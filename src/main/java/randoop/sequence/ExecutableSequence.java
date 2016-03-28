@@ -1,15 +1,12 @@
 package randoop.sequence;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import randoop.test.Check;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.ExecutionVisitor;
@@ -17,10 +14,10 @@ import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.main.GenInputsAbstract;
+import randoop.test.Check;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
 import randoop.util.ProgressDisplay;
-import randoop.util.Reflection;
 
 /**
  * An ExecutableSequence wraps a {@link Sequence} with functionality for
@@ -95,7 +92,7 @@ public class ExecutableSequence {
    * executionResults.size(). Transient because it can contain arbitrary objects
    * that may not be serializable.
    */
-  protected transient /* final */ Execution executionResults;
+  private transient /* final */ Execution executionResults;
 
   /**
    * How long it took to generate this sequence in nanoseconds, excluding
@@ -312,7 +309,7 @@ public class ExecutableSequence {
 
       // Find and collect the input values to i-th statement.
       List<Variable> inputs = sequence.getInputs(i);
-      Object[] inputVariables = new Object[inputs.size()];
+      Object[] inputVariables;
 
       inputVariables = getRuntimeInputs(sequence, executionResults.theList, i, inputs);
 
@@ -348,8 +345,8 @@ public class ExecutableSequence {
     checks = gen.visit(this);
   }
 
-  public Object[] getRuntimeInputs(
-      Sequence s, List<ExecutionOutcome> outcome, int i, List<Variable> inputs) {
+  private Object[] getRuntimeInputs(
+          Sequence s, List<ExecutionOutcome> outcome, int i, List<Variable> inputs) {
 
     Object[] ros = getRuntimeValuesForVars(inputs, outcome);
 
@@ -378,8 +375,8 @@ public class ExecutableSequence {
     return getRuntimeValuesForVars(vars, execution.theList);
   }
 
-  protected static Object[] getRuntimeValuesForVars(
-      List<Variable> vars, List<ExecutionOutcome> execution) {
+  private static Object[] getRuntimeValuesForVars(
+          List<Variable> vars, List<ExecutionOutcome> execution) {
     Object[] runtimeObjects = new Object[vars.size()];
     for (int j = 0; j < runtimeObjects.length; j++) {
       int creatingStatementIdx = vars.get(j).getDeclIndex();
@@ -393,8 +390,8 @@ public class ExecutableSequence {
 
   // Execute the index-th statement in the sequence.
   // Precondition: this method has been invoked on 0..index-1.
-  public static void executeStatement(
-      Sequence s, List<ExecutionOutcome> outcome, int index, Object[] inputVariables) {
+  private static void executeStatement(
+          Sequence s, List<ExecutionOutcome> outcome, int index, Object[] inputVariables) {
     Statement statement = s.getStatement(index);
 
     // Capture any output Synchronize with ProgressDisplay so that
@@ -523,7 +520,7 @@ public class ExecutableSequence {
     for (int i = 0; i < this.sequence.size(); i++)
       if ((getResult(i) instanceof ExceptionalExecution)) {
         ExceptionalExecution e = (ExceptionalExecution) getResult(i);
-        if (Reflection.canBeUsedAs(e.getException().getClass(), exceptionClass)) return i;
+        if (exceptionClass.isAssignableFrom(e.getException().getClass())) return i;
       }
     return -1;
   }

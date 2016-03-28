@@ -9,10 +9,8 @@ import java.util.Set;
 
 import randoop.BugInRandoopException;
 import randoop.Globals;
-import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
 import randoop.util.CollectionsExt;
-import randoop.util.Reflection;
 
 /**
  * A sequence that can be mutated (unlike a {@code Sequence}, which is

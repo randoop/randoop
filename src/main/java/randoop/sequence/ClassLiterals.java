@@ -43,7 +43,7 @@ public class ClassLiterals extends MappedSequences<ConcreteType> {
     for (ConcreteType c : superClasses) {
       listOfLists.add(super.getSequences(c, desiredType));
     }
-    return new ListOfLists<Sequence>(listOfLists);
+    return new ListOfLists<>(listOfLists);
   }
 
   // Gets superclasses for the given class. Stops at null or Object (excludes

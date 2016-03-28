@@ -3,17 +3,12 @@ package randoop.sequence;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.ConcreteOperation;
-import randoop.operation.NonreceiverTerm;
-import randoop.operation.Operation;
-import randoop.operation.OperationParseException;
 import randoop.operation.OperationParser;
 import randoop.types.ConcreteType;
 import randoop.types.PrimitiveTypes;
@@ -21,8 +16,7 @@ import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.OneMoreElementList;
 import randoop.util.Randomness;
-import randoop.util.Reflection;
-import randoop.util.Reflection.Match;
+import randoop.types.Match;
 import randoop.util.SimpleList;
 import randoop.util.WeightedElement;
 
@@ -420,15 +414,15 @@ public final class Sequence implements WeightedElement {
   // values. See documentation for these fields for more info.
   private void computeLastStatementInfo() {
     this.lastStatementTypes = new ArrayList<>();
-    this.lastStatementVariables = new ArrayList<Variable>();
+    this.lastStatementVariables = new ArrayList<>();
 
     if (this.statements.size() > 0) {
       Statement si = this.statements.get(this.statements.size() - 1);
 
       // Process return value
-      if (si.getOutputType().equals(void.class)) {
+      if (si.getOutputType().isVoid()) {
         lastStatementTypes.add(
-            ConcreteType.forClass(void.class)); // used for void methods and Dummy
+            ConcreteType.VOID_TYPE); // used for void methods and Dummy
         // statements
       } else {
         lastStatementTypes.add(si.getOutputType());
@@ -444,11 +438,7 @@ public final class Sequence implements WeightedElement {
 
       for (int i = 0; i < v.size(); i++) {
         Variable value = v.get(i);
-        assert si.getInputTypes()
-            .get(i)
-            .isAssignableFrom(
-                value
-                    .getType()); //Reflection.canBeUsedAs(value.getType(), si.getInputTypes().get(i));
+        assert si.getInputTypes().get(i).isAssignableFrom(value.getType());
         lastStatementTypes.add(value.getType());
         Variable idx = getVariableForInput(this.size() - 1, si.inputs.get(i)); // XXX
         // bogus.
@@ -505,7 +495,7 @@ public final class Sequence implements WeightedElement {
             .getInputTypes()
             .get(i)
             .isAssignableFrom(
-                newRefConstraint))) //Reflection.canBeUsedAs(newRefConstraint, statementWithInputs.getInputTypes().get(i)))
+                newRefConstraint)))
         throw new IllegalArgumentException(
               i
                   + "th input constraint "
@@ -533,7 +523,7 @@ public final class Sequence implements WeightedElement {
     if (o == this) return true;
     Sequence other = (Sequence) o;
     if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size())
-      return GenInputsAbstract.debug_checks ? verifyFalse("size", other) : false;
+      return GenInputsAbstract.debug_checks && verifyFalse("size", other);
     for (int i = 0; i < this.statements.size(); i++) {
       Statement thisStatement = this.statements.get(i);
       Statement otherStatement = other.statements.get(i);
@@ -542,7 +532,7 @@ public final class Sequence implements WeightedElement {
         assert other.statements.get(i) == otherStatement;
       }
       if (!thisStatement.equals(otherStatement)) {
-        return GenInputsAbstract.debug_checks ? verifyFalse("statement index " + i, other) : false;
+        return GenInputsAbstract.debug_checks && verifyFalse("statement index " + i, other);
       }
     }
     return true;
@@ -612,7 +602,7 @@ public final class Sequence implements WeightedElement {
    * Returns null if there are no matches.
    */
   public final Variable randomVariableOfTypeLastStatement(
-      ConcreteType type, Reflection.Match match) {
+      ConcreteType type, Match match) {
     List<Variable> possibleVariables = valuesAppearingInLastStatement(type, match);
     if (possibleVariables.isEmpty()) return null;
     return Randomness.randomMember(possibleVariables);
@@ -623,7 +613,7 @@ public final class Sequence implements WeightedElement {
    * class. Returns an empty list if there are no matches.
    */
   public final List<Variable> valuesAppearingInLastStatement(
-      ConcreteType type, Reflection.Match match) {
+      ConcreteType type, Match match) {
     if (type == null || match == null)
       throw new IllegalArgumentException("parameters cannot be null.");
     List<Variable> possibleIndices = new ArrayList<Variable>(this.lastStatementVariables.size());
@@ -643,10 +633,10 @@ public final class Sequence implements WeightedElement {
    * All the variables declared in this sequences whose type matches the given
    * class. Returns an empty list if there are no matches.
    */
-  public List<Variable> getVariablesOfType(ConcreteType type, Reflection.Match match) {
+  public List<Variable> getVariablesOfType(ConcreteType type, Match match) {
     if (type == null || match == null)
       throw new IllegalArgumentException("parameters cannot be null.");
-    List<Variable> possibleIndices = new ArrayList<Variable>(this.lastStatementVariables.size());
+    List<Variable> possibleIndices = new ArrayList<>(this.lastStatementVariables.size());
     for (int i = 0; i < this.size(); i++) {
       Statement s = statements.get(i);
       if (!s.isVoidMethodCall() && varTypeMatches(s.getOutputType(), type, match)) {
@@ -659,7 +649,7 @@ public final class Sequence implements WeightedElement {
   private boolean varTypeMatches(ConcreteType type, ConcreteType variableType, Match match) {
     switch (match) {
       case COMPATIBLE_TYPE:
-        return variableType.isAssignableFrom(type); //Reflection.canBeUsedAs(type, variableType);
+        return variableType.isAssignableFrom(type);
       case EXACT_TYPE:
         return type.equals(variableType);
       default:
@@ -677,14 +667,14 @@ public final class Sequence implements WeightedElement {
    */
   public final Sequence extend(ConcreteOperation operation, List<Variable> inputVariables) {
     checkInputs(operation, inputVariables);
-    List<RelativeNegativeIndex> indexList = new ArrayList<RelativeNegativeIndex>(1);
+    List<RelativeNegativeIndex> indexList = new ArrayList<>(1);
     for (Variable v : inputVariables) {
       indexList.add(getRelativeIndexForVariable(size(), v));
     }
     Statement statement = new Statement(operation, indexList);
     int newNetSize = (operation.isNonreceivingValue()) ? this.savedNetSize : this.savedNetSize + 1;
     return new Sequence(
-        new OneMoreElementList<Statement>(this.statements, statement),
+        new OneMoreElementList<>(this.statements, statement),
         this.savedHashCode + statement.hashCode(),
         newNetSize);
   }
@@ -762,7 +752,7 @@ public final class Sequence implements WeightedElement {
           .getInputTypes()
           .get(i)
           .isAssignableFrom(
-              newRefConstraint))) { //Reflection.canBeUsedAs(newRefConstraint, operation.getInputTypes().get(i))) {
+              newRefConstraint))) {
         String msg =
             i
                 + "th input constraint "
@@ -796,7 +786,7 @@ public final class Sequence implements WeightedElement {
    * @return the concatenation of the sequences in the list
    */
   public static Sequence concatenate(List<Sequence> sequences) {
-    List<SimpleList<Statement>> statements1 = new ArrayList<SimpleList<Statement>>();
+    List<SimpleList<Statement>> statements1 = new ArrayList<>();
     int newHashCode = 0;
     int newNetSize = 0;
     for (Sequence c : sequences) {
@@ -818,7 +808,7 @@ public final class Sequence implements WeightedElement {
    * that the input is the value created by the x-th statement in the sequence.
    */
   public List<Integer> getInputsAsAbsoluteIndices(int i) {
-    List<Integer> inputsAsVariables = new ArrayList<Integer>();
+    List<Integer> inputsAsVariables = new ArrayList<>();
     for (RelativeNegativeIndex relIndex : this.statements.get(i).inputs)
       inputsAsVariables.add(getVariableForInput(i, relIndex).index);
     return inputsAsVariables;
@@ -924,7 +914,7 @@ public final class Sequence implements WeightedElement {
    *
    * where the VAR are strings representing a variable name, and OPERATION is a
    * string representing a StatementKind. For more on OPERATION, see the
-   * documentation for {@link OperationParser#parse(String)}.
+   * documentation for {@link OperationParser#parse(String, randoop.reflection.ClassVisitor)}.
    *
    * The first VAR token represents the "output variable" that is the result of
    * the statement call. The VAR tokens appearing after OPERATION represent the
@@ -955,6 +945,7 @@ public final class Sequence implements WeightedElement {
    * the sequences using java's serialization mechanism, or write them out as
    * parseable text. Serialization is faster, and text is human-readable.
    */
+  /*
   public static Sequence parse(List<String> statements) throws SequenceParseException {
 
     Map<String, Integer> valueMap = new LinkedHashMap<>();
@@ -1013,7 +1004,7 @@ public final class Sequence implements WeightedElement {
         // Parse operation.
         ConcreteOperation st;
         try {
-          st = OperationParser.parse(opStr);
+          st = OperationParser.parse(opStr, visitor);
         } catch (OperationParseException e) {
           throw new SequenceParseException(e.getMessage(), statements, statementCount);
         }
@@ -1075,7 +1066,7 @@ public final class Sequence implements WeightedElement {
     }
     return sequence;
   }
-
+*/
   /**
    * Parse a sequence encoded as a strings. Convenience method for
    * {@link #parse(List)}, which parses a sequence of strings, each representing
@@ -1098,9 +1089,11 @@ public final class Sequence implements WeightedElement {
    * @throws SequenceParseException
    *           if string is not valid sequence
    */
+  /*
   public static Sequence parse(String string) throws SequenceParseException {
     return parse(Arrays.asList(string.split(Globals.lineSep)));
   }
+*/
 
   public int lastUseBefore(int idx, Variable var) {
     if (var.sequence != this)

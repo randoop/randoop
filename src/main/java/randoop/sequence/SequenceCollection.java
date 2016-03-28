@@ -16,7 +16,7 @@ import randoop.types.ConcreteType;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
-import randoop.util.Reflection.Match;
+import randoop.types.Match;
 import randoop.util.SimpleList;
 
 /**
@@ -145,7 +145,7 @@ public class SequenceCollection {
       Variable v = values.get(i);
       assert constraints
           .get(i)
-          .isAssignableFrom(v.getType()); //Reflection.canBeUsedAs(v.getType(), constraints.get(i));
+          .isAssignableFrom(v.getType());
       if (sequence.isActive(v.getDeclIndex())) types.add(constraints.get(i));
     }
     updateCompatibleClassMap(types);
