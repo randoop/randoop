@@ -8,8 +8,7 @@ import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.field.AccessibleField;
-import randoop.field.FieldParser;
-import randoop.reflection.ClassVisitor;
+import randoop.reflection.OperationParseVisitor;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 import randoop.types.GeneralType;
@@ -88,7 +87,7 @@ public class FieldGet extends CallableOperation {
    */
   @Override
   public String toParseableString(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType) {
-    return "<get>(" + field.toParseableString(declaringType, outputType) + ")";
+    return declaringType.getName() + ".<get>(" + field.getName() + ")";
   }
 
   @Override
@@ -114,9 +113,6 @@ public class FieldGet extends CallableOperation {
    * Parses a getter for a field from a string. A getter description has the
    * form "&lt;get&gt;( field-descriptor )" where &lt;get&gt;" is literal ("&lt;
    * " and "&gt;" included), and field-descriptor is as recognized by
-   * {@link FieldParser#parse(String)}.
-   *
-   * @see FieldParser#parse(String)
    *
    * @param descr
    *          the string containing descriptor of getter for a field.
@@ -125,26 +121,36 @@ public class FieldGet extends CallableOperation {
    * @throws OperationParseException
    *           if any error in descriptor string
    */
-  public static FieldGet parse(String descr, ClassVisitor visitor) throws OperationParseException {
-    int parPos = descr.indexOf('(');
+  public static void parse(String descr, OperationParseVisitor visitor) throws OperationParseException {
     String errorPrefix = "Error parsing " + descr + " as description for field getter statement: ";
-    if (parPos < 0) {
+
+    int openParPos = descr.indexOf('(');
+    int closeParPos = descr.indexOf(')');
+
+    if (openParPos < 0) {
       String msg = errorPrefix + " expecting parentheses.";
       throw new OperationParseException(msg);
     }
-    String prefix = descr.substring(0, parPos);
-    if (!prefix.equals("<get>")) {
+    String prefix = descr.substring(0, openParPos);
+    int lastDotPos = prefix.lastIndexOf('.');
+    assert lastDotPos > 0 : "should be a period after the classname: " + descr;
+
+    String classname = prefix.substring(0, lastDotPos);
+    String opname = prefix.substring(lastDotPos + 1);
+
+    if (!opname.equals("<get>")) {
       String msg = errorPrefix + " expecting <get>( <field-descriptor> ).";
       throw new OperationParseException(msg);
     }
-    int lastParPos = descr.lastIndexOf(')');
-    if (lastParPos < 0) {
+
+    if (closeParPos < 0) {
       String msg = errorPrefix + " no closing parentheses found.";
       throw new OperationParseException(msg);
     }
-    String fieldDescriptor = descr.substring(parPos + 1, lastParPos);
-    AccessibleField pf = (new FieldParser()).parse(fieldDescriptor);
-    return new FieldGet(pf);
+    String fieldname = descr.substring(openParPos + 1, closeParPos);
+
+    visitor.visitField(classname, opname, fieldname);
+
   }
 
   @Override

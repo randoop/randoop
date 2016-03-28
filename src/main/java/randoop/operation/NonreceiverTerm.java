@@ -7,7 +7,7 @@ import plume.UtilMDE;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
-import randoop.reflection.ClassVisitor;
+import randoop.reflection.OperationParseVisitor;
 import randoop.sequence.Variable;
 import randoop.types.ConcreteType;
 import randoop.types.GeneralType;
@@ -246,7 +246,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * @throws OperationParseException
    *           if string does not represent valid object.
    */
-  public static NonreceiverTerm parse(String s, ClassVisitor visitor) throws OperationParseException {
+  public static void parse(String s, OperationParseVisitor visitor) throws OperationParseException {
     if (s == null) throw new IllegalArgumentException("s cannot be null.");
     int colonIdx = s.indexOf(':');
     if (colonIdx == -1) {
@@ -282,7 +282,7 @@ public final class NonreceiverTerm extends CallableOperation {
 
     ConcreteType type;
     try {
-      type = ConcreteType.forClass(Class.forName(typeString));
+      type = (ConcreteType)ConcreteType.forClass(Class.forName(typeString));
     } catch (ClassNotFoundException e1) {
       String msg =
           "Error when parsing type/value pair "
@@ -444,7 +444,7 @@ public final class NonreceiverTerm extends CallableOperation {
       }
     }
 
-    return new NonreceiverTerm(type, value);
+    visitor.visitNonreceiverTerm(new NonreceiverTerm(type, value));
   }
 
   /**

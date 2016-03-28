@@ -6,8 +6,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import randoop.operation.ConcreteOperation;
 import randoop.operation.NonreceiverTerm;
 import randoop.sequence.Sequence;
+import randoop.sequence.Variable;
 import randoop.util.ClassFileConstants;
 import randoop.util.MultiMap;
 
@@ -34,7 +36,8 @@ public class ClassLiteralExtractor implements ClassVisitor {
     MultiMap<Class<?>, NonreceiverTerm> constantMap = ClassFileConstants.toMap(constList);
     for (Class<?> constantClass : constantMap.keySet()) {
       for (NonreceiverTerm term : constantMap.getValues(constantClass)) {
-        literalMap.add(constantClass, Sequence.create(term));
+        Sequence seq = new Sequence().extend(ConcreteOperation.createNonreceiverInitialization(term), new ArrayList<Variable>());
+        literalMap.add(constantClass, seq);
       }
     }
   }

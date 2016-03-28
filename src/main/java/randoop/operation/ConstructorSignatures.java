@@ -2,7 +2,7 @@ package randoop.operation;
 
 import java.lang.reflect.Constructor;
 
-import randoop.types.TypeNames;
+import randoop.reflection.OperationParseVisitor;
 
 /**
  * ConstructorSignatures provides static methods to write as well as parse a
@@ -25,42 +25,25 @@ public class ConstructorSignatures {
    *           there is no method with the name, or there is a security
    *           exception.
    */
-  public static Constructor<?> getConstructorForSignatureString(String signature)
+  public static void getConstructorForSignatureString(String signature, OperationParseVisitor visitor)
       throws OperationParseException {
     if (signature == null) {
       throw new IllegalArgumentException("signature may not be null");
     }
 
-    // TODO simplify argument recognition using regex
-    int openPar = signature.indexOf('(');
-    int closePar = signature.indexOf(')');
-    // Verify only one open/close paren, and close paren is last char.
-    assert openPar == signature.lastIndexOf('(') : signature;
-    assert closePar == signature.lastIndexOf(')') : signature;
-    assert closePar == signature.length() - 1 : signature;
-    String clsAndMethod = signature.substring(0, openPar);
-    int lastDot = clsAndMethod.lastIndexOf('.');
-    // There should be at least one dot, separating class/method name.
-    assert lastDot >= 0;
-    String clsName = clsAndMethod.substring(0, lastDot);
-    String methodName = clsAndMethod.substring(lastDot + 1);
-    assert methodName.equals("<init>") : "expected init, saw " + methodName;
-    String argsOneStr = signature.substring(openPar + 1, closePar);
+    int openParPos = signature.indexOf('(');
+    int closeParPos = signature.indexOf(')');
 
-    // Extract parameter types.
-    Class<?>[] argTypes = TypeArguments.getTypeArgumentsForString(argsOneStr);
+    String prefix = signature.substring(0, openParPos);
+    int lastDotPos = prefix.lastIndexOf('.');
 
-    Class<?> cls;
-    try {
-      cls = TypeNames.getTypeForName(clsName);
-      return cls.getDeclaredConstructor(argTypes);
-    } catch (ClassNotFoundException e1) {
-      throw new Error(e1);
-    } catch (NoSuchMethodException e) {
-      throw new Error(e);
-    } catch (SecurityException e) {
-      throw new Error(e);
-    }
+    assert lastDotPos >= 0;
+    String classname = prefix.substring(0, lastDotPos);
+    String opname = prefix.substring(lastDotPos + 1);
+    assert opname.equals("<init>") : "expected init, saw " + opname;
+    String arguments = signature.substring(openParPos + 1, closeParPos);
+
+    visitor.visitConstructor(classname, opname, arguments);
   }
 
   /**

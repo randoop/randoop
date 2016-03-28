@@ -6,6 +6,7 @@ import java.util.List;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.reflection.ClassVisitor;
+import randoop.reflection.OperationParseVisitor;
 import randoop.sequence.Variable;
 import randoop.types.GeneralType;
 import randoop.types.GeneralTypeTuple;
@@ -79,7 +80,7 @@ public class EnumConstant extends CallableOperation {
    * {@inheritDoc} Issues a string representation of an enum constant as a
    * type-value pair. The parse function should return an equivalent object.
    *
-   * @see EnumConstant#parse(String, ClassVisitor)
+   * @see EnumConstant#parse(String, OperationParseVisitor)
    */
   @Override
   public String toParseableString(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType) {
@@ -99,9 +100,9 @@ public class EnumConstant extends CallableOperation {
    * @throws OperationParseException
    *           if desc does not match expected form.
    */
-    public static EnumConstant parse(String desc, ClassVisitor visitor) throws OperationParseException {
+    public static void parse(String desc, OperationParseVisitor visitor) throws OperationParseException {
       if (desc == null) {
-        throw new IllegalArgumentException("s cannot be null");
+        throw new IllegalArgumentException("desc cannot be null");
       }
       int colonIdx = desc.indexOf(':');
       if (colonIdx < 0) {
@@ -142,50 +143,10 @@ public class EnumConstant extends CallableOperation {
         throw new OperationParseException(msg);
       }
 
-      Class<?> type;
-      try {
-        type = TypeNames.getTypeForName(typeName);
-      } catch (ClassNotFoundException e) {
-        String msg = errorPrefix + " The type given \"" + typeName + "\" was not recognized.";
-        throw new OperationParseException(msg);
-      }
-      if (!type.isEnum()) {
-        String msg = errorPrefix + " The type given \"" + typeName + "\" is not an enum.";
-        throw new OperationParseException(msg);
-      }
+     visitor.visitEnum(typeName, valueName);
 
-      value = valueOf(type,valueName);
-      if (value == null) {
-        String msg =
-            errorPrefix
-                + " The value given \""
-                + valueName
-                + "\" is not a constant of the enum "
-                + typeName
-                + ".";
-        throw new OperationParseException(msg);
-      }
-
-      return new EnumConstant(value);
     }
 
-  /**
-   * valueOf searches the enum constant list of a class for a constant with the given name.
-   * Note: cannot make this work using valueOf method of Enum due to typing.
-   *
-   * @param type class that is already known to be an enum.
-   * @param valueName name for value that may be a constant of the enum.
-   * @return reference to actual constant value, or null if none exists in type.
-   */
-  private static Enum<?> valueOf(Class<?> type, String valueName) {
-    for (Object obj : type.getEnumConstants()) {
-      Enum<?> e = (Enum<?>) obj;
-      if (e.name().equals(valueName)) {
-        return e;
-      }
-    }
-    return null;
-  }
 
   /**
    * value

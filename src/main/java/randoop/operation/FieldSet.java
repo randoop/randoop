@@ -8,8 +8,7 @@ import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.field.AccessibleField;
-import randoop.field.FieldParser;
-import randoop.reflection.ClassVisitor;
+import randoop.reflection.OperationParseVisitor;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
@@ -122,14 +121,56 @@ public class FieldSet extends CallableOperation {
 
   /**
    * Returns the string descriptor for field that can be parsed by
-   * {@link FieldParser}.
    *
    * @return the parseable string descriptor for this setter.
    */
   @Override
   public String toParseableString(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType) {
     assert inputTypes.size() == 1;
-    return "<set>(" + field.toParseableString(declaringType, inputTypes.get(0)) + ")";
+    return declaringType.getName() + ".<set>(" + field.getName() + ")";
+  }
+
+  /**
+   * Parses a description of a field setter in the given string. A setter
+   * description has the form "&lt;set&gt;( field-descriptor )" where
+   * "&lt;set&gt;" is literally what is expected.
+   *
+   * @param descr
+   *          string containing descriptor of field setter.
+   * @param visitor
+   * @return {@code FieldSetter} object corresponding to setter descriptor.
+   * @throws OperationParseException
+   *           if descr does not have expected form.
+   */
+  public static void parse(String descr, OperationParseVisitor visitor) throws OperationParseException {
+    String errorPrefix = "Error parsing " + descr + " as description for field getter statement: ";
+
+    int openParPos = descr.indexOf('(');
+    int closeParPos = descr.indexOf(')');
+
+    if (openParPos < 0) {
+      String msg = errorPrefix + " expecting parentheses.";
+      throw new OperationParseException(msg);
+    }
+    String prefix = descr.substring(0, openParPos);
+    int lastDotPos = prefix.lastIndexOf('.');
+    assert lastDotPos > 0 : "should be a period after the classname: " + descr;
+
+    String classname = prefix.substring(0, lastDotPos);
+    String opname = prefix.substring(lastDotPos + 1);
+
+    if (!opname.equals("<set>")) {
+      String msg = errorPrefix + " expecting <set>( <field-descriptor> ).";
+      throw new OperationParseException(msg);
+    }
+
+    if (closeParPos < 0) {
+      String msg = errorPrefix + " no closing parentheses found.";
+      throw new OperationParseException(msg);
+    }
+    String fieldname = descr.substring(openParPos + 1, closeParPos);
+
+    visitor.visitField(classname, opname, fieldname);
   }
 
   @Override
@@ -149,41 +190,6 @@ public class FieldSet extends CallableOperation {
   @Override
   public int hashCode() {
     return field.hashCode();
-  }
-
-  /**
-   * Parses a description of a field setter in the given string. A setter
-   * description has the form "&lt;set&gt;( field-descriptor )" where
-   * "&lt;set&gt;" is literally what is expected.
-   *
-   * @param descr
-   *          string containing descriptor of field setter.
-   * @param visitor
-   * @return {@code FieldSetter} object corresponding to setter descriptor.
-   * @throws OperationParseException
-   *           if descr does not have expected form.
-   * @see FieldParser#parse(String)
-   */
-  public static FieldSet parse(String descr, ClassVisitor visitor) throws OperationParseException {
-    int parPos = descr.indexOf('(');
-    String errorPrefix = "Error parsing " + descr + " as description for field getter statement: ";
-    if (parPos < 0) {
-      String msg = errorPrefix + " expecting parentheses.";
-      throw new OperationParseException(msg);
-    }
-    String prefix = descr.substring(0, parPos);
-    if (!prefix.equals("<set>")) {
-      String msg = errorPrefix + " expecting <set>( <field-descriptor> ).";
-      throw new OperationParseException(msg);
-    }
-    int lastParPos = descr.lastIndexOf(')');
-    if (lastParPos < 0) {
-      String msg = errorPrefix + " no closing parentheses found.";
-      throw new OperationParseException(msg);
-    }
-    String fieldDescriptor = descr.substring(parPos + 1, lastParPos);
-    AccessibleField pf = (new FieldParser()).parse(fieldDescriptor);
-    return new FieldSet(pf);
   }
 
   @Override

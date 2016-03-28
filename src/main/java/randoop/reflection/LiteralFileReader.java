@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import randoop.operation.ConcreteOperation;
+import randoop.operation.GenericOperation;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.OperationParseException;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
+import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypeTuple;
+import randoop.types.GenericType;
 import randoop.types.TypeNames;
 import randoop.util.MultiMap;
 import randoop.util.RecordListReader;
@@ -72,6 +75,9 @@ public class LiteralFileReader {
 
     final MultiMap<Class<?>, Sequence> map = new MultiMap<>();
 
+    final ModelCollections collections = new ConcreteSequenceCollections(map);
+    final OperationParseVisitor visitor = new OperationParseVisitor(new TypedOperationManager(collections));
+
     RecordProcessor processor =
         new RecordProcessor() {
           @Override
@@ -99,10 +105,8 @@ public class LiteralFileReader {
 
             for (int i = 3; i < lines.size(); i++) {
               try {
-
-                NonreceiverTerm term = NonreceiverTerm.parse(lines.get(i));
-                ConcreteOperation op = new ConcreteOperation(term, term.getType(), new ConcreteTypeTuple(), term.getType());
-                map.add(cls, new Sequence().extend(op, new ArrayList<Variable>()));
+                visitor.visit(cls);
+                NonreceiverTerm.parse(lines.get(i), visitor);
               } catch (OperationParseException e) {
                 throwInvalidRecordError(e, lines, i);
               }
@@ -137,5 +141,35 @@ public class LiteralFileReader {
       b.append("   " + l + "\n");
     }
     b.append("------------------------------\n");
+  }
+
+  private static class ConcreteSequenceCollections implements ModelCollections {
+
+    private final MultiMap<Class<?>, Sequence> map;
+    private ConcreteType classType;
+
+    public ConcreteSequenceCollections(MultiMap<Class<?>, Sequence> map) {
+      this.map = map;
+    }
+
+    @Override
+    public void addConcreteClassType(ConcreteType type) {
+      classType = type;
+    }
+
+    @Override
+    public void addGenericClassType(GenericType type, GenericOperation operation) {
+
+    }
+
+    @Override
+    public void addGenericOperation(GenericOperation operation) {
+
+    }
+
+    @Override
+    public void addConcreteOperation(ConcreteOperation operation) {
+      map.add(classType.getRuntimeClass(), new Sequence().extend(operation, new ArrayList<Variable>()));
+    }
   }
 }

@@ -7,16 +7,17 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import randoop.ComponentManager;
-import randoop.LiteralFileReader;
 import randoop.contract.EqualsHashcode;
 import randoop.contract.EqualsReflexive;
 import randoop.contract.EqualsSymmetric;
 import randoop.contract.EqualsToNullRetFalse;
 import randoop.contract.ObjectContract;
+import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
 import randoop.operation.ConcreteOperation;
 import randoop.operation.GenericOperation;
+import randoop.operation.OperationParseException;
+import randoop.operation.OperationParser;
 import randoop.sequence.Sequence;
 import randoop.types.ConcreteType;
 import randoop.types.GenericType;
@@ -38,7 +39,7 @@ import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
  * This class manages all information about generic classes internally, and instantiates any
  * type variables in operations before returning them.
  */
-public class OperationModel {
+public class OperationModel implements ModelCollections {
 
   /** The set of class objects used in the exercised-class test filter */
   private final LinkedHashSet<Class<?>> exercisedClasses;
@@ -54,7 +55,14 @@ public class OperationModel {
 
   /** Set of concrete operations extracted from classes */
   private Set<ConcreteOperation> operations;
+
+  /** Set of generic operations extracted from classes */
+  private final Set<GenericOperation> genericOperations;
+
+  /** Set of concrete class types extracted/constructed from classes */
   private Set<ConcreteType> classTypes;
+
+  private MultiMap<GenericType, GenericOperation> genericClassTypes;
 
 
   /**
@@ -66,7 +74,9 @@ public class OperationModel {
     contracts = new LinkedHashSet<>();
     exercisedClasses = new LinkedHashSet<>();
     operations = new LinkedHashSet<>();
+    genericOperations = new LinkedHashSet<>();
     classTypes = new LinkedHashSet<>();
+    genericClassTypes = new MultiMap<>();
   }
 
   /**
@@ -84,9 +94,10 @@ public class OperationModel {
    */
   public static OperationModel createModel(
       VisibilityPredicate visibility,
-      DefaultReflectionPredicate reflectionPredicate,
+      ReflectionPredicate reflectionPredicate,
       Set<String> classnames,
       Set<String> exercisedClassnames,
+      Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList) {
 
@@ -94,11 +105,11 @@ public class OperationModel {
 
     Set<Class<?>> visitedClasses = new LinkedHashSet<>();
     Set<ConcreteType> inputTypes = new LinkedHashSet<>();
-    MultiMap<GenericType, GenericOperation> genericClassTypes = new MultiMap<>();
 
     OperationModel model = new OperationModel();
     ReflectionManager mgr = new ReflectionManager(reflectionPredicate);
-    mgr.add(new OperationExtractor(model.classTypes, model.operations, genericClassTypes));
+    ClassVisitor opExtractor = new OperationExtractor(new TypedOperationManager(model));
+    mgr.add(opExtractor);
     mgr.add(new InputTypeExtractor(inputTypes));
     mgr.add(new TestValueExtractor(model.annotatedTestValues));
     mgr.add(new CheckRepExtractor(model.contracts));
@@ -161,6 +172,7 @@ public class OperationModel {
     }
 
     model.addDefaultContracts();
+    model.addOperations(methodSignatures, opExtractor);
 
     return model;
   }
@@ -175,7 +187,7 @@ public class OperationModel {
    * @param literalsFile  the list of literals file names
    * @param literalsLevel  the level of literals to add
    */
-  public void addClassLiterals(
+  private void addClassLiterals(
       ComponentManager compMgr, List<String> literalsFile, ClassLiteralsMode literalsLevel) {
 
     // Add a (1-element) sequence corresponding to each literal to the component
@@ -186,7 +198,7 @@ public class OperationModel {
       if (filename.equals("CLASSES")) {
         literalmap = classLiteralMap;
       } else {
-        literalmap = LiteralFileReader.parse(filename);
+        literalmap = LiteralFileReader.parse(filename, visitor);
       }
 
       for (Class<?> cls : literalmap.keySet()) {
@@ -194,7 +206,7 @@ public class OperationModel {
         for (Sequence seq : literalmap.getValues(cls)) {
           switch (literalsLevel) {
             case CLASS:
-              compMgr.addClassLevelLiteral(ConcreteType.forClass(cls), seq);
+              compMgr.addClassLevelLiteral((ConcreteType)ConcreteType.forClass(cls), seq);
               break;
             case PACKAGE:
               assert pkg != null;
@@ -210,6 +222,16 @@ public class OperationModel {
         }
       }
     }
+  }
+
+  public MultiMap<ConcreteType, ConcreteOperation> getObservers(Set<String> observerSignatures) throws OperationParseException {
+    // Populate observer_map from observers file.
+    MultiMap<ConcreteType, ConcreteOperation> observerMap = new MultiMap<>();
+    for (String sig: observerSignatures) {
+      ModelCollections observerManager = new ConcreteModelCollections(observerMap);
+      OperationParser.parse(sig, new OperationParseVisitor(new TypedOperationManager(observerManager)));
+    }
+    return observerMap;
   }
 
   /**
@@ -243,9 +265,10 @@ public class OperationModel {
     return new ArrayList<>(operations);
   }
 
-  public void addOperations(Set<String> methodSignatures) {
+  private void addOperations(Set<String> methodSignatures, ClassVisitor visitor) throws OperationParseException {
     for (String sig : methodSignatures) {
-      //parse sig to operation
+      GenericOperation op = null;
+      OperationParser.parse(sig, new OperationParseVisitor(new TypedOperationManager(this)));
     }
   }
 
@@ -278,4 +301,58 @@ public class OperationModel {
   public Set<Sequence> getAnnotatedTestValues() {
     return annotatedTestValues;
   }
+
+  @Override
+  public void addConcreteClassType(ConcreteType type) {
+    classTypes.add(type);
+  }
+
+  @Override
+  public void addGenericClassType(GenericType type, GenericOperation operation) {
+    genericClassTypes.add(type, operation);
+  }
+
+  @Override
+  public void addGenericOperation(GenericOperation operation) {
+
+  }
+
+  @Override
+  public void addConcreteOperation(ConcreteOperation operation) {
+
+  }
+
+  private class ConcreteModelCollections implements ModelCollections {
+    private final MultiMap<ConcreteType, ConcreteOperation> observerMap;
+    private ConcreteType classType;
+
+    public ConcreteModelCollections(MultiMap<ConcreteType, ConcreteOperation> observerMap) {
+      this.observerMap = observerMap;
+    }
+
+    @Override
+    public void addConcreteClassType(ConcreteType classType) {
+      this.classType = classType;
+    }
+
+    @Override
+    public void addGenericClassType(GenericType type, GenericOperation operation) {
+      // ignoring generics
+    }
+
+    @Override
+    public void addGenericOperation(GenericOperation operation) {
+      // ignoring generics
+    }
+
+    @Override
+    public void addConcreteOperation(ConcreteOperation operation) {
+      ConcreteType outputType = operation.getOutputType();
+      if (outputType.isPrimitive() || outputType.equals(ConcreteType.STRING_TYPE) || outputType.isEnum()) {
+        observerMap.add(classType, operation);
+      }
+    }
+
+  }
+
 }

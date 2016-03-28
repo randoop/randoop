@@ -2,7 +2,7 @@ package randoop.operation;
 
 import java.lang.reflect.Method;
 
-import randoop.types.TypeNames;
+import randoop.reflection.OperationParseVisitor;
 
 /**
  * MethodSignatures provides static methods to write as well as parse a string
@@ -20,40 +20,26 @@ public class MethodSignatures {
    * @throws OperationParseException
    *           if signature parameter does not match expected format.
    */
-  public static Method getMethodForSignatureString(String signature)
+  public static void getMethodForSignatureString(String signature, OperationParseVisitor visitor)
       throws OperationParseException {
     if (signature == null) {
       throw new IllegalArgumentException("signature may not be null");
     }
 
-    int openPar = signature.indexOf('(');
-    int closePar = signature.indexOf(')');
+    int openParPos = signature.indexOf('(');
+    int closeParPos = signature.indexOf(')');
     // Verify only one open/close paren, and close paren is last char.
-    assert openPar == signature.lastIndexOf('(') : signature;
-    assert closePar == signature.lastIndexOf(')') : signature;
-    assert closePar == signature.length() - 1 : signature;
-    String clsAndMethod = signature.substring(0, openPar);
-    int lastDot = clsAndMethod.lastIndexOf('.');
-    // There should be at least one dot, separating class/method name.
-    assert lastDot >= 0;
-    String clsName = clsAndMethod.substring(0, lastDot);
-    String methodName = clsAndMethod.substring(lastDot + 1);
-    String argsOneStr = signature.substring(openPar + 1, closePar);
+    assert openParPos == signature.lastIndexOf('(') : signature;
+    assert closeParPos == signature.lastIndexOf(')') : signature;
+    assert closeParPos == signature.length() - 1 : signature;
+    String prefix = signature.substring(0, openParPos);
+    int lastDot = prefix.lastIndexOf('.');
+    assert lastDot >= 0 : "there should be at least one period";
+    String classname = prefix.substring(0, lastDot);
+    String opname = prefix.substring(lastDot + 1);
+    String arguments = signature.substring(openParPos + 1, closeParPos);
 
-    // Extract parameter types.
-    Class<?>[] argTypes = TypeArguments.getTypeArgumentsForString(argsOneStr);
-
-    Class<?> cls;
-    try {
-      cls = TypeNames.getTypeForName(clsName);
-      return cls.getDeclaredMethod(methodName, argTypes);
-    } catch (ClassNotFoundException e1) {
-      throw new Error(e1);
-    } catch (NoSuchMethodException e) {
-      throw new Error(e);
-    } catch (SecurityException e) {
-      throw new Error(e);
-    }
+    visitor.visitMethod(classname, opname, arguments);
   }
 
   /**

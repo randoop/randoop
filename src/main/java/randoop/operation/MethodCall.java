@@ -14,7 +14,7 @@ import java.util.List;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.reflection.ClassVisitor;
+import randoop.reflection.OperationParseVisitor;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
@@ -304,9 +304,8 @@ public final class MethodCall extends CallableOperation {
    * @throws OperationParseException
    *           if s does not match expected descriptor.
    */
-  public static MethodCall parse(String s, ClassVisitor visitor) throws OperationParseException {
-    // return MethodCall.createMethodCall(MethodSignatures.getMethodForSignatureString(s));
-    return null;
+  public static void parse(String s, OperationParseVisitor visitor) throws OperationParseException {
+    MethodSignatures.getMethodForSignatureString(s, visitor);
   }
 
   /**

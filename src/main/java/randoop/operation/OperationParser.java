@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import randoop.reflection.ClassVisitor;
+import randoop.reflection.OperationParseVisitor;
 
 public class OperationParser {
 
@@ -39,7 +39,7 @@ public class OperationParser {
    * @throws OperationParseException
    *           if the string does not have expected format.
    */
-  public static void parse(String str, ClassVisitor visitor) throws OperationParseException {
+  public static void parse(String str, OperationParseVisitor visitor) throws OperationParseException {
     if (str == null || str.length() == 0)
       throw new IllegalArgumentException("invalid string: " + str);
 
@@ -118,4 +118,5 @@ public class OperationParser {
     if (op instanceof FieldSet) return FieldSet.ID;
     throw new Error();
   }
+
 }
