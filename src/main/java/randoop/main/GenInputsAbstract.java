@@ -47,7 +47,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Code under test")
   @Option("The fully-qualified name of a class under test")
-  public static List<String> testclass = new ArrayList<String>();
+  public static List<String> testclass = new ArrayList<>();
 
   /**
    * File that lists classes to test.
@@ -425,7 +425,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
      */
     PACKAGE,
     /** each literal is used as input to any method under test */
-    ALL;
+    ALL
   }
 
   // Implementation note: when checking whether a String S exceeds the given
@@ -547,7 +547,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // We do this rather than using java -D so that we can easily pass these
   // to other JVMs
   @Option("-D Specify system properties to be set (similar to java -Dx=y)")
-  public static List<String> system_props = new ArrayList<String>();
+  public static List<String> system_props = new ArrayList<>();
 
   /**
    * Specify an extra command for recursive JVM calls that Randoop spawns. The
@@ -592,7 +592,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   ///////////////////////////////////////////////////////////////////
   @OptionGroup(value = "Advanced extension points")
   @Option("Install the given runtime visitor")
-  public static List<String> visitor = new ArrayList<String>();
+  public static List<String> visitor = new ArrayList<>();
 
   ///////////////////////////////////////////////////////////////////
   @OptionGroup(value = "Logging and troubleshooting Randoop")
