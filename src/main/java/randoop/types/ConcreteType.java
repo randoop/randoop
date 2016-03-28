@@ -12,9 +12,16 @@ import java.lang.reflect.Type;
  */
 public abstract class ConcreteType extends GeneralType {
 
-  public static final ConcreteType VOID_TYPE = ConcreteType.forClass(void.class);
-  public static final ConcreteType STRING_TYPE = ConcreteType.forClass(String.class);
-  public static final ConcreteType OBJECT_TYPE = ConcreteType.forClass(Object.class);
+  public static final ConcreteType VOID_TYPE = (ConcreteType)ConcreteType.forClass(void.class);
+  public static final ConcreteType STRING_TYPE = (ConcreteType)ConcreteType.forClass(String.class);
+  public static final ConcreteType OBJECT_TYPE = (ConcreteType)ConcreteType.forClass(Object.class);
+  public static final ConcreteType INT_TYPE = (ConcreteType)ConcreteType.forClass(int.class);
+  public static final ConcreteType LONG_TYPE = (ConcreteType)ConcreteType.forClass(long.class);
+  public static final ConcreteType SHORT_TYPE = (ConcreteType)ConcreteType.forClass(short.class);
+  public static final ConcreteType FLOAT_TYPE = (ConcreteType)ConcreteType.forClass(float.class);
+  public static final ConcreteType CLASS_TYPE = (ConcreteType)ConcreteType.forClass(Class.class);
+  public static final ConcreteType DOUBLE_TYPE = (ConcreteType)ConcreteType.forClass(double.class);
+
 
   /**
    * Indicates whether a value of a {@code ConcreteType} can be assigned to a
@@ -203,4 +210,6 @@ public abstract class ConcreteType extends GeneralType {
   public ConcreteType apply(Substitution substitution) {
     return this;
   }
+
+  public abstract ConcreteType getSuperclass();
 }

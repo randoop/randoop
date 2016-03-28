@@ -15,7 +15,6 @@ public class ConcreteSimpleType extends ConcreteType {
 
   /** The runtime type of this simple type. */
   private Class<?> runtimeClass;
-  private List<ConcreteOperation> operations;
 
   /**
    * Create a {@code ConcreteSimpleType} object for the runtime class
@@ -24,12 +23,6 @@ public class ConcreteSimpleType extends ConcreteType {
    */
   public ConcreteSimpleType(Class<?> runtimeType) {
     this.runtimeClass = runtimeType;
-    this.operations = new ArrayList<>();
-  }
-
-  @Override
-  public void add(ConcreteOperation op) {
-    operations.add(op);
   }
 
   /**
@@ -175,5 +168,13 @@ public class ConcreteSimpleType extends ConcreteType {
     }
 
     return false;
+  }
+
+  @Override
+  public ConcreteType getSuperclass() {
+    if (this.equals(ConcreteType.OBJECT_TYPE)) {
+      return null;
+    }
+    return new ConcreteSimpleType(this.runtimeClass.getSuperclass());
   }
 }

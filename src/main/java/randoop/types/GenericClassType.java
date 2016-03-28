@@ -245,4 +245,13 @@ public class GenericClassType extends GenericType {
 
     return null;
   }
+
+  GeneralType getSuperclass() {
+    Type superclass = this.rawType.getGenericSuperclass();
+    if (superclass == null) {
+      return null;
+    }
+
+    return GeneralType.forType(superclass);
+  }
 }

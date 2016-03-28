@@ -278,4 +278,25 @@ public class ParameterizedType extends ConcreteType {
   public boolean isInstantiationOf(GenericClassType genericClassType) {
     return instantiatedType.equals(genericClassType);
   }
+
+  /**
+   * Constructs the superclass type for this parameterized type.
+   *
+   * @return the superclass type for this parameterized type
+   */
+  @Override
+  public ConcreteType getSuperclass() {
+    GeneralType superclass = this.instantiatedType.getSuperclass();
+    if (superclass == null) {
+      return null;
+    }
+
+    assert (superclass instanceof GenericClassType) || (superclass instanceof ConcreteType) : "unexpected type: " + superclass;
+
+    if (superclass instanceof GenericClassType) {
+      return new ParameterizedType((GenericClassType)superclass, this.substitution);
+    }
+
+    return (ConcreteType)superclass;
+  }
 }

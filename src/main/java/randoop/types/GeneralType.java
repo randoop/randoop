@@ -274,6 +274,10 @@ public abstract class GeneralType {
     if (c == null) {
       c = Class.forName(typeName);
     }
+    return GeneralType.forClass(c);
+  }
+
+  public static GeneralType forClass(Class<?> c) {
     if (c.getTypeParameters().length > 0) {
       return GenericType.forClass(c);
     }

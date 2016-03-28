@@ -60,4 +60,14 @@ public class ConcreteTypeTuple implements GeneralTypeTuple {
   public boolean isEmpty() {
     return list.isEmpty();
   }
+
+  @Override
+  public boolean isGeneric() {
+    return false;
+  }
+
+  @Override
+  public GeneralTypeTuple apply(Substitution substitution) {
+    return this;
+  }
 }

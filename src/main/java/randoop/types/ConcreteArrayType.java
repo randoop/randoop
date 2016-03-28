@@ -120,4 +120,9 @@ public class ConcreteArrayType extends ConcreteType {
   public Class<?> getRuntimeClass() {
     return runtimeType;
   }
+
+  @Override
+  public ConcreteType getSuperclass() {
+    return ConcreteType.OBJECT_TYPE;
+  }
 }
