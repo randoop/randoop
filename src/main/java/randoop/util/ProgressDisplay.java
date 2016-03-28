@@ -4,9 +4,9 @@ import java.util.Date;
 import java.util.Map;
 
 import randoop.Globals;
-import randoop.RandoopListenerManager;
+import randoop.generation.RandoopListenerManager;
 import randoop.main.GenInputsAbstract;
-import randoop.sequence.AbstractGenerator;
+import randoop.generation.AbstractGenerator;
 
 import plume.UtilMDE;
 

@@ -104,7 +104,7 @@ public class ClassFileConstants {
   /**
    * A simple driver program that prints output literals file format.
    *
-   * @see randoop.LiteralFileReader
+   * @see randoop.reflection.LiteralFileReader
    * @param args  the command line arguments
    * @throws IOException if an error occurs in writing the constants
    */
@@ -575,22 +575,22 @@ public class ClassFileConstants {
         throw new Error("Class " + cs.classname + " not found on the classpath.");
       }
       for (Integer x : cs.ints) {
-        map.add(clazz, new NonreceiverTerm(ConcreteType.forClass(int.class), x.intValue()));
+        map.add(clazz, new NonreceiverTerm(ConcreteType.INT_TYPE, x.intValue()));
       }
       for (Long x : cs.longs) {
-        map.add(clazz, new NonreceiverTerm(ConcreteType.forClass(long.class), x.longValue()));
+        map.add(clazz, new NonreceiverTerm(ConcreteType.LONG_TYPE, x.longValue()));
       }
       for (Float x : cs.floats) {
-        map.add(clazz, new NonreceiverTerm(ConcreteType.forClass(float.class), x.floatValue()));
+        map.add(clazz, new NonreceiverTerm(ConcreteType.FLOAT_TYPE, x.floatValue()));
       }
       for (Double x : cs.doubles) {
-        map.add(clazz, new NonreceiverTerm(ConcreteType.forClass(double.class), x.doubleValue()));
+        map.add(clazz, new NonreceiverTerm(ConcreteType.DOUBLE_TYPE, x.doubleValue()));
       }
       for (String x : cs.strings) {
-        map.add(clazz, new NonreceiverTerm(ConcreteType.forClass(String.class), x));
+        map.add(clazz, new NonreceiverTerm(ConcreteType.STRING_TYPE, x));
       }
       for (Class<?> x : cs.classes) {
-        map.add(clazz, new NonreceiverTerm(ConcreteType.forClass(Class.class), x));
+        map.add(clazz, new NonreceiverTerm(ConcreteType.CLASS_TYPE, x));
       }
     }
     return map;
