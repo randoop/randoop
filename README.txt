@@ -13,4 +13,4 @@ Randoop's documentation is in the doc/ directory.
   page, and an overview of Randoop's internals (userful if you want to
   modify/enhance the tool).
 
-* Javadoc is in doc/javadoc/.
+* Javadoc is in build/docs/api/.
