@@ -167,11 +167,11 @@ Run Randoop by invoking its main class <code>randoop.main.Main</code>:
 </p>
 
 <pre class="code">
-java -ea -classpath &lt;classes-under-test&gt;:randoop.jar randoop.main.Main <em>command</em> <em>args...</em>
+java -ea -classpath <em>&lt;classes-under-test&gt;</em>:randoop.jar randoop.main.Main <em>command</em> <em>args...</em>
 </pre>
 
 <p>
-The classpath needs to contain both Randoop and the path to the classes under test (written above as <code>&lt;classes-under-test&gt;</code>).
+The classpath needs to contain both Randoop and the path to the classes under test.
 For instance, if the current working directory contains both
 <code>randoop.jar</code> and a directory named <code>bin</code> containing
  your compiled classes, then you would use:
