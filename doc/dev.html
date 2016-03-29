@@ -110,7 +110,7 @@ There is separate <a href="../plugin/doc/dev.html">developer documentation
   Jar files are placed in directory <code>build/libs</code>.
 </p>
 
-</p>
+<p>
   You can also break this process down by running separate tasks.
   For the full list of tasks supported by the Randoop build script, type
   <code>./gradlew tasks</code>.
@@ -171,10 +171,10 @@ There is separate <a href="../plugin/doc/dev.html">developer documentation
 <ul>
   <li>Gradle allows you to run multiple tasks.  For instance, for a clean build,
     type <code>./gradlew clean build</code>.</li>
-  <li>You can run a task <tt>taskName</tt> on individual classes by setting the
+  <li><p>You can run a task <tt>taskName</tt> on individual classes by setting the
     system property <code>taskName.single</code> on the command line.
     For instance, to run just the tests in <tt>RandoopSystemTest</tt> use the
-    command<br>
+    command<br />
     <code><pre>
       ./gradlew -Dtest.single=RandoopSystemTest test
     </pre></code></li>
