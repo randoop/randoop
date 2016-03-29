@@ -6,36 +6,62 @@ import randoop.types.ConcreteType;
 import randoop.types.GenericType;
 
 /**
- * Interface for representing collections of model types and operations, including
+ * Abstract class for representing collections of types and operations for a set of classes.
+ * Includes:
  * <ul>
  *   <li>concrete class types,</li>
  *   <li>generic class types and corresponding operations,</li>
  *   <li>generic operations (aka, generic methods and constructors), and</li>
  *   <li>concrete operations.</li>
  * </ul>
-  * Implementing classes may not implement all of the corresponding methods.
+  * Implementing classes may not implement all of these corresponding methods.
  */
-public interface ModelCollections {
+public abstract class ModelCollections {
 
   /**
    * Adds a concrete type to the collection.
    *
-   * @param type  the {@link ConcreteType} to add to the class types collection.
+   * @param type  the {@link ConcreteType} to add to the class types collection
    */
-  void addConcreteClassType(ConcreteType type);
+  public void addConcreteClassType(ConcreteType type) { }
+
+  /**
+   * Adds a generic type to the collection.
+   *
+   * @param type  the {@link GenericType} to add to the class types collection
+   */
+  public void addGenericClassType(GenericType type) { }
 
   /**
    * Adds an operation to a generic type to the generic class type collection.
    *
-   * @param type  the type
+   * @param declaringType  the type
    * @param operation  the operation
    */
-  void addGenericClassType(GenericType type, GenericOperation operation);
+  public void addGenericOperation(GenericType declaringType, GenericOperation operation) { }
 
   /**
+   * Adds a concrete operation from a generic declaring type.
    *
-   * @param operation
+   * @param declaringType  the generic declaring type
+   * @param operation  the concrete operation
    */
-  void addGenericOperation(GenericOperation operation);
-  void addConcreteOperation(ConcreteOperation operation);
+  public void addConcreteOperation(GenericType declaringType, ConcreteOperation operation) { }
+
+  /**
+   * Adds a generic operation from a concrete declaring type.
+   *
+   * @param declaringType  the concrete declaring type
+   * @param operation  the generic operation
+   */
+  public void addGenericOperation(ConcreteType declaringType, GenericOperation operation) { }
+
+  /**
+   * Adds a concrete operation from a generic declaring type.
+   *
+   * @param declaringType  the concrete declaring type
+   * @param operation  the generic operation
+   */
+  public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) { }
+
 }
