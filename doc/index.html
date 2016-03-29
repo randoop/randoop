@@ -1,8 +1,7 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="stylesheets/main.css" type="text/css" />
 <link rel="icon" type="image/png" href="https://randoop.github.io/randoop/images/randoop-logo.png" />
 <title>Randoop Manual</title>
@@ -27,7 +26,7 @@ The Randoop homepage is
       <li><a href="#running_randoop">Running Randoop</a></li>
       <li><a href="#generating_tests">Generating tests</a>
         <ul>
-          <li><a href="#example_collections">Example: Generating tests for <tt>java.util.Collections</tt></a></li>
+          <li><a href="#example_collections">Example: Generating tests for <code>java.util.Collections</code></a></li>
           <li><a href="#specifying-methods">Specifying methods and constructors that may appear in a test</a></li>
           <li><a href="#classifying_tests">Classifying tests</a></li>
           <li><a href="#error_revealing_tests">Error-revealing tests</a></li>
@@ -139,15 +138,15 @@ tests. </p>
 
 <ul><li><strong>(Easiest)</strong> If you are interested
 only in using Randoop, the quickest way to get started is downloading
-the file <tt>randoop-<em>X.Y.Z</em>.jar</tt> from the
+the file <code>randoop-<em>X.Y.Z</em>.jar</code> from the
 <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.
 After you do this, follow the instructions in the next section. </li>
 <li><strong>(Easy)</strong> If you want to use
 Randoop and are also interested in inspecting or compiling the source
-code, you can download the file <tt>randoop-<em>X.Y.Z</em>.zip</tt> from the
+code, you can download the file <code>randoop-<em>X.Y.Z</em>.zip</code> from the
 <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.
 This zip archive contains, in addition
-to <tt>randoop.jar</tt>, the source code for the tool and accompanying
+to <code>randoop.jar</code>, the source code for the tool and accompanying
 libraries. </li>
 <li><strong>(Advanced)</strong> You
 can get the entire project repository contents, which includes system
@@ -164,7 +163,7 @@ can get the entire project repository contents, which includes system
 <h2 id="running_randoop">Running Randoop</h2>
 
 <p>
-Run Randoop by invoking its main class <tt>randoop.main.Main</tt>:
+Run Randoop by invoking its main class <code>randoop.main.Main</code>:
 </p>
 
 <pre class="code">
@@ -174,7 +173,7 @@ java -ea -classpath randoop.jar:... randoop.main.Main <em>command</em> <em>args.
 <p>
 The classpath needs to contain both Randoop and the classes under test.
 You don't need the <code>-classpath</code> argument if you add
-<tt>randoop.jar</tt> to your classpath.
+<code>randoop.jar</code> to your classpath.
 </p>
 
 <p>
@@ -231,19 +230,19 @@ describes
 and finally lists Randoop's <a href="#command-line-options">command-line options</a>. </p>
 
 
-<h3 id="example_collections">Example: Generating tests for <tt>java.util.Collections</tt></h3>
+<h3 id="example_collections">Example: Generating tests for <code>java.util.Collections</code></h3>
 
 <p>Imagine we want to generate tests for the
-class <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Collections.html"><tt>java.util.Collections</tt></a>.
+class <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Collections.html"><code>java.util.Collections</code></a>.
 </p>
 
 <p><strong>Randoop
 will only generate tests using classes you <a href="#specifying-methods">specify</a>.</strong> In order
 to effectively test Collections, you should probably also specify some
 helper classes, including classes that generate collections. For this
-example, we will add <tt>java.util.TreeSet</tt> to the mix. </p>
+example, we will add <code>java.util.TreeSet</code> to the mix. </p>
 
-<p>Create a file <tt>myclasses.txt</tt> that lists the names of the classes under test:
+<p>Create a file <code>myclasses.txt</code> that lists the names of the classes under test:
 </p>
 <pre class="code">java.util.Collections
 java.util.TreeSet</pre>
@@ -262,9 +261,9 @@ Created file: my/home/directory/ErrorTest.java
 done.</pre>
 <p>
 Randoop creates two different main test suites, in classes
-<tt>ErrorTest</tt> and <tt>RegressionTest</tt>. Compile and run the tests.
+<code>ErrorTest</code> and <code>RegressionTest</code>. Compile and run the tests.
 (The classpath should include the code under test, the generated tests, and
-JUnit files <tt>junit.jar</tt> and <tt>hamcrest-core.jar</tt>.)
+JUnit files <code>junit.jar</code> and <code>hamcrest-core.jar</code>.)
 </p>
 
 <pre class="code">export JUNITPATH=.../junit.jar:.../hamcrest-core.jar
@@ -335,7 +334,7 @@ a "method under test".
   test B.
   If you wish to test different settings of the global variable, run
   Randoop multiple times specifying different
-  <a href="#option:init-routine"><tt>--init-routine</tt></a> arguments that
+  <a href="#option:init-routine"><code>--init-routine</code></a> arguments that
   set the global variable to different values.
 </li>
 
@@ -362,20 +361,20 @@ You can use command-line arguments to tell Randoop how to classify tests that th
 </p>
 <ul>
 <li>Checked exceptions. Option:
-<a href="#option:checked-exception"><tt>--checked-exception</tt></a></li>
+<a href="#option:checked-exception"><code>--checked-exception</code></a></li>
 <li>Unchecked exceptions. Option:
-<a href="#option:unchecked-exception"><tt>--unchecked-exception</tt></a></li>
-<li>A <tt>NullPointerException</tt> when <tt>null</tt> is given as an input in a test.
-Option: <a href="#option:npe-on-null-input"><tt>--npe-on-null-input</tt></a>
+<a href="#option:unchecked-exception"><code>--unchecked-exception</code></a></li>
+<li>A <code>NullPointerException</code> when <code>null</code> is given as an input in a test.
+Option: <a href="#option:npe-on-null-input"><code>--npe-on-null-input</code></a>
 </li>
-<li>A <tt>NullPointerException</tt> when only non-<tt>null</tt> input is given in a test.
-Option: <a href="#option:npe-on-non-null-input"><tt>--npe-on-non-null-input</tt></a></li>
-<li>An <tt>OutOfMemoryError</tt>. Option:
-<a href="#option:oom-exception"><tt>--oom-exception</tt></a></li>
+<li>A <code>NullPointerException</code> when only non-<code>null</code> input is given in a test.
+Option: <a href="#option:npe-on-non-null-input"><code>--npe-on-non-null-input</code></a></li>
+<li>An <code>OutOfMemoryError</code>. Option:
+<a href="#option:oom-exception"><code>--oom-exception</code></a></li>
 </ul>
 <p>
 To indicate a behavior type for one of the kinds of exceptions, simply assign
-the behavior type (e.g., <tt>--npe-on-null-input=EXPECTED</tt>).
+the behavior type (e.g., <code>--npe-on-null-input=EXPECTED</code>).
 The behavior types for these exceptions determine the test classification as
 defined above, but additional ERROR behaviors are described in the
 <a href="#error_revealing_tests">error-revealing tests</a> section.
@@ -383,12 +382,12 @@ defined above, but additional ERROR behaviors are described in the
 
 <p>
 The default behavior for
-<a href="#option:unchecked-exception"><tt>--unchecked-exception</tt></a> is to
+<a href="#option:unchecked-exception"><code>--unchecked-exception</code></a> is to
 treat throwing any unchecked exception as expected, normal behavior.  An
 alternative would be to consider a test that throws
 <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/AssertionError.html">AssertionError</a>
 as error-revealing.  However, a random test generator often supplies illegal
-arguments (such as <tt>null</tt> to a method that requires a non-null
+arguments (such as <code>null</code> to a method that requires a non-null
 argument), and this approach will lead to false alarms in which Randoop
 output an "error-revealing test" that misuses the software under test.
 Depending on your needs, you can override Randoop's default.
@@ -398,18 +397,18 @@ Depending on your needs, you can override Randoop's default.
 <h3 id="error_revealing_tests">Error-revealing tests</h3>
 
 <p>
-When Randoop includes a error-revealing test in file <tt>ErrorTest.java</tt>,
+When Randoop includes a error-revealing test in file <code>ErrorTest.java</code>,
 the test shows that the code
 violates its specification or contract &mdash; some property that it is supposed to preserve.  For example, the test shown in
 the <a href="#Introduction">Introduction</a>
-creates a <tt>TreeSet</tt> that
+creates a <code>TreeSet</code> that
 violates <i>reflexivity of equality</i>:  namely, for every
-object <tt>o</tt>, <tt>o.equals(o)</tt> should
-return <tt>true</tt>.
-The test reveals an error in the <tt>TreeSet</tt> constructor, which does
+object <code>o</code>, <code>o.equals(o)</code> should
+return <code>true</code>.
+The test reveals an error in the <code>TreeSet</code> constructor, which does
 not properly check its arguments (and possibly a second error in the
-<tt>TreeSet.equals</tt> method, which should always check if its argument
-is the same object as itself and return <tt>true</tt> in such a case).
+<code>TreeSet.equals</code> method, which should always check if its argument
+is the same object as itself and return <code>true</code> in such a case).
 </p>
 
 <p>
@@ -430,16 +429,16 @@ You may wish to minimize the test case to ease debugging.
 <ul>
   <li>Contracts over <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html#equals-java.lang.Object-">Object.equals()</a>:
     <ul>
-      <li><i>Reflexivity:</i> <tt>o.equals(o)</tt> == <tt>true</tt> </li>
-      <li><i>Symmetry:</i> <tt>o1.equals(o2)</tt> == <tt>o2.equals(o1)</tt> </li>
-	<li><i>Transitivity:</i> <tt>o1.equals(o2)</tt> && <tt>o2.equals(o3)</tt> &rArr; <tt>o1.equals(o3)</tt> </li>
-      <li><i>Equals to null:</i> <tt>o.equals(null)</tt> == <tt>false</tt> </li>
+      <li><i>Reflexivity:</i> <code>o.equals(o)</code> == <code>true</code> </li>
+      <li><i>Symmetry:</i> <code>o1.equals(o2)</code> == <code>o2.equals(o1)</code> </li>
+	<li><i>Transitivity:</i> <code>o1.equals(o2)</code> && <code>o2.equals(o3)</code> &rArr; <code>o1.equals(o3)</code> </li>
+      <li><i>Equals to null:</i> <code>o.equals(null)</code> == <code>false</code> </li>
       <li>it does not throw an exception</li>
     </ul>
   </li>
   <li>Contracts over <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html#hashCode--">Object.hashCode()</a>:
     <ul>
-      <li><i>Equals and hashcode are consistent:</i> If <tt>o1.equals(o2)==true</tt>, then <tt>o1.hashCode() == o2.hashCode()</tt> </li>
+      <li><i>Equals and hashcode are consistent:</i> If <code>o1.equals(o2)==true</code>, then <code>o1.hashCode() == o2.hashCode()</code> </li>
       <li>it does not throw an exception</li>
     </ul>
   </li>
@@ -455,17 +454,17 @@ You may wish to minimize the test case to ease debugging.
   </li>
   <li>Contracts over <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Comparable.html">Comparable.compareTo()</a> and <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Comparator.html#compare-T-T-">Comparator.compare()</a>:
     <ul>
-      <li><i>Reflexivity:</i> <tt>o.compareTo(o)</tt> == 0  (implied by anti-symmetry)</li>
-      <li><i>Anti-symmetry:</i> <tt>sgn(o1.compareTo(o2))</tt> == <tt>-sgn(o2.compareTo(o1))</tt> </li>
-	<li><i>Transitivity:</i> <tt>o1.compareTo(o2)>0</tt> && <tt>o2.compareTo(o3)>0</tt> &rArr; <tt>o1.compareTo(o3)>0</tt> </li>
-      <li><i>Substitutability of equals:</i> <tt>x.compareTo(y)==0</tt> &rArr; <tt>sgn(x.compareTo(z)) == sgn(y.compareTo(z))</tt></li>
-      <li><i>Consistency with <tt>equals()</tt>:</i> <tt>(x.compareTo(y)==0) == x.equals(y)</tt> (this contract can be disabled)</li>
+      <li><i>Reflexivity:</i> <code>o.compareTo(o)</code> == 0  (implied by anti-symmetry)</li>
+      <li><i>Anti-symmetry:</i> <code>sgn(o1.compareTo(o2))</code> == <code>-sgn(o2.compareTo(o1))</code> </li>
+	<li><i>Transitivity:</i> <code>o1.compareTo(o2)>0</code> && <code>o2.compareTo(o3)>0</code> &rArr; <code>o1.compareTo(o3)>0</code> </li>
+      <li><i>Substitutability of equals:</i> <code>x.compareTo(y)==0</code> &rArr; <code>sgn(x.compareTo(z)) == sgn(y.compareTo(z))</code></li>
+      <li><i>Consistency with <code>equals()</code>:</i> <code>(x.compareTo(y)==0) == x.equals(y)</code> (this contract can be disabled)</li>
       <li>it does not throw an exception</li>
     </ul>
   </li>
-  <li>Contracts over <tt>checkRep()</tt> (that is, any nullary method annotated with <a href="https://randoop.github.io/randoop/api/randoop/CheckRep.html"><tt>@CheckRep</tt></a>):
+  <li>Contracts over <code>checkRep()</code> (that is, any nullary method annotated with <a href="https://randoop.github.io/randoop/api/randoop/CheckRep.html"><code>@CheckRep</code></a>):
     <ul>
-      <li>if its return type is <tt>boolean</tt>, it returns <tt>true</tt></li>
+      <li>if its return type is <code>boolean</code>, it returns <code>true</code></li>
       <li>it does not throw an exception</li>
     </ul>
   </li>
@@ -484,8 +483,8 @@ You can add additional contracts to Randoop.
 A thrown exception is <em>not</em> considered a contract violation unless it is
 tagged as error behavior. This is because a method may have a precondition that
 is unknown to Randoop. This is why the defaults have
-<tt>--npe-on-non-null-input=ERROR</tt>
-and <tt>--npe-on-null-input=EXPECTED</tt>.
+<code>--npe-on-non-null-input=ERROR</code>
+and <code>--npe-on-null-input=EXPECTED</code>.
 In another example, a binary search implementation might
 require that its input is sorted, and so Randoop should not mark the method
 as buggy just because it throws an exception when Randoop passes it an
@@ -500,7 +499,7 @@ You can customize how exceptions are considered by
 <h3 id="regression_tests">Regression tests</h3>
 
 <p>
-The tests in the <tt>RegressionTest*.java</tt> files record the current behavior
+The tests in the <code>RegressionTest*.java</code> files record the current behavior
 (values returned or exceptions thrown) of the classes under test.  These
 tests assert that behavior, and they currently pass.  After you change your
 code, you can run these regression tests, which will alert you if your
@@ -523,7 +522,7 @@ public void test10() throws Throwable {
   org.junit.Assert.assertTrue(var2 == false);
 }</pre>
 
-<p>This test would fail if you introduced an error that caused <tt>contains</tt> to return true on an empty set. </p>
+<p>This test would fail if you introduced an error that caused <code>contains</code> to return true on an empty set. </p>
 
 <p>
 A regression test can also assert what exception is currently thrown,
@@ -556,9 +555,9 @@ appropriate action.
     table.<br />
     In this case, you need to re-run Randoop, informing it not to depend on
     observations that may vary from run to run.  You can use the
-    <a href="#option:omitmethods"><tt>--omitmethods</tt></a> command-line
+    <a href="#option:omitmethods"><code>--omitmethods</code></a> command-line
     option, or you can replace its behavior with a different implementation
-    (such as a deterministic one or a mock) using the <a href="#map_calls"><tt>map_calls</tt> feature of the Randoop agent</a>,
+    (such as a deterministic one or a mock) using the <a href="#map_calls"><code>map_calls</code> feature of the Randoop agent</a>,
     and you can also see the techniques suggested in the paper
     <a href="http://homes.cs.washington.edu/~mernst/pubs/maintainable-tests-ase2011.pdf">Scaling Up Automated Test Generation</a>.
   </li>
@@ -577,12 +576,12 @@ change the part of the program, that you suspect is the cause, back to its
 previous behavior.  Once you are satisfied that you understand the
 failures, you can discard the tests and have Randoop generate new ones.
 For example, suppose that you believe that all the test failures are caused
-by a change to method <tt>m</tt>.  You can change <tt>m</tt> back to its
+by a change to method <code>m</code>.  You can change <code>m</code> back to its
 previous implementation and run the tests.  If they all succeed, you can
-change <tt>m</tt> back to its new implementation and re-generate the tests.
+change <code>m</code> back to its new implementation and re-generate the tests.
 (As an alternative to making a temporary change to your source code, you
 can use
-the <a href="#map_calls"><tt>map_calls</tt> feature of the Randoop
+the <a href="#map_calls"><code>map_calls</code> feature of the Randoop
 agent</a> to replace the new functionality by the old functionality.)
 </p>
 
@@ -602,11 +601,11 @@ Randoop about your application, and that is how we recommend using Randoop.
 <ul>
   <li id="optiongroup:Code-under-test">Code under test
     <ul>
-      <li id="option:testclass"><b>--testclass=</b><i>string</i> <tt>[+]</tt>.
+      <li id="option:testclass"><b>--testclass=</b><i>string</i> <code>[+]</code>.
  The fully-qualified name of a class to test. This class is tested in
- addition to any specified using <tt>--classlist</tt>, and must be
+ addition to any specified using <code>--classlist</code>, and must be
  accessible from the package of the tests (set with
- <tt>--junit-package-name</tt>).</li>
+ <code>--junit-package-name</code>).</li>
       <li id="option:classlist"><b>--classlist=</b><i>filename</i>.
  File that lists classes to test.
 
@@ -614,14 +613,14 @@ Randoop about your application, and that is how we recommend using Randoop.
  on a separate line. See an <a href=
  "https://raw.githubusercontent.com/randoop/randoop/master/doc/class_list_example.txt">
  example</a>. These classes are tested in addition to any specified using
- <tt>--testclass</tt>. All classes must be accessible from the package of
- the tests (set with <tt>--junit-package-name</tt>).</li>
+ <code>--testclass</code>. All classes must be accessible from the package of
+ the tests (set with <code>--junit-package-name</code>).</li>
       <li id="option:methodlist"><b>--methodlist=</b><i>filename</i>.
  File that lists methods to test.
 
  In the file, each each method under test is specified on a separate line.
  The list of methods given by this argument augment any methods derived via
- the <tt>--testclass</tt> or <tt>--classlist</tt> option.
+ the <code>--testclass</code> or <code>--classlist</code> option.
 
  <p>
  A constructor line begins with <code>"cons :"</code> followed by the
@@ -656,8 +655,8 @@ Randoop about your application, and that is how we recommend using Randoop.
 
  <p>
  Randoop only calls methods that are specified by one of the
- <tt>--testclass</tt>, <tt>-classlist</tt>, or <tt>--methodlist</tt>
- command-line options; the purpose of <tt>--omitmethods</tt> is to override
+ <code>--testclass</code>, <code>-classlist</code>, or <code>--methodlist</code>
+ command-line options; the purpose of <code>--omitmethods</code> is to override
  one of those other command-line options.
  </p></li>
       <li id="option:omit-field-list"><b>--omit-field-list=</b><i>filename</i>.
@@ -666,7 +665,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  visible class.</li>
       <li id="option:only-test-public-members"><b>--only-test-public-members=</b><i>boolean</i>.
  Restrict tests to only include public members of classes. Ordinarily, the
- setting of <tt>--junit-package-name</tt> and package accessibility is used
+ setting of <code>--junit-package-name</code> and package accessibility is used
  to determine which members will be used in tests. Using this option
  restricts the tests to only use public members even if the class is a
  member of the same package as the generated tests. [default false]</li>
@@ -723,8 +722,8 @@ Randoop about your application, and that is how we recommend using Randoop.
  EXPECTED), or should it be discarded (value: INVALID)?
 
  <p>
- The arguments <tt>--npe-on-null-input</tt>,
- <tt>--npe-on-non-null-input</tt>, and <tt>--oom-exception</tt> handle
+ The arguments <code>--npe-on-null-input</code>,
+ <code>--npe-on-non-null-input</code>, and <code>--oom-exception</code> handle
  special cases of unchecked exceptions.
   [default EXPECTED]</p><ul><li><b>ERROR</b> Occurrence of exception reveals an error</li><li><b>EXPECTED</b> Occurrence of exception is expected behavior</li><li><b>INVALID</b> Occurrence of exception indicates an invalid test</li></ul></li>
       <li id="option:npe-on-null-input"><b>--npe-on-null-input=</b><i>enum</i>.
@@ -842,7 +841,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  Does not affect the behavior based on --null_ratio, which independently
  determines the frequency that <code>null</code> is used as an input.
   [default false]</p></li>
-      <li id="option:literals-file"><b>--literals-file=</b><i>string</i> <tt>[+]</tt>.
+      <li id="option:literals-file"><b>--literals-file=</b><i>string</i> <code>[+]</code>.
  A file containing literal values to be used as inputs to methods under
  test, or "CLASSES".
 
@@ -854,7 +853,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  </p></li>
       <li id="option:literals-level"><b>--literals-level=</b><i>enum</i>.
  How to use literal values that are specified via the
- <tt>--literals-file</tt> command-line option. See: <code>ClassLiteralsMode</code>. [default CLASS]<ul><li><b>NONE</b> do not use literals specified in a literals file</li><li><b>CLASS</b> a literal for a given class is used as input only to methods of that
+ <code>--literals-file</code> command-line option. See: <code>ClassLiteralsMode</code>. [default CLASS]<ul><li><b>NONE</b> do not use literals specified in a literals file</li><li><b>CLASS</b> a literal for a given class is used as input only to methods of that
  class</li><li><b>PACKAGE</b> a literal is used as input to methods of any classes in the same package</li><li><b>ALL</b> each literal is used as input to any method under test</li></ul></li>
       <li id="option:string-maxlen"><b>--string-maxlen=</b><i>int</i>.
  Maximum length of strings in generated tests, including in assertions.
@@ -910,7 +909,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  same as the package of a class under test, then package visibility rules
  are used to determine whether to include the class or class members in a
  test. Tests can be restricted to public members only by using the option
- <tt>--only-test-public-members</tt>. [default ]</li>
+ <code>--only-test-public-members</code>. [default ]</li>
       <li id="option:junit-output-dir"><b>--junit-output-dir=</b><i>string</i>.
  Name of the directory to which JUnit files should be written</li>
       <li id="option:dont-output-tests"><b>--dont-output-tests=</b><i>boolean</i>.
@@ -933,7 +932,7 @@ Randoop about your application, and that is how we recommend using Randoop.
   </li>
   <li id="optiongroup:Runtime-environment">Runtime environment
     <ul>
-      <li id="option:system-props"><b>-D</b> <b>--system-props=</b><i>string</i> <tt>[+]</tt>.
+      <li id="option:system-props"><b>-D</b> <b>--system-props=</b><i>string</i> <code>[+]</code>.
  Specify system properties to be set (similar to java -Dx=y)</li>
       <li id="option:agent"><b>--agent=</b><i>string</i>.
  Specify an extra command for recursive JVM calls that Randoop spawns. The
@@ -951,9 +950,9 @@ Randoop about your application, and that is how we recommend using Randoop.
   </li>
   <li id="optiongroup:Serialized-input-output-of-generated-tests">Serialized input/output of generated tests
     <ul>
-      <li id="option:componentfile-ser"><b>--componentfile-ser=</b><i>filename</i> <tt>[+]</tt>.
+      <li id="option:componentfile-ser"><b>--componentfile-ser=</b><i>filename</i> <code>[+]</code>.
  Read serialized test inputs from the given file</li>
-      <li id="option:componentfile-txt"><b>--componentfile-txt=</b><i>filename</i> <tt>[+]</tt>.
+      <li id="option:componentfile-txt"><b>--componentfile-txt=</b><i>filename</i> <code>[+]</code>.
  Read serialized test inputs from the given file (text-based)</li>
       <li id="option:output-components"><b>--output-components=</b><i>filename</i>.
  Output components (serialized, GZIPPED) to the given file. Suggestion: use
@@ -982,7 +981,7 @@ Randoop about your application, and that is how we recommend using Randoop.
   </li>
   <li id="optiongroup:Advanced-extension-points">Advanced extension points
     <ul>
-      <li id="option:visitor"><b>--visitor=</b><i>string</i> <tt>[+]</tt>.
+      <li id="option:visitor"><b>--visitor=</b><i>string</i> <code>[+]</code>.
  Install the given runtime visitor. See class randoop.ExecutionVisitor.</li>
     </ul>
   </li>
@@ -1011,7 +1010,7 @@ Randoop about your application, and that is how we recommend using Randoop.
     </ul>
   </li>
 </ul>
-<tt>[+]</tt> marked option can be specified multiple times
+<code>[+]</code> marked option can be specified multiple times
 <!-- end options doc -->
 
 
@@ -1019,7 +1018,7 @@ Randoop about your application, and that is how we recommend using Randoop.
 
 <p>
 The code under test may make calls to certain methods that you do not want
-Randoop to execute.  Two examples are <tt>System.exit</tt> (which will
+Randoop to execute.  Two examples are <code>System.exit</code> (which will
 terminate not just the target program but also Randoop!) and methods that
 require user interaction, such as popping up a modal dialog box.
 </p>
@@ -1027,7 +1026,7 @@ require user interaction, such as popping up a modal dialog box.
 <p>
 You can prevent Randoop from calling certain methods in the code under
 test, by using the
-<tt>--omitmethods=regexp</tt> command-line option.
+<code>--omitmethods=regexp</code> command-line option.
 </p>
 
 <p>
@@ -1039,29 +1038,29 @@ that you provide.
 
 <p>
 To transform calls to undesired methods, pass the following command-line
-option to <tt>java</tt> when running Randoop:
+option to <code>java</code> when running Randoop:
 </p>
 <pre>
     -javaagent:$(randoop)/mapcall_agent.jar=--map_calls=map_calls.txt
 </pre>
 <p>
-(<b>Note:</b> If you supply the <tt>-javaagent</tt> option to <tt>java</tt>
+(<b>Note:</b> If you supply the <code>-javaagent</code> option to <code>java</code>
 when running Randoop, and there is any chance that Randoop may spawn
-another process (for example, if the <tt>--compare-checks</tt> command-line
+another process (for example, if the <code>--compare-checks</code> command-line
 option is specified), then then you should also specify the
-<tt>--agent</tt> argument to Randoop.)
+<code>--agent</code> argument to Randoop.)
 </p>
 
 <p>
-You need to supply the <tt>map_calls.txt</tt> file, and also a definition
+You need to supply the <code>map_calls.txt</code> file, and also a definition
 of the replacement methods.  When you run the generated tests, you will
-also need to supply the same <tt>-javaagent:...</tt> argument.  (In the
+also need to supply the same <code>-javaagent:...</code> argument.  (In the
 future, Randoop may provide a way to generate standalone tests even when
-generating tests using the <tt>-javaagent:...</tt> argument.)
+generating tests using the <code>-javaagent:...</code> argument.)
 </p>
 
 <p>
-The <tt>map_calls.txt</tt> file consists of sections, where each section
+The <code>map_calls.txt</code> file consists of sections, where each section
 has the format
 </p>
 <pre>
@@ -1080,8 +1079,8 @@ a call to a method with identical name and arguments in the new class.
 </p>
 
 <p>
-Blank lines and <tt>//</tt> comments are ignored in the
-<tt>map_calls.txt</tt> file.
+Blank lines and <code>//</code> comments are ignored in the
+<code>map_calls.txt</code> file.
 </p>
 
 <p>
@@ -1098,7 +1097,7 @@ If Randoop is calling methods that it should not (for example, while
 generating tests, a dialog box pops up), then you need to add more calls to
 you map_calls file.  While the dialog box is displayed, determine which
 calls are executing by examining the stack trace.  On Unix this can be done
-by typing <tt>Ctrl-\</tt> (hold down the Control key, then press the
+by typing <code>Ctrl-\</code> (hold down the Control key, then press the
 Backslash key).
 </p>
 
@@ -1167,9 +1166,9 @@ exception escaping the method as the rep invariant being violated.
   To instrument classes for this filter, also use the <code>exercised_agent.jar</code>
   by giving the following command-line option for java
 </p>
-<code><pre>
+<pre><code>
   -javaagent:$(randoop)exercised_agent.jar
-</pre><code>
+</code></pre>
 <p>
   This will instrument any non-abstract constructor and method of loaded
   classes so that the use of a class can be detected.
@@ -1184,14 +1183,14 @@ inputs to methods:
 </p>
 
 <ul>
-  <li><tt>byte</tt>: <tt>-1</tt>, <tt>0</tt> <tt>1</tt>,  <tt>10</tt>, <tt>100</tt></li>
-  <li><tt>short</tt>: <tt>-1</tt>, <tt>0</tt> <tt>1</tt>,  <tt>10</tt>, <tt>100</tt></li>
-  <li><tt>int</tt>: <tt>-1</tt>, <tt>0</tt> <tt>1</tt>,  <tt>10</tt>, <tt>100</tt></li>
-  <li><tt>long</tt>: <tt>-1</tt>, <tt>0</tt> <tt>1</tt>,  <tt>10</tt>, <tt>100</tt></li>
-  <li><tt>float</tt>: <tt>-1</tt>, <tt>0</tt> <tt>1</tt>,  <tt>10</tt>, <tt>100</tt></li>
-  <li><tt>double</tt>: <tt>-1</tt>, <tt>0</tt> <tt>1</tt>,  <tt>10</tt>, <tt>100</tt></li>
-  <li><tt>char</tt>: <tt>'#'</tt>, <tt>' '</tt>, <tt>'4'</tt>, <tt>'a'</tt></li>
-  <li><tt>java.lang.String</tt>: <tt>""</tt>, <tt>"hi!"</tt></li>
+  <li><code>byte</code>: <code>-1</code>, <code>0</code> <code>1</code>,  <code>10</code>, <code>100</code></li>
+  <li><code>short</code>: <code>-1</code>, <code>0</code> <code>1</code>,  <code>10</code>, <code>100</code></li>
+  <li><code>int</code>: <code>-1</code>, <code>0</code> <code>1</code>,  <code>10</code>, <code>100</code></li>
+  <li><code>long</code>: <code>-1</code>, <code>0</code> <code>1</code>,  <code>10</code>, <code>100</code></li>
+  <li><code>float</code>: <code>-1</code>, <code>0</code> <code>1</code>,  <code>10</code>, <code>100</code></li>
+  <li><code>double</code>: <code>-1</code>, <code>0</code> <code>1</code>,  <code>10</code>, <code>100</code></li>
+  <li><code>char</code>: <code>'#'</code>, <code>' '</code>, <code>'4'</code>, <code>'a'</code></li>
+  <li><code>java.lang.String</code>: <code>""</code>, <code>"hi!"</code></li>
 </ul>
 
 <p>This is the initial set of <i>seed</i> values used by Randoop: in
@@ -1203,25 +1202,25 @@ method call.</p>
 
 <ul>
 <li><b>Command line.</b> An easy way to specify additional seed
-values in to use the <tt>--literals-file</tt> command-line option to
+values in to use the <code>--literals-file</code> command-line option to
 either use literals from a file you specify or to read literals out of
 the source code you that Randoop is analyzing.</li>
 
 <li><b>Programmatically.</b> You can declare a class that stores
-primitive values, using the <tt>@TestValue</tt> annotation:
+primitive values, using the <code>@TestValue</code> annotation:
 
 <ol>
 
-  <li> Create a <b>public</b> class <i>C</i>, and import <tt>randoop.*</tt>.
+  <li> Create a <b>public</b> class <i>C</i>, and import <code>randoop.*</code>.
   </li>
 
   <li> Declare one more more fields in <i>C</i> that hold the
        values you want to seed. Each field should:
 
     <ul>
-      <li> include the <tt>@TestValue</tt> annotation,</li>
-      <li> be declared <b><tt>public</tt></b> and <b><tt>static</tt></b>,</li>
-      <li> be of a primitive (or <tt>String</tt>) type, or an array of primitives or <tt>String</tt>s, and</li>
+      <li> include the <code>@TestValue</code> annotation,</li>
+      <li> be declared <b><code>public</code></b> and <b><code>static</code></b>,</li>
+      <li> be of a primitive (or <code>String</code>) type, or an array of primitives or <code>String</code>s, and</li>
       <li> be initialized to contain one or more seed values.</li>
     </ul>
   </li>
@@ -1229,7 +1228,7 @@ primitive values, using the <tt>@TestValue</tt> annotation:
   <li> Include the class you created in the list of classes given to Randoop to test.</li>
 </ol>
 
-<p>Alternatively, you can simply add a <tt>@TestValue</tt> annotation
+<p>Alternatively, you can simply add a <code>@TestValue</code> annotation
 to a field in one of your classes under test, as long as it adheres to
 the above requirements.</p>
 
@@ -1237,7 +1236,7 @@ the above requirements.</p>
 @TestValue annotation. For Randoop to use the primitive values
 described in the class, you would add this class to the list of
 classes under test
-(e.g. via the option <tt>--testclass=example.TestValueExamples</tt>).</p>
+(e.g. via the option <code>--testclass=example.TestValueExamples</code>).</p>
 
 <pre class="code">
   package example;
@@ -1306,19 +1305,19 @@ taking too long to execute and cannot be killed by Randoop.
 <ul>
 <li><strong>Manual</strong>: what you are currently reading. </li>
 
-<li><strong>Randoop's <tt>help</tt> command</strong>:  For help on
-  usage, use Randoop's <tt>help</tt> command. To print Randoop's main help message, run:
+<li><strong>Randoop's <code>help</code> command</strong>:  For help on
+  usage, use Randoop's <code>help</code> command. To print Randoop's main help message, run:
 
 <pre class="code">java -classpath randoop.jar randoop.main.Main help</pre>
 
-To print help for test generation (the <tt>gentests</tt> command), run:
+To print help for test generation (the <code>gentests</code> command), run:
 
 <pre class="code">
 java -ea -classpath randoop.jar randoop.main.Main help gentests
 </pre>
 
 To also include unpublicized (due to being experimental or unsupported)
- options for a command, use the <tt>--unpub</tt> flag:
+ options for a command, use the <code>--unpub</code> flag:
 
 <pre class="code">
 java -ea -classpath randoop.jar randoop.main.Main help --unpub gentests
@@ -1327,8 +1326,8 @@ java -ea -classpath randoop.jar randoop.main.Main help --unpub gentests
 
 </li>
 <li><strong>Mailing list</strong>: If you don't find your question answered,
-  email either <tt>randoop-discuss@googlegroups.com</tt> or
-  <tt>randoop-developers@googlegroups.com</tt> with your question.
+  email either <code>randoop-discuss@googlegroups.com</code> or
+  <code>randoop-developers@googlegroups.com</code> with your question.
 </li>
 <li><strong>Bug reporting</strong>: If
   you have discovered a problem with Randoop, we would like to fix it.
@@ -1342,7 +1341,7 @@ java -ea -classpath randoop.jar randoop.main.Main help --unpub gentests
   fix.  This generally includes
   <ul>
     <li>the version of Randoop (please use the most recent released version or the current version from the version control repository),</li>
-    <li>the exact commands you ran (we recommend using the <tt>-ea</tt> option to java when running Randoop, which makes diagnosis easier),</li>
+    <li>the exact commands you ran (we recommend using the <code>-ea</code> option to java when running Randoop, which makes diagnosis easier),</li>
     <li>the exact and complete output of the commands, and</li>
     <li>all the files that are necessary to run those commands.</li>
   </ul>
@@ -1373,14 +1372,14 @@ change.  See elsewhere in this manual for suggestions.
 <h4 id="nontermination">Randoop does not terminate</h4>
 
 <p>
-If Randoop does not terminate, run it with the <tt>--log=filename</tt>
+If Randoop does not terminate, run it with the <code>--log=filename</code>
 command-line option, and either examine the log or send it to the Randoop
 developers for diagnosis.
 </p>
 
 <p>
 You can also determine which calls are executing by examining the stack
-trace.  On Unix this can be done by typing <tt>Ctrl-\</tt> (hold down the
+trace.  On Unix this can be done by typing <code>Ctrl-\</code> (hold down the
 Control key, then press the Backslash key).
 </p>
 
@@ -1390,7 +1389,7 @@ Control key, then press the Backslash key).
 <p>
 Randoop is deterministic:  if you run it twice with the same arguments, it
 will produce the identical test suite.  You can use the
-<a href="#option:randomseed"><tt>--randomseed</tt></a> command-line
+<a href="#option:randomseed"><code>--randomseed</code></a> command-line
 argument to make Randoop produce different tests.
 </p>
 
@@ -1412,7 +1411,7 @@ sequential Java program are:
     Override hashCode(), so that your program does not use
     Object.hashCode() which is nondeterministic (it depends on when the
     garbage collector runs).  Also don't instantiate the Object class,
-    as in <tt>new Object()</tt>; instead, use some class that overrides
+    as in <code>new Object()</code>; instead, use some class that overrides
     hashCode().
   </li>
   <li>
