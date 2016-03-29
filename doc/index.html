@@ -172,9 +172,9 @@ java -ea -classpath &lt;classes-under-test&gt;:randoop.jar randoop.main.Main <em
 
 <p>
 The classpath needs to contain both Randoop and the path to the classes under test (written above as <code>&lt;classes-under-test&gt;</code>).
-For instance, if in your current working directory, you have both the
-<code>randoop.jar</code> file, and a directory named <code>bin</code> containing
-  your compiled classes, then you would use this classpath option
+For instance, if the current working directory contains both
+<code>randoop.jar</code> and a directory named <code>bin</code> containing
+ your compiled classes, then you would use:
 </p>
 
 <pre class="code">
@@ -182,10 +182,7 @@ For instance, if in your current working directory, you have both the
 </pre>
 
  <p>
-In general, you'll need to give the path to the directory holding the class files
-for your classes-under-test and the <code>randoop.jar</code> file.
-(On Windows use the semicolon instead of the colon to separate paths in your
-classpath.)
+(On Windows, semicolon instead of colon is the classpath separator.)
 Note that you don't need the <code>-classpath</code> argument if you add
 <tt>randoop.jar</tt> to your classpath.
 </p>
