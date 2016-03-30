@@ -1,18 +1,18 @@
 package randoop.sequence;
 
 import java.io.PrintStream;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import randoop.ExecutionOutcome;
 import randoop.Globals;
-import randoop.operation.*;
+import randoop.operation.CallableOperation;
+import randoop.operation.ConcreteOperation;
+import randoop.operation.Operation;
+import randoop.operation.OperationParser;
 import randoop.sequence.Sequence.RelativeNegativeIndex;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypeTuple;
-import randoop.types.GeneralType;
 import randoop.types.PrimitiveTypes;
 
 /**
@@ -229,7 +229,7 @@ public final class Statement {
   }
 
   /**
-   * isNullInialization determines if statement represents an initialization by
+   * isNullInitialization determines if statement represents an initialization by
    * null value.
    *
    * @return true if statement represents null initialization, and false

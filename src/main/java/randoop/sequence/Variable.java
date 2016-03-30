@@ -107,11 +107,12 @@ public class Variable implements Comparable<Variable> {
   public int compareTo(Variable o) {
     if (o == null) throw new IllegalArgumentException();
     if (o.sequence != this.sequence) throw new IllegalArgumentException();
-    return (new Integer(this.index).compareTo(new Integer(o.index)));
+    return (new Integer(this.index).compareTo(o.index));
   }
 
   /** Convert to string and downcase the first character.
-   * @param type*/
+   * @param type  the type
+   */
   public static String classToVariableName(ConcreteType type) {
     // assert !clazz.equals(void.class) : "The given variable type can not be
     // void!";

@@ -569,7 +569,7 @@ public class ExecutableSequence {
   }
 
   public static <D extends Check> List<Sequence> getSequences(List<ExecutableSequence> exec) {
-    List<Sequence> result = new ArrayList<Sequence>(exec.size());
+    List<Sequence> result = new ArrayList<>(exec.size());
     for (ExecutableSequence execSeq : exec) {
       result.add(execSeq.sequence);
     }
@@ -587,9 +587,8 @@ public class ExecutableSequence {
     ExecutableSequence that = (ExecutableSequence) obj;
     if (!this.sequence.equals(that.sequence)) return false;
     if (this.checks == null) return (that.checks == null);
-    if (!this.checks.equals(that.checks)) return false;
+    return this.checks.equals(that.checks);
 
-    return true;
   }
 
   public boolean hasNullInput() {

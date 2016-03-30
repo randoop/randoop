@@ -3,67 +3,16 @@ package randoop.sequence;
 import randoop.types.ConcreteArrayType;
 import randoop.types.ConcreteType;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-public class VariableRenamer {
+class VariableRenamer {
 
   /**
    * The sequence in which every variable will be renamed
    */
   public final Sequence sequence;
 
-  /**
-   * A map from variable id to name
-   */
-  public final Map<Integer, String> name_mapping;
-
   public VariableRenamer(Sequence sequence) {
     assert sequence != null : "The given sequence to rename can not be null";
     this.sequence = sequence;
-    this.name_mapping = this.renameVarsInSequence();
-  }
-
-  /**
-   * Gets the name for the index-th variable (output by the i-th statement)
-   */
-  public String getRenamedVar(int index) {
-    String name = this.name_mapping.get(index);
-    if (name == null) {
-      assert sequence.getStatement(index).getOutputType().isVoid()
-          : "The index: " + index + "-th output should be void.";
-      throw new Error("Error in Randoop, please report it.");
-    }
-    return name;
-  }
-
-  /**
-   * The map storing the occurrence number of the same class. The key is the
-   * class name, and the value is the number of variables with the given type.
-   * This field is only used in <code>rename</code> method.
-   */
-  private Map<String, Integer> name_counting_map = new LinkedHashMap<String, Integer>();
-
-  private Map<Integer, String> renameVarsInSequence() {
-    Map<Integer, String> index_var_map = new LinkedHashMap<Integer, String>();
-    for (int i = 0; i < this.sequence.size(); i++) {
-      ConcreteType outputType = this.sequence.getStatement(i).getOutputType();
-      if (outputType.isVoid()) {
-        continue;
-      }
-      String rename = getVariableName(outputType);
-      if (!name_counting_map.containsKey(rename)) {
-        index_var_map.put(new Integer(i), rename + "0");
-        // update and increase the counting in name map
-        name_counting_map.put(rename, 1);
-      } else {
-        int num = name_counting_map.get(rename);
-        index_var_map.put(new Integer(i), rename + num);
-        // update and increase the counting in name map
-        name_counting_map.put(rename, num + 1);
-      }
-    }
-    return index_var_map;
   }
 
   /**
@@ -75,7 +24,7 @@ public class VariableRenamer {
    * @param type  the type to use as base of variable name
    * @return a variable name based on its type
    */
-  public static String getVariableName(ConcreteType type) {
+  static String getVariableName(ConcreteType type) {
 
     if (type.isVoid()) {
       return "void";

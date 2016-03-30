@@ -339,7 +339,7 @@ public final class Sequence implements WeightedElement {
     int absoluteIndex = statementPosition + input.index;
     if (absoluteIndex < 0) {
       throw new IllegalArgumentException(
-          "invalid index (expeciting non-negative): " + absoluteIndex);
+          "invalid index (expecting non-negative): " + absoluteIndex);
     }
     return new Variable(this, absoluteIndex);
   }
@@ -545,7 +545,7 @@ public final class Sequence implements WeightedElement {
     return false;
   }
 
-  // A saved copy of this sequence's hashcode to avoid recomputation.
+  // A saved copy of this sequence's hashcode to avoid recalculation.
   protected final int savedHashCode;
 
   // A saved copy of this sequence's net size to avoid recomputation.
@@ -566,8 +566,7 @@ public final class Sequence implements WeightedElement {
    */
   private boolean isValidIndex(int index) {
     if (index < 0) return false;
-    if (index > this.size() - 1) return false;
-    return true;
+    return index <= this.size() - 1;
   }
 
   /**
@@ -616,7 +615,7 @@ public final class Sequence implements WeightedElement {
       ConcreteType type, Match match) {
     if (type == null || match == null)
       throw new IllegalArgumentException("parameters cannot be null.");
-    List<Variable> possibleIndices = new ArrayList<Variable>(this.lastStatementVariables.size());
+    List<Variable> possibleIndices = new ArrayList<>(this.lastStatementVariables.size());
     for (int ithOutputIndex = 0;
         ithOutputIndex < this.lastStatementVariables.size();
         ithOutputIndex++) {
@@ -794,7 +793,7 @@ public final class Sequence implements WeightedElement {
       newNetSize += c.savedNetSize;
       statements1.add(c.statements);
     }
-    return new Sequence(new ListOfLists<Statement>(statements1), newHashCode, newNetSize);
+    return new Sequence(new ListOfLists<>(statements1), newHashCode, newNetSize);
   }
 
   // TODO inline and remove; used only in one place and confusing.
@@ -874,7 +873,7 @@ public final class Sequence implements WeightedElement {
    * st.equals(parse(st.toParseableCode()))
    * </pre>
    *
-   * See the {@link #parse(List)} for the required format of a String
+   * See the parse(List) for the required format of a String
    * representing a Sequence.
    *
    * @return parseable string description of sequence.
@@ -1069,7 +1068,7 @@ public final class Sequence implements WeightedElement {
 */
   /**
    * Parse a sequence encoded as a strings. Convenience method for
-   * {@link #parse(List)}, which parses a sequence of strings, each representing
+   * parse(List), which parses a sequence of strings, each representing
    * a Statement. See that method for more documentation on the string
    * representation of a sequence.
    * <p>
