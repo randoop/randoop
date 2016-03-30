@@ -26,6 +26,7 @@ import randoop.contract.ObjectContract;
 import randoop.instrument.ExercisedClassVisitor;
 import randoop.operation.ConcreteOperation;
 import randoop.operation.Operation;
+import randoop.operation.OperationParseException;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PackageVisibilityPredicate;
@@ -188,15 +189,22 @@ public class GenTests extends GenInputsAbstract {
     Set<String> methodSignatures =
             GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
 
-    OperationModel operationModel =
-        OperationModel.createModel(
-            visibility,
-            reflectionPredicate,
-            classnames,
-            coveredClassnames,
-                methodSignatures,
-            classNameErrorHandler,
-            GenInputsAbstract.literals_file);
+    OperationModel operationModel = null;
+    try {
+      operationModel=
+          OperationModel.createModel(
+              visibility,
+              reflectionPredicate,
+              classnames,
+              coveredClassnames,
+              methodSignatures,
+              classNameErrorHandler,
+              GenInputsAbstract.literals_file);
+    } catch (OperationParseException e) {
+      System.out.printf("Error: parse exception thrown %s%n", e);
+      System.exit(1);
+    }
+    assert operationModel != null;
 
     if (operationModel.hasClasses()) {
       System.out.println("No classes to test");
@@ -230,7 +238,14 @@ public class GenTests extends GenInputsAbstract {
 
     Set<String> observerSignatures = GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.observers,"Unable to read observer file", "//.*", null);
 
-    MultiMap<ConcreteType,ConcreteOperation> observerMap = operationModel.getObservers(observerSignatures);
+    MultiMap<ConcreteType,ConcreteOperation> observerMap = null;
+    try {
+      observerMap = operationModel.getObservers(observerSignatures);
+    } catch (OperationParseException e) {
+      System.out.printf("Error: parse exception thrown while reading observers: %s%n", e);
+      System.exit(1);
+    }
+    assert observerMap != null;
     Set<ConcreteOperation> observers = new LinkedHashSet<>();
     for (ConcreteType keyType : observerMap.keySet()) {
       observers.addAll(observerMap.getValues(keyType));
@@ -242,7 +257,7 @@ public class GenTests extends GenInputsAbstract {
     AbstractGenerator explorer;
     explorer =
         new ForwardGenerator(
-            model, observers, timelimit * 1000, inputlimit, outputlimit, componentMgr, null, listenerMgr);
+            model, observers, timelimit * 1000, inputlimit, outputlimit, componentMgr, listenerMgr);
 
     /*
      * setup for check generation
@@ -564,11 +579,11 @@ public class GenTests extends GenInputsAbstract {
    *          the base name for the class
    * @return list of files written.
    **/
-  public static List<File> writeJUnitTests(
-      String output_dir,
-      List<ExecutableSequence> seqList,
-      List<String> additionalJUnitClasses,
-      String junitClassname) {
+  private static List<File> writeJUnitTests(
+          String output_dir,
+          List<ExecutableSequence> seqList,
+          List<String> additionalJUnitClasses,
+          String junitClassname) {
 
     List<File> files = new ArrayList<>();
 
@@ -607,7 +622,7 @@ public class GenTests extends GenInputsAbstract {
    * @param phase
    *          the phase number passed to initialization routine
    */
-  public static void executeInitializationRoutine(int phase) {
+  private static void executeInitializationRoutine(int phase) {
 
     if (GenInputsAbstract.init_routine == null) return;
 
@@ -644,7 +659,7 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /** Print out usage error and stack trace and then exit **/
-  static void usage(Throwable t, String format, Object... args) {
+  private static void usage(Throwable t, String format, Object... args) {
 
     System.out.print("ERROR: ");
     System.out.printf(format, args);
@@ -654,7 +669,7 @@ public class GenTests extends GenInputsAbstract {
     System.exit(-1);
   }
 
-  static void usage(String format, Object... args) {
+  private static void usage(String format, Object... args) {
     usage(null, format, args);
   }
 }

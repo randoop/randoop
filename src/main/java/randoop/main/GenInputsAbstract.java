@@ -204,7 +204,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * The possible values for exception behavior types. The order INVALID, ERROR,
    * EXPECTED should be maintained.
    */
-  public static enum BehaviorType {
+  public enum BehaviorType {
     /** Occurrence of exception reveals an error */
     ERROR,
     /** Occurrence of exception is expected behavior */
@@ -412,7 +412,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * @see #literals_level
    */
-  public static enum ClassLiteralsMode {
+  public enum ClassLiteralsMode {
     /** do not use literals specified in a literals file */
     NONE,
     /**
