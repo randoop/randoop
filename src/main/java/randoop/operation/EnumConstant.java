@@ -5,12 +5,12 @@ import java.util.List;
 
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.reflection.ClassVisitor;
-import randoop.reflection.OperationParseVisitor;
+import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Variable;
+import randoop.types.ConcreteType;
 import randoop.types.GeneralType;
 import randoop.types.GeneralTypeTuple;
-import randoop.types.TypeNames;
+import randoop.types.GenericTypeTuple;
 
 /**
  * EnumConstant is an {@link Operation} representing a constant value from an
@@ -80,7 +80,7 @@ public class EnumConstant extends CallableOperation {
    * {@inheritDoc} Issues a string representation of an enum constant as a
    * type-value pair. The parse function should return an equivalent object.
    *
-   * @see EnumConstant#parse(String, OperationParseVisitor)
+   * @see EnumConstant#parse(String, TypedOperationManager)
    */
   @Override
   public String toParseableString(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType) {
@@ -95,12 +95,11 @@ public class EnumConstant extends CallableOperation {
    * OuterClass$InnerEnum:EnumValue for an enum that is an inner type of a class.
    *
    * @param desc string representing type-value pair for an enum constant
-   * @param visitor
-   * @return an EnumConstant representing the enum constant value in desc
+   * @param manager  the {@link TypedOperationManager} to collect operations
    * @throws OperationParseException
    *           if desc does not match expected form.
    */
-    public static void parse(String desc, OperationParseVisitor visitor) throws OperationParseException {
+    public static void parse(String desc, TypedOperationManager manager) throws OperationParseException {
       if (desc == null) {
         throw new IllegalArgumentException("desc cannot be null");
       }
@@ -117,8 +116,6 @@ public class EnumConstant extends CallableOperation {
 
       String typeName = desc.substring(0, colonIdx).trim();
       String valueName = desc.substring(colonIdx+1).trim();
-
-      Enum<?> value = null;
 
       String errorPrefix = "Error when parsing type-value pair " + desc +
           " for an enum description of the form <type>:<value>.";
@@ -143,10 +140,31 @@ public class EnumConstant extends CallableOperation {
         throw new OperationParseException(msg);
       }
 
-     visitor.visitEnum(typeName, valueName);
+      ConcreteType declaringType;
+      try {
+        declaringType = (ConcreteType)GeneralType.forName(typeName);
+      } catch (ClassNotFoundException e) {
+        String msg = "The type given \"" + typeName + "\" was not recognized.";
+        throw new OperationParseException(msg);
+      }
+      if (!declaringType.isEnum()) {
+        String msg = "The type given \"" + typeName + "\" is not an enum.";
+        throw new OperationParseException(msg);
+      }
+
+      Enum<?> value = valueOf(declaringType.getRuntimeClass(),valueName);
+      if (value == null) {
+        String msg = "The value given \""
+                + valueName
+                + "\" is not a constant of the enum "
+                + typeName
+                + ".";
+        throw new OperationParseException(msg);
+      }
+
+      manager.createTypedOperation(new EnumConstant(value), declaringType, new GenericTypeTuple(), declaringType);
 
     }
-
 
   /**
    * value
@@ -166,4 +184,21 @@ public class EnumConstant extends CallableOperation {
     return value();
   }
 
+  /**
+   * valueOf searches the enum constant list of a class for a constant with the given name.
+   * Note: cannot make this work using valueOf method of Enum due to typing.
+   *
+   * @param type class that is already known to be an enum.
+   * @param valueName name for value that may be a constant of the enum.
+   * @return reference to actual constant value, or null if none exists in type.
+   */
+  private static Enum<?> valueOf(Class<?> type, String valueName) {
+    for (Object obj : type.getEnumConstants()) {
+      Enum<?> e = (Enum<?>) obj;
+      if (e.name().equals(valueName)) {
+        return e;
+      }
+    }
+    return null;
+  }
 }

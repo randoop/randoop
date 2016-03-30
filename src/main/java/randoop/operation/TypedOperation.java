@@ -3,18 +3,35 @@ package randoop.operation;
 import randoop.reflection.ReflectionPredicate;
 
 /**
- * Superclass for type decorator for {@link Operation} objects.
+ * Superclass for type decorator of {@link Operation} objects.
+ * Serves as facade to forward {@link Operation} method calls.
  */
 public abstract class TypedOperation<T extends Operation> implements Operation {
 
+  /** The operation to be decorated */
   private T operation;
 
+  /**
+   * Create typed operation for the given {@link Operation}.
+   *
+   * @param operation  the operation to wrap
+   */
   public TypedOperation(T operation) {
     this.operation = operation;
   }
 
+  /**
+   * Get the enclosed operation in this typed operation.
+   *
+   * @return the enclosed operation
+   */
   public T getOperation() { return operation; }
 
+  /**
+   * Indicate whether this operation is generic.
+   *
+   * @return true if the operation is generic, false if not
+   */
   public abstract boolean isGeneric();
 
   @Override

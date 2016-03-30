@@ -7,11 +7,12 @@ import plume.UtilMDE;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
-import randoop.reflection.OperationParseVisitor;
+import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Variable;
 import randoop.types.ConcreteType;
 import randoop.types.GeneralType;
 import randoop.types.GeneralTypeTuple;
+import randoop.types.GenericTypeTuple;
 import randoop.types.PrimitiveTypes;
 import randoop.util.StringEscapeUtils;
 import randoop.util.Util;
@@ -217,7 +218,7 @@ public final class NonreceiverTerm extends CallableOperation {
   @Override
   public String toParseableString(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType) {
 
-    String valStr = null;
+    String valStr;
     if (value == null) {
       valStr = "null";
     } else {
@@ -241,12 +242,12 @@ public final class NonreceiverTerm extends CallableOperation {
    *
    * @param s
    *          a string representing a value of a non-receiver type.
-   * @param visitor
-   * @return a {@link NonreceiverTerm} object containing the recognized value.
+   * @param manager
+   *          the {@link TypedOperationManager} to collect operations
    * @throws OperationParseException
    *           if string does not represent valid object.
    */
-  public static void parse(String s, OperationParseVisitor visitor) throws OperationParseException {
+  public static void parse(String s, TypedOperationManager manager) throws OperationParseException {
     if (s == null) throw new IllegalArgumentException("s cannot be null.");
     int colonIdx = s.indexOf(':');
     if (colonIdx == -1) {
@@ -282,7 +283,7 @@ public final class NonreceiverTerm extends CallableOperation {
 
     ConcreteType type;
     try {
-      type = (ConcreteType)ConcreteType.forClass(Class.forName(typeString));
+      type = ConcreteType.forClass(Class.forName(typeString));
     } catch (ClassNotFoundException e1) {
       String msg =
           "Error when parsing type/value pair "
@@ -412,7 +413,6 @@ public final class NonreceiverTerm extends CallableOperation {
       if (valString.equals("null")) {
         value = null;
       } else {
-        value = valString;
         if (valString.charAt(0) != '"' || valString.charAt(valString.length() - 1) != '"') {
           String msg =
               "Error when parsing type/value pair "
@@ -444,7 +444,8 @@ public final class NonreceiverTerm extends CallableOperation {
       }
     }
 
-    visitor.visitNonreceiverTerm(new NonreceiverTerm(type, value));
+    NonreceiverTerm nonreceiverTerm = new NonreceiverTerm(type, value);
+    manager.createTypedOperation(nonreceiverTerm, type, new GenericTypeTuple(), type);
   }
 
   /**

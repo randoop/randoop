@@ -3,17 +3,19 @@ package randoop.operation;
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.List;
 
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.reflection.OperationParseVisitor;
+import randoop.reflection.TypedOperationManager;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.GeneralType;
 import randoop.types.GeneralTypeTuple;
+import randoop.types.GenericTypeTuple;
 import randoop.types.TypeNames;
 import randoop.util.ConstructorReflectionCode;
 import randoop.util.ReflectionExecutor;
@@ -209,13 +211,18 @@ public final class ConstructorCall extends CallableOperation {
    * </code>
    * </pre>
    *
-   * @see ConstructorSignatures#getSignatureString(Constructor)
+   * @see #parse(String, TypedOperationManager)
    *
    * @return signature string for constructor.
    */
   @Override
   public String toParseableString(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType) {
-    return ConstructorSignatures.getSignatureString(constructor);
+    StringBuilder sb = new StringBuilder();
+    sb.append(constructor.getName()).append(".<init>(");
+    Class<?>[] params = constructor.getParameterTypes();
+    TypeArguments.getTypeArgumentString(sb, params);
+    sb.append(")");
+    return sb.toString();
   }
 
   /**
@@ -223,18 +230,56 @@ public final class ConstructorCall extends CallableOperation {
    * {@link ConstructorCall#toParseableString(GeneralType, GeneralTypeTuple, GeneralType)} and
    * returns the corresponding {@link ConstructorCall} object.
    *
-   * @see OperationParser#parse(String, randoop.reflection.OperationParseVisitor)
+   * @see OperationParser#parse(String, randoop.reflection.TypedOperationManager)
    *
-   * @param s
+   * @param signature
    *          a string descriptor of a constructor call.
-   * @param visitor
-   * @return {@link ConstructorCall} object corresponding to the given
-   *         signature.
+   * @param manager  the {@link TypedOperationManager} for collecting operations
    * @throws OperationParseException
    *           if no constructor found for signature.
    */
-  public static void parse(String s, OperationParseVisitor visitor) throws OperationParseException {
-    ConstructorSignatures.getConstructorForSignatureString(s, visitor);
+  public static void parse(String signature, TypedOperationManager manager) throws OperationParseException {
+    if (signature == null) {
+      throw new IllegalArgumentException("signature may not be null");
+    }
+
+    int openParPos = signature.indexOf('(');
+    int closeParPos = signature.indexOf(')');
+
+    String prefix = signature.substring(0, openParPos);
+    int lastDotPos = prefix.lastIndexOf('.');
+
+    assert lastDotPos >= 0;
+    String classname = prefix.substring(0, lastDotPos);
+    String opname = prefix.substring(lastDotPos + 1);
+    assert opname.equals("<init>") : "expected init, saw " + opname;
+    String arguments = signature.substring(openParPos + 1, closeParPos);
+
+    String constructorString = classname + "." + opname + arguments;
+    GeneralType classType;
+    try {
+      classType = GeneralType.forName(classname);
+    } catch (ClassNotFoundException e) {
+      String msg = "Class for constructor " + constructorString + " not found: " + e;
+      throw new OperationParseException(msg);
+    }
+
+    Class<?>[] typeArguments = TypeArguments.getTypeArgumentsForString(arguments);
+    Constructor<?> con;
+    try {
+      con = classType.getRuntimeClass().getDeclaredConstructor(typeArguments);
+    } catch (NoSuchMethodException e) {
+      String msg = "Constructor " + constructorString + " not found: " + e;
+      throw new OperationParseException(msg);
+    }
+
+    ConstructorCall op = new ConstructorCall(con);
+    List<GeneralType> paramTypes = new ArrayList<>();
+    for (Class<?> c : typeArguments) {
+      paramTypes.add(manager.getClassType(c));
+    }
+
+    manager.createTypedOperation(op, classType, new GenericTypeTuple(paramTypes), classType);
   }
 
   /**

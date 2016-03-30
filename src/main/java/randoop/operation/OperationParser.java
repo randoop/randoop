@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import randoop.reflection.OperationParseVisitor;
+import randoop.reflection.TypedOperationManager;
 
 public class OperationParser {
 
@@ -35,11 +35,12 @@ public class OperationParser {
    *
    * @param str
    *          the string to be parsed.
-   * @param visitor
+   * @param manager
+   *          the {@link TypedOperationManager} for collecting operations
    * @throws OperationParseException
    *           if the string does not have expected format.
    */
-  public static void parse(String str, OperationParseVisitor visitor) throws OperationParseException {
+  public static void parse(String str, TypedOperationManager manager) throws OperationParseException {
     if (str == null || str.length() == 0)
       throw new IllegalArgumentException("invalid string: " + str);
 
@@ -72,19 +73,19 @@ public class OperationParser {
 
     // Call appropriate parsing method.
     if (id.equals(NonreceiverTerm.ID)) {
-      NonreceiverTerm.parse(descr, visitor);
+      NonreceiverTerm.parse(descr, manager);
     } else if (id.equals(MethodCall.ID)) {
-      MethodCall.parse(descr, visitor);
+      MethodCall.parse(descr, manager);
     } else if (id.equals(ConstructorCall.ID)) {
-      ConstructorCall.parse(descr, visitor);
+      ConstructorCall.parse(descr, manager);
     } else if (id.equals(ArrayCreation.ID)) {
-      ArrayCreation.parse(descr, visitor);
+      ArrayCreation.parse(descr, manager);
     } else if (id.equals(EnumConstant.ID)) {
-      EnumConstant.parse(descr, visitor);
+      EnumConstant.parse(descr, manager);
     } else if (id.equals(FieldGet.ID)) {
-      FieldGet.parse(descr, visitor);
+      FieldGet.parse(descr, manager);
     } else if (id.equals(FieldSet.ID)) {
-      FieldSet.parse(descr, visitor);
+      FieldSet.parse(descr, manager);
     } else {
       String msg =
           "A statement description must be of the form "

@@ -1,13 +1,9 @@
 package randoop.operation;
 
 import java.io.PrintStream;
-import java.util.List;
 
-import randoop.ExecutionOutcome;
 import randoop.reflection.ReflectionPredicate;
-import randoop.sequence.Variable;
 import randoop.types.GeneralType;
-import randoop.types.GeneralTypeTuple;
 
 /**
  * Operation represents the constructs that can occur in a statement as part of
@@ -41,7 +37,7 @@ import randoop.types.GeneralTypeTuple;
  * When an Operation is used in a statement the actual inputs have to be
  * identified.
  * Execution of the statement will call
- * {@link Operation#execute(Object[], PrintStream)} with concrete values for each
+ * {@link CallableOperation#execute(Object[], PrintStream)} with concrete values for each
  * of the inputs.
  * @see randoop.sequence.Statement
  * @see randoop.sequence.ExecutableSequence#execute(randoop.ExecutionVisitor, randoop.test.TestCheckGenerator)

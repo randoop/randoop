@@ -8,18 +8,21 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.reflection.OperationParseVisitor;
 import randoop.reflection.ReflectionPredicate;
+import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.GeneralType;
 import randoop.types.GeneralTypeTuple;
+import randoop.types.GenericTypeTuple;
 import randoop.types.PrimitiveTypes;
 import randoop.util.CollectionsExt;
 import randoop.util.MethodReflectionCode;
@@ -53,15 +56,7 @@ public final class MethodCall extends CallableOperation {
   public static final String ID = "method";
 
   private final Method method;
-
-  // Cached values (for improved performance). Their values
-  // are computed upon the first invocation of the respective
-  // getter method.
-
-  private boolean hashCodeComputed = false;
-  private int hashCodeCached = 0;
-  private boolean isStaticComputed = false;
-  private boolean isStaticCached = false;
+  private final boolean isStatic;
 
   /**
    * getMethod returns Method object of this MethodCall.
@@ -82,6 +77,7 @@ public final class MethodCall extends CallableOperation {
 
     this.method = method;
     this.method.setAccessible(true);
+    this.isStatic = Modifier.isStatic(method.getModifiers() & Modifier.methodModifiers());
   }
 
   /**
@@ -184,14 +180,7 @@ public final class MethodCall extends CallableOperation {
 
   private void appendReceiverOrClassForStatics(GeneralType declaringType, GeneralTypeTuple inputTypes, String receiverString, StringBuilder b) {
     if (isStatic()) {
-      String s2 = declaringType.getName().replace('$', '.'); // TODO
-      // combine
-      // this
-      // with
-      // last
-      // if
-      // clause
-      b.append(s2);
+      b.append(declaringType.getName().replace('$', '.'));
     } else {
       Class<?> expectedType = inputTypes.get(0).getRuntimeClass();
       String typeName = expectedType.getName();
@@ -219,15 +208,8 @@ public final class MethodCall extends CallableOperation {
 
   @Override
   public int hashCode() {
-    if (!hashCodeComputed) {
-      hashCodeComputed = true;
-      hashCodeCached = this.method.hashCode();
-    }
-    return hashCodeCached;
+    return Objects.hash(method);
   }
-
-  private long calls_time = 0;
-  private int calls_num = 0;
 
   /**
    * {@inheritDoc}
@@ -253,10 +235,7 @@ public final class MethodCall extends CallableOperation {
 
     MethodReflectionCode code = new MethodReflectionCode(this.method, receiver, params);
 
-    calls_num++;
-    long startTime = System.nanoTime();
     Throwable thrown = ReflectionExecutor.executeReflectionCode(code, out);
-    calls_time += System.nanoTime() - startTime;
 
     if (thrown == null) {
       return new NormalExecution(code.getReturnVariable(), 0);
@@ -271,11 +250,7 @@ public final class MethodCall extends CallableOperation {
    */
   @Override
   public boolean isStatic() {
-    if (!isStaticComputed) {
-      isStaticComputed = true;
-      isStaticCached = Modifier.isStatic(this.method.getModifiers());
-    }
-    return this.isStaticCached;
+    return isStatic;
   }
 
   /**
@@ -288,7 +263,13 @@ public final class MethodCall extends CallableOperation {
    */
   @Override
   public String toParseableString(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType) {
-    return MethodSignatures.getSignatureString(this.method);
+    StringBuilder sb = new StringBuilder();
+    sb.append(method.getDeclaringClass().getName()).append(".");
+    sb.append(method.getName()).append("(");
+    Class<?>[] params = method.getParameterTypes();
+    TypeArguments.getTypeArgumentString(sb, params);
+    sb.append(")");
+    return sb.toString();
   }
 
   /**
@@ -296,38 +277,58 @@ public final class MethodCall extends CallableOperation {
    * {@link MethodCall} object. Should satisfy
    * <code>parse(op.toParseableString()).equals(op)</code> for Operation op.
    *
-   * @see OperationParser#parse(String, randoop.reflection.ClassVisitor)
+   * @see OperationParser#parse(String, randoop.reflection.TypedOperationManager)
    *
-   * @param s  a string descriptor
-   * @param visitor
-   * @return the {@link MethodCall} object described by the string.
+   * @param signature  a string descriptor
+   * @param manager  the {@link TypedOperationManager} for collecting operations
    * @throws OperationParseException
    *           if s does not match expected descriptor.
    */
-  public static void parse(String s, OperationParseVisitor visitor) throws OperationParseException {
-    MethodSignatures.getMethodForSignatureString(s, visitor);
-  }
+  public static void parse(String signature, TypedOperationManager manager) throws OperationParseException {
+    if (signature == null) {
+      throw new IllegalArgumentException("signature may not be null");
+    }
 
-  /**
-   * callsMethodIn determines whether the current method object calls one of the
-   * methods in the list.
-   *
-   * @param list
-   *          method objects to compare against.
-   * @return true if method called by this object is in the given list.
-   */
-  public boolean callsMethodIn(List<Method> list) {
-    return list.contains(method);
-  }
+    int openParPos = signature.indexOf('(');
+    int closeParPos = signature.indexOf(')');
 
-  /**
-   * callsMethod determines whether the method that this object calls is
-   * method given in the parameter.
-   * @param m method to test against.
-   * @return true, if m corresponds to the method in this object, false otherwise.
-   */
-  public boolean callsMethod(Method m) {
-    return method.equals(m);
+    String prefix = signature.substring(0, openParPos);
+    int lastDotPos = prefix.lastIndexOf('.');
+
+    assert lastDotPos >= 0;
+    String classname = prefix.substring(0, lastDotPos);
+    String opname = prefix.substring(lastDotPos + 1);
+    String arguments = signature.substring(openParPos + 1, closeParPos);
+
+    String methodString = classname + "." + opname + arguments;
+    GeneralType classType;
+    try {
+      classType = GeneralType.forName(classname);
+    } catch (ClassNotFoundException e) {
+      String msg = "Class for method " + methodString + " not found: " + e;
+      throw new OperationParseException(msg);
+    }
+
+    Class<?>[] typeArguments = TypeArguments.getTypeArgumentsForString(arguments);
+    Method m;
+    try {
+      m = classType.getRuntimeClass().getDeclaredMethod(opname, typeArguments);
+    } catch (NoSuchMethodException e) {
+      String msg = "Method " + methodString + " not found: " + e;
+      throw new OperationParseException(msg);
+    }
+
+    MethodCall op = new MethodCall(m);
+    List<GeneralType> paramTypes = new ArrayList<>();
+    if (!Modifier.isStatic(m.getModifiers() & Modifier.methodModifiers())) {
+      paramTypes.add(classType);
+    }
+    for (Class<?> c : typeArguments) {
+      paramTypes.add(manager.getClassType(c));
+    }
+    GeneralType outputType = GeneralType.forType(m.getGenericReturnType());
+    manager.createTypedOperation(op, classType, new GenericTypeTuple(paramTypes), outputType);
+
   }
 
   /**
