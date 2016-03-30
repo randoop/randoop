@@ -20,28 +20,28 @@ public interface TestChecks {
    *
    * @return the count of checks in this object
    */
-  public int count();
+  int count();
 
   /**
    * Get all non-exception checks and whether they are passing for this object.
    *
    * @return all checks with passing status
    */
-  public Map<Check, Boolean> get();
+  Map<Check, Boolean> get();
 
   /**
    * Indicates whether this set of checks corresponds to valid behaviors.
    *
    * @return true when has checks for invalid behavior, false otherwise
    */
-  public boolean hasInvalidBehavior();
+  boolean hasInvalidBehavior();
 
   /**
    * Indicates whether this object has checks.
    *
    * @return true if this object has checks, false otherwise
    */
-  public boolean hasChecks();
+  boolean hasChecks();
 
   /**
    * Indicate whether this object has any failing checks. (This is essentially
@@ -49,14 +49,14 @@ public interface TestChecks {
    *
    * @return true if this object has failing checks, false otherwise
    */
-  public boolean hasErrorBehavior();
+  boolean hasErrorBehavior();
 
   /**
    * Return the exception check in this object if there is one.
    *
    * @return the expected exception check, null otherwise
    */
-  public ExceptionCheck getExceptionCheck();
+  ExceptionCheck getExceptionCheck();
 
   /**
    * Add a check to this sequence.
@@ -64,7 +64,7 @@ public interface TestChecks {
    * @param ck
    *          the check object to add to this set of checks
    */
-  public void add(Check ck);
+  void add(Check ck);
 
   /**
    * Returns the consensus checks for two sets of checks. Refuses to compare
