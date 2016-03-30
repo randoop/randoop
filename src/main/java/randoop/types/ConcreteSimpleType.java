@@ -1,10 +1,5 @@
 package randoop.types;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import randoop.operation.ConcreteOperation;
-
 /**
  * {@code ConcreteSimpleType} represents an atomic concrete type: a primitive type,
  * a non-generic class, an enum, or the rawtype for a generic class.
@@ -14,7 +9,7 @@ import randoop.operation.ConcreteOperation;
 public class ConcreteSimpleType extends ConcreteType {
 
   /** The runtime type of this simple type. */
-  private Class<?> runtimeClass;
+  private final Class<?> runtimeClass;
 
   /**
    * Create a {@code ConcreteSimpleType} object for the runtime class
@@ -128,11 +123,8 @@ public class ConcreteSimpleType extends ConcreteType {
     }
 
     // to be assignable, other cases must be ConcreteSimpleType to ConcreteSimpleType
-    if (sourceType instanceof ConcreteSimpleType) {
-      return isAssignableFrom((ConcreteSimpleType) sourceType);
-    }
+    return sourceType instanceof ConcreteSimpleType && isAssignableFrom((ConcreteSimpleType) sourceType);
 
-    return false;
   }
 
   /**

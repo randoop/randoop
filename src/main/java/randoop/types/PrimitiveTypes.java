@@ -55,7 +55,7 @@ public final class PrimitiveTypes {
     primitiveAndStringToBoxed.put(int.class, Integer.class);
     primitiveAndStringToBoxed.put(long.class, Long.class);
     primitiveAndStringToBoxed.put(short.class, Short.class);
-    primitiveAndStringToBoxed.put(String.class, String.class); // TODO remove this hack!
+    primitiveAndStringToBoxed.put(String.class, String.class);
   }
 
   private static final Map<String, Class<?>> typeNameToPrimitiveOrString = new LinkedHashMap<>();
@@ -78,16 +78,16 @@ public final class PrimitiveTypes {
   static {
     Set<Class<?>> s = new HashSet<>();
     s.add(double.class);
-    wideningTable.put(float.class, new HashSet<Class<?>>(s));
+    wideningTable.put(float.class, new HashSet<>(s));
     s.add(float.class);
-    wideningTable.put(long.class, new HashSet<Class<?>>(s));
+    wideningTable.put(long.class, new HashSet<>(s));
     s.add(long.class);
-    wideningTable.put(int.class, new HashSet<Class<?>>(s));
+    wideningTable.put(int.class, new HashSet<>(s));
     s.add(int.class);
-    wideningTable.put(char.class, new HashSet<Class<?>>(s));
-    wideningTable.put(short.class, new HashSet<Class<?>>(s));
+    wideningTable.put(char.class, new HashSet<>(s));
+    wideningTable.put(short.class, new HashSet<>(s));
     s.add(short.class);
-    wideningTable.put(byte.class, new HashSet<Class<?>>(s));
+    wideningTable.put(byte.class, new HashSet<>(s));
   }
 
   public static boolean isPrimitiveOrStringTypeName(String typeName) {
@@ -101,13 +101,13 @@ public final class PrimitiveTypes {
   }
 
   public static ConcreteType getPrimitiveOrStringType(String typeName) {
-    return (ConcreteType)ConcreteType.forClass(typeNameToPrimitiveOrString.get(typeName));
+    return ConcreteType.forClass(typeNameToPrimitiveOrString.get(typeName));
   }
 
   public static Set<ConcreteType> getPrimitiveOrStringTypes() {
     Set<ConcreteType> s = new LinkedHashSet<>();
     for (Class<?> c : primitiveAndStringToBoxed.keySet()) {
-      s.add((ConcreteType)ConcreteType.forClass(c));
+      s.add(ConcreteType.forClass(c));
     }
     return Collections.unmodifiableSet(s);
   }
@@ -115,13 +115,13 @@ public final class PrimitiveTypes {
   public static Set<ConcreteType> getBoxedTypesAndString() {
     Set<ConcreteType> s = new LinkedHashSet<>();
     for (Class<?> c : boxedToPrimitiveAndString.keySet()) {
-      s.add((ConcreteType)ConcreteType.forClass(c));
+      s.add(ConcreteType.forClass(c));
     }
     return Collections.unmodifiableSet(s);
   }
 
   public static ConcreteType toBoxedType(ConcreteType cls) {
-    return (ConcreteType)ConcreteType.forClass(primitiveAndStringToBoxed.get(cls.getRuntimeClass()));
+    return ConcreteType.forClass(primitiveAndStringToBoxed.get(cls.getRuntimeClass()));
   }
 
   public static boolean isBoxedPrimitiveTypeOrString(Class<?> c) {
@@ -132,7 +132,7 @@ public final class PrimitiveTypes {
     return primitiveAndStringToBoxed.containsKey(type);
   }
 
-  public static Map<Class<?>, Boolean> isPrimitiveCached = new LinkedHashMap<Class<?>, Boolean>();
+  private static Map<Class<?>, Boolean> isPrimitiveCached = new LinkedHashMap<>();
 
   /**
    * Same as c.isPrimitive() but faster if this test is done very
@@ -149,13 +149,11 @@ public final class PrimitiveTypes {
   }
 
   public static boolean isBoxedOrPrimitiveOrStringType(Class<?> c) {
-    if (isPrimitive(c)) return true;
-    if (isBoxedPrimitiveTypeOrString(c)) return true;
-    return false;
+    return isPrimitive(c) || isBoxedPrimitiveTypeOrString(c);
   }
 
   /** Returns null if c is not a primitive or a boxed type. */
-  public static Class<?> primitiveType(Class<? extends Object> c) {
+  public static Class<?> primitiveType(Class<?> c) {
     if (c.isPrimitive()) return c;
     return boxedToPrimitiveAndString.get(c);
   }
@@ -251,7 +249,7 @@ public final class PrimitiveTypes {
     }
   }
 
-  public static Class<?> toUnboxedType(Class<?> c) {
+  static Class<?> toUnboxedType(Class<?> c) {
     return boxedToPrimitiveAndString.get(c);
   }
 
@@ -281,15 +279,12 @@ public final class PrimitiveTypes {
 
     // Object.toString() string must have at least one character for
     // the class name, plus '@', plus one character for hashCode().
-    if (len < 3) {
-      return false;
-    }
+    return len >= 3 && s.matches(OBJECT_REF_PATTERN);
 
-    return s.matches(OBJECT_REF_PATTERN);
   }
 
   // Used to increase performance of stringLengthOK method.
-  private static Map<String, Boolean> stringLengthOKCached = new LinkedHashMap<String, Boolean>();
+  private static Map<String, Boolean> stringLengthOKCached = new LinkedHashMap<>();
 
   /**
    * Returns true if the given string is deemed to be reasonable (i.e. not too long)
@@ -339,7 +334,7 @@ public final class PrimitiveTypes {
     return retval;
   }
 
-  public static Class<?> getClassForName(String typeName) {
+  static Class<?> getClassForName(String typeName) {
     return typeNameToPrimitiveOrString.get(typeName);
   }
 
@@ -351,7 +346,7 @@ public final class PrimitiveTypes {
    * @param source  the source type for assignment
    * @return true if the source type can be assigned to the target type, false otherwise
    */
-  public static boolean isAssignable(Class<?> target, Class<?> source) {
+  static boolean isAssignable(Class<?> target, Class<?> source) {
     if (target == null || source == null) {
       throw new IllegalArgumentException("types must be non null");
     }
@@ -363,10 +358,7 @@ public final class PrimitiveTypes {
       return true;
     }
     Set<Class<?>> targets = wideningTable.get(source);
-    if (targets == null) {
-      return false;
-    }
-    return targets.contains(target);
+    return targets != null && targets.contains(target);
   }
 
   /**
@@ -375,7 +367,7 @@ public final class PrimitiveTypes {
    * @param cls  the {@code Class} object for the primitive type
    * @return the {@code Class} object for boxed primitive type
    */
-  public static Class<?> getBoxedType(Class<?> cls) {
+  static Class<?> getBoxedType(Class<?> cls) {
     return primitiveAndStringToBoxed.get(cls);
   }
 }

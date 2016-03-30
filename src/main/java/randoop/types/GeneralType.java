@@ -234,7 +234,7 @@ public abstract class GeneralType {
         typeBounds.add(TypeBound.fromTypes(v.getBounds()));
       } else if (actualArguments[i] instanceof Class) {
         typeArguments[i] =
-            ConcreteType.forClass((Class<?>) actualArguments[i], new ConcreteType[0]);
+            ConcreteType.forClass((Class<?>) actualArguments[i]);
       } else {
         String msg = "Expecting either type or type variable, got " + actualArguments[i].toString();
         throw new IllegalArgumentException(msg);
@@ -274,10 +274,6 @@ public abstract class GeneralType {
     if (c == null) {
       c = Class.forName(typeName);
     }
-    return GeneralType.forClass(c);
-  }
-
-  public static GeneralType forClass(Class<?> c) {
     if (c.getTypeParameters().length > 0) {
       return GenericType.forClass(c);
     }

@@ -1,7 +1,5 @@
 package randoop.types;
 
-import randoop.operation.ConcreteOperation;
-
 import java.lang.reflect.Array;
 import java.util.Objects;
 
@@ -14,7 +12,7 @@ public class ConcreteArrayType extends ConcreteType {
   private ConcreteType elementType;
 
   /** The runtime type of this array type. */
-  private Class<? extends Object> runtimeType;
+  private Class<?> runtimeType;
 
   /**
    * Creates a concrete array type for the given element type.

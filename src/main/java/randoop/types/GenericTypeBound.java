@@ -50,7 +50,7 @@ public class GenericTypeBound extends TypeBound {
       return false;
     }
     for (int i = 0; i < this.parameters.length; i++) {
-      if (!this.parameters[i].equals(b.parameters)) {
+      if (!this.parameters[i].equals(b.parameters[i])) {
         return false;
       }
     }
