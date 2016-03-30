@@ -29,7 +29,7 @@ public class ProgressDisplay extends Thread {
 
   private static int exit_if_no_new_sequences_after_mseconds = 10000;
 
-  public static enum Mode {
+  public enum Mode {
     SINGLE_LINE_OVERWRITE,
     MULTILINE,
     NO_DISPLAY

@@ -21,7 +21,7 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
   private enum Ops {
     ADD,
     REMOVE
-  };
+  }
 
   private final List<Triple<Ops, T1, T2>> ops;
 

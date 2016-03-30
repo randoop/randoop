@@ -63,12 +63,12 @@ public class ClassFileConstants {
 
   public static class ConstantSet {
     public String classname;
-    public Set<Integer> ints = new TreeSet<Integer>();
-    public Set<Long> longs = new TreeSet<Long>();
-    public Set<Float> floats = new TreeSet<Float>();
-    public Set<Double> doubles = new TreeSet<Double>();
-    public Set<String> strings = new TreeSet<String>();
-    public Set<Class<?>> classes = new TreeSet<Class<?>>();
+    public Set<Integer> ints = new TreeSet<>();
+    public Set<Long> longs = new TreeSet<>();
+    public Set<Float> floats = new TreeSet<>();
+    public Set<Double> doubles = new TreeSet<>();
+    public Set<String> strings = new TreeSet<>();
+    public Set<Class<?>> classes = new TreeSet<>();
 
     @Override
     public String toString() {
@@ -95,7 +95,7 @@ public class ClassFileConstants {
       for (Class<?> x : classes) {
         System.out.printf("Class:%s%n", x);
       }
-      System.out.printf("%nEND CLASSLITERALS%n", classname);
+      System.out.printf("%nEND CLASSLITERALS%n");
 
       return baos.toString();
     }
@@ -185,9 +185,7 @@ public class ClassFileConstants {
     for (Method m : jc.getMethods()) {
       MethodGen mg = new MethodGen(m, jc.getClassName(), pool);
       InstructionList il = mg.getInstructionList();
-      if (il == null) {
-        // System.out.println("No instructions for " + mg);
-      } else {
+      if (il != null) {
         for (Instruction inst : il.getInstructions()) {
           switch (inst.getOpcode()) {
 
@@ -575,16 +573,16 @@ public class ClassFileConstants {
         throw new Error("Class " + cs.classname + " not found on the classpath.");
       }
       for (Integer x : cs.ints) {
-        map.add(clazz, new NonreceiverTerm(ConcreteType.INT_TYPE, x.intValue()));
+        map.add(clazz, new NonreceiverTerm(ConcreteType.INT_TYPE, x));
       }
       for (Long x : cs.longs) {
-        map.add(clazz, new NonreceiverTerm(ConcreteType.LONG_TYPE, x.longValue()));
+        map.add(clazz, new NonreceiverTerm(ConcreteType.LONG_TYPE, x));
       }
       for (Float x : cs.floats) {
-        map.add(clazz, new NonreceiverTerm(ConcreteType.FLOAT_TYPE, x.floatValue()));
+        map.add(clazz, new NonreceiverTerm(ConcreteType.FLOAT_TYPE, x));
       }
       for (Double x : cs.doubles) {
-        map.add(clazz, new NonreceiverTerm(ConcreteType.DOUBLE_TYPE, x.doubleValue()));
+        map.add(clazz, new NonreceiverTerm(ConcreteType.DOUBLE_TYPE, x));
       }
       for (String x : cs.strings) {
         map.add(clazz, new NonreceiverTerm(ConcreteType.STRING_TYPE, x));
