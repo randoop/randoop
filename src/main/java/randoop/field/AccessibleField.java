@@ -19,6 +19,7 @@ import randoop.types.GeneralType;
 public class AccessibleField {
 
   private Field field;
+  private final GeneralType declaringType;
   private boolean isFinal;
   private boolean isStatic;
 
@@ -28,12 +29,13 @@ public class AccessibleField {
    * @param field
    *          the field.
    */
-  public AccessibleField(Field field) {
+  public AccessibleField(Field field, GeneralType declaringType) {
     this.field = field;
     this.field.setAccessible(true);
     int mods = field.getModifiers() & Modifier.fieldModifiers();
     this.isFinal = Modifier.isFinal(mods);
     this.isStatic = Modifier.isStatic(mods);
+    this.declaringType = declaringType;
   }
 
   /**
@@ -65,7 +67,7 @@ public class AccessibleField {
 
   /**
    * Returns a string descriptor of a field that can be parsed by
-   * {@link FieldParser#parse(String)}.
+   * {@link FieldParser#parse(String, String, String)}.
    *
    * @return String for type-field pair describing field.
    */
@@ -110,7 +112,7 @@ public class AccessibleField {
    *           {@link IllegalAccessException}.
    */
   public Object getValue(Object object) {
-    Object ret = null;
+    Object ret;
     try {
       ret = field.get(object);
     } catch (IllegalArgumentException e) {
@@ -166,5 +168,13 @@ public class AccessibleField {
    */
   public boolean satisfies(ReflectionPredicate predicate) {
     return predicate.test(field);
+  }
+
+  public Field getRawField() {
+    return field;
+  }
+
+  public GeneralType getDeclaringType() {
+    return declaringType;
   }
 }

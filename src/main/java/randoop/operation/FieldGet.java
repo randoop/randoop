@@ -1,6 +1,7 @@
 package randoop.operation;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import randoop.BugInRandoopException;
@@ -8,11 +9,13 @@ import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.field.AccessibleField;
-import randoop.reflection.OperationParseVisitor;
+import randoop.field.FieldParser;
 import randoop.reflection.ReflectionPredicate;
+import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Variable;
 import randoop.types.GeneralType;
 import randoop.types.GeneralTypeTuple;
+import randoop.types.GenericTypeTuple;
 
 /**
  * FieldGetter is an adapter that creates a {@link Operation} from a
@@ -116,12 +119,12 @@ public class FieldGet extends CallableOperation {
    *
    * @param descr
    *          the string containing descriptor of getter for a field.
-   * @param visitor
-   * @return the getter object for the descriptor.
+   * @param manager
+   *          the {@link TypedOperationManager} to collect operations
    * @throws OperationParseException
    *           if any error in descriptor string
    */
-  public static void parse(String descr, OperationParseVisitor visitor) throws OperationParseException {
+  public static void parse(String descr, TypedOperationManager manager) throws OperationParseException {
     String errorPrefix = "Error parsing " + descr + " as description for field getter statement: ";
 
     int openParPos = descr.indexOf('(');
@@ -137,11 +140,7 @@ public class FieldGet extends CallableOperation {
 
     String classname = prefix.substring(0, lastDotPos);
     String opname = prefix.substring(lastDotPos + 1);
-
-    if (!opname.equals("<get>")) {
-      String msg = errorPrefix + " expecting <get>( <field-descriptor> ).";
-      throw new OperationParseException(msg);
-    }
+    assert opname.equals("<get>") : "expecting <get>, saw " + opname;
 
     if (closeParPos < 0) {
       String msg = errorPrefix + " no closing parentheses found.";
@@ -149,8 +148,15 @@ public class FieldGet extends CallableOperation {
     }
     String fieldname = descr.substring(openParPos + 1, closeParPos);
 
-    visitor.visitField(classname, opname, fieldname);
+    AccessibleField accessibleField = FieldParser.parse(descr, classname, fieldname);
+    GeneralType classType = accessibleField.getDeclaringType();
+    GeneralType fieldType = GeneralType.forType(accessibleField.getRawField().getGenericType());
 
+    List<GeneralType> getInputTypeList = new ArrayList<>();
+    if (! accessibleField.isStatic()) {
+      getInputTypeList.add(classType);
+    }
+    manager.createTypedOperation(new FieldGet(accessibleField), classType, new GenericTypeTuple(getInputTypeList), fieldType);
   }
 
   @Override

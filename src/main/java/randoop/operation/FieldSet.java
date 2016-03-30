@@ -1,6 +1,7 @@
 package randoop.operation;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import randoop.BugInRandoopException;
@@ -8,12 +9,15 @@ import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.field.AccessibleField;
-import randoop.reflection.OperationParseVisitor;
+import randoop.field.FieldParser;
 import randoop.reflection.ReflectionPredicate;
+import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.types.ConcreteType;
 import randoop.types.GeneralType;
 import randoop.types.GeneralTypeTuple;
+import randoop.types.GenericTypeTuple;
 
 /**
  * FieldSetter is an adapter for a {@link AccessibleField} as a
@@ -137,12 +141,12 @@ public class FieldSet extends CallableOperation {
    *
    * @param descr
    *          string containing descriptor of field setter.
-   * @param visitor
-   * @return {@code FieldSetter} object corresponding to setter descriptor.
+   * @param manager
+   *          the {@link TypedOperationManager} to collect operations
    * @throws OperationParseException
    *           if descr does not have expected form.
    */
-  public static void parse(String descr, OperationParseVisitor visitor) throws OperationParseException {
+  public static void parse(String descr, TypedOperationManager manager) throws OperationParseException {
     String errorPrefix = "Error parsing " + descr + " as description for field getter statement: ";
 
     int openParPos = descr.indexOf('(');
@@ -158,19 +162,24 @@ public class FieldSet extends CallableOperation {
 
     String classname = prefix.substring(0, lastDotPos);
     String opname = prefix.substring(lastDotPos + 1);
+    assert opname.equals("<set>") : "expecting <set>, saw " + opname;
+    assert (closeParPos < 0) : "no closing parentheses found.";
 
-    if (!opname.equals("<set>")) {
-      String msg = errorPrefix + " expecting <set>( <field-descriptor> ).";
-      throw new OperationParseException(msg);
-    }
-
-    if (closeParPos < 0) {
-      String msg = errorPrefix + " no closing parentheses found.";
-      throw new OperationParseException(msg);
-    }
     String fieldname = descr.substring(openParPos + 1, closeParPos);
 
-    visitor.visitField(classname, opname, fieldname);
+    AccessibleField accessibleField = FieldParser.parse(descr, classname, fieldname);
+    GeneralType classType = accessibleField.getDeclaringType();
+    GeneralType fieldType = GeneralType.forType(accessibleField.getRawField().getGenericType());
+
+    if (accessibleField.isFinal()) {
+      throw new OperationParseException("Cannot create setter for final field " + classname + "." + opname);
+    }
+    List<GeneralType> setInputTypeList = new ArrayList<>();
+    if (! accessibleField.isStatic()) {
+      setInputTypeList.add(classType);
+    }
+    setInputTypeList.add(fieldType);
+    manager.createTypedOperation(new FieldSet(accessibleField), classType, new GenericTypeTuple(setInputTypeList), ConcreteType.VOID_TYPE);
   }
 
   @Override
@@ -218,4 +227,5 @@ public class FieldSet extends CallableOperation {
   public boolean satisfies(ReflectionPredicate predicate) {
     return field.satisfies(predicate);
   }
+
 }
