@@ -5,18 +5,17 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import randoop.types.ConcreteType;
+import randoop.types.Match;
 import randoop.util.IMultiMap;
 import randoop.util.ISimpleSet;
 import randoop.util.MultiMap;
-import randoop.util.Reflection;
 import randoop.util.ReversibleMultiMap;
 import randoop.util.ReversibleSet;
 import randoop.util.SimpleSet;
 
 /**
  * A set of classes. This data structure additionally allows for efficient
- * answers to queries about can-be-used-as (
- * {@link randoop.util.Reflection#canBeUsedAs(Class,Class)}) relationships.
+ * answers to queries about can-be-used-as relationships.
  */
 public class SubTypeSet {
 
@@ -28,9 +27,9 @@ public class SubTypeSet {
   // Maps a type to the list of subtypes that have sequences.
   // The list for a given type can be empty, which means that there
   // are no subtypes with sequences for the given type.
-  public IMultiMap<ConcreteType, ConcreteType> subTypesWithsequences;
+  private IMultiMap<ConcreteType, ConcreteType> subTypesWithsequences;
 
-  public boolean reversible;
+  private boolean reversible;
 
   public SubTypeSet(boolean reversible) {
     if (reversible) {
@@ -67,7 +66,7 @@ public class SubTypeSet {
 
     // Update existing entries.
     for (ConcreteType cls : subTypesWithsequences.keySet()) {
-      if (cls.isAssignableFrom(c)) { //if (Reflection.canBeUsedAs(c, cls)) {
+      if (cls.isAssignableFrom(c)) {
         if (!subTypesWithsequences.getValues(cls).contains(c)) subTypesWithsequences.add(cls, c);
       }
     }
@@ -80,7 +79,7 @@ public class SubTypeSet {
 
     Set<ConcreteType> compatibleTypesWithSequences = new LinkedHashSet<>();
     for (ConcreteType t : typesWithsequences.getElements()) {
-      if (type.isAssignableFrom(t)) { //if (Reflection.canBeUsedAs(classWithsequence, c)) {
+      if (type.isAssignableFrom(t)) {
         compatibleTypesWithSequences.add(t);
       }
     }
@@ -120,15 +119,15 @@ public class SubTypeSet {
    *   type, or {@code match=COMPATIBLE_TYPE} and there is a sequence with a
    *   subtype of the query type as its output type.
    */
-  public boolean containsAssignableType(ConcreteType type, Reflection.Match match) {
+  public boolean containsAssignableType(ConcreteType type, Match match) {
     if (!subTypesWithsequences.keySet().contains(type)) {
       addQueryType(type);
     }
 
-    if (typesWithsequences.contains(type)) return true;
+    return typesWithsequences.contains(type)
+            || ((match == Match.COMPATIBLE_TYPE)
+            && !subTypesWithsequences.getValues(type).isEmpty());
 
-    return match == Reflection.Match.COMPATIBLE_TYPE
-        && !subTypesWithsequences.getValues(type).isEmpty();
   }
 
   public int size() {

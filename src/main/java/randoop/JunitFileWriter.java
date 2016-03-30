@@ -395,7 +395,7 @@ public class JunitFileWriter {
   }
 
   private File getDir() {
-    File dir = null;
+    File dir;
     if (dirName == null || dirName.length() == 0) dir = new File(System.getProperty("user.dir"));
     else dir = new File(dirName);
     if (packageName == null) return dir;
