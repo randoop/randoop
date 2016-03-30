@@ -12,10 +12,7 @@ public final class EqualsHashcode implements ObjectContract {
   public boolean equals(Object o) {
     if (o == null) return false;
     if (o == this) return true;
-    if (!(o instanceof EqualsHashcode)) {
-      return false;
-    }
-    return true; // no state to compare.
+    return o instanceof EqualsHashcode;
   }
 
   @Override
@@ -61,9 +58,9 @@ public final class EqualsHashcode implements ObjectContract {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
     b.append("// Checks the contract: ");
-    b.append(" " + toCommentString() + Globals.lineSep);
+    b.append(" ").append(toCommentString()).append(Globals.lineSep);
     b.append("org.junit.Assert.assertTrue(");
-    b.append("\"Contract failed: " + toCommentString() + "\", ");
+    b.append("\"Contract failed: ").append(toCommentString()).append("\", ");
     b.append("x0.equals(x1) ? x0.hashCode() == x1.hashCode() : true");
     b.append(");");
     return b.toString();

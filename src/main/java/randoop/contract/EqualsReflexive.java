@@ -11,10 +11,7 @@ public final class EqualsReflexive implements ObjectContract {
   public boolean equals(Object o) {
     if (o == null) return false;
     if (o == this) return true;
-    if (!(o instanceof EqualsReflexive)) {
-      return false;
-    }
-    return true; // no state to compare.
+    return o instanceof EqualsReflexive;
   }
 
   @Override
