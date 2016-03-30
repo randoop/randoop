@@ -4,8 +4,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import randoop.reflection.ReflectionPredicate;
-
 public class EverythingAllowedPredicate implements ReflectionPredicate {
 
   @Override

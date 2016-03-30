@@ -6,16 +6,13 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import randoop.SeedSequences;
 import randoop.TestValue;
+import randoop.generation.SeedSequences;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.NonreceiverTerm;
 import randoop.sequence.Sequence;
-import randoop.types.ConcreteType;
 import randoop.types.PrimitiveTypes;
 
 /**
@@ -23,11 +20,11 @@ import randoop.types.PrimitiveTypes;
  * see if they are annotated with {@link randoop.TestValue}, are static, and
  * have type that is primitive, String, or an array of primitive or String.
  */
-public class TestValueExtractor implements ClassVisitor {
+class TestValueExtractor implements ClassVisitor {
 
   private Set<Sequence> valueSequences;
 
-  public TestValueExtractor(Set<Sequence> valueSequences) {
+  TestValueExtractor(Set<Sequence> valueSequences) {
     this.valueSequences = valueSequences;
   }
 
@@ -73,12 +70,12 @@ public class TestValueExtractor implements ClassVisitor {
         printDetectedAnnotatedFieldMsg(f);
       }
 
-      Object value = null;
+      Object value;
       try {
         value = f.get(null);
       } catch (IllegalAccessException e) {
         String msg =
-            "RANDOOP ANNOTATION ERROR: IllegalAccessException when processing @TestValue-annotated field "
+                "RANDOOP ANNOTATION ERROR: IllegalAccessException when processing @TestValue-annotated field "
                 + f.getName()
                 + " in class "
                 + f.getDeclaringClass()
@@ -89,10 +86,9 @@ public class TestValueExtractor implements ClassVisitor {
       if (!fieldType.isArray()) {
         valueList.add(value);
       } else {
-        Object array = value;
-        int length = Array.getLength(array);
+        int length = Array.getLength(value);
         for (int i = 0; i < length; i++) {
-          valueList.add(Array.get(array, i));
+          valueList.add(Array.get(value, i));
         }
       }
     } else {

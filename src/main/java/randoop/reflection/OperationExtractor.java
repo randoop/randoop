@@ -29,7 +29,7 @@ import randoop.types.GenericTypeTuple;
  */
 public class OperationExtractor implements ClassVisitor {
 
-  private TypedOperationManager manager;
+  private final TypedOperationManager manager;
 
   /** The current class type */
   private GeneralType classType;
@@ -100,7 +100,7 @@ public class OperationExtractor implements ClassVisitor {
     List<GeneralType> setInputTypeList = new ArrayList<>();
     List<GeneralType> getInputTypeList = new ArrayList<>();
 
-    AccessibleField accessibleField = new AccessibleField(field);
+    AccessibleField accessibleField = new AccessibleField(field, classType);
 
     if (! accessibleField.isStatic()) {
       getInputTypeList.add(classType);

@@ -10,6 +10,7 @@ import randoop.operation.ConcreteOperation;
 import randoop.operation.NonreceiverTerm;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
+import randoop.types.ConcreteType;
 import randoop.util.ClassFileConstants;
 import randoop.util.MultiMap;
 
@@ -17,16 +18,12 @@ import randoop.util.MultiMap;
  * {@code ClassLiteralExtractor} is a {@link ClassVisitor} that extracts literals from the bytecode
  * of each class visited, adding a sequence for each to a map associating a sequence with a type.
  */
-public class ClassLiteralExtractor implements ClassVisitor {
+class ClassLiteralExtractor implements ClassVisitor {
 
-  private MultiMap<Class<?>, Sequence> literalMap;
+  private MultiMap<ConcreteType, Sequence> literalMap;
 
-  public ClassLiteralExtractor(MultiMap<Class<?>, Sequence> literalMap) {
+  ClassLiteralExtractor(MultiMap<ConcreteType, Sequence> literalMap) {
     this.literalMap = literalMap;
-  }
-
-  public MultiMap<Class<?>, Sequence> getLiteralMap() {
-    return literalMap;
   }
 
   @Override
@@ -35,9 +32,10 @@ public class ClassLiteralExtractor implements ClassVisitor {
     constList.add(ClassFileConstants.getConstants(c.getName()));
     MultiMap<Class<?>, NonreceiverTerm> constantMap = ClassFileConstants.toMap(constList);
     for (Class<?> constantClass : constantMap.keySet()) {
+      ConcreteType constantType = ConcreteType.forClass(constantClass);
       for (NonreceiverTerm term : constantMap.getValues(constantClass)) {
         Sequence seq = new Sequence().extend(ConcreteOperation.createNonreceiverInitialization(term), new ArrayList<Variable>());
-        literalMap.add(constantClass, seq);
+        literalMap.add(constantType, seq);
       }
     }
   }

@@ -18,10 +18,9 @@ import randoop.types.GenericTypeTuple;
  * visiting classes and class members.
  * The class also provides basic translation methods for input type tuples.
  *
- * @see OperationParseVisitor
  * @see OperationExtractor
  */
-class TypedOperationManager {
+public class TypedOperationManager {
 
   private final ModelCollections collections;
 
@@ -45,21 +44,23 @@ class TypedOperationManager {
    * @param inputTypes  the types of inputs to operation
    * @param outputType  the output type of operation
    */
-  void createTypedOperation(CallableOperation op, GeneralType declaringType, GenericTypeTuple inputTypes, GeneralType outputType) {
+  public void createTypedOperation(CallableOperation op, GeneralType declaringType, GenericTypeTuple inputTypes, GeneralType outputType) {
     if (declaringType.isGeneric()) {
       GenericOperation genericOp = new GenericOperation(op, declaringType, inputTypes, outputType);
-      collections.addGenericClassType((GenericType)declaringType, genericOp);
-    } else if (inputTypes.isGeneric() || outputType.isGeneric()) {
-      assert op.isConstructorCall() || op.isMethodCall()
-              : "expected either constructor or method call, got " + op.toString();
-      GenericOperation genericOp = new GenericOperation(op, declaringType, inputTypes, outputType);
-      collections.addGenericOperation(genericOp);
+      collections.addGenericOperation((GenericType)declaringType, genericOp);
     } else {
       ConcreteType concreteClassType = (ConcreteType)declaringType;
-      ConcreteTypeTuple concreteInputTypes = inputTypes.makeConcrete();
-      ConcreteType concreteOutputType = (ConcreteType)outputType;
-      ConcreteOperation concreteOp = new ConcreteOperation(op, concreteClassType, concreteInputTypes, concreteOutputType);
-      collections.addConcreteOperation(concreteOp);
+      if (inputTypes.isGeneric() || outputType.isGeneric()) {
+        assert op.isConstructorCall() || op.isMethodCall()
+                : "expected either constructor or method call, got " + op.toString();
+        GenericOperation genericOp = new GenericOperation(op, declaringType, inputTypes, outputType);
+        collections.addGenericOperation(concreteClassType, genericOp);
+      } else {
+        ConcreteTypeTuple concreteInputTypes = inputTypes.makeConcrete();
+        ConcreteType concreteOutputType = (ConcreteType)outputType;
+        ConcreteOperation concreteOp = new ConcreteOperation(op, concreteClassType, concreteInputTypes, concreteOutputType);
+        collections.addConcreteOperation(concreteClassType, concreteOp);
+      }
     }
   }
 
@@ -101,10 +102,16 @@ class TypedOperationManager {
     return new GenericTypeTuple(paramTypes);
   }
 
-  GeneralType getClassType(Class<?> c) {
-    GeneralType classType = GeneralType.forClass(c);
-    if (classType instanceof ConcreteType) {
-      collections.addConcreteClassType((ConcreteType)classType);
+  public GeneralType getClassType(Class<?> c) {
+    GeneralType classType;
+    if (c.getTypeParameters().length > 0) {
+      GenericType genericClassType = GenericType.forClass(c);
+      collections.addGenericClassType(genericClassType);
+      classType = genericClassType;
+    } else {
+      ConcreteType concreteClassType = ConcreteType.forClass(c);
+      collections.addConcreteClassType(concreteClassType);
+      classType = concreteClassType;
     }
     return classType;
   }

@@ -4,14 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import randoop.operation.ConcreteOperation;
-import randoop.operation.GenericOperation;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.OperationParseException;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeTuple;
-import randoop.types.GenericType;
 import randoop.types.TypeNames;
 import randoop.util.MultiMap;
 import randoop.util.RecordListReader;
@@ -71,12 +68,12 @@ public class LiteralFileReader {
    * @param inFile  the input file
    * @return the map from types to literal values
    */
-  public static MultiMap<Class<?>, Sequence> parse(String inFile) {
+  public static MultiMap<ConcreteType, Sequence> parse(String inFile) {
 
-    final MultiMap<Class<?>, Sequence> map = new MultiMap<>();
+    final MultiMap<ConcreteType, Sequence> map = new MultiMap<>();
 
     final ModelCollections collections = new ConcreteSequenceCollections(map);
-    final OperationParseVisitor visitor = new OperationParseVisitor(new TypedOperationManager(collections));
+    final TypedOperationManager manager = new TypedOperationManager(collections);
 
     RecordProcessor processor =
         new RecordProcessor() {
@@ -105,8 +102,7 @@ public class LiteralFileReader {
 
             for (int i = 3; i < lines.size(); i++) {
               try {
-                visitor.visit(cls);
-                NonreceiverTerm.parse(lines.get(i), visitor);
+                NonreceiverTerm.parse(lines.get(i), manager);
               } catch (OperationParseException e) {
                 throwInvalidRecordError(e, lines, i);
               }
@@ -126,7 +122,7 @@ public class LiteralFileReader {
 
   private static void throwInvalidRecordError(String string, List<String> lines, int i) {
     StringBuilder b = new StringBuilder();
-    b.append("RECORD PROCESSING ERROR: " + string + "\n");
+    b.append("RECORD PROCESSING ERROR: ").append(string).append("\n");
     appendRecord(b, lines, i);
     throw new Error(b.toString());
   }
@@ -135,41 +131,25 @@ public class LiteralFileReader {
     // This printout is less than ideal (it does not include the START/END
     // delimiters) and has no line number data, a limitation inherited from
     // RecordProcessor/RecordListReader.
-    b.append("INVALID RECORD (error is at index " + i + "):\n");
+    b.append("INVALID RECORD (error is at index ").append(i).append("):\n");
     b.append("------------------------------\n");
     for (String l : lines) {
-      b.append("   " + l + "\n");
+      b.append("   ").append(l).append("\n");
     }
     b.append("------------------------------\n");
   }
 
-  private static class ConcreteSequenceCollections implements ModelCollections {
+  private static class ConcreteSequenceCollections extends ModelCollections {
 
-    private final MultiMap<Class<?>, Sequence> map;
-    private ConcreteType classType;
+    private final MultiMap<ConcreteType, Sequence> map;
 
-    public ConcreteSequenceCollections(MultiMap<Class<?>, Sequence> map) {
+    ConcreteSequenceCollections(MultiMap<ConcreteType, Sequence> map) {
       this.map = map;
     }
 
     @Override
-    public void addConcreteClassType(ConcreteType type) {
-      classType = type;
-    }
-
-    @Override
-    public void addGenericClassType(GenericType type, GenericOperation operation) {
-
-    }
-
-    @Override
-    public void addGenericOperation(GenericOperation operation) {
-
-    }
-
-    @Override
-    public void addConcreteOperation(ConcreteOperation operation) {
-      map.add(classType.getRuntimeClass(), new Sequence().extend(operation, new ArrayList<Variable>()));
+    public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
+      map.add(declaringType, new Sequence().extend(operation, new ArrayList<Variable>()));
     }
   }
 }

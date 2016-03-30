@@ -39,13 +39,13 @@ import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
  * This class manages all information about generic classes internally, and instantiates any
  * type variables in operations before returning them.
  */
-public class OperationModel implements ModelCollections {
+public class OperationModel extends ModelCollections {
 
   /** The set of class objects used in the exercised-class test filter */
   private final LinkedHashSet<Class<?>> exercisedClasses;
 
   /** Map for singleton sequences of literals extracted from classes. */
-  private MultiMap<Class<?>, Sequence> classLiteralMap;
+  private MultiMap<ConcreteType, Sequence> classLiteralMap;
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
@@ -99,7 +99,7 @@ public class OperationModel implements ModelCollections {
       Set<String> exercisedClassnames,
       Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
-      List<String> literalsFileList) {
+      List<String> literalsFileList) throws OperationParseException {
 
     // TODO make sure adding Object constructor
 
@@ -159,6 +159,7 @@ public class OperationModel implements ModelCollections {
         } catch (ClassNotFoundException e) {
           errorHandler.handle(classname);
         }
+        assert c != null;
 
         if (!visibility.isVisible(c)) {
           System.out.println(
@@ -187,26 +188,26 @@ public class OperationModel implements ModelCollections {
    * @param literalsFile  the list of literals file names
    * @param literalsLevel  the level of literals to add
    */
-  private void addClassLiterals(
+  public void addClassLiterals(
       ComponentManager compMgr, List<String> literalsFile, ClassLiteralsMode literalsLevel) {
 
     // Add a (1-element) sequence corresponding to each literal to the component
     // manager.
 
     for (String filename : literalsFile) {
-      MultiMap<Class<?>, Sequence> literalmap;
+      MultiMap<ConcreteType, Sequence> literalmap;
       if (filename.equals("CLASSES")) {
         literalmap = classLiteralMap;
       } else {
-        literalmap = LiteralFileReader.parse(filename, visitor);
+        literalmap = LiteralFileReader.parse(filename);
       }
 
-      for (Class<?> cls : literalmap.keySet()) {
-        Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? cls.getPackage() : null);
-        for (Sequence seq : literalmap.getValues(cls)) {
+      for (ConcreteType type : literalmap.keySet()) {
+        Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
+        for (Sequence seq : literalmap.getValues(type)) {
           switch (literalsLevel) {
             case CLASS:
-              compMgr.addClassLevelLiteral((ConcreteType)ConcreteType.forClass(cls), seq);
+              compMgr.addClassLevelLiteral(type, seq);
               break;
             case PACKAGE:
               assert pkg != null;
@@ -228,9 +229,10 @@ public class OperationModel implements ModelCollections {
     // Populate observer_map from observers file.
     MultiMap<ConcreteType, ConcreteOperation> observerMap = new MultiMap<>();
     for (String sig: observerSignatures) {
-      ModelCollections observerManager = new ConcreteModelCollections(observerMap);
-      OperationParser.parse(sig, new OperationParseVisitor(new TypedOperationManager(observerManager)));
+      ModelCollections observerManager = new ObserverCollections(observerMap);
+      OperationParser.parse(sig, new TypedOperationManager(observerManager));
     }
+
     return observerMap;
   }
 
@@ -268,7 +270,7 @@ public class OperationModel implements ModelCollections {
   private void addOperations(Set<String> methodSignatures, ClassVisitor visitor) throws OperationParseException {
     for (String sig : methodSignatures) {
       GenericOperation op = null;
-      OperationParser.parse(sig, new OperationParseVisitor(new TypedOperationManager(this)));
+      OperationParser.parse(sig, new TypedOperationManager(this));
     }
   }
 
@@ -302,54 +304,56 @@ public class OperationModel implements ModelCollections {
     return annotatedTestValues;
   }
 
+  /*
+   * ModelCollections methods
+   */
   @Override
   public void addConcreteClassType(ConcreteType type) {
     classTypes.add(type);
   }
 
   @Override
-  public void addGenericClassType(GenericType type, GenericOperation operation) {
-    genericClassTypes.add(type, operation);
+  public void addGenericOperation(GenericType declaringType, GenericOperation operation) {
+    genericClassTypes.add(declaringType, operation);
   }
 
   @Override
-  public void addGenericOperation(GenericOperation operation) {
-
+  public void addGenericOperation(ConcreteType declaringType, GenericOperation operation) {
+    genericOperations.add(operation);
   }
 
   @Override
-  public void addConcreteOperation(ConcreteOperation operation) {
-
+  public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
+    operations.add(operation);
   }
 
-  private class ConcreteModelCollections implements ModelCollections {
+  /**
+   * {@code ObserverCollections} is a {@link ModelCollections} implementation that stores
+   * observer operations in a {@link MultiMap} provided to the constructor.
+   */
+  private class ObserverCollections extends ModelCollections {
+
+    /** The map of types to observers */
     private final MultiMap<ConcreteType, ConcreteOperation> observerMap;
-    private ConcreteType classType;
 
-    public ConcreteModelCollections(MultiMap<ConcreteType, ConcreteOperation> observerMap) {
+    /**
+     * Creates an observer collection that stores observers in the given map.
+     *
+     * @param observerMap  the map to which this object adds observers
+     */
+    ObserverCollections(MultiMap<ConcreteType, ConcreteOperation> observerMap) {
       this.observerMap = observerMap;
     }
 
+    /**
+     * {@inheritDoc}
+     * Adds an observer operation for the given declaring type to the observer map.
+     */
     @Override
-    public void addConcreteClassType(ConcreteType classType) {
-      this.classType = classType;
-    }
-
-    @Override
-    public void addGenericClassType(GenericType type, GenericOperation operation) {
-      // ignoring generics
-    }
-
-    @Override
-    public void addGenericOperation(GenericOperation operation) {
-      // ignoring generics
-    }
-
-    @Override
-    public void addConcreteOperation(ConcreteOperation operation) {
+    public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
       ConcreteType outputType = operation.getOutputType();
       if (outputType.isPrimitive() || outputType.equals(ConcreteType.STRING_TYPE) || outputType.isEnum()) {
-        observerMap.add(classType, operation);
+        observerMap.add(declaringType, operation);
       }
     }
 

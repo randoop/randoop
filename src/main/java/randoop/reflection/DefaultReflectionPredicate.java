@@ -50,8 +50,6 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    *          pattern for methods to omit, if null then no methods omitted.
    * @param visibility
    *          the predicate for testing visibility expectations for members
-   * @see OperationExtractor#getOperations(java.util.Collection,
-   *      ReflectionPredicate)
    */
   public DefaultReflectionPredicate(
       Pattern omitMethods, Set<String> omitFields, VisibilityPredicate visibility) {
@@ -63,10 +61,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
 
   @Override
   public boolean test(Class<?> c) {
-    if (c.isAnonymousClass()) {
-      return false;
-    }
-    return visibility.isVisible(c);
+    return !c.isAnonymousClass() && visibility.isVisible(c);
   }
 
   /**
@@ -179,10 +174,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   }
 
   private boolean isRandoopInstrumentation(Method m) {
-    if (m.getName().contains("randoop_")) {
-      return true;
-    }
-    return false;
+    return m.getName().contains("randoop_");
   }
 
   /**
@@ -323,9 +315,8 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       }
     }
 
-    if (Modifier.isAbstract(c.getDeclaringClass().getModifiers())) return false;
+    return !Modifier.isAbstract(c.getDeclaringClass().getModifiers());
 
-    return true;
   }
 
   private boolean matchesOmitMethodPattern(String name) {
@@ -373,9 +364,6 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   }
 
   private boolean isRandoopInstrumentation(Field f) {
-    if (f.getName().contains("randoop_")) {
-      return true;
-    }
-    return false;
+    return f.getName().contains("randoop_");
   }
 }
