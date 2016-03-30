@@ -39,11 +39,11 @@ public class ForwardGenerator extends AbstractGenerator {
    * The set of ALL sequences ever generated, including sequences that were
    * executed and then discarded.
    */
-  public final Set<Sequence> allSequences;
+  private final Set<Sequence> allSequences;
   private final Set<ConcreteOperation> observers;
 
   /** Sequences that are used in other sequences (and are thus redundant) **/
-  public Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
+  private Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
 
   // For testing purposes only. If Globals.randooptestrun==false then the array
   // is never populated or queried. This set contains the same set of
@@ -59,14 +59,15 @@ public class ForwardGenerator extends AbstractGenerator {
   // been generated, to add the value to the components.
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
-  // Stores runtime objects created during generation. The set of objects
-  // is used to determine if a new sequences creates objects different from
-  // those created by earlier sequences.
-  protected ObjectCache objectCache = new ObjectCache(new EqualsMethodMatcher());
-
-  public void setObjectCache(ObjectCache newCache) {
-    if (newCache == null) throw new IllegalArgumentException();
-    this.objectCache = newCache;
+  public ForwardGenerator(
+          List<ConcreteOperation> operations,
+          Set<ConcreteOperation> observers,
+          long timeMillis,
+          int maxGenSequences,
+          int maxOutSequences,
+          ComponentManager componentManager,
+          RandoopListenerManager listenerManager) {
+    this(operations, observers, timeMillis, maxGenSequences, maxOutSequences, componentManager,  null, listenerManager);
   }
 
   public ForwardGenerator(
@@ -175,7 +176,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * not encountered before. Such values are added to the component manager so
    * they can be used during subsequent generation attempts.
    */
-  public void processSequence(ExecutableSequence seq) {
+  private void processSequence(ExecutableSequence seq) {
 
     if (seq.hasNonExecutedStatements()) {
       if (Log.isLoggingOn()) {
@@ -378,12 +379,12 @@ public class ForwardGenerator extends AbstractGenerator {
    *          the number of times to repeat the {@link Operation}.
    * @return a new {@code Sequence}
    */
-  public Sequence repeat(Sequence seq, ConcreteOperation operation, int times) {
+  private Sequence repeat(Sequence seq, ConcreteOperation operation, int times) {
     Sequence retval = new Sequence(seq.statements);
     for (int i = 0; i < times; i++) {
       List<Integer> vil = new ArrayList<>();
       for (Variable v : retval.getInputs(retval.size() - 1)) {
-        if (v.getType().equals(int.class)) {
+        if (v.getType().equals(ConcreteType.INT_TYPE)) {
           int randint = Randomness.nextRandomInt(100);
           retval = retval.extend(ConcreteOperation.createPrimitiveInitialization(ConcreteType.INT_TYPE, randint));
           vil.add(retval.size() - 1);
@@ -403,7 +404,7 @@ public class ForwardGenerator extends AbstractGenerator {
   // Adds the string corresponding to the given newSequences to the
   // set allSequencesAsCode. The latter set is intended to mirror
   // the set allSequences, but stores strings instead of Sequences.
-  protected void randoopConsistencyTest2(Sequence newSequence) {
+  private void randoopConsistencyTest2(Sequence newSequence) {
     // Testing code.
     if (GenInputsAbstract.debug_checks) {
       this.allsequencesAsCode.add(newSequence.toCodeString());
@@ -413,7 +414,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
   // Checks that the set allSequencesAsCode contains a set of strings
   // equivalent to the sequences in allSequences.
-  protected void randoopConsistencyTests(Sequence newSequence) {
+  private void randoopConsistencyTests(Sequence newSequence) {
     // Testing code.
     if (GenInputsAbstract.debug_checks) {
       String code = newSequence.toCodeString();
@@ -565,7 +566,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // type,
       // randomly selecting a single sequence from this list, and appending it
       // to S.
-      SimpleList<Sequence> l = null;
+      SimpleList<Sequence> l;
 
       // We use one of two ways to gather candidate sequences, but the second
       // case below
@@ -639,7 +640,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // At this point, we have a list of candidate sequences and need to select
       // a
       // randomly-chosen sequence from the list.
-      Sequence chosenSeq = null;
+      Sequence chosenSeq;
       if (GenInputsAbstract.small_tests) {
         chosenSeq = Randomness.randomMemberWeighted(l);
       } else {

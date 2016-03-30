@@ -91,8 +91,7 @@ public final class SeedSequences {
   static Set<Object> getSeeds(ConcreteType type) {
     Set<Object> result = new LinkedHashSet<>();
     for (Object seed : primitiveSeeds) {
-      ConcreteType seedType = (ConcreteType)ConcreteType.forClass(seed.getClass());
-      if (type.isAssignableFrom(seedType)) {
+      if (type.isInstance(seed)) {
         result.add(seed);
       }
     }
