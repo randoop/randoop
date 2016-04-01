@@ -432,3 +432,10 @@ task tags(type: Exec, dependsOn: 'clone') {
   environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
   commandLine "bash", "-c", "find src/ -name *.java | sort-directory-order | xargs etags"
 }
+
+/* Validate HTML files */
+task validate(type: Exec, dependsOn: 'clone') {
+  description "Run html5validator to find HTML errors"
+  environment PATH: "$System.env.PATH:/homes/gws/mernst/.local/bin/html5validator"
+  commandLine "html5validator", "--ignore-re", "/build/docs/api/"
+}
