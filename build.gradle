@@ -437,5 +437,5 @@ task tags(type: Exec, dependsOn: 'clone') {
 task validate(type: Exec, dependsOn: 'clone') {
   description "Run html5validator to find HTML errors"
   environment PATH: "$System.env.PATH:/homes/gws/mernst/.local/bin/html5validator"
-  commandLine "html5validator", "--ignore-re", "/build/docs/api/"
+  commandLine "html5validator", "--ignore", "/build/docs/api/", "/build/docs/javadoc/"
 }
