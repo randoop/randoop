@@ -72,14 +72,14 @@ public class HeapArray {
 
   static {
     java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-        new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+            new java.util.LinkedHashMap<>();
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(0);
       methodToIndices.put(" Object extractMax() ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(1);
       indexList.add(2);
       indexList.add(3);
@@ -87,13 +87,13 @@ public class HeapArray {
       methodToIndices.put(" void heapifyDown(int index) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(5);
       indexList.add(6);
       methodToIndices.put(" boolean insert(Comparable element) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(7);
       methodToIndices.put(" void heapifyUp(int index) ", indexList);
     }

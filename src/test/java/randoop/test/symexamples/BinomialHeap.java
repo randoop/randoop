@@ -115,20 +115,20 @@ public class BinomialHeap {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" BinomialHeapNode reverse(BinomialHeapNode sibl) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         indexList.add(2);
         methodToIndices.put(" BinomialHeapNode findMinNode() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(4);
         indexList.add(5);
@@ -310,20 +310,20 @@ public class BinomialHeap {
 
   static {
     java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-        new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+            new java.util.LinkedHashMap<>();
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(0);
       methodToIndices.put(" BinomialHeapNode reverse(BinomialHeapNode sibl) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(1);
       indexList.add(2);
       methodToIndices.put(" BinomialHeapNode findMinNode() ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(3);
       indexList.add(4);
       indexList.add(5);
@@ -331,7 +331,7 @@ public class BinomialHeap {
       methodToIndices.put(" BinomialHeapNode findANodeWithKey(Integer value) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(0);
       indexList.add(1);
       indexList.add(2);
@@ -342,7 +342,7 @@ public class BinomialHeap {
       methodToIndices.put(" void merge(BinomialHeapNode binHeap) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(7);
       indexList.add(8);
       indexList.add(9);
@@ -350,13 +350,13 @@ public class BinomialHeap {
       methodToIndices.put(" void unionNodes(BinomialHeapNode binHeap) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(11);
       indexList.add(12);
       methodToIndices.put(" void insert(Integer value) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(13);
       indexList.add(14);
       indexList.add(15);
@@ -367,13 +367,13 @@ public class BinomialHeap {
       methodToIndices.put(" Integer extractMin() ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(20);
       methodToIndices.put(
           " void decreaseKeyVariable(Integer old_value, Integer new_value) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(21);
       methodToIndices.put(" void delete(Integer value) ", indexList);
     }

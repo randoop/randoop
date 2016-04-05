@@ -137,16 +137,16 @@ public class TreeMap extends AbstractMap implements SortedMap {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         indexList.add(2);
         methodToIndices.put(" Entry getEntry(Integer key) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(4);
         indexList.add(5);
@@ -155,7 +155,7 @@ public class TreeMap extends AbstractMap implements SortedMap {
         methodToIndices.put(" Object put(Integer key, Object value) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(8);
         methodToIndices.put(" Object remove(Integer key) ", indexList);
       }
@@ -456,16 +456,16 @@ public class TreeMap extends AbstractMap implements SortedMap {
 
   static {
     java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-        new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+            new java.util.LinkedHashMap<>();
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(0);
       indexList.add(1);
       indexList.add(2);
       methodToIndices.put(" Entry getEntry(Integer key) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(3);
       indexList.add(4);
       indexList.add(5);
@@ -474,12 +474,12 @@ public class TreeMap extends AbstractMap implements SortedMap {
       methodToIndices.put(" Object put(Integer key, Object value) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(8);
       methodToIndices.put(" Object remove(Integer key) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(9);
       indexList.add(10);
       indexList.add(11);
@@ -487,26 +487,26 @@ public class TreeMap extends AbstractMap implements SortedMap {
       methodToIndices.put(" Entry successor(Entry t) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(13);
       methodToIndices.put(" void setColor(Entry p, boolean c) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(14);
       indexList.add(15);
       indexList.add(16);
       methodToIndices.put(" void rotateLeft(Entry p) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(17);
       indexList.add(18);
       indexList.add(19);
       methodToIndices.put(" void rotateRight(Entry p) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(20);
       indexList.add(21);
       indexList.add(22);
@@ -518,7 +518,7 @@ public class TreeMap extends AbstractMap implements SortedMap {
       methodToIndices.put(" void fixAfterInsertion(Entry x) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(28);
       indexList.add(29);
       indexList.add(30);
@@ -532,7 +532,7 @@ public class TreeMap extends AbstractMap implements SortedMap {
       methodToIndices.put(" void deleteEntry(Entry p) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(38);
       indexList.add(39);
       indexList.add(40);
@@ -544,7 +544,7 @@ public class TreeMap extends AbstractMap implements SortedMap {
       methodToIndices.put(" void fixAfterDeletion(Entry x) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(46);
       indexList.add(47);
       indexList.add(48);

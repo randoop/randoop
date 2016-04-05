@@ -16,12 +16,14 @@ import randoop.DummyVisitor;
 import randoop.ExceptionalExecution;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
+import randoop.operation.ConcreteOperation;
 import randoop.operation.ConstructorCall;
-import randoop.operation.NonreceiverTerm;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 import randoop.test.DummyCheckGenerator;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
 
 /**
  * Tests to check whether exception predicates are acting as expected.
@@ -76,16 +78,21 @@ public class ExceptionPredicateTest {
   public void testNullNPE() {
     ExceptionalExecution exec = new ExceptionalExecution(new NullPointerException(), 0);
     Class<?> c = CUTForExceptionPredicate.class;
+    ConcreteType classType = ConcreteType.forClass(c);
     Constructor<?> con = null;
     try {
       con = c.getDeclaredConstructor(Object.class);
     } catch (Exception e) {
       fail("test not setup correctly: " + e);
     }
-    Sequence seq = Sequence.create(NonreceiverTerm.createNullOrZeroTerm(Object.class));
+    List<ConcreteType> paramTypes = new ArrayList<>();
+    paramTypes.add(ConcreteType.OBJECT_TYPE);
+    ConcreteOperation conOp = new ConcreteOperation(new ConstructorCall(con), classType, new ConcreteTypeTuple(paramTypes), classType);
+    Sequence seq = new Sequence().extend(ConcreteOperation.createNullOrZeroInitializationForType(ConcreteType.OBJECT_TYPE));
     List<Variable> inputVariables = new ArrayList<>();
     inputVariables.add(new Variable(seq, 0));
-    seq = seq.extend(new ConstructorCall(con), inputVariables);
+
+    seq = seq.extend(conOp, inputVariables);
     ExecutableSequence s = new ExecutableSequence(seq);
     s.execute(new DummyVisitor(), new DummyCheckGenerator());
 

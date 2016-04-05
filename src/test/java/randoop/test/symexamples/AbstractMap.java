@@ -335,9 +335,9 @@ public abstract class AbstractMap implements Map {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         indexList.add(2);
@@ -346,7 +346,7 @@ public abstract class AbstractMap implements Map {
         methodToIndices.put(" boolean containsValue(Object value) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         indexList.add(7);
@@ -355,7 +355,7 @@ public abstract class AbstractMap implements Map {
         methodToIndices.put(" boolean containsKey(Object key) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(10);
         indexList.add(11);
         indexList.add(12);
@@ -364,7 +364,7 @@ public abstract class AbstractMap implements Map {
         methodToIndices.put(" Object get(Object key) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(15);
         indexList.add(16);
         indexList.add(17);
@@ -374,22 +374,22 @@ public abstract class AbstractMap implements Map {
         methodToIndices.put(" Object remove(Object key) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(21);
         methodToIndices.put(" void putAll(Map t) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(22);
         methodToIndices.put(" Set keySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(23);
         methodToIndices.put(" Collection values() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(24);
         indexList.add(25);
         indexList.add(26);
@@ -401,12 +401,12 @@ public abstract class AbstractMap implements Map {
         methodToIndices.put(" boolean equals(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(31);
         methodToIndices.put(" int hashCode() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(32);
         indexList.add(33);
         methodToIndices.put(" String toString() ", indexList);
@@ -447,9 +447,9 @@ public abstract class AbstractMap implements Map {
 
   static {
     java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-        new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+            new java.util.LinkedHashMap<>();
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(0);
       indexList.add(1);
       indexList.add(2);
@@ -458,7 +458,7 @@ public abstract class AbstractMap implements Map {
       methodToIndices.put(" boolean containsValue(Object value) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(5);
       indexList.add(6);
       indexList.add(7);
@@ -467,7 +467,7 @@ public abstract class AbstractMap implements Map {
       methodToIndices.put(" boolean containsKey(Object key) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(10);
       indexList.add(11);
       indexList.add(12);
@@ -476,7 +476,7 @@ public abstract class AbstractMap implements Map {
       methodToIndices.put(" Object get(Object key) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(15);
       indexList.add(16);
       indexList.add(17);
@@ -486,22 +486,22 @@ public abstract class AbstractMap implements Map {
       methodToIndices.put(" Object remove(Object key) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(21);
       methodToIndices.put(" void putAll(Map t) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(22);
       methodToIndices.put(" Set keySet() ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(23);
       methodToIndices.put(" Collection values() ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(24);
       indexList.add(25);
       indexList.add(26);
@@ -513,12 +513,12 @@ public abstract class AbstractMap implements Map {
       methodToIndices.put(" boolean equals(Object o) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(31);
       methodToIndices.put(" int hashCode() ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(32);
       indexList.add(33);
       methodToIndices.put(" String toString() ", indexList);

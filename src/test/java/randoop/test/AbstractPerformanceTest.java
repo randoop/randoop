@@ -19,7 +19,7 @@ public abstract class AbstractPerformanceTest extends TestCase {
 
   private static double computeFactor() {
     String foo = "make sure that the loop doesn't get optimized away";
-    List<String> list = new ArrayList<String>();
+    List<String> list = new ArrayList<>();
     Timer t = new Timer();
     t.startTiming();
     for (int i = 0; i < 50000000; i++) {

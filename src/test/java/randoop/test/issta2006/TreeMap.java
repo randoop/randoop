@@ -31,7 +31,7 @@ public class TreeMap {
 
   private native boolean checkAbstractState(int which);
 
-  public static Set<String> tests = new HashSet<String>();
+  public static Set<String> tests = new HashSet<>();
 
   public static int counter = 0;
 

@@ -23,41 +23,41 @@ public class ListOfListsSelectorTest extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    ArrayListSimpleList<Integer> l1List = new ArrayListSimpleList<Integer>();
-    ArrayListSimpleList<Integer> l2List = new ArrayListSimpleList<Integer>();
+    ArrayListSimpleList<Integer> l1List = new ArrayListSimpleList<>();
+    ArrayListSimpleList<Integer> l2List = new ArrayListSimpleList<>();
     l2List.add(1);
-    ArrayListSimpleList<Integer> l3List = new ArrayListSimpleList<Integer>();
+    ArrayListSimpleList<Integer> l3List = new ArrayListSimpleList<>();
     l3List.add(2);
     l3List.add(3);
 
-    List<SimpleList<Integer>> emptyList = new ArrayList<SimpleList<Integer>>();
-    empty = new ListOfLists<Integer>(emptyList);
+    List<SimpleList<Integer>> emptyList = new ArrayList<>();
+    empty = new ListOfLists<>(emptyList);
 
-    List<SimpleList<Integer>> l1ListList = new ArrayList<SimpleList<Integer>>();
+    List<SimpleList<Integer>> l1ListList = new ArrayList<>();
     l1ListList.add(l1List);
-    l1 = new ListOfLists<Integer>(l1ListList);
+    l1 = new ListOfLists<>(l1ListList);
 
-    List<SimpleList<Integer>> l3ListList = new ArrayList<SimpleList<Integer>>();
+    List<SimpleList<Integer>> l3ListList = new ArrayList<>();
     l3ListList.add(l3List);
-    l3 = new ListOfLists<Integer>(l3ListList);
+    l3 = new ListOfLists<>(l3ListList);
 
-    List<SimpleList<Integer>> l1l2ListList = new ArrayList<SimpleList<Integer>>();
+    List<SimpleList<Integer>> l1l2ListList = new ArrayList<>();
     l1l2ListList.add(l1List);
     l1l2ListList.add(l2List);
-    l1l2 = new ListOfLists<Integer>(l1l2ListList);
+    l1l2 = new ListOfLists<>(l1l2ListList);
 
-    List<SimpleList<Integer>> l1l2l3ListList = new ArrayList<SimpleList<Integer>>();
+    List<SimpleList<Integer>> l1l2l3ListList = new ArrayList<>();
     l1l2l3ListList.add(l1List);
     l1l2l3ListList.add(l2List);
     l1l2l3ListList.add(l3List);
-    l1l2l3 = new ListOfLists<Integer>(l1l2l3ListList);
+    l1l2l3 = new ListOfLists<>(l1l2l3ListList);
 
-    List<SimpleList<Integer>> l3l3l1l2ListList = new ArrayList<SimpleList<Integer>>();
+    List<SimpleList<Integer>> l3l3l1l2ListList = new ArrayList<>();
     l3l3l1l2ListList.add(l3List);
     l3l3l1l2ListList.add(l3List);
     l3l3l1l2ListList.add(l1List);
     l3l3l1l2ListList.add(l2List);
-    l3l3l1l2 = new ListOfLists<Integer>(l3l3l1l2ListList);
+    l3l3l1l2 = new ListOfLists<>(l3l3l1l2ListList);
   }
 
   @Override

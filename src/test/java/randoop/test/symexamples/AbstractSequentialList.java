@@ -80,9 +80,9 @@ public abstract class AbstractSequentialList extends AbstractList {
 
   static {
     java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-        new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+            new java.util.LinkedHashMap<>();
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(0);
       methodToIndices.put(" boolean addAll(int index, Collection c) ", indexList);
     }

@@ -29,9 +29,9 @@ public class FibHeap {
 
   // XXX see note above
   //   @NotPartOfState
-  private Vector<Node> cachedNodes = new Vector<Node>();
+  private Vector<Node> cachedNodes = new Vector<>();
 
-  public static Set<String> tests = new HashSet<String>();
+  public static Set<String> tests = new HashSet<>();
 
   // private static Set abs_states = new HashSet();
 

@@ -79,10 +79,10 @@ public class PlayingCard {
   }
 
   public static List<PlayingCard> newDeck() {
-    return new ArrayList<PlayingCard>(prototypeDeck);
+    return new ArrayList<>(prototypeDeck);
   }
 
-  private static final List<PlayingCard> prototypeDeck = new ArrayList<PlayingCard>(52);
+  private static final List<PlayingCard> prototypeDeck = new ArrayList<>(52);
 
   static {
     for (Suit suit : Suit.values())

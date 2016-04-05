@@ -128,9 +128,9 @@ public class LinkedList extends AbstractSequentialList {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         methodToIndices.put(" boolean remove(Integer o) ", indexList);
@@ -159,15 +159,15 @@ public class LinkedList extends AbstractSequentialList {
 
   static {
     java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-        new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+            new java.util.LinkedHashMap<>();
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(0);
       indexList.add(1);
       methodToIndices.put(" boolean remove(Integer o) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(2);
       methodToIndices.put(" void remove(Entry e) ", indexList);
     }

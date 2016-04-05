@@ -26,7 +26,7 @@ public class BinarySearchTree {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       randoopCoverageInfo = new randoop.util.TestCoverageInfo(0, methodToIndices);
     }
   }
@@ -124,9 +124,9 @@ public class BinarySearchTree {
 
   static {
     java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-        new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+            new java.util.LinkedHashMap<>();
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(0);
       indexList.add(1);
       indexList.add(2);
@@ -136,7 +136,7 @@ public class BinarySearchTree {
       methodToIndices.put(" boolean remove(Comparable info) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(6);
       indexList.add(7);
       indexList.add(8);
@@ -144,7 +144,7 @@ public class BinarySearchTree {
       methodToIndices.put(" Node removeNode(Node current) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(10);
       indexList.add(11);
       indexList.add(12);

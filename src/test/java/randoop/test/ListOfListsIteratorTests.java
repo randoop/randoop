@@ -15,18 +15,18 @@ public class ListOfListsIteratorTests extends TestCase {
 
   public void test() {
 
-    ArrayListSimpleList<Integer> a1 = new ArrayListSimpleList<Integer>();
+    ArrayListSimpleList<Integer> a1 = new ArrayListSimpleList<>();
     a1.add(1);
     a1.add(2);
 
-    ArrayListSimpleList<Integer> a2 = new ArrayListSimpleList<Integer>();
+    ArrayListSimpleList<Integer> a2 = new ArrayListSimpleList<>();
 
-    ArrayListSimpleList<Integer> a3 = new ArrayListSimpleList<Integer>();
+    ArrayListSimpleList<Integer> a3 = new ArrayListSimpleList<>();
     a3.add(3);
     a3.add(4);
     a3.add(5);
 
-    List<SimpleList<Integer>> level0 = new ArrayList<SimpleList<Integer>>();
+    List<SimpleList<Integer>> level0 = new ArrayList<>();
     level0.add(a1);
     level0.add(a2);
     level0.add(a3);
@@ -34,7 +34,7 @@ public class ListOfListsIteratorTests extends TestCase {
     for (int i = 0; i < 100; i++) {
 
       // Create random list.
-      List<SimpleList<Integer>> lists = new ArrayList<SimpleList<Integer>>();
+      List<SimpleList<Integer>> lists = new ArrayList<>();
       lists.add(a1);
       lists.add(a2);
       lists.add(a3);
@@ -44,18 +44,18 @@ public class ListOfListsIteratorTests extends TestCase {
         int whichOperation = Randomness.nextRandomInt(2);
         if (whichOperation == 0) {
           // ListOfLists
-          List<SimpleList<Integer>> members = new ArrayList<SimpleList<Integer>>();
+          List<SimpleList<Integer>> members = new ArrayList<>();
           int howManyLists = Randomness.nextRandomInt(lists.size());
           for (int k = 0; k < howManyLists; k++) {
             members.add(Randomness.randomMember(lists));
           }
-          theList = new ListOfLists<Integer>(members);
+          theList = new ListOfLists<>(members);
           lists.add(theList);
         } else {
           // OneMoreElementList
           int theElement = Randomness.nextRandomInt(10);
           SimpleList<Integer> prefixList = Randomness.randomMember(lists);
-          theList = new OneMoreElementList<Integer>(prefixList, theElement);
+          theList = new OneMoreElementList<>(prefixList, theElement);
           lists.add(theList);
         }
       }

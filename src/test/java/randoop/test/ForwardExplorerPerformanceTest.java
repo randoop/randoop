@@ -1,15 +1,21 @@
 package randoop.test;
 
-import java.io.InputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
+import plume.EntryReader;
 import randoop.Globals;
-import randoop.main.ClassReader;
+import randoop.generation.ForwardGenerator;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.Operation;
+import randoop.operation.ConcreteOperation;
+import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.ModelCollections;
 import randoop.reflection.OperationExtractor;
-import randoop.sequence.ForwardGenerator;
+import randoop.reflection.ReflectionManager;
+import randoop.reflection.TypedOperationManager;
+import randoop.types.ConcreteType;
 import randoop.util.Timer;
 
 import junit.framework.TestCase;
@@ -23,7 +29,7 @@ public class ForwardExplorerPerformanceTest extends TestCase {
 
   private static long performanceMultiplier() {
     String foo = "make sure that the loop doesn't get optimized away";
-    List<String> list = new ArrayList<String>();
+    List<String> list = new ArrayList<>();
     Timer t = new Timer();
     t.startTiming();
     for (int i = 0; i < 10000000; i++) {
@@ -38,18 +44,32 @@ public class ForwardExplorerPerformanceTest extends TestCase {
 
     String resourcename = "java.util.classlist.java1.6.txt";
 
-    InputStream classStream =
-        ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename);
+    final List<ConcreteOperation> model = new ArrayList<>();
+    TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
+      @Override
+      public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
+        model.add(operation);
+      }
+    });
+    ReflectionManager manager = new ReflectionManager(new DefaultReflectionPredicate());
+    manager.add(new OperationExtractor(operationManager));
 
-    List<Operation> model =
-        OperationExtractor.getOperations(
-            ClassReader.getClassesForStream(classStream, resourcename), null);
+    try (EntryReader er = new EntryReader(ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
+      for (String entry : er) {
+        manager.apply(Class.forName(entry));
+      }
+    } catch (IOException e) {
+      fail("exception when reading class names " + e);
+    } catch (ClassNotFoundException e) {
+      fail("class not found when reading classnames: " + e);
+    }
+
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     GenInputsAbstract.debug_checks = false;
     ForwardGenerator explorer =
         new ForwardGenerator(
-            model, TIME_LIMIT_SECS * 1000, Integer.MAX_VALUE, Integer.MAX_VALUE, null, null, null);
+            model, new LinkedHashSet<ConcreteOperation>(), TIME_LIMIT_SECS * 1000, Integer.MAX_VALUE, Integer.MAX_VALUE, null, null, null);
     System.out.println("" + Globals.lineSep + "Will explore for " + TIME_LIMIT_SECS + " seconds.");
     explorer.explore();
     System.out.println(
@@ -60,23 +80,19 @@ public class ForwardExplorerPerformanceTest extends TestCase {
             + "Expected "
             + EXPECTED_MIN
             + " sequences, created "
-            + explorer.allSequences.size()
+            + explorer.numGeneratedSequences()
             + " sequences.");
     GenInputsAbstract.dontexecute = false;
     GenInputsAbstract.debug_checks = true;
-    if (explorer.allSequences.size() < EXPECTED_MIN) {
-      StringBuilder b = new StringBuilder();
-      b.append("Randoop's explorer created fewer than " + EXPECTED_MIN);
-      b.append(" inputs (precisely, " + explorer.allSequences.size() + ") in ");
-      b.append(TIME_LIMIT_SECS + " seconds." + Globals.lineSep + "");
-      b.append("This failure could have two causes:" + Globals.lineSep + "");
-      b.append(" (1) Our guess as to how fast your machine is is wrong." + Globals.lineSep + "");
-      b.append(
-          " (2) You made a change to Randoop that slows down its performance."
-              + Globals.lineSep
-              + "");
-      b.append("     No tips available here.");
-      fail(b.toString());
+    if (explorer.numGeneratedSequences() < EXPECTED_MIN) {
+      String b = "Randoop's explorer created fewer than " + EXPECTED_MIN
+              + " inputs (precisely, " + explorer.numGeneratedSequences() + ") in "
+              + TIME_LIMIT_SECS + " seconds." + Globals.lineSep
+              + "This failure could have two causes:" + Globals.lineSep
+              + " (1) Our guess as to how fast your machine is is wrong." + Globals.lineSep
+              + " (2) You made a change to Randoop that slows down its performance." + Globals.lineSep
+              + "     No tips available here.";
+      fail(b);
     }
   }
 }
