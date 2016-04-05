@@ -14,6 +14,7 @@ import randoop.types.GeneralType;
 import randoop.types.GeneralTypeTuple;
 import randoop.types.GenericTypeTuple;
 import randoop.types.PrimitiveTypes;
+import randoop.types.TypeNames;
 import randoop.util.StringEscapeUtils;
 import randoop.util.Util;
 
@@ -56,15 +57,19 @@ public final class NonreceiverTerm extends CallableOperation {
 
     if (type.isVoid()) throw new IllegalArgumentException("type should not be void.class.");
 
-    if (type.isPrimitive()) {
-      if (value == null)
-        throw new IllegalArgumentException("primitive-like values cannot be null.");
-      if (!PrimitiveTypes.toBoxedType(type).equals(ConcreteType.forClass(value.getClass())))
-        throw new IllegalArgumentException("o.getClass()=" + value.getClass() + ",t=" + type);
-      if (!PrimitiveTypes.isBoxedOrPrimitiveOrStringType(value.getClass()))
-        throw new IllegalArgumentException("o is not a primitive-like value.");
-    } else if (type.hasRuntimeClass(String.class)) {
-      if (!PrimitiveTypes.stringLengthOK((String) value)) {
+    if (type.isPrimitive() || type.isBoxedPrimitive()) {
+      if (value == null) {
+        if (type.isPrimitive()) {
+          throw new IllegalArgumentException("primitive-like values cannot be null.");
+        }
+      } else {
+        if (!type.isInstance(value))
+          throw new IllegalArgumentException("o.getClass()=" + value.getClass() + ",t=" + type);
+        if (!PrimitiveTypes.isBoxedOrPrimitiveOrStringType(value.getClass()))
+          throw new IllegalArgumentException("o is not a primitive-like value.");
+      }
+    } else if (type.isString()) {
+      if (value != null && !PrimitiveTypes.stringLengthOK((String) value)) {
         throw new IllegalArgumentException(
             "String too long, length = " + ((String) value).length());
       }
@@ -283,7 +288,7 @@ public final class NonreceiverTerm extends CallableOperation {
 
     ConcreteType type;
     try {
-      type = ConcreteType.forClass(Class.forName(typeString));
+      type = (ConcreteType)ConcreteType.forName(typeString);
     } catch (ClassNotFoundException e1) {
       String msg =
           "Error when parsing type/value pair "

@@ -10,6 +10,7 @@ import randoop.sequence.Variable;
 import randoop.types.ConcreteArrayType;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypeTuple;
+import randoop.types.PrimitiveTypes;
 
 /**
  * {@code ConcreteOperation} is an abstract implementation of {@link Operation} that represents the
@@ -143,8 +144,8 @@ public class ConcreteOperation extends TypedOperation<CallableOperation> {
   }
 
   public static ConcreteOperation createNullInitializationWithType(ConcreteType type) {
-    assert type.isPrimitive() : "cannot initialize primitive to null: " + type;
-    return ConcreteOperation.createPrimitiveInitialization(type, null);
+    assert ! type.isPrimitive() : "cannot initialize primitive to null: " + type;
+    return ConcreteOperation.createNonreceiverInitialization(new NonreceiverTerm(type, null));
   }
 
   public static ConcreteOperation createNullOrZeroInitializationForType(ConcreteType type) {
@@ -152,7 +153,7 @@ public class ConcreteOperation extends TypedOperation<CallableOperation> {
   }
 
   public static ConcreteOperation createPrimitiveInitialization(ConcreteType type, Object value) {
-    assert type.isPrimitive() : "must be primitive";
+    assert PrimitiveTypes.isBoxedOrPrimitiveOrStringType(type.getRuntimeClass()) : "must be nonreceiver type, got " + type.getName();
     return ConcreteOperation.createNonreceiverInitialization(new NonreceiverTerm(type,value));
   }
 

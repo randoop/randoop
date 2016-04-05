@@ -51,7 +51,7 @@ public final class ArrayCreation extends CallableOperation {
    * @param arrayType  the type of array this operation creates
    */
   ArrayCreation(ConcreteArrayType arrayType, int length) {
-    assert length < 0 : "array length may not be negative";
+    assert length >= 0 : "array length may not be negative: " + length;
 
     this.elementType = arrayType.getElementType();
     this.length = length;

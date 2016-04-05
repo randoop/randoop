@@ -35,7 +35,7 @@ public final class ConstructorCall extends CallableOperation {
   /**
    * ID for parsing purposes.
    *
-   * @see OperationParser#getId(Operation)
+   * @see OperationParser#getId(ConcreteOperation)
    */
   public static final String ID = "cons";
 
@@ -278,7 +278,7 @@ public final class ConstructorCall extends CallableOperation {
     for (Class<?> c : typeArguments) {
       paramTypes.add(manager.getClassType(c));
     }
-
+System.out.printf("[constructorcall parse] op:%s%n",op);
     manager.createTypedOperation(op, classType, new GenericTypeTuple(paramTypes), classType);
   }
 

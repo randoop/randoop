@@ -1,6 +1,7 @@
 package randoop.operation;
 
 import java.io.PrintStream;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +42,9 @@ public class FieldSet extends CallableOperation {
    *           if field is static final.
    */
   public FieldSet(AccessibleField field) {
+    if (field.isFinal()) {
+      throw new IllegalArgumentException("Field may not be final for FieldSet");
+    }
     this.field = field;
   }
 
@@ -130,7 +134,6 @@ public class FieldSet extends CallableOperation {
    */
   @Override
   public String toParseableString(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType) {
-    assert inputTypes.size() == 1;
     return declaringType.getName() + ".<set>(" + field.getName() + ")";
   }
 
@@ -147,7 +150,7 @@ public class FieldSet extends CallableOperation {
    *           if descr does not have expected form.
    */
   public static void parse(String descr, TypedOperationManager manager) throws OperationParseException {
-    String errorPrefix = "Error parsing " + descr + " as description for field getter statement: ";
+    String errorPrefix = "Error parsing " + descr + " as description for field set statement: ";
 
     int openParPos = descr.indexOf('(');
     int closeParPos = descr.indexOf(')');
@@ -163,7 +166,7 @@ public class FieldSet extends CallableOperation {
     String classname = prefix.substring(0, lastDotPos);
     String opname = prefix.substring(lastDotPos + 1);
     assert opname.equals("<set>") : "expecting <set>, saw " + opname;
-    assert (closeParPos < 0) : "no closing parentheses found.";
+    assert (closeParPos > 0) : "no closing parentheses found.";
 
     String fieldname = descr.substring(openParPos + 1, closeParPos);
 

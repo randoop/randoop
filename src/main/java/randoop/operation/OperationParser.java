@@ -108,15 +108,15 @@ public class OperationParser {
    *          the operation.
    * @return the ID string for the operation.
    */
-  public static String getId(Operation op) {
+  public static String getId(ConcreteOperation op) {
     if (op == null) throw new IllegalArgumentException("st cannot be null.");
-    if (op instanceof NonreceiverTerm) return NonreceiverTerm.ID;
-    if (op instanceof MethodCall) return MethodCall.ID;
-    if (op instanceof ConstructorCall) return ConstructorCall.ID;
-    if (op instanceof ArrayCreation) return ArrayCreation.ID;
-    if (op instanceof EnumConstant) return EnumConstant.ID;
-    if (op instanceof FieldGet) return FieldGet.ID;
-    if (op instanceof FieldSet) return FieldSet.ID;
+    if (op.getOperation() instanceof NonreceiverTerm) return NonreceiverTerm.ID;
+    if (op.getOperation() instanceof MethodCall) return MethodCall.ID;
+    if (op.getOperation() instanceof ConstructorCall) return ConstructorCall.ID;
+    if (op.getOperation() instanceof ArrayCreation) return ArrayCreation.ID;
+    if (op.getOperation() instanceof EnumConstant) return EnumConstant.ID;
+    if (op.getOperation() instanceof FieldGet) return FieldGet.ID;
+    if (op.getOperation() instanceof FieldSet) return FieldSet.ID;
     throw new Error();
   }
 

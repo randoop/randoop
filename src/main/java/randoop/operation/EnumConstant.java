@@ -144,17 +144,17 @@ public class EnumConstant extends CallableOperation {
       try {
         declaringType = (ConcreteType)GeneralType.forName(typeName);
       } catch (ClassNotFoundException e) {
-        String msg = "The type given \"" + typeName + "\" was not recognized.";
+        String msg = errorPrefix + " The type given \"" + typeName + "\" was not recognized.";
         throw new OperationParseException(msg);
       }
       if (!declaringType.isEnum()) {
-        String msg = "The type given \"" + typeName + "\" is not an enum.";
+        String msg = errorPrefix + " The type given \"" + typeName + "\" is not an enum.";
         throw new OperationParseException(msg);
       }
 
       Enum<?> value = valueOf(declaringType.getRuntimeClass(),valueName);
       if (value == null) {
-        String msg = "The value given \""
+        String msg = errorPrefix + " The value given \""
                 + valueName
                 + "\" is not a constant of the enum "
                 + typeName
