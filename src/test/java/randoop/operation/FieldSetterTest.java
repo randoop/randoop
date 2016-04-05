@@ -1,26 +1,30 @@
 package randoop.operation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.ArrayList;
-
 import org.junit.Test;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.Globals;
 import randoop.NormalExecution;
+import randoop.field.AccessibleField;
 import randoop.field.ClassWithFields;
-import randoop.field.FinalInstanceField;
-import randoop.field.InstanceField;
-import randoop.field.StaticField;
-import randoop.field.StaticFinalField;
+import randoop.reflection.ModelCollections;
+import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * FieldSetterTest defines unit tests for FieldSetter class.
@@ -33,23 +37,30 @@ public class FieldSetterTest {
   @Test
   public void testStaticField() {
     Class<?> c = ClassWithFields.class;
+    ConcreteType declaringType = ConcreteType.forClass(c);
     try {
-      StaticField f = new StaticField(c.getField("fourField"));
-      FieldSet rhs = new FieldSet(f);
+      Field field = c.getField("fourField");
+      AccessibleField f = new AccessibleField(field, declaringType);
+      ConcreteType fieldType = ConcreteType.forClass(field.getType());
+      List<ConcreteType> setInputTypeList = new ArrayList<>();
+      setInputTypeList.add(fieldType);
+      FieldSet setOp = new FieldSet(f);
+      ConcreteOperation op = new ConcreteOperation(setOp, declaringType, new ConcreteTypeTuple(setInputTypeList), ConcreteType.VOID_TYPE); 
 
       //types
-      assertEquals("Should be one input type", 1, rhs.getInputTypes().size());
-      assertEquals("Output type should be void", void.class, rhs.getOutputType());
+      assertEquals("Should be one input type", 1, op.getInputTypes().size());
+      assertEquals("Output type should be void", ConcreteType.VOID_TYPE, op.getOutputType());
 
       //code generation
       String expected = "randoop.field.ClassWithFields.fourField = 24;" + Globals.lineSep;
       StringBuilder b = new StringBuilder();
+      ConcreteOperation initOp = new ConcreteOperation(new NonreceiverTerm(ConcreteType.INT_TYPE, 24), ConcreteType.INT_TYPE, new ConcreteTypeTuple(), ConcreteType.INT_TYPE);
       Sequence seq0 =
-          new Sequence().extend(new NonreceiverTerm(int.class, 24), new ArrayList<Variable>());
+          new Sequence().extend(initOp, new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
       vars.add(new Variable(seq0, 0));
-      Statement st_rhs = new Statement(rhs);
-      st_rhs.appendCode(null, vars, b);
+      Statement st_op = new Statement(op);
+      st_op.appendCode(null, vars, b);
       assertEquals("Expect assignment to static field", expected, b.toString());
 
       //execution -- gives back null
@@ -57,7 +68,7 @@ public class FieldSetterTest {
       NormalExecution expectedExec = new NormalExecution(null, 0);
       Object[] inputs = new Object[1];
       inputs[0] = 24;
-      ExecutionOutcome actualExec = rhs.execute(inputs, null);
+      ExecutionOutcome actualExec = op.execute(inputs, null);
       assertTrue(
           "outcome of static field set should be normal execution",
           actualExec instanceof NormalExecution);
@@ -78,28 +89,42 @@ public class FieldSetterTest {
   @Test
   public void testInstanceField() {
     Class<?> c = ClassWithFields.class;
+    ConcreteType declaringType = ConcreteType.forClass(c);
     try {
-      InstanceField f = new InstanceField(c.getField("oneField"));
-      FieldSet rhs = new FieldSet(f);
+      Field field = c.getField("oneField");
+      AccessibleField f = new AccessibleField(field, declaringType);
+      ConcreteType fieldType = ConcreteType.forClass(field.getDeclaringClass());
+      List<ConcreteType> setInputTypeList = new ArrayList<>();
+      setInputTypeList.add(declaringType);
+      setInputTypeList.add(fieldType);
+      FieldSet setOp = new FieldSet(f);
+      ConcreteOperation op = new ConcreteOperation(setOp, declaringType, new ConcreteTypeTuple(setInputTypeList), ConcreteType.VOID_TYPE);
 
       //types
-      assertEquals("Should be two input types", 2, rhs.getInputTypes().size());
-      assertEquals("Output type should be void", void.class, rhs.getOutputType());
+      assertEquals("Should be two input types", 2, op.getInputTypes().size());
+      assertEquals("Output type should be void", ConcreteType.VOID_TYPE, op.getOutputType());
 
       //code generation
       String expected = "classWithFields0.oneField = 24;" + Globals.lineSep;
       StringBuilder b = new StringBuilder();
-      ConstructorCall cons =
-          new ConstructorCall(
-              ConstructorSignatures.getConstructorForSignatureString(
-                  "randoop.field.ClassWithFields.<init>()"));
-      Sequence seq0 = new Sequence().extend(cons, new ArrayList<Variable>());
-      Sequence seq1 = seq0.extend(new NonreceiverTerm(int.class, 24), new ArrayList<Variable>());
+      Constructor<?> constructor = null;
+      try {
+        constructor = c.getConstructor();
+      } catch (NoSuchMethodException e) {
+        fail("didn't load constructor " + e);
+      }
+      assert constructor != null;
+      ConstructorCall cons = new ConstructorCall(constructor);
+      ConcreteOperation consOp = new ConcreteOperation(cons,declaringType, new ConcreteTypeTuple(), declaringType);
+
+      Sequence seq0 = new Sequence().extend(consOp, new ArrayList<Variable>());
+      ConcreteOperation initOp = new ConcreteOperation(new NonreceiverTerm(ConcreteType.INT_TYPE, 24), ConcreteType.INT_TYPE, new ConcreteTypeTuple(), ConcreteType.INT_TYPE);
+      Sequence seq1 = seq0.extend(initOp, new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
       vars.add(new Variable(seq1, 0));
       vars.add(new Variable(seq1, 1));
-      Statement st_rhs = new Statement(rhs);
-      st_rhs.appendCode(null, vars, b);
+      Statement st_op = new Statement(op);
+      st_op.appendCode(null, vars, b);
       assertEquals("Expect assignment to instance field", expected, b.toString());
 
       //execution
@@ -107,7 +132,7 @@ public class FieldSetterTest {
       inputs[0] = null;
       inputs[1] = 9;
       //null object
-      ExecutionOutcome nullOutcome = rhs.execute(inputs, null);
+      ExecutionOutcome nullOutcome = op.execute(inputs, null);
       assertTrue(
           "Expect null pointer exception",
           nullOutcome instanceof ExceptionalExecution
@@ -120,7 +145,7 @@ public class FieldSetterTest {
       inputs2[1] = 9;
       assertFalse("Initial value of field is not 9", 9 == (int) f.getValue(inputs2[0]));
       NormalExecution expectedExec = new NormalExecution(null, 0);
-      ExecutionOutcome actualExec = rhs.execute(inputs2, null);
+      ExecutionOutcome actualExec = op.execute(inputs2, null);
       assertTrue("outcome should be normal execution", actualExec instanceof NormalExecution);
       NormalExecution actualNExec = (NormalExecution) actualExec;
       assertTrue(
@@ -137,24 +162,25 @@ public class FieldSetterTest {
       fail("test failed because object instantiation failed.");
     } catch (IllegalAccessException e) {
       fail("test failed because of unexpected access exception.");
-    } catch (OperationParseException e) {
-      fail("test failed because ClassWithFields constructor not found");
     }
   }
 
   @Test
-  public void testFinalInstanceField() {
+  public void testFinalField() {
     Class<?> c = ClassWithFields.class;
+    ConcreteType declaringType = ConcreteType.forClass(c);
     try {
-      FinalInstanceField f = new FinalInstanceField(c.getField("tenField"));
+      Field field = c.getField("tenField");
+      AccessibleField f = new AccessibleField(field, declaringType);
+
       try {
         @SuppressWarnings("unused")
-        FieldSet rhs = new FieldSet(f);
+        FieldSet setOp = new FieldSet(f);
         fail(
-            "IllegalArgumentException expected when final instance field given to FieldSetter constructor");
+            "IllegalArgumentException expected when final instance field given to FieldSet constructor");
       } catch (IllegalArgumentException e) {
         assertEquals(
-            "Argument Exception", "Field may not be final for FieldSetter", e.getMessage());
+            "Argument Exception", "Field may not be final for FieldSet", e.getMessage());
       }
     } catch (NoSuchFieldException e) {
       fail("test failed because field in test class not found");
@@ -164,18 +190,21 @@ public class FieldSetterTest {
   }
 
   @Test
-  public void testStaticFinalField() {
+  public void testFinalStaticField() {
     Class<?> c = ClassWithFields.class;
+    ConcreteType declaringType = ConcreteType.forClass(c);
     try {
-      StaticFinalField f = new StaticFinalField(c.getField("FIVEFIELD"));
+      Field field = c.getField("FIVEFIELD");
+      AccessibleField f = new AccessibleField(field, declaringType);
+
       try {
         @SuppressWarnings("unused")
-        FieldSet rhs = new FieldSet(f);
+        FieldSet op = new FieldSet(f);
         fail(
-            "IllegalArgumentException expected when static final field given to FieldSetter constructor");
+            "IllegalArgumentException expected when static final field given to FieldSet constructor");
       } catch (IllegalArgumentException e) {
         assertEquals(
-            "Argument exception", "Field may not be static final for FieldSetter", e.getMessage());
+            "Argument exception", "Field may not be final for FieldSet", e.getMessage());
       }
     } catch (NoSuchFieldException e) {
       fail("test failed because field in test class not found");
@@ -186,9 +215,18 @@ public class FieldSetterTest {
 
   @Test
   public void parseable() {
-    String setterDesc = "<set>(int:randoop.field.ClassWithFields.oneField)";
+    String setterDesc = "randoop.field.ClassWithFields.<set>(oneField)";
+    final List<ConcreteOperation> ops = new ArrayList<>();
+    TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
+      @Override
+      public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
+        ops.add(operation);
+      }
+    });
     try {
-      FieldSet setter = FieldSet.parse(setterDesc);
+      FieldSet.parse(setterDesc, operationManager);
+      assert ops.size() > 0 : "operations should have element";
+      ConcreteOperation setter = ops.get(0);
       assertEquals(
           "parse should return object that converts to string",
           setterDesc,

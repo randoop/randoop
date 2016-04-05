@@ -7,13 +7,17 @@ import static org.junit.Assert.fail;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 
+import randoop.operation.ConcreteOperation;
 import randoop.operation.MethodCall;
-import randoop.operation.Operation;
 import randoop.reflection.visibilitytest.PackageSubclass;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
 
 /**
  * A test to ensure that reflective collection of methods includes the
@@ -25,28 +29,33 @@ public class VisibilityBridgeTest {
   //can't compare method of superclass directly to method of subclass
   //so need to convert to abstraction to allow list search
   private class FormalMethod {
-    private Class<?> returnType;
+    private ConcreteType returnType;
     private String name;
-    private Class<?>[] parameterTypes;
+    private ConcreteTypeTuple parameterTypes;
 
-    public FormalMethod(Method m) {
-      this.returnType = m.getReturnType();
+    FormalMethod(Method m, ConcreteType declaringType) {
+      this.returnType = ConcreteType.forClass(m.getReturnType());
       this.name = m.getName();
-      this.parameterTypes = m.getParameterTypes();
+      List<ConcreteType> paramTypes = new ArrayList<>();
+      if (! Modifier.isStatic(m.getModifiers() & Modifier.methodModifiers())) {
+        paramTypes.add(declaringType);
+      }
+      for (Class<?> p : m.getParameterTypes()) {
+        paramTypes.add(ConcreteType.forClass(p));
+      }
+      this.parameterTypes = new ConcreteTypeTuple(paramTypes);
     }
 
-    public FormalMethod(MethodCall call) {
-      this(call.getMethod());
+    FormalMethod(ConcreteOperation op) {
+      this.returnType = op.getOutputType();
+      this.parameterTypes = op.getInputTypes();
+      this.name = ((MethodCall)op.getOperation()).getName();
     }
 
     public boolean equals(FormalMethod m) {
-      if (!this.returnType.equals(m.returnType)) return false;
-      if (!this.name.equals(m.name)) return false;
-      if (this.parameterTypes.length != m.parameterTypes.length) return false;
-      for (int i = 0; i < this.parameterTypes.length; i++) {
-        if (!this.parameterTypes[i].equals(m.parameterTypes[i])) return false;
-      }
-      return true;
+      return this.returnType.equals(m.returnType)
+              && this.name.equals(m.name)
+              && this.parameterTypes.equals(m.parameterTypes);
     }
 
     @Override
@@ -68,9 +77,8 @@ public class VisibilityBridgeTest {
    */
   @Test
   public void testVisibilityBridge() {
-    ArrayList<Class<?>> classes = new ArrayList<>();
     Class<?> sub = PackageSubclass.class;
-    classes.add(sub);
+    ConcreteType declaringType = ConcreteType.forClass(sub);
 
     //should only inherit public non-synthetic methods of package private superclass
     List<FormalMethod> include = new ArrayList<>();
@@ -78,28 +86,47 @@ public class VisibilityBridgeTest {
       Class<?> sup = Class.forName("randoop.reflection.visibilitytest.PackagePrivateBase");
       for (Method m : sup.getDeclaredMethods()) {
         if (Modifier.isPublic(m.getModifiers()) && !m.isBridge() && !m.isSynthetic()) {
-          include.add(new FormalMethod(m));
+          include.add(new FormalMethod(m, declaringType));
         }
       }
     } catch (ClassNotFoundException e) {
       fail("test failed because unable to find base class");
     }
 
-    List<Operation> actualOps = OperationExtractor.getOperations(classes, null);
+    Set<ConcreteOperation> actualOps = getConcreteOperations(sub);
     assertEquals(
         "expect operations count to be inherited methods plus constructor",
         include.size() + 1,
         actualOps.size());
 
     List<FormalMethod> actual = new ArrayList<>();
-    for (Operation op : actualOps) {
-      if (op instanceof MethodCall) {
-        actual.add(new FormalMethod((MethodCall) op));
+    for (ConcreteOperation op : actualOps) {
+      if (op.isMethodCall()) {
+        actual.add(new FormalMethod(op));
       }
     }
 
     for (FormalMethod m : include) {
       assertTrue("method " + m.getName() + " should occur", actual.contains(m));
     }
+  }
+
+  private Set<ConcreteOperation> getConcreteOperations(Class<?> c) {
+    return getConcreteOperations(c, new DefaultReflectionPredicate());
+  }
+
+  private Set<ConcreteOperation> getConcreteOperations(Class<?> c, ReflectionPredicate predicate) {
+    final Set<ConcreteOperation> operations = new LinkedHashSet<>();
+    TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
+      @Override
+      public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
+        operations.add(operation);
+      }
+    });
+    OperationExtractor extractor = new OperationExtractor(operationManager);
+    ReflectionManager manager = new ReflectionManager(predicate);
+    manager.add(extractor);
+    manager.apply(c);
+    return operations;
   }
 }

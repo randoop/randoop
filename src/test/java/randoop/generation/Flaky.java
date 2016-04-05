@@ -1,4 +1,4 @@
-package randoop.sequence;
+package randoop.generation;
 
 public class Flaky {
 

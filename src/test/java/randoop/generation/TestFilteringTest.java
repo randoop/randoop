@@ -1,8 +1,8 @@
-package randoop.sequence;
+package randoop.generation;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -10,24 +10,29 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.junit.Test;
-
-import randoop.ComponentManager;
 import randoop.DummyVisitor;
-import randoop.RandoopListenerManager;
-import randoop.SeedSequences;
+import randoop.contract.ObjectContract;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.main.GenTests;
-import randoop.operation.ConstructorCall;
-import randoop.operation.Operation;
+import randoop.operation.ConcreteOperation;
 import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.ModelCollections;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
+import randoop.reflection.ReflectionManager;
 import randoop.reflection.ReflectionPredicate;
+import randoop.reflection.TypedOperationManager;
 import randoop.reflection.VisibilityPredicate;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Sequence;
 import randoop.test.TestCheckGenerator;
+import randoop.types.ConcreteType;
+import randoop.util.MultiMap;
+import randoop.util.predicate.AlwaysTrue;
 import randoop.util.predicate.Predicate;
+
+import static org.junit.Assert.assertTrue;
 
 public class TestFilteringTest {
 
@@ -148,7 +153,7 @@ public class TestFilteringTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have no regression tests", rTests.size() == 0);
+    assertTrue("should have no regression tests, but getting " + rTests.size(), rTests.size() == 0);
     assertTrue("should have some error tests", eTests.size() > 0);
   }
 
@@ -214,41 +219,42 @@ public class TestFilteringTest {
   }
 
   private ForwardGenerator buildGenerator(Class<?> c) {
-    Set<Class<?>> classes = new LinkedHashSet<>();
-    classes.add(c);
+
     Set<String> omitfields = new HashSet<>();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ReflectionPredicate predicate =
-        new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields, visibility);
-    List<Operation> model = OperationExtractor.getOperations(classes, predicate);
-    Collection<Sequence> components = new LinkedHashSet<Sequence>();
-    components.addAll(SeedSequences.objectsToSeeds(SeedSequences.primitiveSeeds));
+            new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields, visibility);
+    final List<ConcreteOperation> model = new ArrayList<>();
+    TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
+      @Override
+      public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
+        model.add(operation);
+      }
+    });
+    ReflectionManager manager = new ReflectionManager(predicate);
+    manager.add(new OperationExtractor(operationManager));
+    manager.apply(c);
+    Collection<Sequence> components = new LinkedHashSet<>();
+    components.addAll(SeedSequences.defaultSeeds());
     ComponentManager componentMgr = new ComponentManager(components);
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
-    ForwardGenerator testGenerator =
-        new ForwardGenerator(
-            model,
-            GenInputsAbstract.timelimit * 1000,
-            GenInputsAbstract.inputlimit,
-            GenInputsAbstract.outputlimit,
-            componentMgr,
-            null,
-            listenerMgr);
+    ForwardGenerator gen =
+            new ForwardGenerator(
+                    model,
+                    new LinkedHashSet<ConcreteOperation>(),
+                    GenInputsAbstract.timelimit * 1000,
+                    GenInputsAbstract.inputlimit,
+                    GenInputsAbstract.outputlimit,
+                    componentMgr,
+                    null,
+                    listenerMgr);
     GenTests genTests = new GenTests();
-    ConstructorCall objectConstructor = null;
-    try {
-      objectConstructor = ConstructorCall.createConstructorCall(Object.class.getConstructor());
-      if (!model.contains(objectConstructor)) model.add(objectConstructor);
-    } catch (Exception e) {
-      fail("couldn't get object constructor");
-    }
-    Predicate<ExecutableSequence> isOutputTest =
-        genTests.createTestOutputPredicate(
-            objectConstructor, new HashSet<Class<?>>(), include_if_classname_appears);
-    testGenerator.addTestPredicate(isOutputTest);
-    TestCheckGenerator checkGenerator = genTests.createTestCheckGenerator(visibility, classes);
-    testGenerator.addTestCheckGenerator(checkGenerator);
-    testGenerator.addExecutionVisitor(new DummyVisitor());
-    return testGenerator;
+    Predicate<ExecutableSequence> isOutputTest = genTests.createTestOutputPredicate(new HashSet<Sequence>(), new HashSet<Class<?>>(), null);
+    gen.addTestPredicate(isOutputTest);
+    TestCheckGenerator checkGenerator =
+            (new GenTests()).createTestCheckGenerator(visibility, new LinkedHashSet<ObjectContract>(), new MultiMap<ConcreteType, ConcreteOperation>(), new LinkedHashSet<ConcreteOperation>());
+    gen.addTestCheckGenerator(checkGenerator);
+    gen.addExecutionVisitor(new DummyVisitor());
+    return gen;
   }
 }

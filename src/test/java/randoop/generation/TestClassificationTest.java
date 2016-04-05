@@ -1,40 +1,46 @@
-package randoop.sequence;
+package randoop.generation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Test;
-
-import randoop.test.Check;
-import randoop.ComponentManager;
 import randoop.DummyVisitor;
+import randoop.contract.ObjectContract;
+import randoop.main.GenInputsAbstract;
+import randoop.main.GenInputsAbstract.BehaviorType;
+import randoop.main.GenTests;
+import randoop.operation.ConcreteOperation;
+import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.ModelCollections;
+import randoop.reflection.OperationExtractor;
+import randoop.reflection.PublicVisibilityPredicate;
+import randoop.reflection.ReflectionManager;
+import randoop.reflection.ReflectionPredicate;
+import randoop.reflection.TypedOperationManager;
+import randoop.reflection.VisibilityPredicate;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Sequence;
+import randoop.test.Check;
 import randoop.test.EmptyExceptionCheck;
 import randoop.test.ExceptionCheck;
 import randoop.test.ExpectedExceptionCheck;
 import randoop.test.NoExceptionCheck;
-import randoop.RandoopListenerManager;
-import randoop.SeedSequences;
-import randoop.main.GenInputsAbstract;
-import randoop.main.GenInputsAbstract.BehaviorType;
-import randoop.main.GenTests;
-import randoop.operation.Operation;
-import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.OperationExtractor;
-import randoop.reflection.PublicVisibilityPredicate;
-import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.VisibilityPredicate;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
+import randoop.types.ConcreteType;
+import randoop.util.MultiMap;
 import randoop.util.predicate.AlwaysTrue;
 import randoop.util.predicate.Predicate;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Tests the classification of tests based on exception behavior assignments.
@@ -300,20 +306,29 @@ public class TestClassificationTest {
   }
 
   private ForwardGenerator buildGenerator(Class<?> c) {
-    Set<Class<?>> classes = new LinkedHashSet<>();
-    classes.add(c);
+
     Set<String> omitfields = new HashSet<>();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ReflectionPredicate predicate =
         new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields, visibility);
-    List<Operation> model = OperationExtractor.getOperations(classes, predicate);
-    Collection<Sequence> components = new LinkedHashSet<Sequence>();
-    components.addAll(SeedSequences.objectsToSeeds(SeedSequences.primitiveSeeds));
+    final List<ConcreteOperation> model = new ArrayList<>();
+    TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
+      @Override
+      public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
+        model.add(operation);
+      }
+    });
+    ReflectionManager manager = new ReflectionManager(predicate);
+    manager.add(new OperationExtractor(operationManager));
+    manager.apply(c);
+    Collection<Sequence> components = new LinkedHashSet<>();
+    components.addAll(SeedSequences.defaultSeeds());
     ComponentManager componentMgr = new ComponentManager(components);
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
     ForwardGenerator gen =
         new ForwardGenerator(
             model,
+            new LinkedHashSet<ConcreteOperation>(),
             GenInputsAbstract.timelimit * 1000,
             GenInputsAbstract.inputlimit,
             GenInputsAbstract.outputlimit,
@@ -323,7 +338,7 @@ public class TestClassificationTest {
     Predicate<ExecutableSequence> isOutputTest = new AlwaysTrue<>();
     gen.addTestPredicate(isOutputTest);
     TestCheckGenerator checkGenerator =
-        (new GenTests()).createTestCheckGenerator(visibility, classes);
+        (new GenTests()).createTestCheckGenerator(visibility, new LinkedHashSet<ObjectContract>(), new MultiMap<ConcreteType, ConcreteOperation>(), new LinkedHashSet<ConcreteOperation>());
     gen.addTestCheckGenerator(checkGenerator);
     gen.addExecutionVisitor(new DummyVisitor());
     return gen;
