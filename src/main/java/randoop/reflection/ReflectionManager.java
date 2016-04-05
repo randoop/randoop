@@ -34,7 +34,7 @@ import randoop.util.Log;
  * <li>methods defined for enum constants that satisfy predicate.
  * </ul>
  */
-class ReflectionManager {
+public class ReflectionManager {
 
   private ReflectionPredicate predicate;
   private ArrayList<ClassVisitor> visitors;
@@ -48,7 +48,7 @@ class ReflectionManager {
    *          the predicate to indicate whether classes and class members should
    *          be visited.
    */
-  ReflectionManager(ReflectionPredicate predicate) {
+  public ReflectionManager(ReflectionPredicate predicate) {
     this.predicate = predicate;
     this.visitors = new ArrayList<>();
   }
@@ -72,7 +72,7 @@ class ReflectionManager {
    *
    * @param c  the {@link Class} object to be visited.
    */
-  void apply(Class<?> c) {
+  public void apply(Class<?> c) {
 
     if (predicate.test(c)) {
 

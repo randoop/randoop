@@ -20,11 +20,11 @@ import randoop.types.PrimitiveTypes;
  * see if they are annotated with {@link randoop.TestValue}, are static, and
  * have type that is primitive, String, or an array of primitive or String.
  */
-class TestValueExtractor implements ClassVisitor {
+public class TestValueExtractor implements ClassVisitor {
 
   private Set<Sequence> valueSequences;
 
-  TestValueExtractor(Set<Sequence> valueSequences) {
+  public TestValueExtractor(Set<Sequence> valueSequences) {
     this.valueSequences = valueSequences;
   }
 
@@ -119,7 +119,7 @@ class TestValueExtractor implements ClassVisitor {
             + f.getName()
             + "\" in class "
             + f.getDeclaringClass().getCanonicalName()
-            + ". Will collect its primtive values to use in generation.";
+            + ". Will collect its primitive values to use in generation.";
     System.out.println(msg);
   }
 

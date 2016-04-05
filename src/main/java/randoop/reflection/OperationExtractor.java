@@ -69,8 +69,8 @@ public class OperationExtractor implements ClassVisitor {
    */
   @Override
   public void visit(Method method) {
-    assert method.getDeclaringClass().equals(classType.getRuntimeClass())
-            : "classType " + classType + " and declaring class " + method.getDeclaringClass().getName() + " should be same";
+    assert method.getDeclaringClass().isAssignableFrom(classType.getRuntimeClass())
+            : "classType " + classType + " should be assignable to declaring class " + method.getDeclaringClass().getName();
 
     MethodCall op = new MethodCall(method);
     GenericTypeTuple inputTypes;
@@ -93,8 +93,8 @@ public class OperationExtractor implements ClassVisitor {
    */
   @Override
   public void visit(Field field) {
-    assert field.getDeclaringClass().equals(classType.getRuntimeClass())
-            : "classType " + classType + " and declaring class " + field.getDeclaringClass().getName() + " should be same";
+    assert field.getDeclaringClass().isAssignableFrom(classType.getRuntimeClass())
+            : "classType " + classType + " should be assignable from " + field.getDeclaringClass().getName();
 
     GeneralType fieldType = GeneralType.forType(field.getGenericType());
     List<GeneralType> setInputTypeList = new ArrayList<>();
@@ -123,11 +123,10 @@ public class OperationExtractor implements ClassVisitor {
    */
   @Override
   public void visit(Enum<?> e) {
-    assert e.getDeclaringClass().equals(classType.getRuntimeClass())
-            : "classType " + classType + " and declaring class " + e.getDeclaringClass().getName() + " should be same";
-    assert ! classType.isGeneric() : "type of enum class cannot be generic";
+    ConcreteType enumType = ConcreteType.forClass(e.getDeclaringClass());
+    assert ! enumType.isGeneric() : "type of enum class cannot be generic";
     EnumConstant op = new EnumConstant(e);
-    manager.createTypedOperation(op, classType, new GenericTypeTuple(), classType);
+    manager.createTypedOperation(op, enumType, new GenericTypeTuple(), enumType);
   }
 
   @Override

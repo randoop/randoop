@@ -2,6 +2,7 @@ package randoop.reflection;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -15,12 +16,15 @@ import randoop.contract.ObjectContract;
 import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
 import randoop.operation.ConcreteOperation;
+import randoop.operation.ConstructorCall;
 import randoop.operation.GenericOperation;
 import randoop.operation.OperationParseException;
 import randoop.operation.OperationParser;
 import randoop.sequence.Sequence;
 import randoop.types.ConcreteType;
+import randoop.types.GeneralType;
 import randoop.types.GenericType;
+import randoop.types.GenericTypeTuple;
 import randoop.types.TypeNames;
 import randoop.util.MultiMap;
 
@@ -296,8 +300,15 @@ public class OperationModel extends ModelCollections {
     return contracts;
   }
 
-  public ConcreteOperation getOperation(Constructor<Object> constructor) {
-    return null;
+  public ConcreteOperation getConcreteOperation(Constructor<?> constructor) {
+    ConcreteType declaringType = ConcreteType.forClass(constructor.getDeclaringClass());
+    ConstructorCall op = new ConstructorCall(constructor);
+    List<GeneralType> paramTypes = new ArrayList<>();
+    for (Type t : constructor.getGenericParameterTypes()) {
+      paramTypes.add(GeneralType.forType(t));
+    }
+    GenericTypeTuple inputTypes = new GenericTypeTuple(paramTypes);
+    return new ConcreteOperation(op, declaringType, inputTypes.makeConcrete(), declaringType);
   }
 
   public Set<Sequence> getAnnotatedTestValues() {

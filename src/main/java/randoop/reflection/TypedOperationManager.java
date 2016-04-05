@@ -24,7 +24,7 @@ public class TypedOperationManager {
 
   private final ModelCollections collections;
 
-  TypedOperationManager(ModelCollections collections) {
+  public TypedOperationManager(ModelCollections collections) {
     this.collections = collections;
   }
 
