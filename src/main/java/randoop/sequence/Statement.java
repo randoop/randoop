@@ -60,7 +60,7 @@ public final class Statement {
    *
    * @return true if output type is void.
    */
-  public boolean isVoidMethodCall() {
+  boolean isVoidMethodCall() {
     return operation.getOutputType().isVoid();
   }
 
@@ -158,8 +158,8 @@ public final class Statement {
    *          the mutable variable the statement affects
    * @return instance of mutable statement corresponding to this statement.
    */
-  public MutableStatement toModifiableStatement(
-      List<MutableVariable> inputs, MutableVariable mVariable) {
+  MutableStatement toModifiableStatement(
+          List<MutableVariable> inputs, MutableVariable mVariable) {
     return new MutableStatement(operation, inputs, mVariable);
   }
 
@@ -273,7 +273,7 @@ public final class Statement {
   }
 
   /**
-   * getOperation is meant to be a temporary solution to type confusion in
+   * getConcreteOperation is meant to be a temporary solution to type confusion in
    * generators. This should go away. Only intended to be called by
    * {@link Sequence#extend(ConcreteOperation, List)}.
    *

@@ -65,12 +65,14 @@ class VariableRenamer {
       return "byte";
     } else {
       // for other object types
-      String name = type.getName();
-      if (name.length() > 0) {
-        if (Character.isUpperCase(name.charAt(0))) {
-          return name.substring(0, 1).toLowerCase() + name.substring(1);
+      String qualifiedTypeName = type.getName();
+      assert qualifiedTypeName.indexOf('.') > 0 : "expecting qualified type name, got " + qualifiedTypeName;
+      String typeName = qualifiedTypeName.substring(qualifiedTypeName.lastIndexOf('.') + 1);
+      if (typeName.length() > 0) {
+        if (Character.isUpperCase(typeName.charAt(0))) {
+          return typeName.substring(0, 1).toLowerCase() + typeName.substring(1);
         } else {
-          return name + "_instance";
+          return typeName + "_instance";
         }
       } else {
         return "anonymous";

@@ -3,13 +3,18 @@ package randoop.sequence;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.ConcreteOperation;
+import randoop.operation.OperationParseException;
 import randoop.operation.OperationParser;
+import randoop.reflection.ModelCollections;
+import randoop.reflection.TypedOperationManager;
 import randoop.types.ConcreteType;
 import randoop.types.PrimitiveTypes;
 import randoop.util.ArrayListSimpleList;
@@ -36,17 +41,23 @@ public final class Sequence implements WeightedElement {
 
   public double lastTimeUsed = java.lang.System.currentTimeMillis();
 
-  // The list of statements.
+  /** The list of statements. */
   public final SimpleList<Statement> statements;
 
-  // The values involved in the last statement (receiver, return
-  // value, parameters). Should be final but cannot because of serialization.
-  // This info is used by some generators.
+  /**
+   * The variables that are inputs or output for the last statement of this sequence.
+   * These hold the values "produced" by some statement of the sequence.
+   * Should be final but cannot because of serialization.
+   * This info is used by some generators.
+   */
   private transient /* final */ List<Variable> lastStatementVariables;
 
-  // The types of the values in lastStatementTypes.
-  // Should be final but cannot because of serialization.
-  // This info is used by some generators.
+  /**
+   * The types of the inputs and output for the last statement of this sequence.
+   * Excludes void in the case the output type of the operation of the last statement is void.
+   * Should be final but cannot because of serialization.
+   * This info is used by some generators.
+   */
   private transient /* final */ List<ConcreteType> lastStatementTypes;
 
   /*
@@ -91,7 +102,7 @@ public final class Sequence implements WeightedElement {
    * The variables involved in the last statement. This includes the output
    * variable.
    */
-  public List<Variable> getLastStatementVariables() {
+  public List<Variable> getVariablesOfLastStatement() {
     return this.lastStatementVariables;
   }
 
@@ -100,7 +111,7 @@ public final class Sequence implements WeightedElement {
    * includes the output variable. The types returned are not the types in the
    * signature of the StatementKind, but the types of the variables.
    */
-  public List<ConcreteType> getLastStatementTypes() {
+  public List<ConcreteType> getTypesForLastStatement() {
     return this.lastStatementTypes;
   }
 
@@ -354,7 +365,7 @@ public final class Sequence implements WeightedElement {
    * given class.
    */
   public static Sequence zero(ConcreteType c) {
-    return new Sequence().extend(ConcreteOperation.createNullInitializationWithType(c), new ArrayList<Variable>());
+    return new Sequence().extend(ConcreteOperation.createNullOrZeroInitializationForType(c), new ArrayList<Variable>());
   }
 
   // Create a sequence with the given statements.
@@ -417,39 +428,27 @@ public final class Sequence implements WeightedElement {
     this.lastStatementVariables = new ArrayList<>();
 
     if (this.statements.size() > 0) {
-      Statement si = this.statements.get(this.statements.size() - 1);
+      int lastStatementIndex = this.statements.size() - 1;
+      Statement lastStatement = this.statements.get(lastStatementIndex);
 
       // Process return value
-      if (si.getOutputType().isVoid()) {
-        lastStatementTypes.add(
-            ConcreteType.VOID_TYPE); // used for void methods and Dummy
-        // statements
-      } else {
-        lastStatementTypes.add(si.getOutputType());
+      if (! lastStatement.getOutputType().isVoid()) {
+        lastStatementTypes.add(lastStatement.getOutputType());
+        lastStatementVariables.add(new Variable(this, lastStatementIndex));
       }
-      lastStatementVariables.add(new Variable(this, this.statements.size() - 1));
 
       // Process input arguments.
-      if (si.inputs.size() != si.getInputTypes().size())
-        throw new RuntimeException(si.inputs + ", " + si.getInputTypes() + ", " + si.toString());
+      if (lastStatement.inputs.size() != lastStatement.getInputTypes().size())
+        throw new RuntimeException(lastStatement.inputs + ", " + lastStatement.getInputTypes() + ", " + lastStatement.toString());
 
-      List<Variable> v = this.getInputs(this.statements.size() - 1);
-      if (v.size() != si.getInputTypes().size()) throw new RuntimeException();
+      List<Variable> v = this.getInputs(lastStatementIndex);
+      if (v.size() != lastStatement.getInputTypes().size()) throw new RuntimeException();
 
       for (int i = 0; i < v.size(); i++) {
-        Variable value = v.get(i);
-        assert si.getInputTypes().get(i).isAssignableFrom(value.getType());
-        lastStatementTypes.add(value.getType());
-        Variable idx = getVariableForInput(this.size() - 1, si.inputs.get(i)); // XXX
-        // bogus.
-        // Isn't
-        // this
-        // just
-        // recomputing
-        // v
-        // from
-        // above?
-        lastStatementVariables.add(idx);
+        Variable actualArgument = v.get(i);
+        assert lastStatement.getInputTypes().get(i).isAssignableFrom(actualArgument.getType());
+        lastStatementTypes.add(actualArgument.getType());
+        lastStatementVariables.add(actualArgument);
       }
     }
   }
@@ -902,6 +901,8 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
+   * NOTE: the ONLY place this is used is in a test.
+   *
    * Parse a sequence encoded as a list of strings, each string corresponding to
    * one statement. This method is similar to parse(String), but expects the
    * individual statements already as separate strings. Each statement is
@@ -913,7 +914,7 @@ public final class Sequence implements WeightedElement {
    *
    * where the VAR are strings representing a variable name, and OPERATION is a
    * string representing a StatementKind. For more on OPERATION, see the
-   * documentation for {@link OperationParser#parse(String, randoop.reflection.ClassVisitor)}.
+   * documentation for {@link OperationParser#parse(String, randoop.reflection.TypedOperationManager)}.
    *
    * The first VAR token represents the "output variable" that is the result of
    * the statement call. The VAR tokens appearing after OPERATION represent the
@@ -944,7 +945,6 @@ public final class Sequence implements WeightedElement {
    * the sequences using java's serialization mechanism, or write them out as
    * parseable text. Serialization is faster, and text is human-readable.
    */
-  /*
   public static Sequence parse(List<String> statements) throws SequenceParseException {
 
     Map<String, Integer> valueMap = new LinkedHashMap<>();
@@ -1000,13 +1000,23 @@ public final class Sequence implements WeightedElement {
           throw new SequenceParseException(msg, statements, statementCount);
         }
 
+        System.out.println("operation string: " + opStr);
+        final List<ConcreteOperation> list = new ArrayList<>();
+        TypedOperationManager manager = new TypedOperationManager(new ModelCollections() {
+          @Override
+          public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
+            list.add(operation);
+          }
+        });
         // Parse operation.
-        ConcreteOperation st;
+
         try {
-          st = OperationParser.parse(opStr, visitor);
+          OperationParser.parse(opStr, manager);
         } catch (OperationParseException e) {
           throw new SequenceParseException(e.getMessage(), statements, statementCount);
         }
+        assert list.size() == 1 : "should have parsed one operator, got " + list.size();
+        ConcreteOperation st = list.get(0);
 
         // Find input variables from their names.
         String[] inVars = new String[0];
@@ -1048,24 +1058,21 @@ public final class Sequence implements WeightedElement {
       // Saw some other exception that is not a parse error.
       // Throw an error, giving information on the problem.
       StringBuilder b = new StringBuilder();
-      b.append(
-          "Error while parsing the following list of strings as a sequence (error was at index "
-              + statementCount
-              + "):\n\n");
+      b.append("Error while parsing the following list of strings as a sequence (error was at index ").append(statementCount).append("):\n\n");
       for (String s : statements) {
-        b.append(s + "\n");
+        b.append(s).append("\n");
       }
       b.append("\n\n");
-      b.append("Error: " + e.toString() + "\n");
+      b.append("Error: ").append(e.toString()).append("\n");
       b.append("Stack trace:\n");
       for (StackTraceElement s : e.getStackTrace()) {
         b.append(s.toString());
       }
-      throw new Error(e);
+      throw new Error(b.toString());
     }
     return sequence;
   }
-*/
+
   /**
    * Parse a sequence encoded as a strings. Convenience method for
    * parse(List), which parses a sequence of strings, each representing
@@ -1088,11 +1095,11 @@ public final class Sequence implements WeightedElement {
    * @throws SequenceParseException
    *           if string is not valid sequence
    */
-  /*
+
   public static Sequence parse(String string) throws SequenceParseException {
     return parse(Arrays.asList(string.split(Globals.lineSep)));
   }
-*/
+
 
   public int lastUseBefore(int idx, Variable var) {
     if (var.sequence != this)
@@ -1161,7 +1168,7 @@ public final class Sequence implements WeightedElement {
     if (value == null) throw new IllegalArgumentException("o is null");
     ConcreteType type = ConcreteType.forClass(value.getClass());
 
-    if (!(type.isPrimitive() || type.isBoxedPrimitive())) {
+    if (!(type.isPrimitive() || type.isBoxedPrimitive() || type.isString())) {
       throw new IllegalArgumentException("o is not a boxed primitive or String");
     }
     if (type.equals(ConcreteType.STRING_TYPE) && !PrimitiveTypes.stringLengthOK((String) value)) {

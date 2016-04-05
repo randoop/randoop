@@ -114,10 +114,6 @@ public class Variable implements Comparable<Variable> {
    * @param type  the type
    */
   public static String classToVariableName(ConcreteType type) {
-    // assert !clazz.equals(void.class) : "The given variable type can not be
-    // void!";
-    // return classNameToVariableName(clazz.getSimpleName().replace("[]",
-    // "_array"));
     return VariableRenamer.getVariableName(type);
   }
 
