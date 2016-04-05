@@ -606,7 +606,7 @@ public class ForwardGenerator extends AbstractGenerator {
           return new InputsAndSuccessFlag(false, null, null);
         } else {
           if (Log.isLoggingOn()) Log.logLine("Will use null as " + i + "-th input");
-          ConcreteOperation st = ConcreteOperation.createNullInitializationWithType(t);
+          ConcreteOperation st = ConcreteOperation.createNullOrZeroInitializationForType(t);
           Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
           variables.add(totStatements);
           sequences.add(seq);
@@ -628,7 +628,7 @@ public class ForwardGenerator extends AbstractGenerator {
           && Randomness.weighedCoinFlip(GenInputsAbstract.null_ratio)) {
         if (Log.isLoggingOn())
           Log.logLine("null-ratio option given. Randomly decided to use null as input.");
-        ConcreteOperation st = ConcreteOperation.createNullInitializationWithType(t);
+        ConcreteOperation st = ConcreteOperation.createNullOrZeroInitializationForType(t);
         Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
         variables.add(totStatements);
         sequences.add(seq);
