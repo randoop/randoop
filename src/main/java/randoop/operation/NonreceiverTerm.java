@@ -113,6 +113,11 @@ public final class NonreceiverTerm extends CallableOperation {
     return value.toString();
   }
 
+  @Override
+  public String getName() {
+    return this.toString();
+  }
+
   /**
    * {@inheritDoc}
    *

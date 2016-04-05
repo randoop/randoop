@@ -58,6 +58,11 @@ public class EnumConstant extends CallableOperation {
     return value.toString();
   }
 
+  @Override
+  public String getName() {
+    return this.toString();
+  }
+
   /**
    * {@inheritDoc}
    * @return a {@link NormalExecution} object holding the value of the enum constant.

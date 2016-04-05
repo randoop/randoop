@@ -1,5 +1,7 @@
 package randoop.operation;
 
+import java.util.Objects;
+
 import randoop.reflection.ReflectionPredicate;
 
 /**
@@ -18,6 +20,30 @@ public abstract class TypedOperation<T extends Operation> implements Operation {
    */
   public TypedOperation(T operation) {
     this.operation = operation;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (! (obj instanceof TypedOperation)) {
+      return false;
+    }
+    TypedOperation<?> op = (TypedOperation<?>)obj;
+    return operation.equals(op.operation);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(operation);
+  }
+
+  @Override
+  public String toString() {
+    return this.getName();
+  }
+
+  @Override
+  public String getName() {
+    return operation.getName();
   }
 
   /**

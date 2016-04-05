@@ -98,6 +98,10 @@ public class FieldGet extends CallableOperation {
     return field.toString();
   }
 
+  public String getName() {
+    return toString();
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof FieldGet) {

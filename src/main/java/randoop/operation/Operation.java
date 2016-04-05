@@ -116,4 +116,11 @@ public interface Operation extends Comparable<Operation> {
    * @return result of applying reflectionPredicate to object.
    */
   boolean satisfies(ReflectionPredicate reflectionPredicate);
+
+  /**
+   * Returns the name for the operation.
+   *
+   * @return the name for this operation
+   */
+  String getName();
 }

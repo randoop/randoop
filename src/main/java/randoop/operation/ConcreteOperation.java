@@ -143,6 +143,11 @@ public class ConcreteOperation extends TypedOperation<CallableOperation> {
     return this.toParseableString();
   }
 
+  @Override
+  public String getName() {
+    return super.getName();
+  }
+
   public static ConcreteOperation createNullInitializationWithType(ConcreteType type) {
     assert ! type.isPrimitive() : "cannot initialize primitive to null: " + type;
     return ConcreteOperation.createNonreceiverInitialization(new NonreceiverTerm(type, null));

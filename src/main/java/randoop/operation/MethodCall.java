@@ -51,7 +51,7 @@ public final class MethodCall extends CallableOperation {
   /**
    * ID for parsing purposes
    *
-   * @see OperationParser#getId(Operation)
+   * @see OperationParser#getId(ConcreteOperation)
    */
   public static final String ID = "method";
 

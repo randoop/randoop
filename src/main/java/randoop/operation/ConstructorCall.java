@@ -1,5 +1,7 @@
 package randoop.operation;
 
+import org.checkerframework.checker.oigj.qual.O;
+
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
@@ -85,6 +87,11 @@ public final class ConstructorCall extends CallableOperation {
     }
     b.append(")");
     return b.toString();
+  }
+
+  @Override
+  public String getName() {
+    return "<init>";
   }
 
   /**

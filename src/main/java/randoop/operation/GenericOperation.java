@@ -1,5 +1,7 @@
 package randoop.operation;
 
+import java.util.Objects;
+
 import randoop.types.GeneralType;
 import randoop.types.GeneralTypeTuple;
 import randoop.types.GenericType;
@@ -45,6 +47,28 @@ public class GenericOperation extends TypedOperation<Operation> {
     this.declaringType = declaringType;
     this.inputTypes = inputTypes;
     this.outputType = outputType;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (! (obj instanceof  GenericOperation)) {
+      return false;
+    }
+    GenericOperation op = (GenericOperation)obj;
+    return super.equals(op)
+            && declaringType.equals(op.declaringType)
+            && inputTypes.equals(op.inputTypes)
+            && outputType.equals(op.outputType);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(declaringType, inputTypes, outputType, super.hashCode());
+  }
+
+  @Override
+  public String toString() {
+    return declaringType + "." + super.toString() + inputTypes + " -> " + outputType;
   }
 
   /**

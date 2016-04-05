@@ -191,6 +191,11 @@ public class FieldSet extends CallableOperation {
   }
 
   @Override
+  public String getName() {
+    return this.toString();
+  }
+
+  @Override
   public boolean equals(Object obj) {
     if (obj instanceof FieldSet) {
       FieldSet s = (FieldSet) obj;
