@@ -12,17 +12,26 @@ public class FieldParser {
 
 
   public static AccessibleField parse(String descr, String classname, String fieldname) throws OperationParseException {
+    String errorPrefix = "Error when parsing field " + descr + ".";
     GeneralType classType;
     try {
       classType = GeneralType.forName(classname);
     } catch (ClassNotFoundException e) {
-      String msg = "Class for field " + descr + " not found: " + e;
+      String msg = errorPrefix + " Class for field " + descr + " not found: " + e;
+      throw new OperationParseException(msg);
+    }
+
+    String whitespacePattern = ".*\\s+.*";
+    if (fieldname.matches(whitespacePattern)) {
+      String msg = errorPrefix + " The field name "
+              + fieldname
+              + " has unexpected whitespace characters.";
       throw new OperationParseException(msg);
     }
 
     Field field = fieldForName(classType.getRuntimeClass(), fieldname);
     if (field == null) {
-      String msg =  " The field name \""
+      String msg =  errorPrefix + " The field name \""
               + fieldname
               + "\" is not a field of the class "
               + "\""
