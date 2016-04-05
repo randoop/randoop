@@ -1,23 +1,18 @@
 package randoop.instrument;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.Test;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import org.junit.Test;
 
 import randoop.CheckRep;
 import randoop.main.GenInputsAbstract;
-import randoop.main.GenTests;
-import randoop.reflection.PublicVisibilityPredicate;
-import randoop.reflection.VisibilityPredicate;
 import randoop.types.TypeNames;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * This test was originally written when the exercised-class instrumentation
@@ -34,10 +29,6 @@ public class LoadingWithAnnotationTest {
     GenInputsAbstract.include_if_classname_appears = null;
     GenInputsAbstract.include_if_class_exercised =
         new File("randoop/instrument/testcase/annotatedclasses.txt");
-    Set<Class<?>> coveredClasses = new LinkedHashSet<>();
-    Set<Class<?>> classes = new LinkedHashSet<>();
-    VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    GenTests.getClassesUnderTest(visibility, classes, coveredClasses);
 
     Class<?> cc = null;
     try {
@@ -48,7 +39,7 @@ public class LoadingWithAnnotationTest {
 
     Method m = null;
     try {
-      m = cc.getDeclaredMethod("isZero", new Class<?>[0]);
+      m = cc.getDeclaredMethod("isZero");
     } catch (NoSuchMethodException e) {
       fail("annotated method not found: " + e);
     } catch (SecurityException e) {
