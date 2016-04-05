@@ -183,6 +183,12 @@ test {
   reports.html.enabled = false
 
   /*
+   * Temporary exclusion b/c script file uses generics as raw types and conflicts with
+   * other uses of parsing.
+   */
+  exclude '**/randoop/test/SequenceTests.*'
+
+  /*
    * Problematic tests excluded during Gradle setup that need to be evaluated.
    * Unless otherwise noted, these are tests that were not previously run by
    * Makefile. However, some included tests were also not run, but are not

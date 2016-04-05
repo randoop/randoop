@@ -9,15 +9,19 @@ import java.util.List;
 
 import org.junit.Test;
 
-public class InstanceFieldTest {
+import randoop.types.ConcreteType;
+import randoop.types.GeneralType;
+
+public class AccessibleFieldTest {
 
   @Test
   public void inheritedMethods() {
     Class<?> c = ClassWithFields.class;
+    GeneralType declaringType = ConcreteType.forClass(c);
     try {
-      InstanceField pf1 = new InstanceField(c.getField("oneField"));
-      InstanceField pf1_2 = new InstanceField(c.getField("oneField"));
-      InstanceField pf2 = new InstanceField(c.getField("threeField"));
+      AccessibleField pf1 = new AccessibleField(c.getField("oneField"), declaringType);
+      AccessibleField pf1_2 = new AccessibleField(c.getField("oneField"), declaringType);
+      AccessibleField pf2 = new AccessibleField(c.getField("threeField"), declaringType);
 
       //identity
       assertEquals("Object built from same field should be equal", pf1, pf1_2);
@@ -27,18 +31,9 @@ public class InstanceFieldTest {
           pf1.hashCode(),
           pf1_2.hashCode());
 
-      //types
-      List<Class<?>> types = pf1.getSetTypes();
-      assertEquals("Instance field needs two input types", 2, types.size());
-
-      List<Class<?>> expectedTypes = new ArrayList<>();
-      expectedTypes.add(c);
-      expectedTypes.add(int.class);
-      assertEquals("Input type is field type", expectedTypes, types);
-
-      List<Class<?>> accessTypes = new ArrayList<>();
-      accessTypes.add(c);
-      assertEquals("Access types should be declaring class", accessTypes, pf1.getAccessTypes());
+      /*
+       * Note: this test shrank because
+       */
 
     } catch (NoSuchFieldException e) {
       fail("test failed because field in test class not found");
