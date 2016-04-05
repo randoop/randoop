@@ -121,6 +121,11 @@ public class GenericClassType extends GenericType {
     return rawType.getCanonicalName() + "<" + UtilMDE.join(parameters, ",") + ">";
   }
 
+  @Override
+  public boolean isInterface() {
+    return rawType.isInterface();
+  }
+
   /**
    * {@inheritDoc}
    * @return a {@link ParameterizedType} instantiating this generic class with

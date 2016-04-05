@@ -71,6 +71,13 @@ public abstract class GeneralType {
   }
 
   /**
+   * Indicates whether this object represents a type defined by an interface.
+   *
+   * @return true if this object represents an interface type, false otherwise
+   */
+  public boolean isInterface() { return false; }
+
+  /**
    * Indicate whether this type is generic.
    * If not, then type is concrete.
    *
@@ -219,7 +226,7 @@ public abstract class GeneralType {
    */
   private static GeneralType forParameterizedType(java.lang.reflect.ParameterizedType t) {
     Type rawType = t.getRawType();
-    assert !(rawType instanceof Class<?>);
+    assert (rawType instanceof Class<?>) : "rawtype not an instance of Class<?> type " ;
 
     // Collect whatever is lurking in the "actual type arguments"
     // Could be *actual* "actual type arguments", or type variables
@@ -301,5 +308,9 @@ public abstract class GeneralType {
       return c.getPackage();
     }
     return null;
+  }
+
+  public boolean isString() {
+    return false;
   }
 }

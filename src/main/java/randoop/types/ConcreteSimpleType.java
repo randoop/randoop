@@ -71,13 +71,22 @@ public class ConcreteSimpleType extends ConcreteType {
   }
 
   @Override
+  public boolean isInterface() { return runtimeClass.isInterface(); }
+
+  @Override
   public boolean isPrimitive() {
     return runtimeClass.isPrimitive();
   }
 
   @Override
   public boolean isBoxedPrimitive() {
-    return PrimitiveTypes.isBoxedOrPrimitiveOrStringType(runtimeClass);
+    return PrimitiveTypes.isBoxedPrimitiveTypeOrString(runtimeClass)
+            && ! this.equals(ConcreteType.STRING_TYPE);
+  }
+
+  @Override
+  public boolean isString() {
+    return this.equals(ConcreteType.STRING_TYPE);
   }
 
   /**

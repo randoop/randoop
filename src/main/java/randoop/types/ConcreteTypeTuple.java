@@ -2,6 +2,9 @@ package randoop.types;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import plume.UtilMDE;
 
 /**
  * {@code ConcreteTypeTuple} represents an ordered tuple of {@link ConcreteType} objects,
@@ -27,6 +30,20 @@ public class ConcreteTypeTuple implements GeneralTypeTuple {
    */
   public ConcreteTypeTuple() {
     list = new ArrayList<>();
+  }
+
+  @Override
+  public boolean equals (Object obj) {
+    if (! (obj instanceof ConcreteTypeTuple)) {
+      return false;
+    }
+    ConcreteTypeTuple tuple = (ConcreteTypeTuple)obj;
+    return list.equals(tuple.list);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(list);
   }
 
   /**
@@ -69,5 +86,10 @@ public class ConcreteTypeTuple implements GeneralTypeTuple {
   @Override
   public GeneralTypeTuple apply(Substitution substitution) {
     return this;
+  }
+
+  @Override
+  public String toString() {
+    return "(" + UtilMDE.join(list, ",") + ")";
   }
 }

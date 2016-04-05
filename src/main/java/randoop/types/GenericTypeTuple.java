@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import randoop.BugInRandoopException;
 import randoop.operation.GenericOperation;
@@ -29,6 +30,20 @@ public class GenericTypeTuple implements GeneralTypeTuple {
    */
   public GenericTypeTuple() {
     this.typeList = new ArrayList<>();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (! (obj instanceof GenericTypeTuple)) {
+      return false;
+    }
+    GenericTypeTuple tuple = (GenericTypeTuple)obj;
+    return typeList.equals(tuple.typeList);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(typeList);
   }
 
   /**

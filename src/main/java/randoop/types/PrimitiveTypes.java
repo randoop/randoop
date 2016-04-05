@@ -120,8 +120,9 @@ public final class PrimitiveTypes {
     return Collections.unmodifiableSet(s);
   }
 
-  public static ConcreteType toBoxedType(ConcreteType cls) {
-    return ConcreteType.forClass(primitiveAndStringToBoxed.get(cls.getRuntimeClass()));
+  public static ConcreteType toBoxedType(Class<?> cls) {
+    System.out.println("class: " + cls);
+    return ConcreteType.forClass(primitiveAndStringToBoxed.get(cls));
   }
 
   public static boolean isBoxedPrimitiveTypeOrString(Class<?> c) {
@@ -350,8 +351,8 @@ public final class PrimitiveTypes {
     if (target == null || source == null) {
       throw new IllegalArgumentException("types must be non null");
     }
-    if (!target.isPrimitive() || !source.isPrimitive()) {
-      throw new IllegalArgumentException("types must be primitive");
+    if ((!target.isPrimitive() && !target.equals(String.class)) || (!source.isPrimitive() && !source.equals(String.class))) {
+      throw new IllegalArgumentException("types must be primitive or String");
     }
 
     if (source.equals(target)) { // check identity widening

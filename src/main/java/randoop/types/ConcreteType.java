@@ -12,16 +12,18 @@ import java.lang.reflect.Type;
  */
 public abstract class ConcreteType extends GeneralType {
 
-  public static final ConcreteType VOID_TYPE = ConcreteType.forClass(void.class);
-  public static final ConcreteType STRING_TYPE = ConcreteType.forClass(String.class);
-  public static final ConcreteType OBJECT_TYPE = ConcreteType.forClass(Object.class);
-  public static final ConcreteType INT_TYPE = ConcreteType.forClass(int.class);
-  public static final ConcreteType LONG_TYPE = ConcreteType.forClass(long.class);
-  public static final ConcreteType SHORT_TYPE = ConcreteType.forClass(short.class);
-  public static final ConcreteType FLOAT_TYPE = ConcreteType.forClass(float.class);
+  public static final ConcreteType BOOLEAN_TYPE = ConcreteType.forClass(boolean.class);
+  public static final ConcreteType BYTE_TYPE = ConcreteType.forClass(byte.class);
+  public static final ConcreteType CHAR_TYPE = ConcreteType.forClass(char.class);
   public static final ConcreteType CLASS_TYPE = ConcreteType.forClass(Class.class);
   public static final ConcreteType DOUBLE_TYPE = ConcreteType.forClass(double.class);
-
+  public static final ConcreteType FLOAT_TYPE = ConcreteType.forClass(float.class);
+  public static final ConcreteType INT_TYPE = ConcreteType.forClass(int.class);
+  public static final ConcreteType LONG_TYPE = ConcreteType.forClass(long.class);
+  public static final ConcreteType OBJECT_TYPE = ConcreteType.forClass(Object.class);
+  public static final ConcreteType SHORT_TYPE = ConcreteType.forClass(short.class);
+  public static final ConcreteType STRING_TYPE = ConcreteType.forClass(String.class);
+  public static final ConcreteType VOID_TYPE = ConcreteType.forClass(void.class);
 
   /**
    * Indicates whether a value of a {@code ConcreteType} can be assigned to a
@@ -116,12 +118,16 @@ public abstract class ConcreteType extends GeneralType {
   }
 
   /**
-   * Indicates whether the given object represents an instance of this type.
+   * Indicates whether the given object represents a value that is assignable to this type.
+   * If the reference is null, then returns true only if this type is not primitive.
    *
    * @param e  the element to check
    * @return true if the type of {@code e} is assignable to this type, false otherwise
    */
   public <T> boolean isInstance(T e) {
+    if (e == null) {
+      return ! this.isPrimitive();
+    }
     return this.isAssignableFrom(ConcreteType.forClass(e.getClass()));
   }
 
@@ -198,7 +204,7 @@ public abstract class ConcreteType extends GeneralType {
    * @param elementType  the element type for the array type
    * @return a type object representing the array type with the given element type
    */
-  public static ConcreteType forArrayOf(ConcreteType elementType) {
+  public static ConcreteArrayType forArrayOf(ConcreteType elementType) {
     return new ConcreteArrayType(elementType);
   }
 
