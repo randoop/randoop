@@ -309,13 +309,22 @@ public final class MethodCall extends CallableOperation {
       throw new OperationParseException(msg);
     }
 
+    System.out.println("Looking for: " + opname + " args: " + arguments);
+
     Class<?>[] typeArguments = TypeArguments.getTypeArgumentsForString(arguments);
-    Method m;
+    Method m = null;
     try {
       m = classType.getRuntimeClass().getDeclaredMethod(opname, typeArguments);
     } catch (NoSuchMethodException e) {
-      String msg = "Method " + methodString + " not found: " + e;
-      throw new OperationParseException(msg);
+
+    }
+    if (m == null) {
+      try {
+        m = classType.getRuntimeClass().getMethod(opname, typeArguments);
+      } catch (NoSuchMethodException e) {
+        String msg = "Method " + methodString + " not found: " + e;
+        throw new OperationParseException(msg);
+      }
     }
 
     MethodCall op = new MethodCall(m);
