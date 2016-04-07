@@ -61,7 +61,7 @@ public final class Statement {
    * @return true if output type is void.
    */
   boolean isVoidMethodCall() {
-    return operation.getOutputType().isVoid();
+    return operation.isMethodCall() && operation.getOutputType().isVoid();
   }
 
   /**
@@ -119,8 +119,8 @@ public final class Statement {
    *          the {@code StringBuilder} to which code text is appended.
    */
   public void appendCode(Variable variable, List<Variable> inputs, StringBuilder b) {
-    if (!isVoidMethodCall()) {
-      ConcreteType type = operation.getOutputType();
+    ConcreteType type = operation.getOutputType();
+    if (! type.isVoid()) {
       String typeName = type.getName();
       b.append(typeName);
       b.append(" ").append(Variable.classToVariableName(type)).append(variable.index).append(" = ");
