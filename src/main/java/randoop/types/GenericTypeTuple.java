@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import plume.UtilMDE;
 import randoop.BugInRandoopException;
 import randoop.operation.GenericOperation;
 
@@ -44,6 +45,11 @@ public class GenericTypeTuple implements GeneralTypeTuple {
   @Override
   public int hashCode() {
     return Objects.hash(typeList);
+  }
+
+  @Override
+  public String toString() {
+    return "(" + UtilMDE.join(typeList, ", ") + ")";
   }
 
   /**

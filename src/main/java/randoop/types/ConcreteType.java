@@ -218,4 +218,12 @@ public abstract class ConcreteType extends GeneralType {
   }
 
   public abstract ConcreteType getSuperclass();
+
+  public ConcreteType toBoxedPrimitive() {
+    throw new IllegalArgumentException("Must be applied to a primitive type");
+  }
+
+  public ConcreteType toPrimitive() {
+    throw new IllegalArgumentException("Must be applied to a boxed primitive type");
+  }
 }

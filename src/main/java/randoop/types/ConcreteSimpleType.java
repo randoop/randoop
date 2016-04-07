@@ -174,8 +174,28 @@ public class ConcreteSimpleType extends ConcreteType {
   @Override
   public ConcreteType getSuperclass() {
     if (this.equals(ConcreteType.OBJECT_TYPE)) {
-      return null;
+      return this;
     }
     return new ConcreteSimpleType(this.runtimeClass.getSuperclass());
+  }
+
+  @Override
+  public ConcreteType toBoxedPrimitive() {
+    if (this.isPrimitive()) {
+      return ConcreteType.forClass(PrimitiveTypes.getBoxedType(this.getRuntimeClass()));
+    } else if (this.isBoxedPrimitive()) {
+      return this;
+    }
+    throw new IllegalArgumentException("Type must be primitive");
+  }
+
+  @Override
+  public ConcreteType toPrimitive() {
+    if (this.isPrimitive()) {
+      return this;
+    } else if (this.isBoxedPrimitive()) {
+      return ConcreteType.forClass(PrimitiveTypes.toUnboxedType(this.getRuntimeClass()));
+    }
+    throw new IllegalArgumentException("Type must be primtive");
   }
 }

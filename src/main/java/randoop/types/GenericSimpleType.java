@@ -49,6 +49,11 @@ public class GenericSimpleType extends GenericType {
     return Objects.hash(parameter, bound);
   }
 
+  @Override
+  public String toString() {
+    return bound.toString();
+  }
+
   /**
    * {@inheritDoc}
    * @return runtime class of the bound of this type
@@ -126,4 +131,5 @@ public class GenericSimpleType extends GenericType {
     }
     return concreteType;
   }
+
 }
