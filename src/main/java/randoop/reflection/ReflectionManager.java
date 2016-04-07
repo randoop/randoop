@@ -13,7 +13,7 @@ import randoop.util.Log;
 /**
  * ReflectionManager reflectively visits a {@link Class} instance to apply a set
  * of {@link ClassVisitor} objects to the class members. Uses a
- * {@link ReflectionPredicate} and heuristics to determine which classes and
+ * {@link VisibilityPredicate} and heuristics to determine which classes and
  * class members to visit.
  * <p>
  * For a non-enum class, visits:
@@ -33,10 +33,12 @@ import randoop.util.Log;
  * and <code>valueOf</code>.
  * <li>methods defined for enum constants that satisfy predicate.
  * </ul>
+ * <p>
+ * Note that visitors may have their own predicates, but need not check visibility.
  */
 public class ReflectionManager {
 
-  private ReflectionPredicate predicate;
+  private VisibilityPredicate predicate;
   private ArrayList<ClassVisitor> visitors;
 
   /**
@@ -48,7 +50,7 @@ public class ReflectionManager {
    *          the predicate to indicate whether classes and class members should
    *          be visited.
    */
-  public ReflectionManager(ReflectionPredicate predicate) {
+  public ReflectionManager(VisibilityPredicate predicate) {
     this.predicate = predicate;
     this.visitors = new ArrayList<>();
   }
@@ -73,9 +75,7 @@ public class ReflectionManager {
    * @param c  the {@link Class} object to be visited.
    */
   public void apply(Class<?> c) {
-
-    if (predicate.test(c)) {
-
+    if (predicate.isVisible(c)) {
       if (Log.isLoggingOn()) Log.logLine("Applying visitors to class " + c.getName());
 
       visitBefore(c); // perform any previsit steps
@@ -88,27 +88,27 @@ public class ReflectionManager {
         Set<Method> methods = new HashSet<>();
         for (Method m : c.getMethods()) { // for all public methods
           methods.add(m); // remember to avoid duplicates
-          if (predicate.test(m)) { // if satisfies predicate then visit
+          if (isVisible(m)) { // if satisfies predicate then visit
             applyTo(m);
           }
         }
         for (Method m : c.getDeclaredMethods()) { // for all methods declared by c
           // if not duplicate and satisfies predicate
-          if ((!methods.contains(m)) && predicate.test(m)) {
+          if ((!methods.contains(m)) && predicate.isVisible(m)) {
             applyTo(m);
           }
         }
 
         // Constructors
         for (Constructor<?> co : c.getDeclaredConstructors()) {
-          if (predicate.test(co)) {
+          if (isVisible(co)) {
             applyTo(co);
           }
         }
 
         // Inner enums
         for (Class<?> ic : c.getDeclaredClasses()) { // look for inner enums
-          if (ic.isEnum() && predicate.test(ic)) {
+          if (ic.isEnum() && predicate.isVisible(ic)) {
             applyToEnum(ic);
           }
         }
@@ -119,14 +119,14 @@ public class ReflectionManager {
         Set<String> declaredNames = new TreeSet<>();
         for (Field f : c.getDeclaredFields()) { // for fields declared by c
           declaredNames.add(f.getName());
-          if (predicate.test(f)) {
+          if (predicate.isVisible(f)) {
             applyTo(f);
           }
         }
         for (Field f : c.getFields()) { // for all public fields of c
           // keep a field that satisfies filter, and is not inherited and hidden by
           // local declaration
-          if (predicate.test(f) && (!declaredNames.contains(f.getName()))) {
+          if (predicate.isVisible(f) && (!declaredNames.contains(f.getName()))) {
             applyTo(f);
           }
         }
@@ -165,7 +165,7 @@ public class ReflectionManager {
     }
     // get methods that are explicitly declared in the enum
     for (Method m : c.getDeclaredMethods()) {
-      if (predicate.test(m)) {
+      if (predicate.isVisible(m)) {
         if (!m.getName().equals("values") && !m.getName().equals("valueOf")) {
           applyTo(m);
         }
@@ -174,7 +174,7 @@ public class ReflectionManager {
     // get any inherited methods also declared in anonymous class of some
     // constant
     for (Method m : c.getMethods()) {
-      if (predicate.test(m) && overrideMethods.contains(m.getName())) {
+      if (predicate.isVisible(m) && overrideMethods.contains(m.getName())) {
         applyTo(m);
       }
     }
@@ -264,5 +264,65 @@ public class ReflectionManager {
     for (ClassVisitor v : visitors) {
       v.visitBefore(c);
     }
+  }
+
+  /**
+   * Determines whether a method, its parameter types, and its return type are all visible.
+   *
+   * @param m  the method to check for visibility
+   * @return true if the method, each parameter type, and the return type are all visible; and false otherwise
+   */
+  private boolean isVisible(Method m) {
+    if (! predicate.isVisible(m)) {
+      if (Log.isLoggingOn()) {
+        Log.logLine("Will not use: " + m.toString());
+        Log.logLine("  reason: the method is not visible from test classes");
+      }
+      return false;
+    }
+    if (! predicate.isVisible(m.getReturnType())) {
+      if (Log.isLoggingOn()) {
+        Log.logLine("Will not use: " + m.toString());
+        Log.logLine("  reason: the method's return type is not visible from test classes");
+      }
+      return false;
+    }
+    for (Class<?> p : m.getParameterTypes()) {
+      if (! predicate.isVisible(p)) {
+        if (Log.isLoggingOn()) {
+          Log.logLine("Will not use: " + m.toString());
+          Log.logLine("  reason: the method has a parameter that is not visible from test classes");
+        }
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Determines whether a concsturctor and each of its parameter types are visible.
+   *
+   * @param c  the constructor
+   * @return true if the constructor and each parameter type are visible; false, otherwise
+   */
+  private boolean isVisible(Constructor<?> c) {
+    if (! predicate.isVisible(c)) {
+      if (Log.isLoggingOn()) {
+        Log.logLine("Will not use: " + c.toString());
+        Log.logLine("  reason: the constructor is not visible from test classes");
+      }
+      return false;
+    }
+    for (Class<?> p : c.getParameterTypes()) {
+      if (! predicate.isVisible(p)) {
+        if (Log.isLoggingOn()) {
+          Log.logLine("Will not use: " + c.toString());
+          Log.logLine(
+                  "  reason: the constructor has a parameter that is not visible from test classes");
+        }
+        return false;
+      }
+    }
+    return true;
   }
 }

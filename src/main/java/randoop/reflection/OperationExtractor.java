@@ -30,6 +30,7 @@ import randoop.types.GenericTypeTuple;
 public class OperationExtractor implements ClassVisitor {
 
   private final TypedOperationManager manager;
+  private final ReflectionPredicate predicate;
 
   /** The current class type */
   private GeneralType classType;
@@ -41,8 +42,9 @@ public class OperationExtractor implements ClassVisitor {
    * strictly ordered once flattened to a list. This is needed to guarantee
    * determinism between Randoop runs with the same classes and parameters.
    */
-  public OperationExtractor(TypedOperationManager manager) {
+  public OperationExtractor(TypedOperationManager manager, ReflectionPredicate predicate) {
     this.manager = manager;
+    this.predicate = predicate;
   }
 
   /**
@@ -56,6 +58,9 @@ public class OperationExtractor implements ClassVisitor {
   public void visit(Constructor<?> c) {
     assert c.getDeclaringClass().equals(classType.getRuntimeClass())
             : "classType " + classType + " and declaring class " + c.getDeclaringClass().getName() + " should be same";
+    if (! predicate.test(c)) {
+      return;
+    }
     ConstructorCall op = new ConstructorCall(c);
     GenericTypeTuple inputTypes = manager.getInputTypes(c.getGenericParameterTypes());
     manager.createTypedOperation(op, classType, inputTypes, classType);
@@ -71,7 +76,9 @@ public class OperationExtractor implements ClassVisitor {
   public void visit(Method method) {
     assert method.getDeclaringClass().isAssignableFrom(classType.getRuntimeClass())
             : "classType " + classType + " should be assignable to declaring class " + method.getDeclaringClass().getName();
-
+    if (! predicate.test(method)) {
+      return;
+    }
     MethodCall op = new MethodCall(method);
     GenericTypeTuple inputTypes;
     if (! Modifier.isStatic(method.getModifiers() & Modifier.methodModifiers())) {
@@ -95,7 +102,9 @@ public class OperationExtractor implements ClassVisitor {
   public void visit(Field field) {
     assert field.getDeclaringClass().isAssignableFrom(classType.getRuntimeClass())
             : "classType " + classType + " should be assignable from " + field.getDeclaringClass().getName();
-
+    if (! predicate.test(field)) {
+      return;
+    }
     GeneralType fieldType = GeneralType.forType(field.getGenericType());
     List<GeneralType> setInputTypeList = new ArrayList<>();
     List<GeneralType> getInputTypeList = new ArrayList<>();
@@ -131,6 +140,9 @@ public class OperationExtractor implements ClassVisitor {
 
   @Override
   public void visitBefore(Class<?> c) {
+    if (! predicate.test(c)) {
+      return;
+    }
     classType = manager.getClassType(c);
   }
 

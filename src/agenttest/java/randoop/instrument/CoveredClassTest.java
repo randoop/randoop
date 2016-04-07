@@ -176,7 +176,7 @@ public class CoveredClassTest {
             GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.omit_field_list, "Error reading field file");
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ReflectionPredicate reflectionPredicate =
-        new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitFields, visibility);
+        new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitFields);
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
     Set<String> methodSignatures =
             GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
@@ -192,6 +192,8 @@ public class CoveredClassTest {
                       GenInputsAbstract.literals_file);
     } catch (OperationParseException e) {
       fail("operation parse exception thrown: " + e);
+    } catch (NoSuchMethodException e) {
+      fail("Method not found: " + e);
     }
     assert operationModel != null;
 

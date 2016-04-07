@@ -65,7 +65,7 @@ public class SpecialCoveredClassTest {
     Set<String> omitFields = new HashSet<>();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ReflectionPredicate reflectionPredicate =
-            new DefaultReflectionPredicate(omitmethods, omitFields, visibility);
+            new DefaultReflectionPredicate(omitmethods, omitFields);
     Set<String> methodSignatures =
             GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
@@ -80,9 +80,8 @@ public class SpecialCoveredClassTest {
                       methodSignatures,
                       classNameErrorHandler,
                       GenInputsAbstract.literals_file);
-    } catch (OperationParseException e) {
-      System.out.printf("Error: parse exception thrown %s%n", e);
-      System.exit(1);
+    } catch (Throwable e) {
+     fail("Error: " + e);
     }
     assert operationModel != null;
 

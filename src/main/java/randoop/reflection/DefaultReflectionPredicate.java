@@ -23,23 +23,14 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
 
   private Pattern omitMethods = null;
   private Set<String> omitFields;
-  private VisibilityPredicate visibility;
-
-  public DefaultReflectionPredicate() {
-    this(null, new HashSet<String>());
-  }
 
   /** If omitMethods is null, then no methods are omitted. */
   public DefaultReflectionPredicate(Pattern omitMethods) {
     this(omitMethods, new HashSet<String>());
   }
 
-  public DefaultReflectionPredicate(VisibilityPredicate visibility) {
-    this(null, new HashSet<String>(), visibility);
-  }
-
-  public DefaultReflectionPredicate(Pattern omitMethods, Set<String> omitFields) {
-    this(omitMethods, omitFields, new PublicVisibilityPredicate());
+  public DefaultReflectionPredicate() {
+    this(null, new HashSet<String>());
   }
 
   /**
@@ -48,20 +39,16 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    *
    * @param omitMethods
    *          pattern for methods to omit, if null then no methods omitted.
-   * @param visibility
-   *          the predicate for testing visibility expectations for members
    */
-  public DefaultReflectionPredicate(
-      Pattern omitMethods, Set<String> omitFields, VisibilityPredicate visibility) {
+  public DefaultReflectionPredicate(Pattern omitMethods, Set<String> omitFields) {
     super();
     this.omitMethods = omitMethods;
     this.omitFields = omitFields;
-    this.visibility = visibility;
   }
 
   @Override
   public boolean test(Class<?> c) {
-    return !c.isAnonymousClass() && visibility.isVisible(c);
+    return !c.isAnonymousClass();
   }
 
   /**
@@ -80,30 +67,6 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
 
     if (isRandoopInstrumentation(m)) {
       return false;
-    }
-
-    if (!visibility.isVisible(m)) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Will not use: " + m.toString());
-        Log.logLine("  reason: the method is not visible from test classes");
-      }
-      return false;
-    }
-    if (!visibility.isVisible(m.getReturnType())) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Will not use: " + m.toString());
-        Log.logLine("  reason: the method's return type is not visible from test classes");
-      }
-      return false;
-    }
-    for (Class<?> p : m.getParameterTypes()) {
-      if (!visibility.isVisible(p)) {
-        if (Log.isLoggingOn()) {
-          Log.logLine("Will not use: " + m.toString());
-          Log.logLine("  reason: the method has a parameter that is not visible from test classes");
-        }
-        return false;
-      }
     }
 
     // If it's a main entry method, don't use it (we're doing unit
@@ -194,10 +157,10 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * these methods.
    * <p>
    * The third known case involves a public class inheriting a public method
-   * defined in the same package private class. The bridge method in the public
+   * defined in a private class of the same package. The bridge method in the public
    * class exposes the method outside of the package, and we *do* want to be
    * able to call this method. (This sort of trick is useful in providing a
-   * facade to an API where implementation details are accessible within the
+   * facade to an API where implementation details are only accessible within the
    * package.)
    * <p>
    * To recognize a visibility bridge, it is sufficient to run up the superclass
@@ -214,7 +177,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   private boolean isNotVisibilityBridge(Method m) throws Error {
     Method method = m;
     Class<?> c = m.getDeclaringClass();
-    while (c != null && visibility.isVisible(c) && method != null && method.isBridge()) {
+    while (c != null && isPublic(c) && method != null && method.isBridge()) {
       c = c.getSuperclass();
       try {
         method = c.getDeclaredMethod(m.getName(), m.getParameterTypes());
@@ -225,7 +188,11 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
         throw new Error(msg);
       }
     }
-    return visibility.isVisible(c);
+    return isPublic(c);
+  }
+
+  private boolean isPublic(Class<?> c) {
+    return Modifier.isPublic(c.getModifiers() & Modifier.classModifiers());
   }
 
   private String doNotUseSpecialCase(Method m) {
@@ -279,24 +246,6 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
 
   @Override
   public boolean test(Constructor<?> c) {
-
-    if (!visibility.isVisible(c)) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Will not use: " + c.toString());
-        Log.logLine("  reason: the constructor is not visible from test classes");
-      }
-      return false;
-    }
-    for (Class<?> p : c.getParameterTypes()) {
-      if (!visibility.isVisible(p)) {
-        if (Log.isLoggingOn()) {
-          Log.logLine("Will not use: " + c.toString());
-          Log.logLine(
-              "  reason: the constructor has a parameter that is not visible from test classes");
-        }
-        return false;
-      }
-    }
 
     if (matchesOmitMethodPattern(c.toString())) {
       if (Log.isLoggingOn()) {
@@ -352,7 +301,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     }
 
     String name = f.getDeclaringClass().getName() + "." + f.getName();
-    boolean result = visibility.isVisible(f) && !omitFields.contains(name);
+    boolean result = !omitFields.contains(name);
     if (Log.isLoggingOn()) {
       if (result) {
         Log.logLine(String.format("Including field '%s'", name));

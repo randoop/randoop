@@ -178,8 +178,7 @@ public class GenTests extends GenInputsAbstract {
       visibility = new PackageVisibilityPredicate(junitPackage);
     }
 
-    ReflectionPredicate reflectionPredicate =
-        new DefaultReflectionPredicate(omitmethods, omitFields, visibility);
+    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitmethods, omitFields);
 
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
     if (silently_ignore_bad_class_names) {
@@ -203,10 +202,13 @@ public class GenTests extends GenInputsAbstract {
     } catch (OperationParseException e) {
       System.out.printf("Error: parse exception thrown %s%n", e);
       System.exit(1);
+    } catch (NoSuchMethodException e) {
+      System.out.printf("Error building operation model: %s%n", e);
+      System.exit(1);
     }
     assert operationModel != null;
 
-    if (operationModel.hasClasses()) {
+    if (! operationModel.hasClasses()) {
       System.out.println("No classes to test");
       System.exit(1);
     }
@@ -236,13 +238,13 @@ public class GenTests extends GenInputsAbstract {
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
 
-    Set<String> observerSignatures = GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.observers,"Unable to read observer file", "//.*", null);
+    Set<String> observerSignatures = GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.observers, "Unable to read observer file", "//.*", null);
 
     MultiMap<ConcreteType,ConcreteOperation> observerMap = null;
     try {
       observerMap = operationModel.getObservers(observerSignatures);
     } catch (OperationParseException e) {
-      System.out.printf("Error: parse exception thrown while reading observers: %s%n", e);
+      System.out.printf("Error reading observers: %s%n", e);
       System.exit(1);
     }
     assert observerMap != null;
@@ -277,7 +279,7 @@ public class GenTests extends GenInputsAbstract {
     // Always exclude a singleton sequence with just new Object()
     ConcreteOperation objectConstructor = null;
     try {
-      objectConstructor = operationModel.getOperation(Object.class.getConstructor());
+      objectConstructor = operationModel.getConcreteOperation(Object.class.getConstructor());
     } catch (NoSuchMethodException e) {
       assert false : "failed to get Object constructor: " + e;
     }
