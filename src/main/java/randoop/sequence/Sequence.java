@@ -585,77 +585,38 @@ public final class Sequence implements WeightedElement {
     return this.getStatementsWithInputs().get(index);
   }
 
-  public Variable randomVariableForTypeLastStatement(ConcreteType t, Match match) {
-    return randomVariableOfTypeLastStatement(t, match);
-  }
-
-  public Variable randomVariableForType(ConcreteType t, Match match) {
-    List<Variable> possibleVariables = getVariablesOfType(t, match);
-    if (possibleVariables.size() == 0) return null;
-    return Randomness.randomMember(possibleVariables);
-  }
-
-  /**
-   * A value declared in this sequence whose type matches the given class.
-   * Returns null if there are no matches.
-   */
-  public final Variable randomVariableOfTypeLastStatement(
-      ConcreteType type, Match match) {
-    List<Variable> possibleVariables = valuesAppearingInLastStatement(type, match);
-    if (possibleVariables.isEmpty()) return null;
-    return Randomness.randomMember(possibleVariables);
-  }
-
-  /**
-   * All the values declared in this sequences whose type matches the given
-   * class. Returns an empty list if there are no matches.
-   */
-  public final List<Variable> valuesAppearingInLastStatement(
-      ConcreteType type, Match match) {
-    if (type == null || match == null)
-      throw new IllegalArgumentException("parameters cannot be null.");
+  public Variable randomVariableForTypeLastStatement(ConcreteType type) {
+    if (type == null)
+      throw new IllegalArgumentException("type cannot be null.");
     List<Variable> possibleIndices = new ArrayList<>(this.lastStatementVariables.size());
     for (int ithOutputIndex = 0;
         ithOutputIndex < this.lastStatementVariables.size();
         ithOutputIndex++) {
       Variable i = this.lastStatementVariables.get(ithOutputIndex);
       Statement s = statements.get(i.index);
-      if (!s.isVoidMethodCall() && varTypeMatches(s.getOutputType(), type, match)) {
+      if (!s.isVoidMethodCall() && type.isAssignableFrom(s.getOutputType())) {
         possibleIndices.add(i);
       }
     }
-    return possibleIndices;
+    if (possibleIndices.isEmpty()) return null;
+    return Randomness.randomMember(possibleIndices);
   }
 
-  /**
-   * All the variables declared in this sequences whose type matches the given
-   * class. Returns an empty list if there are no matches.
-   */
-  public List<Variable> getVariablesOfType(ConcreteType type, Match match) {
-    if (type == null || match == null)
-      throw new IllegalArgumentException("parameters cannot be null.");
+  public Variable randomVariableForType(ConcreteType type) {
+    if (type == null)
+      throw new IllegalArgumentException("type cannot be null.");
     List<Variable> possibleIndices = new ArrayList<>(this.lastStatementVariables.size());
     for (int i = 0; i < this.size(); i++) {
       Statement s = statements.get(i);
-      if (!s.isVoidMethodCall() && varTypeMatches(s.getOutputType(), type, match)) {
+      if (type.isAssignableFrom(s.getOutputType())) {
         possibleIndices.add(getVariable(i));
       }
     }
-    return possibleIndices;
+    if (possibleIndices.size() == 0) return null;
+    return Randomness.randomMember(possibleIndices);
   }
 
-  private boolean varTypeMatches(ConcreteType type, ConcreteType variableType, Match match) {
-    switch (match) {
-      case COMPATIBLE_TYPE:
-        return variableType.isAssignableFrom(type);
-      case EXACT_TYPE:
-        return type.equals(variableType);
-      default:
-        return false;
-    }
-  }
-
-  protected void checkIndex(int i) {
+  void checkIndex(int i) {
     if (i < 0 || i > size() - 1) throw new IllegalArgumentException();
   }
 
@@ -1165,15 +1126,19 @@ public final class Sequence implements WeightedElement {
    *         object.
    */
   public static Sequence createSequenceForPrimitive(Object value) {
-    if (value == null) throw new IllegalArgumentException("o is null");
+    if (value == null) throw new IllegalArgumentException("value is null");
     ConcreteType type = ConcreteType.forClass(value.getClass());
 
-    if (!(type.isPrimitive() || type.isBoxedPrimitive() || type.isString())) {
-      throw new IllegalArgumentException("o is not a boxed primitive or String");
+    if (type.isBoxedPrimitive()) {
+      type = type.toPrimitive();
+    }
+
+    if (!(type.isPrimitive() || type.isString())) {
+      throw new IllegalArgumentException("value is not a primitive or String");
     }
     if (type.equals(ConcreteType.STRING_TYPE) && !PrimitiveTypes.stringLengthOK((String) value)) {
       throw new IllegalArgumentException(
-              "o is a string of length > " + GenInputsAbstract.string_maxlen);
+              "value is a string of length > " + GenInputsAbstract.string_maxlen);
     }
 
     return new Sequence().extend(ConcreteOperation.createPrimitiveInitialization(type, value));

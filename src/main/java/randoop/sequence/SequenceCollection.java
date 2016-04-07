@@ -131,7 +131,6 @@ public class SequenceCollection {
    * the client.
    */
   public void add(Sequence sequence) {
-    List<ConcreteType> types = new ArrayList<>();
     List<ConcreteType> formalTypes = sequence.getTypesForLastStatement();
     List<Variable> arguments = sequence.getVariablesOfLastStatement();
     assert formalTypes.size() == arguments.size();
@@ -140,31 +139,25 @@ public class SequenceCollection {
       assert formalTypes
           .get(i)
           .isAssignableFrom(argument.getType()) : formalTypes.get(i).getName() + " should be assignable from " + argument.getType().getName();
-      if (sequence.isActive(argument.getDeclIndex())) types.add(formalTypes.get(i));
+      if (sequence.isActive(argument.getDeclIndex())) {
+        ConcreteType type = formalTypes.get(i);
+        typeSet.add(type);
+        updateCompatibleMap(sequence, type);
+      }
     }
-    updateCompatibleClassMap(types);
-    updateCompatibleMap(sequence, types);
     checkRep();
   }
 
-  private void updateCompatibleClassMap(List<ConcreteType> types) {
-    for (ConcreteType c : types) {
-      typeSet.add(c);
-    }
-  }
-
-  private void updateCompatibleMap(Sequence newsequence, List<ConcreteType> types) {
-    for (ConcreteType t : types) {
-      ArrayListSimpleList<Sequence> set = this.sequenceMap.get(t);
+  private void updateCompatibleMap(Sequence sequence, ConcreteType type) {
+      ArrayListSimpleList<Sequence> set = this.sequenceMap.get(type);
       if (set == null) {
         set = new ArrayListSimpleList<>();
-        this.sequenceMap.put(t, set);
+        this.sequenceMap.put(type, set);
       }
-      if (Log.isLoggingOn()) Log.logLine("Adding sequence to active sequences of type " + t);
-      boolean added = set.add(newsequence);
+      if (Log.isLoggingOn()) Log.logLine("Adding sequence of type " + type);
+      boolean added = set.add(sequence);
       sequenceCount++;
       assert added;
-    }
   }
 
   /**
@@ -177,33 +170,32 @@ public class SequenceCollection {
    */
   public SimpleList<Sequence> getSequencesForType(ConcreteType type, boolean exactMatch) {
 
-    if (type == null) throw new IllegalArgumentException("clazz cannot be null.");
+    if (type == null) throw new IllegalArgumentException("type cannot be null.");
 
     if (Log.isLoggingOn()) {
-      Log.logLine("getActivesequencesThatYield: entering method, clazz=" + type.toString());
-      // Log.logLine(activesequences.toString());
+      Log.logLine("getSequencesForType: entering method, type=" + type.toString());
     }
 
-    List<SimpleList<Sequence>> ret = new ArrayList<>();
+    List<SimpleList<Sequence>> resultList = new ArrayList<>();
 
     if (exactMatch) {
       SimpleList<Sequence> l = this.sequenceMap.get(type);
       if (l != null) {
-        ret.add(l);
+        resultList.add(l);
       }
     } else {
       for (ConcreteType compatibleType : typeSet.getMatches(type)) {
-        ret.add(this.sequenceMap.get(compatibleType));
+        resultList.add(this.sequenceMap.get(compatibleType));
       }
     }
 
-    if (ret.isEmpty()) {
+    if (resultList.isEmpty()) {
       if (Log.isLoggingOn())
-        Log.logLine("getActivesequencesThatYield: found no sequences matching class " + type);
+        Log.logLine("getSequencesForType: found no sequences matching type " + type);
     }
-    SimpleList<Sequence> selector = new ListOfLists<>(ret);
+    SimpleList<Sequence> selector = new ListOfLists<>(resultList);
     if (Log.isLoggingOn())
-      Log.logLine("getActivesequencesThatYield: returning " + selector.size() + " sequences.");
+      Log.logLine("getSequencesForType: returning " + selector.size() + " sequences.");
     return selector;
   }
 

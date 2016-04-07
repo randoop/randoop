@@ -519,7 +519,7 @@ public class ForwardGenerator extends AbstractGenerator {
     MultiMap<ConcreteType, Integer> typesToVars = new MultiMap<>();
 
     for (int i = 0; i < inputTypes.size(); i++) {
-      ConcreteType t = inputTypes.get(i);
+      ConcreteType inputType = inputTypes.get(i);
 
       // true if statement st represents an instance method, and we are
       // currently
@@ -537,7 +537,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
         // For each type T in S compatible with inputTypes[i], add all the
         // indices in S of type T.
-        for (ConcreteType match : types.getMatches(t)) {
+        for (ConcreteType match : types.getMatches(inputType)) {
           // Sanity check: the domain of typesToVars contains all the types in
           // variable types.
           assert typesToVars.keySet().contains(match);
@@ -572,7 +572,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // case below
       // is by far the most common.
 
-      if (t.isArray()) {
+      if (inputType.isArray()) {
 
         // 1. If T=inputTypes[i] is an array type, ask the component manager for
         // all sequences
@@ -580,15 +580,15 @@ public class ForwardGenerator extends AbstractGenerator {
         // that create arrays (list l2).
         SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i);
         if (Log.isLoggingOn())
-          Log.logLine("Array creation heuristic: will create helper array of type " + t);
-        SimpleList<Sequence> l2 = HelperSequenceCreator.createSequence(componentManager, t);
+          Log.logLine("Array creation heuristic: will create helper array of type " + inputType);
+        SimpleList<Sequence> l2 = HelperSequenceCreator.createSequence(componentManager, inputType);
         l = new ListOfLists<>(l1, l2);
 
       } else {
 
         // 2. COMMON CASE: ask the component manager for all sequences that
         // yield the required type.
-        if (Log.isLoggingOn()) Log.logLine("Will query component set for objects of type" + t);
+        if (Log.isLoggingOn()) Log.logLine("Will query component set for objects of type" + inputType);
         l = componentManager.getSequencesForType(operation, i);
       }
       assert l != null;
@@ -606,7 +606,7 @@ public class ForwardGenerator extends AbstractGenerator {
           return new InputsAndSuccessFlag(false, null, null);
         } else {
           if (Log.isLoggingOn()) Log.logLine("Will use null as " + i + "-th input");
-          ConcreteOperation st = ConcreteOperation.createNullOrZeroInitializationForType(t);
+          ConcreteOperation st = ConcreteOperation.createNullOrZeroInitializationForType(inputType);
           Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
           variables.add(totStatements);
           sequences.add(seq);
@@ -628,7 +628,7 @@ public class ForwardGenerator extends AbstractGenerator {
           && Randomness.weighedCoinFlip(GenInputsAbstract.null_ratio)) {
         if (Log.isLoggingOn())
           Log.logLine("null-ratio option given. Randomly decided to use null as input.");
-        ConcreteOperation st = ConcreteOperation.createNullOrZeroInitializationForType(t);
+        ConcreteOperation st = ConcreteOperation.createNullOrZeroInitializationForType(inputType);
         Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
         variables.add(totStatements);
         sequences.add(seq);
@@ -648,10 +648,7 @@ public class ForwardGenerator extends AbstractGenerator {
       }
 
       // Now, find values that satisfy the constraint set.
-      Match m = Match.COMPATIBLE_TYPE;
-      // if (i == 0 && (operation.isMessage() && ! operation.isStatic())) m =
-      // Match.EXACT_TYPE;
-      Variable randomVariable = chosenSeq.randomVariableForTypeLastStatement(t, m);
+      Variable randomVariable = chosenSeq.randomVariableForTypeLastStatement(inputType);
 
       // We are not done yet: we have chosen a sequence that yields a value of
       // the required
@@ -660,7 +657,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // selection step is to select from among all possible values.
       // if (i == 0 && statement.isInstanceMethod()) m = Match.EXACT_TYPE;
       if (randomVariable == null) {
-        throw new BugInRandoopException("type: " + t + ", sequence: " + chosenSeq);
+        throw new BugInRandoopException("type: " + inputType + ", sequence: " + chosenSeq);
       }
 
       // Fail, if we were unlucky and selected a null or primitive value as the

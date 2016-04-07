@@ -72,8 +72,7 @@ public class HelperSequenceCreator {
         // have such a var,
         // which I know is currently true because of SequenceCollection
         // implementation.
-        ins.add(
-            s.randomVariableForTypeLastStatement(elementType, Match.COMPATIBLE_TYPE));
+        ins.add(s.randomVariableForTypeLastStatement(elementType));
         s = s.extend(declOp, ins);
       }
     }
