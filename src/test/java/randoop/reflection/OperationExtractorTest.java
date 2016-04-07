@@ -1,6 +1,8 @@
 package randoop.reflection;
 
 import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.LinkedHashSet;
@@ -18,7 +20,9 @@ import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
 
 /**
- * Created by bjkeller on 3/24/16.
+ * Tests for {@link OperationExtractor} and {@link TypedOperationManager} to ensure they are
+ * collecting the right types and operations.
+ * Tests separately for a concrete class and a generic class.
  */
 public class OperationExtractorTest {
 
@@ -51,8 +55,8 @@ public class OperationExtractorTest {
       }
     });
 
-    OperationExtractor extractor = new OperationExtractor(operationManager);
-    ReflectionManager mgr = new ReflectionManager(new DefaultReflectionPredicate());
+    OperationExtractor extractor = new OperationExtractor(operationManager, new DefaultReflectionPredicate());
+    ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
     mgr.add(extractor);
 
     Class<?> c = null;
@@ -67,5 +71,58 @@ public class OperationExtractorTest {
 
     assertThat("should only be one class", classTypes.size(), is(equalTo(1)) );
     assertThat("name should be", classTypes.iterator().next().getName(), is(equalTo(c.getName())));
+    assertTrue("there are no generic types", genericClassTypes.isEmpty());
+
+    assertThat("class has 9 concrete operations", operations.size(), is(equalTo(11)));
+    assertThat("class has 1 generic operation", genericOperations.size(), is(equalTo(1)));
+
+  }
+
+  @Test
+  public void genericClassTest() {
+    final Set<ConcreteType> concreteTypes = new LinkedHashSet<>();
+    final Set<GenericType> genericTypes = new LinkedHashSet<>();
+    final MultiMap<GenericType,GenericOperation> genericsMap = new MultiMap<>();
+
+    TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
+      @Override
+      public void addConcreteClassType(ConcreteType type) {
+        concreteTypes.add(type);
+      }
+
+      @Override
+      public void addGenericClassType(GenericType type) {
+        genericTypes.add(type);
+      }
+
+      @Override
+      public void addGenericOperation(GenericType declaringType, GenericOperation operation) {
+        genericsMap.add(declaringType, operation);
+      }
+
+    });
+    OperationExtractor extractor = new OperationExtractor(operationManager, new DefaultReflectionPredicate());
+    ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
+    mgr.add(extractor);
+
+    Class<?> c = null;
+    try {
+      c = TypeNames.getTypeForName("randoop.reflection.GenericClass");
+    } catch (ClassNotFoundException e) {
+      fail("didn't find class: " + e);
+    }
+    assert c != null;
+
+    mgr.apply(c);
+
+    assertTrue("should be no concrete types", concreteTypes.isEmpty());
+    assertTrue("should be a generic type", ! genericTypes.isEmpty());
+    assertThat("should be one generic type", genericTypes.size(), is(equalTo(1)));
+
+    for (GenericType key : genericsMap.keySet()) {
+      assertThat("there should be 19 operations", genericsMap.getValues(key).size(), is(equalTo(19)));
+    }
+
+
   }
 }

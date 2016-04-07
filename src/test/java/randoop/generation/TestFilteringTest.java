@@ -29,7 +29,6 @@ import randoop.sequence.Sequence;
 import randoop.test.TestCheckGenerator;
 import randoop.types.ConcreteType;
 import randoop.util.MultiMap;
-import randoop.util.predicate.AlwaysTrue;
 import randoop.util.predicate.Predicate;
 
 import static org.junit.Assert.assertTrue;
@@ -223,7 +222,7 @@ public class TestFilteringTest {
     Set<String> omitfields = new HashSet<>();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ReflectionPredicate predicate =
-            new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields, visibility);
+            new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields);
     final List<ConcreteOperation> model = new ArrayList<>();
     TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
       @Override
@@ -231,8 +230,8 @@ public class TestFilteringTest {
         model.add(operation);
       }
     });
-    ReflectionManager manager = new ReflectionManager(predicate);
-    manager.add(new OperationExtractor(operationManager));
+    ReflectionManager manager = new ReflectionManager(visibility);
+    manager.add(new OperationExtractor(operationManager, predicate));
     manager.apply(c);
     Collection<Sequence> components = new LinkedHashSet<>();
     components.addAll(SeedSequences.defaultSeeds());

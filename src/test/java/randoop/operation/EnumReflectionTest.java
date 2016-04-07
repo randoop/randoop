@@ -19,9 +19,11 @@ import org.junit.Test;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.ModelCollections;
 import randoop.reflection.OperationExtractor;
+import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.TypedOperationManager;
+import randoop.reflection.VisibilityPredicate;
 import randoop.test.Coin;
 import randoop.test.OperatorEnum;
 import randoop.test.PlayingCard;
@@ -205,10 +207,10 @@ public class EnumReflectionTest {
   }
 
   private Set<ConcreteOperation> getConcreteOperations(Class<?> c) {
-    return getConcreteOperations(c, new DefaultReflectionPredicate());
+    return getConcreteOperations(c, new DefaultReflectionPredicate(), new PublicVisibilityPredicate());
   }
 
-  private Set<ConcreteOperation> getConcreteOperations(Class<?> c, ReflectionPredicate predicate) {
+  private Set<ConcreteOperation> getConcreteOperations(Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
     final Set<ConcreteOperation> operations = new LinkedHashSet<>();
     TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
       @Override
@@ -216,8 +218,8 @@ public class EnumReflectionTest {
         operations.add(operation);
       }
     });
-    OperationExtractor extractor = new OperationExtractor(operationManager);
-    ReflectionManager manager = new ReflectionManager(predicate);
+    OperationExtractor extractor = new OperationExtractor(operationManager, predicate);
+    ReflectionManager manager = new ReflectionManager(visibilityPredicate);
     manager.add(extractor);
     manager.apply(c);
     return operations;

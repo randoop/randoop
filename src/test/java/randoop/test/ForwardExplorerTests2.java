@@ -65,8 +65,8 @@ public class ForwardExplorerTests2  {
         model.add(operation);
       }
     });
-    ReflectionManager mgr = new ReflectionManager(new DefaultReflectionPredicate());
-    mgr.add(new OperationExtractor(operationManager));
+    ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
+    mgr.add(new OperationExtractor(operationManager, new DefaultReflectionPredicate()));
     for (Class<?> c: classes) {
       mgr.apply(c);
     }

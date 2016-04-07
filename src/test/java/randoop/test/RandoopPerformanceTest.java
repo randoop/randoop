@@ -12,6 +12,7 @@ import randoop.operation.ConcreteOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.ModelCollections;
 import randoop.reflection.OperationExtractor;
+import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.TypedOperationManager;
 import randoop.types.ConcreteType;
@@ -57,8 +58,8 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
         model.add(operation);
       }
     });
-    ReflectionManager mgr = new ReflectionManager(new DefaultReflectionPredicate());
-    mgr.add(new OperationExtractor(operationManager));
+    ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
+    mgr.add(new OperationExtractor(operationManager, new DefaultReflectionPredicate()));
     for (Class<?> c: classes) {
       mgr.apply(c);
     }

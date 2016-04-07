@@ -13,6 +13,7 @@ import randoop.operation.ConcreteOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.ModelCollections;
 import randoop.reflection.OperationExtractor;
+import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.TypedOperationManager;
 import randoop.types.ConcreteType;
@@ -51,8 +52,8 @@ public class ForwardExplorerPerformanceTest extends TestCase {
         model.add(operation);
       }
     });
-    ReflectionManager manager = new ReflectionManager(new DefaultReflectionPredicate());
-    manager.add(new OperationExtractor(operationManager));
+    ReflectionManager manager = new ReflectionManager(new PublicVisibilityPredicate());
+    manager.add(new OperationExtractor(operationManager, new DefaultReflectionPredicate()));
 
     try (EntryReader er = new EntryReader(ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
       for (String entry : er) {

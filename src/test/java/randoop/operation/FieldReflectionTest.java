@@ -17,9 +17,11 @@ import randoop.field.SubclassWithFields;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.ModelCollections;
 import randoop.reflection.OperationExtractor;
+import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.TypedOperationManager;
+import randoop.reflection.VisibilityPredicate;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypeTuple;
 
@@ -74,10 +76,10 @@ public class FieldReflectionTest {
   }
 
   private Set<ConcreteOperation> getConcreteOperations(Class<?> c) {
-    return getConcreteOperations(c, new DefaultReflectionPredicate());
+    return getConcreteOperations(c, new DefaultReflectionPredicate(), new PublicVisibilityPredicate());
   }
 
-  private Set<ConcreteOperation> getConcreteOperations(Class<?> c, ReflectionPredicate predicate) {
+  private Set<ConcreteOperation> getConcreteOperations(Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
     final Set<ConcreteOperation> operations = new LinkedHashSet<>();
     TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
       @Override
@@ -85,8 +87,8 @@ public class FieldReflectionTest {
         operations.add(operation);
       }
     });
-    OperationExtractor extractor = new OperationExtractor(operationManager);
-    ReflectionManager manager = new ReflectionManager(predicate);
+    OperationExtractor extractor = new OperationExtractor(operationManager, predicate);
+    ReflectionManager manager = new ReflectionManager(visibilityPredicate);
     manager.add(extractor);
     manager.apply(c);
     return operations;
@@ -153,7 +155,7 @@ public class FieldReflectionTest {
     }
 
     ReflectionPredicate filter = new DefaultReflectionPredicate(null, excludeNames);
-    Set<ConcreteOperation> actual = getConcreteOperations(c, filter);
+    Set<ConcreteOperation> actual = getConcreteOperations(c, filter, new PublicVisibilityPredicate());
 
     assertEquals("number of operations ", 2, actual.size());
 

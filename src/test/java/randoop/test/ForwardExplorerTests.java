@@ -70,14 +70,15 @@ public class ForwardExplorerTests {
         model.add(operation);
       }
     });
-    ReflectionManager mgr = new ReflectionManager(new DefaultReflectionPredicate());
-    mgr.add(new OperationExtractor(operationManager));
+    ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
+    mgr.add(new OperationExtractor(operationManager, new DefaultReflectionPredicate()));
     for (Class<?> c: classes) {
       mgr.apply(c);
     }
     return model;
   }
 
+  @Test
   public void test2() throws Throwable {
     boolean bisort = false;
     boolean bimerge = false;
@@ -124,6 +125,7 @@ public class ForwardExplorerTests {
     assertTrue(random);
   }
 
+  @Test
   public void test4() throws Exception {
 
     boolean bh = false;

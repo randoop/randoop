@@ -3,11 +3,15 @@ package randoop.reflection;
 import randoop.TestValue;
 
 /**
- * Created by bjkeller on 3/24/16.
+ * An example class to test harvesting of types and operations.
  */
 public class ConcreteClass {
 
   public String thePublicField;
+
+  public final int thePublicFinalField;
+
+  public int[] thePublicArray;
 
   @TestValue
   public static String thePublicStaticField = "thevalue";
@@ -16,10 +20,12 @@ public class ConcreteClass {
 
   private final int thePrivateFinalField;
 
-  public ConcreteClass(String thePublicField, int thePrivateField, int thePrivateFinalField) {
+  public ConcreteClass(String thePublicField, int thePrivateField, int thePrivateFinalField, int thePublicFinalField) {
     this.thePublicField = thePublicField;
     this.thePrivateField = thePrivateField;
     this.thePrivateFinalField = thePrivateFinalField;
+    this.thePublicFinalField = thePublicFinalField;
+    this.thePublicArray = new int[5];
   }
 
   @Override

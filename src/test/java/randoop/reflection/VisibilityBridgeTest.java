@@ -112,10 +112,10 @@ public class VisibilityBridgeTest {
   }
 
   private Set<ConcreteOperation> getConcreteOperations(Class<?> c) {
-    return getConcreteOperations(c, new DefaultReflectionPredicate());
+    return getConcreteOperations(c, new DefaultReflectionPredicate(), new PublicVisibilityPredicate());
   }
 
-  private Set<ConcreteOperation> getConcreteOperations(Class<?> c, ReflectionPredicate predicate) {
+  private Set<ConcreteOperation> getConcreteOperations(Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
     final Set<ConcreteOperation> operations = new LinkedHashSet<>();
     TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
       @Override
@@ -123,8 +123,8 @@ public class VisibilityBridgeTest {
         operations.add(operation);
       }
     });
-    OperationExtractor extractor = new OperationExtractor(operationManager);
-    ReflectionManager manager = new ReflectionManager(predicate);
+    OperationExtractor extractor = new OperationExtractor(operationManager, predicate);
+    ReflectionManager manager = new ReflectionManager(visibilityPredicate);
     manager.add(extractor);
     manager.apply(c);
     return operations;

@@ -102,11 +102,11 @@ public class VisibilityTest {
 
     assertTrue("class should be visible", visibility.isVisible(c));
 
-    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(visibility);
+    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
 
     assertTrue("class should be OK by reflection predicate", reflectionPredicate.test(c));
 
-    Set<ConcreteOperation> actual = getConcreteOperations(c, reflectionPredicate);
+    Set<ConcreteOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
 
     int expectedCount =
         expectedMethods.size()
@@ -204,11 +204,11 @@ public class VisibilityTest {
 
     assertTrue("class should be visible", visibility.isVisible(c));
 
-    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(visibility);
+    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
 
     assertTrue("class should be OK by reflection predicate", reflectionPredicate.test(c));
 
-    Set<ConcreteOperation> actual = getConcreteOperations(c, reflectionPredicate);
+    Set<ConcreteOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
 
     int expectedCount =
         expectedMethods.size()
@@ -303,11 +303,11 @@ public class VisibilityTest {
 
     assertTrue("class should be visible", visibility.isVisible(c));
 
-    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(visibility);
+    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
 
     assertTrue("class should be OK by reflection predicate", reflectionPredicate.test(c));
 
-    Set<ConcreteOperation> actual = getConcreteOperations(c, reflectionPredicate);
+    Set<ConcreteOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
 
     int expectedCount =
         expectedMethods.size()
@@ -400,11 +400,11 @@ public class VisibilityTest {
 
     assertTrue("class should be visible", visibility.isVisible(c));
 
-    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(visibility);
+    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
 
     assertTrue("class should be OK by reflection predicate", reflectionPredicate.test(c));
 
-    Set<ConcreteOperation> actual = getConcreteOperations(c, reflectionPredicate);
+    Set<ConcreteOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
 
     int expectedCount =
         expectedMethods.size()
@@ -531,7 +531,7 @@ public class VisibilityTest {
     return statements;
   }
 
-  private Set<ConcreteOperation> getConcreteOperations(Class<?> c, ReflectionPredicate predicate) {
+  private Set<ConcreteOperation> getConcreteOperations(Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
     final Set<ConcreteOperation> operations = new LinkedHashSet<>();
     TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
       @Override
@@ -539,8 +539,8 @@ public class VisibilityTest {
         operations.add(operation);
       }
     });
-    OperationExtractor extractor = new OperationExtractor(operationManager);
-    ReflectionManager manager = new ReflectionManager(predicate);
+    OperationExtractor extractor = new OperationExtractor(operationManager, predicate);
+    ReflectionManager manager = new ReflectionManager(visibilityPredicate);
     manager.add(extractor);
     manager.apply(c);
     return operations;

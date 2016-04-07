@@ -11,6 +11,7 @@ import randoop.TestValue;
 import randoop.generation.SeedSequences;
 import randoop.operation.ConcreteOperation;
 import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.TestValueExtractor;
 import randoop.sequence.Sequence;
@@ -27,7 +28,7 @@ public class SeedSequencesTests {
   public void testGetSeedsFromAnnotatedFields() {
 
     Set<Sequence> annotatedTestValues = new LinkedHashSet<>();
-    ReflectionManager manager = new ReflectionManager(new DefaultReflectionPredicate());
+    ReflectionManager manager = new ReflectionManager(new PublicVisibilityPredicate());
     manager.add(new TestValueExtractor(annotatedTestValues));
     
     try {
@@ -87,7 +88,7 @@ public class SeedSequencesTests {
     assertTrue("and still nothing... ", annotatedTestValues.isEmpty());
 
     Set<Sequence> s4 = new LinkedHashSet<>();
-    ReflectionManager managerS4 = new ReflectionManager(new DefaultReflectionPredicate());
+    ReflectionManager managerS4 = new ReflectionManager(new PublicVisibilityPredicate());
     managerS4.add(new TestValueExtractor(s4));
 
     managerS4.apply(SeedSequencesTests.TestValueExamples.class);

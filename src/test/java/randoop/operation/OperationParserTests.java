@@ -123,11 +123,6 @@ public class OperationParserTests {
       }
 
       @Override
-      public void addConcreteOperation(GenericType declaringType, ConcreteOperation operation) {
-        collected.add(operation);
-      }
-
-      @Override
       public void addGenericOperation(ConcreteType declaringType, GenericOperation operation) {
         super.addGenericOperation(declaringType, operation);
       }
