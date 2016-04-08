@@ -12,6 +12,7 @@ import randoop.types.ConcreteTypeTuple;
 import randoop.types.GeneralType;
 import randoop.types.GenericType;
 import randoop.types.GenericTypeTuple;
+import randoop.types.RandoopTypeException;
 
 /**
  * {@code TypeOperationManager} creates and categorizes types and typed operations collected by
@@ -46,8 +47,9 @@ public class TypedOperationManager {
    */
   public void createTypedOperation(CallableOperation op, GeneralType declaringType, GenericTypeTuple inputTypes, GeneralType outputType) {
     if (declaringType.isGeneric()) {
+      GenericType genericClassType = (GenericType)declaringType;
       GenericOperation genericOp = new GenericOperation(op, declaringType, inputTypes, outputType);
-      collections.addGenericOperation((GenericType)declaringType, genericOp);
+      collections.addGenericOperation(genericClassType, genericOp);
     } else {
       ConcreteType concreteClassType = (ConcreteType)declaringType;
       if (inputTypes.isGeneric() || outputType.isGeneric()) {
@@ -72,7 +74,7 @@ public class TypedOperationManager {
    * @param genericParameterTypes  the array of reflective generic parameter types of operation
    * @return the input tuple for the given types and type variables
    */
-  GenericTypeTuple getInputTypes(Type[] genericParameterTypes) {
+  GenericTypeTuple getInputTypes(Type[] genericParameterTypes) throws RandoopTypeException {
     return getInputTypes(null, genericParameterTypes);
   }
 
@@ -86,7 +88,7 @@ public class TypedOperationManager {
    * @param genericParameterTypes  the array of reflective generic parameter types of the operation
    * @return the input tuple for the given types and type variables.
    */
-  GenericTypeTuple getInputTypes(GeneralType declaringType, Type[] genericParameterTypes) {
+  GenericTypeTuple getInputTypes(GeneralType declaringType, Type[] genericParameterTypes) throws RandoopTypeException {
     List<GeneralType> paramTypes = new ArrayList<>();
 
     if (declaringType != null) {
@@ -102,7 +104,7 @@ public class TypedOperationManager {
     return new GenericTypeTuple(paramTypes);
   }
 
-  public GeneralType getClassType(Class<?> c) {
+  public GeneralType getClassType(Class<?> c) throws RandoopTypeException {
     GeneralType classType;
     if (c.getTypeParameters().length > 0) {
       GenericType genericClassType = GenericType.forClass(c);

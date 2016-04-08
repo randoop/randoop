@@ -2,6 +2,8 @@ package randoop.types;
 
 import java.lang.reflect.Type;
 
+import randoop.BugInRandoopException;
+
 /**
  * {@code ConcreteType} represents any type that does not have a type variable:
  * a primitive type, a non-generic class, an enum, a parameterized type, or a
@@ -11,19 +13,6 @@ import java.lang.reflect.Type;
  * @see randoop.types.ParameterizedType
  */
 public abstract class ConcreteType extends GeneralType {
-
-  public static final ConcreteType BOOLEAN_TYPE = ConcreteType.forClass(boolean.class);
-  public static final ConcreteType BYTE_TYPE = ConcreteType.forClass(byte.class);
-  public static final ConcreteType CHAR_TYPE = ConcreteType.forClass(char.class);
-  public static final ConcreteType CLASS_TYPE = ConcreteType.forClass(Class.class);
-  public static final ConcreteType DOUBLE_TYPE = ConcreteType.forClass(double.class);
-  public static final ConcreteType FLOAT_TYPE = ConcreteType.forClass(float.class);
-  public static final ConcreteType INT_TYPE = ConcreteType.forClass(int.class);
-  public static final ConcreteType LONG_TYPE = ConcreteType.forClass(long.class);
-  public static final ConcreteType OBJECT_TYPE = ConcreteType.forClass(Object.class);
-  public static final ConcreteType SHORT_TYPE = ConcreteType.forClass(short.class);
-  public static final ConcreteType STRING_TYPE = ConcreteType.forClass(String.class);
-  public static final ConcreteType VOID_TYPE = ConcreteType.forClass(void.class);
 
   /**
    * Indicates whether a value of a {@code ConcreteType} can be assigned to a
@@ -128,7 +117,13 @@ public abstract class ConcreteType extends GeneralType {
     if (e == null) {
       return ! this.isPrimitive();
     }
-    return this.isAssignableFrom(ConcreteType.forClass(e.getClass()));
+    ConcreteType type;
+    try {
+      type = ConcreteType.forClass(e.getClass());
+    } catch (RandoopTypeException e1) {
+      throw new BugInRandoopException("Type error converting class " + e.getClass().getName());
+    }
+    return this.isAssignableFrom(type);
   }
 
   /**
@@ -145,25 +140,7 @@ public abstract class ConcreteType extends GeneralType {
    * @param arguments  the actual type arguments to create a parameterized type
    * @return a {@code Type} object wrapping the {@code Class} object.
    */
-  public static ConcreteType forClass(Class<?> typeClass, ConcreteType... arguments) {
-
-    if (typeClass.isPrimitive()) {
-      if (arguments.length > 0) {
-        String msg = "There should be no type arguments for a primitive type";
-        throw new IllegalArgumentException(msg);
-      }
-      return new ConcreteSimpleType(typeClass);
-    }
-    if (typeClass.isEnum()) {
-      if (arguments.length > 0) {
-        String msg = "There should be no type arguments for an enum type";
-        throw new IllegalArgumentException(msg);
-      }
-      return new ConcreteSimpleType(typeClass);
-    }
-    if (typeClass.isArray()) {
-      return new ConcreteArrayType(typeClass);
-    }
+  public static ConcreteType forClass(Class<?> typeClass, ConcreteType... arguments) throws RandoopTypeException {
 
     if (typeClass.getTypeParameters().length > 0) { // is generic
       if (arguments.length > 0) {
@@ -174,6 +151,11 @@ public abstract class ConcreteType extends GeneralType {
       // if no arguments, fall through to return as rawtype
     }
     assert arguments.length == 0;
+
+    if (typeClass.isArray()) {
+      ConcreteType elementType = ConcreteType.forClass(typeClass.getComponentType(), arguments);
+      return new ConcreteArrayType(elementType);
+    }
     return new ConcreteSimpleType(typeClass);
   }
 
@@ -189,7 +171,7 @@ public abstract class ConcreteType extends GeneralType {
    * @param type  the type to convert
    * @return a {@code ConcreteType} object corresponding to the concrete type
    */
-  public static ConcreteType forType(Type type) {
+  public static ConcreteType forType(Type type) throws RandoopTypeException {
     GeneralType t = GeneralType.forType(type);
     if (!t.isGeneric()) {
       return (ConcreteType) t;
@@ -217,11 +199,7 @@ public abstract class ConcreteType extends GeneralType {
     return this;
   }
 
-  public abstract ConcreteType getSuperclass();
-
-  public ConcreteType toBoxedPrimitive() {
-    throw new IllegalArgumentException("Must be applied to a primitive type");
-  }
+  public abstract ConcreteType getSuperclass() throws RandoopTypeException;
 
   public ConcreteType toPrimitive() {
     throw new IllegalArgumentException("Must be applied to a boxed primitive type");

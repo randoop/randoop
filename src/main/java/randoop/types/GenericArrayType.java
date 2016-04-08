@@ -54,7 +54,7 @@ public class GenericArrayType extends GenericType {
    * parameters of this generic array type with the type arguments
    */
   @Override
-  public ConcreteType instantiate(ConcreteType... typeArguments) {
+  public ConcreteType instantiate(ConcreteType... typeArguments) throws RandoopTypeException {
     return new ConcreteArrayType(elementType.instantiate(typeArguments));
   }
 
@@ -64,7 +64,7 @@ public class GenericArrayType extends GenericType {
    * parameters of this generic array type using the substitution
    */
   @Override
-  public ConcreteType apply(Substitution substitution) {
+  public ConcreteType apply(Substitution substitution) throws RandoopTypeException {
     return new ConcreteArrayType(elementType.apply(substitution));
   }
 }

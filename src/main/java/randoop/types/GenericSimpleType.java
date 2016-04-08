@@ -23,7 +23,7 @@ public class GenericSimpleType extends GenericType {
    *
    * @param parameter  the type parameter
    */
-  public GenericSimpleType(TypeVariable<?> parameter) {
+  public GenericSimpleType(TypeVariable<?> parameter) throws RandoopTypeException {
     this.parameter = parameter;
     this.bound = TypeBound.fromTypes(parameter.getBounds());
   }
@@ -91,7 +91,7 @@ public class GenericSimpleType extends GenericType {
    * bound
    */
   @Override
-  public ConcreteType instantiate(ConcreteType... typeArguments) {
+  public ConcreteType instantiate(ConcreteType... typeArguments) throws RandoopTypeException {
     if (typeArguments == null) {
       throw new IllegalArgumentException("type arguments must be non-null");
     }
@@ -117,7 +117,7 @@ public class GenericSimpleType extends GenericType {
    * match the parameter bound.
    */
   @Override
-  public ConcreteType apply(Substitution substitution) {
+  public ConcreteType apply(Substitution substitution) throws RandoopTypeException {
     if (substitution == null) {
       throw new IllegalArgumentException("substitution must be non-null");
     }

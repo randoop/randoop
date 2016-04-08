@@ -33,6 +33,7 @@ public class ConcreteArrayType extends ConcreteType {
    *
    * @param runtimeType  the runtime
    */
+  /*
   ConcreteArrayType(Class<?> runtimeType) {
     if (runtimeType == null) {
       throw new IllegalArgumentException("runtime class may not be null");
@@ -40,10 +41,10 @@ public class ConcreteArrayType extends ConcreteType {
     if (!runtimeType.isArray()) {
       throw new IllegalArgumentException("Class must be array");
     }
-    this.elementType = ConcreteType.forClass(runtimeType.getComponentType(), new ConcreteType[0]);
+    this.elementType = ConcreteType.forClass(runtimeType.getComponentType());
     this.runtimeType = runtimeType;
   }
-
+*/
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof ConcreteArrayType)) {
@@ -121,6 +122,6 @@ public class ConcreteArrayType extends ConcreteType {
 
   @Override
   public ConcreteType getSuperclass() {
-    return ConcreteType.OBJECT_TYPE;
+    return ConcreteTypes.OBJECT_TYPE;
   }
 }

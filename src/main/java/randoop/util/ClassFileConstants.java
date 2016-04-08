@@ -35,6 +35,7 @@ import org.apache.commons.bcel6.util.ClassPath;
 
 import randoop.operation.NonreceiverTerm;
 import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypes;
 import randoop.types.TypeNames;
 
 // Implementation notes:  All string, float, and double constants are in the
@@ -573,22 +574,22 @@ public class ClassFileConstants {
         throw new Error("Class " + cs.classname + " not found on the classpath.");
       }
       for (Integer x : cs.ints) {
-        map.add(clazz, new NonreceiverTerm(ConcreteType.INT_TYPE, x));
+        map.add(clazz, new NonreceiverTerm(ConcreteTypes.INT_TYPE, x));
       }
       for (Long x : cs.longs) {
-        map.add(clazz, new NonreceiverTerm(ConcreteType.LONG_TYPE, x));
+        map.add(clazz, new NonreceiverTerm(ConcreteTypes.LONG_TYPE, x));
       }
       for (Float x : cs.floats) {
-        map.add(clazz, new NonreceiverTerm(ConcreteType.FLOAT_TYPE, x));
+        map.add(clazz, new NonreceiverTerm(ConcreteTypes.FLOAT_TYPE, x));
       }
       for (Double x : cs.doubles) {
-        map.add(clazz, new NonreceiverTerm(ConcreteType.DOUBLE_TYPE, x));
+        map.add(clazz, new NonreceiverTerm(ConcreteTypes.DOUBLE_TYPE, x));
       }
       for (String x : cs.strings) {
-        map.add(clazz, new NonreceiverTerm(ConcreteType.STRING_TYPE, x));
+        map.add(clazz, new NonreceiverTerm(ConcreteTypes.STRING_TYPE, x));
       }
       for (Class<?> x : cs.classes) {
-        map.add(clazz, new NonreceiverTerm(ConcreteType.CLASS_TYPE, x));
+        map.add(clazz, new NonreceiverTerm(ConcreteTypes.CLASS_TYPE, x));
       }
     }
     return map;

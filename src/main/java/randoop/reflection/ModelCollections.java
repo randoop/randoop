@@ -1,5 +1,7 @@
 package randoop.reflection;
 
+import java.lang.reflect.Constructor;
+
 import randoop.operation.ConcreteOperation;
 import randoop.operation.GenericOperation;
 import randoop.types.ConcreteType;
@@ -39,14 +41,6 @@ public abstract class ModelCollections {
    * @param operation  the operation
    */
   public void addGenericOperation(GenericType declaringType, GenericOperation operation) { }
-
-  /**
-   * Adds a concrete operation from a generic declaring type.
-   *
-   * @param declaringType  the generic declaring type
-   * @param operation  the concrete operation
-   */
-  public void addConcreteOperation(GenericType declaringType, ConcreteOperation operation) { }
 
   /**
    * Adds a generic operation from a concrete declaring type.

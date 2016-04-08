@@ -115,8 +115,13 @@ public class ParameterizedType extends ConcreteType {
     }
 
     // Now, check subtype relation
-    if (sourceType.isSubtypeOf(this)) {
-      return true;
+    try {
+      if (sourceType.isSubtypeOf(this)) {
+        return true;
+      }
+    } catch (RandoopTypeException e) {
+      // this is a bit dangerous, but I'm doing it anyway
+      return false;
     }
 
     // otherwise, test unchecked
@@ -153,7 +158,7 @@ public class ParameterizedType extends ConcreteType {
    * (Tested using {@link GenericClassType#equals(Object)}.)
    */
   @Override
-  public boolean isSubtypeOf(ConcreteType type) {
+  public boolean isSubtypeOf(ConcreteType type) throws RandoopTypeException {
     if (type == null) {
       throw new IllegalArgumentException("type must be non-null");
     }
@@ -285,7 +290,7 @@ public class ParameterizedType extends ConcreteType {
    * @return the superclass type for this parameterized type
    */
   @Override
-  public ConcreteType getSuperclass() {
+  public ConcreteType getSuperclass() throws RandoopTypeException {
     GeneralType superclass = this.instantiatedType.getSuperclass();
     if (superclass == null) {
       return null;

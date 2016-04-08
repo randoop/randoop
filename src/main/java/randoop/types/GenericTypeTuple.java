@@ -84,7 +84,7 @@ public class GenericTypeTuple implements GeneralTypeTuple {
   }
 
   @Override
-  public GeneralTypeTuple apply(Substitution substitution) {
+  public GeneralTypeTuple apply(Substitution substitution) throws RandoopTypeException {
     List<GeneralType> generalTypes = new ArrayList<>();
     for (GeneralType generalType : typeList) {
       generalTypes.add(generalType.apply(substitution));
@@ -111,7 +111,7 @@ public class GenericTypeTuple implements GeneralTypeTuple {
    * @param substitution  the type substitution
    * @return the concrete type tuple formed by applying the substitution componentwise to this tuple
    */
-  public ConcreteTypeTuple instantiate(Substitution substitution) {
+  public ConcreteTypeTuple instantiate(Substitution substitution) throws RandoopTypeException {
     return ((GenericTypeTuple)this.apply(substitution)).makeConcrete();
   }
 

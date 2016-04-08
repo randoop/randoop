@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypes;
+import randoop.types.RandoopTypeException;
 import randoop.util.ListOfLists;
 import randoop.util.SimpleList;
 
@@ -50,10 +52,14 @@ public class ClassLiterals extends MappedSequences<ConcreteType> {
   // Object from result).
   private Set<ConcreteType> getSuperClasses(ConcreteType cls) {
     Set<ConcreteType> ret = new LinkedHashSet<>();
-    ConcreteType sup = cls.getSuperclass();
-    while (sup != null && !sup.equals(ConcreteType.OBJECT_TYPE)) {
-      ret.add(sup);
-      sup = sup.getSuperclass();
+    try {
+      ConcreteType sup = cls.getSuperclass();
+      while (sup != null && !sup.equals(ConcreteTypes.OBJECT_TYPE)) {
+        ret.add(sup);
+        sup = sup.getSuperclass();
+      }
+    } catch (RandoopTypeException e) {
+      System.out.println("Type error for class " + cls.getName() + ": " + e);
     }
     return ret;
   }

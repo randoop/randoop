@@ -10,6 +10,7 @@ import randoop.operation.ConcreteOperation;
 import randoop.operation.NonreceiverTerm;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
+import randoop.types.ConcreteSimpleType;
 import randoop.types.ConcreteType;
 import randoop.util.ClassFileConstants;
 import randoop.util.MultiMap;
@@ -32,7 +33,8 @@ class ClassLiteralExtractor implements ClassVisitor {
     constList.add(ClassFileConstants.getConstants(c.getName()));
     MultiMap<Class<?>, NonreceiverTerm> constantMap = ClassFileConstants.toMap(constList);
     for (Class<?> constantClass : constantMap.keySet()) {
-      ConcreteType constantType = ConcreteType.forClass(constantClass);
+      assert constantClass.isPrimitive() : "encountered non-primitive constant type";
+      ConcreteType constantType = new ConcreteSimpleType(constantClass);
       for (NonreceiverTerm term : constantMap.getValues(constantClass)) {
         Sequence seq = new Sequence().extend(ConcreteOperation.createNonreceiverInitialization(term), new ArrayList<Variable>());
         literalMap.add(constantType, seq);

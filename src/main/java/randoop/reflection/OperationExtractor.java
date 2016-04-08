@@ -7,6 +7,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
+import randoop.BugInRandoopException;
 import randoop.field.AccessibleField;
 import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
@@ -14,9 +15,12 @@ import randoop.operation.FieldGet;
 import randoop.operation.FieldSet;
 import randoop.operation.MethodCall;
 import randoop.operation.Operation;
+import randoop.types.ConcreteSimpleType;
 import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypes;
 import randoop.types.GeneralType;
 import randoop.types.GenericTypeTuple;
+import randoop.types.RandoopTypeException;
 
 /**
  * OperationExtractor is a {@link ClassVisitor} that creates a collection of
@@ -62,7 +66,13 @@ public class OperationExtractor implements ClassVisitor {
       return;
     }
     ConstructorCall op = new ConstructorCall(c);
-    GenericTypeTuple inputTypes = manager.getInputTypes(c.getGenericParameterTypes());
+    GenericTypeTuple inputTypes;
+    try {
+      inputTypes = manager.getInputTypes(c.getGenericParameterTypes());
+    } catch (RandoopTypeException e) {
+      System.out.println("Ignoring constructor " + c.getName() + ": " + e.getMessage());
+      return; // not a critical error, just end visit
+    }
     manager.createTypedOperation(op, classType, inputTypes, classType);
   }
 
@@ -81,12 +91,18 @@ public class OperationExtractor implements ClassVisitor {
     }
     MethodCall op = new MethodCall(method);
     GenericTypeTuple inputTypes;
-    if (! Modifier.isStatic(method.getModifiers() & Modifier.methodModifiers())) {
-      inputTypes = manager.getInputTypes(classType, method.getGenericParameterTypes());
-    } else {
-      inputTypes = manager.getInputTypes(method.getGenericParameterTypes());
+    GeneralType outputType;
+    try {
+      if (!Modifier.isStatic(method.getModifiers() & Modifier.methodModifiers())) {
+        inputTypes = manager.getInputTypes(classType, method.getGenericParameterTypes());
+      } else {
+        inputTypes = manager.getInputTypes(method.getGenericParameterTypes());
+      }
+      outputType = GeneralType.forType(method.getGenericReturnType());
+    } catch (RandoopTypeException e) {
+      System.out.println("Ignoring method " + method.getName() + ": " + e.getMessage());
+      return; // not a critical error, just end visit
     }
-    GeneralType outputType = GeneralType.forType(method.getGenericReturnType());
 
     manager.createTypedOperation(op, classType, inputTypes, outputType);
   }
@@ -105,7 +121,13 @@ public class OperationExtractor implements ClassVisitor {
     if (! predicate.test(field)) {
       return;
     }
-    GeneralType fieldType = GeneralType.forType(field.getGenericType());
+    GeneralType fieldType;
+    try {
+      fieldType = GeneralType.forType(field.getGenericType());
+    } catch (RandoopTypeException e) {
+      System.out.println("Ignoring field " + field.getName() + ": " + e.getMessage());
+      return; // not a critical error, just end visit
+    }
     List<GeneralType> setInputTypeList = new ArrayList<>();
     List<GeneralType> getInputTypeList = new ArrayList<>();
 
@@ -119,7 +141,7 @@ public class OperationExtractor implements ClassVisitor {
     manager.createTypedOperation(new FieldGet(accessibleField), classType, new GenericTypeTuple(getInputTypeList), fieldType);
     if (! accessibleField.isFinal()) {
       setInputTypeList.add(fieldType);
-      manager.createTypedOperation(new FieldSet(accessibleField), classType, new GenericTypeTuple(setInputTypeList), ConcreteType.VOID_TYPE);
+      manager.createTypedOperation(new FieldSet(accessibleField), classType, new GenericTypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
     }
 
   }
@@ -132,7 +154,7 @@ public class OperationExtractor implements ClassVisitor {
    */
   @Override
   public void visit(Enum<?> e) {
-    ConcreteType enumType = ConcreteType.forClass(e.getDeclaringClass());
+    ConcreteType enumType = new ConcreteSimpleType(e.getDeclaringClass());
     assert ! enumType.isGeneric() : "type of enum class cannot be generic";
     EnumConstant op = new EnumConstant(e);
     manager.createTypedOperation(op, enumType, new GenericTypeTuple(), enumType);
@@ -143,7 +165,11 @@ public class OperationExtractor implements ClassVisitor {
     if (! predicate.test(c)) {
       return;
     }
-    classType = manager.getClassType(c);
+    try {
+      classType = manager.getClassType(c);
+    } catch (RandoopTypeException e) {
+      throw new BugInRandoopException("Type error when reading class " + c.getName() + ": " + e.getMessage());
+    }
   }
 
   @Override

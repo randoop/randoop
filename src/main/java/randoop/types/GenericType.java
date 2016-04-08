@@ -32,7 +32,7 @@ public abstract class GenericType extends GeneralType {
    * @param typeArguments  the type arguments
    * @return the concrete type
    */
-  public ConcreteType instantiate(ConcreteType... typeArguments) {
+  public ConcreteType instantiate(ConcreteType... typeArguments) throws RandoopTypeException {
     return null;
   }
 
@@ -45,7 +45,7 @@ public abstract class GenericType extends GeneralType {
    * parameters in this generic type
    */
   @Override
-  public ConcreteType apply(Substitution substitution) {
+  public ConcreteType apply(Substitution substitution) throws RandoopTypeException {
     return null;
   }
 
@@ -60,7 +60,7 @@ public abstract class GenericType extends GeneralType {
    * @throws IllegalArgumentException if the type is neither a generic array or
    * class
    */
-  public static GenericType forType(Type type) {
+  public static GenericType forType(Type type) throws RandoopTypeException {
     GeneralType t = GeneralType.forType(type);
     if (t.isGeneric()) {
       return (GenericType) t;
@@ -80,7 +80,7 @@ public abstract class GenericType extends GeneralType {
    * @throws IllegalArgumentException if the class is not a generic type, or
    * {@code Class} object represents an array
    */
-  public static GenericType forClass(Class<?> c) {
+  public static GenericType forClass(Class<?> c) throws RandoopTypeException {
     if (c.getTypeParameters().length == 0) {
       throw new IllegalArgumentException("class must be a generic type");
     }

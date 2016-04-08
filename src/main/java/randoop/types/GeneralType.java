@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,7 +94,7 @@ public abstract class GeneralType {
    * @return true if this is the {@code Object} type, false otherwise
    */
   public boolean isObject() {
-    return this.getRuntimeClass().equals(Object.class);
+    return this.equals(ConcreteTypes.OBJECT_TYPE);
   }
 
   /**
@@ -108,7 +109,7 @@ public abstract class GeneralType {
    * @param type  the possible supertype
    * @return true if this type is a subtype of the given type, false otherwise
    */
-  public boolean isSubtypeOf(ConcreteType type) {
+  public boolean isSubtypeOf(ConcreteType type) throws RandoopTypeException {
     if (type == null) {
       throw new IllegalArgumentException("type may not be null");
     }
@@ -171,7 +172,7 @@ public abstract class GeneralType {
    * @return a {@code randoop.types.Type} object corresponding to the given type
    * @throws IllegalArgumentException if the rawtype is not a Class instance
    */
-  public static GeneralType forType(Type type) {
+  public static GeneralType forType(Type type) throws RandoopTypeException {
 
     if (type instanceof java.lang.reflect.GenericArrayType) {
       return forGenericArrayType((java.lang.reflect.GenericArrayType) type);
@@ -205,7 +206,7 @@ public abstract class GeneralType {
    * @param type  the {@link java.lang.reflect.GenericArrayType} reference
    * @return the {@code GeneralType} for the array type
    */
-  private static GeneralType forGenericArrayType(java.lang.reflect.GenericArrayType type) {
+  private static GeneralType forGenericArrayType(java.lang.reflect.GenericArrayType type) throws RandoopTypeException {
     GeneralType elementType = GeneralType.forType(type.getGenericComponentType());
     if (elementType.isGeneric()) {
       return new GenericArrayType((GenericType) elementType);
@@ -224,10 +225,9 @@ public abstract class GeneralType {
    *         variables, or of type {@code ParameterizedType} if the arguments
    *         are concrete
    */
-  private static GeneralType forParameterizedType(java.lang.reflect.ParameterizedType t) {
+  private static GeneralType forParameterizedType(java.lang.reflect.ParameterizedType t) throws RandoopTypeException {
     Type rawType = t.getRawType();
     assert (rawType instanceof Class<?>) : "rawtype not an instance of Class<?> type " ;
-
     // Collect whatever is lurking in the "actual type arguments"
     // Could be *actual* "actual type arguments", or type variables
     ConcreteType[] typeArguments = new ConcreteType[t.getActualTypeArguments().length];
@@ -239,14 +239,30 @@ public abstract class GeneralType {
         TypeVariable<?> v = (TypeVariable<?>) actualArguments[i];
         typeParameters.add(v);
         typeBounds.add(TypeBound.fromTypes(v.getBounds()));
+      } else if (actualArguments[i] instanceof WildcardType) {
+        WildcardType wildcard = (WildcardType)actualArguments[i];
+        if (wildcard.getUpperBounds().length > 0) {
+          TypeBound bound = TypeBound.fromTypes(wildcard.getUpperBounds());
+          if (bound.isConcreteBound()) {
+            typeArguments[i] = ((ConcreteTypeBound)bound).getBoundType();
+          } else if (bound.isVariableBound()) {
+            TypeVariable<?> v = ((VariableTypeBound)bound).getTypeVariable();
+          } else {
+            throw new RandoopTypeException("not yet sure what to do with wildcard bounds that look like: " + bound.toString());
+          }
+        }
+        if (wildcard.getLowerBounds().length > 0) {
+          throw new RandoopTypeException("not currently supporting lower bounds on wildcard types " + wildcard.toString());
+        }
       } else if (actualArguments[i] instanceof Class) {
         typeArguments[i] =
-            ConcreteType.forClass((Class<?>) actualArguments[i]);
+                ConcreteType.forClass((Class<?>) actualArguments[i]);
       } else {
         String msg = "Expecting either type or type variable, got " + actualArguments[i].toString();
-        throw new IllegalArgumentException(msg);
+        throw new RandoopTypeException(msg);
       }
     }
+
 
     // Now decide whether object is generic or parameterized type
     if (typeParameters.size() == actualArguments.length) { // is generic
@@ -276,7 +292,7 @@ public abstract class GeneralType {
    * @return the type object for the type with the name, null if none is found
    * @throws ClassNotFoundException if name is not a recognized type
    */
-  public static GeneralType forName(String typeName) throws ClassNotFoundException {
+  public static GeneralType forName(String typeName) throws ClassNotFoundException, RandoopTypeException {
     Class<?> c = PrimitiveTypes.getClassForName(typeName);
     if (c == null) {
       c = Class.forName(typeName);
@@ -295,7 +311,7 @@ public abstract class GeneralType {
    * @return a {@code ConcreteType} constructed by substituting for type
    * parameters in this generic type
    */
-  public abstract GeneralType apply(Substitution substitution);
+  public abstract GeneralType apply(Substitution substitution) throws RandoopTypeException;
 
   /**
    * Returns the package of this types runtime class.

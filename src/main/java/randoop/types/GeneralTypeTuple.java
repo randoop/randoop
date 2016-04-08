@@ -42,6 +42,6 @@ public interface GeneralTypeTuple {
    * @param substitution  the substitution
    * @return a new type tuple resulting from applying the given substitution to this tuple
    */
-  GeneralTypeTuple apply(Substitution substitution);
+  GeneralTypeTuple apply(Substitution substitution) throws RandoopTypeException;
 
 }

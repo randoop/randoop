@@ -41,7 +41,7 @@ public class GenericClassType extends GenericType {
    * @param rawType  the raw type for the generic class
    * @throws IllegalArgumentException if the class is not generic
    */
-  public GenericClassType(Class<?> rawType) {
+  public GenericClassType(Class<?> rawType) throws RandoopTypeException {
     if (rawType.getTypeParameters().length == 0) {
       throw new IllegalArgumentException("class must be a generic type");
     }
@@ -134,7 +134,7 @@ public class GenericClassType extends GenericType {
    * corresponding type parameter bounds
    */
   @Override
-  public ConcreteType instantiate(ConcreteType... typeArguments) {
+  public ConcreteType instantiate(ConcreteType... typeArguments) throws RandoopTypeException {
     if (typeArguments == null) {
       throw new IllegalArgumentException("type arguments cannot be null");
     }
@@ -157,7 +157,7 @@ public class GenericClassType extends GenericType {
    * given substitution
    */
   @Override
-  public ConcreteType apply(Substitution substitution) {
+  public ConcreteType apply(Substitution substitution) throws RandoopTypeException {
     if (substitution == null) {
       throw new IllegalArgumentException("substitution must be non-null");
     }
@@ -211,7 +211,7 @@ public class GenericClassType extends GenericType {
    * has an assignable rawtype; or null otherwise
    * @throws IllegalArgumentException if type is null
    */
-  GenericClassType getMatchingSupertype(GenericClassType type) {
+  GenericClassType getMatchingSupertype(GenericClassType type) throws RandoopTypeException {
     if (type == null) {
       throw new IllegalArgumentException("type may not be null");
     }
@@ -251,7 +251,7 @@ public class GenericClassType extends GenericType {
     return null;
   }
 
-  GeneralType getSuperclass() {
+  GeneralType getSuperclass() throws RandoopTypeException {
     Type superclass = this.rawType.getGenericSuperclass();
     if (superclass == null) {
       return null;

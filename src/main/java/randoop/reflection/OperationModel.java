@@ -18,6 +18,7 @@ import randoop.main.ClassNameErrorHandler;
 import randoop.operation.ConcreteOperation;
 import randoop.operation.ConstructorCall;
 import randoop.operation.GenericOperation;
+import randoop.operation.MethodCall;
 import randoop.operation.OperationParseException;
 import randoop.operation.OperationParser;
 import randoop.sequence.Sequence;
@@ -25,6 +26,7 @@ import randoop.types.ConcreteType;
 import randoop.types.GeneralType;
 import randoop.types.GenericType;
 import randoop.types.GenericTypeTuple;
+import randoop.types.RandoopTypeException;
 import randoop.types.TypeNames;
 import randoop.util.MultiMap;
 
@@ -103,7 +105,7 @@ public class OperationModel extends ModelCollections {
       Set<String> exercisedClassnames,
       Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
-      List<String> literalsFileList) throws OperationParseException {
+      List<String> literalsFileList) throws OperationParseException, NoSuchMethodException {
 
     // TODO make sure adding Object constructor
 
@@ -111,8 +113,8 @@ public class OperationModel extends ModelCollections {
     Set<ConcreteType> inputTypes = new LinkedHashSet<>();
 
     OperationModel model = new OperationModel();
-    ReflectionManager mgr = new ReflectionManager(reflectionPredicate);
-    ClassVisitor opExtractor = new OperationExtractor(new TypedOperationManager(model));
+    ReflectionManager mgr = new ReflectionManager(visibility);
+    ClassVisitor opExtractor = new OperationExtractor(new TypedOperationManager(model), reflectionPredicate);
     mgr.add(opExtractor);
     mgr.add(new InputTypeExtractor(inputTypes));
     mgr.add(new TestValueExtractor(model.annotatedTestValues));
@@ -130,7 +132,6 @@ public class OperationModel extends ModelCollections {
         errorHandler.handle(classname);
       }
       // Note that c could be null if errorHandler just warns on bad names
-
       if (c != null && ! visitedClasses.contains(c)) {
         visitedClasses.add(c);
 
@@ -177,11 +178,30 @@ public class OperationModel extends ModelCollections {
     }
 
     model.addDefaultContracts();
-    model.addOperations(methodSignatures, opExtractor);
+    model.addOperations(methodSignatures);
+    model.addObjectConstructor();
 
     return model;
   }
 
+  /**
+   * Creates and adds the Object class default constructor call to the concrete operations.
+   */
+  private void addObjectConstructor()  {
+    Constructor<?> objectConstructor = null;
+    try {
+      objectConstructor = Object.class.getConstructor();
+    } catch (NoSuchMethodException e) {
+      System.out.println("Something is really wrong. Please report unable to load Object()");
+      System.exit(1);
+    }
+    try {
+      operations.add(getConcreteOperation(objectConstructor));
+    } catch (RandoopTypeException e) {
+      System.out.println("Something is really wrong. Please report type error in reading object constructor.");
+      System.exit(1);
+    }
+  }
 
   /**
    * Adds literals to the component manager, by parsing any literals files
@@ -229,14 +249,20 @@ public class OperationModel extends ModelCollections {
     }
   }
 
+  /**
+   * Gets observer methods from the set of signatures.
+   *
+   * @param observerSignatures  the set of method signatures
+   * @return the map to observer methods from their declaring class type
+   * @throws OperationParseException if a method signature cannot be parsed
+   */
   public MultiMap<ConcreteType, ConcreteOperation> getObservers(Set<String> observerSignatures) throws OperationParseException {
     // Populate observer_map from observers file.
     MultiMap<ConcreteType, ConcreteOperation> observerMap = new MultiMap<>();
     for (String sig: observerSignatures) {
       ModelCollections observerManager = new ObserverCollections(observerMap);
-      OperationParser.parse(sig, new TypedOperationManager(observerManager));
+      MethodCall.parse(sig, new TypedOperationManager(observerManager));
     }
-
     return observerMap;
   }
 
@@ -249,6 +275,11 @@ public class OperationModel extends ModelCollections {
     exercisedClasses.add(c);
   }
 
+  /**
+   * Returns the set of identified {@code Class<?>} objects for the exercised class heuristic.
+   *
+   * @return the set of exercised classes
+   */
   public Set<Class<?>> getExercisedClasses() {
     return exercisedClasses;
   }
@@ -263,6 +294,11 @@ public class OperationModel extends ModelCollections {
     return classTypes;
   }
 
+  /**
+   * Indicate whether the model has class types.
+   *
+   * @return true if the model has class types, and false if the class type set is empty
+   */
   public boolean hasClasses() {
     return ! classTypes.isEmpty();
   }
@@ -271,9 +307,8 @@ public class OperationModel extends ModelCollections {
     return new ArrayList<>(operations);
   }
 
-  private void addOperations(Set<String> methodSignatures, ClassVisitor visitor) throws OperationParseException {
+  private void addOperations(Set<String> methodSignatures) throws OperationParseException {
     for (String sig : methodSignatures) {
-      GenericOperation op = null;
       OperationParser.parse(sig, new TypedOperationManager(this));
     }
   }
@@ -300,7 +335,7 @@ public class OperationModel extends ModelCollections {
     return contracts;
   }
 
-  public ConcreteOperation getConcreteOperation(Constructor<?> constructor) {
+  public ConcreteOperation getConcreteOperation(Constructor<?> constructor) throws RandoopTypeException {
     ConcreteType declaringType = ConcreteType.forClass(constructor.getDeclaringClass());
     ConstructorCall op = new ConstructorCall(constructor);
     List<GeneralType> paramTypes = new ArrayList<>();
@@ -363,9 +398,14 @@ public class OperationModel extends ModelCollections {
     @Override
     public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
       ConcreteType outputType = operation.getOutputType();
-      if (outputType.isPrimitive() || outputType.equals(ConcreteType.STRING_TYPE) || outputType.isEnum()) {
+      if (outputType.isPrimitive() || outputType.isString() || outputType.isEnum()) {
         observerMap.add(declaringType, operation);
       }
+    }
+
+    @Override
+    public void addGenericOperation(GenericType declaringType, GenericOperation operation) {
+      System.out.println("Got a generic observer: " + operation);
     }
 
   }

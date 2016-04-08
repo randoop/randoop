@@ -21,6 +21,7 @@ import randoop.sequence.Variable;
 import randoop.test.DummyCheckGenerator;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypeTuple;
+import randoop.types.ConcreteTypes;
 import randoop.types.PrimitiveTypes;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
@@ -384,9 +385,9 @@ public class ForwardGenerator extends AbstractGenerator {
     for (int i = 0; i < times; i++) {
       List<Integer> vil = new ArrayList<>();
       for (Variable v : retval.getInputs(retval.size() - 1)) {
-        if (v.getType().equals(ConcreteType.INT_TYPE)) {
+        if (v.getType().equals(ConcreteTypes.INT_TYPE)) {
           int randint = Randomness.nextRandomInt(100);
-          retval = retval.extend(ConcreteOperation.createPrimitiveInitialization(ConcreteType.INT_TYPE, randint));
+          retval = retval.extend(ConcreteOperation.createPrimitiveInitialization(ConcreteTypes.INT_TYPE, randint));
           vil.add(retval.size() - 1);
         } else {
           vil.add(v.getDeclIndex());

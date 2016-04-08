@@ -13,6 +13,7 @@ import randoop.contract.ObjectContractUtils;
 import randoop.sequence.ExecutableSequence;
 import randoop.test.predicate.ExceptionPredicate;
 import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypes;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 
@@ -237,8 +238,8 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
       if (result instanceof NormalExecution) {
 
         ConcreteType outputType = s.sequence.getStatement(i).getOutputType();
-        if (!outputType.equals(ConcreteType.VOID_TYPE)
-            && !outputType.equals(ConcreteType.STRING_TYPE)
+        if (!outputType.equals(ConcreteTypes.VOID_TYPE)
+            && !outputType.equals(ConcreteTypes.STRING_TYPE)
             && !outputType.isPrimitive()
             && ((NormalExecution) result).getRuntimeValue() != null) {
           positionMap.add(outputType, i);

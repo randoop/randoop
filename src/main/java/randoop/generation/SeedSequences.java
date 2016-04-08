@@ -8,6 +8,7 @@ import java.util.Set;
 
 import randoop.sequence.Sequence;
 import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypes;
 
 /**
  * Provides functionality for creating a set of sequences that create a set of
@@ -74,7 +75,7 @@ public final class SeedSequences {
     Set<Sequence> seedSequences = new LinkedHashSet<>();
     for (Object seed : seeds) {
       if (seed == null) {
-        seedSequences.add(Sequence.zero(ConcreteType.STRING_TYPE));
+        seedSequences.add(Sequence.zero(ConcreteTypes.STRING_TYPE));
       } else {
         seedSequences.add(Sequence.createSequenceForPrimitive(seed));
       }

@@ -2,6 +2,7 @@ package randoop.sequence;
 
 import randoop.types.ConcreteArrayType;
 import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypes;
 
 class VariableRenamer {
 
@@ -41,28 +42,25 @@ class VariableRenamer {
     // for object, string, class types
     if (type.isObject()) {
       return "obj";
-    } else if (type.hasRuntimeClass(String.class)) {
+    } else if (type.isString()) {
       return "str";
-    } else if (type.hasRuntimeClass(Class.class)) {
-      return "clazz";
-    }
-    // for primitive types (including boxing or unboxing types)
-    else if (type.hasRuntimeClass(int.class) || type.hasRuntimeClass(Integer.class)) {
-      return "i";
-    } else if (type.hasRuntimeClass(double.class) || type.hasRuntimeClass(Double.class)) {
-      return "d";
-    } else if (type.hasRuntimeClass(float.class) || type.hasRuntimeClass(Float.class)) {
-      return "f";
-    } else if (type.hasRuntimeClass(short.class) || type.hasRuntimeClass(Short.class)) {
-      return "s";
-    } else if (type.hasRuntimeClass(boolean.class) || type.hasRuntimeClass(Boolean.class)) {
-      return "b";
-    } else if (type.hasRuntimeClass(char.class) || type.hasRuntimeClass(Character.class)) {
-      return "char";
-    } else if (type.hasRuntimeClass(long.class) || type.hasRuntimeClass(Long.class)) {
-      return "long";
-    } else if (type.hasRuntimeClass(byte.class) || type.hasRuntimeClass(Byte.class)) {
-      return "byte";
+    } else if (type.equals(ConcreteTypes.CLASS_TYPE)) {
+      return "cls";
+    } else if (type.isPrimitive() || type.isBoxedPrimitive()) {
+      if (type.isBoxedPrimitive()) {
+        type = type.toPrimitive();
+      }
+      if (type.equals(ConcreteTypes.CHAR_TYPE)) {
+        return "char";
+      }
+      if (type.equals(ConcreteTypes.LONG_TYPE)) {
+        return "long";
+      }
+      if (type.equals(ConcreteTypes.BYTE_TYPE)) {
+        return "byte";
+      }
+      // otherwise, use the first character of the type name
+      return type.getName().substring(0,1);
     } else {
       // for other object types
       String qualifiedTypeName = type.getName();

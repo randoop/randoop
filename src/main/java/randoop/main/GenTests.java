@@ -53,6 +53,7 @@ import randoop.test.predicate.AlwaysFalseExceptionPredicate;
 import randoop.test.predicate.ExceptionBehaviorPredicate;
 import randoop.test.predicate.ExceptionPredicate;
 import randoop.types.ConcreteType;
+import randoop.types.RandoopTypeException;
 import randoop.util.CollectionsExt;
 import randoop.util.Log;
 import randoop.util.MultiMap;
@@ -282,6 +283,8 @@ public class GenTests extends GenInputsAbstract {
       objectConstructor = operationModel.getConcreteOperation(Object.class.getConstructor());
     } catch (NoSuchMethodException e) {
       assert false : "failed to get Object constructor: " + e;
+    } catch (RandoopTypeException e) {
+      assert false : "type error getting Object constructor: " + e;
     }
     assert objectConstructor != null;
 

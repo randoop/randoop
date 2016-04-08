@@ -15,7 +15,9 @@ import randoop.operation.OperationParseException;
 import randoop.operation.OperationParser;
 import randoop.reflection.ModelCollections;
 import randoop.reflection.TypedOperationManager;
+import randoop.types.ConcreteSimpleType;
 import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypes;
 import randoop.types.PrimitiveTypes;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
@@ -1127,16 +1129,17 @@ public final class Sequence implements WeightedElement {
    */
   public static Sequence createSequenceForPrimitive(Object value) {
     if (value == null) throw new IllegalArgumentException("value is null");
-    ConcreteType type = ConcreteType.forClass(value.getClass());
+    Class<?> c = value.getClass();
+    if (! PrimitiveTypes.isBoxedOrPrimitiveOrStringType(c)) {
+      throw new IllegalArgumentException("value is not a (boxed) primitive or String");
+    }
+    ConcreteType type = new ConcreteSimpleType(c);
 
     if (type.isBoxedPrimitive()) {
       type = type.toPrimitive();
     }
 
-    if (!(type.isPrimitive() || type.isString())) {
-      throw new IllegalArgumentException("value is not a primitive or String");
-    }
-    if (type.equals(ConcreteType.STRING_TYPE) && !PrimitiveTypes.stringLengthOK((String) value)) {
+    if (type.equals(ConcreteTypes.STRING_TYPE) && !PrimitiveTypes.stringLengthOK((String) value)) {
       throw new IllegalArgumentException(
               "value is a string of length > " + GenInputsAbstract.string_maxlen);
     }
