@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public abstract class TypeBound {
    * @return true if this bound is satisfied by the concrete type when the
    *         substitution is used on the bound, false otherwise
    */
-  public boolean isSatisfiedBy(ConcreteType argType, Substitution subst) {
+  public boolean isSatisfiedBy(ConcreteType argType, Substitution subst) throws RandoopTypeException {
     return false;
   }
 
@@ -35,7 +36,7 @@ public abstract class TypeBound {
    * @param bounds  the types representing a type parameter bound
    * @return the type bound constructed from the given {@code Type} objects
    */
-  public static TypeBound fromTypes(Type... bounds) {
+  public static TypeBound fromTypes(Type... bounds) throws RandoopTypeException {
     if (bounds == null) {
       throw new IllegalArgumentException("bounds must be non null");
     }
@@ -43,9 +44,9 @@ public abstract class TypeBound {
     if (bounds.length == 1) {
       return TypeBound.fromType(bounds[0]);
     } else {
-      List<TypeBound> boundList = new ArrayList<TypeBound>();
-      for (Type t : bounds) {
-        boundList.add(TypeBound.fromType(t));
+      List<TypeBound> boundList = new ArrayList<>();
+      for (Type type : bounds) {
+        boundList.add(TypeBound.fromType(type));
       }
       return new IntersectionTypeBound(boundList);
     }
@@ -63,12 +64,7 @@ public abstract class TypeBound {
    * @throws IllegalArgumentException if a parameterized type is given but the
    *         rawtype is not a Class object
    */
-  private static TypeBound fromType(Type type) {
-
-    if (type instanceof Class<?>) {
-      Class<?> c = (Class<?>) type;
-      return new ConcreteTypeBound(ConcreteType.forClass(c, new ConcreteType[0]));
-    }
+  private static TypeBound fromType(Type type) throws RandoopTypeException {
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
 
@@ -88,12 +84,22 @@ public abstract class TypeBound {
 
       for (int i = 0; i < arguments.length; i++) {
         if (arguments[i] instanceof Class<?>) { // concrete
-          conTypes[i] = ConcreteType.forClass((Class<?>) arguments[i], new ConcreteType[0]);
+          conTypes[i] = ConcreteType.forClass((Class<?>) arguments[i]);
         } else { // generic -- just bail to generic bound constructor
           return new GenericTypeBound(runtimeType, arguments);
         }
       }
       return new ConcreteTypeBound(ConcreteType.forClass(runtimeType, conTypes));
+    }
+
+    if (type instanceof TypeVariable) {
+      return new VariableTypeBound((TypeVariable<?>)type);
+    }
+
+    if (type instanceof Class<?>) {
+      System.out.println("type bound: " + type.toString());
+      Class<?> c = (Class<?>) type;
+      return new ConcreteTypeBound(ConcreteType.forClass(c));
     }
 
     throw new IllegalArgumentException("unsupported type bound " + type.toString());
@@ -109,5 +115,13 @@ public abstract class TypeBound {
    */
   public Class<?> getRuntimeClass() {
     return null;
+  }
+
+  public boolean isConcreteBound() {
+    return false;
+  }
+
+  public boolean isVariableBound() {
+    return false;
   }
 }

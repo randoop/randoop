@@ -59,7 +59,7 @@ public class IntersectionTypeBound extends TypeBound {
    * intersection type bound.
    */
   @Override
-  public boolean isSatisfiedBy(ConcreteType argType, Substitution subst) {
+  public boolean isSatisfiedBy(ConcreteType argType, Substitution subst) throws RandoopTypeException {
     for (TypeBound b : boundList) {
       if (!b.isSatisfiedBy(argType, subst)) {
         return false;

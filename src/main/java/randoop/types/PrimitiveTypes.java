@@ -101,13 +101,13 @@ public final class PrimitiveTypes {
   }
 
   public static ConcreteType getPrimitiveOrStringType(String typeName) {
-    return ConcreteType.forClass(typeNameToPrimitiveOrString.get(typeName));
+    return new ConcreteSimpleType(typeNameToPrimitiveOrString.get(typeName));
   }
 
   public static Set<ConcreteType> getPrimitiveOrStringTypes() {
     Set<ConcreteType> s = new LinkedHashSet<>();
     for (Class<?> c : primitiveAndStringToBoxed.keySet()) {
-      s.add(ConcreteType.forClass(c));
+      s.add(new ConcreteSimpleType(c));
     }
     return Collections.unmodifiableSet(s);
   }
@@ -115,14 +115,14 @@ public final class PrimitiveTypes {
   public static Set<ConcreteType> getBoxedTypesAndString() {
     Set<ConcreteType> s = new LinkedHashSet<>();
     for (Class<?> c : boxedToPrimitiveAndString.keySet()) {
-      s.add(ConcreteType.forClass(c));
+      s.add(new ConcreteSimpleType(c));
     }
     return Collections.unmodifiableSet(s);
   }
 
   public static ConcreteType toBoxedType(Class<?> cls) {
     System.out.println("class: " + cls);
-    return ConcreteType.forClass(primitiveAndStringToBoxed.get(cls));
+    return new ConcreteSimpleType(primitiveAndStringToBoxed.get(cls));
   }
 
   public static boolean isBoxedPrimitiveTypeOrString(Class<?> c) {

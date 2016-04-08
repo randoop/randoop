@@ -78,7 +78,7 @@ public class GenericTypeBound extends TypeBound {
    * the concrete type.
    */
   @Override
-  public boolean isSatisfiedBy(ConcreteType argType, Substitution substitution) {
+  public boolean isSatisfiedBy(ConcreteType argType, Substitution substitution) throws RandoopTypeException {
     ConcreteTypeBound b = instantiate(substitution);
     return b.isSatisfiedBy(argType, substitution);
   }
@@ -94,7 +94,7 @@ public class GenericTypeBound extends TypeBound {
    * @throws IllegalArgumentException if either an argument is not a type variable,
    * or a type variable has no instantiation in the substitution
    */
-  public ConcreteTypeBound instantiate(Substitution substitution) {
+  public ConcreteTypeBound instantiate(Substitution substitution) throws RandoopTypeException {
     ConcreteType[] concreteArgs = new ConcreteType[parameters.length];
     for (int i = 0; i < parameters.length; i++) {
       if (!(parameters[i] instanceof TypeVariable)) {
@@ -116,6 +116,6 @@ public class GenericTypeBound extends TypeBound {
    */
   @Override
   public Class<?> getRuntimeClass() {
-    return Object.class;
+    return rawType;
   }
 }

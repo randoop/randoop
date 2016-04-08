@@ -9,7 +9,7 @@ import java.util.Objects;
 public class ConcreteTypeBound extends TypeBound {
 
   /** the type of the bound */
-  private ConcreteType boundType;
+  private final ConcreteType boundType;
 
   /**
    * Constructs a concrete type bound from a particular concrete type.
@@ -51,5 +51,14 @@ public class ConcreteTypeBound extends TypeBound {
   @Override
   public Class<?> getRuntimeClass() {
     return boundType.getRuntimeClass();
+  }
+
+  @Override
+  public boolean isConcreteBound() {
+    return true;
+  }
+
+  public ConcreteType getBoundType() {
+    return boundType;
   }
 }
