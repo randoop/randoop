@@ -2,6 +2,7 @@ package randoop.field;
 
 import org.junit.Test;
 
+import randoop.types.ConcreteSimpleType;
 import randoop.types.ConcreteType;
 import randoop.types.GeneralType;
 
@@ -15,7 +16,7 @@ public class AccessibleFieldTest {
   @Test
   public void inheritedMethods() {
     Class<?> c = ClassWithFields.class;
-    GeneralType declaringType = ConcreteType.forClass(c);
+    GeneralType declaringType = new ConcreteSimpleType(c);
     try {
       AccessibleField pf1 = new AccessibleField(c.getField("oneField"), declaringType);
       AccessibleField pf1_2 = new AccessibleField(c.getField("oneField"), declaringType);

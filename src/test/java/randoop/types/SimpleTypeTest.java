@@ -3,6 +3,7 @@ package randoop.types;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -202,8 +203,12 @@ public class SimpleTypeTest {
     ConcreteType shortType = new ConcreteSimpleType(short.class);
     ConcreteType subclassType = new ConcreteSimpleType(randoop.types.test.Subclass.class);
     ConcreteType intArrayType = ConcreteType.forArrayOf(intType);
-    ConcreteType intArrayListType =
-        ConcreteType.forClass(ArrayList.class, ConcreteType.forClass(Integer.class));
+    ConcreteType intArrayListType = null;
+    try {
+      intArrayListType = ConcreteType.forClass(ArrayList.class, ConcreteType.forClass(Integer.class));
+    } catch (RandoopTypeException e) {
+      fail("type error: " + e.getMessage());
+    }
 
     assertTrue("Object is assignable from all types", objectType.isAssignableFrom(objectType));
     assertTrue("Object is assignable from all types", objectType.isAssignableFrom(booleanType));
@@ -274,7 +279,12 @@ public class SimpleTypeTest {
   public void testRawtypeAssignability() {
     ConcreteType rawALType = new ConcreteSimpleType(ArrayList.class);
     ConcreteType parameterizedALType =
-        ConcreteType.forClass(ArrayList.class, new ConcreteSimpleType(String.class));
+            null;
+    try {
+      parameterizedALType = ConcreteType.forClass(ArrayList.class, new ConcreteSimpleType(String.class));
+    } catch (RandoopTypeException e) {
+      fail("type error: " + e.getMessage());
+    }
     assertTrue(
         "ArrayList<String> assignable to ArrayList",
         rawALType.isAssignableFrom(parameterizedALType));
@@ -294,8 +304,12 @@ public class SimpleTypeTest {
   public void testExtendingGeneric() {
     // class I {}
     // class J<T> extends I {}
-    ConcreteType iType = ConcreteType.forClass(I.class);
-    ConcreteType strJType = ConcreteType.forClass(J.class, new ConcreteSimpleType(String.class));
-    assertTrue("J<String> is assignable to I", iType.isAssignableFrom(strJType));
+    try {
+      ConcreteType iType = ConcreteType.forClass(I.class);
+      ConcreteType strJType = ConcreteType.forClass(J.class, new ConcreteSimpleType(String.class));
+      assertTrue("J<String> is assignable to I", iType.isAssignableFrom(strJType));
+    } catch (RandoopTypeException e) {
+      fail("type error: " + e.getMessage());
+    }
   }
 }

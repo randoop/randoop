@@ -18,8 +18,10 @@ import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.types.ConcreteSimpleType;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypeTuple;
+import randoop.types.ConcreteTypes;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -37,24 +39,24 @@ public class FieldSetterTest {
   @Test
   public void testStaticField() {
     Class<?> c = ClassWithFields.class;
-    ConcreteType declaringType = ConcreteType.forClass(c);
+    ConcreteType declaringType = new ConcreteSimpleType(c);
     try {
       Field field = c.getField("fourField");
       AccessibleField f = new AccessibleField(field, declaringType);
-      ConcreteType fieldType = ConcreteType.forClass(field.getType());
+      ConcreteType fieldType = new ConcreteSimpleType(field.getType());
       List<ConcreteType> setInputTypeList = new ArrayList<>();
       setInputTypeList.add(fieldType);
       FieldSet setOp = new FieldSet(f);
-      ConcreteOperation op = new ConcreteOperation(setOp, declaringType, new ConcreteTypeTuple(setInputTypeList), ConcreteType.VOID_TYPE); 
+      ConcreteOperation op = new ConcreteOperation(setOp, declaringType, new ConcreteTypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE); 
 
       //types
       assertEquals("Should be one input type", 1, op.getInputTypes().size());
-      assertEquals("Output type should be void", ConcreteType.VOID_TYPE, op.getOutputType());
+      assertEquals("Output type should be void", ConcreteTypes.VOID_TYPE, op.getOutputType());
 
       //code generation
       String expected = "randoop.field.ClassWithFields.fourField = 24;" + Globals.lineSep;
       StringBuilder b = new StringBuilder();
-      ConcreteOperation initOp = new ConcreteOperation(new NonreceiverTerm(ConcreteType.INT_TYPE, 24), ConcreteType.INT_TYPE, new ConcreteTypeTuple(), ConcreteType.INT_TYPE);
+      ConcreteOperation initOp = new ConcreteOperation(new NonreceiverTerm(ConcreteTypes.INT_TYPE, 24), ConcreteTypes.INT_TYPE, new ConcreteTypeTuple(), ConcreteTypes.INT_TYPE);
       Sequence seq0 =
           new Sequence().extend(initOp, new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
@@ -89,20 +91,20 @@ public class FieldSetterTest {
   @Test
   public void testInstanceField() {
     Class<?> c = ClassWithFields.class;
-    ConcreteType declaringType = ConcreteType.forClass(c);
+    ConcreteType declaringType = new ConcreteSimpleType(c);
     try {
       Field field = c.getField("oneField");
       AccessibleField f = new AccessibleField(field, declaringType);
-      ConcreteType fieldType = ConcreteType.forClass(field.getDeclaringClass());
+      ConcreteType fieldType = new ConcreteSimpleType(field.getDeclaringClass());
       List<ConcreteType> setInputTypeList = new ArrayList<>();
       setInputTypeList.add(declaringType);
       setInputTypeList.add(fieldType);
       FieldSet setOp = new FieldSet(f);
-      ConcreteOperation op = new ConcreteOperation(setOp, declaringType, new ConcreteTypeTuple(setInputTypeList), ConcreteType.VOID_TYPE);
+      ConcreteOperation op = new ConcreteOperation(setOp, declaringType, new ConcreteTypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
 
       //types
       assertEquals("Should be two input types", 2, op.getInputTypes().size());
-      assertEquals("Output type should be void", ConcreteType.VOID_TYPE, op.getOutputType());
+      assertEquals("Output type should be void", ConcreteTypes.VOID_TYPE, op.getOutputType());
 
       //code generation
       String expected = "classWithFields0.oneField = 24;" + Globals.lineSep;
@@ -118,7 +120,7 @@ public class FieldSetterTest {
       ConcreteOperation consOp = new ConcreteOperation(cons,declaringType, new ConcreteTypeTuple(), declaringType);
 
       Sequence seq0 = new Sequence().extend(consOp, new ArrayList<Variable>());
-      ConcreteOperation initOp = new ConcreteOperation(new NonreceiverTerm(ConcreteType.INT_TYPE, 24), ConcreteType.INT_TYPE, new ConcreteTypeTuple(), ConcreteType.INT_TYPE);
+      ConcreteOperation initOp = new ConcreteOperation(new NonreceiverTerm(ConcreteTypes.INT_TYPE, 24), ConcreteTypes.INT_TYPE, new ConcreteTypeTuple(), ConcreteTypes.INT_TYPE);
       Sequence seq1 = seq0.extend(initOp, new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
       vars.add(new Variable(seq1, 0));
@@ -168,7 +170,7 @@ public class FieldSetterTest {
   @Test
   public void testFinalField() {
     Class<?> c = ClassWithFields.class;
-    ConcreteType declaringType = ConcreteType.forClass(c);
+    ConcreteType declaringType = new ConcreteSimpleType(c);
     try {
       Field field = c.getField("tenField");
       AccessibleField f = new AccessibleField(field, declaringType);
@@ -192,7 +194,7 @@ public class FieldSetterTest {
   @Test
   public void testFinalStaticField() {
     Class<?> c = ClassWithFields.class;
-    ConcreteType declaringType = ConcreteType.forClass(c);
+    ConcreteType declaringType = new ConcreteSimpleType(c);
     try {
       Field field = c.getField("FIVEFIELD");
       AccessibleField f = new AccessibleField(field, declaringType);

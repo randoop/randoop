@@ -28,6 +28,7 @@ import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.test.TestCheckGenerator;
 import randoop.types.ConcreteType;
+import randoop.types.RandoopTypeException;
 import randoop.types.TypeNames;
 import randoop.util.MultiMap;
 import randoop.util.predicate.Predicate;
@@ -238,6 +239,8 @@ public class CoveredClassTest {
       objectConstructor = operationModel.getConcreteOperation(Object.class.getConstructor());
     } catch (NoSuchMethodException e) {
       assert false : "failed to get Object constructor: " + e;
+    } catch (RandoopTypeException e) {
+      fail("type error: " + e.getMessage());
     }
     assert objectConstructor != null : "object constructor is null";
 

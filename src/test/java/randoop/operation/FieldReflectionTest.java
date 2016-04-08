@@ -22,12 +22,16 @@ import randoop.reflection.ReflectionManager;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.TypedOperationManager;
 import randoop.reflection.VisibilityPredicate;
+import randoop.types.ConcreteSimpleType;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypeTuple;
+import randoop.types.ConcreteTypes;
+import randoop.types.RandoopTypeException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * FieldReflectionTest consists of tests of reflection collection of field methods
@@ -43,7 +47,7 @@ public class FieldReflectionTest {
   @Test
   public void basicFields() {
     Class<?> c = ClassWithFields.class;
-    ConcreteType declaringType = ConcreteType.forClass(c);
+    ConcreteType declaringType = new ConcreteSimpleType(c);
 
     @SuppressWarnings("unchecked")
     List<Field> fields = Arrays.asList(c.getFields());
@@ -63,15 +67,23 @@ public class FieldReflectionTest {
       }
     }
 
-    for (Field f : fields) {
-      assertTrue(
-          "field " + f.toGenericString() + " should occur", operations.containsAll(getOperations(f, declaringType)));
+    try {
+      for (Field f : fields) {
+        assertTrue(
+                "field " + f.toGenericString() + " should occur", operations.containsAll(getOperations(f, declaringType)));
+      }
+    } catch (RandoopTypeException e) {
+      fail("type error: " + e.getMessage());
     }
 
-    for (Field f : exclude) {
-      assertFalse(
-          "field " + f.toGenericString() + " should not occur",
-          operations.containsAll(getOperations(f, declaringType)));
+    try {
+      for (Field f : exclude) {
+        assertFalse(
+                "field " + f.toGenericString() + " should not occur",
+                operations.containsAll(getOperations(f, declaringType)));
+      }
+    } catch (RandoopTypeException e) {
+      fail("type error: " + e.getMessage());
     }
   }
 
@@ -101,7 +113,7 @@ public class FieldReflectionTest {
   @Test
   public void inheritedFields() {
     Class<?> c = SubclassWithFields.class;
-    ConcreteType declaringType = ConcreteType.forClass(c);
+    ConcreteType declaringType = new ConcreteSimpleType(c);
 
     List<Field> expected = new ArrayList<>();
     List<Field> exclude = new ArrayList<>();
@@ -124,16 +136,23 @@ public class FieldReflectionTest {
     Set<ConcreteOperation> actual = getConcreteOperations(c);
 
     assertEquals("number of operations ", 2 * expected.size() - 1 + 2, actual.size());
-
-    for (Field f : expected) {
-      assertTrue(
-          "field " + f.toGenericString() + " should occur", actual.containsAll(getOperations(f, declaringType)));
+    try {
+      for (Field f : expected) {
+        assertTrue(
+                "field " + f.toGenericString() + " should occur", actual.containsAll(getOperations(f, declaringType)));
+      }
+    } catch (RandoopTypeException e) {
+      fail("type error: " + e);
     }
 
-    for (Field f : exclude) {
-      assertFalse(
-          "field " + f.toGenericString() + " should not occur",
-          actual.containsAll(getOperations(f, declaringType)));
+    try {
+      for (Field f : exclude) {
+        assertFalse(
+                "field " + f.toGenericString() + " should not occur",
+                actual.containsAll(getOperations(f, declaringType)));
+      }
+    } catch (RandoopTypeException e) {
+      fail("type error: " + e);
     }
   }
 
@@ -144,7 +163,7 @@ public class FieldReflectionTest {
   @Test
   public void filteredFields() {
     Class<?> c = ClassWithFields.class;
-    ConcreteType declaringType = ConcreteType.forClass(c);
+    ConcreteType declaringType = new ConcreteSimpleType(c);
 
     //let's exclude every field
     List<Field> exclude = new ArrayList<>();
@@ -160,9 +179,13 @@ public class FieldReflectionTest {
     assertEquals("number of operations ", 2, actual.size());
 
     for (Field f : exclude) {
-      assertFalse(
-          "field " + f.toGenericString() + " should not occur",
-          actual.containsAll(getOperations(f, declaringType)));
+      try {
+        assertFalse(
+            "field " + f.toGenericString() + " should not occur",
+            actual.containsAll(getOperations(f, declaringType)));
+      } catch (RandoopTypeException e) {
+        fail("type error: " + e.getMessage());
+      }
     }
   }
 
@@ -174,7 +197,7 @@ public class FieldReflectionTest {
    * @param f - reflective Field object
    * @return List of getter/setter statements for the field
    */
-  private List<ConcreteOperation> getOperations(Field f, ConcreteType declaringType) {
+  private List<ConcreteOperation> getOperations(Field f, ConcreteType declaringType) throws RandoopTypeException {
     List<ConcreteOperation> statements = new ArrayList<>();
     ConcreteType fieldType = ConcreteType.forType(f.getGenericType());
     AccessibleField field = new AccessibleField(f, declaringType);
@@ -189,7 +212,7 @@ public class FieldReflectionTest {
 
     if (! field.isFinal()) {
       setInputTypeList.add(fieldType);
-      statements.add(new ConcreteOperation(new FieldSet(field), declaringType, new ConcreteTypeTuple(setInputTypeList), ConcreteType.VOID_TYPE));
+      statements.add(new ConcreteOperation(new FieldSet(field), declaringType, new ConcreteTypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE));
     }
     return statements;
   }

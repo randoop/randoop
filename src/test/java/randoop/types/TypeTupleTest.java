@@ -28,7 +28,7 @@ public class TypeTupleTest {
   @Test
   public void singletonTest() {
     List<ConcreteType> pl1 = new ArrayList<>();
-    pl1.add(ConcreteType.INT_TYPE);
+    pl1.add(ConcreteTypes.INT_TYPE);
     ConcreteTypeTuple ct1 = new ConcreteTypeTuple(pl1);
     ConcreteTypeTuple ct2 = new ConcreteTypeTuple(pl1);
     assertEquals("singletons should be same", ct1, ct2);

@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import randoop.operation.OperationParseException;
 import randoop.types.GeneralType;
+import randoop.types.RandoopTypeException;
 
 public class PublicFieldParserTest {
 
@@ -20,7 +21,9 @@ public class PublicFieldParserTest {
     try {
       classType = GeneralType.forName(classname);
     } catch (ClassNotFoundException e) {
-      fail("couldn't load class: " + e);
+      fail("couldn't load class: " + e.getMessage());
+    } catch (RandoopTypeException e) {
+      fail("type error: " + e.getMessage());
     }
     assert classType != null;
     try {
@@ -44,6 +47,8 @@ public class PublicFieldParserTest {
       classType = GeneralType.forName(classname);
     } catch (ClassNotFoundException e) {
       fail("couldn't load class: " + e);
+    } catch (RandoopTypeException e) {
+      fail("type error: " + e.getMessage());
     }
     assert classType != null;
     try {
@@ -69,6 +74,8 @@ public class PublicFieldParserTest {
       classType = GeneralType.forName(classname);
     } catch (ClassNotFoundException e) {
       fail("couldn't load class: " + e);
+    } catch (RandoopTypeException e) {
+      fail("type error: " + e.getMessage());
     }
     assert classType != null;
     try {

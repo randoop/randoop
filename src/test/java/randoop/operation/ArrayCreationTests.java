@@ -12,13 +12,14 @@ import randoop.sequence.Variable;
 import randoop.types.ConcreteArrayType;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypeTuple;
+import randoop.types.ConcreteTypes;
 
 import static org.junit.Assert.assertEquals;
 
 public class ArrayCreationTests {
   @Test
   public void test1() throws Exception {
-    ConcreteType elementType = ConcreteType.STRING_TYPE;
+    ConcreteType elementType = ConcreteTypes.STRING_TYPE;
     ConcreteType arrayType = ConcreteType.forArrayOf(elementType);
     List<ConcreteType> paramTypes = new ArrayList<>();
     paramTypes.add(elementType);
@@ -44,7 +45,7 @@ public class ArrayCreationTests {
 
   @Test
   public void test2() throws Exception {
-    ConcreteType elementType = ConcreteType.CHAR_TYPE;
+    ConcreteType elementType = ConcreteTypes.CHAR_TYPE;
     ConcreteType arrayType = ConcreteType.forArrayOf(elementType);
     ArrayCreation ad = new ArrayCreation((ConcreteArrayType)arrayType, 1);
     List<ConcreteType> paramTypes = new ArrayList<>();
@@ -64,7 +65,7 @@ public class ArrayCreationTests {
 
   @Test
   public void test3() throws Exception {
-    ConcreteType elementType = ConcreteType.forArrayOf(ConcreteType.CHAR_TYPE);
+    ConcreteType elementType = ConcreteType.forArrayOf(ConcreteTypes.CHAR_TYPE);
     ConcreteType arrayType = ConcreteType.forArrayOf(elementType);
     ArrayCreation arrayCreation = new ArrayCreation((ConcreteArrayType)arrayType, 1);
     List<ConcreteType> paramTypes = new ArrayList<>();

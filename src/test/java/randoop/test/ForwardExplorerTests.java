@@ -33,6 +33,7 @@ import randoop.test.bh.Node;
 import randoop.test.bh.Tree;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypeTuple;
+import randoop.types.ConcreteTypes;
 import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.Predicate;
@@ -186,7 +187,7 @@ public class ForwardExplorerTests {
     } catch (Exception e) {
       throw new BugInRandoopException(e); // Should never reach here!
     }
-    ConcreteOperation op = new ConcreteOperation(objectConstructor, ConcreteType.OBJECT_TYPE, new ConcreteTypeTuple(), ConcreteType.OBJECT_TYPE);
+    ConcreteOperation op = new ConcreteOperation(objectConstructor, ConcreteTypes.OBJECT_TYPE, new ConcreteTypeTuple(), ConcreteTypes.OBJECT_TYPE);
     sequences.add((new Sequence().extend(op, new ArrayList<Variable>())));
     return (new GenTests())
         .createTestOutputPredicate(

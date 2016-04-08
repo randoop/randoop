@@ -12,6 +12,7 @@ import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypeTuple;
+import randoop.types.RandoopTypeException;
 import randoop.util.ReflectionExecutor;
 import randoop.util.TimeoutExceededException;
 
@@ -20,6 +21,7 @@ import junit.framework.TestCase;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class NonterminatingInputTest {
 
@@ -27,7 +29,12 @@ public class NonterminatingInputTest {
   public void test() throws SecurityException, NoSuchMethodException {
 
     Sequence s = new Sequence();
-    ConcreteOperation con = createConstructorCall(Looper.class.getConstructor());
+    ConcreteOperation con = null;
+    try {
+      con = createConstructorCall(Looper.class.getConstructor());
+    } catch (RandoopTypeException e) {
+      fail("type error: " + e.getMessage());
+    }
     s = s.extend(con, new ArrayList<Variable>());
     int oldTimeout = ReflectionExecutor.timeout;
     ReflectionExecutor.timeout = 500;
@@ -45,7 +52,7 @@ public class NonterminatingInputTest {
     }
   }
 
-  private ConcreteOperation createConstructorCall(Constructor<?> con) {
+  private ConcreteOperation createConstructorCall(Constructor<?> con) throws RandoopTypeException {
     ConstructorCall op = new ConstructorCall(con);
     ConcreteType declaringType = ConcreteType.forClass(con.getDeclaringClass());
     List<ConcreteType> paramTypes = new ArrayList<>();

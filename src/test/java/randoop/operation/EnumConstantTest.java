@@ -18,6 +18,7 @@ import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.types.ConcreteSimpleType;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypeTuple;
 
@@ -161,7 +162,7 @@ public class EnumConstantTest {
   @Test
   public void testInheritedMethods() {
     //skipping reflection
-    ConcreteType enumType = ConcreteType.forClass(SimpleEnumForTests.class);
+    ConcreteType enumType = new ConcreteSimpleType(SimpleEnumForTests.class);
     ConcreteOperation ec1 = new ConcreteOperation(new EnumConstant(SimpleEnumForTests.ONE), enumType, new ConcreteTypeTuple(), enumType);
     ConcreteOperation ec1_2 = new ConcreteOperation(new EnumConstant(SimpleEnumForTests.ONE), enumType, new ConcreteTypeTuple(), enumType);
     ConcreteOperation ec2 = new ConcreteOperation(new EnumConstant(SimpleEnumForTests.TWO), enumType, new ConcreteTypeTuple(), enumType);
@@ -178,7 +179,7 @@ public class EnumConstantTest {
     assertTrue("Should be no input types", ec1.getInputTypes().isEmpty());
     assertEquals(
         "Output type should match enum type of constant",
-        ConcreteType.forClass(SimpleEnumForTests.ONE.getDeclaringClass()),
+        new ConcreteSimpleType(SimpleEnumForTests.ONE.getDeclaringClass()),
         ec1.getOutputType());
 
     //Execution

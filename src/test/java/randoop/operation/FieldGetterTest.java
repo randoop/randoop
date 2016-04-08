@@ -19,6 +19,7 @@ import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.types.ConcreteSimpleType;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypeTuple;
 
@@ -37,10 +38,10 @@ public class FieldGetterTest {
   @Test
   public void testStaticField() {
     Class<?> c = ClassWithFields.class;
-    ConcreteType classType = ConcreteType.forClass(c);
+    ConcreteType classType = new ConcreteSimpleType(c);
     try {
       Field field = c.getField("fourField");
-      ConcreteType fieldType = ConcreteType.forClass(field.getType());
+      ConcreteType fieldType = new ConcreteSimpleType(field.getType());
       ConcreteOperation rhs = createGetter(field, fieldType, classType);
 
       //types
@@ -76,11 +77,11 @@ public class FieldGetterTest {
   @Test
   public void testInstanceField() {
     Class<?> c = ClassWithFields.class;
-    ConcreteType classType = ConcreteType.forClass(c);
+    ConcreteType classType = new ConcreteSimpleType(c);
     try {
 
       Field field = c.getField("oneField");
-      ConcreteType fieldType = ConcreteType.forClass(field.getType());
+      ConcreteType fieldType = new ConcreteSimpleType(field.getType());
       ConcreteOperation rhs = createGetter(field, fieldType, classType);
 
       //types
@@ -155,11 +156,11 @@ public class FieldGetterTest {
   @Test
   public void testStaticFinalField() {
     Class<?> c = ClassWithFields.class;
-    ConcreteType classType = ConcreteType.forClass(c);
+    ConcreteType classType = new ConcreteSimpleType(c);
     try {
 
       Field field = c.getField("FIVEFIELD");
-      ConcreteType fieldType = ConcreteType.forClass(field.getType());
+      ConcreteType fieldType = new ConcreteSimpleType(field.getType());
       ConcreteOperation rhs = createGetter(field, fieldType, classType);
 
 

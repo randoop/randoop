@@ -18,7 +18,6 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.ConcreteOperation;
-import randoop.operation.OperationParseException;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PublicVisibilityPredicate;
@@ -28,6 +27,7 @@ import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.test.TestCheckGenerator;
 import randoop.types.ConcreteType;
+import randoop.types.RandoopTypeException;
 import randoop.types.TypeNames;
 import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
@@ -131,6 +131,8 @@ public class SpecialCoveredClassTest {
       objectConstructor = operationModel.getConcreteOperation(Object.class.getConstructor());
     } catch (NoSuchMethodException e) {
       assert false : "failed to get Object constructor: " + e;
+    } catch (RandoopTypeException e) {
+      fail("Type error " + e.getMessage());
     }
     assert objectConstructor != null;
 
@@ -179,6 +181,8 @@ public class SpecialCoveredClassTest {
       it = (ConcreteType)ConcreteType.forName("randoop.instrument.testcase.ImplementorOfTarget");
     } catch (ClassNotFoundException e) {
       fail("cannot find implementor class " + e);
+    } catch (RandoopTypeException e) {
+      fail("Type error " + e.getMessage());
     }
     for (ConcreteOperation op : model) {
       assertTrue(

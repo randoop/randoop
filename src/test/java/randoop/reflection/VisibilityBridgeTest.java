@@ -14,8 +14,8 @@ import java.util.Set;
 import org.junit.Test;
 
 import randoop.operation.ConcreteOperation;
-import randoop.operation.MethodCall;
 import randoop.reflection.visibilitytest.PackageSubclass;
+import randoop.types.ConcreteSimpleType;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypeTuple;
 
@@ -34,14 +34,14 @@ public class VisibilityBridgeTest {
     private ConcreteTypeTuple parameterTypes;
 
     FormalMethod(Method m, ConcreteType declaringType) {
-      this.returnType = ConcreteType.forClass(m.getReturnType());
+      this.returnType = new ConcreteSimpleType(m.getReturnType());
       this.name = m.getName();
       List<ConcreteType> paramTypes = new ArrayList<>();
       if (! Modifier.isStatic(m.getModifiers() & Modifier.methodModifiers())) {
         paramTypes.add(declaringType);
       }
       for (Class<?> p : m.getParameterTypes()) {
-        paramTypes.add(ConcreteType.forClass(p));
+        paramTypes.add(new ConcreteSimpleType(p));
       }
       this.parameterTypes = new ConcreteTypeTuple(paramTypes);
     }
@@ -49,7 +49,7 @@ public class VisibilityBridgeTest {
     FormalMethod(ConcreteOperation op) {
       this.returnType = op.getOutputType();
       this.parameterTypes = op.getInputTypes();
-      this.name = ((MethodCall)op.getOperation()).getName();
+      this.name = op.getOperation().getName();
     }
 
     public boolean equals(FormalMethod m) {
@@ -78,7 +78,7 @@ public class VisibilityBridgeTest {
   @Test
   public void testVisibilityBridge() {
     Class<?> sub = PackageSubclass.class;
-    ConcreteType declaringType = ConcreteType.forClass(sub);
+    ConcreteType declaringType = new ConcreteSimpleType(sub);
 
     //should only inherit public non-synthetic methods of package private superclass
     List<FormalMethod> include = new ArrayList<>();
