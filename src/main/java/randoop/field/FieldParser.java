@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 
 import randoop.operation.OperationParseException;
 import randoop.types.GeneralType;
+import randoop.types.RandoopTypeException;
 
 /**
  * Created by bjkeller on 3/29/16.
@@ -17,7 +18,10 @@ public class FieldParser {
     try {
       classType = GeneralType.forName(classname);
     } catch (ClassNotFoundException e) {
-      String msg = errorPrefix + " Class for field " + descr + " not found: " + e;
+      String msg = errorPrefix + " Class for field " + descr + " not found: " + e.getMessage();
+      throw new OperationParseException(msg);
+    } catch (RandoopTypeException e) {
+      String msg = errorPrefix + " Type error: " + e.getMessage();
       throw new OperationParseException(msg);
     }
 
