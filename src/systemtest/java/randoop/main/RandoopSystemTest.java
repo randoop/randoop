@@ -1,14 +1,12 @@
 package randoop.main;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.File;
 import java.io.Writer;
 import java.lang.InterruptedException;
 import java.lang.ProcessBuilder;
-import java.lang.StringBuilder;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -18,7 +16,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
@@ -28,16 +25,12 @@ import javax.tools.ToolProvider;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.greaterThan;
-import org.hamcrest.core.StringStartsWith;
-import org.hamcrest.text.IsEqualIgnoringWhiteSpace;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.BeforeClass;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import plume.TimeLimitProcess;
-import plume.UtilMDE;
 
 /**
  * A JUnit test class that runs the Randoop system tests.
@@ -583,9 +576,14 @@ public class RandoopSystemTest {
     }
 
     // definitely cannot do anything useful if no generated test files
-    // but not sure that an assert is the right way to deal with it
+    // but not sure that this is the right way to deal with it
     // what if test is meant not to generate anything ?
-    assert testClassSourceFiles.size() > 0 : "no test class source files found";
+    if (testClassSourceFiles.size() == 0) {
+      for (String line : randoopExitStatus.outputLines) {
+        System.err.println(line);
+      }
+      fail("No test class source files found");
+    }
 
     Path classDir = workingPath.resolve(CLASS_DIR_NAME);
     boolean compileSucceeded = compileTests(testClassSourceFiles, classDir.toString());
