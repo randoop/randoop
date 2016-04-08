@@ -8,9 +8,11 @@ import randoop.NormalExecution;
 import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Variable;
 import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
 import randoop.types.GeneralType;
 import randoop.types.GeneralTypeTuple;
 import randoop.types.GenericTypeTuple;
+import randoop.types.RandoopTypeException;
 
 /**
  * EnumConstant is an {@link Operation} representing a constant value from an
@@ -77,7 +79,7 @@ public class EnumConstant extends CallableOperation {
    * {@inheritDoc} Adds qualified name of enum constant.
    */
   @Override
-  public void appendCode(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b) {
+  public void appendCode(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType, List<Variable> inputVars, StringBuilder b) {
     b.append(declaringType.getName()).append(".").append(this.value.name());
   }
 
@@ -88,13 +90,13 @@ public class EnumConstant extends CallableOperation {
    * @see EnumConstant#parse(String, TypedOperationManager)
    */
   @Override
-  public String toParseableString(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType) {
+  public String toParseableString(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
     return declaringType.getName() + ":" + value.name();
   }
 
   /**
    * Parses the description of an enum constant value in a string as returned by
-   * {@link EnumConstant#toParseableString(GeneralType,GeneralTypeTuple,GeneralType)}.
+   * {@link EnumConstant#toParseableString(ConcreteType, ConcreteTypeTuple, ConcreteType)}.
    *
    * Valid strings may be of the form EnumType:EnumValue, or
    * OuterClass$InnerEnum:EnumValue for an enum that is an inner type of a class.
@@ -150,6 +152,9 @@ public class EnumConstant extends CallableOperation {
         declaringType = (ConcreteType)GeneralType.forName(typeName);
       } catch (ClassNotFoundException e) {
         String msg = errorPrefix + " The type given \"" + typeName + "\" was not recognized.";
+        throw new OperationParseException(msg);
+      } catch (RandoopTypeException e) {
+        String msg = errorPrefix + " Type error for type " + typeName + ": " + e.getMessage();
         throw new OperationParseException(msg);
       }
       if (!declaringType.isEnum()) {

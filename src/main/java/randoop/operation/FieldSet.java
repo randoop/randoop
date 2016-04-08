@@ -16,9 +16,12 @@ import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
+import randoop.types.ConcreteTypes;
 import randoop.types.GeneralType;
 import randoop.types.GeneralTypeTuple;
 import randoop.types.GenericTypeTuple;
+import randoop.types.RandoopTypeException;
 
 /**
  * FieldSetter is an adapter for a {@link AccessibleField} as a
@@ -107,7 +110,7 @@ public class FieldSet extends CallableOperation {
    *          the StringBuilder to which code is issued.
    */
   @Override
-  public void appendCode(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b) {
+  public void appendCode(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType, List<Variable> inputVars, StringBuilder b) {
 
     b.append(field.toCode(declaringType, inputVars));
     b.append(" = ");
@@ -133,7 +136,7 @@ public class FieldSet extends CallableOperation {
    * @return the parseable string descriptor for this setter.
    */
   @Override
-  public String toParseableString(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType) {
+  public String toParseableString(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
     return declaringType.getName() + ".<set>(" + field.getName() + ")";
   }
 
@@ -172,7 +175,13 @@ public class FieldSet extends CallableOperation {
 
     AccessibleField accessibleField = FieldParser.parse(descr, classname, fieldname);
     GeneralType classType = accessibleField.getDeclaringType();
-    GeneralType fieldType = GeneralType.forType(accessibleField.getRawField().getGenericType());
+    GeneralType fieldType;
+    try {
+      fieldType = GeneralType.forType(accessibleField.getRawField().getGenericType());
+    } catch (RandoopTypeException e) {
+      String msg = errorPrefix + " type error: " + e;
+      throw new OperationParseException(msg);
+    }
 
     if (accessibleField.isFinal()) {
       throw new OperationParseException("Cannot create setter for final field " + classname + "." + opname);
@@ -182,7 +191,7 @@ public class FieldSet extends CallableOperation {
       setInputTypeList.add(classType);
     }
     setInputTypeList.add(fieldType);
-    manager.createTypedOperation(new FieldSet(accessibleField), classType, new GenericTypeTuple(setInputTypeList), ConcreteType.VOID_TYPE);
+    manager.createTypedOperation(new FieldSet(accessibleField), classType, new GenericTypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
   }
 
   @Override

@@ -13,9 +13,12 @@ import randoop.field.FieldParser;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Variable;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
 import randoop.types.GeneralType;
 import randoop.types.GeneralTypeTuple;
 import randoop.types.GenericTypeTuple;
+import randoop.types.RandoopTypeException;
 
 /**
  * FieldGetter is an adapter that creates a {@link Operation} from a
@@ -80,7 +83,7 @@ public class FieldGet extends CallableOperation {
    *          the StringBuilder that strings are appended to.
    */
   @Override
-  public void appendCode(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b) {
+  public void appendCode(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType, List<Variable> inputVars, StringBuilder b) {
     b.append(field.toCode(declaringType, inputVars));
   }
 
@@ -89,7 +92,7 @@ public class FieldGet extends CallableOperation {
    * PublicFieldParser.
    */
   @Override
-  public String toParseableString(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType) {
+  public String toParseableString(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
     return declaringType.getName() + ".<get>(" + field.getName() + ")";
   }
 
@@ -154,7 +157,13 @@ public class FieldGet extends CallableOperation {
 
     AccessibleField accessibleField = FieldParser.parse(descr, classname, fieldname);
     GeneralType classType = accessibleField.getDeclaringType();
-    GeneralType fieldType = GeneralType.forType(accessibleField.getRawField().getGenericType());
+    GeneralType fieldType;
+    try {
+      fieldType = GeneralType.forType(accessibleField.getRawField().getGenericType());
+    } catch (RandoopTypeException e) {
+      String msg = errorPrefix + " type error " + e;
+      throw new OperationParseException(msg);
+    }
 
     List<GeneralType> getInputTypeList = new ArrayList<>();
     if (! accessibleField.isStatic()) {

@@ -1,15 +1,9 @@
 package randoop.operation;
 
 import java.io.PrintStream;
-import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,11 +14,12 @@ import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
 import randoop.types.GeneralType;
 import randoop.types.GeneralTypeTuple;
 import randoop.types.GenericTypeTuple;
-import randoop.types.PrimitiveTypes;
-import randoop.util.CollectionsExt;
+import randoop.types.RandoopTypeException;
 import randoop.util.MethodReflectionCode;
 import randoop.util.ReflectionExecutor;
 
@@ -97,13 +92,21 @@ public final class MethodCall extends CallableOperation {
    * @param inputVars is the list of actual arguments to be printed.
    */
   @Override
-  public void appendCode(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder sb) {
+  public void appendCode(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType, List<Variable> inputVars, StringBuilder sb) {
 
     String receiverString = isStatic() ? null : inputVars.get(0).getName();
-    appendReceiverOrClassForStatics(declaringType, inputTypes, receiverString, sb);
+    if (isStatic()) {
+      sb.append(declaringType.getName().replace('$', '.'));
+    } else {
+      ConcreteType expectedType = inputTypes.get(0);
+      if (expectedType.isPrimitive()) { // explicit cast when want primitive boxed as receiver
+        sb.append("((").append(expectedType.getName()).append(")").append(receiverString).append(")");
+      } else {
+        sb.append(receiverString);
+      }
+    }
 
     sb.append(".");
-    sb.append(getTypeArguments());
     sb.append(getMethod().getName()).append("(");
 
     int startIndex = (isStatic() ? 0 : 1);
@@ -131,71 +134,6 @@ public final class MethodCall extends CallableOperation {
       sb.append(param);
     }
     sb.append(")");
-  }
-
-  // XXX this is a pretty bogus workaround for a bug in javac (type inference
-  // fails sometimes)
-  // It is bogus because what we produce here may be different from correct
-  // inferred type.
-  private String getTypeArguments() {
-    TypeVariable<Method>[] typeParameters = method.getTypeParameters();
-    if (typeParameters.length == 0) return "";
-    StringBuilder b = new StringBuilder();
-    Class<?>[] params = new Class<?>[typeParameters.length];
-    b.append("<");
-    for (int i = 0; i < typeParameters.length; i++) {
-      if (i > 0) b.append(",");
-      Type firstBound =
-          typeParameters[i].getBounds().length == 0
-              ? Object.class
-              : typeParameters[i].getBounds()[0];
-      params[i] = getErasure(firstBound);
-      b.append(getErasure(firstBound).getCanonicalName());
-    }
-    b.append(">");
-    // if all are object, then don't bother
-    if (CollectionsExt.findAll(Arrays.asList(params), Object.class).size() == params.length)
-      return "";
-    return b.toString();
-  }
-
-  private static Class<?> getErasure(Type t) {
-    if (t instanceof Class<?>) return (Class<?>) t;
-    if (t instanceof ParameterizedType) {
-      ParameterizedType pt = (ParameterizedType) t;
-      return getErasure(pt.getRawType());
-    }
-    if (t instanceof TypeVariable<?>) {
-      TypeVariable<?> tv = (TypeVariable<?>) t;
-      Type[] bounds = tv.getBounds();
-      Type firstBound = bounds.length == 0 ? Object.class : bounds[0];
-      return getErasure(firstBound);
-    }
-    if (t instanceof GenericArrayType)
-      throw new UnsupportedOperationException("erasure of arrays not implemented " + t);
-    if (t instanceof WildcardType)
-      throw new UnsupportedOperationException("erasure of wildcards not implemented " + t);
-    throw new IllegalStateException("unexpected type " + t);
-  }
-
-  private void appendReceiverOrClassForStatics(GeneralType declaringType, GeneralTypeTuple inputTypes, String receiverString, StringBuilder b) {
-    if (isStatic()) {
-      b.append(declaringType.getName().replace('$', '.'));
-    } else {
-      Class<?> expectedType = inputTypes.get(0).getRuntimeClass();
-      String typeName = expectedType.getName();
-      boolean mustCast =
-          typeName != null
-              && PrimitiveTypes.isBoxedPrimitiveTypeOrString(expectedType)
-              && !expectedType.equals(String.class);
-      if (mustCast) {
-        // this is a little paranoid but we need to cast primitives in
-        // order to get them boxed.
-        b.append("((").append(typeName).append(")").append(receiverString).append(")");
-      } else {
-        b.append(receiverString);
-      }
-    }
   }
 
   @Override
@@ -262,7 +200,7 @@ public final class MethodCall extends CallableOperation {
    *  java.util.ArrayList.add(int,java.lang.Object)
    */
   @Override
-  public String toParseableString(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType) {
+  public String toParseableString(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
     StringBuilder sb = new StringBuilder();
     sb.append(method.getDeclaringClass().getName()).append(".");
     sb.append(method.getName()).append("(");
@@ -307,22 +245,25 @@ public final class MethodCall extends CallableOperation {
     } catch (ClassNotFoundException e) {
       String msg = "Class for method " + methodString + " not found: " + e;
       throw new OperationParseException(msg);
+    } catch (RandoopTypeException e) {
+      String msg = "Type error for method class: " + e.getMessage();
+      throw new OperationParseException(msg);
     }
 
     System.out.println("Looking for: " + opname + " args: " + arguments);
 
     Class<?>[] typeArguments = TypeArguments.getTypeArgumentsForString(arguments);
     Method m = null;
+    String msg = "Method " + methodString + " not found: ";
     try {
       m = classType.getRuntimeClass().getDeclaredMethod(opname, typeArguments);
     } catch (NoSuchMethodException e) {
-
+      msg += e;
     }
     if (m == null) {
       try {
         m = classType.getRuntimeClass().getMethod(opname, typeArguments);
       } catch (NoSuchMethodException e) {
-        String msg = "Method " + methodString + " not found: " + e;
         throw new OperationParseException(msg);
       }
     }
@@ -333,9 +274,20 @@ public final class MethodCall extends CallableOperation {
       paramTypes.add(classType);
     }
     for (Class<?> c : typeArguments) {
-      paramTypes.add(manager.getClassType(c));
+      try {
+        paramTypes.add(manager.getClassType(c));
+      } catch (RandoopTypeException e) {
+        msg = "Type error for method parameter: " + e.getMessage();
+        throw new OperationParseException(msg);
+      }
     }
-    GeneralType outputType = GeneralType.forType(m.getGenericReturnType());
+    GeneralType outputType;
+    try {
+      outputType = GeneralType.forType(m.getGenericReturnType());
+    } catch (RandoopTypeException e) {
+      msg = "Type error for method " + methodString + ": " + e;
+      throw new OperationParseException(msg);
+    }
     manager.createTypedOperation(op, classType, new GenericTypeTuple(paramTypes), outputType);
 
   }

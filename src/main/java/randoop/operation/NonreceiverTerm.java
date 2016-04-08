@@ -10,11 +10,13 @@ import randoop.main.GenInputsAbstract;
 import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Variable;
 import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
+import randoop.types.ConcreteTypes;
 import randoop.types.GeneralType;
 import randoop.types.GeneralTypeTuple;
 import randoop.types.GenericTypeTuple;
 import randoop.types.PrimitiveTypes;
-import randoop.types.TypeNames;
+import randoop.types.RandoopTypeException;
 import randoop.util.StringEscapeUtils;
 import randoop.util.Util;
 
@@ -35,7 +37,7 @@ public final class NonreceiverTerm extends CallableOperation {
   /**
    * ID for parsing purposes.
    *
-   * @see OperationParser#getId(Operation)
+   * @see OperationParser#getId(ConcreteOperation)
    */
   public static final String ID = "prim";
 
@@ -64,9 +66,9 @@ public final class NonreceiverTerm extends CallableOperation {
         }
       } else {
         if (!type.isInstance(value))
-          throw new IllegalArgumentException("o.getClass()=" + value.getClass() + ",t=" + type);
+          throw new IllegalArgumentException("value.getClass()=" + value.getClass() + ",type=" + type);
         if (!PrimitiveTypes.isBoxedOrPrimitiveOrStringType(value.getClass()))
-          throw new IllegalArgumentException("o is not a primitive-like value.");
+          throw new IllegalArgumentException("value is not a primitive-like value.");
       }
     } else if (type.isString()) {
       if (value != null && !PrimitiveTypes.stringLengthOK((String) value)) {
@@ -144,7 +146,7 @@ public final class NonreceiverTerm extends CallableOperation {
    *
    */
   @Override
-  public void appendCode(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b) {
+  public void appendCode(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType, List<Variable> inputVars, StringBuilder b) {
     b.append(PrimitiveTypes.toCodeString(getValue()));
   }
 
@@ -170,26 +172,29 @@ public final class NonreceiverTerm extends CallableOperation {
    * In the case of characters there is no natural zero, so the value 'a' is
    * used.
    *
-   * @param c
+   * @param type
    *          the type of value desired.
    * @return a {@link NonreceiverTerm} with a canonical representative of the
    *         given type.
    */
-  public static NonreceiverTerm createNullOrZeroTerm(ConcreteType c) {
-    if (c.hasRuntimeClass(String.class)) return new NonreceiverTerm(c, "");
-    if (c.hasRuntimeClass(Character.TYPE))
-      return new NonreceiverTerm(c, 'a'); // TODO This is not null or zero...
-    if (c.hasRuntimeClass(Byte.TYPE)) return new NonreceiverTerm(c, (byte) 0);
-    if (c.hasRuntimeClass(Short.TYPE)) return new NonreceiverTerm(c, (short) 0);
-    if (c.hasRuntimeClass(Integer.TYPE))
-      return new NonreceiverTerm(c, 0);
-    if (c.hasRuntimeClass(Long.TYPE)) return new NonreceiverTerm(c, 0L);
-    if (c.hasRuntimeClass(Float.TYPE))
-      return new NonreceiverTerm(c, 0f);
-    if (c.hasRuntimeClass(Double.TYPE))
-      return new NonreceiverTerm(c, 0d);
-    if (c.hasRuntimeClass(Boolean.TYPE)) return new NonreceiverTerm(c, false);
-    return new NonreceiverTerm(c, null);
+  static NonreceiverTerm createNullOrZeroTerm(ConcreteType type) {
+    if (type.isBoxedPrimitive()) {
+      type = type.toPrimitive();
+    }
+    if (type.isString()) return new NonreceiverTerm(type, "");
+    if (type.equals(ConcreteTypes.CHAR_TYPE))
+      return new NonreceiverTerm(type, 'a'); // TODO This is not null or zero...
+    if (type.equals(ConcreteTypes.BYTE_TYPE)) return new NonreceiverTerm(type, (byte) 0);
+    if (type.equals(ConcreteTypes.SHORT_TYPE)) return new NonreceiverTerm(type, (short) 0);
+    if (type.equals(ConcreteTypes.INT_TYPE))
+      return new NonreceiverTerm(type, 0);
+    if (type.equals(ConcreteTypes.LONG_TYPE)) return new NonreceiverTerm(type, 0L);
+    if (type.equals(ConcreteTypes.FLOAT_TYPE))
+      return new NonreceiverTerm(type, 0f);
+    if (type.equals(ConcreteTypes.DOUBLE_TYPE))
+      return new NonreceiverTerm(type, 0d);
+    if (type.equals(ConcreteTypes.BOOLEAN_TYPE)) return new NonreceiverTerm(type, false);
+    return new NonreceiverTerm(type, null);
   }
 
   /**
@@ -226,17 +231,15 @@ public final class NonreceiverTerm extends CallableOperation {
    * @return string representation of primitive, String or null value.
    */
   @Override
-  public String toParseableString(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType) {
+  public String toParseableString(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
 
     String valStr;
     if (value == null) {
       valStr = "null";
     } else {
-      Class<?> valueClass = PrimitiveTypes.primitiveType(value.getClass());
-
-      if (String.class.equals(valueClass)) {
+      if (type.isString()) {
         valStr = "\"" + StringEscapeUtils.escapeJava(value.toString()) + "\"";
-      } else if (char.class.equals(valueClass)) {
+      } else if (type.equals(ConcreteTypes.CHAR_TYPE)) {
         valStr = Integer.toHexString((Character) value);
       } else {
         valStr = value.toString();
@@ -248,7 +251,7 @@ public final class NonreceiverTerm extends CallableOperation {
 
   /**
    * Parse a non-receiver value in a string in the form generated by
-   * {@link NonreceiverTerm#toParseableString(GeneralType,GeneralTypeTuple,GeneralType)}.
+   * {@link NonreceiverTerm#toParseableString(ConcreteType, ConcreteTypeTuple, ConcreteType)}
    *
    * @param s
    *          a string representing a value of a non-receiver type.
@@ -304,10 +307,13 @@ public final class NonreceiverTerm extends CallableOperation {
               + typeString
               + "\") was unrecognized.";
       throw new OperationParseException(msg);
+    } catch (RandoopTypeException e) {
+      String msg = "Error when parsing type/value pair " + s + ". Type error: " + e.getMessage();
+      throw new OperationParseException(msg);
     }
 
     Object value;
-    if (type.hasRuntimeClass(char.class)) {
+    if (type.equals(ConcreteTypes.CHAR_TYPE)) {
       try {
         value = (char) Integer.parseInt(valString, 16);
       } catch (NumberFormatException e) {
@@ -321,7 +327,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + "\") was not parseable.";
         throw new OperationParseException(msg);
       }
-    } else if (type.hasRuntimeClass(byte.class)) {
+    } else if (type.equals(ConcreteTypes.BYTE_TYPE)) {
       try {
         value = Byte.valueOf(valString);
       } catch (NumberFormatException e) {
@@ -335,7 +341,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + "\") was not parseable.";
         throw new OperationParseException(msg);
       }
-    } else if (type.hasRuntimeClass(short.class)) {
+    } else if (type.equals(ConcreteTypes.SHORT_TYPE)) {
       try {
         value = Short.valueOf(valString);
       } catch (NumberFormatException e) {
@@ -349,7 +355,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + "\") was not parseable.";
         throw new OperationParseException(msg);
       }
-    } else if (type.hasRuntimeClass(int.class)) {
+    } else if (type.equals(ConcreteTypes.INT_TYPE)) {
       try {
         value = Integer.valueOf(valString);
       } catch (NumberFormatException e) {
@@ -363,7 +369,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + "\") was not parseable.";
         throw new OperationParseException(msg);
       }
-    } else if (type.hasRuntimeClass(long.class)) {
+    } else if (type.equals(ConcreteTypes.LONG_TYPE)) {
       try {
         value = Long.valueOf(valString);
       } catch (NumberFormatException e) {
@@ -377,7 +383,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + "\") was not parseable.";
         throw new OperationParseException(msg);
       }
-    } else if (type.hasRuntimeClass(float.class)) {
+    } else if (type.equals(ConcreteTypes.FLOAT_TYPE)) {
       try {
         value = Float.valueOf(valString);
       } catch (NumberFormatException e) {
@@ -391,7 +397,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + "\") was not parseable.";
         throw new OperationParseException(msg);
       }
-    } else if (type.hasRuntimeClass(double.class)) {
+    } else if (type.equals(ConcreteTypes.DOUBLE_TYPE)) {
       try {
         value = Double.valueOf(valString);
       } catch (NumberFormatException e) {
@@ -405,7 +411,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + "\") was not parseable.";
         throw new OperationParseException(msg);
       }
-    } else if (type.hasRuntimeClass(boolean.class)) {
+    } else if (type.equals(ConcreteTypes.BOOLEAN_TYPE)) {
       if (valString.equals("true") || valString.equals("false")) {
         value = Boolean.valueOf(valString);
       } else {
@@ -419,7 +425,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + "\") was not parseable.";
         throw new OperationParseException(msg);
       }
-    } else if (type.hasRuntimeClass(String.class)) {
+    } else if (type.isString()) {
       if (valString.equals("null")) {
         value = null;
       } else {

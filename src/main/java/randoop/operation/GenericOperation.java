@@ -5,6 +5,7 @@ import java.util.Objects;
 import randoop.types.GeneralType;
 import randoop.types.GeneralTypeTuple;
 import randoop.types.GenericType;
+import randoop.types.RandoopTypeException;
 import randoop.types.Substitution;
 
 /**
@@ -108,7 +109,7 @@ public class GenericOperation extends TypedOperation<Operation> {
    * @param substitution  the type substitution
    * @return the concrete operation with type variables replaced by substitution
    */
-  public GenericOperation apply(Substitution substitution) {
+  public GenericOperation apply(Substitution substitution) throws RandoopTypeException {
     GeneralType declaringType = this.declaringType.apply(substitution);
     GeneralTypeTuple inputTypes = this.inputTypes.apply(substitution);
     GeneralType outputType = this.outputType.apply(substitution);
