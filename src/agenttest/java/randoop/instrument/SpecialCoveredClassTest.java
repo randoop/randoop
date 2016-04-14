@@ -96,14 +96,15 @@ public class SpecialCoveredClassTest {
           c.getName());
     }
 
-    assertEquals("should have classes", 2, classes.size());
+    // 2 classes plus Object
+    assertEquals("should have classes", 3, classes.size());
     for (ConcreteType c : classes) {
       assertTrue("should not be interface: " + c.getName(), !c.isInterface());
     }
     //
     List<ConcreteOperation> model = operationModel.getConcreteOperations();
     //
-    assertEquals("model operations", 5, model.size());
+    assertEquals("model operations", 6, model.size());
     //
     Set<Sequence> components = new LinkedHashSet<>();
     components.addAll(SeedSequences.defaultSeeds());
