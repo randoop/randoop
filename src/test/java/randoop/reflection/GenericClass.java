@@ -40,6 +40,10 @@ public class GenericClass<T> {
     }
   }
 
+  public void addAll(List<? extends T> l) {
+    theGenericList.addAll(l);
+  }
+
   // this is a concrete operation inside of a generic class should be in generic operations pool
   public int getTheGenericListLength() { return theGenericList.size(); }
 

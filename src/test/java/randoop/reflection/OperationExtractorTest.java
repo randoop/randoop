@@ -11,6 +11,7 @@ import java.util.Set;
 import randoop.operation.ConcreteOperation;
 import randoop.operation.GenericOperation;
 import randoop.types.ConcreteType;
+import randoop.types.GenericClassType;
 import randoop.types.GenericType;
 import randoop.types.TypeNames;
 import randoop.util.MultiMap;
@@ -40,7 +41,7 @@ public class OperationExtractorTest {
       }
 
       @Override
-      public void addGenericOperation(GenericType declaringType, GenericOperation operation) {
+      public void addGenericOperation(GenericClassType declaringType, GenericOperation operation) {
         genericClassTypes.add(declaringType, operation);
       }
 
@@ -91,12 +92,12 @@ public class OperationExtractorTest {
       }
 
       @Override
-      public void addGenericClassType(GenericType type) {
+      public void addGenericClassType(GenericClassType type) {
         genericTypes.add(type);
       }
 
       @Override
-      public void addGenericOperation(GenericType declaringType, GenericOperation operation) {
+      public void addGenericOperation(GenericClassType declaringType, GenericOperation operation) {
         genericsMap.add(declaringType, operation);
       }
 
@@ -120,7 +121,7 @@ public class OperationExtractorTest {
     assertThat("should be one generic type", genericTypes.size(), is(equalTo(1)));
 
     for (GenericType key : genericsMap.keySet()) {
-      assertThat("there should be 19 operations", genericsMap.getValues(key).size(), is(equalTo(19)));
+      assertThat("there should be 20 operations", genericsMap.getValues(key).size(), is(equalTo(20)));
     }
 
 
