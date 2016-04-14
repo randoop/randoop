@@ -1,10 +1,8 @@
-<!DOCTYPE html 
-     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<!DOCTYPE html>
+<html>
 <head>
   <title>Randoop project ideas</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
 <body>
@@ -107,7 +105,7 @@ next method to test. Here are a few example strategies; the project would involv
 <p>
 Randoop's generated test sequences are random and may not be characteristic
 of real use.  One problem is that there may be restrictions on usage of a
-class:  <tt>close</tt> may only be called after <tt>open</tt>, or arguments
+class:  <code>close</code> may only be called after <code>open</code>, or arguments
 must have particular relationships, such as the non-array argument to
 binary search must appear in the array argument.  Another problem is that
 random invocations may not create interesting data structures, such as very
@@ -193,7 +191,7 @@ A research question is whether this degrades the fault-finding ability of
 the test suite.  Setting global fields may change the behavior of
 subsequent tests &mdash; is that a positive or a negative?
 It would also be interesting to exclude the fields from being modified by
-Randoop, via the <tt>--omitmethods</tt> and <tt>--omit-filed-list</tt> 
+Randoop, via the <code>--omitmethods</code> and <code>--omit-filed-list</code> 
 command-line options.  How much does that degrade Randoop's fault-finding
 ability?
 </p>
@@ -431,7 +429,7 @@ started with Randoop development and make a contribution.
     Make Randoop able to test private methods: generate tests that directly
     call non-public methods and constructors (this is sometimes useful when
     testing certain code). Currently, Randoop can create and execute such
-    tests (via the unpublicized option <tt>--public-only=boolean</tt>), but
+    tests (via the unpublicized option <code>--public-only=boolean</code>), but
     the resulting JUnit tests do not compile. This task involves modifying
     Randoop's JUnit output format so that non-public methods are called via
     reflection, making them accessible for execution.

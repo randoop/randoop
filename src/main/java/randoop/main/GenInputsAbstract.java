@@ -40,9 +40,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * The fully-qualified name of a class to test. This class is tested in
-   * addition to any specified using <tt>--classlist</tt>, and must be
+   * addition to any specified using <code>--classlist</code>, and must be
    * accessible from the package of the tests (set with
-   * <tt>--junit-package-name</tt>).
+   * <code>--junit-package-name</code>).
    */
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Code under test")
@@ -56,8 +56,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * on a separate line. See an <a href=
    * "https://raw.githubusercontent.com/randoop/randoop/master/doc/class_list_example.txt">
    * example</a>. These classes are tested in addition to any specified using
-   * <tt>--testclass</tt>. All classes must be accessible from the package of
-   * the tests (set with <tt>--junit-package-name</tt>).
+   * <code>--testclass</code>. All classes must be accessible from the package of
+   * the tests (set with <code>--junit-package-name</code>).
    */
   @Option("File that lists classes under test")
   public static File classlist = null;
@@ -69,7 +69,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * In the file, each each method under test is specified on a separate line.
    * The list of methods given by this argument augment any methods derived via
-   * the <tt>--testclass</tt> or <tt>--classlist</tt> option.
+   * the <code>--testclass</code> or <code>--classlist</code> option.
    *
    * <p>
    * A constructor line begins with <code>"cons :"</code> followed by the
@@ -113,8 +113,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * <p>
    * Randoop only calls methods that are specified by one of the
-   * <tt>--testclass</tt>, <tt>-classlist</tt>, or <tt>--methodlist</tt>
-   * command-line options; the purpose of <tt>--omitmethods</tt> is to override
+   * <code>--testclass</code>, <code>-classlist</code>, or <code>--methodlist</code>
+   * command-line options; the purpose of <code>--omitmethods</code> is to override
    * one of those other command-line options.
    * </p>
    */
@@ -131,7 +131,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * Restrict tests to only include public members of classes. Ordinarily, the
-   * setting of <tt>--junit-package-name</tt> and package accessibility is used
+   * setting of <code>--junit-package-name</code> and package accessibility is used
    * to determine which members will be used in tests. Using this option
    * restricts the tests to only use public members even if the class is a
    * member of the same package as the generated tests.
@@ -227,8 +227,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * EXPECTED), or should it be discarded (value: INVALID)?
    *
    * <p>
-   * The arguments <tt>--npe-on-null-input</tt>,
-   * <tt>--npe-on-non-null-input</tt>, and <tt>--oom-exception</tt> handle
+   * The arguments <code>--npe-on-null-input</code>,
+   * <code>--npe-on-non-null-input</code>, and <code>--oom-exception</code> handle
    * special cases of unchecked exceptions.
    * </p>
    */
@@ -400,7 +400,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * How to use literal values that are specified via the
-   * <tt>--literals-file</tt> command-line option.
+   * <code>--literals-file</code> command-line option.
    *
    * @see ClassLiteralsMode
    */
@@ -509,7 +509,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * same as the package of a class under test, then package visibility rules
    * are used to determine whether to include the class or class members in a
    * test. Tests can be restricted to public members only by using the option
-   * <tt>--only-test-public-members</tt>.
+   * <code>--only-test-public-members</code>.
    */
   @Option("Name of the package for the generated JUnit files")
   public static String junit_package_name = "";

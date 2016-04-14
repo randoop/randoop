@@ -36,7 +36,7 @@ import randoop.util.RecordProcessor;
  * specifically, TypeNames.getTypeForName(classname) must return a valid Class
  * object.
  * <li>Each type:value pair describes the type and value of a literal (for
- * example, <tt>int:3</tt>).
+ * example, <code>int:3</code>).
  * </ul>
  * Blank lines and comment lines (lines starting with "#") are ignored, both
  * between records and inside records.

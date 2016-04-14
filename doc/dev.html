@@ -1,8 +1,6 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
 <head>
-<meta http-equiv="Content-Type" content="text/html" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="stylesheets/main.css" type="text/css" />
 <link rel="icon" type="image/png" href="https://randoop.github.io/randoop/images/randoop-logo.png" />
 <title>Randoop Developer's Manual</title>
@@ -24,7 +22,7 @@
         </ul></li>
       <li><a href="#usinganide">Using an IDE</a></li>
       <li><a href="#classpath">Randoop classpath</a></li>
-      <li><a href="#prereleasemaintenance">Maintaining Randoop Pre-Release</a>
+      <li><a href="#maintenance">Maintaining Randoop</a>
         <ul>
           <li><a href="#maintaininglibraries">Updating libraries</a></li>
           <li><a href="#documentingchanges">Documenting Changes</a></li>
@@ -88,7 +86,7 @@ There is separate <a href="../plugin/doc/dev.html">developer documentation
 <p>
   When working on a particular feature, create a new
   branch and work there rather
-  than in the <i>master</i> branch.
+  than in the <code>master</code> branch.
 </p>
 
 
@@ -104,64 +102,84 @@ There is separate <a href="../plugin/doc/dev.html">developer documentation
 <p>
   This command compiles Randoop, compiles the Java agents, runs all tests,
   and builds the jar files.
-  For this and other commands that generate files, the generated files are
-  placed in a subdirectory named <i>build</i> in both the parent directory and
+  Generated files are
+  placed in subdirectories named <code>build</code> in the parent directory and in
   each of the agent subdirectories.
-  Once the <code>./gradlew build</code> command completes, all of the jar files
-  will be located in the directory <code>build/libs</code>.
+  Jar files are placed in directory <code>build/libs</code>.
 </p>
 
-</p>
+<p>
   You can also break this process down by running separate tasks.
-  Particular tasks that may be useful during development include
-</p>
-<ul>
-  <li><code>./gradlew jar</code> to build the jar files,</li>
-  <li><code>./gradlew assemble</code> to compile and build jar files,</li>
-  <li><code>./gradlew check</code> to run the all of the tests,</li>
-  <li><code>./gradlew testReport</code> to generate HTML reports from tests
-    (in <tt>build/reports/allTests</tt>), and</li>
-  <li><code>./gradlew clean</code> to remove the <tt>build</tt> subdirectory.</li>
-</ul>
-
-<p>
-  Compiling is a little more complex, since the code is organized by
-  <i>source sets</i>, which is a concept from the
-  <a href="https://docs.gradle.org/current/userguide/java_plugin.html">Gradle Java plugin</a>.
-  A source set is a grouping of source files that can have its own set of
-  dependencies and tasks.
-  For instance, in the Randoop <tt>build.gradle</tt> there is the
-  <tt>agentTest</tt> source set that is separate from the <tt>test</tt> source
-  set because the test classes must run using the <tt>exercised-class</tt> Java
-  agent.
-  The plugin normally has two source sets named <tt>main</tt> and <tt>test</tt>,
-  and the Randoop build script defines others to better structure the build process.
-  Each source set has its own compile task:
-</p>
-<ul>
-  <li><code>./gradlew compileJava</code> to compile the <tt>main</tt> source set,</li>
-  <li><code>./gradlew compileTestJava</code> to compile the <tt>test</tt> source set,</li>
-  <li><code>./gradlew compileAgentTestJava</code> to compile the <tt>agentTest</tt> source set.</li>
-</ul>
-
-<p>
   For the full list of tasks supported by the Randoop build script, type
   <code>./gradlew tasks</code>.
+  Particular tasks that may be useful during development include
+</p>
+<table style="border:0;">
+  <tr>
+    <td><code>./gradlew jar</code></td>
+    <td>to build the jar files</td>
+  </tr>
+  <tr>
+    <td><code>./gradlew assemble</code></td>
+    <td>to compile and build jar files</td>
+  </tr>
+  <tr>
+    <td><code>./gradlew check</code></td>
+    <td>to run the all of the tests</td>
+  </tr>
+  <tr>
+    <td><code>./gradlew testReport</code></td>
+    <td>to generate HTML reports from tests
+      (in <code>build/reports/allTests</code>)</td>
+  </tr>
+  <tr>
+    <td><code>./gradlew clean</code></td>
+    <td>to remove the <code>build</code> subdirectory</td>
+  </tr>
+  <tr>
+    <td><code>./gradlew compileJava</code></td>
+    <td>to compile the <code>main</code> source set</td>
+  </tr>
+  <tr>
+    <td><code>./gradlew compileTestJava</code></td>
+    <td>to compile the <code>test</code> source set</td>
+  </tr>
+  <tr>
+    <td><code>./gradlew compileAgentTestJava</code></td>
+    <td>to compile the <code>agentTest</code> source set</td>
+  </tr>
+  <tr>
+    <td><code>./gradlew manual</code></td>
+    <td>to update the manual from the source Javadoc</td>
+  </tr>
+</table>
+<p>
+  Compiling uses the concept of
+  <a href="https://docs.gradle.org/current/userguide/java_plugin.html"><i>source sets</i></a>.
+  A source set is a grouping of source files that can have its own set of
+  dependencies and tasks.
+  The 
+  For instance, in the Randoop <code>build.gradle</code> there is the
+  <code>agentTest</code> source set that is separate from the <code>test</code> source
+  set because the test classes must run using the <code>exercised-class</code> Java
+  agent.
+  The plugin normally has two source sets named <code>main</code> and <code>test</code>,
+  and the Randoop build script defines others to better structure the build process.
 </p>
 
 <p>
-  Otherwise, there are some Gradle tricks that may be useful:
+  Here are some Gradle tricks that may be useful:
 </p>
 <ul>
-  <li>Gradle allows you to combine tasks, for instance, for a clean build,
+  <li>Gradle allows you to run multiple tasks.  For instance, for a clean build,
     type <code>./gradlew clean build</code>.</li>
-  <li>You can run a task <tt>taskName</tt> on individual classes by setting the
+  <li><p>You can run a task <code>taskName</code> on individual classes by setting the
     system property <code>taskName.single</code> on the command line.
-    For instance, to run just the tests in <tt>RandoopSystemTest</tt> use the
-    command<br>
-    <code><pre>
+    For instance, to run just the tests in <code>RandoopSystemTest</code> use the
+    command</p>
+    <pre><code>
       ./gradlew -Dtest.single=RandoopSystemTest test
-    </pre></code></li>
+    </code></pre></li>
 </ul>
 
 
@@ -169,7 +187,7 @@ There is separate <a href="../plugin/doc/dev.html">developer documentation
 
 <p>
 Randoop is built with Gradle.
-The script named <tt>./gradlew</tt> is the Gradle wrapper
+The script named <code>./gradlew</code> is the Gradle wrapper
 for the project, and is the recommended way to run Gradle commands.
 Using the wrapper means you don't have to install Gradle yourself, instead
 the wrapper will download Gradle the first time you run a build command.
@@ -185,7 +203,7 @@ given here, see the Gradle
 <h2 id="usinganide">Using an IDE</h2>
 
 <p>
-  Effort has been made to accomodate the use of IDEs in developing Randoop,
+  Effort has been made to accommodate the use of IDEs in developing Randoop,
   but you should still use the command line to ensure everything is being built
   properly.
 </p>
@@ -225,9 +243,9 @@ given here, see the Gradle
   plugins to create the configuration files for each tool.
   To generate Eclipse-specific project configuration files, type the command:
 </p>
-<code><pre>
-  ./gradlew eclipse</code>
-</pre></code>
+<pre><code>
+  ./gradlew eclipse
+</code></pre>
 <p>
   Once you've run the task you want, you will be able to import Randoop as a
   native project within Eclipse.
@@ -238,9 +256,9 @@ given here, see the Gradle
 </p>
 
 <p>
-  Other than <tt>.gitignore</tt>, the tool-specific settings are not part of the
+  Other than <code>.gitignore</code>, the tool-specific settings are not part of the
   repository.
-  If you should tweak the Gradle configuration in <tt>build.gradle</tt> to
+  If you should tweak the Gradle configuration in <code>build.gradle</code> to
   better support a particular tool, also verify that it doesn't change behavior
   from the command line using the Gradle wrapper.
 </p>
@@ -250,7 +268,7 @@ given here, see the Gradle
 
 <p>
 To run Randoop, your classpath must include either the Randoop class files or
-the Randoop jar file, and <tt>lib/plume.jar</tt>.
+the Randoop jar file, and also must include <code>lib/plume.jar</code>.
 After the build, the classpath should include either of the following
 </p>
 <ul>
@@ -273,35 +291,35 @@ Plume-lib.
 To run one of the Java agents, the jar files for Java agents are located in
 the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.
-So, for instance, the following will work to run the <tt>exercised-class</tt> agent:
+So, for instance, the following will work to run the <code>exercised-class</code> agent:
 </p>
-<code><pre>
+<pre><code>
   -javaagent:&lt;randoop-path&gt;/build/libs/exercised-class-2.1.4.jar
-</pre></code>
+</code></pre>
 
 
-<h2 id="prereleasemaintenance">Maintaining Randoop Pre-Release</h2>
+<h2 id="maintenance">Maintaining Randoop</h2>
 
 <h3 id="maintaininglibraries">Updating libraries</h3>
 
 <p>
   Most of the libraries that Randoop uses are managed in the Gradle build script
-  <tt>build.gradle</tt>. Running Gradle will download the library files needed
+  <code>build.gradle</code>. Running Gradle will download the library files needed
   to compile Randoop for those libraries that are listed in the build script.
-  However, Randoop also uses other libraries that are kept in the <tt>lib</tt>
+  However, Randoop also uses other libraries that are kept in the <code>lib</code>
   directory.
-  Periodically, these libraries, and those used in <tt>build.gradle</tt> should
+  Periodically, these libraries, and those used in <code>build.gradle</code> should
   be updated.
 </p>
 <p>
   Instructions for updating the "local" libraries can be found in
-  <tt>lib/README</tt> while version numbers and links to the other libraries
+  <code>lib/README</code> while version numbers and links to the other libraries
   can be found in the Gradle build scripts, and should also be checked and updated
   periodically. The build files include:
 </p>
 <ul>
-  <li><tt>randoop/build.gradle</tt></li>
-  <li><tt>randoop/agent/exercised-class/exercised-class.gradle</tt></li>
+  <li><code>randoop/build.gradle</code></li>
+  <li><code>randoop/agent/exercised-class/exercised-class.gradle</code></li>
 </ul>
 <p>
   and the library information occurs in configuration blocks for plugins,
@@ -311,14 +329,14 @@ So, for instance, the following will work to run the <tt>exercised-class</tt> ag
 <h3 id="documentingchanges">Documenting Changes</h3>
 
 <p>
-  Any user interface changes should be documented in the changelog
+  Any user-visible changes should be documented in the changelog
   <code>doc/CHANGES.txt</code>.
-  Be sure to describe the changes in terms of how it affects the user.
+  Be sure to describe the change in terms of how it affects the user.
   List any bug fixes that may affect any user visible behavior, and mention
   any reported issues, and the person who reported the issue.
   Order listed information by importance to the user and subsequent release.
   This text is used for documenting releases, so keeping it up-to-date and
-  ready for public release is important.
+  ready for public release saves time in the long run.
 </p>
 
 
@@ -335,9 +353,9 @@ So, for instance, the following will work to run the <tt>exercised-class</tt> ag
   (Please read cautions below before running the tool.)
 </p>
 <ul>
-  <li><code>./gradlew googleJavaFormat</code> (or <tt>goJF</tt>) to reformat
+  <li><code>./gradlew googleJavaFormat</code> (or <code>goJF</code>) to reformat
     all Java files in the repository. (CAUTION!)</li>
-  <li><code>./gradlew verifyGoogleJavaFormat</code> (or <tt>verGJF</tt>)</li>
+  <li><code>./gradlew verifyGoogleJavaFormat</code> (or <code>verGJF</code>)</li>
 </ul>
 <p>
   <b>CAUTION</b>: The first command will change every single Java file in the
@@ -350,21 +368,23 @@ So, for instance, the following will work to run the <tt>exercised-class</tt> ag
 <h3 id="modmanual">Modifying the manual</h3>
 
 <p>
-The documentation for Randoop is in the subdirectory <tt>doc</tt>:
+The documentation for Randoop is in the subdirectory <code>doc</code>:
 </p>
 <ul>
 <li> <code>doc/index.html</code> has the user manual.
   Note: the command-line argument documentation is extracted from the code.
-  Any changes to code annotated by <code>Options</code> will affect this file.</li>
+  This file is automatically updated if you change Javadoc documentation for
+  a method annotated by
+  <a href="http://types.cs.washington.edu/plume-lib/api/plume/Options.html"><code>@Options</code></a>.</li>
 <li> <code>doc/dev.html</code> is this developer manual.</li>
 </ul>
 
 <p>
 Running the command <code>./gradlew manual</code> will create the Javadoc for
 Randoop, update command-line arguments in the user documentation, and update the
-table-of-contents in both manuals (in the <tt>doc</tt> directory).
-The files are placed in <tt>build/docs</tt>, with the Javadoc in
-<tt>build/docs/api</tt>, and the updated manual files in <tt>build/docs/manual</tt>.
+table-of-contents in both manuals (in the <code>doc</code> directory).
+The files are placed in <code>build/docs</code>, with the Javadoc in
+<code>build/docs/api</code>, and the updated manual files in <code>build/docs/manual</code>.
 </p>
 
 
@@ -372,17 +392,19 @@ The files are placed in <tt>build/docs</tt>, with the Javadoc in
 <h2 id="making_new_dist">Releasing a New Version of Randoop</h2>
 
 <p>
-Throughout, if you push commits to the Github repository, ensure that the tests
+Throughout, if you push commits to the GitHub repository, ensure that the tests
 continue to pass at
-<a href="https://travis-ci.org/randoop/randoop">https://travis-ci.org/randoop/randoop</a>.
+<a href="https://travis-ci.org/randoop/randoop">https://travis-ci.org/randoop/randoop</a>.  They currently pass if this icon is green:
+<img src="https://travis-ci.org/randoop/randoop.svg?branch=master" alt="Randoop Travis status icon"/>
+</p>
+
+<p>
 You can preemptively find most problems that Travis will find by running the
 commands
 </p>
-<code><pre>
-./gradlew clean assemble
-./gradlew check
-./gradlew manual
-</pre></code>
+<pre><code>
+./gradlew clean assemble check manual
+</code></pre>
 <p>
 locally before doing a push to GitHub.
 Though, it may be that some build problems may not occur without a clean project
@@ -396,19 +418,16 @@ merging new work with the master branch.
 <ol>
   <li>
     Be sure that everything related to
-    <a href="#prereleasemaintenance">pre-release maintenance</a>
+    <a href="#maintenance">maintenance</a>
     is up-to-date.
   </li>
   <li>
-    Setup a clone of the Randoop gh-pages branch in a sibling subdirectory:
+    Pull, or clone, the Randoop gh-pages branch in a sibling subdirectory:
     <pre>
-  cd ..
-  git clone git@github.com:randoop/randoop.git randoop-gh-pages
-  cd ../randoop-gh-pages
-  git checkout gh-pages
+      (cd ../randoop-gh-pages && git pull) \
+      || (cd .. && git clone git@github.com:randoop/randoop.git randoop-gh-pages \
+          && cd randoop-gh-pages && git checkout gh-pages)
     </pre>
-    If you already have a copy of the <tt>gh-pages</tt> branch, do <tt>git pull</tt>
-    to make sure that everything is up-to-date with the repository.
   </li>
   <li>
     Increment the Randoop version number:
@@ -417,15 +436,11 @@ merging new work with the master branch.
         Set environment variables for the old and new version numbers.  (Don't use the examples given here!)
         <pre>
   OLDVERSION=<em>2.1.4</em>
-  NEWVERSION=<em>2.1.5</em>
-        </pre>
+  NEWVERSION=<em>2.1.5</em></pre>
         These are used for working with git.
       </li>
-      <li>
-        Update the version number in <tt>build.gradle</tt> to the new number.
-        This number allows Gradle to automatically number the generated jar files.
-      </li>
-      <li>Also, update the version number and set the release date in
+      <li>Also, update the version number and date in
+        <code>build.gradle</code>,
         <code>src/main/java/randoop/Globals.java</code>,
         <code>doc/CHANGES.txt</code>, and
         <code>doc/index.html</code>.
@@ -457,19 +472,17 @@ merging new work with the master branch.
   git commit . -m "Update version to $NEWVERSION"
   git push
   git tag -a v$NEWVERSION -m "Randoop version $NEWVERSION"
-  git push --tags
-    </pre>
+  git push --tags</pre>
     <!-- The gh-pages branch is not tagged. -->
   </li>
   <li>Create the distribution files with <code>./gradlew clean build manual</code></li>
   <li>
-    Update the <tt>gh-pages</tt> branch using the sibling clone of the repository
+    Update the <code>gh-pages</code> branch using the sibling clone of the repository
     created above:
     <pre>
   mv -f build/docs/manual ../randoop-gh-pages/
   mv -f build/docs/api ../randoop-gh-pages/
-  (cd ../randoop-gh-pages && git commit -m "Update for Randoop $NEWVERSION" && git push)
-    </pre>
+  (cd ../randoop-gh-pages && git commit -m "Update for Randoop $NEWVERSION" && git push)</pre>
   </li>
   <li>Follow the
     <a href="https://help.github.com/articles/creating-releases/">GitHub instructions for creating a release</a>;
@@ -478,7 +491,7 @@ merging new work with the master branch.
     click "Tags", click "add release notes" for the new tag (e.g., v<em>2.1.5</em>),
     name it "Randoop version <em>2.1.5</em>", use the changelog entry as the
     description (but remove any line breaks and check the preview), upload the
-    jar files from <tt>build/libs</tt>, and, finally, click "publish release".
+    jar files from <code>build/libs</code>, and, finally, click "publish release".
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com.
     <br/>
@@ -503,7 +516,7 @@ Randoop has the following directory organization:
     <ul>
       <li><i>main</i> - Randoop source code</li>
       <li><i>test</i> - source for JUnit tests of Randoop</li>
-      <li><i>agenttest</i> - source for JUnit tests of the excercised-class Java agent</li>
+      <li><i>agenttest</i> - source for JUnit tests of the exercised-class Java agent</li>
       <li><i>testinput</i> - source for libraries used in Randoop testing</li>
       <li><i>systemtest</i> - source for Randoop system tests
     </ul>
@@ -1060,7 +1073,7 @@ in <a href="javadoc/randoop/main/GenInputsAbstract.html">GenInputsAbstract</a>.
 </body>
 </html>
 
-<!--  LocalWords:  Randoop Randoop's Makefile classpath bashrc hoc gentests JDK java gh EnumConstant enum s1 s2 s3 var0 PrintSteam
+<!--  LocalWords:  Randoop Randoop's Makefile classpath bashrc hoc gentests JDK java gh EnumConstant enum s1 s2 s3 var0 PrintSteam plugin agentTest gradle taskName RandoopSystemTest plugins gitignore randoop changelog RandoopGradle goJF verGJF cd OLDVERSION NEWVERSION unpushed mv subprojects src agenttest  testinput systemtest FieldGetter FieldSetter PublicField init var1 var2 var3 var4 var5 resultAt3 assertTrue o2
  -->
 <!--  LocalWords:  google JDK's testAdd LinkedList addFirst TreeSet RMethod th
  -->
