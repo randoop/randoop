@@ -41,7 +41,6 @@ public class EnumConstantTest {
           "parse(\"e:v\").toParseableString() should equal \"e:v\"",
           enumPair,
           ec.toParseableString());
-      assertEquals("toString calls toParseableString", ec.toParseableString(), ec.toString());
     } catch (OperationParseException e) {
       fail("Parse error: " + e.getMessage());
     }
@@ -203,4 +202,5 @@ public class EnumConstantTest {
     assertEquals(
         "Expect fully qualified initialization of variable by constant.", expected, b.toString());
   }
+
 }

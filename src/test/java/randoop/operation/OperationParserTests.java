@@ -14,6 +14,7 @@ import randoop.types.ConcreteArrayType;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypeTuple;
 import randoop.types.ConcreteTypes;
+import randoop.types.GenericClassType;
 import randoop.types.GenericType;
 import randoop.types.RandoopTypeException;
 
@@ -144,12 +145,12 @@ public class OperationParserTests {
     TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
 
       @Override
-      public void addGenericClassType(GenericType type) {
+      public void addGenericClassType(GenericClassType type) {
         fail("not expecting generic class type: " + type.getName());
       }
 
       @Override
-      public void addGenericOperation(GenericType declaringType, GenericOperation operation) {
+      public void addGenericOperation(GenericClassType declaringType, GenericOperation operation) {
         fail("not expecting generic operation: " + operation.toString());
       }
 

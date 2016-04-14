@@ -25,7 +25,9 @@ import randoop.reflection.ReflectionManager;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.TypedOperationManager;
 import randoop.reflection.VisibilityPredicate;
+import randoop.test.ClassWithInnerEnum;
 import randoop.test.Coin;
+import randoop.test.EnumAsPredicate;
 import randoop.test.OperatorEnum;
 import randoop.test.PlayingCard;
 import randoop.test.SimpleEnum;
@@ -124,6 +126,25 @@ public class EnumReflectionTest {
     }
   }
 
+  @Test
+  public void innerEnumWithMethodsTest() {
+    Class<?> c = ClassWithInnerEnum.class;
+    Class<?>[] memberClasses = c.getDeclaredClasses();
+
+    // TODO test that declaring class of operations for inner enum is enum
+
+    Set<ConcreteOperation> actual = getConcreteOperations(c);
+
+    assertEquals("number of statments", 13, actual.size());
+  }
+
+  @Test
+  public void enumAsPredicateTest() {
+    Class<?> c = EnumAsPredicate.class;
+    Set<ConcreteOperation> actual = getConcreteOperations(c);
+    // TODO this should be 5, except for odd business with lost type of inherited method
+    assertEquals("number of operations", 4, actual.size());
+  }
   
 
   /**
