@@ -1,5 +1,8 @@
 package randoop.sequence;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import randoop.types.ConcreteArrayType;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypes;
@@ -61,6 +64,18 @@ class VariableRenamer {
       }
       // otherwise, use the first character of the type name
       return type.getName().substring(0,1);
+    } if (type.isParameterized()) {
+      String qualifiedTypeName = type.getName();
+      int argumentsPosition = qualifiedTypeName.indexOf('<');
+      String qualifiedClassname = qualifiedTypeName.substring(0, argumentsPosition);
+      String varName = qualifiedClassname.substring(qualifiedClassname.lastIndexOf('.') + 1).toLowerCase();
+      String argumentString = qualifiedTypeName.substring(argumentsPosition + 1, qualifiedTypeName.indexOf('>'));
+      String[] toks = argumentString.split(",");
+      for (String qualifiedArgumentName : toks) {
+        String argumentName = qualifiedArgumentName.substring(qualifiedArgumentName.lastIndexOf('.') + 1);
+        varName += "_" + argumentName;
+      }
+      return varName;
     } else {
       // for other object types
       String qualifiedTypeName = type.getName();
