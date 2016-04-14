@@ -23,12 +23,17 @@ import randoop.operation.OperationParseException;
 import randoop.operation.OperationParser;
 import randoop.sequence.Sequence;
 import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeBound;
 import randoop.types.GeneralType;
-import randoop.types.GenericType;
+import randoop.types.GenericClassType;
+import randoop.types.GenericTypeBound;
 import randoop.types.GenericTypeTuple;
 import randoop.types.RandoopTypeException;
+import randoop.types.Substitution;
+import randoop.types.TypeBound;
 import randoop.types.TypeNames;
 import randoop.util.MultiMap;
+import randoop.util.Randomness;
 
 import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
 
@@ -68,7 +73,7 @@ public class OperationModel extends ModelCollections {
   /** Set of concrete class types extracted/constructed from classes */
   private Set<ConcreteType> classTypes;
 
-  private MultiMap<GenericType, GenericOperation> genericClassTypes;
+  private MultiMap<GenericClassType, GenericOperation> genericClassTypes;
 
 
   /**
@@ -105,7 +110,7 @@ public class OperationModel extends ModelCollections {
       Set<String> exercisedClassnames,
       Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
-      List<String> literalsFileList) throws OperationParseException, NoSuchMethodException {
+      List<String> literalsFileList) throws OperationParseException, NoSuchMethodException, RandoopTypeException {
 
     // TODO make sure adding Object constructor
 
@@ -180,27 +185,92 @@ public class OperationModel extends ModelCollections {
     model.addDefaultContracts();
     model.addOperations(methodSignatures);
     model.addObjectConstructor();
-
+    model.refineGenericClassTypes(inputTypes);
     return model;
+  }
+
+  private void refineGenericClassTypes(Set<ConcreteType> inputTypes) throws RandoopTypeException {
+    for (GenericClassType classType : genericClassTypes.keySet()) {
+      List<Substitution> substitutions = getSubstitutions(inputTypes, classType);
+      assert  substitutions.size() > 0 : "didn't find types to satisfy bounds on generic";
+      Substitution substitution = Randomness.randomMember(substitutions);
+      GeneralType refinedClassType = classType.apply(substitution);
+      if (! refinedClassType.isGeneric()) {
+        classTypes.add((ConcreteType)refinedClassType);
+      }
+      for (GenericOperation operation : genericClassTypes.getValues(classType)) {
+        GenericOperation op = operation.apply(substitution);
+        if (op.isGeneric()) {
+          genericOperations.add(op);
+        } else {
+          operations.add(op.toConcrete());
+        }
+
+      }
+    }
+  }
+
+  private List<Substitution> getSubstitutions(Set<ConcreteType> inputTypes, GenericClassType classType) throws RandoopTypeException {
+    List<TypeBound> bounds = classType.getBounds();
+    TypeTupleSet candidateSet = new TypeTupleSet();
+    for (TypeBound bound : bounds) {
+      List<ConcreteType> candidateTypes = selectCandidates(bound, inputTypes);
+      candidateSet.extend(candidateTypes);
+    }
+    return candidateSet.filter(classType.getTypeParameters());
+  }
+
+  /**
+   * Selects all input types that potentially satisfies the upper bound.
+   * If the bound is concrete, then returned list exactly satisfies the bound.
+   * If the bound is generic, then the types are convertible a la Class.isAssignableFrom.
+   * Otherwise, the input types are returned as a list.
+   *
+   * @param bound  the (upper) bound to test
+   * @param inputTypes  the set of input types to test
+   * @return the list of candidate types to included in tested tuples
+   */
+  private List<ConcreteType> selectCandidates(TypeBound bound, Set<ConcreteType> inputTypes) {
+
+    List<ConcreteType> typeList = new ArrayList<>();
+
+    if (bound instanceof ConcreteTypeBound){
+      ConcreteTypeBound concreteBound = (ConcreteTypeBound)bound;
+      for (ConcreteType inputType : inputTypes) {
+        if (concreteBound.isSatisfiedBy(inputType)) {
+          typeList.add(inputType);
+        }
+      }
+      return typeList;
+    }
+
+    if (bound instanceof GenericTypeBound) {
+      Class<?> rawBoundType = bound.getRuntimeClass();
+      for (ConcreteType inputType : inputTypes) {
+        if (rawBoundType.isAssignableFrom(inputType.getRuntimeClass())) {
+          typeList.add(inputType);
+        }
+      }
+      return typeList;
+    }
+
+    return new ArrayList<>(inputTypes);
   }
 
   /**
    * Creates and adds the Object class default constructor call to the concrete operations.
    */
-  private void addObjectConstructor()  {
+  private void addObjectConstructor() throws RandoopTypeException {
     Constructor<?> objectConstructor = null;
     try {
       objectConstructor = Object.class.getConstructor();
     } catch (NoSuchMethodException e) {
-      System.out.println("Something is really wrong. Please report unable to load Object()");
+      System.out.println("Something is wrong. Please report unable to load Object()");
       System.exit(1);
     }
-    try {
-      operations.add(getConcreteOperation(objectConstructor));
-    } catch (RandoopTypeException e) {
-      System.out.println("Something is really wrong. Please report type error in reading object constructor.");
-      System.exit(1);
-    }
+    ConcreteOperation operation = getConcreteOperation(objectConstructor);
+    addConcreteClassType(operation.getDeclaringType());
+    addConcreteOperation(operation.getDeclaringType(), operation);
   }
 
   /**
@@ -307,6 +377,7 @@ public class OperationModel extends ModelCollections {
     return new ArrayList<>(operations);
   }
 
+  // TODO collect input types from added methods
   private void addOperations(Set<String> methodSignatures) throws OperationParseException {
     for (String sig : methodSignatures) {
       OperationParser.parse(sig, new TypedOperationManager(this));
@@ -359,7 +430,7 @@ public class OperationModel extends ModelCollections {
   }
 
   @Override
-  public void addGenericOperation(GenericType declaringType, GenericOperation operation) {
+  public void addGenericOperation(GenericClassType declaringType, GenericOperation operation) {
     genericClassTypes.add(declaringType, operation);
   }
 
@@ -404,7 +475,7 @@ public class OperationModel extends ModelCollections {
     }
 
     @Override
-    public void addGenericOperation(GenericType declaringType, GenericOperation operation) {
+    public void addGenericOperation(GenericClassType declaringType, GenericOperation operation) {
       System.out.println("Got a generic observer: " + operation);
     }
 
