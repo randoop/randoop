@@ -535,7 +535,7 @@ public class RandoopSystemTest {
           String regressionBasename,
           String errorBasename,
           List<String> randoopOptions) {
-    long defaultTimeout = 10000L;
+    long defaultTimeout = 15000L;
     return generateAndCompile(
         classpath,
         workingPath,
