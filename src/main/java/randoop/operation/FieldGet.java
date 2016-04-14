@@ -102,7 +102,7 @@ public class FieldGet extends CallableOperation {
   }
 
   public String getName() {
-    return toString();
+    return "<get>(" + field.getName() + ")";
   }
 
   @Override

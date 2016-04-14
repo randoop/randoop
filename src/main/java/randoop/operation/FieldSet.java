@@ -201,7 +201,7 @@ public class FieldSet extends CallableOperation {
 
   @Override
   public String getName() {
-    return this.toString();
+    return "<set>(" + field.getName() + ")";
   }
 
   @Override

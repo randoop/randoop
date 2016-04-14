@@ -2,9 +2,12 @@ package randoop.operation;
 
 import java.util.Objects;
 
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
 import randoop.types.GeneralType;
 import randoop.types.GeneralTypeTuple;
 import randoop.types.GenericType;
+import randoop.types.GenericTypeTuple;
 import randoop.types.RandoopTypeException;
 import randoop.types.Substitution;
 
@@ -24,7 +27,7 @@ import randoop.types.Substitution;
  * Note that the <i>declaring</i> and <i>output</i> types of a creation operation are both defined
  * as the type created.
  */
-public class GenericOperation extends TypedOperation<Operation> {
+public class GenericOperation extends TypedOperation<CallableOperation> {
 
   /** The type that declares this operation. */
   private GeneralType declaringType;
@@ -42,7 +45,7 @@ public class GenericOperation extends TypedOperation<Operation> {
    * @param inputTypes  the input types for the operation
    * @param outputType  the output type for the operation
    */
-  public GenericOperation(Operation operation,
+  public GenericOperation(CallableOperation operation,
       GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType) {
     super(operation);
     this.declaringType = declaringType;
@@ -69,7 +72,7 @@ public class GenericOperation extends TypedOperation<Operation> {
 
   @Override
   public String toString() {
-    return declaringType + "." + super.toString() + inputTypes + " -> " + outputType;
+    return declaringType + "." + super.toString() + " : " + inputTypes + " -> " + outputType;
   }
 
   /**
@@ -119,5 +122,17 @@ public class GenericOperation extends TypedOperation<Operation> {
   @Override
   public boolean isGeneric() {
     return declaringType.isGeneric() || inputTypes.isGeneric() || outputType.isGeneric();
+  }
+
+  public ConcreteOperation toConcrete() {
+    ConcreteType declaringType = (ConcreteType)this.declaringType;
+    ConcreteTypeTuple inputTypes;
+    if (this.inputTypes instanceof GenericTypeTuple) {
+      inputTypes = ((GenericTypeTuple) this.inputTypes).makeConcrete();
+    } else {
+      inputTypes = (ConcreteTypeTuple)this.inputTypes;
+    }
+    ConcreteType outputType = (ConcreteType)this.outputType;
+    return new ConcreteOperation(this.getOperation(), declaringType, inputTypes, outputType);
   }
 }

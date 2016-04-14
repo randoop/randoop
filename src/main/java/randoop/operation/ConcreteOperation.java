@@ -140,7 +140,7 @@ public class ConcreteOperation extends TypedOperation<CallableOperation> {
 
   @Override
   public String toString() {
-    return this.toParseableString();
+    return declaringType + "." + super.toString() + " : " + inputTypes + " -> " + outputType;
   }
 
   @Override
