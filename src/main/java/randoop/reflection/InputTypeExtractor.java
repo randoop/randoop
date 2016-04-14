@@ -86,8 +86,12 @@ class InputTypeExtractor implements ClassVisitor {
    * @param type  the general type
    */
   private void addIfConcrete(GeneralType type) {
-    if (! type.isGeneric()) {
-      inputTypes.add((ConcreteType)type);
+    if (! type.isGeneric() && ! type.isVoid() ) {
+      ConcreteType concreteType = (ConcreteType)type;
+      if (concreteType.isPrimitive()) {
+        concreteType = concreteType.toBoxedPrimitive();
+      }
+      inputTypes.add(concreteType);
     }
   }
 
@@ -96,9 +100,19 @@ class InputTypeExtractor implements ClassVisitor {
     // this is the enum constant, so nothing to do here
   }
 
+  /**
+   * {@inheritDoc}
+   * Adds the class if it is concrete.
+   */
   @Override
   public void visitBefore(Class<?> c) {
-    // do nothing
+    if (c.getTypeParameters().length == 0) {
+      try {
+        inputTypes.add(ConcreteType.forClass(c));
+      } catch (RandoopTypeException e) {
+        assert false : "type error visiting concrete class";
+      }
+    }
   }
 
   @Override

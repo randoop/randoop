@@ -7,6 +7,12 @@ import java.lang.reflect.Method;
 /**
  * ClassVisitor defines the interface for a visitor class that uses reflection
  * to collect information about a class and its members.
+ * <p>
+ * Note: if the visitor maintains state relative to {@link #visitBefore(Class)} and other methods
+ * that could be disrupted by visiting member classes (currently just enums), then a stack should
+ * be used to maintain whatever state needs to be remembered. For instance, {@link OperationExtractor}
+ * maintains the declaring class type for visited members, and when inner enums are visited the
+ * declaring class needs to be remembered and restored by {@link #visitAfter(Class)}.
  *
  * @see ReflectionManager
  * @see OperationExtractor

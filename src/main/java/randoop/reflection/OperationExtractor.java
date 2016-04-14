@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import randoop.BugInRandoopException;
 import randoop.field.AccessibleField;
@@ -19,6 +20,7 @@ import randoop.types.ConcreteSimpleType;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypes;
 import randoop.types.GeneralType;
+import randoop.types.GeneralTypeTuple;
 import randoop.types.GenericTypeTuple;
 import randoop.types.RandoopTypeException;
 
@@ -35,6 +37,7 @@ public class OperationExtractor implements ClassVisitor {
 
   private final TypedOperationManager manager;
   private final ReflectionPredicate predicate;
+  private final Stack<GeneralType> typeStack;
 
   /** The current class type */
   private GeneralType classType;
@@ -49,6 +52,8 @@ public class OperationExtractor implements ClassVisitor {
   public OperationExtractor(TypedOperationManager manager, ReflectionPredicate predicate) {
     this.manager = manager;
     this.predicate = predicate;
+    this.typeStack = new Stack<GeneralType>();
+    this.classType = null;
   }
 
   /**
@@ -66,7 +71,7 @@ public class OperationExtractor implements ClassVisitor {
       return;
     }
     ConstructorCall op = new ConstructorCall(c);
-    GenericTypeTuple inputTypes;
+    GeneralTypeTuple inputTypes;
     try {
       inputTypes = manager.getInputTypes(c.getGenericParameterTypes());
     } catch (RandoopTypeException e) {
@@ -89,6 +94,7 @@ public class OperationExtractor implements ClassVisitor {
     if (! predicate.test(method)) {
       return;
     }
+
     MethodCall op = new MethodCall(method);
     GenericTypeTuple inputTypes;
     GeneralType outputType;
@@ -103,7 +109,6 @@ public class OperationExtractor implements ClassVisitor {
       System.out.println("Ignoring method " + method.getName() + ": " + e.getMessage());
       return; // not a critical error, just end visit
     }
-
     manager.createTypedOperation(op, classType, inputTypes, outputType);
   }
 
@@ -162,6 +167,7 @@ public class OperationExtractor implements ClassVisitor {
 
   @Override
   public void visitBefore(Class<?> c) {
+    typeStack.push(classType);
     if (! predicate.test(c)) {
       return;
     }
@@ -174,7 +180,8 @@ public class OperationExtractor implements ClassVisitor {
 
   @Override
   public void visitAfter(Class<?> c) {
-    // nothing to do here
+    assert ! typeStack.isEmpty() : "call to visitAfter not paired with call to visitBefore";
+    classType = typeStack.pop();
   }
 
 

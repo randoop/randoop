@@ -10,6 +10,8 @@ import randoop.operation.GenericOperation;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypeTuple;
 import randoop.types.GeneralType;
+import randoop.types.GeneralTypeTuple;
+import randoop.types.GenericClassType;
 import randoop.types.GenericType;
 import randoop.types.GenericTypeTuple;
 import randoop.types.RandoopTypeException;
@@ -45,9 +47,9 @@ public class TypedOperationManager {
    * @param inputTypes  the types of inputs to operation
    * @param outputType  the output type of operation
    */
-  public void createTypedOperation(CallableOperation op, GeneralType declaringType, GenericTypeTuple inputTypes, GeneralType outputType) {
+  public void createTypedOperation(CallableOperation op, GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType) {
     if (declaringType.isGeneric()) {
-      GenericType genericClassType = (GenericType)declaringType;
+      GenericClassType genericClassType = (GenericClassType)declaringType;
       GenericOperation genericOp = new GenericOperation(op, declaringType, inputTypes, outputType);
       collections.addGenericOperation(genericClassType, genericOp);
     } else {
@@ -58,7 +60,12 @@ public class TypedOperationManager {
         GenericOperation genericOp = new GenericOperation(op, declaringType, inputTypes, outputType);
         collections.addGenericOperation(concreteClassType, genericOp);
       } else {
-        ConcreteTypeTuple concreteInputTypes = inputTypes.makeConcrete();
+        ConcreteTypeTuple concreteInputTypes;
+        if (inputTypes instanceof GenericTypeTuple) {
+          concreteInputTypes = ((GenericTypeTuple) inputTypes).makeConcrete();
+        } else {
+          concreteInputTypes = (ConcreteTypeTuple)inputTypes;
+        }
         ConcreteType concreteOutputType = (ConcreteType)outputType;
         ConcreteOperation concreteOp = new ConcreteOperation(op, concreteClassType, concreteInputTypes, concreteOutputType);
         collections.addConcreteOperation(concreteClassType, concreteOp);
@@ -100,14 +107,14 @@ public class TypedOperationManager {
     }
 
     // XXX I'm flying dangerously here -- not really sure what is going to happen when have generic method/constructor
-
-    return new GenericTypeTuple(paramTypes);
+    GenericTypeTuple inputTypes = new GenericTypeTuple(paramTypes);
+    return inputTypes;
   }
 
   public GeneralType getClassType(Class<?> c) throws RandoopTypeException {
     GeneralType classType;
     if (c.getTypeParameters().length > 0) {
-      GenericType genericClassType = GenericType.forClass(c);
+      GenericClassType genericClassType = (GenericClassType)GenericType.forClass(c);
       collections.addGenericClassType(genericClassType);
       classType = genericClassType;
     } else {

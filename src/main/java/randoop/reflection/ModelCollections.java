@@ -5,6 +5,7 @@ import java.lang.reflect.Constructor;
 import randoop.operation.ConcreteOperation;
 import randoop.operation.GenericOperation;
 import randoop.types.ConcreteType;
+import randoop.types.GenericClassType;
 import randoop.types.GenericType;
 
 /**
@@ -30,9 +31,9 @@ public abstract class ModelCollections {
   /**
    * Adds a generic type to the collection.
    *
-   * @param type  the {@link GenericType} to add to the class types collection
+   * @param type  the {@link GenericClassType} to add to the class types collection
    */
-  public void addGenericClassType(GenericType type) { }
+  public void addGenericClassType(GenericClassType type) { }
 
   /**
    * Adds an operation to a generic type to the generic class type collection.
@@ -40,7 +41,7 @@ public abstract class ModelCollections {
    * @param declaringType  the type
    * @param operation  the operation
    */
-  public void addGenericOperation(GenericType declaringType, GenericOperation operation) { }
+  public void addGenericOperation(GenericClassType declaringType, GenericOperation operation) { }
 
   /**
    * Adds a generic operation from a concrete declaring type.

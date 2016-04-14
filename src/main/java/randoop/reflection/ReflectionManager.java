@@ -108,8 +108,12 @@ public class ReflectionManager {
 
         // Inner enums
         for (Class<?> ic : c.getDeclaredClasses()) { // look for inner enums
-          if (ic.isEnum() && predicate.isVisible(ic)) {
-            applyToEnum(ic);
+          if (predicate.isVisible(ic)){
+            if (ic.isEnum()) {
+              visitBefore(ic);
+              applyToEnum(ic);
+              visitAfter(ic);
+            }
           }
         }
 
@@ -188,7 +192,7 @@ public class ReflectionManager {
    */
   private void applyTo(Field f) {
     if (Log.isLoggingOn()) {
-      Log.logLine(String.format("Considering field %s", f));
+      Log.logLine(String.format("Considering field %s", f.toGenericString()));
     }
     for (ClassVisitor v : visitors) {
       v.visit(f);
@@ -203,7 +207,7 @@ public class ReflectionManager {
    */
   private void applyTo(Constructor<?> co) {
     if (Log.isLoggingOn()) {
-      Log.logLine(String.format("Considering constructor %s", co));
+      Log.logLine(String.format("Considering constructor %s", co.toGenericString()));
     }
     for (ClassVisitor v : visitors) {
       v.visit(co);
@@ -218,7 +222,7 @@ public class ReflectionManager {
    */
   private void applyTo(Method m) {
     if (Log.isLoggingOn()) {
-      Log.logLine(String.format("Considering method %s", m));
+      Log.logLine(String.format("Considering method %s", m.toGenericString()));
     }
     for (ClassVisitor v : visitors) {
       v.visit(m);
@@ -275,14 +279,14 @@ public class ReflectionManager {
   private boolean isVisible(Method m) {
     if (! predicate.isVisible(m)) {
       if (Log.isLoggingOn()) {
-        Log.logLine("Will not use: " + m.toString());
+        Log.logLine("Will not use: " + m.toGenericString());
         Log.logLine("  reason: the method is not visible from test classes");
       }
       return false;
     }
     if (! predicate.isVisible(m.getReturnType())) {
       if (Log.isLoggingOn()) {
-        Log.logLine("Will not use: " + m.toString());
+        Log.logLine("Will not use: " + m.toGenericString());
         Log.logLine("  reason: the method's return type is not visible from test classes");
       }
       return false;
@@ -290,7 +294,7 @@ public class ReflectionManager {
     for (Class<?> p : m.getParameterTypes()) {
       if (! predicate.isVisible(p)) {
         if (Log.isLoggingOn()) {
-          Log.logLine("Will not use: " + m.toString());
+          Log.logLine("Will not use: " + m.toGenericString());
           Log.logLine("  reason: the method has a parameter that is not visible from test classes");
         }
         return false;
@@ -308,7 +312,7 @@ public class ReflectionManager {
   private boolean isVisible(Constructor<?> c) {
     if (! predicate.isVisible(c)) {
       if (Log.isLoggingOn()) {
-        Log.logLine("Will not use: " + c.toString());
+        Log.logLine("Will not use: " + c.toGenericString());
         Log.logLine("  reason: the constructor is not visible from test classes");
       }
       return false;
@@ -316,7 +320,7 @@ public class ReflectionManager {
     for (Class<?> p : c.getParameterTypes()) {
       if (! predicate.isVisible(p)) {
         if (Log.isLoggingOn()) {
-          Log.logLine("Will not use: " + c.toString());
+          Log.logLine("Will not use: " + c.toGenericString());
           Log.logLine(
                   "  reason: the constructor has a parameter that is not visible from test classes");
         }
