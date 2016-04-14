@@ -206,6 +206,8 @@ public class GenTests extends GenInputsAbstract {
     } catch (NoSuchMethodException e) {
       System.out.printf("Error building operation model: %s%n", e);
       System.exit(1);
+    } catch (RandoopTypeException e) {
+      System.out.printf("Type error while building operation model: %s%n", e.getMessage());
     }
     assert operationModel != null;
 
