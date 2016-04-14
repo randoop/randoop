@@ -101,7 +101,7 @@ public class RandoopSystemTest {
     options.add("--observers=resources/systemTest/randoop1_observers.txt");
     options.add("--omit-field-list=resources/systemTest/testclassomitfields.txt");
 
-    long timeout = 18000L;
+    long timeout = 36000L;
     RandoopRunDescription randoopRunDesc =
         generateAndCompile(
             classpath,
@@ -156,7 +156,10 @@ public class RandoopSystemTest {
         testRunDesc.testsSucceed,
         is(equalTo(randoopRunDesc.regressionTestCount)));
 
-    assertThat("...has no error tests", randoopRunDesc.errorTestCount, is(equalTo(0)));
+    if (randoopRunDesc.errorTestCount > 0) {
+      TestRunDescription errorTestRunDesc = runTests(classpath, workingPath, packageName, errorBasename);
+      assertThat("all regression tests should fail", errorTestRunDesc.testsFail, is(equalTo(randoopRunDesc.errorTestCount)));
+    }
   }
 
   /**
@@ -225,7 +228,7 @@ public class RandoopSystemTest {
     options.add("--inputlimit=1000");
     options.add("--classlist=resources/systemTest/buggyclasses.txt");
 
-    long timeout = 60000L;
+    long timeout = 120000L;
 
     RandoopRunDescription randoopRunDesc =
         generateAndCompile(
