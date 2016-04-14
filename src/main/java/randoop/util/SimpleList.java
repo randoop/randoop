@@ -10,7 +10,7 @@ import java.util.List;
  * IMPLEMENTATION NOTE
  * <p>
  *
- * Randoop's main generator ({@link randoop.sequence.ForwardGenerator
+ * Randoop's main generator ({@link randoop.generation.ForwardGenerator
  * ForwardGenerator}) creates new sequences by concatenating existing sequences
  * and appending a statement at the end. A naive implementation of concatenation
  * copies the elements of the concatenated sub-sequences into a new list. The

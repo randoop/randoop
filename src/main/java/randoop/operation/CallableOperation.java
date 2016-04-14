@@ -50,8 +50,8 @@ public abstract class CallableOperation implements Operation {
   }
 
   /**
-   * Compares two {@link Operation} objects. Uses order on result of
-   * {@link Operation#toString()}.
+   * Compares this object to an {@link Operation} object.
+   * Uses order on result of {@link #toString()}.
    *
    * @param op
    *          the {@link Operation} to compare with this operation
