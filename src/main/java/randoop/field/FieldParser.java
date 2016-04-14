@@ -10,7 +10,7 @@ import randoop.types.TypeNames;
  * PublicFieldParser defines a parser to recognize a descriptor of a field in a
  * string, and return an object representing the sort of field it is in the
  * corresponding class. The descriptor is expected to be in the form
- * <tt>TYPE:FIELD-NAME</tt> where the <tt>FIELD-NAME</tt> is a fully qualified
+ * <code>TYPE:FIELD-NAME</code> where the <code>FIELD-NAME</code> is a fully qualified
  * name of the form <i>package</i>.<i>class-name</i>.<i>name</i>. The parser
  * first checks that the descriptor is in the right syntactic form, then
  * extracts the type and field-name and uses reflection to determine if the
