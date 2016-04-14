@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 
 import org.junit.Test;
@@ -17,7 +16,9 @@ import randoop.types.GenericType;
 import randoop.types.ConcreteSimpleType;
 import randoop.types.RandoopTypeException;
 import randoop.types.Substitution;
+import randoop.types.SupertypeOrdering;
 import randoop.types.TypeBound;
+import randoop.types.TypeParameter;
 
 public class GenericTypesTest {
 
@@ -33,7 +34,7 @@ public class GenericTypesTest {
     assertEquals("has one bound", 1, a1.getBounds().size());
     assertEquals(
         "the bound is Object",
-        new ConcreteTypeBound(new ConcreteSimpleType(Object.class)),
+        new ConcreteTypeBound(new ConcreteSimpleType(Object.class), new SupertypeOrdering()),
         a1.getBounds().get(0));
     GenericType a1Type = null;
     try {
@@ -45,7 +46,7 @@ public class GenericTypesTest {
 
     TypeBound b1 = a1.getBounds().get(0);
     Substitution subst =
-        Substitution.forArgs(new ArrayList<TypeVariable<?>>());
+        Substitution.forArgs(new ArrayList<TypeParameter>());
     try {
       assertTrue(
           "String satisfies bound", b1.isSatisfiedBy(new ConcreteSimpleType(String.class), subst));
@@ -69,7 +70,7 @@ public class GenericTypesTest {
     assertEquals("has two bounds", 2, a2.getBounds().size());
     for (TypeBound o : a2.getBounds()) {
       assertEquals(
-          "both bounds are Object", new ConcreteTypeBound(new ConcreteSimpleType(Object.class)), o);
+          "both bounds are Object", new ConcreteTypeBound(new ConcreteSimpleType(Object.class), new SupertypeOrdering()), o);
     }
     assertEquals("objects built fromClass and constructed are same", a2Type, a2);
   }
@@ -77,7 +78,7 @@ public class GenericTypesTest {
   @Test
   public void testConcreteBounds() {
     Substitution emptySubst =
-        Substitution.forArgs(new ArrayList<TypeVariable<?>>());
+        Substitution.forArgs(new ArrayList<TypeParameter>());
 
     Class<?> c1 = Class1.class;
     GenericType a1 = null;
@@ -89,7 +90,7 @@ public class GenericTypesTest {
     assertEquals("has one bound", 1, a1.getBounds().size());
     assertEquals(
         "the bound is Number",
-        new ConcreteTypeBound(new ConcreteSimpleType(Number.class)),
+        new ConcreteTypeBound(new ConcreteSimpleType(Number.class), new SupertypeOrdering()),
         a1.getBounds().get(0));
     GenericType a1Type = null;
     try {
@@ -122,7 +123,7 @@ public class GenericTypesTest {
       assertEquals(
           "the bound is Comparable<Integer>",
           new ConcreteTypeBound(
-              ConcreteType.forClass(Comparable.class, new ConcreteSimpleType(Integer.class))),
+              ConcreteType.forClass(Comparable.class, new ConcreteSimpleType(Integer.class)), new SupertypeOrdering()),
           a2.getBounds().get(0));
     } catch (RandoopTypeException e) {
       fail("type error: " + e.getMessage());
