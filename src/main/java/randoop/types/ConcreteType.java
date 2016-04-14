@@ -98,15 +98,6 @@ public abstract class ConcreteType extends GeneralType {
   }
 
   /**
-   * Indicate whether this type is void.
-   *
-   * @return true if this type is void, false otherwise
-   */
-  public boolean isVoid() {
-    return false;
-  }
-
-  /**
    * Indicates whether the given object represents a value that is assignable to this type.
    * If the reference is null, then returns true only if this type is not primitive.
    *
@@ -203,5 +194,9 @@ public abstract class ConcreteType extends GeneralType {
 
   public ConcreteType toPrimitive() {
     throw new IllegalArgumentException("Must be applied to a boxed primitive type");
+  }
+
+  public ConcreteType toBoxedPrimitive() {
+    throw new IllegalArgumentException("Must be applied to a primitive type");
   }
 }

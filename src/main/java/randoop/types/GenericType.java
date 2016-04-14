@@ -45,7 +45,7 @@ public abstract class GenericType extends GeneralType {
    * parameters in this generic type
    */
   @Override
-  public ConcreteType apply(Substitution substitution) throws RandoopTypeException {
+  public GeneralType apply(Substitution substitution) throws RandoopTypeException {
     return null;
   }
 
@@ -100,4 +100,5 @@ public abstract class GenericType extends GeneralType {
   public List<TypeBound> getBounds() {
     return null;
   }
+
 }

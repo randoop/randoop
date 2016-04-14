@@ -16,20 +16,22 @@ import plume.UtilMDE;
 public class GenericTypeBound extends TypeBound {
 
   /** the rawtype for this generic bound */
-  private Class<?> rawType;
+  private final Class<?> rawType;
 
   /** the type parameters for this bound */
-  private Type[] parameters;
+  private final Type[] parameters;
 
+  private final TypeOrdering typeOrdering;
   /**
    * Creates a {@code GenericTypeBound} from the given rawtype and type parameters.
    *
    * @param rawType  the rawtype for the type bound
    * @param parameters  the type parameters for the type bound
    */
-  public GenericTypeBound(Class<?> rawType, Type[] parameters) {
+  public GenericTypeBound(Class<?> rawType, Type[] parameters, TypeOrdering typeOrdering) {
     this.rawType = rawType;
     this.parameters = parameters;
+    this.typeOrdering = typeOrdering;
   }
 
   /**
@@ -54,12 +56,12 @@ public class GenericTypeBound extends TypeBound {
         return false;
       }
     }
-    return true;
+    return this.typeOrdering.equals(b.typeOrdering);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(rawType, parameters);
+    return Objects.hash(rawType, parameters, typeOrdering);
   }
 
   /**
@@ -100,13 +102,13 @@ public class GenericTypeBound extends TypeBound {
       if (!(parameters[i] instanceof TypeVariable)) {
         throw new IllegalArgumentException("unable to instantiate type parameter " + parameters[i]);
       }
-      ConcreteType t = substitution.get((TypeVariable<?>) parameters[i]);
+      ConcreteType t = substitution.get(parameters[i]);
       if (t == null) {
         throw new IllegalArgumentException("unable to instantiate type parameter " + parameters[i]);
       }
       concreteArgs[i] = t;
     }
-    return new ConcreteTypeBound(ConcreteType.forClass(rawType, concreteArgs));
+    return new ConcreteTypeBound(ConcreteType.forClass(rawType, concreteArgs), typeOrdering);
   }
 
   /**
@@ -117,5 +119,10 @@ public class GenericTypeBound extends TypeBound {
   @Override
   public Class<?> getRuntimeClass() {
     return rawType;
+  }
+
+  @Override
+  public TypeBound apply(Substitution substitution) {
+    return this;
   }
 }

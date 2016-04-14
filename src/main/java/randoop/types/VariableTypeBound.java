@@ -8,9 +8,11 @@ import java.util.Objects;
  */
 public class VariableTypeBound extends TypeBound {
   private final TypeVariable<?> typeVariable;
+  private final TypeOrdering typeOrdering;
 
-  public VariableTypeBound(TypeVariable<?> typeVariable) {
+  public VariableTypeBound(TypeVariable<?> typeVariable, TypeOrdering typeOrdering) {
     this.typeVariable = typeVariable;
+    this.typeOrdering = typeOrdering;
   }
 
   @Override
@@ -38,16 +40,15 @@ public class VariableTypeBound extends TypeBound {
     if (type == null) {
       throw new RandoopTypeException("unable to instantiate bound " + typeVariable);
     }
-    ConcreteTypeBound b = new ConcreteTypeBound(type);
+    ConcreteTypeBound b = new ConcreteTypeBound(type, typeOrdering);
     return b.isSatisfiedBy(argType, substitution);
   }
 
-  @Override
-  public boolean isVariableBound() {
-    return true;
-  }
-
-  public TypeVariable<?> getTypeVariable() {
-    return typeVariable;
+  public TypeBound apply(Substitution substitution) {
+    ConcreteType type = substitution.get(typeVariable);
+    if (type == null) {
+      return this;
+    }
+    return new ConcreteTypeBound(type, typeOrdering);
   }
 }

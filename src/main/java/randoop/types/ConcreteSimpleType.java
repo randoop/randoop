@@ -186,6 +186,16 @@ public class ConcreteSimpleType extends ConcreteType {
     } else if (this.isBoxedPrimitive()) {
       return new ConcreteSimpleType(PrimitiveTypes.toUnboxedType(this.getRuntimeClass()));
     }
-    throw new IllegalArgumentException("Type must be primtive");
+    throw new IllegalArgumentException("Type must be primitive");
+  }
+
+  @Override
+  public ConcreteType toBoxedPrimitive() {
+    if (this.isPrimitive()) {
+      return PrimitiveTypes.toBoxedType(this.getRuntimeClass());
+    } else if (this.isBoxedPrimitive()) {
+      return this;
+    }
+    throw new IllegalArgumentException("type must be primitive");
   }
 }

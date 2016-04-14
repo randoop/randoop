@@ -27,24 +27,6 @@ public class ConcreteArrayType extends ConcreteType {
     this.runtimeType = Array.newInstance(elementType.getRuntimeClass(), 0).getClass();
   }
 
-  /**
-   * (Package private) Creates a concrete array type from the given {@code Class}
-   * representing an array type.
-   *
-   * @param runtimeType  the runtime
-   */
-  /*
-  ConcreteArrayType(Class<?> runtimeType) {
-    if (runtimeType == null) {
-      throw new IllegalArgumentException("runtime class may not be null");
-    }
-    if (!runtimeType.isArray()) {
-      throw new IllegalArgumentException("Class must be array");
-    }
-    this.elementType = ConcreteType.forClass(runtimeType.getComponentType());
-    this.runtimeType = runtimeType;
-  }
-*/
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof ConcreteArrayType)) {

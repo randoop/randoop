@@ -10,7 +10,7 @@ import java.util.Objects;
  * Could occur as a return type, a method/constructor parameter type, a field
  * type, or the type of an array.
  */
-public class GenericSimpleType extends GenericType {
+class GenericSimpleType extends GenericType {
 
   /** the type parameter of the simple type */
   private TypeVariable<?> parameter;
@@ -23,9 +23,9 @@ public class GenericSimpleType extends GenericType {
    *
    * @param parameter  the type parameter
    */
-  public GenericSimpleType(TypeVariable<?> parameter) throws RandoopTypeException {
+  GenericSimpleType(TypeVariable<?> parameter) throws RandoopTypeException {
     this.parameter = parameter;
-    this.bound = TypeBound.fromTypes(parameter.getBounds());
+    this.bound = TypeBound.fromTypes(new SupertypeOrdering(), parameter.getBounds());
   }
 
   /**
@@ -51,7 +51,7 @@ public class GenericSimpleType extends GenericType {
 
   @Override
   public String toString() {
-    return bound.toString();
+    return parameter.toString();
   }
 
   /**
@@ -98,8 +98,8 @@ public class GenericSimpleType extends GenericType {
     if (typeArguments.length != 1) {
       throw new IllegalArgumentException("only one type argument expected");
     }
-    List<TypeVariable<?>> parameters = new ArrayList<>();
-    parameters.add(parameter);
+    List<TypeParameter> parameters = new ArrayList<>();
+    parameters.add(new TypeParameter(parameter, bound));
     Substitution substitution = Substitution.forArgs(parameters, typeArguments);
     if (!bound.isSatisfiedBy(typeArguments[0], substitution)) {
       throw new IllegalArgumentException("type argument does not match parameter bound");
@@ -112,18 +112,17 @@ public class GenericSimpleType extends GenericType {
    *
    * @param substitution  the type substitution
    * @return the {@code ConcreteType} for the type parameter
-   * @throws IllegalArgumentException if the substitution is null, or a type
-   * parameter is not mapped by the substitution, or the type argument does not
+   * @throws IllegalArgumentException if the substitution is null, or the type argument does not
    * match the parameter bound.
    */
   @Override
-  public ConcreteType apply(Substitution substitution) throws RandoopTypeException {
+  public GeneralType apply(Substitution substitution) throws RandoopTypeException {
     if (substitution == null) {
       throw new IllegalArgumentException("substitution must be non-null");
     }
     ConcreteType concreteType = substitution.get(parameter);
     if (concreteType == null) {
-      throw new IllegalArgumentException("parameter not mapped by substitution");
+      return this;
     }
     if (!bound.isSatisfiedBy(concreteType, substitution)) {
       throw new IllegalArgumentException(

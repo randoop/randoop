@@ -11,13 +11,16 @@ public class ConcreteTypeBound extends TypeBound {
   /** the type of the bound */
   private final ConcreteType boundType;
 
+  private final TypeOrdering typeOrdering;
+
   /**
-   * Constructs a concrete type bound from a particular concrete type.
+   * Constructs a concrete type bound from a particular concrete type using the given type order.
    *
    * @param boundType  the type for the bound
    */
-  public ConcreteTypeBound(ConcreteType boundType) {
+  public ConcreteTypeBound(ConcreteType boundType, TypeOrdering typeOrdering) {
     this.boundType = boundType;
+    this.typeOrdering = typeOrdering;
   }
 
   @Override
@@ -45,7 +48,15 @@ public class ConcreteTypeBound extends TypeBound {
    */
   @Override
   public boolean isSatisfiedBy(ConcreteType argType, Substitution substitution) {
-    return boundType.isAssignableFrom(argType);
+    return isSatisfiedBy(argType);
+  }
+
+  public ConcreteType getBoundType() {
+    return boundType;
+  }
+
+  public boolean isSatisfiedBy(ConcreteType argType) {
+    return typeOrdering.isLessThanOrEqualTo(boundType, argType);
   }
 
   @Override
@@ -54,11 +65,9 @@ public class ConcreteTypeBound extends TypeBound {
   }
 
   @Override
-  public boolean isConcreteBound() {
-    return true;
+  public TypeBound apply(Substitution substitution) {
+    return this;
   }
 
-  public ConcreteType getBoundType() {
-    return boundType;
-  }
+
 }

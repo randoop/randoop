@@ -84,4 +84,9 @@ public class IntersectionTypeBound extends TypeBound {
     }
     return c;
   }
+
+  @Override
+  public TypeBound apply(Substitution substitution) {
+    return this;
+  }
 }

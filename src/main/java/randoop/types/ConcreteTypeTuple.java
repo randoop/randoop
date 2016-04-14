@@ -90,6 +90,6 @@ public class ConcreteTypeTuple implements GeneralTypeTuple {
 
   @Override
   public String toString() {
-    return "(" + UtilMDE.join(list, ",") + ")";
+    return "(" + UtilMDE.join(list, ", ") + ")";
   }
 }

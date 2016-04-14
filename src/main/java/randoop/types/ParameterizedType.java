@@ -1,6 +1,5 @@
 package randoop.types;
 
-import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -20,6 +19,7 @@ import plume.UtilMDE;
  */
 public class ParameterizedType extends ConcreteType {
 
+  private final List<TypeArgument> argumentList;
   /** The generic class for this type */
   private GenericClassType instantiatedType;
 
@@ -31,9 +31,10 @@ public class ParameterizedType extends ConcreteType {
    *
    * @param instantiatedType  the generic class type
    * @param substitution  the substitution for type variables
+   * @param argumentList  the list of argument types
    * @throws IllegalArgumentException if either argument is null
    */
-  public ParameterizedType(GenericClassType instantiatedType, Substitution substitution) {
+  ParameterizedType(GenericClassType instantiatedType, Substitution substitution, List<TypeArgument> argumentList) {
     if (instantiatedType == null) {
       throw new IllegalArgumentException("instantiated type must be non-null");
     }
@@ -43,6 +44,7 @@ public class ParameterizedType extends ConcreteType {
 
     this.instantiatedType = instantiatedType;
     this.substitution = substitution;
+    this.argumentList = argumentList;
   }
 
   /**
@@ -64,12 +66,12 @@ public class ParameterizedType extends ConcreteType {
     // Cannot guarantee that instantiated types have same type variables, or
     // that if they do the substitutions will work,
     // so check that parameters are mapped to the samesame concrete types
-    List<TypeVariable<?>> typeParameters = instantiatedType.getTypeParameters();
-    List<TypeVariable<?>> otherParameters = t.instantiatedType.getTypeParameters();
+    List<TypeParameter> typeParameters = instantiatedType.getTypeParameters();
+    List<TypeParameter> otherParameters = t.instantiatedType.getTypeParameters();
     for (int i = 0; i < typeParameters.size(); i++) {
       if (!(substitution
-          .get(typeParameters.get(i))
-          .equals(t.substitution.get(otherParameters.get(i))))) {
+          .get(typeParameters.get(i).getParameter())
+          .equals(t.substitution.get(otherParameters.get(i).getParameter())))) {
         return false;
       }
     }
@@ -78,7 +80,7 @@ public class ParameterizedType extends ConcreteType {
 
   @Override
   public int hashCode() {
-    return Objects.hash(instantiatedType, substitution);
+    return Objects.hash(instantiatedType, substitution, argumentList);
   }
 
   /**
@@ -125,11 +127,8 @@ public class ParameterizedType extends ConcreteType {
     }
 
     // otherwise, test unchecked
-    if (sourceType.isRawtype()) {
-      return sourceType.hasRuntimeClass(this.getRuntimeClass());
-    }
+    return sourceType.isRawtype() && sourceType.hasRuntimeClass(this.getRuntimeClass());
 
-    return false;
   }
 
   /**
@@ -211,7 +210,7 @@ public class ParameterizedType extends ConcreteType {
     if (genericSuperType == null) { // no matching supertype
       return false;
     }
-    ConcreteType superType = genericSuperType.apply(this.substitution);
+    ConcreteType superType = (ConcreteType)genericSuperType.apply(this.substitution);
     if (pt.equals(superType)) {
       return true; // found type
     }
@@ -265,10 +264,10 @@ public class ParameterizedType extends ConcreteType {
    *
    * @return the list of type arguments
    */
-  public List<ConcreteType> getTypeArguments() {
+  private List<ConcreteType> getTypeArguments() {
     List<ConcreteType> arguments = new ArrayList<>();
-    for (TypeVariable<?> v : instantiatedType.getTypeParameters()) {
-      arguments.add(substitution.get(v));
+    for (TypeParameter parameter : instantiatedType.getTypeParameters()) {
+      arguments.add(substitution.get(parameter.getParameter()));
     }
     return arguments;
   }
@@ -299,7 +298,7 @@ public class ParameterizedType extends ConcreteType {
     assert (superclass instanceof GenericClassType) || (superclass instanceof ConcreteType) : "unexpected type: " + superclass;
 
     if (superclass instanceof GenericClassType) {
-      return new ParameterizedType((GenericClassType)superclass, this.substitution);
+      return new ParameterizedType((GenericClassType)superclass, this.substitution, argumentList);
     }
 
     return (ConcreteType)superclass;

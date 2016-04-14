@@ -121,7 +121,6 @@ public final class PrimitiveTypes {
   }
 
   public static ConcreteType toBoxedType(Class<?> cls) {
-    System.out.println("class: " + cls);
     return new ConcreteSimpleType(primitiveAndStringToBoxed.get(cls));
   }
 

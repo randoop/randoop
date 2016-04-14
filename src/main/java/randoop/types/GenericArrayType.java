@@ -48,6 +48,11 @@ public class GenericArrayType extends GenericType {
     return Objects.hash(elementType);
   }
 
+  @Override
+  public String toString() {
+    return elementType + "[]";
+  }
+
   /**
    * {@inheritDoc}
    * @return a {@code ConcreteArrayType} created by instantiating the type
@@ -64,7 +69,12 @@ public class GenericArrayType extends GenericType {
    * parameters of this generic array type using the substitution
    */
   @Override
-  public ConcreteType apply(Substitution substitution) throws RandoopTypeException {
-    return new ConcreteArrayType(elementType.apply(substitution));
+  public GeneralType apply(Substitution substitution) throws RandoopTypeException {
+    GeneralType type = elementType.apply(substitution);
+    if (type != null && ! type.isGeneric()) {
+      return new ConcreteArrayType((ConcreteType)type);
+    } else {
+      return this;
+    }
   }
 }

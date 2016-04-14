@@ -98,6 +98,15 @@ public abstract class GeneralType {
   }
 
   /**
+   * Indicate whether this type is void.
+   *
+   * @return true if this type is void, false otherwise
+   */
+  public boolean isVoid() {
+    return false;
+  }
+
+  /**
    * Test whether this type is a subtype of the given type according to
    * transitive closure of definition of the <i>direct supertype</i> relation in
    * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.2">
@@ -188,7 +197,11 @@ public abstract class GeneralType {
     }
 
     if (type instanceof Class<?>) {
-      return ConcreteType.forClass((Class<?>) type);
+      Class<?> classType = (Class<?>)type;
+      if (classType.getTypeParameters().length > 0) {
+        return GenericType.forClass(classType);
+      }
+      return ConcreteType.forClass(classType);
     }
 
     String msg =
@@ -229,31 +242,25 @@ public abstract class GeneralType {
     Type rawType = t.getRawType();
     assert (rawType instanceof Class<?>) : "rawtype not an instance of Class<?> type " ;
     // Collect whatever is lurking in the "actual type arguments"
-    // Could be *actual* "actual type arguments", or type variables
+    // Could be *actual* "actual type arguments", type variables, or wildcards
     ConcreteType[] typeArguments = new ConcreteType[t.getActualTypeArguments().length];
-    List<TypeVariable<?>> typeParameters = new ArrayList<>(); //see below
-    List<TypeBound> typeBounds = new ArrayList<>();
+    List<TypeParameter> typeParameters = new ArrayList<>(); //see below
     Type[] actualArguments = t.getActualTypeArguments();
     for (int i = 0; i < actualArguments.length; i++) {
       if (actualArguments[i] instanceof TypeVariable) {
         TypeVariable<?> v = (TypeVariable<?>) actualArguments[i];
-        typeParameters.add(v);
-        typeBounds.add(TypeBound.fromTypes(v.getBounds()));
+        TypeBound bound = TypeBound.fromTypes(new SupertypeOrdering(), v.getBounds());
+        typeParameters.add(new TypeParameter(v, bound));
       } else if (actualArguments[i] instanceof WildcardType) {
         WildcardType wildcard = (WildcardType)actualArguments[i];
+        TypeBound bound = null;
         if (wildcard.getUpperBounds().length > 0) {
-          TypeBound bound = TypeBound.fromTypes(wildcard.getUpperBounds());
-          if (bound.isConcreteBound()) {
-            typeArguments[i] = ((ConcreteTypeBound)bound).getBoundType();
-          } else if (bound.isVariableBound()) {
-            TypeVariable<?> v = ((VariableTypeBound)bound).getTypeVariable();
-          } else {
-            throw new RandoopTypeException("not yet sure what to do with wildcard bounds that look like: " + bound.toString());
-          }
+          bound = TypeBound.fromTypes(new SupertypeOrdering(), wildcard.getUpperBounds());
+        } else if (wildcard.getLowerBounds().length > 0) {
+          bound = TypeBound.fromTypes(new SubtypeOrdering(), wildcard.getLowerBounds());
         }
-        if (wildcard.getLowerBounds().length > 0) {
-          throw new RandoopTypeException("not currently supporting lower bounds on wildcard types " + wildcard.toString());
-        }
+        assert bound != null : "type bound not initialized";
+        typeParameters.add(new TypeParameter(wildcard, bound));
       } else if (actualArguments[i] instanceof Class) {
         typeArguments[i] =
                 ConcreteType.forClass((Class<?>) actualArguments[i]);
@@ -271,7 +278,7 @@ public abstract class GeneralType {
       // Otherwise, the variables mapped by the substitutions used in checking
       // subtyping will not be the correct objects, and the subtype test will
       // fail.
-      return new GenericClassType((Class<?>) rawType, typeParameters, typeBounds);
+      return new GenericClassType((Class<?>) rawType, typeParameters);
     } else if (typeParameters.isEmpty()) { // is parameterized type
       // When building parameterized type, first create generic class from the
       // rawtype, and then instantiate with the arguments collected from the
