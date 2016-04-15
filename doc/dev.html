@@ -28,6 +28,7 @@
           <li><a href="#documentingchanges">Documenting Changes</a></li>
           <li><a href="#codeformatting">Formatting Randoop Source Code</a></li>
           <li><a href="#modmanual">Modifying the manual</a></li>
+          <li><a href="#addtests">Adding Tests</a></li>
         </ul></li>
       <li><a href="#making_new_dist">Releasing a New Version of Randoop</a></li>
     </ul></li>
@@ -158,7 +159,7 @@ There is separate <a href="../plugin/doc/dev.html">developer documentation
   <a href="https://docs.gradle.org/current/userguide/java_plugin.html"><i>source sets</i></a>.
   A source set is a grouping of source files that can have its own set of
   dependencies and tasks.
-  The 
+  The
   For instance, in the Randoop <code>build.gradle</code> there is the
   <code>agentTest</code> source set that is separate from the <code>test</code> source
   set because the test classes must run using the <code>exercised-class</code> Java
@@ -173,13 +174,24 @@ There is separate <a href="../plugin/doc/dev.html">developer documentation
 <ul>
   <li>Gradle allows you to run multiple tasks.  For instance, for a clean build,
     type <code>./gradlew clean build</code>.</li>
-  <li><p>You can run a task <code>taskName</code> on individual classes by setting the
-    system property <code>taskName.single</code> on the command line.
-    For instance, to run just the tests in <code>RandoopSystemTest</code> use the
-    command</p>
-    <pre><code>
-      ./gradlew -Dtest.single=RandoopSystemTest test
-    </code></pre></li>
+  <li><p>You can run a single test or smaller group of tests by using the <code>--tests</code>
+    option on the command line.
+    For instance,
+<ul>
+  <li> use
+    <code><pre>
+      ./gradlew test --tests="*GenericTypesTest"
+    </pre></code>
+    to run only the tests in <code>randoop.types.generics.GenericTypesTest</code>, and
+  </li>
+  <li> use
+    <code><pre>
+      ./gradlew test --tests="*testVar*"
+  </pre> </code>
+    to run the test method <code>randoop.types.generics.GenericTypesTest.testVariableParameters</code>.
+  </li>
+  </ul></li>
+
 </ul>
 
 
@@ -204,16 +216,17 @@ given here, see the Gradle
 
 <p>
   Effort has been made to accommodate the use of IDEs in developing Randoop,
-  but you should still use the command line to ensure everything is being built
-  properly.
+  but different IDEs provide different levels of support for Gradle projects.
+  This support is changing quickly, so this document provides information on
+  using the build script plus a little more allowing you to get started.
+  And, so, you should look for current information on your chosen IDE to go further.
 </p>
 
 <p>
-  Based on experiments with IDEs in March 2016, IntelliJ IDEA and NetBeans
-  with the IDEA plugin are the only plugin/tool combinations that actually
-  worked without any/major manual reconfiguration.
-  For both, type
+  The build script is setup to support use of IntelliJ IDEA, NetBeans and Eclipse.
+  To work with IntelliJ IDEA, run the command
 </p>
+
 <pre>
   ./gradlew idea
 </pre>
@@ -221,45 +234,50 @@ given here, see the Gradle
   at the command line in the Randoop directory.
   This uses the
   <a href="https://docs.gradle.org/current/userguide/idea_plugin.html">IntelliJ IDEA plugin</a>
-  to create IDEA configuration files that both tools use when importing the project.
+  to create IDEA configuration files that IntelliJ uses when importing the project.
+  You can then import the project as a Gradle project in IntelliJ IDEA, following
+  any suggestions made on configuring Gradle support.
+  See the Gradle tool window documentation at the <a href="https://www.jetbrains.com/help/idea/">IDEA Help</a> site
+  on how to work with Gradle projects.
 </p>
 
 <p>
-  To use NetBeans with Randoop, you will also need to install the
-  <a href="https://github.com/kelemen/netbeans-gradle-project">NetBeans plugin</a>,
-  but IntelliJ IDEA should import the project without anything additional though
-  you'll want to follow it's suggestions on configuring Gradle support.
-  Building the project in NetBeans works like running <code>./gradlew build</code>,
-  while with IDEA you will need to set the command you want to run in the Gradle
-  tool.
+  To use NetBeans with Randoop, first run the command
+</p>
+<pre>
+  ./gradlew idea
+</pre>
+<p>
+  at the command line in the Randoop directory.
+  Then install the
+  <a href="https://github.com/kelemen/netbeans-gradle-project">NetBeans plugin</a>
+  in NetBeans.
+  This plugin uses the configuration files generated for the IDEA plugin during
+  the import into NetBeans.
+  Building the project in NetBeans works like running <code>./gradlew build</code>.
 </p>
 
 <p>
-  In addition to the IntelliJ IDEA plugin, the build script for Randoop includes
-  the
-  <a href="https://docs.gradle.org/current/userguide/eclipse_plugin.html">Eclipse plugin</a>.
-  With both Eclipse and IntelliJ IDEA, it is possible to import Randoop as a
-  Gradle project, but it seems to work slightly better to use the Gradle-side
-  plugins to create the configuration files for each tool.
-  To generate Eclipse-specific project configuration files, type the command:
+  To use Eclipse with Randoop, run the command
 </p>
-<pre><code>
+<pre>
   ./gradlew eclipse
-</code></pre>
-<p>
-  Once you've run the task you want, you will be able to import Randoop as a
-  native project within Eclipse.
-  However, as mentioned above, expect that you'll have to tweak the
-  project settings within your IDE for it to build/run correctly.
-  Also, when we tried it, the Eclipse build model did not match the Gradle build,
-  breaking most of the instructions in this document.
+</pre>
+</p>
+  at the command line in the Randoop directory.
+  This runs the
+  <a href="https://docs.gradle.org/current/userguide/eclipse_plugin.html">Eclipse plugin</a>
+  to configure the project for use with Eclipse.
+  This will allow you to import Randoop as a native project within Eclipse.
 </p>
 
 <p>
   Other than <code>.gitignore</code>, the tool-specific settings are not part of the
   repository.
-  If you should tweak the Gradle configuration in <code>build.gradle</code> to
-  better support a particular tool, also verify that it doesn't change behavior
+  If your tool introduces new configuration files that are not covered by the <code>.gitignore</code>,
+  please add them to that file.
+  Also, should you need to tweak the Gradle configuration in <code>build.gradle</code> to
+  better support a particular tool, please verify that it doesn't change behavior
   from the command line using the Gradle wrapper.
 </p>
 
@@ -387,6 +405,101 @@ The files are placed in <code>build/docs</code>, with the Javadoc in
 <code>build/docs/api</code>, and the updated manual files in <code>build/docs/manual</code>.
 </p>
 
+
+<h3 id="addtests">Adding Tests</h3>
+
+<p>
+  As you add new functionality to Randoop, you should also add new tests.
+  Randoop has three kinds of tests:
+  tests of Randoop internal classes (in the <i>test</i> source set),
+  tests of Randoop Java agents (in the <i>agentTest</i> source set), and
+  system tests that run Randoop on input classes.
+  The first two are simply JUnit tests that may use other input classes, both
+  of which are placed under the <code>src/test</code> or <code>src/agenttest</code>
+  subdirectories as shown below in the
+  <a href="#file-organization">Project Directory Organization</a>.
+  System tests are a bit more involved, but all that is needed is putting the
+  files in the right place for the tests to be run.
+</p>
+
+<p>
+  The system tests are test methods of a JUnit class <code>randoop.main.RandoopSystemTest</code>
+  in the <code>src/systemtest</code> directory.
+  Each test uses one or more input classes from the <i>testInput</i> source set,
+  which resides in the <code>src/testinput/java</code> subdirectory.
+  (System tests are run with a different classpath than the other tests, and
+  will only take input classes from <code>src/testinput</code>.)
+  So, to set up a new system test, you need to add any new input classes, and add
+  a new test method to the system test class.
+</p>
+
+<p>
+  Here is an example test from <code>randoop.main.RandoopSystemTest</code> that
+  illustrates the main themes that occur in writing a system test.
+</p>
+<code><pre>
+  @Test
+ public void runLiteralsTest() {
+
+   // 1. Set up a working directory -- choose a unique name
+   Path workingPath = createTestDirectory(workingDirsRoot, "literals-test");
+
+   // 2. Setup options for test generation
+   String packageName = "";                   // package for tests
+   String regressionBasename = "LiteralsReg"; // base name for regression tests
+   String errorBasename = "LiteralsErr";      // base name for error tests
+
+   List<String> options =
+       getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
+   options.add("--inputlimit=1000");
+   options.add("--testclass=randoop.literals.A");
+   options.add("--testclass=randoop.literals.A2");
+   options.add("--testclass=randoop.literals.B");
+   options.add("--literals-level=CLASS");
+   options.add("--literals-file=resources/systemTest/literalsfile.txt");
+
+   // 3. Optionally, set a timeout for processes in this test
+   long timeout = 120000L;
+
+   // 4. Run Randoop and compile. (If no timeout, remove from arguments.)
+   RandoopRunDescription randoopRunDesc =
+       generateAndCompile(
+           classpath, workingPath, packageName, regressionBasename, errorBasename, options, timeout);
+
+   // 5. Check results of generation and compiling
+   // Here, want to have regression tests
+   assertThat("...has regression tests", randoopRunDesc.regressionTestCount, is(greaterThan(0)));
+   TestRunDescription testRunDesc =
+       runTests(classpath, workingPath, packageName, regressionBasename);
+   assertThat(
+       "all regression tests should pass",
+       testRunDesc.testsSucceed,
+       is(equalTo(randoopRunDesc.regressionTestCount)));
+
+   // But, want no error tests
+   assertThat("...has no error tests", randoopRunDesc.errorTestCount, is(equalTo(0)));
+ }
+</pre></code>
+
+<p>
+The options list is exactly what you would give at the command line, except for
+setting the names and package for generated tests.
+All Randoop options may be given, except for <code>--junit-reflection-allowed=false</code>
+since the test run method only looks for JUnit suite classes.
+The timeout that can be given to <code>generateAndCompile</code> limits the
+processes run by the test, and is distinct from the Randoop <code>--timelimit</code>
+option.
+</p>
+
+<p>
+  A system test always attempts to compile generated tests.
+  It should also try to run any generated tests and confirm that regression tests
+  pass, and that error tests fail.
+  The output of the Randoop run is captured in the <code>RandoopRunDescription</code>
+  object returned by <code>generateAndCompile</code>, and the output from running
+  the tests is captured in the <code>TestRunDescription</code> returned by <code>runTests</code>.
+  This output can be used in other assertions as needed.
+</p>
 
 
 <h2 id="making_new_dist">Releasing a New Version of Randoop</h2>
