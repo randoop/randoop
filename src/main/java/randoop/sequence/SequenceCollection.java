@@ -15,6 +15,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
+import randoop.util.PrimitiveTypes;
 import randoop.util.Reflection;
 import randoop.util.Reflection.Match;
 import randoop.util.SimpleList;
@@ -154,6 +155,9 @@ public class SequenceCollection {
 
   private void updateCompatibleClassMap(List<Class<?>> classes) {
     for (Class<?> c : classes) {
+      if (PrimitiveTypes.isBoxedPrimitiveTypeOrString(c)) {
+        c = PrimitiveTypes.primitiveType(c);
+      }
       typesWithSequencesMap.add(c);
     }
   }
@@ -161,6 +165,9 @@ public class SequenceCollection {
   private void updateCompatibleMap(Sequence newsequence, List<Class<?>> classes) {
     for (int i = 0; i < classes.size(); i++) {
       Class<?> t = classes.get(i);
+      if (PrimitiveTypes.isBoxedPrimitiveTypeOrString(t)) {
+        t = PrimitiveTypes.primitiveType(t);
+      }
       ArrayListSimpleList<Sequence> set = this.activeSequences.get(t);
       if (set == null) {
         set = new ArrayListSimpleList<Sequence>();
@@ -191,6 +198,9 @@ public class SequenceCollection {
       // Log.logLine(activesequences.toString());
     }
 
+    if (PrimitiveTypes.isBoxedPrimitiveTypeOrString(clazz)) {
+      clazz = PrimitiveTypes.primitiveType(clazz);
+    }
     List<SimpleList<Sequence>> ret = new ArrayList<SimpleList<Sequence>>();
 
     if (exactMatch) {
