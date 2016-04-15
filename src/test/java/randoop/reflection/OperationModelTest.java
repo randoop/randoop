@@ -9,7 +9,10 @@ import java.util.Set;
 
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.ThrowClassNameError;
+import randoop.main.WarnOnBadClassName;
+import randoop.operation.ConcreteOperation;
 import randoop.operation.OperationParseException;
+import randoop.types.ConcreteType;
 import randoop.types.RandoopTypeException;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -45,6 +48,34 @@ public class OperationModelTest {
     }
     assert model != null : "model was not initialized";
     assertThat("only expect the LinkedList and Object classes", model.getClasses().size(), is(equalTo(2)));
+    assertTrue("should have nonzero operations set", model.getConcreteOperations().size() > 0);
+
+  }
+
+  @Test
+  public void classWithInnerClassTest() {
+    VisibilityPredicate visibilityPredicate = new PublicVisibilityPredicate();
+    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
+    Set<String> classnames = new LinkedHashSet<>();
+    classnames.add("randoop.test.ClassWithInnerClass");
+    classnames.add("randoop.test.ClassWithInnerClass$A");
+    Set<String> exercisedClassname = new LinkedHashSet<>();
+    Set<String> methodSignatures = new LinkedHashSet<>();
+    ClassNameErrorHandler errorHandler = new WarnOnBadClassName();
+    List<String> literalsFileList = new ArrayList<>();
+    OperationModel model = null;
+    try {
+      model = OperationModel.createModel(visibilityPredicate, reflectionPredicate, classnames, exercisedClassname, methodSignatures, errorHandler, literalsFileList);
+    } catch (OperationParseException e) {
+      fail("failed to parse operation: " + e.getMessage());
+    } catch (NoSuchMethodException e) {
+      fail("did not find method: " + e.getMessage());
+    } catch (RandoopTypeException e) {
+      fail("type error: " + e.getMessage());
+    }
+    assert model != null: "model was not initialized";
+    assertThat("should have both outer and inner classes, plus Object", model.getClasses().size(), is(equalTo(3)));
+
     assertTrue("should have nonzero operations set", model.getConcreteOperations().size() > 0);
 
   }
