@@ -124,8 +124,10 @@ public final class ConstructorCall extends CallableOperation {
     // TODO the last replace is ugly. There should be a method that does it.
     String declaringClassStr = TypeNames.getCompilableName(declaringClass);
 
-    b.append(isNonStaticMember ? inputVars.get(0) + "." : "").append("new ");
-    b.append(isNonStaticMember ? declaringClass.getSimpleName() : declaringClassStr + "(");
+    b.append(isNonStaticMember ? inputVars.get(0) + "." : "")
+            .append("new ")
+            .append(isNonStaticMember ? declaringClass.getSimpleName() : declaringClassStr)
+            .append("(");
     for (int i = (isNonStaticMember ? 1 : 0); i < inputVars.size(); i++) {
       if (i > (isNonStaticMember ? 1 : 0)) b.append(", ");
 
