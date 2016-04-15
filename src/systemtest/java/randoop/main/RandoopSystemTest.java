@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
@@ -412,6 +413,38 @@ public class RandoopSystemTest {
         is(equalTo(0)));
   }
 
+  @Test
+  public void runInnerClassTest() {
+    Path workingPath = createTestDirectory(workingDirsRoot, "inner-class-test");
+    String packageName = "";
+    String regressionBasename = "InnerClass";
+    String errorBasename = "InnerClass";
+
+    List<String> options =
+            getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
+    options.add("--testclass=randoop.test.ClassWithInnerClass");
+    options.add("--testclass=randoop.test.ClassWithInnerClass$A");
+    options.add("--timelimit=2");
+    options.add("--outputlimit=2");
+    options.add("--junit-reflection-allowed=false");
+    options.add("--silently-ignore-bad-class-names");
+    options.add("--unchecked-exception=ERROR");
+    options.add("--no-regression-tests");
+    options.add("--npe-on-null-input=ERROR");
+    options.add("--npe-on-non-null-input=ERROR");
+
+    RandoopRunDescription randoopRunDescription = generateAndCompile(classpath, workingPath, packageName, regressionBasename, errorBasename, options);
+    assertThat("...should not have regression tests", randoopRunDescription.regressionTestCount, is(equalTo(0)));
+    assertThat("...should have error tests", randoopRunDescription.errorTestCount, is(greaterThan(0)));
+    TestRunDescription errorTestRunDesc = runTests(classpath, workingPath, packageName, errorBasename);
+    if (errorTestRunDesc.testsFail != randoopRunDescription.errorTestCount) {
+      for (String line : errorTestRunDesc.processStatus.outputLines) {
+        System.err.println(line);
+      }
+      fail("all error tests should fail");
+    }
+  }
+
   /********************************** utility methods ***************************/
 
   /**
@@ -593,8 +626,14 @@ public class RandoopSystemTest {
     }
 
     Path classDir = workingPath.resolve(CLASS_DIR_NAME);
-    boolean compileSucceeded = compileTests(testClassSourceFiles, classDir.toString());
-    assert compileSucceeded : "Generated test compile failed";
+    CompileStatus compileStatus = compileTests(testClassSourceFiles, classDir.toString());
+    if (! compileStatus.succeeded) {
+      for (Diagnostic<? extends JavaFileObject> diag : compileStatus.diagnostics) {
+        String sourceName = diag.getSource().toUri().toString();
+        System.err.printf("Error on %d of %s%n%s%n", diag.getLineNumber(), sourceName, diag.getMessage(null));
+      }
+      fail("Compilation failed");
+    }
 
     // collect class files for generated tests
     List<File> testClassClassFiles = new ArrayList<>();
@@ -764,6 +803,16 @@ public class RandoopSystemTest {
     return new ProcessStatus(command, exitValue, outputLines);
   }
 
+  private class CompileStatus {
+
+    private final Boolean succeeded;
+    private final List<Diagnostic<? extends JavaFileObject>> diagnostics;
+
+    public CompileStatus(Boolean succeeded, List<Diagnostic<? extends JavaFileObject>> diagnostics) {
+      this.succeeded = succeeded;
+      this.diagnostics = diagnostics;
+    }
+  }
   /**
    * Compile the test files, writing the class files to the desination directory.
    *
@@ -771,7 +820,7 @@ public class RandoopSystemTest {
    * @param destinationDir  the path to the desination directory
    * @return true if compile succeeded, false otherwise
    */
-  private Boolean compileTests(List<File> testSourceFiles, String destinationDir) {
+  private CompileStatus compileTests(List<File> testSourceFiles, String destinationDir) {
     Locale locale = null; // use default locale
     Charset charset = null; // use default charset
     Writer writer = null; // use System.err for output
@@ -796,7 +845,7 @@ public class RandoopSystemTest {
     } catch (IOException e) {
       fail("I/O Error while compiling generated tests: " + e);
     }
-    return succeeded;
+    return new CompileStatus(succeeded, diagnostics.getDiagnostics());
   }
 
   /**
