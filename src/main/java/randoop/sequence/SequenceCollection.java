@@ -15,9 +15,6 @@ import randoop.types.ConcreteType;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
-import randoop.util.PrimitiveTypes;
-import randoop.util.Reflection;
-import randoop.util.Reflection.Match;
 import randoop.util.SimpleList;
 
 /**
@@ -151,22 +148,8 @@ public class SequenceCollection {
     checkRep();
   }
 
-  private void updateCompatibleClassMap(List<Class<?>> classes) {
-    for (Class<?> c : classes) {
-      if (PrimitiveTypes.isBoxedPrimitiveTypeOrString(c)) {
-        c = PrimitiveTypes.primitiveType(c);
-      }
-      typesWithSequencesMap.add(c);
-    }
-  }
-
-  private void updateCompatibleMap(Sequence newsequence, List<Class<?>> classes) {
-    for (int i = 0; i < classes.size(); i++) {
-      Class<?> t = classes.get(i);
-      if (PrimitiveTypes.isBoxedPrimitiveTypeOrString(t)) {
-        t = PrimitiveTypes.primitiveType(t);
-      }
-      ArrayListSimpleList<Sequence> set = this.activeSequences.get(t);
+  private void updateCompatibleMap(Sequence sequence, ConcreteType type) {
+      ArrayListSimpleList<Sequence> set = this.sequenceMap.get(type);
       if (set == null) {
         set = new ArrayListSimpleList<>();
         this.sequenceMap.put(type, set);
@@ -193,10 +176,7 @@ public class SequenceCollection {
       Log.logLine("getSequencesForType: entering method, type=" + type.toString());
     }
 
-    if (PrimitiveTypes.isBoxedPrimitiveTypeOrString(clazz)) {
-      clazz = PrimitiveTypes.primitiveType(clazz);
-    }
-    List<SimpleList<Sequence>> ret = new ArrayList<SimpleList<Sequence>>();
+    List<SimpleList<Sequence>> resultList = new ArrayList<>();
 
     if (exactMatch) {
       SimpleList<Sequence> l = this.sequenceMap.get(type);
