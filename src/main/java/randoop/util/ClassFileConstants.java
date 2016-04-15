@@ -34,6 +34,8 @@ import org.apache.commons.bcel6.generic.MethodGen;
 import org.apache.commons.bcel6.util.ClassPath;
 
 import randoop.operation.NonreceiverTerm;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypes;
 import randoop.types.TypeNames;
 
 // Implementation notes:  All string, float, and double constants are in the
@@ -62,12 +64,12 @@ public class ClassFileConstants {
 
   public static class ConstantSet {
     public String classname;
-    public Set<Integer> ints = new TreeSet<Integer>();
-    public Set<Long> longs = new TreeSet<Long>();
-    public Set<Float> floats = new TreeSet<Float>();
-    public Set<Double> doubles = new TreeSet<Double>();
-    public Set<String> strings = new TreeSet<String>();
-    public Set<Class<?>> classes = new TreeSet<Class<?>>();
+    public Set<Integer> ints = new TreeSet<>();
+    public Set<Long> longs = new TreeSet<>();
+    public Set<Float> floats = new TreeSet<>();
+    public Set<Double> doubles = new TreeSet<>();
+    public Set<String> strings = new TreeSet<>();
+    public Set<Class<?>> classes = new TreeSet<>();
 
     @Override
     public String toString() {
@@ -94,7 +96,7 @@ public class ClassFileConstants {
       for (Class<?> x : classes) {
         System.out.printf("Class:%s%n", x);
       }
-      System.out.printf("%nEND CLASSLITERALS%n", classname);
+      System.out.printf("%nEND CLASSLITERALS%n");
 
       return baos.toString();
     }
@@ -103,7 +105,7 @@ public class ClassFileConstants {
   /**
    * A simple driver program that prints output literals file format.
    *
-   * @see randoop.LiteralFileReader
+   * @see randoop.reflection.LiteralFileReader
    * @param args  the command line arguments
    * @throws IOException if an error occurs in writing the constants
    */
@@ -184,9 +186,7 @@ public class ClassFileConstants {
     for (Method m : jc.getMethods()) {
       MethodGen mg = new MethodGen(m, jc.getClassName(), pool);
       InstructionList il = mg.getInstructionList();
-      if (il == null) {
-        // System.out.println("No instructions for " + mg);
-      } else {
+      if (il != null) {
         for (Instruction inst : il.getInstructions()) {
           switch (inst.getOpcode()) {
 
@@ -565,7 +565,7 @@ public class ClassFileConstants {
    * @return a map of types to constant operations
    */
   public static MultiMap<Class<?>, NonreceiverTerm> toMap(Collection<ConstantSet> constantSets) {
-    final MultiMap<Class<?>, NonreceiverTerm> map = new MultiMap<Class<?>, NonreceiverTerm>();
+    final MultiMap<Class<?>, NonreceiverTerm> map = new MultiMap<>();
     for (ConstantSet cs : constantSets) {
       Class<?> clazz;
       try {
@@ -574,22 +574,22 @@ public class ClassFileConstants {
         throw new Error("Class " + cs.classname + " not found on the classpath.");
       }
       for (Integer x : cs.ints) {
-        map.add(clazz, new NonreceiverTerm(int.class, x.intValue()));
+        map.add(clazz, new NonreceiverTerm(ConcreteTypes.INT_TYPE, x));
       }
       for (Long x : cs.longs) {
-        map.add(clazz, new NonreceiverTerm(long.class, x.longValue()));
+        map.add(clazz, new NonreceiverTerm(ConcreteTypes.LONG_TYPE, x));
       }
       for (Float x : cs.floats) {
-        map.add(clazz, new NonreceiverTerm(float.class, x.floatValue()));
+        map.add(clazz, new NonreceiverTerm(ConcreteTypes.FLOAT_TYPE, x));
       }
       for (Double x : cs.doubles) {
-        map.add(clazz, new NonreceiverTerm(double.class, x.doubleValue()));
+        map.add(clazz, new NonreceiverTerm(ConcreteTypes.DOUBLE_TYPE, x));
       }
       for (String x : cs.strings) {
-        map.add(clazz, new NonreceiverTerm(String.class, x));
+        map.add(clazz, new NonreceiverTerm(ConcreteTypes.STRING_TYPE, x));
       }
       for (Class<?> x : cs.classes) {
-        map.add(clazz, new NonreceiverTerm(Class.class, x));
+        map.add(clazz, new NonreceiverTerm(ConcreteTypes.CLASS_TYPE, x));
       }
     }
     return map;

@@ -1,68 +1,57 @@
 package randoop.operation;
 
-import java.io.ObjectStreamException;
 import java.io.PrintStream;
-import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.reflection.ReflectionPredicate;
+import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.types.PrimitiveTypes;
-import randoop.util.CollectionsExt;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
+import randoop.types.GeneralType;
+import randoop.types.GeneralTypeTuple;
+import randoop.types.GenericTypeTuple;
+import randoop.types.RandoopTypeException;
 import randoop.util.MethodReflectionCode;
 import randoop.util.ReflectionExecutor;
 
 /**
- * MethodCall is a {@link Operation} that represents a call to a method. It is a
- * wrapper for a reflective Method object, and caches values of computed
+ * MethodCall is a {@link Operation} that represents a call to a method. It is
+ * a wrapper for a reflective Method object, and caches values of computed
  * reflective calls.
  * <p>
  * An an {@link Operation}, a call to a non-static method<br>
- * <code>T mname (T1,...,Tn)</code><br>
- * of class C can be represented formally as an operation <i>mname</i>: [<i>C,
- * T1,...,Tn</i>] &rarr; <i>T</i>. If this method is static, then we could write
- * the operation as <i>C.mname</i>: [<i>T1,...,Tn</i>] &rarr; <i>T</i> (a class
- * instance not being needed as an input).
+ *   <code>T mname (T1,...,Tn)</code><br>
+ * of class C can be represented formally as an operation
+ * <i>mname</i>: [<i>C, T1,...,Tn</i>] &rarr; <i>T</i>.
+ * If this method is static, then we could write the operation as
+ * <i>C.mname</i>: [<i>T1,...,Tn</i>] &rarr; <i>T</i>
+ * (a class instance not being needed as an input).
  * <p>
  * The execution of a {@code MethodCall} executes the enclosed {@link Method}
  * given values for the inputs.
  * <p>
  * (Class previously called RMethod.)
  */
-public final class MethodCall extends AbstractOperation implements Operation {
+public final class MethodCall extends CallableOperation {
 
   /**
    * ID for parsing purposes
    *
-   * @see OperationParser#getId(Operation)
+   * @see OperationParser#getId(ConcreteOperation)
    */
   public static final String ID = "method";
 
   private final Method method;
-
-  // Cached values (for improved performance). Their values
-  // are computed upon the first invocation of the respective
-  // getter method.
-  private List<Class<?>> inputTypesCached;
-  private Class<?> outputTypeCached;
-  private boolean hashCodeComputed = false;
-  private int hashCodeCached = 0;
-  private boolean isVoidComputed = false;
-  private boolean isVoidCached = false;
-  private boolean isStaticComputed = false;
-  private boolean isStaticCached = false;
+  private final boolean isStatic;
 
   /**
    * getMethod returns Method object of this MethodCall.
@@ -76,78 +65,58 @@ public final class MethodCall extends AbstractOperation implements Operation {
   /**
    * MethodCall creates an object corresponding to the given reflective method.
    *
-   * @param method
-   *          the reflective method object.
+   * @param method  the reflective method object.
    */
   public MethodCall(Method method) {
     if (method == null) throw new IllegalArgumentException("method should not be null.");
 
     this.method = method;
-    // TODO move this earlier in the process: check first that all
-    // methods to be used can be made accessible.
-    // XXX this should not be here but I get infinite loop when comment out
     this.method.setAccessible(true);
+    this.isStatic = Modifier.isStatic(method.getModifiers() & Modifier.methodModifiers());
   }
 
   /**
-   * Creates {@code MethodCall} object for the given reflective method.
+   * toString outputs a text representation of the method call.
    *
-   * @param method
-   *          the {@link Method} object
-   * @return constructed {@link MethodCall}
-   */
-  public static MethodCall createMethodCall(Method method) {
-    return new MethodCall(method);
-  }
-
-  /**
-   * toString outputs a parseable text representation of the method call.
-   *
-   * @return string representation constructed by
-   *         {@link MethodCall#toParseableString()}
+   * @return string representation of the enclosed method
    */
   @Override
   public String toString() {
-    return toParseableString();
+    return method.toString();
   }
 
   /**
-   * {@inheritDoc} Issues the code that corresponds to calling the method with
-   * the provided {@link Variable} objects as arguments.
-   *
-   * @param inputVars
-   *          is the list of actual arguments to be printed.
+   * {@inheritDoc}
+   * Issues the code that corresponds to calling the method with the provided
+   * {@link Variable} objects as arguments.
+   * @param inputVars is the list of actual arguments to be printed.
    */
   @Override
-  public void appendCode(List<Variable> inputVars, StringBuilder sb) {
+  public void appendCode(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType, List<Variable> inputVars, StringBuilder sb) {
 
-    String receiverString = null;
-    if (!isStatic()) {
-      if (PrimitiveTypes.isPrimitive(inputVars.get(0).getType())) {
-        Statement statementCreatingVar = inputVars.get(0).getDeclaringStatement();
-        receiverString = statementCreatingVar.getShortForm();
+    String receiverString = isStatic() ? null : inputVars.get(0).getName();
+    if (isStatic()) {
+      sb.append(declaringType.getName().replace('$', '.'));
+    } else {
+      ConcreteType expectedType = inputTypes.get(0);
+      if (expectedType.isPrimitive()) { // explicit cast when want primitive boxed as receiver
+        sb.append("((").append(expectedType.getName()).append(")").append(receiverString).append(")");
       } else {
-        receiverString = inputVars.get(0).getName();
+        sb.append(receiverString);
       }
     }
-    appendReceiverOrClassForStatics(receiverString, sb);
 
     sb.append(".");
-    sb.append(getTypeArguments());
-    sb.append(getMethod().getName() + "(");
+    sb.append(getMethod().getName()).append("(");
 
     int startIndex = (isStatic() ? 0 : 1);
     for (int i = startIndex; i < inputVars.size(); i++) {
       if (i > startIndex) sb.append(", ");
 
       // CASTING.
-      if (!inputVars.get(i).getType().equals(this.getInputTypes().get(i))) {
+      if (!inputVars.get(i).getType().equals(inputTypes.get(i))) {
         // Cast if the variable and input types are not identical.
-        if (PrimitiveTypes.isPrimitive(getInputTypes().get(i))) {
-          sb.append("(" + getInputTypes().get(i).getName() + ")");
-        } else {
-          sb.append("(" + getInputTypes().get(i).getCanonicalName() + ")");
-        }
+        sb.append("(").append(inputTypes.get(i).getName()).append(")");
       }
 
       String param = inputVars.get(i).getName();
@@ -167,78 +136,6 @@ public final class MethodCall extends AbstractOperation implements Operation {
     sb.append(")");
   }
 
-  // XXX this is a pretty bogus workaround for a bug in javac (type inference
-  // fails sometimes)
-  // It is bogus because what we produce here may be different from correct
-  // inferred type.
-  private String getTypeArguments() {
-    TypeVariable<Method>[] typeParameters = method.getTypeParameters();
-    if (typeParameters.length == 0) return "";
-    StringBuilder b = new StringBuilder();
-    Class<?>[] params = new Class<?>[typeParameters.length];
-    b.append("<");
-    for (int i = 0; i < typeParameters.length; i++) {
-      if (i > 0) b.append(",");
-      Type firstBound =
-          typeParameters[i].getBounds().length == 0
-              ? Object.class
-              : typeParameters[i].getBounds()[0];
-      params[i] = getErasure(firstBound);
-      b.append(getErasure(firstBound).getCanonicalName());
-    }
-    b.append(">");
-    // if all are object, then don't bother
-    if (CollectionsExt.findAll(Arrays.asList(params), Object.class).size() == params.length)
-      return "";
-    return b.toString();
-  }
-
-  private static Class<?> getErasure(Type t) {
-    if (t instanceof Class<?>) return (Class<?>) t;
-    if (t instanceof ParameterizedType) {
-      ParameterizedType pt = (ParameterizedType) t;
-      return getErasure(pt.getRawType());
-    }
-    if (t instanceof TypeVariable<?>) {
-      TypeVariable<?> tv = (TypeVariable<?>) t;
-      Type[] bounds = tv.getBounds();
-      Type firstBound = bounds.length == 0 ? Object.class : bounds[0];
-      return getErasure(firstBound);
-    }
-    if (t instanceof GenericArrayType)
-      throw new UnsupportedOperationException("erasure of arrays not implemented " + t);
-    if (t instanceof WildcardType)
-      throw new UnsupportedOperationException("erasure of wildcards not implemented " + t);
-    throw new IllegalStateException("unexpected type " + t);
-  }
-
-  private void appendReceiverOrClassForStatics(String receiverString, StringBuilder b) {
-    if (isStatic()) {
-      String s2 = this.method.getDeclaringClass().getName().replace('$', '.'); // TODO
-      // combine
-      // this
-      // with
-      // last
-      // if
-      // clause
-      b.append(s2);
-    } else {
-      Class<?> expectedType = getInputTypes().get(0);
-      String canonicalName = expectedType.getCanonicalName();
-      boolean mustCast =
-          canonicalName != null
-              && PrimitiveTypes.isBoxedPrimitiveTypeOrString(expectedType)
-              && !expectedType.equals(String.class);
-      if (mustCast) {
-        // this is a little paranoid but we need to cast primitives in
-        // order to get them boxed.
-        b.append("((" + canonicalName + ")" + receiverString + ")");
-      } else {
-        b.append(receiverString);
-      }
-    }
-  }
-
   @Override
   public boolean equals(Object o) {
     if (!(o instanceof MethodCall)) return false;
@@ -249,47 +146,34 @@ public final class MethodCall extends AbstractOperation implements Operation {
 
   @Override
   public int hashCode() {
-    if (!hashCodeComputed) {
-      hashCodeComputed = true;
-      hashCodeCached = this.method.hashCode();
-    }
-    return hashCodeCached;
+    return Objects.hash(method);
   }
-
-  public long calls_time = 0;
-  public int calls_num = 0;
 
   /**
    * {@inheritDoc}
-   *
    * @return {@link NormalExecution} with return value if execution normal,
    *         otherwise {@link ExceptionalExecution} if an exception thrown.
    */
   @Override
-  public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
-
-    assert statementInput.length == getInputTypes().size();
+  public ExecutionOutcome execute(Object[] input, PrintStream out) {
 
     Object receiver = null;
-    int paramsLength = getInputTypes().size();
+    int paramsLength = input.length;
     int paramsStartIndex = 0;
     if (!isStatic()) {
-      receiver = statementInput[0];
+      receiver = input[0];
       paramsLength--;
       paramsStartIndex = 1;
     }
 
     Object[] params = new Object[paramsLength];
     for (int i = 0; i < params.length; i++) {
-      params[i] = statementInput[i + paramsStartIndex];
+      params[i] = input[i + paramsStartIndex];
     }
 
     MethodReflectionCode code = new MethodReflectionCode(this.method, receiver, params);
 
-    calls_num++;
-    long startTime = System.nanoTime();
     Throwable thrown = ReflectionExecutor.executeReflectionCode(code, out);
-    calls_time += System.nanoTime() - startTime;
 
     if (thrown == null) {
       return new NormalExecution(code.getReturnVariable(), 0);
@@ -299,76 +183,31 @@ public final class MethodCall extends AbstractOperation implements Operation {
   }
 
   /**
-   * {@inheritDoc} If the method is non-static the first element of the list is
-   * the type of the class to which the method belongs.
-   *
-   * @return list of argument types for this method.
-   */
-  @Override
-  public List<Class<?>> getInputTypes() {
-    if (inputTypesCached == null) {
-      Class<?>[] methodParameterTypes = method.getParameterTypes();
-      inputTypesCached =
-          new ArrayList<Class<?>>(methodParameterTypes.length + (isStatic() ? 0 : 1));
-      if (!isStatic()) inputTypesCached.add(method.getDeclaringClass());
-      for (int i = 0; i < methodParameterTypes.length; i++) {
-        inputTypesCached.add(methodParameterTypes[i]);
-      }
-    }
-    return inputTypesCached;
-  }
-
-  /**
    * {@inheritDoc}
-   *
-   * @return return type of this method.
-   */
-  @Override
-  public Class<?> getOutputType() {
-    if (outputTypeCached == null) {
-      outputTypeCached = method.getReturnType();
-    }
-    return outputTypeCached;
-  }
-
-  /**
-   * isVoid is a predicate to indicate whether this method has a void return
-   * types.
-   *
-   * @return true if this method has a void return type, false otherwise.
-   */
-  public boolean isVoid() {
-    if (!isVoidComputed) {
-      isVoidComputed = true;
-      isVoidCached = void.class.equals(this.method.getReturnType());
-    }
-    return isVoidCached;
-  }
-
-  /**
-   * {@inheritDoc}
-   *
    * @return true if this method is static, and false otherwise.
    */
   @Override
   public boolean isStatic() {
-    if (!isStaticComputed) {
-      isStaticComputed = true;
-      isStaticCached = Modifier.isStatic(this.method.getModifiers());
-    }
-    return this.isStaticCached;
+    return isStatic;
   }
 
   /**
-   * {@inheritDoc} The descriptor for a method is a string representing the
-   * method signature.
+   * {@inheritDoc}
+   * The descriptor for a method is a string representing the method signature.
    *
-   * Examples: java.util.ArrayList.get(int)
-   * java.util.ArrayList.add(int,java.lang.Object)
+   * Examples:
+   *  java.util.ArrayList.get(int)
+   *  java.util.ArrayList.add(int,java.lang.Object)
    */
   @Override
-  public String toParseableString() {
-    return MethodSignatures.getSignatureString(this.method);
+  public String toParseableString(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(method.getDeclaringClass().getName()).append(".");
+    sb.append(method.getName()).append("(");
+    Class<?>[] params = method.getParameterTypes();
+    TypeArguments.getTypeArgumentString(sb, params);
+    sb.append(")");
+    return sb.toString();
   }
 
   /**
@@ -376,57 +215,86 @@ public final class MethodCall extends AbstractOperation implements Operation {
    * {@link MethodCall} object. Should satisfy
    * <code>parse(op.toParseableString()).equals(op)</code> for Operation op.
    *
-   * @see OperationParser#parse(String)
+   * @see OperationParser#parse(String, randoop.reflection.TypedOperationManager)
    *
-   * @param s
-   *          a string descriptor
-   * @return the {@link MethodCall} object described by the string.
+   * @param signature  a string descriptor
+   * @param manager  the {@link TypedOperationManager} for collecting operations
    * @throws OperationParseException
    *           if s does not match expected descriptor.
    */
-  public static Operation parse(String s) throws OperationParseException {
-    return MethodCall.createMethodCall(MethodSignatures.getMethodForSignatureString(s));
+  public static void parse(String signature, TypedOperationManager manager) throws OperationParseException {
+    if (signature == null) {
+      throw new IllegalArgumentException("signature may not be null");
+    }
+
+    int openParPos = signature.indexOf('(');
+    int closeParPos = signature.indexOf(')');
+
+    String prefix = signature.substring(0, openParPos);
+    int lastDotPos = prefix.lastIndexOf('.');
+
+    assert lastDotPos >= 0;
+    String classname = prefix.substring(0, lastDotPos);
+    String opname = prefix.substring(lastDotPos + 1);
+    String arguments = signature.substring(openParPos + 1, closeParPos);
+
+    String methodString = classname + "." + opname + arguments;
+    GeneralType classType;
+    try {
+      classType = GeneralType.forName(classname);
+    } catch (ClassNotFoundException e) {
+      String msg = "Class for method " + methodString + " not found: " + e;
+      throw new OperationParseException(msg);
+    } catch (RandoopTypeException e) {
+      String msg = "Type error for method class: " + e.getMessage();
+      throw new OperationParseException(msg);
+    }
+
+    System.out.println("Looking for: " + opname + " args: " + arguments);
+
+    Class<?>[] typeArguments = TypeArguments.getTypeArgumentsForString(arguments);
+    Method m = null;
+    String msg = "Method " + methodString + " not found: ";
+    try {
+      m = classType.getRuntimeClass().getDeclaredMethod(opname, typeArguments);
+    } catch (NoSuchMethodException e) {
+      msg += e;
+    }
+    if (m == null) {
+      try {
+        m = classType.getRuntimeClass().getMethod(opname, typeArguments);
+      } catch (NoSuchMethodException e) {
+        throw new OperationParseException(msg);
+      }
+    }
+
+    MethodCall op = new MethodCall(m);
+    List<GeneralType> paramTypes = new ArrayList<>();
+    if (!Modifier.isStatic(m.getModifiers() & Modifier.methodModifiers())) {
+      paramTypes.add(classType);
+    }
+    for (Class<?> c : typeArguments) {
+      try {
+        paramTypes.add(manager.getClassType(c));
+      } catch (RandoopTypeException e) {
+        msg = "Type error for method parameter: " + e.getMessage();
+        throw new OperationParseException(msg);
+      }
+    }
+    GeneralType outputType;
+    try {
+      outputType = GeneralType.forType(m.getGenericReturnType());
+    } catch (RandoopTypeException e) {
+      msg = "Type error for method " + methodString + ": " + e;
+      throw new OperationParseException(msg);
+    }
+    manager.createTypedOperation(op, classType, new GenericTypeTuple(paramTypes), outputType);
+
   }
 
   /**
    * {@inheritDoc}
-   *
-   * @return the class in which this method is declared.
-   */
-  @Override
-  public Class<?> getDeclaringClass() {
-    return method.getDeclaringClass();
-  }
-
-  /**
-   * callsMethodIn determines whether the current method object calls one of the
-   * methods in the list.
-   *
-   * @param list
-   *          method objects to compare against.
-   * @return true if method called by this object is in the given list.
-   */
-  public boolean callsMethodIn(List<Method> list) {
-    return list.contains(method);
-  }
-
-  /**
-   * callsMethod determines whether the method that this object calls is method
-   * given in the parameter.
-   *
-   * @param m
-   *          method to test against.
-   * @return true, if m corresponds to the method in this object, false
-   *         otherwise.
-   */
-  public boolean callsMethod(Method m) {
-    return method.equals(m);
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * @return true always, since this is a method call.
+   * @return true always, since this is a method call
    */
   @Override
   public boolean isMessage() {
@@ -434,16 +302,27 @@ public final class MethodCall extends AbstractOperation implements Operation {
   }
 
   /**
-   * {@inheritDoc} Determines whether enclosed {@link Method} satisfies the
-   * given predicate.
+   * {@inheritDoc}
+   * @return true always, since this is a method call
+   */
+  @Override
+  public boolean isMethodCall() { return true; }
+
+  public String getName() {
+    return method.getName();
+  }
+
+  /**
+   * {@inheritDoc}
+   * Determines whether enclosed {@link Method} satisfies the given predicate.
    *
-   * @param predicate
-   *          the {@link ReflectionPredicate} to be checked.
-   * @return true only if the method in this object satisfies the canUse(Method)
-   *         of predicate.
+   * @param predicate the {@link ReflectionPredicate} to be checked.
+   * @return true only if the method in this object satisfies the canUse(Method) of predicate.
    */
   @Override
   public boolean satisfies(ReflectionPredicate predicate) {
     return predicate.test(method);
   }
+
+
 }

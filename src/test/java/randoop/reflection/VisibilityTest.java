@@ -1,8 +1,6 @@
 package randoop.reflection;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.Test;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -10,24 +8,30 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
-
-import org.junit.Test;
+import java.util.Set;
 
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.field.FinalInstanceField;
-import randoop.field.InstanceField;
-import randoop.field.StaticField;
-import randoop.field.StaticFinalField;
+import randoop.field.AccessibleField;
+import randoop.operation.CallableOperation;
+import randoop.operation.ConcreteOperation;
 import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
 import randoop.operation.FieldGet;
 import randoop.operation.FieldSet;
 import randoop.operation.MethodCall;
-import randoop.operation.Operation;
 import randoop.reflection.visibilitytest.PublicClass;
+import randoop.types.ConcreteSimpleType;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
+import randoop.types.ConcreteTypes;
+import randoop.types.RandoopTypeException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class VisibilityTest {
 
@@ -38,14 +42,14 @@ public class VisibilityTest {
    */
   @Test
   public void testStandardPackagePrivateVisibility() {
-    List<Class<?>> classes = new ArrayList<>();
+
     Class<?> c = null;
     try {
       c = Class.forName("randoop.reflection.visibilitytest.PackagePrivateClass");
-      classes.add(c);
     } catch (ClassNotFoundException e) {
       fail("can't access class-under-test: PackagePrivateClass");
     }
+    ConcreteType declaringType = new ConcreteSimpleType(c);
 
     List<Constructor<?>> expectedConstructors = new ArrayList<>();
     for (Constructor<?> co : c.getDeclaredConstructors()) {
@@ -101,11 +105,11 @@ public class VisibilityTest {
 
     assertTrue("class should be visible", visibility.isVisible(c));
 
-    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(visibility);
+    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
 
     assertTrue("class should be OK by reflection predicate", reflectionPredicate.test(c));
 
-    List<Operation> actual = OperationExtractor.getOperations(classes, reflectionPredicate);
+    Set<ConcreteOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
 
     int expectedCount =
         expectedMethods.size()
@@ -116,22 +120,30 @@ public class VisibilityTest {
         "Expect operations count to be methods plus constructor", expectedCount, actual.size());
 
     for (Enum<?> e : expectedEnums) {
-      assertTrue("enum " + e.name() + " should occur", actual.contains(new EnumConstant(e)));
+      assertTrue("enum " + e.name() + " should occur", actual.contains(createEnumOperation(e)));
     }
 
     for (Field f : expectedFields) {
       assertTrue(
-          "field " + f.toGenericString() + " should occur", actual.containsAll(getOperations(f)));
+          "field " + f.toGenericString() + " should occur", actual.containsAll(getOperations(f, declaringType)));
     }
 
-    for (Method m : expectedMethods) {
-      assertTrue("method " + m.getName() + " should occur", actual.contains(new MethodCall(m)));
+    try {
+      for (Method m : expectedMethods) {
+        assertTrue("method " + m.getName() + " should occur", actual.contains(createMethodCall(m, declaringType)));
+      }
+    } catch (RandoopTypeException e) {
+      fail("Type error: " + e.getMessage());
     }
 
-    for (Constructor<?> co : expectedConstructors) {
-      assertTrue(
-          "constructor " + co.getName() + " should occur",
-          actual.contains(new ConstructorCall(co)));
+    try {
+      for (Constructor<?> co : expectedConstructors) {
+        assertTrue(
+                "constructor " + co.getName() + " should occur",
+                actual.contains(createConstructorCall(co)));
+      }
+    } catch (RandoopTypeException e) {
+      fail("Type error: " + e.getMessage());
     }
   }
 
@@ -141,14 +153,13 @@ public class VisibilityTest {
    */
   @Test
   public void testPublicOnlyPackagePrivateVisibility() {
-    List<Class<?>> classes = new ArrayList<>();
     Class<?> c = null;
     try {
       c = Class.forName("randoop.reflection.visibilitytest.PackagePrivateClass");
-      classes.add(c);
     } catch (ClassNotFoundException e) {
       fail("can't access class-under-test: PackagePrivateClass");
     }
+    ConcreteType declaringType = new ConcreteSimpleType(c);
 
     List<Constructor<?>> expectedConstructors = new ArrayList<>();
     for (Constructor<?> co : c.getDeclaredConstructors()) {
@@ -204,11 +215,11 @@ public class VisibilityTest {
 
     assertTrue("class should be visible", visibility.isVisible(c));
 
-    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(visibility);
+    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
 
     assertTrue("class should be OK by reflection predicate", reflectionPredicate.test(c));
 
-    List<Operation> actual = OperationExtractor.getOperations(classes, reflectionPredicate);
+    Set<ConcreteOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
 
     int expectedCount =
         expectedMethods.size()
@@ -219,22 +230,30 @@ public class VisibilityTest {
         "Expect operations count to be methods plus constructor", expectedCount, actual.size());
 
     for (Enum<?> e : expectedEnums) {
-      assertTrue("enum " + e.name() + " should occur", actual.contains(new EnumConstant(e)));
+      assertTrue("enum " + e.name() + " should occur", actual.contains(createEnumOperation(e)));
     }
 
     for (Field f : expectedFields) {
       assertTrue(
-          "field " + f.toGenericString() + " should occur", actual.containsAll(getOperations(f)));
+          "field " + f.toGenericString() + " should occur", actual.containsAll(getOperations(f, declaringType)));
     }
 
-    for (Method m : expectedMethods) {
-      assertTrue("method " + m.getName() + " should occur", actual.contains(new MethodCall(m)));
+    try {
+      for (Method m : expectedMethods) {
+        assertTrue("method " + m.getName() + " should occur", actual.contains(createMethodCall(m, declaringType)));
+      }
+    } catch (RandoopTypeException e) {
+      fail("Type error: " + e.getMessage());
     }
 
-    for (Constructor<?> co : expectedConstructors) {
-      assertTrue(
-          "constructor " + co.getName() + " should occur",
-          actual.contains(new ConstructorCall(co)));
+    try {
+      for (Constructor<?> co : expectedConstructors) {
+        assertTrue(
+                "constructor " + co.getName() + " should occur",
+                actual.contains(createConstructorCall(co)));
+      }
+    } catch (RandoopTypeException e) {
+      fail("Type error: " + e.getMessage());
     }
   }
 
@@ -245,9 +264,8 @@ public class VisibilityTest {
    */
   @Test
   public void testStandardVisibility() {
-    List<Class<?>> classes = new ArrayList<>();
     Class<?> c = PublicClass.class;
-    classes.add(c);
+    ConcreteType declaringType = new ConcreteSimpleType(c);
 
     List<Constructor<?>> expectedConstructors = new ArrayList<>();
     for (Constructor<?> co : c.getDeclaredConstructors()) {
@@ -304,11 +322,11 @@ public class VisibilityTest {
 
     assertTrue("class should be visible", visibility.isVisible(c));
 
-    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(visibility);
+    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
 
     assertTrue("class should be OK by reflection predicate", reflectionPredicate.test(c));
 
-    List<Operation> actual = OperationExtractor.getOperations(classes, reflectionPredicate);
+    Set<ConcreteOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
 
     int expectedCount =
         expectedMethods.size()
@@ -319,22 +337,30 @@ public class VisibilityTest {
         "Expect operations count to be methods plus constructor", expectedCount, actual.size());
 
     for (Enum<?> e : expectedEnums) {
-      assertTrue("enum " + e.name() + " should occur", actual.contains(new EnumConstant(e)));
+      assertTrue("enum " + e.name() + " should occur", actual.contains(createEnumOperation(e)));
     }
 
     for (Field f : expectedFields) {
       assertTrue(
-          "field " + f.toGenericString() + " should occur", actual.containsAll(getOperations(f)));
+          "field " + f.toGenericString() + " should occur", actual.containsAll(getOperations(f, declaringType)));
     }
 
-    for (Method m : expectedMethods) {
-      assertTrue("method " + m.getName() + " should occur", actual.contains(new MethodCall(m)));
+    try {
+      for (Method m : expectedMethods) {
+        assertTrue("method " + m.getName() + " should occur", actual.contains(createMethodCall(m, declaringType)));
+      }
+    } catch (RandoopTypeException e) {
+      fail("Type error: " + e.getMessage());
     }
 
-    for (Constructor<?> co : expectedConstructors) {
-      assertTrue(
-          "constructor " + co.getName() + " should occur",
-          actual.contains(new ConstructorCall(co)));
+    try {
+      for (Constructor<?> co : expectedConstructors) {
+        assertTrue(
+                "constructor " + co.getName() + " should occur",
+                actual.contains(createConstructorCall(co)));
+      }
+    } catch (RandoopTypeException e) {
+      fail("Type error: " + e.getMessage());
     }
   }
 
@@ -344,9 +370,7 @@ public class VisibilityTest {
    */
   @Test
   public void testPublicOnlyVisibility() {
-    List<Class<?>> classes = new ArrayList<>();
     Class<?> c = PublicClass.class;
-    classes.add(c);
 
     List<Constructor<?>> expectedConstructors = new ArrayList<>();
     for (Constructor<?> co : c.getDeclaredConstructors()) {
@@ -358,6 +382,7 @@ public class VisibilityTest {
     if (expectedConstructors.isEmpty()) {
       fail("should have nonempty expected constructor set");
     }
+    ConcreteType declaringType = new ConcreteSimpleType(c);
 
     List<Enum<?>> expectedEnums = new ArrayList<>();
     for (Class<?> ic : c.getDeclaredClasses()) {
@@ -402,11 +427,11 @@ public class VisibilityTest {
 
     assertTrue("class should be visible", visibility.isVisible(c));
 
-    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(visibility);
+    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
 
     assertTrue("class should be OK by reflection predicate", reflectionPredicate.test(c));
 
-    List<Operation> actual = OperationExtractor.getOperations(classes, reflectionPredicate);
+    Set<ConcreteOperation> actual = getConcreteOperations(c, reflectionPredicate, visibility);
 
     int expectedCount =
         expectedMethods.size()
@@ -417,35 +442,39 @@ public class VisibilityTest {
         "Expect operations count to be methods plus constructor", expectedCount, actual.size());
 
     for (Enum<?> e : expectedEnums) {
-      assertTrue("enum " + e.name() + " should occur", actual.contains(new EnumConstant(e)));
+      assertTrue("enum " + e.name() + " should occur", actual.contains(createEnumOperation(e)));
     }
 
-    for (Field f : expectedFields) {
-      assertTrue(
-          "field " + f.toGenericString() + " should occur", actual.containsAll(getOperations(f)));
-    }
+    try {
+      for (Field f : expectedFields) {
+        assertTrue(
+                "field " + f.toGenericString() + " should occur", actual.containsAll(getOperations(f, declaringType)));
+      }
 
-    for (Method m : expectedMethods) {
-      assertTrue("method " + m.getName() + " should occur", actual.contains(new MethodCall(m)));
-    }
 
-    for (Constructor<?> co : expectedConstructors) {
-      assertTrue(
-          "constructor " + co.getName() + " should occur",
-          actual.contains(new ConstructorCall(co)));
-    }
+      for (Method m : expectedMethods) {
+        assertTrue("method " + m.getName() + " should occur", actual.contains(createMethodCall(m, declaringType)));
+      }
+
+      for (Constructor<?> co : expectedConstructors) {
+        assertTrue(
+                "constructor " + co.getName() + " should occur",
+                actual.contains(createConstructorCall(co)));
+      }
+    } catch (RandoopTypeException e) {
+    fail("Type error: " + e.getMessage());
+  }
   }
 
   @Test
   public void checkFieldAccessibility() {
-    List<Class<?>> classes = new ArrayList<>();
     Class<?> c = null;
     try {
       c = Class.forName("randoop.reflection.visibilitytest.PackagePrivateClass");
-      classes.add(c);
     } catch (ClassNotFoundException e) {
       fail("can't access class-under-test: PackagePrivateClass");
     }
+    ConcreteType declaringType = new ConcreteSimpleType(c);
 
     Constructor<?> con = null;
     try {
@@ -472,8 +501,8 @@ public class VisibilityTest {
     for (Field f : c.getDeclaredFields()) {
       int mods = f.getModifiers() & Modifier.fieldModifiers();
       if (isPackageVisible(mods)) {
-        Collection<Operation> ops = getOperations(f);
-        for (Operation op : ops) {
+        List<ConcreteOperation> ops = getOperations(f, declaringType);
+        for (ConcreteOperation op : ops) {
           ExecutionOutcome result;
           if (op.getInputTypes().size() == 2) {
             Object[] input = new Object[] {o, 10};
@@ -506,24 +535,80 @@ public class VisibilityTest {
     return Modifier.isPublic(mods) || !Modifier.isPrivate(mods);
   }
 
-  private Collection<Operation> getOperations(Field f) {
-    List<Operation> statements = new ArrayList<>();
-    int mods = f.getModifiers();
-    if (Modifier.isStatic(mods)) {
-      if (Modifier.isFinal(mods)) {
-        statements.add(new FieldGet(new StaticFinalField(f)));
-      } else {
-        statements.add(new FieldGet(new StaticField(f)));
-        statements.add(new FieldSet(new StaticField(f)));
-      }
-    } else {
-      if (Modifier.isFinal(mods)) {
-        statements.add(new FieldGet(new FinalInstanceField(f)));
-      } else {
-        statements.add(new FieldGet(new InstanceField(f)));
-        statements.add(new FieldSet(new InstanceField(f)));
-      }
+  /**
+   * getOperations maps a field into possible operations.
+   * Looks at modifiers to decide which kind of field wrapper
+   * to create and then builds list with getter and setter.
+   *
+   * @param f - reflective Field object
+   * @return List of getter/setter statements for the field
+   */
+  private List<ConcreteOperation> getOperations(Field f, ConcreteType declaringType) {
+    List<ConcreteOperation> statements = new ArrayList<>();
+    ConcreteType fieldType = null;
+    try {
+      fieldType = ConcreteType.forType(f.getGenericType());
+    } catch (RandoopTypeException e) {
+      fail("Type error: " + e.getMessage());
+    }
+    AccessibleField field = new AccessibleField(f, declaringType);
+    List<ConcreteType> getInputTypeList = new ArrayList<>();
+    List<ConcreteType> setInputTypeList = new ArrayList<>();
+    if (! field.isStatic()) {
+      getInputTypeList.add(declaringType);
+      setInputTypeList.add(declaringType);
+    }
+
+    statements.add(new ConcreteOperation(new FieldGet(field), declaringType, new ConcreteTypeTuple(getInputTypeList), fieldType));
+
+    if (! field.isFinal()) {
+      setInputTypeList.add(fieldType);
+      statements.add(new ConcreteOperation(new FieldSet(field), declaringType, new ConcreteTypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE));
     }
     return statements;
+  }
+
+  private Set<ConcreteOperation> getConcreteOperations(Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
+    final Set<ConcreteOperation> operations = new LinkedHashSet<>();
+    TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
+      @Override
+      public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
+        operations.add(operation);
+      }
+    });
+    OperationExtractor extractor = new OperationExtractor(operationManager, predicate);
+    ReflectionManager manager = new ReflectionManager(visibilityPredicate);
+    manager.add(extractor);
+    manager.apply(c);
+    return operations;
+  }
+
+  private ConcreteOperation createEnumOperation(Enum<?> e) {
+    CallableOperation eOp = new EnumConstant(e);
+    ConcreteType enumType = new ConcreteSimpleType(e.getDeclaringClass());
+    return new ConcreteOperation(eOp, enumType, new ConcreteTypeTuple(), enumType);
+  }
+  
+  private ConcreteOperation createConstructorCall(Constructor<?> con) throws RandoopTypeException {
+    ConstructorCall op = new ConstructorCall(con);
+    ConcreteType declaringType = ConcreteType.forClass(con.getDeclaringClass());
+    List<ConcreteType> paramTypes = new ArrayList<>();
+    for (Class<?> pc : con.getParameterTypes()) {
+      paramTypes.add(ConcreteType.forClass(pc));
+    }
+    return new ConcreteOperation(op, declaringType, new ConcreteTypeTuple(paramTypes), declaringType);
+  }
+
+  private ConcreteOperation createMethodCall(Method m, ConcreteType declaringType) throws RandoopTypeException {
+    MethodCall op = new MethodCall(m);
+    List<ConcreteType> paramTypes = new ArrayList<>();
+    if (!Modifier.isStatic(m.getModifiers() & Modifier.methodModifiers())) {
+      paramTypes.add(declaringType);
+    }
+    for (Class<?> pc : m.getParameterTypes()) {
+      paramTypes.add(ConcreteType.forClass(pc));
+    }
+    ConcreteType outputType = ConcreteType.forClass(m.getReturnType());
+    return new ConcreteOperation(op, declaringType, new ConcreteTypeTuple(paramTypes), outputType);
   }
 }

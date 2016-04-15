@@ -117,11 +117,6 @@ dependencies {
    * source set systemTest
    */
    systemTestCompile sourceSets.main.output
-   /*
-    * system tests use system-rules for capturing output of Randoop runs
-    * http://stefanbirkner.github.io/system-rules/
-    */
-   systemTestCompile group: 'com.github.stefanbirkner', name: 'system-rules', version: '1.16.0'
    systemTestCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
    systemTestRuntime sourceSets.testInput.output
 
@@ -174,12 +169,19 @@ test {
    * Show as much as possible to console.
    */
   testLogging {
+    events 'started', 'passed'
     showStandardStreams = true
     exceptionFormat = 'full'
   }
 
   /* Turn off HTML reports -- handled by testReport task */
   reports.html.enabled = false
+
+  /*
+   * Temporary exclusion b/c script file uses generics as raw types and conflicts with
+   * other uses of parsing.
+   */
+  exclude '**/randoop/test/SequenceTests.*'
 
   /*
    * Problematic tests excluded during Gradle setup that need to be evaluated.

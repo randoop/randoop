@@ -1,19 +1,22 @@
 package randoop.operation;
 
-import java.io.ObjectStreamException;
 import java.io.PrintStream;
-import java.util.Collections;
 import java.util.List;
 
 import plume.UtilMDE;
-
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
-import randoop.sequence.Sequence;
+import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Variable;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
+import randoop.types.ConcreteTypes;
+import randoop.types.GeneralType;
+import randoop.types.GeneralTypeTuple;
+import randoop.types.GenericTypeTuple;
 import randoop.types.PrimitiveTypes;
-import randoop.types.TypeNames;
+import randoop.types.RandoopTypeException;
 import randoop.util.StringEscapeUtils;
 import randoop.util.Util;
 
@@ -29,55 +32,59 @@ import randoop.util.Util;
  *
  * The execution of this {@link Operation} simply returns the value.
  */
-public final class NonreceiverTerm extends AbstractOperation implements Operation {
-
-  private static final long serialVersionUID = 20100429;
+public final class NonreceiverTerm extends CallableOperation {
 
   /**
    * ID for parsing purposes.
    *
-   * @see OperationParser#getId(Operation)
+   * @see OperationParser#getId(ConcreteOperation)
    */
   public static final String ID = "prim";
 
   // State variables.
-  private final Class<?> type;
+  private final ConcreteType type;
   // This value is guaranteed to be null, a String, or a boxed primitive.
   private final Object value;
 
   /**
    * Constructs a NonreceiverTerm with type t and value o.
    *
-   * @param t
+   * @param type
    *          the type of the term
-   * @param o
+   * @param value
    *          the value of the term
    */
-  public NonreceiverTerm(Class<?> t, Object o) {
-    if (t == null) throw new IllegalArgumentException("t should not be null.");
+  public NonreceiverTerm(ConcreteType type, Object value) {
+    if (type == null) throw new IllegalArgumentException("type should not be null.");
 
-    if (void.class.equals(t)) throw new IllegalArgumentException("t should not be void.class.");
+    if (type.isVoid()) throw new IllegalArgumentException("type should not be void.class.");
 
-    if (t.isPrimitive()) {
-      if (o == null) throw new IllegalArgumentException("primitive-like values cannot be null.");
-      if (!PrimitiveTypes.toBoxedType(t).equals(o.getClass()))
-        throw new IllegalArgumentException("o.getClass()=" + o.getClass() + ",t=" + t);
-      if (!PrimitiveTypes.isBoxedOrPrimitiveOrStringType(o.getClass()))
-        throw new IllegalArgumentException("o is not a primitive-like value.");
-    } else if (t.equals(String.class)) {
-      if (!PrimitiveTypes.stringLengthOK((String) o)) {
-        throw new IllegalArgumentException("String too long, length = " + ((String) o).length());
+    if (type.isPrimitive() || type.isBoxedPrimitive()) {
+      if (value == null) {
+        if (type.isPrimitive()) {
+          throw new IllegalArgumentException("primitive-like values cannot be null.");
+        }
+      } else {
+        if (!type.isInstance(value))
+          throw new IllegalArgumentException("value.getClass()=" + value.getClass() + ",type=" + type);
+        if (!PrimitiveTypes.isBoxedOrPrimitiveOrStringType(value.getClass()))
+          throw new IllegalArgumentException("value is not a primitive-like value.");
+      }
+    } else if (type.isString()) {
+      if (value != null && !PrimitiveTypes.stringLengthOK((String) value)) {
+        throw new IllegalArgumentException(
+            "String too long, length = " + ((String) value).length());
       }
     } else {
       // if it's not primitive or string then must be null
-      if (o != null) {
+      if (value != null) {
         throw new IllegalArgumentException(
-            "value must be null for non-primitive, non-string type " + t + " but was " + o);
+            "value must be null for non-primitive, non-string type " + type + " but was " + value);
       }
     }
 
-    this.type = t;
-    this.value = o;
+    this.type = type;
+    this.value = value;
   }
 
   /**
@@ -105,7 +112,12 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
    */
   @Override
   public String toString() {
-    return toParseableString();
+    return value.toString();
+  }
+
+  @Override
+  public String getName() {
+    return this.toString();
   }
 
   /**
@@ -121,21 +133,11 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
   }
 
   /**
-   * {@inheritDoc}
-   *
-   * @return empty list.
-   */
-  @Override
-  public List<Class<?>> getInputTypes() {
-    return Collections.emptyList();
-  }
-
-  /**
    * {@inheritDoc} For NonreceiverTerm, simply adds a code representation of the
    * value to the string builder. Note: this does not explicitly box primitive
    * values.
    *
-   * @see Operation#appendCode(List, StringBuilder)
+   * @see ConcreteOperation#appendCode(List, StringBuilder)
    *
    * @param inputVars
    *          ignored
@@ -144,7 +146,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
    *
    */
   @Override
-  public void appendCode(List<Variable> inputVars, StringBuilder b) {
+  public void appendCode(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType, List<Variable> inputVars, StringBuilder b) {
     b.append(PrimitiveTypes.toCodeString(getValue()));
   }
 
@@ -161,17 +163,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
   /**
    * @return Returns the type.
    */
-  public Class<?> getType() {
-    return this.type;
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * @return type of value.
-   */
-  @Override
-  public Class<?> getOutputType() {
+  public ConcreteType getType() {
     return this.type;
   }
 
@@ -180,27 +172,29 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
    * In the case of characters there is no natural zero, so the value 'a' is
    * used.
    *
-   * @param c
+   * @param type
    *          the type of value desired.
    * @return a {@link NonreceiverTerm} with a canonical representative of the
    *         given type.
    */
-  public static NonreceiverTerm createNullOrZeroTerm(Class<?> c) {
-    if (String.class.equals(c)) return new NonreceiverTerm(String.class, "");
-    if (Character.TYPE.equals(c))
-      return new NonreceiverTerm(Character.TYPE, 'a'); // TODO This is not null
-    // or zero...
-    if (Byte.TYPE.equals(c)) return new NonreceiverTerm(Byte.TYPE, (byte) 0);
-    if (Short.TYPE.equals(c)) return new NonreceiverTerm(Short.TYPE, (short) 0);
-    if (Integer.TYPE.equals(c))
-      return new NonreceiverTerm(Integer.TYPE, (Integer.valueOf(0)).intValue());
-    if (Long.TYPE.equals(c)) return new NonreceiverTerm(Long.TYPE, (Long.valueOf(0)).longValue());
-    if (Float.TYPE.equals(c))
-      return new NonreceiverTerm(Float.TYPE, (Float.valueOf(0)).floatValue());
-    if (Double.TYPE.equals(c))
-      return new NonreceiverTerm(Double.TYPE, (Double.valueOf(0)).doubleValue());
-    if (Boolean.TYPE.equals(c)) return new NonreceiverTerm(Boolean.TYPE, false);
-    return new NonreceiverTerm(c, null);
+  static NonreceiverTerm createNullOrZeroTerm(ConcreteType type) {
+    if (type.isBoxedPrimitive()) {
+      type = type.toPrimitive();
+    }
+    if (type.isString()) return new NonreceiverTerm(type, "");
+    if (type.equals(ConcreteTypes.CHAR_TYPE))
+      return new NonreceiverTerm(type, 'a'); // TODO This is not null or zero...
+    if (type.equals(ConcreteTypes.BYTE_TYPE)) return new NonreceiverTerm(type, (byte) 0);
+    if (type.equals(ConcreteTypes.SHORT_TYPE)) return new NonreceiverTerm(type, (short) 0);
+    if (type.equals(ConcreteTypes.INT_TYPE))
+      return new NonreceiverTerm(type, 0);
+    if (type.equals(ConcreteTypes.LONG_TYPE)) return new NonreceiverTerm(type, 0L);
+    if (type.equals(ConcreteTypes.FLOAT_TYPE))
+      return new NonreceiverTerm(type, 0f);
+    if (type.equals(ConcreteTypes.DOUBLE_TYPE))
+      return new NonreceiverTerm(type, 0d);
+    if (type.equals(ConcreteTypes.BOOLEAN_TYPE)) return new NonreceiverTerm(type, false);
+    return new NonreceiverTerm(type, null);
   }
 
   /**
@@ -237,17 +231,15 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
    * @return string representation of primitive, String or null value.
    */
   @Override
-  public String toParseableString() {
+  public String toParseableString(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
 
-    String valStr = null;
+    String valStr;
     if (value == null) {
       valStr = "null";
     } else {
-      Class<?> valueClass = PrimitiveTypes.primitiveType(value.getClass());
-
-      if (String.class.equals(valueClass)) {
+      if (type.isString()) {
         valStr = "\"" + StringEscapeUtils.escapeJava(value.toString()) + "\"";
-      } else if (char.class.equals(valueClass)) {
+      } else if (type.equals(ConcreteTypes.CHAR_TYPE)) {
         valStr = Integer.toHexString((Character) value);
       } else {
         valStr = value.toString();
@@ -258,38 +250,17 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
   }
 
   /**
-   * Creates a sequence corresponding to the given non-null primitive value.
-   *
-   * @param o
-   *          non-null reference to a primitive or String value
-   * @return a {@link Sequence} consisting of a statement created with the
-   *         object.
-   */
-  public static Sequence createSequenceForPrimitive(Object o) {
-    if (o == null) throw new IllegalArgumentException("o is null");
-    Class<?> cls = o.getClass();
-    if (!PrimitiveTypes.isBoxedOrPrimitiveOrStringType(cls)) {
-      throw new IllegalArgumentException("o is not a boxed primitive or String");
-    }
-    if (cls.equals(String.class) && !PrimitiveTypes.stringLengthOK((String) o)) {
-      throw new IllegalArgumentException(
-          "o is a string of length > " + GenInputsAbstract.string_maxlen);
-    }
-
-    return Sequence.create(new NonreceiverTerm(PrimitiveTypes.primitiveType(cls), o));
-  }
-
-  /**
    * Parse a non-receiver value in a string in the form generated by
-   * {@link NonreceiverTerm#toParseableString()}.
+   * {@link NonreceiverTerm#toParseableString(ConcreteType, ConcreteTypeTuple, ConcreteType)}
    *
    * @param s
    *          a string representing a value of a non-receiver type.
-   * @return a {@link NonreceiverTerm} object containing the recognized value.
+   * @param manager
+   *          the {@link TypedOperationManager} to collect operations
    * @throws OperationParseException
    *           if string does not represent valid object.
    */
-  public static NonreceiverTerm parse(String s) throws OperationParseException {
+  public static void parse(String s, TypedOperationManager manager) throws OperationParseException {
     if (s == null) throw new IllegalArgumentException("s cannot be null.");
     int colonIdx = s.indexOf(':');
     if (colonIdx == -1) {
@@ -323,9 +294,9 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
       typeString = "java.lang.String";
     }
 
-    Class<?> type;
+    ConcreteType type;
     try {
-      type = TypeNames.getTypeForName(typeString);
+      type = (ConcreteType)ConcreteType.forName(typeString);
     } catch (ClassNotFoundException e1) {
       String msg =
           "Error when parsing type/value pair "
@@ -336,10 +307,13 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
               + typeString
               + "\") was unrecognized.";
       throw new OperationParseException(msg);
+    } catch (RandoopTypeException e) {
+      String msg = "Error when parsing type/value pair " + s + ". Type error: " + e.getMessage();
+      throw new OperationParseException(msg);
     }
 
     Object value;
-    if (type.equals(char.class)) {
+    if (type.equals(ConcreteTypes.CHAR_TYPE)) {
       try {
         value = (char) Integer.parseInt(valString, 16);
       } catch (NumberFormatException e) {
@@ -353,7 +327,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
                 + "\") was not parseable.";
         throw new OperationParseException(msg);
       }
-    } else if (type.equals(byte.class)) {
+    } else if (type.equals(ConcreteTypes.BYTE_TYPE)) {
       try {
         value = Byte.valueOf(valString);
       } catch (NumberFormatException e) {
@@ -367,7 +341,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
                 + "\") was not parseable.";
         throw new OperationParseException(msg);
       }
-    } else if (type.equals(short.class)) {
+    } else if (type.equals(ConcreteTypes.SHORT_TYPE)) {
       try {
         value = Short.valueOf(valString);
       } catch (NumberFormatException e) {
@@ -381,7 +355,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
                 + "\") was not parseable.";
         throw new OperationParseException(msg);
       }
-    } else if (type.equals(int.class)) {
+    } else if (type.equals(ConcreteTypes.INT_TYPE)) {
       try {
         value = Integer.valueOf(valString);
       } catch (NumberFormatException e) {
@@ -395,7 +369,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
                 + "\") was not parseable.";
         throw new OperationParseException(msg);
       }
-    } else if (type.equals(long.class)) {
+    } else if (type.equals(ConcreteTypes.LONG_TYPE)) {
       try {
         value = Long.valueOf(valString);
       } catch (NumberFormatException e) {
@@ -409,7 +383,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
                 + "\") was not parseable.";
         throw new OperationParseException(msg);
       }
-    } else if (type.equals(float.class)) {
+    } else if (type.equals(ConcreteTypes.FLOAT_TYPE)) {
       try {
         value = Float.valueOf(valString);
       } catch (NumberFormatException e) {
@@ -423,7 +397,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
                 + "\") was not parseable.";
         throw new OperationParseException(msg);
       }
-    } else if (type.equals(double.class)) {
+    } else if (type.equals(ConcreteTypes.DOUBLE_TYPE)) {
       try {
         value = Double.valueOf(valString);
       } catch (NumberFormatException e) {
@@ -437,7 +411,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
                 + "\") was not parseable.";
         throw new OperationParseException(msg);
       }
-    } else if (type.equals(boolean.class)) {
+    } else if (type.equals(ConcreteTypes.BOOLEAN_TYPE)) {
       if (valString.equals("true") || valString.equals("false")) {
         value = Boolean.valueOf(valString);
       } else {
@@ -451,11 +425,10 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
                 + "\") was not parseable.";
         throw new OperationParseException(msg);
       }
-    } else if (type.equals(String.class)) {
+    } else if (type.isString()) {
       if (valString.equals("null")) {
         value = null;
       } else {
-        value = valString;
         if (valString.charAt(0) != '"' || valString.charAt(valString.length() - 1) != '"') {
           String msg =
               "Error when parsing type/value pair "
@@ -487,17 +460,8 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
       }
     }
 
-    return new NonreceiverTerm(type, value);
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * @return type of value.
-   */
-  @Override
-  public Class<?> getDeclaringClass() {
-    return type;
+    NonreceiverTerm nonreceiverTerm = new NonreceiverTerm(type, value);
+    manager.createTypedOperation(nonreceiverTerm, type, new GenericTypeTuple(), type);
   }
 
   /**

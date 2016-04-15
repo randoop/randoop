@@ -68,7 +68,7 @@ public class SimpleListTest {
       lists.add(new ArrayListSimpleList<>(sub));
     }
 
-    SimpleList<String> sl = new ListOfLists<String>(lists);
+    SimpleList<String> sl = new ListOfLists<>(lists);
 
     for (int i = 0; i < sl.size(); i++) {
       assertTrue("element should be in original", al.contains(sl.get(i)));

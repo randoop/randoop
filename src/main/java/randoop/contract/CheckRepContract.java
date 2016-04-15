@@ -1,6 +1,5 @@
 package randoop.contract;
 
-import java.io.ObjectStreamException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -109,16 +108,15 @@ public final class CheckRepContract implements ObjectContract {
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
-    b.append("// Check representation invariant." + Globals.lineSep);
+    b.append("// Check representation invariant.").append(Globals.lineSep);
     if (returnsBoolean) {
       b.append("org.junit.Assert.assertTrue(");
-      b.append("\"Representation invariant failed: " + toCommentString() + "\", ");
-      b.append(("x0." + checkRepMethod.getName() + "()"));
+      b.append("\"Representation invariant failed: ").append(toCommentString()).append("\", ");
+      b.append("x0.").append(checkRepMethod.getName()).append("()");
       b.append(");");
     } else {
-      b.append(("x0." + checkRepMethod.getName() + "();"));
+      b.append("x0.").append(checkRepMethod.getName()).append("();");
     }
     return b.toString();
   }
-
 }

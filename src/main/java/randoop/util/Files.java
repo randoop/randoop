@@ -27,7 +27,7 @@ public final class Files {
   // Attempts to detect symbolic links, and fails if it finds one.
   public static boolean deleteRecursive(File dir) {
     if (dir == null) throw new IllegalArgumentException("dir cannot be null.");
-    String canonicalPath = null;
+    String canonicalPath;
     try {
       canonicalPath = dir.getCanonicalPath();
     } catch (IOException e) {
@@ -74,11 +74,8 @@ public final class Files {
   }
 
   public static void writeToFile(String s, File file, Boolean append) throws IOException {
-    BufferedWriter writer = new BufferedWriter(new FileWriter(file, append));
-    try {
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, append))) {
       writer.append(s);
-    } finally {
-      writer.close();
     }
   }
 
@@ -114,11 +111,8 @@ public final class Files {
    * Reads the whole file. Returns the list of lines.
    */
   public static List<String> readWhole(File file) throws IOException {
-    BufferedReader in = new BufferedReader(new FileReader(file));
-    try {
+    try (BufferedReader in = new BufferedReader(new FileReader(file))) {
       return readWhole(in);
-    } finally {
-      in.close();
     }
   }
 
@@ -135,17 +129,13 @@ public final class Files {
    */
   public static String getFileContents(File file) throws IOException {
     StringBuilder result = new StringBuilder();
-    Reader in = new BufferedReader(new FileReader(file));
-    try {
+    try (Reader in = new BufferedReader(new FileReader(file))) {
       int c;
       while ((c = in.read()) != -1) {
         result.append((char) c);
       }
-      in.close();
-      return result.toString();
-    } finally {
-      in.close();
     }
+    return result.toString();
   }
 
   /**

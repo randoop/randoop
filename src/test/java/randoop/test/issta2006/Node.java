@@ -40,7 +40,7 @@ public class Node {
   }
 
   public List<Object> getAbstraction() {
-    List<Object> retval = new ArrayList<Object>();
+    List<Object> retval = new ArrayList<>();
     retval.add(parent);
     retval.add(left);
     retval.add(right);

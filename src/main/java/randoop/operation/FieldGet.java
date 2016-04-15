@@ -1,7 +1,7 @@
 package randoop.operation;
 
 import java.io.PrintStream;
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import randoop.BugInRandoopException;
@@ -11,7 +11,14 @@ import randoop.NormalExecution;
 import randoop.field.AccessibleField;
 import randoop.field.FieldParser;
 import randoop.reflection.ReflectionPredicate;
+import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Variable;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
+import randoop.types.GeneralType;
+import randoop.types.GeneralTypeTuple;
+import randoop.types.GenericTypeTuple;
+import randoop.types.RandoopTypeException;
 
 /**
  * FieldGetter is an adapter that creates a {@link Operation} from a
@@ -20,9 +27,7 @@ import randoop.sequence.Variable;
  * @see AccessibleField
  *
  */
-public class FieldGet extends AbstractOperation implements Operation, Serializable {
-
-  private static final long serialVersionUID = 3966201727170073093L;
+public class FieldGet extends CallableOperation {
 
   public static String ID = "getter";
 
@@ -39,42 +44,19 @@ public class FieldGet extends AbstractOperation implements Operation, Serializab
   }
 
   /**
-   * Returns the types required to access the field.
+   * Performs computation of getting value of field or capturing thrown exceptions.
+   * Exceptions should only be NullPointerException, which happens when input is null but
+   * field is an instance field. {@link AccessibleField#getValue(Object)} suppresses exceptions
+   * that occur because field is not valid or accessible.
    *
-   * @return singleton list if field is instance field, empty if static
-   */
-  @Override
-  public List<Class<?>> getInputTypes() {
-    return field.getAccessTypes();
-  }
-
-  /**
-   * getOutputType returns the type of the field
-   */
-  @Override
-  public Class<?> getOutputType() {
-    return field.getType();
-  }
-
-  /**
-   * Performs computation of getting value of field or capturing thrown
-   * exceptions. Exceptions should only be NullPointerException, which happens
-   * when input is null but field is an instance field.
-   * {@link AccessibleField#getValue(Object)} suppresses exceptions that occur
-   * because field is not valid or accessible.
-   *
-   * @param statementInput
-   *          the inputs for statement.
-   * @param out
-   *          the stream for printing output (unused).
+   * @param statementInput  the inputs for statement.
+   * @param out  the stream for printing output (unused).
    * @return outcome of access.
    * @throws BugInRandoopException
    *           if field access throws bug exception.
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
-    assert statementInput.length == getInputTypes().size()
-        : "expected " + getInputTypes().size() + " got " + statementInput.length;
 
     // either 0 or 1 inputs. If none use null, otherwise give object.
     Object input = statementInput.length == 0 ? null : statementInput[0];
@@ -101,8 +83,8 @@ public class FieldGet extends AbstractOperation implements Operation, Serializab
    *          the StringBuilder that strings are appended to.
    */
   @Override
-  public void appendCode(List<Variable> inputVars, StringBuilder b) {
-    b.append(field.toCode(inputVars));
+  public void appendCode(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType, List<Variable> inputVars, StringBuilder b) {
+    b.append(field.toCode(declaringType, inputVars));
   }
 
   /**
@@ -110,13 +92,17 @@ public class FieldGet extends AbstractOperation implements Operation, Serializab
    * PublicFieldParser.
    */
   @Override
-  public String toParseableString() {
-    return "<get>(" + field.toParseableString() + ")";
+  public String toParseableString(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
+    return declaringType.getName() + ".<get>(" + field.getName() + ")";
   }
 
   @Override
   public String toString() {
-    return toParseableString();
+    return field.toString();
+  }
+
+  public String getName() {
+    return "<get>(" + field.getName() + ")";
   }
 
   @Override
@@ -137,36 +123,53 @@ public class FieldGet extends AbstractOperation implements Operation, Serializab
    * Parses a getter for a field from a string. A getter description has the
    * form "&lt;get&gt;( field-descriptor )" where &lt;get&gt;" is literal ("&lt;
    * " and "&gt;" included), and field-descriptor is as recognized by
-   * {@link FieldParser#parse(String)}.
-   *
-   * @see FieldParser#parse(String)
    *
    * @param descr
    *          the string containing descriptor of getter for a field.
-   * @return the getter object for the descriptor.
+   * @param manager
+   *          the {@link TypedOperationManager} to collect operations
    * @throws OperationParseException
    *           if any error in descriptor string
    */
-  public static FieldGet parse(String descr) throws OperationParseException {
-    int parPos = descr.indexOf('(');
+  public static void parse(String descr, TypedOperationManager manager) throws OperationParseException {
     String errorPrefix = "Error parsing " + descr + " as description for field getter statement: ";
-    if (parPos < 0) {
+
+    int openParPos = descr.indexOf('(');
+    int closeParPos = descr.indexOf(')');
+
+    if (openParPos < 0) {
       String msg = errorPrefix + " expecting parentheses.";
       throw new OperationParseException(msg);
     }
-    String prefix = descr.substring(0, parPos);
-    if (!prefix.equals("<get>")) {
-      String msg = errorPrefix + " expecting <get>( <field-descriptor> ).";
-      throw new OperationParseException(msg);
-    }
-    int lastParPos = descr.lastIndexOf(')');
-    if (lastParPos < 0) {
+    String prefix = descr.substring(0, openParPos);
+    int lastDotPos = prefix.lastIndexOf('.');
+    assert lastDotPos > 0 : "should be a period after the classname: " + descr;
+
+    String classname = prefix.substring(0, lastDotPos);
+    String opname = prefix.substring(lastDotPos + 1);
+    assert opname.equals("<get>") : "expecting <get>, saw " + opname;
+
+    if (closeParPos < 0) {
       String msg = errorPrefix + " no closing parentheses found.";
       throw new OperationParseException(msg);
     }
-    String fieldDescriptor = descr.substring(parPos + 1, lastParPos);
-    AccessibleField pf = (new FieldParser()).parse(fieldDescriptor);
-    return new FieldGet(pf);
+    String fieldname = descr.substring(openParPos + 1, closeParPos);
+
+    AccessibleField accessibleField = FieldParser.parse(descr, classname, fieldname);
+    GeneralType classType = accessibleField.getDeclaringType();
+    GeneralType fieldType;
+    try {
+      fieldType = GeneralType.forType(accessibleField.getRawField().getGenericType());
+    } catch (RandoopTypeException e) {
+      String msg = errorPrefix + " type error " + e;
+      throw new OperationParseException(msg);
+    }
+
+    List<GeneralType> getInputTypeList = new ArrayList<>();
+    if (! accessibleField.isStatic()) {
+      getInputTypeList.add(classType);
+    }
+    manager.createTypedOperation(new FieldGet(accessibleField), classType, new GenericTypeTuple(getInputTypeList), fieldType);
   }
 
   @Override
@@ -182,11 +185,6 @@ public class FieldGet extends AbstractOperation implements Operation, Serializab
   @Override
   public boolean isMessage() {
     return true;
-  }
-
-  @Override
-  public Class<?> getDeclaringClass() {
-    return field.getDeclaringClass();
   }
 
   /**

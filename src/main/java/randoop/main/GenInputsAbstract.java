@@ -47,7 +47,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Code under test")
   @Option("The fully-qualified name of a class under test")
-  public static List<String> testclass = new ArrayList<String>();
+  public static List<String> testclass = new ArrayList<>();
 
   /**
    * File that lists classes to test.
@@ -204,7 +204,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * The possible values for exception behavior types. The order INVALID, ERROR,
    * EXPECTED should be maintained.
    */
-  public static enum BehaviorType {
+  public enum BehaviorType {
     /** Occurrence of exception reveals an error */
     ERROR,
     /** Occurrence of exception is expected behavior */
@@ -391,12 +391,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * <p>
    * Literals in these files are used in addition to all other constants in the
    * pool. For the format of this file, see documentation in class
-   * {@link randoop.LiteralFileReader}. The special value "CLASSES" (with no
+   * {@link randoop.reflection.LiteralFileReader}. The special value "CLASSES" (with no
    * quotes) means to read literals from all classes under test.
    * </p>
    */
   @Option("A file containing literal values to be used as inputs to methods under test")
-  public static List<String> literals_file = new ArrayList<String>();
+  public static List<String> literals_file = new ArrayList<>();
 
   /**
    * How to use literal values that are specified via the
@@ -412,7 +412,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * @see #literals_level
    */
-  public static enum ClassLiteralsMode {
+  public enum ClassLiteralsMode {
     /** do not use literals specified in a literals file */
     NONE,
     /**
@@ -425,7 +425,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
      */
     PACKAGE,
     /** each literal is used as input to any method under test */
-    ALL;
+    ALL
   }
 
   // Implementation note: when checking whether a String S exceeds the given
@@ -547,7 +547,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // We do this rather than using java -D so that we can easily pass these
   // to other JVMs
   @Option("-D Specify system properties to be set (similar to java -Dx=y)")
-  public static List<String> system_props = new ArrayList<String>();
+  public static List<String> system_props = new ArrayList<>();
 
   /**
    * Specify an extra command for recursive JVM calls that Randoop spawns. The
@@ -592,7 +592,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   ///////////////////////////////////////////////////////////////////
   @OptionGroup(value = "Advanced extension points")
   @Option("Install the given runtime visitor")
-  public static List<String> visitor = new ArrayList<String>();
+  public static List<String> visitor = new ArrayList<>();
 
   ///////////////////////////////////////////////////////////////////
   @OptionGroup(value = "Logging and troubleshooting Randoop")
@@ -644,45 +644,38 @@ public abstract class GenInputsAbstract extends CommandHandler {
       throw new RuntimeException(
           "Maximum sequence size must be greater than zero but was " + maxsize);
     }
+
+    if (literals_file.size() > 0 && literals_level == ClassLiteralsMode.NONE) {
+      throw new RuntimeException(
+          "Invalid parameter combination: specified a class literal file but --use-class-literals=NONE");
+    }
   }
 
-  public static List<Class<?>> findClassesFromArgs(Options opts) {
-    List<Class<?>> classes = new ArrayList<Class<?>>();
-
-    if (classlist != null) {
-      try {
-        classes.addAll(ClassReader.getClassesForFile(classlist));
-      } catch (Exception e) {
-        String msg =
-            Util.toNColsStr("ERROR while reading list of classes to test: " + e.getMessage(), 70);
-        System.out.println(msg);
-        System.exit(1);
-      }
-    }
-
-    ClassNameErrorHandler errorHandler = new ThrowClassNameError();
-    if (silently_ignore_bad_class_names) {
-      errorHandler = new WarnOnBadClassName();
-    }
-    classes.addAll(ClassReader.getClassesForNames(testclass, errorHandler));
-
-    return classes;
+  public static Set<String> getClassnamesFromArgs() {
+    String errMessage = "ERROR while reading list of classes to test";
+    Set<String> classnames = getStringSetFromFile(classlist, errMessage);
+    classnames.addAll(testclass);
+    return classnames;
   }
 
-  public static Set<String> getClassnamesFromArgs(Options opts) {
-    Set<String> classnames = new LinkedHashSet<>(testclass);
-    if (classlist != null) {
-      try (EntryReader er = new EntryReader(classlist, "^#.*", null)) {
+  public static Set<String> getStringSetFromFile(File listFile, String errMessage) {
+    return getStringSetFromFile(listFile, errMessage, "^#.*", null);
+  }
+
+  public static Set<String> getStringSetFromFile(
+      File listFile, String errMessage, String commentRegex, String includeRegex) {
+    Set<String> elementSet = new LinkedHashSet<>();
+    if (listFile != null) {
+      try (EntryReader er = new EntryReader(listFile, commentRegex, includeRegex)) {
         for (String line : er) {
-          classnames.add(line.trim());
+          elementSet.add(line.trim());
         }
       } catch (IOException e) {
-        String msg =
-            Util.toNColsStr("ERROR while reading list of classes to test: " + e.getMessage(), 70);
-        System.out.println(msg);
+        String msg = Util.toNColsStr(errMessage + ": " + e.getMessage(), 70);
+        System.err.println(msg);
         System.exit(1);
       }
     }
-    return classnames;
+    return elementSet;
   }
 }

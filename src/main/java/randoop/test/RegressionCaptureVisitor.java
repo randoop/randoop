@@ -1,30 +1,25 @@
 package randoop.test;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
-import randoop.contract.IsNotNull;
-import randoop.contract.IsNull;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
-import randoop.test.ObjectCheck;
+import randoop.contract.IsNotNull;
+import randoop.contract.IsNull;
 import randoop.contract.ObjectContract;
 import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.ConcreteOperation;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.types.ConcreteType;
 import randoop.types.PrimitiveTypes;
-import randoop.types.TypeNames;
-import randoop.util.Files;
 import randoop.util.Log;
-import randoop.util.Reflection;
+import randoop.util.MultiMap;
 
 /**
  * An {@code ExecutionVisitor} that records regression checks on the values
@@ -45,82 +40,16 @@ import randoop.util.Reflection;
 public final class RegressionCaptureVisitor implements TestCheckGenerator {
 
   private ExpectedExceptionCheckGen exceptionExpectation;
+  private MultiMap<ConcreteType, ConcreteOperation> observerMap;
+  private final Set<ConcreteOperation> excludeSet;
   private boolean includeAssertions;
 
   public RegressionCaptureVisitor(
-      ExpectedExceptionCheckGen exceptionExpectation, boolean includeAssertions) {
+      ExpectedExceptionCheckGen exceptionExpectation, MultiMap<ConcreteType, ConcreteOperation> observerMap, Set<ConcreteOperation> excludeSet, boolean includeAssertions) {
     this.exceptionExpectation = exceptionExpectation;
+    this.observerMap = observerMap;
+    this.excludeSet = excludeSet;
     this.includeAssertions = includeAssertions;
-  }
-
-  // We don't create regression checks for these methods.
-  private static final Method objectToString;
-  private static final Method objectHashCode;
-
-  static {
-    try {
-      objectToString = Object.class.getDeclaredMethod("toString");
-      objectHashCode = Object.class.getDeclaredMethod("hashCode");
-    } catch (Exception e) {
-      throw new Error(e);
-    }
-  }
-
-  /** Map from each class to the list of observer methods for that class */
-  private static final Map<Class<?>, List<Method>> observer_map =
-      new LinkedHashMap<Class<?>, List<Method>>();
-
-  public static boolean isObserverInvocation(Statement statement) {
-    if (observer_map.containsKey(statement.getDeclaringClass())) {
-      return statement.isMethodIn(
-          RegressionCaptureVisitor.observer_map.get(statement.getDeclaringClass()));
-    }
-    return false;
-  }
-
-  // TODO move this out of class
-  // Populate observer_map from observers file.
-  static {
-    if (GenInputsAbstract.observers != null) {
-      List<String> lines = null;
-      try {
-        lines = Files.readWhole(GenInputsAbstract.observers);
-      } catch (Exception e) {
-        throw new RuntimeException(
-            "problem reading observer file " + GenInputsAbstract.observers, e);
-      }
-      for (String line : lines) {
-        if (line.startsWith("//")) continue;
-        if (line.trim().length() == 0) continue;
-        int lastdot = line.lastIndexOf(".");
-        if (lastdot == -1) throw new RuntimeException(String.format("invalid observer '%s'", line));
-        String classname = line.substring(0, lastdot);
-        String methodname = line.substring(lastdot + 1);
-        methodname = methodname.replaceFirst("[()]*$", "");
-        Class<?> obs_class = null;
-        try {
-          obs_class = TypeNames.getTypeForName(classname);
-        } catch (Exception e) {
-          throw new RuntimeException("Can't load observer class " + classname, e);
-        }
-        Method obs_method = null;
-        try {
-          obs_method = Reflection.super_get_declared_method(obs_class, methodname);
-        } catch (Exception e) {
-          throw new RuntimeException("Can't find observer method " + methodname, e);
-        }
-        if (!PrimitiveTypes.isPrimitiveOrStringType(obs_method.getReturnType()))
-          throw new RuntimeException(
-              String.format(
-                  "Observer method %s does not return a primitive " + "or string", obs_method));
-        List<Method> methods = observer_map.get(obs_class);
-        if (methods == null) {
-          methods = new ArrayList<Method>();
-          observer_map.put(obs_class, methods);
-        }
-        methods.add(obs_method);
-      }
-    }
   }
 
   /**
@@ -160,13 +89,13 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
           // If value's type is void (i.e. its statement is a
           // void-return method call), don't capture checks
           // (nothing interesting).
-          Class<?> tc = st.getOutputType();
-          if (void.class.equals(tc)) continue; // no return value.
+          ConcreteType tc = st.getOutputType();
+          if (tc.isVoid()) continue; // no return value.
 
           // If value is the result of Object.toString() or
           // Object.hashCode(), don't capture checks (value is
           // likely to be non-deterministic across runs).
-          if (st.callsTheMethod(objectHashCode) || st.callsTheMethod(objectToString)) {
+          if (excludeSet.contains(st.getOperation())) {
             continue;
           }
 
@@ -209,7 +138,7 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
             // don't use it as it's just going to have today's date in it.
             if (s.sequence.getInputs(i).size() > 0) {
               Variable var0 = s.sequence.getInputs(i).get(0);
-              if (var0.getType() == java.util.Date.class) {
+              if (var0.getType().hasRuntimeClass(java.util.Date.class)) {
                 Statement sk = s.sequence.getCreatingStatement(var0);
                 if ((sk.isConstructorCall()) && (s.sequence.getInputs(i).size() == 1)) continue;
                 // System.out.printf ("var type %s comes from date %s / %s%n",
@@ -241,16 +170,13 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
 
             // Put out any observers that exist for this type
             Variable var0 = s.sequence.getVariable(i);
-            List<Method> observers = observer_map.get(var0.getType());
+            Set<ConcreteOperation> observers = observerMap.getValues(var0.getType());
             if (observers != null) {
-              for (Method m : observers) {
+              for (ConcreteOperation m : observers) {
 
-                Object value = null;
-                try {
-                  value = m.invoke(o);
-                } catch (Exception e2) {
-                  String msg =
-                      "unexpected error invoking observer "
+                ExecutionOutcome outcome = m.execute(new Object[]{o}, null);
+                if (outcome instanceof ExceptionalExecution) {
+                  String msg = "unexpected error invoking observer "
                           + m
                           + " on "
                           + var
@@ -262,8 +188,11 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
                           + " ["
                           + o.getClass()
                           + "]";
-                  throw new RuntimeException(msg, e2);
+                  throw new RuntimeException(msg, ((ExceptionalExecution) outcome).getException());
                 }
+
+                Object value = ((NormalExecution) outcome).getRuntimeValue();
+
                 // Don't create assertions over string that look like raw object
                 // references.
                 if ((value instanceof String)
@@ -273,7 +202,11 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
 
                 ObjectContract observerEqValue = new ObserverEqValue(m, value);
                 ObjectCheck observerCheck = new ObjectCheck(observerEqValue, i, var);
-                // System.out.printf ("Adding observer %s%n", observerCheck);
+
+                if (Log.isLoggingOn()) {
+                  Log.logLine(String.format("Adding observer %s%n", observerCheck));
+                }
+
                 checks.add(observerCheck);
               }
             }

@@ -68,14 +68,7 @@ public abstract class CommandHandler {
   }
 
   public final boolean handles(String command) {
-    if (command == null) {
-      return false;
-    }
-    if (command.toUpperCase().equals(fcommand.toUpperCase())) {
-      return true;
-    } else {
-      return false;
-    }
+    return command != null && command.toUpperCase().equals(fcommand.toUpperCase());
   }
 
   public abstract boolean handle(String[] args) throws RandoopTextuiException;

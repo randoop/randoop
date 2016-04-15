@@ -32,7 +32,7 @@ public abstract class GenericType extends GeneralType {
    * @param typeArguments  the type arguments
    * @return the concrete type
    */
-  public ConcreteType instantiate(ConcreteType... typeArguments) {
+  public ConcreteType instantiate(ConcreteType... typeArguments) throws RandoopTypeException {
     return null;
   }
 
@@ -44,7 +44,8 @@ public abstract class GenericType extends GeneralType {
    * @return a {@code ConcreteType} constructed by substituting for type
    * parameters in this generic type
    */
-  public ConcreteType instantiate(Substitution substitution) {
+  @Override
+  public GeneralType apply(Substitution substitution) throws RandoopTypeException {
     return null;
   }
 
@@ -54,15 +55,15 @@ public abstract class GenericType extends GeneralType {
    * The type must either represent a generic array, or a generic class.
    * @see randoop.types.GeneralType#forType(Type)
    *
-   * @param type  the object from which the generic type is to be built 
+   * @param type  the object from which the generic type is to be built
    * @return a {@code GenericType} object constructed from the given type
    * @throws IllegalArgumentException if the type is neither a generic array or
    * class
    */
-  public static GenericType forType(Type type) {
+  public static GenericType forType(Type type) throws RandoopTypeException {
     GeneralType t = GeneralType.forType(type);
     if (t.isGeneric()) {
-      return (GenericType)t;
+      return (GenericType) t;
     }
 
     String msg = "unable to create generic type from type " + t.toString();
@@ -79,7 +80,7 @@ public abstract class GenericType extends GeneralType {
    * @throws IllegalArgumentException if the class is not a generic type, or
    * {@code Class} object represents an array
    */
-  public static GenericType forClass(Class<?> c) {
+  public static GenericType forClass(Class<?> c) throws RandoopTypeException {
     if (c.getTypeParameters().length == 0) {
       throw new IllegalArgumentException("class must be a generic type");
     }

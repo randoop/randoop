@@ -17,12 +17,12 @@ public class TreeMap {
   private transient int size = 0;
 
   private void incrementSize() {
-      /*modCount++;*/
+    /*modCount++;*/
     size++;
   }
 
   private void decrementSize() {
-      /*modCount++;*/
+    /*modCount++;*/
     size--;
   }
 
@@ -31,7 +31,7 @@ public class TreeMap {
 
   private native boolean checkAbstractState(int which);
 
-  public static Set<String> tests = new HashSet<String>();
+  public static Set<String> tests = new HashSet<>();
 
   public static int counter = 0;
 

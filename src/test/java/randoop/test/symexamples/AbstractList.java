@@ -235,9 +235,9 @@ public abstract class AbstractList extends AbstractCollection implements List {
 
   static {
     java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-        new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+            new java.util.LinkedHashMap<>();
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(0);
       indexList.add(1);
       indexList.add(2);
@@ -246,7 +246,7 @@ public abstract class AbstractList extends AbstractCollection implements List {
       methodToIndices.put(" int indexOf(Object o) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(5);
       indexList.add(6);
       indexList.add(7);
@@ -255,17 +255,17 @@ public abstract class AbstractList extends AbstractCollection implements List {
       methodToIndices.put(" int lastIndexOf(Object o) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(10);
       methodToIndices.put(" boolean addAll(int index, Collection c) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(11);
       methodToIndices.put(" ListIterator listIterator(final int index) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(12);
       indexList.add(13);
       indexList.add(14);
@@ -273,12 +273,12 @@ public abstract class AbstractList extends AbstractCollection implements List {
       methodToIndices.put(" boolean equals(Object o) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(16);
       methodToIndices.put(" int hashCode() ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(17);
       methodToIndices.put(" void removeRange(int fromIndex, int toIndex) ", indexList);
     }
@@ -445,32 +445,32 @@ class SubList extends AbstractList {
 
   static {
     java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-        new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+            new java.util.LinkedHashMap<>();
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(0);
       indexList.add(1);
       indexList.add(2);
       methodToIndices.put(" SubList (AbstractList list, int fromIndex, int toIndex) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(3);
       methodToIndices.put(" void add(int index, Object element) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(4);
       indexList.add(5);
       methodToIndices.put(" boolean addAll(int index, Collection c) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(6);
       methodToIndices.put(" ListIterator listIterator(final int index) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(7);
       methodToIndices.put(" void rangeCheck(int index) ", indexList);
     }
@@ -492,7 +492,7 @@ class RandomAccessSubList extends SubList implements RandomAccess {
 
   static {
     java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-        new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+            new java.util.LinkedHashMap<>();
     randoopCoverageInfo = new randoop.util.TestCoverageInfo(0, methodToIndices);
   }
 }

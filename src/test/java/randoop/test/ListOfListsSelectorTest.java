@@ -7,79 +7,73 @@ import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.SimpleList;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-public class ListOfListsSelectorTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-  ListOfLists<Integer> empty;
-  ListOfLists<Integer> l1;
-  ListOfLists<Integer> l3;
-  ListOfLists<Integer> l1l2;
-  ListOfLists<Integer> l1l2l3;
-  ListOfLists<Integer> l3l3l1l2;
+public class ListOfListsSelectorTest {
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+  static ListOfLists<Integer> empty;
+  private static ListOfLists<Integer> l1;
+  private static ListOfLists<Integer> l3;
+  private static ListOfLists<Integer> l1l2;
+  private static ListOfLists<Integer> l1l2l3;
+  private static ListOfLists<Integer> l3l3l1l2;
 
-    ArrayListSimpleList<Integer> l1List = new ArrayListSimpleList<Integer>();
-    ArrayListSimpleList<Integer> l2List = new ArrayListSimpleList<Integer>();
+  @BeforeClass
+  public static void setUp() throws Exception {
+
+    ArrayListSimpleList<Integer> l1List = new ArrayListSimpleList<>();
+    ArrayListSimpleList<Integer> l2List = new ArrayListSimpleList<>();
     l2List.add(1);
-    ArrayListSimpleList<Integer> l3List = new ArrayListSimpleList<Integer>();
+    ArrayListSimpleList<Integer> l3List = new ArrayListSimpleList<>();
     l3List.add(2);
     l3List.add(3);
 
-    List<SimpleList<Integer>> emptyList = new ArrayList<SimpleList<Integer>>();
-    empty = new ListOfLists<Integer>(emptyList);
+    List<SimpleList<Integer>> emptyList = new ArrayList<>();
+    empty = new ListOfLists<>(emptyList);
 
-    List<SimpleList<Integer>> l1ListList = new ArrayList<SimpleList<Integer>>();
+    List<SimpleList<Integer>> l1ListList = new ArrayList<>();
     l1ListList.add(l1List);
-    l1 = new ListOfLists<Integer>(l1ListList);
+    l1 = new ListOfLists<>(l1ListList);
 
-    List<SimpleList<Integer>> l3ListList = new ArrayList<SimpleList<Integer>>();
+    List<SimpleList<Integer>> l3ListList = new ArrayList<>();
     l3ListList.add(l3List);
-    l3 = new ListOfLists<Integer>(l3ListList);
+    l3 = new ListOfLists<>(l3ListList);
 
-    List<SimpleList<Integer>> l1l2ListList = new ArrayList<SimpleList<Integer>>();
+    List<SimpleList<Integer>> l1l2ListList = new ArrayList<>();
     l1l2ListList.add(l1List);
     l1l2ListList.add(l2List);
-    l1l2 = new ListOfLists<Integer>(l1l2ListList);
+    l1l2 = new ListOfLists<>(l1l2ListList);
 
-    List<SimpleList<Integer>> l1l2l3ListList = new ArrayList<SimpleList<Integer>>();
+    List<SimpleList<Integer>> l1l2l3ListList = new ArrayList<>();
     l1l2l3ListList.add(l1List);
     l1l2l3ListList.add(l2List);
     l1l2l3ListList.add(l3List);
-    l1l2l3 = new ListOfLists<Integer>(l1l2l3ListList);
+    l1l2l3 = new ListOfLists<>(l1l2l3ListList);
 
-    List<SimpleList<Integer>> l3l3l1l2ListList = new ArrayList<SimpleList<Integer>>();
+    List<SimpleList<Integer>> l3l3l1l2ListList = new ArrayList<>();
     l3l3l1l2ListList.add(l3List);
     l3l3l1l2ListList.add(l3List);
     l3l3l1l2ListList.add(l1List);
     l3l3l1l2ListList.add(l2List);
-    l3l3l1l2 = new ListOfLists<Integer>(l3l3l1l2ListList);
+    l3l3l1l2 = new ListOfLists<>(l3l3l1l2ListList);
   }
-
-  @Override
-  protected void tearDown() throws Exception {
-    super.tearDown();
-  }
-
-  /*
-   * Test method for 'randoop.util.ListOfLists.ListOfLists(List&lt;List&lt;T&gt;&gt;)'
-   */
-  public void testListOfLists() {}
 
   /*
    * Test method for 'randoop.util.ListOfLists.size()'
    */
+  @Test
   public void testSize() {
-    Assert.assertEquals(empty.size(), 0);
-    Assert.assertEquals(l1.size(), 0);
-    Assert.assertEquals(l3.size(), 2);
-    Assert.assertEquals(l1l2.size(), 1);
-    Assert.assertEquals(l1l2l3.size(), 3);
-    Assert.assertEquals(l3l3l1l2.size(), 5);
+    assertEquals(empty.size(), 0);
+    assertEquals(l1.size(), 0);
+    assertEquals(l3.size(), 2);
+    assertEquals(l1l2.size(), 1);
+    assertEquals(l1l2l3.size(), 3);
+    assertEquals(l3l3l1l2.size(), 5);
   }
 
   private static void callGetElementShouldFail(ListOfLists<?> s, int i) {
@@ -94,6 +88,7 @@ public class ListOfListsSelectorTest extends TestCase {
   /*
    * Test method for 'randoop.util.ListOfLists.get(int)'
    */
+  @Test
   public void testGetElement() {
 
     callGetElementShouldFail(empty, 0);
@@ -106,25 +101,25 @@ public class ListOfListsSelectorTest extends TestCase {
 
     callGetElementShouldFail(l3, -1);
     callGetElementShouldFail(l3, 2);
-    Assert.assertEquals(l3.get(0), new Integer(2));
-    Assert.assertEquals(l3.get(1), new Integer(3));
+    assertEquals(l3.get(0), new Integer(2));
+    assertEquals(l3.get(1), new Integer(3));
 
     callGetElementShouldFail(l1l2, -1);
     callGetElementShouldFail(l1l2, 1);
-    Assert.assertEquals(l1l2.get(0), new Integer(1));
+    assertEquals(l1l2.get(0), new Integer(1));
 
     callGetElementShouldFail(l1l2l3, -1);
     callGetElementShouldFail(l1l2l3, 3);
-    Assert.assertEquals(l1l2l3.get(0), new Integer(1));
-    Assert.assertEquals(l1l2l3.get(1), new Integer(2));
-    Assert.assertEquals(l1l2l3.get(2), new Integer(3));
+    assertEquals(l1l2l3.get(0), new Integer(1));
+    assertEquals(l1l2l3.get(1), new Integer(2));
+    assertEquals(l1l2l3.get(2), new Integer(3));
 
     callGetElementShouldFail(l3l3l1l2, -1);
     callGetElementShouldFail(l3l3l1l2, 5);
-    Assert.assertEquals(l3l3l1l2.get(0), new Integer(2));
-    Assert.assertEquals(l3l3l1l2.get(1), new Integer(3));
-    Assert.assertEquals(l3l3l1l2.get(2), new Integer(2));
-    Assert.assertEquals(l3l3l1l2.get(3), new Integer(3));
-    Assert.assertEquals(l3l3l1l2.get(4), new Integer(1));
+    assertEquals(l3l3l1l2.get(0), new Integer(2));
+    assertEquals(l3l3l1l2.get(1), new Integer(3));
+    assertEquals(l3l3l1l2.get(2), new Integer(2));
+    assertEquals(l3l3l1l2.get(3), new Integer(3));
+    assertEquals(l3l3l1l2.get(4), new Integer(1));
   }
 }

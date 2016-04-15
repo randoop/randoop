@@ -39,6 +39,12 @@ public class MultiMap<T1, T2> implements IMultiMap<T1, T2> {
     }
   }
 
+  public void addAll(MultiMap<T1, T2> mmap) {
+    for (Map.Entry<T1, Set<T2>> entry : mmap.map.entrySet()) {
+      addAll(entry.getKey(), entry.getValue());
+    }
+  }
+
   @Override
   public void add(T1 key, T2 value) {
     Set<T2> values = map.get(key);

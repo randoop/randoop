@@ -5,21 +5,24 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Stack;
 
-import randoop.field.FinalInstanceField;
-import randoop.field.InstanceField;
-import randoop.field.StaticField;
-import randoop.field.StaticFinalField;
+import randoop.BugInRandoopException;
+import randoop.field.AccessibleField;
 import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
 import randoop.operation.FieldGet;
 import randoop.operation.FieldSet;
 import randoop.operation.MethodCall;
 import randoop.operation.Operation;
+import randoop.types.ConcreteSimpleType;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypes;
+import randoop.types.GeneralType;
+import randoop.types.GeneralTypeTuple;
+import randoop.types.GenericTypeTuple;
+import randoop.types.RandoopTypeException;
 
 /**
  * OperationExtractor is a {@link ClassVisitor} that creates a collection of
@@ -32,7 +35,12 @@ import randoop.operation.Operation;
  */
 public class OperationExtractor implements ClassVisitor {
 
-  private Set<Operation> operations;
+  private final TypedOperationManager manager;
+  private final ReflectionPredicate predicate;
+  private final Stack<GeneralType> typeStack;
+
+  /** The current class type */
+  private GeneralType classType;
 
   /**
    * Creates a visitor object that collects Operation objects corresponding to
@@ -41,34 +49,11 @@ public class OperationExtractor implements ClassVisitor {
    * strictly ordered once flattened to a list. This is needed to guarantee
    * determinism between Randoop runs with the same classes and parameters.
    */
-  public OperationExtractor() {
-    this.operations = new TreeSet<>();
-  }
-
-  public List<Operation> getOperations() {
-    return new ArrayList<Operation>(operations);
-  }
-
-  /**
-   * Collects the members of a collection of classes. Returns a filtered list of
-   * {@code Operation} objects.
-   *
-   * @param classListing
-   *          the collection of class objects from which to extract
-   * @param predicate
-   *          whether to include class members in results
-   * @return list of {@code Operation} objects satisfying the predicate
-   */
-  public static List<Operation> getOperations(
-      Collection<Class<?>> classListing, ReflectionPredicate predicate) {
-    if (predicate == null) predicate = new DefaultReflectionPredicate();
-    ReflectionManager mgr = new ReflectionManager(predicate);
-    OperationExtractor op = new OperationExtractor();
-    mgr.add(op);
-    for (Class<?> c : classListing) {
-      mgr.apply(c);
-    }
-    return op.getOperations();
+  public OperationExtractor(TypedOperationManager manager, ReflectionPredicate predicate) {
+    this.manager = manager;
+    this.predicate = predicate;
+    this.typeStack = new Stack<GeneralType>();
+    this.classType = null;
   }
 
   /**
@@ -80,7 +65,20 @@ public class OperationExtractor implements ClassVisitor {
    */
   @Override
   public void visit(Constructor<?> c) {
-    operations.add(new ConstructorCall(c));
+    assert c.getDeclaringClass().equals(classType.getRuntimeClass())
+            : "classType " + classType + " and declaring class " + c.getDeclaringClass().getName() + " should be same";
+    if (! predicate.test(c)) {
+      return;
+    }
+    ConstructorCall op = new ConstructorCall(c);
+    GeneralTypeTuple inputTypes;
+    try {
+      inputTypes = manager.getInputTypes(c.getGenericParameterTypes());
+    } catch (RandoopTypeException e) {
+      System.out.println("Ignoring constructor " + c.getName() + ": " + e.getMessage());
+      return; // not a critical error, just end visit
+    }
+    manager.createTypedOperation(op, classType, inputTypes, classType);
   }
 
   /**
@@ -91,7 +89,27 @@ public class OperationExtractor implements ClassVisitor {
    */
   @Override
   public void visit(Method method) {
-    operations.add(new MethodCall(method));
+    assert method.getDeclaringClass().isAssignableFrom(classType.getRuntimeClass())
+            : "classType " + classType + " should be assignable to declaring class " + method.getDeclaringClass().getName();
+    if (! predicate.test(method)) {
+      return;
+    }
+
+    MethodCall op = new MethodCall(method);
+    GenericTypeTuple inputTypes;
+    GeneralType outputType;
+    try {
+      if (!Modifier.isStatic(method.getModifiers() & Modifier.methodModifiers())) {
+        inputTypes = manager.getInputTypes(classType, method.getGenericParameterTypes());
+      } else {
+        inputTypes = manager.getInputTypes(method.getGenericParameterTypes());
+      }
+      outputType = GeneralType.forType(method.getGenericReturnType());
+    } catch (RandoopTypeException e) {
+      System.out.println("Ignoring method " + method.getName() + ": " + e.getMessage());
+      return; // not a critical error, just end visit
+    }
+    manager.createTypedOperation(op, classType, inputTypes, outputType);
   }
 
   /**
@@ -103,27 +121,34 @@ public class OperationExtractor implements ClassVisitor {
    */
   @Override
   public void visit(Field field) {
-    int mods = field.getModifiers();
-
-    if (Modifier.isStatic(mods)) {
-      if (Modifier.isFinal(mods)) {
-        StaticFinalField s = new StaticFinalField(field);
-        operations.add(new FieldGet(s));
-      } else {
-        StaticField s = new StaticField(field);
-        operations.add(new FieldGet(s));
-        operations.add(new FieldSet(s));
-      }
-    } else {
-      if (Modifier.isFinal(mods)) {
-        FinalInstanceField i = new FinalInstanceField(field);
-        operations.add(new FieldGet(i));
-      } else {
-        InstanceField i = new InstanceField(field);
-        operations.add(new FieldGet(i));
-        operations.add(new FieldSet(i));
-      }
+    assert field.getDeclaringClass().isAssignableFrom(classType.getRuntimeClass())
+            : "classType " + classType + " should be assignable from " + field.getDeclaringClass().getName();
+    if (! predicate.test(field)) {
+      return;
     }
+    GeneralType fieldType;
+    try {
+      fieldType = GeneralType.forType(field.getGenericType());
+    } catch (RandoopTypeException e) {
+      System.out.println("Ignoring field " + field.getName() + ": " + e.getMessage());
+      return; // not a critical error, just end visit
+    }
+    List<GeneralType> setInputTypeList = new ArrayList<>();
+    List<GeneralType> getInputTypeList = new ArrayList<>();
+
+    AccessibleField accessibleField = new AccessibleField(field, classType);
+
+    if (! accessibleField.isStatic()) {
+      getInputTypeList.add(classType);
+      setInputTypeList.add(classType);
+    }
+
+    manager.createTypedOperation(new FieldGet(accessibleField), classType, new GenericTypeTuple(getInputTypeList), fieldType);
+    if (! accessibleField.isFinal()) {
+      setInputTypeList.add(fieldType);
+      manager.createTypedOperation(new FieldSet(accessibleField), classType, new GenericTypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
+    }
+
   }
 
   /**
@@ -134,16 +159,30 @@ public class OperationExtractor implements ClassVisitor {
    */
   @Override
   public void visit(Enum<?> e) {
-    operations.add(new EnumConstant(e));
+    ConcreteType enumType = new ConcreteSimpleType(e.getDeclaringClass());
+    assert ! enumType.isGeneric() : "type of enum class cannot be generic";
+    EnumConstant op = new EnumConstant(e);
+    manager.createTypedOperation(op, enumType, new GenericTypeTuple(), enumType);
   }
 
   @Override
   public void visitBefore(Class<?> c) {
-    // nothing to do here
+    typeStack.push(classType);
+    if (! predicate.test(c)) {
+      return;
+    }
+    try {
+      classType = manager.getClassType(c);
+    } catch (RandoopTypeException e) {
+      throw new BugInRandoopException("Type error when reading class " + c.getName() + ": " + e.getMessage());
+    }
   }
 
   @Override
   public void visitAfter(Class<?> c) {
-    // nothing to do here
+    assert ! typeStack.isEmpty() : "call to visitAfter not paired with call to visitBefore";
+    classType = typeStack.pop();
   }
+
+
 }

@@ -5,14 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
-
 /**
  * Represents a type variable used by itself as a type.
  * Could occur as a return type, a method/constructor parameter type, a field
  * type, or the type of an array.
  */
-public class GenericSimpleType extends GenericType {
+class GenericSimpleType extends GenericType {
 
   /** the type parameter of the simple type */
   private TypeVariable<?> parameter;
@@ -25,9 +23,9 @@ public class GenericSimpleType extends GenericType {
    *
    * @param parameter  the type parameter
    */
-  public GenericSimpleType(TypeVariable<?> parameter) {
+  GenericSimpleType(TypeVariable<?> parameter) throws RandoopTypeException {
     this.parameter = parameter;
-    this.bound = TypeBound.fromTypes(parameter.getBounds());
+    this.bound = TypeBound.fromTypes(new SupertypeOrdering(), parameter.getBounds());
   }
 
   /**
@@ -39,16 +37,21 @@ public class GenericSimpleType extends GenericType {
    */
   @Override
   public boolean equals(Object obj) {
-    if (! (obj instanceof GenericSimpleType)) {
+    if (!(obj instanceof GenericSimpleType)) {
       return false;
     }
-    GenericSimpleType t = (GenericSimpleType)obj;
+    GenericSimpleType t = (GenericSimpleType) obj;
     return parameter.equals(t.parameter);
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(parameter, bound);
+  }
+
+  @Override
+  public String toString() {
+    return parameter.toString();
   }
 
   /**
@@ -88,17 +91,17 @@ public class GenericSimpleType extends GenericType {
    * bound
    */
   @Override
-  public ConcreteType instantiate(ConcreteType... typeArguments) {
+  public ConcreteType instantiate(ConcreteType... typeArguments) throws RandoopTypeException {
     if (typeArguments == null) {
       throw new IllegalArgumentException("type arguments must be non-null");
     }
     if (typeArguments.length != 1) {
       throw new IllegalArgumentException("only one type argument expected");
     }
-    List<TypeVariable<?>> parameters = new ArrayList<>();
-    parameters.add(parameter);
+    List<TypeParameter> parameters = new ArrayList<>();
+    parameters.add(new TypeParameter(parameter, bound));
     Substitution substitution = Substitution.forArgs(parameters, typeArguments);
-    if (! bound.isSatisfiedBy(typeArguments[0], substitution)) {
+    if (!bound.isSatisfiedBy(typeArguments[0], substitution)) {
       throw new IllegalArgumentException("type argument does not match parameter bound");
     }
     return typeArguments[0];
@@ -109,22 +112,23 @@ public class GenericSimpleType extends GenericType {
    *
    * @param substitution  the type substitution
    * @return the {@code ConcreteType} for the type parameter
-   * @throws IllegalArgumentException if the substitution is null, or a type
-   * parameter is not mapped by the substitution, or the type argument does not
+   * @throws IllegalArgumentException if the substitution is null, or the type argument does not
    * match the parameter bound.
    */
   @Override
-  public ConcreteType instantiate(Substitution substitution) {
+  public GeneralType apply(Substitution substitution) throws RandoopTypeException {
     if (substitution == null) {
       throw new IllegalArgumentException("substitution must be non-null");
     }
     ConcreteType concreteType = substitution.get(parameter);
     if (concreteType == null) {
-      throw new IllegalArgumentException("parameter not mapped by substitution");
+      return this;
     }
-    if (! bound.isSatisfiedBy(concreteType, substitution)) {
-      throw new IllegalArgumentException("type argument from substitution does not match parameter bound");
+    if (!bound.isSatisfiedBy(concreteType, substitution)) {
+      throw new IllegalArgumentException(
+          "type argument from substitution does not match parameter bound");
     }
     return concreteType;
   }
+
 }

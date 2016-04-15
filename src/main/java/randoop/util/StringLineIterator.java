@@ -42,7 +42,7 @@ public class StringLineIterator {
     if (length < 0) throw new IllegalArgumentException("length cannot be negative");
     if (!hasMoreWords()) throw new IllegalStateException("no more words.");
 
-    StringBuffer b = new StringBuffer("");
+    StringBuilder b = new StringBuilder("");
     for (; ; ) {
       // Loop invariant
       assert b.length() <= length;

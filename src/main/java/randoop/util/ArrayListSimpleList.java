@@ -11,15 +11,15 @@ public class ArrayListSimpleList<T> extends SimpleList<T> implements Serializabl
   public final ArrayList<T> theList;
 
   public ArrayListSimpleList(ArrayList<T> list) {
-    theList = new ArrayList<T>(list);
+    theList = new ArrayList<>(list);
   }
 
   public ArrayListSimpleList() {
-    theList = new ArrayList<T>();
+    theList = new ArrayList<>();
   }
 
   public ArrayListSimpleList(int capacity) {
-    theList = new ArrayList<T>(capacity);
+    theList = new ArrayList<>(capacity);
   }
 
   @Override
@@ -43,7 +43,7 @@ public class ArrayListSimpleList<T> extends SimpleList<T> implements Serializabl
 
   @Override
   public List<T> toJDKList() {
-    return new ArrayList<T>(theList);
+    return new ArrayList<>(theList);
   }
 
   @Override

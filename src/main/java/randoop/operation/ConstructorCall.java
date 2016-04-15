@@ -1,19 +1,26 @@
 package randoop.operation;
 
-import java.io.ObjectStreamException;
+import org.checkerframework.checker.oigj.qual.O;
+
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.reflection.TypedOperationManager;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
+import randoop.types.GeneralType;
+import randoop.types.GeneralTypeTuple;
+import randoop.types.GenericTypeTuple;
+import randoop.types.RandoopTypeException;
 import randoop.types.TypeNames;
 import randoop.util.ConstructorReflectionCode;
 import randoop.util.ReflectionExecutor;
@@ -28,12 +35,12 @@ import randoop.util.Util;
  * arguments is represented as <i>c</i> : [<i>t1,...,tn</i>] &rarr; <i>c</i>,
  * where the output type <i>c</i> is also the name of the class.
  */
-public final class ConstructorCall extends AbstractOperation implements Operation {
+public final class ConstructorCall extends CallableOperation {
 
   /**
    * ID for parsing purposes.
    *
-   * @see OperationParser#getId(Operation)
+   * @see OperationParser#getId(ConcreteOperation)
    */
   public static final String ID = "cons";
 
@@ -42,8 +49,6 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
   // Cached values (for improved performance). Their values
   // are computed upon the first invocation of the respective
   // getter method.
-  private List<Class<?>> inputTypesCached;
-  private Class<?> outputType;
   private int hashCodeCached = 0;
   private boolean hashCodeComputed = false;
 
@@ -56,10 +61,6 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
   public ConstructorCall(Constructor<?> constructor) {
     if (constructor == null) throw new IllegalArgumentException("constructor should not be null.");
     this.constructor = constructor;
-    this.outputType = constructor.getDeclaringClass();
-    // TODO move this earlier in the process: check first that all
-    // methods to be used can be made accessible.
-    // XXX this should not be here but I get infinite loop when comment out
     this.constructor.setAccessible(true);
   }
 
@@ -70,19 +71,6 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
    */
   public Constructor<?> getConstructor() {
     return this.constructor;
-  }
-
-  /**
-   * Creates the {@code ConstructorCall} corresponding to the given reflection
-   * constructor.
-   *
-   * @param constructor
-   *          the {@link Constructor} object for calls
-   * @return a new {@code ConstructorCall} object for the given
-   *         {@code Constructor} instance.
-   */
-  public static ConstructorCall createConstructorCall(Constructor<?> constructor) {
-    return new ConstructorCall(constructor);
   }
 
   /**
@@ -97,11 +85,16 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
     if (types.length > 0) {
       b.append(types[0].getName());
       for (int i = 1; i < types.length; i++) {
-        b.append(", " + types[i].getName());
+        b.append(", ").append(types[i].getName());
       }
     }
     b.append(")");
     return b.toString();
+  }
+
+  @Override
+  public String getName() {
+    return "<init>";
   }
 
   /**
@@ -112,11 +105,10 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
    *          constructor call.
    * @param b
    *          the StringBuilder to which the output is appended.
-   * @see Operation#appendCode(List, StringBuilder)
+   * @see ConcreteOperation#appendCode(List, StringBuilder)
    */
   @Override
-  public void appendCode(List<Variable> inputVars, StringBuilder b) {
-    assert inputVars.size() == this.getInputTypes().size();
+  public void appendCode(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType, List<Variable> inputVars, StringBuilder b) {
 
     Class<?> declaringClass = constructor.getDeclaringClass();
     boolean isNonStaticMember =
@@ -132,14 +124,16 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
     // TODO the last replace is ugly. There should be a method that does it.
     String declaringClassStr = TypeNames.getCompilableName(declaringClass);
 
-    b.append((isNonStaticMember ? inputVars.get(0) + "." : "") + "new ");
-    b.append(isNonStaticMember ? declaringClass.getSimpleName() : declaringClassStr + "(");
+    b.append(isNonStaticMember ? inputVars.get(0) + "." : "")
+            .append("new ")
+            .append(isNonStaticMember ? declaringClass.getSimpleName() : declaringClassStr)
+            .append("(");
     for (int i = (isNonStaticMember ? 1 : 0); i < inputVars.size(); i++) {
       if (i > (isNonStaticMember ? 1 : 0)) b.append(", ");
 
       // We cast whenever the variable and input types are not identical.
-      if (!inputVars.get(i).getType().equals(getInputTypes().get(i)))
-        b.append("(" + getInputTypes().get(i).getCanonicalName() + ")");
+      if (!inputVars.get(i).getType().equals(inputTypes.get(i)))
+        b.append("(").append(inputTypes.get(i).getName()).append(")");
 
       String param = inputVars.get(i).getName();
 
@@ -190,9 +184,6 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
     return hashCodeCached;
   }
 
-  public long calls_time = 0;
-  public int calls_num = 0;
-
   /**
    * {@inheritDoc} Performs call to the constructor given the objects as actual
    * parameters, and the output stream for any output.
@@ -202,19 +193,15 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
    *          constructor.
    * @param out
    *          is a stream for any output.
-   * @see Operation#execute(Object[], PrintStream)
+   * @see ConcreteOperation#execute(Object[], PrintStream)
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
 
-    assert statementInput.length == this.getInputTypes().size();
-
     ConstructorReflectionCode code =
         new ConstructorReflectionCode(this.constructor, statementInput);
 
-    // long startTime = System.currentTimeMillis();
     Throwable thrown = ReflectionExecutor.executeReflectionCode(code, out);
-    // long totalTime = System.currentTimeMillis() - startTime;
 
     if (thrown == null) {
       return new NormalExecution(code.getReturnVariable(), 0);
@@ -225,30 +212,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
 
   /**
    * {@inheritDoc}
-   *
-   * @return list of parameter types for constructor.
-   */
-  @Override
-  public List<Class<?>> getInputTypes() {
-    if (inputTypesCached == null) {
-      inputTypesCached = new ArrayList<Class<?>>(Arrays.asList(constructor.getParameterTypes()));
-    }
-    return inputTypesCached;
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * @return type of the object created (i.e., class for constructor).
-   */
-  @Override
-  public Class<?> getOutputType() {
-    return outputType;
-  }
-
-  /**
-   * {@inheritDoc} Generates a string representation of the constructor
-   * signature.
+   * Generates a string representation of the constructor signature.
    *
    * Examples:
    *
@@ -259,42 +223,83 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
    * </code>
    * </pre>
    *
-   * @see ConstructorSignatures#getSignatureString(Constructor)
+   * @see #parse(String, TypedOperationManager)
    *
    * @return signature string for constructor.
    */
   @Override
-  public String toParseableString() {
-    return ConstructorSignatures.getSignatureString(constructor);
+  public String toParseableString(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(constructor.getName()).append(".<init>(");
+    Class<?>[] params = constructor.getParameterTypes();
+    TypeArguments.getTypeArgumentString(sb, params);
+    sb.append(")");
+    return sb.toString();
   }
 
   /**
    * Parse a constructor call in a string with the format generated by
-   * {@link ConstructorCall#toParseableString()} and returns the corresponding
-   * {@link ConstructorCall} object.
+   * {@link ConstructorCall#toParseableString(ConcreteType, ConcreteTypeTuple, ConcreteType)} and
+   * returns the corresponding {@link ConstructorCall} object.
    *
-   * @see OperationParser#parse(String)
+   * @see OperationParser#parse(String, randoop.reflection.TypedOperationManager)
    *
-   * @param s
+   * @param signature
    *          a string descriptor of a constructor call.
-   * @return {@link ConstructorCall} object corresponding to the given
-   *         signature.
+   * @param manager  the {@link TypedOperationManager} for collecting operations
    * @throws OperationParseException
    *           if no constructor found for signature.
    */
-  public static Operation parse(String s) throws OperationParseException {
-    return ConstructorCall.createConstructorCall(
-        ConstructorSignatures.getConstructorForSignatureString(s));
-  }
+  public static void parse(String signature, TypedOperationManager manager) throws OperationParseException {
+    if (signature == null) {
+      throw new IllegalArgumentException("signature may not be null");
+    }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return class object representing declaring class for the constructor.
-   */
-  @Override
-  public Class<?> getDeclaringClass() {
-    return constructor.getDeclaringClass();
+    int openParPos = signature.indexOf('(');
+    int closeParPos = signature.indexOf(')');
+
+    String prefix = signature.substring(0, openParPos);
+    int lastDotPos = prefix.lastIndexOf('.');
+
+    assert lastDotPos >= 0;
+    String classname = prefix.substring(0, lastDotPos);
+    String opname = prefix.substring(lastDotPos + 1);
+    assert opname.equals("<init>") : "expected init, saw " + opname;
+    String arguments = signature.substring(openParPos + 1, closeParPos);
+
+    String constructorString = classname + "." + opname + arguments;
+    GeneralType classType;
+    try {
+      classType = GeneralType.forName(classname);
+    } catch (ClassNotFoundException e) {
+      String msg = "Class for constructor " + constructorString + " not found: " + e;
+      throw new OperationParseException(msg);
+    } catch (RandoopTypeException e) {
+      String msg = "Type error for constructor " + constructorString + ": " + e.getMessage();
+      throw new OperationParseException(msg);
+    }
+
+    Class<?>[] typeArguments = TypeArguments.getTypeArgumentsForString(arguments);
+    Constructor<?> con;
+    try {
+      con = classType.getRuntimeClass().getDeclaredConstructor(typeArguments);
+    } catch (NoSuchMethodException e) {
+      String msg = "Constructor " + constructorString + " not found: " + e;
+      throw new OperationParseException(msg);
+    }
+
+    ConstructorCall op = new ConstructorCall(con);
+    List<GeneralType> paramTypes = new ArrayList<>();
+    for (Class<?> c : typeArguments) {
+      try {
+        paramTypes.add(manager.getClassType(c));
+      } catch (RandoopTypeException e) {
+        String msg = "Type error when parsing constructor " + constructorString + ": " + e.getMessage();
+        throw new OperationParseException(msg);
+      }
+    }
+
+    manager.createTypedOperation(op, classType, new GenericTypeTuple(paramTypes), classType);
   }
 
   /**

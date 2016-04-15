@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import plume.Option;
 import plume.Options;
 import plume.Options.ArgException;
 

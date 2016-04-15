@@ -1,17 +1,18 @@
 package randoop.sequence;
 
 import java.io.PrintStream;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 import randoop.ExecutionOutcome;
 import randoop.Globals;
-import randoop.operation.AbstractOperation;
-import randoop.operation.MethodCall;
+import randoop.operation.CallableOperation;
+import randoop.operation.ConcreteOperation;
 import randoop.operation.Operation;
 import randoop.operation.OperationParser;
 import randoop.sequence.Sequence.RelativeNegativeIndex;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
 import randoop.types.PrimitiveTypes;
 
 /**
@@ -26,7 +27,7 @@ public final class Statement {
    * The operation (method call, constructor call, primitive values declaration,
    * etc.).
    */
-  private final Operation operation;
+  private final ConcreteOperation operation;
 
   // The list of values used as input to the statement.
   //
@@ -39,9 +40,9 @@ public final class Statement {
    * Create a new statement of type statement that takes as input the given
    * values.
    */
-  public Statement(Operation operation, List<RelativeNegativeIndex> inputVariables) {
+  public Statement(ConcreteOperation operation, List<RelativeNegativeIndex> inputVariables) {
     this.operation = operation;
-    this.inputs = new ArrayList<RelativeNegativeIndex>(inputVariables);
+    this.inputs = new ArrayList<>(inputVariables);
   }
 
   /**
@@ -50,7 +51,7 @@ public final class Statement {
    * @param operation
    *          the operation for action of this statement.
    */
-  public Statement(Operation operation) {
+  public Statement(ConcreteOperation operation) {
     this(operation, new ArrayList<RelativeNegativeIndex>());
   }
 
@@ -59,8 +60,8 @@ public final class Statement {
    *
    * @return true if output type is void.
    */
-  public boolean isVoidMethodCall() {
-    return operation.getOutputType().equals(void.class);
+  boolean isVoidMethodCall() {
+    return operation.isMethodCall() && operation.getOutputType().isVoid();
   }
 
   /**
@@ -97,11 +98,11 @@ public final class Statement {
     return java.util.Objects.hash(operation, inputs);
   }
 
-  public Class<?> getOutputType() {
+  public ConcreteType getOutputType() {
     return operation.getOutputType();
   }
 
-  public List<Class<?>> getInputTypes() {
+  public ConcreteTypeTuple getInputTypes() {
     return operation.getInputTypes();
   }
 
@@ -118,14 +119,14 @@ public final class Statement {
    *          the {@code StringBuilder} to which code text is appended.
    */
   public void appendCode(Variable variable, List<Variable> inputs, StringBuilder b) {
-    if (!isVoidMethodCall()) {
-      Class<?> type = operation.getOutputType();
-      String typeName = type.getCanonicalName();
+    ConcreteType type = operation.getOutputType();
+    if (! type.isVoid()) {
+      String typeName = type.getName();
       b.append(typeName);
-      b.append(" " + Variable.classToVariableName(type) + variable.index + " = ");
+      b.append(" ").append(Variable.classToVariableName(type)).append(variable.index).append(" = ");
     }
     operation.appendCode(inputs, b);
-    b.append(";" + Globals.lineSep);
+    b.append(";").append(Globals.lineSep);
   }
 
   public String toParseableString(String variableName, List<Variable> inputs) {
@@ -157,8 +158,8 @@ public final class Statement {
    *          the mutable variable the statement affects
    * @return instance of mutable statement corresponding to this statement.
    */
-  public MutableStatement toModifiableStatement(
-      List<MutableVariable> inputs, MutableVariable mVariable) {
+  MutableStatement toModifiableStatement(
+          List<MutableVariable> inputs, MutableVariable mVariable) {
     return new MutableStatement(operation, inputs, mVariable);
   }
 
@@ -204,40 +205,8 @@ public final class Statement {
    *
    * @return result of getDeclaringClass for corresponding statement.
    */
-  public Class<?> getDeclaringClass() {
-    return operation.getDeclaringClass();
-  }
-
-  /**
-   * isMethodIn determines whether the {@link MethodCall} in a statement
-   * corresponds to an element of the list of reflective {@link Method} objects.
-   *
-   * @param list
-   *          containing {@link Method} objects.
-   * @return true if {@link MethodCall} corresponds to an object in list, and
-   *         false otherwise.
-   */
-  public boolean isMethodIn(List<Method> list) {
-    if (operation instanceof MethodCall) {
-      return ((MethodCall) operation).callsMethodIn(list);
-    }
-    return false;
-  }
-
-  /**
-   * callsTheMethod determines whether the {@link MethodCall} in a statement
-   * corresponds to the {@link Method} argument.
-   *
-   * @param m
-   *          instance of {@link Method}.
-   * @return true if {@link MethodCall} object of statement corresponds to m,
-   *         and false otherwise.
-   */
-  public boolean callsTheMethod(Method m) {
-    if (operation instanceof MethodCall) {
-      return ((MethodCall) operation).callsMethod(m);
-    }
-    return false;
+  public ConcreteType getDeclaringClass() {
+    return operation.getDeclaringType();
   }
 
   /**
@@ -260,7 +229,7 @@ public final class Statement {
   }
 
   /**
-   * isNullInialization determines if statement represents an initialization by
+   * isNullInitialization determines if statement represents an initialization by
    * null value.
    *
    * @return true if statement represents null initialization, and false
@@ -291,7 +260,7 @@ public final class Statement {
   /**
    * getValue returns the "value" for a statement. Is only meaningful if
    * statement is an assignment of a constant value. Appeals to
-   * {@link AbstractOperation} to throw appropriate exception when unable to
+   * {@link CallableOperation} to throw appropriate exception when unable to
    * provide a value.
    *
    * This is a hack to allow randoop.main.GenBranchDir to do mutation.
@@ -304,15 +273,15 @@ public final class Statement {
   }
 
   /**
-   * getOperation is meant to be a temporary solution to type confusion in
+   * getConcreteOperation is meant to be a temporary solution to type confusion in
    * generators. This should go away. Only intended to be called by
-   * {@link Sequence#extend(Operation, List)}.
+   * {@link Sequence#extend(ConcreteOperation, List)}.
    *
    * @return operation object in the statement.
    */
   // TODO can remove once RandomWalkGenerator.extendRandomly and
   // SequenceSimplifyUtils.makeCopy modified
-  public final Operation getOperation() {
+  public final ConcreteOperation getOperation() {
     return operation;
   }
 }

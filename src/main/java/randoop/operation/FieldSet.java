@@ -1,7 +1,8 @@
 package randoop.operation;
 
 import java.io.PrintStream;
-import java.io.Serializable;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.List;
 
 import randoop.BugInRandoopException;
@@ -10,11 +11,17 @@ import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.field.AccessibleField;
 import randoop.field.FieldParser;
-import randoop.field.FinalInstanceField;
-import randoop.field.StaticFinalField;
 import randoop.reflection.ReflectionPredicate;
+import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
+import randoop.types.ConcreteTypes;
+import randoop.types.GeneralType;
+import randoop.types.GeneralTypeTuple;
+import randoop.types.GenericTypeTuple;
+import randoop.types.RandoopTypeException;
 
 /**
  * FieldSetter is an adapter for a {@link AccessibleField} as a
@@ -22,9 +29,7 @@ import randoop.sequence.Variable;
  *
  * @see AccessibleField
  */
-public class FieldSet extends AbstractOperation implements Operation, Serializable {
-
-  private static final long serialVersionUID = -5905429635469194115L;
+public class FieldSet extends CallableOperation {
 
   public static String ID = "setter";
 
@@ -40,31 +45,10 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
    *           if field is static final.
    */
   public FieldSet(AccessibleField field) {
-    if (field instanceof StaticFinalField) {
-      throw new IllegalArgumentException("Field may not be static final for FieldSetter");
-    }
-    if (field instanceof FinalInstanceField) {
-      throw new IllegalArgumentException("Field may not be final for FieldSetter");
+    if (field.isFinal()) {
+      throw new IllegalArgumentException("Field may not be final for FieldSet");
     }
     this.field = field;
-  }
-
-  /**
-   * Returns the input types for a field treated as a setter.
-   *
-   * @return list consisting of types of values needed to set the field.
-   */
-  @Override
-  public List<Class<?>> getInputTypes() {
-    return field.getSetTypes();
-  }
-
-  /**
-   * Returns object for void type since since represents setter for field.
-   */
-  @Override
-  public Class<?> getOutputType() {
-    return void.class;
   }
 
   /**
@@ -87,8 +71,6 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
-    assert statementInput.length == getInputTypes().size()
-        : "expected " + getInputTypes().size() + " got " + statementInput.length;
 
     Object instance = null;
     Object input = statementInput[0];
@@ -128,10 +110,9 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
    *          the StringBuilder to which code is issued.
    */
   @Override
-  public void appendCode(List<Variable> inputVars, StringBuilder b) {
-    assert inputVars.size() == 1 || inputVars.size() == 2;
+  public void appendCode(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType, List<Variable> inputVars, StringBuilder b) {
 
-    b.append(field.toCode(inputVars));
+    b.append(field.toCode(declaringType, inputVars));
     b.append(" = ");
 
     // variable/value to be assigned is either only or second entry in list
@@ -151,18 +132,76 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
 
   /**
    * Returns the string descriptor for field that can be parsed by
-   * {@link FieldParser}.
    *
    * @return the parseable string descriptor for this setter.
    */
   @Override
-  public String toParseableString() {
-    return "<set>(" + field.toParseableString() + ")";
+  public String toParseableString(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
+    return declaringType.getName() + ".<set>(" + field.getName() + ")";
+  }
+
+  /**
+   * Parses a description of a field setter in the given string. A setter
+   * description has the form "&lt;set&gt;( field-descriptor )" where
+   * "&lt;set&gt;" is literally what is expected.
+   *
+   * @param descr
+   *          string containing descriptor of field setter.
+   * @param manager
+   *          the {@link TypedOperationManager} to collect operations
+   * @throws OperationParseException
+   *           if descr does not have expected form.
+   */
+  public static void parse(String descr, TypedOperationManager manager) throws OperationParseException {
+    String errorPrefix = "Error parsing " + descr + " as description for field set statement: ";
+
+    int openParPos = descr.indexOf('(');
+    int closeParPos = descr.indexOf(')');
+
+    if (openParPos < 0) {
+      String msg = errorPrefix + " expecting parentheses.";
+      throw new OperationParseException(msg);
+    }
+    String prefix = descr.substring(0, openParPos);
+    int lastDotPos = prefix.lastIndexOf('.');
+    assert lastDotPos > 0 : "should be a period after the classname: " + descr;
+
+    String classname = prefix.substring(0, lastDotPos);
+    String opname = prefix.substring(lastDotPos + 1);
+    assert opname.equals("<set>") : "expecting <set>, saw " + opname;
+    assert (closeParPos > 0) : "no closing parentheses found.";
+
+    String fieldname = descr.substring(openParPos + 1, closeParPos);
+
+    AccessibleField accessibleField = FieldParser.parse(descr, classname, fieldname);
+    GeneralType classType = accessibleField.getDeclaringType();
+    GeneralType fieldType;
+    try {
+      fieldType = GeneralType.forType(accessibleField.getRawField().getGenericType());
+    } catch (RandoopTypeException e) {
+      String msg = errorPrefix + " type error: " + e;
+      throw new OperationParseException(msg);
+    }
+
+    if (accessibleField.isFinal()) {
+      throw new OperationParseException("Cannot create setter for final field " + classname + "." + opname);
+    }
+    List<GeneralType> setInputTypeList = new ArrayList<>();
+    if (! accessibleField.isStatic()) {
+      setInputTypeList.add(classType);
+    }
+    setInputTypeList.add(fieldType);
+    manager.createTypedOperation(new FieldSet(accessibleField), classType, new GenericTypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
   }
 
   @Override
   public String toString() {
-    return toParseableString();
+    return field.toString();
+  }
+
+  @Override
+  public String getName() {
+    return "<set>(" + field.getName() + ")";
   }
 
   @Override
@@ -177,45 +216,6 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
   @Override
   public int hashCode() {
     return field.hashCode();
-  }
-
-  /**
-   * Parses a description of a field setter in the given string. A setter
-   * description has the form "&lt;set&gt;( field-descriptor )" where
-   * "&lt;set&gt;" is literally what is expected.
-   *
-   * @param descr
-   *          string containing descriptor of field setter.
-   * @return {@code FieldSetter} object corresponding to setter descriptor.
-   * @throws OperationParseException
-   *           if descr does not have expected form.
-   * @see FieldParser#parse(String)
-   */
-  public static FieldSet parse(String descr) throws OperationParseException {
-    int parPos = descr.indexOf('(');
-    String errorPrefix = "Error parsing " + descr + " as description for field getter statement: ";
-    if (parPos < 0) {
-      String msg = errorPrefix + " expecting parentheses.";
-      throw new OperationParseException(msg);
-    }
-    String prefix = descr.substring(0, parPos);
-    if (!prefix.equals("<set>")) {
-      String msg = errorPrefix + " expecting <set>( <field-descriptor> ).";
-      throw new OperationParseException(msg);
-    }
-    int lastParPos = descr.lastIndexOf(')');
-    if (lastParPos < 0) {
-      String msg = errorPrefix + " no closing parentheses found.";
-      throw new OperationParseException(msg);
-    }
-    String fieldDescriptor = descr.substring(parPos + 1, lastParPos);
-    AccessibleField pf = (new FieldParser()).parse(fieldDescriptor);
-    return new FieldSet(pf);
-  }
-
-  @Override
-  public Class<?> getDeclaringClass() {
-    return field.getDeclaringClass();
   }
 
   @Override
@@ -244,4 +244,5 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
   public boolean satisfies(ReflectionPredicate predicate) {
     return field.satisfies(predicate);
   }
+
 }

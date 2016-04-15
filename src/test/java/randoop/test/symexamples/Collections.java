@@ -303,42 +303,42 @@ public class Collections {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         indexList.add(2);
         methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(4);
         methodToIndices.put(" Object min(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         indexList.add(7);
         methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(8);
         indexList.add(9);
         methodToIndices.put(" Object max(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(10);
         indexList.add(11);
         indexList.add(12);
         methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(13);
         indexList.add(14);
         indexList.add(15);
@@ -350,7 +350,7 @@ public class Collections {
         methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(21);
         indexList.add(22);
         indexList.add(23);
@@ -364,7 +364,7 @@ public class Collections {
         methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
       }
@@ -400,42 +400,42 @@ public class Collections {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         indexList.add(2);
         methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(4);
         methodToIndices.put(" Object min(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         indexList.add(7);
         methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(8);
         indexList.add(9);
         methodToIndices.put(" Object max(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(10);
         indexList.add(11);
         indexList.add(12);
         methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(13);
         indexList.add(14);
         indexList.add(15);
@@ -447,7 +447,7 @@ public class Collections {
         methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(21);
         indexList.add(22);
         indexList.add(23);
@@ -461,7 +461,7 @@ public class Collections {
         methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
       }
@@ -513,42 +513,42 @@ public class Collections {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         indexList.add(2);
         methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(4);
         methodToIndices.put(" Object min(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         indexList.add(7);
         methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(8);
         indexList.add(9);
         methodToIndices.put(" Object max(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(10);
         indexList.add(11);
         indexList.add(12);
         methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(13);
         indexList.add(14);
         indexList.add(15);
@@ -560,7 +560,7 @@ public class Collections {
         methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(21);
         indexList.add(22);
         indexList.add(23);
@@ -574,7 +574,7 @@ public class Collections {
         methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
       }
@@ -694,42 +694,42 @@ public class Collections {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         indexList.add(2);
         methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(4);
         methodToIndices.put(" Object min(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         indexList.add(7);
         methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(8);
         indexList.add(9);
         methodToIndices.put(" Object max(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(10);
         indexList.add(11);
         indexList.add(12);
         methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(13);
         indexList.add(14);
         indexList.add(15);
@@ -741,7 +741,7 @@ public class Collections {
         methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(21);
         indexList.add(22);
         indexList.add(23);
@@ -755,7 +755,7 @@ public class Collections {
         methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
       }
@@ -783,42 +783,42 @@ public class Collections {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         indexList.add(2);
         methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(4);
         methodToIndices.put(" Object min(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         indexList.add(7);
         methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(8);
         indexList.add(9);
         methodToIndices.put(" Object max(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(10);
         indexList.add(11);
         indexList.add(12);
         methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(13);
         indexList.add(14);
         indexList.add(15);
@@ -830,7 +830,7 @@ public class Collections {
         methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(21);
         indexList.add(22);
         indexList.add(23);
@@ -844,7 +844,7 @@ public class Collections {
         methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
       }
@@ -1073,42 +1073,42 @@ public class Collections {
 
         static {
           java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-              new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+                  new java.util.LinkedHashMap<>();
           {
-            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
             indexList.add(0);
             indexList.add(1);
             indexList.add(2);
             methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
           }
           {
-            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
             indexList.add(3);
             indexList.add(4);
             methodToIndices.put(" Object min(Collection coll) ", indexList);
           }
           {
-            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
             indexList.add(5);
             indexList.add(6);
             indexList.add(7);
             methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
           }
           {
-            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
             indexList.add(8);
             indexList.add(9);
             methodToIndices.put(" Object max(Collection coll) ", indexList);
           }
           {
-            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
             indexList.add(10);
             indexList.add(11);
             indexList.add(12);
             methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
           }
           {
-            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
             indexList.add(13);
             indexList.add(14);
             indexList.add(15);
@@ -1120,7 +1120,7 @@ public class Collections {
             methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
           }
           {
-            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
             indexList.add(21);
             indexList.add(22);
             indexList.add(23);
@@ -1134,55 +1134,55 @@ public class Collections {
             methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
           }
           {
-            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
             indexList.add(0);
             methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
           }
           {
-            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
             indexList.add(0);
             methodToIndices.put(" UnmodifiableMap (Map m) ", indexList);
           }
           {
-            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
             indexList.add(1);
             methodToIndices.put(" Set keySet() ", indexList);
           }
           {
-            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
             indexList.add(2);
             methodToIndices.put(" Set entrySet() ", indexList);
           }
           {
-            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
             indexList.add(3);
             methodToIndices.put(" Collection values() ", indexList);
           }
           {
-            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
             indexList.add(0);
             methodToIndices.put(" Object[] toArray() ", indexList);
           }
           {
-            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
             indexList.add(1);
             indexList.add(2);
             indexList.add(3);
             methodToIndices.put(" Object[] toArray(Object a[]) ", indexList);
           }
           {
-            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
             indexList.add(4);
             methodToIndices.put(" boolean contains(Object o) ", indexList);
           }
           {
-            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
             indexList.add(5);
             indexList.add(6);
             methodToIndices.put(" boolean containsAll(Collection coll) ", indexList);
           }
           {
-            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+            java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
             indexList.add(7);
             indexList.add(8);
             indexList.add(9);
@@ -1197,42 +1197,42 @@ public class Collections {
 
       static {
         java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-            new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+                new java.util.LinkedHashMap<>();
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(0);
           indexList.add(1);
           indexList.add(2);
           methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(3);
           indexList.add(4);
           methodToIndices.put(" Object min(Collection coll) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(5);
           indexList.add(6);
           indexList.add(7);
           methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(8);
           indexList.add(9);
           methodToIndices.put(" Object max(Collection coll) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(10);
           indexList.add(11);
           indexList.add(12);
           methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(13);
           indexList.add(14);
           indexList.add(15);
@@ -1244,7 +1244,7 @@ public class Collections {
           methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(21);
           indexList.add(22);
           indexList.add(23);
@@ -1258,55 +1258,55 @@ public class Collections {
           methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(0);
           methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(0);
           methodToIndices.put(" UnmodifiableMap (Map m) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(1);
           methodToIndices.put(" Set keySet() ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(2);
           methodToIndices.put(" Set entrySet() ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(3);
           methodToIndices.put(" Collection values() ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(0);
           methodToIndices.put(" Object[] toArray() ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(1);
           indexList.add(2);
           indexList.add(3);
           methodToIndices.put(" Object[] toArray(Object a[]) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(4);
           methodToIndices.put(" boolean contains(Object o) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(5);
           indexList.add(6);
           methodToIndices.put(" boolean containsAll(Collection coll) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(7);
           indexList.add(8);
           indexList.add(9);
@@ -1321,42 +1321,42 @@ public class Collections {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         indexList.add(2);
         methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(4);
         methodToIndices.put(" Object min(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         indexList.add(7);
         methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(8);
         indexList.add(9);
         methodToIndices.put(" Object max(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(10);
         indexList.add(11);
         indexList.add(12);
         methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(13);
         indexList.add(14);
         indexList.add(15);
@@ -1368,7 +1368,7 @@ public class Collections {
         methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(21);
         indexList.add(22);
         indexList.add(23);
@@ -1382,55 +1382,55 @@ public class Collections {
         methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableMap (Map m) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         methodToIndices.put(" Set keySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(2);
         methodToIndices.put(" Set entrySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         methodToIndices.put(" Collection values() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" Object[] toArray() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         indexList.add(2);
         indexList.add(3);
         methodToIndices.put(" Object[] toArray(Object a[]) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(4);
         methodToIndices.put(" boolean contains(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         methodToIndices.put(" boolean containsAll(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(7);
         indexList.add(8);
         indexList.add(9);
@@ -1485,42 +1485,42 @@ public class Collections {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         indexList.add(2);
         methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(4);
         methodToIndices.put(" Object min(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         indexList.add(7);
         methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(8);
         indexList.add(9);
         methodToIndices.put(" Object max(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(10);
         indexList.add(11);
         indexList.add(12);
         methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(13);
         indexList.add(14);
         indexList.add(15);
@@ -1532,7 +1532,7 @@ public class Collections {
         methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(21);
         indexList.add(22);
         indexList.add(23);
@@ -1546,55 +1546,55 @@ public class Collections {
         methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableMap (Map m) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         methodToIndices.put(" Set keySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(2);
         methodToIndices.put(" Set entrySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         methodToIndices.put(" Collection values() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" Object[] toArray() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         indexList.add(2);
         indexList.add(3);
         methodToIndices.put(" Object[] toArray(Object a[]) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(4);
         methodToIndices.put(" boolean contains(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         methodToIndices.put(" boolean containsAll(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(7);
         indexList.add(8);
         indexList.add(9);
@@ -1719,42 +1719,42 @@ public class Collections {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         indexList.add(2);
         methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(4);
         methodToIndices.put(" Object min(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         indexList.add(7);
         methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(8);
         indexList.add(9);
         methodToIndices.put(" Object max(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(10);
         indexList.add(11);
         indexList.add(12);
         methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(13);
         indexList.add(14);
         indexList.add(15);
@@ -1766,7 +1766,7 @@ public class Collections {
         methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(21);
         indexList.add(22);
         indexList.add(23);
@@ -1780,55 +1780,55 @@ public class Collections {
         methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableMap (Map m) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         methodToIndices.put(" Set keySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(2);
         methodToIndices.put(" Set entrySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         methodToIndices.put(" Collection values() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" Object[] toArray() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         indexList.add(2);
         indexList.add(3);
         methodToIndices.put(" Object[] toArray(Object a[]) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(4);
         methodToIndices.put(" boolean contains(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         methodToIndices.put(" boolean containsAll(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(7);
         indexList.add(8);
         indexList.add(9);
@@ -1836,7 +1836,7 @@ public class Collections {
         methodToIndices.put(" boolean equals(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" SynchronizedCollection (Collection c) ", indexList);
       }
@@ -1884,42 +1884,42 @@ public class Collections {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         indexList.add(2);
         methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(4);
         methodToIndices.put(" Object min(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         indexList.add(7);
         methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(8);
         indexList.add(9);
         methodToIndices.put(" Object max(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(10);
         indexList.add(11);
         indexList.add(12);
         methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(13);
         indexList.add(14);
         indexList.add(15);
@@ -1931,7 +1931,7 @@ public class Collections {
         methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(21);
         indexList.add(22);
         indexList.add(23);
@@ -1945,55 +1945,55 @@ public class Collections {
         methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableMap (Map m) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         methodToIndices.put(" Set keySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(2);
         methodToIndices.put(" Set entrySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         methodToIndices.put(" Collection values() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" Object[] toArray() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         indexList.add(2);
         indexList.add(3);
         methodToIndices.put(" Object[] toArray(Object a[]) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(4);
         methodToIndices.put(" boolean contains(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         methodToIndices.put(" boolean containsAll(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(7);
         indexList.add(8);
         indexList.add(9);
@@ -2001,7 +2001,7 @@ public class Collections {
         methodToIndices.put(" boolean equals(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" SynchronizedCollection (Collection c) ", indexList);
       }
@@ -2070,42 +2070,42 @@ public class Collections {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         indexList.add(2);
         methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(4);
         methodToIndices.put(" Object min(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         indexList.add(7);
         methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(8);
         indexList.add(9);
         methodToIndices.put(" Object max(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(10);
         indexList.add(11);
         indexList.add(12);
         methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(13);
         indexList.add(14);
         indexList.add(15);
@@ -2117,7 +2117,7 @@ public class Collections {
         methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(21);
         indexList.add(22);
         indexList.add(23);
@@ -2131,55 +2131,55 @@ public class Collections {
         methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableMap (Map m) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         methodToIndices.put(" Set keySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(2);
         methodToIndices.put(" Set entrySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         methodToIndices.put(" Collection values() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" Object[] toArray() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         indexList.add(2);
         indexList.add(3);
         methodToIndices.put(" Object[] toArray(Object a[]) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(4);
         methodToIndices.put(" boolean contains(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         methodToIndices.put(" boolean containsAll(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(7);
         indexList.add(8);
         indexList.add(9);
@@ -2187,7 +2187,7 @@ public class Collections {
         methodToIndices.put(" boolean equals(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" SynchronizedCollection (Collection c) ", indexList);
       }
@@ -2300,42 +2300,42 @@ public class Collections {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         indexList.add(2);
         methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(4);
         methodToIndices.put(" Object min(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         indexList.add(7);
         methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(8);
         indexList.add(9);
         methodToIndices.put(" Object max(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(10);
         indexList.add(11);
         indexList.add(12);
         methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(13);
         indexList.add(14);
         indexList.add(15);
@@ -2347,7 +2347,7 @@ public class Collections {
         methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(21);
         indexList.add(22);
         indexList.add(23);
@@ -2361,55 +2361,55 @@ public class Collections {
         methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableMap (Map m) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         methodToIndices.put(" Set keySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(2);
         methodToIndices.put(" Set entrySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         methodToIndices.put(" Collection values() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" Object[] toArray() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         indexList.add(2);
         indexList.add(3);
         methodToIndices.put(" Object[] toArray(Object a[]) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(4);
         methodToIndices.put(" boolean contains(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         methodToIndices.put(" boolean containsAll(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(7);
         indexList.add(8);
         indexList.add(9);
@@ -2417,7 +2417,7 @@ public class Collections {
         methodToIndices.put(" boolean equals(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" SynchronizedCollection (Collection c) ", indexList);
       }
@@ -2451,42 +2451,42 @@ public class Collections {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         indexList.add(2);
         methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(4);
         methodToIndices.put(" Object min(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         indexList.add(7);
         methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(8);
         indexList.add(9);
         methodToIndices.put(" Object max(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(10);
         indexList.add(11);
         indexList.add(12);
         methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(13);
         indexList.add(14);
         indexList.add(15);
@@ -2498,7 +2498,7 @@ public class Collections {
         methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(21);
         indexList.add(22);
         indexList.add(23);
@@ -2512,55 +2512,55 @@ public class Collections {
         methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableMap (Map m) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         methodToIndices.put(" Set keySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(2);
         methodToIndices.put(" Set entrySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         methodToIndices.put(" Collection values() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" Object[] toArray() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         indexList.add(2);
         indexList.add(3);
         methodToIndices.put(" Object[] toArray(Object a[]) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(4);
         methodToIndices.put(" boolean contains(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         methodToIndices.put(" boolean containsAll(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(7);
         indexList.add(8);
         indexList.add(9);
@@ -2568,7 +2568,7 @@ public class Collections {
         methodToIndices.put(" boolean equals(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" SynchronizedCollection (Collection c) ", indexList);
       }
@@ -2711,42 +2711,42 @@ public class Collections {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         indexList.add(2);
         methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(4);
         methodToIndices.put(" Object min(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         indexList.add(7);
         methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(8);
         indexList.add(9);
         methodToIndices.put(" Object max(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(10);
         indexList.add(11);
         indexList.add(12);
         methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(13);
         indexList.add(14);
         indexList.add(15);
@@ -2758,7 +2758,7 @@ public class Collections {
         methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(21);
         indexList.add(22);
         indexList.add(23);
@@ -2772,55 +2772,55 @@ public class Collections {
         methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableMap (Map m) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         methodToIndices.put(" Set keySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(2);
         methodToIndices.put(" Set entrySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         methodToIndices.put(" Collection values() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" Object[] toArray() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         indexList.add(2);
         indexList.add(3);
         methodToIndices.put(" Object[] toArray(Object a[]) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(4);
         methodToIndices.put(" boolean contains(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         methodToIndices.put(" boolean containsAll(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(7);
         indexList.add(8);
         indexList.add(9);
@@ -2828,12 +2828,12 @@ public class Collections {
         methodToIndices.put(" boolean equals(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" SynchronizedCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" SynchronizedMap (Map m) ", indexList);
       }
@@ -2902,42 +2902,42 @@ public class Collections {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         indexList.add(2);
         methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(4);
         methodToIndices.put(" Object min(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         indexList.add(7);
         methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(8);
         indexList.add(9);
         methodToIndices.put(" Object max(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(10);
         indexList.add(11);
         indexList.add(12);
         methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(13);
         indexList.add(14);
         indexList.add(15);
@@ -2949,7 +2949,7 @@ public class Collections {
         methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(21);
         indexList.add(22);
         indexList.add(23);
@@ -2963,55 +2963,55 @@ public class Collections {
         methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableMap (Map m) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         methodToIndices.put(" Set keySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(2);
         methodToIndices.put(" Set entrySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         methodToIndices.put(" Collection values() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" Object[] toArray() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         indexList.add(2);
         indexList.add(3);
         methodToIndices.put(" Object[] toArray(Object a[]) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(4);
         methodToIndices.put(" boolean contains(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         methodToIndices.put(" boolean containsAll(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(7);
         indexList.add(8);
         indexList.add(9);
@@ -3019,12 +3019,12 @@ public class Collections {
         methodToIndices.put(" boolean equals(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" SynchronizedCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" SynchronizedMap (Map m) ", indexList);
       }
@@ -3072,42 +3072,42 @@ public class Collections {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         indexList.add(2);
         methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(4);
         methodToIndices.put(" Object min(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         indexList.add(7);
         methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(8);
         indexList.add(9);
         methodToIndices.put(" Object max(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(10);
         indexList.add(11);
         indexList.add(12);
         methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(13);
         indexList.add(14);
         indexList.add(15);
@@ -3119,7 +3119,7 @@ public class Collections {
         methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(21);
         indexList.add(22);
         indexList.add(23);
@@ -3133,55 +3133,55 @@ public class Collections {
         methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableMap (Map m) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         methodToIndices.put(" Set keySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(2);
         methodToIndices.put(" Set entrySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         methodToIndices.put(" Collection values() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" Object[] toArray() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         indexList.add(2);
         indexList.add(3);
         methodToIndices.put(" Object[] toArray(Object a[]) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(4);
         methodToIndices.put(" boolean contains(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         methodToIndices.put(" boolean containsAll(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(7);
         indexList.add(8);
         indexList.add(9);
@@ -3189,12 +3189,12 @@ public class Collections {
         methodToIndices.put(" boolean equals(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" SynchronizedCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" SynchronizedMap (Map m) ", indexList);
       }
@@ -3230,42 +3230,42 @@ public class Collections {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         indexList.add(2);
         methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(4);
         methodToIndices.put(" Object min(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         indexList.add(7);
         methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(8);
         indexList.add(9);
         methodToIndices.put(" Object max(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(10);
         indexList.add(11);
         indexList.add(12);
         methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(13);
         indexList.add(14);
         indexList.add(15);
@@ -3277,7 +3277,7 @@ public class Collections {
         methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(21);
         indexList.add(22);
         indexList.add(23);
@@ -3291,55 +3291,55 @@ public class Collections {
         methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableMap (Map m) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         methodToIndices.put(" Set keySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(2);
         methodToIndices.put(" Set entrySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         methodToIndices.put(" Collection values() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" Object[] toArray() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         indexList.add(2);
         indexList.add(3);
         methodToIndices.put(" Object[] toArray(Object a[]) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(4);
         methodToIndices.put(" boolean contains(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         methodToIndices.put(" boolean containsAll(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(7);
         indexList.add(8);
         indexList.add(9);
@@ -3347,12 +3347,12 @@ public class Collections {
         methodToIndices.put(" boolean equals(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" SynchronizedCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" SynchronizedMap (Map m) ", indexList);
       }
@@ -3423,42 +3423,42 @@ public class Collections {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         indexList.add(2);
         methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(4);
         methodToIndices.put(" Object min(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         indexList.add(7);
         methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(8);
         indexList.add(9);
         methodToIndices.put(" Object max(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(10);
         indexList.add(11);
         indexList.add(12);
         methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(13);
         indexList.add(14);
         indexList.add(15);
@@ -3470,7 +3470,7 @@ public class Collections {
         methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(21);
         indexList.add(22);
         indexList.add(23);
@@ -3484,55 +3484,55 @@ public class Collections {
         methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableMap (Map m) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         methodToIndices.put(" Set keySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(2);
         methodToIndices.put(" Set entrySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         methodToIndices.put(" Collection values() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" Object[] toArray() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         indexList.add(2);
         indexList.add(3);
         methodToIndices.put(" Object[] toArray(Object a[]) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(4);
         methodToIndices.put(" boolean contains(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         methodToIndices.put(" boolean containsAll(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(7);
         indexList.add(8);
         indexList.add(9);
@@ -3540,12 +3540,12 @@ public class Collections {
         methodToIndices.put(" boolean equals(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" SynchronizedCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" SynchronizedMap (Map m) ", indexList);
       }
@@ -3603,42 +3603,42 @@ public class Collections {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         indexList.add(2);
         methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(4);
         methodToIndices.put(" Object min(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         indexList.add(7);
         methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(8);
         indexList.add(9);
         methodToIndices.put(" Object max(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(10);
         indexList.add(11);
         indexList.add(12);
         methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(13);
         indexList.add(14);
         indexList.add(15);
@@ -3650,7 +3650,7 @@ public class Collections {
         methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(21);
         indexList.add(22);
         indexList.add(23);
@@ -3664,55 +3664,55 @@ public class Collections {
         methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableMap (Map m) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         methodToIndices.put(" Set keySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(2);
         methodToIndices.put(" Set entrySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         methodToIndices.put(" Collection values() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" Object[] toArray() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         indexList.add(2);
         indexList.add(3);
         methodToIndices.put(" Object[] toArray(Object a[]) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(4);
         methodToIndices.put(" boolean contains(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         methodToIndices.put(" boolean containsAll(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(7);
         indexList.add(8);
         indexList.add(9);
@@ -3720,12 +3720,12 @@ public class Collections {
         methodToIndices.put(" boolean equals(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" SynchronizedCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" SynchronizedMap (Map m) ", indexList);
       }
@@ -3768,42 +3768,42 @@ public class Collections {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         indexList.add(2);
         methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(4);
         methodToIndices.put(" Object min(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         indexList.add(7);
         methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(8);
         indexList.add(9);
         methodToIndices.put(" Object max(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(10);
         indexList.add(11);
         indexList.add(12);
         methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(13);
         indexList.add(14);
         indexList.add(15);
@@ -3815,7 +3815,7 @@ public class Collections {
         methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(21);
         indexList.add(22);
         indexList.add(23);
@@ -3829,55 +3829,55 @@ public class Collections {
         methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableMap (Map m) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         methodToIndices.put(" Set keySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(2);
         methodToIndices.put(" Set entrySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         methodToIndices.put(" Collection values() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" Object[] toArray() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         indexList.add(2);
         indexList.add(3);
         methodToIndices.put(" Object[] toArray(Object a[]) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(4);
         methodToIndices.put(" boolean contains(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         methodToIndices.put(" boolean containsAll(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(7);
         indexList.add(8);
         indexList.add(9);
@@ -3885,17 +3885,17 @@ public class Collections {
         methodToIndices.put(" boolean equals(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" SynchronizedCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" SynchronizedMap (Map m) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" Object get(int index) ", indexList);
       }
@@ -4017,42 +4017,42 @@ public class Collections {
 
       static {
         java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-            new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+                new java.util.LinkedHashMap<>();
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(0);
           indexList.add(1);
           indexList.add(2);
           methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(3);
           indexList.add(4);
           methodToIndices.put(" Object min(Collection coll) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(5);
           indexList.add(6);
           indexList.add(7);
           methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(8);
           indexList.add(9);
           methodToIndices.put(" Object max(Collection coll) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(10);
           indexList.add(11);
           indexList.add(12);
           methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(13);
           indexList.add(14);
           indexList.add(15);
@@ -4064,7 +4064,7 @@ public class Collections {
           methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(21);
           indexList.add(22);
           indexList.add(23);
@@ -4078,58 +4078,58 @@ public class Collections {
           methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(0);
           methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(0);
           methodToIndices.put(" UnmodifiableMap (Map m) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(1);
           indexList.add(0);
           methodToIndices.put(" Set keySet() ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(2);
           indexList.add(1);
           methodToIndices.put(" Set entrySet() ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(3);
           indexList.add(2);
           methodToIndices.put(" Collection values() ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(0);
           methodToIndices.put(" Object[] toArray() ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(1);
           indexList.add(2);
           indexList.add(3);
           methodToIndices.put(" Object[] toArray(Object a[]) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(4);
           methodToIndices.put(" boolean contains(Object o) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(5);
           indexList.add(6);
           methodToIndices.put(" boolean containsAll(Collection coll) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(7);
           indexList.add(8);
           indexList.add(9);
@@ -4137,17 +4137,17 @@ public class Collections {
           methodToIndices.put(" boolean equals(Object o) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(0);
           methodToIndices.put(" SynchronizedCollection (Collection c) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(0);
           methodToIndices.put(" SynchronizedMap (Map m) ", indexList);
         }
         {
-          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+          java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
           indexList.add(0);
           methodToIndices.put(" Object get(int index) ", indexList);
         }
@@ -4159,42 +4159,42 @@ public class Collections {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         indexList.add(2);
         methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(4);
         methodToIndices.put(" Object min(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         indexList.add(7);
         methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(8);
         indexList.add(9);
         methodToIndices.put(" Object max(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(10);
         indexList.add(11);
         indexList.add(12);
         methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(13);
         indexList.add(14);
         indexList.add(15);
@@ -4206,7 +4206,7 @@ public class Collections {
         methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(21);
         indexList.add(22);
         indexList.add(23);
@@ -4220,58 +4220,58 @@ public class Collections {
         methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableMap (Map m) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         indexList.add(0);
         methodToIndices.put(" Set keySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(2);
         indexList.add(1);
         methodToIndices.put(" Set entrySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(2);
         methodToIndices.put(" Collection values() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" Object[] toArray() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         indexList.add(2);
         indexList.add(3);
         methodToIndices.put(" Object[] toArray(Object a[]) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(4);
         methodToIndices.put(" boolean contains(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         methodToIndices.put(" boolean containsAll(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(7);
         indexList.add(8);
         indexList.add(9);
@@ -4279,17 +4279,17 @@ public class Collections {
         methodToIndices.put(" boolean equals(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" SynchronizedCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" SynchronizedMap (Map m) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" Object get(int index) ", indexList);
       }
@@ -4338,42 +4338,42 @@ public class Collections {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-          new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+              new java.util.LinkedHashMap<>();
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         indexList.add(2);
         methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(4);
         methodToIndices.put(" Object min(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         indexList.add(7);
         methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(8);
         indexList.add(9);
         methodToIndices.put(" Object max(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(10);
         indexList.add(11);
         indexList.add(12);
         methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(13);
         indexList.add(14);
         indexList.add(15);
@@ -4385,7 +4385,7 @@ public class Collections {
         methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(21);
         indexList.add(22);
         indexList.add(23);
@@ -4399,58 +4399,58 @@ public class Collections {
         methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" UnmodifiableMap (Map m) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         indexList.add(0);
         methodToIndices.put(" Set keySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(2);
         indexList.add(1);
         methodToIndices.put(" Set entrySet() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(3);
         indexList.add(2);
         methodToIndices.put(" Collection values() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" Object[] toArray() ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(1);
         indexList.add(2);
         indexList.add(3);
         methodToIndices.put(" Object[] toArray(Object a[]) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(4);
         methodToIndices.put(" boolean contains(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(5);
         indexList.add(6);
         methodToIndices.put(" boolean containsAll(Collection coll) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(7);
         indexList.add(8);
         indexList.add(9);
@@ -4458,23 +4458,23 @@ public class Collections {
         methodToIndices.put(" boolean equals(Object o) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" SynchronizedCollection (Collection c) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" SynchronizedMap (Map m) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         indexList.add(1);
         methodToIndices.put(" Object get(int index) ", indexList);
       }
       {
-        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+        java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
         methodToIndices.put(" CopiesList (int n, Object o) ", indexList);
       }
@@ -4511,42 +4511,42 @@ public class Collections {
 
   static {
     java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-        new java.util.LinkedHashMap<String, java.util.Set<Integer>>();
+            new java.util.LinkedHashMap<>();
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(0);
       indexList.add(1);
       indexList.add(2);
       methodToIndices.put(" Object get(ListIterator i, int index) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(3);
       indexList.add(4);
       methodToIndices.put(" Object min(Collection coll) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(5);
       indexList.add(6);
       indexList.add(7);
       methodToIndices.put(" Object min(Collection coll, Comparator comp) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(8);
       indexList.add(9);
       methodToIndices.put(" Object max(Collection coll) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(10);
       indexList.add(11);
       indexList.add(12);
       methodToIndices.put(" Object max(Collection coll, Comparator comp) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(13);
       indexList.add(14);
       indexList.add(15);
@@ -4558,7 +4558,7 @@ public class Collections {
       methodToIndices.put(" int indexOfSubList(List source, List target) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(21);
       indexList.add(22);
       indexList.add(23);
@@ -4572,58 +4572,58 @@ public class Collections {
       methodToIndices.put(" int lastIndexOfSubList(List source, List target) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(0);
       methodToIndices.put(" UnmodifiableCollection (Collection c) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(0);
       methodToIndices.put(" UnmodifiableMap (Map m) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(1);
       indexList.add(0);
       methodToIndices.put(" Set keySet() ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(2);
       indexList.add(1);
       methodToIndices.put(" Set entrySet() ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(3);
       indexList.add(2);
       methodToIndices.put(" Collection values() ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(0);
       methodToIndices.put(" Object[] toArray() ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(1);
       indexList.add(2);
       indexList.add(3);
       methodToIndices.put(" Object[] toArray(Object a[]) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(4);
       methodToIndices.put(" boolean contains(Object o) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(5);
       indexList.add(6);
       methodToIndices.put(" boolean containsAll(Collection coll) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(7);
       indexList.add(8);
       indexList.add(9);
@@ -4631,28 +4631,28 @@ public class Collections {
       methodToIndices.put(" boolean equals(Object o) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(0);
       methodToIndices.put(" SynchronizedCollection (Collection c) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(0);
       methodToIndices.put(" SynchronizedMap (Map m) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(0);
       indexList.add(1);
       methodToIndices.put(" Object get(int index) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(0);
       methodToIndices.put(" CopiesList (int n, Object o) ", indexList);
     }
     {
-      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<Integer>();
+      java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(31);
       methodToIndices.put(" ArrayList list(Enumeration e) ", indexList);
     }

@@ -3,7 +3,7 @@ package randoop.main;
 import java.util.ArrayList;
 import java.util.List;
 
-import randoop.sequence.AbstractGenerator;
+import randoop.generation.AbstractGenerator;
 
 /**
  * Main entry point for Randoop. Asks the command handlers who can handle the
@@ -15,7 +15,7 @@ public class Main {
   public static List<CommandHandler> handlers;
 
   static {
-    handlers = new ArrayList<CommandHandler>();
+    handlers = new ArrayList<>();
     handlers.add(new GenTests());
     handlers.add(new Help());
   }
@@ -39,7 +39,7 @@ public class Main {
 
     // Figure out which handler handles this command.
     CommandHandler handler = null;
-    List<CommandHandler> allHandlers = new ArrayList<CommandHandler>();
+    List<CommandHandler> allHandlers = new ArrayList<>();
     allHandlers.addAll(handlers);
     for (CommandHandler h : allHandlers) {
       if (h.handles(command)) {

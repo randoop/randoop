@@ -1,51 +1,85 @@
 package randoop.test;
 
+import org.junit.Test;
+
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import randoop.BugInRandoopException;
-import randoop.ComponentManager;
-import randoop.SeedSequences;
+import randoop.contract.ObjectContract;
+import randoop.generation.ComponentManager;
+import randoop.generation.ForwardGenerator;
+import randoop.generation.SeedSequences;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
+import randoop.operation.ConcreteOperation;
 import randoop.operation.ConstructorCall;
-import randoop.operation.Operation;
+import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.ModelCollections;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
+import randoop.reflection.ReflectionManager;
+import randoop.reflection.TypedOperationManager;
 import randoop.sequence.ExecutableSequence;
-import randoop.sequence.ForwardGenerator;
 import randoop.sequence.Sequence;
+import randoop.sequence.Variable;
 import randoop.test.bh.BH;
 import randoop.test.bh.Body;
 import randoop.test.bh.Cell;
 import randoop.test.bh.MathVector;
 import randoop.test.bh.Node;
 import randoop.test.bh.Tree;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
+import randoop.types.ConcreteTypes;
+import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.Predicate;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static randoop.main.GenInputsAbstract.include_if_classname_appears;
 
-public class ForwardExplorerTests extends TestCase {
+public class ForwardExplorerTests {
 
-  public static void test1() {
-
-    Set<Class<?>> classes = new LinkedHashSet<>();
+  @Test
+  public void test1() {
+    List<Class<?>> classes = new ArrayList<>();
     classes.add(Long.class);
-    List<Operation> model = OperationExtractor.getOperations(classes, null);
+
+    final List<ConcreteOperation> model = getConcreteOperations(classes);
+
     assertTrue("model not empty", model.size() != 0);
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator explorer =
-        new ForwardGenerator(model, Long.MAX_VALUE, 5000, 5000, mgr, null, null);
-    explorer.addTestCheckGenerator(createChecker(classes));
+        new ForwardGenerator(model, new LinkedHashSet<ConcreteOperation>(), Long.MAX_VALUE, 5000, 5000, mgr, null, null);
+    explorer.addTestCheckGenerator(createChecker(new LinkedHashSet<ObjectContract>()));
     explorer.addTestPredicate(createOutputTest());
     explorer.explore();
     GenInputsAbstract.dontexecute = false;
-    assertTrue(explorer.allSequences.size() != 0);
+    assertTrue(explorer.numGeneratedSequences() != 0);
   }
 
+  private static List<ConcreteOperation> getConcreteOperations(List<Class<?>> classes) {
+    final List<ConcreteOperation> model = new ArrayList<>();
+    TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
+      @Override
+      public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
+        model.add(operation);
+      }
+    });
+    ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
+    mgr.add(new OperationExtractor(operationManager, new DefaultReflectionPredicate()));
+    for (Class<?> c: classes) {
+      mgr.apply(c);
+    }
+    return model;
+  }
+
+  @Test
   public void test2() throws Throwable {
     boolean bisort = false;
     boolean bimerge = false;
@@ -54,7 +88,7 @@ public class ForwardExplorerTests extends TestCase {
     boolean swapright = false;
     boolean random = false;
 
-    Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
+    List<Class<?>> classes = new ArrayList<>();
     classes.add(randoop.test.BiSortVal.class);
     classes.add(BiSort.class);
     //GenFailures.noprogressdisplay = true;
@@ -62,11 +96,11 @@ public class ForwardExplorerTests extends TestCase {
     int oldTimeout = ReflectionExecutor.timeout;
     ReflectionExecutor.timeout = 200;
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
-    List<Operation> model = OperationExtractor.getOperations(classes, null);
+    final List<ConcreteOperation> model = getConcreteOperations(classes);
     assertTrue("model should not be empty", model.size() != 0);
     GenInputsAbstract.ignore_flaky_tests = true;
-    ForwardGenerator exp = new ForwardGenerator(model, Long.MAX_VALUE, 200, 200, mgr, null, null);
-    exp.addTestCheckGenerator(createChecker(classes));
+    ForwardGenerator exp = new ForwardGenerator(model, new LinkedHashSet<ConcreteOperation>(), Long.MAX_VALUE, 200, 200, mgr, null, null);
+    exp.addTestCheckGenerator(createChecker(new LinkedHashSet<ObjectContract>()));
     exp.addTestPredicate(createOutputTest());
     try {
       exp.explore();
@@ -92,6 +126,7 @@ public class ForwardExplorerTests extends TestCase {
     assertTrue(random);
   }
 
+  @Test
   public void test4() throws Exception {
 
     boolean bh = false;
@@ -101,7 +136,7 @@ public class ForwardExplorerTests extends TestCase {
     boolean node = false;
     boolean tree = false;
 
-    Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
+    List<Class<?>> classes = new ArrayList<>();
     classes.add(BH.class);
     classes.add(Body.class);
     classes.add(Cell.class);
@@ -112,11 +147,11 @@ public class ForwardExplorerTests extends TestCase {
     System.out.println(classes);
     GenInputsAbstract.ignore_flaky_tests = true;
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
-    List<Operation> model = OperationExtractor.getOperations(classes, null);
+    final List<ConcreteOperation> model = getConcreteOperations(classes);
     assertTrue("model should not be empty", model.size() != 0);
-    ForwardGenerator exp = new ForwardGenerator(model, Long.MAX_VALUE, 200, 200, mgr, null, null);
+    ForwardGenerator exp = new ForwardGenerator(model, new LinkedHashSet<ConcreteOperation>(), Long.MAX_VALUE, 200, 200, mgr, null, null);
     GenInputsAbstract.forbid_null = false;
-    exp.addTestCheckGenerator(createChecker(classes));
+    exp.addTestCheckGenerator(createChecker(new LinkedHashSet<ObjectContract>()));
     exp.addTestPredicate(createOutputTest());
     try {
       exp.explore();
@@ -140,18 +175,22 @@ public class ForwardExplorerTests extends TestCase {
     assertTrue(tree);
   }
 
-  private static TestCheckGenerator createChecker(Set<Class<?>> classes) {
-    return (new GenTests()).createTestCheckGenerator(new PublicVisibilityPredicate(), classes);
+  private static TestCheckGenerator createChecker(Set<ObjectContract> contracts) {
+    return (new GenTests()).createTestCheckGenerator(new PublicVisibilityPredicate(), contracts, new MultiMap<ConcreteType, ConcreteOperation>(), new LinkedHashSet<ConcreteOperation>());
   }
 
   private static Predicate<ExecutableSequence> createOutputTest() {
-    ConstructorCall objectConstructor = null;
+    Set<Sequence> sequences = new LinkedHashSet<>();
+    ConstructorCall objectConstructor;
     try {
-      objectConstructor = ConstructorCall.createConstructorCall(Object.class.getConstructor());
+      objectConstructor = new ConstructorCall(Object.class.getConstructor());
     } catch (Exception e) {
       throw new BugInRandoopException(e); // Should never reach here!
     }
+    ConcreteOperation op = new ConcreteOperation(objectConstructor, ConcreteTypes.OBJECT_TYPE, new ConcreteTypeTuple(), ConcreteTypes.OBJECT_TYPE);
+    sequences.add((new Sequence().extend(op, new ArrayList<Variable>())));
     return (new GenTests())
-        .createTestOutputPredicate(objectConstructor, new LinkedHashSet<Class<?>>());
+        .createTestOutputPredicate(
+            sequences, new LinkedHashSet<Class<?>>(), include_if_classname_appears);
   }
 }

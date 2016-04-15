@@ -4,8 +4,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
-import randoop.main.GenInputsAbstract;
-
 /**
  * This is used to wrap a constructor together with its parameters, ready for
  * execution. Can be run only once.
@@ -17,18 +15,10 @@ public final class ConstructorReflectionCode extends ReflectionCode {
   private Throwable exceptionThrown;
 
   public ConstructorReflectionCode(Constructor<?> constructor, Object[] inputs) {
-    if (constructor == null) throw new IllegalArgumentException("constrcutor is null");
+    if (constructor == null) throw new IllegalArgumentException("constructor is null");
     if (inputs == null) throw new IllegalArgumentException("inputs is null");
     this.constructor = constructor;
     this.inputs = inputs;
-    checkRep();
-  }
-
-  private void checkRep() {
-    if (!GenInputsAbstract.debug_checks) return;
-    String error =
-        Reflection.checkArgumentTypes(inputs, constructor.getParameterTypes(), constructor);
-    if (error != null) throw new IllegalArgumentException(error);
   }
 
   @Override

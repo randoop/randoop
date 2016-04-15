@@ -29,7 +29,7 @@ public class BinTree {
   //----
   private static void outputTestSequence(int number) {}
 
-  public static Set<String> tests = new HashSet<String>();
+  public static Set<String> tests = new HashSet<>();
 
   // private static Set abs_states = new HashSet();
 

@@ -11,7 +11,7 @@ public class CoinPurse {
   private TreeMap<Coin, Integer> purse;
 
   public CoinPurse() {
-    purse = new TreeMap<Coin, Integer>();
+    purse = new TreeMap<>();
   }
 
   public int value() {

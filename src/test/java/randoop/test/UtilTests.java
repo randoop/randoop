@@ -17,7 +17,7 @@ import randoop.util.Util;
 public class UtilTests extends TestCase {
 
   private <T> List<T> makeList(int length) {
-    List<T> result = new ArrayList<T>(length);
+    List<T> result = new ArrayList<>(length);
     for (int j = 0; j < length; j++) {
       result.add(null);
     }
@@ -60,7 +60,7 @@ public class UtilTests extends TestCase {
   }
 
   public void testGetRandomSetMemeber1() throws Exception {
-    Set<Integer> ints = new LinkedHashSet<Integer>(Arrays.asList(1, 3, 4));
+    Set<Integer> ints = new LinkedHashSet<>(Arrays.asList(1, 3, 4));
     Integer random = Randomness.randomSetMember(ints);
     assertTrue(random != null);
     assertTrue(ints.contains(random));
@@ -144,7 +144,7 @@ public class UtilTests extends TestCase {
   }
 
   public void testRemoveMatching1() {
-    List<String> lst = new ArrayList<String>(Arrays.asList("foo", "bar", "baz"));
+    List<String> lst = new ArrayList<>(Arrays.asList("foo", "bar", "baz"));
     List<String> expected = Arrays.asList("foo");
     assertEquals(expected, CollectionsExt.removeMatching("ba.", lst));
   }
@@ -247,7 +247,7 @@ public class UtilTests extends TestCase {
 
   public void testMap() throws Exception {
     List<Integer> ints = Arrays.asList(3, 4, 5);
-    Map<Integer, Integer> m = new LinkedHashMap<Integer, Integer>();
+    Map<Integer, Integer> m = new LinkedHashMap<>();
     m.put(3, 9);
     m.put(4, 16);
     m.put(5, 25);

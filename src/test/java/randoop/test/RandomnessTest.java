@@ -36,7 +36,7 @@ public class RandomnessTest extends TestCase {
     }
 
     // Create a list of weighted elements.
-    ArrayListSimpleList<WeightedElt> list = new ArrayListSimpleList<WeightedElt>();
+    ArrayListSimpleList<WeightedElt> list = new ArrayListSimpleList<>();
     int sumOfAllWeights = 0;
     for (int i = 1; i < 10; i++) {
       int weight = i;
@@ -44,7 +44,7 @@ public class RandomnessTest extends TestCase {
       sumOfAllWeights += weight;
     }
 
-    Map<Integer, Integer> weightToTimesSelected = new LinkedHashMap<Integer, Integer>();
+    Map<Integer, Integer> weightToTimesSelected = new LinkedHashMap<>();
     int totalSelections = 0;
 
     // Select lots of times.

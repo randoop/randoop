@@ -59,7 +59,7 @@ public final class ReflectionExecutor {
   }
 
   public static Throwable executeReflectionCode(ReflectionCode code, PrintStream out) {
-    Throwable ret = null;
+    Throwable ret;
 
     long start = System.nanoTime();
     if (usethreads) {
@@ -88,7 +88,7 @@ public final class ReflectionExecutor {
    * Executes code.runReflectionCode(). If no exception is thrown, returns null.
    * Otherwise, returns the exception thrown.
    *
-   * @param code
+   * @param code  the {@link ReflectionCode} to be executed
    * @param out
    *          stream to print message to or null if message is to be ignored.
    * @return null or the exception thrown

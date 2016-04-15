@@ -1,17 +1,23 @@
 package randoop.operation;
 
-import java.io.ObjectStreamException;
 import java.io.PrintStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.types.TypeNames;
+import randoop.types.ConcreteArrayType;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
+import randoop.types.GeneralType;
+import randoop.types.GeneralTypeTuple;
+import randoop.types.GenericTypeTuple;
+import randoop.types.RandoopTypeException;
 
 /**
  * ArrayCreation is an {@link Operation} representing the construction of a
@@ -29,51 +35,28 @@ import randoop.types.TypeNames;
  * <p>
  * ArrayCreation objects are immutable.
  */
-public final class ArrayCreation extends AbstractOperation implements Operation {
+public final class ArrayCreation extends CallableOperation {
 
   /** ID for parsing purposes (see StatementKinds.parse method) */
   public static final String ID = "array";
 
   // State variables.
   private final int length;
-  private final Class<?> elementType;
-
-  // Cached values (for improved performance). Their values
-  // are computed upon the first invocation of the respective
-  // getter method.
-  private List<Class<?>> inputTypesCached;
-
-  private Class<?> outputType;
-
-  private int hashCodeCached;
-  private boolean hashCodeComputed = false;
+  private final ConcreteType elementType;
 
   /**
    * Creates an object representing the construction of an array that holds
    * values of the element type and has the given length.
    *
-   * @param elementType
-   *          type of objects in the array
    * @param length
    *          number of objects allowed in the array
+   * @param arrayType  the type of array this operation creates
    */
-  public ArrayCreation(Class<?> elementType, int length) {
+  ArrayCreation(ConcreteArrayType arrayType, int length) {
+    assert length >= 0 : "array length may not be negative: " + length;
 
-    // Check legality of arguments.
-    if (elementType == null) throw new IllegalArgumentException("elementType cannot be null.");
-    if (length < 0) throw new IllegalArgumentException("arity cannot be less than zero: " + length);
-
-    // Set state variables.
-    this.elementType = elementType;
+    this.elementType = arrayType.getElementType();
     this.length = length;
-    this.outputType = Array.newInstance(elementType, 0).getClass();
-  }
-
-  /**
-   * @return the type of the elements held in the created array
-   */
-  public Class<?> getElementType() {
-    return this.elementType;
   }
 
   /**
@@ -83,21 +66,6 @@ public final class ArrayCreation extends AbstractOperation implements Operation 
    */
   public int getLength() {
     return this.length;
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * @return list of identical element types matching length of created array.
-   */
-  @Override
-  public List<Class<?>> getInputTypes() {
-    if (inputTypesCached == null) {
-      this.inputTypesCached = new ArrayList<Class<?>>(length);
-      for (int i = 0; i < length; i++) inputTypesCached.add(elementType);
-      inputTypesCached = Collections.unmodifiableList(inputTypesCached);
-    }
-    return Collections.unmodifiableList(this.inputTypesCached);
   }
 
   /**
@@ -113,7 +81,7 @@ public final class ArrayCreation extends AbstractOperation implements Operation 
     }
     long startTime = System.currentTimeMillis();
     assert statementInput.length == this.length;
-    Object theArray = Array.newInstance(this.elementType, this.length);
+    Object theArray = Array.newInstance(this.elementType.getRuntimeClass(), this.length);
     for (int i = 0; i < statementInput.length; i++) Array.set(theArray, i, statementInput[i]);
     long totalTime = System.currentTimeMillis() - startTime;
     return new NormalExecution(theArray, totalTime);
@@ -121,40 +89,22 @@ public final class ArrayCreation extends AbstractOperation implements Operation 
 
   @Override
   public String toString() {
-    return toParseableString();
-  }
-
-  public String toStringShort() {
-    return toString();
-  }
-
-  public String toStringVerbose() {
-    return toString();
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * @return type of created array.
-   */
-  @Override
-  public Class<?> getOutputType() {
-    return outputType;
+    return elementType.getName() + "[" + length + "]";
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public void appendCode(List<Variable> inputVars, StringBuilder b) {
+  public void appendCode(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType, List<Variable> inputVars, StringBuilder b) {
     if (inputVars.size() > length) {
       String msg = "Too many arguments:" + inputVars.size() + " capacity:" + length;
       throw new IllegalArgumentException(msg);
     }
 
-    String arrayTypeName = this.elementType.getCanonicalName();
+    String arrayTypeName = this.elementType.getName();
 
-    b.append("new " + arrayTypeName + "[] { ");
+    b.append("new ").append(arrayTypeName).append("[] { ");
     for (int i = 0; i < inputVars.size(); i++) {
       if (i > 0) b.append(", ");
 
@@ -178,12 +128,7 @@ public final class ArrayCreation extends AbstractOperation implements Operation 
 
   @Override
   public int hashCode() {
-    if (!hashCodeComputed) {
-      hashCodeComputed = true;
-      hashCodeCached = this.elementType.hashCode();
-      hashCodeCached += this.length * 17;
-    }
-    return hashCodeCached;
+    return Objects.hash(elementType, length);
   }
 
   @Override
@@ -191,9 +136,8 @@ public final class ArrayCreation extends AbstractOperation implements Operation 
     if (!(o instanceof ArrayCreation)) return false;
     if (this == o) return true;
     ArrayCreation otherArrayDecl = (ArrayCreation) o;
-    if (!this.elementType.equals(otherArrayDecl.elementType)) return false;
-    if (this.length != otherArrayDecl.length) return false;
-    return true;
+    return this.elementType.equals(otherArrayDecl.elementType)
+            && this.length == otherArrayDecl.length;
   }
 
   /**
@@ -205,41 +149,55 @@ public final class ArrayCreation extends AbstractOperation implements Operation 
    * @return string descriptor for array creation.
    */
   @Override
-  public String toParseableString() {
+  public String toParseableString(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
     return elementType.getName() + "[" + Integer.toString(length) + "]";
+  }
+
+  @Override
+  public String getName() {
+    return this.toString();
   }
 
   /**
    * Parses an array declaration in a string descriptor in the form generated by
-   * {@link ArrayCreation#toParseableString()}.
+   * {@link ArrayCreation#toParseableString(ConcreteType, ConcreteTypeTuple, ConcreteType)}.
    *
-   * @see OperationParser#parse(String)
+   * @see OperationParser#parse(String, randoop.reflection.TypedOperationManager)
    *
    * @param str
    *          the string to be parsed for the {@code ArrayCreation}.
-   * @return the {@code ArrayCreation} object for the string.
+   * @param manager
+   *          the {@link TypedOperationManager} to collect operations
    * @throws OperationParseException
    *           if string does not have expected form.
    */
-  public static Operation parse(String str) throws OperationParseException {
+  public static void parse(String str, TypedOperationManager manager) throws OperationParseException {
     int openBr = str.indexOf('[');
     int closeBr = str.indexOf(']');
-    String elementTypeStr = str.substring(0, openBr);
+    String elementTypeName = str.substring(0, openBr);
     String lengthStr = str.substring(openBr + 1, closeBr);
 
-    Class<?> elementType;
+    int length = Integer.parseInt(lengthStr);
+
+    GeneralType elementType;
     try {
-      elementType = TypeNames.getTypeForName(elementTypeStr);
+      elementType = GeneralType.forName(elementTypeName);
     } catch (ClassNotFoundException e) {
-      throw new OperationParseException("Type not found for array element type " + elementTypeStr);
+      throw new OperationParseException("Type not found for array element type " + elementTypeName);
+    } catch (RandoopTypeException e) {
+      throw new OperationParseException("Type error for array element type " + elementTypeName + ": " + e.getMessage());
     }
 
-    int length = Integer.parseInt(lengthStr);
-    return new ArrayCreation(elementType, length);
-  }
+    if (elementType.isGeneric()) {
+      throw new OperationParseException("Array element type may not be generic " + elementTypeName);
+    }
 
-  @Override
-  public Class<?> getDeclaringClass() {
-    return getOutputType();
+    List<GeneralType> paramTypes = new ArrayList<>();
+    for (int i = 0; i < length; i++) {
+      paramTypes.add(elementType);
+    }
+    GenericTypeTuple inputTypes = new GenericTypeTuple(paramTypes);
+    ConcreteArrayType arrayType = new ConcreteArrayType((ConcreteType) elementType);
+    manager.createTypedOperation(new ArrayCreation(arrayType, length), arrayType, inputTypes, arrayType);
   }
 }

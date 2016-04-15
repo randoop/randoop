@@ -1,5 +1,3 @@
 package randoop.types.test;
 
-public class Superclass<T> {
-
-}
+public class Superclass<T> {}

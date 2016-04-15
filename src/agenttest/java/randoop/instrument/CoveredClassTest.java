@@ -1,37 +1,43 @@
 package randoop.instrument;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.Test;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.junit.Test;
-
-import randoop.ComponentManager;
-import randoop.RandoopListenerManager;
-import randoop.SeedSequences;
+import randoop.contract.ObjectContract;
+import randoop.generation.ComponentManager;
+import randoop.generation.ForwardGenerator;
+import randoop.generation.RandoopListenerManager;
+import randoop.generation.SeedSequences;
+import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
-import randoop.operation.ConstructorCall;
-import randoop.operation.Operation;
+import randoop.main.ThrowClassNameError;
+import randoop.operation.ConcreteOperation;
+import randoop.operation.OperationParseException;
 import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.OperationExtractor;
+import randoop.reflection.OperationModel;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
-import randoop.sequence.ForwardGenerator;
 import randoop.sequence.Sequence;
 import randoop.test.TestCheckGenerator;
+import randoop.types.ConcreteType;
+import randoop.types.RandoopTypeException;
 import randoop.types.TypeNames;
+import randoop.util.MultiMap;
 import randoop.util.predicate.Predicate;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static randoop.main.GenInputsAbstract.include_if_classname_appears;
+import static randoop.main.GenInputsAbstract.methodlist;
 
 /**
  *
@@ -45,7 +51,7 @@ public class CoveredClassTest {
     GenInputsAbstract.inputlimit = 10000;
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = new File("randoop/instrument/testcase/allclasses.txt");
-    GenInputsAbstract.include_if_classname_appears = null;
+    include_if_classname_appears = null;
     GenInputsAbstract.include_if_class_exercised = null;
     // setup classes
 
@@ -86,7 +92,7 @@ public class CoveredClassTest {
     GenInputsAbstract.inputlimit = 10000;
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = new File("randoop/instrument/testcase/allclasses.txt");
-    GenInputsAbstract.include_if_classname_appears =
+    include_if_classname_appears =
         Pattern.compile("randoop\\.instrument\\.testcase\\.A"); //null;
     GenInputsAbstract.include_if_class_exercised =
         null; //"tests/randoop/instrument/testcase/coveredclasses.txt";
@@ -129,7 +135,7 @@ public class CoveredClassTest {
     GenInputsAbstract.inputlimit = 10000;
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = new File("randoop/instrument/testcase/allclasses.txt");
-    GenInputsAbstract.include_if_classname_appears = null;
+    include_if_classname_appears = null;
     GenInputsAbstract.include_if_class_exercised =
         new File("randoop/instrument/testcase/coveredclasses.txt");
     // setup classes
@@ -165,42 +171,95 @@ public class CoveredClassTest {
   }
 
   private ForwardGenerator getGenerator() {
-    Set<Class<?>> coveredClasses = new LinkedHashSet<>();
-    Set<Class<?>> classes = new LinkedHashSet<>();
-    Set<String> omitfields = new HashSet<>();
+    Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
+    Set<String> coveredClassnames = GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.include_if_class_exercised,"unable to read coverage class names");
+    Set<String> omitFields =
+            GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.omit_field_list, "Error reading field file");
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    ReflectionPredicate reflectionPredicate =
+        new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitFields);
+    ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
+    Set<String> methodSignatures =
+            GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
 
-    GenTests.getClassesUnderTest(visibility, classes, coveredClasses);
-    ReflectionPredicate predicate =
-        new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields, visibility);
-    List<Operation> model = OperationExtractor.getOperations(classes, predicate);
-    Collection<Sequence> components = new LinkedHashSet<Sequence>();
-    components.addAll(SeedSequences.objectsToSeeds(SeedSequences.primitiveSeeds));
+    OperationModel operationModel = null;
+    try {
+      operationModel=
+              OperationModel.createModel(visibility, reflectionPredicate,
+                      classnames,
+                      coveredClassnames,
+                      methodSignatures,
+                      classNameErrorHandler,
+                      GenInputsAbstract.literals_file);
+    } catch (OperationParseException e) {
+      fail("operation parse exception thrown: " + e);
+    } catch (NoSuchMethodException e) {
+      fail("Method not found: " + e);
+    } catch (RandoopTypeException e) {
+      fail("Type error: " + e);
+    }
+    assert operationModel != null;
+
+    List<ConcreteOperation> model = operationModel.getConcreteOperations();
+    Set<Sequence> components = new LinkedHashSet<>();
+    components.addAll(SeedSequences.defaultSeeds());
+    components.addAll(operationModel.getAnnotatedTestValues());
+
     ComponentManager componentMgr = new ComponentManager(components);
+    operationModel.addClassLiterals(
+            componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
+
+    Set<String> observerSignatures = GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.observers,"Unable to read observer file", "//.*", null);
+
+    MultiMap<ConcreteType,ConcreteOperation> observerMap = null;
+    try {
+      observerMap = operationModel.getObservers(observerSignatures);
+    } catch (OperationParseException e) {
+      System.out.printf("Error: parse exception thrown while reading observers: %s%n", e);
+      System.exit(1);
+    }
+    assert observerMap != null;
+    Set<ConcreteOperation> observers = new LinkedHashSet<>();
+    for (ConcreteType keyType : observerMap.keySet()) {
+      observers.addAll(observerMap.getValues(keyType));
+    }
+
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
     ForwardGenerator testGenerator =
         new ForwardGenerator(
             model,
+            observers,
             GenInputsAbstract.timelimit * 1000,
             GenInputsAbstract.inputlimit,
             GenInputsAbstract.outputlimit,
             componentMgr,
-            null,
             listenerMgr);
     GenTests genTests = new GenTests();
-    ConstructorCall objectConstructor = null;
+
+    ConcreteOperation objectConstructor = null;
     try {
-      objectConstructor = ConstructorCall.createConstructorCall(Object.class.getConstructor());
-      if (!model.contains(objectConstructor)) model.add(objectConstructor);
-    } catch (Exception e) {
-      fail("couldn't get object constructor");
+      objectConstructor = operationModel.getConcreteOperation(Object.class.getConstructor());
+    } catch (NoSuchMethodException e) {
+      assert false : "failed to get Object constructor: " + e;
+    } catch (RandoopTypeException e) {
+      fail("type error: " + e.getMessage());
     }
+    assert objectConstructor != null : "object constructor is null";
+
+    Sequence newObj = new Sequence().extend(objectConstructor);
+    Set<Sequence> excludeSet = new LinkedHashSet<>();
+    excludeSet.add(newObj);
+
     Predicate<ExecutableSequence> isOutputTest =
-        genTests.createTestOutputPredicate(objectConstructor, coveredClasses);
+        genTests.createTestOutputPredicate(
+            excludeSet, operationModel.getExercisedClasses(), include_if_classname_appears);
     testGenerator.addTestPredicate(isOutputTest);
-    TestCheckGenerator checkGenerator = genTests.createTestCheckGenerator(visibility, classes);
+
+    Set<ObjectContract> contracts = operationModel.getContracts();
+    Set<ConcreteOperation> excludeAsObservers = new LinkedHashSet<>();
+    TestCheckGenerator checkGenerator = genTests.createTestCheckGenerator(visibility, contracts, observerMap, excludeAsObservers);
     testGenerator.addTestCheckGenerator(checkGenerator);
-    testGenerator.addExecutionVisitor(new ExercisedClassVisitor(coveredClasses));
+    testGenerator.addExecutionVisitor(new ExercisedClassVisitor(operationModel.getExercisedClasses()));
     return testGenerator;
   }
 }

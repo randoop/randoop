@@ -1,6 +1,5 @@
 package randoop.types;
 
-import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -20,6 +19,7 @@ import plume.UtilMDE;
  */
 public class ParameterizedType extends ConcreteType {
 
+  private final List<TypeArgument> argumentList;
   /** The generic class for this type */
   private GenericClassType instantiatedType;
 
@@ -31,10 +31,10 @@ public class ParameterizedType extends ConcreteType {
    *
    * @param instantiatedType  the generic class type
    * @param substitution  the substitution for type variables
+   * @param argumentList  the list of argument types
    * @throws IllegalArgumentException if either argument is null
    */
-  public ParameterizedType(GenericClassType instantiatedType,
-                           Substitution substitution) {
+  ParameterizedType(GenericClassType instantiatedType, Substitution substitution, List<TypeArgument> argumentList) {
     if (instantiatedType == null) {
       throw new IllegalArgumentException("instantiated type must be non-null");
     }
@@ -44,6 +44,7 @@ public class ParameterizedType extends ConcreteType {
 
     this.instantiatedType = instantiatedType;
     this.substitution = substitution;
+    this.argumentList = argumentList;
   }
 
   /**
@@ -54,30 +55,32 @@ public class ParameterizedType extends ConcreteType {
    */
   @Override
   public boolean equals(Object obj) {
-   if (! (obj instanceof ParameterizedType)) {
-     return false;
-   }
-   ParameterizedType t = (ParameterizedType)obj;
-   if (! instantiatedType.equals(t.instantiatedType)) {
-     return false;
-   }
+    if (!(obj instanceof ParameterizedType)) {
+      return false;
+    }
+    ParameterizedType t = (ParameterizedType) obj;
+    if (!instantiatedType.equals(t.instantiatedType)) {
+      return false;
+    }
 
-   // Cannot guarantee that instantiated types have same type variables, or
-   // that if they do the substitutions will work,
-   // so check that parameters are mapped to the samesame concrete types
-   List<TypeVariable<?>> typeParameters = instantiatedType.getTypeParameters();
-   List<TypeVariable<?>> otherParameters = t.instantiatedType.getTypeParameters();
-   for (int i = 0; i < typeParameters.size(); i++ ) {
-     if (! (substitution.get(typeParameters.get(i)).equals(t.substitution.get(otherParameters.get(i))))) {
+    // Cannot guarantee that instantiated types have same type variables, or
+    // that if they do the substitutions will work,
+    // so check that parameters are mapped to the samesame concrete types
+    List<TypeParameter> typeParameters = instantiatedType.getTypeParameters();
+    List<TypeParameter> otherParameters = t.instantiatedType.getTypeParameters();
+    for (int i = 0; i < typeParameters.size(); i++) {
+      if (!(substitution
+          .get(typeParameters.get(i).getParameter())
+          .equals(t.substitution.get(otherParameters.get(i).getParameter())))) {
         return false;
-     }
-   }
-   return true;
+      }
+    }
+    return true;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(instantiatedType, substitution);
+    return Objects.hash(instantiatedType, substitution, argumentList);
   }
 
   /**
@@ -109,21 +112,22 @@ public class ParameterizedType extends ConcreteType {
 
     // second, if underlying Class objects not assignable then there is
     // definitely no widening conversion
-    if (! this.getRuntimeClass().isAssignableFrom(sourceType.getRuntimeClass())) {
+    if (!this.getRuntimeClass().isAssignableFrom(sourceType.getRuntimeClass())) {
       return false;
     }
 
     // Now, check subtype relation
-    if (sourceType.isSubtypeOf(this)) {
-      return true;
+    try {
+      if (sourceType.isSubtypeOf(this)) {
+        return true;
+      }
+    } catch (RandoopTypeException e) {
+      // this is a bit dangerous, but I'm doing it anyway
+      return false;
     }
 
     // otherwise, test unchecked
-    if (sourceType.isRawtype()) {
-      return sourceType.hasRuntimeClass(this.getRuntimeClass());
-    }
-
-    return false;
+    return sourceType.isRawtype() && sourceType.hasRuntimeClass(this.getRuntimeClass());
 
   }
 
@@ -153,7 +157,7 @@ public class ParameterizedType extends ConcreteType {
    * (Tested using {@link GenericClassType#equals(Object)}.)
    */
   @Override
-  public boolean isSubtypeOf(ConcreteType type) {
+  public boolean isSubtypeOf(ConcreteType type) throws RandoopTypeException {
     if (type == null) {
       throw new IllegalArgumentException("type must be non-null");
     }
@@ -173,13 +177,13 @@ public class ParameterizedType extends ConcreteType {
     // minimally, underlying Class should be assignable
     Class<?> otherRuntimeType = type.getRuntimeClass();
     Class<?> thisRuntimeType = this.getRuntimeClass();
-    if (! otherRuntimeType.isAssignableFrom(thisRuntimeType)) {
+    if (!otherRuntimeType.isAssignableFrom(thisRuntimeType)) {
       return false;
     }
 
     // if would-be supertype not parameterized, check supertype of generic form
     // this is the "direct superclass" clause in definition for generic type
-    if (! type.isParameterized()) {
+    if (!type.isParameterized()) {
       return instantiatedType.isSubtypeOf(type);
     }
 
@@ -200,13 +204,13 @@ public class ParameterizedType extends ConcreteType {
     // will be distinct and the substitution will return null values even if the
     // variable names and type bounds are the same.
 
-    ParameterizedType pt = (ParameterizedType)type;
+    ParameterizedType pt = (ParameterizedType) type;
     GenericClassType genericSuperType;
     genericSuperType = this.instantiatedType.getMatchingSupertype(pt.instantiatedType);
     if (genericSuperType == null) { // no matching supertype
       return false;
     }
-    ConcreteType superType = genericSuperType.instantiate(this.substitution);
+    ConcreteType superType = (ConcreteType)genericSuperType.apply(this.substitution);
     if (pt.equals(superType)) {
       return true; // found type
     }
@@ -260,10 +264,10 @@ public class ParameterizedType extends ConcreteType {
    *
    * @return the list of type arguments
    */
-  public List<ConcreteType> getTypeArguments() {
+  private List<ConcreteType> getTypeArguments() {
     List<ConcreteType> arguments = new ArrayList<>();
-    for (TypeVariable<?> v : instantiatedType.getTypeParameters()) {
-      arguments.add(substitution.get(v));
+    for (TypeParameter parameter : instantiatedType.getTypeParameters()) {
+      arguments.add(substitution.get(parameter.getParameter()));
     }
     return arguments;
   }
@@ -279,4 +283,24 @@ public class ParameterizedType extends ConcreteType {
     return instantiatedType.equals(genericClassType);
   }
 
+  /**
+   * Constructs the superclass type for this parameterized type.
+   *
+   * @return the superclass type for this parameterized type
+   */
+  @Override
+  public ConcreteType getSuperclass() throws RandoopTypeException {
+    GeneralType superclass = this.instantiatedType.getSuperclass();
+    if (superclass == null) {
+      return null;
+    }
+
+    assert (superclass instanceof GenericClassType) || (superclass instanceof ConcreteType) : "unexpected type: " + superclass;
+
+    if (superclass instanceof GenericClassType) {
+      return new ParameterizedType((GenericClassType)superclass, this.substitution, argumentList);
+    }
+
+    return (ConcreteType)superclass;
+  }
 }

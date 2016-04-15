@@ -1,11 +1,10 @@
 package randoop.test;
 
-import randoop.ExecutionOutcome;
 import randoop.ExceptionalExecution;
+import randoop.ExecutionOutcome;
 import randoop.Globals;
 import randoop.NotExecuted;
 import randoop.sequence.Execution;
-import randoop.util.Reflection;
 
 /**
  * An {@code ExceptionCheck} that enforces the expectation of an exception being
@@ -40,7 +39,7 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
   protected void appendTryBehavior(StringBuilder b, String exceptionClassName) {
     String assertion =
         "org.junit.Assert.fail(\"Expected exception of type " + exceptionClassName + "\")";
-    b.append("  " + assertion + ";" + Globals.lineSep);
+    b.append("  ").append(assertion).append(";").append(Globals.lineSep);
   }
 
   /**
@@ -53,9 +52,9 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
         "org.junit.Assert.fail(\"Expected exception of type "
             + exceptionClassName
             + ", got \" + e.getClass().getCanonicalName())";
-    b.append("  if (" + condition + ") {" + Globals.lineSep);
-    b.append("    " + assertion + ";" + Globals.lineSep);
-    b.append("  }" + Globals.lineSep);
+    b.append("  if (").append(condition).append(") {").append(Globals.lineSep);
+    b.append("    ").append(assertion).append(";").append(Globals.lineSep);
+    b.append("  }").append(Globals.lineSep);
   }
 
   /**
@@ -75,6 +74,7 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
       return false;
     }
     ExceptionalExecution e = (ExceptionalExecution) outcomeAtIndex;
-    return Reflection.canBeUsedAs(e.getException().getClass(), exception.getClass());
+    // TODO verify that this substitution still works!!!
+    return exception.getClass().isAssignableFrom(e.getException().getClass());
   }
 }

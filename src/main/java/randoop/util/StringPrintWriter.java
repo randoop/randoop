@@ -68,6 +68,6 @@ class StringPrintWriter extends PrintWriter {
    */
   public String getString() {
     flush();
-    return ((StringWriter) this.out).toString();
+    return this.out.toString();
   }
 }

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import randoop.types.ConcreteType;
+
 /** Represents the result of a statement call in a sequence. */
 public class Variable implements Comparable<Variable> {
 
@@ -42,7 +44,7 @@ public class Variable implements Comparable<Variable> {
   }
 
   /** The declared type of the value */
-  public Class<?> getType() {
+  public ConcreteType getType() {
     return this.sequence.getStatement(index).getOutputType();
   }
 
@@ -72,8 +74,8 @@ public class Variable implements Comparable<Variable> {
     return getName(index);
   }
 
-  public String getName(Class<?> clazz) {
-    return getName(clazz, index);
+  public String getName(ConcreteType type) {
+    return getName(type, index);
   }
 
   public String getName(int i) {
@@ -84,8 +86,8 @@ public class Variable implements Comparable<Variable> {
    * For use by clients when the statement has not yet been appended, so
    * getType() would fail.
    */
-  public String getName(Class<?> clazz, int i) {
-    return getName(classToVariableName(clazz), index);
+  public String getName(ConcreteType type, int i) {
+    return getName(classToVariableName(type), index);
   }
 
   /**
@@ -105,16 +107,14 @@ public class Variable implements Comparable<Variable> {
   public int compareTo(Variable o) {
     if (o == null) throw new IllegalArgumentException();
     if (o.sequence != this.sequence) throw new IllegalArgumentException();
-    return (new Integer(this.index).compareTo(new Integer(o.index)));
+    return (new Integer(this.index).compareTo(o.index));
   }
 
-  /** Convert to string and downcase the first character. */
-  public static String classToVariableName(Class<?> clazz) {
-    // assert !clazz.equals(void.class) : "The given variable type can not be
-    // void!";
-    // return classNameToVariableName(clazz.getSimpleName().replace("[]",
-    // "_array"));
-    return VariableRenamer.getVariableName(clazz);
+  /** Convert to string and downcase the first character.
+   * @param type  the type
+   */
+  public static String classToVariableName(ConcreteType type) {
+    return VariableRenamer.getVariableName(type);
   }
 
   /** Downcase the first character. */

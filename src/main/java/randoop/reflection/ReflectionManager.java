@@ -13,7 +13,7 @@ import randoop.util.Log;
 /**
  * ReflectionManager reflectively visits a {@link Class} instance to apply a set
  * of {@link ClassVisitor} objects to the class members. Uses a
- * {@link ReflectionPredicate} and heuristics to determine which classes and
+ * {@link VisibilityPredicate} and heuristics to determine which classes and
  * class members to visit.
  * <p>
  * For a non-enum class, visits:
@@ -33,10 +33,12 @@ import randoop.util.Log;
  * and <code>valueOf</code>.
  * <li>methods defined for enum constants that satisfy predicate.
  * </ul>
+ * <p>
+ * Note that visitors may have their own predicates, but need not check visibility.
  */
 public class ReflectionManager {
 
-  private ReflectionPredicate predicate;
+  private VisibilityPredicate predicate;
   private ArrayList<ClassVisitor> visitors;
 
   /**
@@ -48,7 +50,7 @@ public class ReflectionManager {
    *          the predicate to indicate whether classes and class members should
    *          be visited.
    */
-  public ReflectionManager(ReflectionPredicate predicate) {
+  public ReflectionManager(VisibilityPredicate predicate) {
     this.predicate = predicate;
     this.visitors = new ArrayList<>();
   }
@@ -57,8 +59,7 @@ public class ReflectionManager {
    * Registers a {@link ClassVisitor} for use by the
    * {@link ReflectionManager#apply(Class)} method.
    *
-   * @param visitor
-   *          a {@link ClassVisitor} object.
+   * @param visitor  the {@link ClassVisitor} object to add
    */
   public void add(ClassVisitor visitor) {
     visitors.add(visitor);
@@ -66,64 +67,76 @@ public class ReflectionManager {
 
   /**
    * Applies the registered {@link ClassVisitor} objects of this object to the
-   * given class.
+   * given class and its members that satisfy the given predicate.
+   * Excludes fields that are hidden by inheritance that are otherwise still accessible by
+   * reflection.
+   * Each visitor is applied to each member at most once.
    *
-   * @param c
-   *          a {@link Class} object to be visited.
+   * @param c  the {@link Class} object to be visited.
    */
   public void apply(Class<?> c) {
-
-    if (predicate.test(c)) {
-
+    if (predicate.isVisible(c)) {
       if (Log.isLoggingOn()) Log.logLine("Applying visitors to class " + c.getName());
 
       visitBefore(c); // perform any previsit steps
 
       if (c.isEnum()) { // treat enum classes differently
-        applyEnum(c);
+        applyToEnum(c);
       } else {
 
-        applyMethods(c);
+        // Methods
+        Set<Method> methods = new HashSet<>();
+        for (Method m : c.getMethods()) { // for all public methods
+          methods.add(m); // remember to avoid duplicates
+          if (isVisible(m)) { // if satisfies predicate then visit
+            applyTo(m);
+          }
+        }
+        for (Method m : c.getDeclaredMethods()) { // for all methods declared by c
+          // if not duplicate and satisfies predicate
+          if ((!methods.contains(m)) && predicate.isVisible(m)) {
+            applyTo(m);
+          }
+        }
 
+        // Constructors
         for (Constructor<?> co : c.getDeclaredConstructors()) {
-          if (predicate.test(co)) {
-            visitConstructor(co);
+          if (isVisible(co)) {
+            applyTo(co);
           }
         }
 
+        // Inner enums
         for (Class<?> ic : c.getDeclaredClasses()) { // look for inner enums
-          if (ic.isEnum() && predicate.test(ic)) {
-            applyEnum(ic);
+          if (predicate.isVisible(ic)){
+            if (ic.isEnum()) {
+              visitBefore(ic);
+              applyToEnum(ic);
+              visitAfter(ic);
+            }
           }
         }
 
-        applyFields(c);
+        // Fields
+        // The set of fields declared in class c is needed to ensure we don't
+        // collect inherited fields that are hidden by local declaration
+        Set<String> declaredNames = new TreeSet<>();
+        for (Field f : c.getDeclaredFields()) { // for fields declared by c
+          declaredNames.add(f.getName());
+          if (predicate.isVisible(f)) {
+            applyTo(f);
+          }
+        }
+        for (Field f : c.getFields()) { // for all public fields of c
+          // keep a field that satisfies filter, and is not inherited and hidden by
+          // local declaration
+          if (predicate.isVisible(f) && (!declaredNames.contains(f.getName()))) {
+            applyTo(f);
+          }
+        }
       }
 
       visitAfter(c);
-    }
-  }
-
-  /**
-   * Applies the visitors to each method of the class at most once. Visits all
-   * methods satisfying the reflection predicate.
-   *
-   * @param c
-   *          the class whose methods should be visited
-   */
-  private void applyMethods(Class<?> c) {
-    Set<Method> methods = new HashSet<>();
-    for (Method m : c.getMethods()) { // for all public methods
-      methods.add(m); // remember to avoid duplicates
-      if (predicate.test(m)) { // if satisfies predicate then visit
-        visitMethod(m);
-      }
-    }
-    for (Method m : c.getDeclaredMethods()) { // for all methods declared by c
-      // if not duplicate and satisfies predicate
-      if ((!methods.contains(m)) && predicate.test(m)) {
-        visitMethod(m);
-      }
     }
   }
 
@@ -141,14 +154,13 @@ public class ReflectionManager {
    * since their definition is implicit, and we aren't testing Java enum
    * implementation.
    *
-   * @param c
-   *          enum class object from which constants and methods are extracted
+   * @param c the enum class object from which constants and methods are extracted
    */
-  private void applyEnum(Class<?> c) {
-    Set<String> overrideMethods = new HashSet<String>();
+  private void applyToEnum(Class<?> c) {
+    Set<String> overrideMethods = new HashSet<>();
     for (Object obj : c.getEnumConstants()) {
       Enum<?> e = (Enum<?>) obj;
-      visitEnum(e);
+      applyTo(e);
       if (!e.getClass().equals(c)) { // does constant have an anonymous class?
         for (Method m : e.getClass().getDeclaredMethods()) {
           overrideMethods.add(m.getName()); // collect any potential overrides
@@ -157,44 +169,17 @@ public class ReflectionManager {
     }
     // get methods that are explicitly declared in the enum
     for (Method m : c.getDeclaredMethods()) {
-      if (predicate.test(m)) {
+      if (predicate.isVisible(m)) {
         if (!m.getName().equals("values") && !m.getName().equals("valueOf")) {
-          visitMethod(m);
+          applyTo(m);
         }
       }
     }
     // get any inherited methods also declared in anonymous class of some
     // constant
     for (Method m : c.getMethods()) {
-      if (predicate.test(m) && overrideMethods.contains(m.getName())) {
-        visitMethod(m);
-      }
-    }
-  }
-
-  /**
-   * Determines which fields of the given class the visitors will be applied to.
-   * Only excludes fields hidden by inheritance that are otherwise still
-   * accessible via reflection.
-   *
-   * @param c
-   */
-  private void applyFields(Class<?> c) {
-    // The set of fields declared in class c is needed to ensure we don't
-    // collect
-    // inherited fields that are hidden by local declaration
-    Set<String> declaredNames = new TreeSet<>();
-    for (Field f : c.getDeclaredFields()) { // for fields declared by c
-      declaredNames.add(f.getName());
-      if (predicate.test(f)) {
-        visitField(f);
-      }
-    }
-    for (Field f : c.getFields()) { // for all public fields of c
-      // keep a field that satisfies filter, and is not inherited and hidden by
-      // local declaration
-      if (predicate.test(f) && (!declaredNames.contains(f.getName()))) {
-        visitField(f);
+      if (predicate.isVisible(m) && overrideMethods.contains(m.getName())) {
+        applyTo(m);
       }
     }
   }
@@ -205,9 +190,9 @@ public class ReflectionManager {
    * @param f
    *          the field to be visited.
    */
-  private void visitField(Field f) {
+  private void applyTo(Field f) {
     if (Log.isLoggingOn()) {
-      Log.logLine(String.format("Considering field %s", f));
+      Log.logLine(String.format("Considering field %s", f.toGenericString()));
     }
     for (ClassVisitor v : visitors) {
       v.visit(f);
@@ -220,9 +205,9 @@ public class ReflectionManager {
    * @param co
    *          the constructor to be visited.
    */
-  private void visitConstructor(Constructor<?> co) {
+  private void applyTo(Constructor<?> co) {
     if (Log.isLoggingOn()) {
-      Log.logLine(String.format("Considering constructor %s", co));
+      Log.logLine(String.format("Considering constructor %s", co.toGenericString()));
     }
     for (ClassVisitor v : visitors) {
       v.visit(co);
@@ -235,9 +220,9 @@ public class ReflectionManager {
    * @param m
    *          the method to be visited.
    */
-  private void visitMethod(Method m) {
+  private void applyTo(Method m) {
     if (Log.isLoggingOn()) {
-      Log.logLine(String.format("Considering method %s", m));
+      Log.logLine(String.format("Considering method %s", m.toGenericString()));
     }
     for (ClassVisitor v : visitors) {
       v.visit(m);
@@ -250,7 +235,7 @@ public class ReflectionManager {
    * @param e
    *          the enum value to be visited.
    */
-  private void visitEnum(Enum<?> e) {
+  private void applyTo(Enum<?> e) {
     if (Log.isLoggingOn()) {
       Log.logLine(String.format("Considering enum %s", e));
     }
@@ -283,5 +268,65 @@ public class ReflectionManager {
     for (ClassVisitor v : visitors) {
       v.visitBefore(c);
     }
+  }
+
+  /**
+   * Determines whether a method, its parameter types, and its return type are all visible.
+   *
+   * @param m  the method to check for visibility
+   * @return true if the method, each parameter type, and the return type are all visible; and false otherwise
+   */
+  private boolean isVisible(Method m) {
+    if (! predicate.isVisible(m)) {
+      if (Log.isLoggingOn()) {
+        Log.logLine("Will not use: " + m.toGenericString());
+        Log.logLine("  reason: the method is not visible from test classes");
+      }
+      return false;
+    }
+    if (! predicate.isVisible(m.getReturnType())) {
+      if (Log.isLoggingOn()) {
+        Log.logLine("Will not use: " + m.toGenericString());
+        Log.logLine("  reason: the method's return type is not visible from test classes");
+      }
+      return false;
+    }
+    for (Class<?> p : m.getParameterTypes()) {
+      if (! predicate.isVisible(p)) {
+        if (Log.isLoggingOn()) {
+          Log.logLine("Will not use: " + m.toGenericString());
+          Log.logLine("  reason: the method has a parameter that is not visible from test classes");
+        }
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Determines whether a concsturctor and each of its parameter types are visible.
+   *
+   * @param c  the constructor
+   * @return true if the constructor and each parameter type are visible; false, otherwise
+   */
+  private boolean isVisible(Constructor<?> c) {
+    if (! predicate.isVisible(c)) {
+      if (Log.isLoggingOn()) {
+        Log.logLine("Will not use: " + c.toGenericString());
+        Log.logLine("  reason: the constructor is not visible from test classes");
+      }
+      return false;
+    }
+    for (Class<?> p : c.getParameterTypes()) {
+      if (! predicate.isVisible(p)) {
+        if (Log.isLoggingOn()) {
+          Log.logLine("Will not use: " + c.toGenericString());
+          Log.logLine(
+                  "  reason: the constructor has a parameter that is not visible from test classes");
+        }
+        return false;
+      }
+    }
+    return true;
   }
 }

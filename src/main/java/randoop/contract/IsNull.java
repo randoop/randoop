@@ -17,10 +17,7 @@ public final class IsNull implements ObjectContract {
   public boolean equals(Object o) {
     if (o == null) return false;
     if (o == this) return true;
-    if (!(o instanceof IsNull)) {
-      return false;
-    }
-    return true; // no state to compare.
+    return o instanceof IsNull;
   }
 
   @Override

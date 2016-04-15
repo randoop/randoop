@@ -1,41 +1,49 @@
 package randoop.instrument;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.Test;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Test;
-
-import randoop.ComponentManager;
-import randoop.RandoopListenerManager;
-import randoop.SeedSequences;
+import randoop.contract.ObjectContract;
+import randoop.generation.ComponentManager;
+import randoop.generation.ForwardGenerator;
+import randoop.generation.RandoopListenerManager;
+import randoop.generation.SeedSequences;
+import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
-import randoop.operation.ConstructorCall;
-import randoop.operation.Operation;
+import randoop.main.ThrowClassNameError;
+import randoop.operation.ConcreteOperation;
 import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.OperationExtractor;
+import randoop.reflection.OperationModel;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
-import randoop.sequence.ForwardGenerator;
 import randoop.sequence.Sequence;
 import randoop.test.TestCheckGenerator;
+import randoop.types.ConcreteType;
+import randoop.types.RandoopTypeException;
 import randoop.types.TypeNames;
+import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.Predicate;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static randoop.main.GenInputsAbstract.include_if_class_exercised;
+import static randoop.main.GenInputsAbstract.include_if_classname_appears;
+import static randoop.main.GenInputsAbstract.methodlist;
+import static randoop.main.GenInputsAbstract.omitmethods;
+
 /**
- * Test special cases of "covered" class filtering.
+ * Test special cases of "covered" (or exercised) class filtering.
  * Want to ensure behaves well when given abstract class and interface.
  */
 public class SpecialCoveredClassTest {
@@ -44,17 +52,41 @@ public class SpecialCoveredClassTest {
   public void abstractClassTest() {
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = new File("randoop/instrument/testcase/special-allclasses.txt");
-    GenInputsAbstract.include_if_class_exercised =
+    include_if_class_exercised =
         new File("randoop/instrument/testcase/special-coveredclasses.txt");
     ReflectionExecutor.usethreads = false;
     GenInputsAbstract.outputlimit = 5000;
     GenInputsAbstract.inputlimit = 10000;
 
-    Set<Class<?>> coveredClasses = new LinkedHashSet<>();
-    Set<Class<?>> classes = new LinkedHashSet<>();
-    Set<String> omitfields = new HashSet<>();
+    Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
+    Set<String> coveredClassnames =
+            GenInputsAbstract.getStringSetFromFile(
+                    include_if_class_exercised, "Unable to read coverage class names");
+    Set<String> omitFields = new HashSet<>();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    GenTests.getClassesUnderTest(visibility, classes, coveredClasses);
+    ReflectionPredicate reflectionPredicate =
+            new DefaultReflectionPredicate(omitmethods, omitFields);
+    Set<String> methodSignatures =
+            GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
+    ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
+    OperationModel operationModel = null;
+    try {
+      operationModel=
+              OperationModel.createModel(
+                      visibility,
+                      reflectionPredicate,
+                      classnames,
+                      coveredClassnames,
+                      methodSignatures,
+                      classNameErrorHandler,
+                      GenInputsAbstract.literals_file);
+    } catch (Throwable e) {
+     fail("Error: " + e);
+    }
+    assert operationModel != null;
+
+    Set<Class<?>> coveredClasses = operationModel.getExercisedClasses();
+    Set<ConcreteType> classes = operationModel.getClasses();
     //
     assertTrue("should be one covered classes", coveredClasses.size() == 1);
     for (Class<?> c : coveredClasses) {
@@ -64,42 +96,59 @@ public class SpecialCoveredClassTest {
           c.getName());
     }
 
-    assertEquals("should have classes", 2, classes.size());
-    for (Class<?> c : classes) {
+    // 2 classes plus Object
+    assertEquals("should have classes", 3, classes.size());
+    for (ConcreteType c : classes) {
       assertTrue("should not be interface: " + c.getName(), !c.isInterface());
     }
     //
-    ReflectionPredicate predicate =
-        new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields, visibility);
-    List<Operation> model = OperationExtractor.getOperations(classes, predicate);
+    List<ConcreteOperation> model = operationModel.getConcreteOperations();
     //
-    assertEquals("model operations", 5, model.size());
+    assertEquals("model operations", 6, model.size());
     //
-    Collection<Sequence> components = new LinkedHashSet<Sequence>();
-    components.addAll(SeedSequences.objectsToSeeds(SeedSequences.primitiveSeeds));
+    Set<Sequence> components = new LinkedHashSet<>();
+    components.addAll(SeedSequences.defaultSeeds());
+    components.addAll(operationModel.getAnnotatedTestValues());
+
     ComponentManager componentMgr = new ComponentManager(components);
+    operationModel.addClassLiterals(
+            componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
+
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
+    Set<ConcreteOperation> observers = new LinkedHashSet<>();
     ForwardGenerator testGenerator =
-        new ForwardGenerator(
-            model,
-            GenInputsAbstract.timelimit * 1000,
-            GenInputsAbstract.inputlimit,
-            GenInputsAbstract.outputlimit,
-            componentMgr,
-            null,
-            listenerMgr);
+            new ForwardGenerator(
+                    model,
+                    observers,
+                    GenInputsAbstract.timelimit * 1000,
+                    GenInputsAbstract.inputlimit,
+                    GenInputsAbstract.outputlimit,
+                    componentMgr,
+                    listenerMgr);
     GenTests genTests = new GenTests();
-    ConstructorCall objectConstructor = null;
+
+    ConcreteOperation objectConstructor = null;
     try {
-      objectConstructor = ConstructorCall.createConstructorCall(Object.class.getConstructor());
-      if (!model.contains(objectConstructor)) model.add(objectConstructor);
-    } catch (Exception e) {
-      fail("couldn't get object constructor");
+      objectConstructor = operationModel.getConcreteOperation(Object.class.getConstructor());
+    } catch (NoSuchMethodException e) {
+      assert false : "failed to get Object constructor: " + e;
+    } catch (RandoopTypeException e) {
+      fail("Type error " + e.getMessage());
     }
+    assert objectConstructor != null;
+
+    Sequence newObj = new Sequence().extend(objectConstructor);
+    Set<Sequence> excludeSet = new LinkedHashSet<>();
+    excludeSet.add(newObj);
+
     Predicate<ExecutableSequence> isOutputTest =
-        genTests.createTestOutputPredicate(objectConstructor, coveredClasses);
+            genTests.createTestOutputPredicate(
+                    excludeSet, operationModel.getExercisedClasses(), include_if_classname_appears);
     testGenerator.addTestPredicate(isOutputTest);
-    TestCheckGenerator checkGenerator = genTests.createTestCheckGenerator(visibility, classes);
+    Set<ObjectContract> contracts = operationModel.getContracts();
+    Set<ConcreteOperation> excludeAsObservers = new LinkedHashSet<>();
+    MultiMap<ConcreteType,ConcreteOperation> observerMap = new MultiMap<>();
+    TestCheckGenerator checkGenerator = genTests.createTestCheckGenerator(visibility, contracts, observerMap, excludeAsObservers);
     testGenerator.addTestCheckGenerator(checkGenerator);
     testGenerator.addExecutionVisitor(new ExercisedClassVisitor(coveredClasses));
     testGenerator.explore();
@@ -117,27 +166,29 @@ public class SpecialCoveredClassTest {
       fail("cannot find class: " + e);
     }
 
-    Set<Operation> opSet = new LinkedHashSet<>();
+    Set<ConcreteOperation> opSet = new LinkedHashSet<>();
     for (ExecutableSequence e : rTests) {
       assertTrue("should cover the class: " + at.getName(), e.coversClass(at));
       for (int i = 0; i < e.sequence.size(); i++) {
-        Operation op = e.sequence.getStatement(i).getOperation();
+        ConcreteOperation op = e.sequence.getStatement(i).getOperation();
         if (model.contains(op)) {
           opSet.add(op);
         }
       }
     }
 
-    Class<?> it = null;
+    ConcreteType it = null;
     try {
-      it = TypeNames.getTypeForName("randoop.instrument.testcase.ImplementorOfTarget");
+      it = (ConcreteType)ConcreteType.forName("randoop.instrument.testcase.ImplementorOfTarget");
     } catch (ClassNotFoundException e) {
       fail("cannot find implementor class " + e);
+    } catch (RandoopTypeException e) {
+      fail("Type error " + e.getMessage());
     }
-    for (Operation op : model) {
+    for (ConcreteOperation op : model) {
       assertTrue(
           "all model operations should be used or from wrong implementor",
-          opSet.contains(op) || op.getDeclaringClass().equals(it));
+          opSet.contains(op) || op.getDeclaringType().equals(it));
     }
   }
 }

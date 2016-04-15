@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import randoop.reflection.TypedOperationManager;
+
 public class OperationParser {
 
   /**
@@ -33,11 +35,12 @@ public class OperationParser {
    *
    * @param str
    *          the string to be parsed.
-   * @return the operation corresponding to the string.
+   * @param manager
+   *          the {@link TypedOperationManager} for collecting operations
    * @throws OperationParseException
    *           if the string does not have expected format.
    */
-  public static Operation parse(String str) throws OperationParseException {
+  public static void parse(String str, TypedOperationManager manager) throws OperationParseException {
     if (str == null || str.length() == 0)
       throw new IllegalArgumentException("invalid string: " + str);
 
@@ -55,7 +58,7 @@ public class OperationParser {
     String id = str.substring(0, colonIdx).trim();
     String descr = str.substring(colonIdx + 1).trim();
 
-    Set<String> validIds = new LinkedHashSet<String>();
+    Set<String> validIds = new LinkedHashSet<>();
 
     // If you add a statement kind, add its ID to this set.
     validIds.addAll(
@@ -70,19 +73,19 @@ public class OperationParser {
 
     // Call appropriate parsing method.
     if (id.equals(NonreceiverTerm.ID)) {
-      return NonreceiverTerm.parse(descr);
+      NonreceiverTerm.parse(descr, manager);
     } else if (id.equals(MethodCall.ID)) {
-      return MethodCall.parse(descr);
+      MethodCall.parse(descr, manager);
     } else if (id.equals(ConstructorCall.ID)) {
-      return ConstructorCall.parse(descr);
+      ConstructorCall.parse(descr, manager);
     } else if (id.equals(ArrayCreation.ID)) {
-      return ArrayCreation.parse(descr);
+      ArrayCreation.parse(descr, manager);
     } else if (id.equals(EnumConstant.ID)) {
-      return EnumConstant.parse(descr);
+      EnumConstant.parse(descr, manager);
     } else if (id.equals(FieldGet.ID)) {
-      return FieldGet.parse(descr);
+      FieldGet.parse(descr, manager);
     } else if (id.equals(FieldSet.ID)) {
-      return FieldSet.parse(descr);
+      FieldSet.parse(descr, manager);
     } else {
       String msg =
           "A statement description must be of the form "
@@ -94,6 +97,7 @@ public class OperationParser {
               + "\" does not have a valid <id>.";
       throw new OperationParseException(msg);
     }
+
   }
 
   /**
@@ -104,15 +108,16 @@ public class OperationParser {
    *          the operation.
    * @return the ID string for the operation.
    */
-  public static String getId(Operation op) {
+  public static String getId(ConcreteOperation op) {
     if (op == null) throw new IllegalArgumentException("st cannot be null.");
-    if (op instanceof NonreceiverTerm) return NonreceiverTerm.ID;
-    if (op instanceof MethodCall) return MethodCall.ID;
-    if (op instanceof ConstructorCall) return ConstructorCall.ID;
-    if (op instanceof ArrayCreation) return ArrayCreation.ID;
-    if (op instanceof EnumConstant) return EnumConstant.ID;
-    if (op instanceof FieldGet) return FieldGet.ID;
-    if (op instanceof FieldSet) return FieldSet.ID;
+    if (op.getOperation() instanceof NonreceiverTerm) return NonreceiverTerm.ID;
+    if (op.getOperation() instanceof MethodCall) return MethodCall.ID;
+    if (op.getOperation() instanceof ConstructorCall) return ConstructorCall.ID;
+    if (op.getOperation() instanceof ArrayCreation) return ArrayCreation.ID;
+    if (op.getOperation() instanceof EnumConstant) return EnumConstant.ID;
+    if (op.getOperation() instanceof FieldGet) return FieldGet.ID;
+    if (op.getOperation() instanceof FieldSet) return FieldSet.ID;
     throw new Error();
   }
+
 }

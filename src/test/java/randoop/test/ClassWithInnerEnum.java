@@ -1,0 +1,37 @@
+package randoop.test;
+
+/**
+ * Created by bjkeller on 4/14/16.
+ */
+public class ClassWithInnerEnum {
+  public Toggle toggleSwitch;
+  public OtherToggle otherToggle;
+
+  public ClassWithInnerEnum() {
+    toggleSwitch = Toggle.OFF;
+    otherToggle = OtherToggle.ON;
+  }
+
+  public enum Toggle {
+    OFF,
+    ON;
+
+    public boolean isOn() { return this != OFF; }
+  }
+
+  public enum OtherToggle {
+    OFF {
+      public boolean isOn() {
+        return false;
+      }
+    },
+    ON {
+      public boolean isOn() { return true; }
+    };
+
+    public abstract boolean isOn();
+  }
+
+  public Toggle getToggleSwitch() { return toggleSwitch; }
+  public OtherToggle getOtherToggleSwitch() { return  otherToggle; }
+}

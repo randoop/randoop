@@ -3,27 +3,41 @@ package randoop.operation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.junit.Test;
 
+import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.ModelCollections;
 import randoop.reflection.OperationExtractor;
+import randoop.reflection.PublicVisibilityPredicate;
+import randoop.reflection.ReflectionManager;
+import randoop.reflection.ReflectionPredicate;
+import randoop.reflection.TypedOperationManager;
+import randoop.reflection.VisibilityPredicate;
+import randoop.test.ClassWithInnerEnum;
 import randoop.test.Coin;
+import randoop.test.EnumAsPredicate;
 import randoop.test.OperatorEnum;
 import randoop.test.PlayingCard;
 import randoop.test.SimpleEnum;
-import randoop.util.Reflection;
+import randoop.types.ConcreteSimpleType;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
+import randoop.types.RandoopTypeException;
 
 /**
- * EnumReflectionTest consists of tests of {@link Reflection#getStatements}
+ * EnumReflectionTest consists of tests of reflection classes
  * to verify what is collected from enums and classes using enums. In particular,
  * want to collect enum constants, methods of enum (esp. if abstract), enums that are
  * are inner types.
@@ -39,26 +53,29 @@ public class EnumReflectionTest {
    */
   @Test
   public void simpleEnum() {
-    ArrayList<Class<?>> classes = new ArrayList<>();
     Class<?> se = SimpleEnum.class;
-    classes.add(se);
+    ConcreteType declaringType = new ConcreteSimpleType(se);
 
     @SuppressWarnings("unchecked")
     List<Enum<?>> include = asList(se.getEnumConstants());
     @SuppressWarnings("unchecked")
     List<Method> exclude = Arrays.asList(se.getMethods());
-    List<Operation> actual = OperationExtractor.getOperations(classes, null);
+    Set<ConcreteOperation> actual = getConcreteOperations(se);
 
     assertEquals("number of statements", include.size(), actual.size());
 
     for (Enum<?> e : include) {
       assertTrue(
-          "enum constant " + e.name() + " should occur", actual.contains(new EnumConstant(e)));
+          "enum constant " + e.name() + " should occur", actual.contains(createEnumOperation(e)));
     }
     for (Method m : exclude) {
-      assertFalse(
-          "method " + m.toGenericString() + " should not occur in simple enum",
-          actual.contains(new MethodCall(m)));
+      try {
+        assertFalse(
+            "method " + m.toGenericString() + " should not occur in simple enum",
+            actual.contains(createMethodCall(m, declaringType)));
+      } catch (RandoopTypeException e) {
+        fail("type error: " + e);
+      }
     }
   }
 
@@ -81,9 +98,7 @@ public class EnumReflectionTest {
   @SuppressWarnings("unchecked")
   @Test
   public void innerEnum() {
-    ArrayList<Class<?>> classes = new ArrayList<>();
     Class<?> pc = PlayingCard.class;
-    classes.add(pc);
 
     List<Enum<?>> include = new ArrayList<>();
     List<Enum<?>> exclude = new ArrayList<>();
@@ -98,18 +113,39 @@ public class EnumReflectionTest {
       }
     }
 
-    List<Operation> actual = OperationExtractor.getOperations(classes, null);
+    Set<ConcreteOperation> actual = getConcreteOperations(pc);
     assertEquals("number of statements", include.size() + 5, actual.size());
 
     for (Enum<?> e : include) {
       assertTrue(
-          "enum constant " + e.name() + " should occur", actual.contains(new EnumConstant(e)));
+          "enum constant " + e.name() + " should occur", actual.contains(createEnumOperation(e)));
     }
     for (Enum<?> e : exclude) {
       assertFalse(
-          "enum constant " + e.name() + " should not occur", actual.contains(new EnumConstant(e)));
+          "enum constant " + e.name() + " should not occur", actual.contains(createEnumOperation(e)));
     }
   }
+
+  @Test
+  public void innerEnumWithMethodsTest() {
+    Class<?> c = ClassWithInnerEnum.class;
+    Class<?>[] memberClasses = c.getDeclaredClasses();
+
+    // TODO test that declaring class of operations for inner enum is enum
+
+    Set<ConcreteOperation> actual = getConcreteOperations(c);
+
+    assertEquals("number of statments", 13, actual.size());
+  }
+
+  @Test
+  public void enumAsPredicateTest() {
+    Class<?> c = EnumAsPredicate.class;
+    Set<ConcreteOperation> actual = getConcreteOperations(c);
+    // TODO this should be 5, except for odd business with lost type of inherited method
+    assertEquals("number of operations", 4, actual.size());
+  }
+  
 
   /**
    * valueEnum tests Reflection.getStatements for an enum with a field.
@@ -119,40 +155,51 @@ public class EnumReflectionTest {
    */
   @Test
   public void valueEnum() {
-    ArrayList<Class<?>> classes = new ArrayList<>();
     Class<?> coin = Coin.class;
-    classes.add(coin);
+    ConcreteType declaringType = new ConcreteSimpleType(coin);
 
-    List<Operation> actual = OperationExtractor.getOperations(classes, null);
+    Set<ConcreteOperation> actual = getConcreteOperations(coin);
 
     int count = 0;
     for (Object obj : coin.getEnumConstants()) {
       Enum<?> e = (Enum<?>) obj;
       assertTrue(
-          "enum constant " + e.name() + " should occur", actual.contains(new EnumConstant(e)));
+          "enum constant " + e.name() + " should occur", actual.contains(createEnumOperation(e)));
       count++;
     }
 
     for (Constructor<?> con : coin.getDeclaredConstructors()) {
-      assertFalse(
-          "enum constructor " + con.getName() + "should not occur",
-          actual.contains(new ConstructorCall(con)));
+      try {
+        assertFalse(
+            "enum constructor " + con.getName() + "should not occur",
+            actual.contains(createConstructorCall(con)));
+      } catch (RandoopTypeException e) {
+        fail("type error: " + e);
+      }
     }
 
     for (Method m : coin.getMethods()) {
+      ConcreteOperation mc = null;
+      try {
+        mc = createMethodCall(m, declaringType);
+      } catch (RandoopTypeException e) {
+        fail("type error: " + e);
+      }
       if (m.getName().equals("value")) {
         assertTrue(
             "enum method " + m.toGenericString() + " should occur",
-            actual.contains(new MethodCall(m)));
+            actual.contains(mc));
         count++;
       } else {
         assertFalse(
             "enum method " + m.toGenericString() + " should not occur",
-            actual.contains(new MethodCall(m)));
+            actual.contains(mc));
       }
     }
     assertEquals("number of statements", count, actual.size());
   }
+
+ 
 
   /**
    * abstractMethodEnum tests Reflection.getStatements for an enum with an abstract method
@@ -162,18 +209,17 @@ public class EnumReflectionTest {
    */
   @Test
   public void abstractMethodEnum() {
-    ArrayList<Class<?>> classes = new ArrayList<>();
     Class<?> op = OperatorEnum.class;
-    classes.add(op);
+    ConcreteType declaringType = new ConcreteSimpleType(op);
 
-    List<Operation> actual = OperationExtractor.getOperations(classes, null);
+    Set<ConcreteOperation> actual = getConcreteOperations(op);
 
-    Set<String> overrides = new TreeSet<String>();
+    Set<String> overrides = new TreeSet<>();
     int count = 0;
     for (Object obj : op.getEnumConstants()) {
       Enum<?> e = (Enum<?>) obj;
       assertTrue(
-          "enum constant " + e.name() + " should occur", actual.contains(new EnumConstant(e)));
+          "enum constant " + e.name() + " should occur", actual.contains(createEnumOperation(e)));
       count++;
       for (Method m : e.getClass().getDeclaredMethods()) {
         overrides.add(m.getName());
@@ -181,18 +227,71 @@ public class EnumReflectionTest {
     }
 
     for (Method m : op.getMethods()) {
+      ConcreteOperation mc = null;
+      try {
+        mc = createMethodCall(m, declaringType);
+      } catch (RandoopTypeException e) {
+        fail("type error: " + e.getMessage());
+      }
       if (overrides.contains(m.getName())) {
         assertTrue(
             "enum method " + m.toGenericString() + " should occur",
-            actual.contains(new MethodCall(m)));
+            actual.contains(mc));
         count++;
       } else {
         assertFalse(
             "enum method " + m.toGenericString() + " should not occur",
-            actual.contains(new MethodCall(m)));
+            actual.contains(mc));
       }
     }
 
     assertEquals("number of statements", count, actual.size());
   }
+
+  private Set<ConcreteOperation> getConcreteOperations(Class<?> c) {
+    return getConcreteOperations(c, new DefaultReflectionPredicate(), new PublicVisibilityPredicate());
+  }
+
+  private Set<ConcreteOperation> getConcreteOperations(Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
+    final Set<ConcreteOperation> operations = new LinkedHashSet<>();
+    TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
+      @Override
+      public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
+        operations.add(operation);
+      }
+    });
+    OperationExtractor extractor = new OperationExtractor(operationManager, predicate);
+    ReflectionManager manager = new ReflectionManager(visibilityPredicate);
+    manager.add(extractor);
+    manager.apply(c);
+    return operations;
+  }
+
+  private ConcreteOperation createEnumOperation(Enum<?> e) {
+    CallableOperation eOp = new EnumConstant(e);
+    ConcreteType enumType = new ConcreteSimpleType(e.getDeclaringClass());
+    return new ConcreteOperation(eOp, enumType, new ConcreteTypeTuple(), enumType);
+  }
+
+  private ConcreteOperation createConstructorCall(Constructor<?> con) throws RandoopTypeException {
+    ConstructorCall op = new ConstructorCall(con);
+    ConcreteType declaringType = ConcreteType.forClass(con.getDeclaringClass());
+    List<ConcreteType> paramTypes = new ArrayList<>();
+    for (Class<?> pc : con.getParameterTypes()) {
+      paramTypes.add(ConcreteType.forClass(pc));
+    }
+    return new ConcreteOperation(op, declaringType, new ConcreteTypeTuple(paramTypes), declaringType);
+  }
+  
+  private ConcreteOperation createMethodCall(Method m, ConcreteType declaringType) throws RandoopTypeException {
+    MethodCall op = new MethodCall(m);
+    List<ConcreteType> paramTypes = new ArrayList<>();
+    paramTypes.add(declaringType);
+    for (Class<?> pc : m.getParameterTypes()) {
+      paramTypes.add(ConcreteType.forClass(pc));
+    }
+    ConcreteType outputType = ConcreteType.forClass(m.getReturnType());
+    return new ConcreteOperation(op, declaringType, new ConcreteTypeTuple(paramTypes), outputType);
+  }
+  
 }

@@ -48,7 +48,7 @@ import java.io.Writer;
  * StreamRedirectThread is a thread which copies it's input to it's output and
  * terminates when it completes.
  *
- * @version (#) StreamRedirectThread.java 1.4 03/01/23 16:33:15
+ * @version StreamRedirectThread.java 1.4 03/01/23 16:33:15
  * @author Robert Field
  */
 public class StreamRedirectThread extends Thread {

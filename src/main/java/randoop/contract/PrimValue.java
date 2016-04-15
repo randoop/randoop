@@ -1,7 +1,7 @@
 package randoop.contract;
 
 import randoop.Globals;
-import randoop.util.PrimitiveTypes;
+import randoop.types.PrimitiveTypes;
 
 /**
  * A check recording the value of a primitive value obtained during execution,
