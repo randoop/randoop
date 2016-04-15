@@ -426,7 +426,7 @@ public class RandoopSystemTest {
     options.add("--testclass=randoop.test.ClassWithInnerClass$A");
     options.add("--timelimit=2");
     options.add("--outputlimit=2");
-    options.add("--junit-reflection-allowed=false");
+//    options.add("--junit-reflection-allowed=false");
     options.add("--silently-ignore-bad-class-names");
     options.add("--unchecked-exception=ERROR");
     options.add("--no-regression-tests");
