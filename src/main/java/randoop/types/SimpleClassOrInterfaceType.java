@@ -6,7 +6,7 @@ package randoop.types;
  * It is a wrapper for a {@link Class} object, which is a runtime representation
  * of a type.
  */
-public class ConcreteSimpleType extends ConcreteType {
+public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
 
   /** The runtime type of this simple type. */
   private final Class<?> runtimeClass;
@@ -16,7 +16,8 @@ public class ConcreteSimpleType extends ConcreteType {
    *
    * @param runtimeType  the runtime class for the type
    */
-  public ConcreteSimpleType(Class<?> runtimeType) {
+  public SimpleClassOrInterfaceType(Class<?> runtimeType) {
+    assert ! runtimeType.isPrimitive() : "must be reference type";
     this.runtimeClass = runtimeType;
   }
 
@@ -26,10 +27,10 @@ public class ConcreteSimpleType extends ConcreteType {
    */
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof ConcreteSimpleType)) {
+    if (!(obj instanceof SimpleClassOrInterfaceType)) {
       return false;
     }
-    ConcreteSimpleType t = (ConcreteSimpleType) obj;
+    SimpleClassOrInterfaceType t = (SimpleClassOrInterfaceType) obj;
     return this.runtimeClass.equals(t.runtimeClass);
   }
 
@@ -74,11 +75,6 @@ public class ConcreteSimpleType extends ConcreteType {
   public boolean isInterface() { return runtimeClass.isInterface(); }
 
   @Override
-  public boolean isPrimitive() {
-    return runtimeClass.isPrimitive();
-  }
-
-  @Override
   public boolean isBoxedPrimitive() {
     return PrimitiveTypes.isBoxedPrimitiveTypeOrString(runtimeClass)
             && ! this.equals(ConcreteTypes.STRING_TYPE);
@@ -103,6 +99,11 @@ public class ConcreteSimpleType extends ConcreteType {
     return runtimeClass.equals(void.class);
   }
 
+  @Override
+  public GeneralType apply(Substitution substitution) throws RandoopTypeException {
+    return this;
+  }
+
   /**
    * {@inheritDoc}
    * Tests for assignability to this {@code ConcreteSimpleType}.
@@ -113,7 +114,7 @@ public class ConcreteSimpleType extends ConcreteType {
    *         assignment conversion, false otherwise
    */
   @Override
-  public boolean isAssignableFrom(ConcreteType sourceType) {
+  public boolean isAssignableFrom(GeneralType sourceType) {
 
     // cannot assign to/from void
     if (this.isVoid() || sourceType.isVoid()) {
@@ -132,7 +133,7 @@ public class ConcreteSimpleType extends ConcreteType {
     }
 
     // to be assignable, other cases must be ConcreteSimpleType to ConcreteSimpleType
-    return sourceType instanceof ConcreteSimpleType && isAssignableFrom((ConcreteSimpleType) sourceType);
+    return sourceType instanceof SimpleClassOrInterfaceType && isAssignableFrom((SimpleClassOrInterfaceType) sourceType);
 
   }
 
@@ -146,20 +147,10 @@ public class ConcreteSimpleType extends ConcreteType {
    * @return true if a value of {@code sourceType} can be assigned to a variable
    *         of this type
    */
-  private boolean isAssignableFrom(ConcreteSimpleType sourceType) {
+  private boolean isAssignableFrom(SimpleClassOrInterfaceType sourceType) {
     // test for identity and reference widening conversions
     if (this.runtimeClass.isAssignableFrom(sourceType.runtimeClass)) {
       return true;
-    }
-
-    // test for primitive widening or unboxing conversion
-    if (this.isPrimitive()) {
-      if (sourceType.isPrimitive()) { // primitive widening conversion
-        return PrimitiveTypes.isAssignable(this.runtimeClass, sourceType.runtimeClass);
-      } else { // unbox then widen conversion
-        Class<?> tUnboxed = PrimitiveTypes.toUnboxedType(sourceType.runtimeClass);
-        return tUnboxed != null && PrimitiveTypes.isAssignable(this.runtimeClass, tUnboxed);
-      }
     }
 
     // test for boxing conversion
@@ -172,30 +163,26 @@ public class ConcreteSimpleType extends ConcreteType {
   }
 
   @Override
-  public ConcreteType getSuperclass() {
+  public ClassOrInterfaceType getSuperclass() {
     if (this.equals(ConcreteTypes.OBJECT_TYPE)) {
       return this;
     }
-    return new ConcreteSimpleType(this.runtimeClass.getSuperclass());
+    return new SimpleClassOrInterfaceType(this.runtimeClass.getSuperclass());
   }
 
   @Override
-  public ConcreteType toPrimitive() {
-    if (this.isPrimitive()) {
+  public PrimitiveType toPrimitive() {
+    if (this.isBoxedPrimitive()) {
+      return new PrimitiveType(PrimitiveTypes.toUnboxedType(this.getRuntimeClass()));
+    }
+    throw new IllegalArgumentException("Type must be boxed primitive");
+  }
+
+  @Override
+  public ClassOrInterfaceType toBoxedPrimitive() {
+    if (this.isBoxedPrimitive()) {
       return this;
-    } else if (this.isBoxedPrimitive()) {
-      return new ConcreteSimpleType(PrimitiveTypes.toUnboxedType(this.getRuntimeClass()));
     }
     throw new IllegalArgumentException("Type must be primitive");
-  }
-
-  @Override
-  public ConcreteType toBoxedPrimitive() {
-    if (this.isPrimitive()) {
-      return PrimitiveTypes.toBoxedType(this.getRuntimeClass());
-    } else if (this.isBoxedPrimitive()) {
-      return this;
-    }
-    throw new IllegalArgumentException("type must be primitive");
   }
 }

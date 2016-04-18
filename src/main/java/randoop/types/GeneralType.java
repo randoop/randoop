@@ -6,8 +6,6 @@ import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.List;
 
-import randoop.reflection.ReflectionPredicate;
-
 /**
  * Common superclass representing types in Randoop.
  * Intended as glue for dealing with generating objects from
@@ -27,9 +25,6 @@ import randoop.reflection.ReflectionPredicate;
  * @see randoop.types.GenericType
  */
 public abstract class GeneralType {
-
-  /** The predicate to decide whether to include members in a type */
-  protected static ReflectionPredicate predicate;
 
   /**
    * Returns the runtime {@code Class} object for this type.
@@ -58,9 +53,7 @@ public abstract class GeneralType {
    *
    * @return the fully-qualified type name for this type
    */
-  public String getName() {
-    return null;
-  }
+  public abstract String getName();
 
   /**
    * Indicates whether this object represents an array type.
@@ -72,11 +65,58 @@ public abstract class GeneralType {
   }
 
   /**
-   * Indicates whether this object represents a type defined by an interface.
+   * Indicates whether a value of a {@code ConcreteType} can be assigned to a
+   * variable of this type:
+   * <code>
+   * Variable<sub>this</sub> = Expression<sub>sourcetype</sub>.
+   * </code>
+   * In other words, this is a legal assignment.
+   * Based on the definition of <i>assignment context</i> in
+   * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.2">
+   * section 5.2 of the JDK 8 Java Language Specification</a>
+   * a value of one type is assignable to a variable of another type if the
+   * first type can be converted to the second by
+   * <ul>
+   * <li> an identity conversion,
+   * <li> a widening primitive conversion,
+   * <li> a widening reference conversion,
+   * <li> a boxing conversion, and
+   * <li> an unboxing conversion possibly followed by a widening conversion.
+   * </ul>
+   * And, if after all those conversions, the type is a raw type, an
+   * unchecked conversion may occur.
+   *<p>
+   * When implementing this method, be aware that the method
+   * {@link Class#isAssignableFrom(Class)} checks identity and
+   * reference conversions, and does a comparison of raw types for parameterized
+   * types. The method {@link PrimitiveTypes#isAssignable(Class, Class)} checks
+   * identity and primitive widening for primitive types.
    *
-   * @return true if this object represents an interface type, false otherwise
+   * @param sourceType  the type to test for assignability
+   * @return true if this type can be assigned from the source type, and false otherwise
    */
-  public boolean isInterface() { return false; }
+  public boolean isAssignableFrom(GeneralType sourceType) {
+    return false;
+  }
+
+
+  /**
+   * Indicates whether this is a boxed primitive type.
+   *
+   * @return true if this type is a boxed primitive, false otherwise
+   */
+  public boolean isBoxedPrimitive() {
+    return false;
+  }
+
+  /**
+   * Indicates whether this is an enum type.
+   *
+   * @return true if this is an enum type, false otherwise
+   */
+  public boolean isEnum() {
+    return false;
+  }
 
   /**
    * Indicate whether this type is generic.
@@ -89,6 +129,13 @@ public abstract class GeneralType {
   }
 
   /**
+   * Indicates whether this object represents a type defined by an interface.
+   *
+   * @return true if this object represents an interface type, false otherwise
+   */
+  public boolean isInterface() { return false; }
+
+  /**
    * Indicate whether this is the {@code Object} type.
    *
    * @return true if this is the {@code Object} type, false otherwise
@@ -98,11 +145,36 @@ public abstract class GeneralType {
   }
 
   /**
-   * Indicate whether this type is void.
+   * Indicate whether this type is a parameterized type.
+   * (A parameterized type is a generic class that has been instantiated with
+   * concrete type arguments such as <code>List&lt;String&gt;</code>.)
    *
-   * @return true if this type is void, false otherwise
+   * @return true if this type is a parameterized type, false otherwise
    */
-  public boolean isVoid() {
+  public boolean isParameterized() {
+    return false;
+  }
+
+  /**
+   * Indicates whether this is a primitive type.
+   *
+   * @return true if this type is primitive, false otherwise
+   */
+  public boolean isPrimitive() {
+    return false;
+  }
+
+  /**
+   * Indicate whether this type is a rawtype of a generic class. The rawtype is
+   * the runtime type of the class with type parameters erased.
+   *
+   * @return true if this type is a rawtype of a generic class, false otherwise
+   */
+  public boolean isRawtype() {
+    return false;
+  }
+
+  public boolean isString() {
     return false;
   }
 
@@ -112,7 +184,7 @@ public abstract class GeneralType {
    * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.2">
    * section 4.10.2 of JLS for JavaSE 8</a>.
    * <i>Only</i> checks reference types.
-   * @see ConcreteType#isAssignableFrom(ConcreteType)
+   * @see #isAssignableFrom(GeneralType)
    * @see ParameterizedType#isSubtypeOf(ConcreteType)
    *
    * @param type  the possible supertype
@@ -157,6 +229,15 @@ public abstract class GeneralType {
       return superType.isSubtypeOf(type);
     }
 
+    return false;
+  }
+
+  /**
+   * Indicate whether this type is void.
+   *
+   * @return true if this type is void, false otherwise
+   */
+  public boolean isVoid() {
     return false;
   }
 
@@ -221,11 +302,7 @@ public abstract class GeneralType {
    */
   private static GeneralType forGenericArrayType(java.lang.reflect.GenericArrayType type) throws RandoopTypeException {
     GeneralType elementType = GeneralType.forType(type.getGenericComponentType());
-    if (elementType.isGeneric()) {
-      return new GenericArrayType((GenericType) elementType);
-    } else {
-      return new ConcreteArrayType((ConcreteType) elementType);
-    }
+    return new ArrayType(elementType);
   }
 
   /**
@@ -269,7 +346,6 @@ public abstract class GeneralType {
         throw new RandoopTypeException(msg);
       }
     }
-
 
     // Now decide whether object is generic or parameterized type
     if (typeParameters.size() == actualArguments.length) { // is generic
@@ -333,7 +409,11 @@ public abstract class GeneralType {
     return null;
   }
 
-  public boolean isString() {
-    return false;
+  public PrimitiveType toPrimitive() {
+    throw new IllegalArgumentException("Type must be boxed primitive");
+  }
+
+  public ClassOrInterfaceType toBoxedPrimitive() {
+    throw new IllegalArgumentException("type must be primitive");
   }
 }

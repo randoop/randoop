@@ -13,7 +13,7 @@ import plume.UtilMDE;
  * @see GenericClassType
  * @see Substitution
  */
-public class GenericTypeBound extends TypeBound {
+public class GenericTypeBound extends ParameterBound {
 
   /** the rawtype for this generic bound */
   private final Class<?> rawType;
