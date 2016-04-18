@@ -323,6 +323,12 @@ task copyJars(type: Copy, dependsOn: [':exercised-class:jar', ':mapcall:jar']) {
   into "$buildDir/libs"
 }
 
+task singleJar (type: Jar) {
+  baseName = project.name + '-all'
+  from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+  with jar
+}
+
 /********************* Building manual *******************/
 /*
  * Goal is to create the contents of the manual directory deployed to gh-pages
