@@ -445,6 +445,32 @@ public class RandoopSystemTest {
     }
   }
 
+  @Test
+  public void runParameterizedTypeTest() {
+    Path workingPath = createTestDirectory(workingDirsRoot, "parameterized-type");
+    String packageName = "";
+    String regressionBasename = "ParamTypeReg";
+    String errorBasename = "ParamTypeErr";
+
+    List<String> options =
+            getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
+    options.add("--testclass=muse.SortContainer");
+    options.add("--outputlimit=2");
+    options.add("--timelimit=3");
+
+    RandoopRunDescription randoopRunDescription = generateAndCompile(classpath, workingPath, packageName, regressionBasename, errorBasename, options);
+    assertThat("...should have regression tests", randoopRunDescription.regressionTestCount, is(greaterThan(0)));
+    TestRunDescription regressionTestRunDesc = runTests(classpath, workingPath, packageName, regressionBasename);
+    if (regressionTestRunDesc.testsSucceed != randoopRunDescription.regressionTestCount) {
+      for (String line : regressionTestRunDesc.processStatus.outputLines) {
+        System.err.println(line);
+      }
+      fail("all regression tests should pass");
+    }
+    assertThat("...should not have error tests", randoopRunDescription.errorTestCount, is(equalTo(0)));
+
+  }
+
   /********************************** utility methods ***************************/
 
   /**
