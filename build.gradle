@@ -139,11 +139,12 @@ dependencies {
  * Configuration for compilation.
  */
 
-compileJava.options.compilerArgs = ['-Xlint','-g','-Xlint:-classfile']
-compileTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
-compileAgentTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
-compileSystemTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
-compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
+compileJava.options.compilerArgs = ['-Xlint','-g','-Xlint:-classfile','-Werror','-bootclasspath',System.getenv("JAVA_HOME") + '/jre/lib/rt.jar']
+compileTestJava.options.compilerArgs = ['-g','-Xlint:-classfile','-Werror']
+compileAgentTestJava.options.compilerArgs = ['-g','-Xlint:-classfile','-Werror']
+compileSystemTestJava.options.compilerArgs = ['-g','-Xlint:-classfile','-Werror']
+compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile','-Werror']
+
 
 /*
  * Configuration for testing.
