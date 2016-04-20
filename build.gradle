@@ -442,3 +442,15 @@ task validate(type: Exec, dependsOn: 'clone') {
   environment PATH: "$System.env.PATH:/homes/gws/mernst/.local/bin/html5validator"
   commandLine "html5validator", "--ignore", "/build/docs/api/", "/build/docs/javadoc/"
 }
+
+task reformat(type: Exec, dependsOn: 'clone') {
+  description "Reformat Java source code"
+  environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
+  commandLine "bash", "-c", "find src/ -name *.java | sort-directory-order | xargs run-google-java-format.py"
+}
+
+task checkFormat(type: Exec, dependsOn: 'clone') {
+  description "Reformat Java source code"
+  environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
+  commandLine "bash", "-c", "find src/ -name *.java | sort-directory-order | xargs check-google-java-format.py"
+}
