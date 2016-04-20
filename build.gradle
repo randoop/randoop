@@ -353,8 +353,8 @@ task clone << {
   if ( ! plumeFolder.exists() ) {
     org.ajoberstar.grgit.Grgit.clone(dir: plumeFolder, uri: 'https://github.com/mernst/plume-lib.git')
   } else {
-    println("WARNING: not cloning plume-lib because already exists.")
-    println("         Force clone by running after clean")
+    def plgit = org.ajoberstar.grgit.Grgit.open(dir: plumeFolder)
+    plgit.pull()
   }
 }
 
