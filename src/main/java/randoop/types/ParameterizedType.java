@@ -1,8 +1,8 @@
 package randoop.types;
 
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import plume.UtilMDE;
 
@@ -17,71 +17,7 @@ import plume.UtilMDE;
  * interfaces is handled by
  * {@link randoop.types.GeneralType#forType(java.lang.reflect.Type)}.
  */
-public class ParameterizedType extends ClassOrInterfaceType {
-
-  private final List<TypeArgument> argumentList;
-  /** The generic class for this type */
-  private GenericClassType instantiatedType;
-
-  /** The instantiating type substitution */
-  private Substitution substitution;
-
-  /**
-   * Create a parameterized type from the generic class type.
-   *
-   * @param instantiatedType  the generic class type
-   * @param substitution  the substitution for type variables
-   * @param argumentList  the list of argument types
-   * @throws IllegalArgumentException if either argument is null
-   */
-  ParameterizedType(GenericClassType instantiatedType, Substitution substitution, List<TypeArgument> argumentList) {
-    if (instantiatedType == null) {
-      throw new IllegalArgumentException("instantiated type must be non-null");
-    }
-    if (substitution == null) {
-      throw new IllegalArgumentException("substitution must be non-null");
-    }
-
-    this.instantiatedType = instantiatedType;
-    this.substitution = substitution;
-    this.argumentList = argumentList;
-  }
-
-  /**
-   * {@inheritDoc}
-   * Test if the given object is equal to this parameterized type.
-   * Two parameterized types are equal if they have the same raw type and
-   * the same type arguments.
-   */
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof ParameterizedType)) {
-      return false;
-    }
-    ParameterizedType t = (ParameterizedType) obj;
-    if (!instantiatedType.equals(t.instantiatedType)) {
-      return false;
-    }
-
-    // Cannot guarantee that instantiated types have same type variables, or
-    // that if they do the substitutions will work,
-    // so check that parameters are mapped to the samesame concrete types
-    List<TypeParameter> typeParameters = instantiatedType.getTypeParameters();
-    List<TypeParameter> otherParameters = t.instantiatedType.getTypeParameters();
-    for (int i = 0; i < typeParameters.size(); i++) {
-      if (!(substitution
-          .get(typeParameters.get(i).getParameter())
-          .equals(t.substitution.get(otherParameters.get(i).getParameter())))) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(instantiatedType, substitution, argumentList);
-  }
+public abstract class ParameterizedType extends ClassOrInterfaceType {
 
   /**
    * {@inheritDoc}
@@ -95,11 +31,11 @@ public class ParameterizedType extends ClassOrInterfaceType {
    * conversion, but with parameterized types it is also necessary to check type
    * arguments.  Since a widening reference conversion (JLS, section 5.1.5)
    * exists from type S to type T if S is a subtype of T, this method calls
-   * {@link ParameterizedType#isSubtypeOf(ConcreteType)} to test the subtype
+   * {@link ParameterizedType#isSubtypeOf(GeneralType)} to test the subtype
    * relation.
    */
   @Override
-  public boolean isAssignableFrom(ConcreteType sourceType) {
+  public boolean isAssignableFrom(GeneralType sourceType) {
     if (sourceType == null) {
       throw new IllegalArgumentException("source type must be non-null");
     }
@@ -133,94 +69,6 @@ public class ParameterizedType extends ClassOrInterfaceType {
 
   /**
    * {@inheritDoc}
-   * Handles specific cases of supertypes of a parameterized type
-   *  <code>C&lt;T<sub>1</sub>,...,T<sub>n</sub>&gt;</code>
-   * instantiating the generic type
-   *  <code>C&lt;F<sub>1</sub>,...,F<sub>n</sub>&gt;</code>
-   * by substitution
-   *  <code>&#952; =[F<sub>1</sub>/T<sub>1</sub>,...,F<sub>n</sub>]</code>
-   * for which direct supertypes are:
-   * <ol>
-   *   <li> <code>D&lt;U<sub>1</sub>&#952;,...,U<sub>k</sub>&#952;&gt;</code>
-   *        where <code>D&lt;U<sub>1</sub>,...,U<sub>k</sub>&gt;</code> is a
-   *        supertype of <code>C&lt;F<sub>1</sub>,...,F<sub>n</sub>&gt;</code>.
-   *   <li> <code>C&lt;S<sub>1</sub>,...,S<sub>n</sub>&gt;</code> where
-   *        S<sub>i</sub> <i>contains</i> T<sub>i</sub> (JLS section 4.5.1).
-   *
-   *   <li> The rawtype <code>C</code>.
-   *   <li> <code>Object</code> if generic form is interface with no
-   *   interfaces as supertypes.
-   * </ol>
-   * Note that the full definition of the <i>contains</i> relation in the second
-   * clause involves wildcards, which are not currently implemented, and so the
-   * relation reduces to equality on the parameter bounds.
-   * (Tested using {@link GenericClassType#equals(Object)}.)
-   */
-  @Override
-  public boolean isSubtypeOf(ConcreteType type) throws RandoopTypeException {
-    if (type == null) {
-      throw new IllegalArgumentException("type must be non-null");
-    }
-
-    // Object is *the* supertype
-    if (type.isObject()) {
-      return true;
-    }
-
-    // rawtype is a direct supertype (see JLS section 4.10.2)
-    if (type.isRawtype()) {
-      return type.hasRuntimeClass(this.getRuntimeClass());
-    }
-
-    // the next two checks are short-circuiting to avoid recursive calls
-
-    // minimally, underlying Class should be assignable
-    Class<?> otherRuntimeType = type.getRuntimeClass();
-    Class<?> thisRuntimeType = this.getRuntimeClass();
-    if (!otherRuntimeType.isAssignableFrom(thisRuntimeType)) {
-      return false;
-    }
-
-    // if would-be supertype not parameterized, check supertype of generic form
-    // this is the "direct superclass" clause in definition for generic type
-    if (!type.isParameterized()) {
-      return instantiatedType.isSubtypeOf(type);
-    }
-
-    // otherwise, check more complicated cases of definition
-
-    // second clause.
-    // Not yet handling wildcards, so "contains" reduces to equality
-    if (thisRuntimeType.equals(otherRuntimeType)) {
-      return this.equals(type);
-    }
-
-    // first clause.
-    // Extra fragile because this.substitution only applies to the type
-    // variables of this.instantiatedType, which are shared by supertype objects
-    // created by Class.getGenericInterfaces() and Class.getGenericSuperClass().
-    // This is how GenericClassType.getMatchingSupertype(GenericClassType) works.
-    // If we get GenericClassType supertype via other means, the type variables
-    // will be distinct and the substitution will return null values even if the
-    // variable names and type bounds are the same.
-
-    ParameterizedType pt = (ParameterizedType) type;
-    GenericClassType genericSuperType;
-    genericSuperType = this.instantiatedType.getMatchingSupertype(pt.instantiatedType);
-    if (genericSuperType == null) { // no matching supertype
-      return false;
-    }
-    ConcreteType superType = (ConcreteType)genericSuperType.apply(this.substitution);
-    if (pt.equals(superType)) {
-      return true; // found type
-    }
-
-    // non-null superType is potentially on transitive chain to type
-    return superType.isSubtypeOf(type);
-  }
-
-  /**
-   * {@inheritDoc}
    * @return true, since this is a parameterized type
    */
   @Override
@@ -250,27 +98,15 @@ public class ParameterizedType extends ClassOrInterfaceType {
         + ">";
   }
 
-  /**
-   * {@inheritDoc}
-   * @return the rawtype of the generic type that this type instantiates
-   */
   @Override
-  public Class<?> getRuntimeClass() {
-    return instantiatedType.getRuntimeClass();
-  }
+  public abstract ParameterizedType apply(Substitution substitution);
 
   /**
    * Returns the type arguments for this type.
    *
    * @return the list of type arguments
    */
-  private List<ConcreteType> getTypeArguments() {
-    List<ConcreteType> arguments = new ArrayList<>();
-    for (TypeParameter parameter : instantiatedType.getTypeParameters()) {
-      arguments.add(substitution.get(parameter.getParameter()));
-    }
-    return arguments;
-  }
+  public abstract List<TypeArgument> getTypeArguments();
 
   /**
    * Checks whether this parameterized type is an instantiation of the given
@@ -279,28 +115,70 @@ public class ParameterizedType extends ClassOrInterfaceType {
    * @param genericClassType  the generic class type
    * @return true if this type is an instantiation of the generic class, false otherwise
    */
-  public boolean isInstantiationOf(GenericClassType genericClassType) {
-    return instantiatedType.equals(genericClassType);
+  public abstract boolean isInstantiationOf(GenericClassType genericClassType);
+
+  public static GenericClassType forClass(Class<?> typeClass) {
+    if (typeClass.getTypeParameters().length == 0) {
+      throw new IllegalArgumentException("class must be a generic type");
+    }
+
+    List<TypeVariable> argumentList = new ArrayList<>();
+    for (java.lang.reflect.TypeVariable<?> v : typeClass.getTypeParameters()) {
+      argumentList.add(TypeVariable.forType(v));
+    }
+    return new GenericClassType(typeClass, argumentList);
   }
 
   /**
-   * Constructs the superclass type for this parameterized type.
+   * Performs the conversion of {@code java.lang.reflect.ParameterizedType} to
+   * either {@code GenericClassType} or {@code ParameterizedType} depending on
+   * type arguments of the referenced object.
    *
-   * @return the superclass type for this parameterized type
+   * @param type  the reflective type object
+   * @return an object of type {@code GenericClassType} if arguments are type
+   *         variables, or of type {@code ParameterizedType} if the arguments
+   *         are concrete
    */
-  @Override
-  public ConcreteType getSuperclass() throws RandoopTypeException {
-    GeneralType superclass = this.instantiatedType.getSuperclass();
-    if (superclass == null) {
-      return null;
+  public static ParameterizedType forType(Type type) {
+    if (! (type instanceof java.lang.reflect.ParameterizedType)) {
+      throw new IllegalArgumentException("type must be java.lang.reflect.ParameterizedType");
     }
 
-    assert (superclass instanceof GenericClassType) || (superclass instanceof ConcreteType) : "unexpected type: " + superclass;
+    java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType)type;
 
-    if (superclass instanceof GenericClassType) {
-      return new ParameterizedType((GenericClassType)superclass, this.substitution, argumentList);
+    Type rawType = t.getRawType();
+    assert (rawType instanceof Class<?>) : "rawtype not an instance of Class<?> type " ;
+
+    List<TypeArgument> typeArguments = new ArrayList<>();
+    List<TypeVariable> typeParameters = new ArrayList<>(); //see below
+
+    for (Type argType : t.getActualTypeArguments()) {
+      if (argType instanceof java.lang.reflect.TypeVariable) {
+        java.lang.reflect.TypeVariable<?> v = (java.lang.reflect.TypeVariable<?>) argType;
+        typeParameters.add(TypeVariable.forType(v));
+      } else {
+        typeArguments.add(TypeArgument.forType(argType));
+      }
     }
 
-    return (ConcreteType)superclass;
+    // Now decide whether object is generic or parameterized type
+    if (typeParameters.size() == t.getActualTypeArguments().length) { // is generic
+      // When building generic class type, need to use the TypeVariables
+      // obtained through the java.lang.reflect.ParameterizedType as above.
+      // Otherwise, the variables mapped by the substitutions used in checking
+      // subtyping will not be the correct objects, and the subtype test will
+      // fail.
+      return new GenericClassType((Class<?>) rawType, typeParameters);
+    } else if (typeParameters.isEmpty()) { // is parameterized type
+      // When building parameterized type, first create generic class from the
+      // rawtype, and then instantiate with the arguments collected from the
+      // java.lang.reflect.ParameterizedType interface.
+      GenericClassType genericClass = ParameterizedType.forClass((Class<?>) rawType);
+      Substitution substitution = Substitution.forArgs(genericClass.getTypeArguments(), typeArguments);
+      return new InstantiatedType(genericClass, substitution, typeArguments);
+    } else {
+      String msg = "Expecting either all concrete types or all type variables";
+      throw new IllegalArgumentException(msg);
+    }
   }
 }

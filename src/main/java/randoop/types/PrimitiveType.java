@@ -1,7 +1,7 @@
 package randoop.types;
 
 /**
- * Created by bjkeller on 4/18/16.
+ * Represents a Java primitive type.
  */
 public class PrimitiveType extends GeneralType {
 
@@ -14,7 +14,7 @@ public class PrimitiveType extends GeneralType {
 
   /**
    * {@inheritDoc}
-   * @return true if the runtime types are the same, false otherwise
+   * @return true if the runtime type of this primitive type and the object are the same, false otherwise
    */
   @Override
   public boolean equals(Object obj) {
@@ -57,16 +57,28 @@ public class PrimitiveType extends GeneralType {
     return runtimeClass;
   }
 
+  /**
+   * {@inheritDoc}
+   * @return true since this object represents a primitive type
+   */
   @Override
   public boolean isPrimitive() {
     return true;
   }
 
+  /**
+   * {@inheritDoc}
+   * @return this object
+   */
   @Override
   public GeneralType apply(Substitution substitution) throws RandoopTypeException {
     return this;
   }
 
+  /**
+   * {@inheritDoc}
+   * @return true if this type can be assigned from the source type by primitive widening or uboxing, false otherwise
+   */
   @Override
   public boolean isAssignableFrom(GeneralType sourceType) {
     // test for primitive widening or unboxing conversion
