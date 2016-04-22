@@ -50,9 +50,9 @@ public class ExercisedClassVisitor implements ExecutionVisitor {
    */
   private boolean checkAndReset(Class<?> c) {
     try {
-      Method m = c.getMethod("randoop_checkAndReset", new Class<?>[0]);
+      Method m = c.getMethod("randoop_checkAndReset");
       m.setAccessible(true);
-      return (boolean) m.invoke(null, new Object[0]);
+      return (boolean) m.invoke(null);
     } catch (NoSuchMethodException e) {
       throw new Error("Cannot find instrumentation method: " + e);
     } catch (SecurityException e) {
