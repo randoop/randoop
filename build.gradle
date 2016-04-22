@@ -136,9 +136,21 @@ dependencies {
 }
 
 /*
+ * Configuration for formatting
+ */
+tasks.googleJavaFormat {
+  description = "Reformat Java source code with Google-Java-format"
+  exclude 'src/testinput'
+}
+
+tasks.verifyGoogleJavaFormat {
+  description = "Check Java source code is in Google-Java-format"
+  exclude 'src/testinput'
+}
+
+/*
  * Configuration for compilation.
  */
-
 compileJava.options.compilerArgs = ['-Xlint','-g','-Xlint:-classfile']
 compileTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileAgentTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
@@ -324,6 +336,8 @@ task copyJars(type: Copy, dependsOn: [':exercised-class:jar', ':mapcall:jar']) {
 }
 
 task singleJar (type: Jar) {
+  group "build"
+  description "Assemble a fat jar archive of Randoop and runtime dependencies"
   baseName = project.name + '-all'
   from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
   with jar
