@@ -1,7 +1,6 @@
 package randoop.types;
 
 import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.util.Objects;
 
 import plume.UtilMDE;
@@ -10,10 +9,9 @@ import plume.UtilMDE;
  * Represents a type bound in which a type variable occurs.
  * To evaluate this kind of bound, a substitution is needed to instantiate the
  * bound to a concrete type bound.
- * @see GenericClassType
- * @see Substitution
+  * @see Substitution
  */
-public class GenericTypeBound extends ParameterBound {
+public class GenericTypeBound extends ClassOrInterfaceBound {
 
   /** the rawtype for this generic bound */
   private final Class<?> rawType;
@@ -21,17 +19,15 @@ public class GenericTypeBound extends ParameterBound {
   /** the type parameters for this bound */
   private final Type[] parameters;
 
-  private final TypeOrdering typeOrdering;
   /**
    * Creates a {@code GenericTypeBound} from the given rawtype and type parameters.
    *
    * @param rawType  the rawtype for the type bound
    * @param parameters  the type parameters for the type bound
    */
-  public GenericTypeBound(Class<?> rawType, Type[] parameters, TypeOrdering typeOrdering) {
+  public GenericTypeBound(Class<?> rawType, Type[] parameters) {
     this.rawType = rawType;
     this.parameters = parameters;
-    this.typeOrdering = typeOrdering;
   }
 
   /**
@@ -56,12 +52,12 @@ public class GenericTypeBound extends ParameterBound {
         return false;
       }
     }
-    return this.typeOrdering.equals(b.typeOrdering);
+    return true;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(rawType, parameters, typeOrdering);
+    return Objects.hash(rawType, parameters);
   }
 
   /**
@@ -80,49 +76,24 @@ public class GenericTypeBound extends ParameterBound {
    * the concrete type.
    */
   @Override
-  public boolean isSatisfiedBy(ConcreteType argType, Substitution substitution) throws RandoopTypeException {
-    ConcreteTypeBound b = instantiate(substitution);
-    return b.isSatisfiedBy(argType, substitution);
+  public boolean isSatisfiedBy(GeneralType argType, Substitution substitution) {
+   return false;
   }
 
-  /**
-   * Creates concrete type bound from this bound by instantiating the type
-   * variables of this bound with the given substitution. The substitution must
-   * be for the generic class to which the bound belongs.
-   *
-   * @param substitution  the substitution for instantiating type variables
-   * @return the concrete type bound formed by substituting type variables with
-   * the concrete types using the substitution
-   * @throws IllegalArgumentException if either an argument is not a type variable,
-   * or a type variable has no instantiation in the substitution
-   */
-  public ConcreteTypeBound instantiate(Substitution substitution) throws RandoopTypeException {
-    ConcreteType[] concreteArgs = new ConcreteType[parameters.length];
-    for (int i = 0; i < parameters.length; i++) {
-      if (!(parameters[i] instanceof TypeVariable)) {
-        throw new IllegalArgumentException("unable to instantiate type parameter " + parameters[i]);
-      }
-      ConcreteType t = substitution.get(parameters[i]);
-      if (t == null) {
-        throw new IllegalArgumentException("unable to instantiate type parameter " + parameters[i]);
-      }
-      concreteArgs[i] = t;
+  @Override
+  public boolean isSatisfiedBy(GeneralType argType) {
+    return false;
+  }
+
+  public static GenericTypeBound fromType(Type type) {
+    if (! (type instanceof java.lang.reflect.ParameterizedType)) {
+      throw new IllegalArgumentException("type must be generic");
     }
-    return new ConcreteTypeBound(ConcreteType.forClass(rawType, concreteArgs), typeOrdering);
-  }
 
-  /**
-   * {@inheritDoc}
-   * As a hack to return something usable, returns {@code Object}, but needs to
-   * be bound based on parameter.
-   */
-  @Override
-  public Class<?> getRuntimeClass() {
-    return rawType;
-  }
-
-  @Override
-  public TypeBound apply(Substitution substitution) {
-    return this;
+    java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
+    Type rawType = pt.getRawType();
+    assert rawType instanceof Class<?> : "rawtype must be class";
+    Class<?> runtimeType = (Class<?>) rawType;
+    return new GenericTypeBound(runtimeType, pt.getActualTypeArguments());
   }
 }

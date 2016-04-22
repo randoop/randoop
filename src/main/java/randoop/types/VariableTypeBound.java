@@ -1,20 +1,29 @@
 package randoop.types;
 
-import java.lang.reflect.TypeVariable;
+import java.lang.reflect.Type;
 import java.util.Objects;
 
 /**
  * Created by bjkeller on 4/7/16.
  */
-public class VariableTypeBound extends TypeBound {
-  private final TypeVariable<?> typeVariable;
-  private final TypeOrdering typeOrdering;
+public class VariableTypeBound extends ParameterBound {
 
-  public VariableTypeBound(TypeVariable<?> typeVariable, TypeOrdering typeOrdering) {
+  /** The {@link TypeVariable} that is this bound */
+  private final TypeVariable typeVariable;
+
+  /**
+   * Constructs a bound for the given {@link TypeVariable}.
+   *
+   * @param typeVariable  the type variable
+   */
+  public VariableTypeBound(TypeVariable typeVariable) {
     this.typeVariable = typeVariable;
-    this.typeOrdering = typeOrdering;
   }
 
+  /**
+   * {@inheritDoc}
+   * @return true if the {@link TypeVariable} objects are equal, false otherwise
+   */
   @Override
   public boolean equals(Object obj) {
     if (! (obj instanceof VariableTypeBound)) {
@@ -34,21 +43,52 @@ public class VariableTypeBound extends TypeBound {
     return typeVariable.toString();
   }
 
+  /**
+   * {@inheritDoc}
+   * A type variable parameter bound is satisfied by a type if the instantiation of the bound by the
+   * given substitution is an upper bound of the type.
+   *
+   * @return
+   */
   @Override
-  public boolean isSatisfiedBy(ConcreteType argType, Substitution substitution) throws RandoopTypeException {
-    ConcreteType type = substitution.get(typeVariable);
-    if (type == null) {
-      throw new RandoopTypeException("unable to instantiate bound " + typeVariable);
+  public boolean isSatisfiedBy(GeneralType argType, Substitution substitution) {
+    ParameterBound bound = apply(substitution);
+    if (bound != null) {
+      return bound.isSatisfiedBy(argType, substitution);
+    } else {
+      return isSatisfiedBy(argType);
     }
-    ConcreteTypeBound b = new ConcreteTypeBound(type, typeOrdering);
-    return b.isSatisfiedBy(argType, substitution);
   }
 
-  public TypeBound apply(Substitution substitution) {
-    ConcreteType type = substitution.get(typeVariable);
+  /**
+   * {@inheritDoc}
+   * The relaxed evaluation of a type variable bound is to check whether the bound of the variable
+   * is satisfied.
+   *
+   * @return true if the bound of this {@link TypeVariable} is satisfied, false otherwise
+   */
+  @Override
+  public boolean isSatisfiedBy(GeneralType argType) {
+    ParameterBound bound = typeVariable.getTypeBound();
+    return bound.isSatisfiedBy(argType);
+  }
+
+  /**
+   * Applies a substitution to this type variable parameter, and returns a new parameter bound for
+   * the substituted type.
+
+   * @param substitution  the substitution
+   * @return a {@link ParameterBound} for the type substituted for this variable, or null if there is none
+   */
+  private ParameterBound apply(Substitution substitution) {
+    GeneralType type = substitution.get(typeVariable);
     if (type == null) {
-      return this;
+      return null;
     }
-    return new ConcreteTypeBound(type, typeOrdering);
+    return ParameterBound.forType(type);
+  }
+
+  public static VariableTypeBound forType(Type type) {
+    return new VariableTypeBound(TypeVariable.forType(type));
   }
 }
