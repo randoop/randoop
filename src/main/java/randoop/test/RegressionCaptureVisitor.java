@@ -12,11 +12,11 @@ import randoop.contract.ObjectContract;
 import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.ConcreteOperation;
+import randoop.operation.TypedOperation;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.types.ConcreteType;
+import randoop.types.GeneralType;
 import randoop.types.PrimitiveTypes;
 import randoop.util.Log;
 import randoop.util.MultiMap;
@@ -40,12 +40,12 @@ import randoop.util.MultiMap;
 public final class RegressionCaptureVisitor implements TestCheckGenerator {
 
   private ExpectedExceptionCheckGen exceptionExpectation;
-  private MultiMap<ConcreteType, ConcreteOperation> observerMap;
-  private final Set<ConcreteOperation> excludeSet;
+  private MultiMap<GeneralType, TypedOperation> observerMap;
+  private final Set<TypedOperation> excludeSet;
   private boolean includeAssertions;
 
   public RegressionCaptureVisitor(
-      ExpectedExceptionCheckGen exceptionExpectation, MultiMap<ConcreteType, ConcreteOperation> observerMap, Set<ConcreteOperation> excludeSet, boolean includeAssertions) {
+      ExpectedExceptionCheckGen exceptionExpectation, MultiMap<GeneralType, TypedOperation> observerMap, Set<TypedOperation> excludeSet, boolean includeAssertions) {
     this.exceptionExpectation = exceptionExpectation;
     this.observerMap = observerMap;
     this.excludeSet = excludeSet;
@@ -89,7 +89,7 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
           // If value's type is void (i.e. its statement is a
           // void-return method call), don't capture checks
           // (nothing interesting).
-          ConcreteType tc = st.getOutputType();
+          GeneralType tc = st.getOutputType();
           if (tc.isVoid()) continue; // no return value.
 
           // If value is the result of Object.toString() or
@@ -170,9 +170,9 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
 
             // Put out any observers that exist for this type
             Variable var0 = s.sequence.getVariable(i);
-            Set<ConcreteOperation> observers = observerMap.getValues(var0.getType());
+            Set<TypedOperation> observers = observerMap.getValues(var0.getType());
             if (observers != null) {
-              for (ConcreteOperation m : observers) {
+              for (TypedOperation m : observers) {
 
                 ExecutionOutcome outcome = m.execute(new Object[]{o}, null);
                 if (outcome instanceof ExceptionalExecution) {

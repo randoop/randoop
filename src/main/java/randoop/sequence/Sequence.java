@@ -10,20 +10,19 @@ import java.util.regex.Pattern;
 
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.ConcreteOperation;
 import randoop.operation.OperationParseException;
 import randoop.operation.OperationParser;
+import randoop.operation.TypedOperation;
 import randoop.reflection.ModelCollections;
 import randoop.reflection.TypedOperationManager;
-import randoop.types.ConcreteSimpleType;
-import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypes;
+import randoop.types.GeneralType;
+import randoop.types.PrimitiveType;
 import randoop.types.PrimitiveTypes;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.OneMoreElementList;
 import randoop.util.Randomness;
-import randoop.types.Match;
 import randoop.util.SimpleList;
 import randoop.util.WeightedElement;
 
@@ -60,7 +59,7 @@ public final class Sequence implements WeightedElement {
    * Should be final but cannot because of serialization.
    * This info is used by some generators.
    */
-  private transient /* final */ List<ConcreteType> lastStatementTypes;
+  private transient /* final */ List<GeneralType> lastStatementTypes;
 
   /*
    * Weight is used by heuristic that favors smaller sequences so it makes sense
@@ -113,7 +112,7 @@ public final class Sequence implements WeightedElement {
    * includes the output variable. The types returned are not the types in the
    * signature of the StatementKind, but the types of the variables.
    */
-  public List<ConcreteType> getTypesForLastStatement() {
+  public List<GeneralType> getTypesForLastStatement() {
     return this.lastStatementTypes;
   }
 
@@ -366,8 +365,8 @@ public final class Sequence implements WeightedElement {
    * Returns a sequence that is of the form "Foo f = null;" where Foo is the
    * given class.
    */
-  public static Sequence zero(ConcreteType c) {
-    return new Sequence().extend(ConcreteOperation.createNullOrZeroInitializationForType(c), new ArrayList<Variable>());
+  public static Sequence zero(GeneralType c) {
+    return new Sequence().extend(TypedOperation.createNullOrZeroInitializationForType(c), new ArrayList<Variable>());
   }
 
   // Create a sequence with the given statements.
@@ -489,7 +488,7 @@ public final class Sequence implements WeightedElement {
       for (int i = 0; i < statementWithInputs.inputs.size(); i++) {
         int index = statementWithInputs.inputs.get(i).index;
         if (index >= 0) throw new IllegalStateException();
-        ConcreteType newRefConstraint =
+        GeneralType newRefConstraint =
             statements.get(si + statementWithInputs.inputs.get(i).index).getOutputType();
         if (newRefConstraint == null) throw new IllegalStateException();
         if (!(statementWithInputs
@@ -587,7 +586,7 @@ public final class Sequence implements WeightedElement {
     return this.getStatementsWithInputs().get(index);
   }
 
-  public Variable randomVariableForTypeLastStatement(ConcreteType type) {
+  public Variable randomVariableForTypeLastStatement(GeneralType type) {
     if (type == null)
       throw new IllegalArgumentException("type cannot be null.");
     List<Variable> possibleIndices = new ArrayList<>(this.lastStatementVariables.size());
@@ -604,7 +603,7 @@ public final class Sequence implements WeightedElement {
     return Randomness.randomMember(possibleIndices);
   }
 
-  public Variable randomVariableForType(ConcreteType type) {
+  public Variable randomVariableForType(GeneralType type) {
     if (type == null)
       throw new IllegalArgumentException("type cannot be null.");
     List<Variable> possibleIndices = new ArrayList<>(this.lastStatementVariables.size());
@@ -626,7 +625,7 @@ public final class Sequence implements WeightedElement {
    * Returns a new sequence that is equivalent to this sequence plus the given
    * statement appended at the end.
    */
-  public final Sequence extend(ConcreteOperation operation, List<Variable> inputVariables) {
+  public final Sequence extend(TypedOperation operation, List<Variable> inputVariables) {
     checkInputs(operation, inputVariables);
     List<RelativeNegativeIndex> indexList = new ArrayList<>(1);
     for (Variable v : inputVariables) {
@@ -644,7 +643,7 @@ public final class Sequence implements WeightedElement {
    * Returns a new sequence that is equivalent to this sequence plus the given
    * statement appended at the end.
    */
-  public final Sequence extend(ConcreteOperation operation, Variable... inputs) {
+  public final Sequence extend(TypedOperation operation, Variable... inputs) {
     return extend(operation, Arrays.asList(inputs));
   }
 
@@ -658,7 +657,7 @@ public final class Sequence implements WeightedElement {
    * @param inputs
    *          is the list of variables for input.
    * @return sequence constructed from this one plus the operation
-   * @see Sequence#extend(ConcreteOperation, List)
+   * @see Sequence#extend(TypedOperation, List)
    */
   public Sequence extend(Statement statement, List<Variable> inputs) {
     return extend(statement.getOperation(), inputs);
@@ -666,7 +665,7 @@ public final class Sequence implements WeightedElement {
 
   // Argument checker for extend method.
   // These checks should be caught by checkRep() too.
-  private void checkInputs(ConcreteOperation operation, List<Variable> inputVariables) {
+  private void checkInputs(TypedOperation operation, List<Variable> inputVariables) {
     if (operation.getInputTypes().size() != inputVariables.size()) {
       String msg =
           "statement.getInputTypes().size():"
@@ -694,7 +693,7 @@ public final class Sequence implements WeightedElement {
                 + inputVariables;
         throw new IllegalArgumentException(msg);
       }
-      ConcreteType newRefConstraint = statements.get(inputVariables.get(i).index).getOutputType();
+      GeneralType newRefConstraint = statements.get(inputVariables.get(i).index).getOutputType();
       if (newRefConstraint == null) {
         String msg =
             "newRefConstraint == null for"
@@ -964,10 +963,10 @@ public final class Sequence implements WeightedElement {
         }
 
         System.out.println("operation string: " + opStr);
-        final List<ConcreteOperation> list = new ArrayList<>();
+        final List<TypedOperation> list = new ArrayList<>();
         TypedOperationManager manager = new TypedOperationManager(new ModelCollections() {
           @Override
-          public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
+          public void addConcreteOperation(GeneralType declaringType, TypedOperation operation) {
             list.add(operation);
           }
         });
@@ -979,7 +978,7 @@ public final class Sequence implements WeightedElement {
           throw new SequenceParseException(e.getMessage(), statements, statementCount);
         }
         assert list.size() == 1 : "should have parsed one operator, got " + list.size();
-        ConcreteOperation st = list.get(0);
+        TypedOperation st = list.get(0);
 
         // Find input variables from their names.
         String[] inVars = new String[0];
@@ -1133,7 +1132,7 @@ public final class Sequence implements WeightedElement {
     if (! PrimitiveTypes.isBoxedOrPrimitiveOrStringType(c)) {
       throw new IllegalArgumentException("value is not a (boxed) primitive or String");
     }
-    ConcreteType type = new ConcreteSimpleType(c);
+    GeneralType type = new PrimitiveType(c);
 
     if (type.isBoxedPrimitive()) {
       type = type.toPrimitive();
@@ -1144,6 +1143,6 @@ public final class Sequence implements WeightedElement {
               "value is a string of length > " + GenInputsAbstract.string_maxlen);
     }
 
-    return new Sequence().extend(ConcreteOperation.createPrimitiveInitialization(type, value));
+    return new Sequence().extend(TypedOperation.createPrimitiveInitialization(type, value));
   }
 }

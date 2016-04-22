@@ -5,7 +5,7 @@ import java.util.Set;
 
 public class EqualsMethodMatcher implements StateMatcher {
 
-  Set<Object> cache = new LinkedHashSet<>();
+  private final Set<Object> cache = new LinkedHashSet<>();
 
   @Override
   public boolean add(Object object) {

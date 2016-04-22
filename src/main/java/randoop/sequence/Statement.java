@@ -7,12 +7,12 @@ import java.util.List;
 import randoop.ExecutionOutcome;
 import randoop.Globals;
 import randoop.operation.CallableOperation;
-import randoop.operation.ConcreteOperation;
+import randoop.operation.TypedOperation;
 import randoop.operation.Operation;
 import randoop.operation.OperationParser;
 import randoop.sequence.Sequence.RelativeNegativeIndex;
-import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeTuple;
+import randoop.types.GeneralType;
+import randoop.types.TypeTuple;
 import randoop.types.PrimitiveTypes;
 
 /**
@@ -27,7 +27,7 @@ public final class Statement {
    * The operation (method call, constructor call, primitive values declaration,
    * etc.).
    */
-  private final ConcreteOperation operation;
+  private final TypedOperation operation;
 
   // The list of values used as input to the statement.
   //
@@ -40,7 +40,7 @@ public final class Statement {
    * Create a new statement of type statement that takes as input the given
    * values.
    */
-  public Statement(ConcreteOperation operation, List<RelativeNegativeIndex> inputVariables) {
+  public Statement(TypedOperation operation, List<RelativeNegativeIndex> inputVariables) {
     this.operation = operation;
     this.inputs = new ArrayList<>(inputVariables);
   }
@@ -51,7 +51,7 @@ public final class Statement {
    * @param operation
    *          the operation for action of this statement.
    */
-  public Statement(ConcreteOperation operation) {
+  public Statement(TypedOperation operation) {
     this(operation, new ArrayList<RelativeNegativeIndex>());
   }
 
@@ -98,11 +98,11 @@ public final class Statement {
     return java.util.Objects.hash(operation, inputs);
   }
 
-  public ConcreteType getOutputType() {
+  public GeneralType getOutputType() {
     return operation.getOutputType();
   }
 
-  public ConcreteTypeTuple getInputTypes() {
+  public TypeTuple getInputTypes() {
     return operation.getInputTypes();
   }
 
@@ -119,7 +119,7 @@ public final class Statement {
    *          the {@code StringBuilder} to which code text is appended.
    */
   public void appendCode(Variable variable, List<Variable> inputs, StringBuilder b) {
-    ConcreteType type = operation.getOutputType();
+    GeneralType type = operation.getOutputType();
     if (! type.isVoid()) {
       String typeName = type.getName();
       b.append(typeName);
@@ -205,7 +205,7 @@ public final class Statement {
    *
    * @return result of getDeclaringClass for corresponding statement.
    */
-  public ConcreteType getDeclaringClass() {
+  public GeneralType getDeclaringClass() {
     return operation.getDeclaringType();
   }
 
@@ -273,15 +273,15 @@ public final class Statement {
   }
 
   /**
-   * getConcreteOperation is meant to be a temporary solution to type confusion in
+   * getTypedOperation is meant to be a temporary solution to type confusion in
    * generators. This should go away. Only intended to be called by
-   * {@link Sequence#extend(ConcreteOperation, List)}.
+   * {@link Sequence#extend(TypedOperation, List)}.
    *
    * @return operation object in the statement.
    */
   // TODO can remove once RandomWalkGenerator.extendRandomly and
   // SequenceSimplifyUtils.makeCopy modified
-  public final ConcreteOperation getOperation() {
+  public final TypedOperation getOperation() {
     return operation;
   }
 }

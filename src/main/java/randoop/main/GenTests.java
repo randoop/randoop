@@ -24,7 +24,7 @@ import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
 import randoop.contract.ObjectContract;
 import randoop.instrument.ExercisedClassVisitor;
-import randoop.operation.ConcreteOperation;
+import randoop.operation.TypedOperation;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.reflection.DefaultReflectionPredicate;
@@ -52,7 +52,7 @@ import randoop.test.ValidityCheckingVisitor;
 import randoop.test.predicate.AlwaysFalseExceptionPredicate;
 import randoop.test.predicate.ExceptionBehaviorPredicate;
 import randoop.test.predicate.ExceptionPredicate;
-import randoop.types.ConcreteType;
+import randoop.types.GeneralType;
 import randoop.types.RandoopTypeException;
 import randoop.util.CollectionsExt;
 import randoop.util.Log;
@@ -216,7 +216,7 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     }
 
-    List<ConcreteOperation> model = operationModel.getConcreteOperations();
+    List<TypedOperation> model = operationModel.getConcreteOperations();
 
     if (model.size() == 0) {
       Log.out.println("There are no methods to test. Exiting.");
@@ -243,7 +243,7 @@ public class GenTests extends GenInputsAbstract {
 
     Set<String> observerSignatures = GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.observers, "Unable to read observer file", "//.*", null);
 
-    MultiMap<ConcreteType,ConcreteOperation> observerMap = null;
+    MultiMap<GeneralType,TypedOperation> observerMap = null;
     try {
       observerMap = operationModel.getObservers(observerSignatures);
     } catch (OperationParseException e) {
@@ -251,8 +251,8 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     }
     assert observerMap != null;
-    Set<ConcreteOperation> observers = new LinkedHashSet<>();
-    for (ConcreteType keyType : observerMap.keySet()) {
+    Set<TypedOperation> observers = new LinkedHashSet<>();
+    for (GeneralType keyType : observerMap.keySet()) {
       observers.addAll(observerMap.getValues(keyType));
     }
 
@@ -270,7 +270,7 @@ public class GenTests extends GenInputsAbstract {
     Set<ObjectContract> contracts = operationModel.getContracts();
 
 
-    Set<ConcreteOperation> excludeAsObservers = new LinkedHashSet<>();
+    Set<TypedOperation> excludeAsObservers = new LinkedHashSet<>();
     // TODO add Object.toString() and Object.hashCode() to exclude set
     TestCheckGenerator testGen = createTestCheckGenerator(visibility, contracts, observerMap, excludeAsObservers);
 
@@ -280,7 +280,7 @@ public class GenTests extends GenInputsAbstract {
      * Setup for test predicate
      */
     // Always exclude a singleton sequence with just new Object()
-    ConcreteOperation objectConstructor = null;
+    TypedOperation objectConstructor = null;
     try {
       objectConstructor = operationModel.getConcreteOperation(Object.class.getConstructor());
     } catch (NoSuchMethodException e) {
@@ -541,7 +541,7 @@ public class GenTests extends GenInputsAbstract {
    *         arguments.
    */
   public TestCheckGenerator createTestCheckGenerator(
-          VisibilityPredicate visibility, Set<ObjectContract> contracts, MultiMap<ConcreteType, ConcreteOperation> observerMap, Set<ConcreteOperation> excludeAsObservers) {
+          VisibilityPredicate visibility, Set<ObjectContract> contracts, MultiMap<GeneralType, TypedOperation> observerMap, Set<TypedOperation> excludeAsObservers) {
 
     // start with checking for invalid exceptions
     ExceptionPredicate isInvalid = new ExceptionBehaviorPredicate(BehaviorType.INVALID);

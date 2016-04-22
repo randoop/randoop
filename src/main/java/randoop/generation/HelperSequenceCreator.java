@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Set;
 
 import randoop.main.GenInputsAbstract;
-import randoop.operation.ConcreteOperation;
+import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
-import randoop.types.ConcreteArrayType;
-import randoop.types.ConcreteType;
+import randoop.types.ArrayType;
+import randoop.types.GeneralType;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.Randomness;
 import randoop.types.Match;
@@ -28,14 +28,14 @@ public class HelperSequenceCreator {
    * @param type  the query type
    * @return the singleton list containing the compatible sequence
    */
-  public static SimpleList<Sequence> createSequence(ComponentManager components, ConcreteType type) {
+  public static SimpleList<Sequence> createSequence(ComponentManager components, GeneralType type) {
 
     if (!type.isArray()) {
       return new ArrayListSimpleList<Sequence>();
     }
 
-    ConcreteArrayType arrayType = (ConcreteArrayType)type;
-    ConcreteType elementType = arrayType.getElementType();
+    ArrayType arrayType = (ArrayType)type;
+    GeneralType elementType = arrayType.getElementType();
 
     Sequence s = null;
 
@@ -48,24 +48,24 @@ public class HelperSequenceCreator {
         // No sequences that produce appropriate component values found, and
         if (GenInputsAbstract.forbid_null) {
           // use of null is forbidden. So, return the empty array.
-          s = new Sequence().extend(ConcreteOperation.createArrayCreation(arrayType, 0));
+          s = new Sequence().extend(TypedOperation.createArrayCreation(arrayType, 0));
         } else {
           // null is allowed.
           s = new Sequence();
           List<Variable> ins = new ArrayList<>();
-          ConcreteOperation declOp;
+          TypedOperation declOp;
           if (Randomness.weighedCoinFlip(0.5)) {
-            declOp = ConcreteOperation.createArrayCreation(arrayType, 0);
+            declOp = TypedOperation.createArrayCreation(arrayType, 0);
           } else {
-            s = s.extend(ConcreteOperation.createNullOrZeroInitializationForType(elementType));
+            s = s.extend(TypedOperation.createNullOrZeroInitializationForType(elementType));
             ins.add(s.getVariable(0));
-            declOp = ConcreteOperation.createArrayCreation(arrayType, 1);
+            declOp = TypedOperation.createArrayCreation(arrayType, 1);
           }
           s = s.extend(declOp, ins);
         }
       } else {
         // Return the array [ x ] where x is the last value in the sequence.
-        ConcreteOperation declOp = ConcreteOperation.createArrayCreation(arrayType, 1);
+        TypedOperation declOp = TypedOperation.createArrayCreation(arrayType, 1);
         s = candidates.get(Randomness.nextRandomInt(candidates.size()));
         List<Variable> ins = new ArrayList<>();
         // XXX IS THIS OLD COMMENT TRUE? : this assumes that last statement will
@@ -82,7 +82,7 @@ public class HelperSequenceCreator {
     return l;
   }
 
-  private static Sequence randPrimitiveArray(ConcreteType componentType) {
+  private static Sequence randPrimitiveArray(GeneralType componentType) {
     assert componentType.isPrimitive();
     Set<Object> potentialElts = SeedSequences.getSeeds(componentType);
     int length = Randomness.nextRandomInt(4);
@@ -90,13 +90,13 @@ public class HelperSequenceCreator {
     List<Variable> emptylist = new ArrayList<>();
     for (int i = 0; i < length; i++) {
       Object elt = Randomness.randomSetMember(potentialElts);
-      s = s.extend(ConcreteOperation.createPrimitiveInitialization(componentType, elt), emptylist);
+      s = s.extend(TypedOperation.createPrimitiveInitialization(componentType, elt), emptylist);
     }
     List<Variable> inputs = new ArrayList<>();
     for (int i = 0; i < length; i++) {
       inputs.add(s.getVariable(i));
     }
-    s = s.extend(ConcreteOperation.createArrayCreation(new ConcreteArrayType(componentType), length), inputs);
+    s = s.extend(TypedOperation.createArrayCreation(ArrayType.ofElementType(componentType), length), inputs);
     return s;
   }
 }

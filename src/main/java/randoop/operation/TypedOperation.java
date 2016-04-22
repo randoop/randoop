@@ -210,11 +210,11 @@ public class TypedOperation implements Operation {
    * @param substitution  the type substitution
    * @return the concrete operation with type variables replaced by substitution
    */
-  public GenericOperation apply(Substitution substitution) throws RandoopTypeException {
+  public TypedOperation apply(Substitution substitution) throws RandoopTypeException {
     GeneralType declaringType = this.declaringType.apply(substitution);
     TypeTuple inputTypes = this.inputTypes.apply(substitution);
     GeneralType outputType = this.outputType.apply(substitution);
-    return new GenericOperation(this.getOperation(), declaringType, inputTypes, outputType);
+    return new TypedOperation(this.getOperation(), declaringType, inputTypes, outputType);
   }
 
   public static TypedOperation createNullInitializationWithType(GeneralType type) {

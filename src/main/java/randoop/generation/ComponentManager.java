@@ -1,11 +1,12 @@
 package randoop.generation;
 
-import randoop.operation.ConcreteOperation;
+import randoop.operation.TypedOperation;
 import randoop.sequence.ClassLiterals;
 import randoop.sequence.PackageLiterals;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
-import randoop.types.ConcreteType;
+import randoop.types.ClassOrInterfaceType;
+import randoop.types.GeneralType;
 import randoop.types.PrimitiveTypes;
 import randoop.util.ListOfLists;
 import randoop.util.SimpleList;
@@ -109,7 +110,7 @@ public class ComponentManager {
    * @param type  the class literal to add for the sequence
    * @param seq  the sequence
    */
-  public void addClassLevelLiteral(ConcreteType type, Sequence seq) {
+  public void addClassLevelLiteral(ClassOrInterfaceType type, Sequence seq) {
     if (classLiterals == null) {
       classLiterals = new ClassLiterals();
     }
@@ -166,7 +167,7 @@ public class ComponentManager {
    * @param exactMatch  the flag whether or not to use subtyping in type matching
    *@return the sequences that create values of the given type
    */
-  public SimpleList<Sequence> getSequencesForType(ConcreteType cls, boolean exactMatch) {
+  public SimpleList<Sequence> getSequencesForType(GeneralType cls, boolean exactMatch) {
     return gralComponents.getSequencesForType(cls, exactMatch);
   }
 
@@ -180,18 +181,18 @@ public class ComponentManager {
    * @return the sequences that create values of the given type
    */
   @SuppressWarnings("unchecked")
-  public SimpleList<Sequence> getSequencesForType(ConcreteOperation operation, int i) {
+  public SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i) {
 
-    ConcreteType neededType = operation.getInputTypes().get(i);
+    GeneralType neededType = operation.getInputTypes().get(i);
 
     SimpleList<Sequence> ret = gralComponents.getSequencesForType(neededType, false);
 
     if (classLiterals != null || packageLiterals != null) {
 
-      ConcreteType declaringCls = operation.getDeclaringType();
+      GeneralType declaringCls = operation.getDeclaringType();
       if (declaringCls != null) {
-        if (classLiterals != null) {
-            SimpleList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
+        if (classLiterals != null && declaringCls instanceof ClassOrInterfaceType) {
+            SimpleList<Sequence> sl = classLiterals.getSequences((ClassOrInterfaceType)declaringCls, neededType);
             if (!sl.isEmpty()) {
               ret = new ListOfLists<>(ret, sl);
             }
@@ -228,7 +229,7 @@ public class ComponentManager {
     if (packageLiterals != null) {
       ret.addAll(packageLiterals.getAllSequences());
     }
-    for (ConcreteType type : PrimitiveTypes.getPrimitiveOrStringTypes()) {
+    for (GeneralType type : PrimitiveTypes.getPrimitiveOrStringTypes()) {
       ret.addAll(gralComponents.getSequencesForType(type, true).toJDKList());
     }
     return ret;
