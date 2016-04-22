@@ -51,7 +51,7 @@ public class TypeTuple {
    * @param i  the component index
    * @return the component type at the position
    */
-  GeneralType get(int i) {
+  public GeneralType get(int i) {
     assert 0 <= i && i < list.size();
     return list.get(i);
   }
@@ -61,7 +61,7 @@ public class TypeTuple {
    *
    * @return true if the tuple has no components, false otherwise
    */
-  boolean isEmpty() {
+  public boolean isEmpty() {
     return list.isEmpty();
   }
 
@@ -70,7 +70,7 @@ public class TypeTuple {
    *
    * @return true if any component of tupe is generic, false if none are
    */
-  boolean isGeneric() {
+  public boolean isGeneric() {
     for (GeneralType type : list) {
     if (type.isGeneric()) {
       return true;
@@ -91,8 +91,17 @@ public class TypeTuple {
    * @param substitution  the substitution
    * @return a new type tuple resulting from applying the given substitution to this tuple
    */
-  TypeTuple apply(Substitution substitution) throws RandoopTypeException {
-    return null;
+  public TypeTuple apply(Substitution substitution) throws RandoopTypeException {
+    List<GeneralType> typeList = new ArrayList<>();
+    for (GeneralType type : this.list) {
+      GeneralType newType = type.apply(substitution);
+      if (newType != null) {
+        typeList.add(newType);
+      } else {
+        typeList.add(type);
+      }
+    }
+    return new TypeTuple(typeList);
   }
 
 }
