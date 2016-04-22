@@ -13,12 +13,9 @@ import randoop.field.FieldParser;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Variable;
-import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeTuple;
 import randoop.types.GeneralType;
-import randoop.types.GeneralTypeTuple;
-import randoop.types.GenericTypeTuple;
 import randoop.types.RandoopTypeException;
+import randoop.types.TypeTuple;
 
 /**
  * FieldGetter is an adapter that creates a {@link Operation} from a
@@ -83,7 +80,7 @@ public class FieldGet extends CallableOperation {
    *          the StringBuilder that strings are appended to.
    */
   @Override
-  public void appendCode(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType, List<Variable> inputVars, StringBuilder b) {
+  public void appendCode(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b) {
     b.append(field.toCode(declaringType, inputVars));
   }
 
@@ -92,7 +89,7 @@ public class FieldGet extends CallableOperation {
    * PublicFieldParser.
    */
   @Override
-  public String toParseableString(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
+  public String toParseableString(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
     return declaringType.getName() + ".<get>(" + field.getName() + ")";
   }
 
@@ -169,7 +166,7 @@ public class FieldGet extends CallableOperation {
     if (! accessibleField.isStatic()) {
       getInputTypeList.add(classType);
     }
-    manager.createTypedOperation(new FieldGet(accessibleField), classType, new GenericTypeTuple(getInputTypeList), fieldType);
+    manager.createTypedOperation(new FieldGet(accessibleField), classType, new TypeTuple(getInputTypeList), fieldType);
   }
 
   @Override

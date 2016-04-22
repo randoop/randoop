@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Set;
 
-import randoop.types.ConcreteType;
+import randoop.types.GeneralType;
 import randoop.types.GeneralType;
 import randoop.types.RandoopTypeException;
 
@@ -17,14 +17,14 @@ import randoop.types.RandoopTypeException;
 class InputTypeExtractor implements ClassVisitor {
 
   /** The set of concrete types */
-  private Set<ConcreteType> inputTypes;
+  private Set<GeneralType> inputTypes;
 
   /**
    * Creates a visitor that adds discovered concrete types to the given set.
    *
    * @param inputTypes  the set of concrete types
    */
-  InputTypeExtractor(Set<ConcreteType> inputTypes) {
+  InputTypeExtractor(Set<GeneralType> inputTypes) {
     this.inputTypes = inputTypes;
   }
 
@@ -87,7 +87,7 @@ class InputTypeExtractor implements ClassVisitor {
    */
   private void addIfConcrete(GeneralType type) {
     if (! type.isGeneric() && ! type.isVoid() ) {
-      ConcreteType concreteType = (ConcreteType)type;
+      GeneralType concreteType = (GeneralType)type;
       if (concreteType.isPrimitive()) {
         concreteType = concreteType.toBoxedPrimitive();
       }
@@ -107,11 +107,7 @@ class InputTypeExtractor implements ClassVisitor {
   @Override
   public void visitBefore(Class<?> c) {
     if (c.getTypeParameters().length == 0) {
-      try {
-        inputTypes.add(ConcreteType.forClass(c));
-      } catch (RandoopTypeException e) {
-        assert false : "type error visiting concrete class";
-      }
+      inputTypes.add(GeneralType.forClass(c));
     }
   }
 

@@ -6,7 +6,7 @@ package randoop.sequence;
 import java.util.ArrayList;
 import java.util.List;
 
-import randoop.operation.ConcreteOperation;
+import randoop.operation.TypedOperation;
 
 /**
  * A statement that is part of a mutable sequence.
@@ -15,7 +15,7 @@ import randoop.operation.ConcreteOperation;
  */
 public class MutableStatement {
 
-  public final ConcreteOperation operation;
+  public final TypedOperation operation;
 
   public final List<MutableVariable> inputs;
 
@@ -37,7 +37,7 @@ public class MutableStatement {
    * values.
    */
   public MutableStatement(
-      ConcreteOperation statement, List<MutableVariable> inputVariables, MutableVariable result) {
+      TypedOperation statement, List<MutableVariable> inputVariables, MutableVariable result) {
     this.operation = statement;
     this.inputs = new ArrayList<MutableVariable>(inputVariables);
     this.result = result;

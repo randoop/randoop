@@ -16,13 +16,11 @@ import randoop.operation.FieldGet;
 import randoop.operation.FieldSet;
 import randoop.operation.MethodCall;
 import randoop.operation.Operation;
-import randoop.types.ConcreteSimpleType;
-import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypes;
 import randoop.types.GeneralType;
-import randoop.types.GeneralTypeTuple;
-import randoop.types.GenericTypeTuple;
 import randoop.types.RandoopTypeException;
+import randoop.types.SimpleClassOrInterfaceType;
+import randoop.types.TypeTuple;
 
 /**
  * OperationExtractor is a {@link ClassVisitor} that creates a collection of
@@ -52,7 +50,7 @@ public class OperationExtractor implements ClassVisitor {
   public OperationExtractor(TypedOperationManager manager, ReflectionPredicate predicate) {
     this.manager = manager;
     this.predicate = predicate;
-    this.typeStack = new Stack<GeneralType>();
+    this.typeStack = new Stack<>();
     this.classType = null;
   }
 
@@ -71,7 +69,7 @@ public class OperationExtractor implements ClassVisitor {
       return;
     }
     ConstructorCall op = new ConstructorCall(c);
-    GeneralTypeTuple inputTypes;
+    TypeTuple inputTypes;
     try {
       inputTypes = manager.getInputTypes(c.getGenericParameterTypes());
     } catch (RandoopTypeException e) {
@@ -96,7 +94,7 @@ public class OperationExtractor implements ClassVisitor {
     }
 
     MethodCall op = new MethodCall(method);
-    GenericTypeTuple inputTypes;
+    TypeTuple inputTypes;
     GeneralType outputType;
     try {
       if (!Modifier.isStatic(method.getModifiers() & Modifier.methodModifiers())) {
@@ -143,10 +141,10 @@ public class OperationExtractor implements ClassVisitor {
       setInputTypeList.add(classType);
     }
 
-    manager.createTypedOperation(new FieldGet(accessibleField), classType, new GenericTypeTuple(getInputTypeList), fieldType);
+    manager.createTypedOperation(new FieldGet(accessibleField), classType, new TypeTuple(getInputTypeList), fieldType);
     if (! accessibleField.isFinal()) {
       setInputTypeList.add(fieldType);
-      manager.createTypedOperation(new FieldSet(accessibleField), classType, new GenericTypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
+      manager.createTypedOperation(new FieldSet(accessibleField), classType, new TypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
     }
 
   }
@@ -159,10 +157,10 @@ public class OperationExtractor implements ClassVisitor {
    */
   @Override
   public void visit(Enum<?> e) {
-    ConcreteType enumType = new ConcreteSimpleType(e.getDeclaringClass());
+    GeneralType enumType = new SimpleClassOrInterfaceType(e.getDeclaringClass());
     assert ! enumType.isGeneric() : "type of enum class cannot be generic";
     EnumConstant op = new EnumConstant(e);
-    manager.createTypedOperation(op, enumType, new GenericTypeTuple(), enumType);
+    manager.createTypedOperation(op, enumType, new TypeTuple(), enumType);
   }
 
   @Override

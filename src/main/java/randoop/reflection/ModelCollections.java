@@ -1,12 +1,9 @@
 package randoop.reflection;
 
-import java.lang.reflect.Constructor;
-
-import randoop.operation.ConcreteOperation;
-import randoop.operation.GenericOperation;
-import randoop.types.ConcreteType;
-import randoop.types.GenericClassType;
-import randoop.types.GenericType;
+import randoop.operation.TypedOperation;
+import randoop.types.ClassOrInterfaceType;
+import randoop.types.GeneralType;
+import randoop.types.ParameterizedType;
 
 /**
  * Abstract class for representing collections of types and operations for a set of classes.
@@ -24,16 +21,16 @@ public abstract class ModelCollections {
   /**
    * Adds a concrete type to the collection.
    *
-   * @param type  the {@link ConcreteType} to add to the class types collection
+   * @param type  the {@link ClassOrInterfaceType} to add to the class types collection
    */
-  public void addConcreteClassType(ConcreteType type) { }
+  public void addConcreteClassType(ClassOrInterfaceType type) { }
 
   /**
    * Adds a generic type to the collection.
    *
-   * @param type  the {@link GenericClassType} to add to the class types collection
+   * @param type  the {@link ParameterizedType} to add to the class types collection
    */
-  public void addGenericClassType(GenericClassType type) { }
+  public void addGenericClassType(ParameterizedType type) { }
 
   /**
    * Adds an operation to a generic type to the generic class type collection.
@@ -41,7 +38,7 @@ public abstract class ModelCollections {
    * @param declaringType  the type
    * @param operation  the operation
    */
-  public void addGenericOperation(GenericClassType declaringType, GenericOperation operation) { }
+  public void addOperationToGenericType(ParameterizedType declaringType, TypedOperation operation) { }
 
   /**
    * Adds a generic operation from a concrete declaring type.
@@ -49,14 +46,14 @@ public abstract class ModelCollections {
    * @param declaringType  the concrete declaring type
    * @param operation  the generic operation
    */
-  public void addGenericOperation(ConcreteType declaringType, GenericOperation operation) { }
+  public void addGenericOperation(ClassOrInterfaceType declaringType, TypedOperation operation) { }
 
   /**
-   * Adds a concrete operation from a generic declaring type.
+   * Adds a concrete operation from a concrete declaring type.
    *
    * @param declaringType  the concrete declaring type
    * @param operation  the generic operation
    */
-  public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) { }
+  public void addConcreteOperation(ClassOrInterfaceType declaringType, TypedOperation operation) { }
 
 }

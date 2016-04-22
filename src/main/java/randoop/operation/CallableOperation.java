@@ -6,10 +6,8 @@ import java.util.List;
 import randoop.ExecutionOutcome;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
-import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeTuple;
 import randoop.types.GeneralType;
-import randoop.types.GeneralTypeTuple;
+import randoop.types.TypeTuple;
 
 /**
  * CallableOperation is an abstract implementation of the Operation interface to
@@ -96,7 +94,7 @@ public abstract class CallableOperation implements Operation {
    * @param inputVars  the list of variables that are inputs to operation.
    * @param b  the {@link StringBuilder} to which code is added.
    */
-  public abstract void appendCode(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType, List<Variable> inputVars, StringBuilder b);
+  public abstract void appendCode(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b);
 
   /**
    * Returns a string representation of this Operation, which can be read by
@@ -107,6 +105,6 @@ public abstract class CallableOperation implements Operation {
    *
    * @return string descriptor of {@link Operation} object.
    */
-  public abstract String toParseableString(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType);
+  public abstract String toParseableString(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType);
 
 }

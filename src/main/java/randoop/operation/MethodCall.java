@@ -14,12 +14,9 @@ import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeTuple;
 import randoop.types.GeneralType;
-import randoop.types.GeneralTypeTuple;
-import randoop.types.GenericTypeTuple;
 import randoop.types.RandoopTypeException;
+import randoop.types.TypeTuple;
 import randoop.util.MethodReflectionCode;
 import randoop.util.ReflectionExecutor;
 
@@ -46,7 +43,7 @@ public final class MethodCall extends CallableOperation {
   /**
    * ID for parsing purposes
    *
-   * @see OperationParser#getId(ConcreteOperation)
+   * @see OperationParser#getId(TypedOperation)
    */
   public static final String ID = "method";
 
@@ -92,13 +89,13 @@ public final class MethodCall extends CallableOperation {
    * @param inputVars is the list of actual arguments to be printed.
    */
   @Override
-  public void appendCode(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType, List<Variable> inputVars, StringBuilder sb) {
+  public void appendCode(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder sb) {
 
     String receiverString = isStatic() ? null : inputVars.get(0).getName();
     if (isStatic()) {
       sb.append(declaringType.getName().replace('$', '.'));
     } else {
-      ConcreteType expectedType = inputTypes.get(0);
+      GeneralType expectedType = inputTypes.get(0);
       if (expectedType.isPrimitive()) { // explicit cast when want primitive boxed as receiver
         sb.append("((").append(expectedType.getName()).append(")").append(receiverString).append(")");
       } else {
@@ -200,7 +197,7 @@ public final class MethodCall extends CallableOperation {
    *  java.util.ArrayList.add(int,java.lang.Object)
    */
   @Override
-  public String toParseableString(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
+  public String toParseableString(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
     StringBuilder sb = new StringBuilder();
     sb.append(method.getDeclaringClass().getName()).append(".");
     sb.append(method.getName()).append("(");
@@ -288,7 +285,7 @@ public final class MethodCall extends CallableOperation {
       msg = "Type error for method " + methodString + ": " + e;
       throw new OperationParseException(msg);
     }
-    manager.createTypedOperation(op, classType, new GenericTypeTuple(paramTypes), outputType);
+    manager.createTypedOperation(op, classType, new TypeTuple(paramTypes), outputType);
 
   }
 

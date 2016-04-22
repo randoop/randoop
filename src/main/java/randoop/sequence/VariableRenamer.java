@@ -1,11 +1,8 @@
 package randoop.sequence;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import randoop.types.ConcreteArrayType;
-import randoop.types.ConcreteType;
+import randoop.types.ArrayType;
 import randoop.types.ConcreteTypes;
+import randoop.types.GeneralType;
 
 class VariableRenamer {
 
@@ -28,7 +25,7 @@ class VariableRenamer {
    * @param type  the type to use as base of variable name
    * @return a variable name based on its type
    */
-  static String getVariableName(ConcreteType type) {
+  static String getVariableName(GeneralType type) {
 
     if (type.isVoid()) {
       return "void";
@@ -38,7 +35,7 @@ class VariableRenamer {
       String arraySuffix = "";
       while (type.isArray()) {
         arraySuffix += "_array";
-        type = ((ConcreteArrayType) type).getElementType();
+        type = ((ArrayType) type).getElementType();
       }
       return getVariableName(type) + arraySuffix;
     }

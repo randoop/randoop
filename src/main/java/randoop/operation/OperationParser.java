@@ -108,7 +108,7 @@ public class OperationParser {
    *          the operation.
    * @return the ID string for the operation.
    */
-  public static String getId(ConcreteOperation op) {
+  public static String getId(TypedOperation op) {
     if (op == null) throw new IllegalArgumentException("st cannot be null.");
     if (op.getOperation() instanceof NonreceiverTerm) return NonreceiverTerm.ID;
     if (op.getOperation() instanceof MethodCall) return MethodCall.ID;

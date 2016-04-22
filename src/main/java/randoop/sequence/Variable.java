@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import randoop.types.ConcreteType;
+import randoop.types.GeneralType;
 
 /** Represents the result of a statement call in a sequence. */
 public class Variable implements Comparable<Variable> {
@@ -44,7 +44,7 @@ public class Variable implements Comparable<Variable> {
   }
 
   /** The declared type of the value */
-  public ConcreteType getType() {
+  public GeneralType getType() {
     return this.sequence.getStatement(index).getOutputType();
   }
 
@@ -63,7 +63,7 @@ public class Variable implements Comparable<Variable> {
   }
 
   public static List<Integer> statementIndexList(List<Variable> values) {
-    List<Integer> result = new ArrayList<Integer>(values.size());
+    List<Integer> result = new ArrayList<>(values.size());
     for (Variable value : values) {
       result.add(value.getDeclIndex());
     }
@@ -74,7 +74,7 @@ public class Variable implements Comparable<Variable> {
     return getName(index);
   }
 
-  public String getName(ConcreteType type) {
+  public String getName(GeneralType type) {
     return getName(type, index);
   }
 
@@ -86,7 +86,7 @@ public class Variable implements Comparable<Variable> {
    * For use by clients when the statement has not yet been appended, so
    * getType() would fail.
    */
-  public String getName(ConcreteType type, int i) {
+  public String getName(GeneralType type, int i) {
     return getName(classToVariableName(type), index);
   }
 
@@ -113,7 +113,7 @@ public class Variable implements Comparable<Variable> {
   /** Convert to string and downcase the first character.
    * @param type  the type
    */
-  public static String classToVariableName(ConcreteType type) {
+  public static String classToVariableName(GeneralType type) {
     return VariableRenamer.getVariableName(type);
   }
 

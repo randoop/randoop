@@ -6,12 +6,13 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import randoop.operation.ConcreteOperation;
 import randoop.operation.NonreceiverTerm;
+import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
-import randoop.types.ConcreteSimpleType;
-import randoop.types.ConcreteType;
+import randoop.types.ClassOrInterfaceType;
+import randoop.types.GeneralType;
+import randoop.types.PrimitiveType;
 import randoop.util.ClassFileConstants;
 import randoop.util.MultiMap;
 
@@ -21,9 +22,9 @@ import randoop.util.MultiMap;
  */
 class ClassLiteralExtractor implements ClassVisitor {
 
-  private MultiMap<ConcreteType, Sequence> literalMap;
+  private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
-  ClassLiteralExtractor(MultiMap<ConcreteType, Sequence> literalMap) {
+  ClassLiteralExtractor(MultiMap<ClassOrInterfaceType, Sequence> literalMap) {
     this.literalMap = literalMap;
   }
 
@@ -33,10 +34,9 @@ class ClassLiteralExtractor implements ClassVisitor {
     constList.add(ClassFileConstants.getConstants(c.getName()));
     MultiMap<Class<?>, NonreceiverTerm> constantMap = ClassFileConstants.toMap(constList);
     for (Class<?> constantClass : constantMap.keySet()) {
-      assert constantClass.isPrimitive() : "encountered non-primitive constant type";
-      ConcreteType constantType = new ConcreteSimpleType(constantClass);
+      ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(constantClass);
       for (NonreceiverTerm term : constantMap.getValues(constantClass)) {
-        Sequence seq = new Sequence().extend(ConcreteOperation.createNonreceiverInitialization(term), new ArrayList<Variable>());
+        Sequence seq = new Sequence().extend(TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>());
         literalMap.add(constantType, seq);
       }
     }

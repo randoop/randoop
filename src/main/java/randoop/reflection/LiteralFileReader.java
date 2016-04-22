@@ -3,12 +3,12 @@ package randoop.reflection;
 import java.util.ArrayList;
 import java.util.List;
 
-import randoop.operation.ConcreteOperation;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.OperationParseException;
+import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
-import randoop.types.ConcreteType;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.TypeNames;
 import randoop.util.MultiMap;
 import randoop.util.RecordListReader;
@@ -68,9 +68,9 @@ public class LiteralFileReader {
    * @param inFile  the input file
    * @return the map from types to literal values
    */
-  public static MultiMap<ConcreteType, Sequence> parse(String inFile) {
+  public static MultiMap<ClassOrInterfaceType, Sequence> parse(String inFile) {
 
-    final MultiMap<ConcreteType, Sequence> map = new MultiMap<>();
+    final MultiMap<ClassOrInterfaceType, Sequence> map = new MultiMap<>();
 
     final ModelCollections collections = new ConcreteSequenceCollections(map);
     final TypedOperationManager manager = new TypedOperationManager(collections);
@@ -141,14 +141,14 @@ public class LiteralFileReader {
 
   private static class ConcreteSequenceCollections extends ModelCollections {
 
-    private final MultiMap<ConcreteType, Sequence> map;
+    private final MultiMap<ClassOrInterfaceType, Sequence> map;
 
-    ConcreteSequenceCollections(MultiMap<ConcreteType, Sequence> map) {
+    ConcreteSequenceCollections(MultiMap<ClassOrInterfaceType, Sequence> map) {
       this.map = map;
     }
 
     @Override
-    public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
+    public void addConcreteOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
       map.add(declaringType, new Sequence().extend(operation, new ArrayList<Variable>()));
     }
   }

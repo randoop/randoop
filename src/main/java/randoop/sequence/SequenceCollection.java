@@ -11,7 +11,7 @@ import java.util.Set;
 import randoop.Globals;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
-import randoop.types.ConcreteType;
+import randoop.types.GeneralType;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
@@ -52,7 +52,7 @@ import randoop.util.SimpleList;
 public class SequenceCollection {
 
   // We make it a list to make it easier to pick out an element at random.
-  private Map<ConcreteType, ArrayListSimpleList<Sequence>> sequenceMap = new LinkedHashMap<>();
+  private Map<GeneralType, ArrayListSimpleList<Sequence>> sequenceMap = new LinkedHashMap<>();
 
   private SubTypeSet typeSet = new SubTypeSet(false);
 
@@ -131,7 +131,7 @@ public class SequenceCollection {
    * the client.
    */
   public void add(Sequence sequence) {
-    List<ConcreteType> formalTypes = sequence.getTypesForLastStatement();
+    List<GeneralType> formalTypes = sequence.getTypesForLastStatement();
     List<Variable> arguments = sequence.getVariablesOfLastStatement();
     assert formalTypes.size() == arguments.size();
     for (int i = 0; i < formalTypes.size(); i++) {
@@ -140,7 +140,7 @@ public class SequenceCollection {
           .get(i)
           .isAssignableFrom(argument.getType()) : formalTypes.get(i).getName() + " should be assignable from " + argument.getType().getName();
       if (sequence.isActive(argument.getDeclIndex())) {
-        ConcreteType type = formalTypes.get(i);
+        GeneralType type = formalTypes.get(i);
         typeSet.add(type);
         updateCompatibleMap(sequence, type);
       }
@@ -148,7 +148,7 @@ public class SequenceCollection {
     checkRep();
   }
 
-  private void updateCompatibleMap(Sequence sequence, ConcreteType type) {
+  private void updateCompatibleMap(Sequence sequence, GeneralType type) {
       ArrayListSimpleList<Sequence> set = this.sequenceMap.get(type);
       if (set == null) {
         set = new ArrayListSimpleList<>();
@@ -168,7 +168,7 @@ public class SequenceCollection {
    * @return list of sequence objects that are of typp 'type' and abide by the
    *         constraints defined by nullOk.
    */
-  public SimpleList<Sequence> getSequencesForType(ConcreteType type, boolean exactMatch) {
+  public SimpleList<Sequence> getSequencesForType(GeneralType type, boolean exactMatch) {
 
     if (type == null) throw new IllegalArgumentException("type cannot be null.");
 
@@ -184,7 +184,7 @@ public class SequenceCollection {
         resultList.add(l);
       }
     } else {
-      for (ConcreteType compatibleType : typeSet.getMatches(type)) {
+      for (GeneralType compatibleType : typeSet.getMatches(type)) {
         resultList.add(this.sequenceMap.get(compatibleType));
       }
     }

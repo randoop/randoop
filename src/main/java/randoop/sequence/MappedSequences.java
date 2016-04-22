@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import randoop.types.ConcreteType;
+import randoop.types.GeneralType;
 import randoop.util.ListOfLists;
 import randoop.util.SimpleList;
 
@@ -49,7 +49,7 @@ public class MappedSequences<T> {
    * @param key  the key value
    * @param desiredType  the query type
    */
-  public SimpleList<Sequence> getSequences(T key, ConcreteType desiredType) {
+  public SimpleList<Sequence> getSequences(T key, GeneralType desiredType) {
     if (key == null) throw new IllegalArgumentException("key is null");
     SequenceCollection c = map.get(key);
     if (c == null) {
