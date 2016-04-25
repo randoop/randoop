@@ -136,15 +136,26 @@ dependencies {
 }
 
 /*
+ * Configuration for formatting
+ */
+tasks.googleJavaFormat {
+  description = "Reformat Java source code with Google-Java-format"
+  exclude 'src/testinput'
+}
+
+tasks.verifyGoogleJavaFormat {
+  description = "Check Java source code is in Google-Java-format"
+  exclude 'src/testinput'
+}
+
+/*
  * Configuration for compilation.
  */
-
 compileJava.options.compilerArgs = ['-Xlint','-g','-Xlint:-classfile']
 compileTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileAgentTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileSystemTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
-
 
 /*
  * Configuration for testing.
@@ -325,6 +336,8 @@ task copyJars(type: Copy, dependsOn: [':exercised-class:jar', ':mapcall:jar']) {
 }
 
 task singleJar (type: Jar) {
+  group "build"
+  description "Assemble a fat jar archive of Randoop and runtime dependencies"
   baseName = project.name + '-all'
   from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
   with jar
@@ -360,8 +373,8 @@ task clone << {
   if ( ! plumeFolder.exists() ) {
     org.ajoberstar.grgit.Grgit.clone(dir: plumeFolder, uri: 'https://github.com/mernst/plume-lib.git')
   } else {
-    def plgit = org.ajoberstar.grgit.Grgit.open(dir: plumeFolder)
-    plgit.pull()
+    println("WARNING: not cloning plume-lib because already exists.")
+    println("         Force clone by running after clean")
   }
 }
 
@@ -447,16 +460,4 @@ task validate(type: Exec, dependsOn: 'clone') {
   description "Run html5validator to find HTML errors"
   environment PATH: "$System.env.PATH:/homes/gws/mernst/.local/bin/html5validator"
   commandLine "html5validator", "--ignore", "/build/docs/api/", "/build/docs/javadoc/"
-}
-
-task reformat(type: Exec, dependsOn: 'clone') {
-  description "Reformat Java source code"
-  environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
-  commandLine "bash", "-c", "find src/ -name *.java | sort-directory-order | xargs run-google-java-format.py"
-}
-
-task checkFormat(type: Exec, dependsOn: 'clone') {
-  description "Reformat Java source code"
-  environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
-  commandLine "bash", "-c", "find src/ -name *.java | sort-directory-order | xargs check-google-java-format.py"
 }
