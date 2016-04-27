@@ -79,7 +79,6 @@ class VariableRenamer {
     } else {
       // for other object types
       String qualifiedTypeName = type.getName();
-      assert qualifiedTypeName.indexOf('.') > 0 : "expecting qualified type name, got " + qualifiedTypeName;
       String typeName = qualifiedTypeName.substring(qualifiedTypeName.lastIndexOf('.') + 1);
       if (typeName.length() > 0) {
         if (Character.isUpperCase(typeName.charAt(0))) {
