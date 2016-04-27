@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import randoop.BugInRandoopException;
+
 import plume.UtilMDE;
 
 /**
@@ -38,7 +40,7 @@ public class GenericClassType extends GenericType {
    * @param rawType  the raw type for the generic class
    * @throws IllegalArgumentException if the class is not generic
    */
-  public GenericClassType(Class<?> rawType) throws RandoopTypeException {
+  public GenericClassType(Class<?> rawType) {
     if (rawType.getTypeParameters().length == 0) {
       throw new IllegalArgumentException("class must be a generic type");
     }
@@ -47,7 +49,11 @@ public class GenericClassType extends GenericType {
     this.parameters = new ArrayList<>();
 
     for (TypeVariable<?> v : rawType.getTypeParameters()) {
-      this.parameters.add(new TypeParameter(v, TypeBound.fromTypes(new SupertypeOrdering(), v.getBounds())));
+      try {
+        this.parameters.add(new TypeParameter(v, TypeBound.fromTypes(new SupertypeOrdering(), v.getBounds())));
+      } catch (RandoopTypeException e) {
+        throw new BugInRandoopException("Type error when creating Generic Class: " + e.getMessage());
+      }
     }
 
   }

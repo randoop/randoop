@@ -264,7 +264,7 @@ public class ParameterizedType extends ConcreteType {
    *
    * @return the list of type arguments
    */
-  private List<ConcreteType> getTypeArguments() {
+  public List<ConcreteType> getTypeArguments() {
     List<ConcreteType> arguments = new ArrayList<>();
     for (TypeParameter parameter : instantiatedType.getTypeParameters()) {
       arguments.add(substitution.get(parameter.getParameter()));
