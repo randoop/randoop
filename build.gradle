@@ -343,6 +343,8 @@ task singleJar (type: Jar) {
   with jar
 }
 
+assemble.dependsOn singleJar
+
 /********************* Building manual *******************/
 /*
  * Goal is to create the contents of the manual directory deployed to gh-pages
