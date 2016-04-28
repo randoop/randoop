@@ -1,6 +1,10 @@
 package randoop.operation;
 
 import java.io.PrintStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -215,6 +219,32 @@ public class TypedOperation implements Operation {
     TypeTuple inputTypes = this.inputTypes.apply(substitution);
     GeneralType outputType = this.outputType.apply(substitution);
     return new TypedOperation(this.getOperation(), declaringType, inputTypes, outputType);
+  }
+
+  public static TypedOperation forConstructor(Constructor<?> constructor) {
+    ConstructorCall op = new ConstructorCall(constructor);
+    GeneralType declaringType = GeneralType.forClass(constructor.getDeclaringClass());
+    List<GeneralType> paramTypes = new ArrayList<>();
+    for (Type t : constructor.getGenericParameterTypes()) {
+      paramTypes.add(GeneralType.forType(t));
+    }
+    TypeTuple inputTypes = new TypeTuple(paramTypes);
+    return new TypedOperation(op, declaringType, inputTypes, declaringType);
+  }
+
+  public static TypedOperation forMethod(Method method) {
+    MethodCall op = new MethodCall(method);
+    GeneralType declaringType = GeneralType.forClass(method.getDeclaringClass());
+    List<GeneralType> paramTypes = new ArrayList<>();
+    if (op.isStatic()) {
+      paramTypes.add(declaringType);
+    }
+    for (Type t : method.getGenericParameterTypes()) {
+      paramTypes.add(GeneralType.forType(t));
+    }
+    TypeTuple inputTypes = new TypeTuple(paramTypes);
+    GeneralType outputType = GeneralType.forType(method.getGenericReturnType());
+    return new TypedOperation(op, declaringType, inputTypes, outputType);
   }
 
   public static TypedOperation createNullInitializationWithType(GeneralType type) {

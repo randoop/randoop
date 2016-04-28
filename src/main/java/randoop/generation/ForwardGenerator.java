@@ -21,6 +21,8 @@ import randoop.sequence.Variable;
 import randoop.test.DummyCheckGenerator;
 import randoop.types.ConcreteTypes;
 import randoop.types.GeneralType;
+import randoop.types.JDKTypes;
+import randoop.types.ParameterizedType;
 import randoop.types.TypeTuple;
 import randoop.types.PrimitiveTypes;
 import randoop.util.ArrayListSimpleList;
@@ -581,7 +583,16 @@ public class ForwardGenerator extends AbstractGenerator {
         SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i);
         if (Log.isLoggingOn())
           Log.logLine("Array creation heuristic: will create helper array of type " + inputType);
-        SimpleList<Sequence> l2 = HelperSequenceCreator.createSequence(componentManager, inputType);
+        SimpleList<Sequence> l2 = HelperSequenceCreator.createArraySequence(componentManager, inputType);
+        l = new ListOfLists<>(l1, l2);
+
+      } if (inputType.isParameterized() && ((ParameterizedType)inputType).isInstantiationOf(JDKTypes.COLLECTION_TYPE)) {
+
+        SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i);
+        if (Log.isLoggingOn())
+          Log.logLine("Collection creation heuristic: will create helper of type " + inputType);
+        ArrayListSimpleList<Sequence> l2 = new ArrayListSimpleList<>();
+        l2.add(HelperSequenceCreator.createCollection(componentManager, inputType));
         l = new ListOfLists<>(l1, l2);
 
       } else {
