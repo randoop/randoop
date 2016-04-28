@@ -4,9 +4,9 @@ import java.lang.reflect.Type;
 import java.util.Objects;
 
 /**
- * Created by bjkeller on 4/7/16.
+ * Represents a type parameter bound that is a type variable.
  */
-public class VariableTypeBound extends ParameterBound {
+class VariableTypeBound extends ParameterBound {
 
   /** The {@link TypeVariable} that is this bound */
   private final TypeVariable typeVariable;
@@ -16,7 +16,7 @@ public class VariableTypeBound extends ParameterBound {
    *
    * @param typeVariable  the type variable
    */
-  public VariableTypeBound(TypeVariable typeVariable) {
+  VariableTypeBound(TypeVariable typeVariable) {
     this.typeVariable = typeVariable;
   }
 

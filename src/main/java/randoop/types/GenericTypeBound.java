@@ -11,7 +11,7 @@ import plume.UtilMDE;
  * bound to a concrete type bound.
   * @see Substitution
  */
-public class GenericTypeBound extends ClassOrInterfaceBound {
+class GenericTypeBound extends ClassOrInterfaceBound {
 
   /** the rawtype for this generic bound */
   private final Class<?> rawType;
@@ -25,7 +25,7 @@ public class GenericTypeBound extends ClassOrInterfaceBound {
    * @param rawType  the rawtype for the type bound
    * @param parameters  the type parameters for the type bound
    */
-  public GenericTypeBound(Class<?> rawType, Type[] parameters) {
+  private GenericTypeBound(Class<?> rawType, Type[] parameters) {
     this.rawType = rawType;
     this.parameters = parameters;
   }
@@ -85,7 +85,7 @@ public class GenericTypeBound extends ClassOrInterfaceBound {
     return false;
   }
 
-  public static GenericTypeBound fromType(Type type) {
+  static GenericTypeBound fromType(Type type) {
     if (! (type instanceof java.lang.reflect.ParameterizedType)) {
       throw new IllegalArgumentException("type must be generic");
     }

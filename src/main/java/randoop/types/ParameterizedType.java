@@ -1,12 +1,10 @@
 package randoop.types;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 import plume.UtilMDE;
-
-import randoop.BugInRandoopException;
 
 /**
  * Represents a parameterized type as a generic class instantiated with
@@ -131,15 +129,6 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
       argumentList.add(TypeVariable.forType(v));
     }
     return new GenericClassType(typeClass, argumentList);
-  }
-
-  public boolean isInstantiatedSubTypeOf(GenericClassType genericClassType) {
-    try {
-      return instantiatedType.equals(genericClassType)
-          || instantiatedType.getMatchingSupertype(genericClassType) != null;
-    } catch (RandoopTypeException e) {
-      throw new BugInRandoopException("type error when testing subtype: " + e.getMessage());
-    }
   }
 
   /**

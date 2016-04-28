@@ -14,7 +14,7 @@ import java.util.Objects;
  * interfaces is handled by
  * {@link randoop.types.GeneralType#forType(java.lang.reflect.Type)}.
  */
-public class InstantiatedType extends ParameterizedType {
+class InstantiatedType extends ParameterizedType {
 
   private final List<TypeArgument> argumentList;
 
