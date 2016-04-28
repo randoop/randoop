@@ -6,6 +6,8 @@ import java.util.Objects;
 
 import plume.UtilMDE;
 
+import randoop.BugInRandoopException;
+
 /**
  * Represents a parameterized type as a generic class instantiated with
  * concrete type arguments.
@@ -20,6 +22,7 @@ import plume.UtilMDE;
 public class ParameterizedType extends ConcreteType {
 
   private final List<TypeArgument> argumentList;
+
   /** The generic class for this type */
   private GenericClassType instantiatedType;
 
@@ -158,6 +161,7 @@ public class ParameterizedType extends ConcreteType {
    */
   @Override
   public boolean isSubtypeOf(ConcreteType type) throws RandoopTypeException {
+
     if (type == null) {
       throw new IllegalArgumentException("type must be non-null");
     }
@@ -281,6 +285,15 @@ public class ParameterizedType extends ConcreteType {
    */
   public boolean isInstantiationOf(GenericClassType genericClassType) {
     return instantiatedType.equals(genericClassType);
+  }
+
+  public boolean isInstantiatedSubTypeOf(GenericClassType genericClassType) {
+    try {
+      return instantiatedType.equals(genericClassType)
+          || instantiatedType.getMatchingSupertype(genericClassType) != null;
+    } catch (RandoopTypeException e) {
+      throw new BugInRandoopException("type error when testing subtype: " + e.getMessage());
+    }
   }
 
   /**

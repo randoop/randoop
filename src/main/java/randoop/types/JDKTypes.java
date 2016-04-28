@@ -20,6 +20,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import randoop.BugInRandoopException;
+
 public class JDKTypes {
   public static final GenericClassType COLLECTION_TYPE = new GenericClassType(Collection.class);
   public static final GenericClassType DEQUE_TYPE = new GenericClassType(Deque.class);
@@ -43,62 +45,64 @@ public class JDKTypes {
   public static final GenericClassType LINKED_HASH_MAP_TYPE = new GenericClassType(LinkedHashMap.class);
 
   public static GenericClassType getImplementingType(ParameterizedType type) {
-     if (type.isInstantiationOf(COLLECTION_TYPE)) {
+     if (type.isInstantiatedSubTypeOf(COLLECTION_TYPE)) {
 
-       if (type.isInstantiationOf(LIST_TYPE)) {
-         if (type.isInstantiationOf(ARRAY_LIST_TYPE)) {
+       if (type.isInstantiatedSubTypeOf(LIST_TYPE)) {
+         if (type.isInstantiatedSubTypeOf(ARRAY_LIST_TYPE)) {
            return ARRAY_LIST_TYPE;
          }
-         if (type.isInstantiationOf(LINKED_LIST_TYPE)) {
+         if (type.isInstantiatedSubTypeOf(LINKED_LIST_TYPE)) {
            return LINKED_LIST_TYPE;
          }
-         if (type.isInstantiationOf(STACK_TYPE)) {
+         if (type.isInstantiatedSubTypeOf(STACK_TYPE)) {
            return STACK_TYPE;
          }
-         if (type.isInstantiationOf(VECTOR_TYPE)) {
+         if (type.isInstantiatedSubTypeOf(VECTOR_TYPE)) {
            return VECTOR_TYPE;
          }
 
          return ARRAY_LIST_TYPE;
        }
 
-       if (type.isInstantiationOf(SET_TYPE)) {
-         if (type.isInstantiationOf(ENUM_SET_TYPE)) {
+       if (type.isInstantiatedSubTypeOf(SET_TYPE)) {
+         if (type.isInstantiatedSubTypeOf(ENUM_SET_TYPE)) {
            return ENUM_SET_TYPE;
          }
-         if (type.isInstantiationOf(TREE_SET_TYPE)) {
+         if (type.isInstantiatedSubTypeOf(TREE_SET_TYPE)) {
            return TREE_SET_TYPE;
          }
 
-         if (type.isInstantiationOf(LINKED_HASH_SET_TYPE)) {
+         if (type.isInstantiatedSubTypeOf(LINKED_HASH_SET_TYPE)) {
            return LINKED_HASH_SET_TYPE;
          }
-         if (type.isInstantiationOf(HASH_SET_TYPE)) {
+         if (type.isInstantiatedSubTypeOf(HASH_SET_TYPE)) {
            return LINKED_HASH_SET_TYPE;
          }
-         if (type.isInstantiationOf(SORTED_SET_TYPE)) {
+         if (type.isInstantiatedSubTypeOf(SORTED_SET_TYPE)) {
            return TREE_SET_TYPE;
          }
 
          return LINKED_HASH_SET_TYPE;
        }
 
-       if (type.isInstantiationOf(QUEUE_TYPE)) {
-         if (type.isInstantiationOf(DEQUE_TYPE)) {
+       if (type.isInstantiatedSubTypeOf(QUEUE_TYPE)) {
+         if (type.isInstantiatedSubTypeOf(DEQUE_TYPE)) {
            return ARRAY_DEQUE_TYPE;
          }
          return LINKED_LIST_TYPE;
        }
+
+       throw new BugInRandoopException("Collection subtype not recognized: " + type);
      }
 
-     if (type.isInstantiationOf(MAP_TYPE)) {
-       if (type.isInstantiationOf(SORTED_MAP_TYPE)) {
+     if (type.isInstantiatedSubTypeOf(MAP_TYPE)) {
+       if (type.isInstantiatedSubTypeOf(SORTED_MAP_TYPE)) {
          return TREE_MAP_TYPE;
        }
        return LINKED_HASH_MAP_TYPE;
      }
 
-     throw new IllegalArgumentException("type must be a JDK Collections type");
+     throw new IllegalArgumentException("type must be a JDK Collections type, got " + type);
    }
 
 }
