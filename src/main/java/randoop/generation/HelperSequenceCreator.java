@@ -43,6 +43,8 @@ public class HelperSequenceCreator {
    */
   public static SimpleList<Sequence> createSequence(ComponentManager components, ConcreteType type) {
 
+    final int MAX_LENGTH = 7;
+
     if (!type.isArray()) {
       return new ArrayListSimpleList<Sequence>();
     }
@@ -51,18 +53,14 @@ public class HelperSequenceCreator {
     ConcreteType elementType = arrayType.getElementType();
 
     Sequence s = null;
-
-    if (elementType.isPrimitive()) {
-      s = randPrimitiveArray(elementType);
-    } else {
-      SimpleList<Sequence> candidates =
+    SimpleList<Sequence> candidates =
           components.getSequencesForType(elementType, false);
-      if (candidates.isEmpty()) {
+    if (candidates.isEmpty()) {
         // No sequences that produce appropriate component values found, and
-        if (GenInputsAbstract.forbid_null) {
+      if (GenInputsAbstract.forbid_null) {
           // use of null is forbidden. So, return the empty array.
           s = new Sequence().extend(ConcreteOperation.createArrayCreation(arrayType, 0));
-        } else {
+      } else {
           // null is allowed.
           s = new Sequence();
           List<Variable> ins = new ArrayList<>();
@@ -75,19 +73,10 @@ public class HelperSequenceCreator {
             declOp = ConcreteOperation.createArrayCreation(arrayType, 1);
           }
           s = s.extend(declOp, ins);
-        }
-      } else {
-        // Return the array [ x ] where x is the last value in the sequence.
-        ConcreteOperation declOp = ConcreteOperation.createArrayCreation(arrayType, 1);
-        s = candidates.get(Randomness.nextRandomInt(candidates.size()));
-        List<Variable> ins = new ArrayList<>();
-        // XXX IS THIS OLD COMMENT TRUE? : this assumes that last statement will
-        // have such a var,
-        // which I know is currently true because of SequenceCollection
-        // implementation.
-        ins.add(s.randomVariableForTypeLastStatement(elementType));
-        s = s.extend(declOp, ins);
       }
+    } else {
+        int length = Randomness.nextRandomInt(MAX_LENGTH);
+        s = createAnArray(candidates, elementType, length);
     }
     assert s != null;
     ArrayListSimpleList<Sequence> l = new ArrayListSimpleList<>();
@@ -95,26 +84,7 @@ public class HelperSequenceCreator {
     return l;
   }
 
-  private static Sequence randPrimitiveArray(ConcreteType componentType) {
-    assert componentType.isPrimitive();
-    Set<Object> potentialElts = SeedSequences.getSeeds(componentType);
-    int length = Randomness.nextRandomInt(4);
-    Sequence s = new Sequence();
-    List<Variable> emptylist = new ArrayList<>();
-    for (int i = 0; i < length; i++) {
-      Object elt = Randomness.randomSetMember(potentialElts);
-      s = s.extend(ConcreteOperation.createPrimitiveInitialization(componentType, elt), emptylist);
-    }
-    List<Variable> inputs = new ArrayList<>();
-    for (int i = 0; i < length; i++) {
-      inputs.add(s.getVariable(i));
-    }
-    s = s.extend(ConcreteOperation.createArrayCreation(new ConcreteArrayType(componentType), length), inputs);
-    return s;
-  }
-
   public static Sequence createCollection(ComponentManager componentManager, ConcreteType inputType) {
-
    if (!inputType.isParameterized()) {
      throw new IllegalArgumentException("type must be parameterized");
    }
@@ -130,16 +100,7 @@ public class HelperSequenceCreator {
    List<Sequence> inputSequences = new ArrayList<>();
    List<Integer> variableIndices = new ArrayList<>();
 
-   // build sequence to create array of element type
-   SimpleList<Sequence> candidates = componentManager.getSequencesForType(elementType, false);
-   int length = Randomness.nextRandomInt(candidates.size()) + 1;
-   Sequence inputSequence = createAnArray(candidates, elementType, length);
-
-   inputSequences.add(inputSequence);
-   variableIndices.add(inputSequence.getLastVariable().index);
-   totStatements += inputSequence.size();
-
-   // select implmenting Collection type and instantiate
+   // select implementing Collection type and instantiate
    GenericClassType implementingType = JDKTypes.getImplementingType(collectionType);
    ParameterizedType creationType;
    try {
@@ -155,6 +116,16 @@ public class HelperSequenceCreator {
 
    inputSequences.add(creationSequence);
    variableIndices.add(totStatements + creationSequence.getLastVariable().index);
+   totStatements += creationSequence.size();
+
+   // build sequence to create array of element type
+   SimpleList<Sequence> candidates = componentManager.getSequencesForType(elementType, false);
+   int length = Randomness.nextRandomInt(candidates.size()) + 1;
+   Sequence inputSequence = createAnArray(candidates, elementType, length);
+
+   inputSequences.add(inputSequence);
+   variableIndices.add(totStatements + inputSequence.getLastVariable().index);
+   totStatements += inputSequence.size();
 
    // call Collections.addAll(c, inputArray)
    ConcreteOperation addOperation = getCollectionAddAllOperation(elementType);
