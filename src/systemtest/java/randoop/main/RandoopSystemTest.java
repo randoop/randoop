@@ -455,8 +455,10 @@ public class RandoopSystemTest {
     List<String> options =
             getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
     options.add("--testclass=muse.SortContainer");
-    options.add("--outputlimit=2");
-    options.add("--timelimit=3");
+    options.add("--outputlimit=100");
+    options.add("--timelimit=300");
+    options.add("--forbid-null");
+    options.add("--null-ratio=0");
 
     RandoopRunDescription randoopRunDescription = generateAndCompile(classpath, workingPath, packageName, regressionBasename, errorBasename, options);
     assertThat("...should have regression tests", randoopRunDescription.regressionTestCount, is(greaterThan(0)));
@@ -469,6 +471,9 @@ public class RandoopSystemTest {
     }
     assertThat("...should not have error tests", randoopRunDescription.errorTestCount, is(equalTo(0)));
 
+    for (String line : randoopRunDescription.processStatus.outputLines) {
+      System.out.println(line);
+    }
   }
 
   /**
