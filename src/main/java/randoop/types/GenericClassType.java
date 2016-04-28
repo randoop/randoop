@@ -121,6 +121,16 @@ public class GenericClassType extends ParameterizedType {
     return null;
   }
 
+  @Override
+  public InstantiatedType instantiate(ReferenceType... typeArguments) {
+    if (typeArguments.length != parameters.size()) {
+      throw new IllegalArgumentException("number of arguments and parameters must match");
+    }
+
+    Substitution substitution = Substitution.forArgs(getTypeArguments(), typeArguments);
+    return this.apply(substitution);
+  }
+
   /**
    * {@inheritDoc}
    * @return the rawtype of this generic class

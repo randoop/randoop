@@ -15,6 +15,7 @@ import randoop.operation.OperationParser;
 import randoop.operation.TypedOperation;
 import randoop.reflection.ModelCollections;
 import randoop.reflection.TypedOperationManager;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
 import randoop.types.GeneralType;
 import randoop.types.PrimitiveType;
@@ -966,7 +967,7 @@ public final class Sequence implements WeightedElement {
         final List<TypedOperation> list = new ArrayList<>();
         TypedOperationManager manager = new TypedOperationManager(new ModelCollections() {
           @Override
-          public void addConcreteOperation(GeneralType declaringType, TypedOperation operation) {
+          public void addConcreteOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
             list.add(operation);
           }
         });

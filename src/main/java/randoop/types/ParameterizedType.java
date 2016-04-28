@@ -101,6 +101,8 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
   @Override
   public abstract ParameterizedType apply(Substitution substitution);
 
+  public abstract ParameterizedType instantiate(ReferenceType... typeArguments);
+
   /**
    * Returns the type arguments for this type.
    *
@@ -181,4 +183,6 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
       throw new IllegalArgumentException(msg);
     }
   }
+
+
 }

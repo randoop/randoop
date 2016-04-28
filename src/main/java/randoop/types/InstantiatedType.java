@@ -217,6 +217,16 @@ public class InstantiatedType extends ParameterizedType {
     return null;
   }
 
+  @Override
+  public InstantiatedType instantiate(ReferenceType... typeArguments) {
+    if (typeArguments.length != argumentList.size()) {
+      throw new IllegalArgumentException("number of arguments and parameters must agree");
+    }
+
+    Substitution substitution = Substitution.forArgs(argumentList, typeArguments);
+    return this.apply(substitution);
+  }
+
   /**
    * {@inheritDoc}
    * @return the name of this type

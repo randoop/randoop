@@ -15,23 +15,25 @@ import randoop.contract.EqualsToNullRetFalse;
 import randoop.contract.ObjectContract;
 import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
-import randoop.operation.ConcreteOperation;
 import randoop.operation.ConstructorCall;
-import randoop.operation.GenericOperation;
+import randoop.operation.TypedOperation;
 import randoop.operation.MethodCall;
 import randoop.operation.OperationParseException;
 import randoop.operation.OperationParser;
 import randoop.sequence.Sequence;
-import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeBound;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
-import randoop.types.GenericClassType;
-import randoop.types.GenericTypeBound;
-import randoop.types.GenericTypeTuple;
+import randoop.types.ParameterBound;
+import randoop.types.ParameterizedType;
 import randoop.types.RandoopTypeException;
+import randoop.types.ReferenceArgument;
+import randoop.types.ReferenceType;
 import randoop.types.Substitution;
-import randoop.types.TypeBound;
+import randoop.types.TypeArgument;
 import randoop.types.TypeNames;
+import randoop.types.TypeTuple;
+import randoop.types.TypeVariable;
+import randoop.types.WildcardArgument;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
 
@@ -56,7 +58,7 @@ public class OperationModel extends ModelCollections {
   private final LinkedHashSet<Class<?>> exercisedClasses;
 
   /** Map for singleton sequences of literals extracted from classes. */
-  private MultiMap<ConcreteType, Sequence> classLiteralMap;
+  private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
@@ -65,15 +67,15 @@ public class OperationModel extends ModelCollections {
   private Set<ObjectContract> contracts;
 
   /** Set of concrete operations extracted from classes */
-  private Set<ConcreteOperation> operations;
+  private Set<TypedOperation> operations;
 
   /** Set of generic operations extracted from classes */
-  private final Set<GenericOperation> genericOperations;
+  private final Set<TypedOperation> genericOperations;
 
   /** Set of concrete class types extracted/constructed from classes */
-  private Set<ConcreteType> classTypes;
+  private Set<GeneralType> classTypes;
 
-  private MultiMap<GenericClassType, GenericOperation> genericClassTypes;
+  private MultiMap<ParameterizedType, TypedOperation> genericClassTypes;
 
 
   /**
@@ -115,7 +117,7 @@ public class OperationModel extends ModelCollections {
     // TODO make sure adding Object constructor
 
     Set<Class<?>> visitedClasses = new LinkedHashSet<>();
-    Set<ConcreteType> inputTypes = new LinkedHashSet<>();
+    Set<GeneralType> inputTypes = new LinkedHashSet<>();
 
     OperationModel model = new OperationModel();
     ReflectionManager mgr = new ReflectionManager(visibility);
@@ -189,35 +191,35 @@ public class OperationModel extends ModelCollections {
     return model;
   }
 
-  private void refineGenericClassTypes(Set<ConcreteType> inputTypes) throws RandoopTypeException {
-    for (GenericClassType classType : genericClassTypes.keySet()) {
+  private void refineGenericClassTypes(Set<GeneralType> inputTypes) throws RandoopTypeException {
+    for (ParameterizedType classType : genericClassTypes.keySet()) {
       List<Substitution> substitutions = getSubstitutions(inputTypes, classType);
       assert  substitutions.size() > 0 : "didn't find types to satisfy bounds on generic";
       Substitution substitution = Randomness.randomMember(substitutions);
-      GeneralType refinedClassType = classType.apply(substitution);
+      ParameterizedType refinedClassType = classType.apply(substitution);
       if (! refinedClassType.isGeneric()) {
-        classTypes.add((ConcreteType)refinedClassType);
+        classTypes.add(refinedClassType);
       }
-      for (GenericOperation operation : genericClassTypes.getValues(classType)) {
-        GenericOperation op = operation.apply(substitution);
+      for (TypedOperation operation : genericClassTypes.getValues(classType)) {
+        TypedOperation op = operation.apply(substitution);
         if (op.isGeneric()) {
           genericOperations.add(op);
         } else {
-          operations.add(op.toConcrete());
+          operations.add(op);
         }
 
       }
     }
   }
 
-  private List<Substitution> getSubstitutions(Set<ConcreteType> inputTypes, GenericClassType classType) throws RandoopTypeException {
-    List<TypeBound> bounds = classType.getBounds();
+  private List<Substitution> getSubstitutions(Set<GeneralType> inputTypes, ParameterizedType classType) throws RandoopTypeException {
+    List<TypeArgument> typeArguments = classType.getTypeArguments();
     TypeTupleSet candidateSet = new TypeTupleSet();
-    for (TypeBound bound : bounds) {
-      List<ConcreteType> candidateTypes = selectCandidates(bound, inputTypes);
+    for (TypeArgument typeArgument : typeArguments) {
+      List<GeneralType> candidateTypes = selectCandidates(typeArgument, inputTypes);
       candidateSet.extend(candidateTypes);
     }
-    return candidateSet.filter(classType.getTypeParameters());
+    return candidateSet.filter(classType.getTypeArguments());
   }
 
   /**
@@ -226,35 +228,39 @@ public class OperationModel extends ModelCollections {
    * If the bound is generic, then the types are convertible a la Class.isAssignableFrom.
    * Otherwise, the input types are returned as a list.
    *
-   * @param bound  the (upper) bound to test
+   * @param argument  the type arguments
    * @param inputTypes  the set of input types to test
    * @return the list of candidate types to included in tested tuples
    */
-  private List<ConcreteType> selectCandidates(TypeBound bound, Set<ConcreteType> inputTypes) {
+  private List<GeneralType> selectCandidates(TypeArgument argument, Set<GeneralType> inputTypes) {
 
-    List<ConcreteType> typeList = new ArrayList<>();
-
-    if (bound instanceof ConcreteTypeBound){
-      ConcreteTypeBound concreteBound = (ConcreteTypeBound)bound;
-      for (ConcreteType inputType : inputTypes) {
-        if (concreteBound.isSatisfiedBy(inputType)) {
-          typeList.add(inputType);
-        }
+    if (argument instanceof ReferenceArgument) {
+      ReferenceType referenceType = ((ReferenceArgument)argument).getReferenceType();
+      if (referenceType instanceof TypeVariable) {
+        return selectCandidates(((TypeVariable)referenceType).getTypeBound(), inputTypes);
       }
-      return typeList;
+      // otherwise argument is a particular class, though may be generic
     }
 
-    if (bound instanceof GenericTypeBound) {
-      Class<?> rawBoundType = bound.getRuntimeClass();
-      for (ConcreteType inputType : inputTypes) {
-        if (rawBoundType.isAssignableFrom(inputType.getRuntimeClass())) {
-          typeList.add(inputType);
-        }
+    if (argument instanceof WildcardArgument) {
+      ReferenceType bound = ((WildcardArgument) argument).getBoundType();
+      for (GeneralType type : inputTypes) {
+        // if bound is generic, can be instantiated
+        // if bound is concrete, then equal
       }
-      return typeList;
     }
 
-    return new ArrayList<>(inputTypes);
+    throw new IllegalArgumentException("unknown argument type " + argument);
+  }
+
+  private List<GeneralType> selectCandidates(ParameterBound bound, Set<GeneralType> inputTypes) {
+    List<GeneralType> typeList = new ArrayList<>();
+    for (GeneralType inputType : inputTypes) {
+      if (bound.isSatisfiedBy(inputType)) {
+        typeList.add(inputType);
+      }
+    }
+    return typeList;
   }
 
   /**
@@ -268,9 +274,9 @@ public class OperationModel extends ModelCollections {
       System.out.println("Something is wrong. Please report unable to load Object()");
       System.exit(1);
     }
-    ConcreteOperation operation = getConcreteOperation(objectConstructor);
-    addConcreteClassType(operation.getDeclaringType());
-    addConcreteOperation(operation.getDeclaringType(), operation);
+    TypedOperation operation = getConcreteOperation(objectConstructor);
+    addConcreteClassType((ClassOrInterfaceType)operation.getDeclaringType());
+    addConcreteOperation((ClassOrInterfaceType)operation.getDeclaringType(), operation);
   }
 
   /**
@@ -289,14 +295,14 @@ public class OperationModel extends ModelCollections {
     // manager.
 
     for (String filename : literalsFile) {
-      MultiMap<ConcreteType, Sequence> literalmap;
+      MultiMap<ClassOrInterfaceType, Sequence> literalmap;
       if (filename.equals("CLASSES")) {
         literalmap = classLiteralMap;
       } else {
         literalmap = LiteralFileReader.parse(filename);
       }
 
-      for (ConcreteType type : literalmap.keySet()) {
+      for (ClassOrInterfaceType type : literalmap.keySet()) {
         Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
         for (Sequence seq : literalmap.getValues(type)) {
           switch (literalsLevel) {
@@ -326,9 +332,9 @@ public class OperationModel extends ModelCollections {
    * @return the map to observer methods from their declaring class type
    * @throws OperationParseException if a method signature cannot be parsed
    */
-  public MultiMap<ConcreteType, ConcreteOperation> getObservers(Set<String> observerSignatures) throws OperationParseException {
+  public MultiMap<GeneralType, TypedOperation> getObservers(Set<String> observerSignatures) throws OperationParseException {
     // Populate observer_map from observers file.
-    MultiMap<ConcreteType, ConcreteOperation> observerMap = new MultiMap<>();
+    MultiMap<GeneralType, TypedOperation> observerMap = new MultiMap<>();
     for (String sig: observerSignatures) {
       ModelCollections observerManager = new ObserverCollections(observerMap);
       MethodCall.parse(sig, new TypedOperationManager(observerManager));
@@ -360,7 +366,7 @@ public class OperationModel extends ModelCollections {
    *
    * @return the set of concrete types for the classes in this model
    */
-  public Set<ConcreteType> getClasses() {
+  public Set<GeneralType> getClasses() {
     return classTypes;
   }
 
@@ -373,7 +379,7 @@ public class OperationModel extends ModelCollections {
     return ! classTypes.isEmpty();
   }
 
-  public List<ConcreteOperation> getConcreteOperations() {
+  public List<TypedOperation> getConcreteOperations() {
     return new ArrayList<>(operations);
   }
 
@@ -406,15 +412,15 @@ public class OperationModel extends ModelCollections {
     return contracts;
   }
 
-  public ConcreteOperation getConcreteOperation(Constructor<?> constructor) throws RandoopTypeException {
-    ConcreteType declaringType = ConcreteType.forClass(constructor.getDeclaringClass());
+  public TypedOperation getConcreteOperation(Constructor<?> constructor) throws RandoopTypeException {
+    GeneralType declaringType = GeneralType.forClass(constructor.getDeclaringClass());
     ConstructorCall op = new ConstructorCall(constructor);
     List<GeneralType> paramTypes = new ArrayList<>();
     for (Type t : constructor.getGenericParameterTypes()) {
       paramTypes.add(GeneralType.forType(t));
     }
-    GenericTypeTuple inputTypes = new GenericTypeTuple(paramTypes);
-    return new ConcreteOperation(op, declaringType, inputTypes.makeConcrete(), declaringType);
+    TypeTuple inputTypes = new TypeTuple(paramTypes);
+    return new TypedOperation(op, declaringType, inputTypes, declaringType);
   }
 
   public Set<Sequence> getAnnotatedTestValues() {
@@ -425,22 +431,22 @@ public class OperationModel extends ModelCollections {
    * ModelCollections methods
    */
   @Override
-  public void addConcreteClassType(ConcreteType type) {
+  public void addConcreteClassType(ClassOrInterfaceType type) {
     classTypes.add(type);
   }
 
   @Override
-  public void addGenericOperation(GenericClassType declaringType, GenericOperation operation) {
+  public void addOperationToGenericType(ParameterizedType declaringType, TypedOperation operation) {
     genericClassTypes.add(declaringType, operation);
   }
 
   @Override
-  public void addGenericOperation(ConcreteType declaringType, GenericOperation operation) {
+  public void addGenericOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
     genericOperations.add(operation);
   }
 
   @Override
-  public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
+  public void addConcreteOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
     operations.add(operation);
   }
 
@@ -451,14 +457,14 @@ public class OperationModel extends ModelCollections {
   private class ObserverCollections extends ModelCollections {
 
     /** The map of types to observers */
-    private final MultiMap<ConcreteType, ConcreteOperation> observerMap;
+    private final MultiMap<GeneralType, TypedOperation> observerMap;
 
     /**
      * Creates an observer collection that stores observers in the given map.
      *
      * @param observerMap  the map to which this object adds observers
      */
-    ObserverCollections(MultiMap<ConcreteType, ConcreteOperation> observerMap) {
+    ObserverCollections(MultiMap<GeneralType, TypedOperation> observerMap) {
       this.observerMap = observerMap;
     }
 
@@ -467,15 +473,15 @@ public class OperationModel extends ModelCollections {
      * Adds an observer operation for the given declaring type to the observer map.
      */
     @Override
-    public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
-      ConcreteType outputType = operation.getOutputType();
+    public void addConcreteOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
+      GeneralType outputType = operation.getOutputType();
       if (outputType.isPrimitive() || outputType.isString() || outputType.isEnum()) {
         observerMap.add(declaringType, operation);
       }
     }
 
     @Override
-    public void addGenericOperation(GenericClassType declaringType, GenericOperation operation) {
+    public void addGenericOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
       System.out.println("Got a generic observer: " + operation);
     }
 
