@@ -587,16 +587,6 @@ public class ForwardGenerator extends AbstractGenerator {
         SimpleList<Sequence> l2 = HelperSequenceCreator.createSequence(componentManager, inputType);
         l = new ListOfLists<>(l1, l2);
 
-      } if (inputType.isParameterized() && ((ParameterizedType)inputType).isInstantiationOf(JDKTypes.COLLECTION_TYPE)) {
-
-        SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i);
-        if (Log.isLoggingOn())
-
-          Log.logLine("Collection creation heuristic: will create helper of type " + inputType);
-        ArrayListSimpleList<Sequence> l2 = new ArrayListSimpleList<>();
-        l2.add(HelperSequenceCreator.createCollection(componentManager, inputType));
-        l = new ListOfLists<>(l1, l2);
-
       } else {
 
         // 2. COMMON CASE: ask the component manager for all sequences that
