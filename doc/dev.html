@@ -110,6 +110,11 @@ There is separate <a href="../plugin/doc/dev.html">developer documentation
 </p>
 
 <p>
+  <b>Windows users:</b> you do not need to include the "<code>./</code>" when running Gradle.
+  When our instructions say to run <code>./gradlew build</code>, you will run <code>gradlew build</code> instead.
+</p>
+
+<p>
   You can also break this process down by running separate tasks.
   For the full list of tasks supported by the Randoop build script, type
   <code>./gradlew tasks</code>.
@@ -118,11 +123,15 @@ There is separate <a href="../plugin/doc/dev.html">developer documentation
 <table style="border:0;">
   <tr>
     <td><code>./gradlew jar</code></td>
-    <td>to build the jar files</td>
+    <td>to build the Randoop jar files</td>
   </tr>
   <tr>
     <td><code>./gradlew assemble</code></td>
-    <td>to compile and build jar files</td>
+    <td>to compile and build Randoop and fat jar files</td>
+  </tr>
+  <tr>
+    <td><code>./gradlew singleJar</code></td>
+    <td>to build the "user" jar including all library dependencies
   </tr>
   <tr>
     <td><code>./gradlew check</code></td>
@@ -195,12 +204,13 @@ There is separate <a href="../plugin/doc/dev.html">developer documentation
 </ul>
 
 
-<h3 id="gradlew">The <code>./gradlew</code> script</h3>
+<h3 id="gradlew">The Gradle wrapper</h3>
 
 <p>
 Randoop is built with Gradle.
-The script named <code>./gradlew</code> is the Gradle wrapper
-for the project, and is the recommended way to run Gradle commands.
+The shell script named <code>./gradlew</code> and the Windows batch script
+<code>gradlew.bat</code> run the Gradle wrapper for the project, which is the
+recommended way to run Gradle commands.
 Using the wrapper means you don't have to install Gradle yourself, instead
 the wrapper will download Gradle the first time you run a build command.
 </p>
@@ -212,19 +222,39 @@ given here, see the Gradle
 </p>
 
 
+<h3 id="buildgradle">The Randoop build script</h3>
+
+<p>
+  The Gradle build tasks for Randoop are defined in the build script <code>build.gradle</code>,
+  along with the build scripts for the java agents in the corresponding subproject directories.
+  This is the file you would modify to change the Randoop build.
+  Note that the script uses plugins that each define tasks that may not be explicit
+  within the script, though it may be possible to configure them differently by
+  following the instructions at the plugin sites.
+</p>
+
+<p>
+  If you add or change a build task in a way that affects how Randoop is built,
+  you should also make changes to this document.
+  And, when these changes are pushed to the master branch on GitHub, this
+  document should also be pushed to the gh-pages branch on GitHub.
+</p>
+
 <h2 id="usinganide">Using an IDE</h2>
 
 <p>
   Effort has been made to accommodate the use of IDEs in developing Randoop,
   but different IDEs provide different levels of support for Gradle projects.
   This support is changing quickly, so this document provides information on
-  using the build script plus a little more allowing you to get started.
+  using the build script plus just a little more allowing you to get started.
   And, so, you should look for current information on your chosen IDE to go further.
 </p>
 
 <p>
   The build script is setup to support use of IntelliJ IDEA, NetBeans and Eclipse.
-  To work with IntelliJ IDEA, run the command
+</p>
+<p>
+  To work with <b>IntelliJ IDEA</b>, run the command
 </p>
 
 <pre>
@@ -242,7 +272,7 @@ given here, see the Gradle
 </p>
 
 <p>
-  To use NetBeans with Randoop, first run the command
+  To use <b>NetBeans</b> with Randoop, first run the command
 </p>
 <pre>
   ./gradlew idea
@@ -254,11 +284,10 @@ given here, see the Gradle
   in NetBeans.
   This plugin uses the configuration files generated for the IDEA plugin during
   the import into NetBeans.
-  Building the project in NetBeans works like running <code>./gradlew build</code>.
 </p>
 
 <p>
-  To use Eclipse with Randoop, run the command
+  To use <b>Eclipse</b> with Randoop, run the command
 </p>
 <pre>
   ./gradlew eclipse
