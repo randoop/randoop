@@ -240,9 +240,9 @@ public class GenericClassType extends GenericType {
     if (otherRawType.isInterface()) {
       Type[] interfaces = this.rawType.getGenericInterfaces();
       for (Type t : interfaces) {
-        GenericType genericType = GenericType.forType(t);
-        if (type.equals(genericType)) { // found the type
-          return (GenericClassType) genericType;
+        GeneralType generalType = GeneralType.forType(t);
+        if (generalType.isGeneric() && type.equals(generalType)) { // found the type
+          return (GenericClassType) generalType;
         }
       }
     }
