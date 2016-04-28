@@ -3,7 +3,6 @@ package randoop.operation;
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,27 +10,19 @@ import java.util.Objects;
 
 import randoop.ExecutionOutcome;
 import randoop.reflection.ReflectionPredicate;
-import randoop.sequence.Variable;
 import randoop.types.ArrayType;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
 import randoop.types.PrimitiveTypes;
-import randoop.types.RandoopTypeException;
-import randoop.types.Substitution;
 import randoop.types.TypeTuple;
 
 /**
- * Superclass for type decorator of {@link Operation} objects.
- * Serves as facade to forward {@link Operation} method calls.
+ * Type decorator of {@link Operation} objects.
  */
-public class TypedOperation implements Operation {
+public abstract class TypedOperation implements Operation {
 
   /** The operation to be decorated */
-  private CallableOperation operation;
-
-  /**
-   * The declaring type for this operation
-   */
-  private final GeneralType declaringType;
+  private final CallableOperation operation;
 
   /**
    * The type tuple of concrete input types.
@@ -48,9 +39,8 @@ public class TypedOperation implements Operation {
    *
    * @param operation  the operation to wrap
    */
-  public TypedOperation(CallableOperation operation, GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
+  public TypedOperation(CallableOperation operation, TypeTuple inputTypes, GeneralType outputType) {
     this.operation = operation;
-    this.declaringType = declaringType;
     this.inputTypes = inputTypes;
     this.outputType = outputType;
   }
@@ -62,19 +52,18 @@ public class TypedOperation implements Operation {
     }
     TypedOperation op = (TypedOperation)obj;
     return getOperation().equals(op.getOperation())
-            && declaringType.equals(op.declaringType)
             && inputTypes.equals(op.inputTypes)
             && outputType.equals(op.outputType);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getOperation(), declaringType, inputTypes, outputType);
+    return Objects.hash(getOperation(), inputTypes, outputType);
   }
 
   @Override
   public String toString() {
-    return declaringType + "." + super.toString() + " : " + inputTypes + " -> " + outputType;
+    return super.toString() + " : " + inputTypes + " -> " + outputType;
   }
 
   @Override
@@ -101,16 +90,6 @@ public class TypedOperation implements Operation {
     return outputType;
   }
 
-  /**
-   * Returns the class in which the operation is defined, or, if the operation represents a value,
-   * the type of the value.
-   *
-   * @return class to which the operation belongs.
-   */
-  public GeneralType getDeclaringType() {
-    return declaringType;
-  }
-  
   /**
    * Get the enclosed operation in this typed operation.
    *
@@ -183,58 +162,20 @@ public class TypedOperation implements Operation {
     return this.getOperation().execute(input, out);
   }
 
-  /**
-   * Produces a Java source code representation of this statement and append it to the given
-   * StringBuilder.
-   *
-   * @param inputVars the list of variables that are inputs to operation.
-   * @param b         the {@link StringBuilder} to which code is added.
-   */
-  public void appendCode(List<Variable> inputVars, StringBuilder b) {
-    assert inputVars.size() == this.inputTypes.size(): "number of inputs doesn't match on operation appendCode";
-    this.getOperation().appendCode(declaringType, inputTypes, outputType, inputVars, b);
-  }
-
-  /**
-   * Returns a string representation of this Operation, which can be read by static parse method for
-   * class. For a class C implementing the Operation interface, this method should return a String s
-   * such that parsing the string returns an object equivalent to this object, i.e.
-   * C.parse(this.s).equals(this).
-   *
-   * @return string descriptor of {@link Operation} object.
-   */
-  public String toParseableString() {
-    return this.getOperation().toParseableString(declaringType, inputTypes, outputType);
-  }
-
-  /**
-   * Creates a {@link TypedOperation} from this operation by
-   * using the given {@link Substitution} on type variables.
-   *
-   * @param substitution  the type substitution
-   * @return the concrete operation with type variables replaced by substitution
-   */
-  public TypedOperation apply(Substitution substitution) throws RandoopTypeException {
-    GeneralType declaringType = this.declaringType.apply(substitution);
-    TypeTuple inputTypes = this.inputTypes.apply(substitution);
-    GeneralType outputType = this.outputType.apply(substitution);
-    return new TypedOperation(this.getOperation(), declaringType, inputTypes, outputType);
-  }
-
-  public static TypedOperation forConstructor(Constructor<?> constructor) {
+  public static TypedClassOperation forConstructor(Constructor<?> constructor) {
     ConstructorCall op = new ConstructorCall(constructor);
-    GeneralType declaringType = GeneralType.forClass(constructor.getDeclaringClass());
+    ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(constructor.getDeclaringClass());
     List<GeneralType> paramTypes = new ArrayList<>();
     for (Type t : constructor.getGenericParameterTypes()) {
       paramTypes.add(GeneralType.forType(t));
     }
     TypeTuple inputTypes = new TypeTuple(paramTypes);
-    return new TypedOperation(op, declaringType, inputTypes, declaringType);
+    return new TypedClassOperation(op, declaringType, inputTypes, declaringType);
   }
 
-  public static TypedOperation forMethod(Method method) {
+  public static TypedClassOperation forMethod(Method method) {
     MethodCall op = new MethodCall(method);
-    GeneralType declaringType = GeneralType.forClass(method.getDeclaringClass());
+    ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(method.getDeclaringClass());
     List<GeneralType> paramTypes = new ArrayList<>();
     if (op.isStatic()) {
       paramTypes.add(declaringType);
@@ -244,7 +185,7 @@ public class TypedOperation implements Operation {
     }
     TypeTuple inputTypes = new TypeTuple(paramTypes);
     GeneralType outputType = GeneralType.forType(method.getGenericReturnType());
-    return new TypedOperation(op, declaringType, inputTypes, outputType);
+    return new TypedClassOperation(op, declaringType, inputTypes, outputType);
   }
 
   public static TypedOperation createNullInitializationWithType(GeneralType type) {
@@ -262,7 +203,7 @@ public class TypedOperation implements Operation {
   }
 
   public static TypedOperation createNonreceiverInitialization(NonreceiverTerm term) {
-    return new TypedOperation(term, term.getType(), new TypeTuple(), term.getType());
+    return new TypedTermOperation(term, new TypeTuple(), term.getType());
   }
 
   public static TypedOperation createArrayCreation(ArrayType arrayType, int size) {
@@ -271,6 +212,6 @@ public class TypedOperation implements Operation {
       typeList.add(arrayType.getElementType());
     }
     TypeTuple inputTypes = new TypeTuple(typeList);
-    return new TypedOperation(new ArrayCreation(arrayType, size), arrayType, inputTypes, arrayType);
+    return new TypedTermOperation(new ArrayCreation(arrayType, size), inputTypes, arrayType);
   }
 }
