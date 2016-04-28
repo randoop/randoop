@@ -455,8 +455,10 @@ public class RandoopSystemTest {
     List<String> options =
             getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
     options.add("--testclass=muse.SortContainer");
-    options.add("--outputlimit=2");
-    options.add("--timelimit=3");
+    options.add("--outputlimit=100");
+    options.add("--timelimit=300");
+    options.add("--forbid-null");
+    options.add("--null-ratio=0");
 
     RandoopRunDescription randoopRunDescription = generateAndCompile(classpath, workingPath, packageName, regressionBasename, errorBasename, options);
     assertThat("...should have regression tests", randoopRunDescription.regressionTestCount, is(greaterThan(0)));
@@ -469,6 +471,37 @@ public class RandoopSystemTest {
     }
     assertThat("...should not have error tests", randoopRunDescription.errorTestCount, is(equalTo(0)));
 
+    for (String line : randoopRunDescription.processStatus.outputLines) {
+      System.out.println(line);
+    }
+  }
+
+  /**
+   * simply runs Randoop on a class in the default package to ensure nothing breaks.
+   */
+  @Test
+  public void runDefaultPackageTest() {
+    Path workingPath = createTestDirectory(workingDirsRoot, "default-package");
+    String packageName = "";
+    String regressionBasename = "DefaultPackageReg";
+    String errorBasename = "DefaultPackageErr";
+
+    List<String> options =
+      getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
+      options.add("--testclass=ClassInDefaultPackage");
+      options.add("--outputlimit=2");
+      options.add("--timelimit=3");
+
+      RandoopRunDescription randoopRunDescription = generateAndCompile(classpath, workingPath, packageName, regressionBasename, errorBasename, options);
+      assertThat("...should have regression tests", randoopRunDescription.regressionTestCount, is(greaterThan(0)));
+      TestRunDescription regressionTestRunDesc = runTests(classpath, workingPath, packageName, regressionBasename);
+      if (regressionTestRunDesc.testsSucceed != randoopRunDescription.regressionTestCount) {
+        for (String line : regressionTestRunDesc.processStatus.outputLines) {
+          System.err.println(line);
+        }
+        fail("all regression tests should pass");
+      }
+      assertThat("...should not have error tests", randoopRunDescription.errorTestCount, is(equalTo(0)));
   }
 
   /********************************** utility methods ***************************/

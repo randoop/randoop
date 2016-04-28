@@ -5,6 +5,9 @@ means for generic classes it will select a type argument for each type parameter
 and use that selection consistently. This will avoid compile and run time type
 errors related to inconsistent use of a parameterized type.
 
+Randoop will now generate longer arrays for reference types. Element types must
+be primitive, boxed primitive, or be input with --testclass.
+
 Fixes a bug where the opening parenthesis was not being generated for a call to
 the constructor of a non-static inner class.
 

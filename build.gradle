@@ -446,7 +446,7 @@ task manual(type: DefaultTask, dependsOn: ['copyManual', 'generateOptionsDoc', '
 /* Declares the Gradle version to be used when the wrapper is built */
 task wrapper(type: Wrapper) {
   description "Configure Gradle Wrapper for this project"
-  gradleVersion = '2.12'
+  gradleVersion = '2.13'
 }
 
 /*************** Other tool configs *************/

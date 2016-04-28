@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import randoop.BugInRandoopException;
+
 import plume.UtilMDE;
 
 /**
@@ -177,9 +179,9 @@ public class GenericClassType extends ParameterizedType {
     if (otherRawType.isInterface()) {
       Type[] interfaces = this.rawType.getGenericInterfaces();
       for (Type t : interfaces) {
-        GeneralType genericType = GeneralType.forType(t);
-        if (type.equals(genericType)) { // found the type
-          return (GenericClassType) genericType;
+        GeneralType generalType = GeneralType.forType(t);
+        if (generalType.isGeneric() && type.equals(generalType)) { // found the type
+          return (GenericClassType) generalType;
         }
       }
     }

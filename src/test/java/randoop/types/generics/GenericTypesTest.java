@@ -37,11 +37,7 @@ public class GenericTypesTest {
         new ConcreteTypeBound(new ConcreteSimpleType(Object.class), new SupertypeOrdering()),
         a1.getBounds().get(0));
     GenericType a1Type = null;
-    try {
-      a1Type = new GenericClassType(c1);
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
-    }
+    a1Type = new GenericClassType(c1);
     assertEquals("objects built fromClass and constructed are same", a1Type, a1);
 
     TypeBound b1 = a1.getBounds().get(0);
@@ -56,11 +52,7 @@ public class GenericTypesTest {
 
     Class<?> c2 = Variable2.class;
     GenericType a2Type = null;
-    try {
-      a2Type = new GenericClassType(c2);
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
-    }
+    a2Type = new GenericClassType(c2);
     GenericType a2 = null;
     try {
       a2 = GenericType.forClass(c2);
@@ -93,11 +85,7 @@ public class GenericTypesTest {
         new ConcreteTypeBound(new ConcreteSimpleType(Number.class), new SupertypeOrdering()),
         a1.getBounds().get(0));
     GenericType a1Type = null;
-    try {
-      a1Type = new GenericClassType(c1);
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
-    }
+    a1Type = new GenericClassType(c1);
     assertEquals("built and constructed object same", a1Type, a1);
 
     TypeBound b1 = a1.getBounds().get(0);
@@ -129,11 +117,7 @@ public class GenericTypesTest {
       fail("type error: " + e.getMessage());
     }
     GenericType a2Type = null;
-    try {
-      a2Type = new GenericClassType(c2);
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
-    }
+    a2Type = new GenericClassType(c2);
     assertEquals("objects built fromClass and constructed are same", a2Type, a2);
 
     TypeBound b2 = a1.getBounds().get(0);
