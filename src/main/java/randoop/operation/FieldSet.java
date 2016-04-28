@@ -187,7 +187,7 @@ public class FieldSet extends CallableOperation {
       setInputTypeList.add(classType);
     }
     setInputTypeList.add(fieldType);
-    manager.createTypedOperation(new FieldSet(accessibleField), classType, new TypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
+    manager.addOperation(new FieldSet(accessibleField), classType, new TypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
   }
 
   @Override

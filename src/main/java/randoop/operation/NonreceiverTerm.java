@@ -134,8 +134,6 @@ public final class NonreceiverTerm extends CallableOperation {
    * value to the string builder. Note: this does not explicitly box primitive
    * values.
    *
-   * @see TypedOperation#appendCode(List, StringBuilder)
-   *
    * @param inputVars
    *          ignored
    * @param b
@@ -458,7 +456,7 @@ public final class NonreceiverTerm extends CallableOperation {
     }
 
     NonreceiverTerm nonreceiverTerm = new NonreceiverTerm(type, value);
-    manager.createTypedOperation(nonreceiverTerm, type, new TypeTuple(), type);
+    manager.addOperation(new TypedTermOperation(nonreceiverTerm, new TypeTuple(), type));
   }
 
   /**

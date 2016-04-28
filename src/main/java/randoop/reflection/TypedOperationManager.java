@@ -1,20 +1,12 @@
 package randoop.reflection;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-
-import randoop.operation.CallableOperation;
-import randoop.operation.TypedOperation;
+import randoop.operation.TypedClassOperation;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.GeneralType;
-import randoop.types.RandoopTypeException;
-import randoop.types.TypeTuple;
+import randoop.types.ParameterizedType;
 
 /**
- * {@code TypeOperationManager} creates and categorizes types and typed operations collected by
+ * {@code TypeOperationManager}  categorizes types and typed operations collected by
  * visiting classes and class members.
- * The class also provides basic translation methods for input type tuples.
  *
  * @see OperationExtractor
  */
@@ -27,8 +19,7 @@ public class TypedOperationManager {
   }
 
   /**
-   * Creates a {@link randoop.operation.TypedOperation} for the given operation with type information,
-   * and then saves it to the appropriate grouping.
+   * Adds a {@link randoop.operation.TypedClassOperation} to the appropriate collection.
    * Classifies the operation based on whether the declaring type, input types, or output type are
    * generic:
    * <ul>
@@ -37,74 +28,34 @@ public class TypedOperationManager {
    *   <li>If none are generic then it is saved to the set of concrete operations.</li>
    * </ul>
    *
-   * @param op  the operation
-   * @param declaringType  the declaring type for the operation
-   * @param inputTypes  the types of inputs to operation
-   * @param outputType  the output type of operation
+   * @param operation  the operation
    */
-  public void createTypedOperation(CallableOperation op, GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
-    TypedOperation operation = new TypedOperation(op, declaringType, inputTypes, outputType);
-    if (declaringType.isGeneric()) {
-      collections.addOperationToGenericType(declaringType, operation);
+  public void addOperation(TypedClassOperation operation) {
+    assert operation != null;
+    if (operation.getDeclaringType().isGeneric()) {
+      collections.addOperationToGenericType((ParameterizedType) operation.getDeclaringType(), operation);
     } else {
-      if (inputTypes.isGeneric() || outputType.isGeneric()) {
-        assert op.isConstructorCall() || op.isMethodCall()
-                : "expected either constructor or method call, got " + op.toString();
-        collections.addGenericOperation(declaringType, operation);
+      if (operation.isGeneric()) {
+        assert operation.isConstructorCall() || operation.isMethodCall()
+                : "expected either constructor or method call, got " + operation.toString();
+        collections.addGenericOperation(operation.getDeclaringType(), operation);
       } else {
-        collections.addConcreteOperation(declaringType, operation);
+        collections.addConcreteOperation(operation.getDeclaringType(), operation);
       }
     }
   }
 
   /**
-   * Creates input type tuple for an operator that does not require declaring class as first input.
-   * This includes constructor and static method calls.
-   * @see #getInputTypes(GeneralType, Type[])
+   * Adds the given class type to either the generic or concrete classes of the model depending
+   * on whether the type is generic or not.
    *
-   * @param genericParameterTypes  the array of reflective generic parameter types of operation
-   * @return the input tuple for the given types and type variables
+   * @param classType  the class type
    */
-  TypeTuple getInputTypes(Type[] genericParameterTypes) throws RandoopTypeException {
-    return getInputTypes(null, genericParameterTypes);
-  }
-
-  /**
-   * Creates the input type tuple for an operator given the declaring type, parameter types, and
-   * type parameters.
-   * If the declaring type is non-null, it is placed at the beginning of the generated tuple to
-   * indicate that the operator requires an instance of the declaring class.
-   *
-   * @param declaringType  the declaring type for the operation
-   * @param genericParameterTypes  the array of reflective generic parameter types of the operation
-   * @return the input tuple for the given types and type variables.
-   */
-  TypeTuple getInputTypes(GeneralType declaringType, Type[] genericParameterTypes) throws RandoopTypeException {
-    List<GeneralType> paramTypes = new ArrayList<>();
-
-    if (declaringType != null) {
-      paramTypes.add(declaringType);
-    }
-
-    for (Type t : genericParameterTypes) {
-      paramTypes.add(GeneralType.forType(t));
-    }
-
-    // XXX I'm flying dangerously here -- not really sure what is going to happen when have generic method/constructor
-    return new TypeTuple(paramTypes);
-  }
-
-  public GeneralType getClassType(Class<?> c) throws RandoopTypeException {
-    GeneralType classType;
-    if (c.getTypeParameters().length > 0) {
-      randoop.types.ParameterizedType genericClassType = randoop.types.ParameterizedType.forClass(c);
-      collections.addGenericClassType(genericClassType);
-      classType = genericClassType;
+  public void addClassType(ClassOrInterfaceType classType) {
+    if (classType.isGeneric()) {
+      collections.addGenericClassType((ParameterizedType)classType);
     } else {
-      ClassOrInterfaceType concreteClassType = ClassOrInterfaceType.forClass(c);
-      collections.addConcreteClassType(concreteClassType);
-      classType = concreteClassType;
+      collections.addConcreteClassType(classType);
     }
-    return classType;
   }
 }

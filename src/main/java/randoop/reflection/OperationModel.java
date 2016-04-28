@@ -16,6 +16,7 @@ import randoop.contract.ObjectContract;
 import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
 import randoop.operation.ConstructorCall;
+import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.operation.MethodCall;
 import randoop.operation.OperationParseException;

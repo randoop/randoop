@@ -2,7 +2,6 @@ package randoop.reflection;
 
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.GeneralType;
 import randoop.types.ParameterizedType;
 
 /**
@@ -30,7 +29,7 @@ public abstract class ModelCollections {
    *
    * @param type  the {@link ParameterizedType} to add to the class types collection
    */
-  public void addGenericClassType(ParameterizedType type) { }
+  void addGenericClassType(ParameterizedType type) { }
 
   /**
    * Adds an operation to a generic type to the generic class type collection.

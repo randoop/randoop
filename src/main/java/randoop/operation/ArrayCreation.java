@@ -195,6 +195,6 @@ public final class ArrayCreation extends CallableOperation {
     }
     TypeTuple inputTypes = new TypeTuple(paramTypes);
     ArrayType arrayType = ArrayType.ofElementType(elementType);
-    manager.createTypedOperation(new ArrayCreation(arrayType, length), arrayType, inputTypes, arrayType);
+    manager.addOperation(new ArrayCreation(arrayType, length), arrayType, inputTypes, arrayType);
   }
 }

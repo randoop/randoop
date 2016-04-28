@@ -166,7 +166,7 @@ public class FieldGet extends CallableOperation {
     if (! accessibleField.isStatic()) {
       getInputTypeList.add(classType);
     }
-    manager.createTypedOperation(new FieldGet(accessibleField), classType, new TypeTuple(getInputTypeList), fieldType);
+    manager.addOperation(new FieldGet(accessibleField), classType, new TypeTuple(getInputTypeList), fieldType);
   }
 
   @Override

@@ -287,14 +287,14 @@ public final class ConstructorCall extends CallableOperation {
     List<GeneralType> paramTypes = new ArrayList<>();
     for (Class<?> c : typeArguments) {
       try {
-        paramTypes.add(manager.getClassType(c));
+        paramTypes.add(manager.addClassType(c));
       } catch (RandoopTypeException e) {
         String msg = "Type error when parsing constructor " + constructorString + ": " + e.getMessage();
         throw new OperationParseException(msg);
       }
     }
 
-    manager.createTypedOperation(op, classType, new TypeTuple(paramTypes), classType);
+    manager.addOperation(op, classType, new TypeTuple(paramTypes), classType);
   }
 
   /**

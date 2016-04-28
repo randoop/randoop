@@ -7,6 +7,7 @@ import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Variable;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
 import randoop.types.RandoopTypeException;
 import randoop.types.TypeTuple;
@@ -169,7 +170,7 @@ public class EnumConstant extends CallableOperation {
         throw new OperationParseException(msg);
       }
 
-      manager.createTypedOperation(new EnumConstant(value), declaringType, new TypeTuple(), declaringType);
+      manager.addOperation(new TypedClassOperation(new EnumConstant(value), (ClassOrInterfaceType)declaringType, new TypeTuple(), declaringType));
 
     }
 

@@ -2,7 +2,6 @@ package randoop.reflection;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import randoop.types.GeneralType;
 import randoop.types.Substitution;
@@ -15,10 +14,8 @@ import randoop.types.TypeArgument;
  * Starts as a singleton list with the empty list, which is expanded by repeated use of
  * the {@link #extend(List)} method that adds new types to the lists in the
  * set, then the set of {@link Substitution} objects is created by a call to {@link #filter(List)}.
- *
- * @see OperationModel#getSubstitutions(Set, GeneralType)
  */
-public class TypeTupleSet {
+class TypeTupleSet {
 
   /** The list of type lists (tuples) */
   private List<List<GeneralType>> typeTuples;
@@ -29,7 +26,7 @@ public class TypeTupleSet {
   /**
    * Creates a tuple set with a single empty tuple.
    */
-  public TypeTupleSet() {
+  TypeTupleSet() {
     this.typeTuples = new ArrayList<>();
     this.typeTuples.add(new ArrayList<GeneralType>());
     this.tupleLength = 0;

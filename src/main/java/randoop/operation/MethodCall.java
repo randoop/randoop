@@ -272,7 +272,7 @@ public final class MethodCall extends CallableOperation {
     }
     for (Class<?> c : typeArguments) {
       try {
-        paramTypes.add(manager.getClassType(c));
+        paramTypes.add(manager.addClassType(c));
       } catch (RandoopTypeException e) {
         msg = "Type error for method parameter: " + e.getMessage();
         throw new OperationParseException(msg);
@@ -285,7 +285,7 @@ public final class MethodCall extends CallableOperation {
       msg = "Type error for method " + methodString + ": " + e;
       throw new OperationParseException(msg);
     }
-    manager.createTypedOperation(op, classType, new TypeTuple(paramTypes), outputType);
+    manager.addOperation(op, classType, new TypeTuple(paramTypes), outputType);
 
   }
 

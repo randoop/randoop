@@ -7,8 +7,6 @@ import java.lang.reflect.Type;
 import java.util.Set;
 
 import randoop.types.GeneralType;
-import randoop.types.GeneralType;
-import randoop.types.RandoopTypeException;
 
 /**
  * {@code InputTypeExtractor} is a {@link ClassVisitor} that extracts concrete types that are used
@@ -35,11 +33,7 @@ class InputTypeExtractor implements ClassVisitor {
   @Override
   public void visit(Constructor<?> c) {
     for (Type paramType : c.getGenericParameterTypes()) {
-      try {
-        addIfConcrete(GeneralType.forType(paramType));
-      } catch (RandoopTypeException e) {
-        // do nothing
-      }
+      addIfConcrete(GeneralType.forType(paramType));
     }
   }
 
@@ -50,18 +44,10 @@ class InputTypeExtractor implements ClassVisitor {
   @Override
   public void visit(Method m) {
     for (Type paramType : m.getGenericParameterTypes()) {
-      try {
-        addIfConcrete(GeneralType.forType(paramType));
-      } catch (RandoopTypeException e) {
-        // do nothing
-      }
+      addIfConcrete(GeneralType.forType(paramType));
     }
     Type returnType = m.getReturnType();
-    try {
-      addIfConcrete(GeneralType.forType(returnType));
-    } catch (RandoopTypeException e) {
-      // do nothing
-    }
+    addIfConcrete(GeneralType.forType(returnType));
 
   }
 
@@ -72,11 +58,7 @@ class InputTypeExtractor implements ClassVisitor {
   @Override
   public void visit(Field f) {
     Type fieldType = f.getGenericType();
-    try {
-      addIfConcrete(GeneralType.forType(fieldType));
-    } catch (RandoopTypeException e) {
-      // do nothing
-    }
+    addIfConcrete(GeneralType.forType(fieldType));
   }
 
   /**
@@ -87,7 +69,7 @@ class InputTypeExtractor implements ClassVisitor {
    */
   private void addIfConcrete(GeneralType type) {
     if (! type.isGeneric() && ! type.isVoid() ) {
-      GeneralType concreteType = (GeneralType)type;
+      GeneralType concreteType = type;
       if (concreteType.isPrimitive()) {
         concreteType = concreteType.toBoxedPrimitive();
       }
