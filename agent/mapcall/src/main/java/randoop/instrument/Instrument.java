@@ -209,7 +209,7 @@ public class Instrument implements ClassFileTransformer {
         "transforming class %s, loader %s - %s%n", className, loader, loader.getParent());
 
     // Parse the bytes of the classfile, die on any errors
-    JavaClass c = null;
+    JavaClass c;
     ClassParser parser = new ClassParser(new ByteArrayInputStream(classfileBuffer), className);
     try {
       c = parser.parse();
@@ -328,7 +328,7 @@ public class Instrument implements ClassFileTransformer {
         debug_instrument_inst.log("instrumenting instruction %s%n", ih);
         // ih.getInstruction().toString(pool.getConstantPool()));
       }
-      InstructionList new_il = null;
+      InstructionList new_il;
 
       // Remember the next instruction to process
       InstructionHandle next_ih = ih.getNext();

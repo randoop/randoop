@@ -188,7 +188,7 @@ public class BitSet implements Cloneable, java.io.Serializable {
     }
 
     int startUnitIndex = unitIndex(fromIndex);
-    long bitMask = 0;
+    long bitMask;
     if (startUnitIndex == endUnitIndex) {
       // Case 1: One word
       bitMask = (1L << (toIndex & BIT_INDEX_MASK)) - (1L << (fromIndex & BIT_INDEX_MASK));
@@ -293,7 +293,7 @@ public class BitSet implements Cloneable, java.io.Serializable {
     }
 
     int startUnitIndex = unitIndex(fromIndex);
-    long bitMask = 0;
+    long bitMask;
     if (startUnitIndex == endUnitIndex) {
       // Case 1: One word
       bitMask = (1L << (toIndex & BIT_INDEX_MASK)) - (1L << (fromIndex & BIT_INDEX_MASK));
@@ -371,7 +371,7 @@ public class BitSet implements Cloneable, java.io.Serializable {
     if (startUnitIndex >= unitsInUse) return;
     int endUnitIndex = unitIndex(toIndex);
 
-    long bitMask = 0;
+    long bitMask;
     if (startUnitIndex == endUnitIndex) {
       // Case 1: One word
       bitMask = (1L << (toIndex & BIT_INDEX_MASK)) - (1L << (fromIndex & BIT_INDEX_MASK));
@@ -890,7 +890,7 @@ public class BitSet implements Cloneable, java.io.Serializable {
    * @see     java2.util2.BitSet#size()
    */
   public Object clone() {
-    BitSet result = null;
+    BitSet result;
     try {
       result = (BitSet) super.clone();
     } catch (CloneNotSupportedException e) {

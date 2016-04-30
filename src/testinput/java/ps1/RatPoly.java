@@ -170,7 +170,7 @@ public class RatPoly {
 
     StringBuffer sb = new StringBuffer();
     boolean isNegative;
-    RatNum coeff = null;
+    RatNum coeff;
     for (int i = 0, size = terms.size(); i < size; i++) {
       isNegative = terms.get(i).coeff.isNegative();
 

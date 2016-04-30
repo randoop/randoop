@@ -38,7 +38,7 @@ public class ListOfListsIteratorTests extends TestCase {
       lists.add(a1);
       lists.add(a2);
       lists.add(a3);
-      SimpleList<Integer> theList = null;
+      SimpleList<Integer> theList;
       int operations = Randomness.nextRandomInt(30);
       for (int j = 0; j < operations; j++) {
         int whichOperation = Randomness.nextRandomInt(2);
