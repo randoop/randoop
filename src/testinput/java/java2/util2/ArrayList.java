@@ -86,7 +86,7 @@ public class ArrayList extends AbstractList
    * The array buffer into which the elements of the ArrayList are stored.
    * The capacity of the ArrayList is the length of this array buffer.
    */
-  private transient Object elementData[];
+  private transient Object[] elementData;
 
   /**
    * The size of the ArrayList (the number of elements it contains).
@@ -141,7 +141,7 @@ public class ArrayList extends AbstractList
     modCount++;
     int oldCapacity = elementData.length;
     if (size < oldCapacity) {
-      Object oldData[] = elementData;
+      Object[] oldData = elementData;
       elementData = new Object[size];
       System.arraycopy(oldData, 0, elementData, 0, size);
     }
@@ -158,7 +158,7 @@ public class ArrayList extends AbstractList
     modCount++;
     int oldCapacity = elementData.length;
     if (minCapacity > oldCapacity) {
-      Object oldData[] = elementData;
+      Object[] oldData = elementData;
       int newCapacity = (oldCapacity * 3) / 2 + 1;
       if (newCapacity < minCapacity) newCapacity = minCapacity;
       elementData = new Object[newCapacity];
@@ -284,7 +284,7 @@ public class ArrayList extends AbstractList
    * @throws ArrayStoreException if the runtime type of a is not a supertype
    *         of the runtime type of every element in this list.
    */
-  public Object[] toArray(Object a[]) {
+  public Object[] toArray(Object[] a) {
     if (a.length < size)
       a = (Object[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), size);
 

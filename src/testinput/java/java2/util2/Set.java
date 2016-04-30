@@ -126,7 +126,7 @@ public interface Set extends Collection {
    *            of the runtime type of every element in this set.
    * @throws NullPointerException if the specified array is <tt>null</tt>.
    */
-  Object[] toArray(Object a[]);
+  Object[] toArray(Object[] a);
 
   // Modification Operations
 

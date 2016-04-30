@@ -31,7 +31,7 @@ public class BiSort {
    * The main routine which creates a tree and sorts it a couple of times.
    * @param args the command line arguments
    **/
-  public static final void main(String args[]) {
+  public static final void main(String[] args) {
     parseCmdLine(args);
 
     if (printMsgs) System.out.println("Bisort with " + size + " values");
@@ -79,7 +79,7 @@ public class BiSort {
    * Parse the command line options.
    * @param args the command line options.
    **/
-  private static final void parseCmdLine(String args[]) {
+  private static final void parseCmdLine(String[] args) {
     int i = 0;
     String arg;
 

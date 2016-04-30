@@ -108,7 +108,7 @@ public class Collections {
    * @see Comparable
    */
   public static void sort(List list) {
-    Object a[] = list.toArray();
+    Object[] a = list.toArray();
     Arrays.sort(a);
     ListIterator i = list.listIterator();
     for (int j = 0; j < a.length; j++) {
@@ -150,7 +150,7 @@ public class Collections {
    * @see Comparator
    */
   public static void sort(List list, Comparator c) {
-    Object a[] = list.toArray();
+    Object[] a = list.toArray();
     Arrays.sort(a, c);
     ListIterator i = list.listIterator();
     for (int j = 0; j < a.length; j++) {
@@ -411,7 +411,7 @@ public class Collections {
     if (size < SHUFFLE_THRESHOLD || list instanceof RandomAccess) {
       for (int i = size; i > 1; i--) swap(list, i - 1, rnd.nextInt(i));
     } else {
-      Object arr[] = list.toArray();
+      Object[] arr = list.toArray();
 
       // Shuffle array
       for (int i = size; i > 1; i--) swap(arr, i - 1, rnd.nextInt(i));
@@ -1397,7 +1397,7 @@ public class Collections {
         return a;
       }
 
-      public Object[] toArray(Object a[]) {
+      public Object[] toArray(Object[] a) {
         // We don't pass a to c.toArray, to avoid window of
         // vulnerability wherein an unscrupulous multithreaded client
         // could get his hands on raw (unwrapped) Entries from c.

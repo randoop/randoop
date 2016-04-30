@@ -32,7 +32,7 @@ public class TreeAdd {
    * The main routine which creates a tree and traverses it.
    * @param args the arguments to the program
    **/
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     parseCmdLine(args);
 
     long start0 = System.currentTimeMillis();
@@ -57,7 +57,7 @@ public class TreeAdd {
    * Parse the command line options.
    * @param args the command line options.
    **/
-  private static final void parseCmdLine(String args[]) {
+  private static final void parseCmdLine(String[] args) {
     int i = 0;
     String arg;
 

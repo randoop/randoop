@@ -984,7 +984,7 @@ public class Collections {
       }
 
       @Override
-      public Object[] toArray(final Object a[]) {
+      public Object[] toArray(final Object[] a) {
         final Object[] arr =
             c.toArray(
                 a.length == 0

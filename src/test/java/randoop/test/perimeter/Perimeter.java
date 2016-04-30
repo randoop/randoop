@@ -35,7 +35,7 @@ public class Perimeter {
    * The entry point to computing the perimeter of an image.
    * @param args the command line arguments
    **/
-  public static void main(String args[]) {
+  public static void main(String[] args) {
 
     parseCmdLine(args);
 
@@ -73,7 +73,7 @@ public class Perimeter {
    * Parse the command line options.
    * @param args the command line options.
    **/
-  private static final void parseCmdLine(String args[]) {
+  private static final void parseCmdLine(String[] args) {
     int i = 0;
     String arg;
 

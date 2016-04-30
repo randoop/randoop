@@ -106,7 +106,7 @@ public class Hashtable extends Dictionary implements Map, Cloneable, java.io.Ser
   /**
    * The hash table data.
    */
-  private transient Entry table[];
+  private transient Entry[] table;
 
   /**
    * The total number of entries in the hash table.
@@ -266,7 +266,7 @@ public class Hashtable extends Dictionary implements Map, Cloneable, java.io.Ser
       throw new NullPointerException();
     }
 
-    Entry tab[] = table;
+    Entry[] tab = table;
     for (int i = tab.length; i-- > 0; ) {
       for (Entry e = tab[i]; e != null; e = e.next) {
         if (e.value.equals(value)) {
@@ -305,7 +305,7 @@ public class Hashtable extends Dictionary implements Map, Cloneable, java.io.Ser
    * @see     #contains(Object)
    */
   public synchronized boolean containsKey(Object key) {
-    Entry tab[] = table;
+    Entry[] tab = table;
     int hash = key.hashCode();
     int index = (hash & 0x7FFFFFFF) % tab.length;
     for (Entry e = tab[index]; e != null; e = e.next) {
@@ -327,7 +327,7 @@ public class Hashtable extends Dictionary implements Map, Cloneable, java.io.Ser
    * @see     #put(Object, Object)
    */
   public synchronized Object get(Object key) {
-    Entry tab[] = table;
+    Entry[] tab = table;
     int hash = key.hashCode();
     int index = (hash & 0x7FFFFFFF) % tab.length;
     for (Entry e = tab[index]; e != null; e = e.next) {
@@ -347,10 +347,10 @@ public class Hashtable extends Dictionary implements Map, Cloneable, java.io.Ser
    */
   protected void rehash() {
     int oldCapacity = table.length;
-    Entry oldMap[] = table;
+    Entry[] oldMap = table;
 
     int newCapacity = oldCapacity * 2 + 1;
-    Entry newMap[] = new Entry[newCapacity];
+    Entry[] newMap = new Entry[newCapacity];
 
     modCount++;
     threshold = (int) (newCapacity * loadFactor);
@@ -392,7 +392,7 @@ public class Hashtable extends Dictionary implements Map, Cloneable, java.io.Ser
     }
 
     // Makes sure the key is not already in the hashtable.
-    Entry tab[] = table;
+    Entry[] tab = table;
     int hash = key.hashCode();
     int index = (hash & 0x7FFFFFFF) % tab.length;
     for (Entry e = tab[index]; e != null; e = e.next) {
@@ -429,7 +429,7 @@ public class Hashtable extends Dictionary implements Map, Cloneable, java.io.Ser
    * @throws  NullPointerException  if the key is <code>null</code>.
    */
   public synchronized Object remove(Object key) {
-    Entry tab[] = table;
+    Entry[] tab = table;
     int hash = key.hashCode();
     int index = (hash & 0x7FFFFFFF) % tab.length;
     for (Entry e = tab[index], prev = null; e != null; prev = e, e = e.next) {
@@ -470,7 +470,7 @@ public class Hashtable extends Dictionary implements Map, Cloneable, java.io.Ser
    * Clears this hashtable so that it contains no keys.
    */
   public synchronized void clear() {
-    Entry tab[] = table;
+    Entry[] tab = table;
     modCount++;
     for (int index = tab.length; --index >= 0; ) tab[index] = null;
     count = 0;
@@ -620,7 +620,7 @@ public class Hashtable extends Dictionary implements Map, Cloneable, java.io.Ser
       if (!(o instanceof Map.Entry)) return false;
       Map.Entry entry = (Map.Entry) o;
       Object key = entry.getKey();
-      Entry tab[] = table;
+      Entry[] tab = table;
       int hash = key.hashCode();
       int index = (hash & 0x7FFFFFFF) % tab.length;
 
@@ -633,7 +633,7 @@ public class Hashtable extends Dictionary implements Map, Cloneable, java.io.Ser
       if (!(o instanceof Map.Entry)) return false;
       Map.Entry entry = (Map.Entry) o;
       Object key = entry.getKey();
-      Entry tab[] = table;
+      Entry[] tab = table;
       int hash = key.hashCode();
       int index = (hash & 0x7FFFFFFF) % tab.length;
 
@@ -754,7 +754,7 @@ public class Hashtable extends Dictionary implements Map, Cloneable, java.io.Ser
     if (count == 0 || loadFactor < 0) return h; // Returns zero
 
     loadFactor = -loadFactor; // Mark hashCode computation in progress
-    Entry tab[] = table;
+    Entry[] tab = table;
     for (int i = 0; i < tab.length; i++)
       for (Entry e = tab[i]; e != null; e = e.next) h += e.key.hashCode() ^ e.value.hashCode();
     loadFactor = -loadFactor; // Mark hashCode computation complete
@@ -915,7 +915,7 @@ public class Hashtable extends Dictionary implements Map, Cloneable, java.io.Ser
     public boolean hasMoreElements() {
       Entry e = entry;
       int i = index;
-      Entry t[] = table;
+      Entry[] t = table;
       /* Use locals for faster loop iteration */
       while (e == null && i > 0) {
         e = t[--i];
@@ -928,7 +928,7 @@ public class Hashtable extends Dictionary implements Map, Cloneable, java.io.Ser
     public Object nextElement() {
       Entry et = entry;
       int i = index;
-      Entry t[] = table;
+      Entry[] t = table;
       /* Use locals for faster loop iteration */
       while (et == null && i > 0) {
         et = t[--i];

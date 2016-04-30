@@ -562,7 +562,7 @@ public class WeakHashMap extends AbstractMap implements Map {
     while (queue.poll() != null) ;
 
     modCount++;
-    Entry tab[] = table;
+    Entry[] tab = table;
     for (int i = 0; i < tab.length; ++i) tab[i] = null;
     size = 0;
 
@@ -583,7 +583,7 @@ public class WeakHashMap extends AbstractMap implements Map {
   public boolean containsValue(Object value) {
     if (value == null) return containsNullValue();
 
-    Entry tab[] = getTable();
+    Entry[] tab = getTable();
     for (int i = tab.length; i-- > 0; )
       for (Entry e = tab[i]; e != null; e = e.next) if (value.equals(e.value)) return true;
     return false;
@@ -593,7 +593,7 @@ public class WeakHashMap extends AbstractMap implements Map {
    * Special-case code for containsValue with null argument
    */
   private boolean containsNullValue() {
-    Entry tab[] = getTable();
+    Entry[] tab = getTable();
     for (int i = tab.length; i-- > 0; )
       for (Entry e = tab[i]; e != null; e = e.next) if (e.value == null) return true;
     return false;
@@ -788,7 +788,7 @@ public class WeakHashMap extends AbstractMap implements Map {
       return c.toArray();
     }
 
-    public Object[] toArray(Object a[]) {
+    public Object[] toArray(Object[] a) {
       Collection c = new ArrayList(size());
       for (Iterator i = iterator(); i.hasNext(); ) c.add(i.next());
       return c.toArray(a);
@@ -834,7 +834,7 @@ public class WeakHashMap extends AbstractMap implements Map {
       return c.toArray();
     }
 
-    public Object[] toArray(Object a[]) {
+    public Object[] toArray(Object[] a) {
       Collection c = new ArrayList(size());
       for (Iterator i = iterator(); i.hasNext(); ) c.add(i.next());
       return c.toArray(a);
@@ -891,7 +891,7 @@ public class WeakHashMap extends AbstractMap implements Map {
       return c.toArray();
     }
 
-    public Object[] toArray(Object a[]) {
+    public Object[] toArray(Object[] a) {
       Collection c = new ArrayList(size());
       for (Iterator i = iterator(); i.hasNext(); )
         c.add(new AbstractMap.SimpleEntry((Map.Entry) i.next()));

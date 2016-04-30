@@ -1,7 +1,7 @@
 package randoop.test.mst;
 
 public class Hashtable {
-  protected HashEntry array[];
+  protected HashEntry[] array;
   protected int size;
 
   public Hashtable(int sz) {

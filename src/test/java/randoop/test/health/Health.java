@@ -37,7 +37,7 @@ public class Health {
    * health-care system and executes the simulation for a specified time.
    * @param args the command line arguments
    **/
-  public static final void main(String args[]) {
+  public static final void main(String[] args) {
     parseCmdLine(args);
 
     long start0 = System.currentTimeMillis();
@@ -71,7 +71,7 @@ public class Health {
     System.out.println("Done!");
   }
 
-  private static final void parseCmdLine(String args[]) {
+  private static final void parseCmdLine(String[] args) {
     String arg;
     int i = 0;
     while (i < args.length && args[i].startsWith("-")) {

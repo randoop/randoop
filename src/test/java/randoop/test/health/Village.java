@@ -89,7 +89,7 @@ public class Village {
    **/
   public List simulate() {
     // the list of patients refered from each child village
-    List val[] = new List[4];
+    List[] val = new List[4];
 
     for (int i = 3; i >= 0; i--) {
       Village v = forward[i];
@@ -127,7 +127,7 @@ public class Village {
    * @return a summary of the simulation results for the village
    **/
   public Results getResults() {
-    Results fval[] = new Results[4];
+    Results[] fval = new Results[4];
     for (int i = 3; i >= 0; i--) {
       Village v = forward[i];
       if (v != null) {
