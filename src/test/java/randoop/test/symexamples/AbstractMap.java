@@ -253,7 +253,7 @@ public abstract class AbstractMap implements Map {
 
   @Override
   public String toString() {
-    StringBuffer buf = new StringBuffer();
+    StringBuilder buf = new StringBuilder();
     buf.append("{");
     Iterator i = entrySet().iterator();
     boolean hasNext = i.hasNext();

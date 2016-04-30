@@ -514,7 +514,7 @@ public class Hashtable extends Dictionary implements Map, Cloneable, java.io.Ser
    */
   public synchronized String toString() {
     int max = size() - 1;
-    StringBuffer buf = new StringBuffer();
+    StringBuilder buf = new StringBuilder();
     Iterator it = entrySet().iterator();
 
     buf.append("{");

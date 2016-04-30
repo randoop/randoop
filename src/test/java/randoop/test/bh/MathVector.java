@@ -209,7 +209,7 @@ public class MathVector implements Cloneable {
    **/
   @Override
   public String toString() {
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     for (int i = 0; i < NDIM; i++) {
       s.append(data[i] + " ");
     }
