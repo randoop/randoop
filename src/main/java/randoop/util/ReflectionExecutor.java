@@ -42,6 +42,9 @@ public final class ReflectionExecutor {
   private static long excep_exec_accum = 0;
   private static int excep_exec_count = 0;
 
+  private ReflectionExecutor() {
+  }
+
   public static int normalExecs() {
     return normal_exec_count;
   }

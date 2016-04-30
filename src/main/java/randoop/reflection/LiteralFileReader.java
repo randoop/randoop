@@ -62,6 +62,9 @@ public class LiteralFileReader {
   private static final String CLASSNAME = "CLASSNAME";
   private static final String LITERALS = "LITERALS";
 
+  private LiteralFileReader() {
+  }
+
   /**
    * Returns a map from class to list of constants.
    *

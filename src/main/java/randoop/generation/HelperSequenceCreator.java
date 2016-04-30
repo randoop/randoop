@@ -30,7 +30,10 @@ import randoop.util.SimpleList;
 
 public class HelperSequenceCreator {
 
-  /**
+    private HelperSequenceCreator() {
+    }
+
+    /**
    * Returns a sequence that creates an object of type compatible with the given
    * class. Wraps the object in a list, and returns the list.
    *
