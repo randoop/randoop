@@ -220,7 +220,7 @@ public class FibHeap {
   public static java.util.Random rand = new java.util.Random(0);
 
   public void deleteRandomNode() {
-    if (cachedNodes.size() == 0) return;
+    if (cachedNodes.isEmpty()) return;
     delete(cachedNodes.get(rand.nextInt(cachedNodes.size())));
   }
 

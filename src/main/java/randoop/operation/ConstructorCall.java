@@ -113,7 +113,7 @@ public final class ConstructorCall extends CallableOperation {
     Class<?> declaringClass = constructor.getDeclaringClass();
     boolean isNonStaticMember =
         (!Modifier.isStatic(declaringClass.getModifiers()) && declaringClass.isMemberClass());
-    assert Util.implies(isNonStaticMember, inputVars.size() > 0);
+    assert Util.implies(isNonStaticMember, !inputVars.isEmpty());
 
     // Note on isNonStaticMember: if a class is a non-static member class, the
     // runtime signature of the constructor will have an additional argument

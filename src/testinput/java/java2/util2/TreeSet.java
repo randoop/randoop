@@ -238,7 +238,7 @@ public class TreeSet extends AbstractSet implements SortedSet, Cloneable, java.i
    */
   public boolean addAll(Collection c) {
     // Use linear-time version if applicable
-    if (m.size() == 0 && c.size() > 0 && c instanceof SortedSet && m instanceof TreeMap) {
+    if (m.isEmpty() && !c.isEmpty() && c instanceof SortedSet && m instanceof TreeMap) {
       SortedSet set = (SortedSet) c;
       TreeMap map = (TreeMap) m;
       Comparator cc = set.comparator();

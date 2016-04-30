@@ -153,7 +153,7 @@ public class Premain {
       List<URL> bcel_urls = get_resource_list(bcel_classname);
       List<URL> pag_urls = get_resource_list(pag_marker_classname);
 
-      if (pag_urls.size() == 0) {
+      if (pag_urls.isEmpty()) {
         System.err.printf(
             "%nBCEL must be in the classpath.  " + "Normally it is found in daikon.jar .%n");
         System.exit(1);

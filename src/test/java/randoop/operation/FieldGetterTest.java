@@ -205,7 +205,7 @@ public class FieldGetterTest {
     });
     try {
       FieldGet.parse(getterDescr, operationManager);
-      assert ops.size() > 0 : "operations should have element";
+      assert !ops.isEmpty() : "operations should have element";
       ConcreteOperation getter = ops.get(0);
       assertEquals(
           "parse should return object that converts to string",

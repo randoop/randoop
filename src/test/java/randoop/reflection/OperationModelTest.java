@@ -48,7 +48,7 @@ public class OperationModelTest {
     }
     assert model != null : "model was not initialized";
     assertThat("only expect the LinkedList and Object classes", model.getClasses().size(), is(equalTo(2)));
-    assertTrue("should have nonzero operations set", model.getConcreteOperations().size() > 0);
+    assertTrue("should have nonzero operations set", !model.getConcreteOperations().isEmpty());
 
   }
 
@@ -76,7 +76,7 @@ public class OperationModelTest {
     assert model != null: "model was not initialized";
     assertThat("should have both outer and inner classes, plus Object", model.getClasses().size(), is(equalTo(3)));
 
-    assertTrue("should have nonzero operations set", model.getConcreteOperations().size() > 0);
+    assertTrue("should have nonzero operations set", !model.getConcreteOperations().isEmpty());
 
   }
 }

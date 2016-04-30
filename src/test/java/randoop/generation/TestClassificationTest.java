@@ -71,7 +71,7 @@ public class TestClassificationTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have some regression tests", rTests.size() > 0);
+    assertTrue("should have some regression tests", !rTests.isEmpty());
 
     for (ExecutableSequence s : rTests) {
       TestChecks cks = s.getChecks();
@@ -112,7 +112,7 @@ public class TestClassificationTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have some regression tests", rTests.size() > 0);
+    assertTrue("should have some regression tests", !rTests.isEmpty());
 
     for (ExecutableSequence s : rTests) {
       TestChecks cks = s.getChecks();
@@ -126,7 +126,7 @@ public class TestClassificationTest {
       }
     }
 
-    assertTrue("should have some error tests", eTests.size() > 0);
+    assertTrue("should have some error tests", !eTests.isEmpty());
 
     for (ExecutableSequence s : eTests) {
       TestChecks cks = s.getChecks();
@@ -167,7 +167,7 @@ public class TestClassificationTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have some regression tests", rTests.size() > 0);
+    assertTrue("should have some regression tests", !rTests.isEmpty());
 
     for (ExecutableSequence s : rTests) {
       TestChecks cks = s.getChecks();
@@ -211,7 +211,7 @@ public class TestClassificationTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have some regression tests", rTests.size() > 0);
+    assertTrue("should have some regression tests", !rTests.isEmpty());
 
     for (ExecutableSequence s : rTests) {
       TestChecks cks = s.getChecks();
@@ -227,7 +227,7 @@ public class TestClassificationTest {
       }
     }
 
-    assertTrue("should have error tests", eTests.size() > 0);
+    assertTrue("should have error tests", !eTests.isEmpty());
 
     for (ExecutableSequence s : eTests) {
       TestChecks cks = s.getChecks();
@@ -269,7 +269,7 @@ public class TestClassificationTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have some regression tests", rTests.size() > 0);
+    assertTrue("should have some regression tests", !rTests.isEmpty());
 
     for (ExecutableSequence s : rTests) {
       TestChecks cks = s.getChecks();
@@ -287,7 +287,7 @@ public class TestClassificationTest {
       }
     }
 
-    assertTrue("should have error tests", eTests.size() > 0);
+    assertTrue("should have error tests", !eTests.isEmpty());
 
     for (ExecutableSequence s : eTests) {
       TestChecks cks = s.getChecks();

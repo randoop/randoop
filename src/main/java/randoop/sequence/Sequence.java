@@ -429,7 +429,7 @@ public final class Sequence implements WeightedElement {
     this.lastStatementTypes = new ArrayList<>();
     this.lastStatementVariables = new ArrayList<>();
 
-    if (this.statements.size() > 0) {
+    if (!this.statements.isEmpty()) {
       int lastStatementIndex = this.statements.size() - 1;
       Statement lastStatement = this.statements.get(lastStatementIndex);
 
@@ -614,7 +614,7 @@ public final class Sequence implements WeightedElement {
         possibleIndices.add(getVariable(i));
       }
     }
-    if (possibleIndices.size() == 0) return null;
+    if (possibleIndices.isEmpty()) return null;
     return Randomness.randomMember(possibleIndices);
   }
 
@@ -760,7 +760,7 @@ public final class Sequence implements WeightedElement {
 
   // TODO inline and remove; used only in one place and confusing.
   public Variable getFirstVariableFromLastStatementVariables() {
-    if (lastStatementVariables.size() == 0) throw new IllegalStateException();
+    if (lastStatementVariables.isEmpty()) throw new IllegalStateException();
     return lastStatementVariables.get(0);
   }
 
@@ -983,7 +983,7 @@ public final class Sequence implements WeightedElement {
 
         // Find input variables from their names.
         String[] inVars = new String[0];
-        if (inVarsStr.trim().length() > 0) {
+        if (!inVarsStr.trim().isEmpty()) {
           // One or more input vars.
           inVars = inVarsStr.split("\\s");
         }

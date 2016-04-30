@@ -3407,7 +3407,7 @@ public class Collections {
 
     @Override
     public boolean equals(Object o) {
-      return (o instanceof Map) && ((Map) o).size() == 0;
+      return (o instanceof Map) && ((Map) o).isEmpty();
     }
 
     @Override
