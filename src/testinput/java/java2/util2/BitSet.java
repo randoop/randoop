@@ -941,7 +941,7 @@ public class BitSet implements Cloneable, java.io.Serializable {
    */
   public String toString() {
     int numBits = unitsInUse << ADDRESS_BITS_PER_UNIT;
-    StringBuffer buffer = new StringBuffer(8 * numBits + 2);
+    StringBuilder buffer = new StringBuilder(8 * numBits + 2);
     String separator = "";
     buffer.append('{');
 

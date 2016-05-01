@@ -430,7 +430,7 @@ public abstract class AbstractCollection implements Collection {
    * @return a string representation of this collection.
    */
   public String toString() {
-    StringBuffer buf = new StringBuffer();
+    StringBuilder buf = new StringBuilder();
     buf.append("[");
 
     Iterator i = iterator();

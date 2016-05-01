@@ -555,12 +555,12 @@ public abstract class AbstractMap implements Map {
    * the string representation of each <tt>map.entry</tt> in turn.  After
    * appending each entry except the last, the string <tt>", "</tt> is
    * appended.  Finally a right brace is appended.  A string is obtained
-   * from the stringbuffer, and returned.
+   * from the StringBuilder, and returned.
    *
    * @return a String representation of this map.
    */
   public String toString() {
-    StringBuffer buf = new StringBuffer();
+    StringBuilder buf = new StringBuilder();
     buf.append("{");
 
     Iterator i = entrySet().iterator();
