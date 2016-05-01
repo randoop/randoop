@@ -146,7 +146,7 @@ public class MST {
 
       if (arg.equals("-v")) {
         if (i < args.length) {
-          vertices = new Integer(args[i++]).intValue();
+          vertices = Integer.parseInt(args[i++]);
         } else throw new RuntimeException("-v requires the number of vertices");
       } else if (arg.equals("-p")) {
         printResult = true;

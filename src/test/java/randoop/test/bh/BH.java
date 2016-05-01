@@ -113,13 +113,13 @@ public class BH {
       // check for options that require arguments
       if (arg.equals("-b")) {
         if (i < args.length) {
-          nbody = new Integer(args[i++]).intValue();
+          nbody = Integer.parseInt(args[i++]);
         } else {
           throw new Error("-l requires the number of levels");
         }
       } else if (arg.equals("-s")) {
         if (i < args.length) {
-          nsteps = new Integer(args[i++]).intValue();
+          nsteps = Integer.parseInt(args[i++]);
         } else {
           throw new Error("-l requires the number of levels");
         }

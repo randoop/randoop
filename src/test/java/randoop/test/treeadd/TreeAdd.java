@@ -66,7 +66,7 @@ public class TreeAdd {
 
       if (arg.equals("-l")) {
         if (i < args.length) {
-          levels = new Integer(args[i++]).intValue();
+          levels = Integer.parseInt(args[i++]);
         } else throw new RuntimeException("-l requires the number of levels");
       } else if (arg.equals("-p")) {
         printResult = true;

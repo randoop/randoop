@@ -89,7 +89,7 @@ public class BiSort {
       // check for options that require arguments
       if (arg.equals("-s")) {
         if (i < args.length) {
-          size = new Integer(args[i++]).intValue();
+          size = Integer.parseInt(args[i++]);
         } else {
           throw new Error("-l requires the number of levels");
         }

@@ -82,7 +82,7 @@ public class Perimeter {
 
       if (arg.equals("-l")) {
         if (i < args.length) {
-          levels = new Integer(args[i++]).intValue();
+          levels = Integer.parseInt(args[i++]);
         } else {
           throw new Error("-l requires the number of levels");
         }
