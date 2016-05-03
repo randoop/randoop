@@ -72,9 +72,6 @@ public class LiteralFileReader {
 
     final MultiMap<ClassOrInterfaceType, Sequence> map = new MultiMap<>();
 
-    final ModelCollections collections = new ConcreteSequenceCollections(map);
-    final TypedOperationManager manager = new TypedOperationManager(collections);
-
     RecordProcessor processor =
         new RecordProcessor() {
           @Override
@@ -95,6 +92,7 @@ public class LiteralFileReader {
               throwInvalidRecordError(e, lines, 1);
             }
             assert cls != null;
+            ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(cls);
 
             if (!(lines.size() >= 3 && lines.get(2).trim().toUpperCase().equals(LITERALS))) {
               throwInvalidRecordError("Missing field \"" + LITERALS + "\"", lines, 2);
@@ -102,7 +100,8 @@ public class LiteralFileReader {
 
             for (int i = 3; i < lines.size(); i++) {
               try {
-                NonreceiverTerm.parse(lines.get(i), manager);
+                TypedOperation operation = NonreceiverTerm.parse(lines.get(i));
+                map.add(classType, new Sequence().extend(operation, new ArrayList<Variable>()));
               } catch (OperationParseException e) {
                 throwInvalidRecordError(e, lines, i);
               }
@@ -137,19 +136,5 @@ public class LiteralFileReader {
       b.append("   ").append(l).append("\n");
     }
     b.append("------------------------------\n");
-  }
-
-  private static class ConcreteSequenceCollections extends ModelCollections {
-
-    private final MultiMap<ClassOrInterfaceType, Sequence> map;
-
-    ConcreteSequenceCollections(MultiMap<ClassOrInterfaceType, Sequence> map) {
-      this.map = map;
-    }
-
-    @Override
-    public void addConcreteOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
-      map.add(declaringType, new Sequence().extend(operation, new ArrayList<Variable>()));
-    }
   }
 }

@@ -3,9 +3,10 @@ package randoop.reflection;
 import java.util.ArrayList;
 import java.util.List;
 
-import randoop.types.GeneralType;
+import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.TypeArgument;
+import randoop.types.TypeVariable;
 
 /**
  * Represents a set of lists of candidate type arguments for a {@link randoop.types.ParameterizedType},
@@ -18,7 +19,7 @@ import randoop.types.TypeArgument;
 class TypeTupleSet {
 
   /** The list of type lists (tuples) */
-  private List<List<GeneralType>> typeTuples;
+  private List<List<ReferenceType>> typeTuples;
 
   /** The length of tuples in the set */
   private int tupleLength;
@@ -28,7 +29,7 @@ class TypeTupleSet {
    */
   TypeTupleSet() {
     this.typeTuples = new ArrayList<>();
-    this.typeTuples.add(new ArrayList<GeneralType>());
+    this.typeTuples.add(new ArrayList<ReferenceType>());
     this.tupleLength = 0;
   }
 
@@ -38,12 +39,12 @@ class TypeTupleSet {
    *
    * @param types  the list of types
    */
-  public void extend(List<GeneralType> types) {
+  public void extend(List<ReferenceType> types) {
     tupleLength += types.size();
-    List<List<GeneralType>> tupleList = new ArrayList<>();
-    for (List<GeneralType> tuple : typeTuples) {
-      for (GeneralType type : types) {
-        List<GeneralType> extTuple = new ArrayList<>(tuple);
+    List<List<ReferenceType>> tupleList = new ArrayList<>();
+    for (List<ReferenceType> tuple : typeTuples) {
+      for (ReferenceType type : types) {
+        List<ReferenceType> extTuple = new ArrayList<>(tuple);
         extTuple.add(type);
         assert extTuple.size() == tupleLength : "tuple lengths don't match";
         tupleList.add(extTuple);
@@ -60,15 +61,15 @@ class TypeTupleSet {
    * @param typeParameters  the type arguments
    * @return the list of substitutions that instantiate the type arguments
    */
-  List<Substitution> filter(List<TypeArgument> typeParameters) {
+  List<Substitution<ReferenceType>> filter(List<TypeVariable> typeParameters) {
     assert typeParameters.size() == tupleLength: "tuple size must equal number of parameters";
-    List<Substitution> substitutionSet = new ArrayList<>();
-    List<List<GeneralType>> tupleList = new ArrayList<>();
-    for (List<GeneralType> tuple : typeTuples) {
-      Substitution substitution = Substitution.forArgs(typeParameters, tuple);
+    List<Substitution<ReferenceType>> substitutionSet = new ArrayList<>();
+    List<List<ReferenceType>> tupleList = new ArrayList<>();
+    for (List<ReferenceType> tuple : typeTuples) {
+      Substitution<ReferenceType> substitution = Substitution.forArgs(typeParameters, tuple);
 
       int i = 0;
-      while (i < tuple.size() && typeParameters.get(i).canBeInstantiatedAs(tuple.get(i))) {
+      while (i < tuple.size() && typeParameters.get(i).canBeInstantiatedAs(tuple.get(i), substitution)) {
         i++;
       }
       if (i == tuple.size()) {
