@@ -68,26 +68,40 @@ public class PrimitiveType extends GeneralType {
 
   /**
    * {@inheritDoc}
-   * @return this object
+   * Specifically implements tests for primitive types as defined in
+   * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.1">section 4.10.1 of JLS for JavaSE 8</a>.
    */
   @Override
-  public GeneralType apply(Substitution substitution) throws RandoopTypeException {
-    return this;
+  public boolean isSubtypeOf(GeneralType otherType) {
+    return otherType.isPrimitive()
+        && PrimitiveTypes.isSubtype(this.getRuntimeClass(), otherType.getRuntimeClass());
   }
 
   /**
    * {@inheritDoc}
-   * @return true if this type can be assigned from the source type by primitive widening or uboxing, false otherwise
+   * Checks for
+   * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.2">primitive widening (section 5.1.2)</a>, and
+   * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.8>unboxing (section 5.1.8)</a> conversions.
+   * @return true if this type can be assigned from the source type by primitive widening or unboxing, false otherwise
    */
   @Override
   public boolean isAssignableFrom(GeneralType sourceType) {
+
+    if (super.isAssignableFrom(sourceType)) {
+      return true;
+    }
+
     // test for primitive widening or unboxing conversion
     if (sourceType.isPrimitive()) { // primitive widening conversion
       return PrimitiveTypes.isAssignable(this.runtimeClass, sourceType.getRuntimeClass());
-    } else { // unbox then widen conversion
-      Class<?> tUnboxed = PrimitiveTypes.toUnboxedType(sourceType.getRuntimeClass());
-      return tUnboxed != null && PrimitiveTypes.isAssignable(this.runtimeClass, tUnboxed);
     }
+
+    if (sourceType.isBoxedPrimitive()){ // unbox then primitive widening conversion
+      PrimitiveType primitiveSourceType = ((SimpleClassOrInterfaceType)sourceType).toPrimitive();
+      return this.isAssignableFrom(primitiveSourceType);
+    }
+
+    return false;
   }
 
   @Override
@@ -97,6 +111,6 @@ public class PrimitiveType extends GeneralType {
 
   @Override
   public ClassOrInterfaceType toBoxedPrimitive() {
-    return PrimitiveTypes.toBoxedType(this.getRuntimeClass());
+    return new SimpleClassOrInterfaceType(PrimitiveTypes.getBoxedType(this.getRuntimeClass()));
   }
 }

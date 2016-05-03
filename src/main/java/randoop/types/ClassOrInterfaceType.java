@@ -17,7 +17,59 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   @Override
-  public abstract ClassOrInterfaceType apply(Substitution substitution);
+  public abstract ClassOrInterfaceType apply(Substitution<ReferenceType> substitution);
+
+  /**
+   * Test whether this type is a subtype of the given type according to
+   * transitive closure of definition of the <i>direct supertype</i> relation in
+   * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.2">
+   * section 4.10.2 of JLS for JavaSE 8</a>.
+   * <i>Only</i> checks reference types.
+   * @see #isAssignableFrom(GeneralType)
+   * @see ParameterizedType#isSubtypeOf(GeneralType)
+   *
+   * @param otherType  the possible supertype
+   * @return true if this type is a subtype of the given type, false otherwise
+   */
+  @Override
+  public boolean isSubtypeOf(GeneralType otherType) {
+
+    if (super.isSubtypeOf(otherType)) {
+      return true;
+    }
+
+    // minimally, underlying Class should be assignable
+    Class<?> otherRuntimeType = otherType.getRuntimeClass();
+    Class<?> thisRuntimeType = this.getRuntimeClass();
+    if (!otherRuntimeType.isAssignableFrom(thisRuntimeType)) {
+      return false;
+    }
+
+    // if other type is an interface, check interfaces first
+    if (otherRuntimeType.isInterface()) {
+      Type[] interfaces = thisRuntimeType.getGenericInterfaces();
+      for (Type t : interfaces) {
+        if (otherType.equals(GeneralType.forType(t))) {
+          return true; // found the type
+        }
+      }
+      return false;
+    }
+
+    // otherwise, get superclass
+    Type superclass = thisRuntimeType.getGenericSuperclass();
+    if (superclass != null) {
+      GeneralType superType = GeneralType.forType(superclass);
+      if (otherType.equals(superType)) { // found the type
+        return true;
+      }
+
+      // no match yet, so check for transitive chain
+      return superType.isSubtypeOf(otherType);
+    }
+
+    return false;
+  }
 
   /**
    * Translates a {@code Class} object that represents a class or interface into a

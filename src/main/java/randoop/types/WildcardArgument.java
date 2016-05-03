@@ -6,7 +6,14 @@ import java.util.Objects;
 
 /**
  * Represents a wildcard type argument to a parameterized type.
+ * A wildcard may have either an upper or lower bound.
  * (See JLS, 4.5.1)
+ * <p>
+ *   Note that in the context of a
+ *   <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">capture conversion</a>,
+ *   a wildcard has both an upper and a lower bound, computed from the explicit wildcard bound and
+ *   bound on the formal type parameter.
+ *   The subclasses represent the bound as given for the wildcard.
  *
  * @see WildcardArgumentWithLowerBound
  * @see WildcardArgumentWithUpperBound
@@ -44,13 +51,31 @@ public abstract class WildcardArgument extends TypeArgument{
     return true;
   }
 
+  @Override
+  public boolean isWildcard() {
+    return true;
+  }
+
+  /**
+   * Indicates whether this wildcard argument has an upper bound.
+   * (If not, then it has a lower bound.)
+   *
+   * @return true if this wildcard argument has an upper bound, false if it has a lower bound
+   */
+  public abstract boolean hasUpperBound();
+
+  /**
+   * Return the type of the upper/lower bound of this wildcard argument.
+   *
+   * @return the type of the bound of this wildcard argument
+   */
   public ReferenceType getBoundType() {
     return boundType;
   }
 
   /**
    * Creates a {@code WildcardArgument} from a {@code java.lang.reflect.Type}.
-   * A wild card may have either an upper or lower bound.
+   * A wildcard may have either an upper or lower bound.
    *
    * @param type  the {@code Type} object
    * @return the {@code WildcardArgument} created from the given {@code Type}

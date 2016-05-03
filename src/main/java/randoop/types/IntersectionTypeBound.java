@@ -59,7 +59,7 @@ public class IntersectionTypeBound extends ClassOrInterfaceBound {
    * intersection type bound.
    */
   @Override
-  public boolean isSatisfiedBy(GeneralType argType, Substitution subst) {
+  public boolean isSatisfiedBy(GeneralType argType, Substitution<ReferenceType> subst) {
     for (ParameterBound b : boundList) {
       if (!b.isSatisfiedBy(argType, subst)) {
         return false;
@@ -76,6 +76,16 @@ public class IntersectionTypeBound extends ClassOrInterfaceBound {
   public boolean isSatisfiedBy(GeneralType argType) {
     for (ParameterBound bound : boundList) {
       if (! bound.isSatisfiedBy(argType)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @Override
+  public boolean isSubtypeOf(GeneralType otherType) {
+    for (ParameterBound b : boundList) {
+      if (! b.isSubtypeOf(otherType)) {
         return false;
       }
     }

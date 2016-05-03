@@ -8,10 +8,51 @@ import java.lang.reflect.Type;
  */
 public abstract class ReferenceType extends GeneralType{
 
+  @Override
+  public abstract ReferenceType apply(Substitution<ReferenceType> substitution);
+
+  /**
+   * {@inheritDoc}
+   * Checks for widening reference conversion
+   * See <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.5">section 5.1.5 of JLS of JavaSE 8</a>
+   */
+  public boolean isAssignableFrom(GeneralType sourceType) {
+    if (super.isAssignableFrom(sourceType)) {
+      return true;
+    }
+
+    return sourceType.isReferenceType()
+            && sourceType.isSubtypeOf(this);
+  }
+
+  /**
+   * {@inheritDoc}
+   * @return true since this is a primitive type
+   */
+  @Override
+  public boolean isReferenceType() {
+    return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   * @return true, if {@code otherType} is {@code Object}, false otherwise
+   */
+  @Override
+  public boolean isSubtypeOf(GeneralType otherType) {
+    if (otherType == null) {
+      throw new IllegalArgumentException("type may not be null");
+    }
+
+    return otherType.isObject();
+  }
+
   /**
    * {@inheritDoc}
    * Provides the default for reference type objects, which is the {@code Object}
    * type.
+   * (Note that this is different behavior than in reflection classes, where {@code null} is
+   * returned because {@code Object} has no superclass.)
    *
    * @return the {@code Object} class type
    */
@@ -22,10 +63,10 @@ public abstract class ReferenceType extends GeneralType{
 
   /**
    * Returns a {@code ReferenceType} object for the given {@code Class} object.
-   * Only checks for arrays, classes and interfaces since type variables are only represented
+   * Only checks for arrays, classes, and interfaces; since type variables are only represented
    * by {@code Type} references.
-   * For arrays, delegates to {@link ArrayType#forClass(Class)}.
-   * For class/interface types, delegates to {@link ClassOrInterfaceType#forClass(Class)}.
+   * For arrays, calls {@link ArrayType#forClass(Class)}.
+   * For other (class/interface) types, calls {@link ClassOrInterfaceType#forClass(Class)}.
    *
    * @param classType  the {@code Class} object representing the type
    * @return the {@code ReferenceType} object for the given type

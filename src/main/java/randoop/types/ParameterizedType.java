@@ -7,65 +7,17 @@ import java.util.List;
 import plume.UtilMDE;
 
 /**
- * Represents a parameterized type as a generic class instantiated with
- * concrete type arguments.
- * <p>
- * Note that {@link java.lang.reflect.ParameterizedType} is an interface that
- * can represent either a parameterized type in the sense meant here, or a
- * generic class.
- * Conversion to this type from this and other {@link java.lang.reflect.Type}
- * interfaces is handled by
- * {@link randoop.types.GeneralType#forType(java.lang.reflect.Type)}.
+ * Represents a parameterized type.
+ * A <i>parameterized type</i> <code>C&lt;T<sub>1</sub>,&hellip;,T<sub>k</sub>&gt;</code>
+ * where <code>C&lt;F<sub>1</sub>,&hellip;,F<sub>k</sub>&gt;</code> is a generic class
+ * instantiated by a substitution <code>[F<sub>i</sub>\T<sub>i</sub>]</code>, and
+ * <code>T<sub>i</sub></code> is a subtype of the upper bound <code>B<sub>i</sub></code> of
+ * the type parameter <code>F<sub>i</sub></code>.
+ *
+ * @see GenericClassType
+ * @see InstantiatedType
  */
 public abstract class ParameterizedType extends ClassOrInterfaceType {
-
-  /**
-   * {@inheritDoc}
-   * Tests for assignability to a parameterized type: can the given concrete
-   * type be assigned to this parameterized type.
-   * <p>
-   * A {@code ConcreteType} is assignable to a parameterized type via
-   * identity, widening reference conversion, or unchecked conversion from raw
-   * type.
-   * The method {@link Class#isAssignableFrom(Class)} checks widening reference
-   * conversion, but with parameterized types it is also necessary to check type
-   * arguments.  Since a widening reference conversion (JLS, section 5.1.5)
-   * exists from type S to type T if S is a subtype of T, this method calls
-   * {@link ParameterizedType#isSubtypeOf(GeneralType)} to test the subtype
-   * relation.
-   */
-  @Override
-  public boolean isAssignableFrom(GeneralType sourceType) {
-    if (sourceType == null) {
-      throw new IllegalArgumentException("source type must be non-null");
-    }
-
-    // do a couple of quick checks for things that don't work
-    // first, can't assign an array to a parameterized type
-    if (sourceType.isArray()) {
-      return false;
-    }
-
-    // second, if underlying Class objects not assignable then there is
-    // definitely no widening conversion
-    if (!this.getRuntimeClass().isAssignableFrom(sourceType.getRuntimeClass())) {
-      return false;
-    }
-
-    // Now, check subtype relation
-    try {
-      if (sourceType.isSubtypeOf(this)) {
-        return true;
-      }
-    } catch (RandoopTypeException e) {
-      // this is a bit dangerous, but I'm doing it anyway
-      return false;
-    }
-
-    // otherwise, test unchecked
-    return sourceType.isRawtype() && sourceType.hasRuntimeClass(this.getRuntimeClass());
-
-  }
 
   /**
    * {@inheritDoc}
@@ -99,9 +51,7 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
   }
 
   @Override
-  public abstract ParameterizedType apply(Substitution substitution);
-
-  public abstract ParameterizedType instantiate(ReferenceType... typeArguments);
+  public abstract ParameterizedType apply(Substitution<ReferenceType> substitution);
 
   /**
    * Returns the type arguments for this type.
@@ -119,6 +69,12 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    */
   public abstract boolean isInstantiationOf(GenericClassType genericClassType);
 
+  /**
+   * Creates a {@link GenericClassType} for the given reflective {@link Class} object.
+   *
+   * @param typeClass  the class type
+   * @return  a generic class type for the given type
+   */
   public static GenericClassType forClass(Class<?> typeClass) {
     if (typeClass.getTypeParameters().length == 0) {
       throw new IllegalArgumentException("class must be a generic type");
@@ -133,13 +89,10 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
 
   /**
    * Performs the conversion of {@code java.lang.reflect.ParameterizedType} to
-   * either {@code GenericClassType} or {@code ParameterizedType} depending on
-   * type arguments of the referenced object.
+   * a {@code ParameterizedType} .
    *
    * @param type  the reflective type object
-   * @return an object of type {@code GenericClassType} if arguments are type
-   *         variables, or of type {@code ParameterizedType} if the arguments
-   *         are concrete
+   * @return an object of type {@code ParameterizedType}
    */
   public static ParameterizedType forType(Type type) {
     if (! (type instanceof java.lang.reflect.ParameterizedType)) {
@@ -151,37 +104,18 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
     Type rawType = t.getRawType();
     assert (rawType instanceof Class<?>) : "rawtype not an instance of Class<?> type " ;
 
+    // Categorize the type arguments as either a type variable or other kind of argument
     List<TypeArgument> typeArguments = new ArrayList<>();
-    List<TypeVariable> typeParameters = new ArrayList<>(); //see below
-
     for (Type argType : t.getActualTypeArguments()) {
-      if (argType instanceof java.lang.reflect.TypeVariable) {
-        java.lang.reflect.TypeVariable<?> v = (java.lang.reflect.TypeVariable<?>) argType;
-        typeParameters.add(TypeVariable.forType(v));
-      } else {
-        typeArguments.add(TypeArgument.forType(argType));
-      }
+      TypeArgument argument = TypeArgument.forType(argType);
+      typeArguments.add(argument);
     }
 
-    // Now decide whether object is generic or parameterized type
-    if (typeParameters.size() == t.getActualTypeArguments().length) { // is generic
-      // When building generic class type, need to use the TypeVariables
-      // obtained through the java.lang.reflect.ParameterizedType as above.
-      // Otherwise, the variables mapped by the substitutions used in checking
-      // subtyping will not be the correct objects, and the subtype test will
-      // fail.
-      return new GenericClassType((Class<?>) rawType, typeParameters);
-    } else if (typeParameters.isEmpty()) { // is parameterized type
-      // When building parameterized type, first create generic class from the
-      // rawtype, and then instantiate with the arguments collected from the
-      // java.lang.reflect.ParameterizedType interface.
-      GenericClassType genericClass = ParameterizedType.forClass((Class<?>) rawType);
-      Substitution substitution = Substitution.forArgs(genericClass.getTypeArguments(), typeArguments);
-      return new InstantiatedType(genericClass, substitution, typeArguments);
-    } else {
-      String msg = "Expecting either all concrete types or all type variables";
-      throw new IllegalArgumentException(msg);
-    }
+    // When building parameterized type, first create generic class from the
+    // rawtype, and then instantiate with the arguments collected from the
+    // java.lang.reflect.ParameterizedType interface.
+    GenericClassType genericClass = ParameterizedType.forClass((Class<?>) rawType);
+    return new InstantiatedType(genericClass, typeArguments);
   }
 
 

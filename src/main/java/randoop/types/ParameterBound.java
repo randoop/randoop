@@ -25,7 +25,7 @@ public abstract class ParameterBound {
    * @return true if this bound is satisfied by the concrete type when the
    *         substitution is used on the bound, false otherwise
    */
-  public abstract boolean isSatisfiedBy(GeneralType argType, Substitution subst);
+  public abstract boolean isSatisfiedBy(GeneralType argType, Substitution<ReferenceType> subst);
 
   /**
    * Determines if this object is an upper bound for the argument type using the most stringent
@@ -48,7 +48,7 @@ public abstract class ParameterBound {
    * @param bounds  the type bounds
    * @return the {@code ParameterBound} for the given types
    */
-  public static ParameterBound forTypes(Type[] bounds) {
+  static ParameterBound forTypes(Type[] bounds) {
     if (bounds == null) {
       throw new IllegalArgumentException("bounds must be non null");
     }
@@ -104,4 +104,6 @@ public abstract class ParameterBound {
 
     throw new IllegalArgumentException("type may only be class, interface, or type variable");
   }
+
+  public abstract boolean isSubtypeOf(GeneralType otherType);
 }

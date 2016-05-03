@@ -21,7 +21,7 @@ public class ArrayType extends ReferenceType {
    * @param elementType  the element type
    * @param runtimeClass  the runtime class
    */
-  public ArrayType(GeneralType elementType, Class<?> runtimeClass) {
+  private ArrayType(GeneralType elementType, Class<?> runtimeClass) {
     this.elementType = elementType;
     this.runtimeClass = runtimeClass;
   }
@@ -64,6 +64,8 @@ public class ArrayType extends ReferenceType {
     return elementType + "[]";
   }
 
+
+
   /**
    * {@inheritDoc}
    * @return true, since this is an array
@@ -75,26 +77,6 @@ public class ArrayType extends ReferenceType {
 
   /**
    * {@inheritDoc}
-   * An array is assignable from an array of same element type, or by an array
-   * of raw type if element type is parameterized.
-   */
-  @Override
-  public boolean isAssignableFrom(GeneralType sourceType) {
-    if (!sourceType.isArray()) {
-      return false;
-    }
-    // if both element types are parameterized, then must be identical
-    ArrayType t = (ArrayType) sourceType;
-    if (this.elementType.isParameterized() && t.elementType.isParameterized()) {
-      return this.elementType.equals(t.elementType);
-    }
-    // otherwise, check identity and widening reference conversions on
-    // runtime class
-    return runtimeClass.isAssignableFrom(sourceType.getRuntimeClass());
-  }
-
-  /**
-   * {@inheritDoc}
    * @return true if the element type is generic, false otherwise
    */
   @Override
@@ -102,8 +84,36 @@ public class ArrayType extends ReferenceType {
     return elementType.isGeneric();
   }
 
+  /**
+   * {@inheritDoc}
+   * This method specifically uses the definition in
+   * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.3">section 4.10.2 of JLS for JavaSE 8</a>.
+   */
   @Override
-  public GeneralType apply(Substitution substitution) {
+  public boolean isSubtypeOf(GeneralType otherType) {
+    if (super.isSubtypeOf(otherType)) {
+      return true;
+    }
+
+    if (otherType.equals(ConcreteTypes.CLONEABLE_TYPE)) {
+      return true;
+    }
+
+    if (otherType.equals(ConcreteTypes.SERIALIZABLE_TYPE)) {
+      return true;
+    }
+
+    if (otherType.isArray() && elementType.isReferenceType()) {
+      ArrayType otherArrayType = (ArrayType)otherType;
+      return otherArrayType.elementType.isReferenceType()
+          && this.elementType.isSubtypeOf(otherArrayType.elementType);
+    }
+
+    return false;
+  }
+
+  @Override
+  public ArrayType apply(Substitution<ReferenceType> substitution) {
     GeneralType type = elementType.apply(substitution);
     if (type != null && ! type.equals(this)) {
         return new ArrayType(type, runtimeClass);

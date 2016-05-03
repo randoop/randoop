@@ -5,14 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import randoop.BugInRandoopException;
-
 import plume.UtilMDE;
 
 /**
- * Represents the type of a generic class as can occur in a class declaration,
- * formal parameter or return type.
- * Related to concrete {@link ParameterizedType} by instantiating with a
+ * Represents the type of a generic class.
+ * Related to concrete {@link InstantiatedType} by instantiating with a
  * {@link Substitution}.
  */
 public class GenericClassType extends ParameterizedType {
@@ -106,6 +103,11 @@ public class GenericClassType extends ParameterizedType {
     return rawType.isInterface();
   }
 
+  @Override
+  public boolean isGeneric() {
+    return true;
+  }
+
   /**
    * Instantiates this generic class using the substitution to replace the type
    * parameters.
@@ -115,7 +117,7 @@ public class GenericClassType extends ParameterizedType {
    * given substitution
    */
   @Override
-  public InstantiatedType apply(Substitution substitution) {
+  public InstantiatedType apply(Substitution<ReferenceType> substitution) {
     if (substitution == null) {
       throw new IllegalArgumentException("substitution must be non-null");
     }
@@ -123,13 +125,19 @@ public class GenericClassType extends ParameterizedType {
     return null;
   }
 
-  @Override
-  public InstantiatedType instantiate(ReferenceType... typeArguments) {
-    if (typeArguments.length != parameters.size()) {
+  /**
+   * Creates a type substitution using the given type arguments and applies it to this type.
+   * @see #apply(Substitution)
+   *
+   * @param typeArguments  the type arguments
+   * @return a type which is this type parameterized by the given type arguments
+   */
+  public ParameterizedType instantiate(ReferenceType... typeArguments) {
+    if (typeArguments.length != this.getTypeArguments().size()) {
       throw new IllegalArgumentException("number of arguments and parameters must match");
     }
 
-    Substitution substitution = Substitution.forArgs(getTypeArguments(), typeArguments);
+    Substitution<ReferenceType> substitution = Substitution.forArgs(this.parameters, typeArguments);
     return this.apply(substitution);
   }
 
@@ -164,7 +172,7 @@ public class GenericClassType extends ParameterizedType {
    * has an assignable rawtype; or null otherwise
    * @throws IllegalArgumentException if type is null
    */
-  GenericClassType getMatchingSupertype(GenericClassType type) throws RandoopTypeException {
+  GenericClassType getMatchingSupertype(GenericClassType type) {
     if (type == null) {
       throw new IllegalArgumentException("type may not be null");
     }
@@ -204,6 +212,33 @@ public class GenericClassType extends ParameterizedType {
     return null;
   }
 
+  /**
+   * {@inheritDoc}
+   * Handles the specific cases of supertypes of a generic class
+   * <code>C&lt;F<sub>1</sub>,...,F<sub>n</sub>&gt;</code>
+   * for which the direct supertypes are:
+   * <ol>
+   *   <li>the direct superclass,</li>
+   *   <li>the direct superinterfaces,</li>
+   *   <li>the type <code>Object</code>, and</li>
+   *   <li>the raw type <code>C</code></li>
+   * </ol>
+   */
+  @Override
+  public boolean isSubtypeOf(GeneralType otherType) {
+    if (otherType == null) {
+      throw new IllegalArgumentException("type must be non-null");
+    }
+
+    if (super.isSubtypeOf(otherType)) {
+      return true;
+    }
+
+    return otherType.isRawtype()
+            && otherType.hasRuntimeClass(this.getRuntimeClass());
+  }
+
+  @Override
   public ClassOrInterfaceType getSuperclass() {
     Type superclass = this.rawType.getGenericSuperclass();
     if (superclass == null) {

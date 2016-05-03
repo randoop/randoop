@@ -100,28 +100,28 @@ public final class PrimitiveTypes {
     return boxed;
   }
 
-  public static GeneralType getPrimitiveOrStringType(String typeName) {
-    return new ConcreteSimpleType(typeNameToPrimitiveOrString.get(typeName));
+  public static Class<?> getPrimitiveOrStringType(String typeName) {
+    return typeNameToPrimitiveOrString.get(typeName);
   }
 
-  public static Set<GeneralType> getPrimitiveOrStringTypes() {
-    Set<GeneralType> s = new LinkedHashSet<>();
+  public static Set<Class<?>> getPrimitiveOrStringTypes() {
+    Set<Class<?>> s = new LinkedHashSet<>();
     for (Class<?> c : primitiveAndStringToBoxed.keySet()) {
-      s.add(new ConcreteSimpleType(c));
+      s.add(c);
     }
     return Collections.unmodifiableSet(s);
   }
 
-  public static Set<ClassOrInterfaceType> getBoxedTypesAndString() {
-    Set<ClassOrInterfaceType> s = new LinkedHashSet<>();
+  public static Set<Class<?>> getBoxedTypesAndString() {
+    Set<Class<?>> s = new LinkedHashSet<>();
     for (Class<?> c : boxedToPrimitiveAndString.keySet()) {
-      s.add(new SimpleClassOrInterfaceType(c));
+      s.add(c);
     }
     return Collections.unmodifiableSet(s);
   }
 
-  public static ClassOrInterfaceType toBoxedType(Class<?> cls) {
-    return new SimpleClassOrInterfaceType(primitiveAndStringToBoxed.get(cls));
+  public static Class<?> toBoxedType(Class<?> cls) {
+    return primitiveAndStringToBoxed.get(cls);
   }
 
   public static boolean isBoxedPrimitiveTypeOrString(Class<?> c) {
@@ -359,6 +359,14 @@ public final class PrimitiveTypes {
     }
     Set<Class<?>> targets = wideningTable.get(source);
     return targets != null && targets.contains(target);
+  }
+
+  static boolean isSubtype(Class<?> first, Class<?> second) {
+    if (! first.isPrimitive() && ! second.isPrimitive()) {
+      throw new IllegalArgumentException("types must be primitive");
+    }
+    Set<Class<?>> superTypes = wideningTable.get(first);
+    return superTypes != null && superTypes.contains(second);
   }
 
   /**

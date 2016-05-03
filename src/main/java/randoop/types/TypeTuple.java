@@ -91,7 +91,7 @@ public class TypeTuple {
    * @param substitution  the substitution
    * @return a new type tuple resulting from applying the given substitution to this tuple
    */
-  public TypeTuple apply(Substitution substitution) throws RandoopTypeException {
+  public TypeTuple apply(Substitution<ReferenceType> substitution) {
     List<GeneralType> typeList = new ArrayList<>();
     for (GeneralType type : this.list) {
       GeneralType newType = type.apply(substitution);

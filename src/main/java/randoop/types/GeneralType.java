@@ -4,7 +4,11 @@ import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 
 /**
- * Represents Java types in Randoop.
+ * Represents Java types in Randoop, including parameterized types.
+  * Should be used for types in test generation rather than reflection type {@code Class<?>}.
+ *
+ * @see ReferenceType
+ * @see PrimitiveType
  */
 public abstract class GeneralType {
 
@@ -30,7 +34,7 @@ public abstract class GeneralType {
   }
 
   /**
-   * Returns the fully-qualified name of the type, including type arguments if
+   * Returns the fully-qualified name of this type, including type arguments if
    * this is a parameterized type.
    *
    * @return the fully-qualified type name for this type
@@ -59,11 +63,11 @@ public abstract class GeneralType {
    * a value of one type is assignable to a variable of another type if the
    * first type can be converted to the second by
    * <ul>
-   * <li> an identity conversion,
-   * <li> a widening primitive conversion,
-   * <li> a widening reference conversion,
-   * <li> a boxing conversion, and
-   * <li> an unboxing conversion possibly followed by a widening conversion.
+   * <li> an identity conversion (section 5.1.1),
+   * <li> a widening primitive conversion (section 5.1.2),
+   * <li> a widening reference conversion (section 5.1.5),
+   * <li> a boxing conversion (5.1.7), and
+   * <li> an unboxing conversion (section 5.1.8) possibly followed by a widening conversion.
    * </ul>
    * And, if after all those conversions, the type is a raw type, an
    * unchecked conversion may occur.
@@ -77,7 +81,19 @@ public abstract class GeneralType {
    * @param sourceType  the type to test for assignability
    * @return true if this type can be assigned from the source type, and false otherwise
    */
-  public abstract boolean isAssignableFrom(GeneralType sourceType);
+  public boolean isAssignableFrom(GeneralType sourceType) {
+    if (sourceType == null) {
+      throw new IllegalArgumentException("source type may not be null");
+    }
+
+    // check for void before identity: cannot assign to/from void
+    if (this.isVoid() || sourceType.isVoid()) {
+      return false;
+    }
+
+    // identity conversion
+    return this.equals(sourceType);
+  }
 
   /**
    * Indicates whether this is a boxed primitive type.
@@ -99,7 +115,7 @@ public abstract class GeneralType {
 
   /**
    * Indicate whether this type is generic.
-   * If not, then type is concrete.
+   * A type is <i>generic</i> if it has one or more type variables.
    *
    * @return true if this type is generic, false otherwise
    */
@@ -125,8 +141,11 @@ public abstract class GeneralType {
 
   /**
    * Indicate whether this type is a parameterized type.
-   * (A parameterized type is a generic class that has been instantiated with
-   * concrete type arguments such as <code>List&lt;String&gt;</code>.)
+   * (A <i>parameterized type</i> <code>C&lt;T<sub>1</sub>,&hellip;,T<sub>k</sub>&gt;</code>
+   * where <code>C&lt;F<sub>1</sub>,&hellip;,F<sub>k</sub>&gt;</code> is a generic class
+   * instantiated by a substitution <code>[F<sub>i</sub>\T<sub>i</sub>]</code>, and
+   * <code>T<sub>i</sub></code> is a subtype of the upper bound <code>B<sub>i</sub></code> of
+   * the type parameter <code>F<sub>i</sub></code>.)
    *
    * @return true if this type is a parameterized type, false otherwise
    */
@@ -153,6 +172,14 @@ public abstract class GeneralType {
     return false;
   }
 
+  /**
+   * Indicates whether this is a reference type.
+   * Note: should be !(this.isPrimitive())
+   *
+   * @return true if this type is a reference type, and false otherwise.
+   */
+  public boolean isReferenceType() { return false; }
+
   public boolean isString() {
     return false;
   }
@@ -160,56 +187,13 @@ public abstract class GeneralType {
   /**
    * Test whether this type is a subtype of the given type according to
    * transitive closure of definition of the <i>direct supertype</i> relation in
-   * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.2">
-   * section 4.10.2 of JLS for JavaSE 8</a>.
-   * <i>Only</i> checks reference types.
-   * @see #isAssignableFrom(GeneralType)
-   * @see ParameterizedType#isSubtypeOf(GeneralType)
+   * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10">
+   * section 4.10 of JLS for JavaSE 8</a>.
    *
    * @param otherType  the possible supertype
    * @return true if this type is a subtype of the given type, false otherwise
    */
-  public boolean isSubtypeOf(GeneralType otherType) throws RandoopTypeException {
-    if (otherType == null) {
-      throw new IllegalArgumentException("type may not be null");
-    }
-
-    // Object is *the* supertype
-    if (otherType.isObject()) {
-      return true;
-    }
-
-    // minimally, underlying Class should be assignable
-    Class<?> otherRuntimeType = otherType.getRuntimeClass();
-    Class<?> thisRuntimeType = this.getRuntimeClass();
-    if (!otherRuntimeType.isAssignableFrom(thisRuntimeType)) {
-      return false;
-    }
-
-    // if other type is an interface, check interfaces first
-    if (otherRuntimeType.isInterface()) {
-      Type[] interfaces = thisRuntimeType.getGenericInterfaces();
-      for (Type t : interfaces) {
-        if (otherType.equals(GeneralType.forType(t))) {
-          return true; // found the type
-        }
-      }
-    }
-
-    // otherwise, get superclass
-    Type superclass = thisRuntimeType.getGenericSuperclass();
-    if (superclass != null) {
-      GeneralType superType = GeneralType.forType(superclass);
-      if (otherType.equals(superType)) { // found the type
-        return true;
-      }
-
-      // no match yet, so check for transitive chain
-      return superType.isSubtypeOf(otherType);
-    }
-
-    return false;
-  }
+  public abstract boolean isSubtypeOf(GeneralType otherType);
 
   /**
    * Indicate whether this type is void.
@@ -228,7 +212,9 @@ public abstract class GeneralType {
    * @return a {@code ConcreteType} constructed by substituting for type
    * parameters in this generic type
    */
-  public abstract GeneralType apply(Substitution substitution);
+  public GeneralType apply(Substitution<ReferenceType> substitution) {
+    return this;
+  }
 
   /**
    * Returns the package of this types runtime class.
@@ -243,10 +229,22 @@ public abstract class GeneralType {
     return null;
   }
 
+  /**
+   * Unbox a boxed primitive type.
+   * Not legal for other types.
+   *
+   * @return the primitive type corresponding to this (boxed primitive) type
+   */
   public PrimitiveType toPrimitive() {
     throw new IllegalArgumentException("Type must be boxed primitive");
   }
 
+  /**
+   * Box a primitive type.
+   * Not legal for other types.
+   *
+   * @return the boxed primitive type corresponding to this type.
+   */
   public ClassOrInterfaceType toBoxedPrimitive() {
     throw new IllegalArgumentException("type must be primitive");
   }
@@ -266,6 +264,12 @@ public abstract class GeneralType {
     return this.isAssignableFrom(type);
   }
 
+  /**
+   * Return the type for the superclass for this type.
+   * Returns null for types that do not have a superclass.
+   *
+   * @return superclass of this type, or null if this type has no superclass
+   */
   public GeneralType getSuperclass() {
     return null;
   }
@@ -303,12 +307,11 @@ public abstract class GeneralType {
   }
 
   /**
-   * Returns a type constructed from an object hiding behind a
+   * Returns a type constructed from the object referenced by a
    * {@code java.lang.reflect.Type} reference.
-   * If the object is a {@code Class} instance then returns the
-   * corresponding {@code ConcreteType}. If the type is actually a
-   * {@code java.lang.reflect.ParameterizedType}, then the type arguments are
-   * inspected to decide whether to return a {@code ParameterizedType} or a
+   * If the object is a {@code Class} instance, then returns the corresponding {@code ConcreteType}.
+   * If the type is actually a {@code java.lang.reflect.ParameterizedType}, then the type arguments
+   * are inspected to decide whether to return a {@code ParameterizedType} or a
    * {@code GenericClassType}.
    * If the type is a {@code java.lang.reflect.GenericArrayType}, then the
    * corresponding {@code GenericArrayType} is returned.

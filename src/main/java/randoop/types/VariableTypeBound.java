@@ -51,7 +51,7 @@ class VariableTypeBound extends ParameterBound {
    * @return
    */
   @Override
-  public boolean isSatisfiedBy(GeneralType argType, Substitution substitution) {
+  public boolean isSatisfiedBy(GeneralType argType, Substitution<ReferenceType> substitution) {
     ParameterBound bound = apply(substitution);
     if (bound != null) {
       return bound.isSatisfiedBy(argType, substitution);
@@ -80,8 +80,8 @@ class VariableTypeBound extends ParameterBound {
    * @param substitution  the substitution
    * @return a {@link ParameterBound} for the type substituted for this variable, or null if there is none
    */
-  private ParameterBound apply(Substitution substitution) {
-    GeneralType type = substitution.get(typeVariable);
+  private ParameterBound apply(Substitution<ReferenceType> substitution) {
+    GeneralType type = typeVariable.apply(substitution);
     if (type == null) {
       return null;
     }
@@ -90,5 +90,10 @@ class VariableTypeBound extends ParameterBound {
 
   public static VariableTypeBound forType(Type type) {
     return new VariableTypeBound(TypeVariable.forType(type));
+  }
+
+  @Override
+  public boolean isSubtypeOf(GeneralType otherType) {
+    return typeVariable.isSubtypeOf(otherType);
   }
 }

@@ -53,8 +53,8 @@ public class TypeVariable extends ReferenceType {
   }
 
   @Override
-  public GeneralType apply(Substitution substitution) {
-    GeneralType type = substitution.get(variable);
+  public ReferenceType apply(Substitution<ReferenceType> substitution) {
+    ReferenceType type = substitution.get(this);
     if (type != null) {
       return type;
     }
@@ -75,6 +75,12 @@ public class TypeVariable extends ReferenceType {
     return false;
   }
 
+  @Override
+  public boolean isSubtypeOf(GeneralType otherType) {
+    return super.isSubtypeOf(otherType)
+            || typeBound.isSubtypeOf(otherType);
+  }
+
   public ParameterBound getTypeBound() {
     return typeBound;
   }
@@ -87,10 +93,10 @@ public class TypeVariable extends ReferenceType {
    * @return the {@code TypeVariable} for the given type
    */
   public static TypeVariable forType(Type type) {
-    if (! (type instanceof java.lang.reflect.TypeVariable)) {
+    if (! (type instanceof java.lang.reflect.TypeVariable<?>)) {
       throw new IllegalArgumentException("type must be a type variable");
     }
-    java.lang.reflect.TypeVariable v = (java.lang.reflect.TypeVariable)type;
+    java.lang.reflect.TypeVariable<?> v = (java.lang.reflect.TypeVariable)type;
     return new TypeVariable(v, ParameterBound.forTypes(v.getBounds()));
   }
 

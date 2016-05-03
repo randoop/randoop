@@ -1,5 +1,7 @@
 package randoop.types;
 
+import java.io.Serializable;
+
 /**
  * Created by bjkeller on 4/8/16.
  */
@@ -17,4 +19,6 @@ public class ConcreteTypes {
   public static final ClassOrInterfaceType STRING_TYPE = new SimpleClassOrInterfaceType(String.class);
   public static final PrimitiveType VOID_TYPE = new PrimitiveType(void.class);
 
+  public static final GeneralType CLONEABLE_TYPE = new SimpleClassOrInterfaceType(Cloneable.class);
+  public static final GeneralType SERIALIZABLE_TYPE = new SimpleClassOrInterfaceType(Serializable.class);
 }

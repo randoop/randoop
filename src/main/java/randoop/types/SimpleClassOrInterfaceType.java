@@ -2,7 +2,7 @@ package randoop.types;
 
 /**
  * {@code ConcreteSimpleType} represents an atomic concrete type: a primitive type,
- * a non-generic class, an enum, or the rawtype for a generic class.
+ * a non-generic class, an enum, or the rawtype of a generic class.
  * It is a wrapper for a {@link Class} object, which is a runtime representation
  * of a type.
  */
@@ -100,66 +100,25 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
   }
 
   @Override
-  public GeneralType apply(Substitution substitution) throws RandoopTypeException {
+  public SimpleClassOrInterfaceType apply(Substitution<ReferenceType> substitution) {
     return this;
   }
 
   /**
    * {@inheritDoc}
-   * Tests for assignability to this {@code ConcreteSimpleType}.
-   * Does not consider void assignable from/to any type.
-   *
-   * @param sourceType  the source type
-   * @return true if the source type can be assigned to this type by an
-   *         assignment conversion, false otherwise
+   * Specifically checks for
+   * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.7">boxing conversion (section 5.1.7)</a>
    */
   @Override
   public boolean isAssignableFrom(GeneralType sourceType) {
-
-    // cannot assign to/from void
-    if (this.isVoid() || sourceType.isVoid()) {
-      return false;
-    }
-
-    // object eats everything by reference widening
-    if (this.isObject()) {
+    // check identity and reference widening
+    if (super.isAssignableFrom(sourceType)) {
       return true;
     }
 
-    // both rawtype and non-generic superclass eat
-    // parameterized types by reference widening
-    if (sourceType.isParameterized()) {
-      return this.runtimeClass.isAssignableFrom(sourceType.getRuntimeClass());
-    }
-
-    // to be assignable, other cases must be ConcreteSimpleType to ConcreteSimpleType
-    return sourceType instanceof SimpleClassOrInterfaceType && isAssignableFrom((SimpleClassOrInterfaceType) sourceType);
-
-  }
-
-  /**
-   * Tests for assignability to a {@code ConcreteSimpleType} from a
-   * {@code ConcreteSimpleType}.
-   * Checks for identity, widening reference, widening primitive, boxing, and
-   * unboxing conversions.
-   *
-   * @param sourceType  the source type
-   * @return true if a value of {@code sourceType} can be assigned to a variable
-   *         of this type
-   */
-  private boolean isAssignableFrom(SimpleClassOrInterfaceType sourceType) {
-    // test for identity and reference widening conversions
-    if (this.runtimeClass.isAssignableFrom(sourceType.runtimeClass)) {
-      return true;
-    }
-
-    // test for boxing conversion
-    if (sourceType.isPrimitive()) {
-      Class<?> tBoxed = PrimitiveTypes.getBoxedType(sourceType.runtimeClass);
-      return tBoxed != null && this.runtimeClass.isAssignableFrom(tBoxed);
-    }
-
-    return false;
+    // otherwise, check for boxing conversion
+    return sourceType.isPrimitive()
+        && this.isAssignableFrom(sourceType.toBoxedPrimitive());
   }
 
   @Override

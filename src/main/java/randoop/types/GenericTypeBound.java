@@ -76,12 +76,17 @@ class GenericTypeBound extends ClassOrInterfaceBound {
    * the concrete type.
    */
   @Override
-  public boolean isSatisfiedBy(GeneralType argType, Substitution substitution) {
+  public boolean isSatisfiedBy(GeneralType argType, Substitution<ReferenceType> substitution) {
    return false;
   }
 
   @Override
   public boolean isSatisfiedBy(GeneralType argType) {
+    return false;
+  }
+
+  @Override
+  public boolean isSubtypeOf(GeneralType otherType) {
     return false;
   }
 

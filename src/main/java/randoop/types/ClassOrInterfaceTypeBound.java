@@ -34,7 +34,7 @@ public class ClassOrInterfaceTypeBound extends ClassOrInterfaceBound {
    *         given type, false otherwise
    */
   @Override
-  public boolean isSatisfiedBy(GeneralType generalType, Substitution substitution) {
+  public boolean isSatisfiedBy(GeneralType generalType, Substitution<ReferenceType> substitution) {
     ClassOrInterfaceType boundType = this.boundType.apply(substitution);
     return boundType.isAssignableFrom(generalType);
   }
@@ -47,5 +47,10 @@ public class ClassOrInterfaceTypeBound extends ClassOrInterfaceBound {
    */
   public static ClassOrInterfaceTypeBound forType(Type type) {
     return new ClassOrInterfaceTypeBound(ClassOrInterfaceType.forType(type));
+  }
+
+  @Override
+  public boolean isSubtypeOf(GeneralType otherType) {
+    return boundType.isSubtypeOf(otherType);
   }
 }

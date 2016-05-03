@@ -17,7 +17,7 @@ public class ReferenceArgument extends TypeArgument {
    *
    * @param referenceType  the {@link ReferenceType}
    */
-  ReferenceArgument(ReferenceType referenceType) {
+  public ReferenceArgument(ReferenceType referenceType) {
     this.referenceType = referenceType;
   }
 
@@ -35,8 +35,36 @@ public class ReferenceArgument extends TypeArgument {
     return Objects.hash(referenceType);
   }
 
+  /**
+   * Get the reference type for this type argument.
+   *
+   * @return the reference type of this type argument
+   */
   public ReferenceType getReferenceType() {
     return referenceType;
+  }
+
+  @Override
+  public ReferenceArgument apply(Substitution<ReferenceType> substitution) {
+    return new ReferenceArgument(referenceType.apply(substitution));
+  }
+
+  /**
+   * {@inheritDoc}
+   * Considers cases:
+   * <ul>
+   *   <li>{@code T} contains {@code T}</li>
+   *   <li>{@code T} contains {@code ? extends T}</li>
+   *   <li>{@code T} contains {@code ? super T}</li>
+   * </ul>
+   */
+  @Override
+  public boolean contains(TypeArgument otherArgument) {
+    if (otherArgument.isWildcard()) {
+      return referenceType.equals(((WildcardArgument)otherArgument).getBoundType());
+    } else {
+      return referenceType.equals(((ReferenceArgument)otherArgument).getReferenceType());
+    }
   }
 
   /**
@@ -67,7 +95,7 @@ public class ReferenceArgument extends TypeArgument {
    * has to satisfy the variables bounds.
    */
   @Override
-  public boolean canBeInstantiatedAs(GeneralType generalType, Substitution substitution) {
+  public boolean canBeInstantiatedAs(GeneralType generalType, Substitution<ReferenceType> substitution) {
     if (referenceType.equals(generalType)) {
       return true;
     }

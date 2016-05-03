@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.awt.*;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 
@@ -9,6 +10,19 @@ import java.lang.reflect.WildcardType;
  * A type argument may be either a reference type or a wildcard.
  */
 public abstract class TypeArgument {
+
+  private ReferenceType type;
+
+  public abstract TypeArgument apply(Substitution<ReferenceType> substitution);
+
+  /**
+   * Checks whether this type argument contains another argument, using relationship defined in
+   * section 4.5.1 of JLS.
+   *
+   * @param otherArgument  the other {@code TypeArgument}
+   * @return true if this argument contains the other argument
+   */
+  public abstract boolean contains(TypeArgument otherArgument);
 
   /**
    * Indicates whether this type argument is generic.
@@ -40,5 +54,15 @@ public abstract class TypeArgument {
    * @param substitution the substitution for this type (? do we need this?)
    * @return true if the type can instantiate this argument, false otherwise
    */
-  public abstract boolean canBeInstantiatedAs(GeneralType generalType, Substitution substitution);
+  public abstract boolean canBeInstantiatedAs(GeneralType generalType, Substitution<ReferenceType> substitution);
+
+  /**
+   * Indicate whether this type argument is a wildcard argument.
+   *
+   * @return true if this is a wildcard argument, false otherwise
+   */
+  public boolean isWildcard() {
+    return false;
+  }
+
 }
