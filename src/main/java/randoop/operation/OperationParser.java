@@ -35,12 +35,10 @@ public class OperationParser {
    *
    * @param str
    *          the string to be parsed.
-   * @param manager
-   *          the {@link TypedOperationManager} for collecting operations
    * @throws OperationParseException
    *           if the string does not have expected format.
    */
-  public static void parse(String str, TypedOperationManager manager) throws OperationParseException {
+  public static TypedOperation parse(String str) throws OperationParseException {
     if (str == null || str.length() == 0)
       throw new IllegalArgumentException("invalid string: " + str);
 
@@ -73,19 +71,19 @@ public class OperationParser {
 
     // Call appropriate parsing method.
     if (id.equals(NonreceiverTerm.ID)) {
-      NonreceiverTerm.parse(descr, manager);
+      return NonreceiverTerm.parse(descr);
     } else if (id.equals(MethodCall.ID)) {
-      MethodCall.parse(descr, manager);
+      return MethodCall.parse(descr);
     } else if (id.equals(ConstructorCall.ID)) {
-      ConstructorCall.parse(descr, manager);
+      return ConstructorCall.parse(descr);
     } else if (id.equals(ArrayCreation.ID)) {
-      ArrayCreation.parse(descr, manager);
+      return ArrayCreation.parse(descr);
     } else if (id.equals(EnumConstant.ID)) {
-      EnumConstant.parse(descr, manager);
+      return EnumConstant.parse(descr);
     } else if (id.equals(FieldGet.ID)) {
-      FieldGet.parse(descr, manager);
+      return FieldGet.parse(descr);
     } else if (id.equals(FieldSet.ID)) {
-      FieldSet.parse(descr, manager);
+      return FieldSet.parse(descr);
     } else {
       String msg =
           "A statement description must be of the form "

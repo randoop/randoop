@@ -38,7 +38,7 @@ public class EnumConstantTest {
       assertTrue("should have one operator: ", operations.size() == 1);
       ConcreteOperation ec = operations.iterator().next();
       assertEquals(
-          "parse(\"e:v\").toParseableString() should equal \"e:v\"",
+          "parse(\"e:v\").toParsableString() should equal \"e:v\"",
           enumPair,
           ec.toParseableString());
     } catch (OperationParseException e) {

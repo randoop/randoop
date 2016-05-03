@@ -3,20 +3,18 @@ package randoop.operation;
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.List;
 
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.reflection.TypedOperationManager;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.types.TypeTuple;
 import randoop.types.GeneralType;
 import randoop.types.RandoopTypeException;
 import randoop.types.TypeNames;
+import randoop.types.TypeTuple;
 import randoop.util.ConstructorReflectionCode;
 import randoop.util.ReflectionExecutor;
 import randoop.util.Util;
@@ -100,7 +98,7 @@ public final class ConstructorCall extends CallableOperation {
    *          constructor call.
    * @param b
    *          the StringBuilder to which the output is appended.
-   * @see TypedOperation#appendCode(List, StringBuilder)
+   * @see TypedClassOperation#appendCode(List, StringBuilder)
    */
   @Override
   public void appendCode(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b) {
@@ -218,7 +216,7 @@ public final class ConstructorCall extends CallableOperation {
    * </code>
    * </pre>
    *
-   * @see #parse(String, TypedOperationManager)
+   * @see #parse(String)
    *
    * @return signature string for constructor.
    */
@@ -237,15 +235,14 @@ public final class ConstructorCall extends CallableOperation {
    * {@link ConstructorCall#toParseableString(GeneralType, TypeTuple, GeneralType)} and
    * returns the corresponding {@link ConstructorCall} object.
    *
-   * @see OperationParser#parse(String, randoop.reflection.TypedOperationManager)
+   * @see OperationParser#parse(String)
    *
    * @param signature
    *          a string descriptor of a constructor call.
-   * @param manager  the {@link TypedOperationManager} for collecting operations
    * @throws OperationParseException
    *           if no constructor found for signature.
    */
-  public static void parse(String signature, TypedOperationManager manager) throws OperationParseException {
+  public static TypedClassOperation parse(String signature) throws OperationParseException {
     if (signature == null) {
       throw new IllegalArgumentException("signature may not be null");
     }
@@ -283,18 +280,7 @@ public final class ConstructorCall extends CallableOperation {
       throw new OperationParseException(msg);
     }
 
-    ConstructorCall op = new ConstructorCall(con);
-    List<GeneralType> paramTypes = new ArrayList<>();
-    for (Class<?> c : typeArguments) {
-      try {
-        paramTypes.add(manager.addClassType(c));
-      } catch (RandoopTypeException e) {
-        String msg = "Type error when parsing constructor " + constructorString + ": " + e.getMessage();
-        throw new OperationParseException(msg);
-      }
-    }
-
-    manager.addOperation(op, classType, new TypeTuple(paramTypes), classType);
+    return TypedClassOperation.forConstructor(con);
   }
 
   /**

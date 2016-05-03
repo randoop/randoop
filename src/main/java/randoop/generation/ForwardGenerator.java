@@ -586,7 +586,7 @@ public class ForwardGenerator extends AbstractGenerator {
         SimpleList<Sequence> l2 = HelperSequenceCreator.createArraySequence(componentManager, inputType);
         l = new ListOfLists<>(l1, l2);
 
-      } if (inputType.isParameterized() && ((ParameterizedType)inputType).isInstantiationOf(JDKTypes.COLLECTION_TYPE)) {
+      } else if (inputType.isParameterized() && ((ParameterizedType)inputType).isInstantiationOf(JDKTypes.COLLECTION_TYPE)) {
 
         SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i);
         if (Log.isLoggingOn())

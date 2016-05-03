@@ -13,9 +13,6 @@ import randoop.main.GenInputsAbstract;
 import randoop.operation.OperationParseException;
 import randoop.operation.OperationParser;
 import randoop.operation.TypedOperation;
-import randoop.reflection.ModelCollections;
-import randoop.reflection.TypedOperationManager;
-import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
 import randoop.types.GeneralType;
 import randoop.types.PrimitiveType;
@@ -162,7 +159,7 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Equivalent to toParseableString().
+   * Equivalent to toParsableString().
    */
   @Override
   public String toString() {
@@ -845,7 +842,7 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Like toParseableString, but the client can specify a string that will be
+   * Like toParsableString, but the client can specify a string that will be
    * used a separator between statements.
    *
    * @param statementSep
@@ -857,7 +854,7 @@ public final class Sequence implements WeightedElement {
     for (int i = 0; i < size(); i++) {
       Statement sk = getStatement(i);
       b.append(
-          sk.toParseableString(Variable.classToVariableName(sk.getOutputType()) + i, getInputs(i)));
+          sk.toParsableString(Variable.classToVariableName(sk.getOutputType()) + i, getInputs(i)));
       b.append(statementSep);
     }
     return b.toString();
@@ -877,7 +874,7 @@ public final class Sequence implements WeightedElement {
    *
    * where the VAR are strings representing a variable name, and OPERATION is a
    * string representing a StatementKind. For more on OPERATION, see the
-   * documentation for {@link OperationParser#parse(String, randoop.reflection.TypedOperationManager)}.
+   * documentation for {@link OperationParser#parse(String)}.
    *
    * The first VAR token represents the "output variable" that is the result of
    * the statement call. The VAR tokens appearing after OPERATION represent the
@@ -964,22 +961,15 @@ public final class Sequence implements WeightedElement {
         }
 
         System.out.println("operation string: " + opStr);
-        final List<TypedOperation> list = new ArrayList<>();
-        TypedOperationManager manager = new TypedOperationManager(new ModelCollections() {
-          @Override
-          public void addConcreteOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
-            list.add(operation);
-          }
-        });
         // Parse operation.
-
+        TypedOperation operation;
         try {
-          OperationParser.parse(opStr, manager);
+          operation = OperationParser.parse(opStr);
         } catch (OperationParseException e) {
           throw new SequenceParseException(e.getMessage(), statements, statementCount);
         }
-        assert list.size() == 1 : "should have parsed one operator, got " + list.size();
-        TypedOperation st = list.get(0);
+        assert operation != null;
+
 
         // Find input variables from their names.
         String[] inVars = new String[0];
@@ -988,12 +978,12 @@ public final class Sequence implements WeightedElement {
           inVars = inVarsStr.split("\\s");
         }
 
-        if (inVars.length != st.getInputTypes().size()) {
+        if (inVars.length != operation.getInputTypes().size()) {
           String msg =
               "Number of input variables given ("
                   + inVarsStr
                   + ") does not match expected (expected "
-                  + st.getInputTypes().size()
+                  + operation.getInputTypes().size()
                   + ")";
           throw new SequenceParseException(msg, statements, statementCount);
         }
@@ -1013,7 +1003,7 @@ public final class Sequence implements WeightedElement {
           inputs.add(sequence.getVariable(index));
         }
 
-        sequence = sequence.extend(st, inputs);
+        sequence = sequence.extend(operation, inputs);
         valueMap.put(newVar, sequence.getLastVariable().getDeclIndex());
         statementCount++;
       }

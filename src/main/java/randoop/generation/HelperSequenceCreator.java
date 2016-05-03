@@ -10,6 +10,7 @@ import randoop.BugInRandoopException;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.ConstructorCall;
 import randoop.operation.MethodCall;
+import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
@@ -84,7 +85,7 @@ class HelperSequenceCreator {
     return l;
   }
 
-  private static Sequence createCollection(ComponentManager componentManager, ReferenceType inputType) {
+  static Sequence createCollection(ComponentManager componentManager, GeneralType inputType) {
     if (!inputType.isParameterized()) {
       throw new IllegalArgumentException("type must be parameterized");
     }
@@ -177,7 +178,7 @@ class HelperSequenceCreator {
       throw new BugInRandoopException("Can't find default constructor for Collection " + creationType + ": " + e.getMessage());
     }
     ConstructorCall op = new ConstructorCall(constructor);
-    return new TypedOperation(op, creationType, new TypeTuple(), creationType);
+    return new TypedClassOperation(op, creationType, new TypeTuple(), creationType);
   }
 
   private static TypedOperation getCollectionAddAllOperation(ReferenceType elementType) {
@@ -197,7 +198,7 @@ class HelperSequenceCreator {
     paramTypes.add(collectionType);
     paramTypes.add(ArrayType.ofElementType(elementType));
 
-    return new TypedOperation(op, ClassOrInterfaceType.forClass(collectionsClass), new TypeTuple(paramTypes), ConcreteTypes.BOOLEAN_TYPE);
+    return new TypedClassOperation(op, ClassOrInterfaceType.forClass(collectionsClass), new TypeTuple(paramTypes), ConcreteTypes.BOOLEAN_TYPE);
   }
 
 }

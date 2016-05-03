@@ -6,7 +6,7 @@ import java.util.Objects;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
-import randoop.types.RandoopTypeException;
+import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.TypeTuple;
 
@@ -56,7 +56,7 @@ public class TypedClassOperation extends TypedOperation {
    * @param substitution  the type substitution
    * @return the concrete operation with type variables replaced by substitution
    */
-  public TypedOperation apply(Substitution substitution) throws RandoopTypeException {
+  public TypedClassOperation apply(Substitution<ReferenceType> substitution) {
     ClassOrInterfaceType declaringType = this.declaringType.apply(substitution);
     TypeTuple inputTypes = this.getInputTypes().apply(substitution);
     GeneralType outputType = this.getOutputType().apply(substitution);
@@ -83,7 +83,8 @@ public class TypedClassOperation extends TypedOperation {
    *
    * @return string descriptor of {@link Operation} object.
    */
-  public String toParseableString() {
+  @Override
+  public String toParsableString() {
     return this.getOperation().toParseableString(declaringType, getInputTypes(), getOutputType());
   }
 

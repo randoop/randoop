@@ -10,10 +10,13 @@ import java.util.Objects;
 
 import randoop.ExecutionOutcome;
 import randoop.reflection.ReflectionPredicate;
+import randoop.sequence.Variable;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
 import randoop.types.PrimitiveTypes;
+import randoop.types.ReferenceType;
+import randoop.types.Substitution;
 import randoop.types.TypeTuple;
 
 /**
@@ -147,6 +150,8 @@ public abstract class TypedOperation implements Operation {
     return operation.compareTo(o);
   }
 
+  public abstract void appendCode(List<Variable> inputVars, StringBuilder b);
+
   /**
    * Performs this operation using the array of input values. Returns the results of execution as an
    * ResultOrException object and can output results to specified PrintStream.
@@ -161,6 +166,10 @@ public abstract class TypedOperation implements Operation {
 
     return this.getOperation().execute(input, out);
   }
+
+  public abstract TypedOperation apply(Substitution<ReferenceType> substitution);
+
+  public abstract String toParsableString();
 
   public static TypedClassOperation forConstructor(Constructor<?> constructor) {
     ConstructorCall op = new ConstructorCall(constructor);
@@ -214,4 +223,6 @@ public abstract class TypedOperation implements Operation {
     TypeTuple inputTypes = new TypeTuple(typeList);
     return new TypedTermOperation(new ArrayCreation(arrayType, size), inputTypes, arrayType);
   }
+
+
 }

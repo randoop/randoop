@@ -14,6 +14,7 @@ import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
 import randoop.types.GeneralType;
 import randoop.types.RandoopTypeException;
@@ -143,12 +144,10 @@ public class FieldSet extends CallableOperation {
    *
    * @param descr
    *          string containing descriptor of field setter.
-   * @param manager
-   *          the {@link TypedOperationManager} to collect operations
    * @throws OperationParseException
    *           if descr does not have expected form.
    */
-  public static void parse(String descr, TypedOperationManager manager) throws OperationParseException {
+  public static TypedOperation parse(String descr) throws OperationParseException {
     String errorPrefix = "Error parsing " + descr + " as description for field set statement: ";
 
     int openParPos = descr.indexOf('(');
@@ -170,14 +169,9 @@ public class FieldSet extends CallableOperation {
     String fieldname = descr.substring(openParPos + 1, closeParPos);
 
     AccessibleField accessibleField = FieldParser.parse(descr, classname, fieldname);
-    GeneralType classType = accessibleField.getDeclaringType();
+    ClassOrInterfaceType classType = accessibleField.getDeclaringType();
     GeneralType fieldType;
-    try {
-      fieldType = GeneralType.forType(accessibleField.getRawField().getGenericType());
-    } catch (RandoopTypeException e) {
-      String msg = errorPrefix + " type error: " + e;
-      throw new OperationParseException(msg);
-    }
+    fieldType = GeneralType.forType(accessibleField.getRawField().getGenericType());
 
     if (accessibleField.isFinal()) {
       throw new OperationParseException("Cannot create setter for final field " + classname + "." + opname);
@@ -187,7 +181,7 @@ public class FieldSet extends CallableOperation {
       setInputTypeList.add(classType);
     }
     setInputTypeList.add(fieldType);
-    manager.addOperation(new FieldSet(accessibleField), classType, new TypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
+    return new TypedClassOperation(new FieldSet(accessibleField), classType, new TypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
   }
 
   @Override

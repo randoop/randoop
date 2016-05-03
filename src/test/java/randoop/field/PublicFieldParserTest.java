@@ -29,7 +29,7 @@ public class PublicFieldParserTest {
     try {
       AccessibleField pf = FieldParser.parse(fieldPair, classname, fieldname);
       assertEquals(
-          "parse(\"t:v\").toParseableString(classType) should equal \"t:v\"",
+          "parse(\"t:v\").toParsableString(classType) should equal \"t:v\"",
           fieldPair,
           pf.toParseableString(classType));
     } catch (OperationParseException e) {
@@ -54,7 +54,7 @@ public class PublicFieldParserTest {
     try {
       AccessibleField pf = FieldParser.parse(fieldPair, classname, fieldname);
       assertEquals(
-          "parse(\"t:v\").toParseableString(classType) should equal \"t:v\"",
+          "parse(\"t:v\").toParsableString(classType) should equal \"t:v\"",
           fieldPair,
           pf.toParseableString(classType));
 
@@ -81,7 +81,7 @@ public class PublicFieldParserTest {
     try {
       AccessibleField pf = FieldParser.parse(fieldPair, classname, fieldname);
       assertEquals(
-          "parse(\"t:v\").toParseableString(classType) should equal \"t:v\"",
+          "parse(\"t:v\").toParsableString(classType) should equal \"t:v\"",
           fieldPair,
           pf.toParseableString(classType));
 

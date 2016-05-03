@@ -1,10 +1,15 @@
 package randoop.operation;
 
+import java.util.List;
+
+import randoop.sequence.Variable;
 import randoop.types.GeneralType;
+import randoop.types.ReferenceType;
+import randoop.types.Substitution;
 import randoop.types.TypeTuple;
 
 /**
- * Created by bjkeller on 4/28/16.
+ *
  */
 class TypedTermOperation extends TypedOperation {
 
@@ -12,4 +17,20 @@ class TypedTermOperation extends TypedOperation {
     super(operation, inputTypes, outputType);
   }
 
+  @Override
+  public void appendCode(List<Variable> inputVars, StringBuilder b) {
+    this.getOperation().appendCode(null, getInputTypes(), getOutputType(), inputVars, b);
+  }
+
+  @Override
+  public TypedTermOperation apply(Substitution<ReferenceType> substitution) {
+    TypeTuple inputTypes = this.getInputTypes().apply(substitution);
+    GeneralType outputType = this.getOutputType().apply(substitution);
+    return new TypedTermOperation(this.getOperation(), inputTypes, outputType);
+  }
+
+  @Override
+  public String toParsableString() {
+    return this.getOperation().toParseableString(null, getInputTypes(), getOutputType());
+  }
 }

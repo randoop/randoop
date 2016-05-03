@@ -16,7 +16,7 @@ import randoop.generation.ForwardGenerator;
 import randoop.generation.IStopper;
 import randoop.generation.SeedSequences;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.ConcreteOperation;
+import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.ModelCollections;
 import randoop.reflection.OperationExtractor;
@@ -27,7 +27,7 @@ import randoop.test.issta2006.BinTree;
 import randoop.test.issta2006.BinomialHeap;
 import randoop.test.issta2006.FibHeap;
 import randoop.test.issta2006.TreeMap;
-import randoop.types.ConcreteType;
+import randoop.types.ClassOrInterfaceType;
 import randoop.util.ReflectionExecutor;
 
 import static org.junit.Assert.assertEquals;
@@ -61,10 +61,10 @@ public class ICSE07ContainersTest {
 
     System.out.println("ICSE 2006 container: " + name);
 
-    final List<ConcreteOperation> model = new ArrayList<>();
+    final List<TypedOperation> model = new ArrayList<>();
     TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
       @Override
-      public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
+      public void addConcreteOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
         model.add(operation);
       }
     });
@@ -84,7 +84,7 @@ public class ICSE07ContainersTest {
     ForwardGenerator explorer =
         new ForwardGenerator(
             model,
-                new LinkedHashSet<ConcreteOperation>(),
+                new LinkedHashSet<TypedOperation>(),
             120000 /* two minutes */,
             Integer.MAX_VALUE,
             Integer.MAX_VALUE,

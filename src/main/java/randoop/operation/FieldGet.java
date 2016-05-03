@@ -13,6 +13,7 @@ import randoop.field.FieldParser;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Variable;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
 import randoop.types.RandoopTypeException;
 import randoop.types.TypeTuple;
@@ -123,12 +124,10 @@ public class FieldGet extends CallableOperation {
    *
    * @param descr
    *          the string containing descriptor of getter for a field.
-   * @param manager
-   *          the {@link TypedOperationManager} to collect operations
    * @throws OperationParseException
    *           if any error in descriptor string
    */
-  public static void parse(String descr, TypedOperationManager manager) throws OperationParseException {
+  public static TypedOperation parse(String descr) throws OperationParseException {
     String errorPrefix = "Error parsing " + descr + " as description for field getter statement: ";
 
     int openParPos = descr.indexOf('(');
@@ -153,20 +152,15 @@ public class FieldGet extends CallableOperation {
     String fieldname = descr.substring(openParPos + 1, closeParPos);
 
     AccessibleField accessibleField = FieldParser.parse(descr, classname, fieldname);
-    GeneralType classType = accessibleField.getDeclaringType();
+    ClassOrInterfaceType classType = accessibleField.getDeclaringType();
     GeneralType fieldType;
-    try {
-      fieldType = GeneralType.forType(accessibleField.getRawField().getGenericType());
-    } catch (RandoopTypeException e) {
-      String msg = errorPrefix + " type error " + e;
-      throw new OperationParseException(msg);
-    }
+    fieldType = GeneralType.forType(accessibleField.getRawField().getGenericType());
 
     List<GeneralType> getInputTypeList = new ArrayList<>();
     if (! accessibleField.isStatic()) {
       getInputTypeList.add(classType);
     }
-    manager.addOperation(new FieldGet(accessibleField), classType, new TypeTuple(getInputTypeList), fieldType);
+    return new TypedClassOperation(new FieldGet(accessibleField), classType, new TypeTuple(getInputTypeList), fieldType);
   }
 
   @Override

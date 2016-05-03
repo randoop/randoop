@@ -210,16 +210,15 @@ public final class MethodCall extends CallableOperation {
   /**
    * Parses a method call in a string descriptor and returns a
    * {@link MethodCall} object. Should satisfy
-   * <code>parse(op.toParseableString()).equals(op)</code> for Operation op.
+   * <code>parse(op.toParsableString()).equals(op)</code> for Operation op.
    *
-   * @see OperationParser#parse(String, randoop.reflection.TypedOperationManager)
+   * @see OperationParser#parse(String)
    *
    * @param signature  a string descriptor
-   * @param manager  the {@link TypedOperationManager} for collecting operations
    * @throws OperationParseException
    *           if s does not match expected descriptor.
    */
-  public static void parse(String signature, TypedOperationManager manager) throws OperationParseException {
+  public static TypedClassOperation parse(String signature) throws OperationParseException {
     if (signature == null) {
       throw new IllegalArgumentException("signature may not be null");
     }
@@ -265,27 +264,7 @@ public final class MethodCall extends CallableOperation {
       }
     }
 
-    MethodCall op = new MethodCall(m);
-    List<GeneralType> paramTypes = new ArrayList<>();
-    if (!Modifier.isStatic(m.getModifiers() & Modifier.methodModifiers())) {
-      paramTypes.add(classType);
-    }
-    for (Class<?> c : typeArguments) {
-      try {
-        paramTypes.add(manager.addClassType(c));
-      } catch (RandoopTypeException e) {
-        msg = "Type error for method parameter: " + e.getMessage();
-        throw new OperationParseException(msg);
-      }
-    }
-    GeneralType outputType;
-    try {
-      outputType = GeneralType.forType(m.getGenericReturnType());
-    } catch (RandoopTypeException e) {
-      msg = "Type error for method " + methodString + ": " + e;
-      throw new OperationParseException(msg);
-    }
-    manager.addOperation(op, classType, new TypeTuple(paramTypes), outputType);
+    return TypedClassOperation.forMethod(m);
 
   }
 

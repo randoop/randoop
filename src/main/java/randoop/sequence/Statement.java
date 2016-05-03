@@ -7,6 +7,7 @@ import java.util.List;
 import randoop.ExecutionOutcome;
 import randoop.Globals;
 import randoop.operation.CallableOperation;
+import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.operation.Operation;
 import randoop.operation.OperationParser;
@@ -129,13 +130,13 @@ public final class Statement {
     b.append(";").append(Globals.lineSep);
   }
 
-  public String toParseableString(String variableName, List<Variable> inputs) {
+  public String toParsableString(String variableName, List<Variable> inputs) {
     StringBuilder b = new StringBuilder();
     b.append(variableName);
     b.append(" =  ");
     b.append(OperationParser.getId(operation));
     b.append(" : ");
-    b.append(operation.toParseableString());
+    b.append(operation.toParsableString());
     b.append(" : ");
     for (Variable v : inputs) {
       b.append(v.toString());
@@ -146,7 +147,7 @@ public final class Statement {
 
   @Override
   public String toString() {
-    return "Statement(" + operation.toParseableString() + ")";
+    return "Statement(" + operation.toParsableString() + ")";
   }
 
   /**
@@ -206,7 +207,10 @@ public final class Statement {
    * @return result of getDeclaringClass for corresponding statement.
    */
   public GeneralType getDeclaringClass() {
-    return operation.getDeclaringType();
+    if (operation instanceof TypedClassOperation) {
+      return ((TypedClassOperation)operation).getDeclaringType();
+    }
+    return null;
   }
 
   /**

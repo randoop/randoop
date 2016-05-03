@@ -1,5 +1,6 @@
 package randoop.generation;
 
+import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.sequence.ClassLiterals;
 import randoop.sequence.PackageLiterals;
@@ -7,7 +8,9 @@ import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
+import randoop.types.PrimitiveType;
 import randoop.types.PrimitiveTypes;
+import randoop.types.SimpleClassOrInterfaceType;
 import randoop.util.ListOfLists;
 import randoop.util.SimpleList;
 
@@ -186,30 +189,30 @@ public class ComponentManager {
     GeneralType neededType = operation.getInputTypes().get(i);
 
     SimpleList<Sequence> ret = gralComponents.getSequencesForType(neededType, false);
+    if (operation instanceof TypedClassOperation) {
+      if (classLiterals != null || packageLiterals != null) {
 
-    if (classLiterals != null || packageLiterals != null) {
-
-      GeneralType declaringCls = operation.getDeclaringType();
-      if (declaringCls != null) {
-        if (classLiterals != null && declaringCls instanceof ClassOrInterfaceType) {
-            SimpleList<Sequence> sl = classLiterals.getSequences((ClassOrInterfaceType)declaringCls, neededType);
+        GeneralType declaringCls = ((TypedClassOperation)operation).getDeclaringType();
+        if (declaringCls != null) {
+          if (classLiterals != null) {
+            SimpleList<Sequence> sl = classLiterals.getSequences((ClassOrInterfaceType) declaringCls, neededType);
             if (!sl.isEmpty()) {
               ret = new ListOfLists<>(ret, sl);
             }
-        }
+          }
 
-        if (packageLiterals != null) {
-          Package pkg = declaringCls.getPackage();
-          if (pkg != null) {
-            SimpleList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
-            if (!sl.isEmpty()) {
-              ret = new ListOfLists<>(ret, sl);
+          if (packageLiterals != null) {
+            Package pkg = declaringCls.getPackage();
+            if (pkg != null) {
+              SimpleList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
+              if (!sl.isEmpty()) {
+                ret = new ListOfLists<>(ret, sl);
+              }
             }
           }
         }
       }
     }
-
     return ret;
   }
 
@@ -229,7 +232,13 @@ public class ComponentManager {
     if (packageLiterals != null) {
       ret.addAll(packageLiterals.getAllSequences());
     }
-    for (GeneralType type : PrimitiveTypes.getPrimitiveOrStringTypes()) {
+    for (Class<?> c : PrimitiveTypes.getPrimitiveOrStringTypes()) {
+      GeneralType type;
+      if (c.isPrimitive()) {
+        type = new PrimitiveType(c);
+      } else {
+        type = new SimpleClassOrInterfaceType(c);
+      }
       ret.addAll(gralComponents.getSequencesForType(type, true).toJDKList());
     }
     return ret;

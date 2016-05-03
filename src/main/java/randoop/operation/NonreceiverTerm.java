@@ -250,12 +250,10 @@ public final class NonreceiverTerm extends CallableOperation {
    *
    * @param s
    *          a string representing a value of a non-receiver type.
-   * @param manager
-   *          the {@link TypedOperationManager} to collect operations
    * @throws OperationParseException
    *           if string does not represent valid object.
    */
-  public static void parse(String s, TypedOperationManager manager) throws OperationParseException {
+  public static TypedOperation parse(String s) throws OperationParseException {
     if (s == null) throw new IllegalArgumentException("s cannot be null.");
     int colonIdx = s.indexOf(':');
     if (colonIdx == -1) {
@@ -456,7 +454,7 @@ public final class NonreceiverTerm extends CallableOperation {
     }
 
     NonreceiverTerm nonreceiverTerm = new NonreceiverTerm(type, value);
-    manager.addOperation(new TypedTermOperation(nonreceiverTerm, new TypeTuple(), type));
+    return new TypedTermOperation(nonreceiverTerm, new TypeTuple(), type);
   }
 
   /**

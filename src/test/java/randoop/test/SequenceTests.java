@@ -65,7 +65,7 @@ public class SequenceTests {
    *
    * Each sequence is parsed, then two checks performed:
    *
-   * 1. (Test parsing code) s.toParseableString() can be parsed back into an equivalent sequence
+   * 1. (Test parsing code) s.toParsableString() can be parsed back into an equivalent sequence
    * 2. (Test execution and test generation code) sequence is executed and the resulting test code is
    *    compared with the expected code from the "EXPECTED_CODE" field in the record.
    */

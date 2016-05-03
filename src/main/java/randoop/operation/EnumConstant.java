@@ -100,11 +100,10 @@ public class EnumConstant extends CallableOperation {
    * OuterClass$InnerEnum:EnumValue for an enum that is an inner type of a class.
    *
    * @param desc string representing type-value pair for an enum constant
-   * @param manager  the {@link TypedOperationManager} to collect operations
    * @throws OperationParseException
    *           if desc does not match expected form.
    */
-    public static void parse(String desc, TypedOperationManager manager) throws OperationParseException {
+    public static TypedClassOperation parse(String desc) throws OperationParseException {
       if (desc == null) {
         throw new IllegalArgumentException("desc cannot be null");
       }
@@ -170,7 +169,7 @@ public class EnumConstant extends CallableOperation {
         throw new OperationParseException(msg);
       }
 
-      manager.addOperation(new TypedClassOperation(new EnumConstant(value), (ClassOrInterfaceType)declaringType, new TypeTuple(), declaringType));
+      return new TypedClassOperation(new EnumConstant(value), (ClassOrInterfaceType)declaringType, new TypeTuple(), declaringType);
 
     }
 
