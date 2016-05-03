@@ -282,11 +282,9 @@ public class GenTests extends GenInputsAbstract {
     // Always exclude a singleton sequence with just new Object()
     TypedOperation objectConstructor = null;
     try {
-      objectConstructor = operationModel.getConcreteOperation(Object.class.getConstructor());
+      objectConstructor = TypedOperation.forConstructor(Object.class.getConstructor());
     } catch (NoSuchMethodException e) {
       assert false : "failed to get Object constructor: " + e;
-    } catch (RandoopTypeException e) {
-      assert false : "type error getting Object constructor: " + e;
     }
     assert objectConstructor != null;
 
