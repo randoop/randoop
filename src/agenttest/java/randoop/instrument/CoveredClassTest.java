@@ -17,8 +17,8 @@ import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
 import randoop.main.ThrowClassNameError;
-import randoop.operation.ConcreteOperation;
 import randoop.operation.OperationParseException;
+import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PublicVisibilityPredicate;
@@ -27,7 +27,7 @@ import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.test.TestCheckGenerator;
-import randoop.types.ConcreteType;
+import randoop.types.GeneralType;
 import randoop.types.RandoopTypeException;
 import randoop.types.TypeNames;
 import randoop.util.MultiMap;
@@ -200,7 +200,7 @@ public class CoveredClassTest {
     }
     assert operationModel != null;
 
-    List<ConcreteOperation> model = operationModel.getConcreteOperations();
+    List<TypedOperation> model = operationModel.getConcreteOperations();
     Set<Sequence> components = new LinkedHashSet<>();
     components.addAll(SeedSequences.defaultSeeds());
     components.addAll(operationModel.getAnnotatedTestValues());
@@ -211,7 +211,7 @@ public class CoveredClassTest {
 
     Set<String> observerSignatures = GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.observers,"Unable to read observer file", "//.*", null);
 
-    MultiMap<ConcreteType,ConcreteOperation> observerMap = null;
+    MultiMap<GeneralType,TypedOperation> observerMap = null;
     try {
       observerMap = operationModel.getObservers(observerSignatures);
     } catch (OperationParseException e) {
@@ -219,8 +219,8 @@ public class CoveredClassTest {
       System.exit(1);
     }
     assert observerMap != null;
-    Set<ConcreteOperation> observers = new LinkedHashSet<>();
-    for (ConcreteType keyType : observerMap.keySet()) {
+    Set<TypedOperation> observers = new LinkedHashSet<>();
+    for (GeneralType keyType : observerMap.keySet()) {
       observers.addAll(observerMap.getValues(keyType));
     }
 
@@ -236,9 +236,9 @@ public class CoveredClassTest {
             listenerMgr);
     GenTests genTests = new GenTests();
 
-    ConcreteOperation objectConstructor = null;
+    TypedOperation objectConstructor = null;
     try {
-      objectConstructor = operationModel.getConcreteOperation(Object.class.getConstructor());
+      objectConstructor = TypedOperation.forConstructor(Object.class.getConstructor());
     } catch (NoSuchMethodException e) {
       assert false : "failed to get Object constructor: " + e;
     } catch (RandoopTypeException e) {
@@ -256,7 +256,7 @@ public class CoveredClassTest {
     testGenerator.addTestPredicate(isOutputTest);
 
     Set<ObjectContract> contracts = operationModel.getContracts();
-    Set<ConcreteOperation> excludeAsObservers = new LinkedHashSet<>();
+    Set<TypedOperation> excludeAsObservers = new LinkedHashSet<>();
     TestCheckGenerator checkGenerator = genTests.createTestCheckGenerator(visibility, contracts, observerMap, excludeAsObservers);
     testGenerator.addTestCheckGenerator(checkGenerator);
     testGenerator.addExecutionVisitor(new ExercisedClassVisitor(operationModel.getExercisedClasses()));
