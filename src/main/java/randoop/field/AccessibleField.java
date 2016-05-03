@@ -7,6 +7,7 @@ import java.util.List;
 import randoop.BugInRandoopException;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
 
 /**
@@ -19,7 +20,7 @@ import randoop.types.GeneralType;
 public class AccessibleField {
 
   private Field field;
-  private final GeneralType declaringType;
+  private final ClassOrInterfaceType declaringType;
   private boolean isFinal;
   private boolean isStatic;
 
@@ -29,7 +30,7 @@ public class AccessibleField {
    * @param field
    *          the field.
    */
-  public AccessibleField(Field field, GeneralType declaringType) {
+  public AccessibleField(Field field, ClassOrInterfaceType declaringType) {
     this.field = field;
     this.field.setAccessible(true);
     int mods = field.getModifiers() & Modifier.fieldModifiers();
@@ -174,7 +175,7 @@ public class AccessibleField {
     return field;
   }
 
-  public GeneralType getDeclaringType() {
+  public ClassOrInterfaceType getDeclaringType() {
     return declaringType;
   }
 }
