@@ -9,10 +9,10 @@ import java.util.Set;
 import randoop.types.GeneralType;
 
 /**
- * {@code InputTypeExtractor} is a {@link ClassVisitor} that extracts concrete types that are used
+ * {@code TypeExtractor} is a {@link ClassVisitor} that extracts concrete types that are used
  * in a class as either a parameter, a return type, or a field type.
  */
-class InputTypeExtractor implements ClassVisitor {
+class TypeExtractor extends DefaultClassVisitor {
 
   /** The set of concrete types */
   private Set<GeneralType> inputTypes;
@@ -22,7 +22,7 @@ class InputTypeExtractor implements ClassVisitor {
    *
    * @param inputTypes  the set of concrete types
    */
-  InputTypeExtractor(Set<GeneralType> inputTypes) {
+  TypeExtractor(Set<GeneralType> inputTypes) {
     this.inputTypes = inputTypes;
   }
 
@@ -77,11 +77,6 @@ class InputTypeExtractor implements ClassVisitor {
     }
   }
 
-  @Override
-  public void visit(Enum<?> e) {
-    // this is the enum constant, so nothing to do here
-  }
-
   /**
    * {@inheritDoc}
    * Adds the class if it is concrete.
@@ -93,8 +88,4 @@ class InputTypeExtractor implements ClassVisitor {
     }
   }
 
-  @Override
-  public void visitAfter(Class<?> c) {
-    // do nothing
-  }
 }
