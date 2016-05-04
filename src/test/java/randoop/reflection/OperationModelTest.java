@@ -10,9 +10,7 @@ import java.util.Set;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.ThrowClassNameError;
 import randoop.main.WarnOnBadClassName;
-import randoop.operation.ConcreteOperation;
 import randoop.operation.OperationParseException;
-import randoop.types.ConcreteType;
 import randoop.types.RandoopTypeException;
 
 import static org.hamcrest.CoreMatchers.is;

@@ -2,23 +2,21 @@ package randoop.reflection;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import randoop.operation.ConcreteOperation;
-import randoop.operation.GenericOperation;
-import randoop.types.ConcreteType;
-import randoop.types.GenericClassType;
-import randoop.types.GenericType;
+import randoop.operation.TypedOperation;
+import randoop.types.ClassOrInterfaceType;
+import randoop.types.GeneralType;
+import randoop.types.ParameterizedType;
 import randoop.types.TypeNames;
 import randoop.util.MultiMap;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-
-import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Tests for {@link OperationExtractor} and {@link TypedOperationManager} to ensure they are
@@ -29,29 +27,29 @@ public class OperationExtractorTest {
 
   @Test
   public void concreteClassTest() {
-    final Set<ConcreteType> classTypes = new LinkedHashSet<>();
-    final Set<ConcreteOperation> operations = new LinkedHashSet<>();
-    final MultiMap<GenericType,GenericOperation> genericClassTypes = new MultiMap<>();
-    final Set<GenericOperation> genericOperations = new LinkedHashSet<>();
+    final Set<ClassOrInterfaceType> classTypes = new LinkedHashSet<>();
+    final Set<TypedOperation> operations = new LinkedHashSet<>();
+    final MultiMap<ParameterizedType, TypedOperation> genericClassTypes = new MultiMap<>();
+    final Set<TypedOperation> genericOperations = new LinkedHashSet<>();
 
     TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
       @Override
-      public void addConcreteClassType(ConcreteType type) {
+      public void addConcreteClassType(ClassOrInterfaceType type) {
         classTypes.add(type);
       }
 
       @Override
-      public void addGenericOperation(GenericClassType declaringType, GenericOperation operation) {
+      public void addOperationToGenericType(ParameterizedType declaringType, TypedOperation operation) {
         genericClassTypes.add(declaringType, operation);
       }
 
       @Override
-      public void addGenericOperation(ConcreteType declaringType, GenericOperation operation) {
+      public void addGenericOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
         genericOperations.add(operation);
       }
 
       @Override
-      public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
+      public void addConcreteOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
         operations.add(operation);
       }
     });
@@ -81,23 +79,23 @@ public class OperationExtractorTest {
 
   @Test
   public void genericClassTest() {
-    final Set<ConcreteType> concreteTypes = new LinkedHashSet<>();
-    final Set<GenericType> genericTypes = new LinkedHashSet<>();
-    final MultiMap<GenericType,GenericOperation> genericsMap = new MultiMap<>();
+    final Set<GeneralType> concreteTypes = new LinkedHashSet<>();
+    final Set<ParameterizedType> genericTypes = new LinkedHashSet<>();
+    final MultiMap<ClassOrInterfaceType,TypedOperation> genericsMap = new MultiMap<>();
 
     TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
       @Override
-      public void addConcreteClassType(ConcreteType type) {
+      public void addConcreteClassType(ClassOrInterfaceType type) {
         concreteTypes.add(type);
       }
 
       @Override
-      public void addGenericClassType(GenericClassType type) {
+      public void addGenericClassType(ParameterizedType type) {
         genericTypes.add(type);
       }
 
       @Override
-      public void addGenericOperation(GenericClassType declaringType, GenericOperation operation) {
+      public void addGenericOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
         genericsMap.add(declaringType, operation);
       }
 
@@ -120,7 +118,7 @@ public class OperationExtractorTest {
     assertTrue("should be a generic type", ! genericTypes.isEmpty());
     assertThat("should be one generic type", genericTypes.size(), is(equalTo(1)));
 
-    for (GenericType key : genericsMap.keySet()) {
+    for (ClassOrInterfaceType key : genericsMap.keySet()) {
       assertThat("there should be 20 operations", genericsMap.getValues(key).size(), is(equalTo(20)));
     }
 
