@@ -85,7 +85,7 @@ public class TypedClassOperation extends TypedOperation {
    */
   @Override
   public String toParsableString() {
-    return this.getOperation().toParseableString(declaringType, getInputTypes(), getOutputType());
+    return this.getOperation().toParsableString(declaringType, getInputTypes(), getOutputType());
   }
 
   @Override

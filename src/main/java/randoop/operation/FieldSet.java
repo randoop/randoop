@@ -11,13 +11,11 @@ import randoop.NormalExecution;
 import randoop.field.AccessibleField;
 import randoop.field.FieldParser;
 import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
 import randoop.types.GeneralType;
-import randoop.types.RandoopTypeException;
 import randoop.types.TypeTuple;
 
 /**
@@ -133,7 +131,7 @@ public class FieldSet extends CallableOperation {
    * @return the parseable string descriptor for this setter.
    */
   @Override
-  public String toParseableString(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
+  public String toParsableString(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
     return declaringType.getName() + ".<set>(" + field.getName() + ")";
   }
 

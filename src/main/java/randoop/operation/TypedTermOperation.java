@@ -31,6 +31,6 @@ class TypedTermOperation extends TypedOperation {
 
   @Override
   public String toParsableString() {
-    return this.getOperation().toParseableString(null, getInputTypes(), getOutputType());
+    return this.getOperation().toParsableString(null, getInputTypes(), getOutputType());
   }
 }

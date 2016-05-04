@@ -85,16 +85,16 @@ public class EnumConstant extends CallableOperation {
    * {@inheritDoc} Issues a string representation of an enum constant as a
    * type-value pair. The parse function should return an equivalent object.
    *
-   * @see EnumConstant#parse(String, TypedOperationManager)
+   * @see EnumConstant#parse(String)
    */
   @Override
-  public String toParseableString(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
+  public String toParsableString(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
     return declaringType.getName() + ":" + value.name();
   }
 
   /**
    * Parses the description of an enum constant value in a string as returned by
-   * {@link EnumConstant#toParseableString(GeneralType, TypeTuple, GeneralType)}.
+   * {@link EnumConstant#toParsableString(GeneralType, TypeTuple, GeneralType)}.
    *
    * Valid strings may be of the form EnumType:EnumValue, or
    * OuterClass$InnerEnum:EnumValue for an enum that is an inner type of a class.
