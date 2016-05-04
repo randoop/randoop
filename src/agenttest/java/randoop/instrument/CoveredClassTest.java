@@ -241,8 +241,6 @@ public class CoveredClassTest {
       objectConstructor = TypedOperation.forConstructor(Object.class.getConstructor());
     } catch (NoSuchMethodException e) {
       assert false : "failed to get Object constructor: " + e;
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
     }
     assert objectConstructor != null : "object constructor is null";
 
