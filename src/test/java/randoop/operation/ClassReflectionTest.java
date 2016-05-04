@@ -15,7 +15,7 @@ import randoop.reflection.TypedOperationManager;
 import randoop.reflection.VisibilityPredicate;
 import randoop.test.AnIntegerPredicate;
 import randoop.test.ClassWithInnerClass;
-import randoop.types.ConcreteType;
+import randoop.types.ClassOrInterfaceType;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -28,21 +28,21 @@ public class ClassReflectionTest {
   @Test
   public void implementsParameterizedTypeTest() {
     Class<?> c = AnIntegerPredicate.class;
-    Set<ConcreteOperation> actual = getConcreteOperations(c);
+    Set<TypedOperation> actual = getConcreteOperations(c);
 
     // TODO be sure the types of the inherited method has the proper type arguments
     assertEquals("number of operations", 4, actual.size());
   }
 
-  private Set<ConcreteOperation> getConcreteOperations(Class<?> c) {
+  private Set<TypedOperation> getConcreteOperations(Class<?> c) {
     return getConcreteOperations(c, new DefaultReflectionPredicate(), new PublicVisibilityPredicate());
   }
 
-  private Set<ConcreteOperation> getConcreteOperations(Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
-    final Set<ConcreteOperation> operations = new LinkedHashSet<>();
+  private Set<TypedOperation> getConcreteOperations(Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
+    final Set<TypedOperation> operations = new LinkedHashSet<>();
     TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
       @Override
-      public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
+      public void addConcreteOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
         operations.add(operation);
       }
     });
@@ -63,15 +63,15 @@ public class ClassReflectionTest {
       fail("could not load inner class" + e.getMessage());
     }
 
-    Set<ConcreteOperation> innerActual = getConcreteOperations(inner);
+    Set<TypedOperation> innerActual = getConcreteOperations(inner);
 
-    for (ConcreteOperation op : innerActual) {
+    for (TypedOperation op : innerActual) {
       System.out.println(op);
     }
     assertEquals("number of inner class operations", 5, innerActual.size());
 
-    Set<ConcreteOperation> outerActual = getConcreteOperations(outer);
-    for(ConcreteOperation op : outerActual) {
+    Set<TypedOperation> outerActual = getConcreteOperations(outer);
+    for(TypedOperation op : outerActual) {
       System.out.println(op);
     }
     assertEquals("number of outer operations", 2, outerActual.size());

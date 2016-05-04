@@ -9,27 +9,27 @@ import randoop.Globals;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.types.ConcreteArrayType;
-import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeTuple;
+import randoop.types.ArrayType;
 import randoop.types.ConcreteTypes;
+import randoop.types.GeneralType;
+import randoop.types.TypeTuple;
 
 import static org.junit.Assert.assertEquals;
 
 public class ArrayCreationTests {
   @Test
   public void test1() throws Exception {
-    ConcreteType elementType = ConcreteTypes.STRING_TYPE;
-    ConcreteType arrayType = ConcreteType.forArrayOf(elementType);
-    List<ConcreteType> paramTypes = new ArrayList<>();
+    GeneralType elementType = ConcreteTypes.STRING_TYPE;
+    GeneralType arrayType = ArrayType.ofElementType(elementType);
+    List<GeneralType> paramTypes = new ArrayList<>();
     paramTypes.add(elementType);
-    ConcreteTypeTuple inputTypes = new ConcreteTypeTuple(paramTypes);
-    ArrayCreation ad = new ArrayCreation((ConcreteArrayType)arrayType, 1);
-    ConcreteOperation acOp = new ConcreteOperation(ad, arrayType, inputTypes, arrayType);
+    TypeTuple inputTypes = new TypeTuple(paramTypes);
+    ArrayCreation ad = new ArrayCreation((ArrayType)arrayType, 1);
+    TypedOperation acOp = new TypedTermOperation(ad, inputTypes, arrayType);
     StringBuilder b = new StringBuilder();
     CallableOperation initOp = new NonreceiverTerm(elementType, "mystring");
 
-    Sequence seq = new Sequence().extend(new ConcreteOperation(initOp, elementType, new ConcreteTypeTuple(), elementType));
+    Sequence seq = new Sequence().extend(new TypedTermOperation(initOp, new TypeTuple(), elementType));
     Variable var0 = new Variable(seq, 0);
     Variable var1 = new Variable(seq, 1);
     ArrayList<Variable> input = new ArrayList<>();
@@ -45,15 +45,15 @@ public class ArrayCreationTests {
 
   @Test
   public void test2() throws Exception {
-    ConcreteType elementType = ConcreteTypes.CHAR_TYPE;
-    ConcreteType arrayType = ConcreteType.forArrayOf(elementType);
-    ArrayCreation ad = new ArrayCreation((ConcreteArrayType)arrayType, 1);
-    List<ConcreteType> paramTypes = new ArrayList<>();
+    GeneralType elementType = ConcreteTypes.CHAR_TYPE;
+    GeneralType arrayType = ArrayType.ofElementType(elementType);
+    ArrayCreation ad = new ArrayCreation((ArrayType)arrayType, 1);
+    List<GeneralType> paramTypes = new ArrayList<>();
     paramTypes.add(elementType);
-    ConcreteTypeTuple inputTypes = new ConcreteTypeTuple(paramTypes);
-    ConcreteOperation acOp = new ConcreteOperation(ad, arrayType, inputTypes, arrayType);
+    TypeTuple inputTypes = new TypeTuple(paramTypes);
+    TypedOperation acOp = new TypedTermOperation(ad, inputTypes, arrayType);
     StringBuilder b = new StringBuilder();
-    Sequence seq = new Sequence().extend(new ConcreteOperation(new NonreceiverTerm(elementType, 'c'), elementType, new ConcreteTypeTuple(), elementType));
+    Sequence seq = new Sequence().extend(new TypedTermOperation(new NonreceiverTerm(elementType, 'c'), new TypeTuple(), elementType));
     Variable var0 = new Variable(seq, 0);
     Variable var1 = new Variable(seq, 1);
     ArrayList<Variable> input = new ArrayList<>();
@@ -65,15 +65,15 @@ public class ArrayCreationTests {
 
   @Test
   public void test3() throws Exception {
-    ConcreteType elementType = ConcreteType.forArrayOf(ConcreteTypes.CHAR_TYPE);
-    ConcreteType arrayType = ConcreteType.forArrayOf(elementType);
-    ArrayCreation arrayCreation = new ArrayCreation((ConcreteArrayType)arrayType, 1);
-    List<ConcreteType> paramTypes = new ArrayList<>();
+    GeneralType elementType = ArrayType.ofElementType(ConcreteTypes.CHAR_TYPE);
+    GeneralType arrayType = ArrayType.ofElementType(elementType);
+    ArrayCreation arrayCreation = new ArrayCreation((ArrayType)arrayType, 1);
+    List<GeneralType> paramTypes = new ArrayList<>();
     paramTypes.add(elementType);
-    ConcreteTypeTuple inputTypes = new ConcreteTypeTuple(paramTypes);
-    ConcreteOperation acOp = new ConcreteOperation(arrayCreation, arrayType, inputTypes, arrayType);
+    TypeTuple inputTypes = new TypeTuple(paramTypes);
+    TypedOperation acOp = new TypedTermOperation(arrayCreation, inputTypes, arrayType);
     StringBuilder b = new StringBuilder();
-    Sequence seq = new Sequence().extend(new ConcreteOperation(new ArrayCreation((ConcreteArrayType)arrayType, 0), elementType, new ConcreteTypeTuple(), elementType));
+    Sequence seq = new Sequence().extend(new TypedTermOperation(new ArrayCreation((ArrayType)arrayType, 0), new TypeTuple(), elementType));
     Variable var0 = new Variable(seq, 0);
     Variable var1 = new Variable(seq, 1);
     ArrayList<Variable> input = new ArrayList<>();

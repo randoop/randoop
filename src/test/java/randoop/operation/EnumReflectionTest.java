@@ -1,9 +1,6 @@
 package randoop.operation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.Test;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -14,8 +11,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
-import org.junit.Test;
 
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.ModelCollections;
@@ -31,10 +26,16 @@ import randoop.test.EnumAsPredicate;
 import randoop.test.OperatorEnum;
 import randoop.test.PlayingCard;
 import randoop.test.SimpleEnum;
-import randoop.types.ConcreteSimpleType;
-import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeTuple;
+import randoop.types.ClassOrInterfaceType;
+import randoop.types.GeneralType;
 import randoop.types.RandoopTypeException;
+import randoop.types.SimpleClassOrInterfaceType;
+import randoop.types.TypeTuple;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * EnumReflectionTest consists of tests of reflection classes
@@ -54,13 +55,13 @@ public class EnumReflectionTest {
   @Test
   public void simpleEnum() {
     Class<?> se = SimpleEnum.class;
-    ConcreteType declaringType = new ConcreteSimpleType(se);
+    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(se);
 
     @SuppressWarnings("unchecked")
     List<Enum<?>> include = asList(se.getEnumConstants());
     @SuppressWarnings("unchecked")
     List<Method> exclude = Arrays.asList(se.getMethods());
-    Set<ConcreteOperation> actual = getConcreteOperations(se);
+    Set<TypedOperation> actual = getConcreteOperations(se);
 
     assertEquals("number of statements", include.size(), actual.size());
 
@@ -113,7 +114,7 @@ public class EnumReflectionTest {
       }
     }
 
-    Set<ConcreteOperation> actual = getConcreteOperations(pc);
+    Set<TypedOperation> actual = getConcreteOperations(pc);
     assertEquals("number of statements", include.size() + 5, actual.size());
 
     for (Enum<?> e : include) {
@@ -133,7 +134,7 @@ public class EnumReflectionTest {
 
     // TODO test that declaring class of operations for inner enum is enum
 
-    Set<ConcreteOperation> actual = getConcreteOperations(c);
+    Set<TypedOperation> actual = getConcreteOperations(c);
 
     assertEquals("number of statments", 13, actual.size());
   }
@@ -141,7 +142,7 @@ public class EnumReflectionTest {
   @Test
   public void enumAsPredicateTest() {
     Class<?> c = EnumAsPredicate.class;
-    Set<ConcreteOperation> actual = getConcreteOperations(c);
+    Set<TypedOperation> actual = getConcreteOperations(c);
     // TODO this should be 5, except for odd business with lost type of inherited method
     assertEquals("number of operations", 4, actual.size());
   }
@@ -156,9 +157,9 @@ public class EnumReflectionTest {
   @Test
   public void valueEnum() {
     Class<?> coin = Coin.class;
-    ConcreteType declaringType = new ConcreteSimpleType(coin);
+    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(coin);
 
-    Set<ConcreteOperation> actual = getConcreteOperations(coin);
+    Set<TypedOperation> actual = getConcreteOperations(coin);
 
     int count = 0;
     for (Object obj : coin.getEnumConstants()) {
@@ -179,7 +180,7 @@ public class EnumReflectionTest {
     }
 
     for (Method m : coin.getMethods()) {
-      ConcreteOperation mc = null;
+      TypedOperation mc = null;
       try {
         mc = createMethodCall(m, declaringType);
       } catch (RandoopTypeException e) {
@@ -210,9 +211,9 @@ public class EnumReflectionTest {
   @Test
   public void abstractMethodEnum() {
     Class<?> op = OperatorEnum.class;
-    ConcreteType declaringType = new ConcreteSimpleType(op);
+    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(op);
 
-    Set<ConcreteOperation> actual = getConcreteOperations(op);
+    Set<TypedOperation> actual = getConcreteOperations(op);
 
     Set<String> overrides = new TreeSet<>();
     int count = 0;
@@ -227,7 +228,7 @@ public class EnumReflectionTest {
     }
 
     for (Method m : op.getMethods()) {
-      ConcreteOperation mc = null;
+      TypedOperation mc = null;
       try {
         mc = createMethodCall(m, declaringType);
       } catch (RandoopTypeException e) {
@@ -248,15 +249,15 @@ public class EnumReflectionTest {
     assertEquals("number of statements", count, actual.size());
   }
 
-  private Set<ConcreteOperation> getConcreteOperations(Class<?> c) {
+  private Set<TypedOperation> getConcreteOperations(Class<?> c) {
     return getConcreteOperations(c, new DefaultReflectionPredicate(), new PublicVisibilityPredicate());
   }
 
-  private Set<ConcreteOperation> getConcreteOperations(Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
-    final Set<ConcreteOperation> operations = new LinkedHashSet<>();
+  private Set<TypedOperation> getConcreteOperations(Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
+    final Set<TypedOperation> operations = new LinkedHashSet<>();
     TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
       @Override
-      public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
+      public void addConcreteOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
         operations.add(operation);
       }
     });
@@ -267,31 +268,31 @@ public class EnumReflectionTest {
     return operations;
   }
 
-  private ConcreteOperation createEnumOperation(Enum<?> e) {
+  private TypedOperation createEnumOperation(Enum<?> e) {
     CallableOperation eOp = new EnumConstant(e);
-    ConcreteType enumType = new ConcreteSimpleType(e.getDeclaringClass());
-    return new ConcreteOperation(eOp, enumType, new ConcreteTypeTuple(), enumType);
+    ClassOrInterfaceType enumType = new SimpleClassOrInterfaceType(e.getDeclaringClass());
+    return new TypedClassOperation(eOp, enumType, new TypeTuple(), enumType);
   }
 
-  private ConcreteOperation createConstructorCall(Constructor<?> con) throws RandoopTypeException {
+  private TypedOperation createConstructorCall(Constructor<?> con) throws RandoopTypeException {
     ConstructorCall op = new ConstructorCall(con);
-    ConcreteType declaringType = ConcreteType.forClass(con.getDeclaringClass());
-    List<ConcreteType> paramTypes = new ArrayList<>();
+    ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(con.getDeclaringClass());
+    List<GeneralType> paramTypes = new ArrayList<>();
     for (Class<?> pc : con.getParameterTypes()) {
-      paramTypes.add(ConcreteType.forClass(pc));
+      paramTypes.add(GeneralType.forClass(pc));
     }
-    return new ConcreteOperation(op, declaringType, new ConcreteTypeTuple(paramTypes), declaringType);
+    return new TypedClassOperation(op, declaringType, new TypeTuple(paramTypes), declaringType);
   }
   
-  private ConcreteOperation createMethodCall(Method m, ConcreteType declaringType) throws RandoopTypeException {
+  private TypedOperation createMethodCall(Method m, ClassOrInterfaceType declaringType) throws RandoopTypeException {
     MethodCall op = new MethodCall(m);
-    List<ConcreteType> paramTypes = new ArrayList<>();
+    List<GeneralType> paramTypes = new ArrayList<>();
     paramTypes.add(declaringType);
     for (Class<?> pc : m.getParameterTypes()) {
-      paramTypes.add(ConcreteType.forClass(pc));
+      paramTypes.add(GeneralType.forClass(pc));
     }
-    ConcreteType outputType = ConcreteType.forClass(m.getReturnType());
-    return new ConcreteOperation(op, declaringType, new ConcreteTypeTuple(paramTypes), outputType);
+    GeneralType outputType = GeneralType.forClass(m.getReturnType());
+    return new TypedClassOperation(op, declaringType, new TypeTuple(paramTypes), outputType);
   }
   
 }

@@ -1,26 +1,22 @@
 package randoop.operation;
 
+import org.junit.Test;
+
+import java.util.ArrayList;
+
+import randoop.Globals;
+import randoop.NormalExecution;
+import randoop.sequence.Sequence;
+import randoop.sequence.Statement;
+import randoop.sequence.Variable;
+import randoop.types.ClassOrInterfaceType;
+import randoop.types.SimpleClassOrInterfaceType;
+import randoop.types.TypeTuple;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import org.junit.Test;
-
-import randoop.Globals;
-import randoop.NormalExecution;
-import randoop.reflection.ModelCollections;
-import randoop.reflection.TypedOperationManager;
-import randoop.sequence.Sequence;
-import randoop.sequence.Statement;
-import randoop.sequence.Variable;
-import randoop.types.ConcreteSimpleType;
-import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeTuple;
 
 /**
  * EnumConstantTest defines unit tests for {@link randoop.operation.EnumConstant}.
@@ -30,36 +26,21 @@ public class EnumConstantTest {
 
   @Test
   public void parseConstraint() {
-    final Set<ConcreteOperation> operations = new LinkedHashSet<>();
-    TypedOperationManager manager = getManager(operations);
     String enumPair = "randoop.operation.SimpleEnumForTests:THREE";
     try {
-      EnumConstant.parse(enumPair, manager);
-      assertTrue("should have one operator: ", operations.size() == 1);
-      ConcreteOperation ec = operations.iterator().next();
+      TypedOperation ec = EnumConstant.parse(enumPair);
       assertEquals(
           "parse(\"e:v\").toParsableString() should equal \"e:v\"",
           enumPair,
-          ec.toParseableString());
+          ec.toParsableString());
     } catch (OperationParseException e) {
       fail("Parse error: " + e.getMessage());
     }
   }
 
-  private TypedOperationManager getManager(final Set<ConcreteOperation> operations) {
-    return new TypedOperationManager(new ModelCollections() {
-      @Override
-      public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
-        operations.add(operation);
-      }
-    });
-  }
-
   @SuppressWarnings("unused")
   @Test
   public void parseErrors() {
-    final Set<ConcreteOperation> operations = new LinkedHashSet<>();
-    TypedOperationManager manager = getManager(operations);
 
     String missingColon = "randoop.operation.SimpleEnumForTestsTHREE";
     String missingType = ":THREE";
@@ -71,7 +52,7 @@ public class EnumConstantTest {
     String nonEnum = "randoop.operation.EnumConstantTest:FIVE";
 
     try {
-      EnumConstant.parse(missingColon, manager);
+      EnumConstant.parse(missingColon);
       fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg =
@@ -87,7 +68,7 @@ public class EnumConstantTest {
     String errorPrefix2 = " for an enum description of the form <type>:<value>.";
 
     try {
-      EnumConstant.parse(missingType, manager);
+      EnumConstant.parse(missingType);
       fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = errorPrefix1 + missingType + errorPrefix2 + " No type given.";
@@ -95,7 +76,7 @@ public class EnumConstantTest {
     }
 
     try {
-      EnumConstant.parse(missingValue, manager);
+      EnumConstant.parse(missingValue);
       fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = errorPrefix1 + missingValue + errorPrefix2 + " No value given.";
@@ -103,7 +84,7 @@ public class EnumConstantTest {
     }
 
     try {
-      EnumConstant.parse(spaceInType, manager);
+      EnumConstant.parse(spaceInType);
       fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg =
@@ -115,7 +96,7 @@ public class EnumConstantTest {
     }
 
     try {
-      EnumConstant.parse(spaceInValue, manager);
+      EnumConstant.parse(spaceInValue);
       fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg =
@@ -127,7 +108,7 @@ public class EnumConstantTest {
     }
 
     try {
-      EnumConstant.parse(badType, manager);
+      EnumConstant.parse(badType);
       fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg =
@@ -135,7 +116,7 @@ public class EnumConstantTest {
       assertEquals("Expecting bad type message", msg, e.getMessage());
     }
     try {
-      EnumConstant.parse(badValue, manager);
+      EnumConstant.parse(badValue);
       fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg =
@@ -146,7 +127,7 @@ public class EnumConstantTest {
       assertEquals("Expecting bad value message", msg, e.getMessage());
     }
     try {
-      EnumConstant.parse(nonEnum, manager);
+      EnumConstant.parse(nonEnum);
       fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg =
@@ -161,10 +142,10 @@ public class EnumConstantTest {
   @Test
   public void testInheritedMethods() {
     //skipping reflection
-    ConcreteType enumType = new ConcreteSimpleType(SimpleEnumForTests.class);
-    ConcreteOperation ec1 = new ConcreteOperation(new EnumConstant(SimpleEnumForTests.ONE), enumType, new ConcreteTypeTuple(), enumType);
-    ConcreteOperation ec1_2 = new ConcreteOperation(new EnumConstant(SimpleEnumForTests.ONE), enumType, new ConcreteTypeTuple(), enumType);
-    ConcreteOperation ec2 = new ConcreteOperation(new EnumConstant(SimpleEnumForTests.TWO), enumType, new ConcreteTypeTuple(), enumType);
+    ClassOrInterfaceType enumType = new SimpleClassOrInterfaceType(SimpleEnumForTests.class);
+    TypedOperation ec1 = new TypedClassOperation(new EnumConstant(SimpleEnumForTests.ONE), enumType, new TypeTuple(), enumType);
+    TypedOperation ec1_2 = new TypedClassOperation(new EnumConstant(SimpleEnumForTests.ONE), enumType, new TypeTuple(), enumType);
+    TypedOperation ec2 = new TypedClassOperation(new EnumConstant(SimpleEnumForTests.TWO), enumType, new TypeTuple(), enumType);
 
     //equals and hashcode
     assertEquals("Object built from same constant should be equal", ec1, ec1_2);
@@ -178,7 +159,7 @@ public class EnumConstantTest {
     assertTrue("Should be no input types", ec1.getInputTypes().isEmpty());
     assertEquals(
         "Output type should match enum type of constant",
-        new ConcreteSimpleType(SimpleEnumForTests.ONE.getDeclaringClass()),
+        new SimpleClassOrInterfaceType(SimpleEnumForTests.ONE.getDeclaringClass()),
         ec1.getOutputType());
 
     //Execution
