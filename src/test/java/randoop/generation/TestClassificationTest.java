@@ -14,7 +14,7 @@ import randoop.contract.ObjectContract;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.main.GenTests;
-import randoop.operation.ConcreteOperation;
+import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.ModelCollections;
 import randoop.reflection.OperationExtractor;
@@ -32,7 +32,8 @@ import randoop.test.ExpectedExceptionCheck;
 import randoop.test.NoExceptionCheck;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
-import randoop.types.ConcreteType;
+import randoop.types.ClassOrInterfaceType;
+import randoop.types.GeneralType;
 import randoop.util.MultiMap;
 import randoop.util.predicate.AlwaysTrue;
 import randoop.util.predicate.Predicate;
@@ -311,10 +312,10 @@ public class TestClassificationTest {
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ReflectionPredicate predicate =
         new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields);
-    final List<ConcreteOperation> model = new ArrayList<>();
+    final List<TypedOperation> model = new ArrayList<>();
     TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
       @Override
-      public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
+      public void addConcreteOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
         model.add(operation);
       }
     });
@@ -328,7 +329,7 @@ public class TestClassificationTest {
     ForwardGenerator gen =
         new ForwardGenerator(
             model,
-            new LinkedHashSet<ConcreteOperation>(),
+            new LinkedHashSet<TypedOperation>(),
             GenInputsAbstract.timelimit * 1000,
             GenInputsAbstract.inputlimit,
             GenInputsAbstract.outputlimit,
@@ -338,7 +339,7 @@ public class TestClassificationTest {
     Predicate<ExecutableSequence> isOutputTest = new AlwaysTrue<>();
     gen.addTestPredicate(isOutputTest);
     TestCheckGenerator checkGenerator =
-        (new GenTests()).createTestCheckGenerator(visibility, new LinkedHashSet<ObjectContract>(), new MultiMap<ConcreteType, ConcreteOperation>(), new LinkedHashSet<ConcreteOperation>());
+        (new GenTests()).createTestCheckGenerator(visibility, new LinkedHashSet<ObjectContract>(), new MultiMap<GeneralType, TypedOperation>(), new LinkedHashSet<TypedOperation>());
     gen.addTestCheckGenerator(checkGenerator);
     gen.addExecutionVisitor(new DummyVisitor());
     return gen;
