@@ -17,7 +17,7 @@ public class GreyNode extends QuadTreeNode {
   /**
    * Compute the perimeter for a grey node using Samet's algorithm.
    *
-   * @param size the size of the image that this node represents.
+   * @param size the size of the image that this node represents
    * @return the perimeter of the image represented by this node.
    **/
   @Override

@@ -84,7 +84,7 @@ public abstract class CallableOperation implements Operation {
    * output results to specified PrintStream.
    * @param input array containing appropriate inputs to operation
    * @param out stream to output results of execution;
-   *            can be null if you don't want to print.
+   *            can be null if you don't want to print
    * @return results of executing this statement
    */
   public abstract ExecutionOutcome execute(Object[] input, PrintStream out);
@@ -93,7 +93,7 @@ public abstract class CallableOperation implements Operation {
    * Produces a Java source code representation of this statement and append it
    * to the given StringBuilder.
    *
-   * @param inputVars  the list of variables that are inputs to operation.
+   * @param inputVars  the list of variables that are inputs to operation
    * @param b  the {@link StringBuilder} to which code is added.
    */
   public abstract void appendCode(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType, List<Variable> inputVars, StringBuilder b);

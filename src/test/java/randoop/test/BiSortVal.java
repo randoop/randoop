@@ -28,7 +28,7 @@ public class BiSortVal {
   /**
    * Create a random tree of value to be sorted using the bitonic sorting algorithm.
    *
-   * @param size the number of values to create.
+   * @param size the number of values to create
    * @param seed a random number generator seed value
    * @return the root of the (sub) tree.
    **/
@@ -49,7 +49,7 @@ public class BiSortVal {
   /**
    * Perform a bitonic sort based upon the Bilardi and Nicolau algorithm.
    *
-   * @param spr_val the "spare" value in the algorithm.
+   * @param spr_val the "spare" value in the algorithm
    * @param direction the direction of the sort (forward or backward)
    * @return the new "spare" value.
    **/
@@ -73,7 +73,7 @@ public class BiSortVal {
   /**
    * Perform the merge part of the bitonic sort.  The merge part does
    * the actualy sorting.
-   * @param spr_val the "spare" value in the algorithm.
+   * @param spr_val the "spare" value in the algorithm
    * @param direction the direction of the sort (forward or backward)
    * @return the new "spare" value
    **/

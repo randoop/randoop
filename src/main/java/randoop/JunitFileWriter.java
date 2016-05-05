@@ -367,7 +367,7 @@ public class JunitFileWriter {
     /*
      * Generates names without 0-padding on counter.
      *
-     * @param prefix is a string to be used as a prefix for all names generated.
+     * @param prefix is a string to be used as a prefix for all names generated
      */
     public NameGenerator(String prefix) {
       this(prefix, 0, 0);

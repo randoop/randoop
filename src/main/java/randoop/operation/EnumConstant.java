@@ -198,8 +198,8 @@ public class EnumConstant extends CallableOperation {
    * valueOf searches the enum constant list of a class for a constant with the given name.
    * Note: cannot make this work using valueOf method of Enum due to typing.
    *
-   * @param type class that is already known to be an enum.
-   * @param valueName name for value that may be a constant of the enum.
+   * @param type class that is already known to be an enum
+   * @param valueName name for value that may be a constant of the enum
    * @return reference to actual constant value, or null if none exists in type.
    */
   private static Enum<?> valueOf(Class<?> type, String valueName) {

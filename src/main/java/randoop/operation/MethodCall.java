@@ -65,7 +65,7 @@ public final class MethodCall extends CallableOperation {
   /**
    * MethodCall creates an object corresponding to the given reflective method.
    *
-   * @param method  the reflective method object.
+   * @param method  the reflective method object
    */
   public MethodCall(Method method) {
     if (method == null) throw new IllegalArgumentException("method should not be null.");
@@ -89,7 +89,7 @@ public final class MethodCall extends CallableOperation {
    * {@inheritDoc}
    * Issues the code that corresponds to calling the method with the provided
    * {@link Variable} objects as arguments.
-   * @param inputVars is the list of actual arguments to be printed.
+   * @param inputVars is the list of actual arguments to be printed
    */
   @Override
   public void appendCode(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType, List<Variable> inputVars, StringBuilder sb) {

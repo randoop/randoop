@@ -64,10 +64,10 @@ public class Village {
    * Each village contains references to four other villages.  Users
    * specify the number of levels.
    *
-   * @param level the number of level of villages.
+   * @param level the number of level of villages
    * @param label a unique label for the village
    * @param back a link to the "parent" village
-   * @param seed the user supplied seed value.
+   * @param seed the user supplied seed value
    * @return the village that was created
    **/
   public static final Village createVillage(int level, int label, Village back, int seed) {

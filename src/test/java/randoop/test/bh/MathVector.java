@@ -94,7 +94,7 @@ public class MathVector implements Cloneable {
 
   /**
    * Subtract two vectors and the result is placed in this vector.
-   * @param u the first operand of the subtraction.
+   * @param u the first operand of the subtraction
    * @param v the second opernd of the subtraction
    **/
   public final void subtraction(MathVector u, MathVector v) {
