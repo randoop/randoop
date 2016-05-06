@@ -10,7 +10,7 @@ Randoop's documentation is in the doc/ directory.
 
   The developer's manual includes information on compiling Randoop,
   running Randoop's unit and system tests, administering the project
-  page, and an overview of Randoop's internals (userful if you want to
+  page, and an overview of Randoop's internals (useful if you want to
   modify/enhance the tool).
 
 * Javadoc is in build/docs/api/.
