@@ -1123,8 +1123,8 @@ public final class Sequence implements WeightedElement {
     if (! PrimitiveTypes.isBoxedOrPrimitiveOrStringType(c)) {
       throw new IllegalArgumentException("value is not a (boxed) primitive or String");
     }
-    GeneralType type = new PrimitiveType(c);
 
+    GeneralType type = GeneralType.forClass(c);
     if (type.isBoxedPrimitive()) {
       type = type.toPrimitive();
     }
