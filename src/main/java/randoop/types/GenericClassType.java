@@ -122,7 +122,15 @@ public class GenericClassType extends ParameterizedType {
       throw new IllegalArgumentException("substitution must be non-null");
     }
 
-    return null;
+    List<TypeArgument> argumentList = new ArrayList<>();
+    for (TypeVariable variable : parameters) {
+      ReferenceType referenceType = substitution.get(variable);
+      if (referenceType == null) {
+        throw new IllegalArgumentException("substitution has no value for variable " + variable.getName());
+      }
+      argumentList.add(new ReferenceArgument(referenceType));
+    }
+    return new InstantiatedType(this, argumentList);
   }
 
   /**
@@ -133,7 +141,7 @@ public class GenericClassType extends ParameterizedType {
    * @return a type which is this type parameterized by the given type arguments
    */
   public ParameterizedType instantiate(ReferenceType... typeArguments) {
-    if (typeArguments.length != this.getTypeArguments().size()) {
+    if (typeArguments.length != this.getTypeParameters().size()) {
       throw new IllegalArgumentException("number of arguments and parameters must match");
     }
 
@@ -248,4 +256,12 @@ public class GenericClassType extends ParameterizedType {
     return ClassOrInterfaceType.forType(superclass);
   }
 
+  @Override
+  public List<ClassOrInterfaceType> getInterfaces() {
+    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
+    for (Type type : rawType.getGenericInterfaces()) {
+      interfaces.add(ClassOrInterfaceType.forType(type));
+    }
+    return interfaces;
+  }
 }

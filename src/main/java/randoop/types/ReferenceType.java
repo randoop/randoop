@@ -20,9 +20,20 @@ public abstract class ReferenceType extends GeneralType{
     if (super.isAssignableFrom(sourceType)) {
       return true;
     }
-
+System.out.println("reference this: " + this + " source " + sourceType);
     return sourceType.isReferenceType()
             && sourceType.isSubtypeOf(this);
+  }
+
+  /**
+   * Indicates whether this type is a capture type variable as constructed by {@link InstantiatedType#applyCaptureConversion()}.
+   * A capture type variable can only occur as a type argument in an {@link InstantiatedType}
+   * constructed this way.
+   *
+   * @return true if this type is a capture type variable, false otherwise
+   */
+  public boolean isCaptureVariable() {
+    return false;
   }
 
   /**
@@ -112,4 +123,6 @@ public abstract class ReferenceType extends GeneralType{
     return ClassOrInterfaceType.forType(type);
 
   }
+
+
 }

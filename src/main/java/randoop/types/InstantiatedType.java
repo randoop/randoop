@@ -59,6 +59,26 @@ class InstantiatedType extends ParameterizedType {
     return Objects.hash(instantiatedType, argumentList);
   }
 
+  @Override
+  public boolean isAssignableFrom(GeneralType otherType) {
+    if (super.isAssignableFrom(otherType)) {
+      return true;
+    }
+
+    // unchecked conversion
+    return otherType.isRawtype()
+            && otherType.hasRuntimeClass(this.getRuntimeClass());
+  }
+
+  @Override
+  public boolean isGeneric() {
+    for (TypeArgument argument : argumentList) {
+      if (argument.isGeneric()) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   /**
    * {@inheritDoc}
@@ -94,7 +114,12 @@ class InstantiatedType extends ParameterizedType {
 
     // rawtype is a direct supertype (see JLS section 4.10.2)
     if (otherType.isRawtype()) {
-      return otherType.hasRuntimeClass(this.getRuntimeClass());
+      if (otherType.hasRuntimeClass(this.getRuntimeClass())) {
+        return true;
+      }
+
+      SimpleClassOrInterfaceType rawtype = new SimpleClassOrInterfaceType(this.getRuntimeClass());
+      return rawtype.isSubtypeOf(otherType);
     }
 
     if (!otherType.isParameterized()) {
@@ -229,7 +254,8 @@ class InstantiatedType extends ParameterizedType {
       return null;
     }
 
-    if (superclass instanceof GenericClassType) {
+    if (superclass.isGeneric()) {
+System.out.println("it this: " + this + " super: " + superclass);
       //replace type variables of superclass with type argument from this class
       // use values from this.argumentList
       Substitution<TypeArgument> substitution = Substitution.forArgs(instantiatedType.getTypeParameters(), argumentList);
@@ -245,4 +271,93 @@ class InstantiatedType extends ParameterizedType {
 
     return superclass;
   }
+
+  @Override
+  public List<ClassOrInterfaceType> getInterfaces() {
+    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
+
+    Substitution<ReferenceType> substitution = Substitution.forArgs(instantiatedType.getTypeParameters(), getReferenceArguments());
+    for (ClassOrInterfaceType type : instantiatedType.getInterfaces()) {
+      interfaces.add(type.apply(substitution));
+    }
+
+    return interfaces;
+  }
+
+  /**
+   * Constructs a capture conversion for this type.
+   * If this type has wildcard type arguments, then introduces {@link CaptureTypeVariable} for each
+   * wildcard as described in the JLS, section 5.1.10,
+   * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">Capture Conversion</a>.
+   *
+   * Based on algorithm in
+   * Mads Torgerson <i>et al.</i>
+   * "<a href="http://www.jot.fm/issues/issue_2004_12/article5.pdf">Adding Wildcards to the Java Programming Language</a>",
+   * Journal of Object Technology, 3 (December 2004) 11, 97-116. Special Issue: OOPS track at SAC 2004.
+   *
+   * If this type has no wildcards then, returns this type.
+   *
+   * @return the capture conversion type for this type
+   */
+  InstantiatedType applyCaptureConversion() {
+    if (! this.hasWildcardArgument()) {
+      return this;
+    }
+
+    List<ReferenceType> convertedTypeList = new ArrayList<>();
+    for (TypeArgument argument : argumentList) {
+      if (argument.isWildcard()) {
+        convertedTypeList.add(new CaptureTypeVariable((WildcardArgument)argument));
+      } else {
+        convertedTypeList.add(((ReferenceArgument)argument).getReferenceType());
+      }
+    }
+
+    Substitution<ReferenceType> substitution = Substitution.forArgs(instantiatedType.getTypeParameters(), convertedTypeList);
+    for (int i = 0; i < convertedTypeList.size(); i++) {
+      if (convertedTypeList.get(i).isCaptureVariable()) {
+        CaptureTypeVariable captureVariable = (CaptureTypeVariable)convertedTypeList.get(i);
+        captureVariable.convert(instantiatedType.getTypeParameters().get(i), substitution);
+      }
+    }
+
+    List<TypeArgument> converedArgumentList = new ArrayList<>();
+    for (ReferenceType type : convertedTypeList) {
+      converedArgumentList.add(new ReferenceArgument(type));
+    }
+
+    return new InstantiatedType(instantiatedType, converedArgumentList);
+  }
+
+  /**
+   * Indicates whether this type has wildcard arguments.
+   *
+   * @return true if this type has a wilcard argument, and false if there are none
+   */
+  private boolean hasWildcardArgument() {
+    for (TypeArgument argument : argumentList) {
+      if (argument.isWildcard()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Returns the list of reference type arguments of this type if there are no wildcards.
+   *
+   * @return the list of reference types that are arguments to this type
+   */
+  private List<ReferenceType> getReferenceArguments() {
+    List<ReferenceType> referenceArgList = new ArrayList<>();
+    for (TypeArgument argument : argumentList) {
+      if (! argument.isWildcard()) {
+        referenceArgList.add(((ReferenceArgument)argument).getReferenceType());
+      } else {
+        throw new IllegalArgumentException("cannot convert a wildcard to a reference type");
+      }
+    }
+    return referenceArgList;
+  }
+
 }

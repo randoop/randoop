@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 /**
  * An abstract class representing Java class or interface types as defined in the JLS.
@@ -38,38 +39,34 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return true;
     }
 
-    // minimally, underlying Class should be assignable
-    Class<?> otherRuntimeType = otherType.getRuntimeClass();
-    Class<?> thisRuntimeType = this.getRuntimeClass();
-    if (!otherRuntimeType.isAssignableFrom(thisRuntimeType)) {
-      return false;
-    }
-
-    // if other type is an interface, check interfaces first
-    if (otherRuntimeType.isInterface()) {
-      Type[] interfaces = thisRuntimeType.getGenericInterfaces();
-      for (Type t : interfaces) {
-        if (otherType.equals(GeneralType.forType(t))) {
-          return true; // found the type
+    if (otherType.isInterface()) {
+      List<ClassOrInterfaceType> interfaces = this.getInterfaces();
+      for (ClassOrInterfaceType type : interfaces) {
+        if (type.equals(otherType)) {
+          return true;
+        }
+        if (type.isSubtypeOf(otherType)) {
+          return true;
         }
       }
       return false;
     }
 
-    // otherwise, get superclass
-    Type superclass = thisRuntimeType.getGenericSuperclass();
-    if (superclass != null) {
-      GeneralType superType = GeneralType.forType(superclass);
-      if (otherType.equals(superType)) { // found the type
-        return true;
-      }
-
-      // no match yet, so check for transitive chain
-      return superType.isSubtypeOf(otherType);
-    }
-
-    return false;
+    ClassOrInterfaceType superClassType = this.getSuperclass();
+    return superClassType != null
+            && !superClassType.equals(ConcreteTypes.OBJECT_TYPE)
+            && (superClassType.equals(otherType)
+                || superClassType.isSubtypeOf(otherType));
   }
+
+  /**
+   * Returns the interface types implemented or extended by this class or interface type.
+   * Preserves the order in the reflection method {@link Class#getGenericInterfaces()}.
+   * If no interfaces are implemented/extended, then returns the empty list.
+   *
+   * @return the list of interfaces implemented or extended by this type
+   */
+  public abstract List<ClassOrInterfaceType> getInterfaces();
 
   /**
    * Translates a {@code Class} object that represents a class or interface into a
@@ -82,7 +79,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    */
   public static ClassOrInterfaceType forClass(Class<?> classType) {
     if (classType.isArray() || classType.isPrimitive()) {
-      throw new IllegalArgumentException("type must be a class or interface");
+      throw new IllegalArgumentException("type must be a class or interface, got " + classType);
     }
 
     if (classType.getTypeParameters().length > 0) {

@@ -17,7 +17,7 @@ public class ReferenceArgument extends TypeArgument {
    *
    * @param referenceType  the {@link ReferenceType}
    */
-  public ReferenceArgument(ReferenceType referenceType) {
+  ReferenceArgument(ReferenceType referenceType) {
     this.referenceType = referenceType;
   }
 
@@ -33,6 +33,11 @@ public class ReferenceArgument extends TypeArgument {
   @Override
   public int hashCode() {
     return Objects.hash(referenceType);
+  }
+
+  @Override
+  public String toString() {
+    return referenceType.toString();
   }
 
   /**
@@ -67,6 +72,9 @@ public class ReferenceArgument extends TypeArgument {
     }
   }
 
+  public boolean isCaptureVariable() {
+    return referenceType.isCaptureVariable();
+  }
   /**
    * Indicates whether a {@code ReferenceArgument} is generic.
    *

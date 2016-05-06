@@ -77,6 +77,30 @@ public class ArrayType extends ReferenceType {
 
   /**
    * {@inheritDoc}
+   * For an array type, check for assignability by reference widening.
+   * If not otherwise assignable, check for unchecked conversion:
+   * occurs when this type is
+   * <code>C&lt;T<sub>1</sub>,&hellip;,T<sub>k</sub>&gt;[]</code>
+   * and other type is
+   * <code>C[]</code> (e.g., the element type is the rawtype <code>C</code>).
+   */
+  @Override
+  public boolean isAssignableFrom(GeneralType otherType) {
+    if (super.isAssignableFrom(otherType)) {
+      return true;
+    }
+
+    if (otherType.isArray() && this.elementType.isParameterized()) {
+      GeneralType otherElementType = ((ArrayType) otherType).elementType;
+      return otherElementType.isRawtype()
+              && otherElementType.hasRuntimeClass(this.elementType.getRuntimeClass());
+    }
+
+    return false;
+  }
+
+  /**
+   * {@inheritDoc}
    * @return true if the element type is generic, false otherwise
    */
   @Override
@@ -171,11 +195,16 @@ public class ArrayType extends ReferenceType {
 
   /**
    * Creates an {@code ArrayType} for the given element type.
+   * If the element type is a type variable then creates a type with an {@link Object} array as the
+   * rawtype.
    *
    * @param elementType  the element type
    * @return an {@code ArrayType} with the given element type
    */
   public static ArrayType ofElementType(GeneralType elementType) {
+    if (elementType instanceof TypeVariable) {
+      return new ArrayType(elementType, Array.newInstance(Object.class, 0).getClass());
+    }
     return new ArrayType(elementType, Array.newInstance(elementType.getRuntimeClass(), 0).getClass());
   }
 }

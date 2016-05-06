@@ -1,5 +1,9 @@
 package randoop.types;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * {@code ConcreteSimpleType} represents an atomic concrete type: a primitive type,
  * a non-generic class, an enum, or the rawtype of a generic class.
@@ -118,7 +122,38 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
 
     // otherwise, check for boxing conversion
     return sourceType.isPrimitive()
+        && ! sourceType.isVoid()
         && this.isAssignableFrom(sourceType.toBoxedPrimitive());
+  }
+
+  @Override
+  public boolean isSubtypeOf(GeneralType otherType) {
+    if (super.isSubtypeOf(otherType)) {
+      return true;
+    }
+
+    if (otherType.isRawtype()) {
+      if (otherType.isInterface()) {
+        for (Class<?> c : runtimeClass.getInterfaces()) {
+          if (otherType.hasRuntimeClass(c)) {
+            return true;
+          }
+          SimpleClassOrInterfaceType superType = new SimpleClassOrInterfaceType(c);
+          if (superType.isSubtypeOf(otherType)) {
+            return true;
+          }
+        }
+        return false;
+      }
+
+      ClassOrInterfaceType superType = this.getSuperclass();
+      if (superType != null && ! superType.equals(ConcreteTypes.OBJECT_TYPE)) {
+        return otherType.equals(superType)
+                || superType.isSubtypeOf(otherType);
+      }
+    }
+
+    return false;
   }
 
   @Override
@@ -127,6 +162,44 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
       return this;
     }
     return new SimpleClassOrInterfaceType(this.runtimeClass.getSuperclass());
+  }
+
+  /**
+   * {@inheritDoc}
+   * If this is a rawtype then returns interfaces as rawtypes.
+   */
+  @Override
+  public List<ClassOrInterfaceType> getInterfaces() {
+    if (this.isRawtype()) {
+      return this.getRawTypeInterfaces();
+    }
+    return getGenericInterfaces();
+  }
+
+  /**
+   * Returns the list of interfaces for this class.
+   *
+   * @return the list of interfaces for this class or interface type
+   */
+  private List<ClassOrInterfaceType> getGenericInterfaces() {
+    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
+    for (Type type : runtimeClass.getGenericInterfaces()) {
+      interfaces.add(ClassOrInterfaceType.forType(type));
+    }
+    return interfaces;
+  }
+
+  /**
+   * Returns the list of rawtype interfaces for this type.
+   *
+   * @return the list of rawtypes for the interfaces of this type
+   */
+  private List<ClassOrInterfaceType> getRawTypeInterfaces() {
+    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
+    for (Class<?> c : runtimeClass.getInterfaces()) {
+      interfaces.add(new SimpleClassOrInterfaceType(c));
+    }
+    return interfaces;
   }
 
   @Override

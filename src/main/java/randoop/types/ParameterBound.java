@@ -106,4 +106,6 @@ public abstract class ParameterBound {
   }
 
   public abstract boolean isSubtypeOf(GeneralType otherType);
+
+  public abstract ParameterBound apply(Substitution<ReferenceType> substitution);
 }

@@ -65,4 +65,13 @@ public abstract class TypeArgument {
     return false;
   }
 
+  /**
+   * Indicates whether this type argument is a capture variable as the result of a capture
+   * conversion constructed by {@link InstantiatedType#applyCaptureConversion()}.
+   *
+   * @return true if this argument is a capture variable, or false otherwise
+   */
+  boolean isCaptureVariable() {
+    return false;
+  }
 }

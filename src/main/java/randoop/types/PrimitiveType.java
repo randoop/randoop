@@ -8,7 +8,7 @@ public class PrimitiveType extends GeneralType {
   private final Class<?> runtimeClass;
 
   public PrimitiveType(Class<?> runtimeClass) {
-    assert runtimeClass.isPrimitive() : "must be initialized with primitive type";
+    assert runtimeClass.isPrimitive() : "must be initialized with primitive type, got " + runtimeClass.getName();
     this.runtimeClass = runtimeClass;
   }
 
@@ -86,6 +86,11 @@ public class PrimitiveType extends GeneralType {
    */
   @Override
   public boolean isAssignableFrom(GeneralType sourceType) {
+
+    // check for void before identity: cannot assign to/from void
+    if (this.isVoid() || sourceType.isVoid()) {
+      return false;
+    }
 
     if (super.isAssignableFrom(sourceType)) {
       return true;
