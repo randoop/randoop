@@ -21,7 +21,7 @@ import java.util.Objects;
 public class Substitution <T> {
 
   /** The substitution map */
-  private Map<TypeVariable, T> map;
+  private Map<AbstractTypeVariable, T> map;
 
   /**
    * Create an empty substitution.
@@ -56,7 +56,7 @@ public class Substitution <T> {
   @Override
   public String toString() {
     List<String> pairs = new ArrayList<>();
-    for (Entry<TypeVariable, T> p : map.entrySet()) {
+    for (Entry<AbstractTypeVariable, T> p : map.entrySet()) {
       pairs.add(p.getKey().toString() + "/" + p.getValue().toString());
     }
     return "[" + UtilMDE.join(pairs, ",") + "]";
@@ -69,7 +69,7 @@ public class Substitution <T> {
    * @param typeParameter  the type variable
    * @param type  the concrete type
    */
-  private void put(TypeVariable typeParameter, T type) {
+  private void put(AbstractTypeVariable typeParameter, T type) {
     map.put(typeParameter, type);
   }
 
@@ -81,7 +81,7 @@ public class Substitution <T> {
    * @return the concrete type mapped from the variable in this substitution, or
    * null if there is no type for the variable
    */
-  public T get(TypeVariable parameter) {
+  public T get(AbstractTypeVariable parameter) {
     return map.get(parameter);
   }
 
