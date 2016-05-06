@@ -14,23 +14,23 @@ public class TypeTupleTest {
 
   @Test
   public void emptyTupleTest() {
-    ConcreteTypeTuple ct1 = new ConcreteTypeTuple();
-    ConcreteTypeTuple ct2 = new ConcreteTypeTuple(new ArrayList<ConcreteType>());
+    TypeTuple ct1 = new TypeTuple();
+    TypeTuple ct2 = new TypeTuple(new ArrayList<GeneralType>());
     assertEquals("empty tuples should be same: ", ct1, ct2);
 
-    GenericTypeTuple gt1 = new GenericTypeTuple();
-    GenericTypeTuple gt2 = new GenericTypeTuple(new ArrayList<GeneralType>());
+    TypeTuple gt1 = new TypeTuple();
+    TypeTuple gt2 = new TypeTuple(new ArrayList<GeneralType>());
     assertEquals("empty tuples should be the same: ", gt1, gt2);
 
-    assertEquals("concrete empty tuples should be the same:", ct1, gt1.makeConcrete());
+    assertEquals("concrete empty tuples should be the same:", ct1, gt1);
   }
 
   @Test
   public void singletonTest() {
-    List<ConcreteType> pl1 = new ArrayList<>();
+    List<GeneralType> pl1 = new ArrayList<>();
     pl1.add(ConcreteTypes.INT_TYPE);
-    ConcreteTypeTuple ct1 = new ConcreteTypeTuple(pl1);
-    ConcreteTypeTuple ct2 = new ConcreteTypeTuple(pl1);
+    TypeTuple ct1 = new TypeTuple(pl1);
+    TypeTuple ct2 = new TypeTuple(pl1);
     assertEquals("singletons should be same", ct1, ct2);
   }
 }

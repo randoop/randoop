@@ -5,140 +5,78 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
-
 import org.junit.Test;
 
-import randoop.types.Class1;
-import randoop.types.Class2;
-import randoop.types.ClassOrInterfaceTypeBound;
-import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeBound;
-import randoop.types.GenericClassType;
-import randoop.types.ConcreteSimpleType;
-import randoop.types.IntersectionBounds;
-import randoop.types.MutuallyRecursive1;
-import randoop.types.Parameterized1;
-import randoop.types.RandoopTypeException;
-import randoop.types.SimpleClassOrInterfaceType;
-import randoop.types.Substitution;
-import randoop.types.SupertypeOrdering;
-import randoop.types.TypeBound;
-import randoop.types.TypeParameter;
-import randoop.types.Variable1;
-import randoop.types.Variable1Ext;
-import randoop.types.Variable1Ext2;
-import randoop.types.Variable1Ext3;
-import randoop.types.Variable1Ext4;
-import randoop.types.Variable2;
+import java.util.ArrayList;
 
-public class GenericClassTypesTest {
+public class GenericTypesTest {
 
   @Test
   public void testVariableParameters() {
     Class<?> c1 = Variable1.class;
-    GenericClassType a1 = null;
+    GenericClassType a1;
     a1 = GenericClassType.forClass(c1);
     assertEquals("has one parameter", 1, a1.getTypeParameters().size());
     assertEquals(
         "the parameter has bound Object",
         new ClassOrInterfaceTypeBound(new SimpleClassOrInterfaceType(Object.class)),
         a1.getTypeParameters().get(0).getTypeBound());
-    GenericClassType a1Type = null;
-    a1Type = new GenericClassType(c1);
-    assertEquals("objects built fromClass and constructed are same", a1Type, a1);
 
-    TypeBound b1 = a1.getBounds().get(0);
-    Substitution subst =
-        Substitution.forArgs(new ArrayList<TypeParameter>());
-    try {
-      assertTrue(
-          "String satisfies bound", b1.isSatisfiedBy(new ConcreteSimpleType(String.class), subst));
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
-    }
+    ParameterBound b1 = a1.getTypeParameters().get(0).getTypeBound();
+    Substitution<ReferenceType> subst =
+        Substitution.forArgs(new ArrayList<TypeVariable>());
+    assertTrue(
+          "String satisfies bound", b1.isSatisfiedBy(new SimpleClassOrInterfaceType(String.class), subst));
 
     Class<?> c2 = Variable2.class;
-    GenericClassType a2Type = null;
-    a2Type = new GenericClassType(c2);
-    GenericClassType a2 = null;
-    try {
-      a2 = GenericClassType.forClass(c2);
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
-    }
-    assertEquals("has two bounds", 2, a2.getBounds().size());
-    for (TypeBound o : a2.getBounds()) {
+    GenericClassType a2;
+    a2 = GenericClassType.forClass(c2);
+    assertEquals("has two bounds", 2, a2.getTypeParameters().size());
+    for (TypeVariable o : a2.getTypeParameters()) {
       assertEquals(
-          "both bounds are Object", new ConcreteTypeBound(new ConcreteSimpleType(Object.class), new SupertypeOrdering()), o);
+          "both bounds are Object", new ClassOrInterfaceTypeBound(new SimpleClassOrInterfaceType(Object.class)), o.getTypeBound());
     }
-    assertEquals("objects built fromClass and constructed are same", a2Type, a2);
   }
 
   @Test
   public void testConcreteBounds() {
-    Substitution emptySubst =
-        Substitution.forArgs(new ArrayList<TypeParameter>());
+    Substitution<ReferenceType> emptySubst =
+        Substitution.forArgs(new ArrayList<TypeVariable>());
 
     Class<?> c1 = Class1.class;
-    GenericClassType a1 = null;
-    try {
-      a1 = GenericClassType.forClass(c1);
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
-    }
-    assertEquals("has one bound", 1, a1.getBounds().size());
+    GenericClassType a1;
+    a1 = GenericClassType.forClass(c1);
+    assertEquals("has one bound", 1, a1.getTypeParameters().size());
     assertEquals(
         "the bound is Number",
-        new ConcreteTypeBound(new ConcreteSimpleType(Number.class), new SupertypeOrdering()),
-        a1.getBounds().get(0));
-    GenericClassType a1Type = null;
-    a1Type = new GenericClassType(c1);
-    assertEquals("built and constructed object same", a1Type, a1);
+        new ClassOrInterfaceTypeBound(new SimpleClassOrInterfaceType(Number.class)),
+        a1.getTypeParameters().get(0).getTypeBound());
 
-    TypeBound b1 = a1.getBounds().get(0);
-    try {
-      assertTrue(
+    ParameterBound b1 = a1.getTypeParameters().get(0).getTypeBound();
+    assertTrue(
               "Integer satisfies bound Number",
-              b1.isSatisfiedBy(new ConcreteSimpleType(Integer.class), emptySubst));
-      assertFalse(
+              b1.isSatisfiedBy(new SimpleClassOrInterfaceType(Integer.class), emptySubst));
+    assertFalse(
               "String does not satisfy bound Number",
-              b1.isSatisfiedBy(new ConcreteSimpleType(String.class), emptySubst));
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
-    }
-    Class<?> c2 = Class2.class;
-    GenericClassType a2 = null;
-    try {
-      a2 = GenericClassType.forClass(c2);
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
-    }
-    assertEquals("has one bound", 1, a2.getBounds().size());
-    try {
-      assertEquals(
-          "the bound is Comparable<Integer>",
-          new ConcreteTypeBound(
-              ConcreteType.forClass(Comparable.class, new ConcreteSimpleType(Integer.class)), new SupertypeOrdering()),
-          a2.getBounds().get(0));
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
-    }
-    GenericClassType a2Type = null;
-    a2Type = new GenericClassType(c2);
-    assertEquals("objects built fromClass and constructed are same", a2Type, a2);
+              b1.isSatisfiedBy(new SimpleClassOrInterfaceType(String.class), emptySubst));
 
-    TypeBound b2 = a1.getBounds().get(0);
-    try {
-      assertTrue(
+    Class<?> c2 = Class2.class;
+    GenericClassType a2 = GenericClassType.forClass(c2);
+
+    assertEquals("has one bound", 1, a2.getTypeParameters().size());
+    assertEquals(
+          "the bound is Comparable<Integer>",
+          new ClassOrInterfaceTypeBound(
+              GenericClassType.forClass(Comparable.class).instantiate(new SimpleClassOrInterfaceType(Integer.class))),
+          a2.getTypeParameters().get(0).getTypeBound());
+
+    ParameterBound b2 = a1.getTypeParameters().get(0).getTypeBound();
+    assertTrue(
               "Integer satisfies bound Comparable<Integer>",
-              b2.isSatisfiedBy(new ConcreteSimpleType(Integer.class), emptySubst));
-      assertFalse(
+              b2.isSatisfiedBy(new SimpleClassOrInterfaceType(Integer.class), emptySubst));
+    assertFalse(
               "String does not satisfy bound Comparable<Integer>",
-              b2.isSatisfiedBy(new ConcreteSimpleType(String.class), emptySubst));
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
-    }
+              b2.isSatisfiedBy(new SimpleClassOrInterfaceType(String.class), emptySubst));
   }
 
   @Test
@@ -146,148 +84,93 @@ public class GenericClassTypesTest {
     //being lazy, rather than building substitution, use instantiate
 
     Class<?> c1 = Parameterized1.class;
-    GenericClassType a1 = null;
-    try {
-      a1 = GenericClassType.forClass(c1);
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
-    }
-    assertEquals("has one bound", 1, a1.getBounds().size());
+    GenericClassType a1 = GenericClassType.forClass(c1);
+    assertEquals("has one parameter", 1, a1.getTypeParameters().size());
 
-    ConcreteType pt = null;
     try {
-      pt = ConcreteType.forClass(Variable1Ext.class);
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
-    }
-    try {
-      ConcreteType it = a1.instantiate(pt);
+      GeneralType it = a1.instantiate(ReferenceType.forClass(Variable1Ext.class));
       assertTrue("Parameterized type bound satisfied, object instantiated", it != null);
     } catch (IllegalArgumentException e) {
-      fail("should not have gotten an exception");
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
-    }
+    fail("should not have gotten an exception");
+  }
 
-    ConcreteType pt2 = null;
-    try {
-      pt2 = ConcreteType.forClass(Integer.class);
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
-    }
+    ReferenceType pt2 = ReferenceType.forClass(Integer.class);
+
     try {
       @SuppressWarnings("unused")
-      ConcreteType ft = a1.instantiate(pt2);
+      GeneralType ft = a1.instantiate(pt2);
       fail("expected an IllegalArgumentException");
     } catch (IllegalArgumentException e) {
       assertEquals(
           "illegal argument message matches",
           "type argument does not match parameter bound",
           e.getMessage());
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
     }
 
     Class<?> c2 = IntersectionBounds.class;
-    GenericClassType a2 = null;
-    try {
-      a2 = GenericClassType.forClass(c2);
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
-    }
-    assertEquals("has one bound", 1, a2.getBounds().size());
+    GenericClassType a2 = GenericClassType.forClass(c2);
+    assertEquals("has one parameter", 1, a2.getTypeParameters().size());
 
-    ConcreteType pt3 = null;
+    ReferenceType pt3 = ReferenceType.forClass(Variable1Ext2.class);
     try {
-      pt3 = ConcreteType.forClass(Variable1Ext2.class);
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
-    }
-    try {
-      ConcreteType it2 = a2.instantiate(pt3);
+      GeneralType it2 = a2.instantiate(pt3);
       assertTrue("Intersection bound satisfied", it2 != null);
     } catch (IllegalArgumentException e) {
       fail("should not have gotten an exception");
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
     }
 
     try {
       @SuppressWarnings("unused")
-      ConcreteType ft2 = a2.instantiate(pt);
+      GeneralType ft2 = a2.instantiate(ReferenceType.forClass(Variable1Ext.class));
       fail("expected an IllegalArgumentException");
     } catch (IllegalArgumentException e) {
       assertEquals(
           "illegal argument message matches",
           "type argument does not match parameter bound",
           e.getMessage());
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
     }
 
     Class<?> c3 = MutuallyRecursive1.class;
-    GenericClassType a3 = null;
-    try {
-      a3 = GenericClassType.forClass(c3);
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
-    }
-    assertEquals("has two bounds", 2, a3.getBounds().size());
+    GenericClassType a3 = GenericClassType.forClass(c3);
+    assertEquals("has two parameter", 2, a3.getTypeParameters().size());
 
-    ConcreteType pt4 = null;
+    ReferenceType pt4 = ReferenceType.forClass(Variable1Ext3.class);
+    ReferenceType pt5 = ReferenceType.forClass(Variable1Ext4.class);
+
     try {
-      pt4 = ConcreteType.forClass(Variable1Ext3.class);
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
-    }
-    ConcreteType pt5 = null;
-    try {
-      pt5 = ConcreteType.forClass(Variable1Ext4.class);
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
-    }
-    try {
-      ConcreteType it3 = a3.instantiate(pt4, pt5);
+      GeneralType it3 = a3.instantiate(pt4, pt5);
       assertTrue("should have instantiated OK", it3 != null);
     } catch (IllegalArgumentException e) {
       fail("should not have gotten exception");
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
     }
 
     try {
-      ConcreteType it4 = a3.instantiate(pt5, pt4);
+      GeneralType it4 = a3.instantiate(pt5, pt4);
       assertTrue("should have instantiated OK", it4 != null);
     } catch (IllegalArgumentException e) {
       fail("should not have gotten exception");
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
     }
 
     try {
       @SuppressWarnings("unused")
-      ConcreteType ft3 = a3.instantiate(pt, pt5);
+      GeneralType ft3 = a3.instantiate(ReferenceType.forClass(Variable1Ext.class), pt5);
       fail("expected an IllegalArgumentException");
     } catch (IllegalArgumentException e) {
       assertEquals(
           "illegal argument message matches",
           "type argument does not match parameter bound",
           e.getMessage());
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
     }
 
     try {
       @SuppressWarnings("unused")
-      ConcreteType ft4 = a3.instantiate(pt);
+      GeneralType ft4 = a3.instantiate(ReferenceType.forClass(Variable1Ext.class));
       fail("expected an IllegalArgumentException");
     } catch (IllegalArgumentException e) {
       assertEquals(
           "illegal argument message matches",
           "number of parameters and arguments must agree",
           e.getMessage());
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
     }
   }
 }
