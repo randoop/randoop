@@ -7,7 +7,7 @@ import java.util.Objects;
  * Represents a type variable used by itself as a type.
  * (See JLS, section 4.3)
  */
-public class TypeVariable extends ReferenceType {
+public class TypeVariable extends AbstractTypeVariable {
 
   /** the type parameter */
   private final java.lang.reflect.TypeVariable<?> variable;
@@ -36,7 +36,7 @@ public class TypeVariable extends ReferenceType {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof TypeVariable)) {
-      return false;
+      return isAssignableFrom(null);
     }
     TypeVariable t = (TypeVariable) obj;
     return variable.equals(t.variable);
@@ -52,15 +52,6 @@ public class TypeVariable extends ReferenceType {
     return variable.toString();
   }
 
-  @Override
-  public ReferenceType apply(Substitution<ReferenceType> substitution) {
-    ReferenceType type = substitution.get(this);
-    if (type != null) {
-      return type;
-    }
-    return this;
-  }
-
   /**
    * {@inheritDoc}
    * @return name of type parameter of this type
@@ -71,14 +62,8 @@ public class TypeVariable extends ReferenceType {
   }
 
   @Override
-  public boolean isAssignableFrom(GeneralType sourceType) {
-    return false;
-  }
-
-  @Override
-  public boolean isSubtypeOf(GeneralType otherType) {
-    return super.isSubtypeOf(otherType)
-            || typeBound.isSubtypeOf(otherType);
+  public boolean isGeneric() {
+    return true;
   }
 
   public ParameterBound getTypeBound() {
