@@ -93,7 +93,7 @@ public class TypedOperationManager {
    *
    * @param declaringType  the declaring type for the operation
    * @param genericParameterTypes  the array of reflective generic parameter types of the operation
-   * @return the input tuple for the given types and type variables.
+   * @return the input tuple for the given types and type variables
    */
   GenericTypeTuple getInputTypes(GeneralType declaringType, Type[] genericParameterTypes) throws RandoopTypeException {
     List<GeneralType> paramTypes = new ArrayList<>();

@@ -146,7 +146,7 @@ public final class ArrayCreation extends CallableOperation {
    *
    * Example: int[3]
    *
-   * @return string descriptor for array creation.
+   * @return string descriptor for array creation
    */
   @Override
   public String toParseableString(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {

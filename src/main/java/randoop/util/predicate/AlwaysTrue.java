@@ -32,7 +32,7 @@ public class AlwaysTrue<T> extends DefaultPredicate<T> {
    * {@inheritDoc}
    *
    * @return the second predicate, since the other predicate must be true for
-   *         the and-also to be true.
+   *         the and-also to be true
    */
   @Override
   public Predicate<T> and(Predicate<T> p) {

@@ -15,7 +15,7 @@ public class PublicVisibilityPredicate implements VisibilityPredicate {
   /**
    * {@inheritDoc}
    *
-   * @return true if class is declared public, false otherwise.
+   * @return true if class is declared public, false otherwise
    */
   @Override
   public boolean isVisible(Class<?> c) {
@@ -25,7 +25,7 @@ public class PublicVisibilityPredicate implements VisibilityPredicate {
   /**
    * {@inheritDoc}
    *
-   * @return true if method is declared public, false otherwise.
+   * @return true if method is declared public, false otherwise
    */
   @Override
   public boolean isVisible(Method m) {
@@ -35,7 +35,7 @@ public class PublicVisibilityPredicate implements VisibilityPredicate {
   /**
    * {@inheritDoc}
    *
-   * @return true if constructor is declared public, false otherwise.
+   * @return true if constructor is declared public, false otherwise
    */
   @Override
   public boolean isVisible(Constructor<?> c) {
@@ -45,7 +45,7 @@ public class PublicVisibilityPredicate implements VisibilityPredicate {
   /**
    * {@inheritDoc}
    *
-   * @return true if field is declared public, false otherwise.
+   * @return true if field is declared public, false otherwise
    */
   @Override
   public boolean isVisible(Field f) {

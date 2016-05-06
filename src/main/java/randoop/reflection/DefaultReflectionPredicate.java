@@ -287,7 +287,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * @param f
    *          field to test
    * @return true if field name does not occur in omitFields pattern, and false
-   *         if it does.
+   *         if it does
    */
   @Override
   public boolean test(Field f) {

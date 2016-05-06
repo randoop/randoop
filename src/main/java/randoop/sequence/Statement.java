@@ -58,7 +58,7 @@ public final class Statement {
   /**
    * True iff this statement is a void method call.
    *
-   * @return true if output type is void.
+   * @return true if output type is void
    */
   boolean isVoidMethodCall() {
     return operation.isMethodCall() && operation.getOutputType().isVoid();
@@ -68,7 +68,7 @@ public final class Statement {
    * equals tests whether two Statement objects are equal:
    *
    * @return true if operation is the same, the number of inputs is the same,
-   *         and inputs are equal.
+   *         and inputs are equal
    */
   @Override
   public boolean equals(Object obj) {
@@ -156,7 +156,7 @@ public final class Statement {
    *          mutable version of variable inputs to statement.
    * @param mVariable
    *          the mutable variable the statement affects
-   * @return instance of mutable statement corresponding to this statement.
+   * @return instance of mutable statement corresponding to this statement
    */
   MutableStatement toModifiableStatement(
           List<MutableVariable> inputs, MutableVariable mVariable) {
@@ -167,7 +167,7 @@ public final class Statement {
    * isStatic indicates whether the corresponding operation is declared as
    * static.
    *
-   * @return result of isStatic on operation corresponding to statement.
+   * @return result of isStatic on operation corresponding to statement
    */
   public boolean isStatic() {
     return operation.isStatic();
@@ -179,7 +179,7 @@ public final class Statement {
    * assignment/initialization involving a method call, or the use of a public
    * field in an assignment on either lhs (as "setter") or rhs (as "getter").
    *
-   * @return true if operation is method-call-like, and false otherwise.
+   * @return true if operation is method-call-like, and false otherwise
    */
   public boolean isMethodCall() {
     return operation.isMessage();
@@ -193,7 +193,7 @@ public final class Statement {
    *          list of objects to use as inputs to execution.
    * @param out
    *          stream for any output.
-   * @return object representing outcome of computation.
+   * @return object representing outcome of computation
    */
   public ExecutionOutcome execute(Object[] inputs, PrintStream out) {
     return operation.execute(inputs, out);
@@ -203,7 +203,7 @@ public final class Statement {
    * getDeclaringClass returns the declaring class as defined by the
    * {@link Operation} of the statement.
    *
-   * @return result of getDeclaringClass for corresponding statement.
+   * @return result of getDeclaringClass for corresponding statement
    */
   public ConcreteType getDeclaringClass() {
     return operation.getDeclaringType();
@@ -213,7 +213,7 @@ public final class Statement {
    * isConstructorCall determines if operation for statement is a call to a
    * constructor.
    *
-   * @return true if operation is a constructor call, and false otherwise.
+   * @return true if operation is a constructor call, and false otherwise
    */
   public boolean isConstructorCall() {
     return operation.isConstructorCall();
@@ -222,7 +222,7 @@ public final class Statement {
   /**
    * isPrimitiveInitialization determines if operation is a nonreceiver term.
    *
-   * @return true if operation is a nonreceiver, and false otherwise.
+   * @return true if operation is a nonreceiver, and false otherwise
    */
   public boolean isPrimitiveInitialization() {
     return operation.isNonreceivingValue();
@@ -233,7 +233,7 @@ public final class Statement {
    * null value.
    *
    * @return true if statement represents null initialization, and false
-   *         otherwise.
+   *         otherwise
    */
   public boolean isNullInitialization() {
     return isPrimitiveInitialization() && operation.getValue() == null;
@@ -277,7 +277,7 @@ public final class Statement {
    * generators. This should go away. Only intended to be called by
    * {@link Sequence#extend(ConcreteOperation, List)}.
    *
-   * @return operation object in the statement.
+   * @return operation object in the statement
    */
   // TODO can remove once RandomWalkGenerator.extendRandomly and
   // SequenceSimplifyUtils.makeCopy modified

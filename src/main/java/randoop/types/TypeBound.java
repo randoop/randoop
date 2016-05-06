@@ -110,7 +110,7 @@ public abstract class TypeBound {
    * closer to the bound.
    * The returned value should not be used to test satisfiability of the bound.
    *
-   * @return the runtime class for this type bound.
+   * @return the runtime class for this type bound
    */
   public Class<?> getRuntimeClass() {
     return null;

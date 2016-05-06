@@ -198,8 +198,8 @@ public class MutableSequence {
    *          The index at which to insert the given sequence.
    * @param seq
    *          The sequence to insert.
-   * @return A mapping from variables in the parameter sequence to their
-   *         corresponding variables in this sequence.
+   * @return a mapping from variables in the parameter sequence to their
+   *         corresponding variables in this sequence
    */
   public Map<MutableVariable, MutableVariable> insert(int index, MutableSequence seq) {
     if (seq == null) {

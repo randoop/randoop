@@ -99,7 +99,7 @@ public class GenericOperation extends TypedOperation<CallableOperation> {
    * Returns the class in which the operation is defined, or, if the operation
    * represents a value, the type of the value.
    *
-   * @return class to which the operation belongs.
+   * @return class to which the operation belongs
    */
   public GeneralType getDeclaringType() {
     return declaringType;

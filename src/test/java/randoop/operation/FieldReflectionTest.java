@@ -194,8 +194,8 @@ public class FieldReflectionTest {
    * Looks at modifiers to decide which kind of field wrapper
    * to create and then builds list with getter and setter.
    *
-   * @param f - reflective Field object
-   * @return List of getter/setter statements for the field
+   * @param f reflective Field object
+   * @return a list of getter/setter statements for the field
    */
   private List<ConcreteOperation> getOperations(Field f, ConcreteType declaringType) throws RandoopTypeException {
     List<ConcreteOperation> statements = new ArrayList<>();

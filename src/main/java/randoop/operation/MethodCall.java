@@ -184,7 +184,7 @@ public final class MethodCall extends CallableOperation {
 
   /**
    * {@inheritDoc}
-   * @return true if this method is static, and false otherwise.
+   * @return true if this method is static, and false otherwise
    */
   @Override
   public boolean isStatic() {
@@ -317,7 +317,7 @@ public final class MethodCall extends CallableOperation {
    * Determines whether enclosed {@link Method} satisfies the given predicate.
    *
    * @param predicate the {@link ReflectionPredicate} to be checked.
-   * @return true only if the method in this object satisfies the canUse(Method) of predicate.
+   * @return true only if the method in this object satisfies the canUse(Method) of predicate
    */
   @Override
   public boolean satisfies(ReflectionPredicate predicate) {

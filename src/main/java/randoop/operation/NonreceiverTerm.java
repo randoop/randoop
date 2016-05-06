@@ -161,7 +161,7 @@ public final class NonreceiverTerm extends CallableOperation {
   }
 
   /**
-   * @return Returns the type.
+   * @return the type
    */
   public ConcreteType getType() {
     return this.type;
@@ -228,7 +228,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * Note that a string type can be given as both "String" or
    * "java.lang.String".
    *
-   * @return string representation of primitive, String or null value.
+   * @return string representation of primitive, String or null value
    */
   @Override
   public String toParseableString(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
@@ -467,7 +467,7 @@ public final class NonreceiverTerm extends CallableOperation {
   /**
    * {@inheritDoc}
    *
-   * @return true, since all of objects are non-receivers.
+   * @return true, since all of objects are non-receivers
    */
   @Override
   public boolean isNonreceivingValue() {

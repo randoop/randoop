@@ -51,7 +51,7 @@ public class FieldGet extends CallableOperation {
    *
    * @param statementInput  the inputs for statement
    * @param out  the stream for printing output (unused)
-   * @return outcome of access.
+   * @return outcome of access
    * @throws BugInRandoopException
    *           if field access throws bug exception.
    */
@@ -180,7 +180,7 @@ public class FieldGet extends CallableOperation {
   /**
    * {@inheritDoc}
    *
-   * @return true, always.
+   * @return true, always
    */
   @Override
   public boolean isMessage() {

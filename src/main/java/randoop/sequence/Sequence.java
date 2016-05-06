@@ -820,7 +820,7 @@ public final class Sequence implements WeightedElement {
    *
    * @param v
    *          the {@link Variable} to test.
-   * @return true if this object defines the variable, and false otherwise.
+   * @return true if this object defines the variable, and false otherwise
    */
   public boolean isOwnerOf(Variable v) {
     return this == v.sequence;
@@ -838,7 +838,7 @@ public final class Sequence implements WeightedElement {
    * See the parse(List) for the required format of a String
    * representing a Sequence.
    *
-   * @return parseable string description of sequence.
+   * @return parseable string description of sequence
    */
   public String toParseableString() {
     return toParseableString(Globals.lineSep);

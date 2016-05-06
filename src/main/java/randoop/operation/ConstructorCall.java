@@ -159,7 +159,7 @@ public final class ConstructorCall extends CallableOperation {
    * @param o
    *          an object
    * @return true if o is a ConstructorCall referring to same constructor
-   *         object; false otherwise.
+   *         object; false otherwise
    */
   @Override
   public boolean equals(Object o) {
@@ -225,7 +225,7 @@ public final class ConstructorCall extends CallableOperation {
    *
    * @see #parse(String, TypedOperationManager)
    *
-   * @return signature string for constructor.
+   * @return signature string for constructor
    */
   @Override
   public String toParseableString(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {

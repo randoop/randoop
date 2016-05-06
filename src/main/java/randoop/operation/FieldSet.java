@@ -65,7 +65,7 @@ public class FieldSet extends CallableOperation {
    * @param out
    *          the stream for printing output (unused).
    * @return outcome of access, either void normal execution or captured
-   *         exception.
+   *         exception
    * @throws BugInRandoopException
    *           if field access throws bug exception.
    */
@@ -133,7 +133,7 @@ public class FieldSet extends CallableOperation {
   /**
    * Returns the string descriptor for field that can be parsed by
    *
-   * @return the parseable string descriptor for this setter.
+   * @return the parseable string descriptor for this setter
    */
   @Override
   public String toParseableString(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {

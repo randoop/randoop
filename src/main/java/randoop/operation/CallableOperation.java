@@ -57,7 +57,7 @@ public abstract class CallableOperation implements Operation {
    *          the {@link Operation} to compare with this operation
    * @return value &lt; 0 if this parsable string is less than for op, 0 if the
    *         strings are equal, and &gt; 0 if string for this object greater
-   *         than for op.
+   *         than for op
    */
   @Override
   public int compareTo(Operation op) {
@@ -71,7 +71,7 @@ public abstract class CallableOperation implements Operation {
    *
    * @param predicate
    *          {@link ReflectionPredicate} against which object to be checked.
-   * @return false as there is no object to check.
+   * @return false as there is no object to check
    */
   @Override
   public boolean satisfies(ReflectionPredicate predicate) {

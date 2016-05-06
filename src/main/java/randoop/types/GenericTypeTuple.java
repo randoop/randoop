@@ -56,7 +56,7 @@ public class GenericTypeTuple implements GeneralTypeTuple {
    * Return the number of components in this tuple.
    *
    *
-   * @return the number of components in this tuple.
+   * @return the number of components in this tuple
    */
   @Override
   public int size() {
