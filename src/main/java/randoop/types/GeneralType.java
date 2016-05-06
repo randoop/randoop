@@ -86,8 +86,7 @@ public abstract class GeneralType {
       throw new IllegalArgumentException("source type may not be null");
     }
 
-    // check for void before identity: cannot assign to/from void
-    if (this.isVoid() || sourceType.isVoid()) {
+    if (sourceType.isVoid()) {
       return false;
     }
 
@@ -201,7 +200,7 @@ public abstract class GeneralType {
    * @return true if this type is void, false otherwise
    */
   public boolean isVoid() {
-    return false;
+    return this.equals(ConcreteTypes.VOID_TYPE);
   }
 
   /**
@@ -298,7 +297,7 @@ public abstract class GeneralType {
    * @return the type object for the type with the name, null if none is found
    * @throws ClassNotFoundException if name is not a recognized type
    */
-  public static GeneralType forName(String typeName) throws ClassNotFoundException, RandoopTypeException {
+  public static GeneralType forName(String typeName) throws ClassNotFoundException {
     Class<?> c = PrimitiveTypes.getClassForName(typeName);
     if (c == null) {
       c = Class.forName(typeName);
@@ -330,6 +329,10 @@ public abstract class GeneralType {
 
     if (type instanceof WildcardType) {
       throw new IllegalArgumentException("Cannot construct type for wildcard " + type);
+    }
+
+    if (type instanceof Class<?>) {
+      return GeneralType.forClass((Class<?>)type);
     }
 
     return ReferenceType.forType(type);

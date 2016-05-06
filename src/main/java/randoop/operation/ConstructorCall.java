@@ -266,9 +266,6 @@ public final class ConstructorCall extends CallableOperation {
     } catch (ClassNotFoundException e) {
       String msg = "Class for constructor " + constructorString + " not found: " + e;
       throw new OperationParseException(msg);
-    } catch (RandoopTypeException e) {
-      String msg = "Type error for constructor " + constructorString + ": " + e.getMessage();
-      throw new OperationParseException(msg);
     }
 
     Class<?>[] typeArguments = TypeArguments.getTypeArgumentsForString(arguments);

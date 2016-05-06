@@ -150,9 +150,6 @@ public class EnumConstant extends CallableOperation {
       } catch (ClassNotFoundException e) {
         String msg = errorPrefix + " The type given \"" + typeName + "\" was not recognized.";
         throw new OperationParseException(msg);
-      } catch (RandoopTypeException e) {
-        String msg = errorPrefix + " Type error for type " + typeName + ": " + e.getMessage();
-        throw new OperationParseException(msg);
       }
       if (!declaringType.isEnum()) {
         String msg = errorPrefix + " The type given \"" + typeName + "\" is not an enum.";

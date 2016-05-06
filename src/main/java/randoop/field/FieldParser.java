@@ -21,9 +21,6 @@ public class FieldParser {
     } catch (ClassNotFoundException e) {
       String msg = errorPrefix + " Class for field " + descr + " not found: " + e.getMessage();
       throw new OperationParseException(msg);
-    } catch (RandoopTypeException e) {
-      String msg = errorPrefix + " Type error: " + e.getMessage();
-      throw new OperationParseException(msg);
     }
 
     String whitespacePattern = ".*\\s+.*";

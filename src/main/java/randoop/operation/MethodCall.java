@@ -239,9 +239,6 @@ public final class MethodCall extends CallableOperation {
     } catch (ClassNotFoundException e) {
       String msg = "Class for method " + methodString + " not found: " + e;
       throw new OperationParseException(msg);
-    } catch (RandoopTypeException e) {
-      String msg = "Type error for method class: " + e.getMessage();
-      throw new OperationParseException(msg);
     }
 
     System.out.println("Looking for: " + opname + " args: " + arguments);

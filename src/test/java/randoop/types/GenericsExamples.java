@@ -1,4 +1,4 @@
-package randoop.types.generics;
+package randoop.types;
 
 class Variable1<T> {}
 

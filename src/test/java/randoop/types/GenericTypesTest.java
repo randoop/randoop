@@ -1,4 +1,4 @@
-package randoop.types.generics;
+package randoop.types;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -9,34 +9,42 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import randoop.types.Class1;
+import randoop.types.Class2;
+import randoop.types.ClassOrInterfaceTypeBound;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypeBound;
 import randoop.types.GenericClassType;
-import randoop.types.GenericType;
 import randoop.types.ConcreteSimpleType;
+import randoop.types.IntersectionBounds;
+import randoop.types.MutuallyRecursive1;
+import randoop.types.Parameterized1;
 import randoop.types.RandoopTypeException;
+import randoop.types.SimpleClassOrInterfaceType;
 import randoop.types.Substitution;
 import randoop.types.SupertypeOrdering;
 import randoop.types.TypeBound;
 import randoop.types.TypeParameter;
+import randoop.types.Variable1;
+import randoop.types.Variable1Ext;
+import randoop.types.Variable1Ext2;
+import randoop.types.Variable1Ext3;
+import randoop.types.Variable1Ext4;
+import randoop.types.Variable2;
 
-public class GenericTypesTest {
+public class GenericClassTypesTest {
 
   @Test
   public void testVariableParameters() {
     Class<?> c1 = Variable1.class;
-    GenericType a1 = null;
-    try {
-      a1 = GenericType.forClass(c1);
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
-    }
-    assertEquals("has one bound", 1, a1.getBounds().size());
+    GenericClassType a1 = null;
+    a1 = GenericClassType.forClass(c1);
+    assertEquals("has one parameter", 1, a1.getTypeParameters().size());
     assertEquals(
-        "the bound is Object",
-        new ConcreteTypeBound(new ConcreteSimpleType(Object.class), new SupertypeOrdering()),
-        a1.getBounds().get(0));
-    GenericType a1Type = null;
+        "the parameter has bound Object",
+        new ClassOrInterfaceTypeBound(new SimpleClassOrInterfaceType(Object.class)),
+        a1.getTypeParameters().get(0).getTypeBound());
+    GenericClassType a1Type = null;
     a1Type = new GenericClassType(c1);
     assertEquals("objects built fromClass and constructed are same", a1Type, a1);
 
@@ -51,11 +59,11 @@ public class GenericTypesTest {
     }
 
     Class<?> c2 = Variable2.class;
-    GenericType a2Type = null;
+    GenericClassType a2Type = null;
     a2Type = new GenericClassType(c2);
-    GenericType a2 = null;
+    GenericClassType a2 = null;
     try {
-      a2 = GenericType.forClass(c2);
+      a2 = GenericClassType.forClass(c2);
     } catch (RandoopTypeException e) {
       fail("type error: " + e.getMessage());
     }
@@ -73,9 +81,9 @@ public class GenericTypesTest {
         Substitution.forArgs(new ArrayList<TypeParameter>());
 
     Class<?> c1 = Class1.class;
-    GenericType a1 = null;
+    GenericClassType a1 = null;
     try {
-      a1 = GenericType.forClass(c1);
+      a1 = GenericClassType.forClass(c1);
     } catch (RandoopTypeException e) {
       fail("type error: " + e.getMessage());
     }
@@ -84,7 +92,7 @@ public class GenericTypesTest {
         "the bound is Number",
         new ConcreteTypeBound(new ConcreteSimpleType(Number.class), new SupertypeOrdering()),
         a1.getBounds().get(0));
-    GenericType a1Type = null;
+    GenericClassType a1Type = null;
     a1Type = new GenericClassType(c1);
     assertEquals("built and constructed object same", a1Type, a1);
 
@@ -100,9 +108,9 @@ public class GenericTypesTest {
       fail("type error: " + e.getMessage());
     }
     Class<?> c2 = Class2.class;
-    GenericType a2 = null;
+    GenericClassType a2 = null;
     try {
-      a2 = GenericType.forClass(c2);
+      a2 = GenericClassType.forClass(c2);
     } catch (RandoopTypeException e) {
       fail("type error: " + e.getMessage());
     }
@@ -116,7 +124,7 @@ public class GenericTypesTest {
     } catch (RandoopTypeException e) {
       fail("type error: " + e.getMessage());
     }
-    GenericType a2Type = null;
+    GenericClassType a2Type = null;
     a2Type = new GenericClassType(c2);
     assertEquals("objects built fromClass and constructed are same", a2Type, a2);
 
@@ -138,9 +146,9 @@ public class GenericTypesTest {
     //being lazy, rather than building substitution, use instantiate
 
     Class<?> c1 = Parameterized1.class;
-    GenericType a1 = null;
+    GenericClassType a1 = null;
     try {
-      a1 = GenericType.forClass(c1);
+      a1 = GenericClassType.forClass(c1);
     } catch (RandoopTypeException e) {
       fail("type error: " + e.getMessage());
     }
@@ -181,9 +189,9 @@ public class GenericTypesTest {
     }
 
     Class<?> c2 = IntersectionBounds.class;
-    GenericType a2 = null;
+    GenericClassType a2 = null;
     try {
-      a2 = GenericType.forClass(c2);
+      a2 = GenericClassType.forClass(c2);
     } catch (RandoopTypeException e) {
       fail("type error: " + e.getMessage());
     }
@@ -218,9 +226,9 @@ public class GenericTypesTest {
     }
 
     Class<?> c3 = MutuallyRecursive1.class;
-    GenericType a3 = null;
+    GenericClassType a3 = null;
     try {
-      a3 = GenericType.forClass(c3);
+      a3 = GenericClassType.forClass(c3);
     } catch (RandoopTypeException e) {
       fail("type error: " + e.getMessage());
     }

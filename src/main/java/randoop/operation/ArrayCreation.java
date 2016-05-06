@@ -177,8 +177,6 @@ public final class ArrayCreation extends CallableOperation {
       elementType = GeneralType.forName(elementTypeName);
     } catch (ClassNotFoundException e) {
       throw new OperationParseException("Type not found for array element type " + elementTypeName);
-    } catch (RandoopTypeException e) {
-      throw new OperationParseException("Type error for array element type " + elementTypeName + ": " + e.getMessage());
     }
 
     if (elementType.isGeneric()) {

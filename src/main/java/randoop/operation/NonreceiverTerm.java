@@ -299,9 +299,6 @@ public final class NonreceiverTerm extends CallableOperation {
               + typeString
               + "\") was unrecognized.";
       throw new OperationParseException(msg);
-    } catch (RandoopTypeException e) {
-      String msg = "Error when parsing type/value pair " + s + ". Type error: " + e.getMessage();
-      throw new OperationParseException(msg);
     }
 
     Object value;
