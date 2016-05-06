@@ -1,27 +1,24 @@
 package randoop.test;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.junit.Test;
-
 import randoop.TestValue;
 import randoop.generation.SeedSequences;
-import randoop.operation.ConcreteOperation;
-import randoop.reflection.DefaultReflectionPredicate;
+import randoop.operation.TypedOperation;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.TestValueExtractor;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
-import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypes;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class SeedSequencesTests {
 
@@ -99,11 +96,11 @@ public class SeedSequencesTests {
                 new Object[] {
                   0, 1, 2, 3, "hi", false, (byte) 3, 'c', 3L, (float) 1.3, 1.4
                 }));
-    expected.add(new Sequence().extend(ConcreteOperation.createNullOrZeroInitializationForType(ConcreteTypes.STRING_TYPE), new ArrayList<Variable>()));
+    expected.add(new Sequence().extend(TypedOperation.createNullOrZeroInitializationForType(ConcreteTypes.STRING_TYPE), new ArrayList<Variable>()));
     assertEquals(expected, s4);
   }
 
-  public static class TestValueExamples {
+  static class TestValueExamples {
     @TestValue public static int x1 = 0;
     @TestValue public static boolean b = false;
     @TestValue public static byte by = 3;

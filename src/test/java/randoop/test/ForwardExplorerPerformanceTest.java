@@ -9,14 +9,14 @@ import plume.EntryReader;
 import randoop.Globals;
 import randoop.generation.ForwardGenerator;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.ConcreteOperation;
+import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.ModelCollections;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.TypedOperationManager;
-import randoop.types.ConcreteType;
+import randoop.types.ClassOrInterfaceType;
 import randoop.util.Timer;
 
 import junit.framework.TestCase;
@@ -45,10 +45,10 @@ public class ForwardExplorerPerformanceTest extends TestCase {
 
     String resourcename = "java.util.classlist.java1.6.txt";
 
-    final List<ConcreteOperation> model = new ArrayList<>();
+    final List<TypedOperation> model = new ArrayList<>();
     TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
       @Override
-      public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
+      public void addConcreteOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
         model.add(operation);
       }
     });
@@ -70,7 +70,7 @@ public class ForwardExplorerPerformanceTest extends TestCase {
     GenInputsAbstract.debug_checks = false;
     ForwardGenerator explorer =
         new ForwardGenerator(
-            model, new LinkedHashSet<ConcreteOperation>(), TIME_LIMIT_SECS * 1000, Integer.MAX_VALUE, Integer.MAX_VALUE, null, null, null);
+            model, new LinkedHashSet<TypedOperation>(), TIME_LIMIT_SECS * 1000, Integer.MAX_VALUE, Integer.MAX_VALUE, null, null, null);
     System.out.println("" + Globals.lineSep + "Will explore for " + TIME_LIMIT_SECS + " seconds.");
     explorer.explore();
     System.out.println(

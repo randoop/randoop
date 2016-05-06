@@ -13,7 +13,7 @@ import randoop.generation.ForwardGenerator;
 import randoop.generation.SeedSequences;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
-import randoop.operation.ConcreteOperation;
+import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.ModelCollections;
 import randoop.reflection.OperationExtractor;
@@ -23,7 +23,8 @@ import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Sequence;
 import randoop.test.treeadd.TreeAdd;
 import randoop.test.treeadd.TreeNode;
-import randoop.types.ConcreteType;
+import randoop.types.ClassOrInterfaceType;
+import randoop.types.GeneralType;
 import randoop.util.MultiMap;
 
 import static org.junit.Assert.assertTrue;
@@ -45,10 +46,10 @@ public class ForwardExplorerTests2  {
     System.out.println(classes);
 
     //SimpleExplorer exp = new SimpleExplorer(classes, Long.MAX_VALUE, 100);
-    List<ConcreteOperation> model = getConcreteOperations(classes);
+    List<TypedOperation> model = getConcreteOperations(classes);
     assertTrue("model should not be empty", model.size() != 0);
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
-    ForwardGenerator exp = new ForwardGenerator(model, new LinkedHashSet<ConcreteOperation>(), Long.MAX_VALUE, 100, 100, mgr, null, null);
+    ForwardGenerator exp = new ForwardGenerator(model, new LinkedHashSet<TypedOperation>(), Long.MAX_VALUE, 100, 100, mgr, null, null);
     exp.addTestCheckGenerator(createChecker(new LinkedHashSet<ObjectContract>()));
     GenInputsAbstract.null_ratio = 0.5; //.forbid_null = false;
     exp.explore();
@@ -57,11 +58,11 @@ public class ForwardExplorerTests2  {
     }
   }
 
-  private static List<ConcreteOperation> getConcreteOperations(List<Class<?>> classes) {
-    final List<ConcreteOperation> model = new ArrayList<>();
+  private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
+    final List<TypedOperation> model = new ArrayList<>();
     TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
       @Override
-      public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
+      public void addConcreteOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
         model.add(operation);
       }
     });
@@ -74,6 +75,6 @@ public class ForwardExplorerTests2  {
   }
 
   private static TestCheckGenerator createChecker(Set<ObjectContract> contracts) {
-    return (new GenTests()).createTestCheckGenerator(new PublicVisibilityPredicate(), contracts, new MultiMap<ConcreteType, ConcreteOperation>(), new LinkedHashSet<ConcreteOperation>());
+    return (new GenTests()).createTestCheckGenerator(new PublicVisibilityPredicate(), contracts, new MultiMap<GeneralType, TypedOperation>(), new LinkedHashSet<TypedOperation>());
   }
 }

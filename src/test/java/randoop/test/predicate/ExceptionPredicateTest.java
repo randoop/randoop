@@ -1,31 +1,33 @@
 package randoop.test.predicate;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import randoop.DummyVisitor;
 import randoop.ExceptionalExecution;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
-import randoop.operation.ConcreteOperation;
 import randoop.operation.ConstructorCall;
+import randoop.operation.TypedClassOperation;
+import randoop.operation.TypedOperation;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 import randoop.test.DummyCheckGenerator;
-import randoop.types.ConcreteSimpleType;
-import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeTuple;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
+import randoop.types.GeneralType;
+import randoop.types.SimpleClassOrInterfaceType;
+import randoop.types.TypeTuple;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Tests to check whether exception predicates are acting as expected.
@@ -80,17 +82,17 @@ public class ExceptionPredicateTest {
   public void testNullNPE() {
     ExceptionalExecution exec = new ExceptionalExecution(new NullPointerException(), 0);
     Class<?> c = CUTForExceptionPredicate.class;
-    ConcreteType classType = new ConcreteSimpleType(c);
+    ClassOrInterfaceType classType = new SimpleClassOrInterfaceType(c);
     Constructor<?> con = null;
     try {
       con = c.getDeclaredConstructor(Object.class);
     } catch (Exception e) {
       fail("test not setup correctly: " + e);
     }
-    List<ConcreteType> paramTypes = new ArrayList<>();
+    List<GeneralType> paramTypes = new ArrayList<>();
     paramTypes.add(ConcreteTypes.OBJECT_TYPE);
-    ConcreteOperation conOp = new ConcreteOperation(new ConstructorCall(con), classType, new ConcreteTypeTuple(paramTypes), classType);
-    Sequence seq = new Sequence().extend(ConcreteOperation.createNullOrZeroInitializationForType(ConcreteTypes.OBJECT_TYPE));
+    TypedOperation conOp = new TypedClassOperation(new ConstructorCall(con), classType, new TypeTuple(paramTypes), classType);
+    Sequence seq = new Sequence().extend(TypedOperation.createNullOrZeroInitializationForType(ConcreteTypes.OBJECT_TYPE));
     List<Variable> inputVariables = new ArrayList<>();
     inputVariables.add(new Variable(seq, 0));
 
