@@ -1,8 +1,5 @@
 package randoop.reflection;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -11,8 +8,6 @@ import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.GeneralType;
-import randoop.types.PrimitiveType;
 import randoop.util.ClassFileConstants;
 import randoop.util.MultiMap;
 
@@ -20,7 +15,7 @@ import randoop.util.MultiMap;
  * {@code ClassLiteralExtractor} is a {@link ClassVisitor} that extracts literals from the bytecode
  * of each class visited, adding a sequence for each to a map associating a sequence with a type.
  */
-class ClassLiteralExtractor implements ClassVisitor {
+class ClassLiteralExtractor extends DefaultClassVisitor {
 
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
@@ -42,28 +37,4 @@ class ClassLiteralExtractor implements ClassVisitor {
     }
   }
 
-  @Override
-  public void visit(Constructor<?> c) {
-    // do nothing
-  }
-
-  @Override
-  public void visit(Method m) {
-    // do nothing
-  }
-
-  @Override
-  public void visit(Field f) {
-    // do nothing
-  }
-
-  @Override
-  public void visit(Enum<?> e) {
-    // do nothing
-  }
-
-  @Override
-  public void visitAfter(Class<?> c) {
-    // do nothing
-  }
 }

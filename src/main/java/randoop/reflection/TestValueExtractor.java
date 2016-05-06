@@ -1,9 +1,7 @@
 package randoop.reflection;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +18,7 @@ import randoop.types.PrimitiveTypes;
  * see if they are annotated with {@link randoop.TestValue}, are static, and
  * have type that is primitive, String, or an array of primitive or String.
  */
-public class TestValueExtractor implements ClassVisitor {
+public class TestValueExtractor extends DefaultClassVisitor {
 
   private Set<Sequence> valueSequences;
 
@@ -123,28 +121,4 @@ public class TestValueExtractor implements ClassVisitor {
     System.out.println(msg);
   }
 
-  @Override
-  public void visit(Constructor<?> c) {
-    // do nothing
-  }
-
-  @Override
-  public void visit(Method m) {
-    // do nothing
-  }
-
-  @Override
-  public void visit(Enum<?> e) {
-    // do nothing
-  }
-
-  @Override
-  public void visitBefore(Class<?> c) {
-    // do nothing
-  }
-
-  @Override
-  public void visitAfter(Class<?> c) {
-    // do nothing
-  }
 }

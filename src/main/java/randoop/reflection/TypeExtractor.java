@@ -6,11 +6,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Set;
 
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
 
 /**
- * {@code TypeExtractor} is a {@link ClassVisitor} that extracts concrete types that are used
- * in a class as either a parameter, a return type, or a field type.
+ * {@code TypeExtractor} is a {@link ClassVisitor} that extracts both the class type, and concrete
+ * types that are used in a class as either a parameter, a return type, or a field type.
  */
 class TypeExtractor extends DefaultClassVisitor {
 
@@ -69,11 +70,10 @@ class TypeExtractor extends DefaultClassVisitor {
    */
   private void addIfConcrete(GeneralType type) {
     if (! type.isGeneric() && ! type.isVoid() ) {
-      GeneralType concreteType = type;
-      if (concreteType.isPrimitive()) {
-        concreteType = concreteType.toBoxedPrimitive();
+      if (type.isPrimitive()) {
+        type = type.toBoxedPrimitive();
       }
-      inputTypes.add(concreteType);
+      inputTypes.add(type);
     }
   }
 
@@ -84,7 +84,7 @@ class TypeExtractor extends DefaultClassVisitor {
   @Override
   public void visitBefore(Class<?> c) {
     if (c.getTypeParameters().length == 0) {
-      inputTypes.add(GeneralType.forClass(c));
+      inputTypes.add(ClassOrInterfaceType.forClass(c));
     }
   }
 

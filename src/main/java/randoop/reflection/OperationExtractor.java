@@ -31,7 +31,7 @@ import randoop.types.TypeTuple;
  * @see ClassVisitor
  *
  */
-public class OperationExtractor implements ClassVisitor {
+public class OperationExtractor extends DefaultClassVisitor {
 
   private final TypedOperationManager manager;
   private final ReflectionPredicate predicate;

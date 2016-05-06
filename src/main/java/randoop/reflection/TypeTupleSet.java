@@ -69,7 +69,7 @@ class TypeTupleSet {
       Substitution<ReferenceType> substitution = Substitution.forArgs(typeParameters, tuple);
 
       int i = 0;
-      while (i < tuple.size() && typeParameters.get(i).canBeInstantiatedAs(tuple.get(i), substitution)) {
+      while (i < tuple.size() && typeParameters.get(i).getTypeBound().isSatisfiedBy(tuple.get(i), substitution)) {
         i++;
       }
       if (i == tuple.size()) {
