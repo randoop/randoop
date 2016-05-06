@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import randoop.reflection.TypedOperationManager;
-
 public class OperationParser {
 
   /**
