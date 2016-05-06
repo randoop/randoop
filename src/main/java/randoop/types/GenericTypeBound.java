@@ -90,6 +90,11 @@ class GenericTypeBound extends ClassOrInterfaceBound {
     return false;
   }
 
+  @Override
+  public ParameterBound apply(Substitution<ReferenceType> substitution) {
+    return null;
+  }
+
   static GenericTypeBound fromType(Type type) {
     if (! (type instanceof java.lang.reflect.ParameterizedType)) {
       throw new IllegalArgumentException("type must be generic");

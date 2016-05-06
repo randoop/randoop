@@ -15,7 +15,7 @@ public class ClassOrInterfaceTypeBound extends ClassOrInterfaceBound {
    *
    * @param boundType the class or interface type
    */
-  public ClassOrInterfaceTypeBound(ClassOrInterfaceType boundType) {
+  ClassOrInterfaceTypeBound(ClassOrInterfaceType boundType) {
     this.boundType = boundType;
   }
 
@@ -52,5 +52,10 @@ public class ClassOrInterfaceTypeBound extends ClassOrInterfaceBound {
   @Override
   public boolean isSubtypeOf(GeneralType otherType) {
     return boundType.isSubtypeOf(otherType);
+  }
+
+  @Override
+  public ParameterBound apply(Substitution<ReferenceType> substitution) {
+    return new ClassOrInterfaceTypeBound(boundType.apply(substitution));
   }
 }

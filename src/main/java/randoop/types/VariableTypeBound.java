@@ -80,7 +80,7 @@ class VariableTypeBound extends ParameterBound {
    * @param substitution  the substitution
    * @return a {@link ParameterBound} for the type substituted for this variable, or null if there is none
    */
-  private ParameterBound apply(Substitution<ReferenceType> substitution) {
+  public ParameterBound apply(Substitution<ReferenceType> substitution) {
     GeneralType type = typeVariable.apply(substitution);
     if (type == null) {
       return null;

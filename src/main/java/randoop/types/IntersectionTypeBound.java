@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -90,6 +91,15 @@ public class IntersectionTypeBound extends ClassOrInterfaceBound {
       }
     }
     return true;
+  }
+
+  @Override
+  public ParameterBound apply(Substitution<ReferenceType> substitution) {
+    List<ClassOrInterfaceBound> bounds = new ArrayList<>();
+    for (ClassOrInterfaceBound bound : this.boundList) {
+      bounds.add((ClassOrInterfaceBound)bound.apply(substitution));
+    }
+    return new IntersectionTypeBound(bounds);
   }
 
 }
