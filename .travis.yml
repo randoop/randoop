@@ -24,3 +24,6 @@ script:
 # notifications:
 #   email:
 #     - randoop-developers@googlegroups.com
+
+git:
+  depth: 3
