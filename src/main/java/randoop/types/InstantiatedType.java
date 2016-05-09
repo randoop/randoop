@@ -61,6 +61,7 @@ class InstantiatedType extends ParameterizedType {
 
   @Override
   public boolean isAssignableFrom(GeneralType otherType) {
+
     if (super.isAssignableFrom(otherType)) {
       return true;
     }
@@ -78,6 +79,11 @@ class InstantiatedType extends ParameterizedType {
       }
     }
     return false;
+  }
+
+  @Override
+  public boolean isInterface() {
+    return instantiatedType.isInterface();
   }
 
   /**
@@ -107,22 +113,22 @@ class InstantiatedType extends ParameterizedType {
    */
   @Override
   public boolean isSubtypeOf(GeneralType otherType) {
-
-    if (super.isSubtypeOf(otherType)) {
-      return true;
-    }
-
-    // rawtype is a direct supertype (see JLS section 4.10.2)
-    if (otherType.isRawtype()) {
-      if (otherType.hasRuntimeClass(this.getRuntimeClass())) {
+System.out.println("inst " + this + " issubtypeof " +otherType);
+    if (!otherType.isParameterized()) {
+      if (super.isSubtypeOf(otherType)) {
         return true;
       }
 
-      SimpleClassOrInterfaceType rawtype = new SimpleClassOrInterfaceType(this.getRuntimeClass());
-      return rawtype.isSubtypeOf(otherType);
-    }
+      // rawtype is a direct supertype (see JLS section 4.10.2)
+      if (otherType.isRawtype()) {
+        if (otherType.hasRuntimeClass(this.getRuntimeClass())) {
+          return true;
+        }
 
-    if (!otherType.isParameterized()) {
+        SimpleClassOrInterfaceType rawtype = new SimpleClassOrInterfaceType(this.getRuntimeClass());
+        return rawtype.isSubtypeOf(otherType);
+      }
+
       return false;
     }
 
@@ -156,6 +162,7 @@ class InstantiatedType extends ParameterizedType {
     if (genericSuperType == null) { // no matching supertype
       return false;
     }
+
     Substitution<ReferenceType> substitution = getTypeSubstitution();
     if (substitution != null) {
       GeneralType superType = genericSuperType.apply(substitution);
@@ -201,7 +208,11 @@ class InstantiatedType extends ParameterizedType {
 
   @Override
   public InstantiatedType apply(Substitution<ReferenceType> substitution) {
-    return null;
+    List<TypeArgument> argumentList = new ArrayList<>();
+    for (TypeArgument argument : this.argumentList) {
+      argumentList.add(argument.apply(substitution));
+    }
+    return new InstantiatedType(instantiatedType, argumentList);
   }
 
   /**
@@ -253,29 +264,15 @@ class InstantiatedType extends ParameterizedType {
     if (superclass == null) {
       return null;
     }
-
-    if (superclass.isGeneric()) {
-System.out.println("it this: " + this + " super: " + superclass);
-      //replace type variables of superclass with type argument from this class
-      // use values from this.argumentList
-      Substitution<TypeArgument> substitution = Substitution.forArgs(instantiatedType.getTypeParameters(), argumentList);
-      GenericClassType superType = (GenericClassType) superclass;
-      List<TypeVariable> typeParameters = superType.getTypeParameters();
-      List<TypeArgument> typeArguments = new ArrayList<>();
-      for (TypeVariable var : typeParameters) {
-        typeArguments.add(substitution.get(var));
-      }
-
-      return new InstantiatedType(superType, typeArguments);
-    }
-
-    return superclass;
+    // TODO refactor with GenericClassType methods so that they apply substitution
+    Substitution<ReferenceType> substitution = Substitution.forArgs(instantiatedType.getTypeParameters(), getReferenceArguments());
+    return superclass.apply(substitution);
   }
 
+  // TODO refactor with GenericClassType methods so that they apply substitution
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
     List<ClassOrInterfaceType> interfaces = new ArrayList<>();
-
     Substitution<ReferenceType> substitution = Substitution.forArgs(instantiatedType.getTypeParameters(), getReferenceArguments());
     for (ClassOrInterfaceType type : instantiatedType.getInterfaces()) {
       interfaces.add(type.apply(substitution));
@@ -332,7 +329,7 @@ System.out.println("it this: " + this + " super: " + superclass);
   /**
    * Indicates whether this type has wildcard arguments.
    *
-   * @return true if this type has a wilcard argument, and false if there are none
+   * @return true if this type has a wildcard argument, and false if there are none
    */
   private boolean hasWildcardArgument() {
     for (TypeArgument argument : argumentList) {

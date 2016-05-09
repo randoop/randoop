@@ -44,7 +44,7 @@ public class TypeVariable extends AbstractTypeVariable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(variable, typeBound);
+    return Objects.hash(variable);
   }
 
   @Override
@@ -85,4 +85,7 @@ public class TypeVariable extends AbstractTypeVariable {
     return new TypeVariable(v, ParameterBound.forTypes(v.getBounds()));
   }
 
+  public Type getReflectionTypeVariable() {
+    return variable;
+  }
 }

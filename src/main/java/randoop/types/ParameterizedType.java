@@ -79,12 +79,14 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
     if (typeClass.getTypeParameters().length == 0) {
       throw new IllegalArgumentException("class must be a generic type");
     }
-
+    return new GenericClassType(typeClass);
+    /*
     List<TypeVariable> argumentList = new ArrayList<>();
     for (java.lang.reflect.TypeVariable<?> v : typeClass.getTypeParameters()) {
       argumentList.add(TypeVariable.forType(v));
     }
     return new GenericClassType(typeClass, argumentList);
+    */
   }
 
   /**

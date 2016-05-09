@@ -29,7 +29,7 @@ class WildcardArgumentWithUpperBound extends WildcardArgument {
   }
 
   @Override
-  public TypeArgument apply(Substitution<ReferenceType> substitution) {
+  public WildcardArgument apply(Substitution<ReferenceType> substitution) {
     return new WildcardArgumentWithUpperBound(getBoundType().apply(substitution));
   }
 

@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.lang.reflect.Type;
+import java.util.Objects;
 
 /**
  * Represents a parameter bound that is a class or interface.
@@ -17,6 +18,25 @@ public class ClassOrInterfaceTypeBound extends ClassOrInterfaceBound {
    */
   ClassOrInterfaceTypeBound(ClassOrInterfaceType boundType) {
     this.boundType = boundType;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (! (obj instanceof  ClassOrInterfaceTypeBound)) {
+      return false;
+    }
+    ClassOrInterfaceTypeBound otherBound = (ClassOrInterfaceTypeBound)obj;
+    return boundType.equals(otherBound.boundType);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(boundType);
+  }
+
+  @Override
+  public String toString() {
+    return boundType.toString();
   }
 
   /**

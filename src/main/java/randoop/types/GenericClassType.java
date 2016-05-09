@@ -20,18 +20,28 @@ public class GenericClassType extends ParameterizedType {
   /** the type parameters of the generic class */
   private List<TypeVariable> parameters;
 
+  GenericClassType(Class<?> rawType) {
+    this.rawType = rawType;
+    this.parameters = new ArrayList<>();
+
+    for (java.lang.reflect.TypeVariable<?> v : rawType.getTypeParameters()) {
+      TypeVariable variable = TypeVariable.forType(v);
+      this.parameters.add(variable);
+    }
+  }
+
   /**
    * Create a {@code GenericClassType} for the given rawtype with the parameters,
    * and parameter type bounds.
    * <p>
-   * This constructor is intended to mainly be used by
-   * {@link randoop.types.GeneralType#forType(Type)} where the full set of arguments is
-   * collected before creating the type object.
+   * This constructor is used for constructing supertypes for of underlying class of
+   * {@link InstantiatedType} objects in order to preserve relationship of type parameters
+   * for application of substitution build from subclass.
    *
    * @param rawType  the rawtype for the generic class
    * @param parameters  the type parameters for the generic class
    */
-  GenericClassType(Class<?> rawType, List<TypeVariable> parameters) {
+  private GenericClassType(Class<?> rawType, List<TypeVariable> parameters) {
     if (rawType.getTypeParameters().length != parameters.size()) {
       throw new IllegalArgumentException("number of parameters should be equal");
     }
@@ -44,6 +54,7 @@ public class GenericClassType extends ParameterizedType {
    * {@inheritDoc}
    * Checks that the rawtypes are the same. This is sufficient since the
    * type parameters and their bounds can be reconstructed from the Class object.
+   * Also, parameters can be distinct depending on how this object is constructed.
    *
    * @return true if two generic classes have the same rawtype, false otherwise
    */
@@ -53,13 +64,13 @@ public class GenericClassType extends ParameterizedType {
       return false;
     }
     GenericClassType t = (GenericClassType) obj;
-    return this.rawType.equals(t.rawType)
-            && this.parameters.equals(t.parameters);
+
+    return this.rawType.equals(t.rawType);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(rawType, parameters);
+    return Objects.hash(rawType);
   }
 
   /**
@@ -121,16 +132,15 @@ public class GenericClassType extends ParameterizedType {
     if (substitution == null) {
       throw new IllegalArgumentException("substitution must be non-null");
     }
-
     List<TypeArgument> argumentList = new ArrayList<>();
     for (TypeVariable variable : parameters) {
       ReferenceType referenceType = substitution.get(variable);
       if (referenceType == null) {
-        throw new IllegalArgumentException("substitution has no value for variable " + variable.getName());
+        throw new IllegalArgumentException("substitution has no value for variable " + variable.getName() + " (" + variable.hashCode() + ")");
       }
       argumentList.add(new ReferenceArgument(referenceType));
     }
-    return new InstantiatedType(this, argumentList);
+    return new InstantiatedType(new GenericClassType(rawType), argumentList);
   }
 
   /**
@@ -146,6 +156,11 @@ public class GenericClassType extends ParameterizedType {
     }
 
     Substitution<ReferenceType> substitution = Substitution.forArgs(this.parameters, typeArguments);
+    for (int i = 0; i < parameters.size(); i++) {
+      if (!parameters.get(i).getTypeBound().isSatisfiedBy(typeArguments[i], substitution)) {
+        throw new IllegalArgumentException("type argument does not match parameter bound");
+      }
+    }
     return this.apply(substitution);
   }
 
@@ -193,19 +208,17 @@ public class GenericClassType extends ParameterizedType {
 
     // if other type is an interface, check interfaces first
     if (otherRawType.isInterface()) {
-      Type[] interfaces = this.rawType.getGenericInterfaces();
-      for (Type t : interfaces) {
-        GeneralType generalType = GeneralType.forType(t);
+      for (ClassOrInterfaceType generalType : this.getInterfaces()){
         if (generalType.isGeneric() && type.equals(generalType)) { // found the type
           return (GenericClassType) generalType;
         }
       }
+      return null;
     }
 
     // otherwise, check superclass
-    Type superclass = this.rawType.getGenericSuperclass();
-    if (superclass != null) {
-      GeneralType superType = GeneralType.forType(superclass);
+    ClassOrInterfaceType superType = this.getSuperclass();
+    if (superType != null) {
       if (type.equals(superType)) { // found the type
         return (GenericClassType) superType;
       }
@@ -246,6 +259,8 @@ public class GenericClassType extends ParameterizedType {
             && otherType.hasRuntimeClass(this.getRuntimeClass());
   }
 
+  // TODO make similar method that takes a substitution so that can be called from InstantiatedType.getSuperclass
+  // TODO make this metod return actual superclass
   @Override
   public ClassOrInterfaceType getSuperclass() {
     Type superclass = this.rawType.getGenericSuperclass();
@@ -253,15 +268,33 @@ public class GenericClassType extends ParameterizedType {
       return null;
     }
 
-    return ClassOrInterfaceType.forType(superclass);
+    return getClassOrInterfaceType(superclass);
   }
 
+  private ClassOrInterfaceType getClassOrInterfaceType(Type type) {
+    if (type instanceof java.lang.reflect.ParameterizedType) {
+      java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType) type;
+
+      List<TypeVariable> typeParameters = new ArrayList<>();
+      for (Type argType : t.getActualTypeArguments()) {
+        TypeVariable var = TypeVariable.forType(argType);
+        typeParameters.add(var);
+      }
+      return new GenericClassType((Class<?>)t.getRawType(), typeParameters);
+    }
+
+    return ClassOrInterfaceType.forType(type);
+  }
+
+  // TODO make similar method that takes a substitution so that can be called from InstantiatedType.getInterfaces
+  // TODO make this method return actual interfaces
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
     List<ClassOrInterfaceType> interfaces = new ArrayList<>();
     for (Type type : rawType.getGenericInterfaces()) {
-      interfaces.add(ClassOrInterfaceType.forType(type));
+      interfaces.add(getClassOrInterfaceType(type));
     }
     return interfaces;
   }
+
 }

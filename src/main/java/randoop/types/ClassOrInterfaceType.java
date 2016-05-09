@@ -34,11 +34,15 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    */
   @Override
   public boolean isSubtypeOf(GeneralType otherType) {
-
     if (super.isSubtypeOf(otherType)) {
       return true;
     }
 
+    if (! otherType.isReferenceType()) {
+      return false;
+    }
+
+    // if otherType is an interface, first check interfaces
     if (otherType.isInterface()) {
       List<ClassOrInterfaceType> interfaces = this.getInterfaces();
       for (ClassOrInterfaceType type : interfaces) {
@@ -49,8 +53,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           return true;
         }
       }
-      return false;
     }
+    // otherwise, may be interface of a superclass
 
     ClassOrInterfaceType superClassType = this.getSuperclass();
     return superClassType != null

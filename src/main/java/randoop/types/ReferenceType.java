@@ -17,12 +17,9 @@ public abstract class ReferenceType extends GeneralType{
    * See <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.5">section 5.1.5 of JLS of JavaSE 8</a>
    */
   public boolean isAssignableFrom(GeneralType sourceType) {
-    if (super.isAssignableFrom(sourceType)) {
-      return true;
-    }
-System.out.println("reference this: " + this + " source " + sourceType);
-    return sourceType.isReferenceType()
-            && sourceType.isSubtypeOf(this);
+    return super.isAssignableFrom(sourceType)
+            || (sourceType.isReferenceType()
+                && sourceType.isSubtypeOf(this));
   }
 
   /**

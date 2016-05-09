@@ -11,8 +11,6 @@ import java.lang.reflect.WildcardType;
  */
 public abstract class TypeArgument {
 
-  private ReferenceType type;
-
   public abstract TypeArgument apply(Substitution<ReferenceType> substitution);
 
   /**

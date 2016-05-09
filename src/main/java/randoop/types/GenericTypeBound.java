@@ -77,7 +77,24 @@ class GenericTypeBound extends ClassOrInterfaceBound {
    */
   @Override
   public boolean isSatisfiedBy(GeneralType argType, Substitution<ReferenceType> substitution) {
-   return false;
+    ClassOrInterfaceTypeBound b = instantiate(substitution);
+    return b.isSatisfiedBy(argType, substitution);
+  }
+
+  private ClassOrInterfaceTypeBound instantiate(Substitution<ReferenceType> substitution) {
+    ReferenceType[] typeArguments = new ReferenceType[parameters.length];
+    for (int i = 0; i < parameters.length; i++) {
+      if (!(parameters[i] instanceof java.lang.reflect.TypeVariable)) {
+        throw new IllegalArgumentException("unexpected type parameter " + parameters[i]);
+      }
+      ReferenceType t = substitution.get(parameters[i]);
+      if (t == null) {
+        throw new IllegalArgumentException("unable to instantiate type parameter " + parameters[i]);
+      }
+      typeArguments[i] = t;
+    }
+    ClassOrInterfaceType boundType = GenericClassType.forClass(rawType).instantiate(typeArguments);
+    return new ClassOrInterfaceTypeBound(boundType);
   }
 
   @Override

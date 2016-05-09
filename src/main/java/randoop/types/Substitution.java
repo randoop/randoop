@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,11 +24,15 @@ public class Substitution <T> {
   /** The substitution map */
   private Map<AbstractTypeVariable, T> map;
 
+  /** map on reflection types - used for testing bounds */
+  private Map<java.lang.reflect.Type, T> rawMap;
+
   /**
    * Create an empty substitution.
    */
   public Substitution() {
     map = new LinkedHashMap<>();
+    rawMap = new LinkedHashMap<>();
   }
 
   /**
@@ -71,6 +76,9 @@ public class Substitution <T> {
    */
   private void put(AbstractTypeVariable typeParameter, T type) {
     map.put(typeParameter, type);
+    if (typeParameter instanceof TypeVariable) {
+      rawMap.put(((TypeVariable)typeParameter).getReflectionTypeVariable(), type);
+    }
   }
 
   /**
@@ -83,6 +91,15 @@ public class Substitution <T> {
    */
   public T get(AbstractTypeVariable parameter) {
     return map.get(parameter);
+  }
+
+  /**
+   * Returns the value for the given {@link java.lang.reflect.Type}
+   * @param parameter
+   * @return
+   */
+  public T get(Type parameter) {
+    return rawMap.get(parameter);
   }
 
   /**
@@ -117,4 +134,10 @@ public class Substitution <T> {
     return s;
   }
 
+
+  public void print() {
+    for (Entry<AbstractTypeVariable, T> entry : map.entrySet()) {
+      System.out.println(entry.getKey() + "(" + entry.getKey().hashCode() + ")" + " := " + entry.getValue());
+    }
+  }
 }

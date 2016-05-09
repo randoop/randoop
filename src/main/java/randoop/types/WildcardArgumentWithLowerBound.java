@@ -30,7 +30,7 @@ class WildcardArgumentWithLowerBound extends WildcardArgument {
   }
 
   @Override
-  public TypeArgument apply(Substitution<ReferenceType> substitution) {
+  public WildcardArgument apply(Substitution<ReferenceType> substitution) {
     return new WildcardArgumentWithLowerBound(getBoundType().apply(substitution));
   }
 

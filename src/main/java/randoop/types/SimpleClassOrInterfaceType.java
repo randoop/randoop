@@ -161,7 +161,18 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
     if (this.equals(ConcreteTypes.OBJECT_TYPE)) {
       return this;
     }
-    return new SimpleClassOrInterfaceType(this.runtimeClass.getSuperclass());
+    if (this.isRawtype()) {
+      Class<?> superclass = this.runtimeClass.getSuperclass();
+      if (superclass != null) {
+        return new SimpleClassOrInterfaceType(superclass);
+      }
+    } else {
+      Type supertype = this.runtimeClass.getGenericSuperclass();
+      if (supertype != null) {
+        return ClassOrInterfaceType.forType(supertype);
+      }
+    }
+    return null;
   }
 
   /**
