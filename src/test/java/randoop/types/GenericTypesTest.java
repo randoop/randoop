@@ -91,7 +91,7 @@ public class GenericTypesTest {
       GeneralType it = a1.instantiate(ReferenceType.forClass(Variable1Ext.class));
       assertTrue("Parameterized type bound satisfied, object instantiated", it != null);
     } catch (IllegalArgumentException e) {
-    fail("should not have gotten an exception");
+    fail("should not have gotten the exception: " + e.getMessage());
   }
 
     ReferenceType pt2 = ReferenceType.forClass(Integer.class);
@@ -116,7 +116,7 @@ public class GenericTypesTest {
       GeneralType it2 = a2.instantiate(pt3);
       assertTrue("Intersection bound satisfied", it2 != null);
     } catch (IllegalArgumentException e) {
-      fail("should not have gotten an exception");
+      fail("should not have gotten an exception: " + e.getMessage());
     }
 
     try {
@@ -169,7 +169,7 @@ public class GenericTypesTest {
     } catch (IllegalArgumentException e) {
       assertEquals(
           "illegal argument message matches",
-          "number of parameters and arguments must agree",
+          "number of arguments and parameters must match",
           e.getMessage());
     }
   }

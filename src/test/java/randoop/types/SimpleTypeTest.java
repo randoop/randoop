@@ -283,18 +283,19 @@ public class SimpleTypeTest {
     GeneralType parameterizedALType;
     parameterizedALType = GenericClassType.forClass(ArrayList.class).instantiate(new SimpleClassOrInterfaceType(String.class));
     assertTrue(
-        "ArrayList<String> is assignable to ArrayList",
+        "ArrayList is assignable from ArrayList<String>",
         rawALType.isAssignableFrom(parameterizedALType));
 
     GeneralType rawCollType = new SimpleClassOrInterfaceType(Collection.class);
     assertTrue(
-        "ArrayList<String> is assignable to Collection",
+        "Collection is assignable from ArrayList<String>",
         rawCollType.isAssignableFrom(parameterizedALType));
-
+    System.out.println("****");
     GeneralType rawSetType = new SimpleClassOrInterfaceType(Set.class);
     assertFalse(
-        "ArrayList<String> is not assignable to Set",
+        "Set is not assignable from ArrayList<String>",
         rawSetType.isAssignableFrom(parameterizedALType));
+    System.out.println("****");
   }
 
   @Test
