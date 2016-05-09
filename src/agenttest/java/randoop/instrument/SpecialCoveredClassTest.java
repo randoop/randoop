@@ -182,8 +182,6 @@ public class SpecialCoveredClassTest {
       it = GeneralType.forName("randoop.instrument.testcase.ImplementorOfTarget");
     } catch (ClassNotFoundException e) {
       fail("cannot find implementor class " + e);
-    } catch (RandoopTypeException e) {
-      fail("Type error " + e.getMessage());
     }
     for (TypedOperation op : model) {
       if (op instanceof TypedClassOperation) {
