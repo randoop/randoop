@@ -514,7 +514,7 @@ public class TreeMap extends AbstractMap implements SortedMap, Cloneable, java.i
    * @return a shallow copy of this Map.
    */
   public Object clone() {
-    TreeMap clone = null;
+    TreeMap clone;
     try {
       clone = (TreeMap) super.clone();
     } catch (CloneNotSupportedException e) {

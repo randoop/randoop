@@ -57,7 +57,7 @@ public class Premain {
     }
 
     // Setup the transformer
-    Object transformer = null;
+    Object transformer;
     if (default_bcel) {
       transformer = new Instrument();
     } else { // use a special classloader to ensure our files are used
@@ -292,7 +292,7 @@ public class Premain {
 
       // Find our version of the class and return it.
       try {
-        InputStream is = null;
+        InputStream is;
         if (name.startsWith("daikon.chicory.Instrument")) {
           String resource_name = classname_to_resource_name(name);
           URL url = ClassLoader.getSystemResource(resource_name);

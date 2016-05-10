@@ -188,10 +188,9 @@ public class BitSet implements Cloneable, java.io.Serializable {
     }
 
     int startUnitIndex = unitIndex(fromIndex);
-    long bitMask = 0;
     if (startUnitIndex == endUnitIndex) {
       // Case 1: One word
-      bitMask = (1L << (toIndex & BIT_INDEX_MASK)) - (1L << (fromIndex & BIT_INDEX_MASK));
+      long bitMask = (1L << (toIndex & BIT_INDEX_MASK)) - (1L << (fromIndex & BIT_INDEX_MASK));
       bits[startUnitIndex] ^= bitMask;
       if (bits[unitsInUse - 1] == 0) recalculateUnitsInUse();
       return;
@@ -199,7 +198,7 @@ public class BitSet implements Cloneable, java.io.Serializable {
 
     // Case 2: Multiple words
     // Handle first word
-    bitMask = bitsLeftOf(fromIndex & BIT_INDEX_MASK);
+    long bitMask = bitsLeftOf(fromIndex & BIT_INDEX_MASK);
     bits[startUnitIndex] ^= bitMask;
 
     // Handle intermediate words, if any
@@ -293,17 +292,16 @@ public class BitSet implements Cloneable, java.io.Serializable {
     }
 
     int startUnitIndex = unitIndex(fromIndex);
-    long bitMask = 0;
     if (startUnitIndex == endUnitIndex) {
       // Case 1: One word
-      bitMask = (1L << (toIndex & BIT_INDEX_MASK)) - (1L << (fromIndex & BIT_INDEX_MASK));
+      long bitMask = (1L << (toIndex & BIT_INDEX_MASK)) - (1L << (fromIndex & BIT_INDEX_MASK));
       bits[startUnitIndex] |= bitMask;
       return;
     }
 
     // Case 2: Multiple words
     // Handle first word
-    bitMask = bitsLeftOf(fromIndex & BIT_INDEX_MASK);
+    long bitMask = bitsLeftOf(fromIndex & BIT_INDEX_MASK);
     bits[startUnitIndex] |= bitMask;
 
     // Handle intermediate words, if any
@@ -371,10 +369,9 @@ public class BitSet implements Cloneable, java.io.Serializable {
     if (startUnitIndex >= unitsInUse) return;
     int endUnitIndex = unitIndex(toIndex);
 
-    long bitMask = 0;
     if (startUnitIndex == endUnitIndex) {
       // Case 1: One word
-      bitMask = (1L << (toIndex & BIT_INDEX_MASK)) - (1L << (fromIndex & BIT_INDEX_MASK));
+      long bitMask = (1L << (toIndex & BIT_INDEX_MASK)) - (1L << (fromIndex & BIT_INDEX_MASK));
       bits[startUnitIndex] &= ~bitMask;
       if (bits[unitsInUse - 1] == 0) recalculateUnitsInUse();
       return;
@@ -382,7 +379,7 @@ public class BitSet implements Cloneable, java.io.Serializable {
 
     // Case 2: Multiple words
     // Handle first word
-    bitMask = bitsLeftOf(fromIndex & BIT_INDEX_MASK);
+    long bitMask = bitsLeftOf(fromIndex & BIT_INDEX_MASK);
     bits[startUnitIndex] &= ~bitMask;
 
     // Handle intermediate words, if any
@@ -890,7 +887,7 @@ public class BitSet implements Cloneable, java.io.Serializable {
    * @see     java2.util2.BitSet#size()
    */
   public Object clone() {
-    BitSet result = null;
+    BitSet result;
     try {
       result = (BitSet) super.clone();
     } catch (CloneNotSupportedException e) {

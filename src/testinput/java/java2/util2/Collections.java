@@ -235,7 +235,7 @@ public class Collections {
    * list listIterator.
    */
   private static Object get(ListIterator i, int index) {
-    Object obj = null;
+    Object obj;
     int pos = i.nextIndex();
     if (pos <= index) {
       do {

@@ -38,7 +38,6 @@ public class ListOfListsIteratorTests extends TestCase {
       lists.add(a1);
       lists.add(a2);
       lists.add(a3);
-      SimpleList<Integer> theList = null;
       int operations = Randomness.nextRandomInt(30);
       for (int j = 0; j < operations; j++) {
         int whichOperation = Randomness.nextRandomInt(2);
@@ -49,13 +48,13 @@ public class ListOfListsIteratorTests extends TestCase {
           for (int k = 0; k < howManyLists; k++) {
             members.add(Randomness.randomMember(lists));
           }
-          theList = new ListOfLists<>(members);
+          SimpleList<Integer> theList = new ListOfLists<>(members);
           lists.add(theList);
         } else {
           // OneMoreElementList
           int theElement = Randomness.nextRandomInt(10);
           SimpleList<Integer> prefixList = Randomness.randomMember(lists);
-          theList = new OneMoreElementList<>(prefixList, theElement);
+          SimpleList<Integer> theList = new OneMoreElementList<>(prefixList, theElement);
           lists.add(theList);
         }
       }

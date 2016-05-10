@@ -567,7 +567,7 @@ public class LinkedList extends AbstractSequentialList
    * @return a shallow copy of this <tt>LinkedList</tt> instance.
    */
   public Object clone() {
-    LinkedList clone = null;
+    LinkedList clone;
     try {
       clone = (LinkedList) super.clone();
     } catch (CloneNotSupportedException e) {
