@@ -34,19 +34,21 @@ class TypeTupleSet {
   }
 
   /**
-   * Extends all of the elements of the current tuple set with the types in
+   * Extends all of the elements of the current tuple set with all of the types in
    * the given list.
+   * In other words, if there are <i>k</i> types given then each tuple will be replaced by <i>k</i>
+   * new tuples extended by one of the input types.
    *
    * @param types  the list of types
    */
   public void extend(List<ReferenceType> types) {
-    tupleLength += types.size();
+    tupleLength += 1;
     List<List<ReferenceType>> tupleList = new ArrayList<>();
     for (List<ReferenceType> tuple : typeTuples) {
       for (ReferenceType type : types) {
         List<ReferenceType> extTuple = new ArrayList<>(tuple);
         extTuple.add(type);
-        assert extTuple.size() == tupleLength : "tuple lengths don't match";
+        assert extTuple.size() == tupleLength : "tuple lengths don't match, expected: " + tupleLength + " have " + extTuple.size();
         tupleList.add(extTuple);
       }
     }
@@ -62,7 +64,7 @@ class TypeTupleSet {
    * @return the list of substitutions that instantiate the type arguments
    */
   List<Substitution<ReferenceType>> filter(List<TypeVariable> typeParameters) {
-    assert typeParameters.size() == tupleLength: "tuple size must equal number of parameters";
+    assert typeParameters.size() == tupleLength: "tuple size " + tupleLength + " must equal number of parameters " + typeParameters.size();
     List<Substitution<ReferenceType>> substitutionSet = new ArrayList<>();
     List<List<ReferenceType>> tupleList = new ArrayList<>();
     for (List<ReferenceType> tuple : typeTuples) {
