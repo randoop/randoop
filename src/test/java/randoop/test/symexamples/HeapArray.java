@@ -40,7 +40,7 @@ public class HeapArray {
   public boolean insert(Comparable element) {
     if ((((size >= array.length) && ++randoopCoverageInfo.branchTrue[6] != 0)
         || ++randoopCoverageInfo.branchFalse[6] == 0)) {
-      Comparable temp[] = new Comparable[2 * array.length + 1];
+      Comparable[] temp = new Comparable[2 * array.length + 1];
       for (int i = 0;
           (((i < size) && ++randoopCoverageInfo.branchTrue[5] != 0)
               || ++randoopCoverageInfo.branchFalse[5] == 0);

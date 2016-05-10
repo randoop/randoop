@@ -26,7 +26,7 @@ public class MST {
    **/
   private static boolean printMsgs = false;
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     parseCmdLine(args);
 
     if (printMsgs) System.out.println("Making graph of size " + vertices);
@@ -137,7 +137,7 @@ public class MST {
    * Parse the command line options.
    * @param args the command line options.
    **/
-  private static final void parseCmdLine(String args[]) {
+  private static final void parseCmdLine(String[] args) {
     int i = 0;
     String arg;
 
