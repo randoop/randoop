@@ -20,7 +20,7 @@ import randoop.types.PrimitiveTypes;
  */
 public class TestValueExtractor extends DefaultClassVisitor {
 
-  private Set<Sequence> valueSequences;
+  private final Set<Sequence> valueSequences;
 
   public TestValueExtractor(Set<Sequence> valueSequences) {
     this.valueSequences = valueSequences;
@@ -57,6 +57,7 @@ public class TestValueExtractor extends DefaultClassVisitor {
    * @return  the value(s) in the field
    */
   private List<Object> getValue(Field f) {
+
     List<Object> valueList = new ArrayList<>();
 
     Class<?> fieldType = f.getType();
@@ -67,7 +68,7 @@ public class TestValueExtractor extends DefaultClassVisitor {
       if (!GenInputsAbstract.noprogressdisplay) {
         printDetectedAnnotatedFieldMsg(f);
       }
-
+      f.setAccessible(true);
       Object value;
       try {
         value = f.get(null);
