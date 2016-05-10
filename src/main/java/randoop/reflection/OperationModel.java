@@ -192,7 +192,7 @@ public class OperationModel extends ModelCollections {
   private void refineGenericClassTypes(Set<ConcreteType> inputTypes) throws RandoopTypeException {
     for (GenericClassType classType : genericClassTypes.keySet()) {
       List<Substitution> substitutions = getSubstitutions(inputTypes, classType);
-      assert  substitutions.size() > 0 : "didn't find types to satisfy bounds on generic";
+      assert !substitutions.isEmpty() : "didn't find types to satisfy bounds on generic";
       Substitution substitution = Randomness.randomMember(substitutions);
       GeneralType refinedClassType = classType.apply(substitution);
       if (! refinedClassType.isGeneric()) {

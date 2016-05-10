@@ -156,8 +156,8 @@ public class SpecialCoveredClassTest {
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
     //
     System.out.println("number of regression tests: " + rTests.size());
-    assertTrue("should have some regression tests", rTests.size() > 0);
-    assertFalse("don't expect error tests", eTests.size() > 0);
+    assertTrue("should have some regression tests", !rTests.isEmpty());
+    assertFalse("don't expect error tests", !eTests.isEmpty());
     //
     Class<?> at = null;
     try {

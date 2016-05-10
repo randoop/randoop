@@ -677,7 +677,7 @@ public class RandoopSystemTest {
     // definitely cannot do anything useful if no generated test files
     // but not sure that this is the right way to deal with it
     // what if test is meant not to generate anything ?
-    if (testClassSourceFiles.size() == 0) {
+    if (testClassSourceFiles.isEmpty()) {
       for (String line : randoopExitStatus.outputLines) {
         System.err.println(line);
       }

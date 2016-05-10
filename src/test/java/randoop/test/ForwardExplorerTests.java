@@ -51,7 +51,7 @@ public class ForwardExplorerTests {
 
     final List<ConcreteOperation> model = getConcreteOperations(classes);
 
-    assertTrue("model not empty", model.size() != 0);
+    assertTrue("model not empty", !model.isEmpty());
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator explorer =
@@ -97,7 +97,7 @@ public class ForwardExplorerTests {
     ReflectionExecutor.timeout = 200;
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     final List<ConcreteOperation> model = getConcreteOperations(classes);
-    assertTrue("model should not be empty", model.size() != 0);
+    assertTrue("model should not be empty", !model.isEmpty());
     GenInputsAbstract.ignore_flaky_tests = true;
     ForwardGenerator exp = new ForwardGenerator(model, new LinkedHashSet<ConcreteOperation>(), Long.MAX_VALUE, 200, 200, mgr, null, null);
     exp.addTestCheckGenerator(createChecker(new LinkedHashSet<ObjectContract>()));
@@ -148,7 +148,7 @@ public class ForwardExplorerTests {
     GenInputsAbstract.ignore_flaky_tests = true;
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     final List<ConcreteOperation> model = getConcreteOperations(classes);
-    assertTrue("model should not be empty", model.size() != 0);
+    assertTrue("model should not be empty", !model.isEmpty());
     ForwardGenerator exp = new ForwardGenerator(model, new LinkedHashSet<ConcreteOperation>(), Long.MAX_VALUE, 200, 200, mgr, null, null);
     GenInputsAbstract.forbid_null = false;
     exp.addTestCheckGenerator(createChecker(new LinkedHashSet<ObjectContract>()));

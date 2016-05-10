@@ -176,6 +176,6 @@ public class OperationParserTests {
     assertTrue(
         stStr + "," + collectedOperation.toParseableString(),
         stStr.equals(collectedOperation.toParseableString()));
-    assertTrue("no generic operations: ", genericOperations.size() == 0);
+    assertTrue("no generic operations: ", genericOperations.isEmpty());
   }
 }

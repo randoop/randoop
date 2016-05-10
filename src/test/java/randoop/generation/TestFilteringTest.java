@@ -61,8 +61,8 @@ public class TestFilteringTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have some regression tests", rTests.size() > 0);
-    assertTrue("should have some error tests", eTests.size() > 0);
+    assertTrue("should have some regression tests", !rTests.isEmpty());
+    assertTrue("should have some error tests", !eTests.isEmpty());
   }
 
   /**
@@ -92,8 +92,8 @@ public class TestFilteringTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have no regression tests", rTests.size() == 0);
-    assertTrue("should have no error tests", eTests.size() == 0);
+    assertTrue("should have no regression tests", rTests.isEmpty());
+    assertTrue("should have no error tests", eTests.isEmpty());
   }
 
   /**
@@ -121,8 +121,8 @@ public class TestFilteringTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have some regression tests", rTests.size() > 0);
-    assertTrue("should have no error tests", eTests.size() == 0);
+    assertTrue("should have some regression tests", !rTests.isEmpty());
+    assertTrue("should have no error tests", eTests.isEmpty());
   }
 
   /**
@@ -152,8 +152,8 @@ public class TestFilteringTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have no regression tests, but getting " + rTests.size(), rTests.size() == 0);
-    assertTrue("should have some error tests", eTests.size() > 0);
+    assertTrue("should have no regression tests, but getting " + rTests.size(), rTests.isEmpty());
+    assertTrue("should have some error tests", !eTests.isEmpty());
   }
 
   /**
@@ -183,8 +183,8 @@ public class TestFilteringTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have no regression tests", rTests.size() == 0);
-    assertTrue("should have no error tests", eTests.size() == 0);
+    assertTrue("should have no regression tests", rTests.isEmpty());
+    assertTrue("should have no error tests", eTests.isEmpty());
   }
 
   /**
@@ -213,8 +213,8 @@ public class TestFilteringTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
-    assertTrue("should have some regression tests", rTests.size() > 0);
-    assertTrue("should have some error tests", eTests.size() > 0);
+    assertTrue("should have some regression tests", !rTests.isEmpty());
+    assertTrue("should have some error tests", !eTests.isEmpty());
   }
 
   private ForwardGenerator buildGenerator(Class<?> c) {

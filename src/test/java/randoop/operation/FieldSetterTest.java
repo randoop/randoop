@@ -227,7 +227,7 @@ public class FieldSetterTest {
     });
     try {
       FieldSet.parse(setterDesc, operationManager);
-      assert ops.size() > 0 : "operations should have element";
+      assert !ops.isEmpty() : "operations should have element";
       ConcreteOperation setter = ops.get(0);
       assertEquals(
           "parse should return object that converts to string",

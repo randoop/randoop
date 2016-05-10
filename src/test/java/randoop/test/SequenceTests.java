@@ -136,7 +136,7 @@ public class SequenceTests {
       throw new IllegalArgumentException(
           "Malformed test record (missing \"EXPECTED_CODE\" record): " + lines.toString());
     }
-    if (sequenceLines.size() == 0) {
+    if (sequenceLines.isEmpty()) {
       throw new IllegalArgumentException("Empty sequence found.");
     }
 
@@ -147,7 +147,7 @@ public class SequenceTests {
       currIdx++;
     }
 
-    if (expectedCode.size() == 0) {
+    if (expectedCode.isEmpty()) {
       throw new IllegalArgumentException("Expected code is empty.");
     }
 
