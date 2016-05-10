@@ -60,7 +60,7 @@ public class EnumConstant extends CallableOperation {
 
   @Override
   public String getName() {
-    return this.toString();
+    return value.name();
   }
 
   /**

@@ -66,7 +66,7 @@ public abstract class TypedOperation implements Operation {
 
   @Override
   public String toString() {
-    return super.toString() + " : " + inputTypes + " -> " + outputType;
+    return getName() + " : " + inputTypes + " -> " + outputType;
   }
 
   @Override
@@ -186,7 +186,7 @@ public abstract class TypedOperation implements Operation {
     MethodCall op = new MethodCall(method);
     ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(method.getDeclaringClass());
     List<GeneralType> paramTypes = new ArrayList<>();
-    if (op.isStatic()) {
+    if (! op.isStatic()) {
       paramTypes.add(declaringType);
     }
     for (Type t : method.getGenericParameterTypes()) {
