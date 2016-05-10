@@ -13,7 +13,7 @@ public class MathVector implements Cloneable {
   /**
    * An array containing the values in the vector.
    **/
-  private double data[];
+  private double[] data;
 
   /**
    * Construct an empty 3 dimensional vector for use in Barnes-Hut algorithm.

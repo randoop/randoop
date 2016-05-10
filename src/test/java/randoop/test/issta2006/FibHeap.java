@@ -120,7 +120,7 @@ public class FibHeap {
 
   private void consolidate() {
     int D = n + 1;
-    Node A[] = new Node[D];
+    Node[] A = new Node[D];
     for (int i = 0; i < D; i++) {
       gen(3, A[i], null);
       A[i] = null;
@@ -340,7 +340,7 @@ public class FibHeap {
     return heap;
   }
 
-  public static void main(String Argv[]) {
+  public static void main(String[] Argv) {
     FibHeap h = new FibHeap();
 
     h.insert(3);

@@ -154,7 +154,7 @@ public interface List extends Collection {
    * 		  this list.
    * @throws NullPointerException if the specified array is <tt>null</tt>.
    */
-  Object[] toArray(Object a[]);
+  Object[] toArray(Object[] a);
 
   // Modification Operations
 
