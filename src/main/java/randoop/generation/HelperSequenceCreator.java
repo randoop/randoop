@@ -52,7 +52,7 @@ public class HelperSequenceCreator {
     ConcreteArrayType arrayType = (ConcreteArrayType)type;
     ConcreteType elementType = arrayType.getElementType();
 
-    Sequence s = null;
+    Sequence s;
     SimpleList<Sequence> candidates =
           components.getSequencesForType(elementType, false);
     if (candidates.isEmpty()) {
@@ -172,7 +172,7 @@ public class HelperSequenceCreator {
  }
 
  public static ConcreteOperation getCollectionConstructor(ParameterizedType creationType) {
-    Constructor<?> constructor = null;
+    Constructor<?> constructor;
     try {
       constructor = creationType.getRuntimeClass().getConstructor();
     } catch (NoSuchMethodException e) {
@@ -184,7 +184,7 @@ public class HelperSequenceCreator {
 
  public static ConcreteOperation getCollectionAddAllOperation(ConcreteType elementType) {
      Class<?> collectionsClass = Collections.class;
-     Method method = null;
+     Method method;
      try {
        method = collectionsClass.getMethod("addAll", JDKTypes.COLLECTION_TYPE.getRuntimeClass(), (new Object[]{}).getClass());
      } catch (NoSuchMethodException e) {

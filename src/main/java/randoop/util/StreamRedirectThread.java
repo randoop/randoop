@@ -87,7 +87,7 @@ public class StreamRedirectThread extends Thread {
     try {
       BufferedReader br = new BufferedReader(in, BUFFER_SIZE);
 
-      String line = null;
+      String line;
       while ((line = br.readLine()) != null) {
         outWriter.println(line);
       }
