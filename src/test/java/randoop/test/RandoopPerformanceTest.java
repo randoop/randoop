@@ -17,6 +17,9 @@ import randoop.reflection.ReflectionManager;
 import randoop.reflection.TypedOperationManager;
 import randoop.types.ConcreteType;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
+
 public class RandoopPerformanceTest extends AbstractPerformanceTest {
 
   @Override
@@ -50,7 +53,7 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
   }
 
 
-  private static List<ConcreteOperation> getConcreteOperations(List<Class<?>> classes) {
+  private List<ConcreteOperation> getConcreteOperations(List<Class<?>> classes) {
     final List<ConcreteOperation> model = new ArrayList<>();
     TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
       @Override

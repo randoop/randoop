@@ -1,5 +1,7 @@
 package randoop.test;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ import randoop.generation.ForwardGenerator;
 import randoop.generation.SeedSequences;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
+import randoop.main.OptionsCache;
 import randoop.operation.ConcreteOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.ModelCollections;
@@ -27,9 +30,22 @@ import randoop.types.ConcreteType;
 import randoop.util.MultiMap;
 
 import static org.junit.Assert.assertTrue;
-
+import static org.junit.Assert.fail;
 
 public class ForwardExplorerTests2  {
+
+  private static OptionsCache optionsCache;
+
+   @BeforeClass
+   public static void setup() {
+     optionsCache = new OptionsCache();
+     optionsCache.saveState();
+   }
+
+   @AfterClass
+   public static void restore() {
+     optionsCache.restoreState();
+   }
 
   @Test
   public void test5() throws Exception {
@@ -50,7 +66,7 @@ public class ForwardExplorerTests2  {
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator exp = new ForwardGenerator(model, new LinkedHashSet<ConcreteOperation>(), Long.MAX_VALUE, 100, 100, mgr, null, null);
     exp.addTestCheckGenerator(createChecker(new LinkedHashSet<ObjectContract>()));
-    GenInputsAbstract.null_ratio = 0.5; //.forbid_null = false;
+    GenInputsAbstract.null_ratio = 0.05; //.forbid_null = false;
     exp.explore();
     for (Sequence s : exp.getAllSequences()) {
       s.toCodeString();

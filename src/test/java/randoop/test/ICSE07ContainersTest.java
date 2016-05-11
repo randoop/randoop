@@ -1,5 +1,7 @@
 package randoop.test;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -15,6 +17,7 @@ import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.IStopper;
 import randoop.generation.SeedSequences;
+import randoop.main.OptionsCache;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.ConcreteOperation;
 import randoop.reflection.DefaultReflectionPredicate;
@@ -52,7 +55,25 @@ import static org.junit.Assert.assertTrue;
  */
 public class ICSE07ContainersTest {
 
-  private static void runRandoop(
+  private static OptionsCache optionsCache;
+
+   @BeforeClass
+   public static void setup() {
+     optionsCache = new OptionsCache();
+     optionsCache.saveState();
+     GenInputsAbstract.maxsize = 10000; // Integer.MAX_VALUE;
+     GenInputsAbstract.repeat_heuristic = true;
+     ReflectionExecutor.usethreads = false;
+     GenInputsAbstract.debug_checks = false;
+     GenInputsAbstract.null_ratio = 0.5;
+   }
+
+   @AfterClass
+   public static void restore() {
+     optionsCache.restoreState();
+   }
+
+  private void runRandoop(
           String name,
           List<Class<?>> classList,
           Pattern omitMethodPattern,
@@ -92,10 +113,6 @@ public class ICSE07ContainersTest {
             stopper,
             null);
     explorer.addTestCheckGenerator(new DummyCheckGenerator());
-    GenInputsAbstract.maxsize = 10000; // Integer.MAX_VALUE;
-    GenInputsAbstract.repeat_heuristic = true;
-    ReflectionExecutor.usethreads = false;
-    randoop.main.GenInputsAbstract.debug_checks = false;
     explorer.explore();
   }
 

@@ -1,5 +1,9 @@
 package randoop.test;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -9,6 +13,7 @@ import plume.EntryReader;
 import randoop.Globals;
 import randoop.generation.ForwardGenerator;
 import randoop.main.GenInputsAbstract;
+import randoop.main.OptionsCache;
 import randoop.operation.ConcreteOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.ModelCollections;
@@ -19,14 +24,27 @@ import randoop.reflection.TypedOperationManager;
 import randoop.types.ConcreteType;
 import randoop.util.Timer;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.fail;
 
 // DEPRECATED. Will delete after testing other performance tests
 // in different machines.
-public class ForwardExplorerPerformanceTest extends TestCase {
+public class ForwardExplorerPerformanceTest {
 
   private static final int TIME_LIMIT_SECS = 10;
   private static final long EXPECTED_MIN = 18000000 / performanceMultiplier();
+
+  private static OptionsCache optionsCache;
+
+   @BeforeClass
+   public static void setup() {
+     optionsCache = new OptionsCache();
+     optionsCache.saveState();
+   }
+
+   @AfterClass
+   public static void restore() {
+     optionsCache.restoreState();
+   }
 
   private static long performanceMultiplier() {
     String foo = "make sure that the loop doesn't get optimized away";
@@ -40,8 +58,9 @@ public class ForwardExplorerPerformanceTest extends TestCase {
     return t.getTimeElapsedMillis();
   }
 
+  @Test
   @SuppressWarnings("unchecked")
-  public static void test1() {
+  public void test1() {
 
     String resourcename = "java.util.classlist.java1.6.txt";
 
