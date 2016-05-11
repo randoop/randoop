@@ -453,6 +453,37 @@ The files are placed in <code>build/docs</code>, with the Javadoc in
 </p>
 
 <p>
+  If you write JUnit tests that change the static state of either a command-line
+  argument or a static class, then you should add <code>BeforeClass</code> and <code>AfterClass</code>
+  annotated methods that save and restore the prior state.
+  For command-line arguments this can be done by adding the following code to
+  the beginning of the test class:
+</p>
+
+<code><pre>
+  private static OptionsCache optionsCache;
+
+  @BeforeClass
+  public static void setup() {
+    optionsCache = new OptionsCache();
+    optionsCache.saveState();
+  }
+
+  @AfterClass
+  public static void restore() {
+    optionsCache.restoreState();
+  }
+</pre></code>
+
+<p>
+This uses the <code>randoop.main.OptionsCache</code> class to save the static state of
+all classes that include the definition of command-line arguments.
+For classes under test with static state that is changed, you would similarly use
+the <code>randoop.reflection.StaticCache</code> class to save the state of that
+particular class.
+</p>
+
+<p>
   The system tests are test methods of a JUnit class <code>randoop.main.RandoopSystemTest</code>
   in the <code>src/systemtest</code> directory.
   Each test uses one or more input classes from the <i>testInput</i> source set,
