@@ -417,7 +417,7 @@ public class TreeSet extends AbstractSet implements SortedSet, Cloneable, java.i
    * @return a shallow copy of this set.
    */
   public Object clone() {
-    TreeSet clone = null;
+    TreeSet clone;
     try {
       clone = (TreeSet) super.clone();
     } catch (CloneNotSupportedException e) {

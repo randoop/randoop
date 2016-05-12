@@ -645,7 +645,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
           "Maximum sequence size must be greater than zero but was " + maxsize);
     }
 
-    if (literals_file.size() > 0 && literals_level == ClassLiteralsMode.NONE) {
+    if (!literals_file.isEmpty() && literals_level == ClassLiteralsMode.NONE) {
       throw new RuntimeException(
           "Invalid parameter combination: specified a class literal file but --use-class-literals=NONE");
     }

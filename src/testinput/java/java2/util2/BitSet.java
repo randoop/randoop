@@ -60,7 +60,7 @@ public class BitSet implements Cloneable, java.io.Serializable {
    *
    * @serial
    */
-  private long bits[]; // this should be called unit[]
+  private long[] bits; // this should be called unit[]
 
   /**
    * The number of units in the logical size of this BitSet.
@@ -130,7 +130,7 @@ public class BitSet implements Cloneable, java.io.Serializable {
     if (bits.length < unitsRequired) {
       // Allocate larger of doubled size or required size
       int request = Math.max(2 * bits.length, unitsRequired);
-      long newBits[] = new long[request];
+      long[] newBits = new long[request];
       System.arraycopy(bits, 0, newBits, 0, unitsInUse);
       bits = newBits;
     }
@@ -188,10 +188,9 @@ public class BitSet implements Cloneable, java.io.Serializable {
     }
 
     int startUnitIndex = unitIndex(fromIndex);
-    long bitMask = 0;
     if (startUnitIndex == endUnitIndex) {
       // Case 1: One word
-      bitMask = (1L << (toIndex & BIT_INDEX_MASK)) - (1L << (fromIndex & BIT_INDEX_MASK));
+      long bitMask = (1L << (toIndex & BIT_INDEX_MASK)) - (1L << (fromIndex & BIT_INDEX_MASK));
       bits[startUnitIndex] ^= bitMask;
       if (bits[unitsInUse - 1] == 0) recalculateUnitsInUse();
       return;
@@ -199,7 +198,7 @@ public class BitSet implements Cloneable, java.io.Serializable {
 
     // Case 2: Multiple words
     // Handle first word
-    bitMask = bitsLeftOf(fromIndex & BIT_INDEX_MASK);
+    long bitMask = bitsLeftOf(fromIndex & BIT_INDEX_MASK);
     bits[startUnitIndex] ^= bitMask;
 
     // Handle intermediate words, if any
@@ -293,17 +292,16 @@ public class BitSet implements Cloneable, java.io.Serializable {
     }
 
     int startUnitIndex = unitIndex(fromIndex);
-    long bitMask = 0;
     if (startUnitIndex == endUnitIndex) {
       // Case 1: One word
-      bitMask = (1L << (toIndex & BIT_INDEX_MASK)) - (1L << (fromIndex & BIT_INDEX_MASK));
+      long bitMask = (1L << (toIndex & BIT_INDEX_MASK)) - (1L << (fromIndex & BIT_INDEX_MASK));
       bits[startUnitIndex] |= bitMask;
       return;
     }
 
     // Case 2: Multiple words
     // Handle first word
-    bitMask = bitsLeftOf(fromIndex & BIT_INDEX_MASK);
+    long bitMask = bitsLeftOf(fromIndex & BIT_INDEX_MASK);
     bits[startUnitIndex] |= bitMask;
 
     // Handle intermediate words, if any
@@ -371,10 +369,9 @@ public class BitSet implements Cloneable, java.io.Serializable {
     if (startUnitIndex >= unitsInUse) return;
     int endUnitIndex = unitIndex(toIndex);
 
-    long bitMask = 0;
     if (startUnitIndex == endUnitIndex) {
       // Case 1: One word
-      bitMask = (1L << (toIndex & BIT_INDEX_MASK)) - (1L << (fromIndex & BIT_INDEX_MASK));
+      long bitMask = (1L << (toIndex & BIT_INDEX_MASK)) - (1L << (fromIndex & BIT_INDEX_MASK));
       bits[startUnitIndex] &= ~bitMask;
       if (bits[unitsInUse - 1] == 0) recalculateUnitsInUse();
       return;
@@ -382,7 +379,7 @@ public class BitSet implements Cloneable, java.io.Serializable {
 
     // Case 2: Multiple words
     // Handle first word
-    bitMask = bitsLeftOf(fromIndex & BIT_INDEX_MASK);
+    long bitMask = bitsLeftOf(fromIndex & BIT_INDEX_MASK);
     bits[startUnitIndex] &= ~bitMask;
 
     // Handle intermediate words, if any
@@ -557,7 +554,7 @@ public class BitSet implements Cloneable, java.io.Serializable {
    * trailingZeroTable[i] is the number of trailing zero bits in the binary
    * representaion of i.
    */
-  private final static byte trailingZeroTable[] = {
+  private final static byte[] trailingZeroTable = {
     -25, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1,
     0, 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1,
     0, 6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1,
@@ -890,7 +887,7 @@ public class BitSet implements Cloneable, java.io.Serializable {
    * @see     java2.util2.BitSet#size()
    */
   public Object clone() {
-    BitSet result = null;
+    BitSet result;
     try {
       result = (BitSet) super.clone();
     } catch (CloneNotSupportedException e) {

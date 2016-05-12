@@ -121,7 +121,7 @@ public abstract class CommandHandler {
       out.println("}}}");
       out.println();
     }
-    if (fnotes != null && fnotes.size() > 0) {
+    if (fnotes != null && !fnotes.isEmpty()) {
       out.println("*Notes:*");
       out.println();
       for (String note : fnotes) {
@@ -167,7 +167,7 @@ public abstract class CommandHandler {
           Util.hangingParagraph("Example: " + fexample, Globals.COLWIDTH, Globals.INDENTWIDTH));
     }
     out.println();
-    if (fnotes != null && fnotes.size() > 0) {
+    if (fnotes != null && !fnotes.isEmpty()) {
       out.println("Notes:");
       out.println();
       for (int i = 0; i < fnotes.size(); i++) {

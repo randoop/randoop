@@ -136,7 +136,7 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
 
             // If the value is returned from a Date that we created,
             // don't use it as it's just going to have today's date in it.
-            if (s.sequence.getInputs(i).size() > 0) {
+            if (!s.sequence.getInputs(i).isEmpty()) {
               Variable var0 = s.sequence.getInputs(i).get(0);
               if (var0.getType().hasRuntimeClass(java.util.Date.class)) {
                 Statement sk = s.sequence.getCreatingStatement(var0);

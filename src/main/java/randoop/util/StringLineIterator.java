@@ -24,7 +24,7 @@ public class StringLineIterator {
    * @return true if there are more words, false otherwise
    */
   public boolean hasMoreWords() {
-    return this.words.size() > 0;
+    return !this.words.isEmpty();
   }
 
   /**

@@ -85,7 +85,7 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
       return bytecode;
     }
 
-    CtClass cc = null;
+    CtClass cc;
     try {
       cc = pool.makeClassIfNew(new ByteArrayInputStream(classfileBuffer));
     } catch (Exception e) {

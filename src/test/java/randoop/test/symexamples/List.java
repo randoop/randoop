@@ -14,7 +14,7 @@ public interface List extends Collection {
 
   Object[] toArray();
 
-  Object[] toArray(Object a[]);
+  Object[] toArray(Object[] a);
 
   boolean add(Object o);
 

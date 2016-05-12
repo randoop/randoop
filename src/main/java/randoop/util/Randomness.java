@@ -50,7 +50,7 @@ public final class Randomness {
   }
 
   public static <T> T randomMember(SimpleList<T> list) {
-    if (list == null || list.size() == 0)
+    if (list == null || list.isEmpty())
       throw new IllegalArgumentException("Expected non-empty list");
     return list.get(nextRandomInt(list.size()));
   }

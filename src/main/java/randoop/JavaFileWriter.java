@@ -19,7 +19,7 @@ public class JavaFileWriter {
   // Output is a set of .java files.
   public static void createJavaFiles(
       List<Sequence> sequences, String junitClassName, int testsPerFile) {
-    if (sequences.size() == 0) {
+    if (sequences.isEmpty()) {
       System.out.println("No sequences given to createJavaFiles. No files created.");
       return;
     }
