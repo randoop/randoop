@@ -21,13 +21,16 @@ import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Sequence;
+import randoop.sequence.SequenceExceptionError;
 import randoop.test.treeadd.TreeAdd;
 import randoop.test.treeadd.TreeNode;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
 import randoop.util.MultiMap;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 
 public class ForwardExplorerTests2  {
@@ -51,8 +54,13 @@ public class ForwardExplorerTests2  {
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator exp = new ForwardGenerator(model, new LinkedHashSet<TypedOperation>(), Long.MAX_VALUE, 100, 100, mgr, null, null);
     exp.addTestCheckGenerator(createChecker(new LinkedHashSet<ObjectContract>()));
-    GenInputsAbstract.null_ratio = 0.5; //.forbid_null = false;
-    exp.explore();
+    GenInputsAbstract.null_ratio = 0.05; //.forbid_null = false;
+    try {
+      exp.explore();
+      fail("expected timeout exception");
+    } catch (SequenceExceptionError e) {
+      assertEquals("should be timeout", e.getMessage(), "Exception thrown before end of sequence");
+    }
     for (Sequence s : exp.getAllSequences()) {
       s.toCodeString();
     }

@@ -1,5 +1,7 @@
 package randoop.test;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -16,6 +18,7 @@ import randoop.generation.ForwardGenerator;
 import randoop.generation.IStopper;
 import randoop.generation.SeedSequences;
 import randoop.main.GenInputsAbstract;
+import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.ModelCollections;
@@ -52,7 +55,26 @@ import static org.junit.Assert.assertTrue;
  */
 public class ICSE07ContainersTest {
 
-  private static void runRandoop(
+  private static OptionsCache optionsCache;
+
+  @BeforeClass
+  public static void setup() {
+    optionsCache = new OptionsCache();
+    optionsCache.saveState();
+    optionsCache.printState();
+    GenInputsAbstract.maxsize = 10000; // Integer.MAX_VALUE;
+    GenInputsAbstract.repeat_heuristic = true;
+    ReflectionExecutor.usethreads = false;
+    GenInputsAbstract.debug_checks = false;
+    GenInputsAbstract.null_ratio = 0.5;
+  }
+
+  @AfterClass
+  public static void restore() {
+    optionsCache.restoreState();
+  }
+
+  private void runRandoop(
           String name,
           List<Class<?>> classList,
           Pattern omitMethodPattern,
@@ -60,6 +82,13 @@ public class ICSE07ContainersTest {
           Set<String> excludeNames) {
 
     System.out.println("ICSE 2006 container: " + name);
+    System.out.println("GenInputsAbstract.clear="+ GenInputsAbstract.clear);
+    System.out.println("GenInputsAbstract.repeat_heuristic=" + GenInputsAbstract.repeat_heuristic);
+    System.out.println("GenInputsAbstract.maxsize=" + GenInputsAbstract.maxsize);
+    System.out.println("GenInputsAbstract.alias_ratio=" + GenInputsAbstract.alias_ratio);
+    System.out.println("GenInputsAbstract.forbid_null=" + GenInputsAbstract.forbid_null);
+    System.out.println("GenInputsAbstract.null_ratio=" + GenInputsAbstract.null_ratio);
+    System.out.println("GenInputsAbstract.small_tests=" + GenInputsAbstract.small_tests);
 
     final List<TypedOperation> model = new ArrayList<>();
     TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
@@ -92,10 +121,6 @@ public class ICSE07ContainersTest {
             stopper,
             null);
     explorer.addTestCheckGenerator(new DummyCheckGenerator());
-    GenInputsAbstract.maxsize = 10000; // Integer.MAX_VALUE;
-    GenInputsAbstract.repeat_heuristic = true;
-    ReflectionExecutor.usethreads = false;
-    randoop.main.GenInputsAbstract.debug_checks = false;
     explorer.explore();
   }
 

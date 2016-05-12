@@ -10,7 +10,7 @@ import java.util.Set;
 import randoop.TestValue;
 import randoop.generation.SeedSequences;
 import randoop.operation.TypedOperation;
-import randoop.reflection.PublicVisibilityPredicate;
+import randoop.reflection.PackageVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.TestValueExtractor;
 import randoop.sequence.Sequence;
@@ -24,9 +24,10 @@ public class SeedSequencesTests {
 
   @Test
   public void testGetSeedsFromAnnotatedFields() {
+    Package thisPackage = this.getClass().getPackage();
 
     Set<Sequence> annotatedTestValues = new LinkedHashSet<>();
-    ReflectionManager manager = new ReflectionManager(new PublicVisibilityPredicate());
+    ReflectionManager manager = new ReflectionManager(new PackageVisibilityPredicate(thisPackage));
     manager.add(new TestValueExtractor(annotatedTestValues));
     
     try {
@@ -36,7 +37,7 @@ public class SeedSequencesTests {
           e.getMessage(),
           e.getMessage().contains("public")); // message should at least mention static modifier.
     }
-    assertTrue("shouldn't get anything ", annotatedTestValues.isEmpty());
+    assertTrue("shouldn't get anything but have " + annotatedTestValues.size() + " value(s)", annotatedTestValues.isEmpty());
 
     try {
       manager.apply(MissingStaticMod.class);
@@ -46,17 +47,6 @@ public class SeedSequencesTests {
           e.getMessage().contains("static")); // message should at least mention static modifier.
     }
     assertTrue("didn't get anything ", annotatedTestValues.isEmpty());
-
-    try {
-      manager.apply(ClassNotPublic.class);
-    } catch (RuntimeException e) {
-      assertTrue(
-          e.getMessage(),
-          e.getMessage()
-              .contains(
-                  "visible")); // message should at least mention potential visibility problem.
-    }
-    assertTrue("still got nothing ", annotatedTestValues.isEmpty());
 
     try {
       manager.apply(BadType0.class);
@@ -86,10 +76,10 @@ public class SeedSequencesTests {
     assertTrue("and still nothing... ", annotatedTestValues.isEmpty());
 
     Set<Sequence> s4 = new LinkedHashSet<>();
-    ReflectionManager managerS4 = new ReflectionManager(new PublicVisibilityPredicate());
+    ReflectionManager managerS4 = new ReflectionManager(new PackageVisibilityPredicate(thisPackage));
     managerS4.add(new TestValueExtractor(s4));
 
-    managerS4.apply(SeedSequencesTests.TestValueExamples.class);
+    managerS4.apply(TestValueExamples.class);
     Set<Sequence> expected =
         SeedSequences.objectsToSeeds(
             Arrays.asList(
@@ -100,43 +90,45 @@ public class SeedSequencesTests {
     assertEquals(expected, s4);
   }
 
-  static class TestValueExamples {
-    @TestValue public static int x1 = 0;
-    @TestValue public static boolean b = false;
-    @TestValue public static byte by = 3;
-    @TestValue public static char c = 'c';
-    @TestValue public static long l = 3L;
-    @TestValue public static float f = (float) 1.3;
-    @TestValue public static double d = 1.4;
-    @TestValue public static String s1 = null;
-    @TestValue public static String s2 = "hi";
-    @TestValue public static int[] a1 = new int[] {1, 2, 3};
-    @TestValue public static int[] a2 = new int[] {};
-  }
 }
 
+@SuppressWarnings("unused")
+class TestValueExamples {
+  @TestValue public static int x1 = 0;
+  @TestValue public static boolean b = false;
+  @TestValue public static byte by = 3;
+  @TestValue public static char c = 'c';
+  @TestValue public static long l = 3L;
+  @TestValue public static float f = (float) 1.3;
+  @TestValue public static double d = 1.4;
+  @TestValue public static String s1 = null;
+  @TestValue public static String s2 = "hi";
+  @TestValue public static int[] a1 = new int[] {1, 2, 3};
+  @TestValue public static int[] a2 = new int[] {};
+}
+
+@SuppressWarnings("unused")
 class MissingPublicMod {
-  @TestValue static int x1 = 0;
+  @TestValue private static int x1 = 0;
 }
 
+@SuppressWarnings("unused")
 class MissingStaticMod {
   @TestValue public int x1 = 0;
 }
 
-class ClassNotPublic {
-  // not static
-  @TestValue static public int x1 = 0;
-}
-
+@SuppressWarnings("unused")
 class BadType0 {
   // not static
   @TestValue static public Integer x1 = 0;
 }
 
+@SuppressWarnings("unused")
 class BadType1 {
   @TestValue public static Object o1 = (int) 1;
 }
 
+@SuppressWarnings("unused")
 class BadType2 {
   @TestValue public static Object o1 = (int) 1;
 }
