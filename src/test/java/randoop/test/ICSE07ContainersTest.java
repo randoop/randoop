@@ -63,7 +63,6 @@ public class ICSE07ContainersTest {
      optionsCache.saveState();
      GenInputsAbstract.maxsize = 10000; // Integer.MAX_VALUE;
      GenInputsAbstract.repeat_heuristic = true;
-     ReflectionExecutor.usethreads = false;
      GenInputsAbstract.debug_checks = false;
      GenInputsAbstract.null_ratio = 0.5;
    }
