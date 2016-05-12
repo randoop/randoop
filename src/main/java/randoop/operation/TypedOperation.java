@@ -150,6 +150,13 @@ public abstract class TypedOperation implements Operation {
     return operation.compareTo(o);
   }
 
+  /**
+   * Appends Java text for this operation to the given {@code StringBuilder}, and using the given
+   * variables.
+   *
+   * @param inputVars  the list of input variables for this operation
+   * @param b  the {@code StringBuilder}
+   */
   public abstract void appendCode(List<Variable> inputVars, StringBuilder b);
 
   /**
@@ -167,10 +174,29 @@ public abstract class TypedOperation implements Operation {
     return this.getOperation().execute(input, out);
   }
 
+  /**
+   * Applies the given substitution to the generic types in this operation, and returns a new
+   * operation with the instantiated types.
+   *
+   * @param substitution  the substitution
+   * @return the operation resulting from applying the substitution to the types of this operation
+   */
   public abstract TypedOperation apply(Substitution<ReferenceType> substitution);
 
+  /**
+   * Constructs a string representation of this operation that can be parsed by parse methods of the
+   * implementing types.
+   *
+   * @return a string representation of this operation
+   */
   public abstract String toParsableString();
 
+  /**
+   * Constructs a {@link TypedOperation} for a constructor object.
+   *
+   * @param constructor  the reflective constructor object
+   * @return the typed operation for the constructor
+   */
   public static TypedClassOperation forConstructor(Constructor<?> constructor) {
     ConstructorCall op = new ConstructorCall(constructor);
     ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(constructor.getDeclaringClass());
@@ -182,6 +208,12 @@ public abstract class TypedOperation implements Operation {
     return new TypedClassOperation(op, declaringType, inputTypes, declaringType);
   }
 
+  /**
+   * Constructs a {@link TypedOperation} for a method object.
+   *
+   * @param method  the reflective method object
+   * @return the typed operation for the given method
+   */
   public static TypedClassOperation forMethod(Method method) {
     MethodCall op = new MethodCall(method);
     ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(method.getDeclaringClass());
@@ -197,24 +229,56 @@ public abstract class TypedOperation implements Operation {
     return new TypedClassOperation(op, declaringType, inputTypes, outputType);
   }
 
+  /**
+   * Creates an operation that initializes a variable to null.
+   *
+   * @param type  the type of variable to be initialized
+   * @return the initialization operation
+   */
   public static TypedOperation createNullInitializationWithType(GeneralType type) {
     assert ! type.isPrimitive() : "cannot initialize primitive to null: " + type;
     return TypedOperation.createNonreceiverInitialization(new NonreceiverTerm(type, null));
   }
 
+  /**
+   * Creates an operation that initializes a variable to the zero value for the given type.
+   *
+   * @param type the type of the initialization
+   * @return the initialization operation
+   */
   public static TypedOperation createNullOrZeroInitializationForType(GeneralType type) {
     return TypedOperation.createNonreceiverInitialization(NonreceiverTerm.createNullOrZeroTerm(type));
   }
 
+  /**
+   * Creates an operation that initializes a variable to a given primitive value.
+   *
+   * @param type  the primitive type
+   * @param value the value for initialization
+   * @return the initialization operation
+   */
   public static TypedOperation createPrimitiveInitialization(GeneralType type, Object value) {
     assert PrimitiveTypes.isBoxedOrPrimitiveOrStringType(type.getRuntimeClass()) : "must be nonreceiver type, got " + type.getName();
     return TypedOperation.createNonreceiverInitialization(new NonreceiverTerm(type,value));
   }
 
+  /**
+   * Creates an operation that uses the given {@link NonreceiverTerm} for initializing a variable.
+   *
+   * @param term the {@link NonreceiverTerm}
+   * @return the initialization operation
+   */
   public static TypedOperation createNonreceiverInitialization(NonreceiverTerm term) {
     return new TypedTermOperation(term, new TypeTuple(), term.getType());
   }
 
+  /**
+   * Creates an operation that creates an array of the given type and size.
+   *
+   * @param arrayType  the type of the array
+   * @param size  the size of the created array
+   * @return the array creation operation
+   */
   public static TypedOperation createArrayCreation(ArrayType arrayType, int size) {
     List<GeneralType> typeList = new ArrayList<>();
     for (int i = 0; i < size; i++) {
