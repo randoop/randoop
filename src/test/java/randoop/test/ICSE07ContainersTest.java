@@ -64,7 +64,7 @@ public class ICSE07ContainersTest {
      GenInputsAbstract.maxsize = 10000; // Integer.MAX_VALUE;
      GenInputsAbstract.repeat_heuristic = true;
      GenInputsAbstract.debug_checks = false;
-     GenInputsAbstract.null_ratio = 0.5;
+
    }
 
    @AfterClass
@@ -117,6 +117,7 @@ public class ICSE07ContainersTest {
 
   @Test
   public void testFibHeap() throws IOException {
+    GenInputsAbstract.null_ratio = 0.05;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(FibHeap.class);
     FibHeap.rand.setSeed(0);
@@ -146,6 +147,7 @@ public class ICSE07ContainersTest {
 
   @Test
   public void testBinTree() {
+    GenInputsAbstract.null_ratio = 0.5;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(BinTree.class);
     randoop.util.Randomness.reset(0);
@@ -169,6 +171,7 @@ public class ICSE07ContainersTest {
 
   @Test
   public void testTreeMap() {
+    GenInputsAbstract.null_ratio = 0.05;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(TreeMap.class);
     randoop.util.Randomness.reset(0);
@@ -197,6 +200,7 @@ public class ICSE07ContainersTest {
 
   @Test
   public void testBinomialHeap() {
+    GenInputsAbstract.null_ratio = 0.5;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(BinomialHeap.class);
     randoop.util.Randomness.reset(0);
