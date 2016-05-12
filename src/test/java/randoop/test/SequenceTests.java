@@ -1,5 +1,7 @@
 package randoop.test;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -20,6 +22,7 @@ import randoop.Globals;
 import randoop.contract.ObjectContract;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
+import randoop.main.OptionsCache;
 import randoop.operation.ConcreteOperation;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.VisibilityPredicate;
@@ -47,6 +50,19 @@ and we aren't trying to parse parameterized types, I'm kicking this down the roa
 
 public class SequenceTests {
 
+  private static OptionsCache optionsCache;
+
+   @BeforeClass
+   public static void setup() {
+     optionsCache = new OptionsCache();
+     optionsCache.saveState();
+   }
+
+   @AfterClass
+   public static void restore() {
+     optionsCache.restoreState();
+   }
+   
   /**
    * Tests the sequence execution and code generation aspects of Randoop.
    *

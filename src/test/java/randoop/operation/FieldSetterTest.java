@@ -1,5 +1,7 @@
 package randoop.operation;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;
@@ -14,6 +16,7 @@ import randoop.NormalExecution;
 import randoop.field.AccessibleField;
 import randoop.field.ClassWithFields;
 import randoop.reflection.ModelCollections;
+import randoop.reflection.StaticCache;
 import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
@@ -36,6 +39,19 @@ import static org.junit.Assert.fail;
  */
 public class FieldSetterTest {
 
+  private static StaticCache cacheClassWithFields;
+
+  @BeforeClass
+  public static void saveState() {
+    cacheClassWithFields = new StaticCache(ClassWithFields.class);
+    cacheClassWithFields.saveState();
+  }
+
+  @AfterClass
+  public static void restoreState() {
+    cacheClassWithFields.restoreState();
+  }
+  
   @Test
   public void testStaticField() {
     Class<?> c = ClassWithFields.class;
@@ -47,7 +63,7 @@ public class FieldSetterTest {
       List<ConcreteType> setInputTypeList = new ArrayList<>();
       setInputTypeList.add(fieldType);
       FieldSet setOp = new FieldSet(f);
-      ConcreteOperation op = new ConcreteOperation(setOp, declaringType, new ConcreteTypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE); 
+      ConcreteOperation op = new ConcreteOperation(setOp, declaringType, new ConcreteTypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
 
       //types
       assertEquals("Should be one input type", 1, op.getInputTypes().size());

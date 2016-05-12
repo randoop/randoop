@@ -1,5 +1,7 @@
 package randoop.generation;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import randoop.contract.ObjectContract;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.main.GenTests;
+import randoop.main.OptionsCache;
 import randoop.operation.ConcreteOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.ModelCollections;
@@ -47,6 +50,19 @@ import static org.junit.Assert.fail;
  * So, question is where exceptions are placed.
  */
 public class TestClassificationTest {
+
+  private static OptionsCache optionsCache;
+
+   @BeforeClass
+   public static void setup() {
+     optionsCache = new OptionsCache();
+     optionsCache.saveState();
+   }
+
+   @AfterClass
+   public static void restore() {
+     optionsCache.restoreState();
+   }
 
   /**
    * Tests the classification of tests when all exceptions are invalid.

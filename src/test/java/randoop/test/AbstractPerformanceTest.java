@@ -3,21 +3,40 @@ package randoop.test;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import randoop.Globals;
+import randoop.main.OptionsCache;
 import randoop.util.Timer;
 
-public abstract class AbstractPerformanceTest extends TestCase {
+import static org.junit.Assert.fail;
+
+public abstract class AbstractPerformanceTest {
+
+  private static OptionsCache optionsCache;
+
+   @BeforeClass
+   public static void setup() {
+     optionsCache = new OptionsCache();
+     optionsCache.saveState();
+   }
+
+   @AfterClass
+   public static void restore() {
+     optionsCache.restoreState();
+   }
 
   abstract int expectedTimeMillis();
 
   abstract void execute();
 
-  private static final double DIVIDE_FACTOR = 1700;
+  private final double DIVIDE_FACTOR = 1700;
 
-  private static final double EXPECTED_MIN = (0.7) / computeFactor();
+  private final double EXPECTED_MIN = (0.7) / computeFactor();
 
-  private static double computeFactor() {
+  private double computeFactor() {
     String foo = "make sure that the loop doesn't get optimized away";
     List<String> list = new ArrayList<>();
     Timer t = new Timer();
@@ -30,6 +49,7 @@ public abstract class AbstractPerformanceTest extends TestCase {
     return t.getTimeElapsedMillis() / DIVIDE_FACTOR;
   }
 
+  @Test
   @SuppressWarnings("unchecked")
   public void test() {
 
