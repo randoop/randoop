@@ -30,6 +30,7 @@
           <li><a href="#codeformatting">Formatting Randoop Source Code</a></li>
           <li><a href="#modmanual">Modifying the manual</a></li>
           <li><a href="#addtests">Adding Tests</a></li>
+          <li><a href="#testing-changes">Testing your changes</a></li>
         </ul></li>
       <li><a href="#making_new_dist">Releasing a New Version of Randoop</a></li>
     </ul></li>
@@ -341,9 +342,7 @@ the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.
 So, for instance, the following will work to run the <code>exercised-class</code> agent:
 </p>
-<pre><code>
-  -javaagent:&lt;randoop-path&gt;/build/libs/exercised-class-2.1.4.jar
-</code></pre>
+<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/exercised-class-2.1.4.jar</code></pre>
 
 
 <h2 id="maintenance">Maintaining Randoop</h2>
@@ -532,12 +531,14 @@ option.
 </p>
 
 
-<h2 id="making_new_dist">Releasing a New Version of Randoop</h2>
+<h3 id="testing-changes">Testing your changes</h3>
 
 <p>
 Throughout, if you push commits to the GitHub repository, ensure that the tests
 continue to pass at
-<a href="https://travis-ci.org/randoop/randoop">https://travis-ci.org/randoop/randoop</a>.  They currently pass if this icon is green:
+<a href="https://travis-ci.org/randoop/randoop">https://travis-ci.org/randoop/randoop</a>.
+You will receive email if you author or push a commit that breaks the build.
+They currently pass if this icon is green:
 <img src="https://travis-ci.org/randoop/randoop.svg?branch=master" alt="Randoop Travis status icon"/>
 </p>
 
@@ -545,15 +546,17 @@ continue to pass at
 You can preemptively find most problems that Travis will find by running the
 commands
 </p>
-<pre><code>
-./gradlew clean assemble check manual
-</code></pre>
+<pre><code>./gradlew clean assemble check manual</code></pre>
 <p>
 locally before doing a push to GitHub.
 Though, it may be that some build problems may not occur without a clean project
 build, and so it is a good idea to push a branch to the Randoop repository before
 merging new work with the master branch.
 </p>
+
+
+
+<h2 id="making_new_dist">Releasing a New Version of Randoop</h2>
 
 <p>
   To make a release from the master branch, follow these steps:
