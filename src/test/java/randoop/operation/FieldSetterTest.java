@@ -1,5 +1,7 @@
 package randoop.operation;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;
@@ -13,12 +15,14 @@ import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.field.AccessibleField;
 import randoop.field.ClassWithFields;
+import randoop.reflection.StaticCache;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
 import randoop.types.GeneralType;
+import randoop.types.PrimitiveType;
 import randoop.types.SimpleClassOrInterfaceType;
 import randoop.types.TypeTuple;
 
@@ -35,6 +39,19 @@ import static org.junit.Assert.fail;
  */
 public class FieldSetterTest {
 
+  private static StaticCache cacheClassWithFields;
+
+  @BeforeClass
+  public static void saveState() {
+    cacheClassWithFields = new StaticCache(ClassWithFields.class);
+    cacheClassWithFields.saveState();
+  }
+
+  @AfterClass
+  public static void restoreState() {
+    cacheClassWithFields.restoreState();
+  }
+
   @Test
   public void testStaticField() {
     Class<?> c = ClassWithFields.class;
@@ -42,7 +59,7 @@ public class FieldSetterTest {
     try {
       Field field = c.getField("fourField");
       AccessibleField f = new AccessibleField(field, declaringType);
-      GeneralType fieldType = new SimpleClassOrInterfaceType(field.getType());
+      GeneralType fieldType = new PrimitiveType(field.getType());
       List<GeneralType> setInputTypeList = new ArrayList<>();
       setInputTypeList.add(fieldType);
       FieldSet setOp = new FieldSet(f);

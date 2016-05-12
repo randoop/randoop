@@ -214,7 +214,6 @@ public class EnumReflectionTest {
     ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(op);
 
     Set<TypedOperation> actual = getConcreteOperations(op);
-
     Set<String> overrides = new TreeSet<>();
     int count = 0;
     for (Object obj : op.getEnumConstants()) {
@@ -246,7 +245,7 @@ public class EnumReflectionTest {
       }
     }
 
-    assertEquals("number of statements", count, actual.size());
+    assertEquals("number of operations", count, actual.size());
   }
 
   private Set<TypedOperation> getConcreteOperations(Class<?> c) {

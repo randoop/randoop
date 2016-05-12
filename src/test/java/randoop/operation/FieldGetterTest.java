@@ -19,6 +19,7 @@ import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
+import randoop.types.PrimitiveType;
 import randoop.types.SimpleClassOrInterfaceType;
 import randoop.types.TypeTuple;
 
@@ -40,7 +41,7 @@ public class FieldGetterTest {
     ClassOrInterfaceType classType = new SimpleClassOrInterfaceType(c);
     try {
       Field field = c.getField("fourField");
-      GeneralType fieldType = new SimpleClassOrInterfaceType(field.getType());
+      GeneralType fieldType = new PrimitiveType(field.getType());
       TypedOperation rhs = createGetter(field, fieldType, classType);
 
       //types
@@ -80,7 +81,7 @@ public class FieldGetterTest {
     try {
 
       Field field = c.getField("oneField");
-      GeneralType fieldType = new SimpleClassOrInterfaceType(field.getType());
+      GeneralType fieldType = new PrimitiveType(field.getType());
       TypedOperation rhs = createGetter(field, fieldType, classType);
 
       //types
@@ -159,7 +160,7 @@ public class FieldGetterTest {
     try {
 
       Field field = c.getField("FIVEFIELD");
-      GeneralType fieldType = new SimpleClassOrInterfaceType(field.getType());
+      GeneralType fieldType = new PrimitiveType(field.getType());
       TypedOperation rhs = createGetter(field, fieldType, classType);
 
 
