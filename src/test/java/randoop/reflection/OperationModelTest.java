@@ -11,6 +11,7 @@ import randoop.main.ClassNameErrorHandler;
 import randoop.main.ThrowClassNameError;
 import randoop.main.WarnOnBadClassName;
 import randoop.operation.OperationParseException;
+import randoop.types.GeneralType;
 import randoop.types.RandoopTypeException;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -41,11 +42,10 @@ public class OperationModelTest {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
     }
     assert model != null : "model was not initialized";
-    assertThat("only expect the LinkedList and Object classes", model.getClasses().size(), is(equalTo(2)));
+
+    assertThat("only expect the LinkedList and Object classes", model.getConcreteClasses().size(), is(equalTo(2)));
     assertTrue("should have nonzero operations set", model.getConcreteOperations().size() > 0);
 
   }
@@ -68,11 +68,9 @@ public class OperationModelTest {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
     }
     assert model != null: "model was not initialized";
-    assertThat("should have both outer and inner classes, plus Object", model.getClasses().size(), is(equalTo(3)));
+    assertThat("should have both outer and inner classes, plus Object", model.getConcreteClasses().size(), is(equalTo(3)));
 
     assertTrue("should have nonzero operations set", model.getConcreteOperations().size() > 0);
 

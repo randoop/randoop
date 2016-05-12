@@ -34,8 +34,8 @@ public class VisibilityBridgeTest {
     private String name;
     private TypeTuple parameterTypes;
 
-    FormalMethod(Method m, GeneralType declaringType) {
-      this.returnType = new SimpleClassOrInterfaceType(m.getReturnType());
+    FormalMethod(Method m, ClassOrInterfaceType declaringType) {
+      this.returnType = GeneralType.forClass(m.getReturnType());
       this.name = m.getName();
       List<GeneralType> paramTypes = new ArrayList<>();
       if (! Modifier.isStatic(m.getModifiers() & Modifier.methodModifiers())) {
@@ -64,6 +64,11 @@ public class VisibilityBridgeTest {
       if (!(obj instanceof FormalMethod)) return false;
       FormalMethod m = (FormalMethod) obj;
       return this.equals(m);
+    }
+
+    @Override
+    public String toString() {
+      return name + " : " + parameterTypes + " -> " + returnType;
     }
 
     public String getName() {
