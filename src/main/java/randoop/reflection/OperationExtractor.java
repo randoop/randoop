@@ -85,8 +85,9 @@ public class OperationExtractor extends DefaultClassVisitor {
     if (! predicate.test(method)) {
       return;
     }
-
-    manager.addOperation(TypedOperation.forMethod(method));
+    final TypedClassOperation operation = TypedOperation.forMethod(method);
+    System.out.println("adding " + operation);
+    manager.addOperation(operation);
   }
 
   /**

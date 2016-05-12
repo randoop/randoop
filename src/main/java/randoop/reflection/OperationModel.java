@@ -25,7 +25,6 @@ import randoop.types.GeneralType;
 import randoop.types.GenericClassType;
 import randoop.types.ParameterBound;
 import randoop.types.ParameterizedType;
-import randoop.types.RandoopTypeException;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.TypeNames;
@@ -111,7 +110,7 @@ public class OperationModel extends ModelCollections {
       Set<String> exercisedClassnames,
       Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
-      List<String> literalsFileList) throws OperationParseException, NoSuchMethodException, RandoopTypeException {
+      List<String> literalsFileList) throws OperationParseException, NoSuchMethodException {
 
     OperationModel model = new OperationModel();
 
@@ -208,7 +207,7 @@ public class OperationModel extends ModelCollections {
     }
   }
 
-  private void refineGenericClassTypes() throws RandoopTypeException {
+  private void refineGenericClassTypes() {
     for (ClassOrInterfaceType classType : classDeclarationTypes) {
       if (classType.isGeneric()) {
         List<Substitution<ReferenceType>> substitutions = getSubstitutions((GenericClassType)classType);
@@ -225,7 +224,7 @@ public class OperationModel extends ModelCollections {
     }
   }
 
-  private List<Substitution<ReferenceType>> getSubstitutions(GenericClassType classType) throws RandoopTypeException {
+  private List<Substitution<ReferenceType>> getSubstitutions(GenericClassType classType) {
     List<TypeVariable> typeArguments = classType.getTypeParameters();
     TypeTupleSet candidateSet = new TypeTupleSet();
     for (TypeVariable typeArgument : typeArguments) {
@@ -261,7 +260,7 @@ public class OperationModel extends ModelCollections {
   /**
    * Creates and adds the Object class default constructor call to the concrete operations.
    */
-  private void addObjectConstructor() throws RandoopTypeException {
+  private void addObjectConstructor() {
     Constructor<?> objectConstructor = null;
     try {
       objectConstructor = Object.class.getConstructor();
@@ -357,6 +356,10 @@ public class OperationModel extends ModelCollections {
    */
   public Set<ClassOrInterfaceType> getClasses() {
     return classDeclarationTypes;
+  }
+
+  public Set<ClassOrInterfaceType> getConcreteClasses() {
+    return concreteClassTypes;
   }
 
   /**

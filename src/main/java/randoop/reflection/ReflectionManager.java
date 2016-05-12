@@ -164,6 +164,10 @@ public class ReflectionManager {
       if (!e.getClass().equals(c)) { // does constant have an anonymous class?
         for (Method m : e.getClass().getDeclaredMethods()) {
           overrideMethods.add(m.getName()); // collect any potential overrides
+Class<?> declaringClass = m.getDeclaringClass();
+System.out.print("constant: " + declaringClass.getName() + " ");
+System.out.print("method: " + m.getName() + " ");
+System.out.println("enclosing: " + declaringClass.getEnclosingClass().getName());
         }
       }
     }
@@ -179,6 +183,11 @@ public class ReflectionManager {
     // constant
     for (Method m : c.getMethods()) {
       if (predicate.isVisible(m) && overrideMethods.contains(m.getName())) {
+Class<?> declaringClass = m.getDeclaringClass();
+System.out.print("enum: " + declaringClass.getName() + " ");
+System.out.print("method: " + m.getName() + " ");
+if (declaringClass.isEnum()) { System.out.print(" isEnum "); }
+System.out.println();
         applyTo(m);
       }
     }
