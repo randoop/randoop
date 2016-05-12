@@ -17,6 +17,7 @@ import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.IStopper;
 import randoop.generation.SeedSequences;
+import randoop.main.OptionsCache;
 import randoop.main.GenInputsAbstract;
 import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
@@ -57,22 +58,20 @@ public class ICSE07ContainersTest {
 
   private static OptionsCache optionsCache;
 
-  @BeforeClass
-  public static void setup() {
-    optionsCache = new OptionsCache();
-    optionsCache.saveState();
-    optionsCache.printState();
-    GenInputsAbstract.maxsize = 10000; // Integer.MAX_VALUE;
-    GenInputsAbstract.repeat_heuristic = true;
-    ReflectionExecutor.usethreads = false;
-    GenInputsAbstract.debug_checks = false;
-    GenInputsAbstract.null_ratio = 0.5;
-  }
+   @BeforeClass
+   public static void setup() {
+     optionsCache = new OptionsCache();
+     optionsCache.saveState();
+     GenInputsAbstract.maxsize = 10000; // Integer.MAX_VALUE;
+     GenInputsAbstract.repeat_heuristic = true;
+     GenInputsAbstract.debug_checks = false;
 
-  @AfterClass
-  public static void restore() {
-    optionsCache.restoreState();
-  }
+   }
+
+   @AfterClass
+   public static void restore() {
+     optionsCache.restoreState();
+   }
 
   private void runRandoop(
           String name,
@@ -126,6 +125,7 @@ public class ICSE07ContainersTest {
 
   @Test
   public void testFibHeap() throws IOException {
+    GenInputsAbstract.null_ratio = 0.05;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(FibHeap.class);
     FibHeap.rand.setSeed(0);
@@ -155,6 +155,7 @@ public class ICSE07ContainersTest {
 
   @Test
   public void testBinTree() {
+    GenInputsAbstract.null_ratio = 0.5;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(BinTree.class);
     randoop.util.Randomness.reset(0);
@@ -178,6 +179,7 @@ public class ICSE07ContainersTest {
 
   @Test
   public void testTreeMap() {
+    GenInputsAbstract.null_ratio = 0.05;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(TreeMap.class);
     randoop.util.Randomness.reset(0);
@@ -206,6 +208,7 @@ public class ICSE07ContainersTest {
 
   @Test
   public void testBinomialHeap() {
+    GenInputsAbstract.null_ratio = 0.05;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(BinomialHeap.class);
     randoop.util.Randomness.reset(0);

@@ -102,7 +102,7 @@ public class OperationParser {
    *
    * @param op
    *          the operation.
-   * @return the ID string for the operation.
+   * @return the ID string for the operation
    */
   public static String getId(TypedOperation op) {
     if (op == null) throw new IllegalArgumentException("st cannot be null.");

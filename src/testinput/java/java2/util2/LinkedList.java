@@ -567,7 +567,7 @@ public class LinkedList extends AbstractSequentialList
    * @return a shallow copy of this <tt>LinkedList</tt> instance.
    */
   public Object clone() {
-    LinkedList clone = null;
+    LinkedList clone;
     try {
       clone = (LinkedList) super.clone();
     } catch (CloneNotSupportedException e) {
@@ -622,7 +622,7 @@ public class LinkedList extends AbstractSequentialList
    *         supertype of the runtime type of every element in this list.
    * @throws NullPointerException if the specified array is null.
    */
-  public Object[] toArray(Object a[]) {
+  public Object[] toArray(Object[] a) {
     if (a.length < size)
       a = (Object[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), size);
     int i = 0;

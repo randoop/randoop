@@ -60,7 +60,7 @@ public final class MethodCall extends CallableOperation {
   /**
    * MethodCall creates an object corresponding to the given reflective method.
    *
-   * @param method  the reflective method object.
+   * @param method  the reflective method object
    */
   public MethodCall(Method method) {
     if (method == null) throw new IllegalArgumentException("method should not be null.");
@@ -84,7 +84,7 @@ public final class MethodCall extends CallableOperation {
    * {@inheritDoc}
    * Issues the code that corresponds to calling the method with the provided
    * {@link Variable} objects as arguments.
-   * @param inputVars is the list of actual arguments to be printed.
+   * @param inputVars is the list of actual arguments to be printed
    */
   @Override
   public void appendCode(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder sb) {
@@ -179,7 +179,7 @@ public final class MethodCall extends CallableOperation {
 
   /**
    * {@inheritDoc}
-   * @return true if this method is static, and false otherwise.
+   * @return true if this method is static, and false otherwise
    */
   @Override
   public boolean isStatic() {
@@ -288,7 +288,7 @@ public final class MethodCall extends CallableOperation {
    * Determines whether enclosed {@link Method} satisfies the given predicate.
    *
    * @param predicate the {@link ReflectionPredicate} to be checked.
-   * @return true only if the method in this object satisfies the canUse(Method) of predicate.
+   * @return true only if the method in this object satisfies the canUse(Method) of predicate
    */
   @Override
   public boolean satisfies(ReflectionPredicate predicate) {

@@ -1,5 +1,7 @@
 package randoop.test;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -27,6 +29,7 @@ import randoop.test.treeadd.TreeNode;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
 import randoop.util.MultiMap;
+import randoop.util.ReflectionExecutor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -35,12 +38,33 @@ import static org.junit.Assert.fail;
 
 public class ForwardExplorerTests2  {
 
+  private static OptionsCache optionsCache;
+
+   @BeforeClass
+   public static void setup() {
+     optionsCache = new OptionsCache();
+     optionsCache.saveState();
+   }
+
+   @AfterClass
+   public static void restore() {
+     optionsCache.restoreState();
+   }
+
+  /**
+   * The input scenario for this test results in the generation of a sequence
+   * with repeated calls to a non-terminating method. If <code>--usethreads</code>
+   * is set, the generator is not able to interrupt the executor, and will
+   * never terminate.
+   * Otherwise, a timeout exception will be thrown and the executor will throw an
+   * exception, which since it is not the last statement is considered "flaky".
+   */
   @Test
   public void test5() throws Exception {
+    // means that timeout results in a flaky sequence exception
+    GenInputsAbstract.repeat_heuristic = true;
 
-    // This test throws Randoop into an infinite loop. Disabling
-    // TODO look into it.
-    //if (true) return;
+    assert ReflectionExecutor.usethreads != false : "this test does not terminate if threads are not used";
 
     List<Class<?>> classes = new ArrayList<>();
     classes.add(TreeNode.class);
@@ -54,7 +78,8 @@ public class ForwardExplorerTests2  {
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator exp = new ForwardGenerator(model, new LinkedHashSet<TypedOperation>(), Long.MAX_VALUE, 100, 100, mgr, null, null);
     exp.addTestCheckGenerator(createChecker(new LinkedHashSet<ObjectContract>()));
-    GenInputsAbstract.null_ratio = 0.05; //.forbid_null = false;
+
+    // get a SequenceExceptionError when repeat_heuristic=true
     try {
       exp.explore();
       fail("expected timeout exception");

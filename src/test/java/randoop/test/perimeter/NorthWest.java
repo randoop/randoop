@@ -31,7 +31,7 @@ public class NorthWest implements Quadrant {
   /**
    * Return the child that represents this quadrant of the given
    * node.
-   * @param node the node that we want the child from.
+   * @param node the node that we want the child from
    * @return the child node representing this quadrant
    **/
   public QuadTreeNode child(QuadTreeNode node) {

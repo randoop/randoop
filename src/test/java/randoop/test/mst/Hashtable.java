@@ -1,7 +1,7 @@
 package randoop.test.mst;
 
 public class Hashtable {
-  protected HashEntry array[];
+  protected HashEntry[] array;
   protected int size;
 
   public Hashtable(int sz) {
@@ -18,7 +18,7 @@ public class Hashtable {
   public Object get(Object key) {
     int j = hashMap(key);
 
-    HashEntry ent = null;
+    HashEntry ent;
 
     for (ent = array[j]; ent != null && ent.key() != key; ent = ent.next()) {
       /* empty body */

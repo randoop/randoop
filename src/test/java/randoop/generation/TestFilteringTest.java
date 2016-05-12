@@ -1,5 +1,7 @@
 package randoop.generation;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -35,6 +37,19 @@ import randoop.util.predicate.Predicate;
 import static org.junit.Assert.assertTrue;
 
 public class TestFilteringTest {
+
+  private static OptionsCache optionsCache;
+
+   @BeforeClass
+   public static void setup() {
+     optionsCache = new OptionsCache();
+     optionsCache.saveState();
+   }
+
+   @AfterClass
+   public static void restore() {
+     optionsCache.restoreState();
+   }
 
   /**
    * Make sure that we are getting both regression and error tests with

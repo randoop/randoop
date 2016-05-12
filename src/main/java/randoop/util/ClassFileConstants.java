@@ -108,7 +108,7 @@ public class ClassFileConstants {
    * @param args  the command line arguments
    * @throws IOException if an error occurs in writing the constants
    */
-  public static void main(String args[]) throws IOException {
+  public static void main(String[] args) throws IOException {
     for (String classname : args) {
       System.out.println(getConstants(classname));
     }

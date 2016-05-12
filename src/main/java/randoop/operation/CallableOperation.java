@@ -55,7 +55,7 @@ public abstract class CallableOperation implements Operation {
    *          the {@link Operation} to compare with this operation
    * @return value &lt; 0 if this parsable string is less than for op, 0 if the
    *         strings are equal, and &gt; 0 if string for this object greater
-   *         than for op.
+   *         than for op
    */
   @Override
   public int compareTo(Operation op) {
@@ -69,7 +69,7 @@ public abstract class CallableOperation implements Operation {
    *
    * @param predicate
    *          {@link ReflectionPredicate} against which object to be checked.
-   * @return false as there is no object to check.
+   * @return false as there is no object to check
    */
   @Override
   public boolean satisfies(ReflectionPredicate predicate) {
@@ -82,7 +82,7 @@ public abstract class CallableOperation implements Operation {
    * output results to specified PrintStream.
    * @param input array containing appropriate inputs to operation
    * @param out stream to output results of execution;
-   *            can be null if you don't want to print.
+   *            can be null if you don't want to print
    * @return results of executing this statement
    */
   public abstract ExecutionOutcome execute(Object[] input, PrintStream out);
@@ -91,7 +91,7 @@ public abstract class CallableOperation implements Operation {
    * Produces a Java source code representation of this statement and append it
    * to the given StringBuilder.
    *
-   * @param inputVars  the list of variables that are inputs to operation.
+   * @param inputVars  the list of variables that are inputs to operation
    * @param b  the {@link StringBuilder} to which code is added.
    */
   public abstract void appendCode(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b);

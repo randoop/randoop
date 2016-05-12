@@ -38,7 +38,7 @@ public class BH {
   static double DTIME = 0.0125;
   private static double TSTOP = 2.0;
 
-  public static final void main(String args[]) {
+  public static final void main(String[] args) {
     parseCmdLine(args);
 
     if (printMsgs) System.out.println("nbody = " + nbody);
@@ -104,7 +104,7 @@ public class BH {
    * Parse the command line options.
    * @param args the command line options.
    **/
-  private static final void parseCmdLine(String args[]) {
+  private static final void parseCmdLine(String[] args) {
     int i = 0;
     String arg;
     while (i < args.length && args[i].startsWith("-")) {
@@ -113,13 +113,13 @@ public class BH {
       // check for options that require arguments
       if (arg.equals("-b")) {
         if (i < args.length) {
-          nbody = new Integer(args[i++]).intValue();
+          nbody = Integer.parseInt(args[i++]);
         } else {
           throw new Error("-l requires the number of levels");
         }
       } else if (arg.equals("-s")) {
         if (i < args.length) {
-          nsteps = new Integer(args[i++]).intValue();
+          nsteps = Integer.parseInt(args[i++]);
         } else {
           throw new Error("-l requires the number of levels");
         }

@@ -89,7 +89,7 @@ public interface Check {
    *
    * @param execution
    *          the execution of sequence on which to test this check
-   * @return true if check succeeded, and false otherwise.
+   * @return true if check succeeded, and false otherwise
    */
   boolean evaluate(Execution execution);
 }

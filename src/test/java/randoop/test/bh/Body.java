@@ -60,7 +60,7 @@ public final class Body extends Node {
 
   /**
    * Enlarge cubical "box", salvaging existing tree structure.
-   * @param tree the root of the tree.
+   * @param tree the root of the tree
    * @param nsteps the current time step
    **/
   public final void expandBox(Tree tree, int nsteps) {

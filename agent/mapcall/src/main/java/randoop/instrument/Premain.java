@@ -57,7 +57,7 @@ public class Premain {
     }
 
     // Setup the transformer
-    Object transformer = null;
+    Object transformer;
     if (default_bcel) {
       transformer = new Instrument();
     } else { // use a special classloader to ensure our files are used
@@ -153,7 +153,7 @@ public class Premain {
       List<URL> bcel_urls = get_resource_list(bcel_classname);
       List<URL> pag_urls = get_resource_list(pag_marker_classname);
 
-      if (pag_urls.size() == 0) {
+      if (pag_urls.isEmpty()) {
         System.err.printf(
             "%nBCEL must be in the classpath.  " + "Normally it is found in daikon.jar .%n");
         System.exit(1);
@@ -292,7 +292,7 @@ public class Premain {
 
       // Find our version of the class and return it.
       try {
-        InputStream is = null;
+        InputStream is;
         if (name.startsWith("daikon.chicory.Instrument")) {
           String resource_name = classname_to_resource_name(name);
           URL url = ClassLoader.getSystemResource(resource_name);

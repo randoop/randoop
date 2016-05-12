@@ -8,10 +8,16 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import randoop.DummyVisitor;
 import randoop.ExceptionalExecution;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
+import randoop.main.OptionsCache;
 import randoop.operation.ConstructorCall;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -35,11 +41,20 @@ import static org.junit.Assert.fail;
  */
 public class ExceptionPredicateTest {
 
+  private static OptionsCache optionsCache;
+
+   @AfterClass
+   public static void restore() {
+     optionsCache.restoreState();
+   }
+
   /*
    * Make sure that command-line arguments are set in expected way.
    */
   @BeforeClass
   public static void setupBeforeClass() {
+    optionsCache = new OptionsCache();
+    optionsCache.saveState();
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.npe_on_null_input = BehaviorType.EXPECTED;

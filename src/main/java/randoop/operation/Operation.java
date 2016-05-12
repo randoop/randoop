@@ -59,7 +59,7 @@ public interface Operation extends Comparable<Operation> {
    * declaring class.
    *
    * @return true if operation corresponds to static method or field of a class,
-   *         and false otherwise.
+   *         and false otherwise
    */
   boolean isStatic();
 
@@ -69,7 +69,7 @@ public interface Operation extends Comparable<Operation> {
    * This includes field getters and setters, which are operations that access
    * fields.
    *
-   * @return true if operation is method-like, and false otherwise.
+   * @return true if operation is method-like, and false otherwise
    */
   boolean isMessage();
 
@@ -84,7 +84,7 @@ public interface Operation extends Comparable<Operation> {
   /**
    * Predicate to indicate whether object represents a call to a constructor.
    *
-   * @return true if operation is a constructor call, and false otherwise.
+   * @return true if operation is a constructor call, and false otherwise
    */
   boolean isConstructorCall();
 
@@ -92,7 +92,7 @@ public interface Operation extends Comparable<Operation> {
    * Predicate to indicate whether this object represents a value of a
    * non-receiving type (includes numbers, strings, and null).
    *
-   * @return true if object is a non-receiving value, and false otherwise.
+   * @return true if object is a non-receiving value, and false otherwise
    */
   boolean isNonreceivingValue();
 
@@ -103,7 +103,7 @@ public interface Operation extends Comparable<Operation> {
    * <p>
    * This is a hack to allow randoop.main.GenBranchDir to do mutation.
    *
-   * @return object reference to value.
+   * @return object reference to value
    * @throws IllegalArgumentException if no meaningful definition of "value" for type.
    */
   Object getValue();
@@ -113,7 +113,7 @@ public interface Operation extends Comparable<Operation> {
    * the <code>canUse</code> criteria of the given {@link ReflectionPredicate}.
    *
    * @param reflectionPredicate a {@link ReflectionPredicate} to be checked.
-   * @return result of applying reflectionPredicate to object.
+   * @return result of applying reflectionPredicate to object
    */
   boolean satisfies(ReflectionPredicate reflectionPredicate);
 

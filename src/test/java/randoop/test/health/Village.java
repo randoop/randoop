@@ -64,10 +64,10 @@ public class Village {
    * Each village contains references to four other villages.  Users
    * specify the number of levels.
    *
-   * @param level the number of level of villages.
+   * @param level the number of level of villages
    * @param label a unique label for the village
    * @param back a link to the "parent" village
-   * @param seed the user supplied seed value.
+   * @param seed the user supplied seed value
    * @return the village that was created
    **/
   public static final Village createVillage(int level, int label, Village back, int seed) {
@@ -89,7 +89,7 @@ public class Village {
    **/
   public List simulate() {
     // the list of patients refered from each child village
-    List val[] = new List[4];
+    List[] val = new List[4];
 
     for (int i = 3; i >= 0; i--) {
       Village v = forward[i];
@@ -127,7 +127,7 @@ public class Village {
    * @return a summary of the simulation results for the village
    **/
   public Results getResults() {
-    Results fval[] = new Results[4];
+    Results[] fval = new Results[4];
     for (int i = 3; i >= 0; i--) {
       Village v = forward[i];
       if (v != null) {

@@ -64,7 +64,7 @@ public interface ObjectContract {
    * exception as passing behavior.
    *
    * @return true if an exception in evaluating this contract should be
-   *         interpreted as a failure, false otherwise.
+   *         interpreted as a failure, false otherwise
    */
   boolean evalExceptionMeansFailure();
 

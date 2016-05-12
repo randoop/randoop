@@ -96,7 +96,7 @@ public class StringEscapeUtils {
    *
    * @param str
    *          String to escape values in, may be null
-   * @return String with escaped values, <code>null</code> if null string input
+   * @return a String with escaped values, <code>null</code> if input string was null
    */
   public static String escapeJava(String str) {
     return escapeJavaStyleString(str, false);
@@ -224,7 +224,7 @@ public class StringEscapeUtils {
    *
    * @param ch
    *          The character to convert.
-   * @return An upper case hexadecimal <code>String</code>
+   * @return an upper case hexadecimal <code>String</code>
    */
   private static String hex(char ch) {
     return Integer.toHexString(ch).toUpperCase();

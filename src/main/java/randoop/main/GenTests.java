@@ -149,7 +149,7 @@ public class GenTests extends GenInputsAbstract {
     executeInitializationRoutine(1);
 
     // Check that there are classes to test
-    if (classlist == null && methodlist == null && testclass.size() == 0) {
+    if (classlist == null && methodlist == null && testclass.isEmpty()) {
       System.out.println("You must specify some classes or methods to test.");
       System.out.println("Use the --classlist, --testclass, or --methodlist options.");
       System.exit(1);
@@ -216,7 +216,7 @@ public class GenTests extends GenInputsAbstract {
 
     List<TypedOperation> model = operationModel.getConcreteOperations();
 
-    if (model.size() == 0) {
+    if (model.isEmpty()) {
       Log.out.println("There are no methods to test. Exiting.");
       System.exit(1);
     }
@@ -356,7 +356,7 @@ public class GenTests extends GenInputsAbstract {
 
     if (!GenInputsAbstract.no_error_revealing_tests) {
       List<ExecutableSequence> errorSequences = explorer.getErrorTestSequences();
-      if (errorSequences.size() > 0) {
+      if (!errorSequences.isEmpty()) {
         if (!GenInputsAbstract.noprogressdisplay) {
           System.out.printf("%nError-revealing test output:%n");
           System.out.printf("Error-revealing test count: %d%n", errorSequences.size());
@@ -371,7 +371,7 @@ public class GenTests extends GenInputsAbstract {
 
     if (!GenInputsAbstract.no_regression_tests) {
       List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
-      if (regressionSequences.size() > 0) {
+      if (!regressionSequences.isEmpty()) {
         if (!GenInputsAbstract.noprogressdisplay) {
           System.out.printf("%nRegression test output:%n");
           System.out.printf("Regression test count: %d%n", regressionSequences.size());
@@ -590,7 +590,7 @@ public class GenTests extends GenInputsAbstract {
 
     List<File> files = new ArrayList<>();
 
-    if (seqList.size() > 0) {
+    if (!seqList.isEmpty()) {
       List<List<ExecutableSequence>> seqPartition =
           CollectionsExt.<ExecutableSequence>chunkUp(new ArrayList<>(seqList), testsperfile);
 

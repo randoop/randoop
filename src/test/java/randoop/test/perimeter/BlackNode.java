@@ -54,7 +54,7 @@ public class BlackNode extends QuadTreeNode {
    *
    * @param quad1 the first specified quadrant
    * @param quad2 the second specified quadrant
-   * @param size the size of the image represented by this node.
+   * @param size the size of the image represented by this node
    * @return the perimeter of the adjacent nodes
    **/
   @Override

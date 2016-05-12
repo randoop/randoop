@@ -166,7 +166,7 @@ public class SequenceCollection {
    *
    * @param type  the type desired for the sequences being sought
    * @return list of sequence objects that are of typp 'type' and abide by the
-   *         constraints defined by nullOk.
+   *         constraints defined by nullOk
    */
   public SimpleList<Sequence> getSequencesForType(GeneralType type, boolean exactMatch) {
 

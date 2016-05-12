@@ -81,7 +81,7 @@ public class JunitFileWriter {
    *          executable sequence to be written to test class.
    * @param className
    *          name of test class.
-   * @return File that new test class was written to.
+   * @return the File that new test class was written to
    */
   public static File writeJUnitTestFile(
       String junitOutputDir, String packageName, ExecutableSequence es, String className) {
@@ -98,7 +98,7 @@ public class JunitFileWriter {
    *
    * @param seqPartition
    *          suite of test classes as a list of lists of executable sequences
-   * @return File objects corresponding to test class files generated.
+   * @return list of File objects corresponding to test class files generated.
    *
    * @see #writeSuiteFile
    * @see #writeDriverFile
@@ -128,7 +128,7 @@ public class JunitFileWriter {
    *          list of executable sequences for method bodies.
    * @param testClassName
    *          name of test class.
-   * @return File object for generated java file.
+   * @return the File object for generated java file
    */
   private File writeTestClass(List<ExecutableSequence> sequences, String testClassName) {
 
@@ -206,7 +206,7 @@ public class JunitFileWriter {
    * Generates the list of test class names for previously generated test
    * suites.
    *
-   * @return list of class names.
+   * @return list of class names
    */
   private List<String> getTestClassNames() {
     List<String> junitTestSuites = new LinkedList<String>();
@@ -367,7 +367,7 @@ public class JunitFileWriter {
     /*
      * Generates names without 0-padding on counter.
      *
-     * @param prefix is a string to be used as a prefix for all names generated.
+     * @param prefix is a string to be used as a prefix for all names generated
      */
     public NameGenerator(String prefix) {
       this(prefix, 0, 0);

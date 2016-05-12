@@ -369,7 +369,7 @@ public class ExecutableSequence {
    *          a list of {@link Variable} objects.
    * @param execution
    *          the object representing outcome of executing this sequence.
-   * @return array of values corresponding to variables.
+   * @return array of values corresponding to variables
    */
   public static Object[] getRuntimeValuesForVars(List<Variable> vars, Execution execution) {
     return getRuntimeValuesForVars(vars, execution.theList);
@@ -446,7 +446,7 @@ public class ExecutableSequence {
   /**
    * Return the results of each statement for the most recent execution.
    *
-   * @return all the execution outcomes for this sequence.
+   * @return all the execution outcomes for this sequence
    */
   public ExecutionOutcome[] getAllResults() {
     ExecutionOutcome[] ret = new ExecutionOutcome[executionResults.size()];
@@ -510,7 +510,7 @@ public class ExecutableSequence {
 
   /**
    * @param exceptionClass  the exception thrown
-   * @return The index in the sequence at which an exception of the given class
+   * @return the index in the sequence at which an exception of the given class
    *         (or a class compatible with it) was thrown. If no such exception,
    *         returns -1.
    */
@@ -527,8 +527,8 @@ public class ExecutableSequence {
 
   /**
    * @param exceptionClass  the exception class
-   * @return True if an exception of the given class (or a class compatible with
-   *         it) has been thrown during this sequence's execution.
+   * @return true if an exception of the given class (or a class compatible with
+   *         it) has been thrown during this sequence's execution
    */
   public boolean throwsException(Class<?> exceptionClass) {
     return getExceptionIndex(exceptionClass) >= 0;
@@ -536,8 +536,8 @@ public class ExecutableSequence {
 
   /**
    *
-   * @return True if an exception has been thrown during this sequence's
-   *         execution.
+   * @return true if an exception has been thrown during this sequence's
+   *         execution
    */
   public boolean throwsException() {
     for (int i = 0; i < this.sequence.size(); i++)

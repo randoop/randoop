@@ -37,7 +37,7 @@ public class Health {
    * health-care system and executes the simulation for a specified time.
    * @param args the command line arguments
    **/
-  public static final void main(String args[]) {
+  public static final void main(String[] args) {
     parseCmdLine(args);
 
     long start0 = System.currentTimeMillis();
@@ -71,7 +71,7 @@ public class Health {
     System.out.println("Done!");
   }
 
-  private static final void parseCmdLine(String args[]) {
+  private static final void parseCmdLine(String[] args) {
     String arg;
     int i = 0;
     while (i < args.length && args[i].startsWith("-")) {
@@ -80,19 +80,19 @@ public class Health {
       // check for options that require arguments
       if (arg.equals("-l")) {
         if (i < args.length) {
-          maxLevel = new Integer(args[i++]).intValue();
+          maxLevel = Integer.parseInt(args[i++]);
         } else {
           throw new Error("-l requires the number of levels");
         }
       } else if (arg.equals("-t")) {
         if (i < args.length) {
-          maxTime = new Integer(args[i++]).intValue();
+          maxTime = Integer.parseInt(args[i++]);
         } else {
           throw new Error("-t requires the amount of time");
         }
       } else if (arg.equals("-s")) {
         if (i < args.length) {
-          seed = new Integer(args[i++]).intValue();
+          seed = Integer.parseInt(args[i++]);
         } else {
           throw new Error("-s requires a seed value");
         }

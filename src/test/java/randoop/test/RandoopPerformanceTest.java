@@ -17,6 +17,9 @@ import randoop.reflection.ReflectionManager;
 import randoop.reflection.TypedOperationManager;
 import randoop.types.ClassOrInterfaceType;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
+
 public class RandoopPerformanceTest extends AbstractPerformanceTest {
 
   @Override

@@ -11,7 +11,7 @@ public class TreeNode {
   /**
    * Create a node in the tree with a given value and two children.
    * @param v the node's value
-   * @param l the left child.
+   * @param l the left child
    * @param r the right child.
    **/
   public TreeNode(int v, TreeNode l, TreeNode r) {

@@ -34,7 +34,7 @@ public class Collections {
   private static final int INDEXOFSUBLIST_THRESHOLD = 35;
 
   private static Object get(ListIterator i, int index) {
-    Object obj = null;
+    Object obj;
     int pos = i.nextIndex();
     if ((((pos <= index) && ++randoopCoverageInfo.branchTrue[2] != 0)
         || ++randoopCoverageInfo.branchFalse[2] == 0)) {
@@ -984,7 +984,7 @@ public class Collections {
       }
 
       @Override
-      public Object[] toArray(final Object a[]) {
+      public Object[] toArray(final Object[] a) {
         final Object[] arr =
             c.toArray(
                 a.length == 0

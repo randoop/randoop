@@ -42,7 +42,7 @@ public class AccessibleField {
   /**
    * Returns the declared name of the field.
    *
-   * @return unqualified name of the field.
+   * @return unqualified name of the field
    */
   public String getName() {
     return field.getName();
@@ -54,7 +54,7 @@ public class AccessibleField {
    * @param declaringType  the declaring type for this field
    * @param inputVars
    *          list of input variables
-   * @return string representing code representation of field.
+   * @return string representing code representation of field
    */
   public String toCode(GeneralType declaringType, List<Variable> inputVars) {
     StringBuilder sb = new StringBuilder();
@@ -70,7 +70,7 @@ public class AccessibleField {
    * Returns a string descriptor of a field that can be parsed by
    * {@link FieldParser#parse(String, String, String)}.
    *
-   * @return String for type-field pair describing field.
+   * @return a String for type-field pair describing field
    */
   public String toParseableString(GeneralType declaringType) {
     return declaringType.getName()
@@ -107,7 +107,7 @@ public class AccessibleField {
    *
    * @param object
    *          - instance to which field belongs, or null if field is static.
-   * @return reference to value of field.
+   * @return reference to value of field
    * @throws BugInRandoopException
    *           if field access throws {@link IllegalArgumentException} or
    *           {@link IllegalAccessException}.
@@ -151,7 +151,7 @@ public class AccessibleField {
   /**
    * isStatic returns the default that a field is not static.
    *
-   * @return false (default for a field).
+   * @return false (default for a field)
    */
   public boolean isStatic() {
     return isStatic;

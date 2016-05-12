@@ -209,9 +209,9 @@ public class Instrument implements ClassFileTransformer {
         "transforming class %s, loader %s - %s%n", className, loader, loader.getParent());
 
     // Parse the bytes of the classfile, die on any errors
-    JavaClass c = null;
-    ClassParser parser = new ClassParser(new ByteArrayInputStream(classfileBuffer), className);
+    JavaClass c;
     try {
+      ClassParser parser = new ClassParser(new ByteArrayInputStream(classfileBuffer), className);
       c = parser.parse();
     } catch (Exception e) {
       throw new RuntimeException("Unexpected error", e);
@@ -328,13 +328,12 @@ public class Instrument implements ClassFileTransformer {
         debug_instrument_inst.log("instrumenting instruction %s%n", ih);
         // ih.getInstruction().toString(pool.getConstantPool()));
       }
-      InstructionList new_il = null;
 
       // Remember the next instruction to process
       InstructionHandle next_ih = ih.getNext();
 
       // Get the translation for this instruction (if any)
-      new_il = xform_inst(mg, ih.getInstruction());
+      InstructionList new_il = xform_inst(mg, ih.getInstruction());
       if (debug_instrument_inst.enabled()) debug_instrument_inst.log("  new inst: %s%n", new_il);
 
       // If this instruction was modified, replace it with the new

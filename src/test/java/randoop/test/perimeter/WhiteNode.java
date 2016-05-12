@@ -19,7 +19,7 @@ public class WhiteNode extends QuadTreeNode {
    * Compute the total perimeter of a white node in a binary image
    * that is represented as a quadtree using Samet's algorithm.
    *
-   * @param size the size of the image that this node represents (size X size).
+   * @param size the size of the image that this node represents (size X size)
    * @return the size of the perimeter of the image.
    **/
   @Override
@@ -33,7 +33,7 @@ public class WhiteNode extends QuadTreeNode {
    *
    * @param quad1 the first specified quadrant
    * @param quad2 the second specified quadrant
-   * @param size the size of the image represented by this node.
+   * @param size the size of the image represented by this node
    * @return the image size that the white node represents
    **/
   @Override

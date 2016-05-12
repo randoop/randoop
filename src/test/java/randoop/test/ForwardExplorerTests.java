@@ -1,5 +1,7 @@
 package randoop.test;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import randoop.generation.ForwardGenerator;
 import randoop.generation.SeedSequences;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
+import randoop.main.OptionsCache;
 import randoop.operation.ConstructorCall;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -45,6 +48,19 @@ import static org.junit.Assert.fail;
 import static randoop.main.GenInputsAbstract.include_if_classname_appears;
 
 public class ForwardExplorerTests {
+
+  private static OptionsCache optionsCache;
+
+   @BeforeClass
+   public static void setup() {
+     optionsCache = new OptionsCache();
+     optionsCache.saveState();
+   }
+
+   @AfterClass
+   public static void restore() {
+     optionsCache.restoreState();
+   }
 
   @Test
   public void test1() {

@@ -67,7 +67,7 @@ public abstract class SimpleList<T> {
    *
    * @param index
    *          the index into this list
-   * @return the sublist containing this list.
+   * @return the sublist containing this list
    */
   public abstract SimpleList<T> getSublist(int index);
 

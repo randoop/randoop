@@ -168,7 +168,7 @@ public abstract class QuadTreeNode {
    * Compute the total perimeter of a binary image that is represented
    * as a quadtree using Samet's algorithm.
    *
-   * @param size the size of the image that this node represents (size X size).
+   * @param size the size of the image that this node represents (size X size)
    * @return the size of the perimeter of the image.
    **/
   abstract public int perimeter(int size);
@@ -179,7 +179,7 @@ public abstract class QuadTreeNode {
    *
    * @param quad1 the first specified quadrant
    * @param quad2 the second specified quadrant
-   * @param size the size of the image represented by this node.
+   * @param size the size of the image represented by this node
    * @return the perimeter of the adjacent nodes
    **/
   abstract public int sumAdjacent(Quadrant quad1, Quadrant quad2, int size);

@@ -156,7 +156,7 @@ public abstract class AbstractCollection implements Collection {
    *         is not a supertype of the runtime type of every element in this
    *         collection.
    */
-  public Object[] toArray(Object a[]) {
+  public Object[] toArray(Object[] a) {
     int size = size();
     if (a.length < size)
       a = (Object[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), size);
@@ -430,7 +430,7 @@ public abstract class AbstractCollection implements Collection {
    * @return a string representation of this collection.
    */
   public String toString() {
-    StringBuffer buf = new StringBuffer();
+    StringBuilder buf = new StringBuilder();
     buf.append("[");
 
     Iterator i = iterator();

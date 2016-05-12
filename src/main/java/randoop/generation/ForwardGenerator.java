@@ -323,7 +323,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // If parameterless statement, subsequence inputs
     // will all be redundant, so just remove it from list of statements.
     // XXX does this make sense? especially in presence of side-effects
-    if (operation.getInputTypes().size() == 0) {
+    if (operation.getInputTypes().isEmpty()) {
       operations.remove(operation);
     }
 
@@ -550,7 +550,7 @@ public class ForwardGenerator extends AbstractGenerator {
         // If any type-compatible variables found, pick one at random as the
         // i-th input to st.
         SimpleList<Integer> candidateVars2 = new ListOfLists<>(candidateVars);
-        if (candidateVars2.size() > 0) {
+        if (!candidateVars2.isEmpty()) {
           int randVarIdx = Randomness.nextRandomInt(candidateVars2.size());
           Integer randVar = candidateVars2.get(randVarIdx);
           variables.add(randVar);
@@ -610,7 +610,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // inputTypes[i], and we are
       // allowed the use null values, use null. If we're not allowed, then
       // return with failure.
-      if (l.size() == 0) {
+      if (l.isEmpty()) {
         if (isReceiver || GenInputsAbstract.forbid_null) {
           if (Log.isLoggingOn())
             Log.logLine("forbid-null option is true. Failed to create new sequence.");

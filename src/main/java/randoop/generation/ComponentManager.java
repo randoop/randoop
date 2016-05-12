@@ -137,7 +137,7 @@ public class ComponentManager {
   /**
    * Add a component sequence.
    *
-   * @param sequence - the sequence
+   * @param sequence the sequence
    */
   public void addGeneratedSequence(Sequence sequence) {
     gralComponents.add(sequence);

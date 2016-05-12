@@ -45,9 +45,9 @@ public class FieldGet extends CallableOperation {
    * field is an instance field. {@link AccessibleField#getValue(Object)} suppresses exceptions
    * that occur because field is not valid or accessible.
    *
-   * @param statementInput  the inputs for statement.
-   * @param out  the stream for printing output (unused).
-   * @return outcome of access.
+   * @param statementInput  the inputs for statement
+   * @param out  the stream for printing output (unused)
+   * @return outcome of access
    * @throws BugInRandoopException
    *           if field access throws bug exception.
    */
@@ -169,7 +169,7 @@ public class FieldGet extends CallableOperation {
   /**
    * {@inheritDoc}
    *
-   * @return true, always.
+   * @return true, always
    */
   @Override
   public boolean isMessage() {

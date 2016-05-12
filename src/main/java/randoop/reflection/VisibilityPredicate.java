@@ -16,7 +16,7 @@ public interface VisibilityPredicate {
    * @param c
    *          the class object to check
    * @return true if predicate criteria determines the class is visible, false
-   *         otherwise.
+   *         otherwise
    */
   boolean isVisible(Class<?> c);
 
@@ -26,7 +26,7 @@ public interface VisibilityPredicate {
    * @param m
    *          the Method object to check
    * @return true if predicate criteria determines the method is visible, false
-   *         otherwise.
+   *         otherwise
    */
   boolean isVisible(Method m);
 
@@ -36,7 +36,7 @@ public interface VisibilityPredicate {
    * @param c
    *          the constructor object to check
    * @return true if predicate criteria determines the constructor is visible,
-   *         false otherwise.
+   *         false otherwise
    */
   boolean isVisible(Constructor<?> c);
 
@@ -46,7 +46,7 @@ public interface VisibilityPredicate {
    * @param f
    *          the field object to check
    * @return true if predicate criteria determines the field is visible, false
-   *         otherwise.
+   *         otherwise
    */
   boolean isVisible(Field f);
 }

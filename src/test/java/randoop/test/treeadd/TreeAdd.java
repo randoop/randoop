@@ -32,7 +32,7 @@ public class TreeAdd {
    * The main routine which creates a tree and traverses it.
    * @param args the arguments to the program
    **/
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     parseCmdLine(args);
 
     long start0 = System.currentTimeMillis();
@@ -57,7 +57,7 @@ public class TreeAdd {
    * Parse the command line options.
    * @param args the command line options.
    **/
-  private static final void parseCmdLine(String args[]) {
+  private static final void parseCmdLine(String[] args) {
     int i = 0;
     String arg;
 
@@ -66,7 +66,7 @@ public class TreeAdd {
 
       if (arg.equals("-l")) {
         if (i < args.length) {
-          levels = new Integer(args[i++]).intValue();
+          levels = Integer.parseInt(args[i++]);
         } else throw new RuntimeException("-l requires the number of levels");
       } else if (arg.equals("-p")) {
         printResult = true;

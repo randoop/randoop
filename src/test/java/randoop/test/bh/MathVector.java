@@ -13,7 +13,7 @@ public class MathVector implements Cloneable {
   /**
    * An array containing the values in the vector.
    **/
-  private double data[];
+  private double[] data;
 
   /**
    * Construct an empty 3 dimensional vector for use in Barnes-Hut algorithm.
@@ -94,7 +94,7 @@ public class MathVector implements Cloneable {
 
   /**
    * Subtract two vectors and the result is placed in this vector.
-   * @param u the first operand of the subtraction.
+   * @param u the first operand of the subtraction
    * @param v the second opernd of the subtraction
    **/
   public final void subtraction(MathVector u, MathVector v) {
@@ -209,7 +209,7 @@ public class MathVector implements Cloneable {
    **/
   @Override
   public String toString() {
-    StringBuffer s = new StringBuffer();
+    StringBuilder s = new StringBuilder();
     for (int i = 0; i < NDIM; i++) {
       s.append(data[i] + " ");
     }

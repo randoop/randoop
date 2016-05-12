@@ -76,7 +76,7 @@ public class ObjectContractUtils {
    * @param vars
    *          list of {@link randoop.sequence.Variable Variable} objects.
    * @return the contract code with actual variable names substituted for dummy
-   *         names.
+   *         names
    */
   public static String localizeContractCode(String str, Variable... vars) {
     for (int i = 0; i < vars.length; i++) {

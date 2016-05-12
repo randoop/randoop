@@ -20,7 +20,5 @@ script:
   - ./gradlew --info check
   - ./gradlew --info manual
 
-## Use Travis defaults for notifications (send to committer and author).
-# notifications:
-#   email:
-#     - randoop-developers@googlegroups.com
+git:
+  depth: 3

@@ -1063,7 +1063,7 @@ public class IdentityHashMap extends AbstractMap implements Map, java.io.Seriali
       return c.toArray();
     }
 
-    public Object[] toArray(Object a[]) {
+    public Object[] toArray(Object[] a) {
       Collection c = new ArrayList(size());
       for (Iterator i = iterator(); i.hasNext(); )
         c.add(new AbstractMap.SimpleEntry((Map.Entry) i.next()));

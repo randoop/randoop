@@ -70,7 +70,7 @@ public class ExerciseInstrumentationTest {
     }
 
     // Let's check instrumentation is working correctly, B has method
-    Method bcheck = null;
+    Method bcheck;
     try {
       bcheck = bc.getMethod("randoop_checkAndReset", new Class<?>[0]);
       assertTrue("BE should have method because everything does", bcheck != null);
@@ -89,7 +89,7 @@ public class ExerciseInstrumentationTest {
     }
 
     // Let's check instrumentation is working correctly, C doesn't have method
-    Method ccheck = null;
+    Method ccheck;
     try {
       ccheck = bc.getMethod("randoop_checkAndReset", new Class<?>[0]);
       assertTrue("CE should have method because everything does", ccheck != null);

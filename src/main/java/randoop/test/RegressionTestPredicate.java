@@ -18,7 +18,7 @@ public class RegressionTestPredicate extends DefaultPredicate<ExecutableSequence
    * TimeoutExceededException}.
    *
    * @return true if has no failures and does not involve a timeout exception,
-   *         false otherwise.
+   *         false otherwise
    */
   @Override
   public boolean test(ExecutableSequence s) {
