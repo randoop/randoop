@@ -455,7 +455,7 @@ The files are placed in <code>build/docs</code>, with the Javadoc in
   If you write JUnit tests that change the static state of either a command-line
   argument or a static class, then you should add <code>BeforeClass</code> and <code>AfterClass</code>
   annotated methods that save and restore the prior state.
-  For command-line arguments this can be done by adding the following code to
+  For command-line arguments, this can be done by adding the following code to
   the beginning of the test class:
 </p>
 
@@ -477,9 +477,9 @@ The files are placed in <code>build/docs</code>, with the Javadoc in
 <p>
 This uses the <code>randoop.main.OptionsCache</code> class to save the static state of
 all classes that include the definition of command-line arguments.
-For classes under test with static state that is changed, you would similarly use
-the <code>randoop.reflection.StaticCache</code> class to save the state of that
-particular class.
+For classes under test with static state that is changed, you would use the
+<code>randoop.reflection.StaticCache</code> class to save and restore the state
+of that particular class in a similar way.
 </p>
 
 <p>
