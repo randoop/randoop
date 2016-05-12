@@ -271,6 +271,18 @@ public class GenericClassType extends ParameterizedType {
     return getClassOrInterfaceType(superclass);
   }
 
+  /**
+   * Constructs a {@link ClassOrInterfaceType} object that represents a supertype of the instantiated
+   * type of an {@link InstantiatedType} object.
+   * Construction allows the application of a substitution on the variables of a subclass on this
+   * type.
+   * <p>
+   *   Note that the constructed type is "broken" in the sense that supertypes constructed from it
+   *   will not have type parameters that allow subtype testing.
+   *
+   * @param type  the {@link java.lang.reflect.Type} object
+   * @return the generic class type parameterized allowing application of subtitution derived from subclass
+   */
   private ClassOrInterfaceType getClassOrInterfaceType(Type type) {
     if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType) type;

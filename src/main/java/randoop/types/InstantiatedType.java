@@ -113,7 +113,6 @@ class InstantiatedType extends ParameterizedType {
    */
   @Override
   public boolean isSubtypeOf(GeneralType otherType) {
-System.out.println("inst " + this + " issubtypeof " +otherType);
     if (!otherType.isParameterized()) {
       if (super.isSubtypeOf(otherType)) {
         return true;
