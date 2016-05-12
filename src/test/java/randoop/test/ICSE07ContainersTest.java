@@ -200,7 +200,7 @@ public class ICSE07ContainersTest {
 
   @Test
   public void testBinomialHeap() {
-    GenInputsAbstract.null_ratio = 0.5;
+    GenInputsAbstract.null_ratio = 0.05;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(BinomialHeap.class);
     randoop.util.Randomness.reset(0);
