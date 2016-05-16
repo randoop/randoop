@@ -195,8 +195,6 @@ public class CoveredClassTest {
       fail("operation parse exception thrown: " + e);
     } catch (NoSuchMethodException e) {
       fail("Method not found: " + e);
-    } catch (RandoopTypeException e) {
-      fail("Type error: " + e);
     }
     assert operationModel != null;
 
