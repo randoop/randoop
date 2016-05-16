@@ -15,7 +15,7 @@ import java.util.Objects;
  * interfaces is handled by
  * {@link randoop.types.GeneralType#forType(java.lang.reflect.Type)}.
  */
-class InstantiatedType extends ParameterizedType {
+public class InstantiatedType extends ParameterizedType {
 
   private final List<TypeArgument> argumentList;
 
@@ -182,7 +182,7 @@ class InstantiatedType extends ParameterizedType {
    *
    * @return the type substitution of the type arguments of this class for the type variables of the instantiated type
    */
-  private Substitution<ReferenceType> getTypeSubstitution() {
+  public Substitution<ReferenceType> getTypeSubstitution() {
     List<ReferenceType> arguments = new ArrayList<>();
     for (TypeArgument arg : this.getTypeArguments()) {
       if (! arg.isWildcard()) {

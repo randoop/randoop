@@ -73,6 +73,15 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   public abstract List<ClassOrInterfaceType> getInterfaces();
 
   /**
+   * Checks whether this parameterized type is an instantiation of the given
+   * generic class type.
+   *
+   * @param genericClassType  the generic class type
+   * @return true if this type is an instantiation of the generic class, false otherwise
+   */
+  public abstract boolean isInstantiationOf(GenericClassType genericClassType);
+
+  /**
    * Translates a {@code Class} object that represents a class or interface into a
    * {@code ClassOrInterfaceType} object.
    * If the object has parameters, then delegates to {@link ParameterizedType#forClass(Class)}.
@@ -92,6 +101,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     return new SimpleClassOrInterfaceType(classType);
   }
+
 
   /**
    * Creates a {@code ClassOrInterfaceType} object for a given
@@ -117,4 +127,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     throw new IllegalArgumentException("Unable to create class type from type " + type);
   }
+
+
 }

@@ -61,15 +61,6 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
   public abstract List<TypeArgument> getTypeArguments();
 
   /**
-   * Checks whether this parameterized type is an instantiation of the given
-   * generic class type.
-   *
-   * @param genericClassType  the generic class type
-   * @return true if this type is an instantiation of the generic class, false otherwise
-   */
-  public abstract boolean isInstantiationOf(GenericClassType genericClassType);
-
-  /**
    * Creates a {@link GenericClassType} for the given reflective {@link Class} object.
    *
    * @param typeClass  the class type

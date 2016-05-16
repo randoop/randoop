@@ -188,6 +188,15 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
   }
 
   /**
+   * {@inheritDoc}
+   * @return false, since a simple class is not an instantiation of any generic class
+   */
+  @Override
+  public boolean isInstantiationOf(GenericClassType genericClassType) {
+    return false;
+  }
+
+  /**
    * Returns the list of interfaces for this class.
    *
    * @return the list of interfaces for this class or interface type

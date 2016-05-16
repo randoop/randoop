@@ -4,7 +4,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -157,17 +159,18 @@ public class ReflectionManager {
    * @param c the enum class object from which constants and methods are extracted
    */
   private void applyToEnum(Class<?> c) {
-    Set<String> overrideMethods = new HashSet<>();
+    Map<String, Set<Method>> overrideMethods = new HashMap<>();
     for (Object obj : c.getEnumConstants()) {
       Enum<?> e = (Enum<?>) obj;
       applyTo(e);
       if (!e.getClass().equals(c)) { // does constant have an anonymous class?
         for (Method m : e.getClass().getDeclaredMethods()) {
-          overrideMethods.add(m.getName()); // collect any potential overrides
-Class<?> declaringClass = m.getDeclaringClass();
-System.out.print("constant: " + declaringClass.getName() + " ");
-System.out.print("method: " + m.getName() + " ");
-System.out.println("enclosing: " + declaringClass.getEnclosingClass().getName());
+          Set<Method> methodSet = overrideMethods.get(m.getName());
+          if (methodSet == null) {
+            methodSet = new HashSet<>();
+          }
+          methodSet.add(m);
+          overrideMethods.put(m.getName(), methodSet); // collect any potential overrides
         }
       }
     }
@@ -182,13 +185,13 @@ System.out.println("enclosing: " + declaringClass.getEnclosingClass().getName())
     // get any inherited methods also declared in anonymous class of some
     // constant
     for (Method m : c.getMethods()) {
-      if (predicate.isVisible(m) && overrideMethods.contains(m.getName())) {
-Class<?> declaringClass = m.getDeclaringClass();
-System.out.print("enum: " + declaringClass.getName() + " ");
-System.out.print("method: " + m.getName() + " ");
-if (declaringClass.isEnum()) { System.out.print(" isEnum "); }
-System.out.println();
-        applyTo(m);
+      if (predicate.isVisible(m)) {
+        Set<Method> methodSet = overrideMethods.get(m.getName());
+        if (methodSet != null) {
+          for (Method method : methodSet) {
+            applyTo(method);
+          }
+        }
       }
     }
   }
