@@ -22,6 +22,7 @@ import randoop.Globals;
 import randoop.contract.ObjectContract;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
+import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.VisibilityPredicate;

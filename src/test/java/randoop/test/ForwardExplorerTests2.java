@@ -15,6 +15,7 @@ import randoop.generation.ForwardGenerator;
 import randoop.generation.SeedSequences;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
+import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.ModelCollections;

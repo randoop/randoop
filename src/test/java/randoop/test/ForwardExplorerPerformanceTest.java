@@ -13,6 +13,7 @@ import plume.EntryReader;
 import randoop.Globals;
 import randoop.generation.ForwardGenerator;
 import randoop.main.GenInputsAbstract;
+import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.ModelCollections;
