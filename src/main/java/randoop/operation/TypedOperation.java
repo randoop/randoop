@@ -8,12 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import randoop.BugInRandoopException;
 import randoop.ExecutionOutcome;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
+import randoop.types.GenericClassType;
+import randoop.types.InstantiatedType;
 import randoop.types.PrimitiveTypes;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
@@ -215,17 +218,76 @@ public abstract class TypedOperation implements Operation {
    * @return the typed operation for the given method
    */
   public static TypedClassOperation forMethod(Method method) {
-    MethodCall op = new MethodCall(method);
-    ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(method.getDeclaringClass());
+    MethodCall op;
+    ClassOrInterfaceType declaringType;
+    TypeTuple inputTypes;
+    GeneralType outputType;
     List<GeneralType> paramTypes = new ArrayList<>();
-    if (! op.isStatic()) {
-      paramTypes.add(declaringType);
+
+    Class<?> declaringClass = method.getDeclaringClass();
+    if (declaringClass.isAnonymousClass()
+            && declaringClass.getEnclosingClass() != null
+            && declaringClass.getEnclosingClass().isEnum()) {
+      // is a method in anonymous class for enum constant
+      Class<?> enumClass = declaringClass.getEnclosingClass();
+      ClassOrInterfaceType enumType = ClassOrInterfaceType.forClass(enumClass);
+
+      Method enumMethod = null;
+      for (Method m : enumClass.getMethods()) {
+        if (m.getName().equals(method.getName())) {
+          // TODO should check types in case of overloads
+          enumMethod = m;
+          break;
+        }
+      }
+      if (enumMethod == null) {
+        throw new BugInRandoopException("enum should have method " + method.getName());
+      }
+
+      op = new MethodCall(enumMethod);
+      declaringType = ClassOrInterfaceType.forClass(enumClass);
+      if (! op.isStatic()) {
+        paramTypes.add(declaringType);
+      }
+      for (Type t : enumMethod.getGenericParameterTypes()) {
+        paramTypes.add(GeneralType.forType(t));
+      }
+      inputTypes = new TypeTuple(paramTypes);
+      outputType = GeneralType.forType(enumMethod.getGenericReturnType());
+
+      ClassOrInterfaceType methodDeclaringType = ClassOrInterfaceType.forClass(enumMethod.getDeclaringClass());
+      if (methodDeclaringType.isGeneric()) {
+        GenericClassType genDeclaringType = (GenericClassType)methodDeclaringType;
+        InstantiatedType superType = null;
+        if (enumType.getSuperclass().isInstantiationOf(genDeclaringType)) {
+          superType = (InstantiatedType)enumType.getSuperclass();
+        } else {
+          for (ClassOrInterfaceType interfaceType : enumType.getInterfaces()) {
+            if (interfaceType.isInstantiationOf(genDeclaringType)) {
+              superType = (InstantiatedType)interfaceType;
+              break;
+            }
+          }
+        }
+        assert superType != null : "should be a super type of enum instantiating " + genDeclaringType;
+        Substitution<ReferenceType> substitution = superType.getTypeSubstitution();
+        inputTypes = inputTypes.apply(substitution);
+        outputType = outputType.apply(substitution);
+      }
+
+    } else {
+      op = new MethodCall(method);
+      declaringType = ClassOrInterfaceType.forClass(method.getDeclaringClass());
+      if (! op.isStatic()) {
+        paramTypes.add(declaringType);
+      }
+      for (Type t : method.getGenericParameterTypes()) {
+        paramTypes.add(GeneralType.forType(t));
+      }
+      inputTypes = new TypeTuple(paramTypes);
+      outputType = GeneralType.forType(method.getGenericReturnType());
     }
-    for (Type t : method.getGenericParameterTypes()) {
-      paramTypes.add(GeneralType.forType(t));
-    }
-    TypeTuple inputTypes = new TypeTuple(paramTypes);
-    GeneralType outputType = GeneralType.forType(method.getGenericReturnType());
+
     return new TypedClassOperation(op, declaringType, inputTypes, outputType);
   }
 

@@ -80,14 +80,10 @@ public class OperationExtractor extends DefaultClassVisitor {
    */
   @Override
   public void visit(Method method) {
-    assert method.getDeclaringClass().isAssignableFrom(classType.getRuntimeClass())
-            : "classType " + classType + " should be assignable to declaring class " + method.getDeclaringClass().getName();
     if (! predicate.test(method)) {
       return;
     }
-    final TypedClassOperation operation = TypedOperation.forMethod(method);
-    System.out.println("adding " + operation);
-    manager.addOperation(operation);
+    manager.addOperation(TypedOperation.forMethod(method));
   }
 
   /**
