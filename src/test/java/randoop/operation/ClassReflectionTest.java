@@ -6,12 +6,10 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.ModelCollections;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.TypedOperationManager;
 import randoop.reflection.VisibilityPredicate;
 import randoop.test.AnIntegerPredicate;
 import randoop.test.ClassWithInnerClass;
@@ -39,17 +37,11 @@ public class ClassReflectionTest {
   }
 
   private Set<TypedOperation> getConcreteOperations(Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
+    ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     final Set<TypedOperation> operations = new LinkedHashSet<>();
-    TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
-      @Override
-      public void addConcreteOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
-        operations.add(operation);
-      }
-    });
-    OperationExtractor extractor = new OperationExtractor(operationManager, predicate);
+    OperationExtractor extractor = new OperationExtractor(classType, operations, predicate);
     ReflectionManager manager = new ReflectionManager(visibilityPredicate);
-    manager.add(extractor);
-    manager.apply(c);
+    manager.apply(extractor, c);
     return operations;
   }
 

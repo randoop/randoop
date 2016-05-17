@@ -16,11 +16,9 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.ModelCollections;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
-import randoop.reflection.TypedOperationManager;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Timer;
 
@@ -65,18 +63,13 @@ public class ForwardExplorerPerformanceTest {
     String resourcename = "java.util.classlist.java1.6.txt";
 
     final List<TypedOperation> model = new ArrayList<>();
-    TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
-      @Override
-      public void addConcreteOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
-        model.add(operation);
-      }
-    });
-    ReflectionManager manager = new ReflectionManager(new PublicVisibilityPredicate());
-    manager.add(new OperationExtractor(operationManager, new DefaultReflectionPredicate()));
 
+    ReflectionManager manager = new ReflectionManager(new PublicVisibilityPredicate());
     try (EntryReader er = new EntryReader(ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
       for (String entry : er) {
-        manager.apply(Class.forName(entry));
+        Class<?> c = Class.forName(entry);
+        ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
+        manager.apply(new OperationExtractor(classType, model, new DefaultReflectionPredicate()), c);
       }
     } catch (IOException e) {
       fail("exception when reading class names " + e);

@@ -19,12 +19,10 @@ import randoop.main.GenTests;
 import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.ModelCollections;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.TypedOperationManager;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
@@ -329,15 +327,9 @@ public class TestClassificationTest {
     ReflectionPredicate predicate =
         new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields);
     final List<TypedOperation> model = new ArrayList<>();
-    TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
-      @Override
-      public void addConcreteOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
-        model.add(operation);
-      }
-    });
+    ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     ReflectionManager manager = new ReflectionManager(visibility);
-    manager.add(new OperationExtractor(operationManager, predicate));
-    manager.apply(c);
+    manager.apply(new OperationExtractor(classType, model, predicate), c);
     Collection<Sequence> components = new LinkedHashSet<>();
     components.addAll(SeedSequences.defaultSeeds());
     ComponentManager componentMgr = new ComponentManager(components);

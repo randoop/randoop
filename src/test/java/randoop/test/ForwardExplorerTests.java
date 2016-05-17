@@ -21,11 +21,9 @@ import randoop.operation.ConstructorCall;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.ModelCollections;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
-import randoop.reflection.TypedOperationManager;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
@@ -83,16 +81,11 @@ public class ForwardExplorerTests {
 
   private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
     final List<TypedOperation> model = new ArrayList<>();
-    TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
-      @Override
-      public void addConcreteOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
-        model.add(operation);
-      }
-    });
+
     ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
-    mgr.add(new OperationExtractor(operationManager, new DefaultReflectionPredicate()));
     for (Class<?> c: classes) {
-      mgr.apply(c);
+      ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
+      mgr.apply(new OperationExtractor(classType, model, new DefaultReflectionPredicate()), c);
     }
     return model;
   }

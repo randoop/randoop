@@ -567,14 +567,9 @@ public class VisibilityTest {
   }
 
   private Set<TypedOperation> getConcreteOperations(Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
+    ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     final Set<TypedOperation> operations = new LinkedHashSet<>();
-    TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
-      @Override
-      public void addConcreteOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
-        operations.add(operation);
-      }
-    });
-    OperationExtractor extractor = new OperationExtractor(operationManager, predicate);
+    OperationExtractor extractor = new OperationExtractor(classType, operations, predicate);
     ReflectionManager manager = new ReflectionManager(visibilityPredicate);
     manager.add(extractor);
     manager.apply(c);

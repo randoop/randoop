@@ -18,11 +18,9 @@ import randoop.main.GenTests;
 import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.ModelCollections;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
-import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
 import randoop.test.treeadd.TreeAdd;
@@ -65,7 +63,7 @@ public class ForwardExplorerTests2  {
     // means that timeout results in a flaky sequence exception
     GenInputsAbstract.repeat_heuristic = true;
 
-    assert ReflectionExecutor.usethreads != false : "this test does not terminate if threads are not used";
+    assert ReflectionExecutor.usethreads : "this test does not terminate if threads are not used";
 
     List<Class<?>> classes = new ArrayList<>();
     classes.add(TreeNode.class);
@@ -94,16 +92,10 @@ public class ForwardExplorerTests2  {
 
   private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
     final List<TypedOperation> model = new ArrayList<>();
-    TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
-      @Override
-      public void addConcreteOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
-        model.add(operation);
-      }
-    });
     ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
-    mgr.add(new OperationExtractor(operationManager, new DefaultReflectionPredicate()));
     for (Class<?> c: classes) {
-      mgr.apply(c);
+      ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
+      mgr.apply(new OperationExtractor(classType, model, new DefaultReflectionPredicate()), c);
     }
     return model;
   }
