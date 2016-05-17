@@ -29,7 +29,6 @@ import randoop.sequence.Sequence;
 import randoop.test.TestCheckGenerator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
-import randoop.types.RandoopTypeException;
 import randoop.types.TypeNames;
 import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
@@ -88,7 +87,7 @@ public class SpecialCoveredClassTest {
     assert operationModel != null;
 
     Set<Class<?>> coveredClasses = operationModel.getExercisedClasses();
-    Set<ClassOrInterfaceType> classes = operationModel.getClasses();
+    Set<ClassOrInterfaceType> classes = operationModel.getDeclarationTypes();
     //
     assertTrue("should be one covered classes", coveredClasses.size() == 1);
     for (Class<?> c : coveredClasses) {
