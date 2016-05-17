@@ -4,8 +4,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Stack;
 
 import randoop.field.AccessibleField;
 import randoop.operation.ConstructorCall;
@@ -19,13 +19,16 @@ import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
 import randoop.types.GeneralType;
+import randoop.types.InstantiatedType;
 import randoop.types.SimpleClassOrInterfaceType;
 import randoop.types.TypeTuple;
 
 /**
  * OperationExtractor is a {@link ClassVisitor} that creates a collection of
- * {@link Operation} objects through its visit methods as called by
- * {@link ReflectionManager#apply(Class)}.
+ * {@link Operation} objects for a particular {@link ClassOrInterfaceType} through its visit
+ * methods as called by {@link ReflectionManager#apply(Class)}.
+ * Allows types of operations of an {@link InstantiatedType} to be instantiated using the subsitution
+ * of the type.
  *
  * @see ReflectionManager
  * @see ClassVisitor
@@ -33,25 +36,46 @@ import randoop.types.TypeTuple;
  */
 public class OperationExtractor extends DefaultClassVisitor {
 
-  private final TypedOperationManager manager;
+  /** The predicate that implements reflection policy for collecting operations */
   private final ReflectionPredicate predicate;
-  private final Stack<ClassOrInterfaceType> typeStack;
 
-  /** The current class type */
+  /** The collection of operations */
+  private final Collection<TypedOperation> operations;
+
+  /** The class type of the declaring class for the collected operations */
   private ClassOrInterfaceType classType;
 
   /**
    * Creates a visitor object that collects Operation objects corresponding to
-   * class members visited by {@link ReflectionManager}. Stores
-   * {@link Operation} objects in an ordered collection to ensure they are
-   * strictly ordered once flattened to a list. This is needed to guarantee
-   * determinism between Randoop runs with the same classes and parameters.
+   * class members visited by {@link ReflectionManager}.
    */
-  public OperationExtractor(TypedOperationManager manager, ReflectionPredicate predicate) {
-    this.manager = manager;
+  /**
+   * Creates a visitor object that collects the {@link TypedOperation} objects corresponding to
+   * members of the class type and satisfying the given predicate.
+   *
+   * @param classType  the declaring classtype for collected operations
+   * @param operations  the collection of operations
+   * @param predicate  the reflection predicate
+   */
+  public OperationExtractor(ClassOrInterfaceType classType, Collection<TypedOperation> operations, ReflectionPredicate predicate) {
+    this.classType = classType;
+    this.operations = operations;
     this.predicate = predicate;
-    this.typeStack = new Stack<>();
-    this.classType = null;
+  }
+
+  /**
+   * Adds an operation to the collection of this extractor.
+   * If the declaring class type is an {@link InstantiatedType}, then the substitution for that
+   * class is applied to the types of the operation, and this instantiated operation is returned.
+   *
+   * @param operation  the {@link TypedOperation}
+   */
+  private void addOperation(TypedClassOperation operation) {
+    if (classType.isParameterized()) {
+      operations.add(operation.apply(((InstantiatedType)classType).getTypeSubstitution()));
+    } else  {
+      operations.add(operation);
+    }
   }
 
   /**
@@ -69,9 +93,9 @@ public class OperationExtractor extends DefaultClassVisitor {
       return;
     }
 
-    manager.addOperation(TypedOperation.forConstructor(c));
+    addOperation(TypedOperation.forConstructor(c));
   }
-
+  
   /**
    * Creates a {@link MethodCall} object for the {@link Method}.
    *
@@ -83,7 +107,7 @@ public class OperationExtractor extends DefaultClassVisitor {
     if (! predicate.test(method)) {
       return;
     }
-    manager.addOperation(TypedOperation.forMethod(method));
+    addOperation(TypedOperation.forMethod(method));
   }
 
   /**
@@ -112,10 +136,10 @@ public class OperationExtractor extends DefaultClassVisitor {
       setInputTypeList.add(classType);
     }
 
-    manager.addOperation(new TypedClassOperation(new FieldGet(accessibleField), classType, new TypeTuple(getInputTypeList), fieldType));
+    addOperation(new TypedClassOperation(new FieldGet(accessibleField), classType, new TypeTuple(getInputTypeList), fieldType));
     if (! accessibleField.isFinal()) {
       setInputTypeList.add(fieldType);
-      manager.addOperation(new TypedClassOperation(new FieldSet(accessibleField), classType, new TypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE));
+      addOperation(new TypedClassOperation(new FieldSet(accessibleField), classType, new TypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE));
     }
   }
 
@@ -130,22 +154,7 @@ public class OperationExtractor extends DefaultClassVisitor {
     ClassOrInterfaceType enumType = new SimpleClassOrInterfaceType(e.getDeclaringClass());
     assert ! enumType.isGeneric() : "type of enum class cannot be generic";
     EnumConstant op = new EnumConstant(e);
-    manager.addOperation(new TypedClassOperation(op, enumType, new TypeTuple(), enumType));
+    addOperation(new TypedClassOperation(op, enumType, new TypeTuple(), enumType));
   }
 
-  @Override
-  public void visitBefore(Class<?> c) {
-    typeStack.push(classType);
-    if (! predicate.test(c)) {
-      return;
-    }
-    classType = ClassOrInterfaceType.forClass(c);
-    manager.addClassType(classType);
-  }
-
-  @Override
-  public void visitAfter(Class<?> c) {
-    assert ! typeStack.isEmpty() : "call to visitAfter not paired with call to visitBefore";
-    classType = typeStack.pop();
-  }
 }
