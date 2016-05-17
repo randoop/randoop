@@ -5,11 +5,9 @@ import java.util.List;
 
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
-import randoop.types.RandoopTypeException;
 import randoop.types.TypeTuple;
 
 /**

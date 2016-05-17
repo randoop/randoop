@@ -103,6 +103,10 @@ public abstract class TypedOperation implements Operation {
    */
   public CallableOperation getOperation() { return operation; }
 
+  public boolean hasWildcardTypes() {
+    return inputTypes.hasWildcard() || outputType.hasWildcard();
+  }
+
   /**
    * Indicate whether this operation is generic.
    * An operation is generic if any of its input and output types are generic.
@@ -269,7 +273,7 @@ public abstract class TypedOperation implements Operation {
             }
           }
         }
-        assert superType != null : "should be a super type of enum instantiating " + genDeclaringType;
+        assert superType != null : "should exist a super type of enum instantiating " + genDeclaringType;
         Substitution<ReferenceType> substitution = superType.getTypeSubstitution();
         inputTypes = inputTypes.apply(substitution);
         outputType = outputType.apply(substitution);
@@ -349,6 +353,5 @@ public abstract class TypedOperation implements Operation {
     TypeTuple inputTypes = new TypeTuple(typeList);
     return new TypedTermOperation(new ArrayCreation(arrayType, size), inputTypes, arrayType);
   }
-
 
 }
