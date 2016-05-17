@@ -56,6 +56,15 @@ public class TypeTuple {
     return list.get(i);
   }
 
+  public boolean hasWildcard() {
+    for (GeneralType type : list) {
+      if (type.hasWildcard()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   /**
    * Indicates whether the tuple is empty.
    *
@@ -72,12 +81,12 @@ public class TypeTuple {
    */
   public boolean isGeneric() {
     for (GeneralType type : list) {
-    if (type.isGeneric()) {
-      return true;
+      if (type.isGeneric()) {
+        return true;
+      }
     }
+    return false;
   }
-  return false;
-}
 
   @Override
   public String toString() {

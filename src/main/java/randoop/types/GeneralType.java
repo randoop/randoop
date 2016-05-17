@@ -41,6 +41,10 @@ public abstract class GeneralType {
    */
   public abstract String getName();
 
+  public boolean hasWildcard() {
+    return false;
+  }
+
   /**
    * Indicates whether this object represents an array type.
    *
@@ -338,6 +342,5 @@ public abstract class GeneralType {
     return ReferenceType.forType(type);
 
   }
-
 
 }

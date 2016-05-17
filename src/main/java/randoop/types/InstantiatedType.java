@@ -60,6 +60,16 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
+  public boolean hasWildcard() {
+    for (TypeArgument argument : argumentList) {
+      if (argument.isWildcard()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
   public boolean isAssignableFrom(GeneralType otherType) {
 
     if (super.isAssignableFrom(otherType)) {
