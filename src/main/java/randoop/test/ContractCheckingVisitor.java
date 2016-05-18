@@ -1,6 +1,8 @@
 package randoop.test;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import randoop.BugInRandoopException;
@@ -11,6 +13,7 @@ import randoop.NotExecuted;
 import randoop.contract.ObjectContract;
 import randoop.contract.ObjectContractUtils;
 import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Variable;
 import randoop.test.predicate.ExceptionPredicate;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypes;
@@ -47,8 +50,8 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
       Set<ObjectContract> contracts, ExceptionPredicate exceptionPredicate) {
     this.contracts = new LinkedHashSet<>();
     for (ObjectContract c : contracts) {
-      if (c.getArity() > 2)
-        throw new IllegalArgumentException("Visitor accepts only unary or binary contracts.");
+      if (c.getArity() > 3)
+        throw new IllegalArgumentException("Visitor accepts only unary or binary or ternary contracts.");
       this.contracts.add(c);
     }
     this.exceptionPredicate = exceptionPredicate;
@@ -89,13 +92,179 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
         for (ObjectContract c : contracts) {
           if (c.getArity() == 1) {
             checkUnary(s, c, idxmap.getValues(cls), checks);
-          } else {
+          } else if (c.getArity() == 2){
             checkBinary(s, c, idxmap.getValues(cls), checks);
+          } else {
+            checkTernary(s, c, idxmap.getValues(cls), checks);
           }
         }
       }
     }
     return checks;
+  }
+
+  /**
+   * Checks n number of contracts over the set of values defined in the sequence,
+   * and attaches failing checks at final statement of the sequence.
+   *
+   * @param s
+   *          the executable sequence
+   * @param c
+   *          the contract to check
+   * @param values
+   *          the set of positions defining values to check
+   * @param checks
+   *          the {@code TestChecks} to which new checks are added
+   * @param n
+   *          the number of contracts
+   */
+  private void checkNContracts(
+          ExecutableSequence s, ObjectContract c, Set<Integer> values, ErrorRevealingChecks checks, int n) {
+    // Invalid number of contracts
+    if (n < 1) {
+      return;
+    }
+    // Keeps a list of indices
+    List<Integer> nList = new ArrayList<Integer>();
+    checkNContractsHelper(s, c, values, checks, n, nList);
+  }
+
+  private void checkNContractsHelper(
+          ExecutableSequence s, ObjectContract c, Set<Integer> values, ErrorRevealingChecks checks,
+          int n, List<Integer> nList) {
+    // Base case
+    if (nList.size() == n) {
+      if (Log.isLoggingOn()) {
+        Log.logLine("Checking contract " + c.getClass() + " on ");
+      }
+
+      // A list to store the results
+      List<ExecutionOutcome> results = new ArrayList<ExecutionOutcome>();
+      for (Integer value : nList) {
+        results.add(s.getResult(value));
+
+        if (Log.isLoggingOn()) {
+          Log.logLine(value + ", ");
+        }
+      }
+
+      Object[] objects = new Object[nList.size()];
+      for (int j = 0; j < nList.size(); j++) {
+        objects[j] = ((NormalExecution) results.get(j)).getRuntimeValue();
+      }
+
+      ExecutionOutcome exprOutcome = ObjectContractUtils.execute(c, objects);
+
+      if (exprOutcome instanceof NormalExecution) {
+        NormalExecution e = (NormalExecution) exprOutcome;
+        if (e.getRuntimeValue().equals(true)) {
+          if (Log.isLoggingOn()) Log.logLine("Contract returned true.");
+          // Behavior ok.
+        } else {
+          if (Log.isLoggingOn())
+            Log.logLine("Contract returned false. Will add ExpressionEqFalse check");
+          // Create an check that records the actual value
+          // returned by the expression, marking it as invalid
+          // behavior.
+
+          // Array of variables to pass to checks
+          Variable[] vars = new Variable[nList.size()];
+          for (int j = 0; j < nList.size(); j++) {
+            vars[j] = s.sequence.getVariable(nList.get(j));
+          }
+
+          checks.add(new ObjectCheck(c, nList.get(0), vars));
+        }
+      } else if (exprOutcome instanceof ExceptionalExecution) {
+        Throwable e = ((ExceptionalExecution) exprOutcome).getException();
+        if (Log.isLoggingOn()) Log.logLine("Contract threw exception: " + e.getMessage());
+        if (e instanceof BugInRandoopException) {
+          throw new BugInRandoopException(e);
+        }
+        // Execution of contract resulted in exception. Do not create
+        // a contract-violation decoration.
+        // TODO are there cases where exception in contract check is a
+        // failure?
+      } else {
+        throw new Error("Contract failed to execute during evaluation");
+      }
+
+    } else {
+      for (Integer i : values) {
+        // Add one of the values
+        nList.add(i);
+        // Recurse with the new nList
+        checkNContractsHelper(s, c, values, checks, n, nList);
+        // Remove last item that was added
+        nList.remove(nList.size() - 1);
+      }
+    }
+  }
+
+
+  /**
+   * Checks a ternary contract over the set of values defined in the sequence,
+   * and attaches failing checks at final statement of the sequence.
+   *
+   * @param s
+   *          the executable sequence
+   * @param c
+   *          the contract to check
+   * @param values
+   *          the set of positions defining values to check
+   * @param checks
+   *          the {@code TestChecks} to which new checks are added
+   */
+  private void checkTernary(
+          ExecutableSequence s, ObjectContract c, Set<Integer> values, ErrorRevealingChecks checks) {
+    for (Integer i : values) {
+      for (Integer j : values) {
+        for (Integer k : values) {
+          // Create three ExecutionOutcome objects from the ExecutableSequence
+          ExecutionOutcome result1 = s.getResult(i);
+          ExecutionOutcome result2 = s.getResult(j);
+          ExecutionOutcome result3 = s.getResult(k);
+
+          if (Log.isLoggingOn()) {
+            Log.logLine("Checking contract " + c.getClass() + " on " + i + ", " + j + ", " + k);
+          }
+
+          ExecutionOutcome exprOutcome =
+                  ObjectContractUtils.execute(
+                          c,
+                          ((NormalExecution) result1).getRuntimeValue(),
+                          ((NormalExecution) result2).getRuntimeValue(),
+                          ((NormalExecution) result3).getRuntimeValue());
+
+          if (exprOutcome instanceof NormalExecution) {
+            NormalExecution e = (NormalExecution) exprOutcome;
+            if (e.getRuntimeValue().equals(true)) {
+              if (Log.isLoggingOn()) Log.logLine("Contract returned true.");
+              // Behavior ok.
+            } else {
+              if (Log.isLoggingOn())
+                Log.logLine("Contract returned false. Will add ExpressionEqFalse check");
+              // Create an check that records the actual value
+              // returned by the expression, marking it as invalid
+              // behavior.
+              checks.add(new ObjectCheck(c, i, s.sequence.getVariable(i), s.sequence.getVariable(j), s.sequence.getVariable(k)));
+            }
+          } else if (exprOutcome instanceof ExceptionalExecution) {
+            Throwable e = ((ExceptionalExecution) exprOutcome).getException();
+            if (Log.isLoggingOn()) Log.logLine("Contract threw exception: " + e.getMessage());
+            if (e instanceof BugInRandoopException) {
+              throw new BugInRandoopException(e);
+            }
+            // Execution of contract resulted in exception. Do not create
+            // a contract-violation decoration.
+            // TODO are there cases where exception in contract check is a
+            // failure?
+          } else {
+            throw new Error("Contract failed to execute during evaluation");
+          }
+        }
+      }
+    }
   }
 
   /**

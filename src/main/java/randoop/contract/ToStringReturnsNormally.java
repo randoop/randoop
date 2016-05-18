@@ -26,6 +26,15 @@ public final class ToStringReturnsNormally implements ObjectContract {
     Object o = objects[0];
     assert o != null;
     o.toString();
+
+    /*
+    try {
+      o.toString();
+    } catch (Exception e) {
+      return false;
+    }
+    */
+
     return true;
   }
 

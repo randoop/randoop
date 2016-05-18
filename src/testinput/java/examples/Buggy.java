@@ -84,6 +84,42 @@ public class Buggy {
     }
   }
 
+  /**
+   * The contract:
+   * <code>x0.equals(x1) && x1.equals(x2) -> x0.equals(x2)</code>.
+   */
+  public static class BuggyEqualsTransitive {
+    private static BuggyEqualsTransitive one = new BuggyEqualsTransitive();
+    private static BuggyEqualsTransitive two = new BuggyEqualsTransitive();
+    private static BuggyEqualsTransitive three = new BuggyEqualsTransitive();
+
+    public static BuggyEqualsTransitive getOne() {
+      return one;
+    }
+    public static BuggyEqualsTransitive getTwo() {
+      return two;
+    }
+    public static BuggyEqualsTransitive getThree() {
+      return three;
+    }
+
+    private  BuggyEqualsTransitive() {}
+
+    @Override
+    public boolean equals(Object o) {
+	if (this == one && o == two) {
+	    return true;
+	}
+	if (this == two && o == three){
+	    return true;
+	}
+	if (this == one && o == three) {
+	    return false;
+	}
+	return true;
+    }
+  }
+
   public static void StackOverflowError() {
     throw new StackOverflowError();
   }
