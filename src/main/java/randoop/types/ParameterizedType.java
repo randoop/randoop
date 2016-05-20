@@ -21,15 +21,6 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
 
   /**
    * {@inheritDoc}
-   * @return true, since this is a parameterized type
-   */
-  @Override
-  public boolean isParameterized() {
-    return true;
-  }
-
-  /**
-   * {@inheritDoc}
    * @return the name of this type
    */
   @Override
