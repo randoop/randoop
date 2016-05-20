@@ -113,4 +113,11 @@ public class TypeTuple {
     return new TypeTuple(typeList);
   }
 
+  public TypeTuple applyCaptureConversion() {
+    List<GeneralType> typeList = new ArrayList<>();
+    for (GeneralType type : this.list) {
+      typeList.add(type.applyCaptureConversion());
+    }
+    return new TypeTuple(typeList);
+  }
 }

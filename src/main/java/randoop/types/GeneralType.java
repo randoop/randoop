@@ -343,4 +343,7 @@ public abstract class GeneralType {
 
   }
 
+  public GeneralType applyCaptureConversion() {
+    return this;
+  }
 }
