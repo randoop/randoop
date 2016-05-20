@@ -92,6 +92,8 @@ public class JDKTypes {
         }
         return LINKED_LIST_TYPE;
       }
+
+      return ARRAY_LIST_TYPE;
     }
 
     if (type.isInstantiationOf(MAP_TYPE)) {
@@ -101,6 +103,6 @@ public class JDKTypes {
       return LINKED_HASH_MAP_TYPE;
     }
 
-    throw new IllegalArgumentException("type must be a JDK Collections type");
+    throw new IllegalArgumentException("type must be a JDK Collections type, got " + type);
   }
 }
