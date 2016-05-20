@@ -28,7 +28,7 @@ public class PublicFieldParserTest {
       assertEquals(
           "parse(\"t:v\").toParsableString(classType) should equal \"t:v\"",
           fieldPair,
-          pf.toParseableString(classType));
+          pf.toParsableString(classType));
     } catch (OperationParseException e) {
       fail("Parse error: " + e.getMessage());
     }
@@ -51,7 +51,7 @@ public class PublicFieldParserTest {
       assertEquals(
           "parse(\"t:v\").toParsableString(classType) should equal \"t:v\"",
           fieldPair,
-          pf.toParseableString(classType));
+          pf.toParsableString(classType));
 
       assertTrue("object is a static field", pf.isStatic());
     } catch (OperationParseException e) {
@@ -76,7 +76,7 @@ public class PublicFieldParserTest {
       assertEquals(
           "parse(\"t:v\").toParsableString(classType) should equal \"t:v\"",
           fieldPair,
-          pf.toParseableString(classType));
+          pf.toParsableString(classType));
 
       assertTrue("object is a static final field", pf.isStatic() && pf.isFinal());
     } catch (OperationParseException e) {
