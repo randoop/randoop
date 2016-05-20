@@ -1,5 +1,7 @@
 package randoop.instrument;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
@@ -16,6 +18,7 @@ import randoop.generation.SeedSequences;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
+import randoop.main.OptionsCache;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
@@ -43,12 +46,27 @@ import static randoop.main.GenInputsAbstract.methodlist;
  */
 public class CoveredClassTest {
 
-  @Test
-  public void testNoFilter() {
-    System.out.println("no filter");
+  private static OptionsCache optionsCache;
+
+  @BeforeClass
+  public static void setup() {
+    optionsCache = new OptionsCache();
+    optionsCache.saveState();
     GenInputsAbstract.outputlimit = 5000;
     GenInputsAbstract.inputlimit = 10000;
     GenInputsAbstract.silently_ignore_bad_class_names = false;
+  }
+
+  @AfterClass
+  public static void restore() {
+    optionsCache.restoreState();
+  }
+
+
+  @Test
+  public void testNoFilter() {
+    System.out.println("no filter");
+
     GenInputsAbstract.classlist = new File("randoop/instrument/testcase/allclasses.txt");
     include_if_classname_appears = null;
     GenInputsAbstract.include_if_class_exercised = null;
@@ -87,9 +105,6 @@ public class CoveredClassTest {
   @Test
   public void testNameFilter() {
     System.out.println("name filter");
-    GenInputsAbstract.outputlimit = 5000;
-    GenInputsAbstract.inputlimit = 10000;
-    GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = new File("randoop/instrument/testcase/allclasses.txt");
     include_if_classname_appears =
         Pattern.compile("randoop\\.instrument\\.testcase\\.A"); //null;
@@ -130,9 +145,6 @@ public class CoveredClassTest {
   @Test
   public void testCoverageFilter() {
     System.out.println("coverage filter");
-    GenInputsAbstract.outputlimit = 5000;
-    GenInputsAbstract.inputlimit = 10000;
-    GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = new File("randoop/instrument/testcase/allclasses.txt");
     include_if_classname_appears = null;
     GenInputsAbstract.include_if_class_exercised =

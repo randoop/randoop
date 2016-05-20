@@ -87,7 +87,7 @@ public class SpecialCoveredClassTest {
     assert operationModel != null;
 
     Set<Class<?>> coveredClasses = operationModel.getExercisedClasses();
-    Set<ClassOrInterfaceType> classes = operationModel.getDeclarationTypes();
+    Set<ClassOrInterfaceType> classes = operationModel.getConcreteClasses();
     //
     assertTrue("should be one covered classes", coveredClasses.size() == 1);
     for (Class<?> c : coveredClasses) {
