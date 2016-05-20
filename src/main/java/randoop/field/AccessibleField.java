@@ -72,7 +72,7 @@ public class AccessibleField {
    *
    * @return a String for type-field pair describing field
    */
-  public String toParseableString(GeneralType declaringType) {
+  public String toParsableString(GeneralType declaringType) {
     return declaringType.getName()
         + "."
         + field.getName();
