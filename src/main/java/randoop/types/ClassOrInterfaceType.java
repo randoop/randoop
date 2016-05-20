@@ -102,7 +102,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     return new SimpleClassOrInterfaceType(classType);
   }
 
-
   /**
    * Creates a {@code ClassOrInterfaceType} object for a given
    * {@code java.lang.reflect.Type} reference.
@@ -129,4 +128,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
 
+  public InstantiatedType getMatchingSupertype(GenericClassType goalType) {
+    if (this.isObject()) {
+      return null;
+    }
+
+    return null;
+  }
 }
