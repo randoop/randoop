@@ -79,7 +79,7 @@ public class TypeVariable extends AbstractTypeVariable {
    */
   public static TypeVariable forType(Type type) {
     if (! (type instanceof java.lang.reflect.TypeVariable<?>)) {
-      throw new IllegalArgumentException("type must be a type variable");
+      throw new IllegalArgumentException("type must be a type variable, got " + type);
     }
     java.lang.reflect.TypeVariable<?> v = (java.lang.reflect.TypeVariable)type;
     return new TypeVariable(v, ParameterBound.forTypes(v.getBounds()));
