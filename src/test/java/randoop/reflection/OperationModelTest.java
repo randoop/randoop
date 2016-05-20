@@ -1,6 +1,5 @@
 package randoop.reflection;
 
-import org.hamcrest.core.IsNot;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -14,19 +13,17 @@ import randoop.main.WarnOnBadClassName;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.GeneralType;
-import randoop.types.RandoopTypeException;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
- * Created by bjkeller on 4/5/16.
+ * Tests of {@link randoop.reflection.OperationModel}.
+ *
  */
 public class OperationModelTest {
 
@@ -49,13 +46,23 @@ public class OperationModelTest {
       fail("did not find method: " + e.getMessage());
     }
     assert model != null : "model was not initialized";
-for (TypedOperation operation : model.getConcreteOperations()) {
-  System.out.println(operation);
-}
 
     assertThat("only expect the LinkedList and Object classes", model.getConcreteClasses().size(), is(equalTo(2)));
-    assertTrue("should have nonzero operations set", model.getConcreteOperations().size() > 1);
-
+    int genericOpCount = 0;
+    int concreteOpCount = 0;
+    int wildcardTypeCount = 0;
+    for (TypedOperation operation : model.getConcreteOperations()) {
+      if (operation.isGeneric()) {
+        genericOpCount++;
+      } else if (operation.hasWildcardTypes()) {
+        wildcardTypeCount++;
+      } else {
+        concreteOpCount++;
+      }
+    }
+    assertEquals("concrete operations", 48, concreteOpCount);
+    assertEquals("generic operations", 10, genericOpCount);
+    assertEquals("wildcard operations", 0, wildcardTypeCount);
   }
 
   @Test
@@ -81,7 +88,6 @@ for (TypedOperation operation : model.getConcreteOperations()) {
     assertThat("should have both outer and inner classes, plus Object", model.getConcreteClasses().size(), is(equalTo(3)));
 
     assertTrue("should have nonzero operations set", model.getConcreteOperations().size() > 1);
-
   }
 
   @Test
@@ -105,13 +111,26 @@ for (TypedOperation operation : model.getConcreteOperations()) {
     assert model != null: "model was not initialized";
 
     assertEquals("should be two classes ", 2, model.getConcreteClasses().size());
+
     for (ClassOrInterfaceType classType : model.getConcreteClasses()) {
       assertTrue("classes are all non generic", ! classType.isGeneric());
     }
 
-    assertEquals("should be some operations ", 20, model.getConcreteOperations().size());
+    int genericOpCount = 0;
+    int wildcardOpCount = 0;
+    assertEquals("should be some operations ", 21, model.getConcreteOperations().size());
     for (TypedOperation operation : model.getConcreteOperations()) {
-      assertTrue("operations are all non generic", ! operation.isGeneric());
+
+      if (operation.isGeneric()) {
+        System.out.println(operation);
+        genericOpCount++;
+      }
+      if (operation.hasWildcardTypes()) {
+        System.out.println(operation);
+        wildcardOpCount++;
+      }
     }
+    assertEquals("should be no generic operations", 1, genericOpCount);
+    assertEquals("should be one wildcard operation", 0, wildcardOpCount);
   }
 }
