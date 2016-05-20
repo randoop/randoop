@@ -3,22 +3,17 @@ package randoop.reflection;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
-import java.util.List;
 
-import randoop.field.AccessibleField;
 import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
-import randoop.operation.FieldGet;
-import randoop.operation.FieldSet;
 import randoop.operation.MethodCall;
 import randoop.operation.Operation;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.ConcreteTypes;
-import randoop.types.GeneralType;
+import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
 import randoop.types.SimpleClassOrInterfaceType;
 import randoop.types.TypeTuple;
@@ -71,11 +66,16 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param operation  the {@link TypedOperation}
    */
   private void addOperation(TypedClassOperation operation) {
-    if (classType.isParameterized()) {
-      operations.add(operation.apply(((InstantiatedType)classType).getTypeSubstitution()));
-    } else  {
-      operations.add(operation);
+    if (operation.getDeclaringType().isGeneric()) { // need to apply a substitution
+      GenericClassType declaringType = (GenericClassType) operation.getDeclaringType();
+      if (classType.isParameterized() && declaringType.hasRuntimeClass(classType.getRuntimeClass())) {
+        operation = operation.apply(((InstantiatedType) classType).getTypeSubstitution());
+      } else if (! classType.isGeneric()){
+        InstantiatedType supertype = classType.getMatchingSupertype(declaringType);
+        operation = operation.apply(supertype.getTypeSubstitution());
+      }
     }
+    operations.add(operation);
   }
 
   /**
@@ -95,7 +95,7 @@ public class OperationExtractor extends DefaultClassVisitor {
 
     addOperation(TypedOperation.forConstructor(c));
   }
-  
+
   /**
    * Creates a {@link MethodCall} object for the {@link Method}.
    *
@@ -124,22 +124,14 @@ public class OperationExtractor extends DefaultClassVisitor {
     if (! predicate.test(field)) {
       return;
     }
-    GeneralType fieldType;
-    fieldType = GeneralType.forType(field.getGenericType());
-    List<GeneralType> setInputTypeList = new ArrayList<>();
-    List<GeneralType> getInputTypeList = new ArrayList<>();
-
-    AccessibleField accessibleField = new AccessibleField(field, classType);
-
-    if (! accessibleField.isStatic()) {
-      getInputTypeList.add(classType);
-      setInputTypeList.add(classType);
+    ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(field.getDeclaringClass());
+    if (! (declaringType.isGeneric()
+            && classType.isInstantiationOf((GenericClassType)declaringType))) {
+      declaringType = classType;
     }
-
-    addOperation(new TypedClassOperation(new FieldGet(accessibleField), classType, new TypeTuple(getInputTypeList), fieldType));
-    if (! accessibleField.isFinal()) {
-      setInputTypeList.add(fieldType);
-      addOperation(new TypedClassOperation(new FieldSet(accessibleField), classType, new TypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE));
+    addOperation(TypedOperation.createGetterForField(field, declaringType));
+    if (! (Modifier.isFinal(field.getModifiers() & Modifier.fieldModifiers()))) {
+      addOperation(TypedOperation.createSetterForField(field, declaringType));
     }
   }
 
