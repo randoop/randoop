@@ -195,7 +195,8 @@ public class GenericClassType extends ParameterizedType {
    * has an assignable rawtype; or null otherwise
    * @throws IllegalArgumentException if type is null
    */
-  GenericClassType getMatchingSupertype(GenericClassType type) {
+  /*
+  public GenericClassType getMatchingSupertype(GenericClassType type) {
     if (type == null) {
       throw new IllegalArgumentException("type may not be null");
     }
@@ -232,7 +233,7 @@ public class GenericClassType extends ParameterizedType {
 
     return null;
   }
-
+*/
   /**
    * {@inheritDoc}
    * Handles the specific cases of supertypes of a generic class
@@ -268,34 +269,7 @@ public class GenericClassType extends ParameterizedType {
       return null;
     }
 
-    return getClassOrInterfaceType(superclass);
-  }
-
-  /**
-   * Constructs a {@link ClassOrInterfaceType} object that represents a supertype of the instantiated
-   * type of an {@link InstantiatedType} object.
-   * Construction allows the application of a substitution on the variables of a subclass on this
-   * type.
-   * <p>
-   *   Note that the constructed type is "broken" in the sense that supertypes constructed from it
-   *   will not have type parameters that allow subtype testing.
-   *
-   * @param type  the {@link java.lang.reflect.Type} object
-   * @return the generic class type parameterized allowing application of subtitution derived from subclass
-   */
-  private ClassOrInterfaceType getClassOrInterfaceType(Type type) {
-    if (type instanceof java.lang.reflect.ParameterizedType) {
-      java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType) type;
-
-      List<TypeVariable> typeParameters = new ArrayList<>();
-      for (Type argType : t.getActualTypeArguments()) {
-        TypeVariable var = TypeVariable.forType(argType);
-        typeParameters.add(var);
-      }
-      return new GenericClassType((Class<?>)t.getRawType(), typeParameters);
-    }
-
-    return ClassOrInterfaceType.forType(type);
+    return ClassOrInterfaceType.forType(superclass);
   }
 
   // TODO make similar method that takes a substitution so that can be called from InstantiatedType.getInterfaces
@@ -304,7 +278,7 @@ public class GenericClassType extends ParameterizedType {
   public List<ClassOrInterfaceType> getInterfaces() {
     List<ClassOrInterfaceType> interfaces = new ArrayList<>();
     for (Type type : rawType.getGenericInterfaces()) {
-      interfaces.add(getClassOrInterfaceType(type));
+      interfaces.add(ClassOrInterfaceType.forType(type));
     }
     return interfaces;
   }
