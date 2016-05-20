@@ -26,9 +26,7 @@ public class OperationExtractorTest {
 
   @Test
   public void concreteClassTest() {
-    final Set<ClassOrInterfaceType> classTypes = new LinkedHashSet<>();
     final Set<TypedOperation> operations = new LinkedHashSet<>();
-    final MultiMap<ParameterizedType, TypedOperation> genericClassTypes = new MultiMap<>();
 
     ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
 
@@ -40,15 +38,23 @@ public class OperationExtractorTest {
     }
     assert c != null;
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-    classTypes.add(classType);
     mgr.apply(new OperationExtractor(classType, operations, new DefaultReflectionPredicate()), c);
+    assertThat("name should be", classType.getName(), is(equalTo(c.getName())));
 
-    assertThat("should only be one class", classTypes.size(), is(equalTo(1)) );
-    assertThat("name should be", classTypes.iterator().next().getName(), is(equalTo(c.getName())));
-    assertTrue("there are no generic types", genericClassTypes.isEmpty());
+    assertThat("class has 12 operations", operations.size(), is(equalTo(12)));
 
-    assertThat("class has 9 concrete operations", operations.size(), is(equalTo(11)));
-
+    int genericOpCount = 0;
+    int wildcardOpCount = 0;
+    for (TypedOperation operation : operations) {
+      if (operation.isGeneric()) {
+        genericOpCount++;
+      }
+      if (operation.hasWildcardTypes()) {
+        wildcardOpCount++;
+      }
+    }
+    assertThat("class has one generic operation", genericOpCount, is(equalTo(1)));
+    assertThat("class has no operations with wildcards", wildcardOpCount, is(equalTo(0)));
   }
 
   @Test
