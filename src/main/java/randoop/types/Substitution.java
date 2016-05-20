@@ -95,8 +95,9 @@ public class Substitution <T> {
 
   /**
    * Returns the value for the given {@link java.lang.reflect.Type}
-   * @param parameter
-   * @return
+   *
+   * @param parameter  the type variable
+   * @return  the value for the type variable, or null if there is none
    */
   public T get(Type parameter) {
     return rawMap.get(parameter);
@@ -133,7 +134,6 @@ public class Substitution <T> {
     }
     return s;
   }
-
 
   public void print() {
     for (Entry<AbstractTypeVariable, T> entry : map.entrySet()) {
