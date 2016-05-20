@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import randoop.BugInRandoopException;
+
 /**
  * Represents a parameterized type as a generic class instantiated with
  * concrete type arguments.
@@ -71,7 +73,6 @@ public class InstantiatedType extends ParameterizedType {
 
   @Override
   public boolean isAssignableFrom(GeneralType otherType) {
-
     if (super.isAssignableFrom(otherType)) {
       return true;
     }
@@ -166,23 +167,10 @@ public class InstantiatedType extends ParameterizedType {
     // variable names and type bounds are the same.
 
     InstantiatedType pt = (InstantiatedType) otherType;
-    GenericClassType genericSuperType;
-    genericSuperType = this.instantiatedType.getMatchingSupertype(pt.instantiatedType);
-    if (genericSuperType == null) { // no matching supertype
-      return false;
-    }
+    InstantiatedType superType = this.getMatchingSupertype(pt.instantiatedType);
 
-    Substitution<ReferenceType> substitution = getTypeSubstitution();
-    if (substitution != null) {
-      GeneralType superType = genericSuperType.apply(substitution);
-      if (pt.equals(superType)) {
-        return true; // found type
-      }
+    return superType != null && pt.equals(superType);
 
-      // otherwise, non-null superType is potentially on transitive chain to type
-      return superType.isSubtypeOf(otherType);
-    }
-    return false;
   }
 
   /**
@@ -262,6 +250,40 @@ public class InstantiatedType extends ParameterizedType {
     return instantiatedType.isInstantiationOf(genericClassType);
   }
 
+  public InstantiatedType getMatchingSupertype(GenericClassType goalType) {
+    if (goalType.isInterface()) {
+      List<ClassOrInterfaceType> interfaces = this.getInterfaces();
+      for (ClassOrInterfaceType interfaceType : interfaces) {
+        if (interfaceType.getRuntimeClass().isAssignableFrom(this.getRuntimeClass())) {
+          if (interfaceType.isParameterized()) {
+            InstantiatedType type = (InstantiatedType) interfaceType;
+            if (type.isInstantiationOf(goalType)) {
+              return (InstantiatedType) interfaceType;
+            }
+            InstantiatedType result = type.getMatchingSupertype(goalType);
+            if (result != null) {
+              return result;
+            }
+          } else {
+            return interfaceType.getMatchingSupertype(goalType);
+          }
+        }
+      }
+    }
+
+    ClassOrInterfaceType superclass = this.getSuperclass();
+    if (superclass != null && ! superclass.isObject()) {
+      if (superclass.isInstantiationOf(goalType)) {
+        return (InstantiatedType)superclass;
+      }
+
+      return superclass.getMatchingSupertype(goalType);
+    }
+
+    return null;
+
+  }
+
   /**
    * Constructs the superclass type for this parameterized type.
    *
@@ -305,7 +327,7 @@ public class InstantiatedType extends ParameterizedType {
    *
    * @return the capture conversion type for this type
    */
-  InstantiatedType applyCaptureConversion() {
+  public InstantiatedType applyCaptureConversion() {
     if (! this.hasWildcardArgument()) {
       return this;
     }
