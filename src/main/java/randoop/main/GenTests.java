@@ -267,7 +267,6 @@ public class GenTests extends GenInputsAbstract {
      */
     Set<ObjectContract> contracts = operationModel.getContracts();
 
-
     Set<TypedOperation> excludeAsObservers = new LinkedHashSet<>();
     // TODO add Object.toString() and Object.hashCode() to exclude set
     TestCheckGenerator testGen = createTestCheckGenerator(visibility, contracts, observerMap, excludeAsObservers);
