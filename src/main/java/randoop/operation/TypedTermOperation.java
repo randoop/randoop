@@ -9,7 +9,7 @@ import randoop.types.Substitution;
 import randoop.types.TypeTuple;
 
 /**
- *
+ * Represents operations that have no declaring class.
  */
 class TypedTermOperation extends TypedOperation {
 
@@ -26,6 +26,13 @@ class TypedTermOperation extends TypedOperation {
   public TypedTermOperation apply(Substitution<ReferenceType> substitution) {
     TypeTuple inputTypes = this.getInputTypes().apply(substitution);
     GeneralType outputType = this.getOutputType().apply(substitution);
+    return new TypedTermOperation(this.getOperation(), inputTypes, outputType);
+  }
+
+  @Override
+  public TypedOperation applyCaptureConversion() {
+    TypeTuple inputTypes = this.getInputTypes().applyCaptureConversion();
+    GeneralType outputType = this.getOutputType().applyCaptureConversion();
     return new TypedTermOperation(this.getOperation(), inputTypes, outputType);
   }
 

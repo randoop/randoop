@@ -63,6 +63,13 @@ public class TypedClassOperation extends TypedOperation {
     return new TypedClassOperation(this.getOperation(), declaringType, inputTypes, outputType);
   }
 
+  @Override
+  public TypedClassOperation applyCaptureConversion() {
+    TypeTuple inputTypes = this.getInputTypes().applyCaptureConversion();
+    GeneralType outputType = this.getOutputType().applyCaptureConversion();
+    return new TypedClassOperation(this.getOperation(), declaringType, inputTypes, outputType);
+  }
+
   /**
    * Produces a Java source code representation of this statement and append it to the given
    * StringBuilder.

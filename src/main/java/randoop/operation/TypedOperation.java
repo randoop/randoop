@@ -2,6 +2,7 @@ package randoop.operation;
 
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -10,10 +11,12 @@ import java.util.Objects;
 
 import randoop.BugInRandoopException;
 import randoop.ExecutionOutcome;
+import randoop.field.AccessibleField;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
+import randoop.types.ConcreteTypes;
 import randoop.types.GeneralType;
 import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
@@ -191,6 +194,14 @@ public abstract class TypedOperation implements Operation {
   public abstract TypedOperation apply(Substitution<ReferenceType> substitution);
 
   /**
+   * Applies a capture conversion to the wildcard types of this operation, and returns a new
+   * operation with the captured types.
+   *
+   * @return the operation result from applying a capture conversion to wildcard types of this operation
+   */
+  public abstract TypedOperation applyCaptureConversion();
+
+  /**
    * Constructs a string representation of this operation that can be parsed by parse methods of the
    * implementing types.
    *
@@ -293,6 +304,27 @@ public abstract class TypedOperation implements Operation {
     }
 
     return new TypedClassOperation(op, declaringType, inputTypes, outputType);
+  }
+
+  public static TypedClassOperation createGetterForField(Field field, ClassOrInterfaceType declaringType) {
+    GeneralType fieldType = GeneralType.forType(field.getGenericType());
+    AccessibleField accessibleField = new AccessibleField(field, declaringType);
+    List<GeneralType> inputTypes = new ArrayList<>();
+    if (! accessibleField.isStatic()) {
+      inputTypes.add(declaringType);
+    }
+    return new TypedClassOperation(new FieldGet(accessibleField), declaringType, new TypeTuple(inputTypes), fieldType);
+  }
+
+  public static TypedClassOperation createSetterForField(Field field, ClassOrInterfaceType declaringType) {
+    GeneralType fieldType = GeneralType.forType(field.getGenericType());
+    AccessibleField accessibleField = new AccessibleField(field, declaringType);
+    List<GeneralType> inputTypes = new ArrayList<>();
+    if (! accessibleField.isStatic()) {
+      inputTypes.add(declaringType);
+    }
+    inputTypes.add(fieldType);
+    return new TypedClassOperation(new FieldSet(accessibleField), declaringType, new TypeTuple(inputTypes), ConcreteTypes.VOID_TYPE);
   }
 
   /**
