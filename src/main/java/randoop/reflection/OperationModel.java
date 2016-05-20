@@ -24,7 +24,6 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
 import randoop.types.GenericClassType;
 import randoop.types.ParameterBound;
-import randoop.types.ParameterizedType;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.TypeNames;
@@ -47,7 +46,7 @@ import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
  * This class manages all information about generic classes internally, and instantiates any
  * type variables in operations before returning them.
  */
-public class OperationModel extends ModelCollections {
+public class OperationModel {
 
   /** The set of class declaration types for this model */
   private Set<ClassOrInterfaceType> classDeclarationTypes;
@@ -116,12 +115,15 @@ public class OperationModel extends ModelCollections {
 
     model.addClassTypes(visibility, reflectionPredicate, classnames, exercisedClassnames, errorHandler, literalsFileList);
     model.refineGenericClassTypes();
+    model.addOperations(model.concreteClassTypes, visibility, reflectionPredicate);
 
     model.addOperations(methodSignatures);
     model.addObjectConstructor();
 
     return model;
   }
+
+
 
   /**
    * Gathers class types to be used in a run of Randoop and adds them to this {@code OperationModel}.
@@ -258,6 +260,48 @@ public class OperationModel extends ModelCollections {
   }
 
   /**
+   * Iterates through a set of simple and instantiated class types and uses reflection to extract
+   * the operations that satisfy both the visibility and reflection predicates, and then adds them
+   * to the operation set of this model.
+   *
+   * @param concreteClassTypes  the declaring class types for the operations
+   * @param visibility  the visibility predicate
+   * @param reflectionPredicate  the reflection predicate
+   */
+  private void addOperations(Set<ClassOrInterfaceType> concreteClassTypes, VisibilityPredicate visibility, ReflectionPredicate reflectionPredicate) {
+    Set<TypedOperation> operationSet = new LinkedHashSet<>();
+    ReflectionManager mgr = new ReflectionManager(visibility);
+    for (ClassOrInterfaceType classType : concreteClassTypes) {
+      mgr.apply(new OperationExtractor(classType, operationSet, reflectionPredicate), classType.getRuntimeClass());
+    }
+    for (TypedOperation operation : operationSet) {
+      addOperation(operation);
+    }
+  }
+
+  // TODO collect input types from added methods
+  private void addOperations(Set<String> methodSignatures) throws OperationParseException {
+    for (String sig : methodSignatures) {
+      TypedOperation operation = OperationParser.parse(sig);
+      addOperation(operation);
+    }
+  }
+
+  private void addOperation(TypedOperation operation) {
+    if (operation.hasWildcardTypes()) {
+      operation = operation.applyCaptureConversion();
+      //return;
+    }
+
+    if (operation.isGeneric()) {
+      //choose types
+      return;
+    }
+
+    operations.add(operation);
+  }
+
+  /**
    * Creates and adds the Object class default constructor call to the concrete operations.
    */
   private void addObjectConstructor() {
@@ -269,8 +313,8 @@ public class OperationModel extends ModelCollections {
       System.exit(1);
     }
     TypedClassOperation operation = TypedOperation.forConstructor(objectConstructor);
-    addConcreteClassType(operation.getDeclaringType());
-    addConcreteOperation(operation.getDeclaringType(), operation);
+    concreteClassTypes.add(operation.getDeclaringType());
+    addOperation(operation);
   }
 
   /**
@@ -354,7 +398,7 @@ public class OperationModel extends ModelCollections {
    *
    * @return the set of concrete types for the classes in this model
    */
-  public Set<ClassOrInterfaceType> getClasses() {
+  public Set<ClassOrInterfaceType> getDeclarationTypes() {
     return classDeclarationTypes;
   }
 
@@ -375,15 +419,6 @@ public class OperationModel extends ModelCollections {
     return new ArrayList<>(operations);
   }
 
-  // TODO collect input types from added methods
-  private void addOperations(Set<String> methodSignatures) throws OperationParseException {
-    TypedOperationManager manager = new TypedOperationManager(this);
-    for (String sig : methodSignatures) {
-      TypedOperation operation = OperationParser.parse(sig);
-      manager.addOperation((TypedClassOperation)operation);
-    }
-  }
-
   /**
    * Returns all {@link ObjectContract} objects for this run of Randoop.
    * Includes Randoop defaults and {@link randoop.CheckRep} annotated methods.
@@ -396,29 +431,6 @@ public class OperationModel extends ModelCollections {
 
   public Set<Sequence> getAnnotatedTestValues() {
     return annotatedTestValues;
-  }
-
-  /*
-   * ModelCollections methods
-   */
-  @Override
-  public void addConcreteClassType(ClassOrInterfaceType type) {
-    concreteClassTypes.add(type);
-  }
-
-  @Override
-  public void addOperationToGenericType(ParameterizedType declaringType, TypedOperation operation) {
-    //genericClassTypes.add(declaringType, operation);
-  }
-
-  @Override
-  public void addGenericOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
-    //genericOperations.add(operation);
-  }
-
-  @Override
-  public void addConcreteOperation(ClassOrInterfaceType declaringType, TypedOperation operation) {
-    operations.add(operation);
   }
 
 }
