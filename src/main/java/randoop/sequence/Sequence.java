@@ -1089,8 +1089,9 @@ public final class Sequence implements WeightedElement {
    */
   public boolean hasUseOfMatchingClass(Pattern classNames) {
     for (int i = 0; i < statements.size(); i++) {
-      String classname = statements.get(i).getDeclaringClass().getName();
-      if (classNames.matcher(classname).matches()) {
+      GeneralType declaringType = statements.get(i).getDeclaringClass();
+      if (declaringType != null
+              && classNames.matcher(declaringType.getName()).matches()) {
         return true;
       }
     }
