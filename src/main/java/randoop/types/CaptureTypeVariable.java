@@ -59,6 +59,11 @@ class CaptureTypeVariable extends AbstractTypeVariable {
   }
 
   @Override
+  public boolean isGeneric() {
+    return true;
+  }
+
+  @Override
   public String getName() {
     return "Capture" + varID;
   }
