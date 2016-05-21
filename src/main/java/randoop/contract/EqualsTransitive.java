@@ -4,7 +4,7 @@ import randoop.Globals;
 
 /**
  * The contract:
- * <code>x0.equals(x1) && x1.equals(x2) -> x0.equals(x2)</code>.
+ * <code>!(x0.equals(x1) && x1.equals(x2))||x0.equals(x2)</code>.
  */
 
 public class EqualsTransitive implements ObjectContract {
@@ -59,7 +59,7 @@ public class EqualsTransitive implements ObjectContract {
         b.append(Globals.lineSep);
         b.append("org.junit.Assert.assertTrue(");
         b.append("\"Contract failed: " + toCommentString() + "\", ");
-        b.append("x0.equals(x1) && x1.equals(x2) -> x0.equals(x2)");
+        b.append("!(x0.equals(x1) && x1.equals(x2)) || x0.equals(x2)");
         b.append(");");
         return b.toString();
     }

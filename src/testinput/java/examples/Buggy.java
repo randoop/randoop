@@ -86,7 +86,7 @@ public class Buggy {
 
   /**
    * The contract:
-   * <code>x0.equals(x1) && x1.equals(x2) -> x0.equals(x2)</code>.
+   * !(x0.equals(x1) && x1.equals(x2)) ||  x0.equals(x2)
    */
   public static class BuggyEqualsTransitive {
     private static BuggyEqualsTransitive one = new BuggyEqualsTransitive();
@@ -107,6 +107,10 @@ public class Buggy {
 
     @Override
     public boolean equals(Object o) {
+	// Prevent violations to lower arity contracts
+	if (o == null) {
+        return false;
+	}
 	if (this == one && o == two) {
 	    return true;
 	}
@@ -117,6 +121,12 @@ public class Buggy {
 	    return false;
 	}
 	return true;
+    }
+
+    @Override
+    public int hashCode() {
+      // No state to compare
+      return 311;
     }
   }
 
