@@ -60,10 +60,10 @@ public class FieldGetterTest {
       //execution - should be 4 (haven't changed value yet)
       NormalExecution expectedExec = new NormalExecution(4, 0);
       NormalExecution actualExec = (NormalExecution) rhs.execute(new Object[0], null);
-      /*assertTrue(
-          "Execution should simply return value" + expectedExec.getRuntimeValue() + " " + actualExec.getRuntimeValue(),
+      assertTrue(
+          "Execution should simply return value",
           expectedExec.getRuntimeValue().equals(actualExec.getRuntimeValue())
-	  && expectedExec.getExecutionTime() == actualExec.getExecutionTime());*/
+              && expectedExec.getExecutionTime() == actualExec.getExecutionTime());
 
     } catch (NoSuchFieldException e) {
       fail("test failed because field in test class not found");
