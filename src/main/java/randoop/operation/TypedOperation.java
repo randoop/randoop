@@ -27,6 +27,9 @@ import randoop.types.TypeTuple;
 
 /**
  * Type decorator of {@link Operation} objects.
+ * An operation has zero or more input types, and one output type that may be {@code void}.
+ * @see randoop.operation.TypedClassOperation
+ * @see randoop.operation.TypedTermOperation
  */
 public abstract class TypedOperation implements Operation {
 
@@ -34,12 +37,12 @@ public abstract class TypedOperation implements Operation {
   private final CallableOperation operation;
 
   /**
-   * The type tuple of concrete input types.
+   * The type tuple of input types.
    */
   private final TypeTuple inputTypes;
 
   /**
-   * The concrete output type.
+   * The output type.
    */
   private final GeneralType outputType;
 
@@ -81,8 +84,7 @@ public abstract class TypedOperation implements Operation {
   }
 
   /**
-   * Returns the tuple of input types for this operation. If a method call or field access, the
-   * first input corresponds to the receiver, which must be an object of the declaring class.
+   * Returns the tuple of input types for this operation.
    *
    * @return tuple of concrete input types
    */
@@ -91,7 +93,7 @@ public abstract class TypedOperation implements Operation {
   }
 
   /**
-   * Returns the type returned by the operation.
+   * Returns the output type returned by the operation.
    *
    * @return {@link GeneralType} type returned by this operation
    */
@@ -106,6 +108,11 @@ public abstract class TypedOperation implements Operation {
    */
   public CallableOperation getOperation() { return operation; }
 
+  /**
+   * Indicates whether this operation has a type that is a wildcard type.
+   *
+   * @return true if at least one input or output type has a wildcard, false otherwise
+   */
   public boolean hasWildcardTypes() {
     return inputTypes.hasWildcard() || outputType.hasWildcard();
   }
@@ -174,7 +181,7 @@ public abstract class TypedOperation implements Operation {
    * ResultOrException object and can output results to specified PrintStream.
    *
    * @param input array containing appropriate inputs to operation
-   * @param out   stream to output results of execution; can be null if you don't want to print.
+   * @param out   stream to output results of execution; if null, nothing is printed
    * @return results of executing this statement
    */
   public ExecutionOutcome execute(Object[] input, PrintStream out) {
@@ -195,7 +202,7 @@ public abstract class TypedOperation implements Operation {
 
   /**
    * Applies a capture conversion to the wildcard types of this operation, and returns a new
-   * operation with the captured types.
+   * operation with new type variables for the wildcard types.
    *
    * @return the operation result from applying a capture conversion to wildcard types of this operation
    */
@@ -306,6 +313,13 @@ public abstract class TypedOperation implements Operation {
     return new TypedClassOperation(op, declaringType, inputTypes, outputType);
   }
 
+  /**
+   * Creates a {@link TypedOperation} that represents a read access to a field.
+   *
+   * @param field  the field
+   * @param declaringType  the declaring type for the field
+   * @return an operation to access the given field of the declaring type
+   */
   public static TypedClassOperation createGetterForField(Field field, ClassOrInterfaceType declaringType) {
     GeneralType fieldType = GeneralType.forType(field.getGenericType());
     AccessibleField accessibleField = new AccessibleField(field, declaringType);
@@ -316,6 +330,13 @@ public abstract class TypedOperation implements Operation {
     return new TypedClassOperation(new FieldGet(accessibleField), declaringType, new TypeTuple(inputTypes), fieldType);
   }
 
+  /**
+   * Creats a {@link TypedOperation} that represents a write access to a field.
+   *
+   * @param field  the field
+   * @param declaringType  the declaring type of the field
+   * @return an operation to set the value of the given field of the declaring type
+   */
   public static TypedClassOperation createSetterForField(Field field, ClassOrInterfaceType declaringType) {
     GeneralType fieldType = GeneralType.forType(field.getGenericType());
     AccessibleField accessibleField = new AccessibleField(field, declaringType);
