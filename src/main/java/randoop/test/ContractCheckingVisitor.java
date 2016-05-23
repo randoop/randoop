@@ -1,8 +1,6 @@
 package randoop.test;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 import randoop.BugInRandoopException;
@@ -13,7 +11,6 @@ import randoop.NotExecuted;
 import randoop.contract.ObjectContract;
 import randoop.contract.ObjectContractUtils;
 import randoop.sequence.ExecutableSequence;
-import randoop.sequence.Variable;
 import randoop.test.predicate.ExceptionPredicate;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypes;

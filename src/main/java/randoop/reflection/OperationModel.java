@@ -8,7 +8,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import randoop.contract.*;
+import randoop.contract.EqualsTransitive;
+import randoop.contract.EqualsReflexive;
+import randoop.contract.EqualsSymmetric;
+import randoop.contract.EqualsToNullRetFalse;
+import randoop.contract.EqualsHashcode;
+import randoop.contract.ObjectContract;
 import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
 import randoop.operation.ConcreteOperation;

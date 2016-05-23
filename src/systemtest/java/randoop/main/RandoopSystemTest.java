@@ -102,7 +102,7 @@ public class RandoopSystemTest {
     options.add("--observers=resources/systemTest/randoop1_observers.txt");
     options.add("--omit-field-list=resources/systemTest/testclassomitfields.txt");
 
-    long timeout = 36000L;
+    long timeout = 60000L;
     RandoopRunDescription randoopRunDesc =
         generateAndCompile(
             classpath,
