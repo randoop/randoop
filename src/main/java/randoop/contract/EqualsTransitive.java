@@ -33,6 +33,7 @@ public class EqualsTransitive implements ObjectContract {
 
     @Override
     public int getArity() {
+	// Contract over three objects
         return 3;
     }
 
