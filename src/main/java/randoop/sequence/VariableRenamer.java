@@ -1,8 +1,12 @@
 package randoop.sequence;
 
 import randoop.types.ArrayType;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
 import randoop.types.GeneralType;
+import randoop.types.InstantiatedType;
+import randoop.types.ReferenceArgument;
+import randoop.types.TypeArgument;
 
 class VariableRenamer {
 
@@ -62,26 +66,22 @@ class VariableRenamer {
       // otherwise, use the first character of the type name
       return type.getName().substring(0,1);
     } if (type.isParameterized()) {
-      String qualifiedTypeName = type.getName();
-      int argumentsPosition = qualifiedTypeName.indexOf('<');
-      String qualifiedClassname = qualifiedTypeName.substring(0, argumentsPosition);
-      String varName = qualifiedClassname.substring(qualifiedClassname.lastIndexOf('.') + 1).toLowerCase();
-      String argumentString = qualifiedTypeName.substring(argumentsPosition + 1, qualifiedTypeName.indexOf('>'));
-      String[] toks = argumentString.split(",");
-      for (String qualifiedArgumentName : toks) {
-        String argumentName = qualifiedArgumentName.substring(qualifiedArgumentName.lastIndexOf('.') + 1);
+      InstantiatedType classType = (InstantiatedType)type;
+      String varName = classType.getClassName().toLowerCase();
+      for (TypeArgument argument : classType.getTypeArguments()) {
+        assert !argument.isWildcard() : "wildcards should be converted and instantiated for types of variables";
+        String argumentName = getVariableName(((ReferenceArgument)argument).getReferenceType());
         varName += "_" + argumentName;
       }
       return varName;
     } else {
       // for other object types
-      String qualifiedTypeName = type.getName();
-      String typeName = qualifiedTypeName.substring(qualifiedTypeName.lastIndexOf('.') + 1);
-      if (typeName.length() > 0) {
-        if (Character.isUpperCase(typeName.charAt(0))) {
-          return typeName.substring(0, 1).toLowerCase() + typeName.substring(1);
+      String classname = ((ClassOrInterfaceType)type).getClassName();
+      if (classname.length() > 0) {
+        if (Character.isUpperCase(classname.charAt(0))) { // preserve camel case
+          return classname.substring(0, 1).toLowerCase() + classname.substring(1);
         } else {
-          return typeName + "_instance";
+          return classname + "_instance";
         }
       } else {
         return "anonymous";
