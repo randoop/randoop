@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import randoop.BugInRandoopException;
 import randoop.contract.EqualsHashcode;
 import randoop.contract.EqualsReflexive;
 import randoop.contract.EqualsSymmetric;
@@ -20,14 +21,13 @@ import randoop.operation.OperationParser;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
+import randoop.types.AbstractTypeVariable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
-import randoop.types.GenericClassType;
 import randoop.types.ParameterBound;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.TypeNames;
-import randoop.types.TypeVariable;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
 
@@ -123,8 +123,6 @@ public class OperationModel {
     return model;
   }
 
-
-
   /**
    * Gathers class types to be used in a run of Randoop and adds them to this {@code OperationModel}.
    * Specifically, collects types for classes-under-test, objects for exercised-class heuristic,
@@ -212,7 +210,8 @@ public class OperationModel {
   private void refineGenericClassTypes() {
     for (ClassOrInterfaceType classType : classDeclarationTypes) {
       if (classType.isGeneric()) {
-        List<Substitution<ReferenceType>> substitutions = getSubstitutions((GenericClassType)classType);
+        List<AbstractTypeVariable> typeParameters = classType.getTypeParameters();
+        List<Substitution<ReferenceType>> substitutions = getSubstitutions(typeParameters);
         assert substitutions.size() > 0 : "didn't find types to satisfy bounds on generic";
         Substitution<ReferenceType> substitution = Randomness.randomMember(substitutions);
         ClassOrInterfaceType refinedClassType = classType.apply(substitution);
@@ -226,14 +225,13 @@ public class OperationModel {
     }
   }
 
-  private List<Substitution<ReferenceType>> getSubstitutions(GenericClassType classType) {
-    List<TypeVariable> typeArguments = classType.getTypeParameters();
+  private List<Substitution<ReferenceType>> getSubstitutions(List<AbstractTypeVariable> typeParameters) {
     TypeTupleSet candidateSet = new TypeTupleSet();
-    for (TypeVariable typeArgument : typeArguments) {
+    for (AbstractTypeVariable typeArgument : typeParameters) {
       List<ReferenceType> candidateTypes = selectCandidates(typeArgument);
       candidateSet.extend(candidateTypes);
     }
-    return candidateSet.filter(classType.getTypeParameters());
+    return candidateSet.filter(typeParameters);
   }
 
   /**
@@ -245,14 +243,14 @@ public class OperationModel {
    * @param argument  the type arguments
    * @return the list of candidate types to included in tested tuples
    */
-  private List<ReferenceType> selectCandidates(TypeVariable argument) {
-    return selectCandidates(argument.getTypeBound());
-  }
-
-  private List<ReferenceType> selectCandidates(ParameterBound bound) {
+  private List<ReferenceType> selectCandidates(AbstractTypeVariable argument) {
+    ReferenceType lowerBound = argument.getLowerTypeBound();
+    ParameterBound upperBound = argument.getTypeBound();
     List<ReferenceType> typeList = new ArrayList<>();
     for (GeneralType inputType : inputTypes) {
-      if (inputType.isReferenceType() && bound.isSatisfiedBy(inputType)) {
+      if (inputType.isReferenceType()
+              && lowerBound.isSubtypeOf(inputType)
+              && upperBound.isSatisfiedBy(inputType)) {
         typeList.add((ReferenceType)inputType);
       }
     }
@@ -279,6 +277,12 @@ public class OperationModel {
     }
   }
 
+  /**
+   * Create operations obtained by parsing method signatures and add each to this model.
+   *
+   * @param methodSignatures  the set of method signatures
+   * @throws OperationParseException if any signature is invalid
+   */
   // TODO collect input types from added methods
   private void addOperations(Set<String> methodSignatures) throws OperationParseException {
     for (String sig : methodSignatures) {
@@ -287,18 +291,39 @@ public class OperationModel {
     }
   }
 
+  /**
+   * Adds instantiated operations to this model based on the given {@link TypedOperation}.
+   * If the given operation is generic, then an instantiating type is chosen from the input types,
+   * and an instantiated version of the operation is added.
+   * If the operation has wildcards types, then capture conversion is first applied to introduce
+   * new type variables that are then instantiated.
+   *
+   * @param operation the operation to add to this model
+   */
   private void addOperation(TypedOperation operation) {
-    if (operation.hasWildcardTypes()) {
-      operation = operation.applyCaptureConversion();
-      //return;
+    if (operation.isGeneric()) {
+      operation = instantiateTypes(operation);
     }
 
-    if (operation.isGeneric()) {
-      //choose types
-      return;
+    if (operation.hasWildcardTypes()) {
+      operation = instantiateTypes(operation.applyCaptureConversion());
     }
 
     operations.add(operation);
+  }
+
+  private TypedOperation instantiateTypes(TypedOperation operation) {
+    List<AbstractTypeVariable> typeParameters = operation.getTypeParameters();
+    if (typeParameters.isEmpty()) {
+      return operation;
+    }
+
+    List<Substitution<ReferenceType>> substitutions = getSubstitutions(typeParameters);
+    if (substitutions.isEmpty()) {
+      throw new BugInRandoopException("Unable to instantiate types for operation " + operation);
+    }
+    Substitution<ReferenceType> substitution = Randomness.randomMember(substitutions);
+    return operation.apply(substitution);
   }
 
   /**
