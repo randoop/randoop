@@ -60,9 +60,10 @@ public class OperationModelTest {
         concreteOpCount++;
       }
     }
-    assertEquals("concrete operations", 48, concreteOpCount);
-    assertEquals("generic operations", 10, genericOpCount);
+    assertEquals("concrete operations", 58, concreteOpCount);
+    assertEquals("generic operations", 0, genericOpCount);
     assertEquals("wildcard operations", 0, wildcardTypeCount);
+    assertEquals("all operations instantiated", model.getConcreteOperations().size(), concreteOpCount);
   }
 
   @Test
@@ -118,19 +119,22 @@ public class OperationModelTest {
 
     int genericOpCount = 0;
     int wildcardOpCount = 0;
-    assertEquals("should be some operations ", 21, model.getConcreteOperations().size());
+    int concreteOpCount = 0;
+
     for (TypedOperation operation : model.getConcreteOperations()) {
 
       if (operation.isGeneric()) {
-        System.out.println(operation);
         genericOpCount++;
-      }
-      if (operation.hasWildcardTypes()) {
         System.out.println(operation);
+      } else if (operation.hasWildcardTypes()) {
         wildcardOpCount++;
+      } else {
+        concreteOpCount++;
       }
     }
-    assertEquals("should be no generic operations", 1, genericOpCount);
-    assertEquals("should be one wildcard operation", 0, wildcardOpCount);
+    assertEquals("should be no generic operations", 0, genericOpCount);
+    assertEquals("should be no wildcard operations", 0, wildcardOpCount);
+    assertEquals("all operations should be instantiated ", model.getConcreteOperations().size(), concreteOpCount);
+    assertEquals("should have 21 operations", 21, model.getConcreteOperations().size());
   }
 }
