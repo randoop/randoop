@@ -110,7 +110,8 @@ public class Variable implements Comparable<Variable> {
     return (new Integer(this.index).compareTo(o.index));
   }
 
-  /** Convert to string and downcase the first character.
+  /**
+   * Convert to string and downcase the first character.
    * @param type  the type
    */
   public static String classToVariableName(GeneralType type) {
