@@ -84,10 +84,6 @@ public class Buggy {
     }
   }
 
-  /**
-   * The contract:
-   * !(x0.equals(x1) && x1.equals(x2)) ||  x0.equals(x2)
-   */
   public static class BuggyEqualsTransitive {
     private static BuggyEqualsTransitive one = new BuggyEqualsTransitive();
     private static BuggyEqualsTransitive two = new BuggyEqualsTransitive();
