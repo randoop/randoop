@@ -2,7 +2,9 @@ package randoop.types;
 
 class Variable1<T> {}
 
-class Variable2<S, T> {}
+class Variable2<S, T> {
+  public <U> T m(Variable1<? extends U> u, T t) { return t; }
+}
 
 class Variable3<T> extends Variable1<T> {}
 
