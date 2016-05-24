@@ -1,8 +1,10 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import plume.UtilMDE;
 
@@ -119,5 +121,13 @@ public class TypeTuple {
       typeList.add(type.applyCaptureConversion());
     }
     return new TypeTuple(typeList);
+  }
+
+  public List<AbstractTypeVariable> getTypeParameters() {
+    Set<AbstractTypeVariable> paramSet = new LinkedHashSet<>();
+    for (GeneralType type : this.list) {
+      paramSet.addAll(type.getTypeParameters());
+    }
+    return new ArrayList<>(paramSet);
   }
 }

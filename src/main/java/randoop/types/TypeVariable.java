@@ -1,7 +1,11 @@
 package randoop.types;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Represents a type variable used by itself as a type.
@@ -83,6 +87,13 @@ public class TypeVariable extends AbstractTypeVariable {
     }
     java.lang.reflect.TypeVariable<?> v = (java.lang.reflect.TypeVariable)type;
     return new TypeVariable(v, ParameterBound.forTypes(v.getBounds()));
+  }
+
+  @Override
+  public List<AbstractTypeVariable> getTypeParameters() {
+    List<AbstractTypeVariable> paramList = new ArrayList<>();
+    paramList.add(this);
+    return paramList;
   }
 
   public Type getReflectionTypeVariable() {

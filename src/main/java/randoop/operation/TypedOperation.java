@@ -14,6 +14,7 @@ import randoop.ExecutionOutcome;
 import randoop.field.AccessibleField;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
+import randoop.types.AbstractTypeVariable;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
@@ -24,6 +25,7 @@ import randoop.types.PrimitiveTypes;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.TypeTuple;
+import randoop.types.TypeVariable;
 
 /**
  * Type decorator of {@link Operation} objects.
@@ -207,6 +209,10 @@ public abstract class TypedOperation implements Operation {
    * @return the operation result from applying a capture conversion to wildcard types of this operation
    */
   public abstract TypedOperation applyCaptureConversion();
+
+  public List<AbstractTypeVariable> getTypeParameters() {
+    return new ArrayList<>();
+  }
 
   /**
    * Constructs a string representation of this operation that can be parsed by parse methods of the

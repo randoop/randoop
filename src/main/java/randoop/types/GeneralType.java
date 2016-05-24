@@ -2,6 +2,8 @@ package randoop.types;
 
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents Java types in Randoop, including parameterized types.
@@ -93,7 +95,6 @@ public abstract class GeneralType {
     if (sourceType.isVoid()) {
       return false;
     }
-
     // identity conversion
     return this.equals(sourceType);
   }
@@ -346,4 +347,9 @@ public abstract class GeneralType {
   public GeneralType applyCaptureConversion() {
     return this;
   }
+
+  public List<AbstractTypeVariable> getTypeParameters() {
+    return new ArrayList<>();
+  }
+
 }

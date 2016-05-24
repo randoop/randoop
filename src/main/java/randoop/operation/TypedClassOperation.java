@@ -1,14 +1,19 @@
 package randoop.operation;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import randoop.sequence.Variable;
+import randoop.types.AbstractTypeVariable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.TypeTuple;
+import randoop.types.TypeVariable;
 
 /**
  * Represents a type decoration for an operation that has a declaring class.
@@ -98,5 +103,13 @@ public class TypedClassOperation extends TypedOperation {
   @Override
   public String toString() {
     return declaringType + "." + super.toString();
+  }
+
+  @Override
+  public List<AbstractTypeVariable> getTypeParameters() {
+    Set<AbstractTypeVariable> paramSet = new LinkedHashSet<>();
+    paramSet.addAll(getInputTypes().getTypeParameters());
+    paramSet.addAll(getOutputType().getTypeParameters());
+    return new ArrayList<>(paramSet);
   }
 }

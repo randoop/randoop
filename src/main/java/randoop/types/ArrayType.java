@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -140,7 +141,7 @@ public class ArrayType extends ReferenceType {
   public ArrayType apply(Substitution<ReferenceType> substitution) {
     GeneralType type = elementType.apply(substitution);
     if (type != null && ! type.equals(this)) {
-        return new ArrayType(type, runtimeClass);
+        return ArrayType.ofElementType(type);
       } else {
         return this;
       }
@@ -191,6 +192,11 @@ public class ArrayType extends ReferenceType {
     }
 
     throw new IllegalArgumentException("type must be an array type");
+  }
+
+  @Override
+  public List<AbstractTypeVariable> getTypeParameters() {
+    return elementType.getTypeParameters();
   }
 
   /**

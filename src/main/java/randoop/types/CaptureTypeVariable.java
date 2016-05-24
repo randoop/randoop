@@ -11,19 +11,32 @@ import java.util.Objects;
  * wildcard bound with the {@link ParameterBound} on the type parameter.
  * An object is constructed from a wildcard using the wildcard bound to determine the initial upper
  * or lower bound.
- * The {@link #convert(TypeVariable, Substitution)} method is then used to update the bounds as described in the
- * JLS section 5.1.10,
+ * The {@link #convert(AbstractTypeVariable, Substitution)} method is then used to update the bounds
+ * to match the definition in JLS section 5.1.10,
  * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">Capture Conversion</a>.
   */
 class CaptureTypeVariable extends AbstractTypeVariable {
 
   private static int count = 0;
 
+  /** The integer ID of this capture variable */
   private final int varID;
+
+  /** The wildcard */
   private final WildcardArgument wildcard;
+
+  /** The upperbound */
   private ParameterBound upperBound;
+
+  /** The lower bound */
   private ReferenceType lowerBoundType;
 
+  /**
+   * Creates a {@link CaptureTypeVariable} for the given wildcard.
+   * Created object is not complete until {@link #convert(AbstractTypeVariable, Substitution)} is run.
+   *
+   * @param wildcard  the wildcard argument
+   */
   CaptureTypeVariable(WildcardArgument wildcard) {
     this.varID = count++;
     this.wildcard = wildcard;
@@ -78,7 +91,7 @@ class CaptureTypeVariable extends AbstractTypeVariable {
    * @param typeParameter  the formal type parameter of the generic type
    * @param substitution  the capture conversion substitution
    */
-  public void convert(TypeVariable typeParameter, Substitution<ReferenceType> substitution) {
+  public void convert(AbstractTypeVariable typeParameter, Substitution<ReferenceType> substitution) {
 
     // the lower bound is either the null-type or the wildcard lower bound, so only do upper bound
     ParameterBound parameterBound = typeParameter.getTypeBound().apply(substitution);
@@ -100,8 +113,15 @@ class CaptureTypeVariable extends AbstractTypeVariable {
   }
 
   @Override
-  public ReferenceType getLowerBoundType() {
+  public ReferenceType getLowerTypeBound() {
     return lowerBoundType;
+  }
+
+  @Override
+  public List<AbstractTypeVariable> getTypeParameters() {
+    List<AbstractTypeVariable> parameters = new ArrayList<>();
+    parameters.add(this);
+    return parameters;
   }
 
 }

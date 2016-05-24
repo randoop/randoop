@@ -1,10 +1,10 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
-
-import randoop.BugInRandoopException;
+import java.util.Set;
 
 /**
  * Represents a parameterized type as a generic class instantiated with
@@ -355,6 +355,15 @@ public class InstantiatedType extends ParameterizedType {
     }
 
     return new InstantiatedType(instantiatedType, converedArgumentList);
+  }
+
+  @Override
+  public List<AbstractTypeVariable> getTypeParameters() {
+    Set<AbstractTypeVariable> paramSet = new LinkedHashSet<>();
+    for (TypeArgument argument : argumentList) {
+      paramSet.addAll(argument.getTypeParameters());
+    }
+    return new ArrayList<>(paramSet);
   }
 
   /**

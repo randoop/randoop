@@ -113,7 +113,7 @@ public class Substitution <T> {
    * @return a {@code Substitution} mapping each type variable to a type argument
    */
   @SafeVarargs
-  public static <T> Substitution<T> forArgs(List<TypeVariable> parameters, T... arguments) {
+  public static <T> Substitution<T> forArgs(List<AbstractTypeVariable> parameters, T... arguments) {
     if (parameters.size() != arguments.length) {
       throw new IllegalArgumentException("number of parameters and arguments must agree");
     }
@@ -124,7 +124,7 @@ public class Substitution <T> {
     return s;
   }
 
-  public static <T> Substitution<T> forArgs(List<TypeVariable> parameters, List<T> arguments) {
+  public static <T> Substitution<T> forArgs(List<AbstractTypeVariable> parameters, List<T> arguments) {
     if (parameters.size() != arguments.size()) {
       throw new IllegalArgumentException("number of parameters and arguments must agree");
     }

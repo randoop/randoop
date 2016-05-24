@@ -3,6 +3,7 @@ package randoop.reflection;
 import java.util.ArrayList;
 import java.util.List;
 
+import randoop.types.AbstractTypeVariable;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.TypeArgument;
@@ -63,7 +64,7 @@ class TypeTupleSet {
    * @param typeParameters  the type arguments
    * @return the list of substitutions that instantiate the type arguments
    */
-  List<Substitution<ReferenceType>> filter(List<TypeVariable> typeParameters) {
+  List<Substitution<ReferenceType>> filter(List<AbstractTypeVariable> typeParameters) {
     assert typeParameters.size() == tupleLength: "tuple size " + tupleLength + " must equal number of parameters " + typeParameters.size();
     List<Substitution<ReferenceType>> substitutionSet = new ArrayList<>();
     List<List<ReferenceType>> tupleList = new ArrayList<>();

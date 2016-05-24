@@ -6,7 +6,7 @@ import java.lang.reflect.Type;
  * A reference type in JLS (Section 4.3) is defined as one of Class/Interface type,
  * Array type, or a type variable.
  */
-public abstract class ReferenceType extends GeneralType{
+public abstract class ReferenceType extends GeneralType {
 
   @Override
   public abstract ReferenceType apply(Substitution<ReferenceType> substitution);

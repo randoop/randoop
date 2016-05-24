@@ -18,7 +18,7 @@ public class GenericClassType extends ParameterizedType {
   private Class<?> rawType;
 
   /** the type parameters of the generic class */
-  private List<TypeVariable> parameters;
+  private List<AbstractTypeVariable> parameters;
 
   GenericClassType(Class<?> rawType) {
     this.rawType = rawType;
@@ -41,7 +41,7 @@ public class GenericClassType extends ParameterizedType {
    * @param rawType  the rawtype for the generic class
    * @param parameters  the type parameters for the generic class
    */
-  private GenericClassType(Class<?> rawType, List<TypeVariable> parameters) {
+  private GenericClassType(Class<?> rawType, List<AbstractTypeVariable> parameters) {
     if (rawType.getTypeParameters().length != parameters.size()) {
       throw new IllegalArgumentException("number of parameters should be equal");
     }
@@ -98,7 +98,7 @@ public class GenericClassType extends ParameterizedType {
   @Override
   public List<TypeArgument> getTypeArguments() {
     List<TypeArgument> argumentList = new ArrayList<>();
-    for (TypeVariable v : parameters) {
+    for (AbstractTypeVariable v : parameters) {
       argumentList.add(new ReferenceArgument(v));
     }
     return argumentList;
@@ -133,7 +133,7 @@ public class GenericClassType extends ParameterizedType {
       throw new IllegalArgumentException("substitution must be non-null");
     }
     List<TypeArgument> argumentList = new ArrayList<>();
-    for (TypeVariable variable : parameters) {
+    for (AbstractTypeVariable variable : parameters) {
       ReferenceType referenceType = substitution.get(variable);
       if (referenceType == null) {
         throw new IllegalArgumentException("substitution has no value for variable " + variable.getName() + " (" + variable.hashCode() + ")");
@@ -178,62 +178,10 @@ public class GenericClassType extends ParameterizedType {
    *
    * @return the list of type parameters of this generic class
    */
-  public List<TypeVariable> getTypeParameters() {
+  public List<AbstractTypeVariable> getTypeParameters() {
     return parameters;
   }
 
-  /**
-   * Returns a direct supertype of this type that either matches the given type,
-   * or has a rawtype assignable to (and so could be subtype of) the given type.
-   * Returns null if no such supertype is found.
-   * Construction guarantees that substitution on this generic class type will
-   * work on returned generic supertype as required by
-   * {@link ParameterizedType#isSubtypeOf(GeneralType)}.
-   *
-   * @param type  the potential supertype
-   * @return a supertype of this type that matches the given type or
-   * has an assignable rawtype; or null otherwise
-   * @throws IllegalArgumentException if type is null
-   */
-  /*
-  public GenericClassType getMatchingSupertype(GenericClassType type) {
-    if (type == null) {
-      throw new IllegalArgumentException("type may not be null");
-    }
-
-    // minimally, underlying Class should be assignable
-    Class<?> otherRawType = type.getRuntimeClass();
-    if (!otherRawType.isAssignableFrom(this.rawType)) {
-      return null;
-    }
-
-    // if other type is an interface, check interfaces first
-    if (otherRawType.isInterface()) {
-      for (ClassOrInterfaceType generalType : this.getInterfaces()){
-        if (generalType.isGeneric() && type.equals(generalType)) { // found the type
-          return (GenericClassType) generalType;
-        }
-      }
-      return null;
-    }
-
-    // otherwise, check superclass
-    ClassOrInterfaceType superType = this.getSuperclass();
-    if (superType != null) {
-      if (type.equals(superType)) { // found the type
-        return (GenericClassType) superType;
-      }
-      if (superType.isObject()) {
-        return null;
-      }
-      if (otherRawType.isAssignableFrom(superType.getRuntimeClass())) {
-        return (GenericClassType) superType;
-      }
-    }
-
-    return null;
-  }
-*/
   /**
    * {@inheritDoc}
    * Handles the specific cases of supertypes of a generic class

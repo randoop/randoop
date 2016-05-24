@@ -22,5 +22,5 @@ public class ConcreteTypes {
   public static final GeneralType CLONEABLE_TYPE = new SimpleClassOrInterfaceType(Cloneable.class);
   public static final GeneralType SERIALIZABLE_TYPE = new SimpleClassOrInterfaceType(Serializable.class);
   /** The Null type is the lower bound of reference types and is only used in {@link randoop.types.CaptureTypeVariable} */
-  static final ReferenceType NULL_TYPE = new NullReferenceType();
+  static final ReferenceType NULL_TYPE = NullReferenceType.getNullType();
 }

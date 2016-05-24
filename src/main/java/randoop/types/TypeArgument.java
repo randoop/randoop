@@ -1,8 +1,9 @@
 package randoop.types;
 
-import java.awt.*;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a type argument of a parameterized type as described in
@@ -71,5 +72,9 @@ public abstract class TypeArgument {
    */
   boolean isCaptureVariable() {
     return false;
+  }
+
+  public List<AbstractTypeVariable> getTypeParameters() {
+    return new ArrayList<>();
   }
 }

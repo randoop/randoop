@@ -86,14 +86,16 @@ public abstract class WildcardArgument extends TypeArgument{
     }
     WildcardType wildcardType = (WildcardType)type;
 
-    if (wildcardType.getUpperBounds().length > 0) {
-      assert wildcardType.getUpperBounds().length == 1 : "a wildcard is defined by the JLS to only have one bound";
-      return new WildcardArgumentWithUpperBound(wildcardType.getUpperBounds());
-    }
+    // Note: every wildcard has an upper bound, so need to check lower first
     if (wildcardType.getLowerBounds().length > 0) {
       assert wildcardType.getLowerBounds().length == 1 : "a wildcard is defined by the JLS to only have one bound";
       return new WildcardArgumentWithLowerBound(wildcardType.getLowerBounds());
     }
+    if (wildcardType.getUpperBounds().length > 0) {
+      assert wildcardType.getUpperBounds().length == 1 : "a wildcard is defined by the JLS to only have one bound";
+      return new WildcardArgumentWithUpperBound(wildcardType.getUpperBounds());
+    }
+
 
     throw new IllegalArgumentException("A wildcard must have either upper or lower bounds");
   }

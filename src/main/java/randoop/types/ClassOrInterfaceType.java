@@ -20,6 +20,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   @Override
   public abstract ClassOrInterfaceType apply(Substitution<ReferenceType> substitution);
 
+  public String getClassName() {
+    return getRuntimeClass().getSimpleName();
+  }
+
   /**
    * Test whether this type is a subtype of the given type according to
    * transitive closure of definition of the <i>direct supertype</i> relation in

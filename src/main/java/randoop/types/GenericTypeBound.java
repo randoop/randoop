@@ -99,7 +99,7 @@ class GenericTypeBound extends ClassOrInterfaceBound {
 
   @Override
   public boolean isSatisfiedBy(GeneralType argType) {
-    return false;
+    return true;
   }
 
   @Override

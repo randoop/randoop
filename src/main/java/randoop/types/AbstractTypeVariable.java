@@ -32,7 +32,7 @@ public abstract class AbstractTypeVariable extends ReferenceType {
    */
   public abstract ParameterBound getTypeBound();
 
-  public ReferenceType getLowerBoundType() {
+  public ReferenceType getLowerTypeBound() {
     return ConcreteTypes.NULL_TYPE;
   }
 }

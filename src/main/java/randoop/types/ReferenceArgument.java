@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.lang.reflect.*;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -70,6 +71,11 @@ public class ReferenceArgument extends TypeArgument {
     } else {
       return referenceType.equals(((ReferenceArgument)otherArgument).getReferenceType());
     }
+  }
+
+  @Override
+  public List<AbstractTypeVariable> getTypeParameters() {
+    return referenceType.getTypeParameters();
   }
 
   public boolean isCaptureVariable() {
