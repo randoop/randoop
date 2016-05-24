@@ -1,3 +1,14 @@
+Version 2.1.6
+Randoop now has an EqualsTransitive contract class which implements
+ObjectContract. EqualsTransitive is a contract of arity three.
+It is different from the other existing contracts in that it follows
+a singleton pattern.
+
+OperationModel was update to include EqualsTransitive as one of the default
+contracts. ContractCheckingVisitor had previously been limited to contracts
+of arity two. Now it accepts contracts of arity three to include
+EqualsTransitive.
+
 Version 2.1.5, released ????
 
 Randoop now tracks types independently of the Java reflection classes. This
