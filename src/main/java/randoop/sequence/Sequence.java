@@ -593,7 +593,7 @@ public final class Sequence implements WeightedElement {
         ithOutputIndex++) {
       Variable i = this.lastStatementVariables.get(ithOutputIndex);
       Statement s = statements.get(i.index);
-      if (!s.isVoidMethodCall() && type.isAssignableFrom(s.getOutputType())) {
+      if (type.isAssignableFrom(s.getOutputType())) {
         possibleIndices.add(i);
       }
     }
