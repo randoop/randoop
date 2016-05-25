@@ -163,7 +163,11 @@ public class ProgressDisplay extends Thread {
     display(message());
   }
 
-  /** Displays the given message. * */
+  /**
+   * Displays the given message.
+   *
+   * @param message  the message to display
+   */
   public void display(String message) {
     if (GenInputsAbstract.progressinterval == -1) return;
     String status = message;

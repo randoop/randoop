@@ -27,8 +27,8 @@ public class AccessibleField {
   /**
    * Create the public field object for the given {@code Field}.
    *
-   * @param field
-   *          the field.
+   * @param field  the field.
+   * @param declaringType  the type for the declaring class of this field
    */
   public AccessibleField(Field field, ClassOrInterfaceType declaringType) {
     this.field = field;
@@ -70,6 +70,7 @@ public class AccessibleField {
    * Returns a string descriptor of a field that can be parsed by
    * {@link FieldParser#parse(String, String, String)}.
    *
+   * @param declaringType  the declaring class type for this field
    * @return a String for type-field pair describing field
    */
   public String toParsableString(GeneralType declaringType) {

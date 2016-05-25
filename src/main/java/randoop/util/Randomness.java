@@ -24,7 +24,7 @@ public final class Randomness {
     random = new Random(newSeed);
   }
 
-  public static int totalCallsToRandom = 0;
+  private static int totalCallsToRandom = 0;
 
   public static boolean nextRandomBool() {
     totalCallsToRandom++;
@@ -35,6 +35,9 @@ public final class Randomness {
 
   /**
    * Uniformly random int from [0, i)
+   *
+   * @param i  upper bound on range for generated values
+   * @return a value selected from range [0, i)
    */
   public static int nextRandomInt(int i) {
     totalCallsToRandom++;

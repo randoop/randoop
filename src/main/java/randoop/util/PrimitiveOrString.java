@@ -16,6 +16,8 @@ public class PrimitiveOrString {
 
   /**
    * The given object must not be null and must be a primitive or string.
+   *
+   * @param o  the primitive or String value
    */
   public PrimitiveOrString(Object o) {
 

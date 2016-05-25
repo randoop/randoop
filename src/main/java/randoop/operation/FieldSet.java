@@ -142,6 +142,7 @@ public class FieldSet extends CallableOperation {
    *
    * @param descr
    *          string containing descriptor of field setter.
+   * @return the field setter for the given string descriptor
    * @throws OperationParseException
    *           if descr does not have expected form.
    */

@@ -40,6 +40,9 @@ public final class Statement {
   /**
    * Create a new statement of type statement that takes as input the given
    * values.
+   *
+   * @param operation  the operation of this statement
+   * @param inputVariables  the variable that are used in this statement
    */
   public Statement(TypedOperation operation, List<RelativeNegativeIndex> inputVariables) {
     this.operation = operation;
@@ -54,15 +57,6 @@ public final class Statement {
    */
   public Statement(TypedOperation operation) {
     this(operation, new ArrayList<RelativeNegativeIndex>());
-  }
-
-  /**
-   * True iff this statement is a void method call.
-   *
-   * @return true if output type is void
-   */
-  boolean isVoidMethodCall() {
-    return operation.isMethodCall() && operation.getOutputType().isVoid();
   }
 
   /**
@@ -143,25 +137,6 @@ public final class Statement {
       b.append(" ");
     }
     return b.toString();
-  }
-
-  @Override
-  public String toString() {
-    return "Statement(" + operation.toParsableString() + ")";
-  }
-
-  /**
-   * toModifiableStatement converts the statement to the mutable form.
-   *
-   * @param inputs
-   *          mutable version of variable inputs to statement.
-   * @param mVariable
-   *          the mutable variable the statement affects
-   * @return instance of mutable statement corresponding to this statement
-   */
-  MutableStatement toModifiableStatement(
-          List<MutableVariable> inputs, MutableVariable mVariable) {
-    return new MutableStatement(operation, inputs, mVariable);
   }
 
   /**

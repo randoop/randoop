@@ -24,7 +24,12 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   private Pattern omitMethods = null;
   private Set<String> omitFields;
 
-  /** If omitMethods is null, then no methods are omitted. */
+  /**
+   * Create a reflection predicate.
+   * If omitMethods is null, then no methods are omitted.
+   *
+   * @param omitMethods  the pattern for names of methods to omit
+   */
   public DefaultReflectionPredicate(Pattern omitMethods) {
     this(omitMethods, new HashSet<String>());
   }
@@ -39,6 +44,8 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    *
    * @param omitMethods
    *          pattern for methods to omit, if null then no methods omitted.
+   * @param omitFields
+   *          set of field names to omit
    */
   public DefaultReflectionPredicate(Pattern omitMethods, Set<String> omitFields) {
     super();

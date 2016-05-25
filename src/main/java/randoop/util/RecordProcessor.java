@@ -9,6 +9,8 @@ public interface RecordProcessor {
 
   /**
    * Parse the given lines that comprise a record.
+   *
+   * @param record  the lines of a record
    */
   void processRecord(List<String> record);
 }

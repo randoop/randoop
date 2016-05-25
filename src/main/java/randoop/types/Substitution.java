@@ -17,7 +17,7 @@ import java.util.Objects;
  * <p>
  * Because a substitution represents the instantiation from a generic class to
  * a parameterized type, an instance is built using
- * {@link Substitution#forArgs(List, T...)} and then not modified.
+ * {@link Substitution#forArgs(List, List)} and then not modified.
  */
 public class Substitution <T> {
 
@@ -108,6 +108,7 @@ public class Substitution <T> {
    * arguments.
    * Requires that the number of parameters and arguments agree.
    *
+   * @param <T>  the substituted type
    * @param parameters  the type parameters
    * @param arguments  the type arguments
    * @return a {@code Substitution} mapping each type variable to a type argument
@@ -124,6 +125,14 @@ public class Substitution <T> {
     return s;
   }
 
+  /**
+   * Create a subtitution from the type parameters and the list of arguments.
+   *
+   * @param parameters  the type parameters
+   * @param arguments  the type arguments
+   * @param <T>  the argument type
+   * @return the substitution that maps the type parameters to the corresponding type argument
+   */
   public static <T> Substitution<T> forArgs(List<AbstractTypeVariable> parameters, List<T> arguments) {
     if (parameters.size() != arguments.size()) {
       throw new IllegalArgumentException("number of parameters and arguments must agree");
@@ -135,6 +144,9 @@ public class Substitution <T> {
     return s;
   }
 
+  /**
+   * Print the entries of this substitution to standard out.
+   */
   public void print() {
     for (Entry<AbstractTypeVariable, T> entry : map.entrySet()) {
       System.out.println(entry.getKey() + "(" + entry.getKey().hashCode() + ")" + " := " + entry.getValue());

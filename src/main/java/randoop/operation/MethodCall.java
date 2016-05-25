@@ -213,6 +213,7 @@ public final class MethodCall extends CallableOperation {
    * @see OperationParser#parse(String)
    *
    * @param signature  a string descriptor
+   * @return the method call operation for the given string descriptor
    * @throws OperationParseException
    *           if s does not match expected descriptor.
    */

@@ -33,21 +33,28 @@ public interface IMultiMap<T1, T2> {
    *
    * @param key
    *          cannot be null.
+   * @return the set of values for the given key
    */
   Set<T2> getValues(T1 key);
 
   /**
    * Returns the set of keys in this map (the domain).
+   *
+   * @return the set of keys in this map
    */
   Set<T1> keySet();
 
   /**
    * Returns the size of this map: the number of mappings.
+   *
+   * @return the number of entries in this map
    */
   int size();
 
   /**
    * Returns a String representation of this map.
+   *
+   * @return a String representation of this map
    */
   @Override
   String toString();

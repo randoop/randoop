@@ -98,6 +98,7 @@ public class EnumConstant extends CallableOperation {
    * OuterClass$InnerEnum:EnumValue for an enum that is an inner type of a class.
    *
    * @param desc string representing type-value pair for an enum constant
+   * @return the enum constant operation for the string descriptor
    * @throws OperationParseException
    *           if desc does not match expected form.
    */

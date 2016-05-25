@@ -19,9 +19,10 @@ import java.util.List;
 public abstract class ParameterBound {
 
   /**
-   * Determines if this is an upper bound for the concrete argument type.
+   * Determines if this is an upper bound for the argument type.
    *
    * @param argType  the concrete argument type
+   * @param subst  the substitution
    * @return true if this bound is satisfied by the concrete type when the
    *         substitution is used on the bound, false otherwise
    */

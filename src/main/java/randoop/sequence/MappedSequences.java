@@ -48,6 +48,7 @@ public class MappedSequences<T> {
    *
    * @param key  the key value
    * @param desiredType  the query type
+   * @return the list of sequences for the key and query type
    */
   public SimpleList<Sequence> getSequences(T key, GeneralType desiredType) {
     if (key == null) throw new IllegalArgumentException("key is null");

@@ -258,6 +258,7 @@ public abstract class GeneralType {
    * If the reference is null, then returns true only if this type is not primitive.
    *
    * @param e  the element to check
+   * @param <T> the type of the value
    * @return true if the type of {@code e} is assignable to this type, false otherwise
    */
   public <T> boolean isInstance(T e) {

@@ -21,6 +21,8 @@ public class CheckRepExtractor extends DefaultClassVisitor {
 
   /**
    * Creates a visitor with an empty contracts set.
+   *
+   * @param contracts  the set of constracts
    */
   public CheckRepExtractor(Set<ObjectContract> contracts) {
     this.contracts = contracts;

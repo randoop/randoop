@@ -27,6 +27,8 @@ public class ExpectedExceptionCheckGen {
    *
    * @param visibility
    *          a predicate to determine visibility of exception classes
+   * @param isExpected
+   *          the predicate to indicate whether an exception is expected
    */
   public ExpectedExceptionCheckGen(VisibilityPredicate visibility, ExceptionPredicate isExpected) {
     this.visibility = visibility;

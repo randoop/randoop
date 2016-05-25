@@ -122,6 +122,7 @@ public class FieldGet extends CallableOperation {
    *
    * @param descr
    *          the string containing descriptor of getter for a field.
+   * @return the getter operation for the given string descriptor
    * @throws OperationParseException
    *           if any error in descriptor string
    */

@@ -15,7 +15,6 @@ import randoop.operation.OperationParser;
 import randoop.operation.TypedOperation;
 import randoop.types.ConcreteTypes;
 import randoop.types.GeneralType;
-import randoop.types.PrimitiveType;
 import randoop.types.PrimitiveTypes;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
@@ -70,6 +69,9 @@ public final class Sequence implements WeightedElement {
 
   /**
    * The statement for the statement at the given index.
+   *
+   * @param index the index of the statement position in this sequence
+   * @return the statement at the given position
    */
   public final Statement getStatement(int index) {
     return getStatementWithInputs(index);
@@ -77,31 +79,30 @@ public final class Sequence implements WeightedElement {
 
   /**
    * The number of statements in the sequence.
+   *
+   * @return the number of statements in this sequence
    */
   public final int size() {
     return statements.size();
   }
 
-  /** The value created by the ith statement. */
+  /**
+   * The value created by the ith statement.
+   * @param i  the statement index
+   * @return the variable created by the statement at the given index
+   */
   public Variable getVariable(int i) {
     checkIndex(i);
     return new Variable(this, i);
   }
 
-  /** The values associated with this sequence. */
-  public List<Variable> getAllVariables() {
-    List<Variable> retval = new ArrayList<>();
-    for (int i = 0; i < this.statements.size(); i++) {
-      retval.add(new Variable(this, i));
-    }
-    return retval;
-  }
-
   /**
    * The variables involved in the last statement. This includes the output
    * variable.
+   *
+   * @return the variables used in the last statement of this sequence
    */
-  public List<Variable> getVariablesOfLastStatement() {
+  List<Variable> getVariablesOfLastStatement() {
     return this.lastStatementVariables;
   }
 
@@ -109,22 +110,28 @@ public final class Sequence implements WeightedElement {
    * The types of all the variables involved in the last statement. This
    * includes the output variable. The types returned are not the types in the
    * signature of the StatementKind, but the types of the variables.
+   *
+   * @return the types of the variables in the last statement of this sequence
    */
-  public List<GeneralType> getTypesForLastStatement() {
+  List<GeneralType> getTypesForLastStatement() {
     return this.lastStatementTypes;
   }
 
-  /** The value created by the last statement in the sequence. */
+  /**
+   * The value created by the last statement in the sequence.
+   *
+   * @return the variable assigned to by the last statement of this sequence
+   */
   public Variable getLastVariable() {
     return new Variable(this, this.statements.size() - 1);
   }
 
-  /** The last Statement in the sequence. */
-  public Statement getLastStatement() {
-    return this.getStatement(this.size() - 1);
-  }
-
-  /** The statement that created this value. */
+  /**
+   * The statement that created this value.
+   *
+   * @param value  the variable
+   * @return the statement that assigned to this variable
+   */
   public Statement getCreatingStatement(Variable value) {
     if (value.sequence != this) throw new IllegalArgumentException("value.owner != this");
     return statements.get((value).index);
@@ -132,6 +139,9 @@ public final class Sequence implements WeightedElement {
 
   /**
    * The inputs for the ith statement. Includes the receiver.
+   *
+   * @param statementIndex  the index for the statement
+   * @return the list of variables for the statement at the given index
    */
   public List<Variable> getInputs(int statementIndex) {
     List<Variable> inputsAsVariables = new ArrayList<>();
@@ -158,9 +168,6 @@ public final class Sequence implements WeightedElement {
     return b.toString();
   }
 
-  /**
-   * Equivalent to toParsableString().
-   */
   @Override
   public String toString() {
     return toParseableString();
@@ -172,26 +179,22 @@ public final class Sequence implements WeightedElement {
    * sequence are useful to be used as inputs when creating a new sequence out
    * of the existing one.
    */
-  public BitSet activeFlags;
+  private BitSet activeFlags;
 
   public boolean hasActiveFlags() {
     return !activeFlags.isEmpty();
   }
 
-  public boolean isActive(int i) {
+  boolean isActive(int i) {
     return activeFlags.get(i);
   }
 
-  public void setAllActiveFlags() {
+  private void setAllActiveFlags() {
     activeFlags.set(0, this.size());
   }
 
   public void clearAllActiveFlags() {
     activeFlags.clear(0, this.size());
-  }
-
-  public void setActiveFlag(int i) {
-    activeFlags.set(i);
   }
 
   public void clearActiveFlag(int i) {
@@ -304,7 +307,7 @@ public final class Sequence implements WeightedElement {
   // Now concatenation is easier: to concatenate two sequences, concatenate
   // their statements. Also, we do not need to create any new
   // statements.
-  protected static final class RelativeNegativeIndex {
+  static final class RelativeNegativeIndex {
 
     public final int index;
 
@@ -321,8 +324,8 @@ public final class Sequence implements WeightedElement {
 
     @Override
     public boolean equals(Object o) {
-      if (!(o instanceof RelativeNegativeIndex)) return false;
-      return this.index == ((RelativeNegativeIndex) o).index;
+      return o instanceof RelativeNegativeIndex
+              && this.index == ((RelativeNegativeIndex) o).index;
     }
 
     @Override
@@ -334,9 +337,12 @@ public final class Sequence implements WeightedElement {
   /**
    * Returns the relative negative index that would result if we use the given
    * value as an input to the statement at position statementPosition.
+   * @param statementPosition  the position of the statement
+   * @param v  the variable
+   * @return the relative negative index computed from the position and variable
    */
-  public static RelativeNegativeIndex getRelativeIndexForVariable(
-      int statementPosition, Variable v) {
+  private static RelativeNegativeIndex getRelativeIndexForVariable(
+          int statementPosition, Variable v) {
     if (v.index >= statementPosition) throw new IllegalArgumentException();
     return new RelativeNegativeIndex(-(statementPosition - v.index));
   }
@@ -344,8 +350,11 @@ public final class Sequence implements WeightedElement {
   /**
    * Returns the Variable corresponding to the given input, which is an input to
    * the statement at position statementPosition.
+   * @param statementPosition  the statement position
+   * @param input  relative index of the input variable
+   * @return the variable at the relative index from the given statement position
    */
-  public Variable getVariableForInput(int statementPosition, RelativeNegativeIndex input) {
+  private Variable getVariableForInput(int statementPosition, RelativeNegativeIndex input) {
     int absoluteIndex = statementPosition + input.index;
     if (absoluteIndex < 0) {
       throw new IllegalArgumentException(
@@ -354,7 +363,9 @@ public final class Sequence implements WeightedElement {
     return new Variable(this, absoluteIndex);
   }
 
-  /** Create a new, empty sequence. */
+  /**
+   * Create a new, empty sequence.
+   */
   public Sequence() {
     this(new ArrayListSimpleList<Statement>(), 0, 0);
   }
@@ -362,13 +373,19 @@ public final class Sequence implements WeightedElement {
   /**
    * Returns a sequence that is of the form "Foo f = null;" where Foo is the
    * given class.
+   * @param c  the type for initialized variable
+   * @return the sequence consisting of the initialization
    */
   public static Sequence zero(GeneralType c) {
     return new Sequence().extend(TypedOperation.createNullOrZeroInitializationForType(c), new ArrayList<Variable>());
   }
 
-  // Create a sequence with the given statements.
-  /* package */ public Sequence(SimpleList<Statement> statements) {
+  /**
+   * Create a sequence with the given statements.
+   *
+   * @param statements  the statements
+   */
+  public Sequence(SimpleList<Statement> statements) {
     this(statements, computeHashcode(statements), computeNetSize(statements));
   }
 
@@ -544,14 +561,10 @@ public final class Sequence implements WeightedElement {
   }
 
   // A saved copy of this sequence's hashcode to avoid recalculation.
-  protected final int savedHashCode;
+  private final int savedHashCode;
 
   // A saved copy of this sequence's net size to avoid recomputation.
   private final int savedNetSize;
-
-  public final int getNetSize() {
-    return savedNetSize;
-  }
 
   // See comment at computeHashCode method for notes on hashCode.
   @Override
@@ -563,14 +576,15 @@ public final class Sequence implements WeightedElement {
    * True iff this sequence contains a statement at the given index.
    */
   private boolean isValidIndex(int index) {
-    if (index < 0) return false;
-    return index <= this.size() - 1;
+    return index >= 0
+            && index <= this.size() - 1;
   }
 
   /**
-   * An unmodifiable list of all the statements in this sequence.
+   * An list of all the statements in this sequence.
+   * @return  the list of all statements in this sequence
    */
-  final SimpleList<Statement> getStatementsWithInputs() {
+  private SimpleList<Statement> getStatementsWithInputs() {
     // The list is constructed unmodifiable so we can just return it.
     return this.statements;
   }
@@ -578,7 +592,7 @@ public final class Sequence implements WeightedElement {
   /**
    * The statement(+inputs) at the given index.
    */
-  protected final Statement getStatementWithInputs(int index) {
+  private Statement getStatementWithInputs(int index) {
     if (!isValidIndex(index))
       throw new IllegalArgumentException("Index " + index + " not valid for sequence " + this);
     return this.getStatementsWithInputs().get(index);
@@ -588,27 +602,10 @@ public final class Sequence implements WeightedElement {
     if (type == null)
       throw new IllegalArgumentException("type cannot be null.");
     List<Variable> possibleIndices = new ArrayList<>(this.lastStatementVariables.size());
-    for (int ithOutputIndex = 0;
-        ithOutputIndex < this.lastStatementVariables.size();
-        ithOutputIndex++) {
-      Variable i = this.lastStatementVariables.get(ithOutputIndex);
+    for (Variable i : this.lastStatementVariables) {
       Statement s = statements.get(i.index);
       if (type.isAssignableFrom(s.getOutputType())) {
         possibleIndices.add(i);
-      }
-    }
-    if (possibleIndices.isEmpty()) return null;
-    return Randomness.randomMember(possibleIndices);
-  }
-
-  public Variable randomVariableForType(GeneralType type) {
-    if (type == null)
-      throw new IllegalArgumentException("type cannot be null.");
-    List<Variable> possibleIndices = new ArrayList<>(this.lastStatementVariables.size());
-    for (int i = 0; i < this.size(); i++) {
-      Statement s = statements.get(i);
-      if (type.isAssignableFrom(s.getOutputType())) {
-        possibleIndices.add(getVariable(i));
       }
     }
     if (possibleIndices.isEmpty()) return null;
@@ -621,7 +618,11 @@ public final class Sequence implements WeightedElement {
 
   /**
    * Returns a new sequence that is equivalent to this sequence plus the given
-   * statement appended at the end.
+   * operation appended to the end.
+   *
+   * @param operation  the operation to add
+   * @param inputVariables  the input variables
+   * @return the sequence formed by appending the given operation to this sequence
    */
   public final Sequence extend(TypedOperation operation, List<Variable> inputVariables) {
     checkInputs(operation, inputVariables);
@@ -640,6 +641,9 @@ public final class Sequence implements WeightedElement {
   /**
    * Returns a new sequence that is equivalent to this sequence plus the given
    * statement appended at the end.
+   * @param operation  the operation to add
+   * @param inputs  the input variables for the operation
+   * @return the sequence formed by appending the given operation to this sequence
    */
   public final Sequence extend(TypedOperation operation, Variable... inputs) {
     return extend(operation, Arrays.asList(inputs));
@@ -755,15 +759,11 @@ public final class Sequence implements WeightedElement {
     return new Sequence(new ListOfLists<>(statements1), newHashCode, newNetSize);
   }
 
-  // TODO inline and remove; used only in one place and confusing.
-  public Variable getFirstVariableFromLastStatementVariables() {
-    if (lastStatementVariables.isEmpty()) throw new IllegalStateException();
-    return lastStatementVariables.get(0);
-  }
-
   /**
    * The inputs for the ith statement, as indices. An index equal to x means
    * that the input is the value created by the x-th statement in the sequence.
+   * @param i  the statement index
+   * @return the absolute indices for the input variables in the given statement
    */
   public List<Integer> getInputsAsAbsoluteIndices(int i) {
     List<Integer> inputsAsVariables = new ArrayList<>();
@@ -784,43 +784,6 @@ public final class Sequence implements WeightedElement {
     // Get strings representing the inputs to this statement.
     // Example: { "var2", "(int)3" }
     getStatement(index).appendCode(getVariable(index), getInputs(index), b);
-  }
-
-  /**
-   * Creates a {@code MutableSequence} from this sequence.
-   *
-   * @return a {@link MutableSequence} objects with the same statements as this
-   *         object.
-   */
-  public MutableSequence toModifiableSequence() {
-    MutableSequence slowSeq = new MutableSequence();
-    List<MutableVariable> values = new ArrayList<>();
-    for (int i = 0; i < size(); i++) {
-      values.add(new MutableVariable(slowSeq, getVariable(i).getName()));
-    }
-    List<MutableStatement> statements = new ArrayList<>();
-    for (int i = 0; i < size(); i++) {
-      Statement sti = this.statements.get(i);
-      List<MutableVariable> inputs = new ArrayList<>();
-      for (Variable v : getInputs(i)) {
-        inputs.add(values.get(v.index));
-      }
-      MutableStatement slowSti = sti.toModifiableStatement(inputs, values.get(i));
-      statements.add(slowSti);
-    }
-    slowSeq.statements = statements;
-    return slowSeq;
-  }
-
-  /**
-   * Checks whether the variable is defined in this sequence.
-   *
-   * @param v
-   *          the {@link Variable} to test.
-   * @return true if this object defines the variable, and false otherwise
-   */
-  public boolean isOwnerOf(Variable v) {
-    return this == v.sequence;
   }
 
   /**
@@ -848,7 +811,7 @@ public final class Sequence implements WeightedElement {
    * @param statementSep
    *          the statement separator.
    */
-  public String toParseableString(String statementSep) {
+  private String toParseableString(String statementSep) {
     assert statementSep != null;
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
@@ -904,6 +867,10 @@ public final class Sequence implements WeightedElement {
    * When writing/reading sequences out to file: you have two options: serialize
    * the sequences using java's serialization mechanism, or write them out as
    * parseable text. Serialization is faster, and text is human-readable.
+   *
+   * @param statements  the list of statement strings
+   * @return the sequence constructed from the list of strings
+   * @throws SequenceParseException if any statement cannot be parsed
    */
   public static Sequence parse(List<String> statements) throws SequenceParseException {
 
@@ -1045,6 +1012,8 @@ public final class Sequence implements WeightedElement {
    * the sequences using java's serialization mechanism, or write them out as
    * parseable text. Serialization is faster, and text is human-readable.
    *
+   * @param string  the string descriptor
+   * @return the sequence constructed by parsing the input string
    * @throws SequenceParseException
    *           if string is not valid sequence
    */
@@ -1053,26 +1022,11 @@ public final class Sequence implements WeightedElement {
     return parse(Arrays.asList(string.split(Globals.lineSep)));
   }
 
-
-  public int lastUseBefore(int idx, Variable var) {
-    if (var.sequence != this)
-      throw new IllegalArgumentException("variable does not belong to sequence.");
-    for (int i = idx - 1; i >= 0; i--) {
-      if (getVariable(i).equals(var)) {
-        return i;
-      }
-      for (Variable input : getInputs(i)) {
-        if (input.equals(var)) {
-          return i;
-        }
-      }
-    }
-    throw new IllegalStateException("Bug in Randoop.");
-  }
-
   /**
    * A sequence representing a single primitive values, like "Foo var0 = null"
    * or "int var0 = 1".
+   *
+   * @return true if this sequence is a single primitive initialization statement, false otherwise
    */
   public boolean isPrimitive() {
     return (size() == 1 && getStatement(0).isPrimitiveInitialization());
@@ -1106,7 +1060,7 @@ public final class Sequence implements WeightedElement {
    *          the statement position in this sequence
    * @return the sequence containing the index position
    */
-  public Sequence getSubsequence(int index) {
+  Sequence getSubsequence(int index) {
     return new Sequence(statements.getSublist(index));
   }
 

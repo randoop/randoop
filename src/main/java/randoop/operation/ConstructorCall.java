@@ -239,6 +239,7 @@ public final class ConstructorCall extends CallableOperation {
    *
    * @param signature
    *          a string descriptor of a constructor call.
+   * @return the constructor call for the given string descriptor
    * @throws OperationParseException
    *           if no constructor found for signature.
    */

@@ -161,6 +161,7 @@ public final class ArrayCreation extends CallableOperation {
    *
    * @param str
    *          the string to be parsed for the {@code ArrayCreation}.
+   * @return the array creation for the given string descriptor
    * @throws OperationParseException
    *           if string does not have expected form.
    */

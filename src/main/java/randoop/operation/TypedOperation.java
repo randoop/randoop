@@ -52,6 +52,8 @@ public abstract class TypedOperation implements Operation {
    * Create typed operation for the given {@link Operation}.
    *
    * @param operation  the operation to wrap
+   * @param inputTypes  the input types
+   * @param outputType  the output types
    */
   public TypedOperation(CallableOperation operation, TypeTuple inputTypes, GeneralType outputType) {
     this.operation = operation;

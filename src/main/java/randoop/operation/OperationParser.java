@@ -33,6 +33,7 @@ public class OperationParser {
    *
    * @param str
    *          the string to be parsed.
+   * @return the operation for the given string descriptor
    * @throws OperationParseException
    *           if the string does not have expected format.
    */

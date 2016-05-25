@@ -99,8 +99,12 @@ public class OperationModel {
    *                             class members are used
    * @param classnames  the names of classes under test
    * @param exercisedClassnames  the names of classes to be tested by exercised heuristic
+   * @param methodSignatures  the signatures of methods to be added to the model
+   * @param errorHandler  the handler for bad file name errors
    * @param literalsFileList  the list of literals file names
    * @return the operation model for the parameters
+   * @throws OperationParseException if a method signature is ill-formed
+   * @throws NoSuchMethodException if an attempt is made to load a non-existant method
    */
   public static OperationModel createModel(
       VisibilityPredicate visibility,
@@ -114,232 +118,12 @@ public class OperationModel {
     OperationModel model = new OperationModel();
 
     model.addClassTypes(visibility, reflectionPredicate, classnames, exercisedClassnames, errorHandler, literalsFileList);
-    model.refineGenericClassTypes();
+    model.instantiateGenericClassTypes();
     model.addOperations(model.concreteClassTypes, visibility, reflectionPredicate);
-
     model.addOperations(methodSignatures);
     model.addObjectConstructor();
 
     return model;
-  }
-
-  /**
-   * Gathers class types to be used in a run of Randoop and adds them to this {@code OperationModel}.
-   * Specifically, collects types for classes-under-test, objects for exercised-class heuristic,
-   * concrete input types, annotated test values, and literal values.
-   * Also collects annotated test values, and class literal values used in test generation.
-   *
-   * @param visibility  the visibility predicate
-   * @param reflectionPredicate  the predicate to determine which reflection objects are used
-   * @param classnames  the names of classes-under-test
-   * @param exercisedClassnames  the names of classes used in exercised-class heuristic
-   * @param errorHandler  the handler for bad class names
-   * @param literalsFileList  the list of literals file names
-   */
-  private void addClassTypes(VisibilityPredicate visibility,
-                             ReflectionPredicate reflectionPredicate,
-                             Set<String> classnames,
-                             Set<String> exercisedClassnames,
-                             ClassNameErrorHandler errorHandler,
-                             List<String> literalsFileList) {
-    ReflectionManager mgr = new ReflectionManager(visibility);
-    mgr.add(new DeclarationExtractor(this.classDeclarationTypes, reflectionPredicate));
-    mgr.add(new TypeExtractor(this.inputTypes));
-    mgr.add(new TestValueExtractor(this.annotatedTestValues));
-    mgr.add(new CheckRepExtractor(this.contracts));
-    if (literalsFileList.contains("CLASSES")) {
-      mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
-    }
-
-    // Collect classes under test
-    Set<Class<?>> visitedClasses = new LinkedHashSet<>();
-    for (String classname : classnames) {
-      Class<?> c = null;
-      try {
-        c = TypeNames.getTypeForName(classname);
-      } catch (ClassNotFoundException e) {
-        errorHandler.handle(classname);
-      }
-      // Note that c could be null if errorHandler just warns on bad names
-      if (c != null && ! visitedClasses.contains(c)) {
-        visitedClasses.add(c);
-
-        // ignore interfaces and non-visible classes
-        if (!visibility.isVisible(c)) {
-          System.out.println(
-              "Ignoring non-visible " + c + " specified via --classlist or --testclass.");
-        } else if (c.isInterface()) {
-          System.out.println("Ignoring " + c + " specified via --classlist or --testclass.");
-        } else {
-          if (Modifier.isAbstract(c.getModifiers()) && !c.isEnum()) {
-            System.out.println(
-                "Ignoring abstract " + c + " specified via --classlist or --testclass.");
-          } else {
-            mgr.apply(c);
-          }
-          if (exercisedClassnames.contains(classname)) {
-            exercisedClasses.add(c);
-          }
-        }
-      }
-    }
-
-    // Collect exercised classes
-    for (String classname : exercisedClassnames) {
-      if (!classnames.contains(classname)) {
-        Class<?> c = null;
-        try {
-          c = TypeNames.getTypeForName(classname);
-        } catch (ClassNotFoundException e) {
-          errorHandler.handle(classname);
-        }
-        assert c != null;
-
-        if (!visibility.isVisible(c)) {
-          System.out.println(
-              "Ignorning non-visible " + c + " specified as include-if-class-exercised target");
-        } else if (c.isInterface()) {
-          System.out.println("Ignoring " + c + " specified as include-if-class-exercised target.");
-        } else {
-          exercisedClasses.add(c);
-        }
-      }
-    }
-  }
-
-  private void refineGenericClassTypes() {
-    for (ClassOrInterfaceType classType : classDeclarationTypes) {
-      if (classType.isGeneric()) {
-        List<AbstractTypeVariable> typeParameters = classType.getTypeParameters();
-        List<Substitution<ReferenceType>> substitutions = getSubstitutions(typeParameters);
-        assert substitutions.size() > 0 : "didn't find types to satisfy bounds on generic";
-        Substitution<ReferenceType> substitution = Randomness.randomMember(substitutions);
-        ClassOrInterfaceType refinedClassType = classType.apply(substitution);
-        if (!refinedClassType.isGeneric()) {
-          concreteClassTypes.add(refinedClassType);
-        }
-
-      } else {
-        concreteClassTypes.add(classType);
-      }
-    }
-  }
-
-  private List<Substitution<ReferenceType>> getSubstitutions(List<AbstractTypeVariable> typeParameters) {
-    TypeTupleSet candidateSet = new TypeTupleSet();
-    for (AbstractTypeVariable typeArgument : typeParameters) {
-      List<ReferenceType> candidateTypes = selectCandidates(typeArgument);
-      candidateSet.extend(candidateTypes);
-    }
-    return candidateSet.filter(typeParameters);
-  }
-
-  /**
-   * Selects all input types that potentially satisfies the upper bound.
-   * If the bound is concrete, then returned list exactly satisfies the bound.
-   * If the bound is generic, then the types are convertible a la Class.isAssignableFrom.
-   * Otherwise, the input types are returned as a list.
-   *
-   * @param argument  the type arguments
-   * @return the list of candidate types to included in tested tuples
-   */
-  private List<ReferenceType> selectCandidates(AbstractTypeVariable argument) {
-    ReferenceType lowerBound = argument.getLowerTypeBound();
-    ParameterBound upperBound = argument.getTypeBound();
-    List<ReferenceType> typeList = new ArrayList<>();
-    for (GeneralType inputType : inputTypes) {
-      if (inputType.isReferenceType()
-              && lowerBound.isSubtypeOf(inputType)
-              && upperBound.isSatisfiedBy(inputType)) {
-        typeList.add((ReferenceType)inputType);
-      }
-    }
-    return typeList;
-  }
-
-  /**
-   * Iterates through a set of simple and instantiated class types and uses reflection to extract
-   * the operations that satisfy both the visibility and reflection predicates, and then adds them
-   * to the operation set of this model.
-   *
-   * @param concreteClassTypes  the declaring class types for the operations
-   * @param visibility  the visibility predicate
-   * @param reflectionPredicate  the reflection predicate
-   */
-  private void addOperations(Set<ClassOrInterfaceType> concreteClassTypes, VisibilityPredicate visibility, ReflectionPredicate reflectionPredicate) {
-    Set<TypedOperation> operationSet = new LinkedHashSet<>();
-    ReflectionManager mgr = new ReflectionManager(visibility);
-    for (ClassOrInterfaceType classType : concreteClassTypes) {
-      mgr.apply(new OperationExtractor(classType, operationSet, reflectionPredicate), classType.getRuntimeClass());
-    }
-    for (TypedOperation operation : operationSet) {
-      addOperation(operation);
-    }
-  }
-
-  /**
-   * Create operations obtained by parsing method signatures and add each to this model.
-   *
-   * @param methodSignatures  the set of method signatures
-   * @throws OperationParseException if any signature is invalid
-   */
-  // TODO collect input types from added methods
-  private void addOperations(Set<String> methodSignatures) throws OperationParseException {
-    for (String sig : methodSignatures) {
-      TypedOperation operation = OperationParser.parse(sig);
-      addOperation(operation);
-    }
-  }
-
-  /**
-   * Adds instantiated operations to this model based on the given {@link TypedOperation}.
-   * If the given operation is generic, then an instantiating type is chosen from the input types,
-   * and an instantiated version of the operation is added.
-   * If the operation has wildcards types, then capture conversion is first applied to introduce
-   * new type variables that are then instantiated.
-   *
-   * @param operation the operation to add to this model
-   */
-  private void addOperation(TypedOperation operation) {
-    if (operation.isGeneric()) {
-      operation = instantiateTypes(operation);
-    }
-
-    if (operation.hasWildcardTypes()) {
-      operation = instantiateTypes(operation.applyCaptureConversion());
-    }
-
-    operations.add(operation);
-  }
-
-  private TypedOperation instantiateTypes(TypedOperation operation) {
-    List<AbstractTypeVariable> typeParameters = operation.getTypeParameters();
-    if (typeParameters.isEmpty()) {
-      return operation;
-    }
-
-    List<Substitution<ReferenceType>> substitutions = getSubstitutions(typeParameters);
-    if (substitutions.isEmpty()) {
-      throw new BugInRandoopException("Unable to instantiate types for operation " + operation);
-    }
-    Substitution<ReferenceType> substitution = Randomness.randomMember(substitutions);
-    return operation.apply(substitution);
-  }
-
-  /**
-   * Creates and adds the Object class default constructor call to the concrete operations.
-   */
-  private void addObjectConstructor() {
-    Constructor<?> objectConstructor = null;
-    try {
-      objectConstructor = Object.class.getConstructor();
-    } catch (NoSuchMethodException e) {
-      System.out.println("Something is wrong. Please report unable to load Object()");
-      System.exit(1);
-    }
-    TypedClassOperation operation = TypedOperation.forConstructor(objectConstructor);
-    concreteClassTypes.add(operation.getDeclaringType());
-    addOperation(operation);
   }
 
   /**
@@ -423,10 +207,6 @@ public class OperationModel {
    *
    * @return the set of concrete types for the classes in this model
    */
-  public Set<ClassOrInterfaceType> getDeclarationTypes() {
-    return classDeclarationTypes;
-  }
-
   public Set<ClassOrInterfaceType> getConcreteClasses() {
     return concreteClassTypes;
   }
@@ -456,6 +236,242 @@ public class OperationModel {
 
   public Set<Sequence> getAnnotatedTestValues() {
     return annotatedTestValues;
+  }
+
+  /**
+   * Gathers class types to be used in a run of Randoop and adds them to this {@code OperationModel}.
+   * Specifically, collects types for classes-under-test, objects for exercised-class heuristic,
+   * concrete input types, annotated test values, and literal values.
+   * Also collects annotated test values, and class literal values used in test generation.
+   *
+   * @param visibility  the visibility predicate
+   * @param reflectionPredicate  the predicate to determine which reflection objects are used
+   * @param classnames  the names of classes-under-test
+   * @param exercisedClassnames  the names of classes used in exercised-class heuristic
+   * @param errorHandler  the handler for bad class names
+   * @param literalsFileList  the list of literals file names
+   */
+  private void addClassTypes(VisibilityPredicate visibility,
+                             ReflectionPredicate reflectionPredicate,
+                             Set<String> classnames,
+                             Set<String> exercisedClassnames,
+                             ClassNameErrorHandler errorHandler,
+                             List<String> literalsFileList) {
+    ReflectionManager mgr = new ReflectionManager(visibility);
+    mgr.add(new DeclarationExtractor(this.classDeclarationTypes, reflectionPredicate));
+    mgr.add(new TypeExtractor(this.inputTypes));
+    mgr.add(new TestValueExtractor(this.annotatedTestValues));
+    mgr.add(new CheckRepExtractor(this.contracts));
+    if (literalsFileList.contains("CLASSES")) {
+      mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
+    }
+
+    // Collect classes under test
+    Set<Class<?>> visitedClasses = new LinkedHashSet<>();
+    for (String classname : classnames) {
+      Class<?> c = null;
+      try {
+        c = TypeNames.getTypeForName(classname);
+      } catch (ClassNotFoundException e) {
+        errorHandler.handle(classname);
+      }
+      // Note that c could be null if errorHandler just warns on bad names
+      if (c != null && ! visitedClasses.contains(c)) {
+        visitedClasses.add(c);
+
+        // ignore interfaces and non-visible classes
+        if (!visibility.isVisible(c)) {
+          System.out.println(
+                  "Ignoring non-visible " + c + " specified via --classlist or --testclass.");
+        } else if (c.isInterface()) {
+          System.out.println("Ignoring " + c + " specified via --classlist or --testclass.");
+        } else {
+          if (Modifier.isAbstract(c.getModifiers()) && !c.isEnum()) {
+            System.out.println(
+                    "Ignoring abstract " + c + " specified via --classlist or --testclass.");
+          } else {
+            mgr.apply(c);
+          }
+          if (exercisedClassnames.contains(classname)) {
+            exercisedClasses.add(c);
+          }
+        }
+      }
+    }
+
+    // Collect exercised classes
+    for (String classname : exercisedClassnames) {
+      if (!classnames.contains(classname)) {
+        Class<?> c = null;
+        try {
+          c = TypeNames.getTypeForName(classname);
+        } catch (ClassNotFoundException e) {
+          errorHandler.handle(classname);
+        }
+        assert c != null;
+
+        if (!visibility.isVisible(c)) {
+          System.out.println(
+                  "Ignorning non-visible " + c + " specified as include-if-class-exercised target");
+        } else if (c.isInterface()) {
+          System.out.println("Ignoring " + c + " specified as include-if-class-exercised target.");
+        } else {
+          exercisedClasses.add(c);
+        }
+      }
+    }
+  }
+
+  /**
+   * Selects instantiations of the generic class declarations in this model from the collected set
+   * of instantiated input types.
+   */
+  private void instantiateGenericClassTypes() {
+    for (ClassOrInterfaceType classType : classDeclarationTypes) {
+      if (classType.isGeneric()) {
+        List<AbstractTypeVariable> typeParameters = classType.getTypeParameters();
+        List<Substitution<ReferenceType>> substitutions = getSubstitutions(typeParameters);
+        assert substitutions.size() > 0 : "didn't find types to satisfy bounds on generic";
+        Substitution<ReferenceType> substitution = Randomness.randomMember(substitutions);
+        ClassOrInterfaceType refinedClassType = classType.apply(substitution);
+        if (!refinedClassType.isGeneric()) {
+          concreteClassTypes.add(refinedClassType);
+        }
+      } else {
+        concreteClassTypes.add(classType);
+      }
+    }
+  }
+
+  /**
+   * Constructs substitutions for the given list of type parameters that are candidates for
+   * instantiating a generic class type.
+   *
+   * @param typeParameters  the type parameters to be instantiated
+   * @return candidate substitutions for the given type parameters
+   */
+  private List<Substitution<ReferenceType>> getSubstitutions(List<AbstractTypeVariable> typeParameters) {
+    TypeTupleSet candidateSet = new TypeTupleSet();
+    for (AbstractTypeVariable typeArgument : typeParameters) {
+      List<ReferenceType> candidateTypes = selectCandidates(typeArgument);
+      candidateSet.extend(candidateTypes);
+    }
+    return candidateSet.filter(typeParameters);
+  }
+
+  /**
+   * Selects all input types that potentially satisfies the upper bound.
+   * If the bound is concrete, then returned list exactly satisfies the bound.
+   * If the bound is generic, then the types are convertible a la Class.isAssignableFrom.
+   * Otherwise, the input types are returned as a list.
+   *
+   * @param argument  the type arguments
+   * @return the list of candidate types to included in tested tuples
+   */
+  private List<ReferenceType> selectCandidates(AbstractTypeVariable argument) {
+    ReferenceType lowerBound = argument.getLowerTypeBound();
+    ParameterBound upperBound = argument.getTypeBound();
+    List<ReferenceType> typeList = new ArrayList<>();
+    for (GeneralType inputType : inputTypes) {
+      if (inputType.isReferenceType()
+              && lowerBound.isSubtypeOf(inputType)
+              && upperBound.isSatisfiedBy(inputType)) {
+        typeList.add((ReferenceType)inputType);
+      }
+    }
+    return typeList;
+  }
+
+  /**
+   * Iterates through a set of simple and instantiated class types and uses reflection to extract
+   * the operations that satisfy both the visibility and reflection predicates, and then adds them
+   * to the operation set of this model.
+   *
+   * @param concreteClassTypes  the declaring class types for the operations
+   * @param visibility  the visibility predicate
+   * @param reflectionPredicate  the reflection predicate
+   */
+  private void addOperations(Set<ClassOrInterfaceType> concreteClassTypes, VisibilityPredicate visibility, ReflectionPredicate reflectionPredicate) {
+    Set<TypedOperation> operationSet = new LinkedHashSet<>();
+    ReflectionManager mgr = new ReflectionManager(visibility);
+    for (ClassOrInterfaceType classType : concreteClassTypes) {
+      mgr.apply(new OperationExtractor(classType, operationSet, reflectionPredicate), classType.getRuntimeClass());
+    }
+    for (TypedOperation operation : operationSet) {
+      addOperation(operation);
+    }
+  }
+
+  /**
+   * Create operations obtained by parsing method signatures and add each to this model.
+   *
+   * @param methodSignatures  the set of method signatures
+   * @throws OperationParseException if any signature is invalid
+   */
+  // TODO collect input types from added methods
+  private void addOperations(Set<String> methodSignatures) throws OperationParseException {
+    for (String sig : methodSignatures) {
+      TypedOperation operation = OperationParser.parse(sig);
+      addOperation(operation);
+    }
+  }
+
+  /**
+   * Creates and adds the Object class default constructor call to the concrete operations.
+   */
+  private void addObjectConstructor() {
+    Constructor<?> objectConstructor = null;
+    try {
+      objectConstructor = Object.class.getConstructor();
+    } catch (NoSuchMethodException e) {
+      System.out.println("Something is wrong. Please report unable to load Object()");
+      System.exit(1);
+    }
+    TypedClassOperation operation = TypedOperation.forConstructor(objectConstructor);
+    concreteClassTypes.add(operation.getDeclaringType());
+    addOperation(operation);
+  }
+
+  /**
+   * Adds instantiated operations to this model based on the given {@link TypedOperation}.
+   * If the given operation is generic, then an instantiating type is chosen from the input types,
+   * and an instantiated version of the operation is added.
+   * If the operation has wildcards types, then capture conversion is first applied to introduce
+   * new type variables that are then instantiated.
+   *
+   * @param operation the operation to add to this model
+   */
+  private void addOperation(TypedOperation operation) {
+    if (operation.isGeneric()) {
+      operation = instantiateOperationTypes(operation);
+    }
+
+    if (operation.hasWildcardTypes()) {
+      operation = instantiateOperationTypes(operation.applyCaptureConversion());
+    }
+
+    operations.add(operation);
+  }
+
+  /**
+   * Selects an instantiation of the generic types of an operation, and returns a new operation with
+   * the types instantiated.
+   *
+   * @param operation  the operation
+   * @return the operation with generic types instantiated
+   */
+  private TypedOperation instantiateOperationTypes(TypedOperation operation) {
+    List<AbstractTypeVariable> typeParameters = operation.getTypeParameters();
+    if (typeParameters.isEmpty()) {
+      return operation;
+    }
+
+    List<Substitution<ReferenceType>> substitutions = getSubstitutions(typeParameters);
+    if (substitutions.isEmpty()) {
+      throw new BugInRandoopException("Unable to instantiate types for operation " + operation);
+    }
+    Substitution<ReferenceType> substitution = Randomness.randomMember(substitutions);
+    return operation.apply(substitution);
   }
 
 }

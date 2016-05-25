@@ -249,6 +249,7 @@ public final class NonreceiverTerm extends CallableOperation {
    *
    * @param s
    *          a string representing a value of a non-receiver type.
+   * @return the non-receiver term for the given string descriptor
    * @throws OperationParseException
    *           if string does not represent valid object.
    */
