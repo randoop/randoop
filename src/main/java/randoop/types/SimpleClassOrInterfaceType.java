@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +69,11 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
   @Override
   public Class<?> getRuntimeClass() {
     return runtimeClass;
+  }
+
+  @Override
+  public boolean isAbstract() {
+    return Modifier.isAbstract(Modifier.classModifiers() & runtimeClass.getModifiers());
   }
 
   @Override

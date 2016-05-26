@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,6 +92,11 @@ public class GenericClassType extends ParameterizedType {
     return rawType.getCanonicalName() + "<" + UtilMDE.join(parameters, ",") + ">";
   }
 
+  @Override
+  public GenericClassType getGenericClassType() {
+    return this;
+  }
+
   /**
    * {@inheritDoc}
    * @return list of {@link ReferenceArgument} for each parameter
@@ -102,6 +108,11 @@ public class GenericClassType extends ParameterizedType {
       argumentList.add(new ReferenceArgument(v));
     }
     return argumentList;
+  }
+
+  @Override
+  public boolean isAbstract() {
+    return Modifier.isAbstract(Modifier.classModifiers() & rawType.getModifiers());
   }
 
   @Override

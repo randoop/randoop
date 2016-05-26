@@ -102,5 +102,10 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
     return new InstantiatedType(genericClass, typeArguments);
   }
 
-
+  /**
+   * Returns the {@link GenericClassType} for this parameterized type.
+   *
+   * @return the generic class type for this type
+   */
+  public abstract GenericClassType getGenericClassType();
 }

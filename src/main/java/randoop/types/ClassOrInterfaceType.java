@@ -139,4 +139,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     return null;
   }
+
+  public abstract boolean isAbstract();
+
 }

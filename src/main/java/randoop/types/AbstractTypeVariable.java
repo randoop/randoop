@@ -1,10 +1,16 @@
 package randoop.types;
 
 /**
- * Created by bjkeller on 5/6/16.
+ * An abstract class representing type variables including standard type variables and those
+ * constructed from capture conversion.
+ * Capture conversion type variables have both upper and lower bounds, so apply that interface here.
  */
 public abstract class AbstractTypeVariable extends ReferenceType {
 
+  /**
+   * {@inheritDoc}
+   * @return false, since an uninstantiated type variable may not be assigned to
+   */
   @Override
   public boolean isAssignableFrom(GeneralType sourceType) {
     return false;
@@ -32,6 +38,11 @@ public abstract class AbstractTypeVariable extends ReferenceType {
    */
   public abstract ParameterBound getTypeBound();
 
+  /**
+   * Get the lower bound for this type variable.
+   *
+   * @return {@link NullReferenceType} in default case since no lower bound is defined
+   */
   public ReferenceType getLowerTypeBound() {
     return ConcreteTypes.NULL_TYPE;
   }

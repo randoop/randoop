@@ -72,6 +72,11 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
+  public boolean isAbstract() {
+    return instantiatedType.isAbstract();
+  }
+
+  @Override
   public boolean isAssignableFrom(GeneralType otherType) {
     if (super.isAssignableFrom(otherType)) {
       return true;
@@ -219,6 +224,11 @@ public class InstantiatedType extends ParameterizedType {
   @Override
   public String toString() {
     return this.getName();
+  }
+
+  @Override
+  public GenericClassType getGenericClassType() {
+    return instantiatedType.getGenericClassType();
   }
 
   /**

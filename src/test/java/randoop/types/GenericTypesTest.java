@@ -173,4 +173,17 @@ public class GenericTypesTest {
           e.getMessage());
     }
   }
+
+  @Test
+  public void subtypeTransitivityTest() {
+    ParameterizedType iterableType = GenericClassType.forClass(Iterable.class).instantiate(ConcreteTypes.STRING_TYPE);
+    ParameterizedType collectionType = JDKTypes.COLLECTION_TYPE.instantiate(ConcreteTypes.STRING_TYPE);
+    assertTrue("collection is subtype of iterable", collectionType.isSubtypeOf(iterableType));
+    assertFalse("iterable is supertype of collection, not subtype", iterableType.isSubtypeOf(collectionType));
+    ParameterizedType vectorType = JDKTypes.VECTOR_TYPE.instantiate(ConcreteTypes.STRING_TYPE);
+    assertTrue("vector is subtype of iterable", vectorType.isSubtypeOf(iterableType) );
+    assertTrue("vector is subtype of collection", vectorType.isSubtypeOf(collectionType));
+    assertFalse("supertype is not a subtype", iterableType.isSubtypeOf(vectorType));
+    assertFalse("supertype is not a subtype", collectionType.isSubtypeOf(vectorType));
+  }
 }

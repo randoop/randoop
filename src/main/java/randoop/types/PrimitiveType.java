@@ -102,7 +102,7 @@ public class PrimitiveType extends GeneralType {
     }
 
     if (sourceType.isBoxedPrimitive()){ // unbox then primitive widening conversion
-      PrimitiveType primitiveSourceType = ((SimpleClassOrInterfaceType)sourceType).toPrimitive();
+      PrimitiveType primitiveSourceType = sourceType.toPrimitive();
       return this.isAssignableFrom(primitiveSourceType);
     }
 
