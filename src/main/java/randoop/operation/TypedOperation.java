@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,7 +26,6 @@ import randoop.types.PrimitiveTypes;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.TypeTuple;
-import randoop.types.TypeVariable;
 
 /**
  * Type decorator of {@link Operation} objects.
@@ -262,10 +262,11 @@ public abstract class TypedOperation implements Operation {
       Class<?> enumClass = declaringClass.getEnclosingClass();
       ClassOrInterfaceType enumType = ClassOrInterfaceType.forClass(enumClass);
 
+      // TODO verify that subsignature conditions on erasure met (JLS 8.4.2)
       Method enumMethod = null;
       for (Method m : enumClass.getMethods()) {
-        if (m.getName().equals(method.getName())) {
-          // TODO should check types in case of overloads
+        if (m.getName().equals(method.getName())
+            && Arrays.equals(m.getGenericParameterTypes(), method.getGenericParameterTypes())) {
           enumMethod = m;
           break;
         }
@@ -354,17 +355,6 @@ public abstract class TypedOperation implements Operation {
     }
     inputTypes.add(fieldType);
     return new TypedClassOperation(new FieldSet(accessibleField), declaringType, new TypeTuple(inputTypes), ConcreteTypes.VOID_TYPE);
-  }
-
-  /**
-   * Creates an operation that initializes a variable to null.
-   *
-   * @param type  the type of variable to be initialized
-   * @return the initialization operation
-   */
-  public static TypedOperation createNullInitializationWithType(GeneralType type) {
-    assert ! type.isPrimitive() : "cannot initialize primitive to null: " + type;
-    return TypedOperation.createNonreceiverInitialization(new NonreceiverTerm(type, null));
   }
 
   /**
