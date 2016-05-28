@@ -6,15 +6,11 @@ import randoop.Globals;
  * The contract:
  * <code>!(x0.equals(x1) &amp;&amp; x1.equals(x2))||x0.equals(x2)</code>.
  */
-
 public class EqualsTransitive implements ObjectContract {
-    // Immutable, single instance
     private static final EqualsTransitive instance = new EqualsTransitive();
 
-    // Private constructor
     private EqualsTransitive() {};
 
-    // Return the single instance of this contract
     public static EqualsTransitive getInstance() {
         return instance;
     }
@@ -33,7 +29,6 @@ public class EqualsTransitive implements ObjectContract {
 
     @Override
     public int getArity() {
-	// Contract over three objects
         return 3;
     }
 

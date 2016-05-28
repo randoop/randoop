@@ -78,10 +78,11 @@ public class ForwardExplorerTests2  {
     ForwardGenerator exp = new ForwardGenerator(model, new LinkedHashSet<ConcreteOperation>(), Long.MAX_VALUE, 100, 100, mgr, null, null);
     exp.addTestCheckGenerator(createChecker(new LinkedHashSet<ObjectContract>()));
 
-    // get a SequenceExceptionError when repeat_heuristic=true 
+    // get a SequenceExceptionError when repeat_heuristic=true
     try {
       exp.explore();
-      //fail("expected timeout exception");
+      // The timeout does not happen with 60-second timeout in RandoopSystemTest.runCollectionsTest.
+      // fail("expected timeout exception");
     } catch (SequenceExceptionError e) {
       assertEquals("should be timeout", e.getMessage(), "Exception thrown before end of sequence");
     }

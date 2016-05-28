@@ -89,7 +89,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
         for (ObjectContract c : contracts) {
           if (c.getArity() == 1) {
             checkUnary(s, c, idxmap.getValues(cls), checks);
-          } else if (c.getArity() == 2){
+          } else if (c.getArity() == 2) {
             checkBinary(s, c, idxmap.getValues(cls), checks);
           } else {
             checkTernary(s, c, idxmap.getValues(cls), checks);
@@ -102,7 +102,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
 
   /**
    * Checks a ternary contract over the set of values defined in the sequence,
-   * and attaches failing checks at final statement of the sequence.
+   * and attaches failing checks at the final statement of the sequence.
    *
    * @param s
    *          the executable sequence
@@ -111,20 +111,19 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
    * @param values
    *          the set of positions defining values to check
    * @param checks
-   *          the {@code TestChecks} to which new checks are added
+   *          the {@link TestChecks} to which new checks are added
    */
   private void checkTernary(
           ExecutableSequence s, ObjectContract c, Set<Integer> values, ErrorRevealingChecks checks) {
     for (Integer i : values) {
+      ExecutionOutcome result1 = s.getResult(i);
       for (Integer j : values) {
+        ExecutionOutcome result2 = s.getResult(j);
         for (Integer k : values) {
-          // Create three ExecutionOutcome objects from the ExecutableSequence
-          ExecutionOutcome result1 = s.getResult(i);
-          ExecutionOutcome result2 = s.getResult(j);
           ExecutionOutcome result3 = s.getResult(k);
 
           if (Log.isLoggingOn()) {
-            Log.logLine("Checking contract " + c.getClass() + " on " + i + ", " + j + ", " + k);
+            Log.logLine("Checking contract " + c.getClass() + " on indices " + i + ", " + j + ", " + k);
           }
 
           ExecutionOutcome exprOutcome =

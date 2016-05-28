@@ -104,8 +104,7 @@ public class RandoopSystemTest {
 
 
     long startTime = System.currentTimeMillis();
-    
-    long timeout = 600000L;
+    long timeout = 600000L; // 60 seconds
     RandoopRunDescription randoopRunDesc =
         generateAndCompile(
             classpath,
@@ -117,7 +116,7 @@ public class RandoopSystemTest {
             timeout);
 
     long endTime = System.currentTimeMillis();
-    System.out.println("runCollectionTest took: " + (endTime - startTime) + " milliseconds");
+    // System.out.println("runCollectionTest took: " + (endTime - startTime) + " milliseconds");
 
     assertThat("...has regression tests", randoopRunDesc.regressionTestCount, is(greaterThan(0)));
     TestRunDescription testRunDesc =
