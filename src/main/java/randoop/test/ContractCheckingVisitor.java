@@ -150,7 +150,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
             Throwable e = ((ExceptionalExecution) exprOutcome).getException();
             if (Log.isLoggingOn()) Log.logLine("Contract threw exception: " + e.getMessage());
             if (e instanceof BugInRandoopException) {
-              throw new BugInRandoopException(e);
+              throw (BugInRandoopException) e;
             }
             // Execution of contract resulted in exception. Do not create
             // a contract-violation decoration.
