@@ -2,7 +2,6 @@ package randoop.operation;
 
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
 import java.util.List;
 
 import randoop.ExceptionalExecution;
@@ -11,9 +10,8 @@ import randoop.NormalExecution;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
-import randoop.types.RandoopTypeException;
-import randoop.types.TypeNames;
 import randoop.types.TypeTuple;
 import randoop.util.ConstructorReflectionCode;
 import randoop.util.ReflectionExecutor;
@@ -102,27 +100,25 @@ public final class ConstructorCall extends CallableOperation {
    */
   @Override
   public void appendCode(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b) {
+    assert declaringType instanceof ClassOrInterfaceType: "constructor must be member of class";
 
-    Class<?> declaringClass = constructor.getDeclaringClass();
-    boolean isNonStaticMember =
-        (!Modifier.isStatic(declaringClass.getModifiers()) && declaringClass.isMemberClass());
-    assert Util.implies(isNonStaticMember, !inputVars.isEmpty());
+    ClassOrInterfaceType declaringClassType = (ClassOrInterfaceType)declaringType;
+
+    boolean isNonStaticMemberClass = ! declaringClassType.isStatic() && declaringClassType.isMemberClass();
+    assert Util.implies(isNonStaticMemberClass, !inputVars.isEmpty());
 
     // Note on isNonStaticMember: if a class is a non-static member class, the
     // runtime signature of the constructor will have an additional argument
     // (as the first argument) corresponding to the owning object. When printing
     // it out as source code, we need to treat it as a special case: instead
-    // of printing "new Foo(x,y.z)" we have to print "x.new Foo(y,z)".
-
-    // TODO the last replace is ugly. There should be a method that does it.
-    String declaringClassStr = TypeNames.getCompilableName(declaringClass);
-
-    b.append(isNonStaticMember ? inputVars.get(0) + "." : "")
+    // of printing "new Foo(x,y,z)" we have to print "x.new Foo(y,z)".
+    b.append(isNonStaticMemberClass ? inputVars.get(0) + "." : "")
             .append("new ")
-            .append(isNonStaticMember ? declaringClass.getSimpleName() : declaringClassStr)
+            .append(isNonStaticMemberClass ? declaringClassType.getClassName() : declaringClassType.getName())
             .append("(");
-    for (int i = (isNonStaticMember ? 1 : 0); i < inputVars.size(); i++) {
-      if (i > (isNonStaticMember ? 1 : 0)) b.append(", ");
+
+    for (int i = (isNonStaticMemberClass ? 1 : 0); i < inputVars.size(); i++) {
+      if (i > (isNonStaticMemberClass ? 1 : 0)) b.append(", ");
 
       // We cast whenever the variable and input types are not identical.
       if (!inputVars.get(i).getType().equals(inputTypes.get(i)))

@@ -13,7 +13,6 @@ import randoop.types.GeneralType;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.TypeTuple;
-import randoop.types.TypeVariable;
 
 /**
  * Represents a type decoration for an operation that has a declaring class.

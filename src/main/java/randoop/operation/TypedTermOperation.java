@@ -13,6 +13,13 @@ import randoop.types.TypeTuple;
  */
 class TypedTermOperation extends TypedOperation {
 
+  /**
+   * Creates a {@link TypedOperation} for a given operation and input and output types.
+   *
+   * @param operation the operation
+   * @param inputTypes  the input types
+   * @param outputType  the output type
+   */
   TypedTermOperation(CallableOperation operation, TypeTuple inputTypes, GeneralType outputType) {
     super(operation, inputTypes, outputType);
   }
