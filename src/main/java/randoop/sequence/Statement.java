@@ -139,6 +139,10 @@ public final class Statement {
     return b.toString();
   }
 
+  public String toString() {
+    return "Statement [ " + operation + "]";
+  }
+
   /**
    * isStatic indicates whether the corresponding operation is declared as
    * static.
