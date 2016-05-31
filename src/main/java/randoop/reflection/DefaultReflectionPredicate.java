@@ -105,6 +105,10 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
           Log.logLine("  reason: it's a bridge method");
         }
         return false;
+      } else if (m.getDeclaringClass().isAnonymousClass()
+              && m.getDeclaringClass().getEnclosingClass() != null
+              && m.getDeclaringClass().getEnclosingClass().isEnum()) {
+        return false; // bridge method in enum constant anonymous class
       } else {
         if (Log.isLoggingOn()) {
           Log.logLine("Using visibility bridge method: " + m.toString());
