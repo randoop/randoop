@@ -290,12 +290,10 @@ public class SimpleTypeTest {
     assertTrue(
         "Collection is assignable from ArrayList<String>",
         rawCollType.isAssignableFrom(parameterizedALType));
-    System.out.println("****");
     GeneralType rawSetType = new SimpleClassOrInterfaceType(Set.class);
     assertFalse(
         "Set is not assignable from ArrayList<String>",
         rawSetType.isAssignableFrom(parameterizedALType));
-    System.out.println("****");
   }
 
   @Test
