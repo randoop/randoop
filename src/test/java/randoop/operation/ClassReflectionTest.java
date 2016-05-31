@@ -5,15 +5,18 @@ import org.junit.Test;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import randoop.Globals;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
+import randoop.sequence.Sequence;
+import randoop.sequence.Variable;
 import randoop.test.AnIntegerPredicate;
-import randoop.test.ClassWithInnerClass;
 import randoop.types.ClassOrInterfaceType;
+import randoop.types.ConcreteTypes;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -47,7 +50,7 @@ public class ClassReflectionTest {
 
   @Test
   public void innerClassTest() {
-    Class<?> outer = ClassWithInnerClass.class;
+    Class<?> outer = randoop.test.ClassWithInnerClass.class;
     Class<?> inner = null;
     try {
       inner = Class.forName("randoop.test.ClassWithInnerClass$A");
@@ -56,17 +59,43 @@ public class ClassReflectionTest {
     }
 
     Set<TypedOperation> innerActual = getConcreteOperations(inner);
-
-    for (TypedOperation op : innerActual) {
-      System.out.println(op);
-    }
-    assertEquals("number of inner class operations", 5, innerActual.size());
+    assertEquals("number of inner class operations", 6, innerActual.size());
 
     Set<TypedOperation> outerActual = getConcreteOperations(outer);
-    for(TypedOperation op : outerActual) {
-      System.out.println(op);
-    }
     assertEquals("number of outer operations", 2, outerActual.size());
+
+    TypedOperation constructorOp = null;
+    for(TypedOperation op : outerActual) {
+      if (op.isConstructorCall()) {
+        constructorOp = op;
+      }
+    }
+    assert constructorOp != null : "should find outer class constructor";
+
+    Sequence sequence = new Sequence();
+    randoop.test.ClassWithInnerClass classWithInnerClass1 = new randoop.test.ClassWithInnerClass(1);
+    TypedOperation nextOp = TypedOperation.createPrimitiveInitialization(ConcreteTypes.INT_TYPE, 1);
+    sequence = sequence.extend(nextOp);
+    sequence = sequence.extend(constructorOp, new Variable(sequence, 0));
+
+    randoop.test.ClassWithInnerClass.A a4 = classWithInnerClass1.new A("blah", 29);
+    sequence = sequence.extend(TypedOperation.createPrimitiveInitialization(ConcreteTypes.STRING_TYPE, "blah"));
+    sequence = sequence.extend(TypedOperation.createPrimitiveInitialization(ConcreteTypes.INT_TYPE, 29));
+
+    TypedOperation innerConstructorOp = null;
+    for (TypedOperation op : innerActual) {
+      if (op.isConstructorCall()) {
+        innerConstructorOp = op;
+      }
+    }
+    assert innerConstructorOp != null : "should find inner class constructor";
+    sequence = sequence.extend(innerConstructorOp, new Variable(sequence, 1), new Variable(sequence, 2), new Variable(sequence, 3));
+
+    String expectedCode = "randoop.test.ClassWithInnerClass classWithInnerClass1 = new randoop.test.ClassWithInnerClass(1);" + Globals.lineSep
+            + "randoop.test.ClassWithInnerClass.A a4 = classWithInnerClass1.new A(\"blah\", 29);" + Globals.lineSep;
+
+
+    assertEquals("code test", expectedCode, sequence.toCodeString());
 
     // TODO be more sophisticated in checking operations
   }
