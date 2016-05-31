@@ -3,7 +3,7 @@ package randoop.contract;
 import randoop.Globals;
 
 /**
- * The contract:
+ * The contract: Checks the transitivity of equals for an object
  * <code>!(x0.equals(x1) &amp;&amp; x1.equals(x2))||x0.equals(x2)</code>.
  */
 public class EqualsTransitive implements ObjectContract {
