@@ -8,12 +8,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import randoop.contract.EqualsTransitive;
+import randoop.contract.EqualsHashcode;
 import randoop.contract.EqualsReflexive;
 import randoop.contract.EqualsSymmetric;
 import randoop.contract.EqualsToNullRetFalse;
-import randoop.contract.EqualsHashcode;
 import randoop.contract.ObjectContract;
+import randoop.contract.EqualsTransitive;
 import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
 import randoop.operation.ConcreteOperation;
@@ -391,11 +391,11 @@ public class OperationModel extends ModelCollections {
    *   Note: if you add to this list, also update the Javadoc for check_object_contracts.
    */
   private void addDefaultContracts() {
-    contracts.add(EqualsTransitive.getInstance());
     contracts.add(new EqualsReflexive());
     contracts.add(new EqualsSymmetric());
     contracts.add(new EqualsHashcode());
     contracts.add(new EqualsToNullRetFalse());
+    contracts.add(EqualsTransitive.getInstance());
   }
 
   /**

@@ -141,7 +141,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
             } else {
               if (Log.isLoggingOn())
                 Log.logLine("Contract returned false. Will add ExpressionEqFalse check");
-              // Create an check that records the actual value
+              // Create a check that records the actual value
               // returned by the expression, marking it as invalid
               // behavior.
               checks.add(new ObjectCheck(c, i, s.sequence.getVariable(i), s.sequence.getVariable(j), s.sequence.getVariable(k)));
@@ -152,8 +152,12 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
             if (e instanceof BugInRandoopException) {
               throw (BugInRandoopException) e;
             }
-            // Execution of contract resulted in exception. Do not create
-            // a contract-violation decoration.
+            // Execution of contract resulted in exception. The exception at this point
+	    // is not a Randoop error and is not handled by the ContractCheckingVisitor
+	    // since the contract isn't a part of the test method sequence.
+	    // Instead, exceptions that occur in statements are handled by a different
+	    // visitor.
+	    // Do not create a contract-violation decoration.
             // TODO are there cases where exception in contract check is a
             // failure?
           } else {

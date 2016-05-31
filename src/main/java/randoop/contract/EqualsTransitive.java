@@ -4,7 +4,7 @@ import randoop.Globals;
 
 /**
  * The contract: Checks the transitivity of equals for an object
- * <code>!(x0.equals(x1) &amp;&amp; x1.equals(x2))||x0.equals(x2)</code>.
+ * <code>(x0.equals(x1) &amp;&amp; x1.equals(x2)) &rarr; x0.equals(x2)</code>.
  */
 public class EqualsTransitive implements ObjectContract {
     private static final EqualsTransitive instance = new EqualsTransitive();
