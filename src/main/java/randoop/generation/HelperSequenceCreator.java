@@ -3,6 +3,7 @@ package randoop.generation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -85,14 +86,10 @@ class HelperSequenceCreator {
     return l;
   }
 
-  static Sequence createCollection(ComponentManager componentManager, GeneralType inputType) {
-    if (!inputType.isParameterized()) {
-      throw new IllegalArgumentException("type must be parameterized");
-    }
-    assert ! inputType.isGeneric() : "type must be instantiated";
+  static Sequence createCollection(ComponentManager componentManager, ParameterizedType collectionType) {
+    assert ! collectionType.isGeneric() : "type must be instantiated";
 
     // get the element type
-    ParameterizedType collectionType = (ParameterizedType)inputType;
     List<TypeArgument> argumentList = collectionType.getTypeArguments();
     assert argumentList.size() == 1 : "Collection classes should have one type argument";
     TypeArgument argumentType = argumentList.get(0);
@@ -100,19 +97,32 @@ class HelperSequenceCreator {
     assert argumentType instanceof ReferenceArgument : "type argument must be reference type";
     elementType = ((ReferenceArgument)argumentType).getReferenceType();
 
-    int totStatements = 0;
-    List<Sequence> inputSequences = new ArrayList<>();
-    List<Integer> variableIndices = new ArrayList<>();
-
     // select implementing Collection type and instantiate
     GenericClassType implementingType = JDKTypes.getImplementingType(collectionType);
     ParameterizedType creationType;
     creationType = implementingType.instantiate(elementType);
 
+
+
+    int totStatements = 0;
+    List<Sequence> inputSequences = new ArrayList<>();
+    List<Integer> variableIndices = new ArrayList<>();
+
     // build sequence to create a Collection object
-    TypedOperation creationOperation = getCollectionConstructor(creationType);
     Sequence creationSequence = new Sequence();
-    creationSequence = creationSequence.extend(creationOperation, new ArrayList<Variable>());
+    List<Variable> creationInputs = new ArrayList<>();
+    TypedOperation creationOperation;
+    if (implementingType.equals(JDKTypes.ENUM_SET_TYPE)) {
+      /*
+      * Not finishing this for current release, need to be able to handle terms other than nonreceivers
+      creationSequence = creationSequence.extend(); // want initialization with value runtimeclassname.class
+      creationOperation = getEnumSetCreation(creationType, elementType);
+      */
+      return null;
+    } else {
+      creationOperation = getCollectionConstructor(creationType);
+    }
+    creationSequence = creationSequence.extend(creationOperation, creationInputs);
 
     inputSequences.add(creationSequence);
     variableIndices.add(totStatements + creationSequence.getLastVariable().index);
@@ -137,39 +147,64 @@ class HelperSequenceCreator {
     return helperSequence.extend(addOperation, inputs);
   }
 
+  /**
+   * Creates a sequence that builds an array of the given element type using sequences from the
+   * given list of candidates.
+   *
+   * @param candidates  the list of candidate elements
+   * @param elementType  the type of elements for the array
+   * @return a sequence that creates an array with the given element type
+   */
+  private static Sequence createAnArray(SimpleList<Sequence> candidates, GeneralType elementType, int length) {
+    int totStatements = 0;
+    List<Sequence> inputSequences = new ArrayList<>();
+    List<Integer> variables = new ArrayList<>();
+    for (int i = 0; i < length; i++) {
+      Sequence inputSeq = candidates.get(Randomness.nextRandomInt(candidates.size()));
+      Variable inputVar = inputSeq.randomVariableForTypeLastStatement(elementType);
 
+      assert inputVar != null;
+      variables.add(totStatements + inputVar.index);
+      inputSequences.add(inputSeq);
+      totStatements += inputSeq.size();
+    }
+    Sequence inputSequence = Sequence.concatenate(inputSequences);
+    List<Variable> inputs = new ArrayList<>();
+    for (Integer inputIndex : variables) {
+      Variable v = inputSequence.getVariable(inputIndex);
+      inputs.add(v);
+    }
 
- /**
-  * Creates a sequence that builds an array of the given element type using sequences from the
-  * given list of candidates.
-  *
-  * @param candidates  the list of candidate elements
-  * @param elementType  the type of elements for the array
-  * @return a sequence that creates an array with the given element type
-  */
- private static Sequence createAnArray(SimpleList<Sequence> candidates, GeneralType elementType, int length) {
-   int totStatements = 0;
-   List<Sequence> inputSequences = new ArrayList<>();
-   List<Integer> variables = new ArrayList<>();
-   for (int i = 0; i < length; i++) {
-     Sequence inputSeq = candidates.get(Randomness.nextRandomInt(candidates.size()));
-     Variable inputVar = inputSeq.randomVariableForTypeLastStatement(elementType);
+    return inputSequence.extend(TypedOperation.createArrayCreation(ArrayType.ofElementType(elementType), length), inputs);
+  }
 
-     assert inputVar != null;
-     variables.add(totStatements + inputVar.index);
-     inputSequences.add(inputSeq);
-     totStatements += inputSeq.size();
-   }
-   Sequence inputSequence = Sequence.concatenate(inputSequences);
-   List<Variable> inputs = new ArrayList<>();
-   for (Integer inputIndex : variables) {
-     Variable v = inputSequence.getVariable(inputIndex);
-     inputs.add(v);
-   }
+  /**
+   * Create the operation needed to create an empty EnumSet of the given type.
+   *
+   * @param creationType  the EnumSet type
+   * @param elementType  the element Enum type
+   * @return the empty EnumSet with the given type
+   */
+  private static TypedOperation getEnumSetCreation(ParameterizedType creationType, ReferenceType elementType) {
+    Class<?> enumsetClass = JDKTypes.ENUM_SET_TYPE.getRuntimeClass();
+    Method method;
+    try {
+      method = enumsetClass.getMethod("noneOf", ConcreteTypes.CLASS_TYPE.getRuntimeClass());
+    } catch (NoSuchMethodException e) {
+      throw new BugInRandoopException("Can't find \"noneOf\" method for EnumSet: " + e.getMessage());
+    }
+    MethodCall op = new MethodCall(method);
+    List<GeneralType> paramTypes = new ArrayList<>();
+    paramTypes.add(ConcreteTypes.CLASS_TYPE);
+    return new TypedClassOperation(op, JDKTypes.ENUM_SET_TYPE, new TypeTuple(paramTypes), creationType);
+  }
 
-   return inputSequence.extend(TypedOperation.createArrayCreation(ArrayType.ofElementType(elementType), length), inputs);
- }
-
+  /**
+   * Create the constructor call operation for the given type.
+   *
+   * @param creationType  the class type
+   * @return the constructor call for the given class type
+   */
   private static TypedOperation getCollectionConstructor(ParameterizedType creationType) {
     Constructor<?> constructor;
     try {
@@ -181,6 +216,13 @@ class HelperSequenceCreator {
     return new TypedClassOperation(op, creationType, new TypeTuple(), creationType);
   }
 
+  /**
+   * Create the operation to call {@link java.util.Collections#addAll(Collection, Object[])} that
+   * allows initialization of a {@link Collection} object.
+   *
+   * @param elementType  the element type of the collection
+   * @return the operation to initialize a collection from an array.
+   */
   private static TypedOperation getCollectionAddAllOperation(ReferenceType elementType) {
     Class<?> collectionsClass = Collections.class;
     Method method;

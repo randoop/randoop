@@ -21,10 +21,10 @@ import randoop.sequence.Variable;
 import randoop.test.DummyCheckGenerator;
 import randoop.types.ConcreteTypes;
 import randoop.types.GeneralType;
+import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
-import randoop.types.ParameterizedType;
-import randoop.types.TypeTuple;
 import randoop.types.PrimitiveTypes;
+import randoop.types.TypeTuple;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
@@ -586,13 +586,15 @@ public class ForwardGenerator extends AbstractGenerator {
         SimpleList<Sequence> l2 = HelperSequenceCreator.createArraySequence(componentManager, inputType);
         l = new ListOfLists<>(l1, l2);
 
-      } else if (inputType.isParameterized() && ((ParameterizedType)inputType).isInstantiationOf(JDKTypes.COLLECTION_TYPE)) {
+      } else if (inputType.isParameterized()
+              && ((InstantiatedType)inputType).getGenericClassType().isSubtypeOf(JDKTypes.COLLECTION_TYPE)) {
+        InstantiatedType classType = (InstantiatedType)inputType;
 
         SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i);
         if (Log.isLoggingOn())
-          Log.logLine("Collection creation heuristic: will create helper of type " + inputType);
+          Log.logLine("Collection creation heuristic: will create helper of type " + classType);
         ArrayListSimpleList<Sequence> l2 = new ArrayListSimpleList<>();
-        l2.add(HelperSequenceCreator.createCollection(componentManager, inputType));
+        l2.add(HelperSequenceCreator.createCollection(componentManager, classType));
         l = new ListOfLists<>(l1, l2);
 
       } else {
