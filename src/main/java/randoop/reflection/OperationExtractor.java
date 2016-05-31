@@ -66,16 +66,18 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param operation  the {@link TypedOperation}
    */
   private void addOperation(TypedClassOperation operation) {
-    if (operation.getDeclaringType().isGeneric()) { // need to apply a substitution
-      GenericClassType declaringType = (GenericClassType) operation.getDeclaringType();
-      if (classType.isParameterized() && declaringType.hasRuntimeClass(classType.getRuntimeClass())) {
-        operation = operation.apply(((InstantiatedType) classType).getTypeSubstitution());
-      } else if (! classType.isGeneric()){
-        InstantiatedType supertype = classType.getMatchingSupertype(declaringType);
-        operation = operation.apply(supertype.getTypeSubstitution());
+    if (operation != null) {
+      if (operation.getDeclaringType().isGeneric()) { // need to apply a substitution
+        GenericClassType declaringType = (GenericClassType) operation.getDeclaringType();
+        if (classType.isParameterized() && declaringType.hasRuntimeClass(classType.getRuntimeClass())) {
+          operation = operation.apply(((InstantiatedType) classType).getTypeSubstitution());
+        } else if (!classType.isGeneric()) {
+          InstantiatedType supertype = classType.getMatchingSupertype(declaringType);
+          operation = operation.apply(supertype.getTypeSubstitution());
+        }
       }
+      operations.add(operation);
     }
-    operations.add(operation);
   }
 
   /**
