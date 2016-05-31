@@ -77,6 +77,11 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
   }
 
   @Override
+  public boolean isMemberClass() {
+    return runtimeClass.isMemberClass();
+  }
+
+  @Override
   public boolean isEnum() {
     return runtimeClass.isEnum();
   }
@@ -200,6 +205,11 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
   @Override
   public boolean isInstantiationOf(GenericClassType genericClassType) {
     return false;
+  }
+
+  @Override
+  public boolean isStatic() {
+    return Modifier.isStatic(runtimeClass.getModifiers() & Modifier.classModifiers());
   }
 
   /**

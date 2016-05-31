@@ -29,7 +29,7 @@ public abstract class ReferenceType extends GeneralType {
    *
    * @return true if this type is a capture type variable, false otherwise
    */
-  public boolean isCaptureVariable() {
+  boolean isCaptureVariable() {
     return false;
   }
 

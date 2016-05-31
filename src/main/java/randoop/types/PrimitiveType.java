@@ -5,8 +5,14 @@ package randoop.types;
  */
 public class PrimitiveType extends GeneralType {
 
+  /** The runtime type of the primitive type */
   private final Class<?> runtimeClass;
 
+  /**
+   * Creates a primitive type from the given runtime class.
+   *
+   * @param runtimeClass  the runtime class
+   */
   public PrimitiveType(Class<?> runtimeClass) {
     assert runtimeClass.isPrimitive() : "must be initialized with primitive type, got " + runtimeClass.getName();
     this.runtimeClass = runtimeClass;

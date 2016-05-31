@@ -96,7 +96,6 @@ public abstract class WildcardArgument extends TypeArgument{
       return new WildcardArgumentWithUpperBound(wildcardType.getUpperBounds());
     }
 
-
     throw new IllegalArgumentException("A wildcard must have either upper or lower bounds");
   }
 }

@@ -88,6 +88,12 @@ class VariableTypeBound extends ParameterBound {
     return ParameterBound.forType(type);
   }
 
+  /**
+   * Creates a type bound that is a variable from the given type.
+   *
+   * @param type  the type for the constructed bound
+   * @return the type bound
+   */
   public static VariableTypeBound forType(Type type) {
     return new VariableTypeBound(TypeVariable.forType(type));
   }

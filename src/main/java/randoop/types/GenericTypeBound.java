@@ -1,6 +1,8 @@
 package randoop.types;
 
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import plume.UtilMDE;
@@ -77,24 +79,9 @@ class GenericTypeBound extends ClassOrInterfaceBound {
    */
   @Override
   public boolean isSatisfiedBy(GeneralType argType, Substitution<ReferenceType> substitution) {
-    ClassOrInterfaceTypeBound b = instantiate(substitution);
-    return b.isSatisfiedBy(argType, substitution);
-  }
+    ClassOrInterfaceTypeBound b = this.apply(substitution);
 
-  private ClassOrInterfaceTypeBound instantiate(Substitution<ReferenceType> substitution) {
-    ReferenceType[] typeArguments = new ReferenceType[parameters.length];
-    for (int i = 0; i < parameters.length; i++) {
-      if (!(parameters[i] instanceof java.lang.reflect.TypeVariable)) {
-        throw new IllegalArgumentException("unexpected type parameter " + parameters[i]);
-      }
-      ReferenceType t = substitution.get(parameters[i]);
-      if (t == null) {
-        throw new IllegalArgumentException("unable to instantiate type parameter " + parameters[i]);
-      }
-      typeArguments[i] = t;
-    }
-    ClassOrInterfaceType boundType = GenericClassType.forClass(rawType).instantiate(typeArguments);
-    return new ClassOrInterfaceTypeBound(boundType);
+    return b.isSatisfiedBy(argType, substitution);
   }
 
   @Override
@@ -108,10 +95,29 @@ class GenericTypeBound extends ClassOrInterfaceBound {
   }
 
   @Override
-  public ParameterBound apply(Substitution<ReferenceType> substitution) {
-    return null;
+  public ClassOrInterfaceTypeBound apply(Substitution<ReferenceType> substitution) {
+    List<TypeArgument> argumentList = new ArrayList<>();
+    for (Type parameter : parameters) {
+      if (!(parameter instanceof java.lang.reflect.TypeVariable)) {
+        throw new IllegalArgumentException("unexpected type parameter " + parameter);
+      }
+      ReferenceType type = substitution.get(parameter);
+      if (type == null) {
+        throw new IllegalArgumentException("substitution does not instantiate parameter " + parameter);
+      }
+      argumentList.add(new ReferenceArgument(type));
+    }
+    GenericClassType classType = GenericClassType.forClass(rawType);
+    InstantiatedType boundType = new InstantiatedType(classType, argumentList);
+    return new ClassOrInterfaceTypeBound(boundType);
   }
 
+  /**
+   * Creates a {@link GenericTypeBound} for the given reflective type.
+   *
+   * @param type  the type
+   * @return the bound for the given type
+   */
   static GenericTypeBound fromType(Type type) {
     if (! (type instanceof java.lang.reflect.ParameterizedType)) {
       throw new IllegalArgumentException("type must be generic");

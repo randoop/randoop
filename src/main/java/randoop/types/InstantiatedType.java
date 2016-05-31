@@ -77,6 +77,11 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
+  public boolean isMemberClass() {
+    return instantiatedType.isMemberClass();
+  }
+
+  @Override
   public boolean isAssignableFrom(GeneralType otherType) {
     if (super.isAssignableFrom(otherType)) {
       return true;
@@ -260,38 +265,9 @@ public class InstantiatedType extends ParameterizedType {
     return instantiatedType.isInstantiationOf(genericClassType);
   }
 
-  public InstantiatedType getMatchingSupertype(GenericClassType goalType) {
-    if (goalType.isInterface()) {
-      List<ClassOrInterfaceType> interfaces = this.getInterfaces();
-      for (ClassOrInterfaceType interfaceType : interfaces) {
-        if (interfaceType.getRuntimeClass().isAssignableFrom(this.getRuntimeClass())) {
-          if (interfaceType.isParameterized()) {
-            InstantiatedType type = (InstantiatedType) interfaceType;
-            if (type.isInstantiationOf(goalType)) {
-              return (InstantiatedType) interfaceType;
-            }
-            InstantiatedType result = type.getMatchingSupertype(goalType);
-            if (result != null) {
-              return result;
-            }
-          } else {
-            return interfaceType.getMatchingSupertype(goalType);
-          }
-        }
-      }
-    }
-
-    ClassOrInterfaceType superclass = this.getSuperclass();
-    if (superclass != null && ! superclass.isObject()) {
-      if (superclass.isInstantiationOf(goalType)) {
-        return (InstantiatedType)superclass;
-      }
-
-      return superclass.getMatchingSupertype(goalType);
-    }
-
-    return null;
-
+  @Override
+  public boolean isStatic() {
+    return instantiatedType.isStatic();
   }
 
   /**

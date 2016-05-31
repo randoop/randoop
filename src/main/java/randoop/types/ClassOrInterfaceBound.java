@@ -1,8 +1,6 @@
 package randoop.types;
 
-import java.lang.reflect.*;
-import java.lang.reflect.TypeVariable;
-import java.util.Set;
+import java.lang.reflect.Type;
 
 /**
  * Represents a parameter bound which is a class or interface type.

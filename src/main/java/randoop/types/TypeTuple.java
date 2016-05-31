@@ -58,6 +58,11 @@ public class TypeTuple {
     return list.get(i);
   }
 
+  /**
+   * Indicates whether any of the types in this type tuple contains a wildcard.
+   *
+   * @return true if there is at least one wildcard occurrence
+   */
   public boolean hasWildcard() {
     for (GeneralType type : list) {
       if (type.hasWildcard()) {
@@ -115,6 +120,11 @@ public class TypeTuple {
     return new TypeTuple(typeList);
   }
 
+  /**
+   * Applies a capture conversion to this object.
+   *
+   * @return a new type tuple after performing a capture conversion
+   */
   public TypeTuple applyCaptureConversion() {
     List<GeneralType> typeList = new ArrayList<>();
     for (GeneralType type : this.list) {
@@ -123,6 +133,11 @@ public class TypeTuple {
     return new TypeTuple(typeList);
   }
 
+  /**
+   * Returns the type parameters for this type tuple.
+   *
+   * @return the list of type parameters for this type tuple.
+   */
   public List<AbstractTypeVariable> getTypeParameters() {
     Set<AbstractTypeVariable> paramSet = new LinkedHashSet<>();
     for (GeneralType type : this.list) {

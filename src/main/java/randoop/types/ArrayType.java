@@ -14,6 +14,7 @@ public class ArrayType extends ReferenceType {
   /** The type of elements in this array */
   private final GeneralType elementType;
 
+  /** The runtime type for this array */
   private final Class<?> runtimeClass;
 
   /**
@@ -64,8 +65,6 @@ public class ArrayType extends ReferenceType {
   public String toString() {
     return elementType + "[]";
   }
-
-
 
   /**
    * {@inheritDoc}

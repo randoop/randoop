@@ -19,6 +19,10 @@ class WildcardArgumentWithUpperBound extends WildcardArgument {
     super(ReferenceType.forType(upperBounds[0]));
   }
 
+  /**
+   * Creates a wildcard argument with the given reference type as an Upper bound.
+   * @param type  the bound type
+   */
   private WildcardArgumentWithUpperBound(ReferenceType type) {
     super(type);
   }

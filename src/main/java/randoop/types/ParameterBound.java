@@ -106,7 +106,19 @@ public abstract class ParameterBound {
     throw new IllegalArgumentException("type may only be class, interface, or type variable");
   }
 
+  /**
+   * Indicates whether this bound is a subtype of the given general type.
+   *
+   * @param otherType  the general type
+   * @return true if this bound is a subtype of the given type
+   */
   public abstract boolean isSubtypeOf(GeneralType otherType);
 
+  /**
+   * Applies the given substitution to this bound.
+   *
+   * @param substitution  the type substitution
+   * @return a new bound with types replaced as indicated by the substitution
+   */
   public abstract ParameterBound apply(Substitution<ReferenceType> substitution);
 }

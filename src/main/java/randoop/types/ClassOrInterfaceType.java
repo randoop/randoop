@@ -86,6 +86,13 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   public abstract boolean isInstantiationOf(GenericClassType genericClassType);
 
   /**
+   * Indicates whether a class is static.
+   *
+   * @return true if this class is static, false otherwise
+   */
+  public abstract boolean isStatic();
+
+  /**
    * Translates a {@code Class} object that represents a class or interface into a
    * {@code ClassOrInterfaceType} object.
    * If the object has parameters, then delegates to {@link ParameterizedType#forClass(Class)}.
@@ -132,14 +139,63 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
 
+  /**
+   * Finds the parameterized type that is a supertype of this class that also matches the given
+   * generic class.
+   *
+   * @param goalType  the generic class type
+   * @return the instantiated type matching the goal type, or null
+   */
   public InstantiatedType getMatchingSupertype(GenericClassType goalType) {
-    if (this.isObject()) {
+    if (this.isObject()
+            && ! goalType.getRuntimeClass().isAssignableFrom(this.getRuntimeClass())) {
       return null;
+    }
+
+    if (goalType.isInterface()) {
+      List<ClassOrInterfaceType> interfaces = this.getInterfaces();
+      for (ClassOrInterfaceType interfaceType : interfaces) {
+        if (goalType.getRuntimeClass().isAssignableFrom(interfaceType.getRuntimeClass())) {
+          if (interfaceType.isParameterized()) {
+            InstantiatedType type = (InstantiatedType)interfaceType;
+            if (type.isInstantiationOf(goalType)) {
+              return (InstantiatedType) interfaceType;
+            }
+            InstantiatedType result = type.getMatchingSupertype(goalType);
+            if (result != null) {
+              return result;
+            }
+          } else {
+            return interfaceType.getMatchingSupertype(goalType);
+          }
+        }
+      }
+    }
+
+    ClassOrInterfaceType superclass = this.getSuperclass();
+    if (superclass != null
+            && ! superclass.isObject()
+            && goalType.getRuntimeClass().isAssignableFrom(superclass.getRuntimeClass())) {
+      if (superclass.isInstantiationOf(goalType)) {
+        return (InstantiatedType)superclass;
+      }
+
+      return superclass.getMatchingSupertype(goalType);
     }
 
     return null;
   }
 
+  /**
+   * Indicate whether this class is abstract.
+   *
+   * @return true if this class is abstract, false otherwise
+   */
   public abstract boolean isAbstract();
 
+  /**
+   * Indicate wheter this class is a member of another class.
+   * @return true if this class is a member class, false otherwise
+   */
+  public abstract boolean isMemberClass();
 }

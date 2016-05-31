@@ -1,7 +1,7 @@
 package randoop.types;
 
 /**
- * Created by bjkeller on 3/27/16.
+ * Enum used to indicate whether types should be matched exactly or using widening.
  */
 public enum Match {
   EXACT_TYPE,

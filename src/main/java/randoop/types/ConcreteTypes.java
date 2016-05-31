@@ -3,7 +3,7 @@ package randoop.types;
 import java.io.Serializable;
 
 /**
- * Created by bjkeller on 4/8/16.
+ * Constants for concrete Java types.
  */
 public class ConcreteTypes {
   public static final PrimitiveType BOOLEAN_TYPE = new PrimitiveType(boolean.class);
@@ -21,6 +21,7 @@ public class ConcreteTypes {
 
   public static final GeneralType CLONEABLE_TYPE = new SimpleClassOrInterfaceType(Cloneable.class);
   public static final GeneralType SERIALIZABLE_TYPE = new SimpleClassOrInterfaceType(Serializable.class);
+
   /** The Null type is the lower bound of reference types and is only used in {@link randoop.types.CaptureTypeVariable} */
   static final ReferenceType NULL_TYPE = NullReferenceType.getNullType();
 }

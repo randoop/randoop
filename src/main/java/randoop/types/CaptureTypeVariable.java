@@ -17,6 +17,7 @@ import java.util.Objects;
   */
 class CaptureTypeVariable extends AbstractTypeVariable {
 
+  /** The ID counter for capture conversion variables */
   private static int count = 0;
 
   /** The integer ID of this capture variable */
@@ -25,7 +26,7 @@ class CaptureTypeVariable extends AbstractTypeVariable {
   /** The wildcard */
   private final WildcardArgument wildcard;
 
-  /** The upperbound */
+  /** The upper bound */
   private ParameterBound upperBound;
 
   /** The lower bound */

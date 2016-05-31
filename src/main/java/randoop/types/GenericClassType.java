@@ -116,8 +116,18 @@ public class GenericClassType extends ParameterizedType {
   }
 
   @Override
+  public boolean isMemberClass() {
+    return rawType.isMemberClass();
+  }
+
+  @Override
   public boolean isInstantiationOf(GenericClassType genericClassType) {
     return this.equals(genericClassType);
+  }
+
+  @Override
+  public boolean isStatic() {
+    return Modifier.isStatic(rawType.getModifiers() & Modifier.classModifiers());
   }
 
   @Override

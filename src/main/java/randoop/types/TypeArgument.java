@@ -12,6 +12,12 @@ import java.util.List;
  */
 public abstract class TypeArgument {
 
+  /**
+   * Applies the type substitution to this type argument.
+   *
+   * @param substitution  the substitution
+   * @return a version of this type argument with type variables replaced by the substitution
+   */
   public abstract TypeArgument apply(Substitution<ReferenceType> substitution);
 
   /**
@@ -74,6 +80,11 @@ public abstract class TypeArgument {
     return false;
   }
 
+  /**
+   * The type parameters for this type argument.
+   *
+   * @return the list of type parameters for this argument
+   */
   public List<AbstractTypeVariable> getTypeParameters() {
     return new ArrayList<>();
   }

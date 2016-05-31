@@ -43,6 +43,11 @@ public abstract class GeneralType {
    */
   public abstract String getName();
 
+  /**
+   * Indicate whether this object has a wildcard as a type parameter.
+   *
+   * @return false by default
+   */
   public boolean hasWildcard() {
     return false;
   }
@@ -184,6 +189,11 @@ public abstract class GeneralType {
    */
   public boolean isReferenceType() { return false; }
 
+  /**
+   * Indicates whether this type is the String type.
+   *
+   * @return true if this type is the String type, and false otherwise
+   */
   public boolean isString() {
     return false;
   }
@@ -345,10 +355,20 @@ public abstract class GeneralType {
 
   }
 
+  /**
+   * Applies a capture conversion to this type.
+   *
+   * @return a copy of this type with wildcards replaced by type conversion
+   */
   public GeneralType applyCaptureConversion() {
     return this;
   }
 
+  /**
+   * Returns the list of type parameters for this type.
+   *
+   * @return the type parameters for this type
+   */
   public List<AbstractTypeVariable> getTypeParameters() {
     return new ArrayList<>();
   }
