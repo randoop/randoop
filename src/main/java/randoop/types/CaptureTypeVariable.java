@@ -43,14 +43,10 @@ class CaptureTypeVariable extends AbstractTypeVariable {
     this.wildcard = wildcard;
     upperBound = new ClassOrInterfaceTypeBound(ConcreteTypes.OBJECT_TYPE);
     lowerBoundType = ConcreteTypes.NULL_TYPE;
-    try {
-      if (wildcard.hasUpperBound()) {
-        upperBound = ParameterBound.forType(wildcard.getBoundType());
-      } else {
-        lowerBoundType = wildcard.getBoundType();
-      }
-    } catch (IllegalArgumentException e) {
-      throw new IllegalArgumentException(e.getMessage() + " from wildcard " + wildcard);
+    if (wildcard.hasUpperBound()) {
+      upperBound = ParameterBound.forType(wildcard.getBoundType());
+    } else {
+      lowerBoundType = wildcard.getBoundType();
     }
   }
 

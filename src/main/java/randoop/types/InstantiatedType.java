@@ -321,11 +321,7 @@ public class InstantiatedType extends ParameterizedType {
     List<ReferenceType> convertedTypeList = new ArrayList<>();
     for (TypeArgument argument : argumentList) {
       if (argument.isWildcard()) {
-        try {
-          convertedTypeList.add(new CaptureTypeVariable((WildcardArgument) argument));
-        } catch (IllegalArgumentException e) {
-          throw new IllegalArgumentException(e.getMessage() + " occuring in type " + this);
-        }
+        convertedTypeList.add(new CaptureTypeVariable((WildcardArgument) argument));
       } else {
         convertedTypeList.add(((ReferenceArgument)argument).getReferenceType());
       }
