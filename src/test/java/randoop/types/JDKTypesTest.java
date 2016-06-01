@@ -25,11 +25,11 @@ public class JDKTypesTest {
     Set<GenericClassType> collectionTypes = new LinkedHashSet<>();
     for (Field f : JDKTypes.class.getDeclaredFields()) {
       try {
-        if (Modifier.isFinal(Modifier.fieldModifiers() & f.getModifiers())) {
+        if (! f.getName().equals("$jacocoData")  && Modifier.isFinal(Modifier.fieldModifiers() & f.getModifiers())) {
           collectionTypes.add((GenericClassType) f.get(null));
         }
       } catch (IllegalAccessException e) {
-        fail("could not access field");
+        fail("could not access field: " + f.getName());
       }
     }
 

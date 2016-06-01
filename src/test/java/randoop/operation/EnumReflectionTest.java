@@ -142,10 +142,12 @@ public class EnumReflectionTest {
           include.add(createEnumOperation(e));
         }
         for (Method m : c.getDeclaredMethods()) {
-          if (!m.getName().equals("values") && !m.getName().equals("valueOf")) {
-            include.add(createMethodCall(m, enumType));
-          } else {
-            exclude.add(createMethodCall(m, enumType));
+          if (!m.getName().equals("$jacocoInit")) {
+            if (!m.getName().equals("values") && !m.getName().equals("valueOf")) {
+              include.add(createMethodCall(m, enumType));
+            } else {
+              exclude.add(createMethodCall(m, enumType));
+            }
           }
         }
       }
@@ -193,10 +195,12 @@ public class EnumReflectionTest {
       }
     }
     for (Method m : c.getDeclaredMethods()) {
-      if (!m.getName().equals("values") && !m.getName().equals("valueOf")) {
-        include.add(createMethodCall(m, enumType));
-      } else {
-        exclude.add(createMethodCall(m, enumType));
+      if (!m.getName().equals("$jacocoInit")) {
+        if (!m.getName().equals("values") && !m.getName().equals("valueOf")) {
+          include.add(createMethodCall(m, enumType));
+        } else {
+          exclude.add(createMethodCall(m, enumType));
+        }
       }
     }
 
