@@ -150,9 +150,10 @@ public class RandoopSystemTest {
     options.add("--testclass=java2.util2.Collections");
     options.add("--omit-field-list=resources/systemTest/naiveomitfields.txt");
 
+    long timeout = 30000;
     RandoopRunDescription randoopRunDesc =
         generateAndCompile(
-            classpath, workingPath, packageName, regressionBasename, errorBasename, options);
+            classpath, workingPath, packageName, regressionBasename, errorBasename, options, timeout);
 
     assertThat("...has regression tests", randoopRunDesc.regressionTestCount, is(greaterThan(0)));
     TestRunDescription testRunDesc =
