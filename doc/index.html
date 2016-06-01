@@ -119,7 +119,7 @@ added by hand): </p>
 </pre>
 
 <p>
-Randoop creates tests, and then classifies them into three types:
+Randoop creates tests, and then classifies them into three kinds:
 ones that detect bugs in your current code, ones that can be used as
 regression tests to detect future bugs, and ones that are invalid and are discarded.
 Randoop's tests are not designed to be short or easy to read &mdash;
@@ -306,7 +306,7 @@ Randoop only invokes a method or constructor <i>M</i> if <b>all</b> of the follo
 </p>
 
 <ol>
-  <li> <i>M</i> is declared in a public class that is named
+  <li> <i>M</i> is declared in a visible class that is named
        by <a href="#option:testclass"><code>--testclass</code></a> or
        <a href="#option:classlist"><code>--classlist</code></a>, or is a
        member named by <a href="#option:methodlist"><code>--methodlist</code></a>.
@@ -314,7 +314,7 @@ Randoop only invokes a method or constructor <i>M</i> if <b>all</b> of the follo
   <li> <i>M</i> does not match the pattern given
        via <a href="#option:omitmethods"><code>--omitmethods</code></a>.
        </li>
-  <li> <i>M</i> is public, and its return type and parameter types are public.
+  <li> <i>M</i> is visible, and its return type and parameter types are public.
   </li>
 </ol>
 
