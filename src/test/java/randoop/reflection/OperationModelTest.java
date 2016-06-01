@@ -65,9 +65,9 @@ public class OperationModelTest {
         concreteOpCount++;
       }
     }
-    assertEquals("concrete operations", 58, concreteOpCount);
-    assertEquals("generic operations", 0, genericOpCount);
-    assertEquals("wildcard operations", 0, wildcardTypeCount);
+    assertTrue("concrete operation count (JDK7: 51, JDK8: 58)", (concreteOpCount == 51) || (concreteOpCount == 58));
+    assertEquals("generic operation count", 0, genericOpCount);
+    assertEquals("wildcard operation count", 0, wildcardTypeCount);
     assertEquals("all operations instantiated", model.getConcreteOperations().size(), concreteOpCount);
   }
 
