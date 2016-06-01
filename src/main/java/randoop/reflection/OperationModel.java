@@ -426,7 +426,7 @@ public class OperationModel {
     try {
       objectConstructor = Object.class.getConstructor();
     } catch (NoSuchMethodException e) {
-      System.out.println("Something is wrong. Please report unable to load Object()");
+      System.out.println("Something is wrong. Please report: unable to load Object()");
       System.exit(1);
     }
     TypedClassOperation operation = TypedOperation.forConstructor(objectConstructor);
