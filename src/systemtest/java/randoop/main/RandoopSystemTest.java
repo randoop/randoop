@@ -102,7 +102,9 @@ public class RandoopSystemTest {
     options.add("--observers=resources/systemTest/randoop1_observers.txt");
     options.add("--omit-field-list=resources/systemTest/testclassomitfields.txt");
 
-    long timeout = 36000L;
+
+    long startTime = System.currentTimeMillis();
+    long timeout = 600000L; // 60 seconds
     RandoopRunDescription randoopRunDesc =
         generateAndCompile(
             classpath,
@@ -112,6 +114,9 @@ public class RandoopSystemTest {
             errorBasename,
             options,
             timeout);
+
+    long endTime = System.currentTimeMillis();
+    // System.out.println("runCollectionTest took: " + (endTime - startTime) + " milliseconds");
 
     assertThat("...has regression tests", randoopRunDesc.regressionTestCount, is(greaterThan(0)));
     TestRunDescription testRunDesc =

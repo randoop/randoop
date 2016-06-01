@@ -13,6 +13,7 @@ import randoop.contract.EqualsReflexive;
 import randoop.contract.EqualsSymmetric;
 import randoop.contract.EqualsToNullRetFalse;
 import randoop.contract.ObjectContract;
+import randoop.contract.EqualsTransitive;
 import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
 import randoop.operation.ConcreteOperation;
@@ -394,6 +395,7 @@ public class OperationModel extends ModelCollections {
     contracts.add(new EqualsSymmetric());
     contracts.add(new EqualsHashcode());
     contracts.add(new EqualsToNullRetFalse());
+    contracts.add(EqualsTransitive.getInstance());
   }
 
   /**

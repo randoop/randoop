@@ -47,8 +47,8 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
       Set<ObjectContract> contracts, ExceptionPredicate exceptionPredicate) {
     this.contracts = new LinkedHashSet<>();
     for (ObjectContract c : contracts) {
-      if (c.getArity() > 2)
-        throw new IllegalArgumentException("Visitor accepts only unary or binary contracts.");
+      if (c.getArity() > 3)
+        throw new IllegalArgumentException("Visitor accepts only unary or binary or ternary contracts.");
       this.contracts.add(c);
     }
     this.exceptionPredicate = exceptionPredicate;
@@ -89,13 +89,83 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
         for (ObjectContract c : contracts) {
           if (c.getArity() == 1) {
             checkUnary(s, c, idxmap.getValues(cls), checks);
-          } else {
+          } else if (c.getArity() == 2) {
             checkBinary(s, c, idxmap.getValues(cls), checks);
+          } else {
+            checkTernary(s, c, idxmap.getValues(cls), checks);
           }
         }
       }
     }
     return checks;
+  }
+
+  /**
+   * Checks a ternary contract over the set of values defined in the sequence,
+   * and attaches failing checks at the final statement of the sequence.
+   *
+   * @param s
+   *          the executable sequence
+   * @param c
+   *          the contract to check
+   * @param values
+   *          the set of positions defining values to check
+   * @param checks
+   *          the {@link TestChecks} to which new checks are added
+   */
+  private void checkTernary(
+          ExecutableSequence s, ObjectContract c, Set<Integer> values, ErrorRevealingChecks checks) {
+    for (Integer i : values) {
+      ExecutionOutcome result1 = s.getResult(i);
+      for (Integer j : values) {
+        ExecutionOutcome result2 = s.getResult(j);
+        for (Integer k : values) {
+          ExecutionOutcome result3 = s.getResult(k);
+
+          if (Log.isLoggingOn()) {
+            Log.logLine("Checking contract " + c.getClass() + " on indices " + i + ", " + j + ", " + k);
+          }
+
+          ExecutionOutcome exprOutcome =
+                  ObjectContractUtils.execute(
+                          c,
+                          ((NormalExecution) result1).getRuntimeValue(),
+                          ((NormalExecution) result2).getRuntimeValue(),
+                          ((NormalExecution) result3).getRuntimeValue());
+
+          if (exprOutcome instanceof NormalExecution) {
+            NormalExecution e = (NormalExecution) exprOutcome;
+            if (e.getRuntimeValue().equals(true)) {
+              if (Log.isLoggingOn()) Log.logLine("Contract returned true.");
+              // Behavior ok.
+            } else {
+              if (Log.isLoggingOn())
+                Log.logLine("Contract returned false. Will add ExpressionEqFalse check");
+              // Create a check that records the actual value
+              // returned by the expression, marking it as invalid
+              // behavior.
+              checks.add(new ObjectCheck(c, i, s.sequence.getVariable(i), s.sequence.getVariable(j), s.sequence.getVariable(k)));
+            }
+          } else if (exprOutcome instanceof ExceptionalExecution) {
+            Throwable e = ((ExceptionalExecution) exprOutcome).getException();
+            if (Log.isLoggingOn()) Log.logLine("Contract threw exception: " + e.getMessage());
+            if (e instanceof BugInRandoopException) {
+              throw (BugInRandoopException) e;
+            }
+            // Execution of contract resulted in exception. The exception at this point
+	    // is not a Randoop error and is not handled by the ContractCheckingVisitor
+	    // since the contract isn't a part of the test method sequence.
+	    // Instead, exceptions that occur in statements are handled by a different
+	    // visitor.
+	    // Do not create a contract-violation decoration.
+            // TODO are there cases where exception in contract check is a
+            // failure?
+          } else {
+            throw new Error("Contract failed to execute during evaluation");
+          }
+        }
+      }
+    }
   }
 
   /**
