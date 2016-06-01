@@ -20,5 +20,8 @@ script:
   - ./gradlew --info check
   - ./gradlew --info manual
 
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+
 git:
   depth: 3

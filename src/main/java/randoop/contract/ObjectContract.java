@@ -70,7 +70,8 @@ public interface ObjectContract {
 
   /**
    * A string that will be inserted as a comment in the test before the code
-   * corresponding to this contract.
+   * corresponding to this contract.  Occurrences of variables x0, x1, x2,
+   * etc. in the string will be replaced by actual values.
    *
    * @return the commment string representation of this contract
    */

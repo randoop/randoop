@@ -26,6 +26,7 @@ allprojects {
   apply plugin: 'java'
   apply plugin: 'eclipse'
   apply plugin: 'idea'
+  apply plugin: 'jacoco'
   sourceCompatibility = 1.7
   targetCompatibility = 1.7
 
@@ -243,6 +244,15 @@ task agentTest(type: Test, dependsOn: 'copyJars') {
  * the project build task.
  */
 check.dependsOn agentTest
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
+
+check.dependsOn jacocoTestReport
 
 /*
  * Task to build the root directory of working directories used by the
