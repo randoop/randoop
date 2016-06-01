@@ -114,7 +114,7 @@ public class Substitution <T> {
    * @return a {@code Substitution} mapping each type variable to a type argument
    */
   @SafeVarargs
-  static <T> Substitution<T> forArgs(List<AbstractTypeVariable> parameters, T... arguments) {
+  public static <T> Substitution<T> forArgs(List<AbstractTypeVariable> parameters, T... arguments) {
     if (parameters.size() != arguments.length) {
       throw new IllegalArgumentException("number of parameters and arguments must agree");
     }
