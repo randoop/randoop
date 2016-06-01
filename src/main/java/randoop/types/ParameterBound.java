@@ -103,7 +103,7 @@ public abstract class ParameterBound {
       return new ClassOrInterfaceTypeBound((ClassOrInterfaceType)type);
     }
 
-    throw new IllegalArgumentException("type may only be class, interface, or type variable");
+    throw new IllegalArgumentException("type may only be class, interface, or type variable, got " + type);
   }
 
   /**
