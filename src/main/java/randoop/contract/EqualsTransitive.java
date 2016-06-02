@@ -9,7 +9,7 @@ import randoop.Globals;
 public class EqualsTransitive implements ObjectContract {
     private static final EqualsTransitive instance = new EqualsTransitive();
 
-    private EqualsTransitive() {};
+    private EqualsTransitive() {}
 
     public static EqualsTransitive getInstance() {
         return instance;

@@ -126,7 +126,7 @@ public class Substitution <T> {
   }
 
   /**
-   * Create a subtitution from the type parameters and the list of arguments.
+   * Create a substitution from the type parameters and the list of arguments.
    *
    * @param parameters  the type parameters
    * @param arguments  the type arguments
