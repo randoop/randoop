@@ -20,24 +20,33 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 /**
- * Created by bjkeller on 6/1/16.
+ * This is the code for building a sequence by extension from the developer document.
+ * Yeah, it works.
+ * No, it doesn't look like the example b/c of variable naming and short form substitutions.
  */
 public class DevExampleCode {
 
   @Test
   public void devDocExampleTest() {
     try {
+      // Want constructor for LinkedList<String>
       InstantiatedType linkedListType = JDKTypes.LINKED_LIST_TYPE.instantiate(ConcreteTypes.STRING_TYPE);
       Substitution<ReferenceType> substLL = linkedListType.getTypeSubstitution();
       TypedOperation newLL = TypedOperation.forConstructor(LinkedList.class.getConstructor()).apply(substLL);
+
+      // operations for string constant, and list method calls
       TypedOperation newOb = TypedOperation.createPrimitiveInitialization(ConcreteTypes.STRING_TYPE, "hi!");
       TypedOperation addFirst = TypedOperation.forMethod(LinkedList.class.getMethod("addFirst", Object.class)).apply(substLL);
       TypedOperation size = TypedOperation.forMethod(LinkedList.class.getMethod("size")).apply(substLL);
+
+      // Call to operation with wildcard in TreeSet<String>
       InstantiatedType treeSetType = JDKTypes.TREE_SET_TYPE.instantiate(ConcreteTypes.STRING_TYPE);
       Substitution<ReferenceType> substTS = treeSetType.getTypeSubstitution();
       TypedOperation wcTS = TypedOperation.forConstructor(TreeSet.class.getConstructor(Collection.class)).apply(substTS).applyCaptureConversion();
       Substitution<ReferenceType> substWC = Substitution.forArgs(wcTS.getTypeParameters(), (ReferenceType)ConcreteTypes.STRING_TYPE);
       TypedOperation newTS = wcTS.apply(substWC);
+
+      // call to generic operation
       TypedOperation syncA = TypedOperation.forMethod(Collections.class.getMethod("synchronizedSet", Set.class));
       Substitution<ReferenceType> substA = Substitution.forArgs(syncA.getTypeParameters(), (ReferenceType)ConcreteTypes.STRING_TYPE);
       TypedOperation syncS = syncA.apply(substA);
