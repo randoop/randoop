@@ -323,7 +323,7 @@ After the build, the classpath should include either of the following
 <ul>
   <li>
 <code>
-&lt;randoop-path&gt;/build/libs/randoop-2.1.4.jar:&lt;randoop-path&gt;/lib/plume.jar
+&lt;randoop-path&gt;/build/libs/randoop-3.0.0.jar:&lt;randoop-path&gt;/lib/plume.jar
 </code>
 </li>
 <li>
@@ -342,7 +342,7 @@ the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.
 So, for instance, the following will work to run the <code>exercised-class</code> agent:
 </p>
-<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/exercised-class-2.1.4.jar</code></pre>
+<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/exercised-class-3.0.0.jar</code></pre>
 
 
 <h2 id="maintenance">Maintaining Randoop</h2>
@@ -613,7 +613,7 @@ merging new work with the master branch.
         Set environment variables for the old and new version numbers.  (Don't use the examples given here!)
         <pre>
   OLDVERSION=<em>2.1.4</em>
-  NEWVERSION=<em>2.1.5</em></pre>
+  NEWVERSION=<em>3.0.0</em></pre>
         These are used for working with git.
       </li>
       <li>Also, update the version number and date in
@@ -665,16 +665,16 @@ merging new work with the master branch.
     <a href="https://help.github.com/articles/creating-releases/">GitHub instructions for creating a release</a>;
     in particular, start at
     <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
-    click "Tags", click "add release notes" for the new tag (e.g., v<em>2.1.5</em>),
-    name it "Randoop version <em>2.1.5</em>", use the changelog entry as the
+    click "Tags", click "add release notes" for the new tag (e.g., v<em>3.0.0</em>),
+    name it "Randoop version <em>3.0.0</em>", use the changelog entry as the
     description (but remove any line breaks and check the preview), upload the
     jar files from <code>build/libs</code>, and, finally, click "publish release".
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com.
     <br/>
-    Subject: Randoop version <em>2.1.5</em>
+    Subject: Randoop version <em>3.0.0</em>
     <br/>
-    Randoop <em>2.1.5</em> has been released and is available at
+    Randoop <em>3.0.0</em> has been released and is available at
     https://github.com/randoop/randoop/releases/.  The changelog appears below.
   </li>
 </ol>
@@ -729,12 +729,12 @@ It is helpful to think of a unit test as consisting of <i>two</i> things:
 <ul>
 <li><b>A test input</b>:  the portions of the code that call
 constructors and method of the classes under test; this is sometimes called the setup code.</li>
-<li><b>Checking code</b> or assertions or the &ldquo;test oracle&rdquo;: the
+<li><b>Checks</b> or assertions: the
 portion of the code that <i>checks</i> that the test input behaves as
 expected.</li>
 </ul>
 <p>
-As a simple example, suppose we're testing the JDK's collections
+As a simple example, suppose we are testing the JDK's collections
 classes (<code>LinkedList</code>, <code>Collections</code>, etc.)  The
 following unit test checks that the size of a linked list is computed
 correctly after an element is added.
@@ -743,57 +743,55 @@ correctly after an element is added.
 <pre class="code">
 1.   // Tests that the size of a list is 1 after adding an element.
 2.   public void testAdd() {
-3.      LinkedList list = new LinkedList();
+3.      LinkedList&lt;String&gt; list = new LinkedList&lt;&gt;();
 4.      boolean b = list.add(null);
-5.      assert list.size() == 1;
+5.      assertTrue(list.size() == 1);
 6.   }
 </pre>
 
 <p>
-The test input consists of lines 3-4, which creates a list and calls the
-<code>add</code> method, exercising the code of the list class under
-test. The test check is in line 5.
+The test input consists of lines 3-4, which exercises the code of the list class
+by creating a list, and then calling the <code>add</code> method.
+The test check is on line 5.
 </p>
 
 <p>
-In Randoop, test inputs are represented using
-<a href="javadoc/randoop/Sequence.html">Sequences</a>, which describe
-a sequence of <a href="javadoc/randoop/Statement.html">Statement</a>s
-(like the statements in lines 3-4 above)
-exercising the code under test, and test checks are represented
-using <a href="javadoc/randoop/Check.html">Checks</a>.
+In Randoop, a test input is represented as a
+<a href="javadoc/randoop/Sequence.html">Sequence</a>,
+and test checks are represented using <a href="javadoc/randoop/Check.html">Checks</a>.
+Each sequence is made up of one or more
+<a href="../api/randoop/sequence/Statement.html">Statement</a> objects.
 </p>
 
 <p>
-Randoop's generation algorithms basically create collections of
-Sequences, add the appropriate Checks to them, and output the results
-to the user as unit tests.
+Randoop's generation algorithms creates Sequences, adding the appropriate Checks
+to each, and output the results to the user as unit tests.
 </p>
 
 <h2 id="sequence">Sequences</h2>
 
 <p>
-Randoop's main data structure is the
-<a href="javadoc/randoop/Sequence.html">Sequence</a>.  A sequence
-describes the syntactic structure of a test input. In Randoop, all
-test inputs are sequences of operations that use the methods and
+Randoop generates
+<a href="javadoc/randoop/Sequence.html">Sequence</a> objects, which are used
+to construct the inputs of unit tests by adding checks.
+In Randoop, all test inputs are sequences of operations that use the methods and
 constructors of the classes under test.
 </p>
 
 <p>
 Continuing with our running example,
 here is an example of a sequence of statements that calls
-methods from the classes under test, which each statement on a
+methods from the classes under test:
 separate line:
 </p>
 
 <pre class="code">
-  LinkedList l = new LinkedList();
-  Object o = new Object();
-  l.addFirst(o);
+  LinkedList&lt;String&gt; l = new LinkedList&lt;&gt;();
+  String str = "hi!"
+  l.addFirst(str);
   int i = l.size();
-  TreeSet t = new TreeSet(l);
-  Set s = Collections.synchronizedSet(t);
+  TreeSet&lt;String&gt; t = new TreeSet&lt;&gt;(l);
+  Set&lt;String&gt; s = Collections.synchronizedSet(t);
 </pre>
 
 <p>
@@ -803,7 +801,7 @@ Notice that each statement has three elements:
 <li>A specific method (or constructor) that is being called.</li>
 <li>A value (primitive or object) returned by each call
 (<code>l</code>,
-<code>o</code>,
+<code>str</code>,
 <code>i</code>,
 <code>t</code>, and
 <code>s</code>).</li>
@@ -813,11 +811,11 @@ Notice that each statement has three elements:
 Rearranging the above sequence, we can see these elements more clearly:
 </p>
 <pre class="code">
-                  Result      StatementKind        Inputs
+                  Result      Operation        Inputs
                   ======      =============        ======
 statement 0:      l       =   new LinkedList       ()
-statement 1:      o       =   new Object           ()
-statement 2:                  addFirst             (l, o)
+statement 1:      str     =   "hi!"                ()
+statement 2:                  addFirst             (l, str)
 statement 3:      i       =   size                 (l)
 statement 4:      t       =   new TreeSet          (l)
 statement 5:      s       =   synchronizedSet      (t)
@@ -829,15 +827,15 @@ The three elements of a statement map to the following classes in Randoop:
 <ul>
 
 <li>
-<p>A <a href="javadoc/randoop/StatementKind.html">StatementKind</a>
+<p>A <a href="../api/randoop/operation/Operation.html">Operation</a>
 represents the kind of operation that the statement
 performs.
 </p>
 <p>
-Randoop statements include:
+Randoop operations include:
 </p>
 <ul>
-<li><a href="javadoc/randoop/RMethod.html">RMethod</a> represents a particular
+<li><a href="../api/randoop/operation/MethodCall.html">MethodCall</a> represents a particular
 method call. This class is Randoop's analogue of Java
 reflection's
 <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html"><code>Method</code></a>
@@ -845,29 +843,29 @@ class, and adds additional
 functionality useful to Randoop.
 </li>
 
-<li><a href="javadoc/randoop/RConstructor.html">RConstructor</a>
+<li><a href="../api/randoop/operation/ConstructorCall.html">ConstructorCall</a>
 represents a constructor call.
 </li>
 
 <li>
-<a href="javadoc/randoop/FieldGetter.html">FieldGetter</a> and <a href="javadoc/randoop/FieldSetter.html">FieldSetter</a>
+<a href="../api/randoop/operation/FieldGet.html">FieldGet</a> and <a href="../api/randoop/operation/FieldSet.html">FieldSet</a>
 represent getting and setting a public field. Fields are represented by
-instances of classes that implement <a href="javadoc/randoop/PublicField.html">PublicField</a>.
+instances of classes that implement <a href="../api/randoop/field/AccessibleField.html">AccessibleField</a>.
 </li>
 
 <li>
-<a href="javadoc/randoop/EnumConstant.html">EnumConstant</a>
+<a href="../api/randoop/operation/EnumConstant.html">EnumConstant</a>
 represents an enum constant value.
 </li>
 
-<li><a href="javadoc/randoop/PrimitiveOrStringOrNullDecl.html">PrimitiveOrStringOrNullDecl</a>
+<li><a href="../api/randoop/operation/NonreceiverTerm.html">NonreceiverTerm</a>
 represents a statement that declares and initializes a variable to primitive value, a String, or
 the <code>null</code> value (in code, <code>int x =
 1</code>, <code>String s = "s"</code>, <code>Foo f = null</code>,
 etc.).
 </li>
 
-<li><a href="javadoc/randoop/ArrayDeclaration.html">ArrayDeclaration</a>
+<li><a href="../api/randoop/operation/ArrayCreation.html">ArrayCreation</a>
 represents a statement that declares and initializes an array out of values created in
 previous statements (e.g. <code>int[] x = new int[] { var0, var1
 };</code>).
@@ -894,36 +892,79 @@ bottom. Recall the example sequence:
 </p>
 
 <pre class="code">
-  LinkedList l = new LinkedList();
-  Object o = new Object();
-  l.addFirst(o);
+  LinkedList&lt;String&gt; l = new LinkedList&lt;&gt;();
+  String str = "hi!";
+  l.addFirst(str);
   int i = l.size();
-  TreeSet t = new TreeSet(l);
+  TreeSet&lt;String&gt; t = new TreeSet&lt;&gt(l);
   Set s = Collections.synchronizedSet(t);
 </pre>
 
 <p>
-Below is code that creates this sequence via extension.
+To create this sequence by extension we need the operations.
+Because this code involves parameterized types, we need to instantiate the generic
+class types that are used in order to get the type substitution that we need.
+For instance, for the <code>LinkedList&lt;String&gt;</code> constructor call, we
+write:
 </p>
 
 <pre class="code">
+  InstantiatedType linkedListType = JDKTypes.LINKED_LIST_TYPE.instantiate(ConcreteTypes.STRING_TYPE);
+  Substitution&lt;ReferenceType&gt; substLL = linkedListType.getTypeSubstitution();
+  TypedOperation newLL = TypedOperation.forConstructor(LinkedList.class.getConstructor()).apply(substLL);
+</pre>
 
-  // First, create the StatementKinds we'll need.
-  StatementKind newLL = RConstructor.getRConstructor(LinkedList.class.getConstructor());
-  StatementKind newOb = RConstructor.getRConstructor(Object.class.getConstructor());
-  StatementKind addFist = RMethod.getRMethod(LinkedList.class.getMethod("addFirst", Object.class));
-  StatementKind size = RMethod.getRMethod(LinkedList.class.getMethod("size"));
-  StatementKind newTS = RConstructor.getRConstructor(TreeSet.class.getConstructor(Collection.class));
-  StatementKind syncS = RMethod.getRMethod(Collections.class.getMethod("synchronizedSet", Set.class));
+<p>
+which first creates the parameterized type, get's the type substitution, and then
+applies the substitution to the operation created from the constructor of the
+generic class.
+The next operations aren't from generic classes, and don't require this amount of setup:
+</p>
 
-  // Now, create the sequence by repeated extension.
+<pre class="code">
+  TypedOperation newOb = TypedOperation.createPrimitiveInitialization(ConcreteTypes.STRING_TYPE, "hi!");
+  TypedOperation addFirst = TypedOperation.forMethod(LinkedList.class.getMethod("addFirst", Object.class)).apply(substLL);
+  TypedOperation size = TypedOperation.forMethod(LinkedList.class.getMethod("size")).apply(substLL);
+</pre>
+
+<p>
+But operations with wildcards require a substitution be applied first for the
+variables in the type, a capture conversion be applied, and then a substitution
+for the variables from the capture conversion.
+</p>
+
+<pre class="code">
+  InstantiatedType treeSetType = JDKTypes.TREE_SET_TYPE.instantiate(ConcreteTypes.STRING_TYPE);
+  Substitution&lt;ReferenceType&gt; substTS = treeSetType.getTypeSubstitution();
+  TypedOperation wcTS = TypedOperation.forConstructor(TreeSet.class.getConstructor(Collection.class)).apply(substTS).applyCaptureConversion();
+  Substitution&lt;ReferenceType&gt; substWC = Substitution.forArgs(wcTS.getTypeParameters(), (ReferenceType)ConcreteTypes.STRING_TYPE);
+  TypedOperation newTS = wcTS.apply(substWC);
+</pre>
+
+<p>
+And, similarly a generic operation requires building a substitution for the
+parameter to the method:
+</p>
+
+<pre class="code">
+   TypedOperation syncA = TypedOperation.forMethod(Collections.class.getMethod("synchronizedSet", Set.class));
+   Substitution&lt;ReferenceType&gt; substA = Substitution.forArgs(syncA.getTypeParameters(), (ReferenceType)ConcreteTypes.STRING_TYPE);
+   TypedOperation syncS = syncA.apply(substA);
+</pre>
+
+<p>
+Once the operations are defined with the proper types, we can build the sequence
+by extension:
+</p>
+
+<pre class="code">
   Sequence s = new Sequence();
-  s = s.extend(newLL);
-  s = s.extend(newOb);
-  s = s.extend(addFist, s.getVariable(0), s.getVariable(1));
-  s = s.extend(size,    s.getVariable(0));
-  s = s.extend(newTS,   s.getVariable(0));
-  s = s.extend(syncS,   s.getVariable(4));
+     s = s.extend(newLL);
+     s = s.extend(newOb);
+     s = s.extend(addFirst, s.getVariable(0), s.getVariable(1));
+     s = s.extend(size,    s.getVariable(0));
+     s = s.extend(newTS,   s.getVariable(0));
+     s = s.extend(syncS,   s.getVariable(4));
 </pre>
 
 <p>
