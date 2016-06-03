@@ -103,7 +103,7 @@ public class GenericTypesTest {
     } catch (IllegalArgumentException e) {
       assertEquals(
           "illegal argument message matches",
-          "type argument does not match parameter bound",
+          "type argument java.lang.Integer does not match parameter bound randoop.types.Variable1<T>",
           e.getMessage());
     }
 
@@ -126,7 +126,8 @@ public class GenericTypesTest {
     } catch (IllegalArgumentException e) {
       assertEquals(
           "illegal argument message matches",
-          "type argument does not match parameter bound",
+          "type argument randoop.types.Variable1Ext does not match parameter bound "
+              + "randoop.types.Variable1<T> & java.lang.Comparable<T>",
           e.getMessage());
     }
 
@@ -158,7 +159,7 @@ public class GenericTypesTest {
     } catch (IllegalArgumentException e) {
       assertEquals(
           "illegal argument message matches",
-          "type argument does not match parameter bound",
+          "type argument randoop.types.Variable1Ext does not match parameter bound randoop.types.Variable1<T>",
           e.getMessage());
     }
 
