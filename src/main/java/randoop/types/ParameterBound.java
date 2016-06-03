@@ -16,28 +16,10 @@ import java.util.List;
  * @see GenericTypeBound
  * @see IntersectionTypeBound
  */
-public abstract class ParameterBound {
+public abstract class ParameterBound extends TypeBound {
 
-  /**
-   * Determines if this is an upper bound for the argument type.
-   *
-   * @param argType  the concrete argument type
-   * @param subst  the substitution
-   * @return true if this bound is satisfied by the concrete type when the
-   *         substitution is used on the bound, false otherwise
-   */
-  public abstract boolean isSatisfiedBy(GeneralType argType, Substitution<ReferenceType> subst);
-
-  /**
-   * Determines if this object is an upper bound for the argument type using the most stringent
-   * relaxation of the criterion used in {@link #isSatisfiedBy(GeneralType, Substitution)} allowed
-   * when not using a substitution. The most relaxed form is simply checking assignability of raw
-   * types.
-   *
-   * @param argType  the argument type
-   * @return true, if the type satisfies the
-   */
-  public abstract boolean isSatisfiedBy(GeneralType argType);
+  @Override
+  public abstract ParameterBound apply(Substitution<ReferenceType> substitution);
 
   /**
    * Creates a bound from the array of bounds of a {@code java.lang.reflect.TypeVariable}.
@@ -88,13 +70,13 @@ public abstract class ParameterBound {
   }
 
   /**
-   * Constructs a parameter bound given a {@link GeneralType}.
+   * Constructs a parameter bound given a {@link ReferenceType}.
    *
-   * @param type  the {@link GeneralType}
+   * @param type  the {@link ReferenceType}
    * @return a {@link ClassOrInterfaceTypeBound} if the type is a {@link ClassOrInterfaceType}, or
    *         a {@link VariableTypeBound} if the type is a {@link TypeVariable}
    */
-  public static ParameterBound forType(GeneralType type) {
+  public static ParameterBound forType(ReferenceType type) {
     if (type instanceof TypeVariable) {
       return new VariableTypeBound((TypeVariable)type);
     }
@@ -106,19 +88,4 @@ public abstract class ParameterBound {
     throw new IllegalArgumentException("type may only be class, interface, or type variable, got " + type);
   }
 
-  /**
-   * Indicates whether this bound is a subtype of the given general type.
-   *
-   * @param otherType  the general type
-   * @return true if this bound is a subtype of the given type
-   */
-  public abstract boolean isSubtypeOf(GeneralType otherType);
-
-  /**
-   * Applies the given substitution to this bound.
-   *
-   * @param substitution  the type substitution
-   * @return a new bound with types replaced as indicated by the substitution
-   */
-  public abstract ParameterBound apply(Substitution<ReferenceType> substitution);
 }
