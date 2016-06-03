@@ -68,7 +68,7 @@ class GenericTypeBound extends ClassOrInterfaceBound {
    */
   @Override
   public String toString() {
-    return rawType.toString() + "<" + UtilMDE.join(parameters, ",") + ">";
+    return rawType.getName() + "<" + UtilMDE.join(parameters, ",") + ">";
   }
 
   /**

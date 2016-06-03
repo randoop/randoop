@@ -179,7 +179,7 @@ public class GenericClassType extends ParameterizedType {
     Substitution<ReferenceType> substitution = Substitution.forArgs(this.getTypeParameters(), typeArguments);
     for (int i = 0; i < parameters.size(); i++) {
       if (!parameters.get(i).getTypeBound().isSatisfiedBy(typeArguments[i], substitution)) {
-        throw new IllegalArgumentException("type argument does not match parameter bound");
+        throw new IllegalArgumentException("type argument " + typeArguments[i] + " does not match parameter bound " + parameters.get(i).getTypeBound());
       }
     }
     return this.apply(substitution);
@@ -209,7 +209,7 @@ public class GenericClassType extends ParameterizedType {
    *
    * @return the list of type parameters of this generic class
    */
-  public List<TypeVariable> getFormalTypeParameters() {
+  List<TypeVariable> getFormalTypeParameters() {
     return parameters;
   }
 

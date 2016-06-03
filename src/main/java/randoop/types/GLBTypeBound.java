@@ -1,5 +1,7 @@
 package randoop.types;
 
+import java.util.Objects;
+
 /**
  * Implements an upper bound on a type variable resulting from a capture conversion (JLS section 5.1.10)
  * in the case that a wildcard has an upper bound other than Object.
@@ -39,6 +41,26 @@ public class GLBTypeBound extends TypeBound {
   public GLBTypeBound(ParameterBound parameterBound, TypeBound wildcardBound) {
     this.parameterBound = parameterBound;
     this.wildcardBound = wildcardBound;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (! (obj instanceof GLBTypeBound)) {
+      return false;
+    }
+    GLBTypeBound bound = (GLBTypeBound)obj;
+    return this.parameterBound.equals(bound.parameterBound)
+            && this.wildcardBound.equals(bound.wildcardBound);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(parameterBound, wildcardBound);
+  }
+
+  @Override
+  public String toString() {
+    return parameterBound.toString() + " & " + wildcardBound.toString();
   }
 
   /**

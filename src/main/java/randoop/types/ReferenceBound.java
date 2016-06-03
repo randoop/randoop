@@ -1,5 +1,7 @@
 package randoop.types;
 
+import java.util.Objects;
+
 /**
  * Represents an upper bound on a boundType variable that is a {@link ReferenceType}.
  * These should only occur as bounds for {@link CaptureTypeVariable} objects constructed during
@@ -19,6 +21,19 @@ class ReferenceBound extends TypeBound {
     this.boundType = boundType;
   }
 
+  @Override
+  public boolean equals(Object obj) {
+    if ( !(obj instanceof ReferenceBound)) {
+      return false;
+    }
+    ReferenceBound bound = (ReferenceBound)obj;
+    return this.boundType.equals(bound.boundType);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(boundType);
+  }
 
   @Override
   public boolean isSatisfiedBy(GeneralType argType, Substitution<ReferenceType> subst) {
