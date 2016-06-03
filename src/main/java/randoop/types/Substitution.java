@@ -116,7 +116,7 @@ public class Substitution <T> {
   @SafeVarargs
   public static <T> Substitution<T> forArgs(List<AbstractTypeVariable> parameters, T... arguments) {
     if (parameters.size() != arguments.length) {
-      throw new IllegalArgumentException("number of parameters and arguments must agree");
+      throw new IllegalArgumentException("number of parameters and arguments must agree, have: " + parameters.size() + ", " + arguments.length);
     }
     Substitution<T> s = new Substitution<>();
     for (int i = 0; i < parameters.size(); i++) {
