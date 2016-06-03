@@ -22,7 +22,7 @@ public class GenericTypesTest {
         new ClassOrInterfaceTypeBound(new SimpleClassOrInterfaceType(Object.class)),
         a1.getTypeParameters().get(0).getTypeBound());
 
-    ParameterBound b1 = a1.getTypeParameters().get(0).getTypeBound();
+    ParameterBound b1 = a1.getFormalTypeParameters().get(0).getTypeBound();
     Substitution<ReferenceType> subst =
         Substitution.forArgs(new ArrayList<AbstractTypeVariable>());
     assertTrue(
@@ -52,7 +52,7 @@ public class GenericTypesTest {
         new ClassOrInterfaceTypeBound(new SimpleClassOrInterfaceType(Number.class)),
         a1.getTypeParameters().get(0).getTypeBound());
 
-    ParameterBound b1 = a1.getTypeParameters().get(0).getTypeBound();
+    ParameterBound b1 = a1.getFormalTypeParameters().get(0).getTypeBound();
     assertTrue(
               "Integer satisfies bound Number",
               b1.isSatisfiedBy(new SimpleClassOrInterfaceType(Integer.class), emptySubst));
@@ -70,7 +70,7 @@ public class GenericTypesTest {
               GenericClassType.forClass(Comparable.class).instantiate(new SimpleClassOrInterfaceType(Integer.class))),
           a2.getTypeParameters().get(0).getTypeBound());
 
-    ParameterBound b2 = a1.getTypeParameters().get(0).getTypeBound();
+    ParameterBound b2 = a1.getFormalTypeParameters().get(0).getTypeBound();
     assertTrue(
               "Integer satisfies bound Comparable<Integer>",
               b2.isSatisfiedBy(new SimpleClassOrInterfaceType(Integer.class), emptySubst));
