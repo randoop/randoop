@@ -12,8 +12,8 @@ import randoop.contract.EqualsHashcode;
 import randoop.contract.EqualsReflexive;
 import randoop.contract.EqualsSymmetric;
 import randoop.contract.EqualsToNullRetFalse;
-import randoop.contract.ObjectContract;
 import randoop.contract.EqualsTransitive;
+import randoop.contract.ObjectContract;
 import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
 import randoop.operation.MethodCall;
@@ -25,9 +25,9 @@ import randoop.sequence.Sequence;
 import randoop.types.AbstractTypeVariable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
-import randoop.types.ParameterBound;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
+import randoop.types.TypeBound;
 import randoop.types.TypeNames;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
@@ -372,7 +372,7 @@ public class OperationModel {
    */
   private List<ReferenceType> selectCandidates(AbstractTypeVariable argument) {
     ReferenceType lowerBound = argument.getLowerTypeBound();
-    ParameterBound upperBound = argument.getTypeBound();
+    TypeBound upperBound = argument.getTypeBound();
     List<ReferenceType> typeList = new ArrayList<>();
     for (GeneralType inputType : inputTypes) {
       if (inputType.isReferenceType()

@@ -34,9 +34,9 @@ public abstract class AbstractTypeVariable extends ReferenceType {
   /**
    * Get the upper bound for for this type variable.
    *
-   * @return the (upper) {@link ParameterBound} for this type variable
+   * @return the (upper) {@link TypeBound} for this type variable
    */
-  public abstract ParameterBound getTypeBound();
+  public abstract TypeBound getTypeBound();
 
   /**
    * Get the lower bound for this type variable.

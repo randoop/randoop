@@ -75,7 +75,7 @@ public class ClassOrInterfaceTypeBound extends ClassOrInterfaceBound {
   }
 
   @Override
-  public ParameterBound apply(Substitution<ReferenceType> substitution) {
+  public ClassOrInterfaceTypeBound apply(Substitution<ReferenceType> substitution) {
     return new ClassOrInterfaceTypeBound(boundType.apply(substitution));
   }
 }
