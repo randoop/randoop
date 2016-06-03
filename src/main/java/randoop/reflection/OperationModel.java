@@ -86,7 +86,7 @@ public class OperationModel {
     contracts.add(new EqualsSymmetric());
     contracts.add(new EqualsHashcode());
     contracts.add(new EqualsToNullRetFalse());
-    contracts.add(EqualsTransitive.getInstance());
+    //contracts.add(EqualsTransitive.getInstance());
     exercisedClasses = new LinkedHashSet<>();
     operations = new LinkedHashSet<>();
   }
