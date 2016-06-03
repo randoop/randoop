@@ -19,7 +19,7 @@ public class GenericClassType extends ParameterizedType {
   private Class<?> rawType;
 
   /** the type parameters of the generic class */
-  private List<AbstractTypeVariable> parameters;
+  private List<TypeVariable> parameters;
 
   GenericClassType(Class<?> rawType) {
     this.rawType = rawType;
@@ -42,7 +42,7 @@ public class GenericClassType extends ParameterizedType {
    * @param rawType  the rawtype for the generic class
    * @param parameters  the type parameters for the generic class
    */
-  private GenericClassType(Class<?> rawType, List<AbstractTypeVariable> parameters) {
+  private GenericClassType(Class<?> rawType, List<TypeVariable> parameters) {
     if (rawType.getTypeParameters().length != parameters.size()) {
       throw new IllegalArgumentException("number of parameters should be equal");
     }
@@ -176,7 +176,7 @@ public class GenericClassType extends ParameterizedType {
       throw new IllegalArgumentException("number of arguments and parameters must match");
     }
 
-    Substitution<ReferenceType> substitution = Substitution.forArgs(this.parameters, typeArguments);
+    Substitution<ReferenceType> substitution = Substitution.forArgs(this.getTypeParameters(), typeArguments);
     for (int i = 0; i < parameters.size(); i++) {
       if (!parameters.get(i).getTypeBound().isSatisfiedBy(typeArguments[i], substitution)) {
         throw new IllegalArgumentException("type argument does not match parameter bound");
@@ -199,7 +199,17 @@ public class GenericClassType extends ParameterizedType {
    *
    * @return the list of type parameters of this generic class
    */
+  @Override
   public List<AbstractTypeVariable> getTypeParameters() {
+    return new ArrayList<AbstractTypeVariable>(parameters);
+  }
+
+  /**
+   * Returns the list of type parameters of this generic class as {@link TypeVariable} objects.
+   *
+   * @return the list of type parameters of this generic class
+   */
+  public List<TypeVariable> getFormalTypeParameters() {
     return parameters;
   }
 

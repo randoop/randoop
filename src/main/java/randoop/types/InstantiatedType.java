@@ -331,7 +331,7 @@ public class InstantiatedType extends ParameterizedType {
     for (int i = 0; i < convertedTypeList.size(); i++) {
       if (convertedTypeList.get(i).isCaptureVariable()) {
         CaptureTypeVariable captureVariable = (CaptureTypeVariable)convertedTypeList.get(i);
-        captureVariable.convert(instantiatedType.getTypeParameters().get(i), substitution);
+        captureVariable.convert(instantiatedType.getFormalTypeParameters().get(i), substitution);
       }
     }
 
