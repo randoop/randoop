@@ -94,7 +94,7 @@ class IntersectionTypeBound extends ClassOrInterfaceBound {
   }
 
   @Override
-  public ParameterBound apply(Substitution<ReferenceType> substitution) {
+  public IntersectionTypeBound apply(Substitution<ReferenceType> substitution) {
     List<ClassOrInterfaceBound> bounds = new ArrayList<>();
     for (ClassOrInterfaceBound bound : this.boundList) {
       bounds.add((ClassOrInterfaceBound)bound.apply(substitution));
