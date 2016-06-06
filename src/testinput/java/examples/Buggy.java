@@ -126,6 +126,240 @@ public class Buggy {
     }
   }
 
+  public static class BuggyCompareToAntiSym implements Comparable<BuggyCompareToAntiSym> {
+    private static BuggyCompareToAntiSym one = new BuggyCompareToAntiSym();
+    private static BuggyCompareToAntiSym two = new BuggyCompareToAntiSym();
+
+    public static BuggyCompareToAntiSym getOne() {
+      return one;
+    }
+    public static BuggyCompareToAntiSym getTwo() {
+      return two;
+    }
+
+    private  BuggyCompareToAntiSym() {}
+
+    @Override
+    public int compareTo(BuggyCompareToAntiSym o) {
+      if (this == one && o == two) {
+        return 1;
+      } else if (this == two && o == one) {
+        return 1;
+      }
+      return 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      // Prevent violations to lower arity contracts
+      if (o == null) {
+        return false;
+      }
+      return this == o;
+    }
+
+    @Override
+    public int hashCode() {
+      // No state to compare
+      return 311;
+    }
+  }
+
+  public static class BuggyCompareToReflexive implements Comparable<BuggyCompareToReflexive> {
+    private static BuggyCompareToReflexive one = new BuggyCompareToReflexive();
+
+    public static BuggyCompareToReflexive getOne() {
+      return one;
+    }
+
+    private  BuggyCompareToReflexive() {}
+
+    @Override
+    public int compareTo(BuggyCompareToReflexive o) {
+      if (this == one && o == one) {
+        return -1;
+      }
+      return 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      // Prevent violations to lower arity contracts
+      if (o == null) {
+        return false;
+      }
+      return this == o;
+    }
+
+    @Override
+    public int hashCode() {
+      // No state to compare
+      return 311;
+    }
+  }
+
+  public static class BuggyCompareToEquals implements Comparable<BuggyCompareToEquals>{
+    private static BuggyCompareToEquals one = new BuggyCompareToEquals();
+    private static BuggyCompareToEquals two = new BuggyCompareToEquals();
+
+    public static BuggyCompareToEquals getOne() {
+      return one;
+    }
+    public static BuggyCompareToEquals getTwo() {
+      return two;
+    }
+
+    private  BuggyCompareToEquals() {}
+
+    @Override
+    public int compareTo(BuggyCompareToEquals o) {
+      if (this == one && o == one) {
+        return -1;
+      } else if (this == two && o == two) {
+        return -1;
+      }
+      return 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      // Prevent violations to lower arity contracts
+      if (o == null) {
+        return false;
+      }
+      return this == o;
+    }
+
+    @Override
+    public int hashCode() {
+      // No state to compare
+      return 311;
+    }
+  }
+
+  public static class BuggyCompareToTransitive implements Comparable<BuggyCompareToTransitive>{
+    private static BuggyCompareToTransitive one = new BuggyCompareToTransitive();
+    private static BuggyCompareToTransitive two = new BuggyCompareToTransitive();
+    private static BuggyCompareToTransitive three = new BuggyCompareToTransitive();
+
+    public static BuggyCompareToTransitive getOne() {
+      return one;
+    }
+    public static BuggyCompareToTransitive getTwo() {
+      return two;
+    }
+    public static BuggyCompareToTransitive getThree() {
+      return three;
+    }
+
+    private BuggyCompareToTransitive() {}
+
+    @Override
+    public int compareTo(BuggyCompareToTransitive o) {
+      if (this == one && o == two) {
+        return 1;
+      } else if (this == two && o == three) {
+        return 1;
+      } else if (this == one && o == three) {
+        return -1;
+      }
+      return 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      // Prevent violations to lower arity contracts
+      if (o == null) {
+        return false;
+      }
+      return this == o;
+    }
+
+    @Override
+    public int hashCode() {
+      // No state to compare
+      return 311;
+    }
+  }
+
+  public static class BuggyCompareToSubs implements Comparable<BuggyCompareToSubs>{
+    private static BuggyCompareToSubs one = new BuggyCompareToSubs();
+    private static BuggyCompareToSubs two = new BuggyCompareToSubs();
+    private static BuggyCompareToSubs three = new BuggyCompareToSubs();
+
+    public static BuggyCompareToSubs getOne() {
+      return one;
+    }
+    public static BuggyCompareToSubs getTwo() {
+      return two;
+    }
+    public static BuggyCompareToSubs getThree() {
+      return three;
+    }
+
+    private BuggyCompareToSubs() {}
+
+    @Override
+    public int compareTo(BuggyCompareToSubs o) {
+      if (this == one && o == two) {
+        return 0;
+      } else if (this == two && o == three) {
+        return 1;
+      } else if (this == one && o == three) {
+        return -1;
+      }
+      return 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      // Prevent violations to lower arity contracts
+      if (o == null) {
+        return false;
+      }
+      return this == o;
+    }
+
+    @Override
+    public int hashCode() {
+      // No state to compare
+      return 311;
+    }
+  }
+
+  public static class BuggyCompareToNormal implements Comparable<BuggyCompareToNormal> {
+    private static BuggyCompareToNormal one = new BuggyCompareToNormal();
+
+    public static BuggyCompareToNormal getOne() {
+      return one;
+    }
+
+    private  BuggyCompareToNormal() {}
+
+    @Override
+    public int compareTo(BuggyCompareToNormal o) {
+      if (this == one) {
+        throw new RuntimeException("CompareTo purposely fails here");
+      }
+      return 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      // Prevent violations to lower arity contracts
+      if (o == null) {
+        return false;
+      }
+      return this == o;
+    }
+
+    @Override
+    public int hashCode() {
+      // No state to compare
+      return 311;
+    }
+  }
+
   public static void StackOverflowError() {
     throw new StackOverflowError();
   }
