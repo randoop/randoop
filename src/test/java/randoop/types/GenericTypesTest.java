@@ -8,6 +8,10 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Set;
+
+import randoop.types.test.ComplexSubclass;
+import randoop.types.test.Superclass;
 
 public class GenericTypesTest {
 
@@ -186,5 +190,32 @@ public class GenericTypesTest {
     assertTrue("vector is subtype of collection", vectorType.isSubtypeOf(collectionType));
     assertFalse("supertype is not a subtype", iterableType.isSubtypeOf(vectorType));
     assertFalse("supertype is not a subtype", collectionType.isSubtypeOf(vectorType));
+  }
+
+  @Test
+  public void parameterizedSupertypeTest() {
+    // subclass extends parameterized Superclass<Set<T>>
+    GenericClassType genericSubtype = GenericClassType.forClass(ComplexSubclass.class);
+    InstantiatedType subtype = genericSubtype.instantiate(ConcreteTypes.STRING_TYPE);
+
+    // make instantiated Superclass<Set<String>>
+    GenericClassType genericSetType = GenericClassType.forClass(Set.class);
+    InstantiatedType stringSetType = genericSetType.instantiate(ConcreteTypes.STRING_TYPE);
+    GenericClassType genericSuperType = GenericClassType.forClass(Superclass.class);
+    InstantiatedType stringSuperType = genericSuperType.instantiate(stringSetType);
+
+    assertTrue("ComplexSubclass<String> should be subtype of Superclass<Set<String>>", subtype.isSubtypeOf(stringSuperType));
+    assertEquals("superclass", stringSuperType, subtype.getSuperclass());
+
+    // try with example inspired by java.util.stream.Stream (which is Java 8)
+    GenericClassType genericStreamType = GenericClassType.forClass(Stream.class);
+    InstantiatedType stringStreamType = genericStreamType.instantiate(ConcreteTypes.STRING_TYPE);
+
+    GenericClassType genericBaseStreamType = GenericClassType.forClass(BaseStream.class);
+    InstantiatedType stringBaseStreamType = genericBaseStreamType.instantiate(ConcreteTypes.STRING_TYPE, stringStreamType);
+    assertTrue("is subtype", stringStreamType.isSubtypeOf(stringBaseStreamType));
+    assertEquals("superclass", null, stringStreamType.getSuperclass());
+    assertTrue("interface", stringStreamType.getInterfaces().contains(stringBaseStreamType));
+ 
   }
 }
