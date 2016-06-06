@@ -150,9 +150,9 @@ public abstract class GeneralType {
 
   /**
    * Indicate whether this type is a parameterized type.
-   * (A <i>parameterized type</i> <code>C&lt;T<sub>1</sub>,&hellip;,T<sub>k</sub>&gt;</code>
+   * (A <i>parameterized type</i> is a type <code>C&lt;T<sub>1</sub>,&hellip;,T<sub>k</sub>&gt;</code>
    * where <code>C&lt;F<sub>1</sub>,&hellip;,F<sub>k</sub>&gt;</code> is a generic class
-   * instantiated by a substitution <code>[F<sub>i</sub>\T<sub>i</sub>]</code>, and
+   * instantiated by a substitution <code>[F<sub>i</sub>:=T<sub>i</sub>]</code>, and
    * <code>T<sub>i</sub></code> is a subtype of the upper bound <code>B<sub>i</sub></code> of
    * the type parameter <code>F<sub>i</sub></code>.)
    *
@@ -231,7 +231,7 @@ public abstract class GeneralType {
   }
 
   /**
-   * Returns the package of this types runtime class.
+   * Returns the package of the runtime class of this type.
    *
    * @return the package of the runtime class of this type
    */
@@ -245,7 +245,7 @@ public abstract class GeneralType {
 
   /**
    * Unbox a boxed primitive type.
-   * Not legal for other types.
+   * Acts as the identity on primitive types, but is not legal for other types.
    *
    * @return the primitive type corresponding to this (boxed primitive) type
    */
@@ -255,7 +255,7 @@ public abstract class GeneralType {
 
   /**
    * Box a primitive type.
-   * Not legal for other types.
+   * Acts as the identity on boxed primitive types, but is not legal for other types.
    *
    * @return the boxed primitive type corresponding to this type.
    */
@@ -307,7 +307,7 @@ public abstract class GeneralType {
 
   /**
    * Returns a {@code GeneralType} object for the given type name.
-   * Uses reflection to find the correspond type.
+   * Uses reflection to find the corresponding type.
    *
    * @param typeName  the name of a type
    * @return the type object for the type with the name, null if none is found
@@ -325,11 +325,6 @@ public abstract class GeneralType {
    * Returns a type constructed from the object referenced by a
    * {@code java.lang.reflect.Type} reference.
    * If the object is a {@code Class} instance, then returns the corresponding {@code ConcreteType}.
-   * If the type is actually a {@code java.lang.reflect.ParameterizedType}, then the type arguments
-   * are inspected to decide whether to return a {@code ParameterizedType} or a
-   * {@code GenericClassType}.
-   * If the type is a {@code java.lang.reflect.GenericArrayType}, then the
-   * corresponding {@code GenericArrayType} is returned.
    * <p>
    * Note that when the type corresponds to a generic class type, this method
    * returns the type variables from the

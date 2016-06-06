@@ -1,9 +1,11 @@
 package randoop.types;
 
 /**
- * An abstract class representing type variables including standard type variables and those
- * constructed from capture conversion.
- * Capture conversion type variables have both upper and lower bounds, so apply that interface here.
+ * An abstract class representing type variables including type variables that are
+ * type parameters, and those constructed from capture conversion.
+ * Assumes a type variable has both upper and lower bounds, which are only formally
+ * defined for capture conversion type variables.
+ * When there is no explicit lower bound, the type {@link NullReferenceType} is returned.
  */
 public abstract class AbstractTypeVariable extends ReferenceType {
 

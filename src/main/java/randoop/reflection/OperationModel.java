@@ -12,7 +12,6 @@ import randoop.contract.EqualsHashcode;
 import randoop.contract.EqualsReflexive;
 import randoop.contract.EqualsSymmetric;
 import randoop.contract.EqualsToNullRetFalse;
-import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
 import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;

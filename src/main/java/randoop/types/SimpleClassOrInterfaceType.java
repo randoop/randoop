@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {@code ConcreteSimpleType} represents an atomic concrete type: a primitive type,
- * a non-generic class, an enum, or the rawtype of a generic class.
+ * {@code SimpleClassOrInterfaceType} represents a non-generic class, interface, enum, or the
+ * rawtype of a generic class.
  * It is a wrapper for a {@link Class} object, which is a runtime representation
  * of a type.
  */

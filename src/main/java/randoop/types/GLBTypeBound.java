@@ -9,7 +9,7 @@ import java.util.Objects;
  * parameterized type
  * <code>C&lt;S<sub>1</sub>,...,S<sub>n</sub>&gt;</code>
  * defined as
- * <code>glb(B<sub>i</sub>, U<sub>i</sub>[A<sub>i</sub>:=S<sub>i</sub></code>
+ * <code>glb(B<sub>i</sub>, U<sub>i</sub>[A<sub>i</sub>:=S<sub>i</sub>])</code>
  * where
  * <ul>
  *   <li><code>U<sub>i</sub></code> is the upper bound on the type variable <code>A<sub>i</sub></code>

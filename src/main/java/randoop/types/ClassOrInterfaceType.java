@@ -29,7 +29,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * transitive closure of definition of the <i>direct supertype</i> relation in
    * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.2">
    * section 4.10.2 of JLS for JavaSE 8</a>.
-   * <i>Only</i> checks reference types.
    * @see #isAssignableFrom(GeneralType)
    * @see ParameterizedType#isSubtypeOf(GeneralType)
    *
@@ -86,7 +85,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   public abstract boolean isInstantiationOf(GenericClassType genericClassType);
 
   /**
-   * Indicates whether a class is static.
+   * Indicates whether this class is static.
    *
    * @return true if this class is static, false otherwise
    */

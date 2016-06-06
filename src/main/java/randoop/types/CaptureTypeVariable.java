@@ -15,7 +15,7 @@ import java.util.Objects;
  * to match the definition in JLS section 5.1.10,
  * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">Capture Conversion</a>.
   */
-class CaptureTypeVariable extends AbstractTypeVariable {
+public class CaptureTypeVariable extends AbstractTypeVariable {
 
   /** The ID counter for capture conversion variables */
   private static int count = 0;

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Represents a type variable used by itself as a type.
+ * Represents a type variable that is a type parameter.
  * (See JLS, section 4.3)
  */
 public class TypeVariable extends AbstractTypeVariable {

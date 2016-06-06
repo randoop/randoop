@@ -7,7 +7,7 @@ import java.lang.reflect.Type;
  * Represents a wildcard type that has a lower bound (e.g., {@code ? super T}).
  * See JLS, section 4.5.1
  */
-class WildcardArgumentWithLowerBound extends WildcardArgument {
+public class WildcardArgumentWithLowerBound extends WildcardArgument {
 
   /**
    * Creates a wildcard argument with a lower bound.

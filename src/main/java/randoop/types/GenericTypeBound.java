@@ -13,7 +13,7 @@ import plume.UtilMDE;
  * bound to a concrete type bound.
   * @see Substitution
  */
-class GenericTypeBound extends ClassOrInterfaceBound {
+public class GenericTypeBound extends ClassOrInterfaceBound {
 
   /** the rawtype for this generic bound */
   private final Class<?> rawType;

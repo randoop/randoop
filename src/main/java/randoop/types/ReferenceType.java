@@ -13,8 +13,11 @@ public abstract class ReferenceType extends GeneralType {
 
   /**
    * {@inheritDoc}
-   * Checks for widening reference conversion
+   * <p>
+   * For {@link ReferenceType}, checks for widening reference conversion.
    * See <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.5">section 5.1.5 of JLS of JavaSE 8</a>
+   * for details.
+   * </p>
    */
   public boolean isAssignableFrom(GeneralType sourceType) {
     return super.isAssignableFrom(sourceType)

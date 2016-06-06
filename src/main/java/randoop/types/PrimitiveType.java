@@ -74,8 +74,10 @@ public class PrimitiveType extends GeneralType {
 
   /**
    * {@inheritDoc}
+   * <p>
    * Specifically implements tests for primitive types as defined in
    * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.1">section 4.10.1 of JLS for JavaSE 8</a>.
+   * </p>
    */
   @Override
   public boolean isSubtypeOf(GeneralType otherType) {
@@ -85,9 +87,12 @@ public class PrimitiveType extends GeneralType {
 
   /**
    * {@inheritDoc}
+   * <p>
    * Checks for
    * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.2">primitive widening (section 5.1.2)</a>, and
    * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.8">unboxing (section 5.1.8)</a> conversions.
+   * </p>
+   *
    * @return true if this type can be assigned from the source type by primitive widening or unboxing, false otherwise
    */
   @Override

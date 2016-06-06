@@ -16,7 +16,7 @@ import plume.UtilMDE;
  * This class preserves the order of the types, just in case it becomes
  * necessary to dump the bound to compilable code.
  */
-class IntersectionTypeBound extends ClassOrInterfaceBound {
+public class IntersectionTypeBound extends ClassOrInterfaceBound {
 
   /** the list of type bounds for the intersection bound */
   private List<ClassOrInterfaceBound> boundList;

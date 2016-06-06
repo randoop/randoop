@@ -11,6 +11,9 @@ import java.util.Set;
 import randoop.main.GenInputsAbstract;
 import randoop.util.StringEscapeUtils;
 
+/**
+ * Implements utilities over Java primitive types.
+ */
 public final class PrimitiveTypes {
   private PrimitiveTypes() {
     throw new IllegalStateException("no instances");

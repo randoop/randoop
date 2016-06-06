@@ -3,17 +3,17 @@ package randoop.types;
 import java.util.Objects;
 
 /**
- * Represents an upper bound on a boundType variable that is a {@link ReferenceType}.
+ * Represents an upper bound on a type variable that is a {@link ReferenceType}.
  * These should only occur as bounds for {@link CaptureTypeVariable} objects constructed during
  * capture conversion.
  */
-class ReferenceBound extends TypeBound {
+public class ReferenceBound extends TypeBound {
 
-  /** The boundType for this bound */
+  /** The type for this bound */
   private final ReferenceType boundType;
 
   /**
-   * Creates a bound for the given reference boundType.
+   * Creates a bound for the given reference type.
    *
    * @param boundType  the reference boundType
    */

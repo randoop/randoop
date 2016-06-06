@@ -114,7 +114,7 @@ public class InstantiatedType extends ParameterizedType {
    * instantiating the generic type
    *  <code>C&lt;F<sub>1</sub>,&hellip;,F<sub>n</sub>&gt;</code>
    * by substitution
-   *  <code>&#952; =[F<sub>1</sub>/T<sub>1</sub>,&hellip;,F<sub>n</sub>]</code>
+   *  <code>&#952; =[F<sub>1</sub>:=T<sub>1</sub>,&hellip;,F<sub>n</sub>:=T<sub>n</sub>]</code>
    * for which direct supertypes are:
    * <ol>
    *   <li> <code>D&lt;U<sub>1</sub>&#952;,&hellip;,U<sub>k</sub>&#952;&gt;</code>
@@ -308,8 +308,9 @@ public class InstantiatedType extends ParameterizedType {
    * Mads Torgerson <i>et al.</i>
    * "<a href="http://www.jot.fm/issues/issue_2004_12/article5.pdf">Adding Wildcards to the Java Programming Language</a>",
    * Journal of Object Technology, 3 (December 2004) 11, 97-116. Special Issue: OOPS track at SAC 2004.
-   *
-   * If this type has no wildcards then, returns this type.
+   * <p>
+   * If this type has no wildcards, then returns this type.
+   *</p>
    *
    * @return the capture conversion type for this type
    */

@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * Represents a type parameter bound that is a type variable.
  */
-class VariableTypeBound extends ParameterBound {
+public class VariableTypeBound extends ParameterBound {
 
   /** The {@link TypeVariable} that is this bound */
   private final TypeVariable typeVariable;
@@ -48,7 +48,7 @@ class VariableTypeBound extends ParameterBound {
    * A type variable parameter bound is satisfied by a type if the instantiation of the bound by the
    * given substitution is an upper bound of the type.
    *
-   * @return
+   * @return true, if the type satisfies the bound determined by the substitution
    */
   @Override
   public boolean isSatisfiedBy(GeneralType argType, Substitution<ReferenceType> substitution) {
