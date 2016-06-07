@@ -25,7 +25,7 @@ public class CompareToReflexive implements ObjectContract {
 
         if (o1 instanceof Comparable) {
             Comparable compObj1 = (Comparable) o1;
-            return (compObj1.compareTo(o1) == 0);
+            return (compObj1.compareTo(compObj1) == 0);
         }
         return true;
     }
