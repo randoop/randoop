@@ -4,7 +4,7 @@ import randoop.Globals;
 
 /**
  * The contract: Reversing a compareTo on two objects should result in equal values of opposite signs
- * <code>(x0.compareTo(x1)) == -(x1.compareTo(x0))</code>.
+ * <code>Math.signum(x0.compareTo(x1)) == -Math.signum(x1.compareTo(x0))</code>.
  */
 public class CompareToAntiSym implements ObjectContract {
     private static final CompareToAntiSym instance = new CompareToAntiSym();
@@ -26,7 +26,7 @@ public class CompareToAntiSym implements ObjectContract {
             Comparable compObj1 = (Comparable)o1;
             Comparable compObj2 = (Comparable)o2;
 
-            return (compObj1.compareTo(compObj2)) == -(compObj2.compareTo(compObj1));
+            return Math.signum(compObj1.compareTo(compObj2)) == -Math.signum(compObj2.compareTo(compObj1));
         }
         // If the compare to operation can't be done, the statement is trivially true
         return true;

@@ -3,8 +3,8 @@ package randoop.contract;
 import randoop.Globals;
 
 /**
- * The contract:
- * (x0.compareTo(x1) == 0) &rarr; ((x0.compareTo(x2) >= 0) == (x1.compareTo(x2) >= 0))
+ * The contract: Checks the substitutability property of compare to for equals
+ * (x0.compareTo(x1) == 0) &rarr; (Math.signum(x0.compareTo(x2)) == Math.signum(x1.compareTo(x2)))
  */
 public class CompareToSubs implements ObjectContract {
     private static final CompareToSubs instance = new CompareToSubs();
@@ -26,10 +26,10 @@ public class CompareToSubs implements ObjectContract {
         if (o1 instanceof Comparable && o2 instanceof Comparable) {
             Comparable compObj1 = (Comparable)o1;
             Comparable compObj2 = (Comparable)o2;
+            Comparable compObj3 = (Comparable)o3;
 
-            if (compObj1.compareTo(o2) == 0) {
-                return ((compObj1.compareTo(o3) >= 0) && (compObj2.compareTo(o3) >= 0))
-                        || ((compObj1.compareTo(o3) < 0) && (compObj2.compareTo(o3) < 0));
+            if (compObj1.compareTo(compObj2) == 0) {
+                return Math.signum(compObj1.compareTo(compObj3)) == Math.signum(compObj2.compareTo(compObj3));
             }
             return true;
         }

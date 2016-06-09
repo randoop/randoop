@@ -3,7 +3,7 @@ package randoop.contract;
 import randoop.Globals;
 
 /**
- * The contract:
+ * The contract: Checks the transitivity of the compare to method
  * <code>((x0.compareTo(x1) > 0) &amp;&amp; (x1.compareTo(x2) > 0)) &rarr; (x0.compareTo(x2) > 0)</code>.
  */
 public class CompareToTransitive implements ObjectContract {
@@ -26,9 +26,10 @@ public class CompareToTransitive implements ObjectContract {
         if (o1 instanceof Comparable && o2 instanceof Comparable) {
             Comparable compObj1 = (Comparable) o1;
             Comparable compObj2 = (Comparable) o2;
+            Comparable compObj3 = (Comparable) o3;
 
-            if (compObj1.compareTo(o2) > 0 && compObj2.compareTo(o3) > 0) {
-                return (compObj1.compareTo(o3) > 0);
+            if (compObj1.compareTo(compObj2) > 0 && compObj2.compareTo(compObj3) > 0) {
+                return (compObj1.compareTo(compObj3) > 0);
             }
             return true;
         }

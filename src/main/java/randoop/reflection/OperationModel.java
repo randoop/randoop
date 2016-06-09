@@ -14,6 +14,8 @@ import randoop.contract.EqualsSymmetric;
 import randoop.contract.EqualsToNullRetFalse;
 import randoop.contract.ObjectContract;
 import randoop.contract.EqualsTransitive;
+import randoop.contract.EqualsReturnsNormally;
+import randoop.contract.HashCodeReturnsNormally;
 import randoop.contract.CompareToAntiSym;
 import randoop.contract.CompareToEquals;
 import randoop.contract.CompareToReflexive;
@@ -397,17 +399,21 @@ public class OperationModel extends ModelCollections {
    *   Note: if you add to this list, also update the Javadoc for check_object_contracts.
    */
   private void addDefaultContracts() {
-    contracts.add(new EqualsReflexive());
-    contracts.add(new EqualsSymmetric());
-    contracts.add(new EqualsHashcode());
-    contracts.add(new EqualsToNullRetFalse());
+    //contracts.add(HashCodeReturnsNormally.getInstance());
+    // Equals contracts
+    //contracts.add(EqualsReturnsNormally.getInstance());
+    contracts.add(EqualsReflexive.getInstance());
+    contracts.add(EqualsSymmetric.getInstance());
+    contracts.add(EqualsHashcode.getInstance());
+    contracts.add(EqualsToNullRetFalse.getInstance());
     contracts.add(EqualsTransitive.getInstance());
+    // Compare to contracts
+    contracts.add(CompareToReturnsNormally.getInstance());
     contracts.add(CompareToReflexive.getInstance());
     contracts.add(CompareToAntiSym.getInstance());
-    contracts.add(CompareToTransitive.getInstance());
-    contracts.add(CompareToSubs.getInstance());
     contracts.add(CompareToEquals.getInstance());
-    contracts.add(CompareToReturnsNormally.getInstance());
+    contracts.add(CompareToSubs.getInstance());
+    contracts.add(CompareToTransitive.getInstance());
   }
 
   /**
