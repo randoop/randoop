@@ -19,7 +19,11 @@ public final class HashCodeReturnsNormally implements ObjectContract {
     assert objects != null && objects.length == 1;
     Object o = objects[0];
     assert o != null;
-    o.hashCode();
+    try {
+      o.hashCode();
+    } catch (Exception e) {
+      return false;
+    }
     return true;
   }
 
