@@ -1,24 +1,24 @@
 package randoop.test;
 
+import org.junit.Test;
+
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
 import randoop.DummyVisitor;
-import randoop.operation.ConcreteOperation;
 import randoop.operation.ConstructorCall;
+import randoop.operation.TypedClassOperation;
+import randoop.operation.TypedOperation;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
-import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeTuple;
+import randoop.types.ClassOrInterfaceType;
+import randoop.types.GeneralType;
 import randoop.types.RandoopTypeException;
+import randoop.types.TypeTuple;
 import randoop.util.ReflectionExecutor;
 import randoop.util.TimeoutExceededException;
-
-import junit.framework.TestCase;
-
-import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -29,7 +29,7 @@ public class NonterminatingInputTest {
   public void test() throws SecurityException, NoSuchMethodException {
 
     Sequence s = new Sequence();
-    ConcreteOperation con = null;
+    TypedOperation con = null;
     try {
       con = createConstructorCall(Looper.class.getConstructor());
     } catch (RandoopTypeException e) {
@@ -44,7 +44,7 @@ public class NonterminatingInputTest {
     assertTrue(es.throwsException(TimeoutExceededException.class));
   }
 
-  public static class Looper {
+  static class Looper {
     public Looper() {
       while (true) {
         // loop.
@@ -52,13 +52,13 @@ public class NonterminatingInputTest {
     }
   }
 
-  private ConcreteOperation createConstructorCall(Constructor<?> con) throws RandoopTypeException {
+  private TypedOperation createConstructorCall(Constructor<?> con) throws RandoopTypeException {
     ConstructorCall op = new ConstructorCall(con);
-    ConcreteType declaringType = ConcreteType.forClass(con.getDeclaringClass());
-    List<ConcreteType> paramTypes = new ArrayList<>();
+    ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(con.getDeclaringClass());
+    List<GeneralType> paramTypes = new ArrayList<>();
     for (Class<?> pc : con.getParameterTypes()) {
-      paramTypes.add(ConcreteType.forClass(pc));
+      paramTypes.add(GeneralType.forClass(pc));
     }
-    return new ConcreteOperation(op, declaringType, new ConcreteTypeTuple(paramTypes), declaringType);
+    return new TypedClassOperation(op, declaringType, new TypeTuple(paramTypes), declaringType);
   }
 }

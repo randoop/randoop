@@ -7,12 +7,13 @@ import java.util.List;
 import randoop.ExecutionOutcome;
 import randoop.Globals;
 import randoop.operation.CallableOperation;
-import randoop.operation.ConcreteOperation;
+import randoop.operation.TypedClassOperation;
+import randoop.operation.TypedOperation;
 import randoop.operation.Operation;
 import randoop.operation.OperationParser;
 import randoop.sequence.Sequence.RelativeNegativeIndex;
-import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeTuple;
+import randoop.types.GeneralType;
+import randoop.types.TypeTuple;
 import randoop.types.PrimitiveTypes;
 
 /**
@@ -27,7 +28,7 @@ public final class Statement {
    * The operation (method call, constructor call, primitive values declaration,
    * etc.).
    */
-  private final ConcreteOperation operation;
+  private final TypedOperation operation;
 
   // The list of values used as input to the statement.
   //
@@ -39,8 +40,11 @@ public final class Statement {
   /**
    * Create a new statement of type statement that takes as input the given
    * values.
+   *
+   * @param operation  the operation of this statement
+   * @param inputVariables  the variable that are used in this statement
    */
-  public Statement(ConcreteOperation operation, List<RelativeNegativeIndex> inputVariables) {
+  public Statement(TypedOperation operation, List<RelativeNegativeIndex> inputVariables) {
     this.operation = operation;
     this.inputs = new ArrayList<>(inputVariables);
   }
@@ -51,17 +55,8 @@ public final class Statement {
    * @param operation
    *          the operation for action of this statement.
    */
-  public Statement(ConcreteOperation operation) {
+  public Statement(TypedOperation operation) {
     this(operation, new ArrayList<RelativeNegativeIndex>());
-  }
-
-  /**
-   * True iff this statement is a void method call.
-   *
-   * @return true if output type is void
-   */
-  boolean isVoidMethodCall() {
-    return operation.isMethodCall() && operation.getOutputType().isVoid();
   }
 
   /**
@@ -98,11 +93,11 @@ public final class Statement {
     return java.util.Objects.hash(operation, inputs);
   }
 
-  public ConcreteType getOutputType() {
+  public GeneralType getOutputType() {
     return operation.getOutputType();
   }
 
-  public ConcreteTypeTuple getInputTypes() {
+  public TypeTuple getInputTypes() {
     return operation.getInputTypes();
   }
 
@@ -119,7 +114,7 @@ public final class Statement {
    *          the {@code StringBuilder} to which code text is appended.
    */
   public void appendCode(Variable variable, List<Variable> inputs, StringBuilder b) {
-    ConcreteType type = operation.getOutputType();
+    GeneralType type = operation.getOutputType();
     if (! type.isVoid()) {
       String typeName = type.getName();
       b.append(typeName);
@@ -129,13 +124,13 @@ public final class Statement {
     b.append(";").append(Globals.lineSep);
   }
 
-  public String toParseableString(String variableName, List<Variable> inputs) {
+  public String toParsableString(String variableName, List<Variable> inputs) {
     StringBuilder b = new StringBuilder();
     b.append(variableName);
     b.append(" =  ");
     b.append(OperationParser.getId(operation));
     b.append(" : ");
-    b.append(operation.toParseableString());
+    b.append(operation.toParsableString());
     b.append(" : ");
     for (Variable v : inputs) {
       b.append(v.toString());
@@ -144,23 +139,8 @@ public final class Statement {
     return b.toString();
   }
 
-  @Override
   public String toString() {
-    return "Statement(" + operation.toParseableString() + ")";
-  }
-
-  /**
-   * toModifiableStatement converts the statement to the mutable form.
-   *
-   * @param inputs
-   *          mutable version of variable inputs to statement.
-   * @param mVariable
-   *          the mutable variable the statement affects
-   * @return instance of mutable statement corresponding to this statement
-   */
-  MutableStatement toModifiableStatement(
-          List<MutableVariable> inputs, MutableVariable mVariable) {
-    return new MutableStatement(operation, inputs, mVariable);
+    return "Statement [ " + operation + "]";
   }
 
   /**
@@ -205,8 +185,11 @@ public final class Statement {
    *
    * @return result of getDeclaringClass for corresponding statement
    */
-  public ConcreteType getDeclaringClass() {
-    return operation.getDeclaringType();
+  public GeneralType getDeclaringClass() {
+    if (operation instanceof TypedClassOperation) {
+      return ((TypedClassOperation)operation).getDeclaringType();
+    }
+    return null;
   }
 
   /**
@@ -273,15 +256,15 @@ public final class Statement {
   }
 
   /**
-   * getConcreteOperation is meant to be a temporary solution to type confusion in
+   * getTypedOperation is meant to be a temporary solution to type confusion in
    * generators. This should go away. Only intended to be called by
-   * {@link Sequence#extend(ConcreteOperation, List)}.
+   * {@link Sequence#extend(TypedOperation, List)}.
    *
    * @return operation object in the statement
    */
   // TODO can remove once RandomWalkGenerator.extendRandomly and
   // SequenceSimplifyUtils.makeCopy modified
-  public final ConcreteOperation getOperation() {
+  public final TypedOperation getOperation() {
     return operation;
   }
 }

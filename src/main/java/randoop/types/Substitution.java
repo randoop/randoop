@@ -17,19 +17,22 @@ import java.util.Objects;
  * <p>
  * Because a substitution represents the instantiation from a generic class to
  * a parameterized type, an instance is built using
- * {@link Substitution#forArgs(List, ConcreteType...)} and then not modified.
+ * {@link Substitution#forArgs(List, List)} and then not modified.
  */
-public class Substitution {
+public class Substitution <T> {
 
   /** The substitution map */
-  private Map<Type, ConcreteType> map;
+  private Map<AbstractTypeVariable, T> map;
+
+  /** map on reflection types - used for testing bounds */
+  private Map<java.lang.reflect.Type, T> rawMap;
 
   /**
    * Create an empty substitution.
-   * Objects created publicly using {@link Substitution#forArgs(List, ConcreteType...)}
    */
-  private Substitution() {
+  public Substitution() {
     map = new LinkedHashMap<>();
+    rawMap = new LinkedHashMap<>();
   }
 
   /**
@@ -41,6 +44,7 @@ public class Substitution {
     if (!(obj instanceof Substitution)) {
       return false;
     }
+    @SuppressWarnings("rawtypes")
     Substitution s = (Substitution) obj;
     return map.equals(s.map);
   }
@@ -57,21 +61,24 @@ public class Substitution {
   @Override
   public String toString() {
     List<String> pairs = new ArrayList<>();
-    for (Entry<Type, ConcreteType> p : map.entrySet()) {
-      pairs.add(p.getKey().toString() + "/" + p.getValue().getName());
+    for (Entry<AbstractTypeVariable, T> p : map.entrySet()) {
+      pairs.add(p.getKey().toString() + "/" + p.getValue().toString());
     }
     return "[" + UtilMDE.join(pairs, ",") + "]";
   }
 
   /**
    * Add a type variable to concrete type mapping to the substitution.
-   * Only called by {@link Substitution#forArgs(List, ConcreteType...)}
+   * Only called by {@link Substitution#forArgs(List, T...)}
    *
    * @param typeParameter  the type variable
-   * @param concreteType  the concrete type
+   * @param type  the concrete type
    */
-  private void put(Type typeParameter, ConcreteType concreteType) {
-    map.put(typeParameter, concreteType);
+  private void put(AbstractTypeVariable typeParameter, T type) {
+    map.put(typeParameter, type);
+    if (typeParameter instanceof TypeVariable) {
+      rawMap.put(((TypeVariable)typeParameter).getReflectionTypeVariable(), type);
+    }
   }
 
   /**
@@ -82,8 +89,18 @@ public class Substitution {
    * @return the concrete type mapped from the variable in this substitution, or
    * null if there is no type for the variable
    */
-  public ConcreteType get(Type parameter) {
+  public T get(AbstractTypeVariable parameter) {
     return map.get(parameter);
+  }
+
+  /**
+   * Returns the value for the given {@link java.lang.reflect.Type}
+   *
+   * @param parameter  the type variable
+   * @return  the value for the type variable, or null if there is none
+   */
+  public T get(Type parameter) {
+    return rawMap.get(parameter);
   }
 
   /**
@@ -91,47 +108,48 @@ public class Substitution {
    * arguments.
    * Requires that the number of parameters and arguments agree.
    *
+   * @param <T>  the substituted type
    * @param parameters  the type parameters
    * @param arguments  the type arguments
    * @return a {@code Substitution} mapping each type variable to a type argument
-   * @throws IllegalArgumentException if the number of type parameters and arguments
-   *         do not agree, or arguments has a primitive value
    */
-  public static Substitution forArgs(List<TypeParameter> parameters, ConcreteType... arguments) {
+  @SafeVarargs
+  public static <T> Substitution<T> forArgs(List<AbstractTypeVariable> parameters, T... arguments) {
     if (parameters.size() != arguments.length) {
-      throw new IllegalArgumentException("number of parameters and arguments must agree");
+      throw new IllegalArgumentException("number of parameters and arguments must agree, have: " + parameters.size() + ", " + arguments.length);
     }
-    Substitution s = new Substitution();
+    Substitution<T> s = new Substitution<>();
     for (int i = 0; i < parameters.size(); i++) {
-      if (arguments[i].isPrimitive()) {
-        String msg = "type arguments may not be primitive (found: " + arguments[i].getName() + ")";
-        throw new IllegalArgumentException(msg);
-      }
-      s.put(parameters.get(i).getParameter(), arguments[i]);
+      s.put(parameters.get(i), arguments[i]);
     }
     return s;
   }
 
-  public static Substitution forArgs(List<TypeParameter> parameters, List<ConcreteType> arguments) {
+  /**
+   * Create a substitution from the type parameters and the list of arguments.
+   *
+   * @param parameters  the type parameters
+   * @param arguments  the type arguments
+   * @param <T>  the argument type
+   * @return the substitution that maps the type parameters to the corresponding type argument
+   */
+  public static <T> Substitution<T> forArgs(List<AbstractTypeVariable> parameters, List<T> arguments) {
     if (parameters.size() != arguments.size()) {
       throw new IllegalArgumentException("number of parameters and arguments must agree");
     }
-    Substitution s = new Substitution();
+    Substitution<T> s = new Substitution<>();
     for (int i = 0; i < parameters.size(); i++) {
-      if (arguments.get(i).isPrimitive()) {
-        String msg = "type arguments may not be primitive (found: " + arguments.get(i).getName() + ")";
-        throw new IllegalArgumentException(msg);
-      }
-
-      s.put(parameters.get(i).getParameter(), arguments.get(i));
+      s.put(parameters.get(i), arguments.get(i));
     }
     return s;
   }
 
-  public Substitution union(Substitution substitution) {
-    Substitution s = new Substitution();
-    s.map.putAll(this.map);
-    s.map.putAll(substitution.map);
-    return s;
+  /**
+   * Print the entries of this substitution to standard out.
+   */
+  public void print() {
+    for (Entry<AbstractTypeVariable, T> entry : map.entrySet()) {
+      System.out.println(entry.getKey() + "(" + entry.getKey().hashCode() + ")" + " := " + entry.getValue());
+    }
   }
 }

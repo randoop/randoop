@@ -5,7 +5,7 @@ import plume.OptionGroup;
 import plume.Unpublicized;
 import randoop.*;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.ConcreteOperation;
+import randoop.operation.TypedOperation;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.test.TestCheckGenerator;
@@ -76,7 +76,7 @@ public abstract class AbstractGenerator {
    * declarations, etc.) used to generate sequences. In other words, statements
    * specifies the universe of operations from which sequences are generated.
    */
-  public List<ConcreteOperation> operations;
+  public List<TypedOperation> operations;
 
   /**
    * Container for execution visitors used during execution of sequences.
@@ -161,7 +161,7 @@ public abstract class AbstractGenerator {
    *          generation. Can be null.
    */
   public AbstractGenerator(
-      List<ConcreteOperation> operations,
+      List<TypedOperation> operations,
       long timeMillis,
       int maxGeneratedSequences,
       int maxOutSequences,

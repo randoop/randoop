@@ -4,56 +4,80 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.Collection;
 
-import randoop.BugInRandoopException;
-import randoop.field.AccessibleField;
 import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
-import randoop.operation.FieldGet;
-import randoop.operation.FieldSet;
 import randoop.operation.MethodCall;
 import randoop.operation.Operation;
-import randoop.types.ConcreteSimpleType;
-import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypes;
-import randoop.types.GeneralType;
-import randoop.types.GeneralTypeTuple;
-import randoop.types.GenericTypeTuple;
-import randoop.types.RandoopTypeException;
+import randoop.operation.TypedClassOperation;
+import randoop.operation.TypedOperation;
+import randoop.types.ClassOrInterfaceType;
+import randoop.types.GenericClassType;
+import randoop.types.InstantiatedType;
+import randoop.types.SimpleClassOrInterfaceType;
+import randoop.types.TypeTuple;
 
 /**
  * OperationExtractor is a {@link ClassVisitor} that creates a collection of
- * {@link Operation} objects through its visit methods as called by
- * {@link ReflectionManager#apply(Class)}.
+ * {@link Operation} objects for a particular {@link ClassOrInterfaceType} through its visit
+ * methods as called by {@link ReflectionManager#apply(Class)}.
+ * Allows types of operations of an {@link InstantiatedType} to be instantiated using the subsitution
+ * of the type.
  *
  * @see ReflectionManager
  * @see ClassVisitor
  *
  */
-public class OperationExtractor implements ClassVisitor {
+public class OperationExtractor extends DefaultClassVisitor {
 
-  private final TypedOperationManager manager;
+  /** The predicate that implements reflection policy for collecting operations */
   private final ReflectionPredicate predicate;
-  private final Stack<GeneralType> typeStack;
 
-  /** The current class type */
-  private GeneralType classType;
+  /** The collection of operations */
+  private final Collection<TypedOperation> operations;
+
+  /** The class type of the declaring class for the collected operations */
+  private ClassOrInterfaceType classType;
 
   /**
    * Creates a visitor object that collects Operation objects corresponding to
-   * class members visited by {@link ReflectionManager}. Stores
-   * {@link Operation} objects in an ordered collection to ensure they are
-   * strictly ordered once flattened to a list. This is needed to guarantee
-   * determinism between Randoop runs with the same classes and parameters.
+   * class members visited by {@link ReflectionManager}.
    */
-  public OperationExtractor(TypedOperationManager manager, ReflectionPredicate predicate) {
-    this.manager = manager;
+  /**
+   * Creates a visitor object that collects the {@link TypedOperation} objects corresponding to
+   * members of the class type and satisfying the given predicate.
+   *
+   * @param classType  the declaring classtype for collected operations
+   * @param operations  the collection of operations
+   * @param predicate  the reflection predicate
+   */
+  public OperationExtractor(ClassOrInterfaceType classType, Collection<TypedOperation> operations, ReflectionPredicate predicate) {
+    this.classType = classType;
+    this.operations = operations;
     this.predicate = predicate;
-    this.typeStack = new Stack<GeneralType>();
-    this.classType = null;
+  }
+
+  /**
+   * Adds an operation to the collection of this extractor.
+   * If the declaring class type is an {@link InstantiatedType}, then the substitution for that
+   * class is applied to the types of the operation, and this instantiated operation is returned.
+   *
+   * @param operation  the {@link TypedOperation}
+   */
+  private void addOperation(TypedClassOperation operation) {
+    if (operation != null) {
+      if (operation.getDeclaringType().isGeneric()) { // need to apply a substitution
+        GenericClassType declaringType = (GenericClassType) operation.getDeclaringType();
+        if (classType.isParameterized() && declaringType.hasRuntimeClass(classType.getRuntimeClass())) {
+          operation = operation.apply(((InstantiatedType) classType).getTypeSubstitution());
+        } else if (!classType.isGeneric()) {
+          InstantiatedType supertype = classType.getMatchingSupertype(declaringType);
+          operation = operation.apply(supertype.getTypeSubstitution());
+        }
+      }
+      operations.add(operation);
+    }
   }
 
   /**
@@ -70,15 +94,8 @@ public class OperationExtractor implements ClassVisitor {
     if (! predicate.test(c)) {
       return;
     }
-    ConstructorCall op = new ConstructorCall(c);
-    GeneralTypeTuple inputTypes;
-    try {
-      inputTypes = manager.getInputTypes(c.getGenericParameterTypes());
-    } catch (RandoopTypeException e) {
-      System.out.println("Ignoring constructor " + c.getName() + ": " + e.getMessage());
-      return; // not a critical error, just end visit
-    }
-    manager.createTypedOperation(op, classType, inputTypes, classType);
+
+    addOperation(TypedOperation.forConstructor(c));
   }
 
   /**
@@ -89,27 +106,10 @@ public class OperationExtractor implements ClassVisitor {
    */
   @Override
   public void visit(Method method) {
-    assert method.getDeclaringClass().isAssignableFrom(classType.getRuntimeClass())
-            : "classType " + classType + " should be assignable to declaring class " + method.getDeclaringClass().getName();
     if (! predicate.test(method)) {
       return;
     }
-
-    MethodCall op = new MethodCall(method);
-    GenericTypeTuple inputTypes;
-    GeneralType outputType;
-    try {
-      if (!Modifier.isStatic(method.getModifiers() & Modifier.methodModifiers())) {
-        inputTypes = manager.getInputTypes(classType, method.getGenericParameterTypes());
-      } else {
-        inputTypes = manager.getInputTypes(method.getGenericParameterTypes());
-      }
-      outputType = GeneralType.forType(method.getGenericReturnType());
-    } catch (RandoopTypeException e) {
-      System.out.println("Ignoring method " + method.getName() + ": " + e.getMessage());
-      return; // not a critical error, just end visit
-    }
-    manager.createTypedOperation(op, classType, inputTypes, outputType);
+    addOperation(TypedOperation.forMethod(method));
   }
 
   /**
@@ -126,29 +126,15 @@ public class OperationExtractor implements ClassVisitor {
     if (! predicate.test(field)) {
       return;
     }
-    GeneralType fieldType;
-    try {
-      fieldType = GeneralType.forType(field.getGenericType());
-    } catch (RandoopTypeException e) {
-      System.out.println("Ignoring field " + field.getName() + ": " + e.getMessage());
-      return; // not a critical error, just end visit
+    ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(field.getDeclaringClass());
+    if (! (declaringType.isGeneric()
+            && classType.isInstantiationOf((GenericClassType)declaringType))) {
+      declaringType = classType;
     }
-    List<GeneralType> setInputTypeList = new ArrayList<>();
-    List<GeneralType> getInputTypeList = new ArrayList<>();
-
-    AccessibleField accessibleField = new AccessibleField(field, classType);
-
-    if (! accessibleField.isStatic()) {
-      getInputTypeList.add(classType);
-      setInputTypeList.add(classType);
+    addOperation(TypedOperation.createGetterForField(field, declaringType));
+    if (! (Modifier.isFinal(field.getModifiers() & Modifier.fieldModifiers()))) {
+      addOperation(TypedOperation.createSetterForField(field, declaringType));
     }
-
-    manager.createTypedOperation(new FieldGet(accessibleField), classType, new GenericTypeTuple(getInputTypeList), fieldType);
-    if (! accessibleField.isFinal()) {
-      setInputTypeList.add(fieldType);
-      manager.createTypedOperation(new FieldSet(accessibleField), classType, new GenericTypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
-    }
-
   }
 
   /**
@@ -159,30 +145,10 @@ public class OperationExtractor implements ClassVisitor {
    */
   @Override
   public void visit(Enum<?> e) {
-    ConcreteType enumType = new ConcreteSimpleType(e.getDeclaringClass());
+    ClassOrInterfaceType enumType = new SimpleClassOrInterfaceType(e.getDeclaringClass());
     assert ! enumType.isGeneric() : "type of enum class cannot be generic";
     EnumConstant op = new EnumConstant(e);
-    manager.createTypedOperation(op, enumType, new GenericTypeTuple(), enumType);
+    addOperation(new TypedClassOperation(op, enumType, new TypeTuple(), enumType));
   }
-
-  @Override
-  public void visitBefore(Class<?> c) {
-    typeStack.push(classType);
-    if (! predicate.test(c)) {
-      return;
-    }
-    try {
-      classType = manager.getClassType(c);
-    } catch (RandoopTypeException e) {
-      throw new BugInRandoopException("Type error when reading class " + c.getName() + ": " + e.getMessage());
-    }
-  }
-
-  @Override
-  public void visitAfter(Class<?> c) {
-    assert ! typeStack.isEmpty() : "call to visitAfter not paired with call to visitBefore";
-    classType = typeStack.pop();
-  }
-
 
 }

@@ -3,7 +3,7 @@ package randoop.contract;
 import java.util.Objects;
 
 import randoop.Globals;
-import randoop.operation.ConcreteOperation;
+import randoop.operation.TypedOperation;
 import randoop.operation.MethodCall;
 import randoop.types.PrimitiveTypes;
 import randoop.util.Util;
@@ -29,7 +29,7 @@ public final class ObserverEqValue implements ObjectContract {
   /**
    * The observer method.
    */
-  public ConcreteOperation observer;
+  public TypedOperation observer;
 
   /**
    * The runtime value of the observer. This variable holds a primitive value or
@@ -53,7 +53,7 @@ public final class ObserverEqValue implements ObjectContract {
     return Objects.hash(observer, value);
   }
 
-  public ObserverEqValue(ConcreteOperation observer, Object value) {
+  public ObserverEqValue(TypedOperation observer, Object value) {
     assert observer.isMethodCall() : "Observer must be MethodCall, got " + observer;
     this.observer = observer;
     this.value = value;

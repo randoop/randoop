@@ -11,7 +11,7 @@ import java.util.Set;
 import randoop.Globals;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
-import randoop.types.ConcreteType;
+import randoop.types.GeneralType;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
@@ -52,7 +52,7 @@ import randoop.util.SimpleList;
 public class SequenceCollection {
 
   // We make it a list to make it easier to pick out an element at random.
-  private Map<ConcreteType, ArrayListSimpleList<Sequence>> sequenceMap = new LinkedHashMap<>();
+  private Map<GeneralType, ArrayListSimpleList<Sequence>> sequenceMap = new LinkedHashMap<>();
 
   private SubTypeSet typeSet = new SubTypeSet(false);
 
@@ -93,6 +93,8 @@ public class SequenceCollection {
 
   /**
    * Create a new collection and adds the given initial sequences.
+   *
+   * @param initialSequences  the initial collection of sequences
    */
   public SequenceCollection(Collection<Sequence> initialSequences) {
     if (initialSequences == null) throw new IllegalArgumentException("initialSequences is null.");
@@ -103,6 +105,11 @@ public class SequenceCollection {
     checkRep();
   }
 
+  /**
+   * All all sequences to this collection.
+   *
+   * @param col  the sequences to add
+   */
   public void addAll(Collection<Sequence> col) {
     if (col == null) {
       throw new IllegalArgumentException("col is null");
@@ -112,6 +119,11 @@ public class SequenceCollection {
     }
   }
 
+  /**
+   * Add all sequences to this collection.
+   *
+   * @param components  the sequences to add
+   */
   public void addAll(SequenceCollection components) {
     for (ArrayListSimpleList<Sequence> s : components.sequenceMap.values()) {
       for (Sequence seq : s.theList) {
@@ -129,9 +141,11 @@ public class SequenceCollection {
    * all sequences that create a T, the sequence will be in the collection
    * returned by the query). How a value is deemed useful or not is left up to
    * the client.
+   *
+   * @param sequence  the sequence to add to this collection
    */
   public void add(Sequence sequence) {
-    List<ConcreteType> formalTypes = sequence.getTypesForLastStatement();
+    List<GeneralType> formalTypes = sequence.getTypesForLastStatement();
     List<Variable> arguments = sequence.getVariablesOfLastStatement();
     assert formalTypes.size() == arguments.size();
     for (int i = 0; i < formalTypes.size(); i++) {
@@ -140,7 +154,7 @@ public class SequenceCollection {
           .get(i)
           .isAssignableFrom(argument.getType()) : formalTypes.get(i).getName() + " should be assignable from " + argument.getType().getName();
       if (sequence.isActive(argument.getDeclIndex())) {
-        ConcreteType type = formalTypes.get(i);
+        GeneralType type = formalTypes.get(i);
         typeSet.add(type);
         updateCompatibleMap(sequence, type);
       }
@@ -148,7 +162,13 @@ public class SequenceCollection {
     checkRep();
   }
 
-  private void updateCompatibleMap(Sequence sequence, ConcreteType type) {
+  /**
+   * Add an entry from the given type to the sequence to the map.
+   *
+   * @param sequence  the sequence
+   * @param type  the {@link GeneralType}
+   */
+  private void updateCompatibleMap(Sequence sequence, GeneralType type) {
       ArrayListSimpleList<Sequence> set = this.sequenceMap.get(type);
       if (set == null) {
         set = new ArrayListSimpleList<>();
@@ -165,10 +185,11 @@ public class SequenceCollection {
    * types match with the parameter type.
    *
    * @param type  the type desired for the sequences being sought
+   * @param exactMatch  the flag to indicate wehter an exact type match is required
    * @return list of sequence objects that are of typp 'type' and abide by the
    *         constraints defined by nullOk
    */
-  public SimpleList<Sequence> getSequencesForType(ConcreteType type, boolean exactMatch) {
+  public SimpleList<Sequence> getSequencesForType(GeneralType type, boolean exactMatch) {
 
     if (type == null) throw new IllegalArgumentException("type cannot be null.");
 
@@ -184,7 +205,7 @@ public class SequenceCollection {
         resultList.add(l);
       }
     } else {
-      for (ConcreteType compatibleType : typeSet.getMatches(type)) {
+      for (GeneralType compatibleType : typeSet.getMatches(type)) {
         resultList.add(this.sequenceMap.get(compatibleType));
       }
     }
@@ -199,7 +220,11 @@ public class SequenceCollection {
     return selector;
   }
 
-
+  /**
+   * Returns the set of all sequences in this collection.
+   *
+   * @return  the set of all sequences in this collection
+   */
   public Set<Sequence> getAllSequences() {
     Set<Sequence> result = new LinkedHashSet<>();
     for (ArrayListSimpleList<Sequence> a : sequenceMap.values()) {

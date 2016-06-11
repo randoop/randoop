@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -12,20 +13,20 @@ import plume.UtilMDE;
  * Java requires that an intersection type bound consist of class and
  * interface types, with at most one class, and if there is a class it appears
  * in the conjunction term first.
- * So, this class preserves the order of the types, just in case it becomes
+ * This class preserves the order of the types, just in case it becomes
  * necessary to dump the bound to compilable code.
  */
-public class IntersectionTypeBound extends TypeBound {
+public class IntersectionTypeBound extends ClassOrInterfaceBound {
 
   /** the list of type bounds for the intersection bound */
-  private List<TypeBound> boundList;
+  private List<ClassOrInterfaceBound> boundList;
 
   /**
    * Create an intersection type bound from the list of type bounds.
    *
    * @param boundList  the list of type bounds
    */
-  public IntersectionTypeBound(List<TypeBound> boundList) {
+  IntersectionTypeBound(List<ClassOrInterfaceBound> boundList) {
     if (boundList == null) {
       throw new IllegalArgumentException("bounds list may not be null");
     }
@@ -33,7 +34,7 @@ public class IntersectionTypeBound extends TypeBound {
     this.boundList = boundList;
   }
 
-  // XXX this could be relaxed. Only require that the first argument be first, if it is a class
+  // XXX could be relaxed: only require that the first argument be first, if it is a class (rest can be reordered)
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof IntersectionTypeBound)) {
@@ -59,8 +60,8 @@ public class IntersectionTypeBound extends TypeBound {
    * intersection type bound.
    */
   @Override
-  public boolean isSatisfiedBy(ConcreteType argType, Substitution subst) throws RandoopTypeException {
-    for (TypeBound b : boundList) {
+  public boolean isSatisfiedBy(GeneralType argType, Substitution<ReferenceType> subst) {
+    for (ParameterBound b : boundList) {
       if (!b.isSatisfiedBy(argType, subst)) {
         return false;
       }
@@ -70,23 +71,35 @@ public class IntersectionTypeBound extends TypeBound {
 
   /**
    * {@inheritDoc}
-   * It is not possible to create a {@code Class} object for an intersection
-   * type, so this returns the runtime class of the first bound or {@code Object}.
+   * Checks whether the argument type satisfies all of the bounds in this intersection type bound.
    */
   @Override
-  public Class<?> getRuntimeClass() {
-    Class<?> c = Object.class;
-    if (!boundList.isEmpty()) {
-      TypeBound b = boundList.get(0);
-      if (b instanceof ConcreteTypeBound) {
-        c = b.getRuntimeClass();
+  public boolean isSatisfiedBy(GeneralType argType) {
+    for (ParameterBound bound : boundList) {
+      if (! bound.isSatisfiedBy(argType)) {
+        return false;
       }
     }
-    return c;
+    return true;
   }
 
   @Override
-  public TypeBound apply(Substitution substitution) {
-    return this;
+  public boolean isSubtypeOf(GeneralType otherType) {
+    for (ParameterBound b : boundList) {
+      if (! b.isSubtypeOf(otherType)) {
+        return false;
+      }
+    }
+    return true;
   }
+
+  @Override
+  public IntersectionTypeBound apply(Substitution<ReferenceType> substitution) {
+    List<ClassOrInterfaceBound> bounds = new ArrayList<>();
+    for (ClassOrInterfaceBound bound : this.boundList) {
+      bounds.add((ClassOrInterfaceBound)bound.apply(substitution));
+    }
+    return new IntersectionTypeBound(bounds);
+  }
+
 }

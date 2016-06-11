@@ -15,16 +15,16 @@ import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.field.AccessibleField;
 import randoop.field.ClassWithFields;
-import randoop.reflection.ModelCollections;
 import randoop.reflection.StaticCache;
-import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.types.ConcreteSimpleType;
-import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeTuple;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
+import randoop.types.GeneralType;
+import randoop.types.PrimitiveType;
+import randoop.types.SimpleClassOrInterfaceType;
+import randoop.types.TypeTuple;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -51,19 +51,19 @@ public class FieldSetterTest {
   public static void restoreState() {
     cacheClassWithFields.restoreState();
   }
-  
+
   @Test
   public void testStaticField() {
     Class<?> c = ClassWithFields.class;
-    ConcreteType declaringType = new ConcreteSimpleType(c);
+    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(c);
     try {
       Field field = c.getField("fourField");
       AccessibleField f = new AccessibleField(field, declaringType);
-      ConcreteType fieldType = new ConcreteSimpleType(field.getType());
-      List<ConcreteType> setInputTypeList = new ArrayList<>();
+      GeneralType fieldType = new PrimitiveType(field.getType());
+      List<GeneralType> setInputTypeList = new ArrayList<>();
       setInputTypeList.add(fieldType);
       FieldSet setOp = new FieldSet(f);
-      ConcreteOperation op = new ConcreteOperation(setOp, declaringType, new ConcreteTypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
+      TypedOperation op = new TypedClassOperation(setOp, declaringType, new TypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
 
       //types
       assertEquals("Should be one input type", 1, op.getInputTypes().size());
@@ -72,7 +72,7 @@ public class FieldSetterTest {
       //code generation
       String expected = "randoop.field.ClassWithFields.fourField = 24;" + Globals.lineSep;
       StringBuilder b = new StringBuilder();
-      ConcreteOperation initOp = new ConcreteOperation(new NonreceiverTerm(ConcreteTypes.INT_TYPE, 24), ConcreteTypes.INT_TYPE, new ConcreteTypeTuple(), ConcreteTypes.INT_TYPE);
+      TypedOperation initOp = new TypedTermOperation(new NonreceiverTerm(ConcreteTypes.INT_TYPE, 24), new TypeTuple(), ConcreteTypes.INT_TYPE);
       Sequence seq0 =
           new Sequence().extend(initOp, new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
@@ -107,16 +107,16 @@ public class FieldSetterTest {
   @Test
   public void testInstanceField() {
     Class<?> c = ClassWithFields.class;
-    ConcreteType declaringType = new ConcreteSimpleType(c);
+    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(c);
     try {
       Field field = c.getField("oneField");
       AccessibleField f = new AccessibleField(field, declaringType);
-      ConcreteType fieldType = new ConcreteSimpleType(field.getDeclaringClass());
-      List<ConcreteType> setInputTypeList = new ArrayList<>();
+      GeneralType fieldType = new SimpleClassOrInterfaceType(field.getDeclaringClass());
+      List<GeneralType> setInputTypeList = new ArrayList<>();
       setInputTypeList.add(declaringType);
       setInputTypeList.add(fieldType);
       FieldSet setOp = new FieldSet(f);
-      ConcreteOperation op = new ConcreteOperation(setOp, declaringType, new ConcreteTypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
+      TypedOperation op = new TypedClassOperation(setOp, declaringType, new TypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
 
       //types
       assertEquals("Should be two input types", 2, op.getInputTypes().size());
@@ -133,10 +133,10 @@ public class FieldSetterTest {
       }
       assert constructor != null;
       ConstructorCall cons = new ConstructorCall(constructor);
-      ConcreteOperation consOp = new ConcreteOperation(cons,declaringType, new ConcreteTypeTuple(), declaringType);
+      TypedOperation consOp = new TypedClassOperation(cons,declaringType, new TypeTuple(), declaringType);
 
       Sequence seq0 = new Sequence().extend(consOp, new ArrayList<Variable>());
-      ConcreteOperation initOp = new ConcreteOperation(new NonreceiverTerm(ConcreteTypes.INT_TYPE, 24), ConcreteTypes.INT_TYPE, new ConcreteTypeTuple(), ConcreteTypes.INT_TYPE);
+      TypedOperation initOp = new TypedTermOperation(new NonreceiverTerm(ConcreteTypes.INT_TYPE, 24), new TypeTuple(), ConcreteTypes.INT_TYPE);
       Sequence seq1 = seq0.extend(initOp, new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
       vars.add(new Variable(seq1, 0));
@@ -186,7 +186,7 @@ public class FieldSetterTest {
   @Test
   public void testFinalField() {
     Class<?> c = ClassWithFields.class;
-    ConcreteType declaringType = new ConcreteSimpleType(c);
+    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(c);
     try {
       Field field = c.getField("tenField");
       AccessibleField f = new AccessibleField(field, declaringType);
@@ -210,7 +210,7 @@ public class FieldSetterTest {
   @Test
   public void testFinalStaticField() {
     Class<?> c = ClassWithFields.class;
-    ConcreteType declaringType = new ConcreteSimpleType(c);
+    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(c);
     try {
       Field field = c.getField("FIVEFIELD");
       AccessibleField f = new AccessibleField(field, declaringType);
@@ -234,21 +234,13 @@ public class FieldSetterTest {
   @Test
   public void parseable() {
     String setterDesc = "randoop.field.ClassWithFields.<set>(oneField)";
-    final List<ConcreteOperation> ops = new ArrayList<>();
-    TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
-      @Override
-      public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
-        ops.add(operation);
-      }
-    });
+
     try {
-      FieldSet.parse(setterDesc, operationManager);
-      assert ops.size() > 0 : "operations should have element";
-      ConcreteOperation setter = ops.get(0);
+      TypedOperation setter = FieldSet.parse(setterDesc);
       assertEquals(
           "parse should return object that converts to string",
           setterDesc,
-          setter.toParseableString());
+          setter.toParsableString());
     } catch (OperationParseException e) {
       fail("Parse error: " + e.getMessage());
     }

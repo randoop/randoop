@@ -1,7 +1,5 @@
 package randoop.reflection;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Set;
@@ -16,13 +14,15 @@ import randoop.main.GenInputsAbstract;
  * see if they are annotated with {@link randoop.CheckRep}, are non-static, and have either a
  * {@code boolean} or {@code void} return type.
  */
-public class CheckRepExtractor implements ClassVisitor {
+public class CheckRepExtractor extends DefaultClassVisitor {
 
   /** The set of accumulated {@link randoop.contract.ObjectContract} objects. */
   private Set<ObjectContract> contracts;
 
   /**
    * Creates a visitor with an empty contracts set.
+   *
+   * @param contracts  the set of constracts
    */
   public CheckRepExtractor(Set<ObjectContract> contracts) {
     this.contracts = contracts;
@@ -96,28 +96,4 @@ public class CheckRepExtractor implements ClassVisitor {
     System.out.println(msg);
   }
 
-  @Override
-  public void visit(Constructor<?> c) {
-    // do nothing
-  }
-
-  @Override
-  public void visit(Field f) {
-    // do nothing
-  }
-
-  @Override
-  public void visit(Enum<?> e) {
-    // do nothing
-  }
-
-  @Override
-  public void visitBefore(Class<?> c) {
-    // do nothing
-  }
-
-  @Override
-  public void visitAfter(Class<?> c) {
-    // do nothing
-  }
 }

@@ -1,8 +1,6 @@
 package randoop.reflection;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -11,13 +9,16 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Test;
-
-import randoop.operation.ConcreteOperation;
+import randoop.operation.TypedOperation;
 import randoop.reflection.visibilitytest.PackageSubclass;
-import randoop.types.ConcreteSimpleType;
-import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeTuple;
+import randoop.types.ClassOrInterfaceType;
+import randoop.types.GeneralType;
+import randoop.types.SimpleClassOrInterfaceType;
+import randoop.types.TypeTuple;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * A test to ensure that reflective collection of methods includes the
@@ -29,24 +30,24 @@ public class VisibilityBridgeTest {
   //can't compare method of superclass directly to method of subclass
   //so need to convert to abstraction to allow list search
   private class FormalMethod {
-    private ConcreteType returnType;
+    private GeneralType returnType;
     private String name;
-    private ConcreteTypeTuple parameterTypes;
+    private TypeTuple parameterTypes;
 
-    FormalMethod(Method m, ConcreteType declaringType) {
-      this.returnType = new ConcreteSimpleType(m.getReturnType());
+    FormalMethod(Method m, ClassOrInterfaceType declaringType) {
+      this.returnType = GeneralType.forClass(m.getReturnType());
       this.name = m.getName();
-      List<ConcreteType> paramTypes = new ArrayList<>();
+      List<GeneralType> paramTypes = new ArrayList<>();
       if (! Modifier.isStatic(m.getModifiers() & Modifier.methodModifiers())) {
         paramTypes.add(declaringType);
       }
       for (Class<?> p : m.getParameterTypes()) {
-        paramTypes.add(new ConcreteSimpleType(p));
+        paramTypes.add(new SimpleClassOrInterfaceType(p));
       }
-      this.parameterTypes = new ConcreteTypeTuple(paramTypes);
+      this.parameterTypes = new TypeTuple(paramTypes);
     }
 
-    FormalMethod(ConcreteOperation op) {
+    FormalMethod(TypedOperation op) {
       this.returnType = op.getOutputType();
       this.parameterTypes = op.getInputTypes();
       this.name = op.getOperation().getName();
@@ -65,6 +66,11 @@ public class VisibilityBridgeTest {
       return this.equals(m);
     }
 
+    @Override
+    public String toString() {
+      return name + " : " + parameterTypes + " -> " + returnType;
+    }
+
     public String getName() {
       return name;
     }
@@ -78,7 +84,7 @@ public class VisibilityBridgeTest {
   @Test
   public void testVisibilityBridge() {
     Class<?> sub = PackageSubclass.class;
-    ConcreteType declaringType = new ConcreteSimpleType(sub);
+    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(sub);
 
     //should only inherit public non-synthetic methods of package private superclass
     List<FormalMethod> include = new ArrayList<>();
@@ -93,14 +99,14 @@ public class VisibilityBridgeTest {
       fail("test failed because unable to find base class");
     }
 
-    Set<ConcreteOperation> actualOps = getConcreteOperations(sub);
+    Set<TypedOperation> actualOps = getConcreteOperations(sub);
     assertEquals(
         "expect operations count to be inherited methods plus constructor",
         include.size() + 1,
         actualOps.size());
 
     List<FormalMethod> actual = new ArrayList<>();
-    for (ConcreteOperation op : actualOps) {
+    for (TypedOperation op : actualOps) {
       if (op.isMethodCall()) {
         actual.add(new FormalMethod(op));
       }
@@ -111,19 +117,14 @@ public class VisibilityBridgeTest {
     }
   }
 
-  private Set<ConcreteOperation> getConcreteOperations(Class<?> c) {
+  private Set<TypedOperation> getConcreteOperations(Class<?> c) {
     return getConcreteOperations(c, new DefaultReflectionPredicate(), new PublicVisibilityPredicate());
   }
 
-  private Set<ConcreteOperation> getConcreteOperations(Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
-    final Set<ConcreteOperation> operations = new LinkedHashSet<>();
-    TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
-      @Override
-      public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
-        operations.add(operation);
-      }
-    });
-    OperationExtractor extractor = new OperationExtractor(operationManager, predicate);
+  private Set<TypedOperation> getConcreteOperations(Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
+    ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
+    final Set<TypedOperation> operations = new LinkedHashSet<>();
+    OperationExtractor extractor = new OperationExtractor(classType, operations, predicate);
     ReflectionManager manager = new ReflectionManager(visibilityPredicate);
     manager.add(extractor);
     manager.apply(c);

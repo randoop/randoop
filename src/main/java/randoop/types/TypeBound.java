@@ -1,121 +1,58 @@
 package randoop.types;
 
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Represents a type bound on a type variable occurring as a type parameter in
- * a class, interface, method or constructor. (See JLS section 4.4)
- * In Java, a type bound is either a type variable, a class type, an interface
- * type, or an intersection type of class and interface bounds.
- * This class represents a bound as concretely as possible based on the values
- * returned by {@link java.lang.reflect.TypeVariable#getBounds()}.
- * @see ConcreteTypeBound
- * @see GenericTypeBound
- * @see IntersectionTypeBound
+ * Represents general upper bound on a type variable of a parameterized type.
  */
 public abstract class TypeBound {
-
   /**
-   * Determines if this is an upper bound for the concrete argument type.
+   * Determines if this is an upper bound for the argument type.
    *
    * @param argType  the concrete argument type
+   * @param subst  the substitution
    * @return true if this bound is satisfied by the concrete type when the
    *         substitution is used on the bound, false otherwise
    */
-  public boolean isSatisfiedBy(ConcreteType argType, Substitution subst) throws RandoopTypeException {
-    return false;
-  }
+  public abstract boolean isSatisfiedBy(GeneralType argType, Substitution<ReferenceType> subst);
 
   /**
-   * Creates a {@code TypeBound} object from the given array of bounds.
-   * If there is more than one type, the returned bound is an intersection type.
+   * Determines if this object is an upper bound for the argument type using the most stringent
+   * relaxation of the criterion used in {@link #isSatisfiedBy(GeneralType, Substitution)} allowed
+   * when not using a substitution. The most relaxed form is simply checking assignability of raw
+   * types.
    *
-   * @param bounds  the types representing a type parameter bound
-   * @return the type bound constructed from the given {@code Type} objects
+   * @param argType  the argument type
+   * @return true, if the type satisfies the
    */
-  public static TypeBound fromTypes(TypeOrdering typeOrdering, Type... bounds) throws RandoopTypeException {
-    if (bounds == null) {
-      throw new IllegalArgumentException("bounds must be non null");
-    }
-
-    if (bounds.length == 1) {
-      return TypeBound.fromType(bounds[0], typeOrdering);
-    } else {
-      List<TypeBound> boundList = new ArrayList<>();
-      for (Type type : bounds) {
-        boundList.add(TypeBound.fromType(type, typeOrdering));
-      }
-      return new IntersectionTypeBound(boundList);
-    }
-  }
+  public abstract boolean isSatisfiedBy(GeneralType argType);
 
   /**
-   * Creates a {@code TypeBound} object from a single
-   * {@code java.lang.reflect.Type}.
-   * Tests for types that are represented by {@code Class} objects, or
-   * {@code java.lang.reflect.ParameterizedType} objects.
+   * Indicates whether this bound is a subtype of the given general type.
    *
-   * @param type  the type for type bound
-   * @return a type bound that ensures the given type is satisfied as an upper
-   *         bound
-   * @throws IllegalArgumentException if a parameterized type is given but the
-   *         rawtype is not a Class object
+   * @param otherType  the general type
+   * @return true if this bound is a subtype of the given type
    */
-  private static TypeBound fromType(Type type, TypeOrdering typeOrdering) throws RandoopTypeException {
-
-    if (type instanceof java.lang.reflect.ParameterizedType) {
-
-      java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
-      Type rawType = pt.getRawType();
-      if (!(rawType instanceof Class<?>)) {
-        throw new IllegalArgumentException("Rawtype expected to be a Class");
-      }
-
-      Class<?> runtimeType = (Class<?>) rawType;
-
-      // Can't tell whether type is a generic or parameterized type
-      // so have to inspect the arguments
-      Type[] arguments = pt.getActualTypeArguments();
-      // array for concrete arguments
-      ConcreteType[] conTypes = new ConcreteType[arguments.length];
-
-      for (int i = 0; i < arguments.length; i++) {
-        if (arguments[i] instanceof Class<?>) { // concrete
-          conTypes[i] = ConcreteType.forClass((Class<?>) arguments[i]);
-        } else { // generic -- just bail to generic bound constructor
-          return new GenericTypeBound(runtimeType, arguments, typeOrdering);
-        }
-      }
-      return new ConcreteTypeBound(ConcreteType.forClass(runtimeType, conTypes), typeOrdering);
-    }
-
-    if (type instanceof TypeVariable) {
-      return new VariableTypeBound((TypeVariable<?>)type, typeOrdering);
-    }
-
-    if (type instanceof Class<?>) {
-      Class<?> c = (Class<?>) type;
-      return new ConcreteTypeBound(ConcreteType.forClass(c), typeOrdering);
-    }
-
-    throw new IllegalArgumentException("unsupported type bound " + type.toString());
-  }
+  public abstract boolean isSubtypeOf(GeneralType otherType);
 
   /**
-   * Returns the runtime class for this type bound.
-   * Depending on implementing class, this may be {@code Object} or something
-   * closer to the bound.
-   * The returned value should not be used to test satisfiability of the bound.
+   * Applies the given substitution to this bound.
    *
-   * @return the runtime class for this type bound
+   * @param substitution  the type substitution
+   * @return a new bound with types replaced as indicated by the substitution
    */
-  public Class<?> getRuntimeClass() {
-    return null;
+  public abstract TypeBound apply(Substitution<ReferenceType> substitution);
+
+  /**
+   * Creates a type bound from a given {@link ReferenceType}.
+   *
+   * @param type  the reference type
+   * @return the type bound with the given type
+   */
+  public static TypeBound forType(ReferenceType type) {
+    if (type instanceof TypeVariable
+            || type instanceof ClassOrInterfaceType) {
+      return ParameterBound.forType(type);
+    }
+
+    return new ReferenceBound(type);
   }
-
-
-  public abstract TypeBound apply(Substitution substitution);
 }

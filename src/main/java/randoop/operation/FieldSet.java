@@ -1,7 +1,6 @@
 package randoop.operation;
 
 import java.io.PrintStream;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,16 +11,12 @@ import randoop.NormalExecution;
 import randoop.field.AccessibleField;
 import randoop.field.FieldParser;
 import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeTuple;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
 import randoop.types.GeneralType;
-import randoop.types.GeneralTypeTuple;
-import randoop.types.GenericTypeTuple;
-import randoop.types.RandoopTypeException;
+import randoop.types.TypeTuple;
 
 /**
  * FieldSetter is an adapter for a {@link AccessibleField} as a
@@ -110,7 +105,7 @@ public class FieldSet extends CallableOperation {
    *          the StringBuilder to which code is issued.
    */
   @Override
-  public void appendCode(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType, List<Variable> inputVars, StringBuilder b) {
+  public void appendCode(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b) {
 
     b.append(field.toCode(declaringType, inputVars));
     b.append(" = ");
@@ -136,7 +131,7 @@ public class FieldSet extends CallableOperation {
    * @return the parseable string descriptor for this setter
    */
   @Override
-  public String toParseableString(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
+  public String toParsableString(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
     return declaringType.getName() + ".<set>(" + field.getName() + ")";
   }
 
@@ -147,12 +142,11 @@ public class FieldSet extends CallableOperation {
    *
    * @param descr
    *          string containing descriptor of field setter.
-   * @param manager
-   *          the {@link TypedOperationManager} to collect operations
+   * @return the field setter for the given string descriptor
    * @throws OperationParseException
    *           if descr does not have expected form.
    */
-  public static void parse(String descr, TypedOperationManager manager) throws OperationParseException {
+  public static TypedOperation parse(String descr) throws OperationParseException {
     String errorPrefix = "Error parsing " + descr + " as description for field set statement: ";
 
     int openParPos = descr.indexOf('(');
@@ -174,14 +168,9 @@ public class FieldSet extends CallableOperation {
     String fieldname = descr.substring(openParPos + 1, closeParPos);
 
     AccessibleField accessibleField = FieldParser.parse(descr, classname, fieldname);
-    GeneralType classType = accessibleField.getDeclaringType();
+    ClassOrInterfaceType classType = accessibleField.getDeclaringType();
     GeneralType fieldType;
-    try {
-      fieldType = GeneralType.forType(accessibleField.getRawField().getGenericType());
-    } catch (RandoopTypeException e) {
-      String msg = errorPrefix + " type error: " + e;
-      throw new OperationParseException(msg);
-    }
+    fieldType = GeneralType.forType(accessibleField.getRawField().getGenericType());
 
     if (accessibleField.isFinal()) {
       throw new OperationParseException("Cannot create setter for final field " + classname + "." + opname);
@@ -191,7 +180,7 @@ public class FieldSet extends CallableOperation {
       setInputTypeList.add(classType);
     }
     setInputTypeList.add(fieldType);
-    manager.createTypedOperation(new FieldSet(accessibleField), classType, new GenericTypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
+    return new TypedClassOperation(new FieldSet(accessibleField), classType, new TypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
   }
 
   @Override

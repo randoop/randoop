@@ -4,7 +4,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -75,34 +77,47 @@ public class ReflectionManager {
    * @param c  the {@link Class} object to be visited.
    */
   public void apply(Class<?> c) {
+    for (ClassVisitor visitor : visitors) {
+      apply(visitor, c);
+    }
+  }
+
+  /**
+   * Applies the given {@link ClassVisitor} visitor to the class object and its members that
+   * satisfy the predicate of this reflection manager.
+   *
+   * @param visitor  the {@link ClassVisitor} to apply to the class
+   * @param c  the class
+   */
+  public void apply(ClassVisitor visitor, Class<?> c) {
     if (predicate.isVisible(c)) {
       if (Log.isLoggingOn()) Log.logLine("Applying visitors to class " + c.getName());
 
-      visitBefore(c); // perform any previsit steps
+      visitBefore(visitor, c); // perform any previsit steps
 
       if (c.isEnum()) { // treat enum classes differently
-        applyToEnum(c);
+        applyToEnum(visitor, c);
       } else {
 
         // Methods
         Set<Method> methods = new HashSet<>();
-        for (Method m : c.getMethods()) { // for all public methods
+        for (Method m : c.getMethods()) { // for all class methods
           methods.add(m); // remember to avoid duplicates
           if (isVisible(m)) { // if satisfies predicate then visit
-            applyTo(m);
+            applyTo(visitor, m);
           }
         }
         for (Method m : c.getDeclaredMethods()) { // for all methods declared by c
           // if not duplicate and satisfies predicate
           if ((!methods.contains(m)) && predicate.isVisible(m)) {
-            applyTo(m);
+            applyTo(visitor, m);
           }
         }
 
         // Constructors
         for (Constructor<?> co : c.getDeclaredConstructors()) {
           if (isVisible(co)) {
-            applyTo(co);
+            applyTo(visitor, co);
           }
         }
 
@@ -110,9 +125,9 @@ public class ReflectionManager {
         for (Class<?> ic : c.getDeclaredClasses()) { // look for inner enums
           if (predicate.isVisible(ic)){
             if (ic.isEnum()) {
-              visitBefore(ic);
-              applyToEnum(ic);
-              visitAfter(ic);
+              visitBefore(visitor, ic);
+              applyToEnum(visitor, ic);
+              visitAfter(visitor, ic);
             }
           }
         }
@@ -124,19 +139,19 @@ public class ReflectionManager {
         for (Field f : c.getDeclaredFields()) { // for fields declared by c
           declaredNames.add(f.getName());
           if (predicate.isVisible(f)) {
-            applyTo(f);
+            applyTo(visitor, f);
           }
         }
         for (Field f : c.getFields()) { // for all public fields of c
           // keep a field that satisfies filter, and is not inherited and hidden by
           // local declaration
           if (predicate.isVisible(f) && (!declaredNames.contains(f.getName()))) {
-            applyTo(f);
+            applyTo(visitor, f);
           }
         }
       }
 
-      visitAfter(c);
+      visitAfter(visitor, c);
     }
   }
 
@@ -156,14 +171,19 @@ public class ReflectionManager {
    *
    * @param c the enum class object from which constants and methods are extracted
    */
-  private void applyToEnum(Class<?> c) {
-    Set<String> overrideMethods = new HashSet<>();
+  private void applyToEnum(ClassVisitor visitor, Class<?> c) {
+    Map<String, Set<Method>> overrideMethods = new HashMap<>();
     for (Object obj : c.getEnumConstants()) {
       Enum<?> e = (Enum<?>) obj;
-      applyTo(e);
+      applyTo(visitor, e);
       if (!e.getClass().equals(c)) { // does constant have an anonymous class?
         for (Method m : e.getClass().getDeclaredMethods()) {
-          overrideMethods.add(m.getName()); // collect any potential overrides
+          Set<Method> methodSet = overrideMethods.get(m.getName());
+          if (methodSet == null) {
+            methodSet = new HashSet<>();
+          }
+          methodSet.add(m);
+          overrideMethods.put(m.getName(), methodSet); // collect any potential overrides
         }
       }
     }
@@ -171,15 +191,20 @@ public class ReflectionManager {
     for (Method m : c.getDeclaredMethods()) {
       if (predicate.isVisible(m)) {
         if (!m.getName().equals("values") && !m.getName().equals("valueOf")) {
-          applyTo(m);
+          applyTo(visitor, m);
         }
       }
     }
     // get any inherited methods also declared in anonymous class of some
     // constant
     for (Method m : c.getMethods()) {
-      if (predicate.isVisible(m) && overrideMethods.contains(m.getName())) {
-        applyTo(m);
+      if (predicate.isVisible(m)) {
+        Set<Method> methodSet = overrideMethods.get(m.getName());
+        if (methodSet != null) {
+          for (Method method : methodSet) {
+            applyTo(visitor, method);
+          }
+        }
       }
     }
   }
@@ -190,13 +215,11 @@ public class ReflectionManager {
    * @param f
    *          the field to be visited.
    */
-  private void applyTo(Field f) {
+  private void applyTo(ClassVisitor v, Field f) {
     if (Log.isLoggingOn()) {
       Log.logLine(String.format("Considering field %s", f.toGenericString()));
     }
-    for (ClassVisitor v : visitors) {
-      v.visit(f);
-    }
+    v.visit(f);
   }
 
   /**
@@ -205,13 +228,11 @@ public class ReflectionManager {
    * @param co
    *          the constructor to be visited.
    */
-  private void applyTo(Constructor<?> co) {
+  private void applyTo(ClassVisitor v, Constructor<?> co) {
     if (Log.isLoggingOn()) {
       Log.logLine(String.format("Considering constructor %s", co.toGenericString()));
     }
-    for (ClassVisitor v : visitors) {
-      v.visit(co);
-    }
+    v.visit(co);
   }
 
   /**
@@ -220,13 +241,11 @@ public class ReflectionManager {
    * @param m
    *          the method to be visited.
    */
-  private void applyTo(Method m) {
+  private void applyTo(ClassVisitor v, Method m) {
     if (Log.isLoggingOn()) {
       Log.logLine(String.format("Considering method %s", m.toGenericString()));
     }
-    for (ClassVisitor v : visitors) {
-      v.visit(m);
-    }
+    v.visit(m);
   }
 
   /**
@@ -235,13 +254,11 @@ public class ReflectionManager {
    * @param e
    *          the enum value to be visited.
    */
-  private void applyTo(Enum<?> e) {
+  private void applyTo(ClassVisitor v, Enum<?> e) {
     if (Log.isLoggingOn()) {
       Log.logLine(String.format("Considering enum %s", e));
     }
-    for (ClassVisitor v : visitors) {
-      v.visit(e);
-    }
+    v.visit(e);
   }
 
   /**
@@ -251,10 +268,8 @@ public class ReflectionManager {
    * @param c
    *          the class to be visited.
    */
-  private void visitAfter(Class<?> c) {
-    for (ClassVisitor v : visitors) {
-      v.visitAfter(c);
-    }
+  private void visitAfter(ClassVisitor v, Class<?> c) {
+    v.visitAfter(c);
   }
 
   /**
@@ -264,10 +279,8 @@ public class ReflectionManager {
    * @param c
    *          the class to be visited.
    */
-  private void visitBefore(Class<?> c) {
-    for (ClassVisitor v : visitors) {
-      v.visitBefore(c);
-    }
+  private void visitBefore(ClassVisitor v, Class<?> c) {
+    v.visitBefore(c);
   }
 
   /**
@@ -304,7 +317,7 @@ public class ReflectionManager {
   }
 
   /**
-   * Determines whether a concsturctor and each of its parameter types are visible.
+   * Determines whether a constructor and each of its parameter types are visible.
    *
    * @param c  the constructor
    * @return true if the constructor and each parameter type are visible; false, otherwise

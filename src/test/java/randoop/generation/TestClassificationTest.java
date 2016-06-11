@@ -17,14 +17,12 @@ import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.main.GenTests;
 import randoop.main.OptionsCache;
-import randoop.operation.ConcreteOperation;
+import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.ModelCollections;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.TypedOperationManager;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
@@ -35,7 +33,8 @@ import randoop.test.ExpectedExceptionCheck;
 import randoop.test.NoExceptionCheck;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
-import randoop.types.ConcreteType;
+import randoop.types.ClassOrInterfaceType;
+import randoop.types.GeneralType;
 import randoop.util.MultiMap;
 import randoop.util.predicate.AlwaysTrue;
 import randoop.util.predicate.Predicate;
@@ -327,16 +326,10 @@ public class TestClassificationTest {
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ReflectionPredicate predicate =
         new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields);
-    final List<ConcreteOperation> model = new ArrayList<>();
-    TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
-      @Override
-      public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
-        model.add(operation);
-      }
-    });
+    final List<TypedOperation> model = new ArrayList<>();
+    ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     ReflectionManager manager = new ReflectionManager(visibility);
-    manager.add(new OperationExtractor(operationManager, predicate));
-    manager.apply(c);
+    manager.apply(new OperationExtractor(classType, model, predicate), c);
     Collection<Sequence> components = new LinkedHashSet<>();
     components.addAll(SeedSequences.defaultSeeds());
     ComponentManager componentMgr = new ComponentManager(components);
@@ -344,7 +337,7 @@ public class TestClassificationTest {
     ForwardGenerator gen =
         new ForwardGenerator(
             model,
-            new LinkedHashSet<ConcreteOperation>(),
+            new LinkedHashSet<TypedOperation>(),
             GenInputsAbstract.timelimit * 1000,
             GenInputsAbstract.inputlimit,
             GenInputsAbstract.outputlimit,
@@ -354,7 +347,7 @@ public class TestClassificationTest {
     Predicate<ExecutableSequence> isOutputTest = new AlwaysTrue<>();
     gen.addTestPredicate(isOutputTest);
     TestCheckGenerator checkGenerator =
-        (new GenTests()).createTestCheckGenerator(visibility, new LinkedHashSet<ObjectContract>(), new MultiMap<ConcreteType, ConcreteOperation>(), new LinkedHashSet<ConcreteOperation>());
+        (new GenTests()).createTestCheckGenerator(visibility, new LinkedHashSet<ObjectContract>(), new MultiMap<GeneralType, TypedOperation>(), new LinkedHashSet<TypedOperation>());
     gen.addTestCheckGenerator(checkGenerator);
     gen.addExecutionVisitor(new DummyVisitor());
     return gen;

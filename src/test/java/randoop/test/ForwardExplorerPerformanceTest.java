@@ -14,14 +14,12 @@ import randoop.Globals;
 import randoop.generation.ForwardGenerator;
 import randoop.main.GenInputsAbstract;
 import randoop.main.OptionsCache;
-import randoop.operation.ConcreteOperation;
+import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.ModelCollections;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
-import randoop.reflection.TypedOperationManager;
-import randoop.types.ConcreteType;
+import randoop.types.ClassOrInterfaceType;
 import randoop.util.Timer;
 
 import static org.junit.Assert.fail;
@@ -64,19 +62,14 @@ public class ForwardExplorerPerformanceTest {
 
     String resourcename = "java.util.classlist.java1.6.txt";
 
-    final List<ConcreteOperation> model = new ArrayList<>();
-    TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
-      @Override
-      public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
-        model.add(operation);
-      }
-    });
-    ReflectionManager manager = new ReflectionManager(new PublicVisibilityPredicate());
-    manager.add(new OperationExtractor(operationManager, new DefaultReflectionPredicate()));
+    final List<TypedOperation> model = new ArrayList<>();
 
+    ReflectionManager manager = new ReflectionManager(new PublicVisibilityPredicate());
     try (EntryReader er = new EntryReader(ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
       for (String entry : er) {
-        manager.apply(Class.forName(entry));
+        Class<?> c = Class.forName(entry);
+        ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
+        manager.apply(new OperationExtractor(classType, model, new DefaultReflectionPredicate()), c);
       }
     } catch (IOException e) {
       fail("exception when reading class names " + e);
@@ -89,7 +82,7 @@ public class ForwardExplorerPerformanceTest {
     GenInputsAbstract.debug_checks = false;
     ForwardGenerator explorer =
         new ForwardGenerator(
-            model, new LinkedHashSet<ConcreteOperation>(), TIME_LIMIT_SECS * 1000, Integer.MAX_VALUE, Integer.MAX_VALUE, null, null, null);
+            model, new LinkedHashSet<TypedOperation>(), TIME_LIMIT_SECS * 1000, Integer.MAX_VALUE, Integer.MAX_VALUE, null, null, null);
     System.out.println("" + Globals.lineSep + "Will explore for " + TIME_LIMIT_SECS + " seconds.");
     explorer.explore();
     System.out.println(

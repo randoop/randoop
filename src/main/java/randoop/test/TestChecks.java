@@ -2,9 +2,6 @@ package randoop.test;
 
 import java.util.Map;
 
-import randoop.test.Check;
-import randoop.test.ExceptionCheck;
-
 /**
  * TestChecks represents the checks for a particular test sequence. Can either
  * be all passing tests for a regression test, or all failing tests for an

@@ -2,7 +2,7 @@ package randoop.util;
 
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.ConcreteOperation;
+import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 
 import java.io.ByteArrayOutputStream;
@@ -67,12 +67,12 @@ public final class Log {
     }
   }
 
-  public static void log(List<ConcreteOperation> model) {
+  public static void log(List<TypedOperation> model) {
     if (!isLoggingOn()) return;
 
     try {
       GenInputsAbstract.log.write("Statements : " + Globals.lineSep);
-      for (ConcreteOperation t : model) {
+      for (TypedOperation t : model) {
         GenInputsAbstract.log.write(t.toString());
         GenInputsAbstract.log.write(Globals.lineSep);
         GenInputsAbstract.log.flush();

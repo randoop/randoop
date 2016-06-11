@@ -34,7 +34,6 @@ import org.apache.commons.bcel6.generic.MethodGen;
 import org.apache.commons.bcel6.util.ClassPath;
 
 import randoop.operation.NonreceiverTerm;
-import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypes;
 import randoop.types.TypeNames;
 

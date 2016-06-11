@@ -17,21 +17,18 @@ import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.IStopper;
 import randoop.generation.SeedSequences;
-import randoop.main.OptionsCache;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.ConcreteOperation;
+import randoop.main.OptionsCache;
+import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.ModelCollections;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
-import randoop.reflection.TypedOperationManager;
 import randoop.test.issta2006.BinTree;
 import randoop.test.issta2006.BinomialHeap;
 import randoop.test.issta2006.FibHeap;
 import randoop.test.issta2006.TreeMap;
-import randoop.types.ConcreteType;
-import randoop.util.ReflectionExecutor;
+import randoop.types.ClassOrInterfaceType;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -80,18 +77,19 @@ public class ICSE07ContainersTest {
           Set<String> excludeNames) {
 
     System.out.println("ICSE 2006 container: " + name);
+    System.out.println("GenInputsAbstract.clear="+ GenInputsAbstract.clear);
+    System.out.println("GenInputsAbstract.repeat_heuristic=" + GenInputsAbstract.repeat_heuristic);
+    System.out.println("GenInputsAbstract.maxsize=" + GenInputsAbstract.maxsize);
+    System.out.println("GenInputsAbstract.alias_ratio=" + GenInputsAbstract.alias_ratio);
+    System.out.println("GenInputsAbstract.forbid_null=" + GenInputsAbstract.forbid_null);
+    System.out.println("GenInputsAbstract.null_ratio=" + GenInputsAbstract.null_ratio);
+    System.out.println("GenInputsAbstract.small_tests=" + GenInputsAbstract.small_tests);
 
-    final List<ConcreteOperation> model = new ArrayList<>();
-    TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
-      @Override
-      public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
-        model.add(operation);
-      }
-    });
+    final List<TypedOperation> model = new ArrayList<>();
     ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
-    mgr.add(new OperationExtractor(operationManager, new DefaultReflectionPredicate(omitMethodPattern, excludeNames)));
     for (Class<?> c : classList) {
-      mgr.apply(c);
+      ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
+      mgr.apply(new OperationExtractor(classType, model, new DefaultReflectionPredicate(omitMethodPattern, excludeNames)), c);
     }
     assertTrue("model should not be empty", !model.isEmpty());
     System.out.println("Number of operations: " + model.size());
@@ -104,7 +102,7 @@ public class ICSE07ContainersTest {
     ForwardGenerator explorer =
         new ForwardGenerator(
             model,
-                new LinkedHashSet<ConcreteOperation>(),
+                new LinkedHashSet<TypedOperation>(),
             120000 /* two minutes */,
             Integer.MAX_VALUE,
             Integer.MAX_VALUE,

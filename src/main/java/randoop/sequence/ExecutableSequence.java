@@ -559,6 +559,8 @@ public class ExecutableSequence {
    * Returns the index i for a non-executed statement, or -1 if there is no such
    * index. Note that a statement is considered executed even if it throws an
    * exception.
+   *
+   * @return the index of a non-executed statement in this sequence
    */
   public int getNonExecutedIndex() {
     // Starting from the end of the sequence is always faster to find
@@ -591,6 +593,11 @@ public class ExecutableSequence {
 
   }
 
+  /**
+   * Indicates whether the executed sequence has any null input values.
+   *
+   * @return  true if there is a null input value in this sequence, false otherwise
+   */
   public boolean hasNullInput() {
     return hasNullInput;
   }

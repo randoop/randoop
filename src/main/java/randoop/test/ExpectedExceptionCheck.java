@@ -28,7 +28,7 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
    * @param catchClassName
    *          the name of exception to be caught
    */
-  public ExpectedExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
+  ExpectedExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
     super(exception, statementIndex, catchClassName);
   }
 

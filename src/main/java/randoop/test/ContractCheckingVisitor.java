@@ -12,8 +12,8 @@ import randoop.contract.ObjectContract;
 import randoop.contract.ObjectContractUtils;
 import randoop.sequence.ExecutableSequence;
 import randoop.test.predicate.ExceptionPredicate;
-import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypes;
+import randoop.types.GeneralType;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 
@@ -84,8 +84,8 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
 
     } else {
       // Otherwise, normal execution, check contracts
-      MultiMap<ConcreteType, Integer> idxmap = indicesToCheck(s);
-      for (ConcreteType cls : idxmap.keySet()) {
+      MultiMap<GeneralType, Integer> idxmap = indicesToCheck(s);
+      for (GeneralType cls : idxmap.keySet()) {
         for (ObjectContract c : contracts) {
           if (c.getArity() == 1) {
             checkUnary(s, c, idxmap.getValues(cls), checks);
@@ -299,15 +299,15 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
    * @return map indicating statement positions where variables of a type are
    *         assigned
    */
-  private static MultiMap<ConcreteType, Integer> indicesToCheck(ExecutableSequence s) {
-    MultiMap<ConcreteType, Integer> positionMap = new MultiMap<>();
+  private static MultiMap<GeneralType, Integer> indicesToCheck(ExecutableSequence s) {
+    MultiMap<GeneralType, Integer> positionMap = new MultiMap<>();
 
     for (int i = 0; i < s.sequence.size(); i++) {
 
       ExecutionOutcome result = s.getResult(i);
       if (result instanceof NormalExecution) {
 
-        ConcreteType outputType = s.sequence.getStatement(i).getOutputType();
+        GeneralType outputType = s.sequence.getStatement(i).getOutputType();
         if (!outputType.equals(ConcreteTypes.VOID_TYPE)
             && !outputType.equals(ConcreteTypes.STRING_TYPE)
             && !outputType.isPrimitive()

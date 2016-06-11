@@ -24,7 +24,12 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   private Pattern omitMethods = null;
   private Set<String> omitFields;
 
-  /** If omitMethods is null, then no methods are omitted. */
+  /**
+   * Create a reflection predicate.
+   * If omitMethods is null, then no methods are omitted.
+   *
+   * @param omitMethods  the pattern for names of methods to omit
+   */
   public DefaultReflectionPredicate(Pattern omitMethods) {
     this(omitMethods, new HashSet<String>());
   }
@@ -39,6 +44,8 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    *
    * @param omitMethods
    *          pattern for methods to omit, if null then no methods omitted.
+   * @param omitFields
+   *          set of field names to omit
    */
   public DefaultReflectionPredicate(Pattern omitMethods, Set<String> omitFields) {
     super();
@@ -98,6 +105,10 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
           Log.logLine("  reason: it's a bridge method");
         }
         return false;
+      } else if (m.getDeclaringClass().isAnonymousClass()
+              && m.getDeclaringClass().getEnclosingClass() != null
+              && m.getDeclaringClass().getEnclosingClass().isEnum()) {
+        return false; // bridge method in enum constant anonymous class
       } else {
         if (Log.isLoggingOn()) {
           Log.logLine("Using visibility bridge method: " + m.toString());
@@ -201,7 +212,8 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     // We're skipping compareTo method in enums - you can call it only with the
     // same type as receiver
     // but the signature does not tell you that
-    if (m.getDeclaringClass().getCanonicalName().equals("java.lang.Enum")
+    if (! m.getDeclaringClass().isAnonymousClass()
+        && m.getDeclaringClass().getCanonicalName().equals("java.lang.Enum")
         && m.getName().equals("compareTo")
         && m.getParameterTypes().length == 1
         && m.getParameterTypes()[0].equals(Enum.class))

@@ -13,7 +13,7 @@
 <h1>Randoop Manual</h1> <!-- omit from toc -->
 
 <p>
-This is the manual for Randoop version 2.1.4, released February 24, 2016.
+This is the manual for Randoop version 3.0.0, released June 6, 2016.
 The Randoop homepage is
 <a href="http://randoop.github.io/randoop/">http://randoop.github.io/randoop/</a>.
 </p>
@@ -119,7 +119,7 @@ added by hand): </p>
 </pre>
 
 <p>
-Randoop creates tests, and then classifies them into three types:
+Randoop creates tests, and then classifies them into three kinds:
 ones that detect bugs in your current code, ones that can be used as
 regression tests to detect future bugs, and ones that are invalid and are discarded.
 Randoop's tests are not designed to be short or easy to read &mdash;
@@ -306,7 +306,7 @@ Randoop only invokes a method or constructor <i>M</i> if <b>all</b> of the follo
 </p>
 
 <ol>
-  <li> <i>M</i> is declared in a public class that is named
+  <li> <i>M</i> is declared in a visible class that is named
        by <a href="#option:testclass"><code>--testclass</code></a> or
        <a href="#option:classlist"><code>--classlist</code></a>, or is a
        member named by <a href="#option:methodlist"><code>--methodlist</code></a>.
@@ -314,7 +314,7 @@ Randoop only invokes a method or constructor <i>M</i> if <b>all</b> of the follo
   <li> <i>M</i> does not match the pattern given
        via <a href="#option:omitmethods"><code>--omitmethods</code></a>.
        </li>
-  <li> <i>M</i> is public, and its return type and parameter types are public.
+  <li> <i>M</i> is visible, and its return type and parameter types are public.
   </li>
 </ol>
 
@@ -1357,7 +1357,7 @@ java -ea -classpath randoop.jar randoop.main.Main help --unpub gentests
     <li>the exact and complete output of the commands, and</li>
     <li>all the files that are necessary to run those commands.</li>
   </ul>
-  If you encountered the problem while using the Eclipse or Maven plug-in,
+  If you encountered the problem while using the Maven plug-in,
   then please reproduce the problem from the command line, to help the
   Randoop developers find the underlying bug (or to isolate the problem to the plug-in).
 

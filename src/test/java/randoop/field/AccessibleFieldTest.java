@@ -2,9 +2,8 @@ package randoop.field;
 
 import org.junit.Test;
 
-import randoop.types.ConcreteSimpleType;
-import randoop.types.ConcreteType;
-import randoop.types.GeneralType;
+import randoop.types.ClassOrInterfaceType;
+import randoop.types.SimpleClassOrInterfaceType;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -16,7 +15,7 @@ public class AccessibleFieldTest {
   @Test
   public void inheritedMethods() {
     Class<?> c = ClassWithFields.class;
-    GeneralType declaringType = new ConcreteSimpleType(c);
+    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(c);
     try {
       AccessibleField pf1 = new AccessibleField(c.getField("oneField"), declaringType);
       AccessibleField pf1_2 = new AccessibleField(c.getField("oneField"), declaringType);

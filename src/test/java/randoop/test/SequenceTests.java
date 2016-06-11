@@ -23,7 +23,7 @@ import randoop.contract.ObjectContract;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.main.OptionsCache;
-import randoop.operation.ConcreteOperation;
+import randoop.operation.TypedOperation;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
@@ -31,7 +31,7 @@ import randoop.sequence.Sequence;
 import randoop.sequence.SequenceParseException;
 import randoop.test.predicate.ExceptionBehaviorPredicate;
 import randoop.test.predicate.ExceptionPredicate;
-import randoop.types.ConcreteType;
+import randoop.types.GeneralType;
 import randoop.util.MultiMap;
 import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;
@@ -62,7 +62,7 @@ public class SequenceTests {
    public static void restore() {
      optionsCache.restoreState();
    }
-   
+
   /**
    * Tests the sequence execution and code generation aspects of Randoop.
    *
@@ -81,7 +81,7 @@ public class SequenceTests {
    *
    * Each sequence is parsed, then two checks performed:
    *
-   * 1. (Test parsing code) s.toParseableString() can be parsed back into an equivalent sequence
+   * 1. (Test parsing code) s.toParsableString() can be parsed back into an equivalent sequence
    * 2. (Test execution and test generation code) sequence is executed and the resulting test code is
    *    compared with the expected code from the "EXPECTED_CODE" field in the record.
    */
@@ -124,7 +124,7 @@ public class SequenceTests {
         new ExtendGenerator(
             new ContractCheckingVisitor(
                 contracts, new ExceptionBehaviorPredicate(BehaviorType.ERROR)),
-            new RegressionCaptureVisitor(expectation, new MultiMap<ConcreteType,ConcreteOperation>(), new LinkedHashSet<ConcreteOperation>() , true));
+            new RegressionCaptureVisitor(expectation, new MultiMap<GeneralType, TypedOperation>(), new LinkedHashSet<TypedOperation>() , true));
   }
 
   // See http://bugs.sun.com/bugdatabase/view_bug.do;:WuuT?bug_id=4094886

@@ -1,27 +1,18 @@
 package randoop.operation;
 
-import org.checkerframework.checker.oigj.qual.O;
-
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.List;
 
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.reflection.TypedOperationManager;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeTuple;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
-import randoop.types.GeneralTypeTuple;
-import randoop.types.GenericTypeTuple;
-import randoop.types.RandoopTypeException;
-import randoop.types.TypeNames;
+import randoop.types.TypeTuple;
 import randoop.util.ConstructorReflectionCode;
 import randoop.util.ReflectionExecutor;
 import randoop.util.Util;
@@ -40,7 +31,7 @@ public final class ConstructorCall extends CallableOperation {
   /**
    * ID for parsing purposes.
    *
-   * @see OperationParser#getId(ConcreteOperation)
+   * @see OperationParser#getId(TypedOperation)
    */
   public static final String ID = "cons";
 
@@ -105,31 +96,29 @@ public final class ConstructorCall extends CallableOperation {
    *          constructor call.
    * @param b
    *          the StringBuilder to which the output is appended.
-   * @see ConcreteOperation#appendCode(List, StringBuilder)
+   * @see TypedClassOperation#appendCode(List, StringBuilder)
    */
   @Override
-  public void appendCode(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType, List<Variable> inputVars, StringBuilder b) {
+  public void appendCode(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b) {
+    assert declaringType instanceof ClassOrInterfaceType: "constructor must be member of class";
 
-    Class<?> declaringClass = constructor.getDeclaringClass();
-    boolean isNonStaticMember =
-        (!Modifier.isStatic(declaringClass.getModifiers()) && declaringClass.isMemberClass());
-    assert Util.implies(isNonStaticMember, !inputVars.isEmpty());
+    ClassOrInterfaceType declaringClassType = (ClassOrInterfaceType)declaringType;
+
+    boolean isNonStaticMemberClass = ! declaringClassType.isStatic() && declaringClassType.isMemberClass();
+    assert Util.implies(isNonStaticMemberClass, !inputVars.isEmpty());
 
     // Note on isNonStaticMember: if a class is a non-static member class, the
     // runtime signature of the constructor will have an additional argument
     // (as the first argument) corresponding to the owning object. When printing
     // it out as source code, we need to treat it as a special case: instead
-    // of printing "new Foo(x,y.z)" we have to print "x.new Foo(y,z)".
-
-    // TODO the last replace is ugly. There should be a method that does it.
-    String declaringClassStr = TypeNames.getCompilableName(declaringClass);
-
-    b.append(isNonStaticMember ? inputVars.get(0) + "." : "")
+    // of printing "new Foo(x,y,z)" we have to print "x.new Foo(y,z)".
+    b.append(isNonStaticMemberClass ? inputVars.get(0) + "." : "")
             .append("new ")
-            .append(isNonStaticMember ? declaringClass.getSimpleName() : declaringClassStr)
+            .append(isNonStaticMemberClass ? declaringClassType.getClassName() : declaringClassType.getName())
             .append("(");
-    for (int i = (isNonStaticMember ? 1 : 0); i < inputVars.size(); i++) {
-      if (i > (isNonStaticMember ? 1 : 0)) b.append(", ");
+
+    for (int i = (isNonStaticMemberClass ? 1 : 0); i < inputVars.size(); i++) {
+      if (i > (isNonStaticMemberClass ? 1 : 0)) b.append(", ");
 
       // We cast whenever the variable and input types are not identical.
       if (!inputVars.get(i).getType().equals(inputTypes.get(i)))
@@ -193,7 +182,7 @@ public final class ConstructorCall extends CallableOperation {
    *          constructor.
    * @param out
    *          is a stream for any output.
-   * @see ConcreteOperation#execute(Object[], PrintStream)
+   * @see TypedOperation#execute(Object[], PrintStream)
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
@@ -223,12 +212,12 @@ public final class ConstructorCall extends CallableOperation {
    * </code>
    * </pre>
    *
-   * @see #parse(String, TypedOperationManager)
+   * @see #parse(String)
    *
    * @return signature string for constructor
    */
   @Override
-  public String toParseableString(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
+  public String toParsableString(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
     StringBuilder sb = new StringBuilder();
     sb.append(constructor.getName()).append(".<init>(");
     Class<?>[] params = constructor.getParameterTypes();
@@ -239,18 +228,18 @@ public final class ConstructorCall extends CallableOperation {
 
   /**
    * Parse a constructor call in a string with the format generated by
-   * {@link ConstructorCall#toParseableString(ConcreteType, ConcreteTypeTuple, ConcreteType)} and
+   * {@link ConstructorCall#toParsableString(GeneralType, TypeTuple, GeneralType)} and
    * returns the corresponding {@link ConstructorCall} object.
    *
-   * @see OperationParser#parse(String, randoop.reflection.TypedOperationManager)
+   * @see OperationParser#parse(String)
    *
    * @param signature
    *          a string descriptor of a constructor call.
-   * @param manager  the {@link TypedOperationManager} for collecting operations
+   * @return the constructor call for the given string descriptor
    * @throws OperationParseException
    *           if no constructor found for signature.
    */
-  public static void parse(String signature, TypedOperationManager manager) throws OperationParseException {
+  public static TypedClassOperation parse(String signature) throws OperationParseException {
     if (signature == null) {
       throw new IllegalArgumentException("signature may not be null");
     }
@@ -274,9 +263,6 @@ public final class ConstructorCall extends CallableOperation {
     } catch (ClassNotFoundException e) {
       String msg = "Class for constructor " + constructorString + " not found: " + e;
       throw new OperationParseException(msg);
-    } catch (RandoopTypeException e) {
-      String msg = "Type error for constructor " + constructorString + ": " + e.getMessage();
-      throw new OperationParseException(msg);
     }
 
     Class<?>[] typeArguments = TypeArguments.getTypeArgumentsForString(arguments);
@@ -288,18 +274,7 @@ public final class ConstructorCall extends CallableOperation {
       throw new OperationParseException(msg);
     }
 
-    ConstructorCall op = new ConstructorCall(con);
-    List<GeneralType> paramTypes = new ArrayList<>();
-    for (Class<?> c : typeArguments) {
-      try {
-        paramTypes.add(manager.getClassType(c));
-      } catch (RandoopTypeException e) {
-        String msg = "Type error when parsing constructor " + constructorString + ": " + e.getMessage();
-        throw new OperationParseException(msg);
-      }
-    }
-
-    manager.createTypedOperation(op, classType, new GenericTypeTuple(paramTypes), classType);
+    return TypedClassOperation.forConstructor(con);
   }
 
   /**

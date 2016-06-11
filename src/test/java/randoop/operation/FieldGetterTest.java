@@ -14,14 +14,14 @@ import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.field.AccessibleField;
 import randoop.field.ClassWithFields;
-import randoop.reflection.ModelCollections;
-import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.types.ConcreteSimpleType;
-import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeTuple;
+import randoop.types.ClassOrInterfaceType;
+import randoop.types.GeneralType;
+import randoop.types.PrimitiveType;
+import randoop.types.SimpleClassOrInterfaceType;
+import randoop.types.TypeTuple;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -38,11 +38,11 @@ public class FieldGetterTest {
   @Test
   public void testStaticField() {
     Class<?> c = ClassWithFields.class;
-    ConcreteType classType = new ConcreteSimpleType(c);
+    ClassOrInterfaceType classType = new SimpleClassOrInterfaceType(c);
     try {
       Field field = c.getField("fourField");
-      ConcreteType fieldType = new ConcreteSimpleType(field.getType());
-      ConcreteOperation rhs = createGetter(field, fieldType, classType);
+      GeneralType fieldType = new PrimitiveType(field.getType());
+      TypedOperation rhs = createGetter(field, fieldType, classType);
 
       //types
       assertTrue("Should be no input types : " + rhs.getInputTypes(), rhs.getInputTypes().isEmpty());
@@ -77,17 +77,17 @@ public class FieldGetterTest {
   @Test
   public void testInstanceField() {
     Class<?> c = ClassWithFields.class;
-    ConcreteType classType = new ConcreteSimpleType(c);
+    ClassOrInterfaceType classType = new SimpleClassOrInterfaceType(c);
     try {
 
       Field field = c.getField("oneField");
-      ConcreteType fieldType = new ConcreteSimpleType(field.getType());
-      ConcreteOperation rhs = createGetter(field, fieldType, classType);
+      GeneralType fieldType = new PrimitiveType(field.getType());
+      TypedOperation rhs = createGetter(field, fieldType, classType);
 
       //types
-      List<ConcreteType> inputTypes = new ArrayList<>();
+      List<GeneralType> inputTypes = new ArrayList<>();
       inputTypes.add(classType);
-      assertEquals("Input types should just be declaring class", new ConcreteTypeTuple(inputTypes), rhs.getInputTypes());
+      assertEquals("Input types should just be declaring class", new TypeTuple(inputTypes), rhs.getInputTypes());
       assertEquals("Output type should match type of field", fieldType, rhs.getOutputType());
 
       //code generation
@@ -103,7 +103,7 @@ public class FieldGetterTest {
       }
       assert constructor != null;
       ConstructorCall cons = new ConstructorCall(constructor);
-      ConcreteOperation consOp = new ConcreteOperation(cons,classType, new ConcreteTypeTuple(), classType);
+      TypedOperation consOp = new TypedClassOperation(cons, classType, new TypeTuple(), classType);
       Sequence seqInit = new Sequence().extend(consOp, new ArrayList<Variable>());
 
       ArrayList<Variable> vars = new ArrayList<>();
@@ -156,12 +156,12 @@ public class FieldGetterTest {
   @Test
   public void testStaticFinalField() {
     Class<?> c = ClassWithFields.class;
-    ConcreteType classType = new ConcreteSimpleType(c);
+    ClassOrInterfaceType classType = new SimpleClassOrInterfaceType(c);
     try {
 
       Field field = c.getField("FIVEFIELD");
-      ConcreteType fieldType = new ConcreteSimpleType(field.getType());
-      ConcreteOperation rhs = createGetter(field, fieldType, classType);
+      GeneralType fieldType = new PrimitiveType(field.getType());
+      TypedOperation rhs = createGetter(field, fieldType, classType);
 
 
       //types
@@ -196,33 +196,24 @@ public class FieldGetterTest {
   @Test
   public void parseable() {
     String getterDescr = "randoop.field.ClassWithFields.<get>(oneField)";
-    final List<ConcreteOperation> ops = new ArrayList<>();
-    TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
-      @Override
-      public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
-        ops.add(operation);
-      }
-    });
     try {
-      FieldGet.parse(getterDescr, operationManager);
-      assert ops.size() > 0 : "operations should have element";
-      ConcreteOperation getter = ops.get(0);
+      TypedOperation getter = FieldGet.parse(getterDescr);
       assertEquals(
           "parse should return object that converts to string",
           getterDescr,
-          getter.toParseableString());
+          getter.toParsableString());
     } catch (OperationParseException e) {
       fail("Parse error: " + e.getMessage());
     }
   }
 
-  private ConcreteOperation createGetter(Field field, ConcreteType fieldType, ConcreteType declaringType) {
+  private TypedOperation createGetter(Field field, GeneralType fieldType, ClassOrInterfaceType declaringType) {
     AccessibleField f = new AccessibleField(field, declaringType);
-    List<ConcreteType> getInputTypesList = new ArrayList<>();
+    List<GeneralType> getInputTypesList = new ArrayList<>();
     if (! Modifier.isStatic(field.getModifiers() & Modifier.fieldModifiers())) {
       getInputTypesList.add(declaringType);
     }
     FieldGet getOp = new FieldGet(f);
-    return new ConcreteOperation(getOp, declaringType, new ConcreteTypeTuple(getInputTypesList), fieldType);
+    return new TypedClassOperation(getOp, declaringType, new TypeTuple(getInputTypesList), fieldType);
   }
 }

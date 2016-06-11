@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import randoop.types.ConcreteType;
+import randoop.types.GeneralType;
 import randoop.types.Match;
 import randoop.util.IMultiMap;
 import randoop.util.ISimpleSet;
@@ -22,12 +22,12 @@ public class SubTypeSet {
   // The set of classes that have sequences. I.e. membership in this
   // set means that the SequenceCollection has one or more sequences that
   // create a value of the member type.
-  public ISimpleSet<ConcreteType> typesWithsequences;
+  public ISimpleSet<GeneralType> typesWithsequences;
 
   // Maps a type to the list of subtypes that have sequences.
   // The list for a given type can be empty, which means that there
   // are no subtypes with sequences for the given type.
-  private IMultiMap<ConcreteType, ConcreteType> subTypesWithsequences;
+  private IMultiMap<GeneralType, GeneralType> subTypesWithsequences;
 
   private boolean reversible;
 
@@ -47,43 +47,43 @@ public class SubTypeSet {
     if (!reversible) {
       throw new RuntimeException("Operation not supported.");
     }
-    ((ReversibleMultiMap<ConcreteType, ConcreteType>) subTypesWithsequences).mark();
-    ((ReversibleSet<ConcreteType>) typesWithsequences).mark();
+    ((ReversibleMultiMap<GeneralType, GeneralType>) subTypesWithsequences).mark();
+    ((ReversibleSet<GeneralType>) typesWithsequences).mark();
   }
 
   public void undoLastStep() {
     if (!reversible) {
       throw new RuntimeException("Operation not supported.");
     }
-    ((ReversibleMultiMap<ConcreteType, ConcreteType>) subTypesWithsequences).undoToLastMark();
-    ((ReversibleSet<ConcreteType>) typesWithsequences).undoToLastMark();
+    ((ReversibleMultiMap<GeneralType, GeneralType>) subTypesWithsequences).undoToLastMark();
+    ((ReversibleSet<GeneralType>) typesWithsequences).undoToLastMark();
   }
 
-  public void add(ConcreteType c) {
+  public void add(GeneralType c) {
     if (c == null) throw new IllegalArgumentException("c cannot be null.");
     if (typesWithsequences.contains(c)) return;
     typesWithsequences.add(c);
 
     // Update existing entries.
-    for (ConcreteType cls : subTypesWithsequences.keySet()) {
+    for (GeneralType cls : subTypesWithsequences.keySet()) {
       if (cls.isAssignableFrom(c)) {
         if (!subTypesWithsequences.getValues(cls).contains(c)) subTypesWithsequences.add(cls, c);
       }
     }
   }
 
-  private void addQueryType(ConcreteType type) {
+  private void addQueryType(GeneralType type) {
     if (type == null) throw new IllegalArgumentException("c cannot be null.");
-    Set<ConcreteType> keySet = subTypesWithsequences.keySet();
+    Set<GeneralType> keySet = subTypesWithsequences.keySet();
     if (keySet.contains(type)) return;
 
-    Set<ConcreteType> compatibleTypesWithSequences = new LinkedHashSet<>();
-    for (ConcreteType t : typesWithsequences.getElements()) {
+    Set<GeneralType> compatibleTypesWithSequences = new LinkedHashSet<>();
+    for (GeneralType t : typesWithsequences.getElements()) {
       if (type.isAssignableFrom(t)) {
         compatibleTypesWithSequences.add(t);
       }
     }
-    for (ConcreteType cls : compatibleTypesWithSequences) {
+    for (GeneralType cls : compatibleTypesWithSequences) {
       subTypesWithsequences.add(type, cls);
     }
   }
@@ -95,7 +95,7 @@ public class SubTypeSet {
    * @param type  the query type
    * @return the set of types that can be used in place of the query type
    */
-  public Set<ConcreteType> getMatches(ConcreteType type) {
+  public Set<GeneralType> getMatches(GeneralType type) {
     if (!subTypesWithsequences.keySet().contains(type)) {
       addQueryType(type);
     }
@@ -119,7 +119,7 @@ public class SubTypeSet {
    *   type, or {@code match=COMPATIBLE_TYPE} and there is a sequence with a
    *   subtype of the query type as its output type.
    */
-  public boolean containsAssignableType(ConcreteType type, Match match) {
+  public boolean containsAssignableType(GeneralType type, Match match) {
     if (!subTypesWithsequences.keySet().contains(type)) {
       addQueryType(type);
     }
@@ -134,7 +134,7 @@ public class SubTypeSet {
     return typesWithsequences.size();
   }
 
-  public Set<ConcreteType> getElements() {
+  public Set<GeneralType> getElements() {
     return typesWithsequences.getElements();
   }
 }

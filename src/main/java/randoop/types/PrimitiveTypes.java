@@ -11,6 +11,9 @@ import java.util.Set;
 import randoop.main.GenInputsAbstract;
 import randoop.util.StringEscapeUtils;
 
+/**
+ * Implements utilities over Java primitive types.
+ */
 public final class PrimitiveTypes {
   private PrimitiveTypes() {
     throw new IllegalStateException("no instances");
@@ -100,28 +103,28 @@ public final class PrimitiveTypes {
     return boxed;
   }
 
-  public static ConcreteType getPrimitiveOrStringType(String typeName) {
-    return new ConcreteSimpleType(typeNameToPrimitiveOrString.get(typeName));
+  public static Class<?> getPrimitiveOrStringType(String typeName) {
+    return typeNameToPrimitiveOrString.get(typeName);
   }
 
-  public static Set<ConcreteType> getPrimitiveOrStringTypes() {
-    Set<ConcreteType> s = new LinkedHashSet<>();
+  public static Set<Class<?>> getPrimitiveOrStringTypes() {
+    Set<Class<?>> s = new LinkedHashSet<>();
     for (Class<?> c : primitiveAndStringToBoxed.keySet()) {
-      s.add(new ConcreteSimpleType(c));
+      s.add(c);
     }
     return Collections.unmodifiableSet(s);
   }
 
-  public static Set<ConcreteType> getBoxedTypesAndString() {
-    Set<ConcreteType> s = new LinkedHashSet<>();
+  public static Set<Class<?>> getBoxedTypesAndString() {
+    Set<Class<?>> s = new LinkedHashSet<>();
     for (Class<?> c : boxedToPrimitiveAndString.keySet()) {
-      s.add(new ConcreteSimpleType(c));
+      s.add(c);
     }
     return Collections.unmodifiableSet(s);
   }
 
-  public static ConcreteType toBoxedType(Class<?> cls) {
-    return new ConcreteSimpleType(primitiveAndStringToBoxed.get(cls));
+  public static Class<?> toBoxedType(Class<?> cls) {
+    return primitiveAndStringToBoxed.get(cls);
   }
 
   public static boolean isBoxedPrimitiveTypeOrString(Class<?> c) {
@@ -137,6 +140,9 @@ public final class PrimitiveTypes {
   /**
    * Same as c.isPrimitive() but faster if this test is done very
    * frequently (as it is in Randoop).
+   *
+   * @param c  the type class
+   * @return true if the type is primitive, false otherwise
    */
   public static boolean isPrimitive(Class<?> c) {
     if (c == null) throw new IllegalArgumentException("c cannot be null.");
@@ -148,11 +154,23 @@ public final class PrimitiveTypes {
     return b;
   }
 
+  /**
+   * Indicates whether the given type is a boxed primitive, primitive or String type.
+   *
+   * @param c  the type class
+   * @return true if the type is boxed primitive, primitive, or String
+   */
   public static boolean isBoxedOrPrimitiveOrStringType(Class<?> c) {
     return isPrimitive(c) || isBoxedPrimitiveTypeOrString(c);
   }
 
-  /** Returns null if c is not a primitive or a boxed type. */
+  /**
+   * Returns the primitive type for the given boxed type.
+   * Returns null if c is not a primitive or a boxed type.
+   *
+   * @param c  the class type
+   * @return the primitive type for the given type, or null if given type is not primitive or boxed
+   */
   public static Class<?> primitiveType(Class<?> c) {
     if (c.isPrimitive()) return c;
     return boxedToPrimitiveAndString.get(c);
@@ -164,6 +182,7 @@ public final class PrimitiveTypes {
    *
    * @param value the value to create a String representation for.
    * The value's type must be a primitive type, a String, or null.
+   * @return a string representing code for the given value
    */
   public static String toCodeString(Object value) {
 
@@ -270,6 +289,9 @@ public final class PrimitiveTypes {
    * Meaning, if it looks like the string contains the telltale "@&lt;hex&gt;"
    * pattern, the method returns false. This almost always works and is a
    * faster check.
+   *
+   * @param s  the string
+   * @return true if string appears to be default toString output, false otherwise
    */
   public static boolean looksLikeObjectToString(String s) {
     if (s == null) {
@@ -298,6 +320,9 @@ public final class PrimitiveTypes {
    * to consider not the length of s, but the length of the string that would be
    * printed to obtain s, which may be different due to escaped and unicode characters.
    * This method takes this into account.
+   *
+   * @param s  the string
+   * @return true if the string length is reasonable for generated tests, false otherwise
    *
    *  @see GenInputsAbstract
    */
@@ -359,6 +384,14 @@ public final class PrimitiveTypes {
     }
     Set<Class<?>> targets = wideningTable.get(source);
     return targets != null && targets.contains(target);
+  }
+
+  static boolean isSubtype(Class<?> first, Class<?> second) {
+    if (! first.isPrimitive() && ! second.isPrimitive()) {
+      throw new IllegalArgumentException("types must be primitive");
+    }
+    Set<Class<?>> superTypes = wideningTable.get(first);
+    return superTypes != null && superTypes.contains(second);
   }
 
   /**

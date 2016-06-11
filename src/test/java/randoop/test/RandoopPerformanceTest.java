@@ -8,14 +8,12 @@ import java.util.List;
 import plume.EntryReader;
 import randoop.generation.ForwardGenerator;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.ConcreteOperation;
+import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.ModelCollections;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
-import randoop.reflection.TypedOperationManager;
-import randoop.types.ConcreteType;
+import randoop.types.ClassOrInterfaceType;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
@@ -37,13 +35,13 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
       fail("couldn't load class");
     }
 
-    List<ConcreteOperation> model = getConcreteOperations(classes);
+    List<TypedOperation> model = getConcreteOperations(classes);
     assertFalse("model should not be empty", model.isEmpty());
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     GenInputsAbstract.debug_checks = false;
     ForwardGenerator explorer =
-        new ForwardGenerator(model, new LinkedHashSet<ConcreteOperation>(), Long.MAX_VALUE, 100000, 100000, null, null, null);
+        new ForwardGenerator(model, new LinkedHashSet<TypedOperation>(), Long.MAX_VALUE, 100000, 100000, null, null, null);
     explorer.explore();
   }
 
@@ -53,18 +51,12 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
   }
 
 
-  private List<ConcreteOperation> getConcreteOperations(List<Class<?>> classes) {
-    final List<ConcreteOperation> model = new ArrayList<>();
-    TypedOperationManager operationManager = new TypedOperationManager(new ModelCollections() {
-      @Override
-      public void addConcreteOperation(ConcreteType declaringType, ConcreteOperation operation) {
-        model.add(operation);
-      }
-    });
+  private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
+    final List<TypedOperation> model = new ArrayList<>();
     ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
-    mgr.add(new OperationExtractor(operationManager, new DefaultReflectionPredicate()));
     for (Class<?> c: classes) {
-      mgr.apply(c);
+      ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
+      mgr.apply(new OperationExtractor(classType, model, new DefaultReflectionPredicate()), c);
     }
     return model;
   }

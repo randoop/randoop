@@ -3,6 +3,7 @@ package randoop.field;
 import java.lang.reflect.Field;
 
 import randoop.operation.OperationParseException;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
 import randoop.types.RandoopTypeException;
 
@@ -14,14 +15,11 @@ public class FieldParser {
 
   public static AccessibleField parse(String descr, String classname, String fieldname) throws OperationParseException {
     String errorPrefix = "Error when parsing field " + descr + ".";
-    GeneralType classType;
+    ClassOrInterfaceType classType;
     try {
-      classType = GeneralType.forName(classname);
+      classType = (ClassOrInterfaceType)GeneralType.forName(classname);
     } catch (ClassNotFoundException e) {
       String msg = errorPrefix + " Class for field " + descr + " not found: " + e.getMessage();
-      throw new OperationParseException(msg);
-    } catch (RandoopTypeException e) {
-      String msg = errorPrefix + " Type error: " + e.getMessage();
       throw new OperationParseException(msg);
     }
 

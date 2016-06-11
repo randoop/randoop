@@ -47,7 +47,7 @@ import randoop.types.GeneralType;
  *  <li> A public static String field that contains a unique ID for the operation.
  *  <li> A public static parse(String) method that returns a new Operation given
  *       a string description. The following property should hold:
- *         <code>C.parse(x.toParseableString()).equals(x)</code>
+ *         <code>C.parse(x.toParsableString()).equals(x)</code>
  *  <li> Update method OperationParser.parse(String) to parse operations of type C.
  *  <li> Update method OperationParser.getId(Operation) to handle operations of type C.
  *  </ul>

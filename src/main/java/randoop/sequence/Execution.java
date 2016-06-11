@@ -18,10 +18,10 @@ import randoop.NotExecuted;
 public final class Execution {
 
   // The execution outcome of each statement.
-  protected final List<ExecutionOutcome> theList;
+  final List<ExecutionOutcome> theList;
 
   // The sequence whose execution results this object stores.
-  protected final Sequence owner;
+  final Sequence owner;
 
   private Set<Class<?>> coveredClasses;
 
@@ -62,7 +62,12 @@ public final class Execution {
     return theList.size();
   }
 
-  /** Set the i-th slot to the given outcome. */
+  /**
+   * Set the i-th slot to the given outcome.
+   *
+   * @param i  statement index
+   * @param outcome  the outcome for the statement
+   */
   public void set(int i, ExecutionOutcome outcome) {
     if (i < 0 || i >= theList.size()) throw new IllegalArgumentException("wrong index " + i);
     if (outcome == null) throw new IllegalArgumentException("outcome cannot be null.");
@@ -80,11 +85,11 @@ public final class Execution {
     return theList.get(i);
   }
 
-  public void addCoveredClass(Class<?> c) {
+  void addCoveredClass(Class<?> c) {
     coveredClasses.add(c);
   }
 
-  public Set<Class<?>> getCoveredClasses() {
+  Set<Class<?>> getCoveredClasses() {
     return coveredClasses;
   }
 }

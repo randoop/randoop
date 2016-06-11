@@ -3,32 +3,34 @@ package randoop.generation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import randoop.BugInRandoopException;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.ConcreteOperation;
 import randoop.operation.ConstructorCall;
 import randoop.operation.MethodCall;
+import randoop.operation.TypedClassOperation;
+import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
-import randoop.types.ConcreteArrayType;
-import randoop.types.ConcreteType;
+import randoop.types.ArrayType;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
-import randoop.types.ConcreteTypeTuple;
 import randoop.types.GeneralType;
 import randoop.types.GenericClassType;
 import randoop.types.JDKTypes;
 import randoop.types.ParameterizedType;
-import randoop.types.RandoopTypeException;
+import randoop.types.ReferenceArgument;
+import randoop.types.ReferenceType;
+import randoop.types.TypeArgument;
+import randoop.types.TypeTuple;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.Randomness;
-import randoop.types.Match;
 import randoop.util.SimpleList;
 
-public class HelperSequenceCreator {
+class HelperSequenceCreator {
 
   /**
    * Returns a sequence that creates an object of type compatible with the given
@@ -38,19 +40,19 @@ public class HelperSequenceCreator {
    * array.
    *
    * @param components  the component manager with existing sequences
-   * @param type  the query type
+   * @param collectionType  the query type
    * @return the singleton list containing the compatible sequence
    */
-  public static SimpleList<Sequence> createSequence(ComponentManager components, ConcreteType type) {
+  static SimpleList<Sequence> createArraySequence(ComponentManager components, GeneralType collectionType) {
 
     final int MAX_LENGTH = 7;
 
-    if (!type.isArray()) {
-      return new ArrayListSimpleList<Sequence>();
+    if (!collectionType.isArray()) {
+      return new ArrayListSimpleList<>();
     }
 
-    ConcreteArrayType arrayType = (ConcreteArrayType)type;
-    ConcreteType elementType = arrayType.getElementType();
+    ArrayType arrayType = (ArrayType)collectionType;
+    GeneralType elementType = arrayType.getElementType();
 
     Sequence s;
     SimpleList<Sequence> candidates =
@@ -59,18 +61,18 @@ public class HelperSequenceCreator {
         // No sequences that produce appropriate component values found, and
       if (GenInputsAbstract.forbid_null) {
           // use of null is forbidden. So, return the empty array.
-          s = new Sequence().extend(ConcreteOperation.createArrayCreation(arrayType, 0));
-      } else {
+          s = new Sequence().extend(TypedOperation.createArrayCreation(arrayType, 0));
+        } else {
           // null is allowed.
           s = new Sequence();
           List<Variable> ins = new ArrayList<>();
-          ConcreteOperation declOp;
+          TypedOperation declOp;
           if (Randomness.weighedCoinFlip(0.5)) {
-            declOp = ConcreteOperation.createArrayCreation(arrayType, 0);
+            declOp = TypedOperation.createArrayCreation(arrayType, 0);
           } else {
-            s = s.extend(ConcreteOperation.createNullOrZeroInitializationForType(elementType));
+            s = s.extend(TypedOperation.createNullOrZeroInitializationForType(elementType));
             ins.add(s.getVariable(0));
-            declOp = ConcreteOperation.createArrayCreation(arrayType, 1);
+            declOp = TypedOperation.createArrayCreation(arrayType, 1);
           }
           s = s.extend(declOp, ins);
       }
@@ -84,131 +86,161 @@ public class HelperSequenceCreator {
     return l;
   }
 
-  public static Sequence createCollection(ComponentManager componentManager, ConcreteType inputType) {
-   if (!inputType.isParameterized()) {
-     throw new IllegalArgumentException("type must be parameterized");
-   }
-   assert ! inputType.isGeneric() : "type must be instantiated";
+  static Sequence createCollection(ComponentManager componentManager, ParameterizedType collectionType) {
+    assert ! collectionType.isGeneric() : "type must be instantiated";
 
-   // get the element type
-   ParameterizedType collectionType = (ParameterizedType)inputType;
-   List<ConcreteType> argumentList = collectionType.getTypeArguments();
-   assert argumentList.size() == 1 : "Collection classes should have one type argument";
-   ConcreteType elementType = argumentList.get(0);
+    // get the element type
+    List<TypeArgument> argumentList = collectionType.getTypeArguments();
+    assert argumentList.size() == 1 : "Collection classes should have one type argument";
+    TypeArgument argumentType = argumentList.get(0);
+    ReferenceType elementType;
+    assert argumentType instanceof ReferenceArgument : "type argument must be reference type";
+    elementType = ((ReferenceArgument)argumentType).getReferenceType();
 
-   int totStatements = 0;
-   List<Sequence> inputSequences = new ArrayList<>();
-   List<Integer> variableIndices = new ArrayList<>();
-
-   // select implementing Collection type and instantiate
-   GenericClassType implementingType = JDKTypes.getImplementingType(collectionType);
-   ParameterizedType creationType;
-   try {
-     creationType = (ParameterizedType)implementingType.instantiate(elementType);
-   } catch (RandoopTypeException e) {
-     throw new BugInRandoopException("type error instantiating Collection: " + e.getMessage());
-   }
-
-   // build sequence to create a Collection object
-   ConcreteOperation creationOperation = getCollectionConstructor(creationType);
-   Sequence creationSequence = new Sequence();
-   creationSequence = creationSequence.extend(creationOperation, new ArrayList<Variable>());
-
-   inputSequences.add(creationSequence);
-   variableIndices.add(totStatements + creationSequence.getLastVariable().index);
-   totStatements += creationSequence.size();
-
-   // build sequence to create array of element type
-   SimpleList<Sequence> candidates = componentManager.getSequencesForType(elementType, false);
-   int length = Randomness.nextRandomInt(candidates.size()) + 1;
-   Sequence inputSequence = createAnArray(candidates, elementType, length);
-
-   inputSequences.add(inputSequence);
-   variableIndices.add(totStatements + inputSequence.getLastVariable().index);
-   totStatements += inputSequence.size();
-
-   // call Collections.addAll(c, inputArray)
-   ConcreteOperation addOperation = getCollectionAddAllOperation(elementType);
-
-   Sequence helperSequence = Sequence.concatenate(inputSequences);
-   List<Variable> inputs = new ArrayList<>();
-   for (int index : variableIndices) {
-     inputs.add(helperSequence.getVariable(index));
-   }
-   return helperSequence.extend(addOperation, inputs);
- }
+    // select implementing Collection type and instantiate
+    GenericClassType implementingType = JDKTypes.getImplementingType(collectionType);
+    ParameterizedType creationType;
+    creationType = implementingType.instantiate(elementType);
 
 
 
- /**
-  * Creates a sequence that builds an array of the given element type using sequences from the
-  * given list of candidates.
-  *
-  * @param candidates  the list of candidate elements
-  * @param elementType  the type of elements for the array
-  * @return a sequence that creates an array with the given element type
-  */
- private static Sequence createAnArray(SimpleList<Sequence> candidates, ConcreteType elementType, int length) {
-   int totStatements = 0;
-   List<Sequence> inputSequences = new ArrayList<>();
-   List<Integer> variables = new ArrayList<>();
-   for (int i = 0; i < length; i++) {
-     Sequence inputSeq = candidates.get(Randomness.nextRandomInt(candidates.size()));
-     Variable inputVar = inputSeq.randomVariableForTypeLastStatement(elementType);
+    int totStatements = 0;
+    List<Sequence> inputSequences = new ArrayList<>();
+    List<Integer> variableIndices = new ArrayList<>();
 
-     assert inputVar != null;
-     variables.add(totStatements + inputVar.index);
-     inputSequences.add(inputSeq);
-     totStatements += inputSeq.size();
-   }
-   Sequence inputSequence = Sequence.concatenate(inputSequences);
-   List<Variable> inputs = new ArrayList<>();
-   for (Integer inputIndex : variables) {
-     Variable v = inputSequence.getVariable(inputIndex);
-     inputs.add(v);
-   }
+    // build sequence to create a Collection object
+    Sequence creationSequence = new Sequence();
+    List<Variable> creationInputs = new ArrayList<>();
+    TypedOperation creationOperation;
+    if (implementingType.equals(JDKTypes.ENUM_SET_TYPE)) {
+      /*
+      * Not finishing this for current release, need to be able to handle terms other than nonreceivers
+      creationSequence = creationSequence.extend(); // want initialization with value runtimeclassname.class
+      creationOperation = getEnumSetCreation(creationType, elementType);
+      */
+      return null;
+    } else {
+      creationOperation = getCollectionConstructor(creationType);
+    }
+    creationSequence = creationSequence.extend(creationOperation, creationInputs);
 
-   return inputSequence.extend(ConcreteOperation.createArrayCreation(new ConcreteArrayType(elementType), length), inputs);
- }
+    inputSequences.add(creationSequence);
+    variableIndices.add(totStatements + creationSequence.getLastVariable().index);
+    totStatements += creationSequence.size();
 
- public static ConcreteOperation getCollectionConstructor(ParameterizedType creationType) {
+    // build sequence to create array of element type
+    SimpleList<Sequence> candidates = componentManager.getSequencesForType(elementType, false);
+    int length = Randomness.nextRandomInt(candidates.size()) + 1;
+    Sequence inputSequence = createAnArray(candidates, elementType, length);
+
+    inputSequences.add(inputSequence);
+    variableIndices.add(totStatements + inputSequence.getLastVariable().index);
+
+    // call Collections.addAll(c, inputArray)
+    TypedOperation addOperation = getCollectionAddAllOperation(elementType);
+
+    Sequence helperSequence = Sequence.concatenate(inputSequences);
+    List<Variable> inputs = new ArrayList<>();
+    for (int index : variableIndices) {
+      inputs.add(helperSequence.getVariable(index));
+    }
+    return helperSequence.extend(addOperation, inputs);
+  }
+
+  /**
+   * Creates a sequence that builds an array of the given element type using sequences from the
+   * given list of candidates.
+   *
+   * @param candidates  the list of candidate elements
+   * @param elementType  the type of elements for the array
+   * @return a sequence that creates an array with the given element type
+   */
+  private static Sequence createAnArray(SimpleList<Sequence> candidates, GeneralType elementType, int length) {
+    int totStatements = 0;
+    List<Sequence> inputSequences = new ArrayList<>();
+    List<Integer> variables = new ArrayList<>();
+    for (int i = 0; i < length; i++) {
+      Sequence inputSeq = candidates.get(Randomness.nextRandomInt(candidates.size()));
+      Variable inputVar = inputSeq.randomVariableForTypeLastStatement(elementType);
+
+      assert inputVar != null;
+      variables.add(totStatements + inputVar.index);
+      inputSequences.add(inputSeq);
+      totStatements += inputSeq.size();
+    }
+    Sequence inputSequence = Sequence.concatenate(inputSequences);
+    List<Variable> inputs = new ArrayList<>();
+    for (Integer inputIndex : variables) {
+      Variable v = inputSequence.getVariable(inputIndex);
+      inputs.add(v);
+    }
+
+    return inputSequence.extend(TypedOperation.createArrayCreation(ArrayType.ofElementType(elementType), length), inputs);
+  }
+
+  /**
+   * Create the operation needed to create an empty EnumSet of the given type.
+   *
+   * @param creationType  the EnumSet type
+   * @param elementType  the element Enum type
+   * @return the empty EnumSet with the given type
+   */
+  private static TypedOperation getEnumSetCreation(ParameterizedType creationType, ReferenceType elementType) {
+    Class<?> enumsetClass = JDKTypes.ENUM_SET_TYPE.getRuntimeClass();
+    Method method;
+    try {
+      method = enumsetClass.getMethod("noneOf", ConcreteTypes.CLASS_TYPE.getRuntimeClass());
+    } catch (NoSuchMethodException e) {
+      throw new BugInRandoopException("Can't find \"noneOf\" method for EnumSet: " + e.getMessage());
+    }
+    MethodCall op = new MethodCall(method);
+    List<GeneralType> paramTypes = new ArrayList<>();
+    paramTypes.add(ConcreteTypes.CLASS_TYPE);
+    return new TypedClassOperation(op, JDKTypes.ENUM_SET_TYPE, new TypeTuple(paramTypes), creationType);
+  }
+
+  /**
+   * Create the constructor call operation for the given type.
+   *
+   * @param creationType  the class type
+   * @return the constructor call for the given class type
+   */
+  private static TypedOperation getCollectionConstructor(ParameterizedType creationType) {
     Constructor<?> constructor;
     try {
       constructor = creationType.getRuntimeClass().getConstructor();
     } catch (NoSuchMethodException e) {
-            throw new BugInRandoopException("Can't find default constructor for Collection " + creationType + ": " + e.getMessage());
+      throw new BugInRandoopException("Can't find default constructor for Collection " + creationType + ": " + e.getMessage());
     }
     ConstructorCall op = new ConstructorCall(constructor);
-    return new ConcreteOperation(op, creationType, new ConcreteTypeTuple(), creationType);
- }
+    return new TypedClassOperation(op, creationType, new TypeTuple(), creationType);
+  }
 
- public static ConcreteOperation getCollectionAddAllOperation(ConcreteType elementType) {
-     Class<?> collectionsClass = Collections.class;
-     Method method;
-     try {
-       method = collectionsClass.getMethod("addAll", JDKTypes.COLLECTION_TYPE.getRuntimeClass(), (new Object[]{}).getClass());
-     } catch (NoSuchMethodException e) {
-       throw new BugInRandoopException("Can't find Collections.addAll method: " + e.getMessage());
-     }
-     MethodCall op = new MethodCall(method);
-     assert method.getTypeParameters().length == 1: "method should have one type parameter";
-     List<ConcreteType> paramTypes = new ArrayList<>();
-     ParameterizedType collectionType;
-     try {
-       collectionType = (ParameterizedType)JDKTypes.COLLECTION_TYPE.instantiate(elementType);
-     } catch (RandoopTypeException e) {
-       throw new BugInRandoopException("type error instantiating Collection: " + e.getMessage());
-     }
-     paramTypes.add(collectionType);
-     paramTypes.add(new ConcreteArrayType(elementType));
+  /**
+   * Create the operation to call {@link java.util.Collections#addAll(Collection, Object[])} that
+   * allows initialization of a {@link Collection} object.
+   *
+   * @param elementType  the element type of the collection
+   * @return the operation to initialize a collection from an array.
+   */
+  private static TypedOperation getCollectionAddAllOperation(ReferenceType elementType) {
+    Class<?> collectionsClass = Collections.class;
+    Method method;
+    try {
+      method = collectionsClass.getMethod("addAll", JDKTypes.COLLECTION_TYPE.getRuntimeClass(), (new Object[]{}).getClass());
+    } catch (NoSuchMethodException e) {
+      throw new BugInRandoopException("Can't find Collections.addAll method: " + e.getMessage());
+    }
+    MethodCall op = new MethodCall(method);
+    assert method.getTypeParameters().length == 1: "method should have one type parameter";
+    List<GeneralType> paramTypes = new ArrayList<>();
+    ParameterizedType collectionType;
+    collectionType = JDKTypes.COLLECTION_TYPE.instantiate(elementType);
 
-     ConcreteOperation addAllOperation;
-     try {
-       addAllOperation = new ConcreteOperation(op, ConcreteType.forClass(collectionsClass), new ConcreteTypeTuple(paramTypes), ConcreteTypes.BOOLEAN_TYPE);
-     } catch (RandoopTypeException e) {
-       throw new BugInRandoopException("type error constructing Collections.addAll method: " + e.getMessage());
-     }
-     return addAllOperation;
-   }
+    paramTypes.add(collectionType);
+    paramTypes.add(ArrayType.ofElementType(elementType));
+
+    return new TypedClassOperation(op, ClassOrInterfaceType.forClass(collectionsClass), new TypeTuple(paramTypes), ConcreteTypes.BOOLEAN_TYPE);
+  }
 
 }

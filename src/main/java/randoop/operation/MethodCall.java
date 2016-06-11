@@ -3,7 +3,6 @@ package randoop.operation;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,15 +10,11 @@ import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeTuple;
 import randoop.types.GeneralType;
-import randoop.types.GeneralTypeTuple;
-import randoop.types.GenericTypeTuple;
 import randoop.types.RandoopTypeException;
+import randoop.types.TypeTuple;
 import randoop.util.MethodReflectionCode;
 import randoop.util.ReflectionExecutor;
 
@@ -46,7 +41,7 @@ public final class MethodCall extends CallableOperation {
   /**
    * ID for parsing purposes
    *
-   * @see OperationParser#getId(ConcreteOperation)
+   * @see OperationParser#getId(TypedOperation)
    */
   public static final String ID = "method";
 
@@ -92,13 +87,13 @@ public final class MethodCall extends CallableOperation {
    * @param inputVars is the list of actual arguments to be printed
    */
   @Override
-  public void appendCode(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType, List<Variable> inputVars, StringBuilder sb) {
+  public void appendCode(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder sb) {
 
     String receiverString = isStatic() ? null : inputVars.get(0).getName();
     if (isStatic()) {
       sb.append(declaringType.getName().replace('$', '.'));
     } else {
-      ConcreteType expectedType = inputTypes.get(0);
+      GeneralType expectedType = inputTypes.get(0);
       if (expectedType.isPrimitive()) { // explicit cast when want primitive boxed as receiver
         sb.append("((").append(expectedType.getName()).append(")").append(receiverString).append(")");
       } else {
@@ -200,7 +195,7 @@ public final class MethodCall extends CallableOperation {
    *  java.util.ArrayList.add(int,java.lang.Object)
    */
   @Override
-  public String toParseableString(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
+  public String toParsableString(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
     StringBuilder sb = new StringBuilder();
     sb.append(method.getDeclaringClass().getName()).append(".");
     sb.append(method.getName()).append("(");
@@ -213,16 +208,16 @@ public final class MethodCall extends CallableOperation {
   /**
    * Parses a method call in a string descriptor and returns a
    * {@link MethodCall} object. Should satisfy
-   * <code>parse(op.toParseableString()).equals(op)</code> for Operation op.
+   * <code>parse(op.toParsableString()).equals(op)</code> for Operation op.
    *
-   * @see OperationParser#parse(String, randoop.reflection.TypedOperationManager)
+   * @see OperationParser#parse(String)
    *
    * @param signature  a string descriptor
-   * @param manager  the {@link TypedOperationManager} for collecting operations
+   * @return the method call operation for the given string descriptor
    * @throws OperationParseException
    *           if s does not match expected descriptor.
    */
-  public static void parse(String signature, TypedOperationManager manager) throws OperationParseException {
+  public static TypedClassOperation parse(String signature) throws OperationParseException {
     if (signature == null) {
       throw new IllegalArgumentException("signature may not be null");
     }
@@ -245,9 +240,6 @@ public final class MethodCall extends CallableOperation {
     } catch (ClassNotFoundException e) {
       String msg = "Class for method " + methodString + " not found: " + e;
       throw new OperationParseException(msg);
-    } catch (RandoopTypeException e) {
-      String msg = "Type error for method class: " + e.getMessage();
-      throw new OperationParseException(msg);
     }
 
     System.out.println("Looking for: " + opname + " args: " + arguments);
@@ -268,27 +260,7 @@ public final class MethodCall extends CallableOperation {
       }
     }
 
-    MethodCall op = new MethodCall(m);
-    List<GeneralType> paramTypes = new ArrayList<>();
-    if (!Modifier.isStatic(m.getModifiers() & Modifier.methodModifiers())) {
-      paramTypes.add(classType);
-    }
-    for (Class<?> c : typeArguments) {
-      try {
-        paramTypes.add(manager.getClassType(c));
-      } catch (RandoopTypeException e) {
-        msg = "Type error for method parameter: " + e.getMessage();
-        throw new OperationParseException(msg);
-      }
-    }
-    GeneralType outputType;
-    try {
-      outputType = GeneralType.forType(m.getGenericReturnType());
-    } catch (RandoopTypeException e) {
-      msg = "Type error for method " + methodString + ": " + e;
-      throw new OperationParseException(msg);
-    }
-    manager.createTypedOperation(op, classType, new GenericTypeTuple(paramTypes), outputType);
+    return TypedClassOperation.forMethod(m);
 
   }
 

@@ -1,5 +1,7 @@
 package randoop.instrument;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
@@ -16,9 +18,10 @@ import randoop.generation.SeedSequences;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
+import randoop.main.OptionsCache;
 import randoop.main.ThrowClassNameError;
-import randoop.operation.ConcreteOperation;
 import randoop.operation.OperationParseException;
+import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PublicVisibilityPredicate;
@@ -27,8 +30,7 @@ import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.test.TestCheckGenerator;
-import randoop.types.ConcreteType;
-import randoop.types.RandoopTypeException;
+import randoop.types.GeneralType;
 import randoop.types.TypeNames;
 import randoop.util.MultiMap;
 import randoop.util.predicate.Predicate;
@@ -44,12 +46,27 @@ import static randoop.main.GenInputsAbstract.methodlist;
  */
 public class CoveredClassTest {
 
-  @Test
-  public void testNoFilter() {
-    System.out.println("no filter");
+  private static OptionsCache optionsCache;
+
+  @BeforeClass
+  public static void setup() {
+    optionsCache = new OptionsCache();
+    optionsCache.saveState();
     GenInputsAbstract.outputlimit = 5000;
     GenInputsAbstract.inputlimit = 10000;
     GenInputsAbstract.silently_ignore_bad_class_names = false;
+  }
+
+  @AfterClass
+  public static void restore() {
+    optionsCache.restoreState();
+  }
+
+
+  @Test
+  public void testNoFilter() {
+    System.out.println("no filter");
+
     GenInputsAbstract.classlist = new File("randoop/instrument/testcase/allclasses.txt");
     include_if_classname_appears = null;
     GenInputsAbstract.include_if_class_exercised = null;
@@ -88,9 +105,6 @@ public class CoveredClassTest {
   @Test
   public void testNameFilter() {
     System.out.println("name filter");
-    GenInputsAbstract.outputlimit = 5000;
-    GenInputsAbstract.inputlimit = 10000;
-    GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = new File("randoop/instrument/testcase/allclasses.txt");
     include_if_classname_appears =
         Pattern.compile("randoop\\.instrument\\.testcase\\.A"); //null;
@@ -131,9 +145,6 @@ public class CoveredClassTest {
   @Test
   public void testCoverageFilter() {
     System.out.println("coverage filter");
-    GenInputsAbstract.outputlimit = 5000;
-    GenInputsAbstract.inputlimit = 10000;
-    GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = new File("randoop/instrument/testcase/allclasses.txt");
     include_if_classname_appears = null;
     GenInputsAbstract.include_if_class_exercised =
@@ -195,12 +206,10 @@ public class CoveredClassTest {
       fail("operation parse exception thrown: " + e);
     } catch (NoSuchMethodException e) {
       fail("Method not found: " + e);
-    } catch (RandoopTypeException e) {
-      fail("Type error: " + e);
     }
     assert operationModel != null;
 
-    List<ConcreteOperation> model = operationModel.getConcreteOperations();
+    List<TypedOperation> model = operationModel.getConcreteOperations();
     Set<Sequence> components = new LinkedHashSet<>();
     components.addAll(SeedSequences.defaultSeeds());
     components.addAll(operationModel.getAnnotatedTestValues());
@@ -211,7 +220,7 @@ public class CoveredClassTest {
 
     Set<String> observerSignatures = GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.observers,"Unable to read observer file", "//.*", null);
 
-    MultiMap<ConcreteType,ConcreteOperation> observerMap = null;
+    MultiMap<GeneralType,TypedOperation> observerMap = null;
     try {
       observerMap = operationModel.getObservers(observerSignatures);
     } catch (OperationParseException e) {
@@ -219,8 +228,8 @@ public class CoveredClassTest {
       System.exit(1);
     }
     assert observerMap != null;
-    Set<ConcreteOperation> observers = new LinkedHashSet<>();
-    for (ConcreteType keyType : observerMap.keySet()) {
+    Set<TypedOperation> observers = new LinkedHashSet<>();
+    for (GeneralType keyType : observerMap.keySet()) {
       observers.addAll(observerMap.getValues(keyType));
     }
 
@@ -236,13 +245,11 @@ public class CoveredClassTest {
             listenerMgr);
     GenTests genTests = new GenTests();
 
-    ConcreteOperation objectConstructor = null;
+    TypedOperation objectConstructor = null;
     try {
-      objectConstructor = operationModel.getConcreteOperation(Object.class.getConstructor());
+      objectConstructor = TypedOperation.forConstructor(Object.class.getConstructor());
     } catch (NoSuchMethodException e) {
       assert false : "failed to get Object constructor: " + e;
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
     }
     assert objectConstructor != null : "object constructor is null";
 
@@ -256,7 +263,7 @@ public class CoveredClassTest {
     testGenerator.addTestPredicate(isOutputTest);
 
     Set<ObjectContract> contracts = operationModel.getContracts();
-    Set<ConcreteOperation> excludeAsObservers = new LinkedHashSet<>();
+    Set<TypedOperation> excludeAsObservers = new LinkedHashSet<>();
     TestCheckGenerator checkGenerator = genTests.createTestCheckGenerator(visibility, contracts, observerMap, excludeAsObservers);
     testGenerator.addTestCheckGenerator(checkGenerator);
     testGenerator.addExecutionVisitor(new ExercisedClassVisitor(operationModel.getExercisedClasses()));

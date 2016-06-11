@@ -632,7 +632,7 @@ public class RandoopSystemTest {
           String regressionBasename,
           String errorBasename,
           List<String> randoopOptions) {
-    long defaultTimeout = 15000L;
+    long defaultTimeout = 60000L;
     return generateAndCompile(
         classpath,
         workingPath,
@@ -693,8 +693,18 @@ public class RandoopSystemTest {
     CompileStatus compileStatus = compileTests(testClassSourceFiles, classDir.toString());
     if (! compileStatus.succeeded) {
       for (Diagnostic<? extends JavaFileObject> diag : compileStatus.diagnostics) {
-        String sourceName = diag.getSource().toUri().toString();
-        System.err.printf("Error on %d of %s%n%s%n", diag.getLineNumber(), sourceName, diag.getMessage(null));
+        if (diag != null) {
+          if (diag.getSource() != null) {
+            String sourceName = diag.getSource().toUri().toString();
+            if (diag.getLineNumber() >= 0) {
+              System.err.printf("Error on %d of %s%n%s%n", diag.getLineNumber(), sourceName, diag.getMessage(null));
+            } else {
+              System.err.printf("%s%n", diag.getMessage(null));
+            }
+          } else {
+            System.err.printf("%s%n", diag.getMessage(null));
+          }
+        }
       }
       fail("Compilation failed");
     }
@@ -869,10 +879,10 @@ public class RandoopSystemTest {
 
   private class CompileStatus {
 
-    private final Boolean succeeded;
-    private final List<Diagnostic<? extends JavaFileObject>> diagnostics;
+    final Boolean succeeded;
+    final List<Diagnostic<? extends JavaFileObject>> diagnostics;
 
-    public CompileStatus(Boolean succeeded, List<Diagnostic<? extends JavaFileObject>> diagnostics) {
+    CompileStatus(Boolean succeeded, List<Diagnostic<? extends JavaFileObject>> diagnostics) {
       this.succeeded = succeeded;
       this.diagnostics = diagnostics;
     }
@@ -885,10 +895,10 @@ public class RandoopSystemTest {
    * @return true if compile succeeded, false otherwise
    */
   private CompileStatus compileTests(List<File> testSourceFiles, String destinationDir) {
-    Locale locale = null; // use default locale
-    Charset charset = null; // use default charset
-    Writer writer = null; // use System.err for output
-    List<String> annotatedClasses = null; // no classes
+    final Locale locale = null;   // use default locale
+    final Charset charset = null; // use default charset
+    final Writer writer = null;   // use System.err for output
+    final List<String> annotatedClasses = null; // no classes
 
     List<String> options = new ArrayList<>();
     options.add("-d");

@@ -1,14 +1,13 @@
 package randoop.field;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import org.junit.Test;
 
 import randoop.operation.OperationParseException;
 import randoop.types.GeneralType;
-import randoop.types.RandoopTypeException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class PublicFieldParserTest {
 
@@ -22,16 +21,14 @@ public class PublicFieldParserTest {
       classType = GeneralType.forName(classname);
     } catch (ClassNotFoundException e) {
       fail("couldn't load class: " + e.getMessage());
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
     }
     assert classType != null;
     try {
       AccessibleField pf = FieldParser.parse(fieldPair, classname, fieldname);
       assertEquals(
-          "parse(\"t:v\").toParseableString(classType) should equal \"t:v\"",
+          "parse(\"t:v\").toParsableString(classType) should equal \"t:v\"",
           fieldPair,
-          pf.toParseableString(classType));
+          pf.toParsableString(classType));
     } catch (OperationParseException e) {
       fail("Parse error: " + e.getMessage());
     }
@@ -47,16 +44,14 @@ public class PublicFieldParserTest {
       classType = GeneralType.forName(classname);
     } catch (ClassNotFoundException e) {
       fail("couldn't load class: " + e);
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
     }
     assert classType != null;
     try {
       AccessibleField pf = FieldParser.parse(fieldPair, classname, fieldname);
       assertEquals(
-          "parse(\"t:v\").toParseableString(classType) should equal \"t:v\"",
+          "parse(\"t:v\").toParsableString(classType) should equal \"t:v\"",
           fieldPair,
-          pf.toParseableString(classType));
+          pf.toParsableString(classType));
 
       assertTrue("object is a static field", pf.isStatic());
     } catch (OperationParseException e) {
@@ -74,16 +69,14 @@ public class PublicFieldParserTest {
       classType = GeneralType.forName(classname);
     } catch (ClassNotFoundException e) {
       fail("couldn't load class: " + e);
-    } catch (RandoopTypeException e) {
-      fail("type error: " + e.getMessage());
     }
     assert classType != null;
     try {
       AccessibleField pf = FieldParser.parse(fieldPair, classname, fieldname);
       assertEquals(
-          "parse(\"t:v\").toParseableString(classType) should equal \"t:v\"",
+          "parse(\"t:v\").toParsableString(classType) should equal \"t:v\"",
           fieldPair,
-          pf.toParseableString(classType));
+          pf.toParsableString(classType));
 
       assertTrue("object is a static final field", pf.isStatic() && pf.isFinal());
     } catch (OperationParseException e) {

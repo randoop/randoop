@@ -2,7 +2,7 @@ package randoop.generation;
 
 public class EverythingIsDifferentMatcher implements StateMatcher {
 
-  int size = 0;
+  private int size = 0;
 
   @Override
   public boolean add(Object object) {

@@ -11,14 +11,10 @@ import randoop.NormalExecution;
 import randoop.field.AccessibleField;
 import randoop.field.FieldParser;
 import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.TypedOperationManager;
 import randoop.sequence.Variable;
-import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeTuple;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
-import randoop.types.GeneralTypeTuple;
-import randoop.types.GenericTypeTuple;
-import randoop.types.RandoopTypeException;
+import randoop.types.TypeTuple;
 
 /**
  * FieldGetter is an adapter that creates a {@link Operation} from a
@@ -83,7 +79,7 @@ public class FieldGet extends CallableOperation {
    *          the StringBuilder that strings are appended to.
    */
   @Override
-  public void appendCode(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType, List<Variable> inputVars, StringBuilder b) {
+  public void appendCode(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b) {
     b.append(field.toCode(declaringType, inputVars));
   }
 
@@ -92,7 +88,7 @@ public class FieldGet extends CallableOperation {
    * PublicFieldParser.
    */
   @Override
-  public String toParseableString(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
+  public String toParsableString(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
     return declaringType.getName() + ".<get>(" + field.getName() + ")";
   }
 
@@ -126,12 +122,11 @@ public class FieldGet extends CallableOperation {
    *
    * @param descr
    *          the string containing descriptor of getter for a field.
-   * @param manager
-   *          the {@link TypedOperationManager} to collect operations
+   * @return the getter operation for the given string descriptor
    * @throws OperationParseException
    *           if any error in descriptor string
    */
-  public static void parse(String descr, TypedOperationManager manager) throws OperationParseException {
+  public static TypedOperation parse(String descr) throws OperationParseException {
     String errorPrefix = "Error parsing " + descr + " as description for field getter statement: ";
 
     int openParPos = descr.indexOf('(');
@@ -156,20 +151,15 @@ public class FieldGet extends CallableOperation {
     String fieldname = descr.substring(openParPos + 1, closeParPos);
 
     AccessibleField accessibleField = FieldParser.parse(descr, classname, fieldname);
-    GeneralType classType = accessibleField.getDeclaringType();
+    ClassOrInterfaceType classType = accessibleField.getDeclaringType();
     GeneralType fieldType;
-    try {
-      fieldType = GeneralType.forType(accessibleField.getRawField().getGenericType());
-    } catch (RandoopTypeException e) {
-      String msg = errorPrefix + " type error " + e;
-      throw new OperationParseException(msg);
-    }
+    fieldType = GeneralType.forType(accessibleField.getRawField().getGenericType());
 
     List<GeneralType> getInputTypeList = new ArrayList<>();
     if (! accessibleField.isStatic()) {
       getInputTypeList.add(classType);
     }
-    manager.createTypedOperation(new FieldGet(accessibleField), classType, new GenericTypeTuple(getInputTypeList), fieldType);
+    return new TypedClassOperation(new FieldGet(accessibleField), classType, new TypeTuple(getInputTypeList), fieldType);
   }
 
   @Override

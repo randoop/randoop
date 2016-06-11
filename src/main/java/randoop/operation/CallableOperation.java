@@ -6,10 +6,8 @@ import java.util.List;
 import randoop.ExecutionOutcome;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
-import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeTuple;
 import randoop.types.GeneralType;
-import randoop.types.GeneralTypeTuple;
+import randoop.types.TypeTuple;
 
 /**
  * CallableOperation is an abstract implementation of the Operation interface to
@@ -90,13 +88,16 @@ public abstract class CallableOperation implements Operation {
   public abstract ExecutionOutcome execute(Object[] input, PrintStream out);
 
   /**
-   * Produces a Java source code representation of this statement and append it
+   * Produces a Java source code representation of this statement and appends it
    * to the given StringBuilder.
    *
+   * @param declaringType  the declaring type for this operation
+   * @param inputTypes  the input types for this operation
+   * @param outputType  the output type for this operation
    * @param inputVars  the list of variables that are inputs to operation
-   * @param b  the {@link StringBuilder} to which code is added.
+   * @param b  the {@link StringBuilder} to which code is added
    */
-  public abstract void appendCode(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType, List<Variable> inputVars, StringBuilder b);
+  public abstract void appendCode(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b);
 
   /**
    * Returns a string representation of this Operation, which can be read by
@@ -105,8 +106,11 @@ public abstract class CallableOperation implements Operation {
    * return a String s such that parsing the string
    * returns an object equivalent to this object, i.e. C.parse(this.s).equals(this).
    *
-   * @return string descriptor of {@link Operation} object.
+   * @param declaringType  the declaring type for this operation
+   * @param inputTypes  the input types for this operation
+   * @param outputType  the output type for this operation
+   * @return a string representation of this operation
    */
-  public abstract String toParseableString(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType);
+  public abstract String toParsableString(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType);
 
 }
