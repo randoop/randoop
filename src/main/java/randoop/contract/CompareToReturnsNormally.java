@@ -20,7 +20,7 @@ public class CompareToReturnsNormally implements ObjectContract {
         assert objects != null && objects.length == 1;
         Object o = objects[0];
         assert o != null;
-	    if (o instanceof Comparable) {
+        if (o instanceof Comparable) {
             try {
                 ((Comparable) o).compareTo(o);
             } catch (Exception e) {
