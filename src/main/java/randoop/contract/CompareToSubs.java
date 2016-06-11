@@ -3,7 +3,7 @@ package randoop.contract;
 import randoop.Globals;
 
 /**
- * The contract: Checks the substitutability property of compare to for equals
+ * The contract: Checks the substitutability property of compareTo for equals
  * (x0.compareTo(x1) == 0) &rarr; (Math.signum(x0.compareTo(x2)) == Math.signum(x1.compareTo(x2)))
  */
 public class CompareToSubs implements ObjectContract {
@@ -44,7 +44,7 @@ public class CompareToSubs implements ObjectContract {
 
     @Override
     public String toCommentString() {
-        return "compare-to-substitutability on x0, x1, and x2";
+        return "compareTo-substitutability on x0, x1, and x2";
     }
 
     @Override

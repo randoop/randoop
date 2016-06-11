@@ -8,18 +8,17 @@ import java.util.List;
 import java.util.Set;
 
 import randoop.BugInRandoopException;
-import randoop.contract.EqualsHashcode;
 import randoop.contract.EqualsReflexive;
 import randoop.contract.EqualsSymmetric;
+import randoop.contract.EqualsHashcode;
 import randoop.contract.EqualsToNullRetFalse;
-import randoop.contract.ObjectContract;
 import randoop.contract.EqualsTransitive;
-import randoop.contract.CompareToAntiSym;
+import randoop.contract.ObjectContract;
+import randoop.contract.CompareToAntiSymmetric;
 import randoop.contract.CompareToEquals;
 import randoop.contract.CompareToReflexive;
 import randoop.contract.CompareToSubs;
 import randoop.contract.CompareToTransitive;
-import randoop.contract.CompareToReturnsNormally;
 import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
 import randoop.operation.MethodCall;
@@ -94,12 +93,11 @@ public class OperationModel {
     contracts.add(EqualsSymmetric.getInstance());
     contracts.add(EqualsHashcode.getInstance());
     contracts.add(EqualsToNullRetFalse.getInstance());
-    //contracts.add(EqualsTransitive.getInstance());
+    contracts.add(EqualsTransitive.getInstance());
 
     // Compare to contracts
-    contracts.add(CompareToReturnsNormally.getInstance());
     contracts.add(CompareToReflexive.getInstance());
-    contracts.add(CompareToAntiSym.getInstance());
+    contracts.add(CompareToAntiSymmetric.getInstance());
     contracts.add(CompareToEquals.getInstance());
     contracts.add(CompareToSubs.getInstance());
     contracts.add(CompareToTransitive.getInstance());

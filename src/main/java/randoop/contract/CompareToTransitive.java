@@ -44,7 +44,7 @@ public class CompareToTransitive implements ObjectContract {
 
     @Override
     public String toCommentString() {
-        return "compare-to-transitive on x0, x1, and x2";
+        return "compareTo-transitive on x0, x1, and x2";
     }
 
     @Override

@@ -3,7 +3,7 @@ package randoop.contract;
 import randoop.Globals;
 
 /**
- * The contract: Comparing an object with itself should result in 0
+ * The contract: Checks that an object is reflexive over compareTo
  * <code>x0.compareTo(x0) == 0</code>.
  */
 public class CompareToReflexive implements ObjectContract {
@@ -37,7 +37,7 @@ public class CompareToReflexive implements ObjectContract {
 
     @Override
     public String toCommentString() {
-        return "compare-to-reflexive on x0";
+        return "compareTo-reflexive on x0";
     }
 
     @Override

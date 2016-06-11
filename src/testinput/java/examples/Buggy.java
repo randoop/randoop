@@ -126,21 +126,21 @@ public class Buggy {
     }
   }
 
-  public static class BuggyCompareToAntiSym implements Comparable<BuggyCompareToAntiSym> {
-    private static BuggyCompareToAntiSym one = new BuggyCompareToAntiSym();
-    private static BuggyCompareToAntiSym two = new BuggyCompareToAntiSym();
+  public static class BuggyCompareToAntiSymmetric implements Comparable<BuggyCompareToAntiSymmetric> {
+    private static BuggyCompareToAntiSymmetric one = new BuggyCompareToAntiSymmetric();
+    private static BuggyCompareToAntiSymmetric two = new BuggyCompareToAntiSymmetric();
 
-    public static BuggyCompareToAntiSym getOne() {
+    public static BuggyCompareToAntiSymmetric getOne() {
       return one;
     }
-    public static BuggyCompareToAntiSym getTwo() {
+    public static BuggyCompareToAntiSymmetric getTwo() {
       return two;
     }
 
-    private  BuggyCompareToAntiSym() {}
+    private BuggyCompareToAntiSymmetric() {}
 
     @Override
-    public int compareTo(BuggyCompareToAntiSym o) {
+    public int compareTo(BuggyCompareToAntiSymmetric o) {
       if (this == one && o == two) {
         return 1;
       } else if (this == two && o == one) {

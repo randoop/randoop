@@ -3,15 +3,15 @@ package randoop.contract;
 import randoop.Globals;
 
 /**
- * The contract: Reversing a compareTo on two objects should result in equal values of opposite signs
+ * The contract: Checks that an object is antisymmetric over compareTo
  * <code>Math.signum(x0.compareTo(x1)) == -Math.signum(x1.compareTo(x0))</code>.
  */
-public class CompareToAntiSym implements ObjectContract {
-    private static final CompareToAntiSym instance = new CompareToAntiSym();
+public class CompareToAntiSymmetric implements ObjectContract {
+    private static final CompareToAntiSymmetric instance = new CompareToAntiSymmetric();
 
-    private CompareToAntiSym() {};
+    private CompareToAntiSymmetric() {};
 
-    public static CompareToAntiSym getInstance() {
+    public static CompareToAntiSymmetric getInstance() {
         return instance;
     }
 
@@ -39,12 +39,12 @@ public class CompareToAntiSym implements ObjectContract {
 
     @Override
     public String toCommentString() {
-        return "compare-to-anti-symmetry on x0 and x1";
+        return "compareTo-anti-symmetric on x0 and x1";
     }
 
     @Override
     public String get_observer_str() {
-        return "CompareToAntiSym";
+        return "CompareToAntiSymmetric";
     }
 
     @Override

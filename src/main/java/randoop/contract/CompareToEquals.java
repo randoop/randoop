@@ -36,7 +36,7 @@ public class CompareToEquals implements ObjectContract {
 
     @Override
     public String toCommentString() {
-        return "compare-to-equals on x0 and x1";
+        return "compareTo-equals on x0 and x1";
     }
 
     @Override
