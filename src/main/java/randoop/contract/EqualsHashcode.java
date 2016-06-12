@@ -7,18 +7,12 @@ import randoop.Globals;
  * <code>o1.equals(o2) &rArr; o1.hashCode() == o2.hashCode()</code>.
  */
 public final class EqualsHashcode implements ObjectContract {
+  private static final EqualsHashcode instance = new EqualsHashcode();
 
-  @Override
-  public boolean equals(Object o) {
-    if (o == null) return false;
-    if (o == this) return true;
-    return o instanceof EqualsHashcode;
-  }
+  private EqualsHashcode() {};
 
-  @Override
-  public int hashCode() {
-    int h = 7;
-    return h; // no state to compare.
+  public static EqualsHashcode getInstance() {
+    return instance;
   }
 
   @Override

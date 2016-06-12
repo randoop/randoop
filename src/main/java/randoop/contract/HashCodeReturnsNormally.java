@@ -6,18 +6,12 @@ import randoop.Globals;
  * Checks that calling hashCode() on an object does not throw an exception.
  */
 public final class HashCodeReturnsNormally implements ObjectContract {
+  private static final HashCodeReturnsNormally instance = new HashCodeReturnsNormally();
 
-  @Override
-  public boolean equals(Object o) {
-    if (o == null) return false;
-    if (o == this) return true;
-    return o instanceof HashCodeReturnsNormally;
-  }
+  private HashCodeReturnsNormally() {};
 
-  @Override
-  public int hashCode() {
-    int h = 29;
-    return h; // no state to compare.
+  public static HashCodeReturnsNormally getInstance() {
+    return instance;
   }
 
   @Override

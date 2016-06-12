@@ -6,18 +6,12 @@ import randoop.Globals;
  * The contract: <code>o1.equals(o2) &rArr; o2.equals(o1)</code>.
  */
 public final class EqualsSymmetric implements ObjectContract {
+  private static final EqualsSymmetric instance = new EqualsSymmetric();
 
-  @Override
-  public boolean equals(Object o) {
-    if (o == null) return false;
-    if (o == this) return true;
-    return o instanceof EqualsSymmetric;
-  }
+  private EqualsSymmetric() {};
 
-  @Override
-  public int hashCode() {
-    int h = 19;
-    return h; // no state to compare.
+  public static EqualsSymmetric getInstance() {
+    return instance;
   }
 
   @Override
