@@ -110,10 +110,10 @@ public class SequenceTests {
 
   static {
     Set<ObjectContract> contracts = new LinkedHashSet<>();
-    contracts.add(new EqualsReflexive());
-    contracts.add(new EqualsToNullRetFalse());
-    contracts.add(new EqualsHashcode());
-    contracts.add(new EqualsSymmetric());
+    contracts.add(EqualsReflexive.getInstance());
+    contracts.add(EqualsToNullRetFalse.getInstance());
+    contracts.add(EqualsHashcode.getInstance());
+    contracts.add(EqualsSymmetric.getInstance());
 
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
