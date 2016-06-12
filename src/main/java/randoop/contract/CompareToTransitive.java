@@ -4,7 +4,7 @@ import randoop.Globals;
 
 /**
  * The contract: Checks the transitivity of the compare to method
- * <code>((x0.compareTo(x1) > 0) &amp;&amp; (x1.compareTo(x2) > 0)) &rarr; (x0.compareTo(x2) > 0)</code>.
+ * <code>((x0.compareTo(x1) &gt; 0) &amp;&amp; (x1.compareTo(x2) &gt; 0)) &rarr; (x0.compareTo(x2) &gt; 0)</code>.
  */
 public class CompareToTransitive implements ObjectContract {
     private static final CompareToTransitive instance = new CompareToTransitive();
