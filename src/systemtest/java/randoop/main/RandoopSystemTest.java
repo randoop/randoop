@@ -143,7 +143,7 @@ public class RandoopSystemTest {
 
     List<String> options =
         getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
-    options.add("--inputlimit=100");
+    options.add("--inputlimit=1000");
     options.add("--testclass=java2.util2.TreeSet");
     options.add("--testclass=java2.util2.ArrayList");
     options.add("--testclass=java2.util2.LinkedList");
