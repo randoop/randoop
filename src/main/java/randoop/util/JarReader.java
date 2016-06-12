@@ -12,6 +12,9 @@ public class JarReader {
 
   private static boolean debug = false;
 
+  private JarReader() {
+  }
+
   public static void main(String[] args) throws IOException {
     List<String> names = getClasseNamesInJar(args[0]);
     Collections.sort(names);

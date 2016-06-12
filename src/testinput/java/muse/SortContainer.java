@@ -8,15 +8,19 @@ import java.util.List;
  * A test input inspired by MUSE project.
  */
 public class SortContainer {
-/*
-  public static void main(String[] args) {
-    List<Integer> list = makeAListOfLengthAtMost100(20);
-    List<Integer> sorted = sort(list);
-    for (int elem : sorted) {
-      System.out.println(elem);
-    }
+
+  private SortContainer() {
   }
-*/
+
+  /*
+    public static void main(String[] args) {
+      List<Integer> list = makeAListOfLengthAtMost100(20);
+      List<Integer> sorted = sort(list);
+      for (int elem : sorted) {
+        System.out.println(elem);
+      }
+    }
+  */
   public static List<Integer> sortIntegerList(List<Integer> unsorted) {
     List<Integer> list = new ArrayList<>(unsorted);
     Collections.sort(list);

@@ -6,6 +6,9 @@ import java.util.Set;
 
 public class OperationParser {
 
+  private OperationParser() {
+  }
+
   /**
    * Parses a string representing a StatementKind. The string is expected to be
    * of the form:

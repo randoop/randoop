@@ -11,7 +11,9 @@ import randoop.types.RandoopTypeException;
  * Created by bjkeller on 3/29/16.
  */
 public class FieldParser {
-
+  
+  private FieldParser() {
+  }
 
   public static AccessibleField parse(String descr, String classname, String fieldname) throws OperationParseException {
     String errorPrefix = "Error when parsing field " + descr + ".";

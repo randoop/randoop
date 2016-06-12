@@ -14,7 +14,10 @@ import randoop.util.Timer;
  */
 public class ObjectContractUtils {
 
-  /**
+    private ObjectContractUtils() {
+    }
+
+    /**
    * Executes the given contract via reflection.
    *
    * @param c

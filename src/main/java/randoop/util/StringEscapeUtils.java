@@ -61,7 +61,7 @@ public class StringEscapeUtils {
    * to operate.
    * </p>
    */
-  public StringEscapeUtils() { // Empty.
+  private StringEscapeUtils() { // Empty.
   }
 
   // Java and JavaScript

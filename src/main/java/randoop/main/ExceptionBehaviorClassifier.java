@@ -9,6 +9,9 @@ import randoop.sequence.ExecutableSequence;
  */
 public class ExceptionBehaviorClassifier {
 
+  private ExceptionBehaviorClassifier() {
+  }
+
   /**
    * Classifies a {@code Throwable} thrown by the {@code ExecutableSequence}
    * using the command-line arguments

@@ -15,6 +15,9 @@ import randoop.util.Log;
  */
 public class JavaFileWriter {
 
+  private JavaFileWriter() {
+  }
+
   // Creates Junit tests for the faults.
   // Output is a set of .java files.
   public static void createJavaFiles(
