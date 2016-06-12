@@ -10,10 +10,14 @@ import randoop.util.CollectionsExt;
 import randoop.util.Log;
 
 /**
- * Outputs a collection of sequences as Java files, with one method per
- * sequence.
+ * Method {@link #createJavaFiles} outputs a collection of sequences
+ * as Java files, with one method per sequence.
  */
 public class JavaFileWriter {
+
+  private JavaFileWriter() {
+    throw new Error("Do not instantiate");
+  }
 
   // Creates Junit tests for the faults.
   // Output is a set of .java files.

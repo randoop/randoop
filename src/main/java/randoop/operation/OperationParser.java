@@ -4,11 +4,18 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+/**
+ * Method {@link #parse} parses a string representing a {@code StatementKind}.
+ */
 public class OperationParser {
 
+  private OperationParser() {
+    throw new Error("Do not instantiate");
+  }
+
   /**
-   * Parses a string representing a StatementKind. The string is expected to be
-   * of the form:
+   * Parses a string representing a {@code StatementKind}.
+   * The string is expected to be of the form:
    *
    * <pre>
    *   ID : DESCRIPTION
