@@ -16,6 +16,10 @@ import plume.UtilMDE;
  */
 public final class ReflectionExecutor {
 
+  private ReflectionExecutor() {
+    throw new Error("Do not instantiate");
+  }
+
   /**
    * Use if Randoop is exhibiting nonterminating behavior, which is usually due
    * to execution of code under test that results in an infinite loop. With this

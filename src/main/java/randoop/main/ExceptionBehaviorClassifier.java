@@ -4,10 +4,15 @@ import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.sequence.ExecutableSequence;
 
 /**
- * Classifies exceptions thrown by a test sequence based on the
- * {@code GenInputsAbstract.BehaviorType} command-line arguments.
+ * Method {@link #classify} classifies exceptions thrown by a test sequence
+ * based on the {@link GenInputsAbstract.BehaviorType} command-line
+ * arguments.
  */
 public class ExceptionBehaviorClassifier {
+
+  private ExceptionBehaviorClassifier() {
+    throw new Error("Do not instantiate");
+  }
 
   /**
    * Classifies a {@code Throwable} thrown by the {@code ExecutableSequence}

@@ -15,9 +15,8 @@ import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;
 
 /**
- * Reads a file specifying literal values to use during generation. Method
- * parse(String) takes as input the name of a text file. The text file should
- * contain one or more records of the form:
+ * Method {@link #parse} reads a file specifying literal values to use during
+ * generation. The text file should contain one or more records of the form:
  *
  * <pre>
  * START CLASSLITERALS
@@ -57,6 +56,10 @@ import randoop.util.RecordProcessor;
  * class.
  */
 public class LiteralFileReader {
+
+  private LiteralFileReader() {
+    throw new Error("Do not instantiate");
+  }
 
   private static final String CLASSLITERALS = "CLASSLITERALS";
   private static final String CLASSNAME = "CLASSNAME";
