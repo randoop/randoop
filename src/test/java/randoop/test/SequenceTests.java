@@ -111,9 +111,10 @@ public class SequenceTests {
   static {
     Set<ObjectContract> contracts = new LinkedHashSet<>();
     contracts.add(EqualsReflexive.getInstance());
-    contracts.add(EqualsSymmetric.getInstance());
-    contracts.add(EqualsHashcode.getInstance());
     contracts.add(EqualsToNullRetFalse.getInstance());
+    contracts.add(EqualsHashcode.getInstance());
+    contracts.add(EqualsSymmetric.getInstance());
+
 
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
     VisibilityPredicate visibility = new PublicVisibilityPredicate();

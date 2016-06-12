@@ -11,13 +11,17 @@ import randoop.util.RandoopSecurityManager.Status;
  */
 public abstract class ReflectionCode {
 
-  private boolean runAlready; /** has this been executed already */
+  /** has this been executed already */
+  private boolean runAlready;
 
   /**
    * Runs the reflection code that this object represents, but first, if
    * System.getSecurityManager() returns a RandoopSecurityManager, this method
    * sets the security manager's status to ON. Before exiting, this method sets
    * the security manager's status to its status before this call.
+   * @throws InvocationTargetException if the invocation does
+   * @throws IllegalAccessException if the invocation does
+   * @throws InstantiationException if the invocation does
    */
   public final void runReflectionCode()
       throws InstantiationException, IllegalAccessException, InvocationTargetException,

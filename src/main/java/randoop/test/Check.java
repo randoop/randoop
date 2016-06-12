@@ -67,7 +67,7 @@ public interface Check {
 
   /**
    * Returns a unique string identifier for the check. Two checks are the same
-   * if these identifiers match. The value is NOT included. with. Used to match
+   * if these identifiers match. The value is NOT included. Used to match
    * up checks between the same sequence run at different times. Note that
    * because of changes in the environment (e.g., static variables), two
    * executions of the same sequence may have different checks (because the

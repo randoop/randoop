@@ -87,15 +87,13 @@ public class OperationModel {
     classLiteralMap = new MultiMap<>();
     annotatedTestValues = new LinkedHashSet<>();
     contracts = new LinkedHashSet<>();
-
-    // Equals contracts
     contracts.add(EqualsReflexive.getInstance());
     contracts.add(EqualsSymmetric.getInstance());
     contracts.add(EqualsHashcode.getInstance());
     contracts.add(EqualsToNullRetFalse.getInstance());
     contracts.add(EqualsTransitive.getInstance());
+    contracts.add(EqualsTransitive.getInstance());
 
-    // Compare to contracts
     contracts.add(CompareToReflexive.getInstance());
     contracts.add(CompareToAntiSymmetric.getInstance());
     contracts.add(CompareToEquals.getInstance());
