@@ -6,18 +6,12 @@ import randoop.Globals;
  * The contract: <code>x0.equals(x0)==true</code>.
  */
 public final class EqualsReflexive implements ObjectContract {
+  private static final EqualsReflexive instance = new EqualsReflexive();
 
-  @Override
-  public boolean equals(Object o) {
-    if (o == null) return false;
-    if (o == this) return true;
-    return o instanceof EqualsReflexive;
-  }
+  private EqualsReflexive() {};
 
-  @Override
-  public int hashCode() {
-    int h = 17;
-    return h; // no state to compare.
+  public static EqualsReflexive getInstance() {
+    return instance;
   }
 
   @Override

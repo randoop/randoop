@@ -12,6 +12,9 @@ import randoop.types.RandoopTypeException;
  */
 public class FieldParser {
 
+  private FieldParser() {
+    throw new Error("Do not instantiate");
+  }
 
   public static AccessibleField parse(String descr, String classname, String fieldname) throws OperationParseException {
     String errorPrefix = "Error when parsing field " + descr + ".";

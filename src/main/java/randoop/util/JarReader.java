@@ -12,6 +12,10 @@ public class JarReader {
 
   private static boolean debug = false;
 
+  private JarReader() {
+    throw new Error("Do not instantiate");
+  }
+
   public static void main(String[] args) throws IOException {
     List<String> names = getClasseNamesInJar(args[0]);
     Collections.sort(names);
