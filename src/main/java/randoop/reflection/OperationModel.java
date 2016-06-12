@@ -81,10 +81,10 @@ public class OperationModel {
     classLiteralMap = new MultiMap<>();
     annotatedTestValues = new LinkedHashSet<>();
     contracts = new LinkedHashSet<>();
-    contracts.add(new EqualsReflexive());
-    contracts.add(new EqualsSymmetric());
-    contracts.add(new EqualsHashcode());
-    contracts.add(new EqualsToNullRetFalse());
+    contracts.add(EqualsReflexive.getInstance());
+    contracts.add(EqualsSymmetric.getInstance());
+    contracts.add(EqualsHashcode.getInstance());
+    contracts.add(EqualsToNullRetFalse.getInstance());
     //contracts.add(EqualsTransitive.getInstance());
     exercisedClasses = new LinkedHashSet<>();
     operations = new LinkedHashSet<>();
