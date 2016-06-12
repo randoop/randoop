@@ -32,7 +32,8 @@ import randoop.types.TypeTuple;
  */
 public final class ArrayCreation extends CallableOperation {
 
-  /** ID for parsing purposes (see StatementKinds.parse method) */
+  /** ID for parsing purposes.
+   * @see OperationParser#parse */
   public static final String ID = "array";
 
   // State variables.
