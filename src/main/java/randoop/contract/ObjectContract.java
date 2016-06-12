@@ -14,10 +14,11 @@ package randoop.contract;
  * Implementing classes provide two key pieces functionality:
  *
  * <ul>
- * <li>A method <code>evaluate(Object... objects)</code> that evaluates ones or
- * more objects at runtime and determines if the given object(s) satisfy the
- * property. The arity will depend on the specific property being checked.
- * <li>A method <code>toCodeString()</code> that emits Java code that can be
+ * <li>A method <code>{@link #evaluate}(Object... objects)</code> that
+ * determines if the given object(s) satisfy the
+ * property.
+ * <li>A method <code>{@link #toCodeString}()</code>
+ * that emits Java code that can be
  * inserted into a unit test to check for the given property.
  * </ul>
  *
@@ -83,13 +84,11 @@ public interface ObjectContract {
    * <p>
    * The string should be formatted as follows: the N-th object that
    * participates in the contract check should be referred to as "xN" (for N one
-   * of 0, ... , 9). For example, if the expression or arity 2 represents a call
+   * of 0, ... , 9). For example, if the expression of arity 2 represents a call
    * of the equals method between two objects, the comment should be something
    * like "x0.equals(x1)".
-   * <p>
-   * The returned string should not be null.
    *
-   * @return the code string representation of this contract
+   * @return the code string representation of this contract; must be non-null
    */
   String toCodeString();
 
