@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * Method {@link #parse} parses a string representing a {@link StatementKind}.
+ * Method {@link #parse} parses a string representing a {@code StatementKind}.
  */
 public class OperationParser {
 
@@ -14,7 +14,7 @@ public class OperationParser {
   }
 
   /**
-   * Parses a string representing a {@link StatementKind}.
+   * Parses a string representing a {@code StatementKind}.
    * The string is expected to be of the form:
    *
    * <pre>
