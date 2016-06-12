@@ -92,7 +92,6 @@ public class OperationModel {
     contracts.add(EqualsHashcode.getInstance());
     contracts.add(EqualsToNullRetFalse.getInstance());
     contracts.add(EqualsTransitive.getInstance());
-    contracts.add(EqualsTransitive.getInstance());
 
     contracts.add(CompareToReflexive.getInstance());
     contracts.add(CompareToAntiSymmetric.getInstance());
