@@ -143,7 +143,7 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
                 if ((sk.isConstructorCall()) && (s.sequence.getInputs(i).size() == 1)) continue;
                 // System.out.printf ("var type %s comes from date %s / %s%n",
                 // s.sequence.getVariable(i).getType(),
-                // s.sequence.getStatementKind(i), sk);
+                // s.sequence.getOperation(i), sk);
               }
             }
 

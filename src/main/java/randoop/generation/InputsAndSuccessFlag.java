@@ -8,7 +8,7 @@ import java.util.List;
 import randoop.sequence.Sequence;
 
 /**
- * Return type for ForwardGenerator's selectInputs method, which is responsible
+ * Return type for ForwardGenerator's private selectInputs method, which is responsible
  * for selecting a set of component sequences to be concatenated into a longer
  * sequence.
  *
@@ -16,9 +16,9 @@ import randoop.sequence.Sequence;
 class InputsAndSuccessFlag {
 
   /**
-   * True if method selectInputs(StatementKind statement) was able to find
-   * component sequences for all the input types required by the given
-   * statement.
+   * True if private method {@code ForwardGenerator.selectInputs(TypedOperation operation)}
+   * was able to find component sequences for all the input types required
+   * by the given statement.
    */
   public boolean success;
 

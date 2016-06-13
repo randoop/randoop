@@ -109,7 +109,7 @@ public final class Sequence implements WeightedElement {
   /**
    * The types of all the variables involved in the last statement. This
    * includes the output variable. The types returned are not the types in the
-   * signature of the StatementKind, but the types of the variables.
+   * signature of the Operation, but the types of the variables.
    *
    * @return the types of the variables in the last statement of this sequence
    */
@@ -836,7 +836,7 @@ public final class Sequence implements WeightedElement {
    * </pre>
    *
    * where the VAR are strings representing a variable name, and OPERATION is a
-   * string representing a StatementKind. For more on OPERATION, see the
+   * string representing an Operation. For more on OPERATION, see the
    * documentation for {@link OperationParser#parse(String)}.
    *
    * The first VAR token represents the "output variable" that is the result of

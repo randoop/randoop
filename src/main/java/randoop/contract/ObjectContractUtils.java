@@ -14,6 +14,10 @@ import randoop.util.Timer;
  */
 public class ObjectContractUtils {
 
+  private ObjectContractUtils() {
+    throw new Error("Do not instantiate");
+  }
+
   /**
    * Executes the given contract via reflection.
    *
