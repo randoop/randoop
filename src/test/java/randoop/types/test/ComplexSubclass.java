@@ -3,7 +3,7 @@ package randoop.types.test;
 import java.util.Set;
 
 /**
- * Created by bjkeller on 6/6/16.
+ * Generic input class inheriting from parameterized type.
  */
 public class ComplexSubclass<T> extends Superclass<Set<T>> {
 }

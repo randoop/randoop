@@ -22,7 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 /**
- * Created by bjkeller on 4/14/16.
+ * Tests of reflection.
  */
 public class ClassReflectionTest {
 

@@ -1,7 +1,7 @@
 package randoop.test;
 
 /**
- * Created by bjkeller on 4/14/16.
+ * Input class for enum testing.
  */
 public class ClassWithInnerEnum {
   public Toggle toggleSwitch;
