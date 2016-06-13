@@ -139,9 +139,12 @@ tests. </p>
 
 <ul><li><strong>(Easiest)</strong> If you are interested
 only in using Randoop, the quickest way to get started is downloading
-the file <code>randoop-<em>X.Y.Z</em>.jar</code> from the
+the file <code>randoop-all-<em>X.Y.Z</em>.jar</code> from the
 <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.
-After you do this, follow the instructions in the next section. </li>
+After you do this, follow the instructions in the next section.
+(The files <code>exercised-class-<em>X.Y.Z</em>.jar</code> and
+<code>mapcall-<em>X.Y.Z</em>.jar</code> are not needed to run Randoop except
+in special cases described later.)</li>
 <li><strong>(Easy)</strong> If you want to use
 Randoop and are also interested in inspecting or compiling the source
 code, you can download the file <code>randoop-<em>X.Y.Z</em>.zip</code> from the
@@ -690,7 +693,7 @@ Randoop about your application, and that is how we recommend using Randoop.
       <li id="option:include-if-class-exercised"><b>--include-if-class-exercised=</b><i>filename</i>.
  File containing fully qualified names of classes that the tests must exercise.
  This option only works if Randoop is run using
- <code>-javaagent:exercised_agent.jar</code>
+ <code>-javaagent:exercised-class-<em>X.Y.Z</em>.jar</code>
  to instrument the classes. A test is output only if it exercises at least one
  of the class names in the file. A test exercises a class if it executes any
  constructor or method of the class, directly or indirectly (the constructor
@@ -1049,11 +1052,14 @@ that you provide.
 </p>
 
 <p>
-To transform calls to undesired methods, pass the following command-line
-option to <code>java</code> when running Randoop:
+To transform calls to undesired methods, first download the
+<code>mapcall-<em>X.Y.Z</em>.jar</code>
+file from the
+<a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.
+Then use this file pass the following command-line option to <code>java</code> when running Randoop:
 </p>
 <pre>
-    -javaagent:$(randoop)/mapcall_agent.jar=--map_calls=map_calls.txt
+    -javaagent:$(AGENT_PATH)/mapcall-<em>X.Y.Z</em>.jar=--map_calls=map_calls.txt
 </pre>
 <p>
 (<b>Note:</b> If you supply the <code>-javaagent</code> option to <code>java</code>
@@ -1175,16 +1181,19 @@ exception escaping the method as the rep invariant being violated.
   <code>--include-if-class-exercised</code> option.
   However, for this option to work, the classes must be instrumented to indicate
   when they are exercised.
-  To instrument classes for this filter, also use the <code>exercised_agent.jar</code>
+  To instrument classes for this filter, also use the <code>exercised-class-<em>X.Y.Z</em>.jar</code>
   by giving the following command-line option for java
 </p>
 <pre><code>
-  -javaagent:$(randoop)exercised_agent.jar
+  -javaagent:$(randoop)exercised-class-<em>X.Y.Z</em>.jar
 </code></pre>
 <p>
   This will instrument any non-abstract constructor and method of loaded
   classes so that the use of a class can be detected.
   (The instrumentation is not done on any JDK or JUnit classes.)
+  (Note: you must first download the <code>exercised-class-<em>X.Y.Z</em>.jar</code>
+  file from the
+  <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.)
 </p>
 
 <h3 id="primitives">Specifying additional primitive values</h3>
