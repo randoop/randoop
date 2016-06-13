@@ -894,7 +894,7 @@ public final class Sequence implements WeightedElement {
         if (equalsInd == -1) {
           String msg =
               "A statement must be of the form "
-                  + "varname = <statementkind> : varname ... varname"
+                  + "varname = <operation-name> : varname ... varname"
                   + " but the "
                   + statementCount
                   + "-th (1-based) is missing"
@@ -905,7 +905,7 @@ public final class Sequence implements WeightedElement {
         if (colonInd == -1) {
           String msg =
               "A statement must be of the form "
-                  + "varname = <statementkind> : varname ... varname"
+                  + "varname = <operation-name> : varname ... varname"
                   + " but the "
                   + statementCount
                   + "-th (1-based) is missing"
