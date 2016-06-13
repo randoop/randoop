@@ -2,7 +2,7 @@ package randoop.field;
 
 /**
  * SubclassWithFields is used for testing reflection over
- * inherited fields in collecting StatementKinds by
+ * inherited fields in collecting Operations by
  * Reflection.getStatements.
  *
  */

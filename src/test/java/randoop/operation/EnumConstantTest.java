@@ -53,7 +53,7 @@ public class EnumConstantTest {
 
     try {
       EnumConstant.parse(missingColon);
-      fail("Expected StatementKindParseException to be thrown");
+      fail("Expected OperationParseException to be thrown");
     } catch (OperationParseException e) {
       String msg =
           "An enum constant description must be of the form \""
@@ -69,7 +69,7 @@ public class EnumConstantTest {
 
     try {
       EnumConstant.parse(missingType);
-      fail("Expected StatementKindParseException to be thrown");
+      fail("Expected OperationParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = errorPrefix1 + missingType + errorPrefix2 + " No type given.";
       assertEquals("Expecting missing type message", msg, e.getMessage());
@@ -77,7 +77,7 @@ public class EnumConstantTest {
 
     try {
       EnumConstant.parse(missingValue);
-      fail("Expected StatementKindParseException to be thrown");
+      fail("Expected OperationParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = errorPrefix1 + missingValue + errorPrefix2 + " No value given.";
       assertEquals("Expecting missing value message", msg, e.getMessage());
@@ -85,7 +85,7 @@ public class EnumConstantTest {
 
     try {
       EnumConstant.parse(spaceInType);
-      fail("Expected StatementKindParseException to be thrown");
+      fail("Expected OperationParseException to be thrown");
     } catch (OperationParseException e) {
       String msg =
           errorPrefix1
@@ -97,7 +97,7 @@ public class EnumConstantTest {
 
     try {
       EnumConstant.parse(spaceInValue);
-      fail("Expected StatementKindParseException to be thrown");
+      fail("Expected OperationParseException to be thrown");
     } catch (OperationParseException e) {
       String msg =
           errorPrefix1
@@ -109,7 +109,7 @@ public class EnumConstantTest {
 
     try {
       EnumConstant.parse(badType);
-      fail("Expected StatementKindParseException to be thrown");
+      fail("Expected OperationParseException to be thrown");
     } catch (OperationParseException e) {
       String msg =
           errorPrefix1 + badType + errorPrefix2 + " The type given \"SEFT\" was not recognized.";
@@ -117,7 +117,7 @@ public class EnumConstantTest {
     }
     try {
       EnumConstant.parse(badValue);
-      fail("Expected StatementKindParseException to be thrown");
+      fail("Expected OperationParseException to be thrown");
     } catch (OperationParseException e) {
       String msg =
           errorPrefix1
@@ -128,7 +128,7 @@ public class EnumConstantTest {
     }
     try {
       EnumConstant.parse(nonEnum);
-      fail("Expected StatementKindParseException to be thrown");
+      fail("Expected OperationParseException to be thrown");
     } catch (OperationParseException e) {
       String msg =
           errorPrefix1

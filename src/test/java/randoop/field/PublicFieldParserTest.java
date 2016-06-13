@@ -96,7 +96,7 @@ public class PublicFieldParserTest {
     String fieldname = "one ield";
     try {
       AccessibleField pf = FieldParser.parse(spaceInValue, classname, fieldname);
-      fail("Expected StatementKindParseException to be thrown");
+      fail("Expected OperationParseException to be thrown");
     } catch (OperationParseException e) {
       String msg =
           errorPrefix1
@@ -110,7 +110,7 @@ public class PublicFieldParserTest {
     fieldname = "oneMethod";
     try {
       AccessibleField pf = FieldParser.parse(nonField, classname, fieldname);
-      fail("Expected StatementKindParseException to be thrown");
+      fail("Expected OperationParseException to be thrown");
     } catch (OperationParseException e) {
       String msg =
           errorPrefix1

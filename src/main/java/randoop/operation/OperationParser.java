@@ -4,32 +4,39 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+/**
+ * Method {@link #parse} parses a string representing a {@code StatementKind}.
+ */
 public class OperationParser {
 
+  private OperationParser() {
+    throw new Error("Do not instantiate");
+  }
+
   /**
-   * Parses a string representing a StatementKind. The string is expected to be
-   * of the form:
+   * Parses a string representing an {code Operation}.
+   * The string is expected to be of the form:
    *
    * <pre>
    *   ID : DESCRIPTION
    * </pre>
    *
-   * Where ID is a string identifying the type of StatementKind, and DESCRIPTION
-   * represents more specifics of the StatementKind. For example, the following
+   * Where ID is a string identifying the type of Operation, and DESCRIPTION
+   * represents more specifics of the Operation. For example, the following
    * String represents the constructor for HashMap:
    *
    * <pre>
    *   cons : java.util.HashMap.&lt;init&gt;()
    * </pre>
    *
-   * A class implementing StatementKind should define a static field named ID
+   * A class implementing Operation should define a static field named ID
    * that corresponds to the ID string used when parsing. The way this parse
    * method works is by using the ID string to determine the specific
-   * StatementKind class C, and the calling C.parse(String) on the DESCRIPTION
+   * Operation class C, and the calling C.parse(String) on the DESCRIPTION
    * String.
    * <p>
    * For more details on the exact form of DESCRIPTION, see the different
-   * classes implementing StatementKind.
+   * classes implementing Operation.
    *
    * @param str
    *          the string to be parsed.
