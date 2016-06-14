@@ -8,11 +8,17 @@ import java.util.List;
 import java.util.Set;
 
 import randoop.BugInRandoopException;
-import randoop.contract.EqualsHashcode;
 import randoop.contract.EqualsReflexive;
 import randoop.contract.EqualsSymmetric;
+import randoop.contract.EqualsHashcode;
 import randoop.contract.EqualsToNullRetFalse;
+import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
+import randoop.contract.CompareToAntiSymmetric;
+import randoop.contract.CompareToEquals;
+import randoop.contract.CompareToReflexive;
+import randoop.contract.CompareToSubs;
+import randoop.contract.CompareToTransitive;
 import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
 import randoop.operation.MethodCall;
@@ -85,7 +91,14 @@ public class OperationModel {
     contracts.add(EqualsSymmetric.getInstance());
     contracts.add(EqualsHashcode.getInstance());
     contracts.add(EqualsToNullRetFalse.getInstance());
-    //contracts.add(EqualsTransitive.getInstance());
+    contracts.add(EqualsTransitive.getInstance());
+
+    contracts.add(CompareToReflexive.getInstance());
+    contracts.add(CompareToAntiSymmetric.getInstance());
+    contracts.add(CompareToEquals.getInstance());
+    contracts.add(CompareToSubs.getInstance());
+    contracts.add(CompareToTransitive.getInstance());
+
     exercisedClasses = new LinkedHashSet<>();
     operations = new LinkedHashSet<>();
   }
@@ -224,6 +237,7 @@ public class OperationModel {
   public List<TypedOperation> getConcreteOperations() {
     return new ArrayList<>(operations);
   }
+
 
   /**
    * Returns all {@link ObjectContract} objects for this run of Randoop.

@@ -3,14 +3,14 @@ package randoop.contract;
 import randoop.Globals;
 
 /**
- * Checks that calling hashCode() on an object does not throw an exception.
+ * Checks that calling equals() on an object does not throw an exception.
  */
-public final class HashCodeReturnsNormally implements ObjectContract {
-  private static final HashCodeReturnsNormally instance = new HashCodeReturnsNormally();
+public final class EqualsReturnsNormally implements ObjectContract {
+  private static final EqualsReturnsNormally instance = new EqualsReturnsNormally();
 
-  private HashCodeReturnsNormally() {};
+  private EqualsReturnsNormally() {};
 
-  public static HashCodeReturnsNormally getInstance() {
+  public static EqualsReturnsNormally getInstance() {
     return instance;
   }
 
@@ -20,7 +20,7 @@ public final class HashCodeReturnsNormally implements ObjectContract {
     Object o = objects[0];
     assert o != null;
     try {
-      o.hashCode();
+      o.equals(o);
     } catch (Exception e) {
       return false;
     }
@@ -34,12 +34,12 @@ public final class HashCodeReturnsNormally implements ObjectContract {
 
   @Override
   public String toCommentString() {
-    return "x0.hashCode() throws no Exception.";
+    return "x0.equals() throws no Exception.";
   }
 
   @Override
   public String get_observer_str() {
-    return "hashCode() throws no Exception";
+    return "equals() throws no Exception";
   }
 
   @Override
@@ -55,7 +55,7 @@ public final class HashCodeReturnsNormally implements ObjectContract {
     b.append(" " + toCommentString() + Globals.lineSep);
     b.append("org.junit.Assert.assertTrue(");
     b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("x0.hashCode()");
+    b.append("x0.equals()");
     b.append(");");
     return b.toString();
   }
