@@ -3,7 +3,7 @@ package randoop.test;
 import randoop.util.predicate.Predicate;
 
 /**
- * Created by bjkeller on 4/14/16.
+ * Class for enums with parameterized types.
  *
  * inspired by Google javascript code in Defects4J Closure 123f
  */

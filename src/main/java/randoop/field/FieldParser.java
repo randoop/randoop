@@ -8,7 +8,8 @@ import randoop.types.GeneralType;
 import randoop.types.RandoopTypeException;
 
 /**
- * Created by bjkeller on 3/29/16.
+ * Recognizes a string representation of a field as part of parsing an
+ * {@link randoop.operation.Operation} that is a {@link randoop.operation.FieldGet} or {@link randoop.operation.FieldSet} operation.
  */
 public class FieldParser {
 
@@ -16,6 +17,16 @@ public class FieldParser {
     throw new Error("Do not instantiate");
   }
 
+ /**
+  * Recognizes a field from a string description, using class and field name
+  * tokens, and returns a {@link AccessibleField} object.
+  *
+  * @param descr  the full string description
+  * @param classname  the name of the field's declaring class
+  * @param fieldname  the name of the field
+  * @return the {@link AccessibleField} for the given class and field name.
+  * @throws OperationParseException if either name is malformed or incorrect
+  */
   public static AccessibleField parse(String descr, String classname, String fieldname) throws OperationParseException {
     String errorPrefix = "Error when parsing field " + descr + ".";
     ClassOrInterfaceType classType;

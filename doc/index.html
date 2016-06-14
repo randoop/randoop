@@ -135,25 +135,31 @@ tests. </p>
 
 <h2 id="getting_randoop">Installing Randoop</h2>
 
-<p>You have three options: </p>
+<p>
+  Most users will want to get Randoop by downloading the file
+  <code>randoop-<em>X.Y.Z</em>.zip</code> from the
+  <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.
+  (The <code><em>X.Y.Z</em></code> will be actual digits such as <code>3.0.1</code>.)
+  This zip archive contains the Randoop jar file
+  <code>randoop-all-<em>X.Y.Z</em>.jar</code>, the Java agent jar files
+  (<code>exercised-class-<em>X.Y.Z</em>.jar</code> and
+   <code>mapcall-<em>X.Y.Z</em>.jar</code>),
+  and this documentation.
+  These instructions assume an environment varible <code>RANDOOP_PATH</code> is set to
+  the path of the unzipped archive.
+</p>
 
-<ul><li><strong>(Easiest)</strong> If you are interested
-only in using Randoop, the quickest way to get started is downloading
-the file <code>randoop-<em>X.Y.Z</em>.jar</code> from the
-<a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.
-After you do this, follow the instructions in the next section. </li>
-<li><strong>(Easy)</strong> If you want to use
-Randoop and are also interested in inspecting or compiling the source
-code, you can download the file <code>randoop-<em>X.Y.Z</em>.zip</code> from the
-<a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.
-This zip archive contains <code>randoop.jar</code>,
-documentation such as the user manual, and source code. </li>
-<li><strong>(Advanced)</strong> You
-can get the entire project repository contents, which includes system
-  tests for Randoop. Run
-  <pre>git clone https://github.com/randoop/randoop.git</pre>
-</li>
-</ul>
+<p>
+  Alternatively, if you are comfortable with setting up your own Java
+  environment, the individual jar files can be downloaded as needed from the
+  <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.
+</p>
+
+<p>
+  If you want to see or work with the source code, follow the instructions in
+  the <a href="dev.html#">Getting Started</a>
+  section of the Randoop Developer's Manual.
+</p>
 
 <p>
   You may wish to join the <a href="https://groups.google.com/forum/#!forum/randoop-discuss">randoop-discuss@googlegroups.com</a> mailing list so that you are notified of new releases.
@@ -167,24 +173,31 @@ Run Randoop by invoking its main class <code>randoop.main.Main</code>:
 </p>
 
 <pre class="code">
-java -ea -classpath <em>&lt;classes-under-test&gt;</em>:randoop.jar randoop.main.Main <em>command</em> <em>args...</em>
+java -ea -classpath <em>&lt;classes-under-test&gt;</em>:randoop-all-<em>X.Y.Z</em>.jar randoop.main.Main <em>command</em> <em>args...</em>
 </pre>
+
+<p>
+  Remember that the <code><em>X.Y.Z</em></code> in the jar file name will be
+  actual digits such as <code>3.0.1</code>.
+</p>
 
 <p>
 The classpath needs to contain both Randoop and the path to the classes under test.
 For instance, if the current working directory contains both
-<code>randoop.jar</code> and a directory named <code>bin</code> containing
+<code>randoop-all-<em>X.Y.Z</em>.jar</code> and a directory named <code>bin</code> containing
  your compiled classes, then you would use:
 </p>
 
 <pre class="code">
-  -classpath bin:randoop.jar
+  -classpath bin:randoop-all-<em>X.Y.Z</em>.jar
 </pre>
 
  <p>
 (On Windows, semicolon instead of colon is the classpath separator.)
 Note that you don't need the <code>-classpath</code> argument if you add
-<code>randoop.jar</code> to your classpath.
+<code>randoop-all-<em>X.Y.Z</em>.jar</code> to your classpath.
+(Note that if you are using the recommended installation from the zip file,
+the path to the jar file is <code>$(RANDOOP_PATH)/randoop-all-<em>X.Y.Z</em>.jar</code>.)
 </p>
 
 <p>
@@ -197,8 +210,8 @@ For details, see <a href="#getting_help">Getting Help</a>.
 Example uses:
 
 <pre class="code">
-java -ea -classpath randoop.jar randoop.main.Main help
-java -ea -classpath randoop.jar randoop.main.Main help gentests
+java -ea -classpath randoop-all-<em>X.Y.Z</em>.jar randoop.main.Main help
+java -ea -classpath randoop-all-<em>X.Y.Z</em>.jar randoop.main.Main help gentests
 </pre>
 </li>
 
@@ -206,7 +219,7 @@ java -ea -classpath randoop.jar randoop.main.Main help gentests
 see <a href="#generating_tests">Generating Tests</a>. Example use:
 
 <pre class="code">
-java -classpath bin:randoop.jar randoop.main.Main gentests --testclass=java.util.TreeSet --timelimit=60
+java -classpath bin:randoop-all-<em>X.Y.Z</em>.jar randoop.main.Main gentests --testclass=java.util.TreeSet --timelimit=60
 </pre>
 </li>
 
@@ -260,7 +273,7 @@ java.util.TreeSet</pre>
 <p>
 and invoke Randoop as follows: </p>
 
-<pre class="code">java -classpath randoop.jar randoop.main.Main gentests --classlist=myclasses.txt --timelimit=60</pre>
+<pre class="code">java -classpath randoop-all-<em>X.Y.Z</em>.jar randoop.main.Main gentests --classlist=myclasses.txt --timelimit=60</pre>
 
 
 <p>After 60 seconds, Randoop stops generating tests. The last thing Randoop prints out is the name of the JUnit files containing the tests it generated. You should see a message similar to the following: </p>
@@ -689,7 +702,7 @@ Randoop about your application, and that is how we recommend using Randoop.
       <li id="option:include-if-class-exercised"><b>--include-if-class-exercised=</b><i>filename</i>.
  File containing fully qualified names of classes that the tests must exercise.
  This option only works if Randoop is run using
- <code>-javaagent:exercised_agent.jar</code>
+ <code>-javaagent:exercised-class-<em>X.Y.Z</em>.jar</code>
  to instrument the classes. A test is output only if it exercises at least one
  of the class names in the file. A test exercises a class if it executes any
  constructor or method of the class, directly or indirectly (the constructor
@@ -1048,11 +1061,14 @@ that you provide.
 </p>
 
 <p>
-To transform calls to undesired methods, pass the following command-line
-option to <code>java</code> when running Randoop:
+To transform calls to undesired methods, use the Java agent in the
+<code>mapcall-<em>X.Y.Z</em>.jar</code>
+file (either in the unzipped distribution file, or downloaded from the
+<a href="https://github.com/randoop/randoop/releases/latest">latest release</a>).
+Then use this file pass the following command-line option to <code>java</code> when running Randoop:
 </p>
 <pre>
-    -javaagent:$(randoop)/mapcall_agent.jar=--map_calls=map_calls.txt
+    -javaagent:$(RANDOOP_PATH)/mapcall-<em>X.Y.Z</em>.jar=--map_calls=map_calls.txt
 </pre>
 <p>
 (<b>Note:</b> If you supply the <code>-javaagent</code> option to <code>java</code>
@@ -1174,16 +1190,19 @@ exception escaping the method as the rep invariant being violated.
   <code>--include-if-class-exercised</code> option.
   However, for this option to work, the classes must be instrumented to indicate
   when they are exercised.
-  To instrument classes for this filter, also use the <code>exercised_agent.jar</code>
+  To instrument classes for this filter, also use the <code>exercised-class-<em>X.Y.Z</em>.jar</code>
   by giving the following command-line option for java
 </p>
 <pre><code>
-  -javaagent:$(randoop)exercised_agent.jar
+  -javaagent:$(RANDOOP_PATH)/exercised-class-<em>X.Y.Z</em>.jar
 </code></pre>
 <p>
   This will instrument any non-abstract constructor and method of loaded
   classes so that the use of a class can be detected.
   (The instrumentation is not done on any JDK or JUnit classes.)
+  (The <code>exercised-class-<em>X.Y.Z</em>.jar</code> file can be found in the
+    unzipped distribution archive, or can be downloaded from the
+    <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.)
 </p>
 
 <h3 id="primitives">Specifying additional primitive values</h3>
@@ -1319,19 +1338,19 @@ taking too long to execute and cannot be killed by Randoop.
 <li><strong>Randoop's <code>help</code> command</strong>:  For help on
   usage, use Randoop's <code>help</code> command. To print Randoop's main help message, run:
 
-<pre class="code">java -classpath randoop.jar randoop.main.Main help</pre>
+<pre class="code">java -classpath randoop-all-<em>X.Y.Z</em>.jar randoop.main.Main help</pre>
 
 To print help for test generation (the <code>gentests</code> command), run:
 
 <pre class="code">
-java -ea -classpath randoop.jar randoop.main.Main help gentests
+java -ea -classpath randoop-all-<em>X.Y.Z</em>.jar randoop.main.Main help gentests
 </pre>
 
 To also include unpublicized (due to being experimental or unsupported)
  options for a command, use the <code>--unpub</code> flag:
 
 <pre class="code">
-java -ea -classpath randoop.jar randoop.main.Main help --unpub gentests
+java -ea -classpath randoop-all-<em>X.Y.Z</em>.jar randoop.main.Main help --unpub gentests
 </pre>
 
 

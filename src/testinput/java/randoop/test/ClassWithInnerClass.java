@@ -1,7 +1,7 @@
 package randoop.test;
 
 /**
- * Created by bjkeller on 4/15/16.
+ * Input class 
  * Inspired by a bug report from Martin Schaef
  */
 public class ClassWithInnerClass {

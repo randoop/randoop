@@ -355,6 +355,20 @@ task singleJar (type: Jar) {
 
 assemble.dependsOn singleJar
 
+task distributionZip (type: Zip , dependsOn: ['singleJar', 'copyJars', 'manual']) {
+  description "Assemble a zip file with jar files and user documentation"
+  from 'build/libs/'
+  from ('build/docs/manual/index.html') {
+    into 'doc'
+  }
+  from ('build/docs/manual/stylesheets') {
+    into 'doc/stylesheets'
+  }
+  from 'doc/READMEDIST.txt'
+  exclude { details -> details.file.name.contains('randoop') && ! details.file.name.contains('-all-') }
+  rename ('READMEDIST.txt', 'README.txt')
+}
+
 /********************* Building manual *******************/
 /*
  * Goal is to create the contents of the manual directory deployed to gh-pages

@@ -96,10 +96,10 @@
 <p>
   In Randoop's top-level directory, run
 </p>
-<pre>  ./gradlew build</pre>
+<pre>  ./gradlew build manual</pre>
 <p>
   This command compiles Randoop, compiles the Java agents, runs all tests,
-  and builds the jar files.
+  builds the jar files, and updates the manual from the source Javadoc.
   Generated files are
   placed in subdirectories named <code>build</code> in the parent directory and in
   each of the agent subdirectories.
@@ -1151,7 +1151,7 @@ to write, how many tests to put in each, what to name them, etc.
   <li><code>randoop.ExecutableSequence.toCodeString()</code>,</li>
   <li>implementors of <code>randoop.ObjectContract</code>,</li>
   <li>implementors of <code>randoop.Check</code>,</li>
-  <li>and the various implementations of <code>StatementKind.appendCode(...)</code></li>
+  <li>and the various implementations of <code>Operation.appendCode(...)</code></li>
   </ul>
 </li>
 </ul>
@@ -1288,11 +1288,11 @@ in <a href="javadoc/randoop/main/GenInputsAbstract.html">GenInputsAbstract</a>.
 
 <!--  LocalWords:  Randoop Randoop's Makefile classpath bashrc hoc gentests JDK java gh EnumConstant enum s1 s2 s3 var0 PrintSteam plugin agentTest gradle taskName RandoopSystemTest plugins gitignore randoop changelog RandoopGradle goJF verGJF cd OLDVERSION NEWVERSION unpushed mv subprojects src agenttest  testinput systemtest FieldGetter FieldSetter PublicField init var1 var2 var3 var4 var5 resultAt3 assertTrue o2
  -->
-<!--  LocalWords:  google JDK's testAdd LinkedList addFirst TreeSet RMethod th
+<!--  LocalWords:  google JDK's testAdd LinkedList addFirst TreeSet MethodCall th
  -->
-<!--  LocalWords:  synchronizedSet StatementKind RConstructor ArrayDeclaration
+<!--  LocalWords:  synchronizedSet Operation ConstructorCall ArrayDeclaration
  -->
-<!--  LocalWords:  PrimitiveOrStringOrNullDecl StatementKinds newLL newOb newTS
+<!--  LocalWords:  PrimitiveOrStringOrNullDecl newLL newOb newTS
  -->
 <!--  LocalWords:  getRConstructor addFist getRMethod syncS getVariable seqs gz
  -->

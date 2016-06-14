@@ -3,7 +3,7 @@ package randoop.test;
 import randoop.util.predicate.Predicate;
 
 /**
- * Created by bjkeller on 4/14/16.
+ * Input test for parameterized types.
  */
 public class AnIntegerPredicate implements Predicate<Integer> {
 

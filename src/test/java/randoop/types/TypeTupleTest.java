@@ -8,7 +8,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by bjkeller on 4/4/16.
+ * Test type tuples.
  */
 public class TypeTupleTest {
 
