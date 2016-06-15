@@ -49,6 +49,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (otherType.isInterface()) {
       List<ClassOrInterfaceType> interfaces = this.getInterfaces();
       for (ClassOrInterfaceType type : interfaces) {
+
         if (type.equals(otherType)) {
           return true;
         }

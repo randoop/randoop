@@ -234,30 +234,55 @@ public class GenericClassType extends ParameterizedType {
     if (super.isSubtypeOf(otherType)) {
       return true;
     }
-
     return otherType.isRawtype()
             && otherType.hasRuntimeClass(this.getRuntimeClass());
   }
 
-  // TODO make similar method that takes a substitution so that can be called from InstantiatedType.getSuperclass
-  // TODO make this metod return actual superclass
   @Override
   public ClassOrInterfaceType getSuperclass() {
+    Class<?> superclass = rawType.getSuperclass();
+    if (superclass != null) {
+      return ClassOrInterfaceType.forClass(rawType.getSuperclass());
+    } else {
+      return ConcreteTypes.OBJECT_TYPE;
+    }
+  }
+
+  /**
+  * Returns the superclass type for this generic class type instantiated by
+  * the given type {@link Substitution}.
+  *
+  * @param substitution  the type substitution
+  * @return the instantiated type
+  */
+  ClassOrInterfaceType getSuperclass(Substitution<ReferenceType> substitution) {
     Type superclass = this.rawType.getGenericSuperclass();
     if (superclass == null) {
       return null;
     }
-
-    return ClassOrInterfaceType.forType(superclass);
+    return ClassOrInterfaceType.forType(superclass).apply(substitution);
   }
 
-  // TODO make similar method that takes a substitution so that can be called from InstantiatedType.getInterfaces
-  // TODO make this method return actual interfaces
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
+    List<ClassOrInterfaceType> interfaceTypes = new ArrayList<>();
+    for (Class<?> c : rawType.getInterfaces()) {
+      interfaceTypes.add(ClassOrInterfaceType.forClass(c));
+    }
+    return interfaceTypes;
+  }
+
+  /**
+  * Return the interface types for this generic class type instantiated by the
+  * given type {@link Substitution}.
+  *
+  * @param substitution  the type substitution
+  * @return the list of instantiated interface types of this type 
+  */
+  List<ClassOrInterfaceType> getInterfaces(Substitution<ReferenceType> substitution) {
     List<ClassOrInterfaceType> interfaces = new ArrayList<>();
     for (Type type : rawType.getGenericInterfaces()) {
-      interfaces.add(ClassOrInterfaceType.forType(type));
+      interfaces.add(ClassOrInterfaceType.forType(type).apply(substitution));
     }
     return interfaces;
   }

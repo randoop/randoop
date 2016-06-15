@@ -207,7 +207,9 @@ public abstract class GeneralType {
    * @param otherType  the possible supertype
    * @return true if this type is a subtype of the given type, false otherwise
    */
-  public abstract boolean isSubtypeOf(GeneralType otherType);
+  public boolean isSubtypeOf(GeneralType otherType) {
+    return this.equals(otherType);
+  }
 
   /**
    * Indicate whether this type is void.

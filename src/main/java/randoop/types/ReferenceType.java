@@ -55,6 +55,10 @@ public abstract class ReferenceType extends GeneralType {
       throw new IllegalArgumentException("type may not be null");
     }
 
+    if (super.isSubtypeOf(otherType)) {
+      return true;
+    }
+
     return otherType.isObject();
   }
 

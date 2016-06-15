@@ -277,13 +277,9 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public ClassOrInterfaceType getSuperclass(){
-    ClassOrInterfaceType superclass = this.instantiatedType.getSuperclass();
-    if (superclass == null) {
-      return null;
-    }
-    // TODO refactor with GenericClassType methods so that they apply substitution
     Substitution<ReferenceType> substitution = Substitution.forArgs(instantiatedType.getTypeParameters(), getReferenceArguments());
-    return superclass.apply(substitution);
+    ClassOrInterfaceType superclass = this.instantiatedType.getSuperclass(substitution);
+    return superclass;
   }
 
   // TODO refactor with GenericClassType methods so that they apply substitution
@@ -291,8 +287,8 @@ public class InstantiatedType extends ParameterizedType {
   public List<ClassOrInterfaceType> getInterfaces() {
     List<ClassOrInterfaceType> interfaces = new ArrayList<>();
     Substitution<ReferenceType> substitution = Substitution.forArgs(instantiatedType.getTypeParameters(), getReferenceArguments());
-    for (ClassOrInterfaceType type : instantiatedType.getInterfaces()) {
-      interfaces.add(type.apply(substitution));
+    for (ClassOrInterfaceType type : instantiatedType.getInterfaces(substitution)) {
+      interfaces.add(type);
     }
 
     return interfaces;
