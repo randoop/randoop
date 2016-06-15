@@ -39,7 +39,7 @@ public class JDKTypesTest {
         assertTrue("EnumSet should be implemented by itself", classType.equals(implementingType));
       } else if (classType.isInterface() || classType.isAbstract()) {
         assertTrue("interface " + classType + " may not map to interface or abstract class " + implementingType, !implementingType.isInterface() && !implementingType.isAbstract());
-        assertThat("interface " + classType + " does not have subtype " + implementingType, !implementingType.isSubtypeOf(classType));
+        assertThat("interface " + classType + " should have subtype " + implementingType, implementingType.isSubtypeOf(classType));
       } else {
         assertTrue("classtype " + classType + " should implement itself", classType.equals(implementingType));
       }
