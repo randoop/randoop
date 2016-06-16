@@ -134,7 +134,10 @@ class HelperSequenceCreator {
 
     // build sequence to create array of element type
     SimpleList<Sequence> candidates = componentManager.getSequencesForType(elementType, false);
-    int length = Randomness.nextRandomInt(candidates.size()) + 1;
+    int length = 0;
+    if (! candidates.isEmpty()) {
+      length = Randomness.nextRandomInt(candidates.size()) + 1;
+    }
     Sequence inputSequence = createAnArray(candidates, elementType, length);
 
     inputSequences.add(inputSequence);
@@ -160,6 +163,7 @@ class HelperSequenceCreator {
    * @return a sequence that creates an array with the given element type
    */
   private static Sequence createAnArray(SimpleList<Sequence> candidates, GeneralType elementType, int length) {
+    assert ! candidates.isEmpty() || length == 0 : "if there are no candidates, length must be zero";
     int totStatements = 0;
     List<Sequence> inputSequences = new ArrayList<>();
     List<Integer> variables = new ArrayList<>();

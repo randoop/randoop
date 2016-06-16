@@ -20,9 +20,6 @@ public final class Execution {
   // The execution outcome of each statement.
   final List<ExecutionOutcome> theList;
 
-  // The sequence whose execution results this object stores.
-  final Sequence owner;
-
   private Set<Class<?>> coveredClasses;
 
   /**
@@ -32,25 +29,11 @@ public final class Execution {
    * @param owner  the executed sequence
    */
   public Execution(Sequence owner) {
-    this.owner = owner;
-    this.theList = new ArrayList<ExecutionOutcome>(owner.size());
+    this.theList = new ArrayList<>(owner.size());
     for (int i = 0; i < owner.size(); i++) {
       theList.add(NotExecuted.create());
     }
     this.coveredClasses = new LinkedHashSet<>();
-  }
-
-  /**
-   * Construct an Execution directly from the given arguments.
-   *
-   * Do not use this constructor! (Unless you know what you're doing.)
-   *
-   * @param owner  the executed Sequence
-   * @param theList  the list of statement outcomes
-   */
-  public Execution(Sequence owner, List<ExecutionOutcome> theList) {
-    this.owner = owner;
-    this.theList = theList;
   }
 
   /**
@@ -60,18 +43,6 @@ public final class Execution {
    */
   public int size() {
     return theList.size();
-  }
-
-  /**
-   * Set the i-th slot to the given outcome.
-   *
-   * @param i  statement index
-   * @param outcome  the outcome for the statement
-   */
-  public void set(int i, ExecutionOutcome outcome) {
-    if (i < 0 || i >= theList.size()) throw new IllegalArgumentException("wrong index " + i);
-    if (outcome == null) throw new IllegalArgumentException("outcome cannot be null.");
-    theList.set(i, outcome);
   }
 
   /**

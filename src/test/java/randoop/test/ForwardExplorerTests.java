@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Set;
 
 import randoop.BugInRandoopException;
-import randoop.contract.ObjectContract;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.SeedSequences;
@@ -72,7 +71,7 @@ public class ForwardExplorerTests {
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator explorer =
         new ForwardGenerator(model, new LinkedHashSet<TypedOperation>(), Long.MAX_VALUE, 5000, 5000, mgr, null, null);
-    explorer.addTestCheckGenerator(createChecker(new LinkedHashSet<ObjectContract>()));
+    explorer.addTestCheckGenerator(createChecker(new ContractSet()));
     explorer.addTestPredicate(createOutputTest());
     explorer.explore();
     GenInputsAbstract.dontexecute = false;
@@ -111,7 +110,7 @@ public class ForwardExplorerTests {
     assertTrue("model should not be empty", model.size() != 0);
     GenInputsAbstract.ignore_flaky_tests = true;
     ForwardGenerator exp = new ForwardGenerator(model, new LinkedHashSet<TypedOperation>(), Long.MAX_VALUE, 200, 200, mgr, null, null);
-    exp.addTestCheckGenerator(createChecker(new LinkedHashSet<ObjectContract>()));
+    exp.addTestCheckGenerator(createChecker(new ContractSet()));
     exp.addTestPredicate(createOutputTest());
     try {
       exp.explore();
@@ -162,7 +161,7 @@ public class ForwardExplorerTests {
     assertTrue("model should not be empty", model.size() != 0);
     ForwardGenerator exp = new ForwardGenerator(model, new LinkedHashSet<TypedOperation>(), Long.MAX_VALUE, 200, 200, mgr, null, null);
     GenInputsAbstract.forbid_null = false;
-    exp.addTestCheckGenerator(createChecker(new LinkedHashSet<ObjectContract>()));
+    exp.addTestCheckGenerator(createChecker(new ContractSet()));
     exp.addTestPredicate(createOutputTest());
     try {
       exp.explore();
@@ -186,7 +185,7 @@ public class ForwardExplorerTests {
     assertTrue(tree);
   }
 
-  private static TestCheckGenerator createChecker(Set<ObjectContract> contracts) {
+  private static TestCheckGenerator createChecker(ContractSet contracts) {
     return (new GenTests()).createTestCheckGenerator(new PublicVisibilityPredicate(), contracts, new MultiMap<GeneralType, TypedOperation>(), new LinkedHashSet<TypedOperation>());
   }
 

@@ -11,15 +11,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import randoop.DummyVisitor;
+import randoop.Globals;
 import randoop.contract.EqualsHashcode;
 import randoop.contract.EqualsReflexive;
 import randoop.contract.EqualsSymmetric;
 import randoop.contract.EqualsToNullRetFalse;
-import randoop.Globals;
-import randoop.contract.ObjectContract;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.main.OptionsCache;
@@ -109,7 +107,7 @@ public class SequenceTests {
   private static final TestCheckGenerator testGen;
 
   static {
-    Set<ObjectContract> contracts = new LinkedHashSet<>();
+    ContractSet contracts = new ContractSet();
     contracts.add(EqualsReflexive.getInstance());
     contracts.add(EqualsToNullRetFalse.getInstance());
     contracts.add(EqualsHashcode.getInstance());

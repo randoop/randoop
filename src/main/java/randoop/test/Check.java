@@ -78,13 +78,6 @@ public interface Check {
   String getID();
 
   /**
-   * Returns the offset in the sequence of this check
-   *
-   * @return statement index for this check
-   */
-  int getStatementIndex();
-
-  /**
    * Evaluates this check on the given execution of a sequence.
    *
    * @param execution

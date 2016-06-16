@@ -23,7 +23,7 @@ public class ProgressDisplay extends Thread {
   /**
    * Lock so that unfortunate interleaving of this printing can be avoided
    */
-  public static Object print_synchro = new Object();
+  public final static Object print_synchro = new Object();
 
   private static int progresswidth = 170;
 
@@ -57,11 +57,10 @@ public class ProgressDisplay extends Thread {
   }
 
   public String message() {
-    StringBuilder b = new StringBuilder();
-    b.append("Progress update: test inputs generated=" + generator.num_sequences_generated);
-    b.append(", failing inputs=" + generator.num_failing_sequences);
-    b.append("      (" + new Date() + ")");
-    return b.toString();
+    return "Progress update: test inputs generated="
+            + generator.num_sequences_generated
+            + ", failing inputs=" + generator.num_failing_sequences
+            + "      (" + new Date() + ")";
   }
 
   /**
@@ -122,8 +121,8 @@ public class ProgressDisplay extends Thread {
       System.out.println("Thread " + trace.getKey().toString());
       System.out.println("Stack trace:");
       StackTraceElement[] elts = trace.getValue();
-      for (int i = 0; i < elts.length; i++) {
-        System.out.println(elts[i]);
+      for (StackTraceElement elt : elts) {
+        System.out.println(elt);
       }
     }
     System.exit(1);
@@ -139,9 +138,6 @@ public class ProgressDisplay extends Thread {
       lastNumSeqs = seqs;
     }
   }
-
-  public long lastCovIncrease = System.currentTimeMillis();
-  private int lastNumBranches = 0;
 
   /** Clear the display; good to do before printing to System.out. * */
   public void clear() {
@@ -168,12 +164,11 @@ public class ProgressDisplay extends Thread {
    *
    * @param message  the message to display
    */
-  public void display(String message) {
+  private void display(String message) {
     if (GenInputsAbstract.progressinterval == -1) return;
-    String status = message;
     synchronized (print_synchro) {
       System.out.print(
-          (this.outputMode == Mode.SINGLE_LINE_OVERWRITE ? "\r" : Globals.lineSep) + status);
+          (this.outputMode == Mode.SINGLE_LINE_OVERWRITE ? "\r" : Globals.lineSep) + message);
       System.out.flush();
     }
     // System.out.println (status);

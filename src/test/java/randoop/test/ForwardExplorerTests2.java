@@ -7,9 +7,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
-import randoop.contract.ObjectContract;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.SeedSequences;
@@ -32,7 +30,6 @@ import randoop.util.ReflectionExecutor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 
 public class ForwardExplorerTests2  {
@@ -76,7 +73,7 @@ public class ForwardExplorerTests2  {
     assertTrue("model should not be empty", model.size() != 0);
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator exp = new ForwardGenerator(model, new LinkedHashSet<TypedOperation>(), Long.MAX_VALUE, 100, 100, mgr, null, null);
-    exp.addTestCheckGenerator(createChecker(new LinkedHashSet<ObjectContract>()));
+    exp.addTestCheckGenerator(createChecker(new ContractSet()));
 
     // get a SequenceExceptionError when repeat_heuristic=true
     try {
@@ -101,7 +98,7 @@ public class ForwardExplorerTests2  {
     return model;
   }
 
-  private static TestCheckGenerator createChecker(Set<ObjectContract> contracts) {
+  private static TestCheckGenerator createChecker(ContractSet contracts) {
     return (new GenTests()).createTestCheckGenerator(new PublicVisibilityPredicate(), contracts, new MultiMap<GeneralType, TypedOperation>(), new LinkedHashSet<TypedOperation>());
   }
 }

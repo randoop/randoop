@@ -16,12 +16,12 @@ public class Buggy {
   // This should not lead to reported failures, because
   // a failure is only a test that leads to an NPE.
   public String toString() {
-    throw new RuntimeException("RuntimeException in Buggy.toString()");
+    throw new RuntimeException("Buggy class is test input class and somehow toString() method has been called outside of contract check");
   }
   // This should not lead to reported failures, because
   // a failure is only a test that leads to an NPE.
   public int hashCode() {
-    throw new RuntimeException("RuntimeException in Buggy.hashCode()");
+    throw new RuntimeException("Buggy class is test input class and somehow hashCode has been called outside of contract check");
   }
 
   public static class Buggy3 {

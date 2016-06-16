@@ -7,7 +7,6 @@ import randoop.types.AbstractTypeVariable;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.TypeArgument;
-import randoop.types.TypeVariable;
 
 /**
  * Represents a set of lists of candidate type arguments for a {@link randoop.types.ParameterizedType},

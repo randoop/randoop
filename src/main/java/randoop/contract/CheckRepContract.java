@@ -3,9 +3,14 @@ package randoop.contract;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Objects;
 
 import randoop.BugInRandoopException;
 import randoop.Globals;
+import randoop.operation.TypedClassOperation;
+import randoop.operation.TypedOperation;
+import randoop.types.ConcreteTypes;
+import randoop.types.TypeTuple;
 
 /**
  * Represents the contract that an object should conform to its representation
@@ -20,6 +25,7 @@ import randoop.Globals;
 public final class CheckRepContract implements ObjectContract {
 
   public final Method checkRepMethod;
+  private final TypedClassOperation operation;
   boolean returnsBoolean; // derived from checkRepMethod
   public final Class<?> declaringClass; // derived from checkRepMethod
 
@@ -36,25 +42,24 @@ public final class CheckRepContract implements ObjectContract {
 
   @Override
   public int hashCode() {
-    int h = 7;
-    h = h * 31 + checkRepMethod.hashCode();
-    return h;
+    return Objects.hash(checkRepMethod);
   }
 
   public CheckRepContract(Method checkRepMethod) {
     if (checkRepMethod == null) {
-      throw new IllegalArgumentException("argument cannot be null.");
+      throw new IllegalArgumentException("check-rep method cannot be null.");
     }
     int modifiers = checkRepMethod.getModifiers();
     assert Modifier.isPublic(modifiers);
     assert !Modifier.isStatic(modifiers);
     assert checkRepMethod.getParameterTypes().length == 0;
-    if (checkRepMethod.getReturnType().equals(boolean.class)) {
+    this.operation = TypedOperation.forMethod(checkRepMethod);
+    if (operation.getOutputType().equals(ConcreteTypes.BOOLEAN_TYPE)) {
       this.returnsBoolean = true;
-    } else if (checkRepMethod.getReturnType().equals(void.class)) {
+    } else if (operation.getOutputType().equals(ConcreteTypes.VOID_TYPE)) {
       this.returnsBoolean = false;
     } else {
-      throw new IllegalArgumentException("check rep method must have void or boolean return type");
+      throw new IllegalArgumentException("check-rep method must have void or boolean return type");
     }
     this.checkRepMethod = checkRepMethod;
     this.declaringClass = checkRepMethod.getDeclaringClass();
@@ -87,6 +92,11 @@ public final class CheckRepContract implements ObjectContract {
   @Override
   public int getArity() {
     return 1;
+  }
+
+  @Override
+  public TypeTuple getInputTypes() {
+    return operation.getInputTypes();
   }
 
   @Override

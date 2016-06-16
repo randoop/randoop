@@ -2,29 +2,28 @@ package randoop.reflection;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Set;
 
 import randoop.CheckRep;
 import randoop.contract.CheckRepContract;
-import randoop.contract.ObjectContract;
 import randoop.main.GenInputsAbstract;
+import randoop.test.ContractSet;
 
 /**
  * {@code CheckRepExtractor} is a {@link ClassVisitor} that inspects the methods passed to it to
  * see if they are annotated with {@link randoop.CheckRep}, are non-static, and have either a
  * {@code boolean} or {@code void} return type.
  */
-public class CheckRepExtractor extends DefaultClassVisitor {
+class CheckRepExtractor extends DefaultClassVisitor {
 
   /** The set of accumulated {@link randoop.contract.ObjectContract} objects. */
-  private Set<ObjectContract> contracts;
+  private ContractSet contracts;
 
   /**
    * Creates a visitor with an empty contracts set.
    *
    * @param contracts  the set of constracts
    */
-  public CheckRepExtractor(Set<ObjectContract> contracts) {
+  CheckRepExtractor(ContractSet contracts) {
     this.contracts = contracts;
   }
 

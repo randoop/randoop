@@ -3,9 +3,12 @@ package randoop.sequence;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -17,6 +20,9 @@ import randoop.main.GenInputsAbstract;
 import randoop.test.Check;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
+import randoop.types.GeneralType;
+import randoop.types.ReferenceType;
+import randoop.util.IdentityMultiMap;
 import randoop.util.ProgressDisplay;
 
 /**
@@ -99,7 +105,6 @@ public class ExecutableSequence {
    * execution time. Must be directly set by the generator that creates this
    * object (no code in this class sets its value).
    */
-  // TODO doesn't this more properly belong in Sequence class?
   public long gentime = -1;
 
   /**
@@ -119,6 +124,8 @@ public class ExecutableSequence {
   private static ByteArrayOutputStream output_buffer = new ByteArrayOutputStream();
   private static PrintStream ps_output_buffer = new PrintStream(output_buffer);
 
+  private IdentityMultiMap<Object, Variable> variableMap;
+
   /**
    * Create an executable sequence that executes the given sequence.
    *
@@ -128,21 +135,7 @@ public class ExecutableSequence {
     this.sequence = sequence;
     this.executionResults = new Execution(sequence);
     this.hasNullInput = false;
-  }
-
-  /**
-   * Create an executable sequence directly using the given arguments.
-   *
-   * Don't use this constructor! (Unless you know what you're doing.)
-   *
-   * @param sequence  the base sequence of this object
-   * @param exec  the execution for this sequences
-   * @param checks over the sequence
-   */
-  public ExecutableSequence(Sequence sequence, Execution exec, TestChecks checks) {
-    this.sequence = sequence;
-    this.executionResults = exec;
-    this.checks = checks;
+    this.variableMap = new IdentityMultiMap<>();
   }
 
   @Override
@@ -165,32 +158,6 @@ public class ExecutableSequence {
       b.append(Globals.lineSep);
     }
     return b.toString();
-  }
-
-  /**
-   * Returns an id based on the contents of the sequence alone. The id will
-   * match for any identical sequences (no matter how they are constructed).
-   * Used for debugging
-   *
-   * @return the ID for the sequence
-   */
-  public int seq_id() {
-    StringBuilder b = new StringBuilder();
-    for (int i = 0; i < sequence.size(); i++) {
-
-      // If short format, don't print out primitive declarations
-      // because primitive values will be directly added to methods
-      // (e.g. "foo(3)" instead of "int x = 3 ; foo(x)".
-      if (sequence.getStatement(i).getShortForm() != null) {
-        continue;
-      }
-
-      StringBuilder oneStatement = new StringBuilder();
-      sequence.appendCode(oneStatement, i);
-
-      b.append(oneStatement);
-    }
-    return b.toString().hashCode();
   }
 
   /**
@@ -294,7 +261,7 @@ public class ExecutableSequence {
    * @param ignoreException
    *          the flag to indicate exceptions should be ignored
    */
-  public void execute(ExecutionVisitor visitor, TestCheckGenerator gen, boolean ignoreException) {
+  private void execute(ExecutionVisitor visitor, TestCheckGenerator gen, boolean ignoreException) {
 
     visitor.initialize(this);
 
@@ -311,7 +278,7 @@ public class ExecutableSequence {
       List<Variable> inputs = sequence.getInputs(i);
       Object[] inputVariables;
 
-      inputVariables = getRuntimeInputs(sequence, executionResults.theList, i, inputs);
+      inputVariables = getRuntimeInputs(executionResults.theList, inputs);
 
       visitor.visitBeforeStatement(this, i);
       executeStatement(sequence, executionResults.theList, i, inputVariables);
@@ -345,18 +312,13 @@ public class ExecutableSequence {
     checks = gen.visit(this);
   }
 
-  private Object[] getRuntimeInputs(
-          Sequence s, List<ExecutionOutcome> outcome, int i, List<Variable> inputs) {
-
+  private Object[] getRuntimeInputs(List<ExecutionOutcome> outcome, List<Variable> inputs) {
     Object[] ros = getRuntimeValuesForVars(inputs, outcome);
-
-    // TODO move this check elsewhere -- results shouldn't be part of ES
-    for (int ri = 0; ri < ros.length; ri++) {
-      if (ros[ri] == null) {
+    for (Object ro : ros) {
+      if (ro == null) {
         this.hasNullInput = true;
       }
     }
-
     return ros;
   }
 
@@ -443,31 +405,93 @@ public class ExecutableSequence {
     return checks;
   }
 
-  /**
-   * Return the results of each statement for the most recent execution.
-   *
-   * @return all the execution outcomes for this sequence
-   */
-  public ExecutionOutcome[] getAllResults() {
-    ExecutionOutcome[] ret = new ExecutionOutcome[executionResults.size()];
-    for (int i = 0; i < executionResults.size(); i++) {
-      ret[i] = executionResults.get(i);
+  private Object getValue(int index) {
+    ExecutionOutcome result = getResult(index);
+    if (result instanceof NormalExecution) {
+      return ((NormalExecution)result).getRuntimeValue();
     }
-    return ret;
+    throw new Error("Abnormal execution in sequence: " + this);
   }
 
   /**
-   * @return the number of elements in the sequence that were executed before an
-   *         execution result of type randoop.NotExecuted.
+   * Returns the list of (reference type) values created and used by the last statement
+   * of this sequence.
+   *
+   * @return the list of values created and used by the last statement of this sequence
    */
-  public int executedSize() {
-    int count = 0;
-    for (; count < executionResults.size(); count++) {
-      if (executionResults.get(count) instanceof NotExecuted) {
-        break;
+  public List<ReferenceValue> getLastStatementValues() {
+    Set<ReferenceValue> values = new LinkedHashSet<>();
+
+    Object outputValue = getValue(sequence.size() - 1);
+    if (outputValue != null) {
+      Variable outputVariable = sequence.getLastVariable();
+
+      GeneralType outputType = outputVariable.getType();
+
+      if (outputType.isReferenceType() && ! outputType.isString()) {
+          ReferenceValue value = new ReferenceValue((ReferenceType)outputType, outputValue);
+          values.add(value);
+          variableMap.put(outputValue, outputVariable);
       }
     }
-    return count;
+
+    for (Variable inputVariable : sequence.getInputs(sequence.size() - 1)) {
+      Object inputValue = getValue(inputVariable.index);
+      if (inputValue != null) {
+        GeneralType inputType = inputVariable.getType();
+        if (inputType.isReferenceType() && !inputType.isString()) {
+          values.add(new ReferenceValue((ReferenceType)inputType, inputValue));
+          variableMap.put(inputValue, inputVariable);
+        }
+      }
+    }
+
+    return new ArrayList<>(values);
+  }
+
+  /**
+   * Returns the list of input reference type values used to compute the
+   * input values of the last statement.
+   *
+   * @return the list of input values used to compute values in last statement
+   */
+  public List<ReferenceValue> getInputValues() {
+    Set<Integer> skipSet = new HashSet<>();
+    for (Variable inputVariable : sequence.getInputs(sequence.size() - 1)) {
+      skipSet.add(inputVariable.index);
+    }
+
+    Set<ReferenceValue> values = new HashSet<>();
+    for (int i = 0; i < sequence.size() - 1; i++ ) {
+      if (! skipSet.contains(i)) {
+        Object value = getValue(i);
+        if (value != null) {
+          Variable variable = sequence.getVariable(i);
+          GeneralType type = variable.getType();
+          if (type.isReferenceType() && !type.isString()) {
+            values.add(new ReferenceValue((ReferenceType)type, value));
+            variableMap.put(value, variable);
+          }
+        }
+      }
+    }
+    return new ArrayList<>(values);
+  }
+
+  /**
+   * Returns the set of variables that have the given value in the outcome of executing this
+   * sequence.
+   *
+   * @param value  the value
+   * @return the set of variables that have the given value
+   */
+  public List<Variable> getVariables(Object value) {
+    Set<Variable> variables = variableMap.get(value);
+    if (variables == null) {
+      return null;
+    } else {
+      return new ArrayList<>(variables);
+    }
   }
 
   /**
@@ -476,7 +500,7 @@ public class ExecutableSequence {
    * @param i  the statement index to test for normal execution
    * @return true if execution of the i-th statement terminated normally
    */
-  public boolean isNormalExecution(int i) {
+  private boolean isNormalExecution(int i) {
     sequence.checkIndex(i);
     return getResult(i) instanceof NormalExecution;
   }
@@ -493,28 +517,12 @@ public class ExecutableSequence {
   }
 
   /**
-   * Returns the index i for which this.isExceptionalExecution(i), or -1 if
-   * there is no such index.
-   *
-   * @return the statement index where an exception was thrown
-   */
-  public int exceptionIndex() {
-    if (!throwsException()) throw new RuntimeException("Execution does not throw an exception");
-    for (int i = 0; i < this.sequence.size(); i++) {
-      if (this.getResult(i) instanceof ExceptionalExecution) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
-  /**
    * @param exceptionClass  the exception thrown
    * @return the index in the sequence at which an exception of the given class
    *         (or a class compatible with it) was thrown. If no such exception,
    *         returns -1.
    */
-  public int getExceptionIndex(Class<?> exceptionClass) {
+  private int getExceptionIndex(Class<?> exceptionClass) {
     if (exceptionClass == null)
       throw new IllegalArgumentException("exceptionClass<?> cannot be null");
     for (int i = 0; i < this.sequence.size(); i++)
@@ -532,17 +540,6 @@ public class ExecutableSequence {
    */
   public boolean throwsException(Class<?> exceptionClass) {
     return getExceptionIndex(exceptionClass) >= 0;
-  }
-
-  /**
-   *
-   * @return true if an exception has been thrown during this sequence's
-   *         execution
-   */
-  public boolean throwsException() {
-    for (int i = 0; i < this.sequence.size(); i++)
-      if (getResult(i) instanceof ExceptionalExecution) return true;
-    return false;
   }
 
   /**
@@ -568,14 +565,6 @@ public class ExecutableSequence {
     for (int i = this.sequence.size() - 1; i >= 0; i--)
       if (getResult(i) instanceof NotExecuted) return i;
     return -1;
-  }
-
-  public static <D extends Check> List<Sequence> getSequences(List<ExecutableSequence> exec) {
-    List<Sequence> result = new ArrayList<>(exec.size());
-    for (ExecutableSequence execSeq : exec) {
-      result.add(execSeq.sequence);
-    }
-    return result;
   }
 
   @Override
@@ -612,15 +601,6 @@ public class ExecutableSequence {
   }
 
   /**
-   * Indicate whether there are any checks.
-   *
-   * @return true if the test checks are nonempty, and false otherwise
-   */
-  public boolean hasChecks() {
-    return checks != null && checks.hasChecks();
-  }
-
-  /**
    * Indicate whether there are any invalid checks.
    *
    * @return true if the test checks have been set and are for invalid behavior,
@@ -651,4 +631,5 @@ public class ExecutableSequence {
   public boolean coversClass(Class<?> c) {
     return executionResults.getCoveredClasses().contains(c);
   }
+
 }

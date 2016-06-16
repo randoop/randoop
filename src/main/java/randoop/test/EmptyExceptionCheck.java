@@ -22,7 +22,7 @@ public class EmptyExceptionCheck extends ExceptionCheck {
    * @param catchClassName
    *          the name of the exception class to be caught
    */
-  public EmptyExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
+  EmptyExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
     super(exception, statementIndex, catchClassName);
   }
 

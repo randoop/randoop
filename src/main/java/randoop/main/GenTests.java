@@ -15,30 +15,30 @@ import java.util.regex.Pattern;
 import plume.Options;
 import plume.Options.ArgException;
 import plume.SimpleLog;
-import randoop.generation.ComponentManager;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
 import randoop.JunitFileWriter;
 import randoop.MultiVisitor;
+import randoop.generation.AbstractGenerator;
+import randoop.generation.ComponentManager;
+import randoop.generation.ForwardGenerator;
 import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
-import randoop.contract.ObjectContract;
 import randoop.instrument.ExercisedClassVisitor;
-import randoop.operation.TypedOperation;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
+import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PackageVisibilityPredicate;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
-import randoop.generation.AbstractGenerator;
 import randoop.sequence.ExecutableSequence;
-import randoop.generation.ForwardGenerator;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
 import randoop.test.ContractCheckingVisitor;
+import randoop.test.ContractSet;
 import randoop.test.ErrorTestPredicate;
 import randoop.test.ExcludeTestPredicate;
 import randoop.test.ExpectedExceptionCheckGen;
@@ -53,7 +53,6 @@ import randoop.test.predicate.AlwaysFalseExceptionPredicate;
 import randoop.test.predicate.ExceptionBehaviorPredicate;
 import randoop.test.predicate.ExceptionPredicate;
 import randoop.types.GeneralType;
-import randoop.types.RandoopTypeException;
 import randoop.util.CollectionsExt;
 import randoop.util.Log;
 import randoop.util.MultiMap;
@@ -265,7 +264,7 @@ public class GenTests extends GenInputsAbstract {
     /*
      * setup for check generation
      */
-    Set<ObjectContract> contracts = operationModel.getContracts();
+    ContractSet contracts = operationModel.getContracts();
 
     Set<TypedOperation> excludeAsObservers = new LinkedHashSet<>();
     // TODO add Object.toString() and Object.hashCode() to exclude set
@@ -536,7 +535,7 @@ public class GenTests extends GenInputsAbstract {
    *         arguments.
    */
   public TestCheckGenerator createTestCheckGenerator(
-          VisibilityPredicate visibility, Set<ObjectContract> contracts, MultiMap<GeneralType, TypedOperation> observerMap, Set<TypedOperation> excludeAsObservers) {
+          VisibilityPredicate visibility, ContractSet contracts, MultiMap<GeneralType, TypedOperation> observerMap, Set<TypedOperation> excludeAsObservers) {
 
     // start with checking for invalid exceptions
     ExceptionPredicate isInvalid = new ExceptionBehaviorPredicate(BehaviorType.INVALID);
@@ -591,7 +590,7 @@ public class GenTests extends GenInputsAbstract {
 
     if (!seqList.isEmpty()) {
       List<List<ExecutableSequence>> seqPartition =
-          CollectionsExt.<ExecutableSequence>chunkUp(new ArrayList<>(seqList), testsperfile);
+          CollectionsExt.chunkUp(new ArrayList<>(seqList), testsperfile);
 
       JunitFileWriter jfw = new JunitFileWriter(output_dir, junit_package_name, junitClassname);
 

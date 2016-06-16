@@ -1,6 +1,5 @@
 package randoop.test;
 
-import randoop.test.ExceptionCheck;
 import randoop.sequence.Execution;
 
 /**
@@ -33,11 +32,6 @@ public class InvalidExceptionCheck extends ExceptionCheck {
   @Override
   public String getID() {
     return "Invalid(" + exception.getClass().getCanonicalName() + ")";
-  }
-
-  @Override
-  public int getStatementIndex() {
-    return statementIndex;
   }
 
   /**

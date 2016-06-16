@@ -22,7 +22,7 @@ public abstract class ExceptionCheck implements Check {
   protected final Throwable exception;
 
   // Indicates which statement results in the given exception.
-  protected final int statementIndex;
+  final int statementIndex;
 
   private String catchClassName;
 
@@ -86,22 +86,15 @@ public abstract class ExceptionCheck implements Check {
     return "Throws exception @" + statementIndex;
   }
 
-  @Override
-  public int getStatementIndex() {
-    return statementIndex;
-  }
-
   /**
    * {@inheritDoc} The pre-statement prefix of the try-catch wrapper.
    */
   @Override
   public final String toCodeStringPreStatement() {
-    StringBuilder b = new StringBuilder();
-    b.append(
-        "// The following exception was thrown during execution in test generation"
-            + Globals.lineSep);
-    b.append("try {" + Globals.lineSep + "  ");
-    return b.toString();
+    return "// The following exception was thrown during execution in test generation"
+            + Globals.lineSep
+            + "try {"
+            + Globals.lineSep;
   }
 
   /**
@@ -122,10 +115,10 @@ public abstract class ExceptionCheck implements Check {
     }
     String exceptionClassName = getExceptionName();
     appendTryBehavior(b, exceptionClassName);
-    b.append("} catch (" + catchClassName + " e) {" + Globals.lineSep);
-    b.append("  // Expected exception." + Globals.lineSep);
+    b.append("} catch (").append(catchClassName).append(" e) {").append(Globals.lineSep);
+    b.append("  // Expected exception.").append(Globals.lineSep);
     appendCatchBehavior(b, exceptionClassName);
-    b.append("}" + Globals.lineSep);
+    b.append("}").append(Globals.lineSep);
     return b.toString();
   }
 

@@ -3,6 +3,8 @@ package randoop.contract;
 // NOTE: This is a publicized user extension point. If you add any
 // methods, document them well and update the Randoop manual.
 
+import randoop.types.TypeTuple;
+
 /**
  * An object contract represents a property that must hold of any object of a
  * given class. It is used as part of the oracle (assertion) for a unit test:
@@ -37,6 +39,13 @@ public interface ObjectContract {
    * @return the number of arguments to the contract
    */
   int getArity();
+
+  /**
+   * Returns the input types for this contract.
+   *
+   * @return the input types for this contract.
+   */
+  TypeTuple getInputTypes();
 
   /**
    * Evaluates the contract on the given values.

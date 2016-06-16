@@ -14,7 +14,7 @@ jdk:
   - oraclejdk7
   - openjdk7
 
-# this is not necessary, unless we want to get info/debug from tests
+# want more info when running tests and building manual
 script:
   - ./gradlew assemble
   - ./gradlew --info check

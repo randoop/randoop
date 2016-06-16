@@ -35,11 +35,10 @@ import randoop.sequence.Variable;
  * sequence that the check is over.
  * </ul>
  */
-public class ObjectCheck implements Check {
+class ObjectCheck implements Check {
 
-  public final ObjectContract contract;
-  public final Variable[] vars;
-  public final int stmt_no;
+  private final ObjectContract contract;
+  private final Variable[] vars;
 
   @Override
   public boolean equals(Object o) {
@@ -57,14 +56,13 @@ public class ObjectCheck implements Check {
     return Objects.hash(contract, vars);
   }
 
-  public ObjectCheck(ObjectContract cc, int stmt_no, Variable... vars) {
+  ObjectCheck(ObjectContract cc, Variable... vars) {
     if (cc == null) {
       throw new IllegalArgumentException("first argument cannot be null.");
     }
     if (vars.length != cc.getArity()) {
       throw new IllegalArgumentException("vars.size() != template.getArity().");
     }
-    this.stmt_no = stmt_no;
     this.contract = cc;
     this.vars = new Variable[vars.length];
     int count = 0;
@@ -75,11 +73,9 @@ public class ObjectCheck implements Check {
 
   @Override
   public String toString() {
-    StringBuilder b = new StringBuilder();
-    b.append("<");
-    b.append(contract.toString());
-    b.append(" " + Arrays.toString(vars) + " ");
-    return b.toString();
+    return "<"
+            + contract.toString()
+            + " " + Arrays.toString(vars) + " ";
   }
 
   @Override
@@ -122,11 +118,6 @@ public class ObjectCheck implements Check {
     } catch (Throwable t) {
       return contract.evalExceptionMeansFailure();
     }
-  }
-
-  @Override
-  public int getStatementIndex() {
-    return (stmt_no);
   }
 
   @Override

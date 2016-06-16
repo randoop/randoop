@@ -1056,8 +1056,7 @@ public final class Sequence implements WeightedElement {
    * Using compositional structure of this sequence, return the subsequence of
    * this sequence that contains the statement at the given index.
    *
-   * @param index
-   *          the statement position in this sequence
+   * @param index  the statement position in this sequence
    * @return the sequence containing the index position
    */
   Sequence getSubsequence(int index) {
@@ -1067,10 +1066,8 @@ public final class Sequence implements WeightedElement {
   /**
    * Creates a sequence corresponding to the given non-null primitive value.
    *
-   * @param value
-   *          non-null reference to a primitive or String value
-   * @return a {@link Sequence} consisting of a statement created with the
-   *         object.
+   * @param value  non-null reference to a primitive or String value
+   * @return a {@link Sequence} consisting of a statement created with the object.
    */
   public static Sequence createSequenceForPrimitive(Object value) {
     if (value == null) throw new IllegalArgumentException("value is null");

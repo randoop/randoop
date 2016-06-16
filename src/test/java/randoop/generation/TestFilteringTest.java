@@ -13,7 +13,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import randoop.DummyVisitor;
-import randoop.contract.ObjectContract;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.main.GenTests;
@@ -27,6 +26,7 @@ import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
+import randoop.test.ContractSet;
 import randoop.test.TestCheckGenerator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
@@ -260,7 +260,7 @@ public class TestFilteringTest {
     Predicate<ExecutableSequence> isOutputTest = genTests.createTestOutputPredicate(new HashSet<Sequence>(), new HashSet<Class<?>>(), null);
     gen.addTestPredicate(isOutputTest);
     TestCheckGenerator checkGenerator =
-            (new GenTests()).createTestCheckGenerator(visibility, new LinkedHashSet<ObjectContract>(), new MultiMap<GeneralType, TypedOperation>(), new LinkedHashSet<TypedOperation>());
+            (new GenTests()).createTestCheckGenerator(visibility, new ContractSet(), new MultiMap<GeneralType, TypedOperation>(), new LinkedHashSet<TypedOperation>());
     gen.addTestCheckGenerator(checkGenerator);
     gen.addExecutionVisitor(new DummyVisitor());
     return gen;

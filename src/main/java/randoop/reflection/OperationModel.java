@@ -9,6 +9,7 @@ import java.util.Set;
 
 import randoop.BugInRandoopException;
 import randoop.contract.EqualsReflexive;
+import randoop.contract.EqualsReturnsNormally;
 import randoop.contract.EqualsSymmetric;
 import randoop.contract.EqualsHashcode;
 import randoop.contract.EqualsToNullRetFalse;
@@ -27,6 +28,7 @@ import randoop.operation.OperationParser;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
+import randoop.test.ContractSet;
 import randoop.types.AbstractTypeVariable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
@@ -72,7 +74,7 @@ public class OperationModel {
   private Set<Sequence> annotatedTestValues;
 
   /** Set of object contracts used to generate tests. */
-  private Set<ObjectContract> contracts;
+  private ContractSet contracts;
 
   /** Set of concrete operations extracted from classes */
   private Set<TypedOperation> operations;
@@ -86,11 +88,12 @@ public class OperationModel {
     inputTypes = new LinkedHashSet<>();
     classLiteralMap = new MultiMap<>();
     annotatedTestValues = new LinkedHashSet<>();
-    contracts = new LinkedHashSet<>();
+    contracts = new ContractSet();
     contracts.add(EqualsReflexive.getInstance());
     contracts.add(EqualsSymmetric.getInstance());
     contracts.add(EqualsHashcode.getInstance());
     contracts.add(EqualsToNullRetFalse.getInstance());
+    contracts.add(EqualsReturnsNormally.getInstance());
     contracts.add(EqualsTransitive.getInstance());
     contracts.add(CompareToReflexive.getInstance());
     contracts.add(CompareToAntiSymmetric.getInstance());
@@ -244,7 +247,7 @@ public class OperationModel {
    *
    * @return the list of contracts
    */
-  public Set<ObjectContract> getContracts() {
+  public ContractSet getContracts() {
     return contracts;
   }
 

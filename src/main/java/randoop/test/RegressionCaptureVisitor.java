@@ -106,7 +106,7 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
           if (o == null) {
 
             // Add observer test for null
-            checks.add(new ObjectCheck(new IsNull(), i, var));
+            checks.add(new ObjectCheck(new IsNull(), var));
 
           } else if (PrimitiveTypes.isBoxedPrimitiveTypeOrString(o.getClass())) {
 
@@ -154,7 +154,7 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
             } else {
               printMode = PrimValue.PrintMode.EQUALSMETHOD;
             }
-            ObjectCheck oc = new ObjectCheck(new PrimValue(o, printMode), i, var);
+            ObjectCheck oc = new ObjectCheck(new PrimValue(o, printMode), var);
             checks.add(oc);
             // System.out.printf ("Adding objectcheck %s to seq %08X\n",
             // oc, s.seq_id());
@@ -165,7 +165,7 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
             // Exception: if the value comes directly from a constructor call,
             // not interesting that it's non-null; omit the check.
             if (!(st.isConstructorCall())) {
-              checks.add(new ObjectCheck(new IsNotNull(), i, var));
+              checks.add(new ObjectCheck(new IsNotNull(), var));
             }
 
             // Put out any observers that exist for this type
@@ -201,7 +201,7 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
                 }
 
                 ObjectContract observerEqValue = new ObserverEqValue(m, value);
-                ObjectCheck observerCheck = new ObjectCheck(observerEqValue, i, var);
+                ObjectCheck observerCheck = new ObjectCheck(observerEqValue, var);
 
                 if (Log.isLoggingOn()) {
                   Log.logLine(String.format("Adding observer %s%n", observerCheck));

@@ -46,11 +46,6 @@ public class NoExceptionCheck implements Check {
   }
 
   @Override
-  public int getStatementIndex() {
-    return statementIdx;
-  }
-
-  @Override
   public String getID() {
     return "NoExceptionCheck @" + statementIdx;
   }

@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import randoop.contract.ObjectContract;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.RandoopListenerManager;
@@ -29,6 +28,7 @@ import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
+import randoop.test.ContractSet;
 import randoop.test.TestCheckGenerator;
 import randoop.types.GeneralType;
 import randoop.types.TypeNames;
@@ -262,7 +262,7 @@ public class CoveredClassTest {
             excludeSet, operationModel.getExercisedClasses(), include_if_classname_appears);
     testGenerator.addTestPredicate(isOutputTest);
 
-    Set<ObjectContract> contracts = operationModel.getContracts();
+    ContractSet contracts = operationModel.getContracts();
     Set<TypedOperation> excludeAsObservers = new LinkedHashSet<>();
     TestCheckGenerator checkGenerator = genTests.createTestCheckGenerator(visibility, contracts, observerMap, excludeAsObservers);
     testGenerator.addTestCheckGenerator(checkGenerator);

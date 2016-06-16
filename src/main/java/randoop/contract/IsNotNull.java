@@ -1,6 +1,12 @@
 package randoop.contract;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import randoop.Globals;
+import randoop.types.ConcreteTypes;
+import randoop.types.GeneralType;
+import randoop.types.TypeTuple;
 
 /**
  * The contract: <code>x != null</code>.
@@ -35,6 +41,13 @@ public final class IsNotNull implements ObjectContract {
   @Override
   public int getArity() {
     return 1;
+  }
+
+  @Override
+  public TypeTuple getInputTypes() {
+    List<GeneralType> inputTypes = new ArrayList<>();
+    inputTypes.add(ConcreteTypes.OBJECT_TYPE);
+    return new TypeTuple(inputTypes);
   }
 
   @Override
