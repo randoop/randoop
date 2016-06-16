@@ -16,12 +16,12 @@ public class Buggy {
   // This should not lead to reported failures, because
   // a failure is only a test that leads to an NPE.
   public String toString() {
-    throw new RuntimeException("oops!");
+    throw new RuntimeException("RuntimeException in Buggy.toString()");
   }
   // This should not lead to reported failures, because
   // a failure is only a test that leads to an NPE.
   public int hashCode() {
-    throw new RuntimeException("oops!");
+    throw new RuntimeException("RuntimeException in Buggy.hashCode()");
   }
 
   public static class Buggy3 {
