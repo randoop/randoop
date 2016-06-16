@@ -15,7 +15,7 @@ public class CompareToSubs implements ObjectContract {
         return instance;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     @Override
     public boolean evaluate(Object... objects) {
         Object o1 = objects[0];

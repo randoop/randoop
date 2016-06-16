@@ -9,13 +9,13 @@ import randoop.Globals;
 public class CompareToAntiSymmetric implements ObjectContract {
     private static final CompareToAntiSymmetric instance = new CompareToAntiSymmetric();
 
-    private CompareToAntiSymmetric() {};
+    private CompareToAntiSymmetric() {}
 
     public static CompareToAntiSymmetric getInstance() {
         return instance;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     @Override
     public boolean evaluate(Object... objects) {
         Object o1 = objects[0];
@@ -57,9 +57,9 @@ public class CompareToAntiSymmetric implements ObjectContract {
         StringBuilder b = new StringBuilder();
         b.append(Globals.lineSep);
         b.append("// Checks the contract: ");
-        b.append(" " + toCommentString() + Globals.lineSep);
+        b.append(" ").append(toCommentString()).append(Globals.lineSep);
         b.append("org.junit.Assert.assertTrue(");
-        b.append("\"Contract failed: " + toCommentString() + "\", ");
+        b.append("\"Contract failed: ").append(toCommentString()).append("\", ");
         b.append("Math.signum(x0.compareTo(x1)) == -Math.signum(x1.compareTo(x0))");
         b.append(");");
         return b.toString();

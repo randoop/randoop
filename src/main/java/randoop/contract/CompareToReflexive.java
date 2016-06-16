@@ -15,7 +15,7 @@ public class CompareToReflexive implements ObjectContract {
         return instance;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     @Override
     public boolean evaluate(Object... objects) {
         assert objects != null && objects.length == 1;
