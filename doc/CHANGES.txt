@@ -1,3 +1,12 @@
+Version 3.0.1, released June 16, 2016
+
+Randoop now includes all of the contracts described in the user manual.
+It also uses a new contract checking heuristic that avoids exhaustive
+enumeration over the new ternary contracts.
+
+Fixed a bug that prevented generation of collections.
+
+
 Version 3.0.0, released June 6, 2016
 
 Randoop now tracks types independently of the Java reflection classes. This
