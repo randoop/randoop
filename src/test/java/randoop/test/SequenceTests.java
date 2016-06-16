@@ -115,6 +115,7 @@ public class SequenceTests {
     contracts.add(EqualsHashcode.getInstance());
     contracts.add(EqualsSymmetric.getInstance());
 
+
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ExceptionPredicate isExpected = new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
