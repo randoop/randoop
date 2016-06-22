@@ -83,7 +83,7 @@ public final class ObserverEqValue implements ObjectContract {
     b.append(
         "// Regression assertion (captures the current behavior of the code)" + Globals.lineSep);
 
-    String methodname = ((MethodCall)observer.getOperation()).getName();
+    String methodname = ((MethodCall) observer.getOperation()).getName();
     if (value == null) {
       b.append(String.format("assertNull(\"x0.%s() == null\", x0.%s());", methodname, methodname));
     } else if (observer.getOutputType().isPrimitive()

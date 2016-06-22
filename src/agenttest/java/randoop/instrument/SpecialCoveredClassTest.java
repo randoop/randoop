@@ -53,36 +53,35 @@ public class SpecialCoveredClassTest {
   public void abstractClassTest() {
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = new File("randoop/instrument/testcase/special-allclasses.txt");
-    include_if_class_exercised =
-        new File("randoop/instrument/testcase/special-coveredclasses.txt");
+    include_if_class_exercised = new File("randoop/instrument/testcase/special-coveredclasses.txt");
     ReflectionExecutor.usethreads = false;
     GenInputsAbstract.outputlimit = 5000;
     GenInputsAbstract.inputlimit = 10000;
 
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
     Set<String> coveredClassnames =
-            GenInputsAbstract.getStringSetFromFile(
-                    include_if_class_exercised, "Unable to read coverage class names");
+        GenInputsAbstract.getStringSetFromFile(
+            include_if_class_exercised, "Unable to read coverage class names");
     Set<String> omitFields = new HashSet<>();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ReflectionPredicate reflectionPredicate =
-            new DefaultReflectionPredicate(omitmethods, omitFields);
+        new DefaultReflectionPredicate(omitmethods, omitFields);
     Set<String> methodSignatures =
-            GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
+        GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
     OperationModel operationModel = null;
     try {
-      operationModel=
-              OperationModel.createModel(
-                      visibility,
-                      reflectionPredicate,
-                      classnames,
-                      coveredClassnames,
-                      methodSignatures,
-                      classNameErrorHandler,
-                      GenInputsAbstract.literals_file);
+      operationModel =
+          OperationModel.createModel(
+              visibility,
+              reflectionPredicate,
+              classnames,
+              coveredClassnames,
+              methodSignatures,
+              classNameErrorHandler,
+              GenInputsAbstract.literals_file);
     } catch (Throwable e) {
-     fail("Error: " + e);
+      fail("Error: " + e);
     }
     assert operationModel != null;
 
@@ -113,19 +112,19 @@ public class SpecialCoveredClassTest {
 
     ComponentManager componentMgr = new ComponentManager(components);
     operationModel.addClassLiterals(
-            componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
+        componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
     Set<TypedOperation> observers = new LinkedHashSet<>();
     ForwardGenerator testGenerator =
-            new ForwardGenerator(
-                    model,
-                    observers,
-                    GenInputsAbstract.timelimit * 1000,
-                    GenInputsAbstract.inputlimit,
-                    GenInputsAbstract.outputlimit,
-                    componentMgr,
-                    listenerMgr);
+        new ForwardGenerator(
+            model,
+            observers,
+            GenInputsAbstract.timelimit * 1000,
+            GenInputsAbstract.inputlimit,
+            GenInputsAbstract.outputlimit,
+            componentMgr,
+            listenerMgr);
     GenTests genTests = new GenTests();
 
     TypedOperation objectConstructor = null;
@@ -141,13 +140,14 @@ public class SpecialCoveredClassTest {
     excludeSet.add(newObj);
 
     Predicate<ExecutableSequence> isOutputTest =
-            genTests.createTestOutputPredicate(
-                    excludeSet, operationModel.getExercisedClasses(), include_if_classname_appears);
+        genTests.createTestOutputPredicate(
+            excludeSet, operationModel.getExercisedClasses(), include_if_classname_appears);
     testGenerator.addTestPredicate(isOutputTest);
     ContractSet contracts = operationModel.getContracts();
     Set<TypedOperation> excludeAsObservers = new LinkedHashSet<>();
-    MultiMap<GeneralType,TypedOperation> observerMap = new MultiMap<>();
-    TestCheckGenerator checkGenerator = genTests.createTestCheckGenerator(visibility, contracts, observerMap, excludeAsObservers);
+    MultiMap<GeneralType, TypedOperation> observerMap = new MultiMap<>();
+    TestCheckGenerator checkGenerator =
+        genTests.createTestCheckGenerator(visibility, contracts, observerMap, excludeAsObservers);
     testGenerator.addTestCheckGenerator(checkGenerator);
     testGenerator.addExecutionVisitor(new ExercisedClassVisitor(coveredClasses));
     testGenerator.explore();
@@ -185,8 +185,8 @@ public class SpecialCoveredClassTest {
     for (TypedOperation op : model) {
       if (op instanceof TypedClassOperation) {
         assertTrue(
-                "all model operations should be used or from wrong implementor",
-                opSet.contains(op) || ((TypedClassOperation)op).getDeclaringType().equals(it));
+            "all model operations should be used or from wrong implementor",
+            opSet.contains(op) || ((TypedClassOperation) op).getDeclaringType().equals(it));
       } else {
         assertTrue("all model operations should be used", opSet.contains(op));
       }

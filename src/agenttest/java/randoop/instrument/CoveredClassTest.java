@@ -62,7 +62,6 @@ public class CoveredClassTest {
     optionsCache.restoreState();
   }
 
-
   @Test
   public void testNoFilter() {
     System.out.println("no filter");
@@ -106,8 +105,7 @@ public class CoveredClassTest {
   public void testNameFilter() {
     System.out.println("name filter");
     GenInputsAbstract.classlist = new File("randoop/instrument/testcase/allclasses.txt");
-    include_if_classname_appears =
-        Pattern.compile("randoop\\.instrument\\.testcase\\.A"); //null;
+    include_if_classname_appears = Pattern.compile("randoop\\.instrument\\.testcase\\.A"); //null;
     GenInputsAbstract.include_if_class_exercised =
         null; //"tests/randoop/instrument/testcase/coveredclasses.txt";
     // setup classes
@@ -183,25 +181,30 @@ public class CoveredClassTest {
 
   private ForwardGenerator getGenerator() {
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
-    Set<String> coveredClassnames = GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.include_if_class_exercised,"unable to read coverage class names");
+    Set<String> coveredClassnames =
+        GenInputsAbstract.getStringSetFromFile(
+            GenInputsAbstract.include_if_class_exercised, "unable to read coverage class names");
     Set<String> omitFields =
-            GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.omit_field_list, "Error reading field file");
+        GenInputsAbstract.getStringSetFromFile(
+            GenInputsAbstract.omit_field_list, "Error reading field file");
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ReflectionPredicate reflectionPredicate =
         new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitFields);
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
     Set<String> methodSignatures =
-            GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
+        GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
 
     OperationModel operationModel = null;
     try {
-      operationModel=
-              OperationModel.createModel(visibility, reflectionPredicate,
-                      classnames,
-                      coveredClassnames,
-                      methodSignatures,
-                      classNameErrorHandler,
-                      GenInputsAbstract.literals_file);
+      operationModel =
+          OperationModel.createModel(
+              visibility,
+              reflectionPredicate,
+              classnames,
+              coveredClassnames,
+              methodSignatures,
+              classNameErrorHandler,
+              GenInputsAbstract.literals_file);
     } catch (OperationParseException e) {
       fail("operation parse exception thrown: " + e);
     } catch (NoSuchMethodException e) {
@@ -216,11 +219,13 @@ public class CoveredClassTest {
 
     ComponentManager componentMgr = new ComponentManager(components);
     operationModel.addClassLiterals(
-            componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
+        componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
-    Set<String> observerSignatures = GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.observers,"Unable to read observer file", "//.*", null);
+    Set<String> observerSignatures =
+        GenInputsAbstract.getStringSetFromFile(
+            GenInputsAbstract.observers, "Unable to read observer file", "//.*", null);
 
-    MultiMap<GeneralType,TypedOperation> observerMap = null;
+    MultiMap<GeneralType, TypedOperation> observerMap = null;
     try {
       observerMap = operationModel.getObservers(observerSignatures);
     } catch (OperationParseException e) {
@@ -264,9 +269,11 @@ public class CoveredClassTest {
 
     ContractSet contracts = operationModel.getContracts();
     Set<TypedOperation> excludeAsObservers = new LinkedHashSet<>();
-    TestCheckGenerator checkGenerator = genTests.createTestCheckGenerator(visibility, contracts, observerMap, excludeAsObservers);
+    TestCheckGenerator checkGenerator =
+        genTests.createTestCheckGenerator(visibility, contracts, observerMap, excludeAsObservers);
     testGenerator.addTestCheckGenerator(checkGenerator);
-    testGenerator.addExecutionVisitor(new ExercisedClassVisitor(operationModel.getExercisedClasses()));
+    testGenerator.addExecutionVisitor(
+        new ExercisedClassVisitor(operationModel.getExercisedClasses()));
     return testGenerator;
   }
 }

@@ -23,19 +23,22 @@ public class TypedClassOperation extends TypedOperation {
    */
   private final ClassOrInterfaceType declaringType;
 
-  public TypedClassOperation(CallableOperation operation, ClassOrInterfaceType declaringType, TypeTuple inputTypes, GeneralType outputType) {
+  public TypedClassOperation(
+      CallableOperation operation,
+      ClassOrInterfaceType declaringType,
+      TypeTuple inputTypes,
+      GeneralType outputType) {
     super(operation, inputTypes, outputType);
     this.declaringType = declaringType;
   }
 
   @Override
   public boolean equals(Object obj) {
-    if (! (obj instanceof TypedClassOperation)) {
+    if (!(obj instanceof TypedClassOperation)) {
       return false;
     }
-    TypedClassOperation op = (TypedClassOperation)obj;
-    return declaringType.equals(op.declaringType)
-            && super.equals(obj);
+    TypedClassOperation op = (TypedClassOperation) obj;
+    return declaringType.equals(op.declaringType) && super.equals(obj);
   }
 
   @Override
@@ -82,7 +85,8 @@ public class TypedClassOperation extends TypedOperation {
    * @param b         the {@link StringBuilder} to which code is added.
    */
   public void appendCode(List<Variable> inputVars, StringBuilder b) {
-    assert inputVars.size() == this.getInputTypes().size(): "number of inputs doesn't match on operation appendCode";
+    assert inputVars.size() == this.getInputTypes().size()
+        : "number of inputs doesn't match on operation appendCode";
     this.getOperation().appendCode(declaringType, getInputTypes(), getOutputType(), inputVars, b);
   }
 

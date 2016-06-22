@@ -12,14 +12,15 @@ class DeclarationExtractor extends DefaultClassVisitor {
   private final Set<ClassOrInterfaceType> classDeclarationTypes;
   private ReflectionPredicate predicate;
 
-  DeclarationExtractor(Set<ClassOrInterfaceType> classDeclarationTypes, ReflectionPredicate predicate) {
+  DeclarationExtractor(
+      Set<ClassOrInterfaceType> classDeclarationTypes, ReflectionPredicate predicate) {
     this.classDeclarationTypes = classDeclarationTypes;
     this.predicate = predicate;
   }
 
   @Override
   public void visitBefore(Class<?> c) {
-    if (! predicate.test(c)) {
+    if (!predicate.test(c)) {
       return;
     }
     classDeclarationTypes.add(ClassOrInterfaceType.forClass(c));

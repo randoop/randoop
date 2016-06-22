@@ -18,7 +18,7 @@ import java.util.Objects;
  * @see WildcardArgumentWithLowerBound
  * @see WildcardArgumentWithUpperBound
  */
-public abstract class WildcardArgument extends TypeArgument{
+public abstract class WildcardArgument extends TypeArgument {
 
   /** the bound type */
   private final ReferenceType boundType;
@@ -34,10 +34,10 @@ public abstract class WildcardArgument extends TypeArgument{
 
   @Override
   public boolean equals(Object obj) {
-    if (! (obj instanceof WildcardArgument)) {
+    if (!(obj instanceof WildcardArgument)) {
       return false;
     }
-    WildcardArgument wildcardArgument = (WildcardArgument)obj;
+    WildcardArgument wildcardArgument = (WildcardArgument) obj;
     return this.boundType.equals(wildcardArgument.boundType);
   }
 
@@ -81,18 +81,20 @@ public abstract class WildcardArgument extends TypeArgument{
    * @return the {@code WildcardArgument} created from the given {@code Type}
    */
   public static WildcardArgument forType(Type type) {
-    if (! (type instanceof WildcardType)) {
+    if (!(type instanceof WildcardType)) {
       throw new IllegalArgumentException("Must be a wildcard type " + type);
     }
-    WildcardType wildcardType = (WildcardType)type;
+    WildcardType wildcardType = (WildcardType) type;
 
     // Note: every wildcard has an upper bound, so need to check lower first
     if (wildcardType.getLowerBounds().length > 0) {
-      assert wildcardType.getLowerBounds().length == 1 : "a wildcard is defined by the JLS to only have one bound";
+      assert wildcardType.getLowerBounds().length == 1
+          : "a wildcard is defined by the JLS to only have one bound";
       return new WildcardArgumentWithLowerBound(wildcardType.getLowerBounds());
     }
     if (wildcardType.getUpperBounds().length > 0) {
-      assert wildcardType.getUpperBounds().length == 1 : "a wildcard is defined by the JLS to only have one bound";
+      assert wildcardType.getUpperBounds().length == 1
+          : "a wildcard is defined by the JLS to only have one bound";
       return new WildcardArgumentWithUpperBound(wildcardType.getUpperBounds());
     }
 

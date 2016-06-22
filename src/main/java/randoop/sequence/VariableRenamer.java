@@ -64,19 +64,21 @@ class VariableRenamer {
         return "byte";
       }
       // otherwise, use the first character of the type name
-      return type.getName().substring(0,1);
-    } if (type.isParameterized()) {
-      InstantiatedType classType = (InstantiatedType)type;
+      return type.getName().substring(0, 1);
+    }
+    if (type.isParameterized()) {
+      InstantiatedType classType = (InstantiatedType) type;
       String varName = classType.getClassName().toLowerCase();
       for (TypeArgument argument : classType.getTypeArguments()) {
-        assert !argument.isWildcard() : "wildcards should be converted and instantiated for types of variables";
-        String argumentName = getVariableName(((ReferenceArgument)argument).getReferenceType());
+        assert !argument.isWildcard()
+            : "wildcards should be converted and instantiated for types of variables";
+        String argumentName = getVariableName(((ReferenceArgument) argument).getReferenceType());
         varName += "_" + argumentName;
       }
       return varName;
     } else {
       // for other object types
-      String classname = ((ClassOrInterfaceType)type).getClassName();
+      String classname = ((ClassOrInterfaceType) type).getClassName();
       if (classname.length() > 0) {
         if (Character.isUpperCase(classname.charAt(0))) { // preserve camel case
           return classname.substring(0, 1).toLowerCase() + classname.substring(1);

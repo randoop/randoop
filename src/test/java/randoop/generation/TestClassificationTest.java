@@ -52,16 +52,16 @@ public class TestClassificationTest {
 
   private static OptionsCache optionsCache;
 
-   @BeforeClass
-   public static void setup() {
-     optionsCache = new OptionsCache();
-     optionsCache.saveState();
-   }
+  @BeforeClass
+  public static void setup() {
+    optionsCache = new OptionsCache();
+    optionsCache.saveState();
+  }
 
-   @AfterClass
-   public static void restore() {
-     optionsCache.restoreState();
-   }
+  @AfterClass
+  public static void restore() {
+    optionsCache.restoreState();
+  }
 
   /**
    * Tests the classification of tests when all exceptions are invalid.
@@ -347,7 +347,12 @@ public class TestClassificationTest {
     Predicate<ExecutableSequence> isOutputTest = new AlwaysTrue<>();
     gen.addTestPredicate(isOutputTest);
     TestCheckGenerator checkGenerator =
-        (new GenTests()).createTestCheckGenerator(visibility, new ContractSet(), new MultiMap<GeneralType, TypedOperation>(), new LinkedHashSet<TypedOperation>());
+        (new GenTests())
+            .createTestCheckGenerator(
+                visibility,
+                new ContractSet(),
+                new MultiMap<GeneralType, TypedOperation>(),
+                new LinkedHashSet<TypedOperation>());
     gen.addTestCheckGenerator(checkGenerator);
     gen.addExecutionVisitor(new DummyVisitor());
     return gen;

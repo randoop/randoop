@@ -45,7 +45,10 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
   private boolean includeAssertions;
 
   public RegressionCaptureVisitor(
-      ExpectedExceptionCheckGen exceptionExpectation, MultiMap<GeneralType, TypedOperation> observerMap, Set<TypedOperation> excludeSet, boolean includeAssertions) {
+      ExpectedExceptionCheckGen exceptionExpectation,
+      MultiMap<GeneralType, TypedOperation> observerMap,
+      Set<TypedOperation> excludeSet,
+      boolean includeAssertions) {
     this.exceptionExpectation = exceptionExpectation;
     this.observerMap = observerMap;
     this.excludeSet = excludeSet;
@@ -174,9 +177,10 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
             if (observers != null) {
               for (TypedOperation m : observers) {
 
-                ExecutionOutcome outcome = m.execute(new Object[]{o}, null);
+                ExecutionOutcome outcome = m.execute(new Object[] {o}, null);
                 if (outcome instanceof ExceptionalExecution) {
-                  String msg = "unexpected error invoking observer "
+                  String msg =
+                      "unexpected error invoking observer "
                           + m
                           + " on "
                           + var

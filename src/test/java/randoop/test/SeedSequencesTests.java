@@ -29,7 +29,7 @@ public class SeedSequencesTests {
     Set<Sequence> annotatedTestValues = new LinkedHashSet<>();
     ReflectionManager manager = new ReflectionManager(new PackageVisibilityPredicate(thisPackage));
     manager.add(new TestValueExtractor(annotatedTestValues));
-    
+
     try {
       manager.apply(MissingPublicMod.class);
     } catch (RuntimeException e) {
@@ -37,7 +37,9 @@ public class SeedSequencesTests {
           e.getMessage(),
           e.getMessage().contains("public")); // message should at least mention static modifier.
     }
-    assertTrue("shouldn't get anything but have " + annotatedTestValues.size() + " value(s)", annotatedTestValues.isEmpty());
+    assertTrue(
+        "shouldn't get anything but have " + annotatedTestValues.size() + " value(s)",
+        annotatedTestValues.isEmpty());
 
     try {
       manager.apply(MissingStaticMod.class);
@@ -76,20 +78,22 @@ public class SeedSequencesTests {
     assertTrue("and still nothing... ", annotatedTestValues.isEmpty());
 
     Set<Sequence> s4 = new LinkedHashSet<>();
-    ReflectionManager managerS4 = new ReflectionManager(new PackageVisibilityPredicate(thisPackage));
+    ReflectionManager managerS4 =
+        new ReflectionManager(new PackageVisibilityPredicate(thisPackage));
     managerS4.add(new TestValueExtractor(s4));
 
     managerS4.apply(TestValueExamples.class);
     Set<Sequence> expected =
         SeedSequences.objectsToSeeds(
             Arrays.asList(
-                new Object[] {
-                  0, 1, 2, 3, "hi", false, (byte) 3, 'c', 3L, (float) 1.3, 1.4
-                }));
-    expected.add(new Sequence().extend(TypedOperation.createNullOrZeroInitializationForType(ConcreteTypes.STRING_TYPE), new ArrayList<Variable>()));
+                new Object[] {0, 1, 2, 3, "hi", false, (byte) 3, 'c', 3L, (float) 1.3, 1.4}));
+    expected.add(
+        new Sequence()
+            .extend(
+                TypedOperation.createNullOrZeroInitializationForType(ConcreteTypes.STRING_TYPE),
+                new ArrayList<Variable>()));
     assertEquals(expected, s4);
   }
-
 }
 
 @SuppressWarnings("unused")

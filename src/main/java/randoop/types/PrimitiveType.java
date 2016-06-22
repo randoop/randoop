@@ -14,7 +14,8 @@ public class PrimitiveType extends GeneralType {
    * @param runtimeClass  the runtime class
    */
   public PrimitiveType(Class<?> runtimeClass) {
-    assert runtimeClass.isPrimitive() : "must be initialized with primitive type, got " + runtimeClass.getName();
+    assert runtimeClass.isPrimitive()
+        : "must be initialized with primitive type, got " + runtimeClass.getName();
     this.runtimeClass = runtimeClass;
   }
 
@@ -112,7 +113,7 @@ public class PrimitiveType extends GeneralType {
       return PrimitiveTypes.isAssignable(this.runtimeClass, sourceType.getRuntimeClass());
     }
 
-    if (sourceType.isBoxedPrimitive()){ // unbox then primitive widening conversion
+    if (sourceType.isBoxedPrimitive()) { // unbox then primitive widening conversion
       PrimitiveType primitiveSourceType = sourceType.toPrimitive();
       return this.isAssignableFrom(primitiveSourceType);
     }

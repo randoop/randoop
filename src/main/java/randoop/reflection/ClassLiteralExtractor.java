@@ -31,10 +31,13 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     for (Class<?> constantClass : constantMap.keySet()) {
       ClassOrInterfaceType constantType = ClassOrInterfaceType.forClass(constantClass);
       for (NonreceiverTerm term : constantMap.getValues(constantClass)) {
-        Sequence seq = new Sequence().extend(TypedOperation.createNonreceiverInitialization(term), new ArrayList<Variable>());
+        Sequence seq =
+            new Sequence()
+                .extend(
+                    TypedOperation.createNonreceiverInitialization(term),
+                    new ArrayList<Variable>());
         literalMap.add(constantType, seq);
       }
     }
   }
-
 }

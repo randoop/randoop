@@ -87,7 +87,12 @@ public final class MethodCall extends CallableOperation {
    * @param inputVars is the list of actual arguments to be printed
    */
   @Override
-  public void appendCode(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder sb) {
+  public void appendCode(
+      GeneralType declaringType,
+      TypeTuple inputTypes,
+      GeneralType outputType,
+      List<Variable> inputVars,
+      StringBuilder sb) {
 
     String receiverString = isStatic() ? null : inputVars.get(0).getName();
     if (isStatic()) {
@@ -95,7 +100,11 @@ public final class MethodCall extends CallableOperation {
     } else {
       GeneralType expectedType = inputTypes.get(0);
       if (expectedType.isPrimitive()) { // explicit cast when want primitive boxed as receiver
-        sb.append("((").append(expectedType.getName()).append(")").append(receiverString).append(")");
+        sb.append("((")
+            .append(expectedType.getName())
+            .append(")")
+            .append(receiverString)
+            .append(")");
       } else {
         sb.append(receiverString);
       }
@@ -195,7 +204,8 @@ public final class MethodCall extends CallableOperation {
    *  java.util.ArrayList.add(int,java.lang.Object)
    */
   @Override
-  public String toParsableString(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
+  public String toParsableString(
+      GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
     StringBuilder sb = new StringBuilder();
     sb.append(method.getDeclaringClass().getName()).append(".");
     sb.append(method.getName()).append("(");
@@ -261,7 +271,6 @@ public final class MethodCall extends CallableOperation {
     }
 
     return TypedClassOperation.forMethod(m);
-
   }
 
   /**
@@ -278,7 +287,9 @@ public final class MethodCall extends CallableOperation {
    * @return true always, since this is a method call
    */
   @Override
-  public boolean isMethodCall() { return true; }
+  public boolean isMethodCall() {
+    return true;
+  }
 
   public String getName() {
     return method.getName();
@@ -295,6 +306,4 @@ public final class MethodCall extends CallableOperation {
   public boolean satisfies(ReflectionPredicate predicate) {
     return predicate.test(method);
   }
-
-
 }

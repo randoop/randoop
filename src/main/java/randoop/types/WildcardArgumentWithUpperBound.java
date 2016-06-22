@@ -50,12 +50,13 @@ public class WildcardArgumentWithUpperBound extends WildcardArgument {
   @Override
   public boolean contains(TypeArgument otherArgument) {
     return otherArgument.isWildcard()
-            && ((WildcardArgument) otherArgument).hasUpperBound()
-            && this.getBoundType().isSubtypeOf(((WildcardArgument) otherArgument).getBoundType());
+        && ((WildcardArgument) otherArgument).hasUpperBound()
+        && this.getBoundType().isSubtypeOf(((WildcardArgument) otherArgument).getBoundType());
   }
 
   @Override
-  public boolean canBeInstantiatedAs(GeneralType generalType, Substitution<ReferenceType> substitution) {
+  public boolean canBeInstantiatedAs(
+      GeneralType generalType, Substitution<ReferenceType> substitution) {
     return getBoundType().isAssignableFrom(generalType);
   }
 

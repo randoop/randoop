@@ -64,13 +64,13 @@ public abstract class TypedOperation implements Operation {
 
   @Override
   public boolean equals(Object obj) {
-    if (! (obj instanceof TypedOperation)) {
+    if (!(obj instanceof TypedOperation)) {
       return false;
     }
-    TypedOperation op = (TypedOperation)obj;
+    TypedOperation op = (TypedOperation) obj;
     return getOperation().equals(op.getOperation())
-            && inputTypes.equals(op.inputTypes)
-            && outputType.equals(op.outputType);
+        && inputTypes.equals(op.inputTypes)
+        && outputType.equals(op.outputType);
   }
 
   @Override
@@ -111,7 +111,9 @@ public abstract class TypedOperation implements Operation {
    *
    * @return the enclosed operation
    */
-  public CallableOperation getOperation() { return operation; }
+  public CallableOperation getOperation() {
+    return operation;
+  }
 
   /**
    * Indicates whether this operation has a type that is a wildcard type.
@@ -191,7 +193,7 @@ public abstract class TypedOperation implements Operation {
    */
   public ExecutionOutcome execute(Object[] input, PrintStream out) {
     assert input.length == inputTypes.size()
-            : "operation execute expected " + inputTypes.size() + ", but got " + input.length;
+        : "operation execute expected " + inputTypes.size() + ", but got " + input.length;
 
     return this.getOperation().execute(input, out);
   }
@@ -233,7 +235,8 @@ public abstract class TypedOperation implements Operation {
    */
   public static TypedClassOperation forConstructor(Constructor<?> constructor) {
     ConstructorCall op = new ConstructorCall(constructor);
-    ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(constructor.getDeclaringClass());
+    ClassOrInterfaceType declaringType =
+        ClassOrInterfaceType.forClass(constructor.getDeclaringClass());
     List<GeneralType> paramTypes = new ArrayList<>();
     for (Type t : constructor.getGenericParameterTypes()) {
       paramTypes.add(GeneralType.forType(t));
@@ -249,10 +252,10 @@ public abstract class TypedOperation implements Operation {
    * @return the typed operation for the given method
    */
   public static TypedClassOperation forMethod(Method method) {
-//    MethodCall op;
-//    ClassOrInterfaceType declaringType;
-   // TypeTuple inputTypes;
-   // GeneralType outputType;
+    //    MethodCall op;
+    //    ClassOrInterfaceType declaringType;
+    // TypeTuple inputTypes;
+    // GeneralType outputType;
 
     List<GeneralType> methodParamTypes = new ArrayList<>();
     for (Type t : method.getGenericParameterTypes()) {
@@ -261,8 +264,8 @@ public abstract class TypedOperation implements Operation {
 
     Class<?> declaringClass = method.getDeclaringClass();
     if (declaringClass.isAnonymousClass()
-            && declaringClass.getEnclosingClass() != null
-            && declaringClass.getEnclosingClass().isEnum()) {
+        && declaringClass.getEnclosingClass() != null
+        && declaringClass.getEnclosingClass().isEnum()) {
       // is a method in anonymous class for enum constant
       return getAnonEnumOperation(method, methodParamTypes, declaringClass.getEnclosingClass());
     }
@@ -270,7 +273,7 @@ public abstract class TypedOperation implements Operation {
     List<GeneralType> paramTypes = new ArrayList<>();
     MethodCall op = new MethodCall(method);
     ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(method.getDeclaringClass());
-    if (! op.isStatic()) {
+    if (!op.isStatic()) {
       paramTypes.add(declaringType);
     }
     paramTypes.addAll(methodParamTypes);
@@ -289,22 +292,23 @@ public abstract class TypedOperation implements Operation {
    * @param enumClass  the declaring class
    * @return the typed operation for the given method
    */
-  private static TypedClassOperation getAnonEnumOperation(Method method, List<GeneralType> methodParamTypes, Class<?> enumClass) {
+  private static TypedClassOperation getAnonEnumOperation(
+      Method method, List<GeneralType> methodParamTypes, Class<?> enumClass) {
     ClassOrInterfaceType enumType = ClassOrInterfaceType.forClass(enumClass);
 
-      /*
-       * have to determine whether parameter types match
-       * if method comes from a generic type, the parameters for method will be instantiated
-       * and it is necessary to build the instantiated parameter list
-       */
+    /*
+     * have to determine whether parameter types match
+     * if method comes from a generic type, the parameters for method will be instantiated
+     * and it is necessary to build the instantiated parameter list
+     */
     // TODO verify that subsignature conditions on erasure met (JLS 8.4.2)
     for (Method m : enumClass.getMethods()) {
       if (m.getName().equals(method.getName())
-              && m.getGenericParameterTypes().length == method.getGenericParameterTypes().length) {
+          && m.getGenericParameterTypes().length == method.getGenericParameterTypes().length) {
         List<GeneralType> paramTypes = new ArrayList<>();
         MethodCall op = new MethodCall(m);
         ClassOrInterfaceType declaringType = enumType;
-        if (! op.isStatic()) {
+        if (!op.isStatic()) {
           paramTypes.add(declaringType);
         }
         for (Type t : m.getGenericParameterTypes()) {
@@ -313,11 +317,13 @@ public abstract class TypedOperation implements Operation {
         TypeTuple inputTypes = new TypeTuple(paramTypes);
         GeneralType outputType = GeneralType.forType(m.getGenericReturnType());
 
-        ClassOrInterfaceType methodDeclaringType = ClassOrInterfaceType.forClass(m.getDeclaringClass());
+        ClassOrInterfaceType methodDeclaringType =
+            ClassOrInterfaceType.forClass(m.getDeclaringClass());
         if (methodDeclaringType.isGeneric()) {
-          GenericClassType genDeclaringType = (GenericClassType)methodDeclaringType;
+          GenericClassType genDeclaringType = (GenericClassType) methodDeclaringType;
           InstantiatedType superType = enumType.getMatchingSupertype(genDeclaringType);
-          assert superType != null : "should exist a super type of enum instantiating " + genDeclaringType;
+          assert superType != null
+              : "should exist a super type of enum instantiating " + genDeclaringType;
           Substitution<ReferenceType> substitution = superType.getTypeSubstitution();
           inputTypes = inputTypes.apply(substitution);
           outputType = outputType.apply(substitution);
@@ -326,7 +332,8 @@ public abstract class TypedOperation implements Operation {
         // check if param types match
         int d = op.isStatic() ? 0 : 1;
         int i = 0;
-        while (i < methodParamTypes.size() && methodParamTypes.get(i).equals(inputTypes.get(i + d))) {
+        while (i < methodParamTypes.size()
+            && methodParamTypes.get(i).equals(inputTypes.get(i + d))) {
           i++;
         }
         if (i == methodParamTypes.size()) {
@@ -334,12 +341,17 @@ public abstract class TypedOperation implements Operation {
         }
       }
     }
-      /*
-       * When dredging methods from anonymous classes, end up with methods that have Object instead
-       * of generic type parameter. These just cause pain when generating code, and this code
-       * assumes that current method is one of these if we cannot find a match.
-       */
-System.out.println(method.getName() + " is bridge? " + method.isBridge() + " is synthetic? " + method.isSynthetic() );
+    /*
+     * When dredging methods from anonymous classes, end up with methods that have Object instead
+     * of generic type parameter. These just cause pain when generating code, and this code
+     * assumes that current method is one of these if we cannot find a match.
+     */
+    System.out.println(
+        method.getName()
+            + " is bridge? "
+            + method.isBridge()
+            + " is synthetic? "
+            + method.isSynthetic());
     return null;
   }
 
@@ -350,14 +362,16 @@ System.out.println(method.getName() + " is bridge? " + method.isBridge() + " is 
    * @param declaringType  the declaring type for the field
    * @return an operation to access the given field of the declaring type
    */
-  public static TypedClassOperation createGetterForField(Field field, ClassOrInterfaceType declaringType) {
+  public static TypedClassOperation createGetterForField(
+      Field field, ClassOrInterfaceType declaringType) {
     GeneralType fieldType = GeneralType.forType(field.getGenericType());
     AccessibleField accessibleField = new AccessibleField(field, declaringType);
     List<GeneralType> inputTypes = new ArrayList<>();
-    if (! accessibleField.isStatic()) {
+    if (!accessibleField.isStatic()) {
       inputTypes.add(declaringType);
     }
-    return new TypedClassOperation(new FieldGet(accessibleField), declaringType, new TypeTuple(inputTypes), fieldType);
+    return new TypedClassOperation(
+        new FieldGet(accessibleField), declaringType, new TypeTuple(inputTypes), fieldType);
   }
 
   /**
@@ -367,15 +381,20 @@ System.out.println(method.getName() + " is bridge? " + method.isBridge() + " is 
    * @param declaringType  the declaring type of the field
    * @return an operation to set the value of the given field of the declaring type
    */
-  public static TypedClassOperation createSetterForField(Field field, ClassOrInterfaceType declaringType) {
+  public static TypedClassOperation createSetterForField(
+      Field field, ClassOrInterfaceType declaringType) {
     GeneralType fieldType = GeneralType.forType(field.getGenericType());
     AccessibleField accessibleField = new AccessibleField(field, declaringType);
     List<GeneralType> inputTypes = new ArrayList<>();
-    if (! accessibleField.isStatic()) {
+    if (!accessibleField.isStatic()) {
       inputTypes.add(declaringType);
     }
     inputTypes.add(fieldType);
-    return new TypedClassOperation(new FieldSet(accessibleField), declaringType, new TypeTuple(inputTypes), ConcreteTypes.VOID_TYPE);
+    return new TypedClassOperation(
+        new FieldSet(accessibleField),
+        declaringType,
+        new TypeTuple(inputTypes),
+        ConcreteTypes.VOID_TYPE);
   }
 
   /**
@@ -385,7 +404,8 @@ System.out.println(method.getName() + " is bridge? " + method.isBridge() + " is 
    * @return the initialization operation
    */
   public static TypedOperation createNullOrZeroInitializationForType(GeneralType type) {
-    return TypedOperation.createNonreceiverInitialization(NonreceiverTerm.createNullOrZeroTerm(type));
+    return TypedOperation.createNonreceiverInitialization(
+        NonreceiverTerm.createNullOrZeroTerm(type));
   }
 
   /**
@@ -396,8 +416,9 @@ System.out.println(method.getName() + " is bridge? " + method.isBridge() + " is 
    * @return the initialization operation
    */
   public static TypedOperation createPrimitiveInitialization(GeneralType type, Object value) {
-    assert PrimitiveTypes.isBoxedOrPrimitiveOrStringType(type.getRuntimeClass()) : "must be nonreceiver type, got " + type.getName();
-    return TypedOperation.createNonreceiverInitialization(new NonreceiverTerm(type,value));
+    assert PrimitiveTypes.isBoxedOrPrimitiveOrStringType(type.getRuntimeClass())
+        : "must be nonreceiver type, got " + type.getName();
+    return TypedOperation.createNonreceiverInitialization(new NonreceiverTerm(type, value));
   }
 
   /**
@@ -425,5 +446,4 @@ System.out.println(method.getName() + " is bridge? " + method.isBridge() + " is 
     TypeTuple inputTypes = new TypeTuple(typeList);
     return new TypedTermOperation(new ArrayCreation(arrayType, size), inputTypes, arrayType);
   }
-
 }

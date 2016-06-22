@@ -33,16 +33,16 @@ public class ForwardExplorerPerformanceTest {
 
   private static OptionsCache optionsCache;
 
-   @BeforeClass
-   public static void setup() {
-     optionsCache = new OptionsCache();
-     optionsCache.saveState();
-   }
+  @BeforeClass
+  public static void setup() {
+    optionsCache = new OptionsCache();
+    optionsCache.saveState();
+  }
 
-   @AfterClass
-   public static void restore() {
-     optionsCache.restoreState();
-   }
+  @AfterClass
+  public static void restore() {
+    optionsCache.restoreState();
+  }
 
   private static long performanceMultiplier() {
     String foo = "make sure that the loop doesn't get optimized away";
@@ -65,11 +65,14 @@ public class ForwardExplorerPerformanceTest {
     final List<TypedOperation> model = new ArrayList<>();
 
     ReflectionManager manager = new ReflectionManager(new PublicVisibilityPredicate());
-    try (EntryReader er = new EntryReader(ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
+    try (EntryReader er =
+            new EntryReader(
+                ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
       for (String entry : er) {
         Class<?> c = Class.forName(entry);
         ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-        manager.apply(new OperationExtractor(classType, model, new DefaultReflectionPredicate()), c);
+        manager.apply(
+            new OperationExtractor(classType, model, new DefaultReflectionPredicate()), c);
       }
     } catch (IOException e) {
       fail("exception when reading class names " + e);
@@ -82,7 +85,14 @@ public class ForwardExplorerPerformanceTest {
     GenInputsAbstract.debug_checks = false;
     ForwardGenerator explorer =
         new ForwardGenerator(
-            model, new LinkedHashSet<TypedOperation>(), TIME_LIMIT_SECS * 1000, Integer.MAX_VALUE, Integer.MAX_VALUE, null, null, null);
+            model,
+            new LinkedHashSet<TypedOperation>(),
+            TIME_LIMIT_SECS * 1000,
+            Integer.MAX_VALUE,
+            Integer.MAX_VALUE,
+            null,
+            null,
+            null);
     System.out.println("" + Globals.lineSep + "Will explore for " + TIME_LIMIT_SECS + " seconds.");
     explorer.explore();
     System.out.println(
@@ -98,12 +108,21 @@ public class ForwardExplorerPerformanceTest {
     GenInputsAbstract.dontexecute = false;
     GenInputsAbstract.debug_checks = true;
     if (explorer.numGeneratedSequences() < EXPECTED_MIN) {
-      String b = "Randoop's explorer created fewer than " + EXPECTED_MIN
-              + " inputs (precisely, " + explorer.numGeneratedSequences() + ") in "
-              + TIME_LIMIT_SECS + " seconds." + Globals.lineSep
-              + "This failure could have two causes:" + Globals.lineSep
-              + " (1) Our guess as to how fast your machine is is wrong." + Globals.lineSep
-              + " (2) You made a change to Randoop that slows down its performance." + Globals.lineSep
+      String b =
+          "Randoop's explorer created fewer than "
+              + EXPECTED_MIN
+              + " inputs (precisely, "
+              + explorer.numGeneratedSequences()
+              + ") in "
+              + TIME_LIMIT_SECS
+              + " seconds."
+              + Globals.lineSep
+              + "This failure could have two causes:"
+              + Globals.lineSep
+              + " (1) Our guess as to how fast your machine is is wrong."
+              + Globals.lineSep
+              + " (2) You made a change to Randoop that slows down its performance."
+              + Globals.lineSep
               + "     No tips available here.";
       fail(b);
     }

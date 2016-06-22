@@ -98,5 +98,4 @@ public final class SeedSequences {
     }
     return result;
   }
-
 }

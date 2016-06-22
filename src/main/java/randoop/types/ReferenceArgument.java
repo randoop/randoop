@@ -24,10 +24,10 @@ public class ReferenceArgument extends TypeArgument {
 
   @Override
   public boolean equals(Object obj) {
-    if (! (obj instanceof ReferenceArgument)) {
+    if (!(obj instanceof ReferenceArgument)) {
       return false;
     }
-    ReferenceArgument referenceArgument = (ReferenceArgument)obj;
+    ReferenceArgument referenceArgument = (ReferenceArgument) obj;
     return this.referenceType.equals(referenceArgument.referenceType);
   }
 
@@ -67,9 +67,9 @@ public class ReferenceArgument extends TypeArgument {
   @Override
   public boolean contains(TypeArgument otherArgument) {
     if (otherArgument.isWildcard()) {
-      return referenceType.equals(((WildcardArgument)otherArgument).getBoundType());
+      return referenceType.equals(((WildcardArgument) otherArgument).getBoundType());
     } else {
-      return referenceType.equals(((ReferenceArgument)otherArgument).getReferenceType());
+      return referenceType.equals(((ReferenceArgument) otherArgument).getReferenceType());
     }
   }
 
@@ -109,7 +109,8 @@ public class ReferenceArgument extends TypeArgument {
    * has to satisfy the variables bounds.
    */
   @Override
-  public boolean canBeInstantiatedAs(GeneralType generalType, Substitution<ReferenceType> substitution) {
+  public boolean canBeInstantiatedAs(
+      GeneralType generalType, Substitution<ReferenceType> substitution) {
     if (referenceType.equals(generalType)) {
       return true;
     }
@@ -117,7 +118,7 @@ public class ReferenceArgument extends TypeArgument {
     if (referenceType.isGeneric()) {
       //  - array type has to be instantiation
       if (referenceType instanceof ArrayType) {
-        if (! generalType.isArray()) {
+        if (!generalType.isArray()) {
           return false;
         }
         // generalType.getElementType() has to instantiate referenceType.getElementType()
@@ -126,7 +127,7 @@ public class ReferenceArgument extends TypeArgument {
 
       //  - class or interface has to be instantiation
       if (referenceType instanceof ParameterizedType) {
-        if (! (generalType instanceof ParameterizedType)) {
+        if (!(generalType instanceof ParameterizedType)) {
           return false;
         }
         // type arguments must instantiate type arguments
@@ -136,7 +137,9 @@ public class ReferenceArgument extends TypeArgument {
       //  - type variable bounds have to be satisfied
       if (referenceType instanceof TypeVariable) {
         // think this needs a substitution
-        return ((TypeVariable)referenceType).getTypeBound().isSatisfiedBy(generalType, substitution);
+        return ((TypeVariable) referenceType)
+            .getTypeBound()
+            .isSatisfiedBy(generalType, substitution);
       }
     }
 

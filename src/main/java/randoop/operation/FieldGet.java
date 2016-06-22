@@ -79,7 +79,12 @@ public class FieldGet extends CallableOperation {
    *          the StringBuilder that strings are appended to.
    */
   @Override
-  public void appendCode(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b) {
+  public void appendCode(
+      GeneralType declaringType,
+      TypeTuple inputTypes,
+      GeneralType outputType,
+      List<Variable> inputVars,
+      StringBuilder b) {
     b.append(field.toCode(declaringType, inputVars));
   }
 
@@ -88,7 +93,8 @@ public class FieldGet extends CallableOperation {
    * PublicFieldParser.
    */
   @Override
-  public String toParsableString(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
+  public String toParsableString(
+      GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
     return declaringType.getName() + ".<get>(" + field.getName() + ")";
   }
 
@@ -156,10 +162,11 @@ public class FieldGet extends CallableOperation {
     fieldType = GeneralType.forType(accessibleField.getRawField().getGenericType());
 
     List<GeneralType> getInputTypeList = new ArrayList<>();
-    if (! accessibleField.isStatic()) {
+    if (!accessibleField.isStatic()) {
       getInputTypeList.add(classType);
     }
-    return new TypedClassOperation(new FieldGet(accessibleField), classType, new TypeTuple(getInputTypeList), fieldType);
+    return new TypedClassOperation(
+        new FieldGet(accessibleField), classType, new TypeTuple(getInputTypeList), fieldType);
   }
 
   @Override

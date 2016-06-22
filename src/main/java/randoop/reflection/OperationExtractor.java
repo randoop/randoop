@@ -52,7 +52,10 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param operations  the collection of operations
    * @param predicate  the reflection predicate
    */
-  public OperationExtractor(ClassOrInterfaceType classType, Collection<TypedOperation> operations, ReflectionPredicate predicate) {
+  public OperationExtractor(
+      ClassOrInterfaceType classType,
+      Collection<TypedOperation> operations,
+      ReflectionPredicate predicate) {
     this.classType = classType;
     this.operations = operations;
     this.predicate = predicate;
@@ -69,7 +72,8 @@ public class OperationExtractor extends DefaultClassVisitor {
     if (operation != null) {
       if (operation.getDeclaringType().isGeneric()) { // need to apply a substitution
         GenericClassType declaringType = (GenericClassType) operation.getDeclaringType();
-        if (classType.isParameterized() && declaringType.hasRuntimeClass(classType.getRuntimeClass())) {
+        if (classType.isParameterized()
+            && declaringType.hasRuntimeClass(classType.getRuntimeClass())) {
           operation = operation.apply(((InstantiatedType) classType).getTypeSubstitution());
         } else if (!classType.isGeneric()) {
           InstantiatedType supertype = classType.getMatchingSupertype(declaringType);
@@ -90,8 +94,12 @@ public class OperationExtractor extends DefaultClassVisitor {
   @Override
   public void visit(Constructor<?> c) {
     assert c.getDeclaringClass().equals(classType.getRuntimeClass())
-            : "classType " + classType + " and declaring class " + c.getDeclaringClass().getName() + " should be same";
-    if (! predicate.test(c)) {
+        : "classType "
+            + classType
+            + " and declaring class "
+            + c.getDeclaringClass().getName()
+            + " should be same";
+    if (!predicate.test(c)) {
       return;
     }
 
@@ -106,7 +114,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    */
   @Override
   public void visit(Method method) {
-    if (! predicate.test(method)) {
+    if (!predicate.test(method)) {
       return;
     }
     addOperation(TypedOperation.forMethod(method));
@@ -122,17 +130,20 @@ public class OperationExtractor extends DefaultClassVisitor {
   @Override
   public void visit(Field field) {
     assert field.getDeclaringClass().isAssignableFrom(classType.getRuntimeClass())
-            : "classType " + classType + " should be assignable from " + field.getDeclaringClass().getName();
-    if (! predicate.test(field)) {
+        : "classType "
+            + classType
+            + " should be assignable from "
+            + field.getDeclaringClass().getName();
+    if (!predicate.test(field)) {
       return;
     }
     ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(field.getDeclaringClass());
-    if (! (declaringType.isGeneric()
-            && classType.isInstantiationOf((GenericClassType)declaringType))) {
+    if (!(declaringType.isGeneric()
+        && classType.isInstantiationOf((GenericClassType) declaringType))) {
       declaringType = classType;
     }
     addOperation(TypedOperation.createGetterForField(field, declaringType));
-    if (! (Modifier.isFinal(field.getModifiers() & Modifier.fieldModifiers()))) {
+    if (!(Modifier.isFinal(field.getModifiers() & Modifier.fieldModifiers()))) {
       addOperation(TypedOperation.createSetterForField(field, declaringType));
     }
   }
@@ -146,9 +157,8 @@ public class OperationExtractor extends DefaultClassVisitor {
   @Override
   public void visit(Enum<?> e) {
     ClassOrInterfaceType enumType = new SimpleClassOrInterfaceType(e.getDeclaringClass());
-    assert ! enumType.isGeneric() : "type of enum class cannot be generic";
+    assert !enumType.isGeneric() : "type of enum class cannot be generic";
     EnumConstant op = new EnumConstant(e);
     addOperation(new TypedClassOperation(op, enumType, new TypeTuple(), enumType));
   }
-
 }

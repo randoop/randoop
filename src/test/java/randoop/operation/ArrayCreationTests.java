@@ -24,12 +24,13 @@ public class ArrayCreationTests {
     List<GeneralType> paramTypes = new ArrayList<>();
     paramTypes.add(elementType);
     TypeTuple inputTypes = new TypeTuple(paramTypes);
-    ArrayCreation ad = new ArrayCreation((ArrayType)arrayType, 1);
+    ArrayCreation ad = new ArrayCreation((ArrayType) arrayType, 1);
     TypedOperation acOp = new TypedTermOperation(ad, inputTypes, arrayType);
     StringBuilder b = new StringBuilder();
     CallableOperation initOp = new NonreceiverTerm(elementType, "mystring");
 
-    Sequence seq = new Sequence().extend(new TypedTermOperation(initOp, new TypeTuple(), elementType));
+    Sequence seq =
+        new Sequence().extend(new TypedTermOperation(initOp, new TypeTuple(), elementType));
     Variable var0 = new Variable(seq, 0);
     Variable var1 = new Variable(seq, 1);
     ArrayList<Variable> input = new ArrayList<>();
@@ -47,13 +48,17 @@ public class ArrayCreationTests {
   public void test2() throws Exception {
     GeneralType elementType = ConcreteTypes.CHAR_TYPE;
     GeneralType arrayType = ArrayType.ofElementType(elementType);
-    ArrayCreation ad = new ArrayCreation((ArrayType)arrayType, 1);
+    ArrayCreation ad = new ArrayCreation((ArrayType) arrayType, 1);
     List<GeneralType> paramTypes = new ArrayList<>();
     paramTypes.add(elementType);
     TypeTuple inputTypes = new TypeTuple(paramTypes);
     TypedOperation acOp = new TypedTermOperation(ad, inputTypes, arrayType);
     StringBuilder b = new StringBuilder();
-    Sequence seq = new Sequence().extend(new TypedTermOperation(new NonreceiverTerm(elementType, 'c'), new TypeTuple(), elementType));
+    Sequence seq =
+        new Sequence()
+            .extend(
+                new TypedTermOperation(
+                    new NonreceiverTerm(elementType, 'c'), new TypeTuple(), elementType));
     Variable var0 = new Variable(seq, 0);
     Variable var1 = new Variable(seq, 1);
     ArrayList<Variable> input = new ArrayList<>();
@@ -67,13 +72,17 @@ public class ArrayCreationTests {
   public void test3() throws Exception {
     GeneralType elementType = ArrayType.ofElementType(ConcreteTypes.CHAR_TYPE);
     GeneralType arrayType = ArrayType.ofElementType(elementType);
-    ArrayCreation arrayCreation = new ArrayCreation((ArrayType)arrayType, 1);
+    ArrayCreation arrayCreation = new ArrayCreation((ArrayType) arrayType, 1);
     List<GeneralType> paramTypes = new ArrayList<>();
     paramTypes.add(elementType);
     TypeTuple inputTypes = new TypeTuple(paramTypes);
     TypedOperation acOp = new TypedTermOperation(arrayCreation, inputTypes, arrayType);
     StringBuilder b = new StringBuilder();
-    Sequence seq = new Sequence().extend(new TypedTermOperation(new ArrayCreation((ArrayType)arrayType, 0), new TypeTuple(), elementType));
+    Sequence seq =
+        new Sequence()
+            .extend(
+                new TypedTermOperation(
+                    new ArrayCreation((ArrayType) arrayType, 0), new TypeTuple(), elementType));
     Variable var0 = new Variable(seq, 0);
     Variable var1 = new Variable(seq, 1);
     ArrayList<Variable> input = new ArrayList<>();

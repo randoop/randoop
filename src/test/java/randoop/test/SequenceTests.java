@@ -50,16 +50,16 @@ public class SequenceTests {
 
   private static OptionsCache optionsCache;
 
-   @BeforeClass
-   public static void setup() {
-     optionsCache = new OptionsCache();
-     optionsCache.saveState();
-   }
+  @BeforeClass
+  public static void setup() {
+    optionsCache = new OptionsCache();
+    optionsCache.saveState();
+  }
 
-   @AfterClass
-   public static void restore() {
-     optionsCache.restoreState();
-   }
+  @AfterClass
+  public static void restore() {
+    optionsCache.restoreState();
+  }
 
   /**
    * Tests the sequence execution and code generation aspects of Randoop.
@@ -113,7 +113,6 @@ public class SequenceTests {
     contracts.add(EqualsHashcode.getInstance());
     contracts.add(EqualsSymmetric.getInstance());
 
-
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ExceptionPredicate isExpected = new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
@@ -123,7 +122,11 @@ public class SequenceTests {
         new ExtendGenerator(
             new ContractCheckingVisitor(
                 contracts, new ExceptionBehaviorPredicate(BehaviorType.ERROR)),
-            new RegressionCaptureVisitor(expectation, new MultiMap<GeneralType, TypedOperation>(), new LinkedHashSet<TypedOperation>() , true));
+            new RegressionCaptureVisitor(
+                expectation,
+                new MultiMap<GeneralType, TypedOperation>(),
+                new LinkedHashSet<TypedOperation>(),
+                true));
   }
 
   // See http://bugs.sun.com/bugdatabase/view_bug.do;:WuuT?bug_id=4094886
@@ -208,7 +211,8 @@ public class SequenceTests {
     StringBuilder b = new StringBuilder();
     b.append("Failure in test ").append(testId).append(": ").append(msg).append(".");
     b.append("").append(Globals.lineSep).append("Expected:").append(Globals.lineSep).append("");
-    for (int i = 0; i < expected.size(); i++) b.append(i).append(": ").append(expected.get(i)).append(Util.newLine);
+    for (int i = 0; i < expected.size(); i++)
+      b.append(i).append(": ").append(expected.get(i)).append(Util.newLine);
     b.append("").append(Globals.lineSep).append("Actual:").append(Globals.lineSep).append("");
     for (int i = 0; i < actual.size(); i++) {
       b.append(i).append(": ").append(actual.get(i)).append(Util.newLine);
@@ -221,7 +225,7 @@ public class SequenceTests {
     List<String> trimmed = new ArrayList<>();
     for (String str : list) {
       String t = str.trim();
-      if (! t.isEmpty()) {
+      if (!t.isEmpty()) {
         trimmed.add(t);
       }
     }

@@ -44,7 +44,15 @@ public class OperationModelTest {
     List<String> literalsFileList = new ArrayList<>();
     OperationModel model = null;
     try {
-      model = OperationModel.createModel(visibility, reflectionPredicate, classnames, exercisedClassnames, methodSignatures, errorHandler, literalsFileList);
+      model =
+          OperationModel.createModel(
+              visibility,
+              reflectionPredicate,
+              classnames,
+              exercisedClassnames,
+              methodSignatures,
+              errorHandler,
+              literalsFileList);
     } catch (OperationParseException e) {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
@@ -52,7 +60,10 @@ public class OperationModelTest {
     }
     assert model != null : "model was not initialized";
 
-    assertThat("only expect the LinkedList and Object classes", model.getConcreteClasses().size(), is(equalTo(2)));
+    assertThat(
+        "only expect the LinkedList and Object classes",
+        model.getConcreteClasses().size(),
+        is(equalTo(2)));
     int genericOpCount = 0;
     int concreteOpCount = 0;
     int wildcardTypeCount = 0;
@@ -65,10 +76,13 @@ public class OperationModelTest {
         concreteOpCount++;
       }
     }
-    assertTrue("concrete operation count (JDK7: 51, JDK8: 58)", (concreteOpCount == 51) || (concreteOpCount == 58));
+    assertTrue(
+        "concrete operation count (JDK7: 51, JDK8: 58)",
+        (concreteOpCount == 51) || (concreteOpCount == 58));
     assertEquals("generic operation count", 0, genericOpCount);
     assertEquals("wildcard operation count", 0, wildcardTypeCount);
-    assertEquals("all operations instantiated", model.getConcreteOperations().size(), concreteOpCount);
+    assertEquals(
+        "all operations instantiated", model.getConcreteOperations().size(), concreteOpCount);
   }
 
   @Test
@@ -84,14 +98,25 @@ public class OperationModelTest {
     List<String> literalsFileList = new ArrayList<>();
     OperationModel model = null;
     try {
-      model = OperationModel.createModel(visibilityPredicate, reflectionPredicate, classnames, exercisedClassname, methodSignatures, errorHandler, literalsFileList);
+      model =
+          OperationModel.createModel(
+              visibilityPredicate,
+              reflectionPredicate,
+              classnames,
+              exercisedClassname,
+              methodSignatures,
+              errorHandler,
+              literalsFileList);
     } catch (OperationParseException e) {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
     }
-    assert model != null: "model was not initialized";
-    assertThat("should have both outer and inner classes, plus Object", model.getConcreteClasses().size(), is(equalTo(3)));
+    assert model != null : "model was not initialized";
+    assertThat(
+        "should have both outer and inner classes, plus Object",
+        model.getConcreteClasses().size(),
+        is(equalTo(3)));
 
     assertTrue("should have nonzero operations set", model.getConcreteOperations().size() > 1);
   }
@@ -108,18 +133,26 @@ public class OperationModelTest {
     List<String> literalsFileList = new ArrayList<>();
     OperationModel model = null;
     try {
-      model = OperationModel.createModel(visibilityPredicate, reflectionPredicate, classnames, exercisedClassname, methodSignatures, errorHandler, literalsFileList);
+      model =
+          OperationModel.createModel(
+              visibilityPredicate,
+              reflectionPredicate,
+              classnames,
+              exercisedClassname,
+              methodSignatures,
+              errorHandler,
+              literalsFileList);
     } catch (OperationParseException e) {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
     }
-    assert model != null: "model was not initialized";
+    assert model != null : "model was not initialized";
 
     assertEquals("should be two classes ", 2, model.getConcreteClasses().size());
 
     for (ClassOrInterfaceType classType : model.getConcreteClasses()) {
-      assertTrue("classes are all non generic", ! classType.isGeneric());
+      assertTrue("classes are all non generic", !classType.isGeneric());
     }
 
     int genericOpCount = 0;
@@ -139,7 +172,10 @@ public class OperationModelTest {
     }
     assertEquals("should be no generic operations", 0, genericOpCount);
     assertEquals("should be no wildcard operations", 0, wildcardOpCount);
-    assertEquals("all operations should be instantiated ", model.getConcreteOperations().size(), concreteOpCount);
+    assertEquals(
+        "all operations should be instantiated ",
+        model.getConcreteOperations().size(),
+        concreteOpCount);
     assertEquals("should have 21 operations", 21, model.getConcreteOperations().size());
   }
 
@@ -159,7 +195,15 @@ public class OperationModelTest {
     List<String> literalsFileList = new ArrayList<>();
     OperationModel model = null;
     try {
-      model = OperationModel.createModel(visibilityPredicate, reflectionPredicate, classnames, exercisedClassnames, methodSignatures, errorHandler, literalsFileList);
+      model =
+          OperationModel.createModel(
+              visibilityPredicate,
+              reflectionPredicate,
+              classnames,
+              exercisedClassnames,
+              methodSignatures,
+              errorHandler,
+              literalsFileList);
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
     } catch (OperationParseException e) {
@@ -184,35 +228,33 @@ public class OperationModelTest {
         inputs[1] = 1;
         outcome = operation.execute(inputs, null);
         assertTrue("execution should be normal", outcome instanceof NormalExecution);
-        value = ((NormalExecution)outcome).getRuntimeValue();
-        assertThat("outcome should be string \"one\"", (String)value, is(equalTo("one")));
+        value = ((NormalExecution) outcome).getRuntimeValue();
+        assertThat("outcome should be string \"one\"", (String) value, is(equalTo("one")));
 
         inputs[0] = InheritedEnum.TWO;
         inputs[1] = 1;
         outcome = operation.execute(inputs, null);
         assertTrue("execution should be normal", outcome instanceof NormalExecution);
-        value = ((NormalExecution)outcome).getRuntimeValue();
-        assertThat("outcome should be string \"two\"", (String)value, is(equalTo("two")));
+        value = ((NormalExecution) outcome).getRuntimeValue();
+        assertThat("outcome should be string \"two\"", (String) value, is(equalTo("two")));
 
-      } else if (operation.getOutputType().equals(ConcreteTypes.INT_TYPE)){
+      } else if (operation.getOutputType().equals(ConcreteTypes.INT_TYPE)) {
         inputs[0] = InheritedEnum.ONE;
         inputs[1] = "one";
         outcome = operation.execute(inputs, null);
         assertTrue("execution should be normal", outcome instanceof NormalExecution);
-        value = ((NormalExecution)outcome).getRuntimeValue();
-        assertThat("outcome should be string \"one\"", (int)value, is(equalTo(1)));
+        value = ((NormalExecution) outcome).getRuntimeValue();
+        assertThat("outcome should be string \"one\"", (int) value, is(equalTo(1)));
 
         inputs[0] = InheritedEnum.TWO;
         inputs[1] = "two";
         outcome = operation.execute(inputs, null);
         assertTrue("execution should be normal", outcome instanceof NormalExecution);
-        value = ((NormalExecution)outcome).getRuntimeValue();
-        assertThat("outcome should be string \"one\"", (int)value, is(equalTo(2)));
+        value = ((NormalExecution) outcome).getRuntimeValue();
+        assertThat("outcome should be string \"one\"", (int) value, is(equalTo(2)));
       } else {
         fail("output type should be either String or int");
       }
-
     }
-
   }
 }

@@ -75,7 +75,12 @@ public class EnumConstant extends CallableOperation {
    * {@inheritDoc} Adds qualified name of enum constant.
    */
   @Override
-  public void appendCode(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b) {
+  public void appendCode(
+      GeneralType declaringType,
+      TypeTuple inputTypes,
+      GeneralType outputType,
+      List<Variable> inputVars,
+      StringBuilder b) {
     b.append(declaringType.getName()).append(".").append(this.value.name());
   }
 
@@ -86,7 +91,8 @@ public class EnumConstant extends CallableOperation {
    * @see EnumConstant#parse(String)
    */
   @Override
-  public String toParsableString(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
+  public String toParsableString(
+      GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
     return declaringType.getName() + ":" + value.name();
   }
 
@@ -102,72 +108,79 @@ public class EnumConstant extends CallableOperation {
    * @throws OperationParseException
    *           if desc does not match expected form.
    */
-    public static TypedClassOperation parse(String desc) throws OperationParseException {
-      if (desc == null) {
-        throw new IllegalArgumentException("desc cannot be null");
-      }
-      int colonIdx = desc.indexOf(':');
-      if (colonIdx < 0) {
-        String msg =
-            "An enum constant description must be of the form \""
-                + "<type>:<value>"
-                + " but description is \""
-                + desc
-                + "\".";
-        throw new OperationParseException(msg);
-      }
-
-      String typeName = desc.substring(0, colonIdx).trim();
-      String valueName = desc.substring(colonIdx+1).trim();
-
-      String errorPrefix = "Error when parsing type-value pair " + desc +
-          " for an enum description of the form <type>:<value>.";
-
-      if (typeName.isEmpty()) {
-        String msg = errorPrefix + " No type given.";
-        throw new OperationParseException(msg);
-      }
-
-      if (valueName.isEmpty()) {
-        String msg = errorPrefix + " No value given.";
-        throw new OperationParseException(msg);
-      }
-
-      String whitespacePattern = ".*\\s+.*";
-      if (typeName.matches(whitespacePattern)) {
-        String msg = errorPrefix + " The type has unexpected whitespace characters.";
-        throw new OperationParseException(msg);
-      }
-      if (valueName.matches(whitespacePattern)) {
-        String msg = errorPrefix + " The value has unexpected whitespace characters.";
-        throw new OperationParseException(msg);
-      }
-
-      GeneralType declaringType;
-      try {
-        declaringType = GeneralType.forName(typeName);
-      } catch (ClassNotFoundException e) {
-        String msg = errorPrefix + " The type given \"" + typeName + "\" was not recognized.";
-        throw new OperationParseException(msg);
-      }
-      if (!declaringType.isEnum()) {
-        String msg = errorPrefix + " The type given \"" + typeName + "\" is not an enum.";
-        throw new OperationParseException(msg);
-      }
-
-      Enum<?> value = valueOf(declaringType.getRuntimeClass(),valueName);
-      if (value == null) {
-        String msg = errorPrefix + " The value given \""
-                + valueName
-                + "\" is not a constant of the enum "
-                + typeName
-                + ".";
-        throw new OperationParseException(msg);
-      }
-
-      return new TypedClassOperation(new EnumConstant(value), (ClassOrInterfaceType)declaringType, new TypeTuple(), declaringType);
-
+  public static TypedClassOperation parse(String desc) throws OperationParseException {
+    if (desc == null) {
+      throw new IllegalArgumentException("desc cannot be null");
     }
+    int colonIdx = desc.indexOf(':');
+    if (colonIdx < 0) {
+      String msg =
+          "An enum constant description must be of the form \""
+              + "<type>:<value>"
+              + " but description is \""
+              + desc
+              + "\".";
+      throw new OperationParseException(msg);
+    }
+
+    String typeName = desc.substring(0, colonIdx).trim();
+    String valueName = desc.substring(colonIdx + 1).trim();
+
+    String errorPrefix =
+        "Error when parsing type-value pair "
+            + desc
+            + " for an enum description of the form <type>:<value>.";
+
+    if (typeName.isEmpty()) {
+      String msg = errorPrefix + " No type given.";
+      throw new OperationParseException(msg);
+    }
+
+    if (valueName.isEmpty()) {
+      String msg = errorPrefix + " No value given.";
+      throw new OperationParseException(msg);
+    }
+
+    String whitespacePattern = ".*\\s+.*";
+    if (typeName.matches(whitespacePattern)) {
+      String msg = errorPrefix + " The type has unexpected whitespace characters.";
+      throw new OperationParseException(msg);
+    }
+    if (valueName.matches(whitespacePattern)) {
+      String msg = errorPrefix + " The value has unexpected whitespace characters.";
+      throw new OperationParseException(msg);
+    }
+
+    GeneralType declaringType;
+    try {
+      declaringType = GeneralType.forName(typeName);
+    } catch (ClassNotFoundException e) {
+      String msg = errorPrefix + " The type given \"" + typeName + "\" was not recognized.";
+      throw new OperationParseException(msg);
+    }
+    if (!declaringType.isEnum()) {
+      String msg = errorPrefix + " The type given \"" + typeName + "\" is not an enum.";
+      throw new OperationParseException(msg);
+    }
+
+    Enum<?> value = valueOf(declaringType.getRuntimeClass(), valueName);
+    if (value == null) {
+      String msg =
+          errorPrefix
+              + " The value given \""
+              + valueName
+              + "\" is not a constant of the enum "
+              + typeName
+              + ".";
+      throw new OperationParseException(msg);
+    }
+
+    return new TypedClassOperation(
+        new EnumConstant(value),
+        (ClassOrInterfaceType) declaringType,
+        new TypeTuple(),
+        declaringType);
+  }
 
   /**
    * value

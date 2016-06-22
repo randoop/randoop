@@ -2,7 +2,6 @@ package randoop.types;
 
 import java.lang.reflect.Type;
 
-
 /**
  * Represents a wildcard type that has a lower bound (e.g., {@code ? super T}).
  * See JLS, section 4.5.1
@@ -58,7 +57,8 @@ public class WildcardArgumentWithLowerBound extends WildcardArgument {
   }
 
   @Override
-  public boolean canBeInstantiatedAs(GeneralType generalType, Substitution<ReferenceType> substitution) {
+  public boolean canBeInstantiatedAs(
+      GeneralType generalType, Substitution<ReferenceType> substitution) {
     return generalType.isAssignableFrom(getBoundType());
   }
 

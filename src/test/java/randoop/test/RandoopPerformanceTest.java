@@ -25,7 +25,9 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
     String resourcename = "java.util.classlist.java1.6.txt";
 
     List<Class<?>> classes = new ArrayList<>();
-    try (EntryReader er = new EntryReader(ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
+    try (EntryReader er =
+            new EntryReader(
+                ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
       for (String entry : er) {
         classes.add(Class.forName(entry));
       }
@@ -41,7 +43,15 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     GenInputsAbstract.debug_checks = false;
     ForwardGenerator explorer =
-        new ForwardGenerator(model, new LinkedHashSet<TypedOperation>(), Long.MAX_VALUE, 100000, 100000, null, null, null);
+        new ForwardGenerator(
+            model,
+            new LinkedHashSet<TypedOperation>(),
+            Long.MAX_VALUE,
+            100000,
+            100000,
+            null,
+            null,
+            null);
     explorer.explore();
   }
 
@@ -50,11 +60,10 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
     return 10000;
   }
 
-
   private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
     final List<TypedOperation> model = new ArrayList<>();
     ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
-    for (Class<?> c: classes) {
+    for (Class<?> c : classes) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
       mgr.apply(new OperationExtractor(classType, model, new DefaultReflectionPredicate()), c);
     }

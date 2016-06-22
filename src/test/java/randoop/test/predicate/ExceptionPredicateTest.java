@@ -43,10 +43,10 @@ public class ExceptionPredicateTest {
 
   private static OptionsCache optionsCache;
 
-   @AfterClass
-   public static void restore() {
-     optionsCache.restoreState();
-   }
+  @AfterClass
+  public static void restore() {
+    optionsCache.restoreState();
+  }
 
   /*
    * Make sure that command-line arguments are set in expected way.
@@ -106,8 +106,13 @@ public class ExceptionPredicateTest {
     }
     List<GeneralType> paramTypes = new ArrayList<>();
     paramTypes.add(ConcreteTypes.OBJECT_TYPE);
-    TypedOperation conOp = new TypedClassOperation(new ConstructorCall(con), classType, new TypeTuple(paramTypes), classType);
-    Sequence seq = new Sequence().extend(TypedOperation.createNullOrZeroInitializationForType(ConcreteTypes.OBJECT_TYPE));
+    TypedOperation conOp =
+        new TypedClassOperation(
+            new ConstructorCall(con), classType, new TypeTuple(paramTypes), classType);
+    Sequence seq =
+        new Sequence()
+            .extend(
+                TypedOperation.createNullOrZeroInitializationForType(ConcreteTypes.OBJECT_TYPE));
     List<Variable> inputVariables = new ArrayList<>();
     inputVariables.add(new Variable(seq, 0));
 

@@ -15,32 +15,36 @@ public class ArrayTypeTest {
 
   @Test
   public void testAssignability() {
-    ArrayList<String>[] al = new ArrayList[]{};
+    ArrayList<String>[] al = new ArrayList[] {};
     GeneralType intArrType = ArrayType.ofElementType(new PrimitiveType(int.class));
     GeneralType shortArrType = ArrayType.ofElementType(new PrimitiveType(short.class));
     GeneralType strALArrType =
-            ArrayType.ofElementType(
-                    GenericClassType.forClass(ArrayList.class).instantiate(new SimpleClassOrInterfaceType(String.class)));
+        ArrayType.ofElementType(
+            GenericClassType.forClass(ArrayList.class)
+                .instantiate(new SimpleClassOrInterfaceType(String.class)));
     GeneralType intALArrType =
-            ArrayType.ofElementType(
-                    GenericClassType.forClass(ArrayList.class).instantiate(new SimpleClassOrInterfaceType(Integer.class)));
-    GeneralType alArrType = ArrayType.ofElementType(new SimpleClassOrInterfaceType(ArrayList.class));
+        ArrayType.ofElementType(
+            GenericClassType.forClass(ArrayList.class)
+                .instantiate(new SimpleClassOrInterfaceType(Integer.class)));
+    GeneralType alArrType =
+        ArrayType.ofElementType(new SimpleClassOrInterfaceType(ArrayList.class));
     GeneralType objArrType = ArrayType.ofElementType(new SimpleClassOrInterfaceType(Object.class));
-    GeneralType intBoxArrType = ArrayType.ofElementType(new SimpleClassOrInterfaceType(Integer.class));
+    GeneralType intBoxArrType =
+        ArrayType.ofElementType(new SimpleClassOrInterfaceType(Integer.class));
 
     assertTrue("can assign array of same element type", intArrType.isAssignableFrom(intArrType));
     assertTrue(
-            "can assign array of raw type to array of parameterized type",
-            strALArrType.isAssignableFrom(alArrType));
+        "can assign array of raw type to array of parameterized type",
+        strALArrType.isAssignableFrom(alArrType));
     assertTrue("can assign Integer[] to Object[]", objArrType.isAssignableFrom(intBoxArrType));
     assertTrue(
-            "can assign ArrayList<Integer>[] to Object[]", objArrType.isAssignableFrom(intALArrType));
+        "can assign ArrayList<Integer>[] to Object[]", objArrType.isAssignableFrom(intALArrType));
 
     assertFalse(
-            "cannot assign short array to int array", intArrType.isAssignableFrom(shortArrType));
+        "cannot assign short array to int array", intArrType.isAssignableFrom(shortArrType));
     assertFalse(
-            "cannot assign ArrayList<String> array to ArrayList<Integer> array",
-            intALArrType.isAssignableFrom(strALArrType));
+        "cannot assign ArrayList<String> array to ArrayList<Integer> array",
+        intALArrType.isAssignableFrom(strALArrType));
     assertFalse("cannot assign int array to Object array", objArrType.isAssignableFrom(intArrType));
   }
 
@@ -49,9 +53,11 @@ public class ArrayTypeTest {
     GeneralType intArrType = ArrayType.ofElementType(new PrimitiveType(int.class));
     GeneralType strArrType = ArrayType.ofElementType(new SimpleClassOrInterfaceType(String.class));
     GeneralType intALArrType =
-            ArrayType.ofElementType(
-                    GenericClassType.forClass(ArrayList.class).instantiate(new SimpleClassOrInterfaceType(Integer.class)));
-    GeneralType alArrType = ArrayType.ofElementType(new SimpleClassOrInterfaceType(ArrayList.class));
+        ArrayType.ofElementType(
+            GenericClassType.forClass(ArrayList.class)
+                .instantiate(new SimpleClassOrInterfaceType(Integer.class)));
+    GeneralType alArrType =
+        ArrayType.ofElementType(new SimpleClassOrInterfaceType(ArrayList.class));
 
     assertEquals("type name", "int[]", intArrType.getName());
     assertEquals("type name", "java.lang.String[]", strArrType.getName());

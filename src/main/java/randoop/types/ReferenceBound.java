@@ -23,10 +23,10 @@ public class ReferenceBound extends TypeBound {
 
   @Override
   public boolean equals(Object obj) {
-    if ( !(obj instanceof ReferenceBound)) {
+    if (!(obj instanceof ReferenceBound)) {
       return false;
     }
-    ReferenceBound bound = (ReferenceBound)obj;
+    ReferenceBound bound = (ReferenceBound) obj;
     return this.boundType.equals(bound.boundType);
   }
 
@@ -37,7 +37,7 @@ public class ReferenceBound extends TypeBound {
 
   @Override
   public boolean isSatisfiedBy(GeneralType argType, Substitution<ReferenceType> subst) {
-    ReferenceType boundType =  this.boundType.apply(subst);
+    ReferenceType boundType = this.boundType.apply(subst);
     return boundType.isAssignableFrom(argType);
   }
 

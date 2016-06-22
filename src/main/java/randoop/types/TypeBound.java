@@ -48,8 +48,7 @@ public abstract class TypeBound {
    * @return the type bound with the given type
    */
   public static TypeBound forType(ReferenceType type) {
-    if (type instanceof TypeVariable
-            || type instanceof ClassOrInterfaceType) {
+    if (type instanceof TypeVariable || type instanceof ClassOrInterfaceType) {
       return ParameterBound.forType(type);
     }
 

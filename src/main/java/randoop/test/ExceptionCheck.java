@@ -92,9 +92,9 @@ public abstract class ExceptionCheck implements Check {
   @Override
   public final String toCodeStringPreStatement() {
     return "// The following exception was thrown during execution in test generation"
-            + Globals.lineSep
-            + "try {"
-            + Globals.lineSep;
+        + Globals.lineSep
+        + "try {"
+        + Globals.lineSep;
   }
 
   /**

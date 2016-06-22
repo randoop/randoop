@@ -234,8 +234,7 @@ public abstract class AbstractList extends AbstractCollection implements List {
   private static randoop.util.TestCoverageInfo randoopCoverageInfo = null;
 
   static {
-    java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-            new java.util.LinkedHashMap<>();
+    java.util.Map<String, java.util.Set<Integer>> methodToIndices = new java.util.LinkedHashMap<>();
     {
       java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(0);
@@ -444,8 +443,7 @@ class SubList extends AbstractList {
   private static randoop.util.TestCoverageInfo randoopCoverageInfo = null;
 
   static {
-    java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-            new java.util.LinkedHashMap<>();
+    java.util.Map<String, java.util.Set<Integer>> methodToIndices = new java.util.LinkedHashMap<>();
     {
       java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(0);
@@ -491,8 +489,7 @@ class RandomAccessSubList extends SubList implements RandomAccess {
   private static randoop.util.TestCoverageInfo randoopCoverageInfo = null;
 
   static {
-    java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-            new java.util.LinkedHashMap<>();
+    java.util.Map<String, java.util.Set<Integer>> methodToIndices = new java.util.LinkedHashMap<>();
     randoopCoverageInfo = new randoop.util.TestCoverageInfo(0, methodToIndices);
   }
 }

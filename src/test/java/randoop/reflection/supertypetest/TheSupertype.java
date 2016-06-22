@@ -9,5 +9,4 @@ public interface TheSupertype {
   String alpha(Integer i);
 
   int alpha(String s);
-
 }

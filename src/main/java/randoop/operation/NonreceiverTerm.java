@@ -62,7 +62,8 @@ public final class NonreceiverTerm extends CallableOperation {
         }
       } else {
         if (!type.isInstance(value))
-          throw new IllegalArgumentException("value.getClass()=" + value.getClass() + ",type=" + type);
+          throw new IllegalArgumentException(
+              "value.getClass()=" + value.getClass() + ",type=" + type);
         if (!PrimitiveTypes.isBoxedOrPrimitiveOrStringType(value.getClass()))
           throw new IllegalArgumentException("value is not a primitive-like value.");
       }
@@ -140,7 +141,12 @@ public final class NonreceiverTerm extends CallableOperation {
    *
    */
   @Override
-  public void appendCode(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b) {
+  public void appendCode(
+      GeneralType declaringType,
+      TypeTuple inputTypes,
+      GeneralType outputType,
+      List<Variable> inputVars,
+      StringBuilder b) {
     b.append(PrimitiveTypes.toCodeString(getValue()));
   }
 
@@ -180,13 +186,10 @@ public final class NonreceiverTerm extends CallableOperation {
       return new NonreceiverTerm(type, 'a'); // TODO This is not null or zero...
     if (type.equals(ConcreteTypes.BYTE_TYPE)) return new NonreceiverTerm(type, (byte) 0);
     if (type.equals(ConcreteTypes.SHORT_TYPE)) return new NonreceiverTerm(type, (short) 0);
-    if (type.equals(ConcreteTypes.INT_TYPE))
-      return new NonreceiverTerm(type, 0);
+    if (type.equals(ConcreteTypes.INT_TYPE)) return new NonreceiverTerm(type, 0);
     if (type.equals(ConcreteTypes.LONG_TYPE)) return new NonreceiverTerm(type, 0L);
-    if (type.equals(ConcreteTypes.FLOAT_TYPE))
-      return new NonreceiverTerm(type, 0f);
-    if (type.equals(ConcreteTypes.DOUBLE_TYPE))
-      return new NonreceiverTerm(type, 0d);
+    if (type.equals(ConcreteTypes.FLOAT_TYPE)) return new NonreceiverTerm(type, 0f);
+    if (type.equals(ConcreteTypes.DOUBLE_TYPE)) return new NonreceiverTerm(type, 0d);
     if (type.equals(ConcreteTypes.BOOLEAN_TYPE)) return new NonreceiverTerm(type, false);
     return new NonreceiverTerm(type, null);
   }
@@ -225,7 +228,8 @@ public final class NonreceiverTerm extends CallableOperation {
    * @return string representation of primitive, String or null value
    */
   @Override
-  public String toParsableString(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
+  public String toParsableString(
+      GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
 
     String valStr;
     if (value == null) {

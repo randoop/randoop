@@ -36,12 +36,11 @@ public final class ReferenceValue {
    */
   @Override
   public boolean equals(Object obj) {
-    if (! (obj instanceof ReferenceValue)) {
+    if (!(obj instanceof ReferenceValue)) {
       return false;
     }
-    ReferenceValue refValue = (ReferenceValue)obj;
-    return this.type.equals(refValue.type)
-            && this.value == refValue.value;
+    ReferenceValue refValue = (ReferenceValue) obj;
+    return this.type.equals(refValue.type) && this.value == refValue.value;
   }
 
   @Override
@@ -71,5 +70,4 @@ public final class ReferenceValue {
   public ReferenceType getType() {
     return type;
   }
-
 }

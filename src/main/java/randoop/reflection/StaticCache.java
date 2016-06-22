@@ -34,7 +34,8 @@ public class StaticCache {
    */
   public void printCache() {
     for (Map.Entry<Field, Object> entry : valueMap.entrySet()) {
-      System.out.println(declaringClass.getName() + "." + entry.getKey().getName() + " = " + entry.getValue());
+      System.out.println(
+          declaringClass.getName() + "." + entry.getKey().getName() + " = " + entry.getValue());
     }
   }
 
@@ -70,5 +71,4 @@ public class StaticCache {
       }
     }
   }
-
 }

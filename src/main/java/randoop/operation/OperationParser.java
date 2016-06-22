@@ -101,7 +101,6 @@ public class OperationParser {
               + "\" does not have a valid <id>.";
       throw new OperationParseException(msg);
     }
-
   }
 
   /**
@@ -123,5 +122,4 @@ public class OperationParser {
     if (op.getOperation() instanceof FieldSet) return FieldSet.ID;
     throw new Error();
   }
-
 }

@@ -74,7 +74,7 @@ public class TestValueExtractor extends DefaultClassVisitor {
         value = f.get(null);
       } catch (IllegalAccessException e) {
         String msg =
-                "RANDOOP ANNOTATION ERROR: IllegalAccessException when processing @TestValue-annotated field "
+            "RANDOOP ANNOTATION ERROR: IllegalAccessException when processing @TestValue-annotated field "
                 + f.getName()
                 + " in class "
                 + f.getDeclaringClass()
@@ -121,5 +121,4 @@ public class TestValueExtractor extends DefaultClassVisitor {
             + ". Will collect its primitive values to use in generation.";
     System.out.println(msg);
   }
-
 }

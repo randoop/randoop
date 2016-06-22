@@ -16,7 +16,7 @@ import randoop.types.GeneralType;
  * Meant to be adapted by either {@link randoop.operation.FieldSet FieldSet} or
  * {@link randoop.operation.FieldGet FieldGet} for use as a
  * {@link randoop.operation.Operation Operation}.
-  */
+ */
 public class AccessibleField {
 
   private Field field;
@@ -74,9 +74,7 @@ public class AccessibleField {
    * @return a String for type-field pair describing field
    */
   public String toParsableString(GeneralType declaringType) {
-    return declaringType.getName()
-        + "."
-        + field.getName();
+    return declaringType.getName() + "." + field.getName();
   }
 
   /**
@@ -139,7 +137,7 @@ public class AccessibleField {
    *           {@link IllegalAccessException}.
    */
   public void setValue(Object object, Object value) {
-    assert ! isFinal : "cannot set a final field";
+    assert !isFinal : "cannot set a final field";
     try {
       field.set(object, value);
     } catch (IllegalArgumentException e) {
@@ -158,7 +156,9 @@ public class AccessibleField {
     return isStatic;
   }
 
-  public boolean isFinal() { return isFinal; }
+  public boolean isFinal() {
+    return isFinal;
+  }
 
   /**
    * satisfies checks whether the enclosed {@link Field} object satisfies the

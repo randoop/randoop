@@ -39,16 +39,16 @@ public class TestFilteringTest {
 
   private static OptionsCache optionsCache;
 
-   @BeforeClass
-   public static void setup() {
-     optionsCache = new OptionsCache();
-     optionsCache.saveState();
-   }
+  @BeforeClass
+  public static void setup() {
+    optionsCache = new OptionsCache();
+    optionsCache.saveState();
+  }
 
-   @AfterClass
-   public static void restore() {
-     optionsCache.restoreState();
-   }
+  @AfterClass
+  public static void restore() {
+    optionsCache.restoreState();
+  }
 
   /**
    * Make sure that we are getting both regression and error tests with
@@ -237,7 +237,7 @@ public class TestFilteringTest {
     Set<String> omitfields = new HashSet<>();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ReflectionPredicate predicate =
-            new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields);
+        new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields);
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     final List<TypedOperation> model = new ArrayList<>();
     ReflectionManager manager = new ReflectionManager(visibility);
@@ -247,20 +247,26 @@ public class TestFilteringTest {
     ComponentManager componentMgr = new ComponentManager(components);
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
     ForwardGenerator gen =
-            new ForwardGenerator(
-                    model,
-                    new LinkedHashSet<TypedOperation>(),
-                    GenInputsAbstract.timelimit * 1000,
-                    GenInputsAbstract.inputlimit,
-                    GenInputsAbstract.outputlimit,
-                    componentMgr,
-                    null,
-                    listenerMgr);
+        new ForwardGenerator(
+            model,
+            new LinkedHashSet<TypedOperation>(),
+            GenInputsAbstract.timelimit * 1000,
+            GenInputsAbstract.inputlimit,
+            GenInputsAbstract.outputlimit,
+            componentMgr,
+            null,
+            listenerMgr);
     GenTests genTests = new GenTests();
-    Predicate<ExecutableSequence> isOutputTest = genTests.createTestOutputPredicate(new HashSet<Sequence>(), new HashSet<Class<?>>(), null);
+    Predicate<ExecutableSequence> isOutputTest =
+        genTests.createTestOutputPredicate(new HashSet<Sequence>(), new HashSet<Class<?>>(), null);
     gen.addTestPredicate(isOutputTest);
     TestCheckGenerator checkGenerator =
-            (new GenTests()).createTestCheckGenerator(visibility, new ContractSet(), new MultiMap<GeneralType, TypedOperation>(), new LinkedHashSet<TypedOperation>());
+        (new GenTests())
+            .createTestCheckGenerator(
+                visibility,
+                new ContractSet(),
+                new MultiMap<GeneralType, TypedOperation>(),
+                new LinkedHashSet<TypedOperation>());
     gen.addTestCheckGenerator(checkGenerator);
     gen.addExecutionVisitor(new DummyVisitor());
     return gen;
