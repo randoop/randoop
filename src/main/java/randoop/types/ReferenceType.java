@@ -21,8 +21,7 @@ public abstract class ReferenceType extends GeneralType {
    */
   public boolean isAssignableFrom(GeneralType sourceType) {
     return super.isAssignableFrom(sourceType)
-            || (sourceType.isReferenceType()
-                && sourceType.isSubtypeOf(this));
+        || (sourceType.isReferenceType() && sourceType.isSubtypeOf(this));
   }
 
   /**
@@ -120,13 +119,10 @@ public abstract class ReferenceType extends GeneralType {
       return TypeVariable.forType(type);
     }
 
-    if ((type instanceof Class<?>) && ((Class<?>)type).isArray()) {
+    if ((type instanceof Class<?>) && ((Class<?>) type).isArray()) {
       return ArrayType.forType(type);
     }
 
     return ClassOrInterfaceType.forType(type);
-
   }
-
-
 }

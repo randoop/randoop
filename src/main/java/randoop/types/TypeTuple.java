@@ -25,11 +25,11 @@ public class TypeTuple {
   }
 
   @Override
-  public boolean equals (Object obj) {
-    if (! (obj instanceof TypeTuple)) {
+  public boolean equals(Object obj) {
+    if (!(obj instanceof TypeTuple)) {
       return false;
     }
-    TypeTuple tuple = (TypeTuple)obj;
+    TypeTuple tuple = (TypeTuple) obj;
     return list.equals(tuple.list);
   }
 

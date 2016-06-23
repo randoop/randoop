@@ -19,7 +19,7 @@ import java.util.Objects;
  * a parameterized type, an instance is built using
  * {@link Substitution#forArgs(List, List)} and then not modified.
  */
-public class Substitution <T> {
+public class Substitution<T> {
 
   /** The substitution map */
   private Map<AbstractTypeVariable, T> map;
@@ -77,7 +77,7 @@ public class Substitution <T> {
   private void put(AbstractTypeVariable typeParameter, T type) {
     map.put(typeParameter, type);
     if (typeParameter instanceof TypeVariable) {
-      rawMap.put(((TypeVariable)typeParameter).getReflectionTypeVariable(), type);
+      rawMap.put(((TypeVariable) typeParameter).getReflectionTypeVariable(), type);
     }
   }
 
@@ -116,7 +116,11 @@ public class Substitution <T> {
   @SafeVarargs
   public static <T> Substitution<T> forArgs(List<AbstractTypeVariable> parameters, T... arguments) {
     if (parameters.size() != arguments.length) {
-      throw new IllegalArgumentException("number of parameters and arguments must agree, have: " + parameters.size() + ", " + arguments.length);
+      throw new IllegalArgumentException(
+          "number of parameters and arguments must agree, have: "
+              + parameters.size()
+              + ", "
+              + arguments.length);
     }
     Substitution<T> s = new Substitution<>();
     for (int i = 0; i < parameters.size(); i++) {
@@ -133,7 +137,8 @@ public class Substitution <T> {
    * @param <T>  the argument type
    * @return the substitution that maps the type parameters to the corresponding type argument
    */
-  public static <T> Substitution<T> forArgs(List<AbstractTypeVariable> parameters, List<T> arguments) {
+  public static <T> Substitution<T> forArgs(
+      List<AbstractTypeVariable> parameters, List<T> arguments) {
     if (parameters.size() != arguments.size()) {
       throw new IllegalArgumentException("number of parameters and arguments must agree");
     }
@@ -149,7 +154,8 @@ public class Substitution <T> {
    */
   public void print() {
     for (Entry<AbstractTypeVariable, T> entry : map.entrySet()) {
-      System.out.println(entry.getKey() + "(" + entry.getKey().hashCode() + ")" + " := " + entry.getValue());
+      System.out.println(
+          entry.getKey() + "(" + entry.getKey().hashCode() + ")" + " := " + entry.getValue());
     }
   }
 }

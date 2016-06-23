@@ -5,7 +5,6 @@ package randoop.reflection.supertypetest;
  * Used to test that Randoop reflection code returns both.
  */
 public enum InheritedEnum implements TheSupertype {
-
   ONE {
     @Override
     public String alpha(Integer i) {
@@ -28,7 +27,4 @@ public enum InheritedEnum implements TheSupertype {
       return 2;
     }
   };
-
-
-
 }

@@ -14,7 +14,7 @@ import randoop.contract.ObjectContract;
 public class ContractSet {
 
   /** the collection of contracts */
-  private final Map<Integer,List<ObjectContract>> contractMap;
+  private final Map<Integer, List<ObjectContract>> contractMap;
 
   /** the maximum arity of a contract */
   private int maxArity;

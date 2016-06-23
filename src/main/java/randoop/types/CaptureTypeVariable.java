@@ -14,7 +14,7 @@ import java.util.Objects;
  * The {@link #convert(TypeVariable, Substitution)} method is then used to update the bounds
  * to match the definition in JLS section 5.1.10,
  * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">Capture Conversion</a>.
-  */
+ */
 public class CaptureTypeVariable extends AbstractTypeVariable {
 
   /** The ID counter for capture conversion variables */
@@ -57,14 +57,14 @@ public class CaptureTypeVariable extends AbstractTypeVariable {
 
   @Override
   public boolean equals(Object obj) {
-    if (! (obj instanceof CaptureTypeVariable)) {
+    if (!(obj instanceof CaptureTypeVariable)) {
       return false;
     }
-    CaptureTypeVariable variable = (CaptureTypeVariable)obj;
+    CaptureTypeVariable variable = (CaptureTypeVariable) obj;
     return this.varID == variable.varID
-            && this.wildcard.equals(variable.wildcard)
-            && this.upperBound.equals(variable.upperBound)
-            && this.lowerBoundType.equals(variable.lowerBoundType);
+        && this.wildcard.equals(variable.wildcard)
+        && this.upperBound.equals(variable.upperBound)
+        && this.lowerBoundType.equals(variable.lowerBoundType);
   }
 
   @Override
@@ -119,5 +119,4 @@ public class CaptureTypeVariable extends AbstractTypeVariable {
     parameters.add(this);
     return parameters;
   }
-
 }

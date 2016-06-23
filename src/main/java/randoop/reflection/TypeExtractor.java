@@ -49,7 +49,6 @@ class TypeExtractor extends DefaultClassVisitor {
     }
     Type returnType = m.getReturnType();
     addIfConcrete(GeneralType.forType(returnType));
-
   }
 
   /**
@@ -69,7 +68,7 @@ class TypeExtractor extends DefaultClassVisitor {
    * @param type  the general type
    */
   private void addIfConcrete(GeneralType type) {
-    if (! type.isGeneric() && ! type.isVoid() && ! type.hasWildcard()) {
+    if (!type.isGeneric() && !type.isVoid() && !type.hasWildcard()) {
       if (type.isPrimitive()) {
         type = type.toBoxedPrimitive();
       }
@@ -87,5 +86,4 @@ class TypeExtractor extends DefaultClassVisitor {
       inputTypes.add(ClassOrInterfaceType.forClass(c));
     }
   }
-
 }

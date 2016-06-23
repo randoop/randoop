@@ -132,7 +132,7 @@
   </tr>
   <tr>
     <td><code>./gradlew check</code></td>
-    <td>to run the all of the tests</td>
+    <td>to run all of the tests</td>
   </tr>
   <tr>
     <td><code>./gradlew testReport</code></td>
@@ -185,15 +185,15 @@
     For instance,
 <ul>
   <li> use
-    <code><pre>
+    <pre><code>
       ./gradlew test --tests="*GenericTypesTest"
-    </pre></code>
+    </code></pre>
     to run only the tests in <code>randoop.types.generics.GenericTypesTest</code>, and
   </li>
   <li> use
-    <code><pre>
+    <pre><code>
       ./gradlew test --tests="*testVar*"
-  </pre> </code>
+  </code></pre>
     to run the test method <code>randoop.types.generics.GenericTypesTest.testVariableParameters</code>.
   </li>
   </ul></li>
@@ -289,7 +289,7 @@ given here, see the Gradle
 <pre>
   ./gradlew eclipse
 </pre>
-</p>
+<p>
   at the command line in the Randoop directory.
   This runs
   <a href="https://docs.gradle.org/current/userguide/eclipse_plugin.html">the Gradle Eclipse plugin</a>
@@ -454,7 +454,7 @@ The files are placed in <code>build/docs</code>, with the Javadoc in
   the beginning of the test class:
 </p>
 
-<code><pre>
+<pre><code>
   private static OptionsCache optionsCache;
 
   @BeforeClass
@@ -467,7 +467,7 @@ The files are placed in <code>build/docs</code>, with the Javadoc in
   public static void restore() {
     optionsCache.restoreState();
   }
-</pre></code>
+</code></pre>
 
 <p>
 This uses the <code>randoop.main.OptionsCache</code> class to save the static state of
@@ -492,7 +492,7 @@ of that particular class in a similar way.
   Here is an example test from <code>randoop.main.RandoopSystemTest</code> that
   illustrates the main themes that occur in writing a system test.
 </p>
-<code><pre>
+<pre><code>
   @Test
  public void runLiteralsTest() {
 
@@ -504,7 +504,7 @@ of that particular class in a similar way.
    String regressionBasename = "LiteralsReg"; // base name for regression tests
    String errorBasename = "LiteralsErr";      // base name for error tests
 
-   List<String> options =
+   List&lt;String&gt; options =
        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
    options.add("--inputlimit=1000");
    options.add("--testclass=randoop.literals.A");
@@ -534,7 +534,7 @@ of that particular class in a similar way.
    // But, want no error tests
    assertThat("...has no error tests", randoopRunDesc.errorTestCount, is(equalTo(0)));
  }
-</pre></code>
+</code></pre>
 
 <p>
 The options list is exactly what you would give at the command line, except for
@@ -891,7 +891,7 @@ bottom. Recall the example sequence:
   String str = "hi!";
   l.addFirst(str);
   int i = l.size();
-  TreeSet&lt;String&gt; t = new TreeSet&lt;&gt(l);
+  TreeSet&lt;String&gt; t = new TreeSet&lt;&gt;(l);
   Set s = Collections.synchronizedSet(t);
 </pre>
 

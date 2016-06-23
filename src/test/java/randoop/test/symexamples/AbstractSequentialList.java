@@ -79,8 +79,7 @@ public abstract class AbstractSequentialList extends AbstractList {
   private static randoop.util.TestCoverageInfo randoopCoverageInfo = null;
 
   static {
-    java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-            new java.util.LinkedHashMap<>();
+    java.util.Map<String, java.util.Set<Integer>> methodToIndices = new java.util.LinkedHashMap<>();
     {
       java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(0);

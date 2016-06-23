@@ -59,7 +59,8 @@ public abstract class TypeArgument {
    * @param substitution the substitution for this type (? do we need this?)
    * @return true if the type can instantiate this argument, false otherwise
    */
-  public abstract boolean canBeInstantiatedAs(GeneralType generalType, Substitution<ReferenceType> substitution);
+  public abstract boolean canBeInstantiatedAs(
+      GeneralType generalType, Substitution<ReferenceType> substitution);
 
   /**
    * Indicate whether this type argument is a wildcard argument.

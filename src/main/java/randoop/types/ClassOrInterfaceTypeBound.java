@@ -5,7 +5,7 @@ import java.util.Objects;
 
 /**
  * Represents a parameter bound that is a class or interface.
-  */
+ */
 public class ClassOrInterfaceTypeBound extends ClassOrInterfaceBound {
 
   /** the type of this bound */
@@ -22,10 +22,10 @@ public class ClassOrInterfaceTypeBound extends ClassOrInterfaceBound {
 
   @Override
   public boolean equals(Object obj) {
-    if (! (obj instanceof  ClassOrInterfaceTypeBound)) {
+    if (!(obj instanceof ClassOrInterfaceTypeBound)) {
       return false;
     }
-    ClassOrInterfaceTypeBound otherBound = (ClassOrInterfaceTypeBound)obj;
+    ClassOrInterfaceTypeBound otherBound = (ClassOrInterfaceTypeBound) obj;
     return boundType.equals(otherBound.boundType);
   }
 

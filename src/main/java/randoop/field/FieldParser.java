@@ -17,21 +17,22 @@ public class FieldParser {
     throw new Error("Do not instantiate");
   }
 
- /**
-  * Recognizes a field from a string description, using class and field name
-  * tokens, and returns a {@link AccessibleField} object.
-  *
-  * @param descr  the full string description
-  * @param classname  the name of the field's declaring class
-  * @param fieldname  the name of the field
-  * @return the {@link AccessibleField} for the given class and field name.
-  * @throws OperationParseException if either name is malformed or incorrect
-  */
-  public static AccessibleField parse(String descr, String classname, String fieldname) throws OperationParseException {
+  /**
+   * Recognizes a field from a string description, using class and field name
+   * tokens, and returns a {@link AccessibleField} object.
+   *
+   * @param descr  the full string description
+   * @param classname  the name of the field's declaring class
+   * @param fieldname  the name of the field
+   * @return the {@link AccessibleField} for the given class and field name.
+   * @throws OperationParseException if either name is malformed or incorrect
+   */
+  public static AccessibleField parse(String descr, String classname, String fieldname)
+      throws OperationParseException {
     String errorPrefix = "Error when parsing field " + descr + ".";
     ClassOrInterfaceType classType;
     try {
-      classType = (ClassOrInterfaceType)GeneralType.forName(classname);
+      classType = (ClassOrInterfaceType) GeneralType.forName(classname);
     } catch (ClassNotFoundException e) {
       String msg = errorPrefix + " Class for field " + descr + " not found: " + e.getMessage();
       throw new OperationParseException(msg);
@@ -39,15 +40,16 @@ public class FieldParser {
 
     String whitespacePattern = ".*\\s+.*";
     if (fieldname.matches(whitespacePattern)) {
-      String msg = errorPrefix + " The field name "
-              + fieldname
-              + " has unexpected whitespace characters.";
+      String msg =
+          errorPrefix + " The field name " + fieldname + " has unexpected whitespace characters.";
       throw new OperationParseException(msg);
     }
 
     Field field = fieldForName(classType.getRuntimeClass(), fieldname);
     if (field == null) {
-      String msg =  errorPrefix + " The field name \""
+      String msg =
+          errorPrefix
+              + " The field name \""
               + fieldname
               + "\" is not a field of the class "
               + "\""
@@ -57,7 +59,6 @@ public class FieldParser {
     }
 
     return new AccessibleField(field, classType);
-
   }
 
   /**

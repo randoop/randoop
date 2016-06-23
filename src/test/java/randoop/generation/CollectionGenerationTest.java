@@ -41,8 +41,9 @@ public class CollectionGenerationTest {
     Class<?> enumClass = Day.class;
     ClassOrInterfaceType enumType = ClassOrInterfaceType.forClass(enumClass);
     for (Object obj : enumClass.getEnumConstants()) {
-      Enum<?> e = (Enum<?>)obj;
-      TypedOperation op = new TypedClassOperation(new EnumConstant(e), enumType, new TypeTuple(), enumType);
+      Enum<?> e = (Enum<?>) obj;
+      TypedOperation op =
+          new TypedClassOperation(new EnumConstant(e), enumType, new TypeTuple(), enumType);
       components.add(new Sequence().extend(op));
     }
     componentManager = new ComponentManager(components);
@@ -60,11 +61,12 @@ public class CollectionGenerationTest {
     for (int i = 0; i < sequence.size(); i++) {
       GeneralType outputType = sequence.getStatement(i).getOutputType();
       outputTypeSet.add(outputType);
-      assertTrue("statement type should",
-              outputType.equals(collectionType)
-                      || outputType.equals(elementType)
-                      || outputType.equals(arrayType)
-                      || outputType.equals(ConcreteTypes.BOOLEAN_TYPE));
+      assertTrue(
+          "statement type should",
+          outputType.equals(collectionType)
+              || outputType.equals(elementType)
+              || outputType.equals(arrayType)
+              || outputType.equals(ConcreteTypes.BOOLEAN_TYPE));
     }
     assertThat("should only be four output types", outputTypeSet.size(), is(equalTo(4)));
   }
@@ -81,11 +83,12 @@ public class CollectionGenerationTest {
     for (int i = 0; i < sequence.size(); i++) {
       GeneralType outputType = sequence.getStatement(i).getOutputType();
       outputTypeSet.add(outputType);
-      assertTrue("statement type should be one of four types, got " + outputType,
-              outputType.isSubtypeOf(collectionType)
-                      || outputType.equals(elementType)
-                      || outputType.equals(arrayType)
-                      || outputType.equals(ConcreteTypes.BOOLEAN_TYPE));
+      assertTrue(
+          "statement type should be one of four types, got " + outputType,
+          outputType.isSubtypeOf(collectionType)
+              || outputType.equals(elementType)
+              || outputType.equals(arrayType)
+              || outputType.equals(ConcreteTypes.BOOLEAN_TYPE));
     }
     assertThat("should only be four output types", outputTypeSet.size(), is(equalTo(4)));
   }
@@ -93,7 +96,7 @@ public class CollectionGenerationTest {
   @Test
   public void testEnumSetCollection() {
     EnumSet<Day> set = EnumSet.noneOf(Day.class);
-    Collections.addAll(set, new Object[]{ Day.FRIDAY } );
+    Collections.addAll(set, new Object[] {Day.FRIDAY});
     ReferenceType enumType = ClassOrInterfaceType.forClass(Day.class);
     ParameterizedType collectionType = JDKTypes.ENUM_SET_TYPE.instantiate(enumType);
     Sequence sequence = HelperSequenceCreator.createCollection(componentManager, collectionType);

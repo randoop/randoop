@@ -338,7 +338,7 @@ public class ExecutableSequence {
   }
 
   private static Object[] getRuntimeValuesForVars(
-          List<Variable> vars, List<ExecutionOutcome> execution) {
+      List<Variable> vars, List<ExecutionOutcome> execution) {
     Object[] runtimeObjects = new Object[vars.size()];
     for (int j = 0; j < runtimeObjects.length; j++) {
       int creatingStatementIdx = vars.get(j).getDeclIndex();
@@ -353,7 +353,7 @@ public class ExecutableSequence {
   // Execute the index-th statement in the sequence.
   // Precondition: this method has been invoked on 0..index-1.
   private static void executeStatement(
-          Sequence s, List<ExecutionOutcome> outcome, int index, Object[] inputVariables) {
+      Sequence s, List<ExecutionOutcome> outcome, int index, Object[] inputVariables) {
     Statement statement = s.getStatement(index);
 
     // Capture any output Synchronize with ProgressDisplay so that
@@ -408,7 +408,7 @@ public class ExecutableSequence {
   private Object getValue(int index) {
     ExecutionOutcome result = getResult(index);
     if (result instanceof NormalExecution) {
-      return ((NormalExecution)result).getRuntimeValue();
+      return ((NormalExecution) result).getRuntimeValue();
     }
     throw new Error("Abnormal execution in sequence: " + this);
   }
@@ -428,10 +428,10 @@ public class ExecutableSequence {
 
       GeneralType outputType = outputVariable.getType();
 
-      if (outputType.isReferenceType() && ! outputType.isString()) {
-          ReferenceValue value = new ReferenceValue((ReferenceType)outputType, outputValue);
-          values.add(value);
-          variableMap.put(outputValue, outputVariable);
+      if (outputType.isReferenceType() && !outputType.isString()) {
+        ReferenceValue value = new ReferenceValue((ReferenceType) outputType, outputValue);
+        values.add(value);
+        variableMap.put(outputValue, outputVariable);
       }
     }
 
@@ -440,7 +440,7 @@ public class ExecutableSequence {
       if (inputValue != null) {
         GeneralType inputType = inputVariable.getType();
         if (inputType.isReferenceType() && !inputType.isString()) {
-          values.add(new ReferenceValue((ReferenceType)inputType, inputValue));
+          values.add(new ReferenceValue((ReferenceType) inputType, inputValue));
           variableMap.put(inputValue, inputVariable);
         }
       }
@@ -462,14 +462,14 @@ public class ExecutableSequence {
     }
 
     Set<ReferenceValue> values = new HashSet<>();
-    for (int i = 0; i < sequence.size() - 1; i++ ) {
-      if (! skipSet.contains(i)) {
+    for (int i = 0; i < sequence.size() - 1; i++) {
+      if (!skipSet.contains(i)) {
         Object value = getValue(i);
         if (value != null) {
           Variable variable = sequence.getVariable(i);
           GeneralType type = variable.getType();
           if (type.isReferenceType() && !type.isString()) {
-            values.add(new ReferenceValue((ReferenceType)type, value));
+            values.add(new ReferenceValue((ReferenceType) type, value));
             variableMap.put(value, variable);
           }
         }
@@ -579,7 +579,6 @@ public class ExecutableSequence {
     if (!this.sequence.equals(that.sequence)) return false;
     if (this.checks == null) return (that.checks == null);
     return this.checks.equals(that.checks);
-
   }
 
   /**
@@ -631,5 +630,4 @@ public class ExecutableSequence {
   public boolean coversClass(Class<?> c) {
     return executionResults.getCoveredClasses().contains(c);
   }
-
 }

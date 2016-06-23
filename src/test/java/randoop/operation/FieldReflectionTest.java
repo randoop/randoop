@@ -55,7 +55,8 @@ public class FieldReflectionTest {
 
     //number of operations is twice number of fields plus constructor and getter minus one for each constant
     //in this case, 11
-    assertEquals("number of operations twice number of fields", 2 * fields.size(), operations.size());
+    assertEquals(
+        "number of operations twice number of fields", 2 * fields.size(), operations.size());
 
     //exclude private or protected fields
     List<Field> exclude = new ArrayList<>();
@@ -69,7 +70,8 @@ public class FieldReflectionTest {
     try {
       for (Field f : fields) {
         assertTrue(
-                "field " + f.toGenericString() + " should occur", operations.containsAll(getOperations(f, declaringType)));
+            "field " + f.toGenericString() + " should occur",
+            operations.containsAll(getOperations(f, declaringType)));
       }
     } catch (RandoopTypeException e) {
       fail("type error: " + e.getMessage());
@@ -78,8 +80,8 @@ public class FieldReflectionTest {
     try {
       for (Field f : exclude) {
         assertFalse(
-                "field " + f.toGenericString() + " should not occur",
-                operations.containsAll(getOperations(f, declaringType)));
+            "field " + f.toGenericString() + " should not occur",
+            operations.containsAll(getOperations(f, declaringType)));
       }
     } catch (RandoopTypeException e) {
       fail("type error: " + e.getMessage());
@@ -87,10 +89,12 @@ public class FieldReflectionTest {
   }
 
   private Set<TypedOperation> getConcreteOperations(Class<?> c) {
-    return getConcreteOperations(c, new DefaultReflectionPredicate(), new PublicVisibilityPredicate());
+    return getConcreteOperations(
+        c, new DefaultReflectionPredicate(), new PublicVisibilityPredicate());
   }
 
-  private Set<TypedOperation> getConcreteOperations(Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
+  private Set<TypedOperation> getConcreteOperations(
+      Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     final Set<TypedOperation> operations = new LinkedHashSet<>();
     OperationExtractor extractor = new OperationExtractor(classType, operations, predicate);
@@ -132,7 +136,8 @@ public class FieldReflectionTest {
     try {
       for (Field f : expected) {
         assertTrue(
-                "field " + f.toGenericString() + " should occur", actual.containsAll(getOperations(f, declaringType)));
+            "field " + f.toGenericString() + " should occur",
+            actual.containsAll(getOperations(f, declaringType)));
       }
     } catch (RandoopTypeException e) {
       fail("type error: " + e);
@@ -141,8 +146,8 @@ public class FieldReflectionTest {
     try {
       for (Field f : exclude) {
         assertFalse(
-                "field " + f.toGenericString() + " should not occur",
-                actual.containsAll(getOperations(f, declaringType)));
+            "field " + f.toGenericString() + " should not occur",
+            actual.containsAll(getOperations(f, declaringType)));
       }
     } catch (RandoopTypeException e) {
       fail("type error: " + e);
@@ -190,22 +195,30 @@ public class FieldReflectionTest {
    * @param f reflective Field object
    * @return a list of getter/setter statements for the field
    */
-  private List<TypedOperation> getOperations(Field f, ClassOrInterfaceType declaringType) throws RandoopTypeException {
+  private List<TypedOperation> getOperations(Field f, ClassOrInterfaceType declaringType)
+      throws RandoopTypeException {
     List<TypedOperation> statements = new ArrayList<>();
     GeneralType fieldType = GeneralType.forType(f.getGenericType());
     AccessibleField field = new AccessibleField(f, declaringType);
     List<GeneralType> getInputTypeList = new ArrayList<>();
     List<GeneralType> setInputTypeList = new ArrayList<>();
-    if (! field.isStatic()) {
+    if (!field.isStatic()) {
       getInputTypeList.add(declaringType);
       setInputTypeList.add(declaringType);
     }
 
-    statements.add(new TypedClassOperation(new FieldGet(field), declaringType, new TypeTuple(getInputTypeList), fieldType));
+    statements.add(
+        new TypedClassOperation(
+            new FieldGet(field), declaringType, new TypeTuple(getInputTypeList), fieldType));
 
-    if (! field.isFinal()) {
+    if (!field.isFinal()) {
       setInputTypeList.add(fieldType);
-      statements.add(new TypedClassOperation(new FieldSet(field), declaringType, new TypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE));
+      statements.add(
+          new TypedClassOperation(
+              new FieldSet(field),
+              declaringType,
+              new TypeTuple(setInputTypeList),
+              ConcreteTypes.VOID_TYPE));
     }
     return statements;
   }

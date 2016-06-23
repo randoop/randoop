@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Interface for visitors on elements of {@link TupleSet}.
  */
-public interface TupleVisitor<E,T> {
+public interface TupleVisitor<E, T> {
 
   /**
    * Transforms a list representing a tuple of a {@link TupleSet}.

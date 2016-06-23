@@ -22,7 +22,7 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
    * @param runtimeType  the runtime class for the type
    */
   public SimpleClassOrInterfaceType(Class<?> runtimeType) {
-    assert ! runtimeType.isPrimitive() : "must be reference type";
+    assert !runtimeType.isPrimitive() : "must be reference type";
     this.runtimeClass = runtimeType;
   }
 
@@ -87,12 +87,14 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
   }
 
   @Override
-  public boolean isInterface() { return runtimeClass.isInterface(); }
+  public boolean isInterface() {
+    return runtimeClass.isInterface();
+  }
 
   @Override
   public boolean isBoxedPrimitive() {
     return PrimitiveTypes.isBoxedPrimitiveTypeOrString(runtimeClass)
-            && ! this.equals(ConcreteTypes.STRING_TYPE);
+        && !this.equals(ConcreteTypes.STRING_TYPE);
   }
 
   @Override
@@ -133,7 +135,7 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
 
     // otherwise, check for boxing conversion
     return sourceType.isPrimitive()
-        && ! sourceType.isVoid()
+        && !sourceType.isVoid()
         && this.isAssignableFrom(sourceType.toBoxedPrimitive());
   }
 
@@ -158,9 +160,8 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
       }
 
       ClassOrInterfaceType superType = this.getSuperclass();
-      if (superType != null && ! superType.equals(ConcreteTypes.OBJECT_TYPE)) {
-        return otherType.equals(superType)
-                || superType.isSubtypeOf(otherType);
+      if (superType != null && !superType.equals(ConcreteTypes.OBJECT_TYPE)) {
+        return otherType.equals(superType) || superType.isSubtypeOf(otherType);
       }
     }
 

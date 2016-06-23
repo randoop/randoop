@@ -54,30 +54,29 @@ public class ICSE07ContainersTest {
 
   private static OptionsCache optionsCache;
 
-   @BeforeClass
-   public static void setup() {
-     optionsCache = new OptionsCache();
-     optionsCache.saveState();
-     GenInputsAbstract.maxsize = 10000; // Integer.MAX_VALUE;
-     GenInputsAbstract.repeat_heuristic = true;
-     GenInputsAbstract.debug_checks = false;
+  @BeforeClass
+  public static void setup() {
+    optionsCache = new OptionsCache();
+    optionsCache.saveState();
+    GenInputsAbstract.maxsize = 10000; // Integer.MAX_VALUE;
+    GenInputsAbstract.repeat_heuristic = true;
+    GenInputsAbstract.debug_checks = false;
+  }
 
-   }
-
-   @AfterClass
-   public static void restore() {
-     optionsCache.restoreState();
-   }
+  @AfterClass
+  public static void restore() {
+    optionsCache.restoreState();
+  }
 
   private void runRandoop(
-          String name,
-          List<Class<?>> classList,
-          Pattern omitMethodPattern,
-          IStopper stopper,
-          Set<String> excludeNames) {
+      String name,
+      List<Class<?>> classList,
+      Pattern omitMethodPattern,
+      IStopper stopper,
+      Set<String> excludeNames) {
 
     System.out.println("ICSE 2006 container: " + name);
-    System.out.println("GenInputsAbstract.clear="+ GenInputsAbstract.clear);
+    System.out.println("GenInputsAbstract.clear=" + GenInputsAbstract.clear);
     System.out.println("GenInputsAbstract.repeat_heuristic=" + GenInputsAbstract.repeat_heuristic);
     System.out.println("GenInputsAbstract.maxsize=" + GenInputsAbstract.maxsize);
     System.out.println("GenInputsAbstract.alias_ratio=" + GenInputsAbstract.alias_ratio);
@@ -89,7 +88,10 @@ public class ICSE07ContainersTest {
     ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
     for (Class<?> c : classList) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-      mgr.apply(new OperationExtractor(classType, model, new DefaultReflectionPredicate(omitMethodPattern, excludeNames)), c);
+      mgr.apply(
+          new OperationExtractor(
+              classType, model, new DefaultReflectionPredicate(omitMethodPattern, excludeNames)),
+          c);
     }
     assertTrue("model should not be empty", !model.isEmpty());
     System.out.println("Number of operations: " + model.size());
@@ -102,7 +104,7 @@ public class ICSE07ContainersTest {
     ForwardGenerator explorer =
         new ForwardGenerator(
             model,
-                new LinkedHashSet<TypedOperation>(),
+            new LinkedHashSet<TypedOperation>(),
             120000 /* two minutes */,
             Integer.MAX_VALUE,
             Integer.MAX_VALUE,
@@ -215,7 +217,8 @@ public class ICSE07ContainersTest {
         excludeNames.add(f.getDeclaringClass().getName() + "." + f.getName());
       }
     }
-    runRandoop("BinomialHeap", classList, Pattern.compile("findMinimum\\(\\)"), stopper, excludeNames);
+    runRandoop(
+        "BinomialHeap", classList, Pattern.compile("findMinimum\\(\\)"), stopper, excludeNames);
     assertEquals(101, randoop.test.issta2006.BinomialHeap.tests.size());
   }
 }

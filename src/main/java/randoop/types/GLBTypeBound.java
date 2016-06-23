@@ -45,12 +45,12 @@ public class GLBTypeBound extends TypeBound {
 
   @Override
   public boolean equals(Object obj) {
-    if (! (obj instanceof GLBTypeBound)) {
+    if (!(obj instanceof GLBTypeBound)) {
       return false;
     }
-    GLBTypeBound bound = (GLBTypeBound)obj;
+    GLBTypeBound bound = (GLBTypeBound) obj;
     return this.parameterBound.equals(bound.parameterBound)
-            && this.wildcardBound.equals(bound.wildcardBound);
+        && this.wildcardBound.equals(bound.wildcardBound);
   }
 
   @Override
@@ -70,7 +70,7 @@ public class GLBTypeBound extends TypeBound {
   @Override
   public boolean isSatisfiedBy(GeneralType argType, Substitution<ReferenceType> subst) {
     return parameterBound.isSatisfiedBy(argType, subst)
-            && wildcardBound.isSatisfiedBy(argType, subst);
+        && wildcardBound.isSatisfiedBy(argType, subst);
   }
 
   /**
@@ -79,8 +79,7 @@ public class GLBTypeBound extends TypeBound {
    */
   @Override
   public boolean isSatisfiedBy(GeneralType argType) {
-    return parameterBound.isSatisfiedBy(argType)
-            && wildcardBound.isSatisfiedBy(argType);
+    return parameterBound.isSatisfiedBy(argType) && wildcardBound.isSatisfiedBy(argType);
   }
 
   /**
@@ -89,8 +88,7 @@ public class GLBTypeBound extends TypeBound {
    */
   @Override
   public boolean isSubtypeOf(GeneralType otherType) {
-    return parameterBound.isSubtypeOf(otherType)
-            && wildcardBound.isSubtypeOf(otherType);
+    return parameterBound.isSubtypeOf(otherType) && wildcardBound.isSubtypeOf(otherType);
   }
 
   /**

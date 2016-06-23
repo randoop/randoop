@@ -72,14 +72,14 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    * @return an object of type {@code ParameterizedType}
    */
   public static ParameterizedType forType(Type type) {
-    if (! (type instanceof java.lang.reflect.ParameterizedType)) {
+    if (!(type instanceof java.lang.reflect.ParameterizedType)) {
       throw new IllegalArgumentException("type must be java.lang.reflect.ParameterizedType");
     }
 
-    java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType)type;
+    java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType) type;
 
     Type rawType = t.getRawType();
-    assert (rawType instanceof Class<?>) : "rawtype not an instance of Class<?> type " ;
+    assert (rawType instanceof Class<?>) : "rawtype not an instance of Class<?> type ";
 
     // Categorize the type arguments as either a type variable or other kind of argument
     List<TypeArgument> typeArguments = new ArrayList<>();

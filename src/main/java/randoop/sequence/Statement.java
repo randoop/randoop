@@ -115,7 +115,7 @@ public final class Statement {
    */
   public void appendCode(Variable variable, List<Variable> inputs, StringBuilder b) {
     GeneralType type = operation.getOutputType();
-    if (! type.isVoid()) {
+    if (!type.isVoid()) {
       String typeName = type.getName();
       b.append(typeName);
       b.append(" ").append(Variable.classToVariableName(type)).append(variable.index).append(" = ");
@@ -187,7 +187,7 @@ public final class Statement {
    */
   public GeneralType getDeclaringClass() {
     if (operation instanceof TypedClassOperation) {
-      return ((TypedClassOperation)operation).getDeclaringType();
+      return ((TypedClassOperation) operation).getDeclaringType();
     }
     return null;
   }

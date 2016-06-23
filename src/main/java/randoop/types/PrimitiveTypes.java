@@ -302,7 +302,6 @@ public final class PrimitiveTypes {
     // Object.toString() string must have at least one character for
     // the class name, plus '@', plus one character for hashCode().
     return len >= 3 && s.matches(OBJECT_REF_PATTERN);
-
   }
 
   // Used to increase performance of stringLengthOK method.
@@ -375,7 +374,8 @@ public final class PrimitiveTypes {
     if (target == null || source == null) {
       throw new IllegalArgumentException("types must be non null");
     }
-    if ((!target.isPrimitive() && !target.equals(String.class)) || (!source.isPrimitive() && !source.equals(String.class))) {
+    if ((!target.isPrimitive() && !target.equals(String.class))
+        || (!source.isPrimitive() && !source.equals(String.class))) {
       throw new IllegalArgumentException("types must be primitive or String");
     }
 
@@ -387,7 +387,7 @@ public final class PrimitiveTypes {
   }
 
   static boolean isSubtype(Class<?> first, Class<?> second) {
-    if (! first.isPrimitive() && ! second.isPrimitive()) {
+    if (!first.isPrimitive() && !second.isPrimitive()) {
       throw new IllegalArgumentException("types must be primitive");
     }
     Set<Class<?>> superTypes = wideningTable.get(first);

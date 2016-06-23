@@ -62,14 +62,22 @@ public class ForwardGenerator extends AbstractGenerator {
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
   public ForwardGenerator(
-          List<TypedOperation> operations,
-          Set<TypedOperation> observers,
-          long timeMillis,
-          int maxGenSequences,
-          int maxOutSequences,
-          ComponentManager componentManager,
-          RandoopListenerManager listenerManager) {
-    this(operations, observers, timeMillis, maxGenSequences, maxOutSequences, componentManager,  null, listenerManager);
+      List<TypedOperation> operations,
+      Set<TypedOperation> observers,
+      long timeMillis,
+      int maxGenSequences,
+      int maxOutSequences,
+      ComponentManager componentManager,
+      RandoopListenerManager listenerManager) {
+    this(
+        operations,
+        observers,
+        timeMillis,
+        maxGenSequences,
+        maxOutSequences,
+        componentManager,
+        null,
+        listenerManager);
   }
 
   public ForwardGenerator(
@@ -267,8 +275,7 @@ public class ForwardGenerator extends AbstractGenerator {
                 && !PrimitiveTypes.stringLengthOK((String) runtimeValue);
         if (!looksLikeObjToString && !tooLongString && runtimePrimitivesSeen.add(runtimeValue)) {
           // Have not seen this value before; add it to the component set.
-          componentManager.addGeneratedSequence(
-              Sequence.createSequenceForPrimitive(runtimeValue));
+          componentManager.addGeneratedSequence(Sequence.createSequenceForPrimitive(runtimeValue));
         }
       } else {
         if (Log.isLoggingOn()) {
@@ -388,7 +395,9 @@ public class ForwardGenerator extends AbstractGenerator {
       for (Variable v : retval.getInputs(retval.size() - 1)) {
         if (v.getType().equals(ConcreteTypes.INT_TYPE)) {
           int randint = Randomness.nextRandomInt(100);
-          retval = retval.extend(TypedOperation.createPrimitiveInitialization(ConcreteTypes.INT_TYPE, randint));
+          retval =
+              retval.extend(
+                  TypedOperation.createPrimitiveInitialization(ConcreteTypes.INT_TYPE, randint));
           vil.add(retval.size() - 1);
         } else {
           vil.add(v.getDeclIndex());
@@ -583,12 +592,15 @@ public class ForwardGenerator extends AbstractGenerator {
         SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i);
         if (Log.isLoggingOn())
           Log.logLine("Array creation heuristic: will create helper array of type " + inputType);
-        SimpleList<Sequence> l2 = HelperSequenceCreator.createArraySequence(componentManager, inputType);
+        SimpleList<Sequence> l2 =
+            HelperSequenceCreator.createArraySequence(componentManager, inputType);
         l = new ListOfLists<>(l1, l2);
 
       } else if (inputType.isParameterized()
-              && ((InstantiatedType)inputType).getGenericClassType().isSubtypeOf(JDKTypes.COLLECTION_TYPE)) {
-        InstantiatedType classType = (InstantiatedType)inputType;
+          && ((InstantiatedType) inputType)
+              .getGenericClassType()
+              .isSubtypeOf(JDKTypes.COLLECTION_TYPE)) {
+        InstantiatedType classType = (InstantiatedType) inputType;
 
         SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i);
         if (Log.isLoggingOn())
@@ -601,7 +613,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
         // 2. COMMON CASE: ask the component manager for all sequences that
         // yield the required type.
-        if (Log.isLoggingOn()) Log.logLine("Will query component set for objects of type" + inputType);
+        if (Log.isLoggingOn())
+          Log.logLine("Will query component set for objects of type" + inputType);
         l = componentManager.getSequencesForType(operation, i);
       }
       assert l != null;

@@ -9,7 +9,7 @@ import randoop.util.ReflectionExecutor;
 
 /**
  * Manages the static state of Randoop classes with Options annotations.
-  */
+ */
 public class OptionsCache {
 
   /** The list of caches for classes with Options annotations. */

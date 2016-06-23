@@ -143,9 +143,15 @@ public class EnumConstantTest {
   public void testInheritedMethods() {
     //skipping reflection
     ClassOrInterfaceType enumType = new SimpleClassOrInterfaceType(SimpleEnumForTests.class);
-    TypedOperation ec1 = new TypedClassOperation(new EnumConstant(SimpleEnumForTests.ONE), enumType, new TypeTuple(), enumType);
-    TypedOperation ec1_2 = new TypedClassOperation(new EnumConstant(SimpleEnumForTests.ONE), enumType, new TypeTuple(), enumType);
-    TypedOperation ec2 = new TypedClassOperation(new EnumConstant(SimpleEnumForTests.TWO), enumType, new TypeTuple(), enumType);
+    TypedOperation ec1 =
+        new TypedClassOperation(
+            new EnumConstant(SimpleEnumForTests.ONE), enumType, new TypeTuple(), enumType);
+    TypedOperation ec1_2 =
+        new TypedClassOperation(
+            new EnumConstant(SimpleEnumForTests.ONE), enumType, new TypeTuple(), enumType);
+    TypedOperation ec2 =
+        new TypedClassOperation(
+            new EnumConstant(SimpleEnumForTests.TWO), enumType, new TypeTuple(), enumType);
 
     //equals and hashcode
     assertEquals("Object built from same constant should be equal", ec1, ec1_2);
@@ -183,5 +189,4 @@ public class EnumConstantTest {
     assertEquals(
         "Expect fully qualified initialization of variable by constant.", expected, b.toString());
   }
-
 }

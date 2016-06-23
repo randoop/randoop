@@ -63,7 +63,9 @@ public class FieldSetterTest {
       List<GeneralType> setInputTypeList = new ArrayList<>();
       setInputTypeList.add(fieldType);
       FieldSet setOp = new FieldSet(f);
-      TypedOperation op = new TypedClassOperation(setOp, declaringType, new TypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
+      TypedOperation op =
+          new TypedClassOperation(
+              setOp, declaringType, new TypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
 
       //types
       assertEquals("Should be one input type", 1, op.getInputTypes().size());
@@ -72,9 +74,12 @@ public class FieldSetterTest {
       //code generation
       String expected = "randoop.field.ClassWithFields.fourField = 24;" + Globals.lineSep;
       StringBuilder b = new StringBuilder();
-      TypedOperation initOp = new TypedTermOperation(new NonreceiverTerm(ConcreteTypes.INT_TYPE, 24), new TypeTuple(), ConcreteTypes.INT_TYPE);
-      Sequence seq0 =
-          new Sequence().extend(initOp, new ArrayList<Variable>());
+      TypedOperation initOp =
+          new TypedTermOperation(
+              new NonreceiverTerm(ConcreteTypes.INT_TYPE, 24),
+              new TypeTuple(),
+              ConcreteTypes.INT_TYPE);
+      Sequence seq0 = new Sequence().extend(initOp, new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
       vars.add(new Variable(seq0, 0));
       Statement st_op = new Statement(op);
@@ -116,7 +121,9 @@ public class FieldSetterTest {
       setInputTypeList.add(declaringType);
       setInputTypeList.add(fieldType);
       FieldSet setOp = new FieldSet(f);
-      TypedOperation op = new TypedClassOperation(setOp, declaringType, new TypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
+      TypedOperation op =
+          new TypedClassOperation(
+              setOp, declaringType, new TypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
 
       //types
       assertEquals("Should be two input types", 2, op.getInputTypes().size());
@@ -133,10 +140,15 @@ public class FieldSetterTest {
       }
       assert constructor != null;
       ConstructorCall cons = new ConstructorCall(constructor);
-      TypedOperation consOp = new TypedClassOperation(cons,declaringType, new TypeTuple(), declaringType);
+      TypedOperation consOp =
+          new TypedClassOperation(cons, declaringType, new TypeTuple(), declaringType);
 
       Sequence seq0 = new Sequence().extend(consOp, new ArrayList<Variable>());
-      TypedOperation initOp = new TypedTermOperation(new NonreceiverTerm(ConcreteTypes.INT_TYPE, 24), new TypeTuple(), ConcreteTypes.INT_TYPE);
+      TypedOperation initOp =
+          new TypedTermOperation(
+              new NonreceiverTerm(ConcreteTypes.INT_TYPE, 24),
+              new TypeTuple(),
+              ConcreteTypes.INT_TYPE);
       Sequence seq1 = seq0.extend(initOp, new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
       vars.add(new Variable(seq1, 0));
@@ -197,8 +209,7 @@ public class FieldSetterTest {
         fail(
             "IllegalArgumentException expected when final instance field given to FieldSet constructor");
       } catch (IllegalArgumentException e) {
-        assertEquals(
-            "Argument Exception", "Field may not be final for FieldSet", e.getMessage());
+        assertEquals("Argument Exception", "Field may not be final for FieldSet", e.getMessage());
       }
     } catch (NoSuchFieldException e) {
       fail("test failed because field in test class not found");
@@ -221,8 +232,7 @@ public class FieldSetterTest {
         fail(
             "IllegalArgumentException expected when static final field given to FieldSet constructor");
       } catch (IllegalArgumentException e) {
-        assertEquals(
-            "Argument exception", "Field may not be final for FieldSet", e.getMessage());
+        assertEquals("Argument exception", "Field may not be final for FieldSet", e.getMessage());
       }
     } catch (NoSuchFieldException e) {
       fail("test failed because field in test class not found");

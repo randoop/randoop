@@ -45,7 +45,8 @@ public class FieldGetterTest {
       TypedOperation rhs = createGetter(field, fieldType, classType);
 
       //types
-      assertTrue("Should be no input types : " + rhs.getInputTypes(), rhs.getInputTypes().isEmpty());
+      assertTrue(
+          "Should be no input types : " + rhs.getInputTypes(), rhs.getInputTypes().isEmpty());
       assertEquals("Output type should match type of field", fieldType, rhs.getOutputType());
 
       //code generation
@@ -72,8 +73,6 @@ public class FieldGetterTest {
     }
   }
 
-
-
   @Test
   public void testInstanceField() {
     Class<?> c = ClassWithFields.class;
@@ -87,7 +86,10 @@ public class FieldGetterTest {
       //types
       List<GeneralType> inputTypes = new ArrayList<>();
       inputTypes.add(classType);
-      assertEquals("Input types should just be declaring class", new TypeTuple(inputTypes), rhs.getInputTypes());
+      assertEquals(
+          "Input types should just be declaring class",
+          new TypeTuple(inputTypes),
+          rhs.getInputTypes());
       assertEquals("Output type should match type of field", fieldType, rhs.getOutputType());
 
       //code generation
@@ -163,7 +165,6 @@ public class FieldGetterTest {
       GeneralType fieldType = new PrimitiveType(field.getType());
       TypedOperation rhs = createGetter(field, fieldType, classType);
 
-
       //types
       assertTrue("Should be no input types", rhs.getInputTypes().isEmpty());
       assertEquals("Output type should match type of field", fieldType, rhs.getOutputType());
@@ -207,13 +208,15 @@ public class FieldGetterTest {
     }
   }
 
-  private TypedOperation createGetter(Field field, GeneralType fieldType, ClassOrInterfaceType declaringType) {
+  private TypedOperation createGetter(
+      Field field, GeneralType fieldType, ClassOrInterfaceType declaringType) {
     AccessibleField f = new AccessibleField(field, declaringType);
     List<GeneralType> getInputTypesList = new ArrayList<>();
-    if (! Modifier.isStatic(field.getModifiers() & Modifier.fieldModifiers())) {
+    if (!Modifier.isStatic(field.getModifiers() & Modifier.fieldModifiers())) {
       getInputTypesList.add(declaringType);
     }
     FieldGet getOp = new FieldGet(f);
-    return new TypedClassOperation(getOp, declaringType, new TypeTuple(getInputTypesList), fieldType);
+    return new TypedClassOperation(
+        getOp, declaringType, new TypeTuple(getInputTypesList), fieldType);
   }
 }

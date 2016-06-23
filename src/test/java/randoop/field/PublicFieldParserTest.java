@@ -102,7 +102,9 @@ public class PublicFieldParserTest {
           errorPrefix1
               + spaceInValue
               + "."
-              + " The field name " + fieldname + " has unexpected whitespace characters.";
+              + " The field name "
+              + fieldname
+              + " has unexpected whitespace characters.";
       assertEquals("Expecting space in field message", msg, e.getMessage());
     }
 

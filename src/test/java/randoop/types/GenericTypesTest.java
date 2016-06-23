@@ -27,10 +27,10 @@ public class GenericTypesTest {
         a1.getTypeParameters().get(0).getTypeBound());
 
     ParameterBound b1 = a1.getFormalTypeParameters().get(0).getTypeBound();
-    Substitution<ReferenceType> subst =
-        Substitution.forArgs(new ArrayList<AbstractTypeVariable>());
+    Substitution<ReferenceType> subst = Substitution.forArgs(new ArrayList<AbstractTypeVariable>());
     assertTrue(
-          "String satisfies bound", b1.isSatisfiedBy(new SimpleClassOrInterfaceType(String.class), subst));
+        "String satisfies bound",
+        b1.isSatisfiedBy(new SimpleClassOrInterfaceType(String.class), subst));
 
     Class<?> c2 = Variable2.class;
     GenericClassType a2;
@@ -38,7 +38,9 @@ public class GenericTypesTest {
     assertEquals("has two bounds", 2, a2.getTypeParameters().size());
     for (AbstractTypeVariable o : a2.getTypeParameters()) {
       assertEquals(
-          "both bounds are Object", new ClassOrInterfaceTypeBound(new SimpleClassOrInterfaceType(Object.class)), o.getTypeBound());
+          "both bounds are Object",
+          new ClassOrInterfaceTypeBound(new SimpleClassOrInterfaceType(Object.class)),
+          o.getTypeBound());
     }
   }
 
@@ -58,29 +60,30 @@ public class GenericTypesTest {
 
     ParameterBound b1 = a1.getFormalTypeParameters().get(0).getTypeBound();
     assertTrue(
-              "Integer satisfies bound Number",
-              b1.isSatisfiedBy(new SimpleClassOrInterfaceType(Integer.class), emptySubst));
+        "Integer satisfies bound Number",
+        b1.isSatisfiedBy(new SimpleClassOrInterfaceType(Integer.class), emptySubst));
     assertFalse(
-              "String does not satisfy bound Number",
-              b1.isSatisfiedBy(new SimpleClassOrInterfaceType(String.class), emptySubst));
+        "String does not satisfy bound Number",
+        b1.isSatisfiedBy(new SimpleClassOrInterfaceType(String.class), emptySubst));
 
     Class<?> c2 = Class2.class;
     GenericClassType a2 = GenericClassType.forClass(c2);
 
     assertEquals("has one bound", 1, a2.getTypeParameters().size());
     assertEquals(
-          "the bound is Comparable<Integer>",
-          new ClassOrInterfaceTypeBound(
-              GenericClassType.forClass(Comparable.class).instantiate(new SimpleClassOrInterfaceType(Integer.class))),
-          a2.getTypeParameters().get(0).getTypeBound());
+        "the bound is Comparable<Integer>",
+        new ClassOrInterfaceTypeBound(
+            GenericClassType.forClass(Comparable.class)
+                .instantiate(new SimpleClassOrInterfaceType(Integer.class))),
+        a2.getTypeParameters().get(0).getTypeBound());
 
     ParameterBound b2 = a1.getFormalTypeParameters().get(0).getTypeBound();
     assertTrue(
-              "Integer satisfies bound Comparable<Integer>",
-              b2.isSatisfiedBy(new SimpleClassOrInterfaceType(Integer.class), emptySubst));
+        "Integer satisfies bound Comparable<Integer>",
+        b2.isSatisfiedBy(new SimpleClassOrInterfaceType(Integer.class), emptySubst));
     assertFalse(
-              "String does not satisfy bound Comparable<Integer>",
-              b2.isSatisfiedBy(new SimpleClassOrInterfaceType(String.class), emptySubst));
+        "String does not satisfy bound Comparable<Integer>",
+        b2.isSatisfiedBy(new SimpleClassOrInterfaceType(String.class), emptySubst));
   }
 
   @Test
@@ -95,8 +98,8 @@ public class GenericTypesTest {
       GeneralType it = a1.instantiate(ReferenceType.forClass(Variable1Ext.class));
       assertTrue("Parameterized type bound satisfied, object instantiated", it != null);
     } catch (IllegalArgumentException e) {
-    fail("should not have gotten the exception: " + e.getMessage());
-  }
+      fail("should not have gotten the exception: " + e.getMessage());
+    }
 
     ReferenceType pt2 = ReferenceType.forClass(Integer.class);
 
@@ -181,12 +184,16 @@ public class GenericTypesTest {
 
   @Test
   public void subtypeTransitivityTest() {
-    ParameterizedType iterableType = GenericClassType.forClass(Iterable.class).instantiate(ConcreteTypes.STRING_TYPE);
-    ParameterizedType collectionType = JDKTypes.COLLECTION_TYPE.instantiate(ConcreteTypes.STRING_TYPE);
+    ParameterizedType iterableType =
+        GenericClassType.forClass(Iterable.class).instantiate(ConcreteTypes.STRING_TYPE);
+    ParameterizedType collectionType =
+        JDKTypes.COLLECTION_TYPE.instantiate(ConcreteTypes.STRING_TYPE);
     assertTrue("collection is subtype of iterable", collectionType.isSubtypeOf(iterableType));
-    assertFalse("iterable is supertype of collection, not subtype", iterableType.isSubtypeOf(collectionType));
+    assertFalse(
+        "iterable is supertype of collection, not subtype",
+        iterableType.isSubtypeOf(collectionType));
     ParameterizedType vectorType = JDKTypes.VECTOR_TYPE.instantiate(ConcreteTypes.STRING_TYPE);
-    assertTrue("vector is subtype of iterable", vectorType.isSubtypeOf(iterableType) );
+    assertTrue("vector is subtype of iterable", vectorType.isSubtypeOf(iterableType));
     assertTrue("vector is subtype of collection", vectorType.isSubtypeOf(collectionType));
     assertFalse("supertype is not a subtype", iterableType.isSubtypeOf(vectorType));
     assertFalse("supertype is not a subtype", collectionType.isSubtypeOf(vectorType));
@@ -204,7 +211,9 @@ public class GenericTypesTest {
     GenericClassType genericSuperType = GenericClassType.forClass(Superclass.class);
     InstantiatedType stringSuperType = genericSuperType.instantiate(stringSetType);
 
-    assertTrue("ComplexSubclass<String> should be subtype of Superclass<Set<String>>", subtype.isSubtypeOf(stringSuperType));
+    assertTrue(
+        "ComplexSubclass<String> should be subtype of Superclass<Set<String>>",
+        subtype.isSubtypeOf(stringSuperType));
     assertEquals("superclass", stringSuperType, subtype.getSuperclass());
 
     // try with example inspired by java.util.stream.Stream (which is Java 8)
@@ -212,10 +221,10 @@ public class GenericTypesTest {
     InstantiatedType stringStreamType = genericStreamType.instantiate(ConcreteTypes.STRING_TYPE);
 
     GenericClassType genericBaseStreamType = GenericClassType.forClass(BaseStream.class);
-    InstantiatedType stringBaseStreamType = genericBaseStreamType.instantiate(ConcreteTypes.STRING_TYPE, stringStreamType);
+    InstantiatedType stringBaseStreamType =
+        genericBaseStreamType.instantiate(ConcreteTypes.STRING_TYPE, stringStreamType);
     assertTrue("is subtype", stringStreamType.isSubtypeOf(stringBaseStreamType));
     assertEquals("superclass", null, stringStreamType.getSuperclass());
     assertTrue("interface", stringStreamType.getInterfaces().contains(stringBaseStreamType));
-
   }
 }

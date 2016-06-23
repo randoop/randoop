@@ -178,7 +178,8 @@ public class GenTests extends GenInputsAbstract {
       visibility = new PackageVisibilityPredicate(junitPackage);
     }
 
-    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitmethods, omitFields);
+    ReflectionPredicate reflectionPredicate =
+        new DefaultReflectionPredicate(omitmethods, omitFields);
 
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
     if (silently_ignore_bad_class_names) {
@@ -186,11 +187,11 @@ public class GenTests extends GenInputsAbstract {
     }
 
     Set<String> methodSignatures =
-            GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
+        GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
 
     OperationModel operationModel = null;
     try {
-      operationModel=
+      operationModel =
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
@@ -208,7 +209,7 @@ public class GenTests extends GenInputsAbstract {
     }
     assert operationModel != null;
 
-    if (! operationModel.hasClasses()) {
+    if (!operationModel.hasClasses()) {
       System.out.println("No classes to test");
       System.exit(1);
     }
@@ -238,9 +239,11 @@ public class GenTests extends GenInputsAbstract {
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
 
-    Set<String> observerSignatures = GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.observers, "Unable to read observer file", "//.*", null);
+    Set<String> observerSignatures =
+        GenInputsAbstract.getStringSetFromFile(
+            GenInputsAbstract.observers, "Unable to read observer file", "//.*", null);
 
-    MultiMap<GeneralType,TypedOperation> observerMap = null;
+    MultiMap<GeneralType, TypedOperation> observerMap = null;
     try {
       observerMap = operationModel.getObservers(observerSignatures);
     } catch (OperationParseException e) {
@@ -268,7 +271,8 @@ public class GenTests extends GenInputsAbstract {
 
     Set<TypedOperation> excludeAsObservers = new LinkedHashSet<>();
     // TODO add Object.toString() and Object.hashCode() to exclude set
-    TestCheckGenerator testGen = createTestCheckGenerator(visibility, contracts, observerMap, excludeAsObservers);
+    TestCheckGenerator testGen =
+        createTestCheckGenerator(visibility, contracts, observerMap, excludeAsObservers);
 
     explorer.addTestCheckGenerator(testGen);
 
@@ -535,7 +539,10 @@ public class GenTests extends GenInputsAbstract {
    *         arguments.
    */
   public TestCheckGenerator createTestCheckGenerator(
-          VisibilityPredicate visibility, ContractSet contracts, MultiMap<GeneralType, TypedOperation> observerMap, Set<TypedOperation> excludeAsObservers) {
+      VisibilityPredicate visibility,
+      ContractSet contracts,
+      MultiMap<GeneralType, TypedOperation> observerMap,
+      Set<TypedOperation> excludeAsObservers) {
 
     // start with checking for invalid exceptions
     ExceptionPredicate isInvalid = new ExceptionBehaviorPredicate(BehaviorType.INVALID);
@@ -560,7 +567,9 @@ public class GenTests extends GenInputsAbstract {
       expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
 
       RegressionCaptureVisitor regressionVisitor;
-      regressionVisitor = new RegressionCaptureVisitor(expectation, observerMap, excludeAsObservers, includeAssertions);
+      regressionVisitor =
+          new RegressionCaptureVisitor(
+              expectation, observerMap, excludeAsObservers, includeAssertions);
 
       testGen = new ExtendGenerator(testGen, regressionVisitor);
     }
@@ -581,10 +590,10 @@ public class GenTests extends GenInputsAbstract {
    * @return list of files written.
    **/
   private static List<File> writeJUnitTests(
-          String output_dir,
-          List<ExecutableSequence> seqList,
-          List<String> additionalJUnitClasses,
-          String junitClassname) {
+      String output_dir,
+      List<ExecutableSequence> seqList,
+      List<String> additionalJUnitClasses,
+      String junitClassname) {
 
     List<File> files = new ArrayList<>();
 

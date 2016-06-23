@@ -157,7 +157,12 @@ public class GenericClassType extends ParameterizedType {
     for (AbstractTypeVariable variable : parameters) {
       ReferenceType referenceType = substitution.get(variable);
       if (referenceType == null) {
-        throw new IllegalArgumentException("substitution has no value for variable " + variable.getName() + " (" + variable.hashCode() + ")");
+        throw new IllegalArgumentException(
+            "substitution has no value for variable "
+                + variable.getName()
+                + " ("
+                + variable.hashCode()
+                + ")");
       }
       argumentList.add(new ReferenceArgument(referenceType));
     }
@@ -176,10 +181,15 @@ public class GenericClassType extends ParameterizedType {
       throw new IllegalArgumentException("number of arguments and parameters must match");
     }
 
-    Substitution<ReferenceType> substitution = Substitution.forArgs(this.getTypeParameters(), typeArguments);
+    Substitution<ReferenceType> substitution =
+        Substitution.forArgs(this.getTypeParameters(), typeArguments);
     for (int i = 0; i < parameters.size(); i++) {
       if (!parameters.get(i).getTypeBound().isSatisfiedBy(typeArguments[i], substitution)) {
-        throw new IllegalArgumentException("type argument " + typeArguments[i] + " does not match parameter bound " + parameters.get(i).getTypeBound());
+        throw new IllegalArgumentException(
+            "type argument "
+                + typeArguments[i]
+                + " does not match parameter bound "
+                + parameters.get(i).getTypeBound());
       }
     }
     return this.apply(substitution);
@@ -234,8 +244,7 @@ public class GenericClassType extends ParameterizedType {
     if (super.isSubtypeOf(otherType)) {
       return true;
     }
-    return otherType.isRawtype()
-            && otherType.hasRuntimeClass(this.getRuntimeClass());
+    return otherType.isRawtype() && otherType.hasRuntimeClass(this.getRuntimeClass());
   }
 
   @Override
@@ -249,12 +258,12 @@ public class GenericClassType extends ParameterizedType {
   }
 
   /**
-  * Returns the superclass type for this generic class type instantiated by
-  * the given type {@link Substitution}.
-  *
-  * @param substitution  the type substitution
-  * @return the instantiated type
-  */
+   * Returns the superclass type for this generic class type instantiated by
+   * the given type {@link Substitution}.
+   *
+   * @param substitution  the type substitution
+   * @return the instantiated type
+   */
   ClassOrInterfaceType getSuperclass(Substitution<ReferenceType> substitution) {
     Type superclass = this.rawType.getGenericSuperclass();
     if (superclass == null) {
@@ -273,12 +282,12 @@ public class GenericClassType extends ParameterizedType {
   }
 
   /**
-  * Return the interface types for this generic class type instantiated by the
-  * given type {@link Substitution}.
-  *
-  * @param substitution  the type substitution
-  * @return the list of instantiated interface types of this type 
-  */
+   * Return the interface types for this generic class type instantiated by the
+   * given type {@link Substitution}.
+   *
+   * @param substitution  the type substitution
+   * @return the list of instantiated interface types of this type
+   */
   List<ClassOrInterfaceType> getInterfaces(Substitution<ReferenceType> substitution) {
     List<ClassOrInterfaceType> interfaces = new ArrayList<>();
     for (Type type : rawType.getGenericInterfaces()) {
@@ -286,5 +295,4 @@ public class GenericClassType extends ParameterizedType {
     }
     return interfaces;
   }
-
 }

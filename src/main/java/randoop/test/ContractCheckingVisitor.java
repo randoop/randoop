@@ -116,5 +116,4 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
     }
     return checks;
   }
-
 }
