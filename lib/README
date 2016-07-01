@@ -1,8 +1,14 @@
 Local dependencies: (last updated on:  3/2/2016)
-A list of jar files for dependencies that cannot be retrieved via Gradle,
-and how they were obtained.
+
+This is a list of jar files for dependencies that cannot be retrieved via
+Gradle, and how they were obtained.  If you update a library, you should
+also update, the library information in configuration blocks for plugins,
+dependencies, and the Gradle wrapper task.  Those appear in these files:
+  randoop/build.gradle
+  randoop/agent/exercised-class/exercised-class.gradle
+
 
 plume.jar: https://github.com/mernst/plume-lib/releases; version 1.0.9
 Currently installed copy was locally generated to include changes to Options
-doclet that includes a -d option to support the Gradle build. Also does note
+doclet that includes a -d option to support the Gradle build. Also does not
 include junit in jar file.
