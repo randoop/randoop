@@ -484,7 +484,7 @@ task tags(type: Exec, dependsOn: 'clone') {
 /* Validate HTML files */
 task validate(type: Exec, dependsOn: 'clone') {
   description "Run html5validator to find HTML errors"
-  environment PATH: "$System.env.PATH:/homes/gws/mernst/.local/bin/html5validator"
+  environment PATH: "$System.env.PATH"
   commandLine "html5validator", "--ignore", "/build/"
 }
 
