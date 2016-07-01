@@ -727,8 +727,8 @@ The test check is on line 5.
 
 <p>
 In Randoop, a test input is represented as a
-<a href="javadoc/randoop/Sequence.html">Sequence</a>,
-and test checks are represented using <a href="javadoc/randoop/Check.html">Checks</a>.
+<a href="../api/randoop/Sequence.html">Sequence</a>,
+and test checks are represented using <a href="../api/randoop/test/Check.html">Checks</a>.
 Each sequence is made up of one or more
 <a href="../api/randoop/sequence/Statement.html">Statement</a> objects.
 </p>
@@ -742,7 +742,7 @@ to each, and output the results to the user as unit tests.
 
 <p>
 Randoop generates
-<a href="javadoc/randoop/Sequence.html">Sequence</a> objects, which are used
+<a href="../api/randoop/Sequence.html">Sequence</a> objects, which are used
 to construct the inputs of unit tests by adding checks.
 In Randoop, all test inputs are sequences of operations that use the methods and
 constructors of the classes under test.
@@ -844,7 +844,7 @@ previous statements (e.g. <code>int[] x = new int[] { var0, var1
 </ul>
 </li>
 
-<li><a href="javadoc/randoop/Variable.html">Variables</a> represent
+<li><a href="../api/randoop/Variable.html">Variables</a> represent
 both the inputs and the outputs of a statement. A variable is just a
 wrapper around an index in the sequence: given a
 sequence <code>s</code>, the variable <code>s.getVariable(i)</code>
@@ -996,7 +996,7 @@ Sequence seq = Sequence.parse(parseable);
 <h2 id="executing_sequence">Executable Sequences</h2>
 
 <p>
-An <a href="javadoc/randoop/ExecutableSequence.html">ExecutableSequence</a>
+An <a href="../api/randoop/ExecutableSequence.html">ExecutableSequence</a>
  wraps a <code>Sequence</code> and adds two pieces of
  functionality:
 </p>
@@ -1051,8 +1051,8 @@ method <code>LinkedList.size()</code>.
 </pre>
 <p>
 To dig more into execution results, explore the
-classes <a href="javadoc/randoop/Execution.html">Execution</a> and
-<a href="javadoc/randoop/ExecutionOutcome.html">ExecutionOutcome</a>.
+classes <a href="../api/randoop/Execution.html">Execution</a> and
+<a href="../api/randoop/ExecutionOutcome.html">ExecutionOutcome</a>.
 </p>
 
 <h3>Miscellaneous Notes</h3> <!-- omit from toc -->
@@ -1083,7 +1083,7 @@ Writing a list of sequences to a serialized file:
   fileos.close();
 </pre>
 <p>
-Any <a href="javadoc/randoop/Check.html">Checks</a> decorating the
+Any <a href="../api/randoop/test/Check.html">Checks</a> decorating the
 sequences will also be serialized.
 </p>
 <p>
@@ -1097,7 +1097,7 @@ Reading a list of sequences from a serialized file:
 <p>
 You can replay the execution of a deserialized sequence (including
 evaluation of its Checks) by executing it with
-a <a href="javadoc/randoop/ReplayVisitor.html">ReplayVisitor</a>.
+a <a href="../api/randoop/ReplayVisitor.html">ReplayVisitor</a>.
 </p>
 
 <h4 id="writing_sequence_as_junit">Writing a sequence as a JUnit test</h4>
@@ -1135,7 +1135,7 @@ to write, how many tests to put in each, what to name them, etc.
 <h2 id="checks">Checks</h2>
 
 <p>
-A <a href="javadoc/randoop/Check.html">Check</a> is an object that
+A <a href="../api/randoop/test/Check.html">Check</a> is an object that
 represents an <b>expected property</b> of a sequence. In terms of
  <a href="#unit_tests">unit test concepts</a>, a check represents some
 piece of checking code (or &ldquo;test oracle&rdquo;) of a unit test.
@@ -1220,7 +1220,7 @@ sequence.
 <p>
 Given how Randoop treats sequences and checks differently, it makes
 more sense for a call like <code>l.equals(l)</code> to be expressed as
-a <a href="javadoc/randoop/Check.html">Check</a>, so that it is always
+a <a href="../api/randoop/test/Check.html">Check</a>, so that it is always
 (not randomly) performed.
 </p>
 
@@ -1232,22 +1232,22 @@ a <a href="javadoc/randoop/Check.html">Check</a>, so that it is always
 <h2 id="code-entry">Main entry points</h2>
 
 <ul>
-<li><a href="javadoc/randoop/main/GenTests.html">randoop.main.GenTests</a>
+<li><a href="../api/randoop/main/GenTests.html">randoop.main.GenTests</a>
 is the main class for Randoop as it is normally used.  There are other
 mains for other purposes.
 </li>
 <li>Method <code>handle</code> is the
-main <a href="javadoc/randoop/main/GenTests.html">GenTests</a>
+main <a href="../api/randoop/main/GenTests.html">GenTests</a>
 entrypoint for Randoop. (This is not strictly true, as Randoop's true
 entrypoint is
-class <a href="javadoc/randoop/main/Main.html">randoop.main.Main</a>.
+class <a href="../api/randoop/main/Main.html">randoop.main.Main</a>.
 But <code>GenTests</code> is where all the action starts with test
 generation.) The <code>handle</code> method is long and mostly deals with
 setting up things before the generation process, and doing things like
 outputting tests after generation.
 </li>
 <li>Most command line options are specified
-in <a href="javadoc/randoop/main/GenInputsAbstract.html">GenInputsAbstract</a>.
+in <a href="../api/randoop/main/GenInputsAbstract.html">GenInputsAbstract</a>.
 </li>
 </ul>
 
