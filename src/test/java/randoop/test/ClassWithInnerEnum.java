@@ -16,7 +16,9 @@ public class ClassWithInnerEnum {
     OFF,
     ON;
 
-    public boolean isOn() { return this != OFF; }
+    public boolean isOn() {
+      return this != OFF;
+    }
   }
 
   public enum OtherToggle {
@@ -26,12 +28,19 @@ public class ClassWithInnerEnum {
       }
     },
     ON {
-      public boolean isOn() { return true; }
+      public boolean isOn() {
+        return true;
+      }
     };
 
     public abstract boolean isOn();
   }
 
-  public Toggle getToggleSwitch() { return toggleSwitch; }
-  public OtherToggle getOtherToggleSwitch() { return  otherToggle; }
+  public Toggle getToggleSwitch() {
+    return toggleSwitch;
+  }
+
+  public OtherToggle getOtherToggleSwitch() {
+    return otherToggle;
+  }
 }

@@ -44,7 +44,6 @@ public class CaptureConversionTest {
     } catch (NoSuchMethodException e) {
       fail("didn't find method: " + e.getMessage());
     }
-
   }
 
   /*
@@ -61,7 +60,10 @@ public class CaptureConversionTest {
    */
   @Test
   public void captureArrayTest() {
-    checkCapture(JDKTypes.LIST_TYPE, ArrayType.ofElementType(ReferenceType.forClass(Integer.class)), listOperations);
+    checkCapture(
+        JDKTypes.LIST_TYPE,
+        ArrayType.ofElementType(ReferenceType.forClass(Integer.class)),
+        listOperations);
   }
 
   /*
@@ -80,16 +82,21 @@ public class CaptureConversionTest {
   public void captureNonsenseContainerTest() {
     ClassOrInterfaceType nonsenseType = ClassOrInterfaceType.forClass(Nonsense.class);
     ClassOrInterfaceType gibberishType = ClassOrInterfaceType.forClass(Gibberish.class);
-    checkCapture(containerType, nonsenseType,  gibberishType, containerOperations);
+    checkCapture(containerType, nonsenseType, gibberishType, containerOperations);
   }
 
   @Test
   public void captureArrayContainerTest() {
     try {
-      checkCapture(containerType, ArrayType.ofElementType(ReferenceType.forClass(Integer.class)), containerOperations);
+      checkCapture(
+          containerType,
+          ArrayType.ofElementType(ReferenceType.forClass(Integer.class)),
+          containerOperations);
       fail("instantiate should throw exception");
     } catch (IllegalArgumentException e) {
-      assertTrue("instantiate exception mismatch: " + e.getMessage(), e.getMessage().indexOf("type argument java.lang.Integer[] does not match") >= 0);
+      assertTrue(
+          "instantiate exception mismatch: " + e.getMessage(),
+          e.getMessage().indexOf("type argument java.lang.Integer[] does not match") >= 0);
     }
   }
 
@@ -102,7 +109,10 @@ public class CaptureConversionTest {
    * @param paramType  the wildcard bound
    * @param genericOperations  the set of operations with the wildcard types
    */
-  private void checkCapture(GenericClassType genericClassType, ReferenceType paramType, List<TypedOperation> genericOperations) {
+  private void checkCapture(
+      GenericClassType genericClassType,
+      ReferenceType paramType,
+      List<TypedOperation> genericOperations) {
     checkCapture(genericClassType, paramType, paramType, genericOperations);
   }
 
@@ -117,7 +127,11 @@ public class CaptureConversionTest {
    * @param actualArgType  the actual argument type
    * @param genericOperations  the set of operations with the wildcard types
    */
-  private void checkCapture(GenericClassType genericClassType, ReferenceType paramType, ReferenceType actualArgType, List<TypedOperation> genericOperations) {
+  private void checkCapture(
+      GenericClassType genericClassType,
+      ReferenceType paramType,
+      ReferenceType actualArgType,
+      List<TypedOperation> genericOperations) {
     InstantiatedType finalType = genericClassType.instantiate(actualArgType);
     InstantiatedType instantiatedType = sourceType.instantiate(paramType);
     Substitution<ReferenceType> substitution = instantiatedType.getTypeSubstitution();
@@ -131,18 +145,20 @@ public class CaptureConversionTest {
         convertedArgumentType = convertedArgumentType.apply(wcSubst);
       }
       if (op.hasWildcardTypes()) {
-        assertEquals("should be instantiated type for method " + op.getName() + " argument.", finalType, convertedArgumentType);
+        assertEquals(
+            "should be instantiated type for method " + op.getName() + " argument.",
+            finalType,
+            convertedArgumentType);
       } else {
-        assertEquals("should not be converted " + op.getName(), argumentType, convertedArgumentType);
+        assertEquals(
+            "should not be converted " + op.getName(), argumentType, convertedArgumentType);
       }
     }
   }
-
 
   private InstantiatedType getArgumentType(TypedOperation op) {
     TypeTuple inputTypes = op.getInputTypes();
     assert inputTypes.size() == 2;
     return (InstantiatedType) inputTypes.get(1);
   }
-
 }

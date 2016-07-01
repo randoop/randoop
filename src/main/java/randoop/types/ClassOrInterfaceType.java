@@ -41,7 +41,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return true;
     }
 
-    if (! otherType.isReferenceType()) {
+    if (!otherType.isReferenceType()) {
       return false;
     }
 
@@ -62,9 +62,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     ClassOrInterfaceType superClassType = this.getSuperclass();
     return superClassType != null
-            && !superClassType.equals(ConcreteTypes.OBJECT_TYPE)
-            && (superClassType.equals(otherType)
-                || superClassType.isSubtypeOf(otherType));
+        && !superClassType.equals(ConcreteTypes.OBJECT_TYPE)
+        && (superClassType.equals(otherType) || superClassType.isSubtypeOf(otherType));
   }
 
   /**
@@ -131,13 +130,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
 
     if (type instanceof Class<?>) {
-      Class<?> classType = (Class<?>)type;
+      Class<?> classType = (Class<?>) type;
       return ClassOrInterfaceType.forClass(classType);
     }
 
     throw new IllegalArgumentException("Unable to create class type from type " + type);
   }
-
 
   /**
    * Finds the parameterized type that is a supertype of this class that also matches the given
@@ -147,8 +145,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @return the instantiated type matching the goal type, or null
    */
   public InstantiatedType getMatchingSupertype(GenericClassType goalType) {
-    if (this.isObject()
-            && ! goalType.getRuntimeClass().isAssignableFrom(this.getRuntimeClass())) {
+    if (this.isObject() && !goalType.getRuntimeClass().isAssignableFrom(this.getRuntimeClass())) {
       return null;
     }
 
@@ -157,7 +154,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       for (ClassOrInterfaceType interfaceType : interfaces) {
         if (goalType.getRuntimeClass().isAssignableFrom(interfaceType.getRuntimeClass())) {
           if (interfaceType.isParameterized()) {
-            InstantiatedType type = (InstantiatedType)interfaceType;
+            InstantiatedType type = (InstantiatedType) interfaceType;
             if (type.isInstantiationOf(goalType)) {
               return (InstantiatedType) interfaceType;
             }
@@ -174,10 +171,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     ClassOrInterfaceType superclass = this.getSuperclass();
     if (superclass != null
-            && ! superclass.isObject()
-            && goalType.getRuntimeClass().isAssignableFrom(superclass.getRuntimeClass())) {
+        && !superclass.isObject()
+        && goalType.getRuntimeClass().isAssignableFrom(superclass.getRuntimeClass())) {
       if (superclass.isInstantiationOf(goalType)) {
-        return (InstantiatedType)superclass;
+        return (InstantiatedType) superclass;
       }
 
       return superclass.getMatchingSupertype(goalType);

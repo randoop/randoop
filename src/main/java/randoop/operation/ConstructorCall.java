@@ -99,12 +99,18 @@ public final class ConstructorCall extends CallableOperation {
    * @see TypedClassOperation#appendCode(List, StringBuilder)
    */
   @Override
-  public void appendCode(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b) {
-    assert declaringType instanceof ClassOrInterfaceType: "constructor must be member of class";
+  public void appendCode(
+      GeneralType declaringType,
+      TypeTuple inputTypes,
+      GeneralType outputType,
+      List<Variable> inputVars,
+      StringBuilder b) {
+    assert declaringType instanceof ClassOrInterfaceType : "constructor must be member of class";
 
-    ClassOrInterfaceType declaringClassType = (ClassOrInterfaceType)declaringType;
+    ClassOrInterfaceType declaringClassType = (ClassOrInterfaceType) declaringType;
 
-    boolean isNonStaticMemberClass = ! declaringClassType.isStatic() && declaringClassType.isMemberClass();
+    boolean isNonStaticMemberClass =
+        !declaringClassType.isStatic() && declaringClassType.isMemberClass();
     assert Util.implies(isNonStaticMemberClass, !inputVars.isEmpty());
 
     // Note on isNonStaticMember: if a class is a non-static member class, the
@@ -113,9 +119,12 @@ public final class ConstructorCall extends CallableOperation {
     // it out as source code, we need to treat it as a special case: instead
     // of printing "new Foo(x,y,z)" we have to print "x.new Foo(y,z)".
     b.append(isNonStaticMemberClass ? inputVars.get(0) + "." : "")
-            .append("new ")
-            .append(isNonStaticMemberClass ? declaringClassType.getClassName() : declaringClassType.getName())
-            .append("(");
+        .append("new ")
+        .append(
+            isNonStaticMemberClass
+                ? declaringClassType.getClassName()
+                : declaringClassType.getName())
+        .append("(");
 
     for (int i = (isNonStaticMemberClass ? 1 : 0); i < inputVars.size(); i++) {
       if (i > (isNonStaticMemberClass ? 1 : 0)) b.append(", ");
@@ -217,7 +226,8 @@ public final class ConstructorCall extends CallableOperation {
    * @return signature string for constructor
    */
   @Override
-  public String toParsableString(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
+  public String toParsableString(
+      GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
     StringBuilder sb = new StringBuilder();
     sb.append(constructor.getName()).append(".<init>(");
     Class<?>[] params = constructor.getParameterTypes();

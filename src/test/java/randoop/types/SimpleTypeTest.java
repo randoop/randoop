@@ -210,7 +210,9 @@ public class SimpleTypeTest {
     GeneralType subclassType = new SimpleClassOrInterfaceType(randoop.types.test.Subclass.class);
     GeneralType intArrayType = ArrayType.ofElementType(intType);
     GeneralType intArrayListType;
-    intArrayListType = GenericClassType.forClass(ArrayList.class).instantiate(ReferenceType.forClass(Integer.class));
+    intArrayListType =
+        GenericClassType.forClass(ArrayList.class)
+            .instantiate(ReferenceType.forClass(Integer.class));
 
     assertTrue("Object is assignable from all types", objectType.isAssignableFrom(objectType));
     assertTrue("Object is assignable from all types", objectType.isAssignableFrom(booleanType));
@@ -281,7 +283,9 @@ public class SimpleTypeTest {
   public void testRawtypeAssignability() {
     GeneralType rawALType = new SimpleClassOrInterfaceType(ArrayList.class);
     GeneralType parameterizedALType;
-    parameterizedALType = GenericClassType.forClass(ArrayList.class).instantiate(new SimpleClassOrInterfaceType(String.class));
+    parameterizedALType =
+        GenericClassType.forClass(ArrayList.class)
+            .instantiate(new SimpleClassOrInterfaceType(String.class));
     assertTrue(
         "ArrayList is assignable from ArrayList<String>",
         rawALType.isAssignableFrom(parameterizedALType));
@@ -301,7 +305,9 @@ public class SimpleTypeTest {
     // class I {}
     // class J<T> extends I {}
     GeneralType iType = GeneralType.forClass(I.class);
-    GeneralType strJType = GenericClassType.forClass(J.class).instantiate(new SimpleClassOrInterfaceType(String.class));
+    GeneralType strJType =
+        GenericClassType.forClass(J.class)
+            .instantiate(new SimpleClassOrInterfaceType(String.class));
     assertTrue("J<String> is assignable to I", iType.isAssignableFrom(strJType));
   }
 }

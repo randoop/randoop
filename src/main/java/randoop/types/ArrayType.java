@@ -52,8 +52,7 @@ public class ArrayType extends ReferenceType {
       return false;
     }
     ArrayType t = (ArrayType) obj;
-    return elementType.equals(t.elementType)
-            && runtimeClass.equals(t.runtimeClass);
+    return elementType.equals(t.elementType) && runtimeClass.equals(t.runtimeClass);
   }
 
   @Override
@@ -93,7 +92,7 @@ public class ArrayType extends ReferenceType {
     if (otherType.isArray() && this.elementType.isParameterized()) {
       GeneralType otherElementType = ((ArrayType) otherType).elementType;
       return otherElementType.isRawtype()
-              && otherElementType.hasRuntimeClass(this.elementType.getRuntimeClass());
+          && otherElementType.hasRuntimeClass(this.elementType.getRuntimeClass());
     }
 
     return false;
@@ -128,7 +127,7 @@ public class ArrayType extends ReferenceType {
     }
 
     if (otherType.isArray() && elementType.isReferenceType()) {
-      ArrayType otherArrayType = (ArrayType)otherType;
+      ArrayType otherArrayType = (ArrayType) otherType;
       return otherArrayType.elementType.isReferenceType()
           && this.elementType.isSubtypeOf(otherArrayType.elementType);
     }
@@ -139,11 +138,11 @@ public class ArrayType extends ReferenceType {
   @Override
   public ArrayType apply(Substitution<ReferenceType> substitution) {
     GeneralType type = elementType.apply(substitution);
-    if (type != null && ! type.equals(this)) {
-        return ArrayType.ofElementType(type);
-      } else {
-        return this;
-      }
+    if (type != null && !type.equals(this)) {
+      return ArrayType.ofElementType(type);
+    } else {
+      return this;
+    }
   }
 
   /**
@@ -162,7 +161,7 @@ public class ArrayType extends ReferenceType {
    * @return the {@code ArrayType} for the given class object
    */
   public static ArrayType forClass(Class<?> arrayClass) {
-    if (! arrayClass.isArray()) {
+    if (!arrayClass.isArray()) {
       throw new IllegalArgumentException("type must be an array");
     }
 
@@ -181,13 +180,13 @@ public class ArrayType extends ReferenceType {
    */
   public static ArrayType forType(Type type) {
     if (type instanceof java.lang.reflect.GenericArrayType) {
-      java.lang.reflect.GenericArrayType arrayType = (java.lang.reflect.GenericArrayType)type;
+      java.lang.reflect.GenericArrayType arrayType = (java.lang.reflect.GenericArrayType) type;
       GeneralType elementType = GeneralType.forType(arrayType.getGenericComponentType());
       return ArrayType.ofElementType(elementType);
     }
 
     if (type instanceof Class<?>) {
-      return ArrayType.forClass((Class<?>)type);
+      return ArrayType.forClass((Class<?>) type);
     }
 
     throw new IllegalArgumentException("type must be an array type");
@@ -210,6 +209,7 @@ public class ArrayType extends ReferenceType {
     if (elementType instanceof TypeVariable) {
       return new ArrayType(elementType, Array.newInstance(Object.class, 0).getClass());
     }
-    return new ArrayType(elementType, Array.newInstance(elementType.getRuntimeClass(), 0).getClass());
+    return new ArrayType(
+        elementType, Array.newInstance(elementType.getRuntimeClass(), 0).getClass());
   }
 }

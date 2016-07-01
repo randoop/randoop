@@ -87,5 +87,6 @@ class ConcreteWithOperations extends GenericWithOperations<String> {
   }
 }
 
-interface BaseStream<T, S extends BaseStream<T,S>> {}
+interface BaseStream<T, S extends BaseStream<T, S>> {}
+
 interface Stream<T> extends BaseStream<T, Stream<T>> {}

@@ -13,14 +13,17 @@ public class ConcreteClass {
 
   public int[] thePublicArray;
 
-  @TestValue
-  public static String thePublicStaticField = "thevalue";
+  @TestValue public static String thePublicStaticField = "thevalue";
 
   private int thePrivateField;
 
   private final int thePrivateFinalField;
 
-  public ConcreteClass(String thePublicField, int thePrivateField, int thePrivateFinalField, int thePublicFinalField) {
+  public ConcreteClass(
+      String thePublicField,
+      int thePrivateField,
+      int thePrivateFinalField,
+      int thePublicFinalField) {
     this.thePublicField = thePublicField;
     this.thePrivateField = thePrivateField;
     this.thePrivateFinalField = thePrivateFinalField;
@@ -30,17 +33,21 @@ public class ConcreteClass {
 
   @Override
   public boolean equals(Object obj) {
-    if (! (obj instanceof ConcreteClass)) {
+    if (!(obj instanceof ConcreteClass)) {
       return false;
     }
     return true;
   }
 
-  public int getThePrivateField() { return thePrivateField; }
+  public int getThePrivateField() {
+    return thePrivateField;
+  }
 
   public <T> void setThePublicField(T value) {
     thePublicField = value.toString();
   }
 
-  public void setThePrivateField(int i) { thePrivateField = i; }
+  public void setThePrivateField(int i) {
+    thePrivateField = i;
+  }
 }

@@ -105,7 +105,12 @@ public class FieldSet extends CallableOperation {
    *          the StringBuilder to which code is issued.
    */
   @Override
-  public void appendCode(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b) {
+  public void appendCode(
+      GeneralType declaringType,
+      TypeTuple inputTypes,
+      GeneralType outputType,
+      List<Variable> inputVars,
+      StringBuilder b) {
 
     b.append(field.toCode(declaringType, inputVars));
     b.append(" = ");
@@ -131,7 +136,8 @@ public class FieldSet extends CallableOperation {
    * @return the parseable string descriptor for this setter
    */
   @Override
-  public String toParsableString(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
+  public String toParsableString(
+      GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
     return declaringType.getName() + ".<set>(" + field.getName() + ")";
   }
 
@@ -173,14 +179,19 @@ public class FieldSet extends CallableOperation {
     fieldType = GeneralType.forType(accessibleField.getRawField().getGenericType());
 
     if (accessibleField.isFinal()) {
-      throw new OperationParseException("Cannot create setter for final field " + classname + "." + opname);
+      throw new OperationParseException(
+          "Cannot create setter for final field " + classname + "." + opname);
     }
     List<GeneralType> setInputTypeList = new ArrayList<>();
-    if (! accessibleField.isStatic()) {
+    if (!accessibleField.isStatic()) {
       setInputTypeList.add(classType);
     }
     setInputTypeList.add(fieldType);
-    return new TypedClassOperation(new FieldSet(accessibleField), classType, new TypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
+    return new TypedClassOperation(
+        new FieldSet(accessibleField),
+        classType,
+        new TypeTuple(setInputTypeList),
+        ConcreteTypes.VOID_TYPE);
   }
 
   @Override
@@ -233,5 +244,4 @@ public class FieldSet extends CallableOperation {
   public boolean satisfies(ReflectionPredicate predicate) {
     return field.satisfies(predicate);
   }
-
 }

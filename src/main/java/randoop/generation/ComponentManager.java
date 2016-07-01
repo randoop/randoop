@@ -192,10 +192,11 @@ public class ComponentManager {
     if (operation instanceof TypedClassOperation) {
       if (classLiterals != null || packageLiterals != null) {
 
-        GeneralType declaringCls = ((TypedClassOperation)operation).getDeclaringType();
+        GeneralType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
         if (declaringCls != null) {
           if (classLiterals != null) {
-            SimpleList<Sequence> sl = classLiterals.getSequences((ClassOrInterfaceType) declaringCls, neededType);
+            SimpleList<Sequence> sl =
+                classLiterals.getSequences((ClassOrInterfaceType) declaringCls, neededType);
             if (!sl.isEmpty()) {
               ret = new ListOfLists<>(ret, sl);
             }

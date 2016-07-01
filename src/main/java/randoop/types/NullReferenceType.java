@@ -40,12 +40,10 @@ class NullReferenceType extends ReferenceType {
 
   @Override
   public boolean isSubtypeOf(GeneralType otherType) {
-    return !otherType.equals(ConcreteTypes.VOID_TYPE)
-            && otherType.isReferenceType();
+    return !otherType.equals(ConcreteTypes.VOID_TYPE) && otherType.isReferenceType();
   }
 
   static NullReferenceType getNullType() {
     return value;
   }
-
 }

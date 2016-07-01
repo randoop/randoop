@@ -94,5 +94,4 @@ class CheckRepExtractor extends DefaultClassVisitor {
             + " during generation.";
     System.out.println(msg);
   }
-
 }

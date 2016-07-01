@@ -26,10 +26,10 @@ public class VariableTypeBound extends ParameterBound {
    */
   @Override
   public boolean equals(Object obj) {
-    if (! (obj instanceof VariableTypeBound)) {
+    if (!(obj instanceof VariableTypeBound)) {
       return false;
     }
-    VariableTypeBound var = (VariableTypeBound)obj;
+    VariableTypeBound var = (VariableTypeBound) obj;
     return this.typeVariable.equals(var.typeVariable);
   }
 
@@ -76,7 +76,7 @@ public class VariableTypeBound extends ParameterBound {
   /**
    * Applies a substitution to this type variable parameter, and returns a new parameter bound for
    * the substituted type.
-
+   *
    * @param substitution  the substitution
    * @return a {@link ParameterBound} for the type substituted for this variable, or null if there is none
    */

@@ -61,9 +61,12 @@ public class SequenceCollection {
   private void checkRep() {
     if (!GenInputsAbstract.debug_checks) return;
     if (sequenceMap.size() != typeSet.size()) {
-      String b = "activesequences types=" + Globals.lineSep
+      String b =
+          "activesequences types="
+              + Globals.lineSep
               + sequenceMap.keySet()
-              + ", typesWithsequencesMap types=" + Globals.lineSep
+              + ", typesWithsequencesMap types="
+              + Globals.lineSep
               + typeSet.typesWithsequences;
       throw new IllegalStateException(b);
     }
@@ -150,9 +153,10 @@ public class SequenceCollection {
     assert formalTypes.size() == arguments.size();
     for (int i = 0; i < formalTypes.size(); i++) {
       Variable argument = arguments.get(i);
-      assert formalTypes
-          .get(i)
-          .isAssignableFrom(argument.getType()) : formalTypes.get(i).getName() + " should be assignable from " + argument.getType().getName();
+      assert formalTypes.get(i).isAssignableFrom(argument.getType())
+          : formalTypes.get(i).getName()
+              + " should be assignable from "
+              + argument.getType().getName();
       if (sequence.isActive(argument.getDeclIndex())) {
         GeneralType type = formalTypes.get(i);
         typeSet.add(type);
@@ -169,15 +173,15 @@ public class SequenceCollection {
    * @param type  the {@link GeneralType}
    */
   private void updateCompatibleMap(Sequence sequence, GeneralType type) {
-      ArrayListSimpleList<Sequence> set = this.sequenceMap.get(type);
-      if (set == null) {
-        set = new ArrayListSimpleList<>();
-        this.sequenceMap.put(type, set);
-      }
-      if (Log.isLoggingOn()) Log.logLine("Adding sequence of type " + type);
-      boolean added = set.add(sequence);
-      sequenceCount++;
-      assert added;
+    ArrayListSimpleList<Sequence> set = this.sequenceMap.get(type);
+    if (set == null) {
+      set = new ArrayListSimpleList<>();
+      this.sequenceMap.put(type, set);
+    }
+    if (Log.isLoggingOn()) Log.logLine("Adding sequence of type " + type);
+    boolean added = set.add(sequence);
+    sequenceCount++;
+    assert added;
   }
 
   /**
@@ -232,5 +236,4 @@ public class SequenceCollection {
     }
     return result;
   }
-
 }

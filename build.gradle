@@ -485,5 +485,12 @@ task tags(type: Exec, dependsOn: 'clone') {
 task validate(type: Exec, dependsOn: 'clone') {
   description "Run html5validator to find HTML errors"
   environment PATH: "$System.env.PATH:/homes/gws/mernst/.local/bin/html5validator"
-  commandLine "html5validator", "--ignore", "/build/docs/api/", "/build/docs/javadoc/"
+  commandLine "html5validator", "--ignore", "/build/"
 }
+
+task installGitHooks(type: Copy) {
+  from 'bin/pre-commit'
+  into '.git/hooks'
+}
+/* Always run this task. */
+tasks.installGitHooks.execute()

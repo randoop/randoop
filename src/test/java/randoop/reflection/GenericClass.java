@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * A generic class for testing type and operation harvesting.
-  */
+ */
 public class GenericClass<T> {
   public T theField;
   public List<T> theGenericList;
@@ -29,10 +29,21 @@ public class GenericClass<T> {
     theField = theValue;
   }
 
-  public List<T> getTheList() { return theGenericList; }
-  public List<Integer> getTheIntegerList() { return theIntegerList; }
-  public T[] getTheGenericArray() { return theGenericArray; }
-  public Integer[] getTheIntegerArray() { return theIntegerArray; }
+  public List<T> getTheList() {
+    return theGenericList;
+  }
+
+  public List<Integer> getTheIntegerList() {
+    return theIntegerList;
+  }
+
+  public T[] getTheGenericArray() {
+    return theGenericArray;
+  }
+
+  public Integer[] getTheIntegerArray() {
+    return theIntegerArray;
+  }
 
   public void addAll(T[] a) {
     for (T t : a) {
@@ -45,6 +56,7 @@ public class GenericClass<T> {
   }
 
   // this is a concrete operation inside of a generic class should be in generic operations pool
-  public int getTheGenericListLength() { return theGenericList.size(); }
-
+  public int getTheGenericListLength() {
+    return theGenericList.size();
+  }
 }

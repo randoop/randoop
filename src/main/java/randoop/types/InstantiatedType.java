@@ -52,8 +52,7 @@ public class InstantiatedType extends ParameterizedType {
       return false;
     }
     InstantiatedType t = (InstantiatedType) obj;
-    return instantiatedType.equals(t.instantiatedType)
-            && argumentList.equals(t.argumentList);
+    return instantiatedType.equals(t.instantiatedType) && argumentList.equals(t.argumentList);
   }
 
   @Override
@@ -88,8 +87,7 @@ public class InstantiatedType extends ParameterizedType {
     }
 
     // unchecked conversion
-    return otherType.isRawtype()
-            && otherType.hasRuntimeClass(this.getRuntimeClass());
+    return otherType.isRawtype() && otherType.hasRuntimeClass(this.getRuntimeClass());
   }
 
   @Override
@@ -159,7 +157,8 @@ public class InstantiatedType extends ParameterizedType {
       List<TypeArgument> thisTypeArguments = this.getTypeArguments();
       assert otherTypeArguments.size() == thisTypeArguments.size();
       int i = 0;
-      while (i < thisTypeArguments.size() && otherTypeArguments.get(i).contains(thisTypeArguments.get(i))) {
+      while (i < thisTypeArguments.size()
+          && otherTypeArguments.get(i).contains(thisTypeArguments.get(i))) {
         i++;
       }
       if (i == thisTypeArguments.size()) {
@@ -180,7 +179,6 @@ public class InstantiatedType extends ParameterizedType {
     InstantiatedType superType = this.getMatchingSupertype(pt.instantiatedType);
 
     return superType != null && pt.equals(superType);
-
   }
 
   /**
@@ -193,8 +191,8 @@ public class InstantiatedType extends ParameterizedType {
   public Substitution<ReferenceType> getTypeSubstitution() {
     List<ReferenceType> arguments = new ArrayList<>();
     for (TypeArgument arg : this.getTypeArguments()) {
-      if (! arg.isWildcard()) {
-        arguments.add(((ReferenceArgument)arg).getReferenceType());
+      if (!arg.isWildcard()) {
+        arguments.add(((ReferenceArgument) arg).getReferenceType());
       }
     }
     Substitution<ReferenceType> substitution = null;
@@ -276,8 +274,9 @@ public class InstantiatedType extends ParameterizedType {
    * @return the superclass type for this parameterized type
    */
   @Override
-  public ClassOrInterfaceType getSuperclass(){
-    Substitution<ReferenceType> substitution = Substitution.forArgs(instantiatedType.getTypeParameters(), getReferenceArguments());
+  public ClassOrInterfaceType getSuperclass() {
+    Substitution<ReferenceType> substitution =
+        Substitution.forArgs(instantiatedType.getTypeParameters(), getReferenceArguments());
     ClassOrInterfaceType superclass = this.instantiatedType.getSuperclass(substitution);
     return superclass;
   }
@@ -286,7 +285,8 @@ public class InstantiatedType extends ParameterizedType {
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
     List<ClassOrInterfaceType> interfaces = new ArrayList<>();
-    Substitution<ReferenceType> substitution = Substitution.forArgs(instantiatedType.getTypeParameters(), getReferenceArguments());
+    Substitution<ReferenceType> substitution =
+        Substitution.forArgs(instantiatedType.getTypeParameters(), getReferenceArguments());
     for (ClassOrInterfaceType type : instantiatedType.getInterfaces(substitution)) {
       interfaces.add(type);
     }
@@ -311,7 +311,7 @@ public class InstantiatedType extends ParameterizedType {
    * @return the capture conversion type for this type
    */
   public InstantiatedType applyCaptureConversion() {
-    if (! this.hasWildcardArgument()) {
+    if (!this.hasWildcardArgument()) {
       return this;
     }
 
@@ -320,14 +320,15 @@ public class InstantiatedType extends ParameterizedType {
       if (argument.isWildcard()) {
         convertedTypeList.add(new CaptureTypeVariable((WildcardArgument) argument));
       } else {
-        convertedTypeList.add(((ReferenceArgument)argument).getReferenceType());
+        convertedTypeList.add(((ReferenceArgument) argument).getReferenceType());
       }
     }
 
-    Substitution<ReferenceType> substitution = Substitution.forArgs(instantiatedType.getTypeParameters(), convertedTypeList);
+    Substitution<ReferenceType> substitution =
+        Substitution.forArgs(instantiatedType.getTypeParameters(), convertedTypeList);
     for (int i = 0; i < convertedTypeList.size(); i++) {
       if (convertedTypeList.get(i).isCaptureVariable()) {
-        CaptureTypeVariable captureVariable = (CaptureTypeVariable)convertedTypeList.get(i);
+        CaptureTypeVariable captureVariable = (CaptureTypeVariable) convertedTypeList.get(i);
         captureVariable.convert(instantiatedType.getFormalTypeParameters().get(i), substitution);
       }
     }
@@ -371,13 +372,12 @@ public class InstantiatedType extends ParameterizedType {
   private List<ReferenceType> getReferenceArguments() {
     List<ReferenceType> referenceArgList = new ArrayList<>();
     for (TypeArgument argument : argumentList) {
-      if (! argument.isWildcard()) {
-        referenceArgList.add(((ReferenceArgument)argument).getReferenceType());
+      if (!argument.isWildcard()) {
+        referenceArgList.add(((ReferenceArgument) argument).getReferenceType());
       } else {
         throw new IllegalArgumentException("cannot convert a wildcard to a reference type");
       }
     }
     return referenceArgList;
   }
-
 }

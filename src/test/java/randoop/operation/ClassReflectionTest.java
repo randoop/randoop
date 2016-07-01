@@ -36,10 +36,12 @@ public class ClassReflectionTest {
   }
 
   private Set<TypedOperation> getConcreteOperations(Class<?> c) {
-    return getConcreteOperations(c, new DefaultReflectionPredicate(), new PublicVisibilityPredicate());
+    return getConcreteOperations(
+        c, new DefaultReflectionPredicate(), new PublicVisibilityPredicate());
   }
 
-  private Set<TypedOperation> getConcreteOperations(Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
+  private Set<TypedOperation> getConcreteOperations(
+      Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     final Set<TypedOperation> operations = new LinkedHashSet<>();
     OperationExtractor extractor = new OperationExtractor(classType, operations, predicate);
@@ -65,7 +67,7 @@ public class ClassReflectionTest {
     assertEquals("number of outer operations", 2, outerActual.size());
 
     TypedOperation constructorOp = null;
-    for(TypedOperation op : outerActual) {
+    for (TypedOperation op : outerActual) {
       if (op.isConstructorCall()) {
         constructorOp = op;
       }
@@ -79,8 +81,11 @@ public class ClassReflectionTest {
     sequence = sequence.extend(constructorOp, new Variable(sequence, 0));
 
     randoop.test.ClassWithInnerClass.A a4 = classWithInnerClass1.new A("blah", 29);
-    sequence = sequence.extend(TypedOperation.createPrimitiveInitialization(ConcreteTypes.STRING_TYPE, "blah"));
-    sequence = sequence.extend(TypedOperation.createPrimitiveInitialization(ConcreteTypes.INT_TYPE, 29));
+    sequence =
+        sequence.extend(
+            TypedOperation.createPrimitiveInitialization(ConcreteTypes.STRING_TYPE, "blah"));
+    sequence =
+        sequence.extend(TypedOperation.createPrimitiveInitialization(ConcreteTypes.INT_TYPE, 29));
 
     TypedOperation innerConstructorOp = null;
     for (TypedOperation op : innerActual) {
@@ -89,11 +94,18 @@ public class ClassReflectionTest {
       }
     }
     assert innerConstructorOp != null : "should find inner class constructor";
-    sequence = sequence.extend(innerConstructorOp, new Variable(sequence, 1), new Variable(sequence, 2), new Variable(sequence, 3));
+    sequence =
+        sequence.extend(
+            innerConstructorOp,
+            new Variable(sequence, 1),
+            new Variable(sequence, 2),
+            new Variable(sequence, 3));
 
-    String expectedCode = "randoop.test.ClassWithInnerClass classWithInnerClass1 = new randoop.test.ClassWithInnerClass(1);" + Globals.lineSep
-            + "randoop.test.ClassWithInnerClass.A a4 = classWithInnerClass1.new A(\"blah\", 29);" + Globals.lineSep;
-
+    String expectedCode =
+        "randoop.test.ClassWithInnerClass classWithInnerClass1 = new randoop.test.ClassWithInnerClass(1);"
+            + Globals.lineSep
+            + "randoop.test.ClassWithInnerClass.A a4 = classWithInnerClass1.new A(\"blah\", 29);"
+            + Globals.lineSep;
 
     assertEquals("code test", expectedCode, sequence.toCodeString());
 

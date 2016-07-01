@@ -48,12 +48,12 @@ class TypeTupleSet {
       for (ReferenceType type : types) {
         List<ReferenceType> extTuple = new ArrayList<>(tuple);
         extTuple.add(type);
-        assert extTuple.size() == tupleLength : "tuple lengths don't match, expected: " + tupleLength + " have " + extTuple.size();
+        assert extTuple.size() == tupleLength
+            : "tuple lengths don't match, expected: " + tupleLength + " have " + extTuple.size();
         tupleList.add(extTuple);
       }
     }
     typeTuples = tupleList;
-
   }
 
   /**
@@ -64,21 +64,22 @@ class TypeTupleSet {
    * @return the list of substitutions that instantiate the type arguments
    */
   List<Substitution<ReferenceType>> filter(List<AbstractTypeVariable> typeParameters) {
-    assert typeParameters.size() == tupleLength: "tuple size " + tupleLength + " must equal number of parameters " + typeParameters.size();
+    assert typeParameters.size() == tupleLength
+        : "tuple size " + tupleLength + " must equal number of parameters " + typeParameters.size();
     List<Substitution<ReferenceType>> substitutionSet = new ArrayList<>();
     List<List<ReferenceType>> tupleList = new ArrayList<>();
     for (List<ReferenceType> tuple : typeTuples) {
       Substitution<ReferenceType> substitution = Substitution.forArgs(typeParameters, tuple);
 
       int i = 0;
-      while (i < tuple.size() && typeParameters.get(i).getTypeBound().isSatisfiedBy(tuple.get(i), substitution)) {
+      while (i < tuple.size()
+          && typeParameters.get(i).getTypeBound().isSatisfiedBy(tuple.get(i), substitution)) {
         i++;
       }
       if (i == tuple.size()) {
         substitutionSet.add(substitution);
         tupleList.add(tuple);
       }
-
     }
     typeTuples = tupleList;
     return substitutionSet;

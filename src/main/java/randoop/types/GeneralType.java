@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * Represents Java types in Randoop, including parameterized types.
-  * Should be used for types in test generation rather than reflection type {@code Class<?>}.
+ * Should be used for types in test generation rather than reflection type {@code Class<?>}.
  *
  * @see ReferenceType
  * @see PrimitiveType
@@ -137,7 +137,9 @@ public abstract class GeneralType {
    *
    * @return true if this object represents an interface type, false otherwise
    */
-  public boolean isInterface() { return false; }
+  public boolean isInterface() {
+    return false;
+  }
 
   /**
    * Indicate whether this is the {@code Object} type.
@@ -187,7 +189,9 @@ public abstract class GeneralType {
    *
    * @return true if this type is a reference type, and false otherwise.
    */
-  public boolean isReferenceType() { return false; }
+  public boolean isReferenceType() {
+    return false;
+  }
 
   /**
    * Indicates whether this type is the String type.
@@ -345,11 +349,10 @@ public abstract class GeneralType {
     }
 
     if (type instanceof Class<?>) {
-      return GeneralType.forClass((Class<?>)type);
+      return GeneralType.forClass((Class<?>) type);
     }
 
     return ReferenceType.forType(type);
-
   }
 
   /**
@@ -369,5 +372,4 @@ public abstract class GeneralType {
   public List<AbstractTypeVariable> getTypeParameters() {
     return new ArrayList<>();
   }
-
 }

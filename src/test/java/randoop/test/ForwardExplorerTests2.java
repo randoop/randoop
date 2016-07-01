@@ -31,21 +31,20 @@ import randoop.util.ReflectionExecutor;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-
-public class ForwardExplorerTests2  {
+public class ForwardExplorerTests2 {
 
   private static OptionsCache optionsCache;
 
-   @BeforeClass
-   public static void setup() {
-     optionsCache = new OptionsCache();
-     optionsCache.saveState();
-   }
+  @BeforeClass
+  public static void setup() {
+    optionsCache = new OptionsCache();
+    optionsCache.saveState();
+  }
 
-   @AfterClass
-   public static void restore() {
-     optionsCache.restoreState();
-   }
+  @AfterClass
+  public static void restore() {
+    optionsCache.restoreState();
+  }
 
   /**
    * The input scenario for this test results in the generation of a sequence
@@ -72,7 +71,9 @@ public class ForwardExplorerTests2  {
     List<TypedOperation> model = getConcreteOperations(classes);
     assertTrue("model should not be empty", model.size() != 0);
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
-    ForwardGenerator exp = new ForwardGenerator(model, new LinkedHashSet<TypedOperation>(), Long.MAX_VALUE, 100, 100, mgr, null, null);
+    ForwardGenerator exp =
+        new ForwardGenerator(
+            model, new LinkedHashSet<TypedOperation>(), Long.MAX_VALUE, 100, 100, mgr, null, null);
     exp.addTestCheckGenerator(createChecker(new ContractSet()));
 
     // get a SequenceExceptionError when repeat_heuristic=true
@@ -91,7 +92,7 @@ public class ForwardExplorerTests2  {
   private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
     final List<TypedOperation> model = new ArrayList<>();
     ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
-    for (Class<?> c: classes) {
+    for (Class<?> c : classes) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
       mgr.apply(new OperationExtractor(classType, model, new DefaultReflectionPredicate()), c);
     }
@@ -99,6 +100,11 @@ public class ForwardExplorerTests2  {
   }
 
   private static TestCheckGenerator createChecker(ContractSet contracts) {
-    return (new GenTests()).createTestCheckGenerator(new PublicVisibilityPredicate(), contracts, new MultiMap<GeneralType, TypedOperation>(), new LinkedHashSet<TypedOperation>());
+    return (new GenTests())
+        .createTestCheckGenerator(
+            new PublicVisibilityPredicate(),
+            contracts,
+            new MultiMap<GeneralType, TypedOperation>(),
+            new LinkedHashSet<TypedOperation>());
   }
 }

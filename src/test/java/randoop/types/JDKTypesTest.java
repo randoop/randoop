@@ -25,7 +25,8 @@ public class JDKTypesTest {
     Set<GenericClassType> collectionTypes = new LinkedHashSet<>();
     for (Field f : JDKTypes.class.getDeclaredFields()) {
       try {
-        if (! f.getName().equals("$jacocoData")  && Modifier.isFinal(Modifier.fieldModifiers() & f.getModifiers())) {
+        if (!f.getName().equals("$jacocoData")
+            && Modifier.isFinal(Modifier.fieldModifiers() & f.getModifiers())) {
           collectionTypes.add((GenericClassType) f.get(null));
         }
       } catch (IllegalAccessException e) {
@@ -38,12 +39,20 @@ public class JDKTypesTest {
       if (classType.equals(JDKTypes.ENUM_SET_TYPE)) { // EnumSet is a special case
         assertTrue("EnumSet should be implemented by itself", classType.equals(implementingType));
       } else if (classType.isInterface() || classType.isAbstract()) {
-        assertTrue("interface " + classType + " may not map to interface or abstract class " + implementingType, !implementingType.isInterface() && !implementingType.isAbstract());
-        assertThat("interface " + classType + " should have subtype " + implementingType, implementingType.isSubtypeOf(classType));
+        assertTrue(
+            "interface "
+                + classType
+                + " may not map to interface or abstract class "
+                + implementingType,
+            !implementingType.isInterface() && !implementingType.isAbstract());
+        assertThat(
+            "interface " + classType + " should have subtype " + implementingType,
+            implementingType.isSubtypeOf(classType));
       } else {
-        assertTrue("classtype " + classType + " should implement itself", classType.equals(implementingType));
+        assertTrue(
+            "classtype " + classType + " should implement itself",
+            classType.equals(implementingType));
       }
     }
-
   }
 }

@@ -115,7 +115,7 @@ public class BinomialHeap {
 
     static {
       java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-              new java.util.LinkedHashMap<>();
+          new java.util.LinkedHashMap<>();
       {
         java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
         indexList.add(0);
@@ -309,8 +309,7 @@ public class BinomialHeap {
   private static randoop.util.TestCoverageInfo randoopCoverageInfo = null;
 
   static {
-    java.util.Map<String, java.util.Set<Integer>> methodToIndices =
-            new java.util.LinkedHashMap<>();
+    java.util.Map<String, java.util.Set<Integer>> methodToIndices = new java.util.LinkedHashMap<>();
     {
       java.util.Set<Integer> indexList = new java.util.LinkedHashSet<>();
       indexList.add(0);

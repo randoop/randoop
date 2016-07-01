@@ -13,7 +13,6 @@ public enum EnumAsPredicate implements Predicate<Integer> {
     public boolean test(Integer integer) {
       return false;
     }
-
   },
   TWO {
     @Override

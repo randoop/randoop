@@ -28,7 +28,8 @@ public class ConcreteTypeTest {
     assertTrue("is not void", !primitiveType.isVoid());
 
     GeneralType classType = GeneralType.forClass(String.class);
-    assertEquals("builds class type correctly", new SimpleClassOrInterfaceType(String.class), classType);
+    assertEquals(
+        "builds class type correctly", new SimpleClassOrInterfaceType(String.class), classType);
     assertTrue("is not primitive", !classType.isPrimitive());
     assertTrue("is not generic", !classType.isGeneric());
     assertTrue("is not array", !classType.isArray());
@@ -45,9 +46,9 @@ public class ConcreteTypeTest {
     Class<?> arrayClass = Array.newInstance(String.class, 0).getClass();
     GeneralType arrayType = GeneralType.forClass(arrayClass);
     assertEquals(
-            "builds array type correctly",
-            ArrayType.ofElementType(new SimpleClassOrInterfaceType(String.class)),
-            arrayType);
+        "builds array type correctly",
+        ArrayType.ofElementType(new SimpleClassOrInterfaceType(String.class)),
+        arrayType);
     assertTrue("is not primitive", !arrayType.isPrimitive());
     assertTrue("is not generic", !arrayType.isGeneric());
     assertTrue("is array", arrayType.isArray());
@@ -63,7 +64,9 @@ public class ConcreteTypeTest {
 
     GeneralType rawClassType = new SimpleClassOrInterfaceType(ArrayList.class);
     assertEquals(
-            "builds raw class type correctly", new SimpleClassOrInterfaceType(ArrayList.class), rawClassType);
+        "builds raw class type correctly",
+        new SimpleClassOrInterfaceType(ArrayList.class),
+        rawClassType);
     assertTrue("is not primitive", !rawClassType.isPrimitive());
     assertTrue("is not generic", !rawClassType.isGeneric());
     assertTrue("is not array", !rawClassType.isArray());
@@ -76,6 +79,5 @@ public class ConcreteTypeTest {
     assertTrue("is reference type", rawClassType.isReferenceType());
     assertTrue("is not String", !rawClassType.isString());
     assertTrue("is not void", !rawClassType.isVoid());
-
-   }
+  }
 }

@@ -34,12 +34,12 @@ public class AccessibleFieldTest {
        * Note: this test shrank because type information lifted beyond operation level.
        */
 
-      assertTrue("field is not static ", ! pf1.isStatic());
+      assertTrue("field is not static ", !pf1.isStatic());
       assertTrue("field is static ", pf2.isStatic());
-      assertTrue("field is not static ", ! pf10.isStatic());
+      assertTrue("field is not static ", !pf10.isStatic());
 
-      assertTrue("field is not final ", ! pf1.isFinal());
-      assertTrue("field is not final", ! pf2.isFinal());
+      assertTrue("field is not final ", !pf1.isFinal());
+      assertTrue("field is not final", !pf2.isFinal());
       assertTrue("field is final ", pf10.isFinal());
 
     } catch (NoSuchFieldException e) {

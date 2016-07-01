@@ -136,7 +136,7 @@
   </tr>
   <tr>
     <td><code>./gradlew check</code></td>
-    <td>to run the all of the tests</td>
+    <td>to run all of the tests</td>
   </tr>
   <tr>
     <td><code>./gradlew testReport</code></td>
@@ -188,15 +188,15 @@
     For instance,
 <ul>
   <li> use
-    <code><pre>
+    <pre><code>
       ./gradlew test --tests="*GenericTypesTest"
-    </pre></code>
+    </code></pre>
     to run only the tests in <code>randoop.types.generics.GenericTypesTest</code>, and
   </li>
   <li> use
-    <code><pre>
+    <pre><code>
       ./gradlew test --tests="*testVar*"
-  </pre> </code>
+  </code></pre>
     to run the test method <code>randoop.types.generics.GenericTypesTest.testVariableParameters</code>.
   </li>
   </ul></li>
@@ -428,7 +428,7 @@ are copied to <code>build/docs/manual/</code>.
   the beginning of the test class:
 </p>
 
-<code><pre>
+<pre><code>
   private static OptionsCache optionsCache;
 
   @BeforeClass
@@ -441,7 +441,7 @@ are copied to <code>build/docs/manual/</code>.
   public static void restore() {
     optionsCache.restoreState();
   }
-</pre></code>
+</code></pre>
 
 <p>
 This uses the <code>randoop.main.OptionsCache</code> class to save the static state of
@@ -480,7 +480,7 @@ of that particular class in a similar way.
    String regressionBasename = "LiteralsReg"; // base filename for generated regression tests
    String errorBasename = "LiteralsErr";      // base filename for generated error tests
 
-   List<String> options =
+   List&lt;String&gt; options =
        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
    options.add("--inputlimit=1000");
    options.add("--testclass=randoop.literals.A");
@@ -513,7 +513,7 @@ of that particular class in a similar way.
        is(equalTo(randoopRunDesc.regressionTestCount)));
 
  }
-</pre></code>
+</code></pre>
 
 <p>
 The options list is exactly what you would give at the command line, except for
@@ -866,7 +866,7 @@ bottom. Recall the example sequence:
   String str = "hi!";
   l.addFirst(str);
   int i = l.size();
-  TreeSet&lt;String&gt; t = new TreeSet&lt;&gt(l);
+  TreeSet&lt;String&gt; t = new TreeSet&lt;&gt;(l);
   Set s = Collections.synchronizedSet(t);
 </pre>
 

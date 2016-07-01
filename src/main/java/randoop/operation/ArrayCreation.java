@@ -92,7 +92,12 @@ public final class ArrayCreation extends CallableOperation {
    * {@inheritDoc}
    */
   @Override
-  public void appendCode(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b) {
+  public void appendCode(
+      GeneralType declaringType,
+      TypeTuple inputTypes,
+      GeneralType outputType,
+      List<Variable> inputVars,
+      StringBuilder b) {
     if (inputVars.size() > length) {
       String msg = "Too many arguments:" + inputVars.size() + " capacity:" + length;
       throw new IllegalArgumentException(msg);
@@ -133,7 +138,7 @@ public final class ArrayCreation extends CallableOperation {
     if (this == o) return true;
     ArrayCreation otherArrayDecl = (ArrayCreation) o;
     return this.elementType.equals(otherArrayDecl.elementType)
-            && this.length == otherArrayDecl.length;
+        && this.length == otherArrayDecl.length;
   }
 
   /**
@@ -145,7 +150,8 @@ public final class ArrayCreation extends CallableOperation {
    * @return string descriptor for array creation
    */
   @Override
-  public String toParsableString(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
+  public String toParsableString(
+      GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
     return elementType.getName() + "[" + Integer.toString(length) + "]";
   }
 

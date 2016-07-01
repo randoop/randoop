@@ -123,7 +123,7 @@ public class ReflectionManager {
 
         // Inner enums
         for (Class<?> ic : c.getDeclaredClasses()) { // look for inner enums
-          if (predicate.isVisible(ic)){
+          if (predicate.isVisible(ic)) {
             if (ic.isEnum()) {
               visitBefore(visitor, ic);
               applyToEnum(visitor, ic);
@@ -290,14 +290,14 @@ public class ReflectionManager {
    * @return true if the method, each parameter type, and the return type are all visible; and false otherwise
    */
   private boolean isVisible(Method m) {
-    if (! predicate.isVisible(m)) {
+    if (!predicate.isVisible(m)) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + m.toGenericString());
         Log.logLine("  reason: the method is not visible from test classes");
       }
       return false;
     }
-    if (! predicate.isVisible(m.getReturnType())) {
+    if (!predicate.isVisible(m.getReturnType())) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + m.toGenericString());
         Log.logLine("  reason: the method's return type is not visible from test classes");
@@ -305,7 +305,7 @@ public class ReflectionManager {
       return false;
     }
     for (Class<?> p : m.getParameterTypes()) {
-      if (! predicate.isVisible(p)) {
+      if (!predicate.isVisible(p)) {
         if (Log.isLoggingOn()) {
           Log.logLine("Will not use: " + m.toGenericString());
           Log.logLine("  reason: the method has a parameter that is not visible from test classes");
@@ -323,7 +323,7 @@ public class ReflectionManager {
    * @return true if the constructor and each parameter type are visible; false, otherwise
    */
   private boolean isVisible(Constructor<?> c) {
-    if (! predicate.isVisible(c)) {
+    if (!predicate.isVisible(c)) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + c.toGenericString());
         Log.logLine("  reason: the constructor is not visible from test classes");
@@ -331,11 +331,11 @@ public class ReflectionManager {
       return false;
     }
     for (Class<?> p : c.getParameterTypes()) {
-      if (! predicate.isVisible(p)) {
+      if (!predicate.isVisible(p)) {
         if (Log.isLoggingOn()) {
           Log.logLine("Will not use: " + c.toGenericString());
           Log.logLine(
-                  "  reason: the constructor has a parameter that is not visible from test classes");
+              "  reason: the constructor has a parameter that is not visible from test classes");
         }
         return false;
       }

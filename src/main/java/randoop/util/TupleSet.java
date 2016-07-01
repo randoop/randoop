@@ -43,7 +43,8 @@ public class TupleSet<E> {
       for (E e : elements) {
         List<E> extTuple = new ArrayList<>(tuple);
         extTuple.add(e);
-        assert extTuple.size() == tupleLength + 1 : "tuple lengths don't match, expected " + tupleLength + " have " + extTuple.size();
+        assert extTuple.size() == tupleLength + 1
+            : "tuple lengths don't match, expected " + tupleLength + " have " + extTuple.size();
         tupleList.add(extTuple);
       }
     }
@@ -96,7 +97,7 @@ public class TupleSet<E> {
    * @param <T>  the return type of the visitor
    * @return a transformed tuple, or null
    */
-  public <T> T findAndTransform(TupleVisitor<E,T> visitor) {
+  public <T> T findAndTransform(TupleVisitor<E, T> visitor) {
     for (List<E> tuple : tuples) {
       T transformedTuple = visitor.apply(tuple);
       if (transformedTuple != null) {

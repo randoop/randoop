@@ -668,7 +668,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
     if (listFile != null) {
       try (EntryReader er = new EntryReader(listFile, commentRegex, includeRegex)) {
         for (String line : er) {
-          elementSet.add(line.trim());
+          String trimmed = line.trim();
+          if (! line.equals("")) {
+            elementSet.add(line.trim());
+          }
         }
       } catch (IOException e) {
         String msg = Util.toNColsStr(errMessage + ": " + e.getMessage(), 70);

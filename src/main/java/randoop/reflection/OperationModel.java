@@ -129,11 +129,18 @@ public class OperationModel {
       Set<String> exercisedClassnames,
       Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
-      List<String> literalsFileList) throws OperationParseException, NoSuchMethodException {
+      List<String> literalsFileList)
+      throws OperationParseException, NoSuchMethodException {
 
     OperationModel model = new OperationModel();
 
-    model.addClassTypes(visibility, reflectionPredicate, classnames, exercisedClassnames, errorHandler, literalsFileList);
+    model.addClassTypes(
+        visibility,
+        reflectionPredicate,
+        classnames,
+        exercisedClassnames,
+        errorHandler,
+        literalsFileList);
     model.instantiateGenericClassTypes();
     model.addOperations(model.concreteClassTypes, visibility, reflectionPredicate);
     model.addOperations(methodSignatures);
@@ -195,10 +202,11 @@ public class OperationModel {
    * @return the map to observer methods from their declaring class type
    * @throws OperationParseException if a method signature cannot be parsed
    */
-  public MultiMap<GeneralType, TypedOperation> getObservers(Set<String> observerSignatures) throws OperationParseException {
+  public MultiMap<GeneralType, TypedOperation> getObservers(Set<String> observerSignatures)
+      throws OperationParseException {
     // Populate observer_map from observers file.
     MultiMap<GeneralType, TypedOperation> observerMap = new MultiMap<>();
-    for (String sig: observerSignatures) {
+    for (String sig : observerSignatures) {
       TypedClassOperation operation = MethodCall.parse(sig);
       GeneralType outputType = operation.getOutputType();
       if (outputType.isPrimitive() || outputType.isString() || outputType.isEnum()) {
@@ -233,13 +241,12 @@ public class OperationModel {
    * @return true if the model has class types, and false if the class type set is empty
    */
   public boolean hasClasses() {
-    return ! classDeclarationTypes.isEmpty();
+    return !classDeclarationTypes.isEmpty();
   }
 
   public List<TypedOperation> getConcreteOperations() {
     return new ArrayList<>(operations);
   }
-
 
   /**
    * Returns all {@link ObjectContract} objects for this run of Randoop.
@@ -268,12 +275,13 @@ public class OperationModel {
    * @param errorHandler  the handler for bad class names
    * @param literalsFileList  the list of literals file names
    */
-  private void addClassTypes(VisibilityPredicate visibility,
-                             ReflectionPredicate reflectionPredicate,
-                             Set<String> classnames,
-                             Set<String> exercisedClassnames,
-                             ClassNameErrorHandler errorHandler,
-                             List<String> literalsFileList) {
+  private void addClassTypes(
+      VisibilityPredicate visibility,
+      ReflectionPredicate reflectionPredicate,
+      Set<String> classnames,
+      Set<String> exercisedClassnames,
+      ClassNameErrorHandler errorHandler,
+      List<String> literalsFileList) {
     ReflectionManager mgr = new ReflectionManager(visibility);
     mgr.add(new DeclarationExtractor(this.classDeclarationTypes, reflectionPredicate));
     mgr.add(new TypeExtractor(this.inputTypes));
@@ -293,19 +301,19 @@ public class OperationModel {
         errorHandler.handle(classname);
       }
       // Note that c could be null if errorHandler just warns on bad names
-      if (c != null && ! visitedClasses.contains(c)) {
+      if (c != null && !visitedClasses.contains(c)) {
         visitedClasses.add(c);
 
         // ignore interfaces and non-visible classes
         if (!visibility.isVisible(c)) {
           System.out.println(
-                  "Ignoring non-visible " + c + " specified via --classlist or --testclass.");
+              "Ignoring non-visible " + c + " specified via --classlist or --testclass.");
         } else if (c.isInterface()) {
           System.out.println("Ignoring " + c + " specified via --classlist or --testclass.");
         } else {
           if (Modifier.isAbstract(c.getModifiers()) && !c.isEnum()) {
             System.out.println(
-                    "Ignoring abstract " + c + " specified via --classlist or --testclass.");
+                "Ignoring abstract " + c + " specified via --classlist or --testclass.");
           } else {
             mgr.apply(c);
           }
@@ -329,7 +337,7 @@ public class OperationModel {
 
         if (!visibility.isVisible(c)) {
           System.out.println(
-                  "Ignorning non-visible " + c + " specified as include-if-class-exercised target");
+              "Ignorning non-visible " + c + " specified as include-if-class-exercised target");
         } else if (c.isInterface()) {
           System.out.println("Ignoring " + c + " specified as include-if-class-exercised target.");
         } else {
@@ -367,7 +375,8 @@ public class OperationModel {
    * @param typeParameters  the type parameters to be instantiated
    * @return candidate substitutions for the given type parameters
    */
-  private List<Substitution<ReferenceType>> getSubstitutions(List<AbstractTypeVariable> typeParameters) {
+  private List<Substitution<ReferenceType>> getSubstitutions(
+      List<AbstractTypeVariable> typeParameters) {
     TypeTupleSet candidateSet = new TypeTupleSet();
     for (AbstractTypeVariable typeArgument : typeParameters) {
       List<ReferenceType> candidateTypes = selectCandidates(typeArgument);
@@ -391,9 +400,9 @@ public class OperationModel {
     List<ReferenceType> typeList = new ArrayList<>();
     for (GeneralType inputType : inputTypes) {
       if (inputType.isReferenceType()
-              && lowerBound.isSubtypeOf(inputType)
-              && upperBound.isSatisfiedBy(inputType)) {
-        typeList.add((ReferenceType)inputType);
+          && lowerBound.isSubtypeOf(inputType)
+          && upperBound.isSatisfiedBy(inputType)) {
+        typeList.add((ReferenceType) inputType);
       }
     }
     return typeList;
@@ -408,11 +417,16 @@ public class OperationModel {
    * @param visibility  the visibility predicate
    * @param reflectionPredicate  the reflection predicate
    */
-  private void addOperations(Set<ClassOrInterfaceType> concreteClassTypes, VisibilityPredicate visibility, ReflectionPredicate reflectionPredicate) {
+  private void addOperations(
+      Set<ClassOrInterfaceType> concreteClassTypes,
+      VisibilityPredicate visibility,
+      ReflectionPredicate reflectionPredicate) {
     Set<TypedOperation> operationSet = new LinkedHashSet<>();
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (ClassOrInterfaceType classType : concreteClassTypes) {
-      mgr.apply(new OperationExtractor(classType, operationSet, reflectionPredicate), classType.getRuntimeClass());
+      mgr.apply(
+          new OperationExtractor(classType, operationSet, reflectionPredicate),
+          classType.getRuntimeClass());
     }
     for (TypedOperation operation : operationSet) {
       addOperation(operation);
@@ -490,5 +504,4 @@ public class OperationModel {
     Substitution<ReferenceType> substitution = Randomness.randomMember(substitutions);
     return operation.apply(substitution);
   }
-
 }

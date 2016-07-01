@@ -38,7 +38,7 @@ public class VisibilityBridgeTest {
       this.returnType = GeneralType.forClass(m.getReturnType());
       this.name = m.getName();
       List<GeneralType> paramTypes = new ArrayList<>();
-      if (! Modifier.isStatic(m.getModifiers() & Modifier.methodModifiers())) {
+      if (!Modifier.isStatic(m.getModifiers() & Modifier.methodModifiers())) {
         paramTypes.add(declaringType);
       }
       for (Class<?> p : m.getParameterTypes()) {
@@ -55,8 +55,8 @@ public class VisibilityBridgeTest {
 
     public boolean equals(FormalMethod m) {
       return this.returnType.equals(m.returnType)
-              && this.name.equals(m.name)
-              && this.parameterTypes.equals(m.parameterTypes);
+          && this.name.equals(m.name)
+          && this.parameterTypes.equals(m.parameterTypes);
     }
 
     @Override
@@ -118,10 +118,12 @@ public class VisibilityBridgeTest {
   }
 
   private Set<TypedOperation> getConcreteOperations(Class<?> c) {
-    return getConcreteOperations(c, new DefaultReflectionPredicate(), new PublicVisibilityPredicate());
+    return getConcreteOperations(
+        c, new DefaultReflectionPredicate(), new PublicVisibilityPredicate());
   }
 
-  private Set<TypedOperation> getConcreteOperations(Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
+  private Set<TypedOperation> getConcreteOperations(
+      Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     final Set<TypedOperation> operations = new LinkedHashSet<>();
     OperationExtractor extractor = new OperationExtractor(classType, operations, predicate);

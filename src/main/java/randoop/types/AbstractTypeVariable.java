@@ -20,8 +20,7 @@ public abstract class AbstractTypeVariable extends ReferenceType {
 
   @Override
   public boolean isSubtypeOf(GeneralType otherType) {
-    return super.isSubtypeOf(otherType)
-            || getTypeBound().isSubtypeOf(otherType);
+    return super.isSubtypeOf(otherType) || getTypeBound().isSubtypeOf(otherType);
   }
 
   @Override

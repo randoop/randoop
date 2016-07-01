@@ -324,8 +324,7 @@ public final class Sequence implements WeightedElement {
 
     @Override
     public boolean equals(Object o) {
-      return o instanceof RelativeNegativeIndex
-              && this.index == ((RelativeNegativeIndex) o).index;
+      return o instanceof RelativeNegativeIndex && this.index == ((RelativeNegativeIndex) o).index;
     }
 
     @Override
@@ -342,7 +341,7 @@ public final class Sequence implements WeightedElement {
    * @return the relative negative index computed from the position and variable
    */
   private static RelativeNegativeIndex getRelativeIndexForVariable(
-          int statementPosition, Variable v) {
+      int statementPosition, Variable v) {
     if (v.index >= statementPosition) throw new IllegalArgumentException();
     return new RelativeNegativeIndex(-(statementPosition - v.index));
   }
@@ -377,7 +376,8 @@ public final class Sequence implements WeightedElement {
    * @return the sequence consisting of the initialization
    */
   public static Sequence zero(GeneralType c) {
-    return new Sequence().extend(TypedOperation.createNullOrZeroInitializationForType(c), new ArrayList<Variable>());
+    return new Sequence()
+        .extend(TypedOperation.createNullOrZeroInitializationForType(c), new ArrayList<Variable>());
   }
 
   /**
@@ -448,14 +448,19 @@ public final class Sequence implements WeightedElement {
       Statement lastStatement = this.statements.get(lastStatementIndex);
 
       // Process return value
-      if (! lastStatement.getOutputType().isVoid()) {
+      if (!lastStatement.getOutputType().isVoid()) {
         lastStatementTypes.add(lastStatement.getOutputType());
         lastStatementVariables.add(new Variable(this, lastStatementIndex));
       }
 
       // Process input arguments.
       if (lastStatement.inputs.size() != lastStatement.getInputTypes().size())
-        throw new RuntimeException(lastStatement.inputs + ", " + lastStatement.getInputTypes() + ", " + lastStatement.toString());
+        throw new RuntimeException(
+            lastStatement.inputs
+                + ", "
+                + lastStatement.getInputTypes()
+                + ", "
+                + lastStatement.toString());
 
       List<Variable> v = this.getInputs(lastStatementIndex);
       if (v.size() != lastStatement.getInputTypes().size()) throw new RuntimeException();
@@ -506,12 +511,8 @@ public final class Sequence implements WeightedElement {
         GeneralType newRefConstraint =
             statements.get(si + statementWithInputs.inputs.get(i).index).getOutputType();
         if (newRefConstraint == null) throw new IllegalStateException();
-        if (!(statementWithInputs
-            .getInputTypes()
-            .get(i)
-            .isAssignableFrom(
-                newRefConstraint)))
-        throw new IllegalArgumentException(
+        if (!(statementWithInputs.getInputTypes().get(i).isAssignableFrom(newRefConstraint)))
+          throw new IllegalArgumentException(
               i
                   + "th input constraint "
                   + newRefConstraint
@@ -576,8 +577,7 @@ public final class Sequence implements WeightedElement {
    * True iff this sequence contains a statement at the given index.
    */
   private boolean isValidIndex(int index) {
-    return index >= 0
-            && index <= this.size() - 1;
+    return index >= 0 && index <= this.size() - 1;
   }
 
   /**
@@ -599,8 +599,7 @@ public final class Sequence implements WeightedElement {
   }
 
   public Variable randomVariableForTypeLastStatement(GeneralType type) {
-    if (type == null)
-      throw new IllegalArgumentException("type cannot be null.");
+    if (type == null) throw new IllegalArgumentException("type cannot be null.");
     List<Variable> possibleIndices = new ArrayList<>(this.lastStatementVariables.size());
     for (Variable i : this.lastStatementVariables) {
       Statement s = statements.get(i.index);
@@ -710,11 +709,7 @@ public final class Sequence implements WeightedElement {
                 + inputVariables;
         throw new IllegalArgumentException(msg);
       }
-      if (!(operation
-          .getInputTypes()
-          .get(i)
-          .isAssignableFrom(
-              newRefConstraint))) {
+      if (!(operation.getInputTypes().get(i).isAssignableFrom(newRefConstraint))) {
         String msg =
             i
                 + "th input constraint "
@@ -937,7 +932,6 @@ public final class Sequence implements WeightedElement {
         }
         assert operation != null;
 
-
         // Find input variables from their names.
         String[] inVars = new String[0];
         if (!inVarsStr.trim().isEmpty()) {
@@ -978,7 +972,10 @@ public final class Sequence implements WeightedElement {
       // Saw some other exception that is not a parse error.
       // Throw an error, giving information on the problem.
       StringBuilder b = new StringBuilder();
-      b.append("Error while parsing the following list of strings as a sequence (error was at index ").append(statementCount).append("):\n\n");
+      b.append(
+              "Error while parsing the following list of strings as a sequence (error was at index ")
+          .append(statementCount)
+          .append("):\n\n");
       for (String s : statements) {
         b.append(s).append("\n");
       }
@@ -1017,7 +1014,6 @@ public final class Sequence implements WeightedElement {
    * @throws SequenceParseException
    *           if string is not valid sequence
    */
-
   public static Sequence parse(String string) throws SequenceParseException {
     return parse(Arrays.asList(string.split(Globals.lineSep)));
   }
@@ -1044,8 +1040,7 @@ public final class Sequence implements WeightedElement {
   public boolean hasUseOfMatchingClass(Pattern classNames) {
     for (int i = 0; i < statements.size(); i++) {
       GeneralType declaringType = statements.get(i).getDeclaringClass();
-      if (declaringType != null
-              && classNames.matcher(declaringType.getName()).matches()) {
+      if (declaringType != null && classNames.matcher(declaringType.getName()).matches()) {
         return true;
       }
     }
@@ -1072,7 +1067,7 @@ public final class Sequence implements WeightedElement {
   public static Sequence createSequenceForPrimitive(Object value) {
     if (value == null) throw new IllegalArgumentException("value is null");
     Class<?> c = value.getClass();
-    if (! PrimitiveTypes.isBoxedOrPrimitiveOrStringType(c)) {
+    if (!PrimitiveTypes.isBoxedOrPrimitiveOrStringType(c)) {
       throw new IllegalArgumentException("value is not a (boxed) primitive or String");
     }
 
@@ -1083,7 +1078,7 @@ public final class Sequence implements WeightedElement {
 
     if (type.equals(ConcreteTypes.STRING_TYPE) && !PrimitiveTypes.stringLengthOK((String) value)) {
       throw new IllegalArgumentException(
-              "value is a string of length > " + GenInputsAbstract.string_maxlen);
+          "value is a string of length > " + GenInputsAbstract.string_maxlen);
     }
 
     return new Sequence().extend(TypedOperation.createPrimitiveInitialization(type, value));

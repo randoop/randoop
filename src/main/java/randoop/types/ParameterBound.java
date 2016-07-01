@@ -66,7 +66,6 @@ public abstract class ParameterBound extends TypeBound {
     }
 
     return ClassOrInterfaceBound.forType(type);
-
   }
 
   /**
@@ -78,14 +77,14 @@ public abstract class ParameterBound extends TypeBound {
    */
   public static ParameterBound forType(ReferenceType type) {
     if (type instanceof TypeVariable) {
-      return new VariableTypeBound((TypeVariable)type);
+      return new VariableTypeBound((TypeVariable) type);
     }
 
     if (type instanceof ClassOrInterfaceType) {
-      return new ClassOrInterfaceTypeBound((ClassOrInterfaceType)type);
+      return new ClassOrInterfaceTypeBound((ClassOrInterfaceType) type);
     }
 
-    throw new IllegalArgumentException("type may only be class, interface, or type variable, got " + type);
+    throw new IllegalArgumentException(
+        "type may only be class, interface, or type variable, got " + type);
   }
-
 }

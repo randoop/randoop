@@ -124,7 +124,8 @@ public class EnumReflectionTest {
     }
     for (Enum<?> e : exclude) {
       assertFalse(
-          "enum constant " + e.name() + " should not occur", actual.contains(createEnumOperation(e)));
+          "enum constant " + e.name() + " should not occur",
+          actual.contains(createEnumOperation(e)));
     }
   }
 
@@ -138,7 +139,7 @@ public class EnumReflectionTest {
       if (c.isEnum()) {
         ClassOrInterfaceType enumType = ClassOrInterfaceType.forClass(c);
         for (Object obj : c.getEnumConstants()) {
-          Enum<?> e = (Enum<?>)obj;
+          Enum<?> e = (Enum<?>) obj;
           include.add(createEnumOperation(e));
         }
         for (Method m : c.getDeclaredMethods()) {
@@ -159,15 +160,12 @@ public class EnumReflectionTest {
     assertEquals("number of statements", 13, actual.size());
 
     for (TypedOperation op : include) {
-      assertTrue(
-              "operation " + op + " should occur", actual.contains(op));
+      assertTrue("operation " + op + " should occur", actual.contains(op));
     }
     for (TypedOperation op : exclude) {
-      assertFalse(
-              "operation " + op + " should not occur", actual.contains(op));
+      assertFalse("operation " + op + " should not occur", actual.contains(op));
     }
   }
-
 
   @Test
   public void enumAsPredicateTest() {
@@ -177,13 +175,13 @@ public class EnumReflectionTest {
     ClassOrInterfaceType enumType = ClassOrInterfaceType.forClass(c);
     List<ClassOrInterfaceType> interfaces = enumType.getInterfaces();
     assert interfaces.size() == 1 : "should only be one interface";
-    InstantiatedType interfaceType = (InstantiatedType)interfaces.get(0);
+    InstantiatedType interfaceType = (InstantiatedType) interfaces.get(0);
 
     List<TypedOperation> include = new ArrayList<>();
     List<TypedOperation> exclude = new ArrayList<>();
     Map<String, Set<TypedClassOperation>> overrideMap = new LinkedHashMap<>();
     for (Object obj : c.getEnumConstants()) {
-      Enum<?> e = (Enum<?>)obj;
+      Enum<?> e = (Enum<?>) obj;
       include.add(createEnumOperation(e));
       for (Method m : e.getClass().getDeclaredMethods()) {
         Set<TypedClassOperation> opSet = overrideMap.get(m.getName());
@@ -207,7 +205,8 @@ public class EnumReflectionTest {
     for (Method m : c.getMethods()) {
       Set<TypedClassOperation> opSet = overrideMap.get(m.getName());
       if (opSet != null) {
-        TypedClassOperation actualEnumOp = createMethodCall(m, enumType).apply(interfaceType.getTypeSubstitution());
+        TypedClassOperation actualEnumOp =
+            createMethodCall(m, enumType).apply(interfaceType.getTypeSubstitution());
         include.add(actualEnumOp);
       }
     }
@@ -218,28 +217,26 @@ public class EnumReflectionTest {
 
     for (TypedOperation op : actual) {
       if (op.getName().equals("test")) {
-        checkOutcome(op, new Object[]{ EnumAsPredicate.ONE, new Integer(0) }, false);
-        checkOutcome(op, new Object[]{ EnumAsPredicate.TWO, new Integer(0) }, true);
+        checkOutcome(op, new Object[] {EnumAsPredicate.ONE, new Integer(0)}, false);
+        checkOutcome(op, new Object[] {EnumAsPredicate.TWO, new Integer(0)}, true);
       }
     }
 
     for (TypedOperation op : include) {
-      assertTrue(
-              String.format("operation %n%s%nshould occur", op), actual.contains(op));
+      assertTrue(String.format("operation %n%s%nshould occur", op), actual.contains(op));
     }
     for (TypedOperation op : exclude) {
-      assertFalse(
-              String.format("operation %n%s%n should not occur", op), actual.contains(op));
+      assertFalse(String.format("operation %n%s%n should not occur", op), actual.contains(op));
     }
   }
 
   private void checkOutcome(TypedOperation op, Object[] input, Object expected) {
     ExecutionOutcome outcome = op.execute(input, System.out);
-    assertTrue("should have normal execution, outcome: " + outcome, outcome instanceof NormalExecution);
-    NormalExecution exec = (NormalExecution)outcome;
+    assertTrue(
+        "should have normal execution, outcome: " + outcome, outcome instanceof NormalExecution);
+    NormalExecution exec = (NormalExecution) outcome;
     assertEquals("should have return value for input", expected, exec.getRuntimeValue());
   }
-
 
   /**
    * valueEnum tests Reflection.getStatements for an enum with a field.
@@ -275,20 +272,15 @@ public class EnumReflectionTest {
     for (Method m : coin.getMethods()) {
       TypedOperation mc = createMethodCall(m, declaringType);
       if (m.getName().equals("value")) {
-        assertTrue(
-            "enum method " + m.toGenericString() + " should occur",
-            actual.contains(mc));
+        assertTrue("enum method " + m.toGenericString() + " should occur", actual.contains(mc));
         count++;
       } else {
         assertFalse(
-            "enum method " + m.toGenericString() + " should not occur",
-            actual.contains(mc));
+            "enum method " + m.toGenericString() + " should not occur", actual.contains(mc));
       }
     }
     assertEquals("number of statements", count, actual.size());
   }
-
- 
 
   /**
    * abstractMethodEnum tests Reflection.getStatements for an enum with an abstract method
@@ -317,14 +309,10 @@ public class EnumReflectionTest {
     for (Method m : op.getMethods()) {
       TypedOperation mc = createMethodCall(m, declaringType);
       if (overrides.contains(m.getName())) {
-        assertTrue(
-            "enum method " + mc + " should occur",
-            actual.contains(mc));
+        assertTrue("enum method " + mc + " should occur", actual.contains(mc));
         count++;
       } else {
-        assertFalse(
-            "enum method " + mc + " should not occur",
-            actual.contains(mc));
+        assertFalse("enum method " + mc + " should not occur", actual.contains(mc));
       }
     }
 
@@ -332,10 +320,12 @@ public class EnumReflectionTest {
   }
 
   private Set<TypedOperation> getConcreteOperations(Class<?> c) {
-    return getConcreteOperations(c, new DefaultReflectionPredicate(), new PublicVisibilityPredicate());
+    return getConcreteOperations(
+        c, new DefaultReflectionPredicate(), new PublicVisibilityPredicate());
   }
 
-  private Set<TypedOperation> getConcreteOperations(Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
+  private Set<TypedOperation> getConcreteOperations(
+      Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     final Set<TypedOperation> operations = new LinkedHashSet<>();
     OperationExtractor extractor = new OperationExtractor(classType, operations, predicate);
@@ -350,7 +340,8 @@ public class EnumReflectionTest {
     return new TypedClassOperation(eOp, enumType, new TypeTuple(), enumType);
   }
 
-  private TypedClassOperation createConstructorCall(Constructor<?> con) throws RandoopTypeException {
+  private TypedClassOperation createConstructorCall(Constructor<?> con)
+      throws RandoopTypeException {
     ConstructorCall op = new ConstructorCall(con);
     ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(con.getDeclaringClass());
     List<GeneralType> paramTypes = new ArrayList<>();
@@ -359,8 +350,8 @@ public class EnumReflectionTest {
     }
     return new TypedClassOperation(op, declaringType, new TypeTuple(paramTypes), declaringType);
   }
-  
-  private TypedClassOperation createMethodCall(Method m, ClassOrInterfaceType declaringType)  {
+
+  private TypedClassOperation createMethodCall(Method m, ClassOrInterfaceType declaringType) {
     MethodCall op = new MethodCall(m);
     List<GeneralType> paramTypes = new ArrayList<>();
     paramTypes.add(declaringType);
@@ -370,5 +361,4 @@ public class EnumReflectionTest {
     GeneralType outputType = GeneralType.forType(m.getGenericReturnType());
     return new TypedClassOperation(op, declaringType, new TypeTuple(paramTypes), outputType);
   }
-  
 }

@@ -11,7 +11,7 @@ import plume.UtilMDE;
  * Represents a type bound in which a type variable occurs.
  * To evaluate this kind of bound, a substitution is needed to instantiate the
  * bound to a concrete type bound.
-  * @see Substitution
+ * @see Substitution
  */
 public class GenericTypeBound extends ClassOrInterfaceBound {
 
@@ -103,7 +103,8 @@ public class GenericTypeBound extends ClassOrInterfaceBound {
       }
       ReferenceType type = substitution.get(parameter);
       if (type == null) {
-        throw new IllegalArgumentException("substitution does not instantiate parameter " + parameter);
+        throw new IllegalArgumentException(
+            "substitution does not instantiate parameter " + parameter);
       }
       argumentList.add(new ReferenceArgument(type));
     }
@@ -119,7 +120,7 @@ public class GenericTypeBound extends ClassOrInterfaceBound {
    * @return the bound for the given type
    */
   static GenericTypeBound fromType(Type type) {
-    if (! (type instanceof java.lang.reflect.ParameterizedType)) {
+    if (!(type instanceof java.lang.reflect.ParameterizedType)) {
       throw new IllegalArgumentException("type must be generic");
     }
 

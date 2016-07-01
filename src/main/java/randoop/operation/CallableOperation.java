@@ -97,7 +97,12 @@ public abstract class CallableOperation implements Operation {
    * @param inputVars  the list of variables that are inputs to operation
    * @param b  the {@link StringBuilder} to which code is added
    */
-  public abstract void appendCode(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b);
+  public abstract void appendCode(
+      GeneralType declaringType,
+      TypeTuple inputTypes,
+      GeneralType outputType,
+      List<Variable> inputVars,
+      StringBuilder b);
 
   /**
    * Returns a string representation of this Operation, which can be read by
@@ -111,6 +116,6 @@ public abstract class CallableOperation implements Operation {
    * @param outputType  the output type for this operation
    * @return a string representation of this operation
    */
-  public abstract String toParsableString(GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType);
-
+  public abstract String toParsableString(
+      GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType);
 }

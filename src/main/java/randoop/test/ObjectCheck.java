@@ -73,9 +73,7 @@ class ObjectCheck implements Check {
 
   @Override
   public String toString() {
-    return "<"
-            + contract.toString()
-            + " " + Arrays.toString(vars) + " ";
+    return "<" + contract.toString() + " " + Arrays.toString(vars) + " ";
   }
 
   @Override

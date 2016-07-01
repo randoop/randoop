@@ -125,9 +125,7 @@ public class SubTypeSet {
     }
 
     return typesWithsequences.contains(type)
-            || ((match == Match.COMPATIBLE_TYPE)
-            && !subTypesWithsequences.getValues(type).isEmpty());
-
+        || ((match == Match.COMPATIBLE_TYPE) && !subTypesWithsequences.getValues(type).isEmpty());
   }
 
   public int size() {

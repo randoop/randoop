@@ -106,8 +106,8 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
         }
         return false;
       } else if (m.getDeclaringClass().isAnonymousClass()
-              && m.getDeclaringClass().getEnclosingClass() != null
-              && m.getDeclaringClass().getEnclosingClass().isEnum()) {
+          && m.getDeclaringClass().getEnclosingClass() != null
+          && m.getDeclaringClass().getEnclosingClass().isEnum()) {
         return false; // bridge method in enum constant anonymous class
       } else {
         if (Log.isLoggingOn()) {
@@ -212,7 +212,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     // We're skipping compareTo method in enums - you can call it only with the
     // same type as receiver
     // but the signature does not tell you that
-    if (! m.getDeclaringClass().isAnonymousClass()
+    if (!m.getDeclaringClass().isAnonymousClass()
         && m.getDeclaringClass().getCanonicalName().equals("java.lang.Enum")
         && m.getName().equals("compareTo")
         && m.getParameterTypes().length == 1
@@ -277,7 +277,6 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     }
 
     return !Modifier.isAbstract(c.getDeclaringClass().getModifiers());
-
   }
 
   private boolean matchesOmitMethodPattern(String name) {
