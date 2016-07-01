@@ -451,6 +451,7 @@ task copyManual(type:Copy, dependsOn: 'updateDevTOC') {
   from ('doc') {
     include 'dev.html'
     include '*_example.txt'
+    include 'RandoopMappedCalls.java.txt'
   }
   from ('doc/stylesheets') {
     into 'stylesheets'
