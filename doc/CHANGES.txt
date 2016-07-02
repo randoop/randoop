@@ -1,6 +1,7 @@
 Version 3.0.1, released June 16, 2016
 
-Randoop now includes all of the contracts described in the user manual.
+Randoop tests more contracts that are mandated by the JDK, thus finding
+more bugs in tested code.
 It also uses a new contract checking heuristic that avoids exhaustive
 enumeration over the new ternary contracts.
 
@@ -11,10 +12,10 @@ Version 3.0.0, released June 6, 2016
 
 Randoop now tracks types independently of the Java reflection classes. This
 means for generic classes it will select a type argument for each type parameter
-and use that selection consistently. This will avoid compile and run time type
+and use that selection consistently. This avoids compile and run time type
 errors related to inconsistent use of a parameterized type.
 
-Randoop will now generate longer arrays for reference types. Element types must
+Randoop generates longer arrays for reference types. Element types must
 be primitive, boxed primitive, or be input with --testclass.
 
 Fixed a bug where the opening parenthesis was not being generated for a call to
