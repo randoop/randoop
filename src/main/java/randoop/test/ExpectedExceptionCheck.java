@@ -60,7 +60,7 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
     } else {
       condition = "e.getClass().getCanonicalName().equals(\"" + getExceptionName() + "\")";
       message =
-          "Expected exception of type \""
+          "Expected exception of type "
               + getExceptionName()
               + ", got \" + e.getClass().getCanonicalName()";
     }
