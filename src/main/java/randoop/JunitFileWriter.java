@@ -11,7 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import randoop.main.GenInputsAbstract;
 import randoop.sequence.ExecutableSequence;
 import randoop.util.Log;
 
@@ -26,15 +25,15 @@ import randoop.util.Log;
 public class JunitFileWriter {
 
   // The class of the main JUnit suite, and the prefix of the subsuite names.
-  public final String masterTestClassName;
+  private final String masterTestClassName;
 
   // The package name of the main JUnit suite
-  public final String packageName;
+  private final String packageName;
 
   // The directory where the JUnit files should be written to.
-  public final String dirName;
+  private final String dirName;
 
-  public static boolean includeParseableString = false;
+  private static boolean includeParseableString = false;
 
   /**
    * testClassCount indicates the number of test classes written for the code
@@ -49,7 +48,7 @@ public class JunitFileWriter {
    * current convention is that a test method is named "test"+i for some integer
    * i.
    */
-  private Map<String, Integer> classMethodCounts = new LinkedHashMap<String, Integer>();
+  private Map<String, Integer> classMethodCounts = new LinkedHashMap<>();
 
   /**
    * JunitFileWriter creates an instance of class holding information needed to
@@ -104,7 +103,7 @@ public class JunitFileWriter {
    * @see #writeDriverFile
    */
   public List<File> writeJUnitTestFiles(List<List<ExecutableSequence>> seqPartition) {
-    List<File> ret = new ArrayList<File>();
+    List<File> ret = new ArrayList<>();
 
     NameGenerator classNameGen = new NameGenerator(masterTestClassName);
 
@@ -132,8 +131,7 @@ public class JunitFileWriter {
    */
   private File writeTestClass(List<ExecutableSequence> sequences, String testClassName) {
 
-    String className = testClassName;
-    File file = new File(getDir(), className + ".java");
+    File file = new File(getDir(), testClassName + ".java");
     PrintStream out = createTextOutputStream(file);
 
     NameGenerator methodNameGen = new NameGenerator("test", 1, numDigits(sequences.size()));
@@ -146,7 +144,7 @@ public class JunitFileWriter {
       out.println("import org.junit.runners.MethodSorters;");
       out.println();
       out.println("@FixMethodOrder(MethodSorters.NAME_ASCENDING)");
-      out.println("public class " + className + " {");
+      out.println("public class " + testClassName + " {");
       out.println();
       out.println("  public static boolean debug = false;");
       out.println();
@@ -158,11 +156,11 @@ public class JunitFileWriter {
           out.println("*/");
         }
 
-        writeTest(out, className, methodNameGen.next(), s);
+        writeTest(out, testClassName, methodNameGen.next(), s);
         out.println();
       }
       out.println("}");
-      classMethodCounts.put(className, methodNameGen.nameCount());
+      classMethodCounts.put(testClassName, methodNameGen.nameCount());
     } finally {
       if (out != null) out.close();
     }
@@ -209,7 +207,7 @@ public class JunitFileWriter {
    * @return list of class names
    */
   private List<String> getTestClassNames() {
-    List<String> junitTestSuites = new LinkedList<String>();
+    List<String> junitTestSuites = new LinkedList<>();
     NameGenerator classNameGen = new NameGenerator(masterTestClassName);
     while (classNameGen.nameCount() < testClassCount) {
       junitTestSuites.add(classNameGen.next());
@@ -287,10 +285,6 @@ public class JunitFileWriter {
       out.println();
       out.println("  public static void main(String[] args) {");
 
-      if (GenInputsAbstract.init_routine != null) {
-        out.println("    " + GenInputsAbstract.init_routine + "();");
-      }
-
       out.println("    boolean wasSuccessful = true;");
 
       NameGenerator instanceNameGen = new NameGenerator("t");
@@ -352,7 +346,7 @@ public class JunitFileWriter {
      *
      * @param digits the minimum number of digits (determines 0-padding)
      */
-    public NameGenerator(String prefix, int initialValue, int digits) {
+    NameGenerator(String prefix, int initialValue, int digits) {
       this.initialValue = initialValue;
       this.counter = initialValue;
 
@@ -369,7 +363,7 @@ public class JunitFileWriter {
      *
      * @param prefix is a string to be used as a prefix for all names generated
      */
-    public NameGenerator(String prefix) {
+    NameGenerator(String prefix) {
       this(prefix, 0, 0);
     }
 
@@ -379,7 +373,7 @@ public class JunitFileWriter {
       return name;
     }
 
-    public int nameCount() {
+    int nameCount() {
       return counter - initialValue;
     }
   }
@@ -409,11 +403,11 @@ public class JunitFileWriter {
   }
 
   // TODO document and move to util directory.
-  public static String indent(String codeString) {
+  private static String indent(String codeString) {
     StringBuilder indented = new StringBuilder();
     String[] lines = codeString.split(Globals.lineSep);
     for (String line : lines) {
-      indented.append("    " + line + Globals.lineSep);
+      indented.append("    ").append(line).append(Globals.lineSep);
     }
     return indented.toString();
   }

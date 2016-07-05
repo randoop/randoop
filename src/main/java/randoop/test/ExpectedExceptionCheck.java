@@ -37,7 +37,7 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
    */
   @Override
   protected void appendTryBehavior(StringBuilder b) {
-    String message = "";
+    String message;
     if (exception.getClass().isAnonymousClass()) {
       message = "Expected anonymous exception";
     } else {
