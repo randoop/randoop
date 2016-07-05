@@ -30,8 +30,12 @@ public class EmptyExceptionCheck extends ExceptionCheck {
    * {@inheritDoc} Appends comment indicating that catch is being ignored.
    */
   @Override
-  protected void appendCatchBehavior(StringBuilder b, String exceptionClassName) {
-    b.append("  // expected exception caught").append(exceptionClassName).append(Globals.lineSep);
+  protected void appendCatchBehavior(StringBuilder b) {
+    String message = "expected exception caught " + getExceptionName();
+    if (exception.getClass().isAnonymousClass()) {
+      message = "anonymous exception caught";
+    }
+    b.append("  // ").append(message).append(Globals.lineSep);
   }
 
   /**
@@ -39,11 +43,12 @@ public class EmptyExceptionCheck extends ExceptionCheck {
    * being ignored.
    */
   @Override
-  protected void appendTryBehavior(StringBuilder b, String exceptionClassName) {
-    b.append("  // expected exception ")
-        .append(exceptionClassName)
-        .append(" not thrown")
-        .append(Globals.lineSep);
+  protected void appendTryBehavior(StringBuilder b) {
+    String message = "expected exception " + getExceptionName();
+    if (exception.getClass().isAnonymousClass()) {
+      message = "expected anonymous exception";
+    }
+    b.append("  // ").append(message).append(" not thrown").append(Globals.lineSep);
   }
 
   /**

@@ -12,8 +12,8 @@ import randoop.Globals;
  * {@link randoop.sequence.ExecutableSequence#toCodeString()}, the methods
  * {@link #toCodeStringPreStatement()} and {@link #toCodeStringPostStatement()}
  * wrap the statement in a try-catch block for the exception, while the
- * implementing classes define {@link #appendTryBehavior(StringBuilder, String)}
- * and {@link #appendCatchBehavior(StringBuilder, String)} which handle
+ * implementing classes define {@link #appendTryBehavior(StringBuilder)}
+ * and {@link #appendCatchBehavior(StringBuilder)} which handle
  * differences in whether assertions are generated to enforce the expectation of
  * the exception.
  */
@@ -102,7 +102,7 @@ public abstract class ExceptionCheck implements Check {
    * Starts with post-statement try-behavior as determined by a subclass
    * implementation of {@link #appendTryBehavior}, and then closes with the
    * catch clause with the body determined by the sub-class implementation of
-   * {@link #appendCatchBehavior(StringBuilder, String)}. Catches this exception
+   * {@link #appendCatchBehavior(StringBuilder)}. Catches this exception
    * or the closest public superclass of the exception.
    *
    * @return the post-statement code text for the expected exception
@@ -113,11 +113,10 @@ public abstract class ExceptionCheck implements Check {
     if (catchClassName == null) {
       catchClassName = "Exception";
     }
-    String exceptionClassName = getExceptionName();
-    appendTryBehavior(b, exceptionClassName);
+    appendTryBehavior(b);
     b.append("} catch (").append(catchClassName).append(" e) {").append(Globals.lineSep);
     b.append("  // Expected exception.").append(Globals.lineSep);
-    appendCatchBehavior(b, exceptionClassName);
+    appendCatchBehavior(b);
     b.append("}").append(Globals.lineSep);
     return b.toString();
   }
@@ -127,10 +126,8 @@ public abstract class ExceptionCheck implements Check {
    *
    * @param b
    *          the string builder to which code text is to be added
-   * @param exceptionClassName
-   *          the class name of the expected exception
    */
-  protected abstract void appendCatchBehavior(StringBuilder b, String exceptionClassName);
+  protected abstract void appendCatchBehavior(StringBuilder b);
 
   /**
    * Appends code to follow the statement throwing expected exception in try
@@ -138,10 +135,8 @@ public abstract class ExceptionCheck implements Check {
    *
    * @param b
    *          the string builder to which code text is added
-   * @param exceptionClassName
-   *          the class name of the expected exception
    */
-  protected abstract void appendTryBehavior(StringBuilder b, String exceptionClassName);
+  protected abstract void appendTryBehavior(StringBuilder b);
 
   /**
    * Returns the name of the exception class.
