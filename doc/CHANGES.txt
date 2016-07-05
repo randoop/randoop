@@ -1,3 +1,13 @@
+Version 3.0.2, released July X, 2016
+
+The command-line argument --init-routine has been removed.
+
+Fixed a bug resulting in tests that threw an NPE when an expected anonymous
+exception was caught. Thanks to Matias Martinez for reporting this issue.
+
+Fixed a bug in reading input class names and an empty string was read.
+
+
 Version 3.0.1, released June 16, 2016
 
 Randoop now includes all of the contracts described in the user manual.
