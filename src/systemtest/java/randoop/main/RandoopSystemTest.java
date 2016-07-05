@@ -537,6 +537,35 @@ public class RandoopSystemTest {
         "...should not have error tests", randoopRunDescription.errorTestCount, is(equalTo(0)));
   }
 
+  /**
+   * Tests that Randoop deals properly with exceptions
+   */
+  @Test
+  public void runExceptionTest() {
+    Path workingPath = createTestDirectory(workingDirsRoot, "exception-tests");
+    String packageName = "misc";
+    String regressionBasename = "RegressionTest";
+    String errorBasename = "ErrorTest";
+
+    List<String> options = getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
+    options.add("--testclass=misc.ThrowsAnonymousException");
+    options.add("--outputlimit=2");
+
+    RandoopRunDescription randoopRunDescription =
+            generateAndCompile(classpath, workingPath, packageName, regressionBasename, errorBasename, options);
+    assertThat("...should have regression tests",
+            randoopRunDescription.regressionTestCount,
+            is(greaterThan(0)));
+    TestRunDescription regressionTestRunDesc = runTests(classpath, workingPath, packageName, regressionBasename);
+    if (regressionTestRunDesc.testsSucceed != randoopRunDescription.regressionTestCount) {
+      for (String line : regressionTestRunDesc.processStatus.outputLines) {
+        System.err.println(line);
+      }
+      fail("all regression tests should pass");
+    }
+    assertThat("...should not have error tests", randoopRunDescription.errorTestCount, is(equalTo(0)));
+  }
+
   /********************************** utility methods ***************************/
 
   /**
