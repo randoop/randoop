@@ -1,8 +1,6 @@
 package randoop.main;
 
 import java.io.File;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -143,9 +141,6 @@ public class GenTests extends GenInputsAbstract {
       if (pa.length != 2) usage("invalid property definition: %s%n", prop);
       System.setProperty(pa[0], pa[1]);
     }
-
-    // If an initializer method was specified, execute it
-    executeInitializationRoutine(1);
 
     // Check that there are classes to test
     if (classlist == null && methodlist == null && testclass.isEmpty()) {
@@ -624,48 +619,6 @@ public class GenTests extends GenInputsAbstract {
       }
     }
     return files;
-  }
-
-  /**
-   * Execute the initialization routine (if user specified one)
-   *
-   * @param phase
-   *          the phase number passed to initialization routine
-   */
-  private static void executeInitializationRoutine(int phase) {
-
-    if (GenInputsAbstract.init_routine == null) return;
-
-    String full_name = GenInputsAbstract.init_routine;
-    int lastdot = full_name.lastIndexOf(".");
-    if (lastdot == -1) usage("invalid init routine: %s\n", full_name);
-    String classname = full_name.substring(0, lastdot);
-    String methodname = full_name.substring(lastdot + 1);
-    methodname = methodname.replaceFirst("[()]*$", "");
-    System.out.printf("%s - %s\n", classname, methodname);
-    Class<?> iclass = null;
-    try {
-      iclass = Class.forName(classname);
-    } catch (Exception e) {
-      usage("Can't load init class %s: %s", classname, e.getMessage());
-    }
-    assert iclass != null;
-
-    Method imethod = null;
-    try {
-      imethod = iclass.getDeclaredMethod(methodname, int.class);
-    } catch (Exception e) {
-      usage("Can't find init method %s: %s", methodname, e);
-    }
-
-    assert imethod != null;
-    if (!Modifier.isStatic(imethod.getModifiers()))
-      usage("init method %s.%s must be static", classname, methodname);
-    try {
-      imethod.invoke(null, phase);
-    } catch (Exception e) {
-      usage(e, "problem executing init method %s.%s: %s", classname, methodname, e);
-    }
   }
 
   /** Print out usage error and stack trace and then exit **/

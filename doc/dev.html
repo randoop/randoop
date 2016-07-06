@@ -304,7 +304,14 @@ given here, see the Gradle
 <h2 id="classpath">Randoop classpath</h2>
 
 <p>
-To run Randoop, your classpath must include either the Randoop class files or
+  When running Randoop, you should use the file
+  <code>randoop-all-<em>X.Y.Z</em>.jar</code>
+  that includes all dependencies.
+  For more detail, see the <a href="index.html">Randoop Manual</a>.
+</p>
+
+<p>
+Otherwise, to run Randoop, your classpath must include either the Randoop class files or
 the Randoop jar file, and also must include <code>lib/plume.jar</code>.
 After the build, the classpath should include either of the following
 </p>
@@ -321,7 +328,7 @@ After the build, the classpath should include either of the following
 </ul>
 <p>
 It is recommended that the classpath for classes under test be placed before
-Plume-lib.
+Plume-lib, should there be a conflict in included classes.
 </p>
 
 <p>

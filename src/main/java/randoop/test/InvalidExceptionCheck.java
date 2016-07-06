@@ -6,21 +6,21 @@ import randoop.sequence.Execution;
  * An {@code InvalidExceptionCheck} represents the occurrence of an exception
  * tagged as an invalid behavior during {@code Check} generation.
  */
-public class InvalidExceptionCheck extends ExceptionCheck {
+class InvalidExceptionCheck extends ExceptionCheck {
 
-  public InvalidExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
+  InvalidExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
     super(exception, statementIndex, catchClassName);
   }
 
   @Override
-  protected void appendCatchBehavior(StringBuilder b, String exceptionClassName) {
+  protected void appendCatchBehavior(StringBuilder b) {
     String prefix = "statement threw an invalid exception ";
     String suffix = " during test generation";
-    b.append("// " + prefix + exception.getClass().getName() + suffix);
+    b.append("// ").append(prefix).append(exception.getClass().getName()).append(suffix);
   }
 
   @Override
-  protected void appendTryBehavior(StringBuilder b, String exceptionClassName) {
+  protected void appendTryBehavior(StringBuilder b) {
     // do nothing
   }
 

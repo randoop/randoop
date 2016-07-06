@@ -36,9 +36,14 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
    * {@inheritDoc} Appends a fail assertion after statement in try block.
    */
   @Override
-  protected void appendTryBehavior(StringBuilder b, String exceptionClassName) {
-    String assertion =
-        "org.junit.Assert.fail(\"Expected exception of type " + exceptionClassName + "\")";
+  protected void appendTryBehavior(StringBuilder b) {
+    String message;
+    if (exception.getClass().isAnonymousClass()) {
+      message = "Expected anonymous exception";
+    } else {
+      message = "Expected exception of type " + getExceptionName();
+    }
+    String assertion = "org.junit.Assert.fail(\"" + message + "\")";
     b.append("  ").append(assertion).append(";").append(Globals.lineSep);
   }
 
@@ -46,13 +51,21 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
    * {@inheritDoc} Appends assertion to confirm expected exception caught.
    */
   @Override
-  protected void appendCatchBehavior(StringBuilder b, String exceptionClassName) {
-    String condition = "! e.getClass().getCanonicalName().equals(\"" + exceptionClassName + "\")";
-    String assertion =
-        "org.junit.Assert.fail(\"Expected exception of type "
-            + exceptionClassName
-            + ", got \" + e.getClass().getCanonicalName())";
-    b.append("  if (").append(condition).append(") {").append(Globals.lineSep);
+  protected void appendCatchBehavior(StringBuilder b) {
+    String condition;
+    String message;
+    if (exception.getClass().isAnonymousClass()) {
+      condition = "e.getClass().isAnonymousClass()";
+      message = "Expected anonymous exception, got \" + e.getClass().getCanonicalName()";
+    } else {
+      condition = "e.getClass().getCanonicalName().equals(\"" + getExceptionName() + "\")";
+      message =
+          "Expected exception of type "
+              + getExceptionName()
+              + ", got \" + e.getClass().getCanonicalName()";
+    }
+    String assertion = "org.junit.Assert.fail(\"" + message + ")";
+    b.append("  if (! ").append(condition).append(") {").append(Globals.lineSep);
     b.append("    ").append(assertion).append(";").append(Globals.lineSep);
     b.append("  }").append(Globals.lineSep);
   }

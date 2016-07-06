@@ -440,10 +440,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int string_maxlen = 10000;
 
   ///////////////////////////////////////////////////////////////////
-  @OptionGroup("Varying the nature of generated tests")
-  @Option("Specifies initialization routine (class.method)")
-  public static String init_routine = null;
-
   /**
    * Try to reuse values from a sequence with the given frequency. If an alias
    * ratio is given, it should be between 0 and 1.
@@ -455,6 +451,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * parameters within a test.
    * </p>
    */
+  @OptionGroup("Varying the nature of generated tests")
   @Option("Reuse values with the given frequency")
   public static double alias_ratio = 0;
 
