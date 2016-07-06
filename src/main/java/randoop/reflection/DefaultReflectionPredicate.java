@@ -191,7 +191,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     while (c != null && isPublic(c) && method != null && method.isBridge()) {
       c = c.getSuperclass();
       try {
-        method = c.getDeclaredMethod(m.getName(), (Class<?>[]) m.getParameterTypes());
+        method = c.getDeclaredMethod(m.getName(), m.getParameterTypes());
       } catch (NoSuchMethodException e) {
         method = null;
       } catch (SecurityException e) {

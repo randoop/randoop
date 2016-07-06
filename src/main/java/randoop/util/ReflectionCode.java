@@ -19,9 +19,9 @@ public abstract class ReflectionCode {
    * System.getSecurityManager() returns a RandoopSecurityManager, this method
    * sets the security manager's status to ON. Before exiting, this method sets
    * the security manager's status to its status before this call.
-   * @throws InvocationTargetException if the invocation does
-   * @throws IllegalAccessException if the invocation does
-   * @throws InstantiationException if the invocation does
+   * @throws InvocationTargetException if executed code throws an exception
+   * @throws IllegalAccessException if the executed code involves inaccessible method or constructor
+   * @throws InstantiationException if unable to create a new instance
    */
   public final void runReflectionCode()
       throws InstantiationException, IllegalAccessException, InvocationTargetException,
@@ -63,6 +63,10 @@ public abstract class ReflectionCode {
    * Executed the reflection code. All internal exceptions must be thrown as
    * NotCaughtIllegalStateException because everything else is caught.
    *
+   * @throws InstantiationException if unable to create a new instance
+   * @throws IllegalAccessException if executed code involves inaccessible method
+   * @throws InvocationTargetException if executed code throws an exception
+   * @throws NotCaughtIllegalStateException if execution results in conflicting error and success states
    */
   protected abstract void runReflectionCodeRaw()
       throws InstantiationException, IllegalAccessException, InvocationTargetException,
