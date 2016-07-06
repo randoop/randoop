@@ -15,7 +15,7 @@ import randoop.types.TypeTuple;
 public class CompareToReflexive implements ObjectContract {
   private static final CompareToReflexive instance = new CompareToReflexive();
 
-  private CompareToReflexive() {};
+  private CompareToReflexive() {}
 
   public static CompareToReflexive getInstance() {
     return instance;

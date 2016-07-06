@@ -24,7 +24,7 @@ public class JarReader {
 
   public static List<String> getClasseNamesInPackage(String jarName, String packageName)
       throws IOException {
-    ArrayList<String> classes = new ArrayList<String>();
+    ArrayList<String> classes = new ArrayList<>();
 
     packageName = packageName.replaceAll("\\.", "/");
     if (debug) System.out.println("Jar " + jarName + " looking for " + packageName);
@@ -52,7 +52,7 @@ public class JarReader {
   }
 
   public static List<String> getClasseNamesInJar(String jarName) throws IOException {
-    ArrayList<String> classes = new ArrayList<String>();
+    ArrayList<String> classes = new ArrayList<>();
 
     if (debug) System.out.println("Jar " + jarName);
 

@@ -31,7 +31,7 @@ public final class CollectionsExt {
    * @return the list of unique elements
    */
   public static <T> List<T> unique(List<T> lst) {
-    return new ArrayList<T>(new LinkedHashSet<T>(lst));
+    return new ArrayList<>(new LinkedHashSet<>(lst));
   }
 
   /**
@@ -42,13 +42,13 @@ public final class CollectionsExt {
    * @return the unmodifiable list of objects from the collection
    */
   public static <T> List<T> roCopyList(Collection<T> l) {
-    return Collections.unmodifiableList(new ArrayList<T>(l));
+    return Collections.unmodifiableList(new ArrayList<>(l));
   }
 
   @SuppressWarnings({"varargs", "unchecked"}) // heap pollution warning
   public static <T> Set<T> intersection(Set<? extends T>... sets) {
     if (sets.length == 0) return Collections.emptySet();
-    Set<T> result = new LinkedHashSet<T>();
+    Set<T> result = new LinkedHashSet<>();
     result.addAll(sets[0]);
     for (Set<? extends T> s : sets) {
       result.retainAll(s);
@@ -62,7 +62,7 @@ public final class CollectionsExt {
   }
 
   public static <T> Set<T> diff(Set<? extends T> s1, Set<? extends T> s2) {
-    Set<T> result = new LinkedHashSet<T>();
+    Set<T> result = new LinkedHashSet<>();
     result.addAll(s1);
     result.removeAll(s2);
     return result;
@@ -70,7 +70,7 @@ public final class CollectionsExt {
 
   @SuppressWarnings({"varargs", "unchecked"}) // heap pollution warning
   public static <T> Set<T> union(Set<? extends T>... sets) {
-    Set<T> result = new LinkedHashSet<T>();
+    Set<T> result = new LinkedHashSet<>();
     for (Set<? extends T> s : sets) {
       result.addAll(s);
     }
@@ -87,7 +87,7 @@ public final class CollectionsExt {
    */
   @SuppressWarnings({"varargs", "unchecked"}) // heap pollution warning
   public static <T> List<T> concat(List<? extends T>... lists) {
-    List<T> result = new ArrayList<T>();
+    List<T> result = new ArrayList<>();
     for (List<? extends T> list : lists) {
       result.addAll(list);
     }
@@ -103,7 +103,7 @@ public final class CollectionsExt {
    * @return the concatenated list
    */
   public static <T> List<T> concatAll(Collection<? extends List<? extends T>> lists) {
-    List<T> result = new ArrayList<T>();
+    List<T> result = new ArrayList<>();
     for (List<? extends T> list : lists) {
       result.addAll(list);
     }
@@ -133,7 +133,7 @@ public final class CollectionsExt {
 
   public static SortedSet<Integer> findAll(List<?> list, Object elem) {
     if (list == null) throw new IllegalArgumentException("list cannot be null.");
-    SortedSet<Integer> result = new TreeSet<Integer>();
+    SortedSet<Integer> result = new TreeSet<>();
     for (int i = 0, n = list.size(); i < n; i++) {
       if (list.get(i).equals(elem)) {
         result.add(i);
@@ -176,7 +176,7 @@ public final class CollectionsExt {
    * @return the concatenated string of object strings
    */
   public static List<String> toStringLines(Collection<?> c) {
-    List<String> lines = new ArrayList<String>(c.size());
+    List<String> lines = new ArrayList<>(c.size());
     for (Object each : c) {
       lines.add(String.valueOf(each));
     }
@@ -211,7 +211,7 @@ public final class CollectionsExt {
       throw new IllegalArgumentException("maxLength must be > 0 but was " + maxLength);
     int fullChunks = list.size() / maxLength;
 
-    List<List<T>> result = new ArrayList<List<T>>(fullChunks + 1);
+    List<List<T>> result = new ArrayList<>(fullChunks + 1);
     for (int i = 0; i < fullChunks; i++) {
       List<T> subList = list.subList(i * maxLength, (i + 1) * maxLength);
       if (subList.size() != maxLength)
@@ -224,7 +224,7 @@ public final class CollectionsExt {
   }
 
   public static <T> Set<T> getAll(Enumeration<T> e) {
-    Set<T> result = new LinkedHashSet<T>();
+    Set<T> result = new LinkedHashSet<>();
     while (e.hasMoreElements()) result.add(e.nextElement());
     return result;
   }
@@ -272,7 +272,7 @@ public final class CollectionsExt {
    * @return the lines with prefix added
    */
   public static List<String> prefix(String prefix, List<String> lines) {
-    List<String> result = new ArrayList<String>(lines.size());
+    List<String> result = new ArrayList<>(lines.size());
     for (String line : lines) {
       result.add(prefix + line);
     }
@@ -309,10 +309,10 @@ public final class CollectionsExt {
    * @return the map from cardinality to sets of that size
    */
   public static Map<Integer, Set<Object[]>> createPerArityGroups(Object[] objects, int max) {
-    Map<Integer, Set<Object[]>> result = new LinkedHashMap<Integer, Set<Object[]>>();
+    Map<Integer, Set<Object[]>> result = new LinkedHashMap<>();
     result.put(0, Collections.singleton(new Object[0]));
     for (int i = 1; i <= max; i++) {
-      Set<Object[]> newSet = new LinkedHashSet<Object[]>();
+      Set<Object[]> newSet = new LinkedHashSet<>();
       // add each object to each one smaller
       for (Object[] oneSmaller : result.get(i - 1)) {
         for (Object object : objects) {
@@ -373,13 +373,13 @@ public final class CollectionsExt {
    */
   public static <T> List<List<T>> allCombinations(List<List<T>> inputs) {
     if (inputs.isEmpty()) {
-      ArrayList<List<T>> result = new ArrayList<List<T>>(1);
+      ArrayList<List<T>> result = new ArrayList<>(1);
       result.add(new ArrayList<T>(1));
       return result;
     }
     List<T> lastList = inputs.get(inputs.size() - 1);
 
-    List<List<T>> result = new ArrayList<List<T>>();
+    List<List<T>> result = new ArrayList<>();
     for (int i = 0; i < lastList.size(); i++) {
       List<List<T>> tails = allCombinations(inputs.subList(0, inputs.size() - 1));
       T x = lastList.get(i);
@@ -433,7 +433,7 @@ public final class CollectionsExt {
    * @return the list formed by mapping values of original list
    */
   public static <T> List<T> map(List<T> values, Map<T, T> map) {
-    List<T> result = new ArrayList<T>(values.size());
+    List<T> result = new ArrayList<>(values.size());
     for (T t : values) {
       result.add(map.get(t));
     }

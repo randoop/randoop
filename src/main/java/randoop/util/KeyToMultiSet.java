@@ -13,7 +13,7 @@ public class KeyToMultiSet<T1, T2> {
   private final Map<T1, MultiSet<T2>> map;
 
   public KeyToMultiSet() {
-    map = new LinkedHashMap<T1, MultiSet<T2>>();
+    map = new LinkedHashMap<>();
   }
 
   public void addAll(Map<? extends T1, ? extends T2> m) {
@@ -31,7 +31,7 @@ public class KeyToMultiSet<T1, T2> {
   public void add(T1 key, T2 value) {
     MultiSet<T2> values = map.get(key);
     if (values == null) {
-      values = new MultiSet<T2>();
+      values = new MultiSet<>();
     }
     values.add(value);
     map.put(key, values);

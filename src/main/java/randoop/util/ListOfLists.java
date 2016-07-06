@@ -28,7 +28,7 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
 
   @SuppressWarnings({"varargs", "unchecked"}) // heap pollution warning
   public ListOfLists(SimpleList<T>... lists) {
-    this.lists = new ArrayList<SimpleList<T>>(lists.length);
+    this.lists = new ArrayList<>(lists.length);
     for (SimpleList<T> sl : lists) {
       this.lists.add(sl);
     }
@@ -102,7 +102,7 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
 
   @Override
   public List<T> toJDKList() {
-    List<T> result = new ArrayList<T>();
+    List<T> result = new ArrayList<>();
     for (SimpleList<T> l : lists) {
       result.addAll(l.toJDKList());
     }

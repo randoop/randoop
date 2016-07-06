@@ -28,7 +28,7 @@ public class JavaFileWriter {
       return;
     }
 
-    List<List<Sequence>> subSuites = CollectionsExt.<Sequence>chunkUp(sequences, testsPerFile);
+    List<List<Sequence>> subSuites = CollectionsExt.chunkUp(sequences, testsPerFile);
     for (int i = 0; i < subSuites.size(); i++) {
       writeSubSuite(subSuites.get(i), i, junitClassName);
     }

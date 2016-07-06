@@ -15,7 +15,7 @@ public class StringLineIterator {
 
   public StringLineIterator(String words) {
     if (words == null) throw new IllegalArgumentException("words cannot be null.");
-    this.words = new LinkedList<String>(Arrays.asList(words.split("\\s")));
+    this.words = new LinkedList<>(Arrays.asList(words.split("\\s")));
   }
 
   /**

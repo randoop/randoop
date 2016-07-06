@@ -11,7 +11,6 @@ import randoop.sequence.Variable;
 import randoop.types.ConcreteTypes;
 import randoop.types.GeneralType;
 import randoop.types.PrimitiveTypes;
-import randoop.types.RandoopTypeException;
 import randoop.types.TypeTuple;
 import randoop.util.StringEscapeUtils;
 import randoop.util.Util;

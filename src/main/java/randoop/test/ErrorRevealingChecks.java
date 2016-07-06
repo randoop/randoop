@@ -44,7 +44,7 @@ public class ErrorRevealingChecks implements TestChecks {
    */
   @Override
   public Map<Check, Boolean> get() {
-    Map<Check, Boolean> result = new LinkedHashMap<Check, Boolean>();
+    Map<Check, Boolean> result = new LinkedHashMap<>();
     if (hasChecks()) {
       for (Check ck : checks) {
         result.put(ck, false);

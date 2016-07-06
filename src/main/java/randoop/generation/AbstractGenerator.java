@@ -38,7 +38,7 @@ public abstract class AbstractGenerator {
   public static boolean dump_sequences = false;
 
   @RandoopStat(
-      "Number of generation steps (one step consistents of an attempt to generate and execute a new, distinct sequence)")
+      "Number of generation steps (one step consists of an attempt to generate and execute a new, distinct sequence)")
   public int num_steps = 0;
 
   @RandoopStat("Number of sequences generated.")

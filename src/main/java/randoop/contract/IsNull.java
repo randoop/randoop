@@ -28,8 +28,7 @@ public final class IsNull implements ObjectContract {
 
   @Override
   public int hashCode() {
-    int h = 37;
-    return h; // no state to compare.
+    return 37; // no state to compare.
   }
 
   @Override

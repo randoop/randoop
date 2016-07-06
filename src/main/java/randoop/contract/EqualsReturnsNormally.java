@@ -14,7 +14,7 @@ import randoop.types.TypeTuple;
 public final class EqualsReturnsNormally implements ObjectContract {
   private static final EqualsReturnsNormally instance = new EqualsReturnsNormally();
 
-  private EqualsReturnsNormally() {};
+  private EqualsReturnsNormally() {}
 
   public static EqualsReturnsNormally getInstance() {
     return instance;
@@ -26,6 +26,7 @@ public final class EqualsReturnsNormally implements ObjectContract {
     Object o = objects[0];
     assert o != null;
     try {
+      //noinspection EqualsWithItself,ResultOfMethodCallIgnored
       o.equals(o);
     } catch (Exception e) {
       return false;

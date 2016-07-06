@@ -98,7 +98,7 @@ public class RecordListReader {
   }
 
   private List<String> readOneRecord(BufferedReader reader) throws IOException {
-    List<String> ret = new ArrayList<String>();
+    List<String> ret = new ArrayList<>();
     String line = nextNWCLine(reader);
     while (line != null && !line.equals(endMarker)) {
       if (line.length() == 0 || line.charAt(0) == '#') continue;

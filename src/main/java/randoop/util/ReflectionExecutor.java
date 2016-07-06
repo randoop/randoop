@@ -178,7 +178,7 @@ public final class ReflectionExecutor {
         // Note that field Throwable.suppressedExceptions only exists in JDK 7.
         Object eSuppressedExceptions = UtilMDE.getPrivateField(e, "suppressedExceptions");
         if (eSuppressedExceptions == null) {
-          UtilMDE.setFinalField(e, "suppressedExceptions", new java.util.ArrayList<Object>());
+          UtilMDE.setFinalField(e, "suppressedExceptions", new java.util.ArrayList<>());
         }
       } catch (NoSuchFieldException nsfe) {
         out.println("This can't happen on JDK7 (can on JDK6): NoSuchFieldException " + nsfe);

@@ -23,7 +23,7 @@ import randoop.sequence.ExecutableSequence;
 public class MultiVisitor implements ExecutionVisitor {
 
   // The list of visitors.
-  private final List<ExecutionVisitor> visitors = new ArrayList<ExecutionVisitor>();
+  private final List<ExecutionVisitor> visitors = new ArrayList<>();
 
   public MultiVisitor() {}
 

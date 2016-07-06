@@ -10,7 +10,7 @@ public class WeightedList {
   private List<WeightedElement> theList;
 
   public WeightedList() {
-    theList = new ArrayList<WeightedElement>();
+    theList = new ArrayList<>();
   }
 
   public void add(WeightedElement elt) {

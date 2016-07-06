@@ -14,7 +14,7 @@ import randoop.types.TypeTuple;
 public final class EqualsReflexive implements ObjectContract {
   private static final EqualsReflexive instance = new EqualsReflexive();
 
-  private EqualsReflexive() {};
+  private EqualsReflexive() {}
 
   public static EqualsReflexive getInstance() {
     return instance;
@@ -25,6 +25,7 @@ public final class EqualsReflexive implements ObjectContract {
     assert objects != null && objects.length == 1;
     Object o = objects[0];
     assert o != null;
+    //noinspection EqualsWithItself
     return o.equals(o);
   }
 

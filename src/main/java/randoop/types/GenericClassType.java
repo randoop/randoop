@@ -241,10 +241,8 @@ public class GenericClassType extends ParameterizedType {
       throw new IllegalArgumentException("type must be non-null");
     }
 
-    if (super.isSubtypeOf(otherType)) {
-      return true;
-    }
-    return otherType.isRawtype() && otherType.hasRuntimeClass(this.getRuntimeClass());
+    return super.isSubtypeOf(otherType)
+        || otherType.isRawtype() && otherType.hasRuntimeClass(this.getRuntimeClass());
   }
 
   @Override

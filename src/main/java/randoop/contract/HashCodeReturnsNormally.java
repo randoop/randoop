@@ -14,7 +14,7 @@ import randoop.types.TypeTuple;
 public final class HashCodeReturnsNormally implements ObjectContract {
   private static final HashCodeReturnsNormally instance = new HashCodeReturnsNormally();
 
-  private HashCodeReturnsNormally() {};
+  private HashCodeReturnsNormally() {}
 
   public static HashCodeReturnsNormally getInstance() {
     return instance;
@@ -26,6 +26,7 @@ public final class HashCodeReturnsNormally implements ObjectContract {
     Object o = objects[0];
     assert o != null;
     try {
+      //noinspection ResultOfMethodCallIgnored
       o.hashCode();
     } catch (Exception e) {
       return false;

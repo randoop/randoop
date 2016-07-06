@@ -28,9 +28,9 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
   private int steps;
 
   public ReversibleMultiMap() {
-    map = new LinkedHashMap<T1, Set<T2>>();
-    marks = new ArrayList<Integer>();
-    ops = new ArrayList<Triple<Ops, T1, T2>>();
+    map = new LinkedHashMap<>();
+    marks = new ArrayList<>();
+    ops = new ArrayList<>();
     steps = 0;
   }
 
@@ -43,7 +43,7 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
   public void add(T1 key, T2 value) {
     if (verbose_log && Log.isLoggingOn()) Log.logLine("ADD " + key + " ->" + value);
     add_bare(key, value);
-    ops.add(new Triple<Ops, T1, T2>(Ops.ADD, key, value));
+    ops.add(new Triple<>(Ops.ADD, key, value));
     steps++;
   }
 
@@ -52,7 +52,7 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
 
     Set<T2> values = map.get(key);
     if (values == null) {
-      values = new LinkedHashSet<T2>(1);
+      values = new LinkedHashSet<>(1);
       map.put(key, values);
     }
     if (values.contains(value)) {
@@ -70,7 +70,7 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
   public void remove(T1 key, T2 value) {
     if (verbose_log && Log.isLoggingOn()) Log.logLine("REMOVE " + key + " ->" + value);
     remove_bare(key, value);
-    ops.add(new Triple<Ops, T1, T2>(Ops.REMOVE, key, value));
+    ops.add(new Triple<>(Ops.REMOVE, key, value));
     steps++;
   }
 

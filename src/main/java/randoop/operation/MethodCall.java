@@ -13,7 +13,6 @@ import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.GeneralType;
-import randoop.types.RandoopTypeException;
 import randoop.types.TypeTuple;
 import randoop.util.MethodReflectionCode;
 import randoop.util.ReflectionExecutor;

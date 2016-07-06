@@ -15,7 +15,7 @@ import randoop.types.TypeTuple;
 public final class EqualsHashcode implements ObjectContract {
   private static final EqualsHashcode instance = new EqualsHashcode();
 
-  private EqualsHashcode() {};
+  private EqualsHashcode() {}
 
   public static EqualsHashcode getInstance() {
     return instance;
@@ -27,10 +27,7 @@ public final class EqualsHashcode implements ObjectContract {
     Object o1 = objects[0];
     Object o2 = objects[1];
 
-    if (o1.equals(o2)) {
-      return o1.hashCode() == o2.hashCode();
-    }
-    return true;
+    return !o1.equals(o2) || o1.hashCode() == o2.hashCode();
   }
 
   @Override

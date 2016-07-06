@@ -5,7 +5,6 @@ import java.lang.reflect.Field;
 import randoop.operation.OperationParseException;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
-import randoop.types.RandoopTypeException;
 
 /**
  * Recognizes a string representation of a field as part of parsing an

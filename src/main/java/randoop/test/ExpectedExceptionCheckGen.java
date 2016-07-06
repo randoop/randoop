@@ -1,9 +1,6 @@
 package randoop.test;
 
-import randoop.test.EmptyExceptionCheck;
-import randoop.test.ExceptionCheck;
 import randoop.ExceptionalExecution;
-import randoop.test.ExpectedExceptionCheck;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.test.predicate.ExceptionPredicate;

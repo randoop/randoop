@@ -1,7 +1,5 @@
 package randoop.types;
 
-import java.util.Objects;
-
 /**
  * The <code>null</code> type is the type of the value <code>null</code>.
  * As the subtype of all reference types, it is the default lowerbound of

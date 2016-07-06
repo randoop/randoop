@@ -14,7 +14,7 @@ import randoop.types.TypeTuple;
 public class CompareToReturnsNormally implements ObjectContract {
   private static final CompareToReturnsNormally instance = new CompareToReturnsNormally();
 
-  private CompareToReturnsNormally() {};
+  private CompareToReturnsNormally() {}
 
   public static CompareToReturnsNormally getInstance() {
     return instance;

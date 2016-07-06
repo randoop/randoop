@@ -14,7 +14,7 @@ import randoop.types.TypeTuple;
 public final class EqualsToNullRetFalse implements ObjectContract {
   private static final EqualsToNullRetFalse instance = new EqualsToNullRetFalse();
 
-  private EqualsToNullRetFalse() {};
+  private EqualsToNullRetFalse() {}
 
   public static EqualsToNullRetFalse getInstance() {
     return instance;
@@ -25,6 +25,7 @@ public final class EqualsToNullRetFalse implements ObjectContract {
     assert objects != null && objects.length == 1;
     Object o = objects[0];
     assert o != null;
+    //noinspection ObjectEqualsNull
     return !o.equals(null);
   }
 

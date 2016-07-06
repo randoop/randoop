@@ -71,7 +71,7 @@ public class TestCoverageInfo {
       }
     }
     assert branchesCovered <= totalBranches;
-    return new Pair<Integer, Integer>(branchesCovered, totalBranches);
+    return new Pair<>(branchesCovered, totalBranches);
   }
 
   public static String getCoverageInfo(Class<?> clazz) {

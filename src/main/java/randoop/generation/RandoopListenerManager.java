@@ -10,7 +10,7 @@ public class RandoopListenerManager {
   private List<IEventListener> listeners;
 
   public RandoopListenerManager() {
-    listeners = new LinkedList<IEventListener>();
+    listeners = new LinkedList<>();
   }
 
   public void addListener(IEventListener listener) {

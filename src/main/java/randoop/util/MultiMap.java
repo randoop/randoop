@@ -15,16 +15,16 @@ public class MultiMap<T1, T2> implements IMultiMap<T1, T2> {
   private final Map<T1, Set<T2>> map;
 
   public MultiMap() {
-    map = new LinkedHashMap<T1, Set<T2>>();
+    map = new LinkedHashMap<>();
   }
 
   public MultiMap(int i) {
-    map = new LinkedHashMap<T1, Set<T2>>(i);
+    map = new LinkedHashMap<>(i);
   }
 
   public void put(T1 key, Collection<? extends T2> values) {
     if (contains(key)) remove(key);
-    map.put(key, new LinkedHashSet<T2>(values));
+    map.put(key, new LinkedHashSet<>(values));
   }
 
   public void addAll(Map<? extends T1, ? extends T2> m) {
@@ -49,7 +49,7 @@ public class MultiMap<T1, T2> implements IMultiMap<T1, T2> {
   public void add(T1 key, T2 value) {
     Set<T2> values = map.get(key);
     if (values == null) {
-      values = new LinkedHashSet<T2>(1);
+      values = new LinkedHashSet<>(1);
       map.put(key, values);
     }
     values.add(value);

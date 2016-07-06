@@ -7,7 +7,7 @@ public class ReversibleSet<T> implements ISimpleSet<T> {
   public final ReversibleMultiMap<T, Boolean> map;
 
   public ReversibleSet() {
-    this.map = new ReversibleMultiMap<T, Boolean>();
+    this.map = new ReversibleMultiMap<>();
   }
 
   @Override

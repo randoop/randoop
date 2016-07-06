@@ -3,7 +3,6 @@ package randoop.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
@@ -73,7 +72,6 @@ public class ClassFileConstants {
     @Override
     public String toString() {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      PrintStream ps = new PrintStream(baos);
 
       System.out.printf("START CLASSLITERALS%n");
       System.out.printf("%nCLASSNAME%n%s%n%nLITERALS%n", classname);

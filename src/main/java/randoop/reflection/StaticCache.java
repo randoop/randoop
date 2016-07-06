@@ -48,7 +48,7 @@ public class StaticCache {
       field.setAccessible(true);
       int mods = Modifier.fieldModifiers() & field.getModifiers();
       if (Modifier.isStatic(mods) && !Modifier.isFinal(mods)) {
-        Object value = null;
+        Object value;
         try {
           value = field.get(null);
         } catch (IllegalAccessException e) {

@@ -39,10 +39,7 @@ public final class Util {
     if (o1 == null) {
       return o2 == null;
     }
-    if (o2 == null) {
-      return false;
-    }
-    return (o1.equals(o2));
+    return o2 != null && (o1.equals(o2));
   }
 
   public static boolean isJavaIdentifier(String s) {
@@ -92,7 +89,7 @@ public final class Util {
    * @return the list of column strings
    */
   public static List<String> toNCols(String s, int width) {
-    List<String> ret = new ArrayList<String>();
+    List<String> ret = new ArrayList<>();
     StringLineIterator i = new StringLineIterator(s);
     while (i.hasMoreWords()) {
       ret.add(i.nextLine(width));

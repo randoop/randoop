@@ -60,7 +60,7 @@ public class RegressionChecks implements TestChecks {
    */
   @Override
   public Map<Check, Boolean> get() {
-    Map<Check, Boolean> mp = new LinkedHashMap<Check, Boolean>();
+    Map<Check, Boolean> mp = new LinkedHashMap<>();
     for (Check ck : checks) {
       mp.put(ck, true);
     }

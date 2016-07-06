@@ -15,7 +15,7 @@ import randoop.types.TypeTuple;
 public class CompareToTransitive implements ObjectContract {
   private static final CompareToTransitive instance = new CompareToTransitive();
 
-  private CompareToTransitive() {};
+  private CompareToTransitive() {}
 
   public static CompareToTransitive getInstance() {
     return instance;
@@ -34,10 +34,8 @@ public class CompareToTransitive implements ObjectContract {
       Comparable compObj2 = (Comparable) o2;
       Comparable compObj3 = (Comparable) o3;
 
-      if (compObj1.compareTo(compObj2) > 0 && compObj2.compareTo(compObj3) > 0) {
-        return (compObj1.compareTo(compObj3) > 0);
-      }
-      return true;
+      return !(compObj1.compareTo(compObj2) > 0 && compObj2.compareTo(compObj3) > 0)
+          || (compObj1.compareTo(compObj3) > 0);
     }
     // If the compare to operation can't be done, the statement is trivially true
     return true;

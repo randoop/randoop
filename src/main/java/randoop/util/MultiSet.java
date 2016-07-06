@@ -9,7 +9,7 @@ public class MultiSet<T> {
   private final Map<T, Integer> frequencyMap;
 
   public MultiSet() {
-    frequencyMap = new LinkedHashMap<T, Integer>();
+    frequencyMap = new LinkedHashMap<>();
   }
 
   public void add(T obj) {

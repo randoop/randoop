@@ -22,7 +22,7 @@ public class MappedSequences<T> {
   private Map<T, SequenceCollection> map;
 
   public MappedSequences() {
-    this.map = new LinkedHashMap<T, SequenceCollection>();
+    this.map = new LinkedHashMap<>();
   }
 
   /**

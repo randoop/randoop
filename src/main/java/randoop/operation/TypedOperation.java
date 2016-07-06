@@ -4,14 +4,11 @@ import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import randoop.BugInRandoopException;
 import randoop.ExecutionOutcome;
 import randoop.field.AccessibleField;
 import randoop.reflection.ReflectionPredicate;
@@ -307,9 +304,8 @@ public abstract class TypedOperation implements Operation {
           && m.getGenericParameterTypes().length == method.getGenericParameterTypes().length) {
         List<GeneralType> paramTypes = new ArrayList<>();
         MethodCall op = new MethodCall(m);
-        ClassOrInterfaceType declaringType = enumType;
         if (!op.isStatic()) {
-          paramTypes.add(declaringType);
+          paramTypes.add(enumType);
         }
         for (Type t : m.getGenericParameterTypes()) {
           paramTypes.add(GeneralType.forType(t));
@@ -337,7 +333,7 @@ public abstract class TypedOperation implements Operation {
           i++;
         }
         if (i == methodParamTypes.size()) {
-          return new TypedClassOperation(op, declaringType, inputTypes, outputType);
+          return new TypedClassOperation(op, enumType, inputTypes, outputType);
         }
       }
     }

@@ -277,8 +277,7 @@ public class InstantiatedType extends ParameterizedType {
   public ClassOrInterfaceType getSuperclass() {
     Substitution<ReferenceType> substitution =
         Substitution.forArgs(instantiatedType.getTypeParameters(), getReferenceArguments());
-    ClassOrInterfaceType superclass = this.instantiatedType.getSuperclass(substitution);
-    return superclass;
+    return this.instantiatedType.getSuperclass(substitution);
   }
 
   // TODO refactor with GenericClassType methods so that they apply substitution

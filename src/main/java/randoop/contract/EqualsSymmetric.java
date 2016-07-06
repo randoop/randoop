@@ -14,7 +14,7 @@ import randoop.types.TypeTuple;
 public final class EqualsSymmetric implements ObjectContract {
   private static final EqualsSymmetric instance = new EqualsSymmetric();
 
-  private EqualsSymmetric() {};
+  private EqualsSymmetric() {}
 
   public static EqualsSymmetric getInstance() {
     return instance;
@@ -26,10 +26,7 @@ public final class EqualsSymmetric implements ObjectContract {
     Object o1 = objects[0];
     Object o2 = objects[1];
 
-    if (o1.equals(o2)) {
-      return o2.equals(o1);
-    }
-    return true;
+    return !o1.equals(o2) || o2.equals(o1);
   }
 
   @Override

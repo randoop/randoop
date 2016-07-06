@@ -6,7 +6,6 @@ import java.util.List;
 import randoop.Globals;
 import randoop.types.ConcreteTypes;
 import randoop.types.GeneralType;
-import randoop.types.JDKTypes;
 import randoop.types.TypeTuple;
 
 /**

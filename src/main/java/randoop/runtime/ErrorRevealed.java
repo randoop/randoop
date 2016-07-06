@@ -18,8 +18,7 @@ public class ErrorRevealed implements IMessage {
       String testCode, String description, List<String> failingClassNames, File junitFile) {
     this.testCode = testCode;
     this.description = description;
-    this.failingClassNames =
-        Collections.unmodifiableList(new LinkedList<String>(failingClassNames));
+    this.failingClassNames = Collections.unmodifiableList(new LinkedList<>(failingClassNames));
     this.junitFile = junitFile;
   }
 

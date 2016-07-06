@@ -6,7 +6,6 @@ import java.util.Objects;
 
 import randoop.Globals;
 import randoop.operation.TypedOperation;
-import randoop.operation.MethodCall;
 import randoop.types.ConcreteTypes;
 import randoop.types.GeneralType;
 import randoop.types.PrimitiveTypes;
@@ -80,10 +79,10 @@ public final class ObserverEqValue implements ObjectContract {
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
-    b.append(
-        "// Regression assertion (captures the current behavior of the code)" + Globals.lineSep);
+    b.append("// Regression assertion (captures the current behavior of the code)")
+        .append(Globals.lineSep);
 
-    String methodname = ((MethodCall) observer.getOperation()).getName();
+    String methodname = observer.getOperation().getName();
     if (value == null) {
       b.append(String.format("assertNull(\"x0.%s() == null\", x0.%s());", methodname, methodname));
     } else if (observer.getOutputType().isPrimitive()

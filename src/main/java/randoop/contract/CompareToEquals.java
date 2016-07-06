@@ -15,7 +15,7 @@ import randoop.types.TypeTuple;
 public class CompareToEquals implements ObjectContract {
   private static final CompareToEquals instance = new CompareToEquals();
 
-  private CompareToEquals() {};
+  private CompareToEquals() {}
 
   public static CompareToEquals getInstance() {
     return instance;

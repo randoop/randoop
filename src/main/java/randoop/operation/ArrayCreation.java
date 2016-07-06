@@ -11,7 +11,6 @@ import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.ArrayType;
 import randoop.types.GeneralType;
-import randoop.types.RandoopTypeException;
 import randoop.types.TypeTuple;
 
 /**

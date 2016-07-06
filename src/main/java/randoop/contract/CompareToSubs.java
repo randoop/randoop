@@ -15,7 +15,7 @@ import randoop.types.TypeTuple;
 public class CompareToSubs implements ObjectContract {
   private static final CompareToSubs instance = new CompareToSubs();
 
-  private CompareToSubs() {};
+  private CompareToSubs() {}
 
   public static CompareToSubs getInstance() {
     return instance;
@@ -34,11 +34,8 @@ public class CompareToSubs implements ObjectContract {
       Comparable compObj2 = (Comparable) o2;
       Comparable compObj3 = (Comparable) o3;
 
-      if (compObj1.compareTo(compObj2) == 0) {
-        return Math.signum(compObj1.compareTo(compObj3))
-            == Math.signum(compObj2.compareTo(compObj3));
-      }
-      return true;
+      return compObj1.compareTo(compObj2) != 0
+          || Math.signum(compObj1.compareTo(compObj3)) == Math.signum(compObj2.compareTo(compObj3));
     }
     // If the compare to operation can't be done, the statement is trivially true
     return true;

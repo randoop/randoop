@@ -8,7 +8,7 @@ public class SimpleSet<T> implements ISimpleSet<T> {
   private final LinkedHashSet<T> set;
 
   public SimpleSet() {
-    set = new LinkedHashSet<T>();
+    set = new LinkedHashSet<>();
   }
 
   @Override

@@ -22,8 +22,7 @@ public final class ToStringReturnsNormally implements ObjectContract {
 
   @Override
   public int hashCode() {
-    int h = 51;
-    return h; // no state to compare.
+    return 51; // no state to compare.
   }
 
   @Override
@@ -31,6 +30,7 @@ public final class ToStringReturnsNormally implements ObjectContract {
     assert objects != null && objects.length == 1;
     Object o = objects[0];
     assert o != null;
+    //noinspection ResultOfMethodCallIgnored
     o.toString();
     return true;
   }

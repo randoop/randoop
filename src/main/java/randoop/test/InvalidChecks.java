@@ -24,7 +24,7 @@ public class InvalidChecks implements TestChecks {
 
   @Override
   public Map<Check, Boolean> get() {
-    Map<Check, Boolean> mp = new LinkedHashMap<Check, Boolean>();
+    Map<Check, Boolean> mp = new LinkedHashMap<>();
     if (exceptionCheck != null) {
       mp.put(exceptionCheck, false);
     }
