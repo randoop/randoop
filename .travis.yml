@@ -23,9 +23,9 @@ script:
   - ./gradlew assemble
   - ./gradlew --info check
   - ./gradlew --info manual
-  - ./gradlew validate
 # TODO: this requires Java 8
-#   - ./gradlew verifyGoogleJavaFormat
+#   - ./gradlew validate
+  - ./gradlew verifyGoogleJavaFormat
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
