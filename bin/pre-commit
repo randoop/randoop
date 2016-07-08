@@ -6,4 +6,8 @@
 # Fail if any command fails
 set -e
 
-./gradlew assemble manual validate verifyGoogleJavaFormat
+# Includes checking of the manual, but checking the manual is too slow.
+# ./gradlew assemble manual validate verifyGoogleJavaFormat
+
+# The manual is rarely changed, and Travis validates the manual anyway.
+./gradlew assemble verifyGoogleJavaFormat
