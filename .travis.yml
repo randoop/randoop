@@ -10,7 +10,8 @@ cache:
 before_install:
   - sudo pip install html5validator
 
-sudo: false
+# sudo: false
+sudo: required
 
 jdk:
   - oraclejdk8
