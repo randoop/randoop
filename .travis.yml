@@ -7,6 +7,9 @@ cache:
       - $HOME/.gradle/caches
       - $HOME/.gradle/wrapper
 
+before_install:
+  - sudo pip install html5validator
+
 sudo: false
 
 jdk:
