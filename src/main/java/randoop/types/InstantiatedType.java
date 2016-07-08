@@ -299,10 +299,13 @@ public class InstantiatedType extends ParameterizedType {
    * wildcard as described in the JLS, section 5.1.10,
    * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">Capture Conversion</a>.
    *
+   * <p>
    * Based on algorithm in
    * Mads Torgerson <i>et al.</i>
    * "<a href="http://www.jot.fm/issues/issue_2004_12/article5.pdf">Adding Wildcards to the Java Programming Language</a>",
    * Journal of Object Technology, 3 (December 2004) 11, 97-116. Special Issue: OOPS track at SAC 2004.
+   * </p>
+   *
    * <p>
    * If this type has no wildcards, then returns this type.
    *</p>
@@ -332,12 +335,12 @@ public class InstantiatedType extends ParameterizedType {
       }
     }
 
-    List<TypeArgument> converedArgumentList = new ArrayList<>();
+    List<TypeArgument> convertedArgumentList = new ArrayList<>();
     for (ReferenceType type : convertedTypeList) {
-      converedArgumentList.add(new ReferenceArgument(type));
+      convertedArgumentList.add(new ReferenceArgument(type));
     }
 
-    return new InstantiatedType(instantiatedType, converedArgumentList);
+    return new InstantiatedType(instantiatedType, convertedArgumentList);
   }
 
   @Override

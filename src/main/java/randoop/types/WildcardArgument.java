@@ -18,7 +18,7 @@ import java.util.Objects;
  * @see WildcardArgumentWithLowerBound
  * @see WildcardArgumentWithUpperBound
  */
-public abstract class WildcardArgument extends TypeArgument {
+abstract class WildcardArgument extends TypeArgument {
 
   /** the bound type */
   private final ReferenceType boundType;
@@ -69,7 +69,7 @@ public abstract class WildcardArgument extends TypeArgument {
    *
    * @return the type of the bound of this wildcard argument
    */
-  public ReferenceType getBoundType() {
+  ReferenceType getBoundType() {
     return boundType;
   }
 

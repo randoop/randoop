@@ -6,7 +6,7 @@ import java.lang.reflect.Type;
  * Represents a wildcard type that has an upper bound (e.g., {@code ? extends T}).
  * See JLS, section 4.5.1
  */
-public class WildcardArgumentWithUpperBound extends WildcardArgument {
+class WildcardArgumentWithUpperBound extends WildcardArgument {
 
   /**
    * Creates a wildcard argument with an upper bound.
