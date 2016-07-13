@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# This file will be used as .git/hooks/pre-commit .
+# However, it should be edited as scripts/git-hook-pre-commit .
+
+# Fail if any command fails
+set -e
+
+# Includes checking of the manual, but checking the manual is too slow.
+# ./gradlew assemble manual validate verifyGoogleJavaFormat
+
+# The manual is rarely changed, and Travis validates the manual anyway.
+./gradlew assemble verifyGoogleJavaFormat

@@ -350,7 +350,7 @@ a "method under test".
 
 <li>
   Do not include methods that side-effect global state.
-  (Methods that side-effect the state of their argument or receiver are fine.)
+  (Methods that side-effect the state of their receiver or other arguments are fine.)
   The reason is that such methods create dependent tests that cannot be run
   in isolation or reordered.
   For example, if test A side-effects global state and test B reads global

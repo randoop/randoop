@@ -7,7 +7,11 @@ cache:
       - $HOME/.gradle/caches
       - $HOME/.gradle/wrapper
 
-sudo: false
+before_install:
+  - sudo pip install html5validator
+
+# sudo: false
+sudo: required
 
 jdk:
   - oraclejdk8
@@ -19,6 +23,9 @@ script:
   - ./gradlew assemble
   - ./gradlew --info check
   - ./gradlew --info manual
+# TODO: this requires Java 8
+#   - ./gradlew validate
+  - ./gradlew verifyGoogleJavaFormat
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

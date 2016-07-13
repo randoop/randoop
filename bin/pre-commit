@@ -1,9 +1,0 @@
-#!/bin/sh
-
-# This file will be used as .git/hooks/pre-commit .
-# However, it should be edited as bin/git-hook-pre-commit .
-
-# Fail if any command fails
-set -e
-
-./gradlew assemble manual validate verifyGoogleJavaFormat
