@@ -490,7 +490,7 @@ task validate(type: Exec, dependsOn: 'clone') {
 }
 
 task installGitHooks(type: Copy) {
-  from 'bin/pre-commit'
+  from 'scripts/pre-commit'
   into '.git/hooks'
 }
 /* Always run this task. */

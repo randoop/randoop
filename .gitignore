@@ -21,6 +21,7 @@ out/
 .settings/
 .classpath
 .project
+bin/
 
 # NetBeans
 /.nb-gradle/
