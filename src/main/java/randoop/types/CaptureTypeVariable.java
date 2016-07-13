@@ -15,7 +15,7 @@ import java.util.Objects;
  * to match the definition in JLS section 5.1.10,
  * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">Capture Conversion</a>.
  */
-public class CaptureTypeVariable extends AbstractTypeVariable {
+class CaptureTypeVariable extends TypeVariable {
 
   /** The ID counter for capture conversion variables */
   private static int count = 0;
@@ -26,12 +26,6 @@ public class CaptureTypeVariable extends AbstractTypeVariable {
   /** The wildcard */
   private final WildcardArgument wildcard;
 
-  /** The upper bound */
-  private TypeBound upperBound;
-
-  /** The lower bound */
-  private ReferenceType lowerBoundType;
-
   /**
    * Creates a {@link CaptureTypeVariable} for the given wildcard.
    * Created object is not complete until {@link #convert(TypeVariable, Substitution)} is run.
@@ -39,14 +33,14 @@ public class CaptureTypeVariable extends AbstractTypeVariable {
    * @param wildcard  the wildcard argument
    */
   CaptureTypeVariable(WildcardArgument wildcard) {
+    super();
     this.varID = count++;
     this.wildcard = wildcard;
-    upperBound = new ClassOrInterfaceTypeBound(ConcreteTypes.OBJECT_TYPE);
-    lowerBoundType = ConcreteTypes.NULL_TYPE;
+
     if (wildcard.hasUpperBound()) {
-      upperBound = TypeBound.forType(wildcard.getBoundType());
+      setUpperBound(new ReferenceBound(wildcard.getBoundType()));
     } else {
-      lowerBoundType = wildcard.getBoundType();
+      setLowerBound(new ReferenceBound(wildcard.getBoundType()));
     }
   }
 
@@ -63,13 +57,12 @@ public class CaptureTypeVariable extends AbstractTypeVariable {
     CaptureTypeVariable variable = (CaptureTypeVariable) obj;
     return this.varID == variable.varID
         && this.wildcard.equals(variable.wildcard)
-        && this.upperBound.equals(variable.upperBound)
-        && this.lowerBoundType.equals(variable.lowerBoundType);
+        && super.equals(variable);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(varID, wildcard, upperBound, lowerBoundType);
+    return Objects.hash(varID, wildcard, super.hashCode());
   }
 
   @Override
@@ -88,6 +81,25 @@ public class CaptureTypeVariable extends AbstractTypeVariable {
    * type parameters and capture conversion argument list.
    * Implements the clauses of the JLS section 5.1.10,
    * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">Capture Conversion</a>.
+   * <p>
+   * Creates an upper bound on a type variable resulting from a capture conversion (JLS section 5.1.10)
+   * in the case that a wildcard has an upper bound other than Object.
+   * In particular, each object represents a bound on a variable <code>S<sub>i</sub></code> in a
+   * parameterized type
+   * <code>C&lt;S<sub>1</sub>,...,S<sub>n</sub>&gt;</code>
+   * defined as
+   * <code>glb(B<sub>i</sub>, U<sub>i</sub>[A<sub>i</sub>:=S<sub>i</sub>])</code>
+   * where
+   * <ul>
+   *   <li><code>U<sub>i</sub></code> is the upper bound on the type variable <code>A<sub>i</sub></code>
+   *   in the declared class <code>C&lt;A<sub>1</sub>,...,A<sub>n</sub>&gt;</code>,</li>
+   *   <li><code>glb(S, T)</code> for types <code>S</code> and <code>T</code> is the intersection type
+   *   <code>S &amp; T</code>.</li>
+   * </ul>
+   * The JLS states that if <code>S</code> and <code>T</code> are both class types not related as
+   * subtypes, then the greatest lower bound of the two types is a compiler error.
+   * Technically it is the null type.
+   * </p>
    *
    * @param typeParameter  the formal type parameter of the generic type
    * @param substitution  the capture conversion substitution
@@ -95,27 +107,20 @@ public class CaptureTypeVariable extends AbstractTypeVariable {
   public void convert(TypeVariable typeParameter, Substitution<ReferenceType> substitution) {
 
     // the lower bound is either the null-type or the wildcard lower bound, so only do upper bound
-    ParameterBound parameterBound = typeParameter.getTypeBound().apply(substitution);
-    if (upperBound.equals(new ClassOrInterfaceTypeBound(ConcreteTypes.OBJECT_TYPE))) {
-      upperBound = parameterBound;
+    ParameterBound parameterBound = typeParameter.getUpperTypeBound().apply(substitution);
+    if (getUpperTypeBound().equals(new ReferenceBound(ConcreteTypes.OBJECT_TYPE))) {
+      setUpperBound(parameterBound);
     } else {
-      upperBound = new GLBTypeBound(parameterBound, upperBound);
+      List<ParameterBound> boundList = new ArrayList<>();
+      boundList.add(parameterBound);
+      boundList.add(getUpperTypeBound());
+      setUpperBound(new IntersectionTypeBound(boundList));
     }
   }
 
   @Override
-  public TypeBound getTypeBound() {
-    return upperBound;
-  }
-
-  @Override
-  public ReferenceType getLowerTypeBound() {
-    return lowerBoundType;
-  }
-
-  @Override
-  public List<AbstractTypeVariable> getTypeParameters() {
-    List<AbstractTypeVariable> parameters = new ArrayList<>();
+  public List<TypeVariable> getTypeParameters() {
+    List<TypeVariable> parameters = new ArrayList<>();
     parameters.add(this);
     return parameters;
   }

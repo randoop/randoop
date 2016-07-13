@@ -1,80 +1,90 @@
 package randoop.types;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 /**
- * Represents a type variable that is a type parameter.
- * (See JLS, section 4.3)
+ * An abstract class representing type variables.
+ * Assumes a type variable has both upper and lower bounds.
+ *
+ * @see ExplicitTypeVariable
+ * @see CaptureTypeVariable
  */
-public class TypeVariable extends AbstractTypeVariable {
+public abstract class TypeVariable extends ReferenceType {
 
-  /** the type parameter */
-  private final java.lang.reflect.TypeVariable<?> variable;
+  /** The lower bound on this type */
+  private ParameterBound lowerBound;
 
-  /** the upper typeBound on the type parameter */
-  private final ParameterBound typeBound;
+  /** The upper bound on this type */
+  private ParameterBound upperBound;
 
   /**
-   * Create a {@code TypeVariable} for the given type parameter
-   *
-   * @param variable  the type parameter
-   * @param bound  the upper boundon the parameter
+   * Creates a type variable with {@link NullReferenceType} as the lower bound, and
+   * the {@code Object} type as upper bound.
    */
-  private TypeVariable(java.lang.reflect.TypeVariable<?> variable, ParameterBound bound) {
-    this.variable = variable;
-    this.typeBound = bound;
+  public TypeVariable() {
+    this.lowerBound = new ReferenceBound(ConcreteTypes.NULL_TYPE);
+    this.upperBound = new ReferenceBound(ConcreteTypes.OBJECT_TYPE);
+  }
+
+  /**
+   * Creates a type variable with the given type bounds.
+   * Assumes the bounds are consistent and does not check for the subtype relationship.
+   *
+   * @param lowerBound  the lower type bound on this variable
+   * @param upperBound  the upper type bound on this variable
+   */
+  public TypeVariable(ParameterBound lowerBound, ParameterBound upperBound) {
+    this.lowerBound = lowerBound;
+    this.upperBound = upperBound;
   }
 
   /**
    * {@inheritDoc}
-   * Checks that the type parameter is equal.
-   * This may be more restrictive than desired because equivalent TypeVariable
-   * objects from different instances of the same type may be distinct.
-   * @return true if the type parameters are equal, false otherwise
+   * @return false, since an uninstantiated type variable may not be assigned to
    */
   @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof TypeVariable)) {
-      return isAssignableFrom(null);
+  public boolean isAssignableFrom(GeneralType sourceType) {
+    return false;
+  }
+
+  @Override
+  public boolean isSubtypeOf(GeneralType otherType) {
+    return super.isSubtypeOf(otherType) || getUpperTypeBound().isSubtypeOf(otherType);
+  }
+
+  @Override
+  public ReferenceType apply(Substitution<ReferenceType> substitution) {
+    ReferenceType type = substitution.get(this);
+    if (type != null) {
+      return type;
     }
-    TypeVariable t = (TypeVariable) obj;
-    return variable.equals(t.variable);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(variable);
-  }
-
-  @Override
-  public String toString() {
-    return variable.toString();
+    return this;
   }
 
   /**
-   * {@inheritDoc}
-   * @return name of type parameter of this type
-   */
-  @Override
-  public String getName() {
-    return variable.getName();
-  }
-
-  @Override
-  public boolean isGeneric() {
-    return true;
-  }
-
-  /**
-   * Return the upper bound type for this type variable.
+   * Get the upper bound for for this type variable.
    *
-   * @return the upper bound type for this variable
+   * @return the (upper) {@link ParameterBound} for this type variable
    */
-  public ParameterBound getTypeBound() {
-    return typeBound;
+  public ParameterBound getUpperTypeBound() {
+    return upperBound;
+  }
+
+  /**
+   * Get the lower bound for this type variable.
+   *
+   * @return {@link NullReferenceType} in default case since no lower bound is defined
+   */
+  public ParameterBound getLowerTypeBound() {
+    return lowerBound;
+  }
+
+  void setUpperBound(ParameterBound upperBound) {
+    this.upperBound = upperBound;
+  }
+
+  void setLowerBound(ParameterBound lowerBound) {
+    this.lowerBound = lowerBound;
   }
 
   /**
@@ -89,22 +99,6 @@ public class TypeVariable extends AbstractTypeVariable {
       throw new IllegalArgumentException("type must be a type variable, got " + type);
     }
     java.lang.reflect.TypeVariable<?> v = (java.lang.reflect.TypeVariable) type;
-    return new TypeVariable(v, ParameterBound.forTypes(v.getBounds()));
-  }
-
-  @Override
-  public List<AbstractTypeVariable> getTypeParameters() {
-    List<AbstractTypeVariable> paramList = new ArrayList<>();
-    paramList.add(this);
-    return paramList;
-  }
-
-  /**
-   * Return the underlying reflection object.
-   *
-   * @return the reflection object.
-   */
-  Type getReflectionTypeVariable() {
-    return variable;
+    return new ExplicitTypeVariable(v, ParameterBound.forTypes(v.getBounds()));
   }
 }

@@ -16,17 +16,17 @@ import plume.UtilMDE;
  * This class preserves the order of the types, just in case it becomes
  * necessary to dump the bound to compilable code.
  */
-public class IntersectionTypeBound extends ClassOrInterfaceBound {
+class IntersectionTypeBound extends ParameterBound {
 
   /** the list of type bounds for the intersection bound */
-  private List<ClassOrInterfaceBound> boundList;
+  private List<ParameterBound> boundList;
 
   /**
    * Create an intersection type bound from the list of type bounds.
    *
    * @param boundList  the list of type bounds
    */
-  IntersectionTypeBound(List<ClassOrInterfaceBound> boundList) {
+  IntersectionTypeBound(List<ParameterBound> boundList) {
     if (boundList == null) {
       throw new IllegalArgumentException("bounds list may not be null");
     }
@@ -95,9 +95,9 @@ public class IntersectionTypeBound extends ClassOrInterfaceBound {
 
   @Override
   public IntersectionTypeBound apply(Substitution<ReferenceType> substitution) {
-    List<ClassOrInterfaceBound> bounds = new ArrayList<>();
-    for (ClassOrInterfaceBound bound : this.boundList) {
-      bounds.add((ClassOrInterfaceBound) bound.apply(substitution));
+    List<ParameterBound> bounds = new ArrayList<>();
+    for (ParameterBound bound : this.boundList) {
+      bounds.add(bound.apply(substitution));
     }
     return new IntersectionTypeBound(bounds);
   }

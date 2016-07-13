@@ -7,7 +7,7 @@ import java.util.Objects;
  * These should only occur as bounds for {@link CaptureTypeVariable} objects constructed during
  * capture conversion.
  */
-public class ReferenceBound extends TypeBound {
+class ReferenceBound extends ParameterBound {
 
   /** The type for this bound */
   private final ReferenceType boundType;
@@ -52,7 +52,7 @@ public class ReferenceBound extends TypeBound {
   }
 
   @Override
-  public TypeBound apply(Substitution<ReferenceType> substitution) {
+  public ParameterBound apply(Substitution<ReferenceType> substitution) {
     return new ReferenceBound(boundType.apply(substitution));
   }
 }
