@@ -97,9 +97,8 @@ public abstract class ParameterBound {
   public static ParameterBound forType(ReferenceType type) {
     if (type instanceof ArrayType) {
       throw new IllegalArgumentException(
-              "type may only be class, interface, or type variable, got " + type);
+          "type may only be class, interface, or type variable, got " + type);
     }
     return new ReferenceBound(type);
   }
-
 }

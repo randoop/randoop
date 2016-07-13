@@ -64,12 +64,14 @@ class ExplicitTypeVariable extends TypeVariable {
     return true;
   }
 
-
-
   @Override
   public List<TypeVariable> getTypeParameters() {
     List<TypeVariable> paramList = new ArrayList<>();
     paramList.add(this);
     return paramList;
+  }
+
+  java.lang.reflect.TypeVariable<?> getReflectionTypeVariable() {
+    return this.variable;
   }
 }

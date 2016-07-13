@@ -76,5 +76,4 @@ class LazyParameterBound extends ParameterBound {
   public ReferenceBound apply(Substitution<ReferenceType> substitution) {
     return null;
   }
-
 }
