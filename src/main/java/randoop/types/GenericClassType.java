@@ -104,7 +104,7 @@ public class GenericClassType extends ParameterizedType {
   @Override
   public List<TypeArgument> getTypeArguments() {
     List<TypeArgument> argumentList = new ArrayList<>();
-    for (AbstractTypeVariable v : parameters) {
+    for (TypeVariable v : parameters) {
       argumentList.add(new ReferenceArgument(v));
     }
     return argumentList;
@@ -154,7 +154,7 @@ public class GenericClassType extends ParameterizedType {
       throw new IllegalArgumentException("substitution must be non-null");
     }
     List<TypeArgument> argumentList = new ArrayList<>();
-    for (AbstractTypeVariable variable : parameters) {
+    for (TypeVariable variable : parameters) {
       ReferenceType referenceType = substitution.get(variable);
       if (referenceType == null) {
         throw new IllegalArgumentException(
@@ -184,12 +184,12 @@ public class GenericClassType extends ParameterizedType {
     Substitution<ReferenceType> substitution =
         Substitution.forArgs(this.getTypeParameters(), typeArguments);
     for (int i = 0; i < parameters.size(); i++) {
-      if (!parameters.get(i).getTypeBound().isSatisfiedBy(typeArguments[i], substitution)) {
+      if (!parameters.get(i).getUpperTypeBound().isSatisfiedBy(typeArguments[i], substitution)) {
         throw new IllegalArgumentException(
             "type argument "
                 + typeArguments[i]
                 + " does not match parameter bound "
-                + parameters.get(i).getTypeBound());
+                + parameters.get(i).getUpperTypeBound());
       }
     }
     return this.apply(substitution);
@@ -210,8 +210,8 @@ public class GenericClassType extends ParameterizedType {
    * @return the list of type parameters of this generic class
    */
   @Override
-  public List<AbstractTypeVariable> getTypeParameters() {
-    return new ArrayList<AbstractTypeVariable>(parameters);
+  public List<TypeVariable> getTypeParameters() {
+    return new ArrayList<TypeVariable>(parameters);
   }
 
   /**

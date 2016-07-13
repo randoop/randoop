@@ -22,7 +22,7 @@ import java.util.Objects;
 public class Substitution<T> {
 
   /** The substitution map */
-  private Map<AbstractTypeVariable, T> map;
+  private Map<TypeVariable, T> map;
 
   /** map on reflection types - used for testing bounds */
   private Map<java.lang.reflect.Type, T> rawMap;
@@ -61,7 +61,7 @@ public class Substitution<T> {
   @Override
   public String toString() {
     List<String> pairs = new ArrayList<>();
-    for (Entry<AbstractTypeVariable, T> p : map.entrySet()) {
+    for (Entry<TypeVariable, T> p : map.entrySet()) {
       pairs.add(p.getKey().toString() + "/" + p.getValue().toString());
     }
     return "[" + UtilMDE.join(pairs, ",") + "]";
@@ -74,10 +74,10 @@ public class Substitution<T> {
    * @param typeParameter  the type variable
    * @param type  the concrete type
    */
-  private void put(AbstractTypeVariable typeParameter, T type) {
+  private void put(TypeVariable typeParameter, T type) {
     map.put(typeParameter, type);
-    if (typeParameter instanceof TypeVariable) {
-      rawMap.put(((TypeVariable) typeParameter).getReflectionTypeVariable(), type);
+    if (typeParameter instanceof ExplicitTypeVariable) {
+      rawMap.put(((ExplicitTypeVariable) typeParameter).getReflectionTypeVariable(), type);
     }
   }
 
@@ -89,7 +89,7 @@ public class Substitution<T> {
    * @return the concrete type mapped from the variable in this substitution, or
    * null if there is no type for the variable
    */
-  public T get(AbstractTypeVariable parameter) {
+  public T get(TypeVariable parameter) {
     return map.get(parameter);
   }
 
@@ -114,7 +114,7 @@ public class Substitution<T> {
    * @return a {@code Substitution} mapping each type variable to a type argument
    */
   @SafeVarargs
-  public static <T> Substitution<T> forArgs(List<AbstractTypeVariable> parameters, T... arguments) {
+  public static <T> Substitution<T> forArgs(List<TypeVariable> parameters, T... arguments) {
     if (parameters.size() != arguments.length) {
       throw new IllegalArgumentException(
           "number of parameters and arguments must agree, have: "
@@ -137,8 +137,7 @@ public class Substitution<T> {
    * @param <T>  the argument type
    * @return the substitution that maps the type parameters to the corresponding type argument
    */
-  public static <T> Substitution<T> forArgs(
-      List<AbstractTypeVariable> parameters, List<T> arguments) {
+  public static <T> Substitution<T> forArgs(List<TypeVariable> parameters, List<T> arguments) {
     if (parameters.size() != arguments.size()) {
       throw new IllegalArgumentException("number of parameters and arguments must agree");
     }
@@ -153,7 +152,7 @@ public class Substitution<T> {
    * Print the entries of this substitution to standard out.
    */
   public void print() {
-    for (Entry<AbstractTypeVariable, T> entry : map.entrySet()) {
+    for (Entry<TypeVariable, T> entry : map.entrySet()) {
       System.out.println(
           entry.getKey() + "(" + entry.getKey().hashCode() + ")" + " := " + entry.getValue());
     }

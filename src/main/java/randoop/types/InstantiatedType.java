@@ -344,8 +344,8 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public List<AbstractTypeVariable> getTypeParameters() {
-    Set<AbstractTypeVariable> paramSet = new LinkedHashSet<>();
+  public List<TypeVariable> getTypeParameters() {
+    Set<TypeVariable> paramSet = new LinkedHashSet<>();
     for (TypeArgument argument : argumentList) {
       paramSet.addAll(argument.getTypeParameters());
     }

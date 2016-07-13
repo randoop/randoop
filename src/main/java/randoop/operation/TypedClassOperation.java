@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import randoop.sequence.Variable;
-import randoop.types.AbstractTypeVariable;
+import randoop.types.TypeVariable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
 import randoop.types.ReferenceType;
@@ -109,8 +109,8 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   @Override
-  public List<AbstractTypeVariable> getTypeParameters() {
-    Set<AbstractTypeVariable> paramSet = new LinkedHashSet<>();
+  public List<TypeVariable> getTypeParameters() {
+    Set<TypeVariable> paramSet = new LinkedHashSet<>();
     paramSet.addAll(getInputTypes().getTypeParameters());
     paramSet.addAll(getOutputType().getTypeParameters());
     return new ArrayList<>(paramSet);

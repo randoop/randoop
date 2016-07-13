@@ -24,10 +24,10 @@ public class GenericTypesTest {
     assertEquals(
         "the parameter has bound Object",
         new ClassOrInterfaceTypeBound(new SimpleClassOrInterfaceType(Object.class)),
-        a1.getTypeParameters().get(0).getTypeBound());
+        a1.getTypeParameters().get(0).getUpperTypeBound());
 
-    ParameterBound b1 = a1.getFormalTypeParameters().get(0).getTypeBound();
-    Substitution<ReferenceType> subst = Substitution.forArgs(new ArrayList<AbstractTypeVariable>());
+    ParameterBound b1 = a1.getFormalTypeParameters().get(0).getUpperTypeBound();
+    Substitution<ReferenceType> subst = Substitution.forArgs(new ArrayList<TypeVariable>());
     assertTrue(
         "String satisfies bound",
         b1.isSatisfiedBy(new SimpleClassOrInterfaceType(String.class), subst));
@@ -36,18 +36,17 @@ public class GenericTypesTest {
     GenericClassType a2;
     a2 = GenericClassType.forClass(c2);
     assertEquals("has two bounds", 2, a2.getTypeParameters().size());
-    for (AbstractTypeVariable o : a2.getTypeParameters()) {
+    for (TypeVariable o : a2.getTypeParameters()) {
       assertEquals(
           "both bounds are Object",
           new ClassOrInterfaceTypeBound(new SimpleClassOrInterfaceType(Object.class)),
-          o.getTypeBound());
+          o.getUpperTypeBound());
     }
   }
 
   @Test
   public void testConcreteBounds() {
-    Substitution<ReferenceType> emptySubst =
-        Substitution.forArgs(new ArrayList<AbstractTypeVariable>());
+    Substitution<ReferenceType> emptySubst = Substitution.forArgs(new ArrayList<TypeVariable>());
 
     Class<?> c1 = Class1.class;
     GenericClassType a1;
@@ -56,9 +55,9 @@ public class GenericTypesTest {
     assertEquals(
         "the bound is Number",
         new ClassOrInterfaceTypeBound(new SimpleClassOrInterfaceType(Number.class)),
-        a1.getTypeParameters().get(0).getTypeBound());
+        a1.getTypeParameters().get(0).getUpperTypeBound());
 
-    ParameterBound b1 = a1.getFormalTypeParameters().get(0).getTypeBound();
+    ParameterBound b1 = a1.getFormalTypeParameters().get(0).getUpperTypeBound();
     assertTrue(
         "Integer satisfies bound Number",
         b1.isSatisfiedBy(new SimpleClassOrInterfaceType(Integer.class), emptySubst));
@@ -75,9 +74,9 @@ public class GenericTypesTest {
         new ClassOrInterfaceTypeBound(
             GenericClassType.forClass(Comparable.class)
                 .instantiate(new SimpleClassOrInterfaceType(Integer.class))),
-        a2.getTypeParameters().get(0).getTypeBound());
+        a2.getTypeParameters().get(0).getUpperTypeBound());
 
-    ParameterBound b2 = a1.getFormalTypeParameters().get(0).getTypeBound();
+    ParameterBound b2 = a1.getFormalTypeParameters().get(0).getUpperTypeBound();
     assertTrue(
         "Integer satisfies bound Comparable<Integer>",
         b2.isSatisfiedBy(new SimpleClassOrInterfaceType(Integer.class), emptySubst));

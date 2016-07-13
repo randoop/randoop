@@ -369,7 +369,7 @@ public abstract class GeneralType {
    *
    * @return the type parameters for this type
    */
-  public List<AbstractTypeVariable> getTypeParameters() {
+  public List<TypeVariable> getTypeParameters() {
     return new ArrayList<>();
   }
 }

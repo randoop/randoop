@@ -13,7 +13,7 @@ import randoop.ExecutionOutcome;
 import randoop.field.AccessibleField;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
-import randoop.types.AbstractTypeVariable;
+import randoop.types.TypeVariable;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
@@ -212,7 +212,7 @@ public abstract class TypedOperation implements Operation {
    */
   public abstract TypedOperation applyCaptureConversion();
 
-  public List<AbstractTypeVariable> getTypeParameters() {
+  public List<TypeVariable> getTypeParameters() {
     return new ArrayList<>();
   }
 

@@ -29,12 +29,12 @@ import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
-import randoop.types.AbstractTypeVariable;
+import randoop.types.ParameterBound;
+import randoop.types.TypeVariable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GeneralType;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
-import randoop.types.TypeBound;
 import randoop.types.TypeNames;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
@@ -354,7 +354,7 @@ public class OperationModel {
   private void instantiateGenericClassTypes() {
     for (ClassOrInterfaceType classType : classDeclarationTypes) {
       if (classType.isGeneric()) {
-        List<AbstractTypeVariable> typeParameters = classType.getTypeParameters();
+        List<TypeVariable> typeParameters = classType.getTypeParameters();
         List<Substitution<ReferenceType>> substitutions = getSubstitutions(typeParameters);
         assert substitutions.size() > 0 : "didn't find types to satisfy bounds on generic";
         Substitution<ReferenceType> substitution = Randomness.randomMember(substitutions);
@@ -375,10 +375,9 @@ public class OperationModel {
    * @param typeParameters  the type parameters to be instantiated
    * @return candidate substitutions for the given type parameters
    */
-  private List<Substitution<ReferenceType>> getSubstitutions(
-      List<AbstractTypeVariable> typeParameters) {
+  private List<Substitution<ReferenceType>> getSubstitutions(List<TypeVariable> typeParameters) {
     TypeTupleSet candidateSet = new TypeTupleSet();
-    for (AbstractTypeVariable typeArgument : typeParameters) {
+    for (TypeVariable typeArgument : typeParameters) {
       List<ReferenceType> candidateTypes = selectCandidates(typeArgument);
       candidateSet.extend(candidateTypes);
     }
@@ -394,9 +393,9 @@ public class OperationModel {
    * @param argument  the type arguments
    * @return the list of candidate types to included in tested tuples
    */
-  private List<ReferenceType> selectCandidates(AbstractTypeVariable argument) {
-    ReferenceType lowerBound = argument.getLowerTypeBound();
-    TypeBound upperBound = argument.getTypeBound();
+  private List<ReferenceType> selectCandidates(TypeVariable argument) {
+    ParameterBound lowerBound = argument.getLowerTypeBound();
+    ParameterBound upperBound = argument.getUpperTypeBound();
     List<ReferenceType> typeList = new ArrayList<>();
     for (GeneralType inputType : inputTypes) {
       if (inputType.isReferenceType()
@@ -473,12 +472,13 @@ public class OperationModel {
    * @param operation the operation to add to this model
    */
   private void addOperation(TypedOperation operation) {
-    if (operation.isGeneric()) {
-      operation = instantiateOperationTypes(operation);
-    }
 
     if (operation.hasWildcardTypes()) {
       operation = instantiateOperationTypes(operation.applyCaptureConversion());
+    }
+
+    if (operation.isGeneric()) {
+      operation = instantiateOperationTypes(operation);
     }
 
     operations.add(operation);
@@ -492,7 +492,8 @@ public class OperationModel {
    * @return the operation with generic types instantiated
    */
   private TypedOperation instantiateOperationTypes(TypedOperation operation) {
-    List<AbstractTypeVariable> typeParameters = operation.getTypeParameters();
+
+    List<TypeVariable> typeParameters = operation.getTypeParameters();
     if (typeParameters.isEmpty()) {
       return operation;
     }

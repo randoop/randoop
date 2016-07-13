@@ -74,7 +74,7 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   @Override
-  public List<AbstractTypeVariable> getTypeParameters() {
+  public List<TypeVariable> getTypeParameters() {
     return referenceType.getTypeParameters();
   }
 
@@ -136,9 +136,8 @@ public class ReferenceArgument extends TypeArgument {
 
       //  - type variable bounds have to be satisfied
       if (referenceType instanceof TypeVariable) {
-        // think this needs a substitution
         return ((TypeVariable) referenceType)
-            .getTypeBound()
+            .getUpperTypeBound()
             .isSatisfiedBy(generalType, substitution);
       }
     }

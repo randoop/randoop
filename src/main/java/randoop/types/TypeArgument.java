@@ -86,7 +86,7 @@ public abstract class TypeArgument {
    *
    * @return the list of type parameters for this argument
    */
-  public List<AbstractTypeVariable> getTypeParameters() {
+  public List<TypeVariable> getTypeParameters() {
     return new ArrayList<>();
   }
 }

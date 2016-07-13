@@ -193,7 +193,7 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
-  public List<AbstractTypeVariable> getTypeParameters() {
+  public List<TypeVariable> getTypeParameters() {
     return elementType.getTypeParameters();
   }
 

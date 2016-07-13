@@ -138,8 +138,8 @@ public class TypeTuple {
    *
    * @return the list of type parameters for this type tuple.
    */
-  public List<AbstractTypeVariable> getTypeParameters() {
-    Set<AbstractTypeVariable> paramSet = new LinkedHashSet<>();
+  public List<TypeVariable> getTypeParameters() {
+    Set<TypeVariable> paramSet = new LinkedHashSet<>();
     for (GeneralType type : this.list) {
       paramSet.addAll(type.getTypeParameters());
     }
