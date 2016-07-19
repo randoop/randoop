@@ -95,6 +95,32 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
+  public List<TypeVariable> getTypeParameters() {
+    return getTypeParameters(boundType);
+  }
+
+  private List<TypeVariable> getTypeParameters(Type type) {
+    List<TypeVariable> variableList = new ArrayList<>();
+    if (type instanceof java.lang.reflect.TypeVariable) {
+      variableList.add(TypeVariable.forType(type));
+    } else if (type instanceof java.lang.reflect.ParameterizedType) {
+      java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
+      for (Type argType : pt.getActualTypeArguments()) {
+        variableList.addAll(getTypeParameters(argType));
+      }
+    } else if (type instanceof java.lang.reflect.WildcardType) {
+      java.lang.reflect.WildcardType wt = (java.lang.reflect.WildcardType) type;
+      for (Type boundType : wt.getUpperBounds()) {
+        variableList.addAll(getTypeParameters(boundType));
+      }
+      for (Type boundType : wt.getLowerBounds()) {
+        variableList.addAll(getTypeParameters(boundType));
+      }
+    }
+    return variableList;
+  }
+
+  @Override
   public ReferenceBound apply(Substitution<ReferenceType> substitution) {
     if (boundType instanceof java.lang.reflect.TypeVariable) {
       ReferenceType referenceType = substitution.get(boundType);

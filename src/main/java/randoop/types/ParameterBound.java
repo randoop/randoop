@@ -145,4 +145,6 @@ public abstract class ParameterBound {
   abstract boolean hasWildcard();
 
   public abstract ParameterBound applyCaptureConversion();
+
+  public abstract List<TypeVariable> getTypeParameters();
 }

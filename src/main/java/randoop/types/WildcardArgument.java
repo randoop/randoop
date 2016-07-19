@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -116,5 +117,10 @@ abstract class WildcardArgument extends TypeArgument {
       }
     }
     return this;
+  }
+
+  @Override
+  public List<TypeVariable> getTypeParameters() {
+    return boundType.getTypeParameters();
   }
 }

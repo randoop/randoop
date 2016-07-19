@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -116,6 +117,11 @@ class ReferenceBound extends ParameterBound {
   @Override
   public ReferenceBound applyCaptureConversion() {
     return new ReferenceBound(boundType.applyCaptureConversion());
+  }
+
+  @Override
+  public List<TypeVariable> getTypeParameters() {
+    return boundType.getTypeParameters();
   }
 
   @Override

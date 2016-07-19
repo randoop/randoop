@@ -115,6 +115,15 @@ class IntersectionTypeBound extends ParameterBound {
   }
 
   @Override
+  public List<TypeVariable> getTypeParameters() {
+    List<TypeVariable> paramList = new ArrayList<>();
+    for (ParameterBound b : boundList) {
+      paramList.addAll(b.getTypeParameters());
+    }
+    return paramList;
+  }
+
+  @Override
   public IntersectionTypeBound apply(Substitution<ReferenceType> substitution) {
     List<ParameterBound> bounds = new ArrayList<>();
     for (ParameterBound bound : this.boundList) {
