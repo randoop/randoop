@@ -2,10 +2,14 @@ package randoop.types;
 
 import org.junit.Test;
 
-import java.lang.reflect.*;
-import java.util.HashSet;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import edu.emory.mathcs.backport.java.util.Collections;
@@ -13,8 +17,8 @@ import randoop.reflection.ClassVisitor;
 import randoop.reflection.PackageVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  * Uses {@link WildcardBoundExamples} to test handling of recursive type bounds involving variables
@@ -26,24 +30,179 @@ public class TypeBoundTest {
     GeneralType enumType = GeneralType.forClass(Enum.class);
     List<TypeVariable> typeParameters = enumType.getTypeParameters();
     assert typeParameters.size() == 1 : "Enum only has one type parameter";
-    TypeVariable paramType = typeParameters.get(0);
-    ParameterBound bound = paramType.getUpperTypeBound();
-    assertTrue(
-        "bound is satisfied by an enum", bound.isSatisfiedBy(GeneralType.forClass(Word.class)));
-    fail("not complete");
+    ReferenceType candidateType = ClassOrInterfaceType.forClass(Word.class);
+    checkBound(typeParameters.get(0), candidateType);
   }
 
   @Test
   public void testWildcardBounds() {
-    Set<TypeVariable> argTypes = getArgumentTypes(WildcardBoundExamples.class);
-    for (TypeVariable variable : argTypes) {
-      System.out.println(variable);
-    }
-    fail("implementation not complete");
+
+    ReferenceType twType = ReferenceType.forClass(TW.class);
+    ReferenceType swType = ReferenceType.forClass(SW.class);
+    ReferenceType uwType = ReferenceType.forClass(UW.class);
+    ReferenceType vwType = ReferenceType.forClass(VW.class);
+    ReferenceType wwType = ReferenceType.forClass(WW.class);
+    ReferenceType xwType = ReferenceType.forClass(XW.class);
+    ReferenceType ywType = ReferenceType.forClass(YW.class);
+    Map<String, TypeVariable> argTypes = getArgumentTypes(WildcardBoundExamples.class);
+
+    TypeVariable variable;
+    variable = argTypes.get("m1");
+    assertTrue("TW satisfies " + variable.getName() + " bound", checkBound(variable, twType));
+    assertFalse(
+        "String does not satisfy " + variable.getName() + " bound",
+        checkBound(variable, ConcreteTypes.STRING_TYPE));
+    assertFalse(
+        "SW does not satisfy " + variable.getName() + " bound", checkBound(variable, swType));
+    assertFalse(
+        "UW does not satisfy " + variable.getName() + " bound", checkBound(variable, uwType));
+    assertFalse(
+        "VW does not satisfy " + variable.getName() + " bound", checkBound(variable, vwType));
+    assertFalse(
+        "WW does not satisfy " + variable.getName() + " bound", checkBound(variable, wwType));
+    assertFalse(
+        "XW does not satisfy " + variable.getName() + " bound", checkBound(variable, xwType));
+    assertFalse(
+        "YW does not satisfy " + variable.getName() + " bound", checkBound(variable, ywType));
+
+    variable = argTypes.get("m2");
+    assertTrue("SW satisfies " + variable.getName() + " bound", checkBound(variable, swType));
+    assertFalse(
+        "TW does not satisfy " + variable.getName() + " bound", checkBound(variable, twType));
+    assertFalse(
+        "UW does not satisfy " + variable.getName() + " bound", checkBound(variable, uwType));
+    assertFalse(
+        "VW does not satisfy " + variable.getName() + " bound", checkBound(variable, vwType));
+    assertFalse(
+        "WW does not satisfy " + variable.getName() + " bound", checkBound(variable, wwType));
+    assertFalse(
+        "XW does not satisfy " + variable.getName() + " bound", checkBound(variable, xwType));
+    assertFalse(
+        "YW does not satisfy " + variable.getName() + " bound", checkBound(variable, ywType));
+    assertFalse(
+        "String does not satisfy " + variable.getName() + " bound",
+        checkBound(variable, ConcreteTypes.STRING_TYPE));
+
+    variable = argTypes.get("m3");
+    assertFalse(
+        "SW does not satisfy " + variable.getName() + " bound", checkBound(variable, swType));
+    assertFalse(
+        "TW does not satisfy " + variable.getName() + " bound", checkBound(variable, twType));
+    assertTrue("UW satisfies " + variable.getName() + " bound", checkBound(variable, uwType));
+    assertFalse(
+        "VW does not satisfy " + variable.getName() + " bound", checkBound(variable, vwType));
+    assertFalse(
+        "WW does not satisfy " + variable.getName() + " bound", checkBound(variable, wwType));
+    assertFalse(
+        "XW does not satisfy " + variable.getName() + " bound", checkBound(variable, xwType));
+    assertFalse(
+        "YW does not satisfy " + variable.getName() + " bound", checkBound(variable, ywType));
+    assertFalse(
+        "String does not satisfy " + variable.getName() + " bound",
+        checkBound(variable, ConcreteTypes.STRING_TYPE));
+
+    variable = argTypes.get("m4");
+    assertFalse(
+        "SW does not satisfy " + variable.getName() + " bound", checkBound(variable, swType));
+    assertFalse(
+        "TW does not satisfy " + variable.getName() + " bound", checkBound(variable, twType));
+    assertFalse(
+        "UW does not satisfy " + variable.getName() + " bound", checkBound(variable, uwType));
+    assertTrue("VW satisfies " + variable.getName() + " bound", checkBound(variable, vwType));
+    assertFalse(
+        "WW does not satisfy " + variable.getName() + " bound", checkBound(variable, wwType));
+    assertFalse(
+        "XW does not satisfy " + variable.getName() + " bound", checkBound(variable, xwType));
+    assertFalse(
+        "YW does not satisfy " + variable.getName() + " bound", checkBound(variable, ywType));
+    assertFalse(
+        "String does not satisfy " + variable.getName() + " bound",
+        checkBound(variable, ConcreteTypes.STRING_TYPE));
+
+    variable = argTypes.get("m5");
+    assertFalse(
+        "SW does not satisfy " + variable.getName() + " bound", checkBound(variable, swType));
+    assertFalse(
+        "TW does not satisfy " + variable.getName() + " bound", checkBound(variable, twType));
+    assertFalse(
+        "UW does not satisfy " + variable.getName() + " bound", checkBound(variable, uwType));
+    assertFalse(
+        "VW does not satisfy " + variable.getName() + " bound", checkBound(variable, vwType));
+    assertFalse(
+        "WW does not satisfy " + variable.getName() + " bound", checkBound(variable, wwType));
+    assertFalse(
+        "XW does not satisfy " + variable.getName() + " bound", checkBound(variable, xwType));
+    assertFalse(
+        "YW does not satisfy " + variable.getName() + " bound", checkBound(variable, ywType));
+    assertTrue(
+        "String satisfies " + variable.getName() + " bound",
+        checkBound(variable, ConcreteTypes.STRING_TYPE));
+
+    variable = argTypes.get("m6");
+    assertTrue(
+        "SW does not satisfy " + variable.getName() + " bound", checkBound(variable, swType));
+    assertTrue(
+        "TW does not satisfy " + variable.getName() + " bound", checkBound(variable, twType));
+    assertTrue(
+        "UW does not satisfy " + variable.getName() + " bound", checkBound(variable, uwType));
+    assertTrue(
+        "VW does not satisfy " + variable.getName() + " bound", checkBound(variable, vwType));
+    assertTrue(
+        "WW does not satisfy " + variable.getName() + " bound", checkBound(variable, wwType));
+    assertTrue(
+        "XW does not satisfy " + variable.getName() + " bound", checkBound(variable, xwType));
+    assertTrue(
+        "YW does not satisfy " + variable.getName() + " bound", checkBound(variable, ywType));
+    assertTrue(
+        "String satisfies " + variable.getName() + " bound",
+        checkBound(variable, ConcreteTypes.STRING_TYPE));
+
+    //m7 has two parameters, so not sure what we get
+    /*
+    variable = argTypes.get("m7");
+    assertFalse("SW does not satisfy " + variable.getName() + " bound", checkBound(variable, swType));
+    assertFalse("TW does not satisfy " + variable.getName() + " bound", checkBound(variable, twType));
+    assertFalse("UW does not satisfy " + variable.getName() + " bound", checkBound(variable, uwType));
+    assertFalse("VW does not satisfy " + variable.getName() + " bound", checkBound(variable, vwType));
+    assertFalse("WW satisfies " + variable.getName() + " bound", checkBound(variable, wwType));
+    assertFalse("XW does not satisfy " + variable.getName() + " bound", checkBound(variable, xwType));
+    assertFalse("YW does not satisfy " + variable.getName() + " bound", checkBound(variable, ywType));
+    assertFalse(
+            "String does not satisfy " + variable.getName() + " bound", checkBound(variable, ConcreteTypes.STRING_TYPE));
+
+    */
+
+    variable = argTypes.get("m8");
+    assertFalse(
+        "SW does not satisfy " + variable.getName() + " bound", checkBound(variable, swType));
+    assertFalse(
+        "TW does not satisfy " + variable.getName() + " bound", checkBound(variable, twType));
+    assertFalse(
+        "UW does not satisfy " + variable.getName() + " bound", checkBound(variable, uwType));
+    assertFalse(
+        "VW does not satisfy " + variable.getName() + " bound", checkBound(variable, vwType));
+    assertTrue("WW satisfies " + variable.getName() + " bound", checkBound(variable, wwType));
+    assertFalse(
+        "XW does not satisfy " + variable.getName() + " bound", checkBound(variable, xwType));
+    assertFalse(
+        "YW does not satisfy " + variable.getName() + " bound", checkBound(variable, ywType));
+    assertFalse(
+        "String does not satisfy " + variable.getName() + " bound",
+        checkBound(variable, ConcreteTypes.STRING_TYPE));
   }
 
-  private Set<TypeVariable> getArgumentTypes(Class<?> classType) {
-    Set<TypeVariable> arguments = new HashSet<>();
+  private boolean checkBound(TypeVariable typeParameter, ReferenceType candidateType) {
+    ParameterBound lowerBound = typeParameter.getLowerTypeBound();
+    ParameterBound upperBound = typeParameter.getUpperTypeBound();
+    List<TypeVariable> typeParameters = new ArrayList<>();
+    typeParameters.add(typeParameter);
+    Substitution<ReferenceType> substitution = Substitution.forArgs(typeParameters, candidateType);
+    return lowerBound.isLowerBound(candidateType, substitution)
+        && upperBound.isUpperBound(candidateType, substitution);
+  }
+
+  private Map<String, TypeVariable> getArgumentTypes(Class<?> classType) {
+    Map<String, TypeVariable> arguments = new LinkedHashMap<>();
     ReflectionManager mgr =
         new ReflectionManager(new PackageVisibilityPredicate(classType.getPackage()));
     mgr.apply(new ArgumentVisitor(arguments), classType);
@@ -51,30 +210,29 @@ public class TypeBoundTest {
   }
 
   private class ArgumentVisitor implements ClassVisitor {
-    private Set<TypeVariable> argTypes;
+    private Map<String, TypeVariable> argTypes;
     private Set<Method> declaredMethods;
 
-    ArgumentVisitor(Set<TypeVariable> argTypes) {
+    ArgumentVisitor(Map<String, TypeVariable> argTypes) {
       this.argTypes = argTypes;
       declaredMethods = new LinkedHashSet<>();
     }
 
     @Override
     public void visit(Constructor<?> c) {
-      addParameters(c.getTypeParameters());
+      addParameters(c.getName(), c.getTypeParameters());
     }
 
-    private void addParameters(java.lang.reflect.TypeVariable<?>[] typeParameters) {
+    private void addParameters(String name, java.lang.reflect.TypeVariable<?>[] typeParameters) {
       for (java.lang.reflect.TypeVariable variable : typeParameters) {
-        argTypes.add(TypeVariable.forType(variable));
+        argTypes.put(name, TypeVariable.forType(variable));
       }
     }
 
     @Override
     public void visit(Method m) {
       if (declaredMethods.contains(m)) {
-        System.out.println("visiting: " + m);
-        addParameters(m.getTypeParameters());
+        addParameters(m.getName(), m.getTypeParameters());
       }
     }
 
