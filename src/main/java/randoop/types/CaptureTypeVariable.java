@@ -38,9 +38,9 @@ class CaptureTypeVariable extends TypeVariable {
     this.wildcard = wildcard;
 
     if (wildcard.hasUpperBound()) {
-      setUpperBound(new ReferenceBound(wildcard.getBoundType()));
+      setUpperBound(wildcard.getBoundType());
     } else {
-      setLowerBound(new ReferenceBound(wildcard.getBoundType()));
+      setLowerBound(wildcard.getBoundType());
     }
   }
 
@@ -63,6 +63,11 @@ class CaptureTypeVariable extends TypeVariable {
   @Override
   public int hashCode() {
     return Objects.hash(varID, wildcard, super.hashCode());
+  }
+
+  @Override
+  boolean isCaptureVariable() {
+    return true;
   }
 
   @Override

@@ -184,6 +184,15 @@ public abstract class GeneralType {
   }
 
   /**
+   * Indicates whether this type is a type variable.
+   *
+   * @return true if this type is a type variable, false otherwise
+   */
+  boolean isVariable() {
+    return false;
+  }
+
+  /**
    * Indicates whether this is a reference type.
    * Note: should be !(this.isPrimitive())
    *

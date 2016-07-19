@@ -52,22 +52,20 @@ public abstract class TypeArgument {
   }
 
   /**
-   * Indicates whether this type argument can be instantiated by the given
-   * {@link GeneralType}.
-   *
-   * @param generalType  the type to test
-   * @param substitution the substitution for this type (? do we need this?)
-   * @return true if the type can instantiate this argument, false otherwise
-   */
-  public abstract boolean canBeInstantiatedAs(
-      GeneralType generalType, Substitution<ReferenceType> substitution);
-
-  /**
    * Indicate whether this type argument is a wildcard argument.
    *
    * @return true if this is a wildcard argument, false otherwise
    */
   public boolean isWildcard() {
+    return false;
+  }
+
+  /**
+   * Indicate whether this type argument has a wildcard.
+   *
+   * @return true if this argument has a wildcard argument.
+   */
+  public boolean hasWildcard() {
     return false;
   }
 
@@ -88,5 +86,16 @@ public abstract class TypeArgument {
    */
   public List<TypeVariable> getTypeParameters() {
     return new ArrayList<>();
+  }
+
+  /**
+   * Determines whether this type argument is an instantiation of the other argument.
+   * @see InstantiatedType#isInstantiationOf(GenericClassType)
+   *
+   * @param otherArgument  the other argument
+   * @return true if this type is an instantiation of the other argument, false otherwise
+   */
+  boolean isInstantiationOf(TypeArgument otherArgument) {
+    return false;
   }
 }

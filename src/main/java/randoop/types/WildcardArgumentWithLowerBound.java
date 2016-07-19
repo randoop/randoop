@@ -16,11 +16,11 @@ class WildcardArgumentWithLowerBound extends WildcardArgument {
    * @param lowerBounds  the lower bound type array
    */
   WildcardArgumentWithLowerBound(Type[] lowerBounds) {
-    super(ReferenceType.forType(lowerBounds[0]));
+    super(ParameterBound.forTypes(lowerBounds));
   }
 
-  private WildcardArgumentWithLowerBound(ReferenceType type) {
-    super(type);
+  WildcardArgumentWithLowerBound(ReferenceBound bound) {
+    super(bound);
   }
 
   @Override
@@ -30,7 +30,7 @@ class WildcardArgumentWithLowerBound extends WildcardArgument {
 
   @Override
   public WildcardArgument apply(Substitution<ReferenceType> substitution) {
-    return new WildcardArgumentWithLowerBound(getBoundType().apply(substitution));
+    return new WildcardArgumentWithLowerBound((ReferenceBound) getBoundType().apply(substitution));
   }
 
   /**
@@ -48,18 +48,12 @@ class WildcardArgumentWithLowerBound extends WildcardArgument {
     if (otherArgument.isWildcard()) {
       WildcardArgument otherWildcard = (WildcardArgument) otherArgument;
       if (otherWildcard.hasUpperBound()) {
-        return otherWildcard.getBoundType().equals(ConcreteTypes.OBJECT_TYPE);
+        return otherWildcard.getBoundType().equals(new ReferenceBound(ConcreteTypes.OBJECT_TYPE));
       } else {
         return otherWildcard.getBoundType().isSubtypeOf(this.getBoundType());
       }
     }
     return false;
-  }
-
-  @Override
-  public boolean canBeInstantiatedAs(
-      GeneralType generalType, Substitution<ReferenceType> substitution) {
-    return generalType.isAssignableFrom(getBoundType());
   }
 
   @Override

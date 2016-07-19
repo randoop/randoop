@@ -63,7 +63,7 @@ public class InstantiatedType extends ParameterizedType {
   @Override
   public boolean hasWildcard() {
     for (TypeArgument argument : argumentList) {
-      if (argument.isWildcard()) {
+      if (argument.hasWildcard()) {
         return true;
       }
     }
@@ -125,14 +125,11 @@ public class InstantiatedType extends ParameterizedType {
    *   <li> <code>Object</code> if generic form is interface with no
    *   interfaces as supertypes.
    * </ol>
-   * Note that the full definition of the <i>contains</i> relation in the second
-   * clause involves wildcards, which are not currently implemented, and so the
-   * relation reduces to equality on the parameter bounds.
-   * (Tested using {@link GenericClassType#equals(Object)}.)
    */
   @Override
   public boolean isSubtypeOf(GeneralType otherType) {
     if (!otherType.isParameterized()) {
+
       if (super.isSubtypeOf(otherType)) {
         return true;
       }
@@ -176,7 +173,7 @@ public class InstantiatedType extends ParameterizedType {
     // variable names and type bounds are the same.
 
     InstantiatedType pt = (InstantiatedType) otherType;
-    InstantiatedType superType = this.getMatchingSupertype(pt.instantiatedType);
+    InstantiatedType superType = (InstantiatedType) this.getMatchingSupertype(pt.instantiatedType);
 
     return superType != null && pt.equals(superType);
   }
@@ -263,6 +260,49 @@ public class InstantiatedType extends ParameterizedType {
     return instantiatedType.isInstantiationOf(genericClassType);
   }
 
+  /**
+   * Checks whether this type is an instantiation of the given instantiated type.
+   * This is only possible if this type is <code>A&lt;T<sub>1</sub>,&hellip;,T<sub>k</sub>&gt;</code>
+   * where all <code>T<sub>i</sub></code> are instantiated by ground types (e.g., does not have type variables),
+   * the other type is <code>A&lt;S<sub>1</sub>,&hellip;,S<sub>k</sub>&gt;</code>, and
+   * each <code>T<sub>i</sub></code> matches <code>S<sub>i</sub></code> for <code>i = 1,&hellip;k</code>
+   * as follows:
+   * <ol>
+   *   <li>
+   *     If <code>S<sub>i</sub></code> is the variable <code>X</code> with lower bound <code>L</code>
+   *     and upper bound <code>U</code>, then <code>T<sub>i</sub></code>
+   *     is a supertype of <code>L</code> and a subtype of <code>U</code>
+   *   </li>
+   *   <li>
+   *     <code>S<sub>i</sub></code> is identical to <code>T<sub>i</sub></code>
+   *   </li>
+   * </ol>
+   * @see ReferenceType#isInstantiationOf(ReferenceType)
+   *
+   * @param otherType  the other {@link InstantiatedType}
+   * @return true if this type is an instantiation of the other type, false otherwise
+   */
+  @Override
+  boolean isInstantiationOf(ReferenceType otherType) {
+    if (super.isInstantiationOf(otherType)) {
+      return true;
+    }
+    if (otherType instanceof InstantiatedType) {
+      InstantiatedType otherInstType = (InstantiatedType) otherType;
+      if (this.instantiatedType.equals(otherInstType.instantiatedType)) {
+        for (int i = 0; i < this.argumentList.size(); i++) {
+          if (!this.argumentList.get(i).isInstantiationOf(otherInstType.argumentList.get(i))) {
+            return false;
+          }
+        }
+        return true;
+      }
+      return false; // instantiated generic class types are not same
+    }
+
+    return false;
+  }
+
   @Override
   public boolean isStatic() {
     return instantiatedType.isStatic();
@@ -313,16 +353,19 @@ public class InstantiatedType extends ParameterizedType {
    * @return the capture conversion type for this type
    */
   public InstantiatedType applyCaptureConversion() {
-    if (!this.hasWildcardArgument()) {
+    if (!this.hasWildcard()) {
       return this;
     }
 
     List<ReferenceType> convertedTypeList = new ArrayList<>();
     for (TypeArgument argument : argumentList) {
       if (argument.isWildcard()) {
-        convertedTypeList.add(new CaptureTypeVariable((WildcardArgument) argument));
+        WildcardArgument convertedArgument = ((WildcardArgument) argument).applyCaptureConversion();
+        convertedTypeList.add(new CaptureTypeVariable(convertedArgument));
       } else {
-        convertedTypeList.add(((ReferenceArgument) argument).getReferenceType());
+        ReferenceType convertedArgument =
+            ((ReferenceArgument) argument).getReferenceType().applyCaptureConversion();
+        convertedTypeList.add(convertedArgument);
       }
     }
 
@@ -331,7 +374,7 @@ public class InstantiatedType extends ParameterizedType {
     for (int i = 0; i < convertedTypeList.size(); i++) {
       if (convertedTypeList.get(i).isCaptureVariable()) {
         CaptureTypeVariable captureVariable = (CaptureTypeVariable) convertedTypeList.get(i);
-        captureVariable.convert(instantiatedType.getFormalTypeParameters().get(i), substitution);
+        captureVariable.convert(instantiatedType.getTypeParameters().get(i), substitution);
       }
     }
 

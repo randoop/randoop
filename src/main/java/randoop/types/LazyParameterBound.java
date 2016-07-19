@@ -1,6 +1,9 @@
 package randoop.types;
 
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
+import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -56,24 +59,121 @@ class LazyParameterBound extends ParameterBound {
    * the concrete type.
    */
   @Override
-  public boolean isSatisfiedBy(GeneralType argType, Substitution<ReferenceType> substitution) {
+  public boolean isUpperBound(GeneralType argType, Substitution<ReferenceType> substitution) {
     ReferenceBound b = this.apply(substitution);
-
-    return b.isSatisfiedBy(argType, substitution);
+    return b.isUpperBound(argType, substitution);
   }
 
   @Override
-  public boolean isSatisfiedBy(GeneralType argType) {
-    return true;
-  }
-
-  @Override
-  public boolean isSubtypeOf(GeneralType otherType) {
+  boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
+    assert false : " not quite sure what to do with lazy type bound";
     return false;
   }
 
   @Override
+  public boolean isLowerBound(GeneralType argType, Substitution<ReferenceType> substitution) {
+    ReferenceBound b = this.apply(substitution);
+    return b.isLowerBound(argType, substitution);
+  }
+
+  @Override
+  public boolean isSubtypeOf(ParameterBound boundType) {
+    assert false : "LazyParameterBound.isSubtypeOf not implemented";
+    return false;
+  }
+
+  @Override
+  boolean hasWildcard() {
+    assert false : "wildcard argument check not implemented in lazy bound";
+    return false;
+  }
+
+  @Override
+  public ParameterBound applyCaptureConversion() {
+    assert false : "unable to do capture conversion on lazy bound";
+    return this;
+  }
+
+  @Override
   public ReferenceBound apply(Substitution<ReferenceType> substitution) {
+    if (boundType instanceof java.lang.reflect.TypeVariable) {
+      ReferenceType referenceType = substitution.get(boundType);
+      if (referenceType != null) {
+        return new ReferenceBound(referenceType);
+      }
+      throw new IllegalArgumentException(
+          "substitution does not instantiate type variable: " + boundType);
+    }
+
+    if (boundType instanceof java.lang.reflect.ParameterizedType) {
+      List<TypeArgument> argumentList = new ArrayList<>();
+      for (Type parameter : ((ParameterizedType) boundType).getActualTypeArguments()) {
+        TypeArgument typeArgument = apply(parameter, substitution);
+        argumentList.add(typeArgument);
+      }
+      GenericClassType classType =
+          GenericClassType.forClass((Class<?>) ((ParameterizedType) boundType).getRawType());
+      InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);
+      return new ReferenceBound(instantiatedType);
+    }
+
+    return null;
+  }
+
+  /**
+   * Applies a substitution to a reflection type that occurs as an actual argument of a
+   * parameterized type bound, to create a type argument to a {@link randoop.types.ParameterizedType}.
+   *
+   * @param type  the reflection type
+   * @param substitution  the type substitution
+   * @return the type argument
+   */
+  private TypeArgument apply(
+      java.lang.reflect.Type type, Substitution<ReferenceType> substitution) {
+    if (type instanceof java.lang.reflect.TypeVariable) {
+      ReferenceType referenceType = substitution.get(type);
+      if (referenceType != null) {
+        return new ReferenceArgument(referenceType);
+      }
+      throw new IllegalArgumentException(
+          "substitution does not instantiate type variable: " + boundType);
+    }
+
+    if (type instanceof java.lang.reflect.ParameterizedType) {
+      List<TypeArgument> argumentList = new ArrayList<>();
+      for (Type parameter : ((ParameterizedType) type).getActualTypeArguments()) {
+        TypeArgument paramType = apply(parameter, substitution);
+        argumentList.add(paramType);
+      }
+      GenericClassType classType =
+          GenericClassType.forClass((Class<?>) ((ParameterizedType) type).getRawType());
+      InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);
+      return new ReferenceArgument(instantiatedType);
+    }
+
+    if (type instanceof Class) {
+      return new ReferenceArgument(ClassOrInterfaceType.forType(type));
+    }
+
+    if (type instanceof java.lang.reflect.WildcardType) {
+      //assert false : "not yet dealing with wildcards: " + type + " subst: " + substitution;
+      final WildcardType wildcardType = (WildcardType) type;
+      if (wildcardType.getLowerBounds().length > 0) {
+        assert wildcardType.getLowerBounds().length == 1
+            : "a wildcard is defined by the JLS to only have one bound";
+        ParameterBound bound =
+            ParameterBound.forTypes(wildcardType.getLowerBounds()).apply(substitution);
+
+        return new WildcardArgumentWithLowerBound((ReferenceBound) bound);
+      }
+      // a wildcard always has an upper bound
+      assert wildcardType.getUpperBounds().length == 1
+          : "a wildcard is defined by the JLS to only have one bound";
+      ParameterBound bound = ParameterBound.forTypes(wildcardType.getUpperBounds());
+      bound = bound.apply(substitution);
+      return new WildcardArgumentWithUpperBound((ReferenceBound) bound);
+    }
+
     return null;
   }
 }

@@ -30,7 +30,7 @@ public class Substitution<T> {
   /**
    * Create an empty substitution.
    */
-  public Substitution() {
+  private Substitution() {
     map = new LinkedHashMap<>();
     rawMap = new LinkedHashMap<>();
   }
@@ -62,9 +62,9 @@ public class Substitution<T> {
   public String toString() {
     List<String> pairs = new ArrayList<>();
     for (Entry<TypeVariable, T> p : map.entrySet()) {
-      pairs.add(p.getKey().toString() + "/" + p.getValue().toString());
+      pairs.add(p.getKey().toString() + " := " + p.getValue().toString());
     }
-    return "[" + UtilMDE.join(pairs, ",") + "]";
+    return "[" + UtilMDE.join(pairs, ", ") + "]";
   }
 
   /**

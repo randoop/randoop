@@ -144,7 +144,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param goalType  the generic class type
    * @return the instantiated type matching the goal type, or null
    */
-  public InstantiatedType getMatchingSupertype(GenericClassType goalType) {
+  public ClassOrInterfaceType getMatchingSupertype(GenericClassType goalType) {
+    if (this.isInstantiationOf(goalType)) {
+      return this;
+    }
+
     if (this.isObject() && !goalType.getRuntimeClass().isAssignableFrom(this.getRuntimeClass())) {
       return null;
     }
@@ -156,9 +160,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           if (interfaceType.isParameterized()) {
             InstantiatedType type = (InstantiatedType) interfaceType;
             if (type.isInstantiationOf(goalType)) {
-              return (InstantiatedType) interfaceType;
+              return interfaceType;
             }
-            InstantiatedType result = type.getMatchingSupertype(goalType);
+            ClassOrInterfaceType result = type.getMatchingSupertype(goalType);
             if (result != null) {
               return result;
             }
@@ -173,8 +177,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     if (superclass != null
         && !superclass.isObject()
         && goalType.getRuntimeClass().isAssignableFrom(superclass.getRuntimeClass())) {
+
       if (superclass.isInstantiationOf(goalType)) {
-        return (InstantiatedType) superclass;
+        return superclass;
       }
 
       return superclass.getMatchingSupertype(goalType);
@@ -191,7 +196,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   public abstract boolean isAbstract();
 
   /**
-   * Indicate wheter this class is a member of another class.
+   * Indicate whether this class is a member of another class.
    * @return true if this class is a member class, false otherwise
    */
   public abstract boolean isMemberClass();

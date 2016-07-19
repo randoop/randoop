@@ -60,23 +60,9 @@ class IntersectionTypeBound extends ParameterBound {
    * intersection type bound.
    */
   @Override
-  public boolean isSatisfiedBy(GeneralType argType, Substitution<ReferenceType> subst) {
+  public boolean isUpperBound(GeneralType argType, Substitution<ReferenceType> subst) {
     for (ParameterBound b : boundList) {
-      if (!b.isSatisfiedBy(argType, subst)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
-   * {@inheritDoc}
-   * Checks whether the argument type satisfies all of the bounds in this intersection type bound.
-   */
-  @Override
-  public boolean isSatisfiedBy(GeneralType argType) {
-    for (ParameterBound bound : boundList) {
-      if (!bound.isSatisfiedBy(argType)) {
+      if (!b.isUpperBound(argType, subst)) {
         return false;
       }
     }
@@ -84,13 +70,48 @@ class IntersectionTypeBound extends ParameterBound {
   }
 
   @Override
-  public boolean isSubtypeOf(GeneralType otherType) {
+  boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
     for (ParameterBound b : boundList) {
-      if (!b.isSubtypeOf(otherType)) {
+      if (!b.isUpperBound(bound, substitution)) {
         return false;
       }
     }
     return true;
+  }
+
+  @Override
+  public boolean isLowerBound(GeneralType otherType, Substitution<ReferenceType> subst) {
+    for (ParameterBound b : boundList) {
+      if (!b.isLowerBound(otherType, subst)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @Override
+  public boolean isSubtypeOf(ParameterBound boundType) {
+    assert false : "intersection type bound issubtypeof not implemented";
+    return false;
+  }
+
+  @Override
+  boolean hasWildcard() {
+    for (ParameterBound b : boundList) {
+      if (b.hasWildcard()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public ParameterBound applyCaptureConversion() {
+    List<ParameterBound> convertedBoundList = new ArrayList<>();
+    for (ParameterBound b : boundList) {
+      convertedBoundList.add(b.applyCaptureConversion());
+    }
+    return new IntersectionTypeBound(convertedBoundList);
   }
 
   @Override

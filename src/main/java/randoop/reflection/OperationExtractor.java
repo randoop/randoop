@@ -76,7 +76,8 @@ public class OperationExtractor extends DefaultClassVisitor {
             && declaringType.hasRuntimeClass(classType.getRuntimeClass())) {
           operation = operation.apply(((InstantiatedType) classType).getTypeSubstitution());
         } else if (!classType.isGeneric()) {
-          InstantiatedType supertype = classType.getMatchingSupertype(declaringType);
+          InstantiatedType supertype =
+              (InstantiatedType) classType.getMatchingSupertype(declaringType);
           operation = operation.apply(supertype.getTypeSubstitution());
         }
       }

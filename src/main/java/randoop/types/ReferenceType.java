@@ -1,6 +1,8 @@
 package randoop.types;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A reference type in JLS (Section 4.3) is defined as one of Class/Interface type,
@@ -120,5 +122,34 @@ public abstract class ReferenceType extends GeneralType {
     }
 
     return ClassOrInterfaceType.forType(type);
+  }
+
+  public ReferenceType applyCaptureConversion() {
+    return this;
+  }
+
+  /**
+   * Indicates whether this type is an instantiation of a given type.
+   * For a general {@link ReferenceType}, this is only true if the other
+   * type is the same, or the other type is a type variable for which
+   * this type satisfies the bounds.
+   *
+   * @param otherType  the other reference type
+   * @return true if this type instantiates the other reference type,
+   * false otherwise
+   */
+  boolean isInstantiationOf(ReferenceType otherType) {
+    if (this.equals(otherType)) {
+      return true;
+    }
+    if (otherType.isVariable()) {
+      TypeVariable variable = (TypeVariable) otherType;
+      List<TypeVariable> typeParameters = new ArrayList<>();
+      typeParameters.add(variable);
+      Substitution<ReferenceType> substitution = Substitution.forArgs(typeParameters, this);
+      return variable.getLowerTypeBound().isLowerBound(this, substitution)
+          && variable.getUpperTypeBound().isUpperBound(this, substitution);
+    }
+    return false;
   }
 }

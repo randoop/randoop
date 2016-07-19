@@ -63,6 +63,7 @@ public class OperationModel {
 
   /** The set of input types for this model */
   private Set<GeneralType> inputTypes;
+  // TODO decide if should only collect ReferenceTypes.
 
   /** The set of class objects used in the exercised-class test filter */
   private final LinkedHashSet<Class<?>> exercisedClasses;
@@ -396,12 +397,18 @@ public class OperationModel {
   private List<ReferenceType> selectCandidates(TypeVariable argument) {
     ParameterBound lowerBound = argument.getLowerTypeBound();
     ParameterBound upperBound = argument.getUpperTypeBound();
+    List<TypeVariable> typeVariableList = new ArrayList<>();
+    typeVariableList.add(argument);
     List<ReferenceType> typeList = new ArrayList<>();
     for (GeneralType inputType : inputTypes) {
-      if (inputType.isReferenceType()
-          && lowerBound.isSubtypeOf(inputType)
-          && upperBound.isSatisfiedBy(inputType)) {
-        typeList.add((ReferenceType) inputType);
+      if (inputType.isReferenceType()) {
+        ReferenceType inputRefType = (ReferenceType) inputType;
+        Substitution<ReferenceType> substitution =
+            Substitution.forArgs(typeVariableList, inputRefType);
+        if (lowerBound.isLowerBound(inputRefType, substitution)
+            && upperBound.isUpperBound(inputRefType, substitution)) {
+          typeList.add(inputRefType);
+        }
       }
     }
     return typeList;

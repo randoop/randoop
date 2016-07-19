@@ -73,7 +73,7 @@ class TypeTupleSet {
 
       int i = 0;
       while (i < tuple.size()
-          && typeParameters.get(i).getUpperTypeBound().isSatisfiedBy(tuple.get(i), substitution)) {
+          && typeParameters.get(i).getUpperTypeBound().isUpperBound(tuple.get(i), substitution)) {
         i++;
       }
       if (i == tuple.size()) {

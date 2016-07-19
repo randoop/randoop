@@ -184,7 +184,7 @@ public class GenericClassType extends ParameterizedType {
     Substitution<ReferenceType> substitution =
         Substitution.forArgs(this.getTypeParameters(), typeArguments);
     for (int i = 0; i < parameters.size(); i++) {
-      if (!parameters.get(i).getUpperTypeBound().isSatisfiedBy(typeArguments[i], substitution)) {
+      if (!parameters.get(i).getUpperTypeBound().isUpperBound(typeArguments[i], substitution)) {
         throw new IllegalArgumentException(
             "type argument "
                 + typeArguments[i]
@@ -211,16 +211,7 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public List<TypeVariable> getTypeParameters() {
-    return new ArrayList<TypeVariable>(parameters);
-  }
-
-  /**
-   * Returns the list of type parameters of this generic class as {@link TypeVariable} objects.
-   *
-   * @return the list of type parameters of this generic class
-   */
-  List<TypeVariable> getFormalTypeParameters() {
-    return parameters;
+    return new ArrayList<>(parameters);
   }
 
   /**

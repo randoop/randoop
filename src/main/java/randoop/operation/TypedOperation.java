@@ -53,7 +53,7 @@ public abstract class TypedOperation implements Operation {
    * @param inputTypes  the input types
    * @param outputType  the output types
    */
-  public TypedOperation(CallableOperation operation, TypeTuple inputTypes, GeneralType outputType) {
+  TypedOperation(CallableOperation operation, TypeTuple inputTypes, GeneralType outputType) {
     this.operation = operation;
     this.inputTypes = inputTypes;
     this.outputType = outputType;
@@ -317,7 +317,8 @@ public abstract class TypedOperation implements Operation {
             ClassOrInterfaceType.forClass(m.getDeclaringClass());
         if (methodDeclaringType.isGeneric()) {
           GenericClassType genDeclaringType = (GenericClassType) methodDeclaringType;
-          InstantiatedType superType = enumType.getMatchingSupertype(genDeclaringType);
+          InstantiatedType superType =
+              (InstantiatedType) enumType.getMatchingSupertype(genDeclaringType);
           assert superType != null
               : "should exist a super type of enum instantiating " + genDeclaringType;
           Substitution<ReferenceType> substitution = superType.getTypeSubstitution();

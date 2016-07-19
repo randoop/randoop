@@ -16,15 +16,15 @@ class WildcardArgumentWithUpperBound extends WildcardArgument {
    * @param upperBounds  the upper bound type array
    */
   WildcardArgumentWithUpperBound(Type[] upperBounds) {
-    super(ReferenceType.forType(upperBounds[0]));
+    super(ParameterBound.forTypes(upperBounds));
   }
 
   /**
    * Creates a wildcard argument with the given reference type as an Upper bound.
-   * @param type  the bound type
+   * @param bound  the bound type
    */
-  private WildcardArgumentWithUpperBound(ReferenceType type) {
-    super(type);
+  WildcardArgumentWithUpperBound(ReferenceBound bound) {
+    super(bound);
   }
 
   @Override
@@ -34,7 +34,7 @@ class WildcardArgumentWithUpperBound extends WildcardArgument {
 
   @Override
   public WildcardArgument apply(Substitution<ReferenceType> substitution) {
-    return new WildcardArgumentWithUpperBound(getBoundType().apply(substitution));
+    return new WildcardArgumentWithUpperBound((ReferenceBound) getBoundType().apply(substitution));
   }
 
   /**
@@ -52,12 +52,6 @@ class WildcardArgumentWithUpperBound extends WildcardArgument {
     return otherArgument.isWildcard()
         && ((WildcardArgument) otherArgument).hasUpperBound()
         && this.getBoundType().isSubtypeOf(((WildcardArgument) otherArgument).getBoundType());
-  }
-
-  @Override
-  public boolean canBeInstantiatedAs(
-      GeneralType generalType, Substitution<ReferenceType> substitution) {
-    return getBoundType().isAssignableFrom(generalType);
   }
 
   @Override

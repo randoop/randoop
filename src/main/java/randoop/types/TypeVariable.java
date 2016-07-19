@@ -1,6 +1,8 @@
 package randoop.types;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An abstract class representing type variables.
@@ -21,7 +23,7 @@ public abstract class TypeVariable extends ReferenceType {
    * Creates a type variable with {@link NullReferenceType} as the lower bound, and
    * the {@code Object} type as upper bound.
    */
-  public TypeVariable() {
+  TypeVariable() {
     this.lowerBound = new ReferenceBound(ConcreteTypes.NULL_TYPE);
     this.upperBound = new ReferenceBound(ConcreteTypes.OBJECT_TYPE);
   }
@@ -33,7 +35,7 @@ public abstract class TypeVariable extends ReferenceType {
    * @param lowerBound  the lower type bound on this variable
    * @param upperBound  the upper type bound on this variable
    */
-  public TypeVariable(ParameterBound lowerBound, ParameterBound upperBound) {
+  TypeVariable(ParameterBound lowerBound, ParameterBound upperBound) {
     this.lowerBound = lowerBound;
     this.upperBound = upperBound;
   }
@@ -48,8 +50,23 @@ public abstract class TypeVariable extends ReferenceType {
   }
 
   @Override
+  boolean isVariable() {
+    return true;
+  }
+
+  @Override
   public boolean isSubtypeOf(GeneralType otherType) {
-    return super.isSubtypeOf(otherType) || getUpperTypeBound().isSubtypeOf(otherType);
+    if (super.isSubtypeOf(otherType)) {
+      return true;
+    }
+    if (otherType.isReferenceType()) {
+      List<TypeVariable> variableList = new ArrayList<>();
+      variableList.add(this);
+      Substitution<ReferenceType> substitution =
+          Substitution.forArgs(variableList, (ReferenceType) otherType);
+      return this.getUpperTypeBound().isLowerBound(otherType, substitution);
+    }
+    return false;
   }
 
   @Override
@@ -100,5 +117,24 @@ public abstract class TypeVariable extends ReferenceType {
     }
     java.lang.reflect.TypeVariable<?> v = (java.lang.reflect.TypeVariable) type;
     return new ExplicitTypeVariable(v, ParameterBound.forTypes(v.getBounds()));
+  }
+
+  @Override
+  boolean isInstantiationOf(ReferenceType otherType) {
+    if (super.isInstantiationOf(otherType)) {
+      return true;
+    }
+
+    if (otherType.isVariable()) {
+      TypeVariable variable = (TypeVariable) otherType;
+      List<TypeVariable> typeParameters = new ArrayList<>();
+      typeParameters.add(variable);
+      Substitution<ReferenceType> substitution =
+          Substitution.forArgs(typeParameters, (ReferenceType) this);
+      boolean lowerbound = variable.getLowerTypeBound().isLowerBound(lowerBound, substitution);
+      boolean upperbound = variable.getUpperTypeBound().isUpperBound(upperBound, substitution);
+      return lowerbound && upperbound;
+    }
+    return false;
   }
 }

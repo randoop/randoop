@@ -3,9 +3,7 @@ package randoop.types;
 import java.util.Objects;
 
 /**
- * Represents an upper bound on a type variable that is a {@link ReferenceType}.
- * These should only occur as bounds for {@link CaptureTypeVariable} objects constructed during
- * capture conversion.
+ * Represents a bound on a type variable that is a {@link ReferenceType}.
  */
 class ReferenceBound extends ParameterBound {
 
@@ -36,23 +34,92 @@ class ReferenceBound extends ParameterBound {
   }
 
   @Override
-  public boolean isSatisfiedBy(GeneralType argType, Substitution<ReferenceType> subst) {
+  public String toString() {
+    return boundType.toString();
+  }
+
+  @Override
+  public boolean isUpperBound(GeneralType argType, Substitution<ReferenceType> subst) {
+    // XXX in practice, substitution not necessary because doesn't have variables by construction
     ReferenceType boundType = this.boundType.apply(subst);
-    return boundType.isAssignableFrom(argType);
+    if (boundType.equals(ConcreteTypes.OBJECT_TYPE)) {
+      return true;
+    }
+    if (boundType.isParameterized()) {
+      if (!(argType instanceof ClassOrInterfaceType)) {
+        return false;
+      }
+      InstantiatedType boundClassType = (InstantiatedType) boundType.applyCaptureConversion();
+      InstantiatedType argSuperType =
+          (InstantiatedType)
+              ((ClassOrInterfaceType) argType)
+                  .getMatchingSupertype(boundClassType.getGenericClassType());
+      if (argSuperType == null) {
+        return false;
+      }
+      argSuperType = argSuperType.applyCaptureConversion();
+      return argSuperType.isInstantiationOf(boundClassType);
+    }
+    return argType.isSubtypeOf(boundType);
   }
 
   @Override
-  public boolean isSatisfiedBy(GeneralType argType) {
-    return boundType.isAssignableFrom(argType);
+  boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
+    return isUpperBound(boundType, substitution);
   }
 
   @Override
-  public boolean isSubtypeOf(GeneralType otherType) {
-    return boundType.isSubtypeOf(otherType);
+  public boolean isLowerBound(GeneralType argType, Substitution<ReferenceType> subst) {
+    // XXX in practice, substitution not necessary because doesn't have variables by construction
+    ReferenceType boundType = this.boundType.apply(subst);
+    if (boundType.equals(ConcreteTypes.NULL_TYPE)) {
+      return true;
+    }
+    if (argType.isParameterized()) {
+      if (!(boundType instanceof ClassOrInterfaceType)) {
+        return false;
+      }
+      InstantiatedType argClassType = (InstantiatedType) argType.applyCaptureConversion();
+      InstantiatedType boundSuperType =
+          (InstantiatedType)
+              ((ClassOrInterfaceType) boundType)
+                  .getMatchingSupertype(argClassType.getGenericClassType());
+      if (boundSuperType == null) {
+        return false;
+      }
+      boundSuperType = boundSuperType.applyCaptureConversion();
+      return boundSuperType.isInstantiationOf(argClassType);
+    }
+    return boundType.isSubtypeOf(argType);
   }
 
   @Override
-  public ParameterBound apply(Substitution<ReferenceType> substitution) {
+  boolean isLowerBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
+    assert bound instanceof ReferenceBound : "only handling reference bounds";
+    return isLowerBound(((ReferenceBound) bound).boundType, substitution);
+  }
+
+  @Override
+  public boolean isSubtypeOf(ParameterBound bound) {
+    if (bound instanceof ReferenceBound) {
+      return this.boundType.isSubtypeOf(((ReferenceBound) bound).boundType);
+    }
+    assert false : "not handling ReferenceBound subtype of other bound type";
+    return false;
+  }
+
+  @Override
+  boolean hasWildcard() {
+    return boundType.hasWildcard();
+  }
+
+  @Override
+  public ReferenceBound applyCaptureConversion() {
+    return new ReferenceBound(boundType.applyCaptureConversion());
+  }
+
+  @Override
+  public ReferenceBound apply(Substitution<ReferenceType> substitution) {
     return new ReferenceBound(boundType.apply(substitution));
   }
 }

@@ -21,14 +21,14 @@ import java.util.Objects;
 abstract class WildcardArgument extends TypeArgument {
 
   /** the bound type */
-  private final ReferenceType boundType;
+  private final ParameterBound boundType;
 
   /**
    * Initializes the bound type.
    *
    * @param boundType  the bound type
    */
-  WildcardArgument(ReferenceType boundType) {
+  WildcardArgument(ParameterBound boundType) {
     this.boundType = boundType;
   }
 
@@ -56,6 +56,11 @@ abstract class WildcardArgument extends TypeArgument {
     return true;
   }
 
+  @Override
+  public boolean hasWildcard() {
+    return true;
+  }
+
   /**
    * Indicates whether this wildcard argument has an upper bound.
    * (If not, then it has a lower bound.)
@@ -69,7 +74,7 @@ abstract class WildcardArgument extends TypeArgument {
    *
    * @return the type of the bound of this wildcard argument
    */
-  ReferenceType getBoundType() {
+  ParameterBound getBoundType() {
     return boundType;
   }
 
@@ -99,5 +104,17 @@ abstract class WildcardArgument extends TypeArgument {
     }
 
     throw new IllegalArgumentException("A wildcard must have either upper or lower bounds");
+  }
+
+  public WildcardArgument applyCaptureConversion() {
+    if (boundType.hasWildcard()) {
+      ReferenceBound convertedType = (ReferenceBound) boundType.applyCaptureConversion();
+      if (this.hasUpperBound()) {
+        return new WildcardArgumentWithUpperBound(convertedType);
+      } else {
+        return new WildcardArgumentWithLowerBound(convertedType);
+      }
+    }
+    return this;
   }
 }

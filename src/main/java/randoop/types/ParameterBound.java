@@ -24,26 +24,22 @@ public abstract class ParameterBound {
    * @return true if this bound is satisfied by the concrete type when the
    *         substitution is used on the bound, false otherwise
    */
-  public abstract boolean isSatisfiedBy(GeneralType argType, Substitution<ReferenceType> subst);
+  public abstract boolean isUpperBound(GeneralType argType, Substitution<ReferenceType> subst);
+
+  abstract boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution);
 
   /**
-   * Determines if this object is an upper bound for the argument type using the most stringent
-   * relaxation of the criterion used in {@link #isSatisfiedBy(GeneralType, Substitution)} allowed
-   * when not using a substitution. The most relaxed form is simply checking assignability of raw
-   * types.
+   * Indicates whether this bound is a subtype of the given argument type.
    *
-   * @param argType  the argument type
-   * @return true, if the type satisfies the
-   */
-  public abstract boolean isSatisfiedBy(GeneralType argType);
-
-  /**
-   * Indicates whether this bound is a subtype of the given general type.
-   *
-   * @param otherType  the general type
+   * @param argType  the concrete argument type
+   * @param subst  the substitution
    * @return true if this bound is a subtype of the given type
    */
-  public abstract boolean isSubtypeOf(GeneralType otherType);
+  public abstract boolean isLowerBound(GeneralType argType, Substitution<ReferenceType> subst);
+
+  boolean isLowerBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
+    return false;
+  }
 
   /**
    * Creates a bound from the array of bounds of a {@code java.lang.reflect.TypeVariable}.
@@ -80,11 +76,53 @@ public abstract class ParameterBound {
    * @param type  the type for type bound
    * @return a type bound that ensures the given type is satisfied as an upper
    *         bound
-   * @throws IllegalArgumentException if a parameterized type is given but the
-   *         rawtype is not a Class object
    */
   private static ParameterBound forType(Type type) {
+
+    if (type instanceof java.lang.reflect.ParameterizedType) {
+      if (!hasTypeVariable(type)) {
+        return new ReferenceBound(ParameterizedType.forType(type));
+      }
+    }
+    if (type instanceof Class<?>) {
+      return new ReferenceBound(ClassOrInterfaceType.forType(type));
+    }
     return new LazyParameterBound(type);
+  }
+
+  /**
+   * Indicates whether the given (reflection) type reference represents a type in which a type
+   * variable occurs.
+   *
+   * @param type  the reflection type
+   * @return true if the type has a type variable, and false otherwise
+   */
+  private static boolean hasTypeVariable(java.lang.reflect.Type type) {
+    if (type instanceof java.lang.reflect.TypeVariable) {
+      return true;
+    }
+    if (type instanceof java.lang.reflect.ParameterizedType) {
+      java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
+      for (Type argType : pt.getActualTypeArguments()) {
+        if (hasTypeVariable(argType)) {
+          return true;
+        }
+      }
+    }
+    if (type instanceof java.lang.reflect.WildcardType) {
+      java.lang.reflect.WildcardType wt = (java.lang.reflect.WildcardType) type;
+      for (Type boundType : wt.getUpperBounds()) {
+        if (hasTypeVariable(boundType)) {
+          return true;
+        }
+      }
+      for (Type boundType : wt.getLowerBounds()) {
+        if (hasTypeVariable(boundType)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /**
@@ -101,4 +139,10 @@ public abstract class ParameterBound {
     }
     return new ReferenceBound(type);
   }
+
+  public abstract boolean isSubtypeOf(ParameterBound boundType);
+
+  abstract boolean hasWildcard();
+
+  public abstract ParameterBound applyCaptureConversion();
 }

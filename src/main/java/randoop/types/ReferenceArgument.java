@@ -41,6 +41,11 @@ public class ReferenceArgument extends TypeArgument {
     return referenceType.toString();
   }
 
+  @Override
+  public boolean hasWildcard() {
+    return referenceType.hasWildcard();
+  }
+
   /**
    * Get the reference type for this type argument.
    *
@@ -67,7 +72,8 @@ public class ReferenceArgument extends TypeArgument {
   @Override
   public boolean contains(TypeArgument otherArgument) {
     if (otherArgument.isWildcard()) {
-      return referenceType.equals(((WildcardArgument) otherArgument).getBoundType());
+      ParameterBound boundType = ((WildcardArgument) otherArgument).getBoundType();
+      return boundType.equals(new ReferenceBound(referenceType));
     } else {
       return referenceType.equals(((ReferenceArgument) otherArgument).getReferenceType());
     }
@@ -78,9 +84,21 @@ public class ReferenceArgument extends TypeArgument {
     return referenceType.getTypeParameters();
   }
 
+  @Override
+  boolean isInstantiationOf(TypeArgument otherArgument) {
+    if (!(otherArgument instanceof ReferenceArgument)) {
+      return false;
+    }
+
+    ReferenceType otherReferenceType = ((ReferenceArgument) otherArgument).getReferenceType();
+
+    return referenceType.isInstantiationOf(otherReferenceType);
+  }
+
   public boolean isCaptureVariable() {
     return referenceType.isCaptureVariable();
   }
+
   /**
    * Indicates whether a {@code ReferenceArgument} is generic.
    *
@@ -99,49 +117,5 @@ public class ReferenceArgument extends TypeArgument {
    */
   public static ReferenceArgument forType(Type type) {
     return new ReferenceArgument(ReferenceType.forType(type));
-  }
-
-  /**
-   * {@inheritDoc}
-   * Reference types must unify, meaning, e.g., if {@code referenceType} is an
-   * {@link ArrayType}, then {@code generalType} must be an {@link ArrayType}.
-   * If {@code referenceType} is a {@link TypeVariable}, then {@code generalType}
-   * has to satisfy the variables bounds.
-   */
-  @Override
-  public boolean canBeInstantiatedAs(
-      GeneralType generalType, Substitution<ReferenceType> substitution) {
-    if (referenceType.equals(generalType)) {
-      return true;
-    }
-
-    if (referenceType.isGeneric()) {
-      //  - array type has to be instantiation
-      if (referenceType instanceof ArrayType) {
-        if (!generalType.isArray()) {
-          return false;
-        }
-        // generalType.getElementType() has to instantiate referenceType.getElementType()
-        return false;
-      }
-
-      //  - class or interface has to be instantiation
-      if (referenceType instanceof ParameterizedType) {
-        if (!(generalType instanceof ParameterizedType)) {
-          return false;
-        }
-        // type arguments must instantiate type arguments
-        return false;
-      }
-
-      //  - type variable bounds have to be satisfied
-      if (referenceType instanceof TypeVariable) {
-        return ((TypeVariable) referenceType)
-            .getUpperTypeBound()
-            .isSatisfiedBy(generalType, substitution);
-      }
-    }
-
-    return false;
   }
 }
