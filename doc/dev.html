@@ -1101,11 +1101,6 @@ Reading a list of sequences from a serialized file:
   ObjectInputStream objectis = new ObjectInputStream(new GZIPInputStream(fileis));
   List&lt;ExecutableSequence&gt; seqsfromfile = (List&lt;ExecutableSequence&gt;) objectis.readObject();
 </pre>
-<p>
-You can replay the execution of a deserialized sequence (including
-evaluation of its Checks) by executing it with
-a <a href="../api/randoop/ReplayVisitor.html">ReplayVisitor</a>.
-</p>
 
 <h4 id="writing_sequence_as_junit">Writing a sequence as a JUnit test</h4>
 <p>
@@ -1290,7 +1285,7 @@ in <a href="../api/randoop/main/GenInputsAbstract.html">GenInputsAbstract</a>.
  -->
 <!--  LocalWords:  GZIPInputStream seqsfromfile readObject deserialized jfw dir
  -->
-<!--  LocalWords:  ReplayVisitor JunitFileWriter junit classname testsperfile
+<!--  LocalWords:  JunitFileWriter junit classname testsperfile
  -->
 <!--  LocalWords:  createJunitFiles GenTests entrypoint GenInputsAbstract
  -->
