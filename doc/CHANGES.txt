@@ -1,12 +1,14 @@
-Version 3.0.2, released July X, 2016
+Version 3.0.2, released July 20, 2016
 
-The command-line argument --init-routine has been removed.
+Fixed a bug related to recursive type bounds of wildcard arguments. Thanks to
+Huascar Sanchez for reporting this issue.
 
 Fixed a bug resulting in tests that threw an NPE when an expected anonymous
 exception was caught. Thanks to Matias Martinez for reporting this issue.
 
 Fixed a bug in reading input class names and an empty string was read.
 
+The command-line argument --init-routine has been removed.
 
 Version 3.0.1, released June 16, 2016
 
