@@ -17,6 +17,7 @@ import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
+import randoop.reflection.OperationModel;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.types.ClassOrInterfaceType;
@@ -72,7 +73,9 @@ public class ForwardExplorerPerformanceTest {
         Class<?> c = Class.forName(entry);
         ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
         manager.apply(
-            new OperationExtractor(classType, model, new DefaultReflectionPredicate()), c);
+            new OperationExtractor(
+                classType, model, new DefaultReflectionPredicate(), new OperationModel()),
+            c);
       }
     } catch (IOException e) {
       fail("exception when reading class names " + e);

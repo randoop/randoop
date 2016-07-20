@@ -7,7 +7,10 @@ import java.util.Set;
 
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
+import randoop.types.ConcreteTypes;
 import randoop.types.ParameterizedType;
+import randoop.types.ReferenceType;
+import randoop.types.Substitution;
 import randoop.types.TypeNames;
 import randoop.util.MultiMap;
 
@@ -38,7 +41,10 @@ public class OperationExtractorTest {
     }
     assert c != null;
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-    mgr.apply(new OperationExtractor(classType, operations, new DefaultReflectionPredicate()), c);
+    mgr.apply(
+        new OperationExtractor(
+            classType, operations, new DefaultReflectionPredicate(), new OperationModel()),
+        c);
     assertThat("name should be", classType.getName(), is(equalTo(c.getName())));
 
     assertThat("class has 12 operations", operations.size(), is(equalTo(12)));
@@ -70,10 +76,19 @@ public class OperationExtractorTest {
     }
     assert c != null;
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-
-    mgr.apply(new OperationExtractor(classType, operations, new DefaultReflectionPredicate()), c);
-
     assertTrue("should be a generic type", classType.isGeneric());
+
+    assertTrue("should have type parameters", classType.getTypeParameters().size() > 0);
+    Substitution<ReferenceType> substitution =
+        Substitution.forArgs(
+            classType.getTypeParameters(), (ReferenceType) ConcreteTypes.STRING_TYPE);
+    classType = classType.apply(substitution);
+
+    mgr.apply(
+        new OperationExtractor(
+            classType, operations, new DefaultReflectionPredicate(), new OperationModel()),
+        c);
+
     assertThat("there should be 20 operations", operations.size(), is(equalTo(20)));
   }
 }

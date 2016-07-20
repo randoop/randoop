@@ -11,6 +11,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
+import randoop.reflection.OperationModel;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.types.ClassOrInterfaceType;
@@ -65,7 +66,10 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
     ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
     for (Class<?> c : classes) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-      mgr.apply(new OperationExtractor(classType, model, new DefaultReflectionPredicate()), c);
+      mgr.apply(
+          new OperationExtractor(
+              classType, model, new DefaultReflectionPredicate(), new OperationModel()),
+          c);
     }
     return model;
   }
