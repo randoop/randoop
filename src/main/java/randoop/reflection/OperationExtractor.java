@@ -50,6 +50,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param classType  the declaring classtype for collected operations
    * @param operations  the collection of operations
    * @param predicate  the reflection predicate
+   * @param model  the {@link OperationModel}
    */
   public OperationExtractor(
       ClassOrInterfaceType classType,
