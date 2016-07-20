@@ -169,7 +169,8 @@ public class ReflectionManager {
    * since their definition is implicit, and we aren't testing Java enum
    * implementation.
    *
-   * @param c the enum class object from which constants and methods are extracted
+   * @param visitor  the {@link ClassVisitor}
+   * @param c  the enum class object from which constants and methods are extracted
    */
   private void applyToEnum(ClassVisitor visitor, Class<?> c) {
     Map<String, Set<Method>> overrideMethods = new HashMap<>();
@@ -210,8 +211,9 @@ public class ReflectionManager {
   }
 
   /**
-   * Apply all registered visitors to a field.
+   * Apply a visitor to a field.
    *
+   * @param v  the {@link ClassVisitor}
    * @param f
    *          the field to be visited.
    */
@@ -223,8 +225,9 @@ public class ReflectionManager {
   }
 
   /**
-   * Apply all registered visitors to the constructor.
+   * Apply a visitor to a constructor.
    *
+   * @param v  the {@link ClassVisitor}
    * @param co
    *          the constructor to be visited.
    */
@@ -236,8 +239,9 @@ public class ReflectionManager {
   }
 
   /**
-   * Apply all registered visitors to the method.
+   * Apply a visitor to a method.
    *
+   * @param v  the {@link ClassVisitor}
    * @param m
    *          the method to be visited.
    */
@@ -249,8 +253,9 @@ public class ReflectionManager {
   }
 
   /**
-   * Apply all registered visitors to the enum value.
+   * Apply a visitor to a enum value.
    *
+   * @param v  the {@link ClassVisitor}
    * @param e
    *          the enum value to be visited.
    */
@@ -262,9 +267,10 @@ public class ReflectionManager {
   }
 
   /**
-   * Apply all registered visitors to the class. Called at the end of
+   * Apply a visitor to a class. Called at the end of
    * {@link #apply(Class)}.
    *
+   * @param v  the {@link ClassVisitor}
    * @param c
    *          the class to be visited.
    */
@@ -273,11 +279,11 @@ public class ReflectionManager {
   }
 
   /**
-   * Apply all registered visitors to the class. Called at the beginning of
+   * Apply a visitor to a class. Called at the beginning of
    * {@link #apply(Class)}.
    *
-   * @param c
-   *          the class to be visited.
+   * @param v  the {@link ClassVisitor}
+   * @param c  the class to be visited.
    */
   private void visitBefore(ClassVisitor v, Class<?> c) {
     v.visitBefore(c);

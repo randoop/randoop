@@ -21,7 +21,6 @@ import java.io.StringWriter;
 /**
  * <p>
  * A PrintWriter that maintains a String as its backing store.
- * </p>
  *
  * <p>
  * Usage:
@@ -31,7 +30,6 @@ import java.io.StringWriter;
  * printTo(out);
  * System.out.println(out.getString());
  * </pre>
- * </p>
  *
  * @author Alex Chaffee
  * @author Scott Stanchfield

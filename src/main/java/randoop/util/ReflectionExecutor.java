@@ -134,6 +134,10 @@ public final class ReflectionExecutor {
 
   /**
    * without threads.
+   *
+   * @param code   the {@link ReflectionCode} to be executed
+   * @param out   the string to print messages; null if no output
+   * @return null, or the exception thrown
    */
   private static Throwable executeReflectionCodeUnThreaded(ReflectionCode code, PrintStream out) {
     try {

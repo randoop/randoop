@@ -621,7 +621,13 @@ public class GenTests extends GenInputsAbstract {
     return files;
   }
 
-  /** Print out usage error and stack trace and then exit **/
+  /**
+   * Print out usage error and stack trace and then exit
+   *
+   * @param t  the exception for the error
+   * @param format  the string format
+   * @param args  the arguments
+   */
   private static void usage(Throwable t, String format, Object... args) {
 
     System.out.print("ERROR: ");

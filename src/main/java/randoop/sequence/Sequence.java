@@ -575,6 +575,9 @@ public final class Sequence implements WeightedElement {
 
   /**
    * True iff this sequence contains a statement at the given index.
+   *
+   * @param index  the index to check for a statement
+   * @return true if the index is the position of a statement in this sequence, false otherwise
    */
   private boolean isValidIndex(int index) {
     return index >= 0 && index <= this.size() - 1;
@@ -591,6 +594,9 @@ public final class Sequence implements WeightedElement {
 
   /**
    * The statement(+inputs) at the given index.
+   *
+   * @param index  the statement position
+   * @return the {@link Statement} at the given index
    */
   private Statement getStatementWithInputs(int index) {
     if (!isValidIndex(index))
@@ -805,6 +811,7 @@ public final class Sequence implements WeightedElement {
    *
    * @param statementSep
    *          the statement separator.
+   * @return the string representation of this sequence
    */
   private String toParseableString(String statementSep) {
     assert statementSep != null;

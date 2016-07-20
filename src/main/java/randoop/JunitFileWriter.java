@@ -320,6 +320,9 @@ public class JunitFileWriter {
 
   /**
    * Returns the number of digits in the printed representation of the argument.
+   *
+   * @param n  the number
+   * @return the number of digits in string form of given number
    */
   private int numDigits(int n) {
     return (int) Math.log10(n) + 1;

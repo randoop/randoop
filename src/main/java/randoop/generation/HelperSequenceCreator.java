@@ -159,6 +159,7 @@ class HelperSequenceCreator {
    *
    * @param candidates  the list of candidate elements
    * @param elementType  the type of elements for the array
+   * @param length  the length of the array
    * @return a sequence that creates an array with the given element type
    */
   private static Sequence createAnArray(

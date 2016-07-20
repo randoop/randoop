@@ -75,7 +75,7 @@ public class Substitution<T> {
 
   /**
    * Add a type variable to concrete type mapping to the substitution.
-   * Only called by {@link Substitution#forArgs(List, T...)}
+   * Only called by {@link #forArgs(List, List)} and {@link #forArgs(List, Object[])}.
    *
    * @param typeParameter  the type variable
    * @param type  the concrete type

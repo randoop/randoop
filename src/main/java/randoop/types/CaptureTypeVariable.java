@@ -104,7 +104,6 @@ class CaptureTypeVariable extends TypeVariable {
    * The JLS states that if <code>S</code> and <code>T</code> are both class types not related as
    * subtypes, then the greatest lower bound of the two types is a compiler error.
    * Technically it is the null type.
-   * </p>
    *
    * @param typeParameter  the formal type parameter of the generic type
    * @param substitution  the capture conversion substitution

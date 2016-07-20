@@ -185,6 +185,8 @@ public class ForwardGenerator extends AbstractGenerator {
    * primitive values created during execution of the sequence are new values
    * not encountered before. Such values are added to the component manager so
    * they can be used during subsequent generation attempts.
+   *
+   * @param seq  the sequence
    */
   private void processSequence(ExecutableSequence seq) {
 
@@ -290,6 +292,8 @@ public class ForwardGenerator extends AbstractGenerator {
    * already in the specified component manager), then it is executed and added
    * to the manager's sequences. If the sequence created is already in the
    * manager's sequences, this method has no effect, and returns null.
+   *
+   * @return a new sequence, or null
    */
   private ExecutableSequence createNewUniqueSequence() {
 
@@ -382,6 +386,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * this object as a prefix, repeating the operation the given number of times.
    * Used during generation.
    *
+   * @param seq  the sequence to extend
    * @param operation
    *          the {@link TypedOperation} to repeat.
    * @param times
