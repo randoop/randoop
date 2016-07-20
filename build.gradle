@@ -389,6 +389,8 @@ task distributionZip (type: Zip , dependsOn: ['singleJar', 'copyJars', 'manual']
 javadoc {
   destinationDir = file("${buildDir}/docs/api")
   source sourceSets.main.allJava
+  options.memberLevel = JavadocMemberLevel.PRIVATE
+  options.addStringOption("stylesheetfile", "doc/stylesheets/javadocstyle.css")
 }
 
 /*
