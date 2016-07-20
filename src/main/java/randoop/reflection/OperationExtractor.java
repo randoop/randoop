@@ -15,7 +15,9 @@ import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
+import randoop.types.ReferenceType;
 import randoop.types.SimpleClassOrInterfaceType;
+import randoop.types.Substitution;
 import randoop.types.TypeTuple;
 
 /**
@@ -36,14 +38,11 @@ public class OperationExtractor extends DefaultClassVisitor {
 
   /** The collection of operations */
   private final Collection<TypedOperation> operations;
+  private final OperationModel model;
 
   /** The class type of the declaring class for the collected operations */
   private ClassOrInterfaceType classType;
 
-  /**
-   * Creates a visitor object that collects Operation objects corresponding to
-   * class members visited by {@link ReflectionManager}.
-   */
   /**
    * Creates a visitor object that collects the {@link TypedOperation} objects corresponding to
    * members of the class type and satisfying the given predicate.
@@ -55,10 +54,12 @@ public class OperationExtractor extends DefaultClassVisitor {
   public OperationExtractor(
       ClassOrInterfaceType classType,
       Collection<TypedOperation> operations,
-      ReflectionPredicate predicate) {
+      ReflectionPredicate predicate,
+      OperationModel model) {
     this.classType = classType;
     this.operations = operations;
     this.predicate = predicate;
+    this.model = model;
   }
 
   /**
@@ -71,15 +72,18 @@ public class OperationExtractor extends DefaultClassVisitor {
   private void addOperation(TypedClassOperation operation) {
     if (operation != null) {
       if (operation.getDeclaringType().isGeneric()) { // need to apply a substitution
+        Substitution<ReferenceType> substitution = new Substitution<>();
         GenericClassType declaringType = (GenericClassType) operation.getDeclaringType();
         if (classType.isParameterized()
             && declaringType.hasRuntimeClass(classType.getRuntimeClass())) {
-          operation = operation.apply(((InstantiatedType) classType).getTypeSubstitution());
+          substitution = ((InstantiatedType) classType).getTypeSubstitution();
         } else if (!classType.isGeneric()) {
           InstantiatedType supertype =
               (InstantiatedType) classType.getMatchingSupertype(declaringType);
-          operation = operation.apply(supertype.getTypeSubstitution());
+          substitution = supertype.getTypeSubstitution();
         }
+        // XXX if operation is generic, then substitution will not be sufficient, have to instantiate any missing variables
+        operation = model.instantiateOperationTypes(operation, substitution);
       }
       operations.add(operation);
     }

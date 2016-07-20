@@ -82,8 +82,12 @@ public class OperationModel {
 
   /**
    * Create an empty model of test context.
+   *
+   * <i>Note:</i> public because used in tests, but use
+   * {@link #createModel(VisibilityPredicate, ReflectionPredicate, Set, Set, Set, ClassNameErrorHandler, List)}
+   * instead.
    */
-  private OperationModel() {
+  public OperationModel() {
     classDeclarationTypes = new LinkedHashSet<>();
     concreteClassTypes = new LinkedHashSet<>();
     inputTypes = new LinkedHashSet<>();
@@ -431,7 +435,7 @@ public class OperationModel {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (ClassOrInterfaceType classType : concreteClassTypes) {
       mgr.apply(
-          new OperationExtractor(classType, operationSet, reflectionPredicate),
+          new OperationExtractor(classType, operationSet, reflectionPredicate, this),
           classType.getRuntimeClass());
     }
     for (TypedOperation operation : operationSet) {
@@ -510,6 +514,30 @@ public class OperationModel {
       throw new BugInRandoopException("Unable to instantiate types for operation " + operation);
     }
     Substitution<ReferenceType> substitution = Randomness.randomMember(substitutions);
+    return operation.apply(substitution);
+  }
+
+  /**
+   * Selects an instantiation of a generic operation, and returns a new operation with the types
+   * instantiated.
+   *
+   * @param operation  the operation
+   * @param substitution  the substitution for class type parameters
+   * @return the operation with generic types instantiated
+   */
+  TypedClassOperation instantiateOperationTypes(
+      TypedClassOperation operation, Substitution<ReferenceType> substitution) {
+    List<TypeVariable> typeParameters = operation.getTypeParameters();
+    typeParameters.removeAll(substitution.getVariables());
+    if (!typeParameters.isEmpty()) {
+      List<Substitution<ReferenceType>> substitutions = getSubstitutions(typeParameters);
+      if (substitutions.isEmpty()) {
+        throw new BugInRandoopException("Unable to instantiate types for operation " + operation);
+      }
+      Substitution<ReferenceType> operationTypeSubstitution =
+          Randomness.randomMember(substitutions);
+      substitution = substitution.extend(operationTypeSubstitution);
+    }
     return operation.apply(substitution);
   }
 }

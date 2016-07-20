@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,9 +31,14 @@ public class Substitution<T> {
   /**
    * Create an empty substitution.
    */
-  private Substitution() {
+  public Substitution() {
     map = new LinkedHashMap<>();
     rawMap = new LinkedHashMap<>();
+  }
+
+  public Substitution(Substitution<T> substitution) {
+    map = new LinkedHashMap<>(substitution.map);
+    rawMap = new LinkedHashMap<>(substitution.rawMap);
   }
 
   /**
@@ -156,5 +162,28 @@ public class Substitution<T> {
       System.out.println(
           entry.getKey() + "(" + entry.getKey().hashCode() + ")" + " := " + entry.getValue());
     }
+  }
+
+  public Collection<TypeVariable> getVariables() {
+    return map.keySet();
+  }
+
+  public Substitution<T> extend(Substitution<T> substitution) {
+    Substitution<T> result = new Substitution<>(this);
+    for (Entry<TypeVariable, T> entry : substitution.map.entrySet()) {
+      if (result.map.containsKey(entry.getKey())) {
+        throw new IllegalArgumentException(
+            "Substitutions not disjoint, both contain " + entry.getKey());
+      }
+      result.map.put(entry.getKey(), entry.getValue());
+    }
+    for (Entry<java.lang.reflect.Type, T> entry : substitution.rawMap.entrySet()) {
+      if (result.rawMap.containsKey(entry.getKey())) {
+        throw new IllegalArgumentException(
+            "Substitutions not disjoint, both contain " + entry.getKey());
+      }
+      result.rawMap.put(entry.getKey(), entry.getValue());
+    }
+    return result;
   }
 }

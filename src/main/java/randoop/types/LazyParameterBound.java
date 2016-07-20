@@ -127,6 +127,7 @@ class LazyParameterBound extends ParameterBound {
       if (referenceType != null) {
         return new ReferenceBound(referenceType);
       }
+      // XXX should be safe to return
       throw new IllegalArgumentException(
           "substitution does not instantiate type variable: " + boundType);
     }
