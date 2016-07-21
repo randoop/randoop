@@ -593,7 +593,7 @@ merging new work with the master branch.
   NEWVERSION=<em>3.0.0</em></pre>
         These are used for working with git.
       </li>
-      <li>Also, update the version number and date in
+      <li>Also, update the version number and date in each of
         <code>build.gradle</code>,
         <code>src/main/java/randoop/Globals.java</code>,
         <code>doc/CHANGES.txt</code>, and
@@ -634,8 +634,10 @@ merging new work with the master branch.
     Update the <code>gh-pages</code> branch using the sibling clone of the repository
     created above:
     <pre>
-  mv -f build/docs/manual ../randoop-gh-pages/
-  mv -f build/docs/api ../randoop-gh-pages/
+  rm -rf ../randoop-gh-pages/manual
+  mv build/docs/manual ../randoop-gh-pages/
+  rm -rf ../randoop-gh-pages/api
+  mv build/docs/api ../randoop-gh-pages/
   (cd ../randoop-gh-pages && git commit -m "Update for Randoop $NEWVERSION" && git push)</pre>
   </li>
   <li>Follow the
