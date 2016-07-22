@@ -4,8 +4,19 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 /**
- * An abstract class representing Java class or interface types as defined in the JLS.
- * (See JLS, section 4.3.)
+ * Represents a class or interface type as defined in JLS Section 4.3.
+ * <pre>
+ *   ClassOrInterfaceType:
+ *     ClassType
+ *     InterfaceType
+ *
+ *   ClassType:
+ *     Identifier [ TypeArguments ]
+ *     ClassOrInterfaceType . Identifier [ TypeArguments ]
+ *
+ *   InterfaceType:
+ *     Classtype
+ * </pre>
  *
  * @see SimpleClassOrInterfaceType
  * @see ParameterizedType
@@ -140,6 +151,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   /**
    * Finds the parameterized type that is a supertype of this class that also matches the given
    * generic class.
+   * <p>
+   * Performs a depth-first search of the supertype relation for this type, using a heuristic
+   * that checks whether the goal type is an interface to restrict the search.
    *
    * @param goalType  the generic class type
    * @return the instantiated type matching the goal type, or null

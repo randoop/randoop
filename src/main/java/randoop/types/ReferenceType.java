@@ -5,8 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A reference type in JLS (Section 4.3) is defined as one of Class/Interface type,
- * Array type, or a type variable.
+ * Represents a reference type defined in JLS Section 4.3
+ * <pre>
+ *   ReferenceType:
+ *     ClassOrInterfaceType
+ *     TypeVariable
+ *     ArrayType
+ * </pre>
+ *
+ * @see ClassOrInterfaceType
+ * @see TypeVariable
+ * @see ArrayType
  */
 public abstract class ReferenceType extends GeneralType {
 

@@ -8,7 +8,7 @@ import java.util.Set;
 
 /**
  * Represents a parameterized type as a generic class instantiated with
- * concrete type arguments.
+ * type arguments.
  * <p>
  * Note that {@link java.lang.reflect.ParameterizedType} is an interface that
  * can represent either a parameterized type in the sense meant here, or a
@@ -265,7 +265,7 @@ public class InstantiatedType extends ParameterizedType {
    * This is only possible if this type is <code>A&lt;T<sub>1</sub>,&hellip;,T<sub>k</sub>&gt;</code>
    * where all <code>T<sub>i</sub></code> are instantiated by ground types (e.g., does not have type variables),
    * the other type is <code>A&lt;S<sub>1</sub>,&hellip;,S<sub>k</sub>&gt;</code>, and
-   * each <code>T<sub>i</sub></code> matches <code>S<sub>i</sub></code> for <code>i = 1,&hellip;k</code>
+   * each <code>T<sub>i</sub></code> matches <code>S<sub>i</sub></code> for <code>i = 1,&hellip;,k</code>
    * as follows:
    * <ol>
    *   <li>
@@ -393,20 +393,6 @@ public class InstantiatedType extends ParameterizedType {
       paramSet.addAll(argument.getTypeParameters());
     }
     return new ArrayList<>(paramSet);
-  }
-
-  /**
-   * Indicates whether this type has wildcard arguments.
-   *
-   * @return true if this type has a wildcard argument, and false if there are none
-   */
-  private boolean hasWildcardArgument() {
-    for (TypeArgument argument : argumentList) {
-      if (argument.isWildcard()) {
-        return true;
-      }
-    }
-    return false;
   }
 
   /**

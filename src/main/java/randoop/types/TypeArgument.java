@@ -6,9 +6,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a type argument of a parameterized type as described in
- * JLS (Section 4.5.1).
- * A type argument may be either a reference type or a wildcard.
+ * Represents a type argument of a parameterized type as described in JLS Section 4.5.1.
+ * <pre>
+ *   TypeArgument:
+ *     ReferenceType
+ *     Wildcard
+ * </pre>
+ *
+ * @see ReferenceArgument
+ * @see WildcardArgument
  */
 public abstract class TypeArgument {
 

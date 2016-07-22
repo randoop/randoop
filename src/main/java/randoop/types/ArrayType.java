@@ -6,7 +6,13 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Represents a Java array type as defined in JLS, Section 4.3.
+ * Represents an array type as defined in JLS, Section 4.3.
+ * <pre>
+ *   ArrayType:
+ *     PrimitiveType [ ] { [ ] }
+ *     ClassOrInterfaceType [ ] { [ ] }
+ *     TypeVariable [ ] { [ ] }
+ * </pre>
  * An array may have elements of any type.
  */
 public class ArrayType extends ReferenceType {
@@ -77,7 +83,7 @@ public class ArrayType extends ReferenceType {
   /**
    * {@inheritDoc}
    * For an array type, check for assignability by reference widening.
-   * If not otherwise assignable, check for unchecked conversion:
+   * If not otherwise assignable, check for unchecked conversion, which
    * occurs when this type is
    * <code>C&lt;T<sub>1</sub>,&hellip;,T<sub>k</sub>&gt;[]</code>
    * and other type is

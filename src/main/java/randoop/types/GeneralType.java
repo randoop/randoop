@@ -6,8 +6,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents Java types in Randoop, including parameterized types.
- * Should be used for types in test generation rather than reflection type {@code Class<?>}.
+ * Represents Java types defined in JLS Section 4.1
+ * <pre>
+ *   Type:
+ *     ReferenceType
+ *     PrimitiveType
+ * </pre>
+ * <p>
+ * This class should be used to represent types in Randoop test generation
+ * rather than the reflection type {@code Class<?>}.
+ * <p>
+ * {@link GeneralType} objects are not constructed directly, and instead
+ * are constructed using the methods
+ * {@link #forType(Type)},
+ * {@link #forClass(Class)}, or
+ * {@link #forName(String)}.
+ * These methods translate the reflection types into objects of subclasses of this type.
  *
  * @see ReferenceType
  * @see PrimitiveType
@@ -46,7 +60,7 @@ public abstract class GeneralType {
   /**
    * Indicate whether this object has a wildcard as a type parameter.
    *
-   * @return false by default
+   * @return true if this type has a wildcard parameter, and false otherwise
    */
   public boolean hasWildcard() {
     return false;
@@ -67,7 +81,8 @@ public abstract class GeneralType {
    * <code>
    * Variable<sub>this</sub> = Expression<sub>sourcetype</sub>.
    * </code>
-   * In other words, this is a legal assignment.
+   * In other words, whether this is a legal assignment.
+   * <p>
    * Based on the definition of <i>assignment context</i> in
    * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.2">
    * section 5.2 of the JDK 8 Java Language Specification</a>
@@ -83,7 +98,7 @@ public abstract class GeneralType {
    * And, if after all those conversions, the type is a raw type, an
    * unchecked conversion may occur.
    *<p>
-   * When implementing this method, be aware that the method
+   * When working on this method, be aware that the method
    * {@link Class#isAssignableFrom(Class)} checks identity and
    * reference conversions, and does a comparison of raw types for parameterized
    * types. The method {@link PrimitiveTypes#isAssignable(Class, Class)} checks
@@ -194,7 +209,7 @@ public abstract class GeneralType {
 
   /**
    * Indicates whether this is a reference type.
-   * Note: should be !(this.isPrimitive())
+   * Note: implementing classes should ensure that this is equivalent to !(this.isPrimitive())
    *
    * @return true if this type is a reference type, and false otherwise.
    */
@@ -234,12 +249,12 @@ public abstract class GeneralType {
   }
 
   /**
-   * Returns a concrete type for this general type created by instantiating
-   * the type parameters with a list of concrete type arguments.
+   * Returns the type for this created by instantiating the type parameters of this type
+   * with {@link ReferenceType} objects.
    *
    * @param substitution  the type substitution
-   * @return a {@code ConcreteType} constructed by substituting for type
-   * parameters in this generic type
+   * @return the {@code GeneralType} constructed by substituting for type
+   * parameters in this type, or this type if there are no type parameters
    */
   public GeneralType apply(Substitution<ReferenceType> substitution) {
     return this;
@@ -339,7 +354,6 @@ public abstract class GeneralType {
   /**
    * Returns a type constructed from the object referenced by a
    * {@code java.lang.reflect.Type} reference.
-   * If the object is a {@code Class} instance, then returns the corresponding {@code ConcreteType}.
    * <p>
    * Note that when the type corresponds to a generic class type, this method
    * returns the type variables from the
@@ -348,8 +362,8 @@ public abstract class GeneralType {
    * {@link ParameterizedType#isSubtypeOf(GeneralType)}.
    *
    * @param type  the type to interpret
-   * @return a {@code randoop.types.Type} object corresponding to the given type
-   * @throws IllegalArgumentException if the rawtype is not a Class instance
+   * @return a {@link GeneralType} object corresponding to the given type
+   * @throws IllegalArgumentException if the type is a {@code java.lang.reflect.WildcardType}
    */
   public static GeneralType forType(Type type) {
 

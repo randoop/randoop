@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Represents a bound on a type variable that is a {@link ReferenceType}.
+ * Represents a bound on a type variable where the bound is a {@link ReferenceType}.
  */
 class ReferenceBound extends ParameterBound {
 

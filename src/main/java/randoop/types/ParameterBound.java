@@ -6,18 +6,33 @@ import java.util.List;
 
 /**
  * Represents a type bound on a type variable occurring as a type parameter in
- * a class, interface, method or constructor. (See JLS section 8.1.2)
- * In Java, a type bound is either a type variable, a class type, an interface
- * type, or an intersection type of class and interface bounds.
- * This class represents a bound as concretely as possible based on the values
- * returned by {@link java.lang.reflect.TypeVariable#getBounds()}.
+ * a class, interface, method or constructor.
+ * Defined in JLS section 8.1.2 as
+ * <pre>
+ *   TypeBound:
+ *     extends TypeVariable
+ *     extends ClassOrInterfaceType [ &amp; InterfaceType ]
+ * </pre>
+ * Type parameters only have upper bounds, but variables introduced by capture conversion can have
+ * lower bounds.
+ * This class and its subclasses can represent both.
+ *
+ * @see ReferenceBound
+ * @see IntersectionTypeBound
+ * @see LazyParameterBound
  */
 public abstract class ParameterBound {
 
+  /**
+   * Applies the given substitution to this type bound by replacing type variables.
+   *
+   * @param substitution  the type substitution
+   * @return this bound with the type after the substitution has been applied.
+   */
   public abstract ParameterBound apply(Substitution<ReferenceType> substitution);
 
   /**
-   * Determines if this is an upper bound for the argument type.
+   * Determines if this bound is an upper bound for the argument type.
    *
    * @param argType  the concrete argument type
    * @param subst  the substitution
@@ -26,10 +41,18 @@ public abstract class ParameterBound {
    */
   public abstract boolean isUpperBound(GeneralType argType, Substitution<ReferenceType> subst);
 
+  /**
+   * Indicates whether this bound is an upper bound on the type of the given bound with respect to
+   * the type substitution.
+   *
+   * @param bound  the other bound
+   * @param substitution  the type substitution
+   * @return true if this bound is an upper bound on the type of the given bound, false otherwise
+   */
   abstract boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution);
 
   /**
-   * Indicates whether this bound is a subtype of the given argument type.
+   * Indicates whether this bound is a lower bound of the given argument type.
    *
    * @param argType  the concrete argument type
    * @param subst  the substitution
@@ -37,6 +60,13 @@ public abstract class ParameterBound {
    */
   public abstract boolean isLowerBound(GeneralType argType, Substitution<ReferenceType> subst);
 
+  /**
+   * Tests whether this is a lower bound on the type of a given bound with respect to a type substitution.
+   *
+   * @param bound  the other bound
+   * @param substitution  the type substitution
+   * @return true, if this bound is a lower bound on the type of the given bound, and false otherwise
+   */
   boolean isLowerBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
     return false;
   }
@@ -140,11 +170,34 @@ public abstract class ParameterBound {
     return new ReferenceBound(type);
   }
 
+  /**
+   * Indicates whether the type of this bound is a subtype of the type of the given bound.
+   *
+   * @param boundType  the other bound
+   * @return true if this type is a subtype of the other bound, false otherwise
+   */
   public abstract boolean isSubtypeOf(ParameterBound boundType);
 
+  /**
+   * Indicates whether the type of this bound has a wildcard type argument.
+   *
+   * @return true, if this bound has a wildcard argument, and false otherwise
+   */
   abstract boolean hasWildcard();
 
+  /**
+   * Applies a capture conversion to any wildcard arguments in the type of this bound.
+   *
+   * @see ReferenceType#applyCaptureConversion()
+   *
+   * @return this type with any wildcards replaced by capture conversion
+   */
   public abstract ParameterBound applyCaptureConversion();
 
+  /**
+   * Returns any type parameters in the type of this bound.
+   *
+   * @return the list of {@code TypeVariable} objects in this bound
+   */
   public abstract List<TypeVariable> getTypeParameters();
 }

@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Represents a type bound using reflection types.
- * Note that these objects may have recursive structure.
+ * A lazy representation of a type bound in which a type variable occurs.
+ * Prevents type recognition from having to deal with recursive type bounds.
+ * All methods that need to evaluate the bound are provided with a substitution for the variable
+ * for which this object is a bound.
  */
 class LazyParameterBound extends ParameterBound {
 
@@ -99,6 +101,12 @@ class LazyParameterBound extends ParameterBound {
     return getTypeParameters(boundType);
   }
 
+  /**
+   * Collects the type parameters from the given reflection {@code Type} object.
+   *
+   * @param type  the {@code Type} reference
+   * @return the list of type variables in the given type
+   */
   private List<TypeVariable> getTypeParameters(Type type) {
     List<TypeVariable> variableList = new ArrayList<>();
     if (type instanceof java.lang.reflect.TypeVariable) {

@@ -7,8 +7,11 @@ import java.util.Objects;
 
 /**
  * Represents a wildcard type argument to a parameterized type.
- * A wildcard may have either an upper or lower bound.
- * (See JLS, 4.5.1)
+ * A wildcard may have either an upper or lower bound as defined in JLS Section 4.5.1.
+ * <pre>
+ *   ? [ extends ReferenceType ]
+ *   ? [ super ReferenceType ]
+ * </pre>
  * <p>
  *   Note that in the context of a
  *   <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">capture conversion</a>,

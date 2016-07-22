@@ -17,7 +17,7 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
   private final Class<?> runtimeClass;
 
   /**
-   * Create a {@code ConcreteSimpleType} object for the runtime class
+   * Create a {@link SimpleClassOrInterfaceType} object for the runtime class
    *
    * @param runtimeType  the runtime class for the type
    */
@@ -64,7 +64,7 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
 
   /**
    * {@inheritDoc}
-   * @return the {@code Class} object for this concrete simple type
+   * @return the {@code Class} object for this simple type
    */
   @Override
   public Class<?> getRuntimeClass() {

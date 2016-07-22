@@ -9,10 +9,13 @@ import plume.UtilMDE;
 /**
  * Represents an intersection type bound on a type parameter in a class,
  * interface, method or constructor (see JLS section 4.4).
+ * Alternatively, it may also represent the greatest lower bound of two upper bounds created by
+ * a capture conversion (JLS section 5.1.10).
  * <p>
  * Java requires that an intersection type bound consist of class and
  * interface types, with at most one class, and if there is a class it appears
  * in the conjunction term first.
+ * In a capture conversion, if both types are classes, one must be a subclass of the other.
  * This class preserves the order of the types, just in case it becomes
  * necessary to dump the bound to compilable code.
  */
