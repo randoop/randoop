@@ -26,5 +26,5 @@ public enum InheritedEnum implements TheSupertype {
     public int alpha(String s) {
       return 2;
     }
-  };
+  }
 }

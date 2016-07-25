@@ -30,4 +30,4 @@ public enum EnumAsPredicate implements Predicate<Integer> {
   public Predicate<Integer> and(Predicate<Integer> q) {
     return this;
   }
-};
+}
