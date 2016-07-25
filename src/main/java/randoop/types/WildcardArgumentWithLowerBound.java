@@ -25,12 +25,12 @@ class WildcardArgumentWithLowerBound extends WildcardArgument {
 
   @Override
   public String toString() {
-    return "? super " + this.getBoundType().toString();
+    return "? super " + this.getTypeBound().toString();
   }
 
   @Override
   public WildcardArgument apply(Substitution<ReferenceType> substitution) {
-    return new WildcardArgumentWithLowerBound((ReferenceBound) getBoundType().apply(substitution));
+    return new WildcardArgumentWithLowerBound((ReferenceBound) getTypeBound().apply(substitution));
   }
 
   /**
@@ -48,9 +48,9 @@ class WildcardArgumentWithLowerBound extends WildcardArgument {
     if (otherArgument.isWildcard()) {
       WildcardArgument otherWildcard = (WildcardArgument) otherArgument;
       if (otherWildcard.hasUpperBound()) {
-        return otherWildcard.getBoundType().equals(new ReferenceBound(ConcreteTypes.OBJECT_TYPE));
+        return otherWildcard.getTypeBound().equals(new ReferenceBound(ConcreteTypes.OBJECT_TYPE));
       } else {
-        return otherWildcard.getBoundType().isSubtypeOf(this.getBoundType());
+        return otherWildcard.getTypeBound().isSubtypeOf(this.getTypeBound());
       }
     }
     return false;

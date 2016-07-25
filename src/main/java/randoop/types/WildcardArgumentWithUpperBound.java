@@ -29,12 +29,12 @@ class WildcardArgumentWithUpperBound extends WildcardArgument {
 
   @Override
   public String toString() {
-    return "? extends " + this.getBoundType().toString();
+    return "? extends " + this.getTypeBound().toString();
   }
 
   @Override
   public WildcardArgument apply(Substitution<ReferenceType> substitution) {
-    return new WildcardArgumentWithUpperBound((ReferenceBound) getBoundType().apply(substitution));
+    return new WildcardArgumentWithUpperBound((ReferenceBound) getTypeBound().apply(substitution));
   }
 
   /**
@@ -51,7 +51,7 @@ class WildcardArgumentWithUpperBound extends WildcardArgument {
   public boolean contains(TypeArgument otherArgument) {
     return otherArgument.isWildcard()
         && ((WildcardArgument) otherArgument).hasUpperBound()
-        && this.getBoundType().isSubtypeOf(((WildcardArgument) otherArgument).getBoundType());
+        && this.getTypeBound().isSubtypeOf(((WildcardArgument) otherArgument).getTypeBound());
   }
 
   @Override

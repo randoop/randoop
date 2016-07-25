@@ -25,7 +25,7 @@ import java.util.Objects;
 abstract class WildcardArgument extends TypeArgument {
 
   /** the bound type */
-  private final ParameterBound boundType;
+  private final ParameterBound typeBound;
 
   /**
    * Initializes the bound type.
@@ -33,7 +33,7 @@ abstract class WildcardArgument extends TypeArgument {
    * @param boundType  the bound type
    */
   WildcardArgument(ParameterBound boundType) {
-    this.boundType = boundType;
+    this.typeBound = boundType;
   }
 
   @Override
@@ -42,12 +42,12 @@ abstract class WildcardArgument extends TypeArgument {
       return false;
     }
     WildcardArgument wildcardArgument = (WildcardArgument) obj;
-    return this.boundType.equals(wildcardArgument.boundType);
+    return this.typeBound.equals(wildcardArgument.typeBound);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(boundType);
+    return Objects.hash(typeBound);
   }
 
   @Override
@@ -78,8 +78,8 @@ abstract class WildcardArgument extends TypeArgument {
    *
    * @return the type of the bound of this wildcard argument
    */
-  ParameterBound getBoundType() {
-    return boundType;
+  ParameterBound getTypeBound() {
+    return typeBound;
   }
 
   /**
@@ -111,8 +111,8 @@ abstract class WildcardArgument extends TypeArgument {
   }
 
   public WildcardArgument applyCaptureConversion() {
-    if (boundType.hasWildcard()) {
-      ReferenceBound convertedType = (ReferenceBound) boundType.applyCaptureConversion();
+    if (typeBound.hasWildcard()) {
+      ReferenceBound convertedType = (ReferenceBound) typeBound.applyCaptureConversion();
       if (this.hasUpperBound()) {
         return new WildcardArgumentWithUpperBound(convertedType);
       } else {
@@ -124,6 +124,6 @@ abstract class WildcardArgument extends TypeArgument {
 
   @Override
   public List<TypeVariable> getTypeParameters() {
-    return boundType.getTypeParameters();
+    return typeBound.getTypeParameters();
   }
 }

@@ -38,9 +38,9 @@ class CaptureTypeVariable extends TypeVariable {
     this.wildcard = wildcard;
 
     if (wildcard.hasUpperBound()) {
-      setUpperBound(wildcard.getBoundType());
+      setUpperBound(wildcard.getTypeBound());
     } else {
-      setLowerBound(wildcard.getBoundType());
+      setLowerBound(wildcard.getTypeBound());
     }
   }
 
