@@ -38,7 +38,6 @@ public class Premain {
   public static boolean default_bcel = true;
 
   /**
-   * {@inheritDoc}
    * This method is the entry point of the java agent. Its main purpose is to
    * set up the transformer so that when classes from the target app are loaded,
    * they are first transformed.
