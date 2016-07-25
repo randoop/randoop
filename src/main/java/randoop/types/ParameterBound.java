@@ -5,17 +5,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a type bound on a type variable occurring as a type parameter in
- * a class, interface, method or constructor.
- * Defined in JLS section 8.1.2 as
+ * Represents a type bound on a type variable or wildcard occurring as a type parameter of
+ * a generic class, interface, method or constructor.
+ * <p>
+ * Type bounds for explicitly defined type variables of generic declarations are defined in
+ * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.1.2">JLS section 8.1.2</a>
+ * as
  * <pre>
  *   TypeBound:
  *     extends TypeVariable
  *     extends ClassOrInterfaceType [ &amp; InterfaceType ]
  * </pre>
+ * Type bounds for wildcards may be any reference type, which includes type variables, so the
+ * {@link ParameterBound} class hierarchy is simplified to use this {@link ReferenceType} objects
+ * as bounds. Intersection types (which includes the greatest lower bound construction used in
+ * capture conversion) are explicitly represented.
+ * And, recursive type bounds are avoided by holding any {@code java.lang.reflect.Type} with
+ * variables as a {@link LazyParameterBound}.
+ * <p>
  * Type parameters only have upper bounds, but variables introduced by capture conversion can have
  * lower bounds.
- * This class and its subclasses can represent both.
+ * This class and its subclasses can represent both, with the default lower bound being
+ * {@link ConcreteTypes#NULL_TYPE},
+ * and the default upperbound being {@link ConcreteTypes#OBJECT_TYPE}.
  *
  * @see ReferenceBound
  * @see IntersectionTypeBound
@@ -76,7 +88,8 @@ public abstract class ParameterBound {
    * <p>
    * The bounds may be either be a single type variable, or a class/interface type followed by a
    * conjunction of interface types.
-   * See JLS section 8.1.2.
+   * See
+   * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.1.2">JLS section 8.1.2</a>.
    *
    * @param bounds  the type bounds
    * @return the {@code ParameterBound} for the given types

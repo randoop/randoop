@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a type argument of a parameterized type as described in JLS Section 4.5.1.
+ * Represents a type argument of a parameterized type as described in
+ * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.
  * <pre>
  *   TypeArgument:
  *     ReferenceType
@@ -28,7 +29,7 @@ public abstract class TypeArgument {
 
   /**
    * Checks whether this type argument contains another argument, using relationship defined in
-   * section 4.5.1 of JLS.
+   * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.
    *
    * @param otherArgument  the other {@code TypeArgument}
    * @return true if this argument contains the other argument

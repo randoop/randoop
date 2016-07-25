@@ -4,14 +4,14 @@ import java.lang.reflect.Type;
 
 /**
  * Represents a wildcard type that has a lower bound (e.g., {@code ? super T}).
- * See JLS, section 4.5.1
+ * See  <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.
  */
 class WildcardArgumentWithLowerBound extends WildcardArgument {
 
   /**
    * Creates a wildcard argument with a lower bound.
    * Assumes that the type array has a single element as defined in
-   * JLS, section 4.5.1
+   *  <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.
    *
    * @param lowerBounds  the lower bound type array
    */

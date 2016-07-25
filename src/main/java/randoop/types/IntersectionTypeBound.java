@@ -8,16 +8,15 @@ import plume.UtilMDE;
 
 /**
  * Represents an intersection type bound on a type parameter in a class,
- * interface, method or constructor (see JLS section 4.4).
- * Alternatively, it may also represent the greatest lower bound of two upper bounds created by
- * a capture conversion (JLS section 5.1.10).
+ * interface, method or constructor (see
+ * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.4">JLS section 4.4</a>).
+ * Alternatively, in capture conversion, it may also represent the greatest lower bound of two upper bounds (
+ * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">JLS section 5.1.10</a>).
  * <p>
  * Java requires that an intersection type bound consist of class and
  * interface types, with at most one class, and if there is a class it appears
- * in the conjunction term first.
+ * in the conjunction term first. This class preserves the order of the types.
  * In a capture conversion, if both types are classes, one must be a subclass of the other.
- * This class preserves the order of the types, just in case it becomes
- * necessary to dump the bound to compilable code.
  */
 class IntersectionTypeBound extends ParameterBound {
 
@@ -59,7 +58,7 @@ class IntersectionTypeBound extends ParameterBound {
 
   /**
    * {@inheritDoc}
-   * Checks whether the argument type satisfies all of the bounds in this
+   * @return true if the argument type satisfies all of the bounds in this
    * intersection type bound.
    */
   @Override
@@ -72,6 +71,11 @@ class IntersectionTypeBound extends ParameterBound {
     return true;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @return true if the argument bound has all of the member bounds of this object as an upper bound.
+   */
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
     for (ParameterBound b : boundList) {
@@ -82,6 +86,10 @@ class IntersectionTypeBound extends ParameterBound {
     return true;
   }
 
+  /**
+   * {@inheritDoc}
+   * @return true if the argument type has all of types of the member bounds of this object as an upper bound.
+   */
   @Override
   public boolean isLowerBound(GeneralType otherType, Substitution<ReferenceType> subst) {
     for (ParameterBound b : boundList) {
@@ -92,12 +100,22 @@ class IntersectionTypeBound extends ParameterBound {
     return true;
   }
 
+  /**
+   * {@inheritDoc}
+   * This method should never be tested for {@link IntersectionTypeBound}.
+   * Will fail if assertions are enabled.
+   * @return false, always
+   */
   @Override
   public boolean isSubtypeOf(ParameterBound boundType) {
-    assert false : "intersection type bound issubtypeof not implemented";
+    assert false : "intersection type bound isSubTypeOf not implemented";
     return false;
   }
 
+  /**
+   * {@inheritDoc}
+   * @return true if any type in the intersection type bound has a wildcard argument, false otherwise
+   */
   @Override
   boolean hasWildcard() {
     for (ParameterBound b : boundList) {
@@ -108,6 +126,10 @@ class IntersectionTypeBound extends ParameterBound {
     return false;
   }
 
+  /**
+   * {@inheritDoc}
+   * @return an intersection bound with capture conversion applied to all member bounds
+   */
   @Override
   public ParameterBound applyCaptureConversion() {
     List<ParameterBound> convertedBoundList = new ArrayList<>();
@@ -117,6 +139,10 @@ class IntersectionTypeBound extends ParameterBound {
     return new IntersectionTypeBound(convertedBoundList);
   }
 
+  /**
+   * {@inheritDoc}
+   * @return the list of type variables occuring in all of the type bounds of this intersection bound
+   */
   @Override
   public List<TypeVariable> getTypeParameters() {
     List<TypeVariable> paramList = new ArrayList<>();
@@ -126,6 +152,10 @@ class IntersectionTypeBound extends ParameterBound {
     return paramList;
   }
 
+  /**
+   * {@inheritDoc}
+   * @return this bound with the substitutition applied to all member bounds
+   */
   @Override
   public IntersectionTypeBound apply(Substitution<ReferenceType> substitution) {
     List<ParameterBound> bounds = new ArrayList<>();

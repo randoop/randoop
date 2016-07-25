@@ -7,17 +7,14 @@ import java.util.Objects;
 
 /**
  * Represents a wildcard type argument to a parameterized type.
- * A wildcard may have either an upper or lower bound as defined in JLS Section 4.5.1.
+ * A wildcard may have either an upper or lower bound as defined in
+ * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.
  * <pre>
  *   ? [ extends ReferenceType ]
  *   ? [ super ReferenceType ]
  * </pre>
  * <p>
- *   Note that in the context of a
- *   <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">capture conversion</a>,
- *   a wildcard has both an upper and a lower bound, computed from the explicit wildcard bound and
- *   bound on the formal type parameter.
- *   The subclasses represent the bound as given for the wildcard.
+ * The subclasses represent the type bound as given for the wildcard.
  *
  * @see WildcardArgumentWithLowerBound
  * @see WildcardArgumentWithUpperBound
@@ -110,6 +107,13 @@ abstract class WildcardArgument extends TypeArgument {
     throw new IllegalArgumentException("A wildcard must have either upper or lower bounds");
   }
 
+  /**
+   * Applies a capture conversion to the bound of this {@link WildcardArgument}.
+   *
+   * @see ReferenceType#applyCaptureConversion()
+   *
+   * @return this wildcard argument with capture conversion applied to the type bound
+   */
   public WildcardArgument applyCaptureConversion() {
     if (typeBound.hasWildcard()) {
       ReferenceBound convertedType = (ReferenceBound) typeBound.applyCaptureConversion();
@@ -122,6 +126,10 @@ abstract class WildcardArgument extends TypeArgument {
     return this;
   }
 
+  /**
+   * {@inheritDoc}
+   * @return the type parameters of the bound of this wildcard argument
+   */
   @Override
   public List<TypeVariable> getTypeParameters() {
     return typeBound.getTypeParameters();

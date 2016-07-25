@@ -4,14 +4,14 @@ import java.lang.reflect.Type;
 
 /**
  * Represents a wildcard type that has an upper bound (e.g., {@code ? extends T}).
- * See JLS, section 4.5.1
+ * See  <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.
  */
 class WildcardArgumentWithUpperBound extends WildcardArgument {
 
   /**
    * Creates a wildcard argument with an upper bound.
    * Assumes that the type array has a single element as defined in
-   * JLS, section 4.5.1
+   *  <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.
    *
    * @param upperBounds  the upper bound type array
    */

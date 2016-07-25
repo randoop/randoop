@@ -151,6 +151,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   /**
    * Finds the parameterized type that is a supertype of this class that also matches the given
    * generic class.
+   * Returns null if there is no such type.
    * <p>
    * Performs a depth-first search of the supertype relation for this type, using a heuristic
    * that checks whether the goal type is an interface to restrict the search.

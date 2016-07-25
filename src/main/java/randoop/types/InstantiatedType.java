@@ -164,14 +164,6 @@ public class InstantiatedType extends ParameterizedType {
     }
 
     // first clause.
-    // Extra fragile because this.substitution only applies to the type
-    // variables of this.instantiatedType, which are shared by supertype objects
-    // created by Class.getGenericInterfaces() and Class.getGenericSuperClass().
-    // This is how GenericClassType.getMatchingSupertype(GenericClassType) works.
-    // If we get GenericClassType supertype via other means, the type variables
-    // will be distinct and the substitution will return null values even if the
-    // variable names and type bounds are the same.
-
     InstantiatedType pt = (InstantiatedType) otherType;
     InstantiatedType superType = (InstantiatedType) this.getMatchingSupertype(pt.instantiatedType);
 
@@ -310,6 +302,17 @@ public class InstantiatedType extends ParameterizedType {
 
   /**
    * Constructs the superclass type for this parameterized type.
+   * <p>
+   * Implementation note: we can think of an {@link InstantiatedType}
+   * <code>A&lt;T<sub>1</sub>,&hellip;,T<sub>k</sub>&gt;</code>
+   * as being represented as a generic class
+   * <code>A&lt;F<sub>1</sub>,&hellip;,F<sub>k</sub>&gt;</code>
+   * with a substitution <code>[ F<sub>i</sub> := T<sub>i</sub>]</code>
+   * for all of the type parameters <code>F<sub>i</sub></code>.
+   * So, when we compute a superclass, we first find the supertype of the generic class
+   * <code>B&lt;F<sub>1</sub>,&hellip;,F<sub>k</sub>&gt;</code>,
+   * and then apply the substitution <code>[ F<sub>i</sub> := T<sub>i</sub>]</code>
+   * using the method {@link GenericClassType#getSuperclass(Substitution)}.
    *
    * @return the superclass type for this parameterized type
    */
@@ -320,7 +323,13 @@ public class InstantiatedType extends ParameterizedType {
     return this.instantiatedType.getSuperclass(substitution);
   }
 
-  // TODO refactor with GenericClassType methods so that they apply substitution
+  /**
+   * Constructs the list of interface supertypes for this parameterized type.
+   * <p>
+   * See the implementation note for {@link #getSuperclass()}.
+   *
+   * @return list of interface supertypes for this parameterized type
+   */
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
     List<ClassOrInterfaceType> interfaces = new ArrayList<>();

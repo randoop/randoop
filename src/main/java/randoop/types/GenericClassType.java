@@ -18,9 +18,14 @@ public class GenericClassType extends ParameterizedType {
   /** The rawtype of the generic class. */
   private Class<?> rawType;
 
-  /** the type parameters of the generic class */
+  /** The type parameters of the generic class. */
   private List<TypeVariable> parameters;
 
+  /**
+   * Creates a {@link GenericClassType} for the given raw type.
+   *
+   * @param rawType  the {@code Class} raw type
+   */
   GenericClassType(Class<?> rawType) {
     this.rawType = rawType;
     this.parameters = new ArrayList<>();
@@ -29,26 +34,6 @@ public class GenericClassType extends ParameterizedType {
       TypeVariable variable = TypeVariable.forType(v);
       this.parameters.add(variable);
     }
-  }
-
-  /**
-   * Create a {@code GenericClassType} for the given rawtype with the parameters,
-   * and parameter type bounds.
-   * <p>
-   * This constructor is used for constructing supertypes for of underlying class of
-   * {@link InstantiatedType} objects in order to preserve relationship of type parameters
-   * for application of substitution build from subclass.
-   *
-   * @param rawType  the rawtype for the generic class
-   * @param parameters  the type parameters for the generic class
-   */
-  private GenericClassType(Class<?> rawType, List<TypeVariable> parameters) {
-    if (rawType.getTypeParameters().length != parameters.size()) {
-      throw new IllegalArgumentException("number of parameters should be equal");
-    }
-
-    this.rawType = rawType;
-    this.parameters = parameters;
   }
 
   /**
@@ -236,6 +221,13 @@ public class GenericClassType extends ParameterizedType {
         || otherType.isRawtype() && otherType.hasRuntimeClass(this.getRuntimeClass());
   }
 
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Note that this method uses {@code Class.getSuperclass()} and does not preserve the
+   * relationship between the type parameters of a class and it's superclass, and should not be
+   * used when finding supertypes of types represented as {@link InstantiatedType} objects.
+   */
   @Override
   public ClassOrInterfaceType getSuperclass() {
     Class<?> superclass = rawType.getSuperclass();
@@ -249,6 +241,13 @@ public class GenericClassType extends ParameterizedType {
   /**
    * Returns the superclass type for this generic class type instantiated by
    * the given type {@link Substitution}.
+   * <p>
+   * <i>This method is not public.</i> It is used when finding the superclass of an
+   * {@link InstantiatedType} using {@link InstantiatedType#getSuperclass()},
+   * where it is important that the relationship between type variables is preserved.
+   * The reflection method {@code Class.getGenericSuperclass()} ensures the type variable objects
+   * are the same from subclass to superclass, which allows the use of the same substitution
+   * for both types.
    *
    * @param substitution  the type substitution
    * @return the instantiated type
@@ -261,6 +260,13 @@ public class GenericClassType extends ParameterizedType {
     return ClassOrInterfaceType.forType(superclass).apply(substitution);
   }
 
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Note that this method uses the {@code Class.getInterfaces()} and does not preserve the
+   * relationship between the type parameters of a class and it's interfaces, and should not be used
+   * when finding supertypes of types represented as {@link InstantiatedType} objects.
+   */
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
     List<ClassOrInterfaceType> interfaceTypes = new ArrayList<>();
@@ -273,6 +279,13 @@ public class GenericClassType extends ParameterizedType {
   /**
    * Return the interface types for this generic class type instantiated by the
    * given type {@link Substitution}.
+   * <p>
+   * <i>This method is not public.</i> It is used when finding the interfaces of an
+   * {@link InstantiatedType} using {@link InstantiatedType#getInterfaces()},
+   * where it is important that the relationship between type variables is preserved.
+   * The reflection method {@code Class.getGenericInterfaces()} ensures the type variable objects
+   * are the same from a class to its interfaces, which allows the use of the same substitution
+   * for both types.
    *
    * @param substitution  the type substitution
    * @return the list of instantiated interface types of this type
