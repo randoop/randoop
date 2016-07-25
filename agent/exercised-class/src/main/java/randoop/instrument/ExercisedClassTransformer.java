@@ -118,7 +118,6 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
    * @see #transform(ClassLoader, String, Class, ProtectionDomain, byte[])
    *
    * @param cc  the {@code javassist.CtClass} object
-   * @throws InstrumentationException
    * @throws CannotCompileException
    *           if inserted code doesn't compile
    */

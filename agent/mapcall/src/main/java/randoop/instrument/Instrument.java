@@ -137,7 +137,7 @@ public class Instrument implements ClassFileTransformer {
   }
 
   /** List of all classname regexs and their corresponding method maps **/
-  public static List<MethodMapInfo> map_list = new ArrayList<MethodMapInfo>();
+  public static List<MethodMapInfo> map_list = new ArrayList<>();
 
   /** Map from original method call to replacement method for current class **/
   Map<MethodDef, MethodInfo> method_map = null;
@@ -544,7 +544,7 @@ public class Instrument implements ClassFileTransformer {
     st.need("(");
 
     // Read the arguments
-    ArrayList<String> args = new ArrayList<String>();
+    ArrayList<String> args = new ArrayList<>();
     String tok = st.nextToken();
     if (tok != ")") { // interned
       st.pushBack();
@@ -588,7 +588,7 @@ public class Instrument implements ClassFileTransformer {
     LineNumberReader lr = new LineNumberReader(new FileReader(map_file));
     MapFileErrorHandler mfeh = new MapFileErrorHandler(lr, map_file);
     Pattern current_regex = null;
-    Map<MethodDef, MethodInfo> map = new LinkedHashMap<MethodDef, MethodInfo>();
+    Map<MethodDef, MethodInfo> map = new LinkedHashMap<>();
     for (String line = lr.readLine(); line != null; line = lr.readLine()) {
       line = line.replaceFirst("//.*$", "");
       if (line.trim().length() == 0) continue;
@@ -604,7 +604,7 @@ public class Instrument implements ClassFileTransformer {
         if (current_regex != null) {
           MethodMapInfo mmi = new MethodMapInfo(current_regex, map);
           map_list.add(mmi);
-          map = new LinkedHashMap<MethodDef, MethodInfo>();
+          map = new LinkedHashMap<>();
         }
         current_regex = Pattern.compile(line);
       }

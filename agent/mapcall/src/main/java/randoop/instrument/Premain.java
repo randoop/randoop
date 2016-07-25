@@ -106,7 +106,7 @@ public class Premain {
    */
   private static HashSet<String> readPurityFile(File purityFileName, File pathLoc)
       throws IOException {
-    HashSet<String> pureMethods = new LinkedHashSet<String>();
+    HashSet<String> pureMethods = new LinkedHashSet<>();
 
     BufferedReader reader =
         new BufferedReader(new FileReader(new File(pathLoc, purityFileName.getPath())));
@@ -254,7 +254,7 @@ public class Premain {
 
       String name = classname_to_resource_name(classname);
       Enumeration<URL> enum_urls = ClassLoader.getSystemResources(name);
-      List<URL> urls = new ArrayList<URL>();
+      List<URL> urls = new ArrayList<>();
       while (enum_urls.hasMoreElements()) {
         urls.add(enum_urls.nextElement());
       }
