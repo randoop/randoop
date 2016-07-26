@@ -68,6 +68,7 @@ class ExplicitTypeVariable extends TypeVariable {
   public List<TypeVariable> getTypeParameters() {
     List<TypeVariable> paramList = new ArrayList<>();
     paramList.add(this);
+    paramList.addAll(this.getUpperTypeBound().getTypeParameters());
     return paramList;
   }
 

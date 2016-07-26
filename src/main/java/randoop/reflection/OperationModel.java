@@ -29,6 +29,7 @@ import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
+import randoop.types.ConcreteTypes;
 import randoop.types.ParameterBound;
 import randoop.types.TypeVariable;
 import randoop.types.ClassOrInterfaceType;
@@ -390,17 +391,16 @@ public class OperationModel {
   }
 
   /**
-   * Selects all input types that potentially satisfies the upper bound.
-   * If the bound is concrete, then returned list exactly satisfies the bound.
-   * If the bound is generic, then the types are convertible a la Class.isAssignableFrom.
-   * Otherwise, the input types are returned as a list.
+   * Selects all input types that potentially satisfies the bounds on the argument.
+   * If a bound has another type parameter, then the default bound is tested.
    *
    * @param argument  the type arguments
-   * @return the list of candidate types to included in tested tuples
+   * @return the list of candidate types to include in tested tuples
    */
   private List<ReferenceType> selectCandidates(TypeVariable argument) {
-    ParameterBound lowerBound = argument.getLowerTypeBound();
-    ParameterBound upperBound = argument.getUpperTypeBound();
+    ParameterBound lowerBound = selectLowerBound(argument);
+    ParameterBound upperBound = selectUpperBound(argument);
+
     List<TypeVariable> typeVariableList = new ArrayList<>();
     typeVariableList.add(argument);
     List<ReferenceType> typeList = new ArrayList<>();
@@ -416,6 +416,42 @@ public class OperationModel {
       }
     }
     return typeList;
+  }
+
+  /**
+   * Chooses the upper bound of the given argument to test in {@link #selectCandidates(TypeVariable)}.
+   * If the bound contains a type parameter other than the given argument, then the bound for
+   * the {@code Object} type is returned.
+   *
+   * @param argument  the type argument
+   * @return the upperbound of the argument if no other type parameter is needed, the {@code Object}
+   * bound otherwise
+   */
+  private ParameterBound selectUpperBound(TypeVariable argument) {
+    ParameterBound upperBound = argument.getUpperTypeBound();
+    List<TypeVariable> parameters = upperBound.getTypeParameters();
+    if (parameters.isEmpty() || (parameters.size() == 1 && parameters.contains(argument))) {
+      return upperBound;
+    }
+    return ParameterBound.forType(ConcreteTypes.OBJECT_TYPE);
+  }
+
+  /**
+   * Chooses the lower bound of the given argument to be tested in {@link #selectCandidates(TypeVariable)}.
+   * If the bound has a type parameter other than the given argument, then the {@link randoop.types.NullReferenceType}
+   * is return as the bound.
+   *
+   * @param argument  the type argument
+   * @return the lower bound of the argument if no other type parameter is needed, the {@link randoop.types.NullReferenceType}
+   * otherwise
+   */
+  private ParameterBound selectLowerBound(TypeVariable argument) {
+    ParameterBound lowerBound = argument.getLowerTypeBound();
+    List<TypeVariable> parameters = lowerBound.getTypeParameters();
+    if (parameters.isEmpty() || (parameters.size() == 1 && parameters.contains(argument))) {
+      return lowerBound;
+    }
+    return ParameterBound.forType(ConcreteTypes.NULL_TYPE);
   }
 
   /**
@@ -474,22 +510,20 @@ public class OperationModel {
   }
 
   /**
-   * Adds instantiated operations to this model based on the given {@link TypedOperation}.
-   * If the given operation is generic, then an instantiating type is chosen from the input types,
-   * and an instantiated version of the operation is added.
-   * If the operation has wildcards types, then capture conversion is first applied to introduce
-   * new type variables that are then instantiated.
+   * Instantiates and adds the given {@link TypedOperation} to this model.
+   * Any type parameters of the operation are first instantiated by selecting from the input types
+   * of this model.
+   * Then, if the operation has wildcard types, capture conversion is applied, and any created
+   * type variables are instantiated.
    *
-   * @param operation the operation to add to this model
+   * @param operation the operation to instantiate and add to this model
    */
   private void addOperation(TypedOperation operation) {
+    operation = instantiateOperationTypes(operation);
 
+    // Note: capture conversion needs all type variables to be instantiated first
     if (operation.hasWildcardTypes()) {
       operation = instantiateOperationTypes(operation.applyCaptureConversion());
-    }
-
-    if (operation.isGeneric()) {
-      operation = instantiateOperationTypes(operation);
     }
 
     operations.add(operation);
@@ -503,12 +537,10 @@ public class OperationModel {
    * @return the operation with generic types instantiated
    */
   private TypedOperation instantiateOperationTypes(TypedOperation operation) {
-
     List<TypeVariable> typeParameters = operation.getTypeParameters();
     if (typeParameters.isEmpty()) {
       return operation;
     }
-
     List<Substitution<ReferenceType>> substitutions = getSubstitutions(typeParameters);
     if (substitutions.isEmpty()) {
       throw new BugInRandoopException("Unable to instantiate types for operation " + operation);

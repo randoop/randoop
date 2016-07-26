@@ -122,6 +122,11 @@ class CaptureTypeVariable extends TypeVariable {
     }
   }
 
+  /**
+   * Returns the type parameters in this type, which is this variable.
+   *
+   * @return this variable
+   */
   @Override
   public List<TypeVariable> getTypeParameters() {
     List<TypeVariable> parameters = new ArrayList<>();

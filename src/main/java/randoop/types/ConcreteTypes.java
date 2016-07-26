@@ -26,7 +26,7 @@ public class ConcreteTypes {
       new SimpleClassOrInterfaceType(Serializable.class);
 
   /** The Null type is the lower bound of reference types and is only used in {@link randoop.types.CaptureTypeVariable} */
-  static final ReferenceType NULL_TYPE = NullReferenceType.getNullType();
+  public static final ReferenceType NULL_TYPE = NullReferenceType.getNullType();
 
   public static final GenericClassType COMPARABLE_TYPE = new GenericClassType(Comparable.class);
 }
