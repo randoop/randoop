@@ -96,7 +96,7 @@ public class CaptureConversionTest {
     } catch (IllegalArgumentException e) {
       assertTrue(
           "instantiate exception mismatch: " + e.getMessage(),
-          e.getMessage().indexOf("type argument java.lang.Integer[] does not match") >= 0);
+          e.getMessage().contains("type argument java.lang.Integer[] does not match"));
     }
   }
 
@@ -136,7 +136,6 @@ public class CaptureConversionTest {
     InstantiatedType instantiatedType = sourceType.instantiate(paramType);
     Substitution<ReferenceType> substitution = instantiatedType.getTypeSubstitution();
     for (TypedOperation op : genericOperations) {
-
       InstantiatedType argumentType = getArgumentType(op).apply(substitution);
       InstantiatedType convertedArgumentType = argumentType.applyCaptureConversion();
       List<TypeVariable> arguments = convertedArgumentType.getTypeParameters();
