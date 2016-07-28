@@ -16,6 +16,8 @@ class CW<E, F> {}
 
 class DW<E> {}
 
+interface IW<E> {}
+
 interface TI {}
 
 class TW extends AW<TI> implements TI {}
@@ -31,6 +33,22 @@ class WW extends DW<AW<? extends WW>> {}
 class XW extends AW<YW> {}
 
 class YW extends BW<XW> {}
+
+interface ML<Z extends IW<Z>> {
+  Z getZ();
+
+  void setZ(Z z);
+}
+
+class MR<E extends ML<E> & IW<E>> {}
+
+class RML extends MR<RML> implements ML<RML>, IW<RML> {
+  public RML getZ() {
+    return null;
+  }
+
+  public void setZ(RML l) {}
+}
 
 public class GenericBounds {
   public <I> void m00(I i) {}
@@ -56,4 +74,6 @@ public class GenericBounds {
   public <S2 extends AW<? super T2>, T2 extends BW<? super S2>> void m10(S2 s, T2 t) {}
 
   public <W2 extends DW<? super AW<? extends W2>>> void m11(W2 w) {}
+
+  public <T2 extends MR<? extends T2> & ML<T2> & IW<T2>> void m12() {}
 }

@@ -35,6 +35,7 @@ public class InstantiationTest {
     classnames.add(packageName + "." + "WW");
     classnames.add(packageName + "." + "XW");
     classnames.add(packageName + "." + "YW");
+    classnames.add(packageName + "." + "RML");
 
     Set<String> methodNames = new LinkedHashSet<>();
     methodNames.add("m00");
@@ -49,6 +50,9 @@ public class InstantiationTest {
     methodNames.add("m09");
     methodNames.add("m10");
     methodNames.add("m11");
+    methodNames.add("m12");
+    methodNames.add("getZ");
+    methodNames.add("setZ");
 
     OperationModel model = createModel(classnames, packageName);
 
@@ -56,14 +60,16 @@ public class InstantiationTest {
     assertThat(
         "expect "
             + expectedClassCount
-            + " classes: GenericBounds, SW, TW, UW, VW, WW, XW, YW and Object",
+            + " classes: GenericBounds, SW, TW, UW, VW, WW, XW, YW, RML and Object",
         model.getConcreteClasses().size(),
         is(equalTo(expectedClassCount)));
 
     int methodCount = 0;
     for (TypedOperation operation : model.getConcreteOperations()) {
       if (operation.isMethodCall()) {
-        assertTrue("method name is in expected list", methodNames.contains(operation.getName()));
+        assertTrue(
+            "method name " + operation.getName() + " should be in expected list",
+            methodNames.contains(operation.getName()));
         methodCount++;
       }
     }
