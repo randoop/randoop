@@ -1,4 +1,4 @@
-Version 3.0.3, released ? ?, 2016
+Version 3.0.3, released July 28, 2016
 
 Fixed bugs that resulted in runtime errors. One involving failure to instantiate
 type parameters with dependencies among type bounds. Another resulting in a
