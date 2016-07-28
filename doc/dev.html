@@ -496,28 +496,19 @@ of that particular class in a similar way.
    options.add("--literals-level=CLASS");
    options.add("--literals-file=resources/systemTest/literalsfile.txt");
 
-   // 3. Optionally, set a timeout in milliseconds for processes in this test
-   // This limits the processes run by the test, and is distinct from
-   // Randoop's --timelimit command-line option.
-   long timeout = 120000L;
+   // 3. Indicate whether you expect regression tests (if you don't care use ExpectedTests.DONT_CARE)
+   ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+   ExpectedTests expectedErrorTests = ExpectedTests.NONE;
 
-   // 4. Run Randoop and compile. (The timeout argument is optional.)
-   RandoopRunDescription randoopRunDesc =
-       generateAndCompile(
-           classpath, workingPath, packageName, regressionBasename, errorBasename, options, timeout);
-
-   // 5. Check results of generation and compiling.
-   // This system test expects Randoop to have generated at least one regression test, but no error tests.
-   assertThat("...has regression tests", randoopRunDesc.regressionTestCount, is(greaterThan(0)));
-   assertThat("...has no error tests", randoopRunDesc.errorTestCount, is(equalTo(0)));
-
-   // 6. Run the tests.
-   TestRunDescription testRunDesc =
-       runTests(classpath, workingPath, packageName, regressionBasename);
-   assertThat(
-       "all regression tests should pass",
-       testRunDesc.testsSucceed,
-       is(equalTo(randoopRunDesc.regressionTestCount)));
+   // 4. Run Randoop, compile and run generated tests, and check to see if expectations met
+   generateAndTest(
+        workingPath,
+        packageName,
+        regressionBasename,
+        errorBasename,
+        options,
+        expectedRegressionTests,
+        expectedErrorTests);
 
  }
 </code></pre>
@@ -530,9 +521,24 @@ since the test run method only looks for JUnit suite classes.
 </p>
 
 <p>
-  A system test always attempts to compile generated tests.
+  Most existing tests take this form, using the <code>RandoopSystemTest.generateAndTest()</code> method,
+  which checks whether Randoop generates the expected tests, that the tests compile,
+  and that regression tests pass and error tests fail when run.
+  The method also allows indicating for both kinds of tests, whether there should
+  be some (at least one) test, none, or if it doesn't matter.
+  This is done using the <code>ExpectedTests</code> enumerated type, which has
+  values <code>SOME</code>, <code>NONE</code>, and <code>DONT_CARE</code>.
+</p>
+<p>
+  However, it is possible to build a test differently using the utility methods of
+  the <code>RandoopSystemTest</code> class.
+  At a minimum, a system test always attempts to compile generated tests.
   It should also try to run any generated tests and confirm that regression tests
   pass, and that error tests fail.
+  Looking at the <code>RandoopSystemTest.generateAndTest()</code> method may be
+  helpful in understanding what can be done.
+</p>
+<p>
   The output of the Randoop run is captured in the <code>RandoopRunDescription</code>
   object returned by <code>generateAndCompile</code>, and the output from running
   the tests is captured in the <code>TestRunDescription</code> returned by <code>runTests</code>.
