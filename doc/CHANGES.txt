@@ -1,8 +1,10 @@
 Version 3.0.3, released ? ?, 2016
 
-Fixed bugs related to instantiation of type parameters with dependencies among
-type bounds and capture conversion. Also, fixed a case where uncompilable tests 
-could be generated.
+Fixed bugs that resulted in runtime errors. One involving failure to instantiate
+type parameters with dependencies among type bounds. Another resulting in a
+failure during capture conversion.
+Also, fixed a case where uncompilable tests involving bridge methods could be
+generated.
 
 
 Version 3.0.2, released July 20, 2016
