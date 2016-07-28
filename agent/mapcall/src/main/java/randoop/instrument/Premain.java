@@ -38,9 +38,12 @@ public class Premain {
   public static boolean default_bcel = true;
 
   /**
-   * This method is the entry point of the java agent. Its main purpose is to
-   * set up the transformer so that when classes from the target app are loaded,
-   * they are first transformed.
+   * Entry point of the java agent. Sets up the transformer {@link Instrument} so that when
+   * classes are loaded they are first transformed.
+   *
+   * @param agentArgs  the arguments to the agent
+   * @param inst the {@code Instrumentation} object
+   * @throws IOException if there is an error reading the map file
    */
   public static void premain(String agentArgs, Instrumentation inst) throws IOException {
 
