@@ -438,11 +438,12 @@ public class OperationModel {
 
   /**
    * Chooses the lower bound of the given argument to be tested in {@link #selectCandidates(TypeVariable)}.
-   * If the bound has a type parameter other than the given argument, then the {@link randoop.types.NullReferenceType}
+   * If the bound has a type parameter other than the given argument, then the
+   * {@link ConcreteTypes#NULL_TYPE}
    * is return as the bound.
    *
    * @param argument  the type argument
-   * @return the lower bound of the argument if no other type parameter is needed, the {@link randoop.types.NullReferenceType}
+   * @return the lower bound of the argument if no other type parameter is needed, the {@link ConcreteTypes#NULL_TYPE}
    * otherwise
    */
   private ParameterBound selectLowerBound(TypeVariable argument) {
