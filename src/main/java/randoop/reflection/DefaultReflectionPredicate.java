@@ -99,16 +99,8 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     }
 
     if (m.isBridge()) {
-      if (isNotVisibilityBridge(m)) {
-        if (Log.isLoggingOn()) {
-          Log.logLine("Will not use: " + m.toString());
-          Log.logLine("  reason: it's a bridge method");
-        }
+      if (discardBridge(m)) {
         return false;
-      } else if (m.getDeclaringClass().isAnonymousClass()
-          && m.getDeclaringClass().getEnclosingClass() != null
-          && m.getDeclaringClass().getEnclosingClass().isEnum()) {
-        return false; // bridge method in enum constant anonymous class
       } else {
         if (Log.isLoggingOn()) {
           Log.logLine("Using visibility bridge method: " + m.toString());
@@ -152,8 +144,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   }
 
   /**
-   * Determines whether a bridge method is not a "visibility" bridge, which
-   * allows access to a definition of the method in a non-visible superclass.
+   * Determines whether a bridge method should be discarded.
    * <p>
    * Bridge methods are synthetic overriding methods that are used by the
    * compiler to make certain things possible that seem reasonable but need
@@ -174,6 +165,30 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * facade to an API where implementation details are only accessible within the
    * package.)
    * <p>
+   * The only case in which a bridge method should be kept is when it is a visibility bridge.
+   *
+   * @param m the bridge method to test
+   * @return true if the bridge method should be discarded, false otherwise
+   */
+  private boolean discardBridge(Method m) {
+    if (isNotVisibilityBridge(m)) {
+      if (Log.isLoggingOn()) {
+        Log.logLine("Will not use: " + m.toString());
+        Log.logLine("  reason: it's a bridge method");
+      }
+      return true;
+    } else if (m.getDeclaringClass().isAnonymousClass()
+        && m.getDeclaringClass().getEnclosingClass() != null
+        && m.getDeclaringClass().getEnclosingClass().isEnum()) {
+      return true; // bridge method in enum constant anonymous class
+    }
+    return false;
+  }
+
+  /**
+   * Determines whether a bridge method is not a <i>visibility</i> bridge, which
+   * allows access to a definition of the method in a non-visible superclass.
+   * <p>
    * To recognize a visibility bridge, it is sufficient to run up the superclass
    * chain and confirm that the visibility of the class changes to non-public.
    * If it does not, then the bridge method is not a visibility bridge.
@@ -188,6 +203,9 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   private boolean isNotVisibilityBridge(Method m) throws Error {
     Method method = m;
     Class<?> c = m.getDeclaringClass();
+    if (!isPublic(c)) {
+      return true;
+    }
     while (c != null && isPublic(c) && method != null && method.isBridge()) {
       c = c.getSuperclass();
       try {
