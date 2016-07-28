@@ -83,7 +83,7 @@ public interface ObjectContract {
    * corresponding to this contract.  Occurrences of variables x0, x1, x2,
    * etc. in the string will be replaced by actual values.
    *
-   * @return the commment string representation of this contract
+   * @return the comment string representation of this contract
    */
   String toCommentString();
 

@@ -84,7 +84,7 @@ public class TypeTuple {
   /**
    * Indicates whether the tuple has any generic components.
    *
-   * @return true if any component of tupe is generic, false if none are
+   * @return true if any component of tuple is generic, false if none are
    */
   public boolean isGeneric() {
     for (GeneralType type : list) {

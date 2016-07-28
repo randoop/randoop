@@ -36,7 +36,7 @@ public class StringLineIterator {
    * by returning non-empty lines, the iterator will not terminate.
    *
    * @param length  the maximum line length
-   * @return the next line of words, no longer than maxium length
+   * @return the next line of words, no longer than maximum length
    */
   public String nextLine(int length) {
     if (length < 0) throw new IllegalArgumentException("length cannot be negative");

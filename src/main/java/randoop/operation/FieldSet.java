@@ -133,7 +133,7 @@ public class FieldSet extends CallableOperation {
   /**
    * Returns the string descriptor for field that can be parsed by
    *
-   * @return the parseable string descriptor for this setter
+   * @return the parsable string descriptor for this setter
    */
   @Override
   public String toParsableString(

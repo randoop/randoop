@@ -317,7 +317,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + "<type>:<value>"
                 + " but the <value> given (\""
                 + valString
-                + "\") was not parseable.";
+                + "\") was not parsable.";
         throw new OperationParseException(msg);
       }
     } else if (type.equals(ConcreteTypes.BYTE_TYPE)) {
@@ -331,7 +331,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + "<type>:<value>"
                 + " but the <value> given (\""
                 + valString
-                + "\") was not parseable.";
+                + "\") was not parsable.";
         throw new OperationParseException(msg);
       }
     } else if (type.equals(ConcreteTypes.SHORT_TYPE)) {
@@ -345,7 +345,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + "<type>:<value>"
                 + " but the <value> given (\""
                 + valString
-                + "\") was not parseable.";
+                + "\") was not parsable.";
         throw new OperationParseException(msg);
       }
     } else if (type.equals(ConcreteTypes.INT_TYPE)) {
@@ -359,7 +359,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + "<type>:<value>"
                 + " but the <value> given (\""
                 + valString
-                + "\") was not parseable.";
+                + "\") was not parsable.";
         throw new OperationParseException(msg);
       }
     } else if (type.equals(ConcreteTypes.LONG_TYPE)) {
@@ -373,7 +373,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + "<type>:<value>"
                 + " but the <value> given (\""
                 + valString
-                + "\") was not parseable.";
+                + "\") was not parsable.";
         throw new OperationParseException(msg);
       }
     } else if (type.equals(ConcreteTypes.FLOAT_TYPE)) {
@@ -387,7 +387,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + "<type>:<value>"
                 + " but the <value> given (\""
                 + valString
-                + "\") was not parseable.";
+                + "\") was not parsable.";
         throw new OperationParseException(msg);
       }
     } else if (type.equals(ConcreteTypes.DOUBLE_TYPE)) {
@@ -401,7 +401,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + "<type>:<value>"
                 + " but the <value> given (\""
                 + valString
-                + "\") was not parseable.";
+                + "\") was not parsable.";
         throw new OperationParseException(msg);
       }
     } else if (type.equals(ConcreteTypes.BOOLEAN_TYPE)) {
@@ -415,7 +415,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + "<type>:<value>"
                 + " but the <value> given (\""
                 + valString
-                + "\") was not parseable.";
+                + "\") was not parsable.";
         throw new OperationParseException(msg);
       }
     } else if (type.isString()) {
@@ -445,7 +445,7 @@ public final class NonreceiverTerm extends CallableOperation {
         String msg =
             "Error when parsing type/value pair "
                 + s
-                + ". A primitve value declaration description that is not a primitive value or a string must be of the form "
+                + ". A primitive value declaration description that is not a primitive value or a string must be of the form "
                 + "<type>:null but the string given (\""
                 + valString
                 + "\") was not of this form.";

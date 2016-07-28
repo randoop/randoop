@@ -1,6 +1,3 @@
-/**
- *
- */
 package randoop.generation;
 
 import java.util.List;

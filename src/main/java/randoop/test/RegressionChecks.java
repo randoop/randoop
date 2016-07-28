@@ -105,10 +105,7 @@ public class RegressionChecks implements TestChecks {
     if (exceptionCheck == null) {
       return (cks.exceptionCheck == null);
     }
-    if (cks.exceptionCheck == null) {
-      return false;
-    }
-    return exceptionCheck.equals(cks.exceptionCheck);
+    return cks.exceptionCheck != null && exceptionCheck.equals(cks.exceptionCheck);
   }
 
   @Override

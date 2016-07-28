@@ -326,7 +326,7 @@ public final class CollectionsExt {
 
   /**
    * Creates and returns an array that contains all elements of the array
-   * parameter and has the el parameter appened.
+   * parameter and has the object appended.
    *
    * The runtime type of the resulting array is the same as the type of the
    * argument array.

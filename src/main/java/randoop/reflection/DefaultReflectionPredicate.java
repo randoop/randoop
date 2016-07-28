@@ -237,7 +237,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
         && m.getParameterTypes()[0].equals(Enum.class))
       return "We're skipping compareTo method in enums";
 
-    // Sepcial case 2:
+    // Special case 2:
     if (m.getName().equals("randomUUID"))
       return "We're skipping this to get reproducibility when running java.util tests.";
 
@@ -253,7 +253,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     // Special case 4: (differs too much between JDK installations)
     if (m.getName().equals("getAvailableLocales")) return "getAvailableLocales";
 
-    // During experimentaion, we obseved that exception-related
+    // During experimentation, we observed that exception-related
     // methods can cause lots of nonterminating runs of Randoop. So we
     // don't explore them.
     if (m.getName().equals("fillInStackTrace"))

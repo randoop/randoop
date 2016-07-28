@@ -170,7 +170,7 @@ public final class Sequence implements WeightedElement {
 
   @Override
   public String toString() {
-    return toParseableString();
+    return toParsableString();
   }
 
   /**
@@ -793,16 +793,16 @@ public final class Sequence implements WeightedElement {
    * following invariant holds:
    *
    * <pre>
-   * st.equals(parse(st.toParseableCode()))
+   * st.equals(parse(st.toParsableCode()))
    * </pre>
    *
    * See the parse(List) for the required format of a String
    * representing a Sequence.
    *
-   * @return parseable string description of sequence
+   * @return parsable string description of sequence
    */
-  public String toParseableString() {
-    return toParseableString(Globals.lineSep);
+  public String toParsableString() {
+    return toParsableString(Globals.lineSep);
   }
 
   /**
@@ -813,7 +813,7 @@ public final class Sequence implements WeightedElement {
    *          the statement separator.
    * @return the string representation of this sequence
    */
-  private String toParseableString(String statementSep) {
+  private String toParsableString(String statementSep) {
     assert statementSep != null;
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
@@ -868,7 +868,7 @@ public final class Sequence implements WeightedElement {
    *
    * When writing/reading sequences out to file: you have two options: serialize
    * the sequences using java's serialization mechanism, or write them out as
-   * parseable text. Serialization is faster, and text is human-readable.
+   * parsable text. Serialization is faster, and text is human-readable.
    *
    * @param statements  the list of statement strings
    * @return the sequence constructed from the list of strings
@@ -1009,12 +1009,12 @@ public final class Sequence implements WeightedElement {
    * The following invariant holds:
    *
    * <pre>
-   * st.equals(parse(st.toParseableCode()))
+   * st.equals(parse(st.toParsableCode()))
    * </pre>
    *
    * When writing/reading sequences out to file: you have two options: serialize
    * the sequences using java's serialization mechanism, or write them out as
-   * parseable text. Serialization is faster, and text is human-readable.
+   * parsable text. Serialization is faster, and text is human-readable.
    *
    * @param string  the string descriptor
    * @return the sequence constructed by parsing the input string

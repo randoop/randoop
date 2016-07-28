@@ -79,7 +79,7 @@ import randoop.util.ProgressDisplay;
  * <li>isExceptionalExecution(i)
  * <li>getExecutionResult(i)
  * <li>getResult(i)
- * <li>getExeception(i)
+ * <li>getException(i)
  * </ul>
  * </ul>
  *
@@ -221,7 +221,7 @@ public class ExecutableSequence {
    * Executes sequence, stopping on exceptions.
    *
    * @param visitor
-   *          the {@code ExecutionVistior} that collects checks from results
+   *          the {@link ExecutionVisitor} that collects checks from results
    * @param gen
    *          the check generator for tests
    */

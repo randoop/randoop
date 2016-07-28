@@ -29,7 +29,7 @@ public class ProgressDisplay extends Thread {
 
   private static int exit_if_no_new_sequences_after_mseconds = 10000;
 
-  public static enum Mode {
+  public enum Mode {
     SINGLE_LINE_OVERWRITE,
     MULTILINE,
     NO_DISPLAY
@@ -145,7 +145,7 @@ public class ProgressDisplay extends Thread {
   /** Clear the display; good to do before printing to System.out. * */
   public void clear() {
     if (GenInputsAbstract.progressinterval == -1) return;
-    // "display("");" is wrong becuase it leaves the timestamp and writes
+    // "display("");" is wrong because it leaves the timestamp and writes
     // spaces across the screen.
     String status = UtilMDE.rpad("", progresswidth - 1);
     System.out.print("\r" + status);

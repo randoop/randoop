@@ -141,7 +141,7 @@ class IntersectionTypeBound extends ParameterBound {
 
   /**
    * {@inheritDoc}
-   * @return the list of type variables occuring in all of the type bounds of this intersection bound
+   * @return the list of type variables occurring in all of the type bounds of this intersection bound
    */
   @Override
   public List<TypeVariable> getTypeParameters() {
@@ -154,7 +154,7 @@ class IntersectionTypeBound extends ParameterBound {
 
   /**
    * {@inheritDoc}
-   * @return this bound with the substitutition applied to all member bounds
+   * @return this bound with the substitution applied to all member bounds
    */
   @Override
   public IntersectionTypeBound apply(Substitution<ReferenceType> substitution) {

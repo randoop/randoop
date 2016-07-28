@@ -22,7 +22,7 @@ public class JarReader {
     System.out.println(CollectionsExt.toStringInLines(names));
   }
 
-  public static List<String> getClasseNamesInPackage(String jarName, String packageName)
+  public static List<String> getClassNamesInPackage(String jarName, String packageName)
       throws IOException {
     ArrayList<String> classes = new ArrayList<>();
 

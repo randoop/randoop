@@ -131,7 +131,7 @@ public class ClassFileConstants {
    *
    * @see #getConstants(String)
    * @param classname  the name of the type
-   * @param result  the set of constants to which constans are added
+   * @param result  the set of constants to which constants are added
    * @return the set of constants with new constants of given type added
    */
   public static ConstantSet getConstants(String classname, ConstantSet result) {
@@ -204,7 +204,7 @@ public class ClassFileConstants {
                 break;
               }
 
-              // Instanceof pushes either 0 or 1 on the stack depending on
+              // InstanceOf pushes either 0 or 1 on the stack depending on
               // whether
               // the object on top of stack is of the specified type.
               // If were interested in class literals, this would be interesting

@@ -4,7 +4,7 @@ import java.util.Set;
 
 /**
  * Represents a relation from a set of T1s (the keys) to another set of T2s (the
- * values). In partucular, each key maps to a set of values.
+ * values). In particular, each key maps to a set of values.
  */
 public interface IMultiMap<T1, T2> {
 

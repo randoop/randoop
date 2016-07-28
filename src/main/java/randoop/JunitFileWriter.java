@@ -33,7 +33,7 @@ public class JunitFileWriter {
   // The directory where the JUnit files should be written to.
   private final String dirName;
 
-  private static boolean includeParseableString = false;
+  private static boolean includeParsableString = false;
 
   /**
    * testClassCount indicates the number of test classes written for the code
@@ -150,7 +150,7 @@ public class JunitFileWriter {
       out.println();
 
       for (ExecutableSequence s : sequences) {
-        if (includeParseableString) {
+        if (includeParsableString) {
           out.println("/*");
           out.println(s.sequence.toString());
           out.println("*/");

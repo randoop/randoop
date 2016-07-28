@@ -372,7 +372,7 @@ public abstract class TypedOperation implements Operation {
   }
 
   /**
-   * Creats a {@link TypedOperation} that represents a write access to a field.
+   * Creates a {@link TypedOperation} that represents a write access to a field.
    *
    * @param field  the field
    * @param declaringType  the declaring type of the field

@@ -24,7 +24,7 @@ import randoop.types.TypeTuple;
  * OperationExtractor is a {@link ClassVisitor} that creates a collection of
  * {@link Operation} objects for a particular {@link ClassOrInterfaceType} through its visit
  * methods as called by {@link ReflectionManager#apply(Class)}.
- * Allows types of operations of an {@link InstantiatedType} to be instantiated using the subsitution
+ * Allows types of operations of an {@link InstantiatedType} to be instantiated using the substitution
  * of the type.
  *
  * @see ReflectionManager

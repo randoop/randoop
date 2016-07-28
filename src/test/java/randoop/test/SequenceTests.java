@@ -177,7 +177,7 @@ public class SequenceTests {
     }
 
     checkListsEqual(
-        sequenceLines, Arrays.asList(sequence.toParseableString().split(Globals.lineSep)), testId);
+        sequenceLines, Arrays.asList(sequence.toParsableString().split(Globals.lineSep)), testId);
 
     ExecutableSequence ds = new ExecutableSequence(sequence);
     ds.execute(new DummyVisitor(), testGen);

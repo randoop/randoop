@@ -189,8 +189,8 @@ public class SequenceCollection {
    * types match with the parameter type.
    *
    * @param type  the type desired for the sequences being sought
-   * @param exactMatch  the flag to indicate wehter an exact type match is required
-   * @return list of sequence objects that are of typp 'type' and abide by the
+   * @param exactMatch  the flag to indicate whether an exact type match is required
+   * @return list of sequence objects that are of type 'type' and abide by the
    *         constraints defined by nullOk
    */
   public SimpleList<Sequence> getSequencesForType(GeneralType type, boolean exactMatch) {

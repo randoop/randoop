@@ -32,7 +32,7 @@ public final class ConstructorReflectionCode extends ReflectionCode {
     if (!this.constructor.isAccessible()) {
       this.constructor.setAccessible(true);
       Log.logLine("not accessible:" + this.constructor);
-      // TODO something is bizzare - it seems that a public method can be
+      // TODO something is bizarre - it seems that a public method can be
       // not-accessible sometimes. RatNum(int,int)
       // TODO you cannot just throw the exception below - because no sequences
       // will be created in the randoop.experiments.

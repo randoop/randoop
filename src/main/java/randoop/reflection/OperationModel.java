@@ -126,7 +126,7 @@ public class OperationModel {
    * @param literalsFileList  the list of literals file names
    * @return the operation model for the parameters
    * @throws OperationParseException if a method signature is ill-formed
-   * @throws NoSuchMethodException if an attempt is made to load a non-existant method
+   * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
   public static OperationModel createModel(
       VisibilityPredicate visibility,
@@ -343,7 +343,7 @@ public class OperationModel {
 
         if (!visibility.isVisible(c)) {
           System.out.println(
-              "Ignorning non-visible " + c + " specified as include-if-class-exercised target");
+              "Ignoring non-visible " + c + " specified as include-if-class-exercised target");
         } else if (c.isInterface()) {
           System.out.println("Ignoring " + c + " specified as include-if-class-exercised target.");
         } else {
