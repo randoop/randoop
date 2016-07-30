@@ -395,7 +395,9 @@ public class JunitFileWriter {
     File dir;
     if (dirName == null || dirName.length() == 0) dir = new File(System.getProperty("user.dir"));
     else dir = new File(dirName);
-    if (packageName == null) return dir;
+    if (packageName == null) {
+      return dir;
+    }
 
     if (packageName.length() == 0) return dir;
     String[] split = packageName.split("\\.");

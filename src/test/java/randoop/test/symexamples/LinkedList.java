@@ -44,8 +44,9 @@ public class LinkedList extends AbstractSequentialList {
     private int nextIndex;
 
     ListItr(int index) {
-      if (index < 0 || index > size)
+      if (index < 0 || index > size) {
         throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+      }
       if (index < size / 2) {
         next = header.next;
         for (nextIndex = 0; nextIndex < index; nextIndex++) next = next.next;

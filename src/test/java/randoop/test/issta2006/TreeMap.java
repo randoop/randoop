@@ -229,7 +229,9 @@ public class TreeMap {
         //System.out.print(" ");
       }
       //System.out.println("L:");
-      if (left != null) left.print(k + 2);
+      if (left != null) {
+        left.print(k + 2);
+      }
 
       for (int i = 0; i < k; i++) {
         //System.out.print(" ");

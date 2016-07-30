@@ -43,7 +43,9 @@ public class TreeAdd {
     int result = root.addTree();
     long end1 = System.currentTimeMillis();
 
-    if (printResult || printMsgs) System.out.println("Received results of " + result);
+    if (printResult || printMsgs) {
+      System.out.println("Received results of " + result);
+    }
 
     if (printMsgs) {
       System.out.println("Treeadd alloc time " + (end0 - start0) / 1000.0);

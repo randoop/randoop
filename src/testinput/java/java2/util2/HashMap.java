@@ -157,11 +157,13 @@ public class HashMap extends AbstractMap implements Map, Cloneable, Serializable
    *         or the load factor is nonpositive.
    */
   public HashMap(int initialCapacity, float loadFactor) {
-    if (initialCapacity < 0)
+    if (initialCapacity < 0) {
       throw new IllegalArgumentException("Illegal initial capacity: " + initialCapacity);
+    }
     if (initialCapacity > MAXIMUM_CAPACITY) initialCapacity = MAXIMUM_CAPACITY;
-    if (loadFactor <= 0 || Float.isNaN(loadFactor))
+    if (loadFactor <= 0 || Float.isNaN(loadFactor)) {
       throw new IllegalArgumentException("Illegal load factor: " + loadFactor);
+    }
 
     // Find a power of 2 >= initialCapacity
     int capacity = 1;
@@ -475,7 +477,9 @@ public class HashMap extends AbstractMap implements Map, Cloneable, Serializable
    */
   public void putAll(Map m) {
     int numKeysToBeAdded = m.size();
-    if (numKeysToBeAdded == 0) return;
+    if (numKeysToBeAdded == 0) {
+      return;
+    }
 
     /*
      * Expand the map if the map if the number of mappings to be added
@@ -547,7 +551,9 @@ public class HashMap extends AbstractMap implements Map, Cloneable, Serializable
    * Special version of remove for EntrySet.
    */
   Entry removeMapping(Object o) {
-    if (!(o instanceof Map.Entry)) return null;
+    if (!(o instanceof Map.Entry)) {
+      return null;
+    }
 
     Map.Entry entry = (Map.Entry) o;
     Object k = maskNull(entry.getKey());
@@ -592,7 +598,9 @@ public class HashMap extends AbstractMap implements Map, Cloneable, Serializable
    *         specified value.
    */
   public boolean containsValue(Object value) {
-    if (value == null) return containsNullValue();
+    if (value == null) {
+      return containsNullValue();
+    }
 
     Entry[] tab = table;
     for (int i = 0; i < tab.length; i++)
@@ -748,7 +756,9 @@ public class HashMap extends AbstractMap implements Map, Cloneable, Serializable
     Entry nextEntry() {
       if (modCount != expectedModCount) throw new ConcurrentModificationException();
       Entry e = next;
-      if (e == null) throw new NoSuchElementException();
+      if (e == null) {
+        throw new NoSuchElementException();
+      }
 
       Entry n = e.next;
       Entry[] t = table;

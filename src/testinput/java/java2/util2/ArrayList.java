@@ -104,8 +104,9 @@ public class ArrayList extends AbstractList
    */
   public ArrayList(int initialCapacity) {
     super();
-    if (initialCapacity < 0)
+    if (initialCapacity < 0) {
       throw new IllegalArgumentException("Illegal Capacity: " + initialCapacity);
+    }
     this.elementData = new Object[initialCapacity];
   }
 
@@ -285,12 +286,15 @@ public class ArrayList extends AbstractList
    *         of the runtime type of every element in this list.
    */
   public Object[] toArray(Object[] a) {
-    if (a.length < size)
+    if (a.length < size) {
       a = (Object[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), size);
+    }
 
     System.arraycopy(elementData, 0, a, 0, size);
 
-    if (a.length > size) a[size] = null;
+    if (a.length > size) {
+      a[size] = null;
+    }
 
     return a;
   }
@@ -352,8 +356,9 @@ public class ArrayList extends AbstractList
    *		  <tt>(index &lt; 0 || index &gt; size())</tt>.
    */
   public void add(int index, Object element) {
-    if (index > size || index < 0)
+    if (index > size || index < 0) {
       throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+    }
 
     ensureCapacity(size + 1); // Increments modCount!!
     System.arraycopy(elementData, index, elementData, index + 1, size - index);
@@ -392,7 +397,9 @@ public class ArrayList extends AbstractList
     modCount++;
 
     // Let gc do its work
-    for (int i = 0; i < size; i++) elementData[i] = null;
+    for (int i = 0; i < size; i++) {
+      elementData[i] = null;
+    }
 
     size = 0;
   }
@@ -436,15 +443,18 @@ public class ArrayList extends AbstractList
    * @throws    NullPointerException if the specified Collection is null.
    */
   public boolean addAll(int index, Collection c) {
-    if (index > size || index < 0)
+    if (index > size || index < 0) {
       throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+    }
 
     Object[] a = c.toArray();
     int numNew = a.length;
     ensureCapacity(size + numNew); // Increments modCount
 
     int numMoved = size - index;
-    if (numMoved > 0) System.arraycopy(elementData, index, elementData, index + numNew, numMoved);
+    if (numMoved > 0) {
+      System.arraycopy(elementData, index, elementData, index + numNew, numMoved);
+    }
 
     System.arraycopy(a, 0, elementData, index, numNew);
     size += numNew;

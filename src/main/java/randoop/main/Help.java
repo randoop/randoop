@@ -35,8 +35,9 @@ public class Help extends CommandHandler {
     String[] args = null;
     try {
       args = foptions.parse(args_raw);
-      if (args.length > 1)
+      if (args.length > 1) {
         throw new ArgException("Unrecognized arguments: " + Arrays.toString(args));
+      }
     } catch (ArgException ae) {
       System.out.println("Error while parsing command-line arguments: " + ae.getMessage());
       System.exit(1);

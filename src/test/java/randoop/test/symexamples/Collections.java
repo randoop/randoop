@@ -165,7 +165,7 @@ public class Collections {
     int sourceSize = source.size();
     int targetSize = target.size();
     int maxCandidate = sourceSize - targetSize;
-    if ((((sourceSize < INDEXOFSUBLIST_THRESHOLD || source instanceof RandomAccess)
+    if ((((sourceSize < INDEXOFSUBLIST_THRESHOLD || source instanceof RandomAccess)o
             && ++randoopCoverageInfo.branchTrue[30] != 0)
         || ++randoopCoverageInfo.branchFalse[30] == 0)) {
       nextCand:

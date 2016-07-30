@@ -29,7 +29,9 @@ public final class Log {
   }
 
   public static void log(String s) {
-    if (!isLoggingOn()) return;
+    if (!isLoggingOn()) {
+      return;
+    }
 
     try {
       GenInputsAbstract.log.write(s);
@@ -41,7 +43,9 @@ public final class Log {
   }
 
   public static void logLine(String s) {
-    if (!isLoggingOn()) return;
+    if (!isLoggingOn()) {
+      return;
+    }
 
     try {
       GenInputsAbstract.log.write(s);
@@ -54,7 +58,9 @@ public final class Log {
   }
 
   public static void log(Sequence s) {
-    if (!isLoggingOn()) return;
+    if (!isLoggingOn()) {
+      return;
+    }
 
     try {
       GenInputsAbstract.log.write(Globals.lineSep + Globals.lineSep);
@@ -68,7 +74,9 @@ public final class Log {
   }
 
   public static void log(List<TypedOperation> model) {
-    if (!isLoggingOn()) return;
+    if (!isLoggingOn()) {
+      return;
+    }
 
     try {
       GenInputsAbstract.log.write("Statements : " + Globals.lineSep);

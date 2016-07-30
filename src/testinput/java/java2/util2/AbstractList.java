@@ -371,7 +371,9 @@ public abstract class AbstractList extends AbstractCollection implements List {
    * @see #modCount
    */
   public ListIterator listIterator(final int index) {
-    if (index < 0 || index > size()) throw new IndexOutOfBoundsException("Index: " + index);
+    if (index < 0 || index > size()) {
+      throw new IndexOutOfBoundsException("Index: " + index);
+    }
 
     return new ListItr(index);
   }
@@ -678,8 +680,9 @@ class SubList extends AbstractList {
   SubList(AbstractList list, int fromIndex, int toIndex) {
     if (fromIndex < 0) throw new IndexOutOfBoundsException("fromIndex = " + fromIndex);
     if (toIndex > list.size()) throw new IndexOutOfBoundsException("toIndex = " + toIndex);
-    if (fromIndex > toIndex)
+    if (fromIndex > toIndex) {
       throw new IllegalArgumentException("fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")");
+    }
     l = list;
     offset = fromIndex;
     size = toIndex - fromIndex;
@@ -735,10 +738,13 @@ class SubList extends AbstractList {
   }
 
   public boolean addAll(int index, Collection c) {
-    if (index < 0 || index > size)
+    if (index < 0 || index > size) {
       throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+    }
     int cSize = c.size();
-    if (cSize == 0) return false;
+    if (cSize == 0) {
+      return false;
+    }
 
     checkForComodification();
     l.addAll(offset + index, c);
@@ -754,8 +760,9 @@ class SubList extends AbstractList {
 
   public ListIterator listIterator(final int index) {
     checkForComodification();
-    if (index < 0 || index > size)
+    if (index < 0 || index > size) {
       throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+    }
 
     return new ListIterator() {
       private ListIterator i = l.listIterator(index + offset);
@@ -811,8 +818,9 @@ class SubList extends AbstractList {
   }
 
   private void rangeCheck(int index) {
-    if (index < 0 || index >= size)
+    if (index < 0 || index >= size) {
       throw new IndexOutOfBoundsException("Index: " + index + ",Size: " + size);
+    }
   }
 
   private void checkForComodification() {

@@ -315,7 +315,9 @@ public class BinomialHeap /*implements java.io.Serializable*/ {
 
   // 5. Extract the node with the minimum key
   public int extractMin() {
-    if (Nodes == null) return -1;
+    if (Nodes == null) {
+      return -1;
+    }
 
     BinomialHeapNode temp = Nodes, prevTemp = null;
     BinomialHeapNode minNode = Nodes.findMinNode();

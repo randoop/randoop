@@ -158,13 +158,18 @@ public abstract class AbstractCollection implements Collection {
    */
   public Object[] toArray(Object[] a) {
     int size = size();
-    if (a.length < size)
+    if (a.length < size) {
       a = (Object[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), size);
+    }
 
     Iterator it = iterator();
-    for (int i = 0; i < size; i++) a[i] = it.next();
+    for (int i = 0; i < size; i++) {
+      a[i] = it.next();
+    }
 
-    if (a.length > size) a[size] = null;
+    if (a.length > size) {
+      a[size] = null;
+    }
 
     return a;
   }

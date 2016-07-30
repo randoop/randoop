@@ -31,7 +31,9 @@ public final class MethodReflectionCode extends ReflectionCode {
   @Override
   public void runReflectionCodeRaw() throws IllegalAccessException, InvocationTargetException {
 
-    if (hasRunAlready()) throw new NotCaughtIllegalStateException("cannot run this twice " + this);
+    if (hasRunAlready()) {
+      throw new NotCaughtIllegalStateException("cannot run this twice " + this);
+    }
 
     this.setRunAlready();
 
@@ -48,9 +50,10 @@ public final class MethodReflectionCode extends ReflectionCode {
     try {
       this.retval = this.method.invoke(this.receiver, this.inputs);
 
-      if (receiver == null && isInstanceMethod())
+      if (receiver == null && isInstanceMethod()) {
         throw new NotCaughtIllegalStateException(
             "receiver was null - expected NPE from call to: " + method);
+      }
     } catch (NullPointerException e) {
       this.exceptionThrown = e;
       throw e;
@@ -58,8 +61,9 @@ public final class MethodReflectionCode extends ReflectionCode {
       this.exceptionThrown = e.getCause();
       throw e;
     } finally {
-      if (retval != null && exceptionThrown != null)
+      if (retval != null && exceptionThrown != null) {
         throw new NotCaughtIllegalStateException("cannot have both retval and exception not null");
+      }
     }
   }
 
@@ -70,8 +74,9 @@ public final class MethodReflectionCode extends ReflectionCode {
   @Override
   public Object getReturnVariable() {
     if (!hasRunAlready()) throw new IllegalStateException("run first, then ask");
-    if (receiver == null && retval != null && isInstanceMethod())
+    if (receiver == null && retval != null && isInstanceMethod()) {
       throw new IllegalStateException("receiver was null - expected NPE from call to: " + method);
+    }
     return retval;
   }
 

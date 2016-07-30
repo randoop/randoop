@@ -329,8 +329,9 @@ public class RatPoly {
     RatPoly result = new RatPoly();
     for (int i = 0, size = this.terms.size(); i < size; i++) {
       for (int j = 0, psize = p.terms.size(); j < psize; j++) {
-        if (this.terms.get(i).coeff.equals(ZERO) || p.terms.get(j).coeff.equals(ZERO))
+        if (this.terms.get(i).coeff.equals(ZERO) || p.terms.get(j).coeff.equals(ZERO)) {
           throw new RuntimeException("REP BROKEN");
+        }
         sortedAdd(
             result.terms,
             new RatTerm(

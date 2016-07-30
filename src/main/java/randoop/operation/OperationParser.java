@@ -45,8 +45,9 @@ public class OperationParser {
    *           if the string does not have expected format.
    */
   public static TypedOperation parse(String str) throws OperationParseException {
-    if (str == null || str.length() == 0)
+    if (str == null || str.length() == 0) {
       throw new IllegalArgumentException("invalid string: " + str);
+    }
 
     // <id> : <description>
     int colonIdx = str.indexOf(':');

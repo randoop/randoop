@@ -48,7 +48,9 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
   }
 
   private void add_bare(T1 key, T2 value) {
-    if (key == null || value == null) throw new IllegalArgumentException("args cannot be null.");
+    if (key == null || value == null) {
+      throw new IllegalArgumentException("args cannot be null.");
+    }
 
     Set<T2> values = map.get(key);
     if (values == null) {
@@ -75,7 +77,9 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
   }
 
   private void remove_bare(T1 key, T2 value) {
-    if (key == null || value == null) throw new IllegalArgumentException("args cannot be null.");
+    if (key == null || value == null) {
+      throw new IllegalArgumentException("args cannot be null.");
+    }
 
     Set<T2> values = map.get(key);
     if (values == null) {

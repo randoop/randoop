@@ -50,9 +50,13 @@ public final class NonreceiverTerm extends CallableOperation {
    *          the value of the term
    */
   public NonreceiverTerm(GeneralType type, Object value) {
-    if (type == null) throw new IllegalArgumentException("type should not be null.");
+    if (type == null) {
+      throw new IllegalArgumentException("type should not be null.");
+    }
 
-    if (type.isVoid()) throw new IllegalArgumentException("type should not be void.class.");
+    if (type.isVoid()) {
+      throw new IllegalArgumentException("type should not be void.class.");
+    }
 
     if (type.isPrimitive() || type.isBoxedPrimitive()) {
       if (value == null) {
@@ -60,11 +64,13 @@ public final class NonreceiverTerm extends CallableOperation {
           throw new IllegalArgumentException("primitive-like values cannot be null.");
         }
       } else {
-        if (!type.isInstance(value))
+        if (!type.isInstance(value)) {
           throw new IllegalArgumentException(
               "value.getClass()=" + value.getClass() + ",type=" + type);
-        if (!PrimitiveTypes.isBoxedOrPrimitiveOrStringType(value.getClass()))
+        }
+        if (!PrimitiveTypes.isBoxedOrPrimitiveOrStringType(value.getClass())) {
           throw new IllegalArgumentException("value is not a primitive-like value.");
+        }
       }
     } else if (type.isString()) {
       if (value != null && !PrimitiveTypes.stringLengthOK((String) value)) {
@@ -181,8 +187,9 @@ public final class NonreceiverTerm extends CallableOperation {
       type = type.toPrimitive();
     }
     if (type.isString()) return new NonreceiverTerm(type, "");
-    if (type.equals(ConcreteTypes.CHAR_TYPE))
+    if (type.equals(ConcreteTypes.CHAR_TYPE)) {
       return new NonreceiverTerm(type, 'a'); // TODO This is not null or zero...
+    }
     if (type.equals(ConcreteTypes.BYTE_TYPE)) return new NonreceiverTerm(type, (byte) 0);
     if (type.equals(ConcreteTypes.SHORT_TYPE)) return new NonreceiverTerm(type, (short) 0);
     if (type.equals(ConcreteTypes.INT_TYPE)) return new NonreceiverTerm(type, 0);

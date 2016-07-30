@@ -106,7 +106,9 @@ public final class ArrayCreation extends CallableOperation {
 
     b.append("new ").append(arrayTypeName).append("[] { ");
     for (int i = 0; i < inputVars.size(); i++) {
-      if (i > 0) b.append(", ");
+      if (i > 0) {
+        b.append(", ");
+      }
 
       String param = inputVars.get(i).getName();
 

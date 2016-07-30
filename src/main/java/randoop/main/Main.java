@@ -35,7 +35,9 @@ public class Main {
 
     String command = args[0];
     String[] args2 = new String[args.length - 1];
-    for (int i = 1; i < args.length; i++) args2[i - 1] = args[i];
+    for (int i = 1; i < args.length; i++) {
+      args2[i - 1] = args[i];
+    }
 
     // Figure out which handler handles this command.
     CommandHandler handler = null;

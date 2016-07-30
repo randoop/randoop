@@ -105,8 +105,9 @@ public class Vector extends AbstractList
    */
   public Vector(int initialCapacity, int capacityIncrement) {
     super();
-    if (initialCapacity < 0)
+    if (initialCapacity < 0) {
       throw new IllegalArgumentException("Illegal Capacity: " + initialCapacity);
+    }
     this.elementData = new Object[initialCapacity];
     this.capacityIncrement = capacityIncrement;
   }
@@ -389,7 +390,9 @@ public class Vector extends AbstractList
    *             than or equal to the current size of this vector.
    */
   public synchronized int lastIndexOf(Object elem, int index) {
-    if (index >= elementCount) throw new IndexOutOfBoundsException(index + " >= " + elementCount);
+    if (index >= elementCount) {
+      throw new IndexOutOfBoundsException(index + " >= " + elementCount);
+    }
 
     if (elem == null) {
       for (int i = index; i >= 0; i--) if (elementData[i] == null) return i;
@@ -603,7 +606,9 @@ public class Vector extends AbstractList
   public synchronized void removeAllElements() {
     modCount++;
     // Let gc do its work
-    for (int i = 0; i < elementCount; i++) elementData[i] = null;
+    for (int i = 0; i < elementCount; i++) {
+      elementData[i] = null;
+    }
 
     elementCount = 0;
   }
@@ -664,14 +669,17 @@ public class Vector extends AbstractList
    * @since 1.2
    */
   public synchronized Object[] toArray(Object[] a) {
-    if (a.length < elementCount)
+    if (a.length < elementCount) {
       a =
           (Object[])
               java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), elementCount);
+    }
 
     System.arraycopy(elementData, 0, a, 0, elementCount);
 
-    if (a.length > elementCount) a[elementCount] = null;
+    if (a.length > elementCount) {
+      a[elementCount] = null;
+    }
 
     return a;
   }
@@ -688,7 +696,9 @@ public class Vector extends AbstractList
    * @since 1.2
    */
   public synchronized Object get(int index) {
-    if (index >= elementCount) throw new ArrayIndexOutOfBoundsException(index);
+    if (index >= elementCount) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
 
     return elementData[index];
   }
@@ -705,7 +715,9 @@ public class Vector extends AbstractList
    * @since 1.2
    */
   public synchronized Object set(int index, Object element) {
-    if (index >= elementCount) throw new ArrayIndexOutOfBoundsException(index);
+    if (index >= elementCount) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
 
     Object oldValue = elementData[index];
     elementData[index] = element;
@@ -875,14 +887,18 @@ public class Vector extends AbstractList
    */
   public synchronized boolean addAll(int index, Collection c) {
     modCount++;
-    if (index < 0 || index > elementCount) throw new ArrayIndexOutOfBoundsException(index);
+    if (index < 0 || index > elementCount) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
 
     Object[] a = c.toArray();
     int numNew = a.length;
     ensureCapacityHelper(elementCount + numNew);
 
     int numMoved = elementCount - index;
-    if (numMoved > 0) System.arraycopy(elementData, index, elementData, index + numNew, numMoved);
+    if (numMoved > 0) {
+      System.arraycopy(elementData, index, elementData, index + numNew, numMoved);
+    }
 
     System.arraycopy(a, 0, elementData, index, numNew);
     elementCount += numNew;

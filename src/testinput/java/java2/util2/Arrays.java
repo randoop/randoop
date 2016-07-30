@@ -1253,8 +1253,9 @@ public class Arrays {
    * appropriate exception if they aren't.
    */
   private static void rangeCheck(int arrayLen, int fromIndex, int toIndex) {
-    if (fromIndex > toIndex)
+    if (fromIndex > toIndex) {
       throw new IllegalArgumentException("fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")");
+    }
     if (fromIndex < 0) throw new ArrayIndexOutOfBoundsException(fromIndex);
     if (toIndex > arrayLen) throw new ArrayIndexOutOfBoundsException(toIndex);
   }
@@ -1621,7 +1622,9 @@ public class Arrays {
    * @see #sort(Object[], Comparator)
    */
   public static int binarySearch(Object[] a, Object key, Comparator c) {
-    if (c == null) return binarySearch(a, key);
+    if (c == null) {
+      return binarySearch(a, key);
+    }
 
     int low = 0;
     int high = a.length - 1;
@@ -1657,9 +1660,13 @@ public class Arrays {
     if (a == null || a2 == null) return false;
 
     int length = a.length;
-    if (a2.length != length) return false;
+    if (a2.length != length) {
+      return false;
+    }
 
-    for (int i = 0; i < length; i++) if (a[i] != a2[i]) return false;
+    for (int i = 0; i < length; i++) {
+      if (a[i] != a2[i]) return false;
+    }
 
     return true;
   }
@@ -1681,9 +1688,13 @@ public class Arrays {
     if (a == null || a2 == null) return false;
 
     int length = a.length;
-    if (a2.length != length) return false;
+    if (a2.length != length) {
+      return false;
+    }
 
-    for (int i = 0; i < length; i++) if (a[i] != a2[i]) return false;
+    for (int i = 0; i < length; i++) {
+      if (a[i] != a2[i]) return false;
+    }
 
     return true;
   }
@@ -1705,9 +1716,13 @@ public class Arrays {
     if (a == null || a2 == null) return false;
 
     int length = a.length;
-    if (a2.length != length) return false;
+    if (a2.length != length) {
+      return false;
+    }
 
-    for (int i = 0; i < length; i++) if (a[i] != a2[i]) return false;
+    for (int i = 0; i < length; i++) {
+      if (a[i] != a2[i]) return false;
+    }
 
     return true;
   }
@@ -1729,9 +1744,13 @@ public class Arrays {
     if (a == null || a2 == null) return false;
 
     int length = a.length;
-    if (a2.length != length) return false;
+    if (a2.length != length) {
+      return false;
+    }
 
-    for (int i = 0; i < length; i++) if (a[i] != a2[i]) return false;
+    for (int i = 0; i < length; i++) {
+      if (a[i] != a2[i]) return false;
+    }
 
     return true;
   }
@@ -1753,9 +1772,13 @@ public class Arrays {
     if (a == null || a2 == null) return false;
 
     int length = a.length;
-    if (a2.length != length) return false;
+    if (a2.length != length) {
+      return false;
+    }
 
-    for (int i = 0; i < length; i++) if (a[i] != a2[i]) return false;
+    for (int i = 0; i < length; i++) {
+      if (a[i] != a2[i]) return false;
+    }
 
     return true;
   }
@@ -1777,9 +1800,13 @@ public class Arrays {
     if (a == null || a2 == null) return false;
 
     int length = a.length;
-    if (a2.length != length) return false;
+    if (a2.length != length) {
+      return false;
+    }
 
-    for (int i = 0; i < length; i++) if (a[i] != a2[i]) return false;
+    for (int i = 0; i < length; i++) {
+      if (a[i] != a2[i]) return false;
+    }
 
     return true;
   }
@@ -1807,7 +1834,9 @@ public class Arrays {
     if (a == null || a2 == null) return false;
 
     int length = a.length;
-    if (a2.length != length) return false;
+    if (a2.length != length) {
+      return false;
+    }
 
     for (int i = 0; i < length; i++)
       if (Double.doubleToLongBits(a[i]) != Double.doubleToLongBits(a2[i])) return false;
@@ -1838,7 +1867,9 @@ public class Arrays {
     if (a == null || a2 == null) return false;
 
     int length = a.length;
-    if (a2.length != length) return false;
+    if (a2.length != length) {
+      return false;
+    }
 
     for (int i = 0; i < length; i++)
       if (Float.floatToIntBits(a[i]) != Float.floatToIntBits(a2[i])) return false;
@@ -1865,7 +1896,9 @@ public class Arrays {
     if (a == null || a2 == null) return false;
 
     int length = a.length;
-    if (a2.length != length) return false;
+    if (a2.length != length) {
+      return false;
+    }
 
     for (int i = 0; i < length; i++) {
       Object o1 = a[i];

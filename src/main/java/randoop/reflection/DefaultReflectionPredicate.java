@@ -117,11 +117,13 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     }
 
     // TODO we could enable some methods from Object, like getClass
-    if (m.getDeclaringClass().equals(java.lang.Object.class))
+    if (m.getDeclaringClass().equals(java.lang.Object.class)) {
       return false; // handled here to avoid printing reasons
+    }
 
-    if (m.getDeclaringClass().equals(java.lang.Thread.class))
+    if (m.getDeclaringClass().equals(java.lang.Thread.class)) {
       return false; // handled here to avoid printing reasons
+    }
 
     if (m.getAnnotation(CheckRep.class) != null) {
       return false;
@@ -238,38 +240,49 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       return "We're skipping compareTo method in enums";
 
     // Special case 2:
-    if (m.getName().equals("randomUUID"))
+    if (m.getName().equals("randomUUID")) {
       return "We're skipping this to get reproducibility when running java.util tests.";
+    }
 
     // Special case 2:
     // hashCode is bad in general but String.hashCode is fair game
-    if (m.getName().equals("hashCode") && !m.getDeclaringClass().equals(String.class))
+    if (m.getName().equals("hashCode") && !m.getDeclaringClass().equals(String.class)) {
       return "hashCode";
+    }
 
     // Special case 3: (just clumps together a bunch of hashCodes, so skip it)
-    if (m.getName().equals("deepHashCode") && m.getDeclaringClass().equals(Arrays.class))
+    if (m.getName().equals("deepHashCode") && m.getDeclaringClass().equals(Arrays.class)) {
       return "deepHashCode";
+    }
 
     // Special case 4: (differs too much between JDK installations)
-    if (m.getName().equals("getAvailableLocales")) return "getAvailableLocales";
+    if (m.getName().equals("getAvailableLocales")) {
+      return "getAvailableLocales";
+    }
 
     // During experimentation, we observed that exception-related
     // methods can cause lots of nonterminating runs of Randoop. So we
     // don't explore them.
-    if (m.getName().equals("fillInStackTrace"))
+    if (m.getName().equals("fillInStackTrace")) {
       return "Randoop avoids exploring Exception class methods.";
+    }
     if (m.getName().equals("getCause")) return "Randoop avoids exploring Exception class methods.";
-    if (m.getName().equals("getLocalizedMessage"))
+    if (m.getName().equals("getLocalizedMessage")) {
       return "Randoop avoids exploring Exception class methods.";
-    if (m.getName().equals("getMessage"))
+    }
+    if (m.getName().equals("getMessage")) {
       return "Randoop avoids exploring Exception class methods.";
-    if (m.getName().equals("getStackTrace"))
+    }
+    if (m.getName().equals("getStackTrace")) {
       return "Randoop avoids exploring Exception class methods.";
+    }
     if (m.getName().equals("initCause")) return "Randoop avoids exploring Exception class methods.";
-    if (m.getName().equals("printStackTrace"))
+    if (m.getName().equals("printStackTrace")) {
       return "Randoop avoids exploring Exception class methods.";
-    if (m.getName().equals("setStackTrace"))
+    }
+    if (m.getName().equals("setStackTrace")) {
       return "Randoop avoids exploring Exception class methods.";
+    }
 
     return null;
   }

@@ -18,7 +18,9 @@ public class SimpleListTest {
   @Test
   public void testArrayList() {
     ArrayList<String> al = new ArrayList<>();
-    for (int i = 0; i < 100; i++) al.add("str" + i);
+    for (int i = 0; i < 100; i++) {
+      al.add("str" + i);
+    }
 
     SimpleList<String> sl = new ArrayListSimpleList<>(al);
 
@@ -30,7 +32,9 @@ public class SimpleListTest {
   @Test
   public void oneMoreElement() {
     ArrayList<String> al = new ArrayList<>();
-    for (int i = 0; i < 100; i++) al.add("str" + i);
+    for (int i = 0; i < 100; i++) {
+      al.add("str" + i);
+    }
 
     SimpleList<String> sl = new OneMoreElementList<>(new ArrayListSimpleList<>(al), "str" + 100);
 
