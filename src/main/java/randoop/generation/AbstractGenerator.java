@@ -328,7 +328,9 @@ public abstract class AbstractGenerator {
         listenerMgr.generationStepPost(eSeq);
       }
 
-      if (eSeq == null) continue;
+      if (eSeq == null) {
+        continue;
+      }
 
       num_sequences_generated++;
 

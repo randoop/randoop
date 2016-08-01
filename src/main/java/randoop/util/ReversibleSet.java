@@ -30,9 +30,13 @@ public class ReversibleSet<T> implements ISimpleSet<T> {
 
   @Override
   public void remove(T elt) {
-    if (elt == null) throw new IllegalArgumentException("arg cannot be null.");
+    if (elt == null) {
+      throw new IllegalArgumentException("arg cannot be null.");
+    }
 
-    if (!contains(elt)) throw new IllegalArgumentException("set does not contain elt " + elt);
+    if (!contains(elt)) {
+      throw new IllegalArgumentException("set does not contain elt " + elt);
+    }
 
     map.remove(elt, true);
   }

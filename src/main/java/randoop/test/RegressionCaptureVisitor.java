@@ -87,7 +87,9 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
           NormalExecution e = (NormalExecution) result;
           // If value is like x in "int x = 3" don't capture
           // checks (nothing interesting).
-          if (st.isPrimitiveInitialization()) continue;
+          if (st.isPrimitiveInitialization()) {
+            continue;
+          }
 
           // If value's type is void (i.e. its statement is a
           // void-return method call), don't capture checks

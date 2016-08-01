@@ -72,7 +72,9 @@ public class RatNum {
    * @throws RuntimeException if representation invariant is violated
    */
   private void checkRep() throws RuntimeException {
-    if (denom < 0) throw new RuntimeException("Denominator of a RatNum cannot be less than zero");
+    if (denom < 0) {
+      throw new RuntimeException("Denominator of a RatNum cannot be less than zero");
+    }
 
     if (denom > 0) {
       int thisGcd = gcd(numer, denom);

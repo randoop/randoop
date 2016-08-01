@@ -61,7 +61,9 @@ public abstract class AbstractSet extends AbstractCollection implements Set {
    * @return <tt>true</tt> if the specified object is equal to this set.
    */
   public boolean equals(Object o) {
-    if (o == this) return true;
+    if (o == this) {
+      return true;
+    }
 
     if (!(o instanceof Set)) return false;
     Collection c = (Collection) o;

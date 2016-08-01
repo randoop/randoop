@@ -192,8 +192,9 @@ public class IdentityHashMap extends AbstractMap implements Map, java.io.Seriali
    * @throws IllegalArgumentException if <tt>expectedMaxSize</tt> is negative
    */
   public IdentityHashMap(int expectedMaxSize) {
-    if (expectedMaxSize < 0)
+    if (expectedMaxSize < 0) {
       throw new IllegalArgumentException("expectedMaxSize is negative: " + expectedMaxSize);
+    }
     init(capacity(expectedMaxSize));
   }
 
@@ -343,7 +344,9 @@ public class IdentityHashMap extends AbstractMap implements Map, java.io.Seriali
    */
   public boolean containsValue(Object value) {
     Object[] tab = table;
-    for (int i = 1; i < tab.length; i += 2) if (tab[i] == value) return true;
+    for (int i = 1; i < tab.length; i += 2) {
+      if (tab[i] == value) return true;
+    }
 
     return false;
   }
@@ -423,7 +426,9 @@ public class IdentityHashMap extends AbstractMap implements Map, java.io.Seriali
       threshold = MAXIMUM_CAPACITY - 1; // Gigantic map!
       return;
     }
-    if (oldLength >= newLength) return;
+    if (oldLength >= newLength) {
+      return;
+    }
 
     Object[] newTable = new Object[newLength];
     threshold = newLength / 3;
@@ -591,7 +596,9 @@ public class IdentityHashMap extends AbstractMap implements Map, java.io.Seriali
       return true;
     } else if (o instanceof IdentityHashMap) {
       IdentityHashMap m = (IdentityHashMap) o;
-      if (m.size() != size) return false;
+      if (m.size() != size) {
+        return false;
+      }
 
       Object[] tab = m.table;
       for (int i = 0; i < tab.length; i += 2) {
@@ -782,14 +789,18 @@ public class IdentityHashMap extends AbstractMap implements Map, java.io.Seriali
 
     public Object getKey() {
       // Provide a better exception than out of bounds index
-      if (lastReturnedIndex < 0) throw new IllegalStateException("Entry was removed");
+      if (lastReturnedIndex < 0) {
+        throw new IllegalStateException("Entry was removed");
+      }
 
       return unmaskNull(traversalTable[lastReturnedIndex]);
     }
 
     public Object getValue() {
       // Provide a better exception than out of bounds index
-      if (lastReturnedIndex < 0) throw new IllegalStateException("Entry was removed");
+      if (lastReturnedIndex < 0) {
+        throw new IllegalStateException("Entry was removed");
+      }
 
       return traversalTable[lastReturnedIndex + 1];
     }
@@ -800,8 +811,9 @@ public class IdentityHashMap extends AbstractMap implements Map, java.io.Seriali
       Object oldValue = traversalTable[lastReturnedIndex + 1];
       traversalTable[lastReturnedIndex + 1] = value;
       // if shadowing, force into main table
-      if (traversalTable != IdentityHashMap.this.table)
+      if (traversalTable != IdentityHashMap.this.table) {
         put(traversalTable[lastReturnedIndex], value);
+      }
       return oldValue;
     }
 
@@ -1058,15 +1070,17 @@ public class IdentityHashMap extends AbstractMap implements Map, java.io.Seriali
 
     public Object[] toArray() {
       Collection c = new ArrayList(size());
-      for (Iterator i = iterator(); i.hasNext(); )
+      for (Iterator i = iterator(); i.hasNext(); ) {
         c.add(new AbstractMap.SimpleEntry((Map.Entry) i.next()));
+      }
       return c.toArray();
     }
 
     public Object[] toArray(Object[] a) {
       Collection c = new ArrayList(size());
-      for (Iterator i = iterator(); i.hasNext(); )
+      for (Iterator i = iterator(); i.hasNext(); ) {
         c.add(new AbstractMap.SimpleEntry((Map.Entry) i.next()));
+      }
       return c.toArray(a);
     }
   }

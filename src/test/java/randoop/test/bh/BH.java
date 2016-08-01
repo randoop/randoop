@@ -41,13 +41,17 @@ public class BH {
   public static final void main(String[] args) {
     parseCmdLine(args);
 
-    if (printMsgs) System.out.println("nbody = " + nbody);
+    if (printMsgs) {
+      System.out.println("nbody = " + nbody);
+    }
 
     long start0 = System.currentTimeMillis();
     Tree root = new Tree();
     root.createTestData(nbody);
     long end0 = System.currentTimeMillis();
-    if (printMsgs) System.out.println("Bodies created");
+    if (printMsgs) {
+      System.out.println("Bodies created");
+    }
 
     long start1 = System.currentTimeMillis();
     double tnow = 0.0;

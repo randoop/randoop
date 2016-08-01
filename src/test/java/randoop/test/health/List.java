@@ -25,7 +25,9 @@ public class List {
   }
 
   public void delete(Object o) {
-    if (head == null) return;
+    if (head == null) {
+      return;
+    }
 
     if (tail.object == o) {
       tail = null;

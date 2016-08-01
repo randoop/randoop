@@ -168,12 +168,16 @@ public class WeakHashMap extends AbstractMap implements Map {
    *         or if the load factor is nonpositive.
    */
   public WeakHashMap(int initialCapacity, float loadFactor) {
-    if (initialCapacity < 0)
+    if (initialCapacity < 0) {
       throw new IllegalArgumentException("Illegal Initial Capacity: " + initialCapacity);
-    if (initialCapacity > MAXIMUM_CAPACITY) initialCapacity = MAXIMUM_CAPACITY;
+    }
+    if (initialCapacity > MAXIMUM_CAPACITY) {
+      initialCapacity = MAXIMUM_CAPACITY;
+    }
 
-    if (loadFactor <= 0 || Float.isNaN(loadFactor))
+    if (loadFactor <= 0 || Float.isNaN(loadFactor)) {
       throw new IllegalArgumentException("Illegal Load factor: " + loadFactor);
+    }
     int capacity = 1;
     while (capacity < initialCapacity) capacity <<= 1;
     table = new Entry[capacity];
@@ -468,7 +472,9 @@ public class WeakHashMap extends AbstractMap implements Map {
    */
   public void putAll(Map m) {
     int numKeysToBeAdded = m.size();
-    if (numKeysToBeAdded == 0) return;
+    if (numKeysToBeAdded == 0) {
+      return;
+    }
 
     /*
      * Expand the map if the map if the number of mappings to be added
@@ -581,7 +587,9 @@ public class WeakHashMap extends AbstractMap implements Map {
    *         specified value.
    */
   public boolean containsValue(Object value) {
-    if (value == null) return containsNullValue();
+    if (value == null) {
+      return containsNullValue();
+    }
 
     Entry[] tab = getTable();
     for (int i = tab.length; i-- > 0; )
@@ -886,15 +894,17 @@ public class WeakHashMap extends AbstractMap implements Map {
 
     public Object[] toArray() {
       Collection c = new ArrayList(size());
-      for (Iterator i = iterator(); i.hasNext(); )
+      for (Iterator i = iterator(); i.hasNext(); ) {
         c.add(new AbstractMap.SimpleEntry((Map.Entry) i.next()));
+      }
       return c.toArray();
     }
 
     public Object[] toArray(Object[] a) {
       Collection c = new ArrayList(size());
-      for (Iterator i = iterator(); i.hasNext(); )
+      for (Iterator i = iterator(); i.hasNext(); ) {
         c.add(new AbstractMap.SimpleEntry((Map.Entry) i.next()));
+      }
       return c.toArray(a);
     }
   }

@@ -24,26 +24,30 @@ public class BlackNode extends QuadTreeNode {
     // North
     QuadTreeNode neighbor = gtEqualAdjNeighbor(NORTH);
     if (neighbor == null || neighbor instanceof WhiteNode) retval += size;
-    else if (neighbor instanceof GreyNode)
+    else if (neighbor instanceof GreyNode) {
       retval += neighbor.sumAdjacent(Quadrant.cSouthEast, Quadrant.cSouthWest, size);
+    }
 
     // East
     neighbor = gtEqualAdjNeighbor(EAST);
     if (neighbor == null || neighbor instanceof WhiteNode) retval += size;
-    else if (neighbor instanceof GreyNode)
+    else if (neighbor instanceof GreyNode) {
       retval += neighbor.sumAdjacent(Quadrant.cSouthWest, Quadrant.cNorthWest, size);
+    }
 
     // South
     neighbor = gtEqualAdjNeighbor(SOUTH);
     if (neighbor == null || neighbor instanceof WhiteNode) retval += size;
-    else if (neighbor instanceof GreyNode)
+    else if (neighbor instanceof GreyNode) {
       retval += neighbor.sumAdjacent(Quadrant.cNorthWest, Quadrant.cNorthEast, size);
+    }
 
     // West
     neighbor = gtEqualAdjNeighbor(WEST);
     if (neighbor == null || neighbor instanceof WhiteNode) retval += size;
-    else if (neighbor instanceof GreyNode)
+    else if (neighbor instanceof GreyNode) {
       retval += neighbor.sumAdjacent(Quadrant.cNorthEast, Quadrant.cSouthEast, size);
+    }
 
     return retval;
   }

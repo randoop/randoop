@@ -145,8 +145,9 @@ public final class Sequence implements WeightedElement {
    */
   public List<Variable> getInputs(int statementIndex) {
     List<Variable> inputsAsVariables = new ArrayList<>();
-    for (RelativeNegativeIndex relIndex : this.statements.get(statementIndex).inputs)
+    for (RelativeNegativeIndex relIndex : this.statements.get(statementIndex).inputs) {
       inputsAsVariables.add(getVariableForInput(statementIndex, relIndex));
+    }
     return inputsAsVariables;
   }
 
@@ -312,8 +313,9 @@ public final class Sequence implements WeightedElement {
     public final int index;
 
     RelativeNegativeIndex(int index) {
-      if (index >= 0)
+      if (index >= 0) {
         throw new IllegalArgumentException("invalid index (expecting non-positive): " + index);
+      }
       this.index = index;
     }
 
@@ -426,8 +428,9 @@ public final class Sequence implements WeightedElement {
   //
   // See comment at computeHashCode method for notes on hashCode.
   private Sequence(SimpleList<Statement> statements, int hashCode, int netSize) {
-    if (statements == null)
+    if (statements == null) {
       throw new IllegalArgumentException("`statements' argument cannot be null");
+    }
     this.statements = statements;
     this.savedHashCode = hashCode;
     this.savedNetSize = netSize;
@@ -454,16 +457,19 @@ public final class Sequence implements WeightedElement {
       }
 
       // Process input arguments.
-      if (lastStatement.inputs.size() != lastStatement.getInputTypes().size())
+      if (lastStatement.inputs.size() != lastStatement.getInputTypes().size()) {
         throw new RuntimeException(
             lastStatement.inputs
                 + ", "
                 + lastStatement.getInputTypes()
                 + ", "
                 + lastStatement.toString());
+      }
 
       List<Variable> v = this.getInputs(lastStatementIndex);
-      if (v.size() != lastStatement.getInputTypes().size()) throw new RuntimeException();
+      if (v.size() != lastStatement.getInputTypes().size()) {
+        throw new RuntimeException();
+      }
 
       for (int i = 0; i < v.size(); i++) {
         Variable actualArgument = v.get(i);
@@ -479,25 +485,31 @@ public final class Sequence implements WeightedElement {
    */
   private void checkRep() {
 
-    if (!GenInputsAbstract.debug_checks) return;
+    if (!GenInputsAbstract.debug_checks) {
+      return;
+    }
 
-    if (statements == null) throw new RuntimeException("statements == null");
+    if (statements == null) {
+      throw new RuntimeException("statements == null");
+    }
 
     for (int si = 0; si < this.statements.size(); si++) {
 
       Statement statementWithInputs = this.statements.get(si);
 
       // No nulls.
-      if (statementWithInputs == null)
+      if (statementWithInputs == null) {
         throw new IllegalStateException(
             "Null statement in sequence:" + Globals.lineSep + this.toString());
-      if (statementWithInputs.inputs == null)
+      }
+      if (statementWithInputs.inputs == null) {
         throw new IllegalArgumentException("parameters cannot be null.");
+      }
 
       // The inputs to the statement are valid: there's the right number
       // of them,
       // and they refer to appropriate input values.
-      if (statementWithInputs.getInputTypes().size() != statementWithInputs.inputs.size())
+      if (statementWithInputs.getInputTypes().size() != statementWithInputs.inputs.size()) {
         throw new IllegalArgumentException(
             "statement.getInputConstraints().size()="
                 + statementWithInputs.getInputTypes().size()
@@ -505,13 +517,14 @@ public final class Sequence implements WeightedElement {
                 + statementWithInputs.inputs.size()
                 + ", sequence: "
                 + this.toString());
+      }
       for (int i = 0; i < statementWithInputs.inputs.size(); i++) {
         int index = statementWithInputs.inputs.get(i).index;
         if (index >= 0) throw new IllegalStateException();
         GeneralType newRefConstraint =
             statements.get(si + statementWithInputs.inputs.get(i).index).getOutputType();
         if (newRefConstraint == null) throw new IllegalStateException();
-        if (!(statementWithInputs.getInputTypes().get(i).isAssignableFrom(newRefConstraint)))
+        if (!(statementWithInputs.getInputTypes().get(i).isAssignableFrom(newRefConstraint))) {
           throw new IllegalArgumentException(
               i
                   + "th input constraint "
@@ -525,6 +538,7 @@ public final class Sequence implements WeightedElement {
                   + ".Sequence:"
                   + Globals.lineSep
                   + this.toString());
+        }
       }
     }
   }
@@ -538,8 +552,9 @@ public final class Sequence implements WeightedElement {
     if (!(o instanceof Sequence)) return false;
     if (o == this) return true;
     Sequence other = (Sequence) o;
-    if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size())
+    if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size()) {
       return GenInputsAbstract.debug_checks && verifyFalse("size", other);
+    }
     for (int i = 0; i < this.statements.size(); i++) {
       Statement thisStatement = this.statements.get(i);
       Statement otherStatement = other.statements.get(i);
@@ -556,8 +571,9 @@ public final class Sequence implements WeightedElement {
 
   // Debugging helper for equals method.
   private boolean verifyFalse(String message, Sequence other) {
-    if (this.toString().equals(other.toString()))
+    if (this.toString().equals(other.toString())) {
       throw new IllegalStateException(message + " : " + this.toString());
+    }
     return false;
   }
 
@@ -599,8 +615,9 @@ public final class Sequence implements WeightedElement {
    * @return the {@link Statement} at the given index
    */
   private Statement getStatementWithInputs(int index) {
-    if (!isValidIndex(index))
+    if (!isValidIndex(index)) {
       throw new IllegalArgumentException("Index " + index + " not valid for sequence " + this);
+    }
     return this.getStatementsWithInputs().get(index);
   }
 
@@ -768,8 +785,9 @@ public final class Sequence implements WeightedElement {
    */
   public List<Integer> getInputsAsAbsoluteIndices(int i) {
     List<Integer> inputsAsVariables = new ArrayList<>();
-    for (RelativeNegativeIndex relIndex : this.statements.get(i).inputs)
+    for (RelativeNegativeIndex relIndex : this.statements.get(i).inputs) {
       inputsAsVariables.add(getVariableForInput(i, relIndex).index);
+    }
     return inputsAsVariables;
   }
 

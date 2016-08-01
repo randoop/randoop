@@ -62,7 +62,9 @@ public final class MethodCall extends CallableOperation {
    * @param method  the reflective method object
    */
   public MethodCall(Method method) {
-    if (method == null) throw new IllegalArgumentException("method should not be null.");
+    if (method == null) {
+      throw new IllegalArgumentException("method should not be null.");
+    }
 
     this.method = method;
     this.method.setAccessible(true);
@@ -114,7 +116,9 @@ public final class MethodCall extends CallableOperation {
 
     int startIndex = (isStatic() ? 0 : 1);
     for (int i = startIndex; i < inputVars.size(); i++) {
-      if (i > startIndex) sb.append(", ");
+      if (i > startIndex) {
+        sb.append(", ");
+      }
 
       // CASTING.
       if (!inputVars.get(i).getType().equals(inputTypes.get(i))) {

@@ -42,8 +42,9 @@ public class RecordListReader {
   private final RecordProcessor processor;
 
   public RecordListReader(String recordType, RecordProcessor proc) {
-    if (recordType == null || recordType.length() == 0)
+    if (recordType == null || recordType.length() == 0) {
       throw new IllegalArgumentException("Invalid record type:" + recordType);
+    }
     if (proc == null) throw new IllegalArgumentException("proc cannot be null.");
     this.processor = proc;
     this.startMarker = "START " + recordType;
@@ -51,8 +52,9 @@ public class RecordListReader {
   }
 
   public void parse(String inFile) {
-    if (inFile == null || inFile.length() == 0)
+    if (inFile == null || inFile.length() == 0) {
       throw new IllegalArgumentException("Illegal input file name: " + inFile);
+    }
 
     BufferedReader reader;
     try {
@@ -65,7 +67,9 @@ public class RecordListReader {
   }
 
   public void parse(File inFile) {
-    if (inFile == null) throw new IllegalArgumentException("Null input file");
+    if (inFile == null) {
+      throw new IllegalArgumentException("Null input file");
+    }
 
     BufferedReader reader;
     try {

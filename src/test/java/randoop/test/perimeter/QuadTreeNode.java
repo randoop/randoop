@@ -240,7 +240,9 @@ public abstract class QuadTreeNode {
             + checkOutside(center_x - size, center_y - size)
             + checkOutside(center_x - size, center_y + size);
 
-    if ((sum == 4) || (sum == -4)) return 0;
+    if ((sum == 4) || (sum == -4)) {
+      return 0;
+    }
 
     return 1;
   }

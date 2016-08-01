@@ -195,7 +195,9 @@ public class SequenceCollection {
    */
   public SimpleList<Sequence> getSequencesForType(GeneralType type, boolean exactMatch) {
 
-    if (type == null) throw new IllegalArgumentException("type cannot be null.");
+    if (type == null) {
+      throw new IllegalArgumentException("type cannot be null.");
+    }
 
     if (Log.isLoggingOn()) {
       Log.logLine("getSequencesForType: entering method, type=" + type.toString());
@@ -215,12 +217,14 @@ public class SequenceCollection {
     }
 
     if (resultList.isEmpty()) {
-      if (Log.isLoggingOn())
+      if (Log.isLoggingOn()) {
         Log.logLine("getSequencesForType: found no sequences matching type " + type);
+      }
     }
     SimpleList<Sequence> selector = new ListOfLists<>(resultList);
-    if (Log.isLoggingOn())
+    if (Log.isLoggingOn()) {
       Log.logLine("getSequencesForType: returning " + selector.size() + " sequences.");
+    }
     return selector;
   }
 

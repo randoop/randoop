@@ -225,7 +225,9 @@ public class TreeMap extends AbstractMap implements SortedMap, Cloneable, java.i
   }
 
   private boolean valueSearchNull(Entry n) {
-    if (n.value == null) return true;
+    if (n.value == null) {
+      return true;
+    }
 
     // Check left and right subtrees for value
     return (n.left != null && valueSearchNull(n.left))
@@ -234,7 +236,9 @@ public class TreeMap extends AbstractMap implements SortedMap, Cloneable, java.i
 
   private boolean valueSearchNonNull(Entry n, Object value) {
     // Check this node for the value
-    if (value.equals(n.value)) return true;
+    if (value.equals(n.value)) {
+      return true;
+    }
 
     // Check left and right subtrees for value
     return (n.left != null && valueSearchNonNull(n.left, value))
@@ -357,7 +361,9 @@ public class TreeMap extends AbstractMap implements SortedMap, Cloneable, java.i
    */
   private Entry getCeilEntry(Object key) {
     Entry p = root;
-    if (p == null) return null;
+    if (p == null) {
+      return null;
+    }
 
     while (true) {
       int cmp = compare(key, p.key);
@@ -389,7 +395,9 @@ public class TreeMap extends AbstractMap implements SortedMap, Cloneable, java.i
    */
   private Entry getPrecedingEntry(Object key) {
     Entry p = root;
-    if (p == null) return null;
+    if (p == null) {
+      return null;
+    }
 
     while (true) {
       int cmp = compare(key, p.key);
@@ -491,7 +499,9 @@ public class TreeMap extends AbstractMap implements SortedMap, Cloneable, java.i
    */
   public Object remove(Object key) {
     Entry p = getEntry(key);
-    if (p == null) return null;
+    if (p == null) {
+      return null;
+    }
 
     Object oldValue = p.value;
     deleteEntry(p);
@@ -1301,7 +1311,9 @@ public class TreeMap extends AbstractMap implements SortedMap, Cloneable, java.i
     } else if (p.parent == null) { // return if we are the only node.
       root = null;
     } else { //  No children. Use self as phantom replacement and unlink.
-      if (p.color == BLACK) fixAfterDeletion(p);
+      if (p.color == BLACK) {
+        fixAfterDeletion(p);
+      }
 
       if (p.parent != null) {
         if (p == p.parent.left) p.parent.left = null;
@@ -1503,12 +1515,16 @@ public class TreeMap extends AbstractMap implements SortedMap, Cloneable, java.i
      * ensuring that items are extracted in corresponding order.
      */
 
-    if (hi < lo) return null;
+    if (hi < lo) {
+      return null;
+    }
 
     int mid = (lo + hi) / 2;
 
     Entry left = null;
-    if (lo < mid) left = buildFromSorted(level + 1, lo, mid - 1, redLevel, it, str, defaultVal);
+    if (lo < mid) {
+      left = buildFromSorted(level + 1, lo, mid - 1, redLevel, it, str, defaultVal);
+    }
 
     // extract key and/or value from iterator or stream
     Object key;
@@ -1530,7 +1546,9 @@ public class TreeMap extends AbstractMap implements SortedMap, Cloneable, java.i
     Entry middle = new Entry(key, value, null);
 
     // color nodes in non-full bottommost level red
-    if (level == redLevel) middle.color = RED;
+    if (level == redLevel) {
+      middle.color = RED;
+    }
 
     if (left != null) {
       middle.left = left;

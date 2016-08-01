@@ -27,7 +27,9 @@ public class JarReader {
     ArrayList<String> classes = new ArrayList<>();
 
     packageName = packageName.replaceAll("\\.", "/");
-    if (debug) System.out.println("Jar " + jarName + " looking for " + packageName);
+    if (debug) {
+      System.out.println("Jar " + jarName + " looking for " + packageName);
+    }
 
     JarInputStream jarFile = null;
     try {
@@ -54,7 +56,9 @@ public class JarReader {
   public static List<String> getClasseNamesInJar(String jarName) throws IOException {
     ArrayList<String> classes = new ArrayList<>();
 
-    if (debug) System.out.println("Jar " + jarName);
+    if (debug) {
+      System.out.println("Jar " + jarName);
+    }
 
     JarInputStream jarFile = null;
     try {

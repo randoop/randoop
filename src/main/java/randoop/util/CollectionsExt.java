@@ -113,8 +113,9 @@ public final class CollectionsExt {
   public static <T> T getNthIteratedElement(Collection<? extends T> s, int index) {
     if (s == null) throw new IllegalArgumentException("s cannot be null.");
     if (s.isEmpty()) throw new IllegalArgumentException("s cannot be empty.");
-    if (index >= s.size())
+    if (index >= s.size()) {
       throw new IllegalArgumentException("Index " + index + " invalid for set of size " + s.size());
+    }
     return getNthIteratedElement(s.iterator(), index);
   }
 
@@ -207,15 +208,17 @@ public final class CollectionsExt {
    * @return the partitioned list
    */
   public static <T> List<List<T>> chunkUp(List<T> list, int maxLength) {
-    if (maxLength <= 0)
+    if (maxLength <= 0) {
       throw new IllegalArgumentException("maxLength must be > 0 but was " + maxLength);
+    }
     int fullChunks = list.size() / maxLength;
 
     List<List<T>> result = new ArrayList<>(fullChunks + 1);
     for (int i = 0; i < fullChunks; i++) {
       List<T> subList = list.subList(i * maxLength, (i + 1) * maxLength);
-      if (subList.size() != maxLength)
+      if (subList.size() != maxLength) {
         throw new IllegalStateException("bogus length:" + subList.size() + " not " + maxLength);
+      }
       result.add(subList);
     }
     List<T> lastChunk = list.subList(fullChunks * maxLength, list.size());

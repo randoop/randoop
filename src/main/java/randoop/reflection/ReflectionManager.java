@@ -91,7 +91,9 @@ public class ReflectionManager {
    */
   public void apply(ClassVisitor visitor, Class<?> c) {
     if (predicate.isVisible(c)) {
-      if (Log.isLoggingOn()) Log.logLine("Applying visitors to class " + c.getName());
+      if (Log.isLoggingOn()) {
+        Log.logLine("Applying visitors to class " + c.getName());
+      }
 
       visitBefore(visitor, c); // perform any previsit steps
 

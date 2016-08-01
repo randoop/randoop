@@ -29,7 +29,9 @@ public class EventObject implements java.io.Serializable {
    * @param    source    The object on which the Event initially occurred.
    */
   public EventObject(Object source) {
-    if (source == null) throw new IllegalArgumentException("null source");
+    if (source == null) {
+      throw new IllegalArgumentException("null source");
+    }
 
     this.source = source;
   }

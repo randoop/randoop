@@ -39,7 +39,9 @@ public class MST {
     int dist = computeMST(graph, vertices);
     long end1 = System.currentTimeMillis();
 
-    if (printResult || printMsgs) System.out.println("MST has cost " + dist);
+    if (printResult || printMsgs) {
+      System.out.println("MST has cost " + dist);
+    }
 
     if (printMsgs) {
       System.out.println("Build graph time " + (end0 - start0) / 1000.0);
@@ -96,7 +98,9 @@ public class MST {
         vlist.setMindist(dist);
         retval.setDist(dist);
       }
-    } else System.out.println("Not found");
+    } else {
+      System.out.println("Not found");
+    }
 
     int count = 0;
     // We are guaranteed that inserted is not first in list
@@ -115,7 +119,9 @@ public class MST {
             tmp.setMindist(dist);
             dist2 = dist;
           }
-        } else System.out.println("Not found");
+        } else {
+          System.out.println("Not found");
+        }
 
         if (dist2 < retval.dist()) {
           retval.setVert(tmp);
