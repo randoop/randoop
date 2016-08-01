@@ -75,7 +75,9 @@ public class SubTypeSet {
   private void addQueryType(GeneralType type) {
     if (type == null) throw new IllegalArgumentException("c cannot be null.");
     Set<GeneralType> keySet = subTypesWithsequences.keySet();
-    if (keySet.contains(type)) return;
+    if (keySet.contains(type)) {
+      return;
+    }
 
     Set<GeneralType> compatibleTypesWithSequences = new LinkedHashSet<>();
     for (GeneralType t : typesWithsequences.getElements()) {

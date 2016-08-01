@@ -488,11 +488,15 @@ public abstract class AbstractMap implements Map {
    * @return <tt>true</tt> if the specified object is equal to this map.
    */
   public boolean equals(Object o) {
-    if (o == this) return true;
+    if (o == this) {
+      return true;
+    }
 
     if (!(o instanceof Map)) return false;
     Map t = (Map) o;
-    if (t.size() != size()) return false;
+    if (t.size() != size()) {
+      return false;
+    }
 
     try {
       Iterator i = entrySet().iterator();

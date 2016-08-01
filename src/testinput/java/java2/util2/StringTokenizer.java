@@ -180,7 +180,9 @@ public class StringTokenizer implements Enumeration {
    * after startPos. If retDelims is true, startPos is returned.
    */
   private int skipDelimiters(int startPos) {
-    if (delimiters == null) throw new NullPointerException();
+    if (delimiters == null) {
+      throw new NullPointerException();
+    }
 
     int position = startPos;
     while (!retDelims && position < maxPosition) {

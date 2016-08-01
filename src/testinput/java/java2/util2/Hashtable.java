@@ -150,10 +150,12 @@ public class Hashtable extends Dictionary implements Map, Cloneable, java.io.Ser
    *             than zero, or if the load factor is nonpositive.
    */
   public Hashtable(int initialCapacity, float loadFactor) {
-    if (initialCapacity < 0)
+    if (initialCapacity < 0) {
       throw new IllegalArgumentException("Illegal Capacity: " + initialCapacity);
-    if (loadFactor <= 0 || Float.isNaN(loadFactor))
+    }
+    if (loadFactor <= 0 || Float.isNaN(loadFactor)) {
       throw new IllegalArgumentException("Illegal Load: " + loadFactor);
+    }
 
     if (initialCapacity == 0) initialCapacity = 1;
     this.loadFactor = loadFactor;
@@ -705,11 +707,15 @@ public class Hashtable extends Dictionary implements Map, Cloneable, java.io.Ser
    * @since 1.2
    */
   public synchronized boolean equals(Object o) {
-    if (o == this) return true;
+    if (o == this) {
+      return true;
+    }
 
     if (!(o instanceof Map)) return false;
     Map t = (Map) o;
-    if (t.size() != size()) return false;
+    if (t.size() != size()) {
+      return false;
+    }
 
     try {
       Iterator i = entrySet().iterator();
@@ -851,7 +857,9 @@ public class Hashtable extends Dictionary implements Map, Cloneable, java.io.Ser
     }
 
     public Object setValue(Object value) {
-      if (value == null) throw new NullPointerException();
+      if (value == null) {
+        throw new NullPointerException();
+      }
 
       Object oldValue = this.value;
       this.value = value;
@@ -956,7 +964,9 @@ public class Hashtable extends Dictionary implements Map, Cloneable, java.io.Ser
     public void remove() {
       if (!iterator) throw new UnsupportedOperationException();
       if (lastReturned == null) throw new IllegalStateException("Hashtable Enumerator");
-      if (modCount != expectedModCount) throw new ConcurrentModificationException();
+      if (modCount != expectedModCount) {
+        throw new ConcurrentModificationException();
+      }
 
       synchronized (Hashtable.this) {
         Entry[] tab = Hashtable.this.table;

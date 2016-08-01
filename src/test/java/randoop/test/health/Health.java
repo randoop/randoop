@@ -44,7 +44,9 @@ public class Health {
     Village top = Village.createVillage(maxLevel, 0, null, seed);
     long end0 = System.currentTimeMillis();
 
-    if (printMsgs) System.out.println("Columbian Health Care Simulator. Working...");
+    if (printMsgs) {
+      System.out.println("Columbian Health Care Simulator. Working...");
+    }
 
     long start1 = System.currentTimeMillis();
     for (int i = 0; i < maxTime; i++) {

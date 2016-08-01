@@ -192,9 +192,9 @@ public class Collections {
    * @see #sort(List)
    */
   public static int binarySearch(List list, Object key) {
-    if (list instanceof RandomAccess || list.size() < BINARYSEARCH_THRESHOLD)
+    if (list instanceof RandomAccess || list.size() < BINARYSEARCH_THRESHOLD) {
       return indexedBinarySearch(list, key);
-    else return iteratorBinarySearch(list, key);
+    } else return iteratorBinarySearch(list, key);
   }
 
   private static int indexedBinarySearch(List list, Object key) {
@@ -285,11 +285,13 @@ public class Collections {
    * @see #sort(List, Comparator)
    */
   public static int binarySearch(List list, Object key, Comparator c) {
-    if (c == null) return binarySearch(list, key);
+    if (c == null) {
+      return binarySearch(list, key);
+    }
 
-    if (list instanceof RandomAccess || list.size() < BINARYSEARCH_THRESHOLD)
+    if (list instanceof RandomAccess || list.size() < BINARYSEARCH_THRESHOLD) {
       return indexedBinarySearch(list, key, c);
-    else return iteratorBinarySearch(list, key, c);
+    } else return iteratorBinarySearch(list, key, c);
   }
 
   private static int indexedBinarySearch(List l, Object key, Comparator c) {
@@ -414,7 +416,9 @@ public class Collections {
       Object[] arr = list.toArray();
 
       // Shuffle array
-      for (int i = size; i > 1; i--) swap(arr, i - 1, rnd.nextInt(i));
+      for (int i = size; i > 1; i--) {
+        swap(arr, i - 1, rnd.nextInt(i));
+      }
 
       // Dump array back into list
       ListIterator it = list.listIterator();
@@ -494,7 +498,9 @@ public class Collections {
    */
   public static void copy(List dest, List src) {
     int srcSize = src.size();
-    if (srcSize > dest.size()) throw new IndexOutOfBoundsException("Source does not fit in dest");
+    if (srcSize > dest.size()) {
+      throw new IndexOutOfBoundsException("Source does not fit in dest");
+    }
 
     if (srcSize < COPY_THRESHOLD || (src instanceof RandomAccess && dest instanceof RandomAccess)) {
       for (int i = 0; i < srcSize; i++) dest.set(i, src.get(i));
@@ -562,7 +568,9 @@ public class Collections {
    * @see Comparable
    */
   public static Object min(Collection coll, Comparator comp) {
-    if (comp == null) return min(coll);
+    if (comp == null) {
+      return min(coll);
+    }
 
     Iterator i = coll.iterator();
     Object candidate = i.next();
@@ -629,7 +637,9 @@ public class Collections {
    * @see Comparable
    */
   public static Object max(Collection coll, Comparator comp) {
-    if (comp == null) return max(coll);
+    if (comp == null) {
+      return max(coll);
+    }
 
     Iterator i = coll.iterator();
     Object candidate = i.next();
@@ -1407,9 +1417,13 @@ public class Collections {
                     ? a
                     : (Object[])
                         java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), 0));
-        for (int i = 0; i < arr.length; i++) arr[i] = new UnmodifiableEntry((Map.Entry) arr[i]);
+        for (int i = 0; i < arr.length; i++) {
+          arr[i] = new UnmodifiableEntry((Map.Entry) arr[i]);
+        }
 
-        if (arr.length > a.length) return arr;
+        if (arr.length > a.length) {
+          return arr;
+        }
 
         System.arraycopy(arr, 0, a, 0, arr.length);
         if (a.length > arr.length) a[arr.length] = null;
@@ -1441,7 +1455,9 @@ public class Collections {
       }
 
       public boolean equals(Object o) {
-        if (o == this) return true;
+        if (o == this) {
+          return true;
+        }
 
         if (!(o instanceof Set)) return false;
         Set s = (Set) o;
@@ -2626,8 +2642,9 @@ public class Collections {
     }
 
     public Object get(int index) {
-      if (index < 0 || index >= n)
+      if (index < 0 || index >= n) {
         throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + n);
+      }
       return element;
     }
   }

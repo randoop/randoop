@@ -127,11 +127,14 @@ public final class ConstructorCall extends CallableOperation {
         .append("(");
 
     for (int i = (isNonStaticMemberClass ? 1 : 0); i < inputVars.size(); i++) {
-      if (i > (isNonStaticMemberClass ? 1 : 0)) b.append(", ");
+      if (i > (isNonStaticMemberClass ? 1 : 0)) {
+        b.append(", ");
+      }
 
       // We cast whenever the variable and input types are not identical.
-      if (!inputVars.get(i).getType().equals(inputTypes.get(i)))
+      if (!inputVars.get(i).getType().equals(inputTypes.get(i))) {
         b.append("(").append(inputTypes.get(i).getName()).append(")");
+      }
 
       String param = inputVars.get(i).getName();
 
@@ -162,7 +165,9 @@ public final class ConstructorCall extends CallableOperation {
   @Override
   public boolean equals(Object o) {
     if (o instanceof ConstructorCall) {
-      if (this == o) return true;
+      if (this == o) {
+        return true;
+      }
 
       ConstructorCall other = (ConstructorCall) o;
       return this.constructor.equals(other.constructor);

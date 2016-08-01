@@ -99,7 +99,9 @@ public class LinkedList extends AbstractSequentialList
    * @throws    NoSuchElementException if this list is empty.
    */
   public Object getFirst() {
-    if (size == 0) throw new NoSuchElementException();
+    if (size == 0) {
+      throw new NoSuchElementException();
+    }
 
     return header.next.element;
   }
@@ -111,7 +113,9 @@ public class LinkedList extends AbstractSequentialList
    * @throws    NoSuchElementException if this list is empty.
    */
   public Object getLast() {
-    if (size == 0) throw new NoSuchElementException();
+    if (size == 0) {
+      throw new NoSuchElementException();
+    }
 
     return header.previous.element;
   }
@@ -350,8 +354,9 @@ public class LinkedList extends AbstractSequentialList
    * Return the indexed entry.
    */
   private Entry entry(int index) {
-    if (index < 0 || index >= size)
+    if (index < 0 || index >= size) {
       throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+    }
     Entry e = header;
     if (index < (size >> 1)) {
       for (int i = 0; i <= index; i++) e = e.next;
@@ -452,8 +457,9 @@ public class LinkedList extends AbstractSequentialList
     private int expectedModCount = modCount;
 
     ListItr(int index) {
-      if (index < 0 || index > size)
+      if (index < 0 || index > size) {
         throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+      }
       if (index < (size >> 1)) {
         next = header.next;
         for (nextIndex = 0; nextIndex < index; nextIndex++) next = next.next;
@@ -469,7 +475,9 @@ public class LinkedList extends AbstractSequentialList
 
     public Object next() {
       checkForComodification();
-      if (nextIndex == size) throw new NoSuchElementException();
+      if (nextIndex == size) {
+        throw new NoSuchElementException();
+      }
 
       lastReturned = next;
       next = next.next;
@@ -482,7 +490,9 @@ public class LinkedList extends AbstractSequentialList
     }
 
     public Object previous() {
-      if (nextIndex == 0) throw new NoSuchElementException();
+      if (nextIndex == 0) {
+        throw new NoSuchElementException();
+      }
 
       lastReturned = next = next.previous;
       nextIndex--;
@@ -552,7 +562,9 @@ public class LinkedList extends AbstractSequentialList
   }
 
   private void remove(Entry e) {
-    if (e == header) throw new NoSuchElementException();
+    if (e == header) {
+      throw new NoSuchElementException();
+    }
 
     e.previous.next = e.next;
     e.next.previous = e.previous;
@@ -581,7 +593,9 @@ public class LinkedList extends AbstractSequentialList
     clone.modCount = 0;
 
     // Initialize clone with our elements
-    for (Entry e = header.next; e != header; e = e.next) clone.add(e.element);
+    for (Entry e = header.next; e != header; e = e.next) {
+      clone.add(e.element);
+    }
 
     return clone;
   }
@@ -623,12 +637,17 @@ public class LinkedList extends AbstractSequentialList
    * @throws NullPointerException if the specified array is null.
    */
   public Object[] toArray(Object[] a) {
-    if (a.length < size)
+    if (a.length < size) {
       a = (Object[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), size);
+    }
     int i = 0;
-    for (Entry e = header.next; e != header; e = e.next) a[i++] = e.element;
+    for (Entry e = header.next; e != header; e = e.next) {
+      a[i++] = e.element;
+    }
 
-    if (a.length > size) a[size] = null;
+    if (a.length > size) {
+      a[size] = null;
+    }
 
     return a;
   }

@@ -25,7 +25,9 @@ public final class ConstructorReflectionCode extends ReflectionCode {
   public void runReflectionCodeRaw()
       throws InstantiationException, IllegalAccessException, InvocationTargetException {
 
-    if (hasRunAlready()) throw new NotCaughtIllegalStateException("cannot run this twice " + this);
+    if (hasRunAlready()) {
+      throw new NotCaughtIllegalStateException("cannot run this twice " + this);
+    }
 
     this.setRunAlready();
 
@@ -45,8 +47,9 @@ public final class ConstructorReflectionCode extends ReflectionCode {
       this.exceptionThrown = e.getCause();
       throw e;
     } finally {
-      if (retval != null && exceptionThrown != null)
+      if (retval != null && exceptionThrown != null) {
         throw new NotCaughtIllegalStateException("cannot have both retval and exception not null");
+      }
     }
   }
 

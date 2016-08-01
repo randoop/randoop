@@ -34,7 +34,9 @@ public class BiSort {
   public static final void main(String[] args) {
     parseCmdLine(args);
 
-    if (printMsgs) System.out.println("Bisort with " + size + " values");
+    if (printMsgs) {
+      System.out.println("Bisort with " + size + " values");
+    }
 
     long start2 = System.currentTimeMillis();
     BiSortVal tree = BiSortVal.createTree(size, 12345768);
@@ -46,7 +48,9 @@ public class BiSort {
       System.out.println(sval);
     }
 
-    if (printMsgs) System.out.println("BEGINNING BITONIC SORT ALGORITHM HERE");
+    if (printMsgs) {
+      System.out.println("BEGINNING BITONIC SORT ALGORITHM HERE");
+    }
 
     long start0 = System.currentTimeMillis();
     sval = tree.bisort(sval, BiSortVal.FORWARD);

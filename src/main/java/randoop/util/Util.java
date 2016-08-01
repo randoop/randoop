@@ -110,8 +110,9 @@ public final class Util {
 
   public static String hangingParagraph(String string, int colWidth, int indentWidth) {
     if (string == null) throw new IllegalArgumentException("string cannot be null.");
-    if (indentWidth > colWidth)
+    if (indentWidth > colWidth) {
       throw new IllegalArgumentException("indentWidth cannot be greater than columnWidth");
+    }
 
     StringBuilder b = new StringBuilder();
 

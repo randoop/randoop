@@ -119,8 +119,9 @@ public class GenTests extends GenInputsAbstract {
 
     try {
       String[] nonargs = options.parse(args);
-      if (nonargs.length > 0)
+      if (nonargs.length > 0) {
         throw new ArgException("Unrecognized arguments: " + Arrays.toString(nonargs));
+      }
     } catch (ArgException ae) {
       usage("while parsing command-line arguments: %s", ae.getMessage());
     }
@@ -349,7 +350,9 @@ public class GenTests extends GenInputsAbstract {
     }
 
     /* post generation */
-    if (GenInputsAbstract.dont_output_tests) return true;
+    if (GenInputsAbstract.dont_output_tests) {
+      return true;
+    }
 
     if (!GenInputsAbstract.no_error_revealing_tests) {
       List<ExecutableSequence> errorSequences = explorer.getErrorTestSequences();

@@ -76,8 +76,9 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
    */
   @Override
   public T get(int index) {
-    if (index < 0 || index > this.totalelements - 1)
+    if (index < 0 || index > this.totalelements - 1) {
       throw new IllegalArgumentException("index must be between 0 and size()-1");
+    }
     int previousListSize = 0;
     for (int i = 0; i < this.accumulatedSize.length; i++) {
       if (index < this.accumulatedSize[i]) return this.lists.get(i).get(index - previousListSize);
@@ -88,8 +89,9 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
 
   @Override
   public SimpleList<T> getSublist(int index) {
-    if (index < 0 || index > this.totalelements - 1)
+    if (index < 0 || index > this.totalelements - 1) {
       throw new IllegalArgumentException("index must be between 0 and size()-1");
+    }
     int previousListSize = 0;
     for (int i = 0; i < this.accumulatedSize.length; i++) {
       if (index < this.accumulatedSize[i]) {

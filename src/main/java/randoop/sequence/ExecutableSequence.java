@@ -523,8 +523,9 @@ public class ExecutableSequence {
    *         returns -1.
    */
   private int getExceptionIndex(Class<?> exceptionClass) {
-    if (exceptionClass == null)
+    if (exceptionClass == null) {
       throw new IllegalArgumentException("exceptionClass<?> cannot be null");
+    }
     for (int i = 0; i < this.sequence.size(); i++)
       if ((getResult(i) instanceof ExceptionalExecution)) {
         ExceptionalExecution e = (ExceptionalExecution) getResult(i);
