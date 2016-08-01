@@ -634,7 +634,6 @@ public class RandoopSystemTest {
           }
           fail("all regression tests should pass, but " + regressionRunDesc.testsFail + " failed");
         }
-
         break;
       case NONE:
         assertThat(
