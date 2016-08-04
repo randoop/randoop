@@ -255,8 +255,6 @@ public final class MethodCall extends CallableOperation {
       throw new OperationParseException(msg);
     }
 
-    System.out.println("Looking for: " + opname + " args: " + arguments);
-
     Class<?>[] typeArguments = TypeArguments.getTypeArgumentsForString(arguments);
     Method m = null;
     String msg = "Method " + methodString + " not found: ";
