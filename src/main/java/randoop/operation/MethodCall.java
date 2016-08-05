@@ -12,7 +12,7 @@ import randoop.NormalExecution;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.MethodReflectionCode;
 import randoop.util.ReflectionExecutor;
@@ -89,9 +89,9 @@ public final class MethodCall extends CallableOperation {
    */
   @Override
   public void appendCode(
-      GeneralType declaringType,
+      Type declaringType,
       TypeTuple inputTypes,
-      GeneralType outputType,
+      Type outputType,
       List<Variable> inputVars,
       StringBuilder sb) {
 
@@ -99,7 +99,7 @@ public final class MethodCall extends CallableOperation {
     if (isStatic()) {
       sb.append(declaringType.getName().replace('$', '.'));
     } else {
-      GeneralType expectedType = inputTypes.get(0);
+      Type expectedType = inputTypes.get(0);
       if (expectedType.isPrimitive()) { // explicit cast when want primitive boxed as receiver
         sb.append("((")
             .append(expectedType.getName())
@@ -207,8 +207,7 @@ public final class MethodCall extends CallableOperation {
    *  java.util.ArrayList.add(int,java.lang.Object)
    */
   @Override
-  public String toParsableString(
-      GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
+  public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
     StringBuilder sb = new StringBuilder();
     sb.append(method.getDeclaringClass().getName()).append(".");
     sb.append(method.getName()).append("(");
@@ -247,9 +246,9 @@ public final class MethodCall extends CallableOperation {
     String arguments = signature.substring(openParPos + 1, closeParPos);
 
     String methodString = classname + "." + opname + arguments;
-    GeneralType classType;
+    Type classType;
     try {
-      classType = GeneralType.forName(classname);
+      classType = Type.forName(classname);
     } catch (ClassNotFoundException e) {
       String msg = "Class for method " + methodString + " not found: " + e;
       throw new OperationParseException(msg);

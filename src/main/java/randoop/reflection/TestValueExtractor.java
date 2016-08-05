@@ -11,7 +11,6 @@ import randoop.TestValue;
 import randoop.generation.SeedSequences;
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
-import randoop.types.PrimitiveTypes;
 
 /**
  * {@code TestValueExtractor} is a {@link ClassVisitor} that inspects the fields passed to it to
@@ -61,9 +60,11 @@ public class TestValueExtractor extends DefaultClassVisitor {
     List<Object> valueList = new ArrayList<>();
 
     Class<?> fieldType = f.getType();
-    if (PrimitiveTypes.isPrimitiveOrStringType(fieldType)
+    if (fieldType.isPrimitive()
+        || fieldType.equals(String.class)
         || (fieldType.isArray()
-            && PrimitiveTypes.isPrimitiveOrStringType(fieldType.getComponentType()))) {
+            && (fieldType.getComponentType().isPrimitive()
+                || fieldType.getComponentType().equals(String.class)))) {
 
       if (!GenInputsAbstract.noprogressdisplay) {
         printDetectedAnnotatedFieldMsg(f);

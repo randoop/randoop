@@ -10,7 +10,6 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
-import randoop.types.TypeNames;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;

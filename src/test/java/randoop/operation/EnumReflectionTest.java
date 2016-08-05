@@ -5,7 +5,6 @@ import org.junit.Test;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -32,7 +31,7 @@ import randoop.test.OperatorEnum;
 import randoop.test.PlayingCard;
 import randoop.test.SimpleEnum;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.InstantiatedType;
 import randoop.types.RandoopTypeException;
 import randoop.types.SimpleClassOrInterfaceType;
@@ -346,21 +345,21 @@ public class EnumReflectionTest {
       throws RandoopTypeException {
     ConstructorCall op = new ConstructorCall(con);
     ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(con.getDeclaringClass());
-    List<GeneralType> paramTypes = new ArrayList<>();
-    for (Type pc : con.getGenericParameterTypes()) {
-      paramTypes.add(GeneralType.forType(pc));
+    List<Type> paramTypes = new ArrayList<>();
+    for (java.lang.reflect.Type pc : con.getGenericParameterTypes()) {
+      paramTypes.add(Type.forType(pc));
     }
     return new TypedClassOperation(op, declaringType, new TypeTuple(paramTypes), declaringType);
   }
 
   private TypedClassOperation createMethodCall(Method m, ClassOrInterfaceType declaringType) {
     MethodCall op = new MethodCall(m);
-    List<GeneralType> paramTypes = new ArrayList<>();
+    List<Type> paramTypes = new ArrayList<>();
     paramTypes.add(declaringType);
-    for (Type t : m.getGenericParameterTypes()) {
-      paramTypes.add(GeneralType.forType(t));
+    for (java.lang.reflect.Type t : m.getGenericParameterTypes()) {
+      paramTypes.add(Type.forType(t));
     }
-    GeneralType outputType = GeneralType.forType(m.getGenericReturnType());
+    Type outputType = Type.forType(m.getGenericReturnType());
     return new TypedClassOperation(op, declaringType, new TypeTuple(paramTypes), outputType);
   }
 }

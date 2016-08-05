@@ -1,5 +1,10 @@
 package randoop.generation;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.sequence.ClassLiterals;
@@ -7,17 +12,11 @@ import randoop.sequence.PackageLiterals;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.GeneralType;
+import randoop.types.ConcreteTypes;
 import randoop.types.PrimitiveType;
-import randoop.types.PrimitiveTypes;
-import randoop.types.SimpleClassOrInterfaceType;
+import randoop.types.Type;
 import randoop.util.ListOfLists;
 import randoop.util.SimpleList;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * Stores and provides means to access the component sequences generated during
@@ -147,7 +146,7 @@ public class ComponentManager {
    * Removes any components sequences added so far, except for seed sequences,
    * which are preserved.
    */
-  public void clearGeneratedSequences() {
+  void clearGeneratedSequences() {
     gralComponents.clear();
     gralComponents.addAll(this.gralSeeds);
   }
@@ -155,7 +154,7 @@ public class ComponentManager {
   /*
    * @return the set of generated sequences
    */
-  public Set<Sequence> getAllGeneratedSequences() {
+  Set<Sequence> getAllGeneratedSequences() {
     return gralComponents.getAllSequences();
   }
 
@@ -170,7 +169,7 @@ public class ComponentManager {
    * @param exactMatch  the flag whether or not to use subtyping in type matching
    *@return the sequences that create values of the given type
    */
-  public SimpleList<Sequence> getSequencesForType(GeneralType cls, boolean exactMatch) {
+  SimpleList<Sequence> getSequencesForType(Type cls, boolean exactMatch) {
     return gralComponents.getSequencesForType(cls, exactMatch);
   }
 
@@ -184,15 +183,15 @@ public class ComponentManager {
    * @return the sequences that create values of the given type
    */
   @SuppressWarnings("unchecked")
-  public SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i) {
+  SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i) {
 
-    GeneralType neededType = operation.getInputTypes().get(i);
+    Type neededType = operation.getInputTypes().get(i);
 
     SimpleList<Sequence> ret = gralComponents.getSequencesForType(neededType, false);
     if (operation instanceof TypedClassOperation) {
       if (classLiterals != null || packageLiterals != null) {
 
-        GeneralType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+        Type declaringCls = ((TypedClassOperation) operation).getDeclaringType();
         if (declaringCls != null) {
           if (classLiterals != null) {
             SimpleList<Sequence> sl =
@@ -224,7 +223,7 @@ public class ComponentManager {
    *
    * @return the sequences for primitive values
    */
-  public Set<Sequence> getAllPrimitiveSequences() {
+  Set<Sequence> getAllPrimitiveSequences() {
 
     Set<Sequence> ret = new LinkedHashSet<>();
     if (classLiterals != null) {
@@ -233,15 +232,10 @@ public class ComponentManager {
     if (packageLiterals != null) {
       ret.addAll(packageLiterals.getAllSequences());
     }
-    for (Class<?> c : PrimitiveTypes.getPrimitiveOrStringTypes()) {
-      GeneralType type;
-      if (c.isPrimitive()) {
-        type = new PrimitiveType(c);
-      } else {
-        type = new SimpleClassOrInterfaceType(c);
-      }
+    for (PrimitiveType type : ConcreteTypes.getPrimitiveTypes()) {
       ret.addAll(gralComponents.getSequencesForType(type, true).toJDKList());
     }
+    ret.addAll(gralComponents.getSequencesForType(ConcreteTypes.STRING_TYPE, true).toJDKList());
     return ret;
   }
 }

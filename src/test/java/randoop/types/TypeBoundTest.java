@@ -27,8 +27,9 @@ public class TypeBoundTest {
 
   @Test
   public void testEnumBound() {
-    GeneralType enumType = GeneralType.forClass(Enum.class);
-    List<TypeVariable> typeParameters = enumType.getTypeParameters();
+    Type enumType = Type.forClass(Enum.class);
+    assert enumType.isReferenceType() : "enum should be reference type";
+    List<TypeVariable> typeParameters = ((ReferenceType) enumType).getTypeParameters();
     assert typeParameters.size() == 1 : "Enum only has one type parameter";
     ReferenceType candidateType = ClassOrInterfaceType.forClass(Word.class);
     checkBound(typeParameters.get(0), candidateType);

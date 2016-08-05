@@ -21,7 +21,7 @@ import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.PrimitiveType;
 import randoop.types.SimpleClassOrInterfaceType;
 import randoop.types.TypeTuple;
@@ -59,8 +59,8 @@ public class FieldSetterTest {
     try {
       Field field = c.getField("fourField");
       AccessibleField f = new AccessibleField(field, declaringType);
-      GeneralType fieldType = new PrimitiveType(field.getType());
-      List<GeneralType> setInputTypeList = new ArrayList<>();
+      Type fieldType = new PrimitiveType(field.getType());
+      List<Type> setInputTypeList = new ArrayList<>();
       setInputTypeList.add(fieldType);
       FieldSet setOp = new FieldSet(f);
       TypedOperation op =
@@ -116,8 +116,8 @@ public class FieldSetterTest {
     try {
       Field field = c.getField("oneField");
       AccessibleField f = new AccessibleField(field, declaringType);
-      GeneralType fieldType = new SimpleClassOrInterfaceType(field.getDeclaringClass());
-      List<GeneralType> setInputTypeList = new ArrayList<>();
+      Type fieldType = new SimpleClassOrInterfaceType(field.getDeclaringClass());
+      List<Type> setInputTypeList = new ArrayList<>();
       setInputTypeList.add(declaringType);
       setInputTypeList.add(fieldType);
       FieldSet setOp = new FieldSet(f);

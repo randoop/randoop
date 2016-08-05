@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.Match;
 import randoop.util.IMultiMap;
 import randoop.util.ISimpleSet;
@@ -22,12 +22,12 @@ public class SubTypeSet {
   // The set of classes that have sequences. I.e. membership in this
   // set means that the SequenceCollection has one or more sequences that
   // create a value of the member type.
-  public ISimpleSet<GeneralType> typesWithsequences;
+  public ISimpleSet<Type> typesWithsequences;
 
   // Maps a type to the list of subtypes that have sequences.
   // The list for a given type can be empty, which means that there
   // are no subtypes with sequences for the given type.
-  private IMultiMap<GeneralType, GeneralType> subTypesWithsequences;
+  private IMultiMap<Type, Type> subTypesWithsequences;
 
   private boolean reversible;
 
@@ -47,45 +47,45 @@ public class SubTypeSet {
     if (!reversible) {
       throw new RuntimeException("Operation not supported.");
     }
-    ((ReversibleMultiMap<GeneralType, GeneralType>) subTypesWithsequences).mark();
-    ((ReversibleSet<GeneralType>) typesWithsequences).mark();
+    ((ReversibleMultiMap<Type, Type>) subTypesWithsequences).mark();
+    ((ReversibleSet<Type>) typesWithsequences).mark();
   }
 
   public void undoLastStep() {
     if (!reversible) {
       throw new RuntimeException("Operation not supported.");
     }
-    ((ReversibleMultiMap<GeneralType, GeneralType>) subTypesWithsequences).undoToLastMark();
-    ((ReversibleSet<GeneralType>) typesWithsequences).undoToLastMark();
+    ((ReversibleMultiMap<Type, Type>) subTypesWithsequences).undoToLastMark();
+    ((ReversibleSet<Type>) typesWithsequences).undoToLastMark();
   }
 
-  public void add(GeneralType c) {
+  public void add(Type c) {
     if (c == null) throw new IllegalArgumentException("c cannot be null.");
     if (typesWithsequences.contains(c)) return;
     typesWithsequences.add(c);
 
     // Update existing entries.
-    for (GeneralType cls : subTypesWithsequences.keySet()) {
+    for (Type cls : subTypesWithsequences.keySet()) {
       if (cls.isAssignableFrom(c)) {
         if (!subTypesWithsequences.getValues(cls).contains(c)) subTypesWithsequences.add(cls, c);
       }
     }
   }
 
-  private void addQueryType(GeneralType type) {
+  private void addQueryType(Type type) {
     if (type == null) throw new IllegalArgumentException("c cannot be null.");
-    Set<GeneralType> keySet = subTypesWithsequences.keySet();
+    Set<Type> keySet = subTypesWithsequences.keySet();
     if (keySet.contains(type)) {
       return;
     }
 
-    Set<GeneralType> compatibleTypesWithSequences = new LinkedHashSet<>();
-    for (GeneralType t : typesWithsequences.getElements()) {
+    Set<Type> compatibleTypesWithSequences = new LinkedHashSet<>();
+    for (Type t : typesWithsequences.getElements()) {
       if (type.isAssignableFrom(t)) {
         compatibleTypesWithSequences.add(t);
       }
     }
-    for (GeneralType cls : compatibleTypesWithSequences) {
+    for (Type cls : compatibleTypesWithSequences) {
       subTypesWithsequences.add(type, cls);
     }
   }
@@ -97,7 +97,7 @@ public class SubTypeSet {
    * @param type  the query type
    * @return the set of types that can be used in place of the query type
    */
-  public Set<GeneralType> getMatches(GeneralType type) {
+  public Set<Type> getMatches(Type type) {
     if (!subTypesWithsequences.keySet().contains(type)) {
       addQueryType(type);
     }
@@ -121,7 +121,7 @@ public class SubTypeSet {
    *   type, or {@code match=COMPATIBLE_TYPE} and there is a sequence with a
    *   subtype of the query type as its output type.
    */
-  public boolean containsAssignableType(GeneralType type, Match match) {
+  public boolean containsAssignableType(Type type, Match match) {
     if (!subTypesWithsequences.keySet().contains(type)) {
       addQueryType(type);
     }
@@ -134,7 +134,7 @@ public class SubTypeSet {
     return typesWithsequences.size();
   }
 
-  public Set<GeneralType> getElements() {
+  public Set<Type> getElements() {
     return typesWithsequences.getElements();
   }
 }

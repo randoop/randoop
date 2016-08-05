@@ -1,6 +1,6 @@
 package randoop.operation;
 
-import randoop.types.TypeNames;
+import randoop.reflection.TypeNames;
 
 /**
  * TypeArguments provides static methods for creating and recognizing strings

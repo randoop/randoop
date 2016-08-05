@@ -27,21 +27,30 @@ class NullReferenceType extends ReferenceType {
   }
 
   @Override
-  public String getName() {
-    return "NullType";
-  }
-
-  @Override
   public ReferenceType apply(Substitution<ReferenceType> substitution) {
     return this;
   }
 
   @Override
-  public boolean isSubtypeOf(GeneralType otherType) {
-    return !otherType.equals(ConcreteTypes.VOID_TYPE) && otherType.isReferenceType();
+  public String getName() {
+    return "NullType";
   }
 
   static NullReferenceType getNullType() {
     return value;
+  }
+
+  /**
+   * Indicate whether this type has a wildcard either as or in a type argument.
+   *
+   * @return true if this type has a wildcard, and false otherwise
+   */
+  public boolean hasWildcard() {
+    return false;
+  }
+
+  @Override
+  public boolean isSubtypeOf(Type otherType) {
+    return !otherType.equals(ConcreteTypes.VOID_TYPE) && otherType.isReferenceType();
   }
 }

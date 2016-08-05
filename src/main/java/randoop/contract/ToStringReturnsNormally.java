@@ -5,7 +5,7 @@ import java.util.List;
 
 import randoop.Globals;
 import randoop.types.ConcreteTypes;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
@@ -42,7 +42,7 @@ public final class ToStringReturnsNormally implements ObjectContract {
 
   @Override
   public TypeTuple getInputTypes() {
-    List<GeneralType> inputTypes = new ArrayList<>();
+    List<Type> inputTypes = new ArrayList<>();
     inputTypes.add(ConcreteTypes.OBJECT_TYPE);
     return new TypeTuple(inputTypes);
   }

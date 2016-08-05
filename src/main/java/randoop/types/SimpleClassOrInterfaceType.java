@@ -1,7 +1,6 @@
 package randoop.types;
 
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +52,36 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
     return this.getName();
   }
 
+  @Override
+  public SimpleClassOrInterfaceType apply(Substitution<ReferenceType> substitution) {
+    return this;
+  }
+
+  /**
+   * {@inheritDoc}
+   * If this is a rawtype then returns interfaces as rawtypes.
+   */
+  @Override
+  public List<ClassOrInterfaceType> getInterfaces() {
+    if (this.isRawtype()) {
+      return this.getRawTypeInterfaces();
+    }
+    return getGenericInterfaces();
+  }
+
+  /**
+   * Returns the list of interfaces for this class.
+   *
+   * @return the list of interfaces for this class or interface type
+   */
+  private List<ClassOrInterfaceType> getGenericInterfaces() {
+    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
+    for (java.lang.reflect.Type type : runtimeClass.getGenericInterfaces()) {
+      interfaces.add(ClassOrInterfaceType.forType(type));
+    }
+    return interfaces;
+  }
+
   /**
    * {@inheritDoc}
    * @return the fully-qualified name of this type
@@ -60,6 +89,19 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
   @Override
   public String getName() {
     return runtimeClass.getCanonicalName();
+  }
+
+  /**
+   * Returns the list of rawtype interfaces for this type.
+   *
+   * @return the list of rawtypes for the interfaces of this type
+   */
+  private List<ClassOrInterfaceType> getRawTypeInterfaces() {
+    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
+    for (Class<?> c : runtimeClass.getInterfaces()) {
+      interfaces.add(new SimpleClassOrInterfaceType(c));
+    }
+    return interfaces;
   }
 
   /**
@@ -72,53 +114,36 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
   }
 
   @Override
-  public boolean isAbstract() {
-    return Modifier.isAbstract(Modifier.classModifiers() & runtimeClass.getModifiers());
-  }
-
-  @Override
-  public boolean isMemberClass() {
-    return runtimeClass.isMemberClass();
-  }
-
-  @Override
-  public boolean isEnum() {
-    return runtimeClass.isEnum();
-  }
-
-  @Override
-  public boolean isInterface() {
-    return runtimeClass.isInterface();
-  }
-
-  @Override
-  public boolean isBoxedPrimitive() {
-    return PrimitiveTypes.isBoxedPrimitiveTypeOrString(runtimeClass)
-        && !this.equals(ConcreteTypes.STRING_TYPE);
-  }
-
-  @Override
-  public boolean isString() {
-    return this.equals(ConcreteTypes.STRING_TYPE);
+  public ClassOrInterfaceType getSuperclass() {
+    if (this.equals(ConcreteTypes.OBJECT_TYPE)) {
+      return this;
+    }
+    if (this.isRawtype()) {
+      Class<?> superclass = this.runtimeClass.getSuperclass();
+      if (superclass != null) {
+        return new SimpleClassOrInterfaceType(superclass);
+      }
+    } else {
+      java.lang.reflect.Type supertype = this.runtimeClass.getGenericSuperclass();
+      if (supertype != null) {
+        return ClassOrInterfaceType.forType(supertype);
+      }
+    }
+    return null;
   }
 
   /**
-   * {@inheritDoc}
-   * @return true if the runtime type corresponds to a generic, false otherwise
+   * Indicate whether this type has a wildcard either as or in a type argument.
+   *
+   * @return true if this type has a wildcard, and false otherwise
    */
-  @Override
-  public boolean isRawtype() {
-    return runtimeClass.getTypeParameters().length > 0;
+  public boolean hasWildcard() {
+    return false;
   }
 
   @Override
-  public boolean isVoid() {
-    return runtimeClass.equals(void.class);
-  }
-
-  @Override
-  public SimpleClassOrInterfaceType apply(Substitution<ReferenceType> substitution) {
-    return this;
+  public boolean isAbstract() {
+    return Modifier.isAbstract(Modifier.classModifiers() & runtimeClass.getModifiers());
   }
 
   /**
@@ -127,7 +152,7 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
    * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.7">boxing conversion (section 5.1.7)</a>
    */
   @Override
-  public boolean isAssignableFrom(GeneralType sourceType) {
+  public boolean isAssignableFrom(Type sourceType) {
     // check identity and reference widening
     if (super.isAssignableFrom(sourceType)) {
       return true;
@@ -140,7 +165,55 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
   }
 
   @Override
-  public boolean isSubtypeOf(GeneralType otherType) {
+  public boolean isBoxedPrimitive() {
+    return PrimitiveTypes.isBoxedPrimitive(this.getRuntimeClass());
+  }
+
+  @Override
+  public boolean isEnum() {
+    return runtimeClass.isEnum();
+  }
+
+  /**
+   * {@inheritDoc}
+   * @return false, since a simple class is not an instantiation of any generic class
+   */
+  @Override
+  public boolean isInstantiationOf(GenericClassType genericClassType) {
+    return false;
+  }
+
+  @Override
+  public boolean isInterface() {
+    return runtimeClass.isInterface();
+  }
+
+  @Override
+  public boolean isMemberClass() {
+    return runtimeClass.isMemberClass();
+  }
+
+  /**
+   * {@inheritDoc}
+   * @return true if the runtime type corresponds to a generic, false otherwise
+   */
+  @Override
+  public boolean isRawtype() {
+    return runtimeClass.getTypeParameters().length > 0;
+  }
+
+  @Override
+  public boolean isStatic() {
+    return Modifier.isStatic(runtimeClass.getModifiers() & Modifier.classModifiers());
+  }
+
+  @Override
+  public boolean isString() {
+    return this.equals(ConcreteTypes.STRING_TYPE);
+  }
+
+  @Override
+  public boolean isSubtypeOf(Type otherType) {
     if (super.isSubtypeOf(otherType)) {
       return true;
     }
@@ -169,74 +242,8 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
   }
 
   @Override
-  public ClassOrInterfaceType getSuperclass() {
-    if (this.equals(ConcreteTypes.OBJECT_TYPE)) {
-      return this;
-    }
-    if (this.isRawtype()) {
-      Class<?> superclass = this.runtimeClass.getSuperclass();
-      if (superclass != null) {
-        return new SimpleClassOrInterfaceType(superclass);
-      }
-    } else {
-      Type supertype = this.runtimeClass.getGenericSuperclass();
-      if (supertype != null) {
-        return ClassOrInterfaceType.forType(supertype);
-      }
-    }
-    return null;
-  }
-
-  /**
-   * {@inheritDoc}
-   * If this is a rawtype then returns interfaces as rawtypes.
-   */
-  @Override
-  public List<ClassOrInterfaceType> getInterfaces() {
-    if (this.isRawtype()) {
-      return this.getRawTypeInterfaces();
-    }
-    return getGenericInterfaces();
-  }
-
-  /**
-   * {@inheritDoc}
-   * @return false, since a simple class is not an instantiation of any generic class
-   */
-  @Override
-  public boolean isInstantiationOf(GenericClassType genericClassType) {
-    return false;
-  }
-
-  @Override
-  public boolean isStatic() {
-    return Modifier.isStatic(runtimeClass.getModifiers() & Modifier.classModifiers());
-  }
-
-  /**
-   * Returns the list of interfaces for this class.
-   *
-   * @return the list of interfaces for this class or interface type
-   */
-  private List<ClassOrInterfaceType> getGenericInterfaces() {
-    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
-    for (Type type : runtimeClass.getGenericInterfaces()) {
-      interfaces.add(ClassOrInterfaceType.forType(type));
-    }
-    return interfaces;
-  }
-
-  /**
-   * Returns the list of rawtype interfaces for this type.
-   *
-   * @return the list of rawtypes for the interfaces of this type
-   */
-  private List<ClassOrInterfaceType> getRawTypeInterfaces() {
-    List<ClassOrInterfaceType> interfaces = new ArrayList<>();
-    for (Class<?> c : runtimeClass.getInterfaces()) {
-      interfaces.add(new SimpleClassOrInterfaceType(c));
-    }
-    return interfaces;
+  public boolean isVoid() {
+    return runtimeClass.equals(void.class);
   }
 
   @Override

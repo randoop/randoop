@@ -59,9 +59,8 @@ class ExplicitTypeVariable extends TypeVariable {
     return variable.getName();
   }
 
-  @Override
-  public boolean isGeneric() {
-    return true;
+  java.lang.reflect.TypeVariable<?> getReflectionTypeVariable() {
+    return this.variable;
   }
 
   @Override
@@ -72,7 +71,8 @@ class ExplicitTypeVariable extends TypeVariable {
     return paramList;
   }
 
-  java.lang.reflect.TypeVariable<?> getReflectionTypeVariable() {
-    return this.variable;
+  @Override
+  public boolean isGeneric() {
+    return true;
   }
 }

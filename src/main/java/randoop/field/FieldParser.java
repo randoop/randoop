@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 
 import randoop.operation.OperationParseException;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 
 /**
  * Recognizes a string representation of a field as part of parsing an
@@ -31,7 +31,7 @@ public class FieldParser {
     String errorPrefix = "Error when parsing field " + descr + ".";
     ClassOrInterfaceType classType;
     try {
-      classType = (ClassOrInterfaceType) GeneralType.forName(classname);
+      classType = (ClassOrInterfaceType) Type.forName(classname);
     } catch (ClassNotFoundException e) {
       String msg = errorPrefix + " Class for field " + descr + " not found: " + e.getMessage();
       throw new OperationParseException(msg);

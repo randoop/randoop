@@ -15,7 +15,7 @@ import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
@@ -106,9 +106,9 @@ public class FieldSet extends CallableOperation {
    */
   @Override
   public void appendCode(
-      GeneralType declaringType,
+      Type declaringType,
       TypeTuple inputTypes,
-      GeneralType outputType,
+      Type outputType,
       List<Variable> inputVars,
       StringBuilder b) {
 
@@ -136,8 +136,7 @@ public class FieldSet extends CallableOperation {
    * @return the parsable string descriptor for this setter
    */
   @Override
-  public String toParsableString(
-      GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
+  public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
     return declaringType.getName() + ".<set>(" + field.getName() + ")";
   }
 
@@ -175,14 +174,14 @@ public class FieldSet extends CallableOperation {
 
     AccessibleField accessibleField = FieldParser.parse(descr, classname, fieldname);
     ClassOrInterfaceType classType = accessibleField.getDeclaringType();
-    GeneralType fieldType;
-    fieldType = GeneralType.forType(accessibleField.getRawField().getGenericType());
+    Type fieldType;
+    fieldType = Type.forType(accessibleField.getRawField().getGenericType());
 
     if (accessibleField.isFinal()) {
       throw new OperationParseException(
           "Cannot create setter for final field " + classname + "." + opname);
     }
-    List<GeneralType> setInputTypeList = new ArrayList<>();
+    List<Type> setInputTypeList = new ArrayList<>();
     if (!accessibleField.isStatic()) {
       setInputTypeList.add(classType);
     }

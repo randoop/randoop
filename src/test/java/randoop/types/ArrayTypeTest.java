@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import org.junit.Test;
@@ -16,21 +15,19 @@ public class ArrayTypeTest {
   @Test
   public void testAssignability() {
     ArrayList<String>[] al = new ArrayList[] {};
-    GeneralType intArrType = ArrayType.ofElementType(new PrimitiveType(int.class));
-    GeneralType shortArrType = ArrayType.ofElementType(new PrimitiveType(short.class));
-    GeneralType strALArrType =
+    Type intArrType = ArrayType.ofElementType(new PrimitiveType(int.class));
+    Type shortArrType = ArrayType.ofElementType(new PrimitiveType(short.class));
+    Type strALArrType =
         ArrayType.ofElementType(
             GenericClassType.forClass(ArrayList.class)
                 .instantiate(new SimpleClassOrInterfaceType(String.class)));
-    GeneralType intALArrType =
+    Type intALArrType =
         ArrayType.ofElementType(
             GenericClassType.forClass(ArrayList.class)
                 .instantiate(new SimpleClassOrInterfaceType(Integer.class)));
-    GeneralType alArrType =
-        ArrayType.ofElementType(new SimpleClassOrInterfaceType(ArrayList.class));
-    GeneralType objArrType = ArrayType.ofElementType(new SimpleClassOrInterfaceType(Object.class));
-    GeneralType intBoxArrType =
-        ArrayType.ofElementType(new SimpleClassOrInterfaceType(Integer.class));
+    Type alArrType = ArrayType.ofElementType(new SimpleClassOrInterfaceType(ArrayList.class));
+    Type objArrType = ArrayType.ofElementType(new SimpleClassOrInterfaceType(Object.class));
+    Type intBoxArrType = ArrayType.ofElementType(new SimpleClassOrInterfaceType(Integer.class));
 
     assertTrue("can assign array of same element type", intArrType.isAssignableFrom(intArrType));
     assertTrue(
@@ -50,14 +47,13 @@ public class ArrayTypeTest {
 
   @Test
   public void testNames() {
-    GeneralType intArrType = ArrayType.ofElementType(new PrimitiveType(int.class));
-    GeneralType strArrType = ArrayType.ofElementType(new SimpleClassOrInterfaceType(String.class));
-    GeneralType intALArrType =
+    Type intArrType = ArrayType.ofElementType(new PrimitiveType(int.class));
+    Type strArrType = ArrayType.ofElementType(new SimpleClassOrInterfaceType(String.class));
+    Type intALArrType =
         ArrayType.ofElementType(
             GenericClassType.forClass(ArrayList.class)
                 .instantiate(new SimpleClassOrInterfaceType(Integer.class)));
-    GeneralType alArrType =
-        ArrayType.ofElementType(new SimpleClassOrInterfaceType(ArrayList.class));
+    Type alArrType = ArrayType.ofElementType(new SimpleClassOrInterfaceType(ArrayList.class));
 
     assertEquals("type name", "int[]", intArrType.getName());
     assertEquals("type name", "java.lang.String[]", strArrType.getName());
@@ -70,8 +66,8 @@ public class ArrayTypeTest {
     Class<?> c = ArrayHarvest.class;
 
     Method m = null;
-    Type t;
-    randoop.types.GeneralType rt;
+    java.lang.reflect.Type t;
+    Type rt;
 
     try {
       m = c.getDeclaredMethod("genericArrayArg1");
@@ -79,7 +75,7 @@ public class ArrayTypeTest {
       fail("could not get method");
     }
     t = m.getGenericReturnType();
-    rt = GeneralType.forType(t);
+    rt = Type.forType(t);
     assertTrue("should be generic: " + rt, rt.isGeneric());
     assertFalse("should not be an object", rt.isObject());
 
@@ -89,7 +85,7 @@ public class ArrayTypeTest {
       fail("could not get method");
     }
     t = m.getGenericReturnType();
-    rt = GeneralType.forType(t);
+    rt = Type.forType(t);
     assertTrue("should be generic: " + rt, rt.isGeneric());
     assertFalse("should not be an object", rt.isObject());
 
@@ -99,7 +95,7 @@ public class ArrayTypeTest {
       fail("could not get method");
     }
     t = m.getGenericReturnType();
-    rt = GeneralType.forType(t);
+    rt = Type.forType(t);
     assertTrue("should not be generic: " + rt, !rt.isGeneric());
     assertFalse("should not be an object", rt.isObject());
 
@@ -109,7 +105,7 @@ public class ArrayTypeTest {
       fail("could not get method");
     }
     t = m.getGenericReturnType();
-    rt = GeneralType.forType(t);
+    rt = Type.forType(t);
     assertTrue("should be generic: " + rt, !rt.isGeneric());
     assertFalse("should not be an object", rt.isObject());
   }

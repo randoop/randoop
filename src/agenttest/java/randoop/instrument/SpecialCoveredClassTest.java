@@ -28,8 +28,8 @@ import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
 import randoop.test.TestCheckGenerator;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.GeneralType;
-import randoop.types.TypeNames;
+import randoop.types.Type;
+import randoop.reflection.TypeNames;
 import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.Predicate;
@@ -98,7 +98,7 @@ public class SpecialCoveredClassTest {
 
     // 2 classes plus Object
     assertEquals("should have classes", 3, classes.size());
-    for (GeneralType c : classes) {
+    for (Type c : classes) {
       assertTrue("should not be interface: " + c.getName(), !c.isInterface());
     }
     //
@@ -145,7 +145,7 @@ public class SpecialCoveredClassTest {
     testGenerator.addTestPredicate(isOutputTest);
     ContractSet contracts = operationModel.getContracts();
     Set<TypedOperation> excludeAsObservers = new LinkedHashSet<>();
-    MultiMap<GeneralType, TypedOperation> observerMap = new MultiMap<>();
+    MultiMap<Type, TypedOperation> observerMap = new MultiMap<>();
     TestCheckGenerator checkGenerator =
         genTests.createTestCheckGenerator(visibility, contracts, observerMap, excludeAsObservers);
     testGenerator.addTestCheckGenerator(checkGenerator);
@@ -176,9 +176,9 @@ public class SpecialCoveredClassTest {
       }
     }
 
-    GeneralType it = null;
+    Type it = null;
     try {
-      it = GeneralType.forName("randoop.instrument.testcase.ImplementorOfTarget");
+      it = Type.forName("randoop.instrument.testcase.ImplementorOfTarget");
     } catch (ClassNotFoundException e) {
       fail("cannot find implementor class " + e);
     }

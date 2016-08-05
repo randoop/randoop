@@ -7,14 +7,13 @@ import java.util.List;
 import randoop.ExecutionOutcome;
 import randoop.Globals;
 import randoop.operation.CallableOperation;
-import randoop.operation.TypedClassOperation;
-import randoop.operation.TypedOperation;
 import randoop.operation.Operation;
 import randoop.operation.OperationParser;
+import randoop.operation.TypedClassOperation;
+import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence.RelativeNegativeIndex;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
-import randoop.types.PrimitiveTypes;
 
 /**
  * Statement represents a statement involving an operation (or term), and the
@@ -93,7 +92,7 @@ public final class Statement {
     return java.util.Objects.hash(operation, inputs);
   }
 
-  public GeneralType getOutputType() {
+  public Type getOutputType() {
     return operation.getOutputType();
   }
 
@@ -114,7 +113,7 @@ public final class Statement {
    *          the {@code StringBuilder} to which code text is appended.
    */
   public void appendCode(Variable variable, List<Variable> inputs, StringBuilder b) {
-    GeneralType type = operation.getOutputType();
+    Type type = operation.getOutputType();
     if (!type.isVoid()) {
       String typeName = type.getName();
       b.append(typeName);
@@ -185,7 +184,7 @@ public final class Statement {
    *
    * @return result of getDeclaringClass for corresponding statement
    */
-  public GeneralType getDeclaringClass() {
+  public Type getDeclaringClass() {
     if (operation instanceof TypedClassOperation) {
       return ((TypedClassOperation) operation).getDeclaringType();
     }
@@ -235,7 +234,7 @@ public final class Statement {
   // disambiguation is truly needed.)
   public String getShortForm() {
     if (isPrimitiveInitialization() && !isNullInitialization()) {
-      return PrimitiveTypes.toCodeString(operation.getValue());
+      return Value.toCodeString(operation.getValue());
     }
     return null;
   }

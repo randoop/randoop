@@ -3,7 +3,7 @@ package randoop.sequence;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.InstantiatedType;
 import randoop.types.ReferenceArgument;
 import randoop.types.TypeArgument;
@@ -29,7 +29,7 @@ class VariableRenamer {
    * @param type  the type to use as base of variable name
    * @return a variable name based on its type
    */
-  static String getVariableName(GeneralType type) {
+  static String getVariableName(Type type) {
 
     if (type.isVoid()) {
       return "void";

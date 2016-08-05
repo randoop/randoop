@@ -58,72 +58,15 @@ class IntersectionTypeBound extends ParameterBound {
 
   /**
    * {@inheritDoc}
-   * @return true if the argument type satisfies all of the bounds in this
-   * intersection type bound.
+   * @return this bound with the substitution applied to all member bounds
    */
   @Override
-  public boolean isUpperBound(GeneralType argType, Substitution<ReferenceType> subst) {
-    for (ParameterBound b : boundList) {
-      if (!b.isUpperBound(argType, subst)) {
-        return false;
-      }
+  public IntersectionTypeBound apply(Substitution<ReferenceType> substitution) {
+    List<ParameterBound> bounds = new ArrayList<>();
+    for (ParameterBound bound : this.boundList) {
+      bounds.add(bound.apply(substitution));
     }
-    return true;
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * @return true if the argument bound has all of the member bounds of this object as an upper bound.
-   */
-  @Override
-  boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
-    for (ParameterBound b : boundList) {
-      if (!b.isUpperBound(bound, substitution)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
-   * {@inheritDoc}
-   * @return true if the argument type has all of types of the member bounds of this object as an upper bound.
-   */
-  @Override
-  public boolean isLowerBound(GeneralType otherType, Substitution<ReferenceType> subst) {
-    for (ParameterBound b : boundList) {
-      if (!b.isLowerBound(otherType, subst)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
-   * {@inheritDoc}
-   * This method should never be tested for {@link IntersectionTypeBound}.
-   * Will fail if assertions are enabled.
-   * @return false, always
-   */
-  @Override
-  public boolean isSubtypeOf(ParameterBound boundType) {
-    assert false : "intersection type bound isSubTypeOf not implemented";
-    return false;
-  }
-
-  /**
-   * {@inheritDoc}
-   * @return true if any type in the intersection type bound has a wildcard argument, false otherwise
-   */
-  @Override
-  boolean hasWildcard() {
-    for (ParameterBound b : boundList) {
-      if (b.hasWildcard()) {
-        return true;
-      }
-    }
-    return false;
+    return new IntersectionTypeBound(bounds);
   }
 
   /**
@@ -154,14 +97,71 @@ class IntersectionTypeBound extends ParameterBound {
 
   /**
    * {@inheritDoc}
-   * @return this bound with the substitution applied to all member bounds
+   * @return true if any type in the intersection type bound has a wildcard argument, false otherwise
    */
   @Override
-  public IntersectionTypeBound apply(Substitution<ReferenceType> substitution) {
-    List<ParameterBound> bounds = new ArrayList<>();
-    for (ParameterBound bound : this.boundList) {
-      bounds.add(bound.apply(substitution));
+  boolean hasWildcard() {
+    for (ParameterBound b : boundList) {
+      if (b.hasWildcard()) {
+        return true;
+      }
     }
-    return new IntersectionTypeBound(bounds);
+    return false;
+  }
+
+  /**
+   * {@inheritDoc}
+   * @return true if the argument type has all of types of the member bounds of this object as an upper bound.
+   */
+  @Override
+  public boolean isLowerBound(Type otherType, Substitution<ReferenceType> subst) {
+    for (ParameterBound b : boundList) {
+      if (!b.isLowerBound(otherType, subst)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   * This method should never be tested for {@link IntersectionTypeBound}.
+   * Will fail if assertions are enabled.
+   * @return false, always
+   */
+  @Override
+  public boolean isSubtypeOf(ParameterBound boundType) {
+    assert false : "intersection type bound isSubTypeOf not implemented";
+    return false;
+  }
+
+  /**
+   * {@inheritDoc}
+   * @return true if the argument type satisfies all of the bounds in this
+   * intersection type bound.
+   */
+  @Override
+  public boolean isUpperBound(Type argType, Substitution<ReferenceType> subst) {
+    for (ParameterBound b : boundList) {
+      if (!b.isUpperBound(argType, subst)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @return true if the argument bound has all of the member bounds of this object as an upper bound.
+   */
+  @Override
+  boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
+    for (ParameterBound b : boundList) {
+      if (!b.isUpperBound(bound, substitution)) {
+        return false;
+      }
+    }
+    return true;
   }
 }

@@ -1,86 +1,19 @@
 package randoop.types;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a reference type defined in JLS Section 4.3
+ * Represents a reference type defined in
+ * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.3">JLS Section 4.3</a>
  * <pre>
  *   ReferenceType:
  *     ClassOrInterfaceType
  *     TypeVariable
  *     ArrayType
  * </pre>
- *
- * @see ClassOrInterfaceType
- * @see TypeVariable
- * @see ArrayType
  */
-public abstract class ReferenceType extends GeneralType {
-
-  @Override
-  public abstract ReferenceType apply(Substitution<ReferenceType> substitution);
-
-  /**
-   * {@inheritDoc}
-   * <p>
-   * For {@link ReferenceType}, checks for widening reference conversion.
-   * See <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.5">section 5.1.5 of JLS of JavaSE 8</a>
-   * for details.
-   * </p>
-   */
-  public boolean isAssignableFrom(GeneralType sourceType) {
-    return super.isAssignableFrom(sourceType)
-        || (sourceType.isReferenceType() && sourceType.isSubtypeOf(this));
-  }
-
-  /**
-   * Indicates whether this type is a capture type variable as constructed by {@link InstantiatedType#applyCaptureConversion()}.
-   * A capture type variable can only occur as a type argument in an {@link InstantiatedType}
-   * constructed this way.
-   *
-   * @return true if this type is a capture type variable, false otherwise
-   */
-  boolean isCaptureVariable() {
-    return false;
-  }
-
-  /**
-   * {@inheritDoc}
-   * @return true since this is a primitive type
-   */
-  @Override
-  public boolean isReferenceType() {
-    return true;
-  }
-
-  /**
-   * {@inheritDoc}
-   * @return true, if {@code otherType} is {@code Object}, false otherwise
-   */
-  @Override
-  public boolean isSubtypeOf(GeneralType otherType) {
-    if (otherType == null) {
-      throw new IllegalArgumentException("type may not be null");
-    }
-
-    return super.isSubtypeOf(otherType) || otherType.isObject();
-  }
-
-  /**
-   * {@inheritDoc}
-   * Provides the default for reference type objects, which is the {@code Object}
-   * type.
-   * (Note that this is different behavior than in reflection classes, where {@code null} is
-   * returned because {@code Object} has no superclass.)
-   *
-   * @return the {@code Object} class type
-   */
-  @Override
-  public ReferenceType getSuperclass() {
-    return ConcreteTypes.OBJECT_TYPE;
-  }
+public abstract class ReferenceType extends Type {
 
   /**
    * Returns a {@code ReferenceType} object for the given {@code Class} object.
@@ -117,7 +50,7 @@ public abstract class ReferenceType extends GeneralType {
    * @param type  the type reference
    * @return the {@code ReferenceType} for the given {@code Type}
    */
-  public static ReferenceType forType(Type type) {
+  public static ReferenceType forType(java.lang.reflect.Type type) {
     if (type instanceof java.lang.reflect.GenericArrayType) {
       return ArrayType.forType(type);
     }
@@ -133,8 +66,51 @@ public abstract class ReferenceType extends GeneralType {
     return ClassOrInterfaceType.forType(type);
   }
 
+  @Override
+  public abstract ReferenceType apply(Substitution<ReferenceType> substitution);
+
+  @Override
   public ReferenceType applyCaptureConversion() {
     return this;
+  }
+
+  /**
+   * Returns the list of type parameters for this type.
+   * Allows the construction of substitutions to instantiate a generic type
+   * such as a generic array type {@code E[]}, or class type in a generic
+   * {@link randoop.operation.TypedClassOperation}.
+   * (This is necessary because the operation class does not capture the
+   * fact that the underlying method/constructor is generic.)
+   *
+   * @return the type parameters for this type
+   */
+  public List<TypeVariable> getTypeParameters() {
+    return new ArrayList<>();
+  }
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * For assignment to {@link ReferenceType}, checks for widening reference conversion.
+   * See <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.5">section
+   * JLS 5.1.5</a>
+   * for details.
+   * </p>
+   */
+  public boolean isAssignableFrom(Type sourceType) {
+    return super.isAssignableFrom(sourceType)
+        || (sourceType.isReferenceType() && sourceType.isSubtypeOf(this));
+  }
+
+  /**
+   * Indicates whether this type is a capture type variable as constructed by {@link InstantiatedType#applyCaptureConversion()}.
+   * A capture type variable can only occur as a type argument in an {@link InstantiatedType}
+   * constructed this way.
+   *
+   * @return true if this type is a capture type variable, false otherwise
+   */
+  boolean isCaptureVariable() {
+    return false;
   }
 
   /**
@@ -160,5 +136,27 @@ public abstract class ReferenceType extends GeneralType {
           && variable.getUpperTypeBound().isUpperBound(this, substitution);
     }
     return false;
+  }
+
+  /**
+   * {@inheritDoc}
+   * @return true since this is a primitive type
+   */
+  @Override
+  public boolean isReferenceType() {
+    return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   * @return true, if {@code otherType} is {@code Object}, false otherwise
+   */
+  @Override
+  public boolean isSubtypeOf(Type otherType) {
+    if (otherType == null) {
+      throw new IllegalArgumentException("type may not be null");
+    }
+
+    return super.isSubtypeOf(otherType) || otherType.isObject();
   }
 }

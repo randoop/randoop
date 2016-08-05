@@ -30,8 +30,8 @@ import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
 import randoop.test.TestCheckGenerator;
-import randoop.types.GeneralType;
-import randoop.types.TypeNames;
+import randoop.types.Type;
+import randoop.reflection.TypeNames;
 import randoop.util.MultiMap;
 import randoop.util.predicate.Predicate;
 
@@ -225,7 +225,7 @@ public class CoveredClassTest {
         GenInputsAbstract.getStringSetFromFile(
             GenInputsAbstract.observers, "Unable to read observer file", "//.*", null);
 
-    MultiMap<GeneralType, TypedOperation> observerMap = null;
+    MultiMap<Type, TypedOperation> observerMap = null;
     try {
       observerMap = operationModel.getObservers(observerSignatures);
     } catch (OperationParseException e) {
@@ -234,7 +234,7 @@ public class CoveredClassTest {
     }
     assert observerMap != null;
     Set<TypedOperation> observers = new LinkedHashSet<>();
-    for (GeneralType keyType : observerMap.keySet()) {
+    for (Type keyType : observerMap.keySet()) {
       observers.addAll(observerMap.getValues(keyType));
     }
 

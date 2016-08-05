@@ -1,6 +1,5 @@
 package randoop.types;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,51 +35,18 @@ import java.util.List;
 public abstract class ParameterBound {
 
   /**
-   * Applies the given substitution to this type bound by replacing type variables.
+   * Constructs a parameter bound given a {@link ReferenceType}.
    *
-   * @param substitution  the type substitution
-   * @return this bound with the type after the substitution has been applied.
+   * @param type  the {@link ReferenceType}
+   * @return a {@link ReferenceBound} if the type is a {@link ClassOrInterfaceType} or
+   *         a {@link TypeVariable}
    */
-  public abstract ParameterBound apply(Substitution<ReferenceType> substitution);
-
-  /**
-   * Determines if this bound is an upper bound for the argument type.
-   *
-   * @param argType  the concrete argument type
-   * @param subst  the substitution
-   * @return true if this bound is satisfied by the concrete type when the
-   *         substitution is used on the bound, false otherwise
-   */
-  public abstract boolean isUpperBound(GeneralType argType, Substitution<ReferenceType> subst);
-
-  /**
-   * Indicates whether this bound is an upper bound on the type of the given bound with respect to
-   * the type substitution.
-   *
-   * @param bound  the other bound
-   * @param substitution  the type substitution
-   * @return true if this bound is an upper bound on the type of the given bound, false otherwise
-   */
-  abstract boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution);
-
-  /**
-   * Indicates whether this bound is a lower bound of the given argument type.
-   *
-   * @param argType  the concrete argument type
-   * @param subst  the substitution
-   * @return true if this bound is a subtype of the given type
-   */
-  public abstract boolean isLowerBound(GeneralType argType, Substitution<ReferenceType> subst);
-
-  /**
-   * Tests whether this is a lower bound on the type of a given bound with respect to a type substitution.
-   *
-   * @param bound  the other bound
-   * @param substitution  the type substitution
-   * @return true, if this bound is a lower bound on the type of the given bound, and false otherwise
-   */
-  boolean isLowerBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
-    return false;
+  public static ParameterBound forType(ReferenceType type) {
+    if (type instanceof ArrayType) {
+      throw new IllegalArgumentException(
+          "type may only be class, interface, or type variable, got " + type);
+    }
+    return new ReferenceBound(type);
   }
 
   /**
@@ -94,7 +60,7 @@ public abstract class ParameterBound {
    * @param bounds  the type bounds
    * @return the {@code ParameterBound} for the given types
    */
-  static ParameterBound forTypes(Type[] bounds) {
+  static ParameterBound forTypes(java.lang.reflect.Type[] bounds) {
     if (bounds == null) {
       throw new IllegalArgumentException("bounds must be non null");
     }
@@ -103,7 +69,7 @@ public abstract class ParameterBound {
       return ParameterBound.forType(bounds[0]);
     } else {
       List<ParameterBound> boundList = new ArrayList<>();
-      for (Type type : bounds) {
+      for (java.lang.reflect.Type type : bounds) {
         boundList.add(ParameterBound.forType(type));
       }
       return new IntersectionTypeBound(boundList);
@@ -120,7 +86,7 @@ public abstract class ParameterBound {
    * @return a type bound that ensures the given type is satisfied as an upper
    *         bound
    */
-  private static ParameterBound forType(Type type) {
+  private static ParameterBound forType(java.lang.reflect.Type type) {
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
       if (!hasTypeVariable(type)) {
@@ -134,69 +100,12 @@ public abstract class ParameterBound {
   }
 
   /**
-   * Indicates whether the given (reflection) type reference represents a type in which a type
-   * variable occurs.
+   * Applies the given substitution to this type bound by replacing type variables.
    *
-   * @param type  the reflection type
-   * @return true if the type has a type variable, and false otherwise
+   * @param substitution  the type substitution
+   * @return this bound with the type after the substitution has been applied.
    */
-  private static boolean hasTypeVariable(java.lang.reflect.Type type) {
-    if (type instanceof java.lang.reflect.TypeVariable) {
-      return true;
-    }
-    if (type instanceof java.lang.reflect.ParameterizedType) {
-      java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
-      for (Type argType : pt.getActualTypeArguments()) {
-        if (hasTypeVariable(argType)) {
-          return true;
-        }
-      }
-    }
-    if (type instanceof java.lang.reflect.WildcardType) {
-      java.lang.reflect.WildcardType wt = (java.lang.reflect.WildcardType) type;
-      for (Type boundType : wt.getUpperBounds()) {
-        if (hasTypeVariable(boundType)) {
-          return true;
-        }
-      }
-      for (Type boundType : wt.getLowerBounds()) {
-        if (hasTypeVariable(boundType)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Constructs a parameter bound given a {@link ReferenceType}.
-   *
-   * @param type  the {@link ReferenceType}
-   * @return a {@link ReferenceBound} if the type is a {@link ClassOrInterfaceType} or
-   *         a {@link TypeVariable}
-   */
-  public static ParameterBound forType(ReferenceType type) {
-    if (type instanceof ArrayType) {
-      throw new IllegalArgumentException(
-          "type may only be class, interface, or type variable, got " + type);
-    }
-    return new ReferenceBound(type);
-  }
-
-  /**
-   * Indicates whether the type of this bound is a subtype of the type of the given bound.
-   *
-   * @param boundType  the other bound
-   * @return true if this type is a subtype of the other bound, false otherwise
-   */
-  public abstract boolean isSubtypeOf(ParameterBound boundType);
-
-  /**
-   * Indicates whether the type of this bound has a wildcard type argument.
-   *
-   * @return true, if this bound has a wildcard argument, and false otherwise
-   */
-  abstract boolean hasWildcard();
+  public abstract ParameterBound apply(Substitution<ReferenceType> substitution);
 
   /**
    * Applies a capture conversion to any wildcard arguments in the type of this bound.
@@ -213,4 +122,94 @@ public abstract class ParameterBound {
    * @return the list of {@code TypeVariable} objects in this bound
    */
   public abstract List<TypeVariable> getTypeParameters();
+
+  /**
+   * Indicates whether the given (reflection) type reference represents a type in which a type
+   * variable occurs.
+   *
+   * @param type  the reflection type
+   * @return true if the type has a type variable, and false otherwise
+   */
+  private static boolean hasTypeVariable(java.lang.reflect.Type type) {
+    if (type instanceof java.lang.reflect.TypeVariable) {
+      return true;
+    }
+    if (type instanceof java.lang.reflect.ParameterizedType) {
+      java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
+      for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
+        if (hasTypeVariable(argType)) {
+          return true;
+        }
+      }
+    }
+    if (type instanceof java.lang.reflect.WildcardType) {
+      java.lang.reflect.WildcardType wt = (java.lang.reflect.WildcardType) type;
+      for (java.lang.reflect.Type boundType : wt.getUpperBounds()) {
+        if (hasTypeVariable(boundType)) {
+          return true;
+        }
+      }
+      for (java.lang.reflect.Type boundType : wt.getLowerBounds()) {
+        if (hasTypeVariable(boundType)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Indicates whether the type of this bound has a wildcard type argument.
+   *
+   * @return true, if this bound has a wildcard argument, and false otherwise
+   */
+  abstract boolean hasWildcard();
+
+  /**
+   * Indicates whether this bound is a lower bound of the given argument type.
+   *
+   * @param argType  the concrete argument type
+   * @param subst  the substitution
+   * @return true if this bound is a subtype of the given type
+   */
+  public abstract boolean isLowerBound(Type argType, Substitution<ReferenceType> subst);
+
+  /**
+   * Tests whether this is a lower bound on the type of a given bound with respect to a type substitution.
+   *
+   * @param bound  the other bound
+   * @param substitution  the type substitution
+   * @return true, if this bound is a lower bound on the type of the given bound, and false otherwise
+   */
+  boolean isLowerBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
+    return false;
+  }
+
+  /**
+   * Indicates whether the type of this bound is a subtype of the type of the given bound.
+   *
+   * @param boundType  the other bound
+   * @return true if this type is a subtype of the other bound, false otherwise
+   */
+  public abstract boolean isSubtypeOf(ParameterBound boundType);
+
+  /**
+   * Determines if this bound is an upper bound for the argument type.
+   *
+   * @param argType  the concrete argument type
+   * @param subst  the substitution
+   * @return true if this bound is satisfied by the concrete type when the
+   *         substitution is used on the bound, false otherwise
+   */
+  public abstract boolean isUpperBound(Type argType, Substitution<ReferenceType> subst);
+
+  /**
+   * Indicates whether this bound is an upper bound on the type of the given bound with respect to
+   * the type substitution.
+   *
+   * @param bound  the other bound
+   * @param substitution  the type substitution
+   * @return true if this bound is an upper bound on the type of the given bound, false otherwise
+   */
+  abstract boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution);
 }

@@ -31,12 +31,11 @@ import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
 import randoop.types.ConcreteTypes;
 import randoop.types.ParameterBound;
+import randoop.types.Type;
 import randoop.types.TypeVariable;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.GeneralType;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
-import randoop.types.TypeNames;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
 
@@ -63,7 +62,7 @@ public class OperationModel {
   private Set<ClassOrInterfaceType> concreteClassTypes;
 
   /** The set of input types for this model */
-  private Set<GeneralType> inputTypes;
+  private Set<Type> inputTypes;
   // TODO decide if should only collect ReferenceTypes.
 
   /** The set of class objects used in the exercised-class test filter */
@@ -208,13 +207,13 @@ public class OperationModel {
    * @return the map to observer methods from their declaring class type
    * @throws OperationParseException if a method signature cannot be parsed
    */
-  public MultiMap<GeneralType, TypedOperation> getObservers(Set<String> observerSignatures)
+  public MultiMap<Type, TypedOperation> getObservers(Set<String> observerSignatures)
       throws OperationParseException {
     // Populate observer_map from observers file.
-    MultiMap<GeneralType, TypedOperation> observerMap = new MultiMap<>();
+    MultiMap<Type, TypedOperation> observerMap = new MultiMap<>();
     for (String sig : observerSignatures) {
       TypedClassOperation operation = MethodCall.parse(sig);
-      GeneralType outputType = operation.getOutputType();
+      Type outputType = operation.getOutputType();
       if (outputType.isPrimitive() || outputType.isString() || outputType.isEnum()) {
         observerMap.add(operation.getDeclaringType(), operation);
       }
@@ -404,7 +403,7 @@ public class OperationModel {
     List<TypeVariable> typeVariableList = new ArrayList<>();
     typeVariableList.add(argument);
     List<ReferenceType> typeList = new ArrayList<>();
-    for (GeneralType inputType : inputTypes) {
+    for (Type inputType : inputTypes) {
       if (inputType.isReferenceType()) {
         ReferenceType inputRefType = (ReferenceType) inputType;
         Substitution<ReferenceType> substitution =

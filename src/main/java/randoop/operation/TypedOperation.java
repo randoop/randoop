@@ -4,7 +4,6 @@ import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -13,17 +12,16 @@ import randoop.ExecutionOutcome;
 import randoop.field.AccessibleField;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
-import randoop.types.TypeVariable;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
-import randoop.types.GeneralType;
 import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
-import randoop.types.PrimitiveTypes;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
+import randoop.types.TypeVariable;
 
 /**
  * Type decorator of {@link Operation} objects.
@@ -44,7 +42,7 @@ public abstract class TypedOperation implements Operation {
   /**
    * The output type.
    */
-  private final GeneralType outputType;
+  private final Type outputType;
 
   /**
    * Create typed operation for the given {@link Operation}.
@@ -53,7 +51,7 @@ public abstract class TypedOperation implements Operation {
    * @param inputTypes  the input types
    * @param outputType  the output types
    */
-  TypedOperation(CallableOperation operation, TypeTuple inputTypes, GeneralType outputType) {
+  TypedOperation(CallableOperation operation, TypeTuple inputTypes, Type outputType) {
     this.operation = operation;
     this.inputTypes = inputTypes;
     this.outputType = outputType;
@@ -97,9 +95,9 @@ public abstract class TypedOperation implements Operation {
   /**
    * Returns the output type returned by the operation.
    *
-   * @return {@link GeneralType} type returned by this operation
+   * @return {@link Type} type returned by this operation
    */
-  public GeneralType getOutputType() {
+  public Type getOutputType() {
     return outputType;
   }
 
@@ -117,9 +115,7 @@ public abstract class TypedOperation implements Operation {
    *
    * @return true if at least one input or output type has a wildcard, false otherwise
    */
-  public boolean hasWildcardTypes() {
-    return inputTypes.hasWildcard() || outputType.hasWildcard();
-  }
+  public abstract boolean hasWildcardTypes();
 
   /**
    * Indicate whether this operation is generic.
@@ -234,9 +230,9 @@ public abstract class TypedOperation implements Operation {
     ConstructorCall op = new ConstructorCall(constructor);
     ClassOrInterfaceType declaringType =
         ClassOrInterfaceType.forClass(constructor.getDeclaringClass());
-    List<GeneralType> paramTypes = new ArrayList<>();
-    for (Type t : constructor.getGenericParameterTypes()) {
-      paramTypes.add(GeneralType.forType(t));
+    List<Type> paramTypes = new ArrayList<>();
+    for (java.lang.reflect.Type t : constructor.getGenericParameterTypes()) {
+      paramTypes.add(Type.forType(t));
     }
     TypeTuple inputTypes = new TypeTuple(paramTypes);
     return new TypedClassOperation(op, declaringType, inputTypes, declaringType);
@@ -252,11 +248,11 @@ public abstract class TypedOperation implements Operation {
     //    MethodCall op;
     //    ClassOrInterfaceType declaringType;
     // TypeTuple inputTypes;
-    // GeneralType outputType;
+    // Type outputType;
 
-    List<GeneralType> methodParamTypes = new ArrayList<>();
-    for (Type t : method.getGenericParameterTypes()) {
-      methodParamTypes.add(GeneralType.forType(t));
+    List<Type> methodParamTypes = new ArrayList<>();
+    for (java.lang.reflect.Type t : method.getGenericParameterTypes()) {
+      methodParamTypes.add(Type.forType(t));
     }
 
     Class<?> declaringClass = method.getDeclaringClass();
@@ -267,7 +263,7 @@ public abstract class TypedOperation implements Operation {
       return getAnonEnumOperation(method, methodParamTypes, declaringClass.getEnclosingClass());
     }
 
-    List<GeneralType> paramTypes = new ArrayList<>();
+    List<Type> paramTypes = new ArrayList<>();
     MethodCall op = new MethodCall(method);
     ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(method.getDeclaringClass());
     if (!op.isStatic()) {
@@ -275,7 +271,7 @@ public abstract class TypedOperation implements Operation {
     }
     paramTypes.addAll(methodParamTypes);
     TypeTuple inputTypes = new TypeTuple(paramTypes);
-    GeneralType outputType = GeneralType.forType(method.getGenericReturnType());
+    Type outputType = Type.forType(method.getGenericReturnType());
     return new TypedClassOperation(op, declaringType, inputTypes, outputType);
   }
 
@@ -290,7 +286,7 @@ public abstract class TypedOperation implements Operation {
    * @return the typed operation for the given method
    */
   private static TypedClassOperation getAnonEnumOperation(
-      Method method, List<GeneralType> methodParamTypes, Class<?> enumClass) {
+      Method method, List<Type> methodParamTypes, Class<?> enumClass) {
     ClassOrInterfaceType enumType = ClassOrInterfaceType.forClass(enumClass);
 
     /*
@@ -302,16 +298,16 @@ public abstract class TypedOperation implements Operation {
     for (Method m : enumClass.getMethods()) {
       if (m.getName().equals(method.getName())
           && m.getGenericParameterTypes().length == method.getGenericParameterTypes().length) {
-        List<GeneralType> paramTypes = new ArrayList<>();
+        List<Type> paramTypes = new ArrayList<>();
         MethodCall op = new MethodCall(m);
         if (!op.isStatic()) {
           paramTypes.add(enumType);
         }
-        for (Type t : m.getGenericParameterTypes()) {
-          paramTypes.add(GeneralType.forType(t));
+        for (java.lang.reflect.Type t : m.getGenericParameterTypes()) {
+          paramTypes.add(Type.forType(t));
         }
         TypeTuple inputTypes = new TypeTuple(paramTypes);
-        GeneralType outputType = GeneralType.forType(m.getGenericReturnType());
+        Type outputType = Type.forType(m.getGenericReturnType());
 
         ClassOrInterfaceType methodDeclaringType =
             ClassOrInterfaceType.forClass(m.getDeclaringClass());
@@ -361,9 +357,9 @@ public abstract class TypedOperation implements Operation {
    */
   public static TypedClassOperation createGetterForField(
       Field field, ClassOrInterfaceType declaringType) {
-    GeneralType fieldType = GeneralType.forType(field.getGenericType());
+    Type fieldType = Type.forType(field.getGenericType());
     AccessibleField accessibleField = new AccessibleField(field, declaringType);
-    List<GeneralType> inputTypes = new ArrayList<>();
+    List<Type> inputTypes = new ArrayList<>();
     if (!accessibleField.isStatic()) {
       inputTypes.add(declaringType);
     }
@@ -380,9 +376,9 @@ public abstract class TypedOperation implements Operation {
    */
   public static TypedClassOperation createSetterForField(
       Field field, ClassOrInterfaceType declaringType) {
-    GeneralType fieldType = GeneralType.forType(field.getGenericType());
+    Type fieldType = Type.forType(field.getGenericType());
     AccessibleField accessibleField = new AccessibleField(field, declaringType);
-    List<GeneralType> inputTypes = new ArrayList<>();
+    List<Type> inputTypes = new ArrayList<>();
     if (!accessibleField.isStatic()) {
       inputTypes.add(declaringType);
     }
@@ -400,7 +396,7 @@ public abstract class TypedOperation implements Operation {
    * @param type the type of the initialization
    * @return the initialization operation
    */
-  public static TypedOperation createNullOrZeroInitializationForType(GeneralType type) {
+  public static TypedOperation createNullOrZeroInitializationForType(Type type) {
     return TypedOperation.createNonreceiverInitialization(
         NonreceiverTerm.createNullOrZeroTerm(type));
   }
@@ -412,9 +408,9 @@ public abstract class TypedOperation implements Operation {
    * @param value the value for initialization
    * @return the initialization operation
    */
-  public static TypedOperation createPrimitiveInitialization(GeneralType type, Object value) {
-    assert PrimitiveTypes.isBoxedOrPrimitiveOrStringType(type.getRuntimeClass())
-        : "must be nonreceiver type, got " + type.getName();
+  public static TypedOperation createPrimitiveInitialization(Type type, Object value) {
+    Type valueType = Type.forValue(value);
+    assert isNonreceiverType(valueType) : "must be nonreceiver type, got " + type.getName();
     return TypedOperation.createNonreceiverInitialization(new NonreceiverTerm(type, value));
   }
 
@@ -436,11 +432,22 @@ public abstract class TypedOperation implements Operation {
    * @return the array creation operation
    */
   public static TypedOperation createArrayCreation(ArrayType arrayType, int size) {
-    List<GeneralType> typeList = new ArrayList<>();
+    List<Type> typeList = new ArrayList<>();
     for (int i = 0; i < size; i++) {
       typeList.add(arrayType.getElementType());
     }
     TypeTuple inputTypes = new TypeTuple(typeList);
     return new TypedTermOperation(new ArrayCreation(arrayType, size), inputTypes, arrayType);
+  }
+
+  /**
+   * Determines whether the given {@link Type} is the type of a non-receiver term:
+   * primitive, boxed primitive, or {@code String}.
+   *
+   * @param type  the {@link Type}
+   * @return true if the type is primitive, boxed primitive or {@code String}; false otherwise
+   */
+  public static boolean isNonreceiverType(Type type) {
+    return type.isPrimitive() || type.isBoxedPrimitive() || type.isString();
   }
 }

@@ -18,7 +18,7 @@ import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.PrimitiveType;
 import randoop.types.SimpleClassOrInterfaceType;
 import randoop.types.TypeTuple;
@@ -41,7 +41,7 @@ public class FieldGetterTest {
     ClassOrInterfaceType classType = new SimpleClassOrInterfaceType(c);
     try {
       Field field = c.getField("fourField");
-      GeneralType fieldType = new PrimitiveType(field.getType());
+      Type fieldType = new PrimitiveType(field.getType());
       TypedOperation rhs = createGetter(field, fieldType, classType);
 
       //types
@@ -80,11 +80,11 @@ public class FieldGetterTest {
     try {
 
       Field field = c.getField("oneField");
-      GeneralType fieldType = new PrimitiveType(field.getType());
+      Type fieldType = new PrimitiveType(field.getType());
       TypedOperation rhs = createGetter(field, fieldType, classType);
 
       //types
-      List<GeneralType> inputTypes = new ArrayList<>();
+      List<Type> inputTypes = new ArrayList<>();
       inputTypes.add(classType);
       assertEquals(
           "Input types should just be declaring class",
@@ -162,7 +162,7 @@ public class FieldGetterTest {
     try {
 
       Field field = c.getField("FIVEFIELD");
-      GeneralType fieldType = new PrimitiveType(field.getType());
+      Type fieldType = new PrimitiveType(field.getType());
       TypedOperation rhs = createGetter(field, fieldType, classType);
 
       //types
@@ -209,9 +209,9 @@ public class FieldGetterTest {
   }
 
   private TypedOperation createGetter(
-      Field field, GeneralType fieldType, ClassOrInterfaceType declaringType) {
+      Field field, Type fieldType, ClassOrInterfaceType declaringType) {
     AccessibleField f = new AccessibleField(field, declaringType);
-    List<GeneralType> getInputTypesList = new ArrayList<>();
+    List<Type> getInputTypesList = new ArrayList<>();
     if (!Modifier.isStatic(field.getModifiers() & Modifier.fieldModifiers())) {
       getInputTypesList.add(declaringType);
     }

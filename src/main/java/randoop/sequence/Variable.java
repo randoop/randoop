@@ -1,6 +1,6 @@
 package randoop.sequence;
 
-import randoop.types.GeneralType;
+import randoop.types.Type;
 
 /** Represents the result of a statement call in a sequence. */
 public class Variable implements Comparable<Variable> {
@@ -44,7 +44,7 @@ public class Variable implements Comparable<Variable> {
    *
    * @return the type of this variable
    */
-  public GeneralType getType() {
+  public Type getType() {
     return this.sequence.getStatement(index).getOutputType();
   }
 
@@ -95,7 +95,7 @@ public class Variable implements Comparable<Variable> {
    * @param type  the type of this variable
    * @return  the name of this variable as a string
    */
-  public String getName(GeneralType type) {
+  public String getName(Type type) {
     return getName(type, index);
   }
 
@@ -117,7 +117,7 @@ public class Variable implements Comparable<Variable> {
    * @param i  the index for the variable
    * @return gets variable names based on the type of the variable
    */
-  public String getName(GeneralType type, int i) {
+  public String getName(Type type, int i) {
     return getName(classToVariableName(type), index);
   }
 
@@ -157,7 +157,7 @@ public class Variable implements Comparable<Variable> {
    * @param type  the type
    * @return the variable name as a string
    */
-  public static String classToVariableName(GeneralType type) {
+  public static String classToVariableName(Type type) {
     return VariableRenamer.getVariableName(type);
   }
 

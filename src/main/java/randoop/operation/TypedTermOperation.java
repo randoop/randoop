@@ -3,7 +3,7 @@ package randoop.operation;
 import java.util.List;
 
 import randoop.sequence.Variable;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.TypeTuple;
@@ -20,8 +20,13 @@ class TypedTermOperation extends TypedOperation {
    * @param inputTypes  the input types
    * @param outputType  the output type
    */
-  TypedTermOperation(CallableOperation operation, TypeTuple inputTypes, GeneralType outputType) {
+  TypedTermOperation(CallableOperation operation, TypeTuple inputTypes, Type outputType) {
     super(operation, inputTypes, outputType);
+  }
+
+  @Override
+  public boolean hasWildcardTypes() {
+    return false;
   }
 
   @Override
@@ -32,14 +37,14 @@ class TypedTermOperation extends TypedOperation {
   @Override
   public TypedTermOperation apply(Substitution<ReferenceType> substitution) {
     TypeTuple inputTypes = this.getInputTypes().apply(substitution);
-    GeneralType outputType = this.getOutputType().apply(substitution);
+    Type outputType = this.getOutputType().apply(substitution);
     return new TypedTermOperation(this.getOperation(), inputTypes, outputType);
   }
 
   @Override
   public TypedOperation applyCaptureConversion() {
     TypeTuple inputTypes = this.getInputTypes().applyCaptureConversion();
-    GeneralType outputType = this.getOutputType().applyCaptureConversion();
+    Type outputType = this.getOutputType().applyCaptureConversion();
     return new TypedTermOperation(this.getOperation(), inputTypes, outputType);
   }
 

@@ -9,9 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 import randoop.DummyVisitor;
 import randoop.ExceptionalExecution;
@@ -27,7 +24,7 @@ import randoop.sequence.Variable;
 import randoop.test.DummyCheckGenerator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.SimpleClassOrInterfaceType;
 import randoop.types.TypeTuple;
 
@@ -104,7 +101,7 @@ public class ExceptionPredicateTest {
     } catch (Exception e) {
       fail("test not setup correctly: " + e);
     }
-    List<GeneralType> paramTypes = new ArrayList<>();
+    List<Type> paramTypes = new ArrayList<>();
     paramTypes.add(ConcreteTypes.OBJECT_TYPE);
     TypedOperation conOp =
         new TypedClassOperation(

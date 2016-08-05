@@ -25,7 +25,7 @@ import randoop.sequence.SequenceExceptionError;
 import randoop.test.treeadd.TreeAdd;
 import randoop.test.treeadd.TreeNode;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
 
@@ -108,7 +108,7 @@ public class ForwardExplorerTests2 {
         .createTestCheckGenerator(
             new PublicVisibilityPredicate(),
             contracts,
-            new MultiMap<GeneralType, TypedOperation>(),
+            new MultiMap<Type, TypedOperation>(),
             new LinkedHashSet<TypedOperation>());
   }
 }

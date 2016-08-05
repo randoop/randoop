@@ -18,7 +18,7 @@ import randoop.sequence.Variable;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.GenericClassType;
 import randoop.types.JDKTypes;
 import randoop.types.ParameterizedType;
@@ -48,7 +48,7 @@ class HelperSequenceCreator {
    * @return the singleton list containing the compatible sequence
    */
   static SimpleList<Sequence> createArraySequence(
-      ComponentManager components, GeneralType collectionType) {
+      ComponentManager components, Type collectionType) {
 
     final int MAX_LENGTH = 7;
 
@@ -57,7 +57,7 @@ class HelperSequenceCreator {
     }
 
     ArrayType arrayType = (ArrayType) collectionType;
-    GeneralType elementType = arrayType.getElementType();
+    Type elementType = arrayType.getElementType();
 
     Sequence s;
     SimpleList<Sequence> candidates = components.getSequencesForType(elementType, false);
@@ -163,7 +163,7 @@ class HelperSequenceCreator {
    * @return a sequence that creates an array with the given element type
    */
   private static Sequence createAnArray(
-      SimpleList<Sequence> candidates, GeneralType elementType, int length) {
+      SimpleList<Sequence> candidates, Type elementType, int length) {
     assert !candidates.isEmpty() || length == 0 : "if there are no candidates, length must be zero";
     int totStatements = 0;
     List<Sequence> inputSequences = new ArrayList<>();
@@ -206,7 +206,7 @@ class HelperSequenceCreator {
           "Can't find \"noneOf\" method for EnumSet: " + e.getMessage());
     }
     MethodCall op = new MethodCall(method);
-    List<GeneralType> paramTypes = new ArrayList<>();
+    List<Type> paramTypes = new ArrayList<>();
     paramTypes.add(ConcreteTypes.CLASS_TYPE);
     return new TypedClassOperation(
         op, JDKTypes.ENUM_SET_TYPE, new TypeTuple(paramTypes), creationType);
@@ -249,7 +249,7 @@ class HelperSequenceCreator {
     }
     MethodCall op = new MethodCall(method);
     assert method.getTypeParameters().length == 1 : "method should have one type parameter";
-    List<GeneralType> paramTypes = new ArrayList<>();
+    List<Type> paramTypes = new ArrayList<>();
     ParameterizedType collectionType;
     collectionType = JDKTypes.COLLECTION_TYPE.instantiate(elementType);
 

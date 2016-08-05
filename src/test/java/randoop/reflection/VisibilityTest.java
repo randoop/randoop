@@ -26,7 +26,7 @@ import randoop.operation.TypedOperation;
 import randoop.reflection.visibilitytest.PublicClass;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.RandoopTypeException;
 import randoop.types.SimpleClassOrInterfaceType;
 import randoop.types.TypeTuple;
@@ -558,11 +558,11 @@ public class VisibilityTest {
    */
   private List<TypedOperation> getOperations(Field f, ClassOrInterfaceType declaringType) {
     List<TypedOperation> statements = new ArrayList<>();
-    GeneralType fieldType;
-    fieldType = GeneralType.forType(f.getGenericType());
+    Type fieldType;
+    fieldType = Type.forType(f.getGenericType());
     AccessibleField field = new AccessibleField(f, declaringType);
-    List<GeneralType> getInputTypeList = new ArrayList<>();
-    List<GeneralType> setInputTypeList = new ArrayList<>();
+    List<Type> getInputTypeList = new ArrayList<>();
+    List<Type> setInputTypeList = new ArrayList<>();
     if (!field.isStatic()) {
       getInputTypeList.add(declaringType);
       setInputTypeList.add(declaringType);
@@ -605,9 +605,9 @@ public class VisibilityTest {
   private TypedOperation createConstructorCall(Constructor<?> con) throws RandoopTypeException {
     ConstructorCall op = new ConstructorCall(con);
     ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(con.getDeclaringClass());
-    List<GeneralType> paramTypes = new ArrayList<>();
+    List<Type> paramTypes = new ArrayList<>();
     for (Class<?> pc : con.getParameterTypes()) {
-      paramTypes.add(GeneralType.forClass(pc));
+      paramTypes.add(Type.forClass(pc));
     }
     return new TypedClassOperation(op, declaringType, new TypeTuple(paramTypes), declaringType);
   }
@@ -615,14 +615,14 @@ public class VisibilityTest {
   private TypedOperation createMethodCall(Method m, ClassOrInterfaceType declaringType)
       throws RandoopTypeException {
     MethodCall op = new MethodCall(m);
-    List<GeneralType> paramTypes = new ArrayList<>();
+    List<Type> paramTypes = new ArrayList<>();
     if (!Modifier.isStatic(m.getModifiers() & Modifier.methodModifiers())) {
       paramTypes.add(declaringType);
     }
     for (Class<?> pc : m.getParameterTypes()) {
-      paramTypes.add(GeneralType.forClass(pc));
+      paramTypes.add(Type.forClass(pc));
     }
-    GeneralType outputType = GeneralType.forClass(m.getReturnType());
+    Type outputType = Type.forClass(m.getReturnType());
     return new TypedClassOperation(op, declaringType, new TypeTuple(paramTypes), outputType);
   }
 }

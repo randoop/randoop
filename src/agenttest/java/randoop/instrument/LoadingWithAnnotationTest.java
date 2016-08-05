@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 
 import randoop.CheckRep;
 import randoop.main.GenInputsAbstract;
-import randoop.types.TypeNames;
+import randoop.reflection.TypeNames;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

@@ -12,7 +12,7 @@ public class ConcreteTypeTest {
 
   @Test
   public void testForClass() {
-    GeneralType primitiveType = GeneralType.forClass(int.class);
+    Type primitiveType = Type.forClass(int.class);
     assertEquals("builds primitive correctly", new PrimitiveType(int.class), primitiveType);
     assertTrue("is primitive", primitiveType.isPrimitive());
     assertTrue("is not generic", !primitiveType.isGeneric());
@@ -27,7 +27,7 @@ public class ConcreteTypeTest {
     assertTrue("is not String", !primitiveType.isString());
     assertTrue("is not void", !primitiveType.isVoid());
 
-    GeneralType classType = GeneralType.forClass(String.class);
+    Type classType = Type.forClass(String.class);
     assertEquals(
         "builds class type correctly", new SimpleClassOrInterfaceType(String.class), classType);
     assertTrue("is not primitive", !classType.isPrimitive());
@@ -44,7 +44,7 @@ public class ConcreteTypeTest {
     assertTrue("is not void", !classType.isVoid());
 
     Class<?> arrayClass = Array.newInstance(String.class, 0).getClass();
-    GeneralType arrayType = GeneralType.forClass(arrayClass);
+    Type arrayType = Type.forClass(arrayClass);
     assertEquals(
         "builds array type correctly",
         ArrayType.ofElementType(new SimpleClassOrInterfaceType(String.class)),
@@ -62,7 +62,7 @@ public class ConcreteTypeTest {
     assertTrue("is not String", !arrayType.isString());
     assertTrue("is not void", !arrayType.isVoid());
 
-    GeneralType rawClassType = new SimpleClassOrInterfaceType(ArrayList.class);
+    Type rawClassType = new SimpleClassOrInterfaceType(ArrayList.class);
     assertEquals(
         "builds raw class type correctly",
         new SimpleClassOrInterfaceType(ArrayList.class),

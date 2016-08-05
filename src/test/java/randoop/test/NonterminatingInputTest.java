@@ -14,7 +14,7 @@ import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.RandoopTypeException;
 import randoop.types.TypeTuple;
 import randoop.util.ReflectionExecutor;
@@ -55,9 +55,9 @@ public class NonterminatingInputTest {
   private TypedOperation createConstructorCall(Constructor<?> con) throws RandoopTypeException {
     ConstructorCall op = new ConstructorCall(con);
     ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(con.getDeclaringClass());
-    List<GeneralType> paramTypes = new ArrayList<>();
+    List<Type> paramTypes = new ArrayList<>();
     for (Class<?> pc : con.getParameterTypes()) {
-      paramTypes.add(GeneralType.forClass(pc));
+      paramTypes.add(Type.forClass(pc));
     }
     return new TypedClassOperation(op, declaringType, new TypeTuple(paramTypes), declaringType);
   }
