@@ -148,8 +148,7 @@ public class ComponentManager {
    * which are preserved.
    */
   public void clearGeneratedSequences() {
-    gralComponents.clear();
-    gralComponents.addAll(this.gralSeeds);
+    gralComponents = new SequenceCollection(this.gralSeeds);
   }
 
   /*
