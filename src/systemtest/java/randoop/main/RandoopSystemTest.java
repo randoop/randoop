@@ -100,21 +100,24 @@ public class RandoopSystemTest {
    *
    * 2. Set the options for Randoop.
    *
-   *    The method that execute Randoop take the command-line arguments as a List<String>, and the
-   *    easiest way to get a list setup is to make a call like
-   *      List<String> options = getRandoopOptions(
-   *         testEnvironment,
-   *         packageName,
-   *         regressionBasename,
-   *         errorBasename
-   *         [ , option-string-args ]);
-   *    where testEnvironment is the variable initialized in step 1, packageName is the package name
-   *    for the tests (use the empty string if none), regressionBasename is the prefix String for
-   *    regression tests, errorBasename is the prefix String for error tests, and option-string-args
-   *    is a comma-separated list of Strings for other Randoop arguments. This method will setup
-   *    options for output directories and logging, so only options specifying inputs and affecting
-   *    generation are needed.  Take a look at getRandoopOptions() and look at some of the
-   *    existing tests to get an idea of what is already handled, and what to do with other options.
+   *    The method that executes Randoop takes the command-line arguments as a RandoopOptions object,
+   *    which can be constructed by the line
+   *      RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+   *    using the TestEnvironment built in the first step.
+   *    This class has methods to explicitly set the test package name and base names:
+   *      options.setPackageName("foo.bar");
+   *      options.setRegressionBasename("TestClass");
+   *      options.setErrorBasename("ErrorTestClass");
+   *    And, the input classes should be specified by using the methods
+   *      options.addTestClass(testClassName);
+   *      options.addClassList(classListFilename);
+   *    that correspond to the Randoop arguments.
+   *    Other options can be set using the methods
+   *      options.setFlag(flagName);
+   *      options.setOption(optionName, optionValue);
+   *    This object will also set options for output directories and logging, so only options
+   *    affecting generation are needed.
+   *
    *
    *  3. Run Randoop and compile generated tests.
    *
@@ -127,9 +130,6 @@ public class RandoopSystemTest {
    *
    *       generateAndTest(
    *         testEnvironment,
-   *         packageName,
-   *         regressionBasename,
-   *         errorBasename,
    *         options,
    *         expectedRegressionTests,
    *         expectedErrorTests);
@@ -143,16 +143,20 @@ public class RandoopSystemTest {
    *     assumptions about regression and error tests (given the quantifiers), and dumping output
    *     when the results don't meet expectations.
    *
-   *     However, there are cases where the test may not follow this standard pattern.
-   *     In that case, the test should minimally make a call like
+   *     By default, coverage is checked against all methods returned by Class.getDeclaredMethods()
+   *     for an input class. Some tests need to specifically exclude methods that Randoop should not
+   *     generate.  These can be indicated by creating a Set<String> with these method names, and giving
+   *     them as the last argument to the alternate version of generateAndTest(). When excluded
+   *     methods are given, these methods may not be covered, and any method not excluded is
+   *     expected to be covered.
+   *
+   *     There are cases where the test may not follow this standard pattern. In that case, the
+   *     test should minimally make a call like
    *       RandoopRunStatus randoopRunDesc =
    *           RandoopRunStatus.generateAndCompile(
    *              testEnvironment,
-   *              packageName,
-   *              regressionBasename,
-   *              errorBasename,
    *              options);
-   *     where the arguments are all defined in steps 1 and 2.
+   *     where the arguments are defined in steps 1 and 2.
    *     This call will run Randoop to generate tests and then compile them.  All tests should
    *     minimally confirm that generated tests compile before testing anything else.
    *     Information about the Randoop run is included in the return value, including the output
