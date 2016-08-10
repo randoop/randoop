@@ -277,10 +277,13 @@ public class RandoopSystemTest {
     excludedMethods.add("java2.util2.Collections.enumeration(java2.util2.Collection)");
     excludedMethods.add("java2.util2.Collections.eq(java.lang.Object, java.lang.Object)");
     excludedMethods.add("java2.util2.Collections.fill(java2.util2.List, java.lang.Object)");
-    excludedMethods.add("java2.util2.Collections.indexedBinarySearch(java2.util2.List, java.lang.Object, java2.util2.Comparator)");
-    excludedMethods.add("java2.util2.Collections.min(java2.util2.Collection, java2.util2.Comparator)");
+    excludedMethods.add(
+        "java2.util2.Collections.indexedBinarySearch(java2.util2.List, java.lang.Object, java2.util2.Comparator)");
+    excludedMethods.add(
+        "java2.util2.Collections.min(java2.util2.Collection, java2.util2.Comparator)");
     excludedMethods.add("java2.util2.Collections.nCopies(int, java.lang.Object)");
-    excludedMethods.add("java2.util2.Collections.replaceAll(java2.util2.List, java.lang.Object, java.lang.Object)");
+    excludedMethods.add(
+        "java2.util2.Collections.replaceAll(java2.util2.List, java.lang.Object, java.lang.Object)");
     excludedMethods.add("java2.util2.Collections.reverseOrder()");
     excludedMethods.add("java2.util2.Collections.synchronizedCollection(java2.util2.Collection)");
     excludedMethods.add("java2.util2.Collections.synchronizedList(java2.util2.List)");
