@@ -210,6 +210,7 @@ public class RandoopSystemTest {
     excludedMethods.add("java2.util2.TreeSet.first()");
     excludedMethods.add("java2.util2.TreeSet.headSet(java.lang.Object)");
     excludedMethods.add("java2.util2.TreeSet.last()");
+    excludedMethods.add("java2.util2.TreeSet.tailSet(java.lang.Object)");
     generateAndTest(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests, excludedMethods);
   }
@@ -264,6 +265,10 @@ public class RandoopSystemTest {
     excludedMethods.add("java2.util2.Collections.synchronizedSortedMap(java2.util2.SortedMap)");
     excludedMethods.add("java2.util2.Collections.unmodifiableSortedMap(java2.util2.SortedMap)");
     excludedMethods.add("java2.util2.ArrayList.removeRange(int, int)");
+    excludedMethods.add("java2.util2.Collections.swap(java2.util2.List, int, int)");
+    excludedMethods.add("java2.util2.LinkedList.remove(int)");
+    excludedMethods.add("java2.util2.TreeSet.headSet(java.lang.Object)");
+    excludedMethods.add("java2.util2.TreeSet.tailSet(java.lang.Object)");
 
     generateAndTest(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests, excludedMethods);
@@ -396,6 +401,64 @@ public class RandoopSystemTest {
     excludedMethods.add("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
     excludedMethods.add("java2.util2.Vector.removeRange(int, int)");
     excludedMethods.add("java2.util2.WeakHashMap.removeMapping(java.lang.Object)");
+    excludedMethods.add("java2.util2.ArrayList.add(int, java.lang.Object)");
+    excludedMethods.add("java2.util2.ArrayList.addAll(int, java2.util2.Collection)");
+    excludedMethods.add("java2.util2.ArrayList.get(int)");
+    excludedMethods.add("java2.util2.ArrayList.lastIndexOf(java.lang.Object)");
+    excludedMethods.add("java2.util2.ArrayList.toArray(java.lang.Object[])");
+    excludedMethods.add("java2.util2.Arrays.fill(short[], short)");
+    excludedMethods.add(
+        "java2.util2.Arrays.sort(java.lang.Object[], int, int, java2.util2.Comparator)");
+    excludedMethods.add("java2.util2.Arrays.sort(short[], int, int)");
+    excludedMethods.add("java2.util2.BitSet.clear()");
+    excludedMethods.add("java2.util2.BitSet.clear(int)");
+    excludedMethods.add("java2.util2.BitSet.flip(int, int)");
+    excludedMethods.add("java2.util2.BitSet.nextSetBit(int)");
+    excludedMethods.add("java2.util2.BitSet.or(java2.util2.BitSet)");
+    excludedMethods.add("java2.util2.BitSet.set(int, int)");
+    excludedMethods.add("java2.util2.BitSet.set(int, int, boolean)");
+    excludedMethods.add("java2.util2.BitSet.toString()");
+    excludedMethods.add("java2.util2.BitSet.trailingZeroCnt(long)");
+    excludedMethods.add("java2.util2.Collections.synchronizedSortedMap(java2.util2.SortedMap)");
+    excludedMethods.add("java2.util2.Collections.unmodifiableSet(java2.util2.Set)");
+    excludedMethods.add("java2.util2.EventObject.toString()");
+    excludedMethods.add("java2.util2.Hashtable.equals(java.lang.Object)");
+    excludedMethods.add("java2.util2.Hashtable.put(java.lang.Object, java.lang.Object)");
+    excludedMethods.add("java2.util2.Hashtable.remove(java.lang.Object)");
+    excludedMethods.add("java2.util2.Hashtable.toString()");
+    excludedMethods.add("java2.util2.LinkedHashMap.containsValue(java.lang.Object)");
+    excludedMethods.add("java2.util2.LinkedHashMap.transfer(java2.util2.HashMap.Entry[])");
+    excludedMethods.add("java2.util2.LinkedList.add(java.lang.Object)");
+    excludedMethods.add("java2.util2.LinkedList.addLast(java.lang.Object)");
+    excludedMethods.add("java2.util2.LinkedList.clear()");
+    excludedMethods.add("java2.util2.LinkedList.getLast()");
+    excludedMethods.add("java2.util2.LinkedList.remove(int)");
+    excludedMethods.add("java2.util2.LinkedList.remove(java.lang.Object)");
+    excludedMethods.add("java2.util2.LinkedList.remove(java2.util2.LinkedList.Entry)");
+    excludedMethods.add("java2.util2.LinkedList.removeFirst()");
+    excludedMethods.add("java2.util2.LinkedList.removeLast()");
+    excludedMethods.add("java2.util2.Observable.addObserver(java2.util2.Observer)");
+    excludedMethods.add("java2.util2.Observable.deleteObserver(java2.util2.Observer)");
+    excludedMethods.add("java2.util2.Observable.notifyObservers()");
+    excludedMethods.add("java2.util2.Observable.notifyObservers(java.lang.Object)");
+    excludedMethods.add("java2.util2.Stack.push(java.lang.Object)");
+    excludedMethods.add("java2.util2.StringTokenizer.nextElement()");
+    excludedMethods.add("java2.util2.StringTokenizer.nextToken(java.lang.String)");
+    excludedMethods.add("java2.util2.TreeMap.get(java.lang.Object)");
+    excludedMethods.add("java2.util2.TreeMap.tailMap(java.lang.Object)");
+    excludedMethods.add("java2.util2.TreeMap.values()");
+    excludedMethods.add("java2.util2.TreeSet.add(java.lang.Object)");
+    excludedMethods.add("java2.util2.TreeSet.tailSet(java.lang.Object)");
+    excludedMethods.add("java2.util2.Vector.clone()");
+    excludedMethods.add("java2.util2.Vector.copyInto(java.lang.Object[])");
+    excludedMethods.add("java2.util2.Vector.hashCode()");
+    excludedMethods.add("java2.util2.WeakHashMap.eq(java.lang.Object, java.lang.Object)");
+    excludedMethods.add("java2.util2.WeakHashMap.put(java.lang.Object, java.lang.Object)");
+    excludedMethods.add("java2.util2.WeakHashMap.resize(int)");
+    excludedMethods.add(
+        "java2.util2.WeakHashMap.transfer(java2.util2.WeakHashMap.Entry[], java2.util2.WeakHashMap.Entry[])");
+    excludedMethods.add("java2.util2.WeakHashMap.unmaskNull(java.lang.Object)");
+    excludedMethods.add("java2.util2.WeakHashMap.values()");
     generateAndTest(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests, excludedMethods);
   }
