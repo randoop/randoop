@@ -79,12 +79,14 @@ class MethodCoverageMap {
     return coverageMap;
   }
 
+  /**
+   * Return the set of names for covered methods of the class.
+   *
+   * @param classname  the class name
+   * @return the set of method names for covered methods
+   */
   Set<String> getMethods(String classname) {
     return classMap.getValues(classname);
-  }
-
-  Set<String> getClassnames() {
-    return classMap.keySet();
   }
 
   private void put(String className, String methodName, ICounter methodCounter) {

@@ -29,6 +29,12 @@ class CompilationStatus {
   /** The list of compiler diagnostics. */
   private final List<Diagnostic<? extends JavaFileObject>> diagnostics;
 
+  /**
+   * Creates a {@link CompilationStatus} object with the success and diagnostic output.
+   *
+   * @param succeeded  the success flag
+   * @param diagnostics  the diagnostic output of the compiler
+   */
   private CompilationStatus(
       Boolean succeeded, List<Diagnostic<? extends JavaFileObject>> diagnostics) {
     this.succeeded = succeeded;

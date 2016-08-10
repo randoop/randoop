@@ -16,10 +16,23 @@ import static org.junit.Assert.fail;
  * Includes the exit status, and the list of output lines.
  */
 class ProcessStatus {
+
+  /** The command executed by the process. */
   final List<String> command;
+
+  /** The exit status of the command. */
   final int exitStatus;
+
+  /** The output from running the command. */
   final List<String> outputLines;
 
+  /**
+   * Creates a {@link ProcessStatus} object for the command with captured exit status, and output.
+   *
+   * @param command  the command
+   * @param exitStatus  the exit status
+   * @param outputLines  the lines of process output
+   */
   private ProcessStatus(List<String> command, int exitStatus, List<String> outputLines) {
     this.command = command;
     this.exitStatus = exitStatus;

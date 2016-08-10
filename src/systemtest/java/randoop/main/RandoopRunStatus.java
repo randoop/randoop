@@ -20,11 +20,28 @@ import static org.junit.Assert.fail;
  * generated tests.
  */
 class RandoopRunStatus {
+
+  /** The {@link ProcessStatus} for the Randoop run. */
   final ProcessStatus processStatus;
+
+  /** The number of operators used in the Randoop run. */
   final int operatorCount;
+
+  /** The number of generated regression tests. */
   final int regressionTestCount;
+
+  /** The number of generated error-revealing tests. */
   final int errorTestCount;
 
+  /**
+   * Creates a {@link RandoopRunStatus} object with the given {@link ProcessStatus}, operator count,
+   * and generated test counts.
+   *
+   * @param processStatus  the status of Randoop execution
+   * @param operatorCount  the number of operators used in generation
+   * @param regressionTestCount  the number of generated regression tests
+   * @param errorTestCount  the number of generated error-revealing tests
+   */
   private RandoopRunStatus(
       ProcessStatus processStatus, int operatorCount, int regressionTestCount, int errorTestCount) {
     this.processStatus = processStatus;

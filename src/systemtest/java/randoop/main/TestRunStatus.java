@@ -10,12 +10,32 @@ import java.util.List;
  * Captures the status of running a suite of JUnit tests.
  */
 class TestRunStatus {
+
+  /** The {@link ProcessStatus} for running JUnit. */
   final ProcessStatus processStatus;
+
+  /** The number of tests run */
   final int testsRun;
+
+  /** The number of tests that failed. */
   final int testsFail;
+
+  /** The number of tests that succeeded. */
   final int testsSucceed;
+
+  /** The {@link MethodCoverageMap} for the executed tests. */
   final MethodCoverageMap coverageMap;
 
+  /**
+   * Creates a {@link TestRunStatus} object for the given {@link ProcessStatus}, coverage map, and
+   * test counts.
+   *
+   * @param processStatus  the {@link ProcessStatus} of running JUnit on a test suite
+   * @param coverageMap  the {@link MethodCoverageMap} from the JUnit execution
+   * @param testsRun  the number of tests run
+   * @param testsFail  the number of tests that failed
+   * @param testsSucceed  the number of tests that succeeded
+   */
   private TestRunStatus(
       ProcessStatus processStatus,
       MethodCoverageMap coverageMap,
