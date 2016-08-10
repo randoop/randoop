@@ -175,7 +175,7 @@ public class RandoopSystemTest {
     options.addTestClass("java2.util2.TreeSet");
     options.addTestClass("java2.util2.Collections");
     options.setFlag("no-error-revealing-tests");
-    //options.setOption("inputlimit", "500");
+    options.setOption("inputlimit", "500");
     options.setOption("npe-on-null-input", "EXPECTED");
     options.setFlag("debug_checks");
     options.setOption("observers", "resources/systemTest/randoop1_observers.txt");
@@ -184,11 +184,11 @@ public class RandoopSystemTest {
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
 
-    //XXX these should not be excluded - temporary exclusion
+    //XXX these are execluded b/c cannot generate input object
     Set<String> excludedMethods = new HashSet<>();
     excludedMethods.add("java2.util2.TreeSet.readObject(java.io.ObjectInputStream)");
     excludedMethods.add("java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream)");
-    excludedMethods.add("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
+
     Set<String> requiredMethods = new HashSet<>();
     generateAndTest(
         testEnvironment,
@@ -212,7 +212,7 @@ public class RandoopSystemTest {
     options.setPackageName("foo.bar");
     options.setRegressionBasename("NaiveRegression");
     options.setErrorBasename("NaiveError");
-    //options.setOption("inputlimit", "100");
+    options.setOption("inputlimit", "100");
     options.addTestClass("java2.util2.TreeSet");
     options.addTestClass("java2.util2.ArrayList");
     options.addTestClass("java2.util2.LinkedList");
@@ -222,11 +222,11 @@ public class RandoopSystemTest {
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
 
-    // XXX these should occur - excluded temporarily
+    // XXX these are excluded b/c cannot generate input object
     Set<String> excludedMethods = new HashSet<>();
     excludedMethods.add("java2.util2.TreeSet.readObject(java.io.ObjectInputStream)");
     excludedMethods.add("java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream)");
-    excludedMethods.add("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
+
     Set<String> requiredMethods = new HashSet<>();
     generateAndTest(
         testEnvironment,
@@ -250,7 +250,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("JDK_Tests_regression");
     options.setErrorBasename("JDK_Tests_error");
 
-    //options.setOption("inputlimit", "1000");
+    options.setOption("inputlimit", "1000");
     options.setOption("null-ratio", "0.3");
     options.setOption("alias-ratio", "0.3");
     options.setFlag("small-tests");
@@ -261,11 +261,11 @@ public class RandoopSystemTest {
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
-    // XXX these should occur - excluded temporarily
+
+    // XXX these are excluded b/c cannot generate input object
     Set<String> excludedMethods = new HashSet<>();
     excludedMethods.add("java2.util2.TreeSet.readObject(java.io.ObjectInputStream)");
     excludedMethods.add("java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream)");
-    excludedMethods.add("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
     Set<String> requiredMethods = new HashSet<>();
     generateAndTest(
         testEnvironment,
@@ -296,7 +296,7 @@ public class RandoopSystemTest {
     options.setErrorBasename("BuggyTest");
 
     options.setFlag("no-regression-tests");
-    //options.setOption("inputlimit", "1000");
+    options.setOption("inputlimit", "1000");
     options.addClassList("resources/systemTest/buggyclasses.txt");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.NONE;
