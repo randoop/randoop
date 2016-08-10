@@ -184,19 +184,34 @@ public class RandoopSystemTest {
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
 
-    //XXX these are execluded b/c cannot generate input object
     Set<String> excludedMethods = new HashSet<>();
+    // these are excluded b/c cannot generate input object
     excludedMethods.add("java2.util2.TreeSet.readObject(java.io.ObjectInputStream)");
     excludedMethods.add("java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream)");
 
-    Set<String> requiredMethods = new HashSet<>();
+    // Randoop not generating these
+    excludedMethods.add("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
+    excludedMethods.add("java2.util2.Collections.get(java2.util2.ListIterator, int)");
+    excludedMethods.add(
+        "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object)");
+    excludedMethods.add(
+        "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object, java2.util2.Comparator)");
+    excludedMethods.add("java2.util2.Collections.rotate2(java2.util2.List, int)");
+    excludedMethods.add("java2.util2.Collections.swap(java.lang.Object[], int, int)");
+    excludedMethods.add("java2.util2.Collections.swap(java2.util2.List, int, int)");
+    excludedMethods.add(
+        "java2.util2.Collections.synchronizedCollection(java2.util2.Collection, java.lang.Object)");
+    excludedMethods.add(
+        "java2.util2.Collections.synchronizedList(java2.util2.List, java.lang.Object)");
+    excludedMethods.add(
+        "java2.util2.Collections.synchronizedSet(java2.util2.Set, java.lang.Object)");
+    excludedMethods.add("java2.util2.Collections.synchronizedSortedMap(java2.util2.SortedMap)");
+    excludedMethods.add("java2.util2.Collections.unmodifiableSortedMap(java2.util2.SortedMap)");
+    excludedMethods.add("java2.util2.TreeSet.first()");
+    excludedMethods.add("java2.util2.TreeSet.headSet(java.lang.Object)");
+    excludedMethods.add("java2.util2.TreeSet.last()");
     generateAndTest(
-        testEnvironment,
-        options,
-        expectedRegressionTests,
-        expectedErrorTests,
-        requiredMethods,
-        excludedMethods);
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests, excludedMethods);
   }
 
   /**
@@ -212,7 +227,7 @@ public class RandoopSystemTest {
     options.setPackageName("foo.bar");
     options.setRegressionBasename("NaiveRegression");
     options.setErrorBasename("NaiveError");
-    options.setOption("inputlimit", "100");
+    //options.setOption("inputlimit", "100");
     options.addTestClass("java2.util2.TreeSet");
     options.addTestClass("java2.util2.ArrayList");
     options.addTestClass("java2.util2.LinkedList");
@@ -222,19 +237,36 @@ public class RandoopSystemTest {
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
 
-    // XXX these are excluded b/c cannot generate input object
     Set<String> excludedMethods = new HashSet<>();
+    // these are excluded b/c cannot generate input object
     excludedMethods.add("java2.util2.TreeSet.readObject(java.io.ObjectInputStream)");
     excludedMethods.add("java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream)");
+    excludedMethods.add("java2.util2.ArrayList.readObject(java.io.ObjectInputStream)");
+    excludedMethods.add("java2.util2.ArrayList.writeObject(java.io.ObjectOutputStream)");
+    excludedMethods.add("java2.util2.LinkedList.readObject(java.io.ObjectInputStream)");
+    excludedMethods.add("java2.util2.LinkedList.writeObject(java.io.ObjectOutputStream)");
 
-    Set<String> requiredMethods = new HashSet<>();
+    // these are excluded b/c Randoop is not generating them for some reason
+    excludedMethods.add("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
+    excludedMethods.add("java2.util2.Collections.get(java2.util2.ListIterator, int)");
+    excludedMethods.add(
+        "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object)");
+    excludedMethods.add(
+        "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object, java2.util2.Comparator)");
+    excludedMethods.add("java2.util2.Collections.rotate2(java2.util2.List, int)");
+    excludedMethods.add("java2.util2.Collections.swap(java.lang.Object[], int, int)");
+    excludedMethods.add(
+        "java2.util2.Collections.synchronizedCollection(java2.util2.Collection, java.lang.Object)");
+    excludedMethods.add(
+        "java2.util2.Collections.synchronizedList(java2.util2.List, java.lang.Object)");
+    excludedMethods.add(
+        "java2.util2.Collections.synchronizedSet(java2.util2.Set, java.lang.Object)");
+    excludedMethods.add("java2.util2.Collections.synchronizedSortedMap(java2.util2.SortedMap)");
+    excludedMethods.add("java2.util2.Collections.unmodifiableSortedMap(java2.util2.SortedMap)");
+    excludedMethods.add("java2.util2.ArrayList.removeRange(int, int)");
+
     generateAndTest(
-        testEnvironment,
-        options,
-        expectedRegressionTests,
-        expectedErrorTests,
-        requiredMethods,
-        excludedMethods);
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests, excludedMethods);
   }
 
   /**
@@ -262,18 +294,110 @@ public class RandoopSystemTest {
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
 
-    // XXX these are excluded b/c cannot generate input object
     Set<String> excludedMethods = new HashSet<>();
+    //this is excluded method - see above
+    excludedMethods.add("java2.util2.Collections.shuffle(java2.util2.List)");
+
+    // these are excluded b/c cannot generate input
     excludedMethods.add("java2.util2.TreeSet.readObject(java.io.ObjectInputStream)");
     excludedMethods.add("java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream)");
-    Set<String> requiredMethods = new HashSet<>();
+    excludedMethods.add("java2.util2.ArrayList.readObject(java.io.ObjectInputStream)");
+    excludedMethods.add("java2.util2.ArrayList.writeObject(java.io.ObjectOutputStream)");
+    excludedMethods.add("java2.util2.BitSet.readObject(java.io.ObjectInputStream)");
+    excludedMethods.add("java2.util2.Hashtable.readObject(java.io.ObjectInputStream)");
+    excludedMethods.add("java2.util2.Hashtable.writeObject(java.io.ObjectOutputStream)");
+    excludedMethods.add("java2.util2.LinkedList.readObject(java.io.ObjectInputStream)");
+    excludedMethods.add("java2.util2.LinkedList.writeObject(java.io.ObjectOutputStream)");
+    excludedMethods.add("java2.util2.TreeMap.readObject(java.io.ObjectInputStream)");
+    excludedMethods.add(
+        "java2.util2.TreeMap.readTreeSet(int, java.io.ObjectInputStream, java.lang.Object)");
+    excludedMethods.add("java2.util2.TreeMap.writeObject(java.io.ObjectOutputStream)");
+    excludedMethods.add("java2.util2.Vector.writeObject(java.io.ObjectOutputStream)");
+
+    // these are not being generated by current Randoop
+    excludedMethods.add("java2.util2.Collections.get(java2.util2.ListIterator, int)");
+    excludedMethods.add(
+        "java2.util2.Collections.indexedBinarySearch(java2.util2.List, java.lang.Object, java2.util2.Comparator)");
+    excludedMethods.add(
+        "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object)");
+    excludedMethods.add(
+        "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object, java2.util2.Comparator)");
+    excludedMethods.add("java2.util2.Arrays.med3(byte[], int, int, int)");
+    excludedMethods.add("java2.util2.Arrays.med3(char[], int, int, int)");
+    excludedMethods.add("java2.util2.Arrays.med3(double[], int, int, int)");
+    excludedMethods.add("java2.util2.Arrays.med3(float[], int, int, int)");
+    excludedMethods.add("java2.util2.Arrays.med3(int[], int, int, int)");
+    excludedMethods.add("java2.util2.Arrays.med3(long[], int, int, int)");
+    excludedMethods.add("java2.util2.Arrays.med3(short[], int, int, int)");
+    excludedMethods.add("java2.util2.Arrays.vecswap(byte[], int, int, int)");
+    excludedMethods.add("java2.util2.Arrays.vecswap(char[], int, int, int)");
+    excludedMethods.add("java2.util2.Arrays.vecswap(double[], int, int, int)");
+    excludedMethods.add("java2.util2.Arrays.vecswap(float[], int, int, int)");
+    excludedMethods.add("java2.util2.Arrays.vecswap(int[], int, int, int)");
+    excludedMethods.add("java2.util2.Arrays.vecswap(long[], int, int, int)");
+    excludedMethods.add("java2.util2.Arrays.vecswap(short[], int, int, int)");
+    excludedMethods.add("java2.util2.ArrayList.remove(int)");
+    excludedMethods.add("java2.util2.ArrayList.removeRange(int, int)");
+    excludedMethods.add("java2.util2.ArrayList.set(int, java.lang.Object)");
+    excludedMethods.add(
+        "java2.util2.Arrays.mergeSort(java.lang.Object[], java.lang.Object[], int, int, int, java2.util2.Comparator)");
+    excludedMethods.add("java2.util2.Arrays.sort(long[], int, int)");
+    excludedMethods.add("java2.util2.Arrays.swap(java.lang.Object[], int, int)");
+    excludedMethods.add("java2.util2.BitSet.bitCount(long)");
+    excludedMethods.add("java2.util2.BitSet.bitLen(int)");
+    excludedMethods.add("java2.util2.BitSet.bitsLeftOf(int)");
+    excludedMethods.add("java2.util2.BitSet.bitsRightOf(int)");
+    excludedMethods.add("java2.util2.BitSet.get(int)");
+    excludedMethods.add("java2.util2.BitSet.getBits(int)");
+    excludedMethods.add("java2.util2.BitSet.hashCode()");
+    excludedMethods.add("java2.util2.BitSet.length()");
+    excludedMethods.add("java2.util2.Collections.rotate2(java2.util2.List, int)");
+    excludedMethods.add("java2.util2.Collections.swap(java.lang.Object[], int, int)");
+    excludedMethods.add("java2.util2.Collections.swap(java2.util2.List, int, int)");
+    excludedMethods.add("java2.util2.Hashtable.rehash()");
+    excludedMethods.add("java2.util2.LinkedHashMap.newValueIterator()");
+    excludedMethods.add("java2.util2.LinkedList.get(int)");
+    excludedMethods.add("java2.util2.LinkedList.set(int, java.lang.Object)");
+    excludedMethods.add("java2.util2.MissingResourceException.getKey()");
+    excludedMethods.add("java2.util2.Observable.clearChanged()");
+    excludedMethods.add("java2.util2.Observable.countObservers()");
+    excludedMethods.add("java2.util2.Observable.deleteObservers()");
+    excludedMethods.add("java2.util2.Observable.hasChanged()");
+    excludedMethods.add("java2.util2.Observable.setChanged()");
+    excludedMethods.add("java2.util2.Stack.empty()");
+    excludedMethods.add("java2.util2.Stack.peek()");
+    excludedMethods.add("java2.util2.Stack.pop()");
+    excludedMethods.add("java2.util2.Stack.search(java.lang.Object)");
+    excludedMethods.add(
+        "java2.util2.TreeMap.addAllForTreeSet(java2.util2.SortedSet, java.lang.Object)");
+    excludedMethods.add("java2.util2.TreeMap.colorOf(java2.util2.TreeMap.Entry)");
+    excludedMethods.add("java2.util2.TreeMap.decrementSize()");
+    excludedMethods.add("java2.util2.TreeMap.deleteEntry(java2.util2.TreeMap.Entry)");
+    excludedMethods.add("java2.util2.TreeMap.fixAfterDeletion(java2.util2.TreeMap.Entry)");
+    excludedMethods.add("java2.util2.TreeMap.fixAfterInsertion(java2.util2.TreeMap.Entry)");
+    excludedMethods.add("java2.util2.TreeMap.getCeilEntry(java.lang.Object)");
+    excludedMethods.add("java2.util2.TreeMap.getPrecedingEntry(java.lang.Object)");
+    excludedMethods.add("java2.util2.TreeMap.lastKey()");
+    excludedMethods.add("java2.util2.TreeMap.leftOf(java2.util2.TreeMap.Entry)");
+    excludedMethods.add("java2.util2.TreeMap.parentOf(java2.util2.TreeMap.Entry)");
+    excludedMethods.add("java2.util2.TreeMap.rightOf(java2.util2.TreeMap.Entry)");
+    excludedMethods.add("java2.util2.TreeMap.rotateLeft(java2.util2.TreeMap.Entry)");
+    excludedMethods.add("java2.util2.TreeMap.rotateRight(java2.util2.TreeMap.Entry)");
+    excludedMethods.add("java2.util2.TreeMap.setColor(java2.util2.TreeMap.Entry, boolean)");
+    excludedMethods.add("java2.util2.TreeMap.subMap(java.lang.Object, java.lang.Object)");
+    excludedMethods.add("java2.util2.TreeMap.successor(java2.util2.TreeMap.Entry)");
+    excludedMethods.add("java2.util2.TreeMap.valEquals(java.lang.Object, java.lang.Object)");
+    excludedMethods.add(
+        "java2.util2.TreeMap.valueSearchNonNull(java2.util2.TreeMap.Entry, java.lang.Object)");
+    excludedMethods.add("java2.util2.TreeMap.valueSearchNull(java2.util2.TreeMap.Entry)");
+    excludedMethods.add("java2.util2.TreeSet.contains(java.lang.Object)");
+    excludedMethods.add("java2.util2.TreeSet.first()");
+    excludedMethods.add("java2.util2.TreeSet.last()");
+    excludedMethods.add("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
+    excludedMethods.add("java2.util2.Vector.removeRange(int, int)");
+    excludedMethods.add("java2.util2.WeakHashMap.removeMapping(java.lang.Object)");
     generateAndTest(
-        testEnvironment,
-        options,
-        expectedRegressionTests,
-        expectedErrorTests,
-        requiredMethods,
-        excludedMethods);
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests, excludedMethods);
   }
 
   /**
@@ -302,17 +426,25 @@ public class RandoopSystemTest {
     ExpectedTests expectedRegressionTests = ExpectedTests.NONE;
     ExpectedTests expectedErrorTests = ExpectedTests.SOME;
 
-    // TODO change to list of required methods
     Set<String> excludedMethods = new HashSet<>();
-    Set<String> requiredMethods = new HashSet<>(); // require all that are not excluded
+
+    // TODO check which of these should actually not be expected
+    excludedMethods.add("examples.Buggy.BuggyCompareToSubs.compareTo(java.lang.Object)");
+    excludedMethods.add("examples.Buggy.BuggyCompareToSubs.hashCode()");
+    excludedMethods.add("examples.Buggy.BuggyEqualsTransitive.hashCode()");
+    excludedMethods.add("examples.Buggy.BuggyCompareToReflexive.compareTo(java.lang.Object)");
+    excludedMethods.add("examples.Buggy.BuggyCompareToReflexive.hashCode()");
+    excludedMethods.add("examples.Buggy.BuggyCompareToAntiSymmetric.compareTo(java.lang.Object)");
+    excludedMethods.add("examples.Buggy.BuggyCompareToAntiSymmetric.hashCode()");
+    excludedMethods.add("examples.Buggy.BuggyCompareToEquals.compareTo(java.lang.Object)");
+    excludedMethods.add("examples.Buggy.BuggyCompareToEquals.hashCode()");
+    excludedMethods.add("examples.Buggy.BuggyCompareToTransitive.compareTo(java.lang.Object)");
+    excludedMethods.add("examples.Buggy.BuggyCompareToTransitive.hashCode()");
+    excludedMethods.add("examples.Buggy.hashCode()");
+    excludedMethods.add("examples.Buggy.toString()");
 
     generateAndTest(
-        testEnvironment,
-        options,
-        expectedRegressionTests,
-        expectedErrorTests,
-        requiredMethods,
-        excludedMethods);
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests, excludedMethods);
   }
 
   /**
@@ -404,14 +536,9 @@ public class RandoopSystemTest {
     Set<String> excludedMethods = new HashSet<>();
     excludedMethods.add("examples.Visibility.getNonVisible()");
     excludedMethods.add("examples.Visibility.takesNonVisible(examples.NonVisible)");
-    Set<String> requiredMethods = new HashSet<>();
+
     generateAndTest(
-        testEnvironment,
-        options,
-        expectedRegressionTests,
-        expectedErrorTests,
-        requiredMethods,
-        excludedMethods);
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests, excludedMethods);
   }
 
   /**
@@ -561,7 +688,6 @@ public class RandoopSystemTest {
       RandoopOptions options,
       ExpectedTests expectedRegression,
       ExpectedTests expectedError,
-      Set<String> requiredMethods,
       Set<String> excludedMethods) {
 
     RandoopRunStatus runStatus = RandoopRunStatus.generateAndCompile(environment, options);
@@ -632,8 +758,7 @@ public class RandoopSystemTest {
         break;
     }
 
-    checkCoverage(
-        options.getClassnames(), requiredMethods, excludedMethods, regressionRunDesc, errorRunDesc);
+    checkCoverage(options.getClassnames(), excludedMethods, regressionRunDesc, errorRunDesc);
   }
 
   private void generateAndTest(
@@ -641,21 +766,17 @@ public class RandoopSystemTest {
       RandoopOptions options,
       ExpectedTests expectedRegression,
       ExpectedTests expectedError) {
-    generateAndTest(
-        environment,
-        options,
-        expectedRegression,
-        expectedError,
-        new HashSet<String>(),
-        new HashSet<String>());
+    generateAndTest(environment, options, expectedRegression, expectedError, new HashSet<String>());
   }
 
   private void checkCoverage(
       Set<String> classnames,
-      Set<String> requiredMethods,
       Set<String> excludedMethods,
       TestRunStatus regressionStatus,
       TestRunStatus errorStatus) {
+
+    Set<String> missingMethods = new TreeSet<>();
+    Set<String> shouldBeMissingMethods = new TreeSet<>();
 
     for (String classname : classnames) {
       Set<String> methods = new HashSet<>();
@@ -663,9 +784,6 @@ public class RandoopSystemTest {
       String canonicalClassname = classname.replace('$', '.');
       getCoveredMethodsForClass(regressionStatus, canonicalClassname, methods);
       getCoveredMethodsForClass(errorStatus, canonicalClassname, methods);
-
-      Set<String> missingMethods = new TreeSet<>();
-      Set<String> shouldBeMissingMethods = new TreeSet<>();
 
       Class<?> c;
       try {
@@ -678,34 +796,33 @@ public class RandoopSystemTest {
               if (methods.contains(methodname)) {
                 shouldBeMissingMethods.add(methodname);
               }
-            } else if (requiredMethods.isEmpty() || requiredMethods.contains(methodname)) {
+            } else {
               if (!methods.contains(methodname)) {
                 missingMethods.add(methodname);
               }
             }
           } else {
-            System.out.println("Ignoring coverage of : " + methodname);
+            System.out.println("Ignoring " + methodname + " in coverage checks");
           }
         }
-
       } catch (ClassNotFoundException e) {
         fail("Could not load input class" + classname + ": " + e.getMessage());
       }
+    }
 
-      if (!missingMethods.isEmpty()) {
-        String msg = String.format("Expected methods not covered:%n");
-        for (String name : missingMethods) {
-          msg += String.format("  %s%n", name);
-        }
-        fail(msg);
+    if (!missingMethods.isEmpty()) {
+      String msg = String.format("Expected methods not covered:%n");
+      for (String name : missingMethods) {
+        msg += String.format("  %s%n", name);
       }
-      if (!shouldBeMissingMethods.isEmpty()) {
-        String msg = String.format("Excluded methods covered:%n");
-        for (String name : shouldBeMissingMethods) {
-          msg += String.format("  %s%n", name);
-        }
-        fail(msg);
+      fail(msg);
+    }
+    if (!shouldBeMissingMethods.isEmpty()) {
+      String msg = String.format("Excluded methods that are covered:%n");
+      for (String name : shouldBeMissingMethods) {
+        msg += String.format("  %s%n", name);
       }
+      fail(msg);
     }
   }
 
