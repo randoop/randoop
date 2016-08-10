@@ -179,7 +179,7 @@ public class RandoopSystemTest {
     options.addTestClass("java2.util2.TreeSet");
     options.addTestClass("java2.util2.Collections");
     options.setFlag("no-error-revealing-tests");
-    options.setOption("inputlimit", "500");
+    options.setOption("inputlimit", "600");
     options.setOption("npe-on-null-input", "EXPECTED");
     options.setFlag("debug_checks");
     options.setOption("observers", "resources/systemTest/randoop1_observers.txt");
@@ -211,10 +211,6 @@ public class RandoopSystemTest {
         "java2.util2.Collections.synchronizedSet(java2.util2.Set, java.lang.Object)");
     excludedMethods.add("java2.util2.Collections.synchronizedSortedMap(java2.util2.SortedMap)");
     excludedMethods.add("java2.util2.Collections.unmodifiableSortedMap(java2.util2.SortedMap)");
-    excludedMethods.add("java2.util2.TreeSet.first()");
-    excludedMethods.add("java2.util2.TreeSet.headSet(java.lang.Object)");
-    excludedMethods.add("java2.util2.TreeSet.last()");
-    excludedMethods.add("java2.util2.TreeSet.tailSet(java.lang.Object)");
     generateAndTest(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests, excludedMethods);
   }
@@ -232,7 +228,7 @@ public class RandoopSystemTest {
     options.setPackageName("foo.bar");
     options.setRegressionBasename("NaiveRegression");
     options.setErrorBasename("NaiveError");
-    //options.setOption("inputlimit", "100");
+    options.setOption("inputlimit", "100");
     options.addTestClass("java2.util2.TreeSet");
     options.addTestClass("java2.util2.ArrayList");
     options.addTestClass("java2.util2.LinkedList");
@@ -273,6 +269,48 @@ public class RandoopSystemTest {
     excludedMethods.add("java2.util2.LinkedList.remove(int)");
     excludedMethods.add("java2.util2.TreeSet.headSet(java.lang.Object)");
     excludedMethods.add("java2.util2.TreeSet.tailSet(java.lang.Object)");
+
+    excludedMethods.add("java2.util2.ArrayList.addAll(int, java2.util2.Collection)");
+    excludedMethods.add("java2.util2.ArrayList.clear()");
+    excludedMethods.add("java2.util2.ArrayList.set(int, java.lang.Object)");
+    excludedMethods.add("java2.util2.ArrayList.trimToSize()");
+    excludedMethods.add("java2.util2.Collections.enumeration(java2.util2.Collection)");
+    excludedMethods.add("java2.util2.Collections.eq(java.lang.Object, java.lang.Object)");
+    excludedMethods.add("java2.util2.Collections.fill(java2.util2.List, java.lang.Object)");
+    excludedMethods.add("java2.util2.Collections.indexedBinarySearch(java2.util2.List, java.lang.Object, java2.util2.Comparator)");
+    excludedMethods.add("java2.util2.Collections.min(java2.util2.Collection, java2.util2.Comparator)");
+    excludedMethods.add("java2.util2.Collections.nCopies(int, java.lang.Object)");
+    excludedMethods.add("java2.util2.Collections.replaceAll(java2.util2.List, java.lang.Object, java.lang.Object)");
+    excludedMethods.add("java2.util2.Collections.reverseOrder()");
+    excludedMethods.add("java2.util2.Collections.synchronizedCollection(java2.util2.Collection)");
+    excludedMethods.add("java2.util2.Collections.synchronizedList(java2.util2.List)");
+    excludedMethods.add("java2.util2.Collections.synchronizedMap(java2.util2.Map)");
+    excludedMethods.add("java2.util2.Collections.synchronizedSet(java2.util2.Set)");
+    excludedMethods.add("java2.util2.Collections.synchronizedSortedSet(java2.util2.SortedSet)");
+    excludedMethods.add("java2.util2.Collections.unmodifiableCollection(java2.util2.Collection)");
+    excludedMethods.add("java2.util2.Collections.unmodifiableMap(java2.util2.Map)");
+    excludedMethods.add("java2.util2.Collections.unmodifiableSortedSet(java2.util2.SortedSet)");
+    excludedMethods.add("java2.util2.LinkedList.add(int, java.lang.Object)");
+    excludedMethods.add("java2.util2.LinkedList.add(java.lang.Object)");
+    excludedMethods.add("java2.util2.LinkedList.addFirst(java.lang.Object)");
+    excludedMethods.add("java2.util2.LinkedList.clone()");
+    excludedMethods.add("java2.util2.LinkedList.contains(java.lang.Object)");
+    excludedMethods.add("java2.util2.LinkedList.get(int)");
+    excludedMethods.add("java2.util2.LinkedList.getLast()");
+    excludedMethods.add("java2.util2.LinkedList.indexOf(java.lang.Object)");
+    excludedMethods.add("java2.util2.LinkedList.lastIndexOf(java.lang.Object)");
+    excludedMethods.add("java2.util2.LinkedList.remove(java.lang.Object)");
+    excludedMethods.add("java2.util2.LinkedList.remove(java2.util2.LinkedList.Entry)");
+    excludedMethods.add("java2.util2.LinkedList.removeFirst()");
+    excludedMethods.add("java2.util2.LinkedList.removeLast()");
+    excludedMethods.add("java2.util2.LinkedList.set(int, java.lang.Object)");
+    excludedMethods.add("java2.util2.LinkedList.toArray(java.lang.Object[])");
+    excludedMethods.add("java2.util2.TreeSet.add(java.lang.Object)");
+    excludedMethods.add("java2.util2.TreeSet.clear()");
+    excludedMethods.add("java2.util2.TreeSet.contains(java.lang.Object)");
+    excludedMethods.add("java2.util2.TreeSet.first()");
+    excludedMethods.add("java2.util2.TreeSet.isEmpty()");
+    excludedMethods.add("java2.util2.TreeSet.last()");
 
     generateAndTest(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests, excludedMethods);
