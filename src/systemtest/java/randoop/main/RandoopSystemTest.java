@@ -1,39 +1,27 @@
 package randoop.main;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import java.io.IOException;
-import java.io.File;
-import java.io.Writer;
-import java.lang.InterruptedException;
-import java.lang.ProcessBuilder;
-import java.nio.charset.Charset;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
+import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Locale;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import javax.tools.Diagnostic;
-import javax.tools.DiagnosticCollector;
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.ToolProvider;
+import plume.UtilMDE;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.greaterThan;
-import org.junit.Test;
-import org.junit.BeforeClass;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-import plume.Pair;
-import plume.TimeLimitProcess;
 
 /**
  * A JUnit test class that runs the Randoop system tests.
@@ -60,31 +48,117 @@ import plume.TimeLimitProcess;
  */
 public class RandoopSystemTest {
 
-  private static final String SOURCE_DIR_NAME = "java";
-  private static final String CLASS_DIR_NAME = "class";
-
-  /** the classpath for this test class */
-  private static String classpath = null;
-
-  /** the root for the system test working directories */
-  private static Path workingDirsRoot = null;
+  private static SystemTestEnvironment systemTestEnvironment;
 
   /**
-   * Sets up the paths for test execution.
+   * Sets up the environment for test execution.
    */
   @BeforeClass
   public static void setupClass() {
-    classpath = System.getProperty("java.class.path");
+    String classpath = System.getProperty("java.class.path");
     /* the current working directory for this test class */
-    Path currentWorkingDir = Paths.get("").toAbsolutePath().normalize();
-    workingDirsRoot = currentWorkingDir.resolve("working-directories");
+    Path buildDir = Paths.get("").toAbsolutePath().normalize();
+    systemTestEnvironment = SystemTestEnvironment.createSystemTestEnvironment(classpath, buildDir);
   }
 
+  /**
+   * Enumerated type to quantify expected test generation:
+   * <ul>
+   *   <li>{@code SOME} - at least one test is generated,</li>
+   *   <li>{@code NONE} - no tests are generated, or</li>
+   *   <li>{@code DONT_CARE} - the number of tests does not need to be checked.</li>
+   * </ul>
+   */
   private enum ExpectedTests {
     SOME,
     NONE,
     DONT_CARE
   }
+
+  /* --------------------------------------- test methods --------------------------------------- */
+
+  /*
+   * WRITING TEST METHODS:
+   *
+   * Methods with the Test annotation will be run normally as JUnit tests.
+   * Each method should consist of one system test, and is responsible for setting up the
+   * directories for the test, setting the options for Randoop, running Randoop, compiling the
+   * generated tests, and then doing whatever checks are required for the test.  The steps each
+   * test should follow are:
+   *
+   * 1. Set up the test environment.
+   *
+   *    Each test method should create the working environment for running the test with a call like
+   *
+   *      TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment(testName);
+   *
+   *    where testName is the name of your test (be sure that it doesn't conflict with the name
+   *    of any test already in this class).
+   *    The variable systemTestEnvironment refers to the global environment for a run of the
+   *    system tests, and contains information about the classpath, and directories needed while
+   *    running all of the system tests.
+   *
+   * 2. Set the options for Randoop.
+   *
+   *    The method that execute Randoop take the command-line arguments as a List<String>, and the
+   *    easiest way to get a list setup is to make a call like
+   *      List<String> options = getRandoopOptions(
+   *         testEnvironment,
+   *         packageName,
+   *         regressionBasename,
+   *         errorBasename
+   *         [ , option-string-args ]);
+   *    where testEnvironment is the variable initialized in step 1, packageName is the package name
+   *    for the tests (use the empty string if none), regressionBasename is the prefix String for
+   *    regression tests, errorBasename is the prefix String for error tests, and option-string-args
+   *    is a comma-separated list of Strings for other Randoop arguments. This method will setup
+   *    options for output directories and logging, so only options specifying inputs and affecting
+   *    generation are needed.  Take a look at getRandoopOptions() and look at some of the
+   *    existing tests to get an idea of what is already handled, and what to do with other options.
+   *
+   *  3. Run Randoop and compile generated tests.
+   *
+   *     This is where things can vary somewhat depending on the condition of the test.
+   *
+   *     In the majority of cases, we want to check that Randoop generates an expected number of
+   *     regression and/or error-revealing tests; that the generated tests compile; and that when run,
+   *     regression tests succeed, error tests fail, and that the methods of the classes-under-test
+   *     are covered by all tests.  In this case, the test method will make a call like
+   *
+   *       generateAndTest(
+   *         testEnvironment,
+   *         packageName,
+   *         regressionBasename,
+   *         errorBasename,
+   *         options,
+   *         expectedRegressionTests,
+   *         expectedErrorTests);
+   *
+   *     where testEnvironment, packageName, regressionBasename, errorBasename, and options are all
+   *     defined in steps 1 and 2.
+   *     The expected-tests parameters are values of the ExpectedTests enumerated type.
+   *     Use the value SOME if there must be at least one test, NONE if there should be no tests,
+   *     and DONT_CARE if, well, it doesn't matter how many tests there are.
+   *     The generateAndTest() method handles the standard test behavior, checking the standard
+   *     assumptions about regression and error tests (given the quantifiers), and dumping output
+   *     when the results don't meet expectations.
+   *
+   *     However, there are cases where the test may not follow this standard pattern.
+   *     In that case, the test should minimally make a call like
+   *       RandoopRunStatus randoopRunDesc =
+   *           RandoopRunStatus.generateAndCompile(
+   *              testEnvironment,
+   *              packageName,
+   *              regressionBasename,
+   *              errorBasename,
+   *              options);
+   *     where the arguments are all defined in steps 1 and 2.
+   *     This call will run Randoop to generate tests and then compile them.  All tests should
+   *     minimally confirm that generated tests compile before testing anything else.
+   *     Information about the Randoop run is included in the return value, including the output
+   *     from the execution.
+   */
+
   /**
    * Test formerly known as randoop1
    * This test previously did a diff on TestClass0.java with goal file.
@@ -92,32 +166,37 @@ public class RandoopSystemTest {
   @Test
   public void runCollectionsTest() {
 
-    Path workingPath = createTestDirectory(workingDirsRoot, "collections-test");
-    String packageName = "foo.bar";
-    String regressionBasename = "TestClass";
-    String errorBasename = "";
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("collections-test");
 
-    List<String> options =
-        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
-    options.add("--no-error-revealing-tests");
-    options.add("--inputlimit=500");
-    options.add("--testclass=java2.util2.TreeSet");
-    options.add("--testclass=java2.util2.Collections");
-    options.add("--npe-on-null-input=EXPECTED");
-    options.add("--debug_checks");
-    options.add("--observers=resources/systemTest/randoop1_observers.txt");
-    options.add("--omit-field-list=resources/systemTest/testclassomitfields.txt");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("foo.bar");
+    options.setRegressionBasename("TestClass");
+    options.addTestClass("java2.util2.TreeSet");
+    options.addTestClass("java2.util2.Collections");
+    options.setFlag("no-error-revealing-tests");
+    //options.setOption("inputlimit", "500");
+    options.setOption("npe-on-null-input", "EXPECTED");
+    options.setFlag("debug_checks");
+    options.setOption("observers", "resources/systemTest/randoop1_observers.txt");
+    options.setOption("omit-field-list", "resources/systemTest/testclassomitfields.txt");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+
+    //XXX these should not be excluded - temporary exclusion
+    Set<String> excludedMethods = new HashSet<>();
+    excludedMethods.add("java2.util2.TreeSet.readObject(java.io.ObjectInputStream)");
+    excludedMethods.add("java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream)");
+    excludedMethods.add("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
+    Set<String> requiredMethods = new HashSet<>();
     generateAndTest(
-        workingPath,
-        packageName,
-        regressionBasename,
-        errorBasename,
+        testEnvironment,
         options,
         expectedRegressionTests,
-        expectedErrorTests);
+        expectedErrorTests,
+        requiredMethods,
+        excludedMethods);
   }
 
   /**
@@ -127,34 +206,35 @@ public class RandoopSystemTest {
   @Test
   public void runNaiveCollectionsTest() {
 
-    Path workingPath = createTestDirectory(workingDirsRoot, "naive-collections-test");
-    String packageName = "foo.bar";
-    String regressionBasename = "NaiveRegression";
-    String errorBasename = "NaiveError";
-
-    List<String> options =
-        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
-    options.add("--inputlimit=100");
-    options.add("--testclass=java2.util2.TreeSet");
-    options.add("--testclass=java2.util2.ArrayList");
-    options.add("--testclass=java2.util2.LinkedList");
-    options.add("--testclass=java2.util2.Collections");
-    options.add("--omit-field-list=resources/systemTest/naiveomitfields.txt");
-
-    RandoopRunDescription randoopRunDesc =
-        generateAndCompile(
-            classpath, workingPath, packageName, regressionBasename, errorBasename, options);
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("naive-collections-test");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("foo.bar");
+    options.setRegressionBasename("NaiveRegression");
+    options.setErrorBasename("NaiveError");
+    //options.setOption("inputlimit", "100");
+    options.addTestClass("java2.util2.TreeSet");
+    options.addTestClass("java2.util2.ArrayList");
+    options.addTestClass("java2.util2.LinkedList");
+    options.addTestClass("java2.util2.Collections");
+    options.setOption("omit-field-list", "resources/systemTest/naiveomitfields.txt");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
+
+    // XXX these should occur - excluded temporarily
+    Set<String> excludedMethods = new HashSet<>();
+    excludedMethods.add("java2.util2.TreeSet.readObject(java.io.ObjectInputStream)");
+    excludedMethods.add("java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream)");
+    excludedMethods.add("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
+    Set<String> requiredMethods = new HashSet<>();
     generateAndTest(
-        workingPath,
-        packageName,
-        regressionBasename,
-        errorBasename,
+        testEnvironment,
         options,
         expectedRegressionTests,
-        expectedErrorTests);
+        expectedErrorTests,
+        requiredMethods,
+        excludedMethods);
   }
 
   /**
@@ -164,30 +244,36 @@ public class RandoopSystemTest {
   @Test
   public void runJDKTest() {
 
-    Path workingPath = createTestDirectory(workingDirsRoot, "jdk-test");
-    String packageName = "jdktests";
-    String regressionBasename = "JDK_Tests_regression";
-    String errorBasename = "JDK_Tests_error";
+    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("jdk-test");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("jdktests");
+    options.setRegressionBasename("JDK_Tests_regression");
+    options.setErrorBasename("JDK_Tests_error");
 
-    List<String> options =
-        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
-    options.add("--inputlimit=1000");
-    options.add("--null-ratio=0.3");
-    options.add("--alias-ratio=0.3");
-    options.add("--small-tests");
-    options.add("--clear=100");
-    options.add("--classlist=resources/systemTest/jdk_classlist.txt");
+    //options.setOption("inputlimit", "1000");
+    options.setOption("null-ratio", "0.3");
+    options.setOption("alias-ratio", "0.3");
+    options.setFlag("small-tests");
+    options.setFlag("clear=100");
+    options.addClassList("resources/systemTest/jdk_classlist.txt");
+    options.setOption(
+        "omitmethods", "java2\\.util2\\.Collections\\.shuffle\\(java2\\.util2\\.List\\)");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
+    // XXX these should occur - excluded temporarily
+    Set<String> excludedMethods = new HashSet<>();
+    excludedMethods.add("java2.util2.TreeSet.readObject(java.io.ObjectInputStream)");
+    excludedMethods.add("java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream)");
+    excludedMethods.add("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
+    Set<String> requiredMethods = new HashSet<>();
     generateAndTest(
-        workingPath,
-        packageName,
-        regressionBasename,
-        errorBasename,
+        testEnvironment,
         options,
         expectedRegressionTests,
-        expectedErrorTests);
+        expectedErrorTests,
+        requiredMethods,
+        excludedMethods);
   }
 
   /**
@@ -204,27 +290,29 @@ public class RandoopSystemTest {
   @Test
   public void runContractsTest() {
 
-    Path workingPath = createTestDirectory(workingDirsRoot, "contracts-test"); // temp directory
-    String packageName = "";
-    String regressionBasename = "";
-    String errorBasename = "BuggyTest";
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("contracts-test"); // temp directory
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setErrorBasename("BuggyTest");
 
-    List<String> options =
-        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
-    options.add("--no-regression-tests");
-    options.add("--inputlimit=1000");
-    options.add("--classlist=resources/systemTest/buggyclasses.txt");
+    options.setFlag("no-regression-tests");
+    //options.setOption("inputlimit", "1000");
+    options.addClassList("resources/systemTest/buggyclasses.txt");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.NONE;
     ExpectedTests expectedErrorTests = ExpectedTests.SOME;
+
+    // TODO change to list of required methods
+    Set<String> excludedMethods = new HashSet<>();
+    Set<String> requiredMethods = new HashSet<>(); // require all that are not excluded
+
     generateAndTest(
-        workingPath,
-        packageName,
-        regressionBasename,
-        errorBasename,
+        testEnvironment,
         options,
         expectedRegressionTests,
-        expectedErrorTests);
+        expectedErrorTests,
+        requiredMethods,
+        excludedMethods);
   }
 
   /**
@@ -233,28 +321,19 @@ public class RandoopSystemTest {
   @Test
   public void runCheckRepTest() {
 
-    Path workingPath = createTestDirectory(workingDirsRoot, "checkrep-test"); // temp directory
-    String packageName = "";
-    String regressionBasename = "";
-    String errorBasename = "CheckRepTest";
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("checkrep-test"); // temp directory
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setErrorBasename("CheckRepTest");
 
-    List<String> options =
-        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
-    options.add("--no-regression-tests");
-    options.add("--timelimit=2");
-    options.add("--testclass=examples.CheckRep1");
-    options.add("--testclass=examples.CheckRep2");
+    options.setFlag("no-regression-tests");
+    options.setOption("timelimit", "2");
+    options.addTestClass("examples.CheckRep1");
+    options.addTestClass("examples.CheckRep2");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.NONE;
     ExpectedTests expectedErrorTests = ExpectedTests.SOME;
-    generateAndTest(
-        workingPath,
-        packageName,
-        regressionBasename,
-        errorBasename,
-        options,
-        expectedRegressionTests,
-        expectedErrorTests);
+    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
   }
 
   /**
@@ -264,30 +343,23 @@ public class RandoopSystemTest {
   @Test
   public void runLiteralsTest() {
 
-    Path workingPath = createTestDirectory(workingDirsRoot, "literals-test"); // temp directory
-    String packageName = "";
-    String regressionBasename = "LiteralsReg";
-    String errorBasename = "LiteralsErr";
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("literals-test"); // temp directory
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("");
+    options.setRegressionBasename("LiteralsReg");
+    options.setErrorBasename("LiteralsErr");
 
-    List<String> options =
-        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
-    options.add("--inputlimit=1000");
-    options.add("--testclass=randoop.literals.A");
-    options.add("--testclass=randoop.literals.A2");
-    options.add("--testclass=randoop.literals.B");
-    options.add("--literals-level=CLASS");
-    options.add("--literals-file=resources/systemTest/literalsfile.txt");
+    options.setOption("inputlimit", "1000");
+    options.addTestClass("randoop.literals.A");
+    options.addTestClass("randoop.literals.A2");
+    options.addTestClass("randoop.literals.B");
+    options.setOption("literals-level", "CLASS");
+    options.setOption("literals-file", "resources/systemTest/literalsfile.txt");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
-    generateAndTest(
-        workingPath,
-        packageName,
-        regressionBasename,
-        errorBasename,
-        options,
-        expectedRegressionTests,
-        expectedErrorTests);
+    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
   }
 
   /**
@@ -296,26 +368,19 @@ public class RandoopSystemTest {
    */
   @Test
   public void runLongStringTest() {
-    Path workingPath = createTestDirectory(workingDirsRoot, "longstring-test"); // temp directory
-    String packageName = "";
-    String regressionBasename = "LongString";
-    String errorBasename = "";
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("longstring-test"); // temp directory
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("");
+    options.setRegressionBasename("LongString");
+    options.setErrorBasename("");
 
-    List<String> options =
-        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
-    options.add("--timelimit=1");
-    options.add("--testclass=randoop.test.LongString");
+    options.setOption("timelimit", "1");
+    options.addTestClass("randoop.test.LongString");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
-    generateAndTest(
-        workingPath,
-        packageName,
-        regressionBasename,
-        errorBasename,
-        options,
-        expectedRegressionTests,
-        expectedErrorTests);
+    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
   }
 
   /**
@@ -323,26 +388,30 @@ public class RandoopSystemTest {
    */
   @Test
   public void runVisibilityTest() {
-    Path workingPath = createTestDirectory(workingDirsRoot, "visibility-test"); // temp directory
-    String packageName = "";
-    String regressionBasename = "VisibilityTest";
-    String errorBasename = "";
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("visibility-test"); // temp directory
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("");
+    options.setRegressionBasename("VisibilityTest");
+    options.setErrorBasename("");
 
-    List<String> options =
-        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
-    options.add("--timelimit=2");
-    options.add("--testclass=examples.Visibility");
+    options.setOption("timelimit", "2");
+    options.addTestClass("examples.Visibility");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+
+    Set<String> excludedMethods = new HashSet<>();
+    excludedMethods.add("examples.Visibility.getNonVisible()");
+    excludedMethods.add("examples.Visibility.takesNonVisible(examples.NonVisible)");
+    Set<String> requiredMethods = new HashSet<>();
     generateAndTest(
-        workingPath,
-        packageName,
-        regressionBasename,
-        errorBasename,
+        testEnvironment,
         options,
         expectedRegressionTests,
-        expectedErrorTests);
+        expectedErrorTests,
+        requiredMethods,
+        excludedMethods);
   }
 
   /**
@@ -351,20 +420,18 @@ public class RandoopSystemTest {
    */
   @Test
   public void runNoOutputTest() {
-    Path workingPath = createTestDirectory(workingDirsRoot, "no-output-test"); // temp directory
-    String packageName = "";
-    String regressionBasename = "NoOutputTest";
-    String errorBasename = "";
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("no-output-test"); // temp directory
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("");
+    options.setRegressionBasename("NoOutputTest");
+    options.setErrorBasename("");
 
-    List<String> options =
-        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
-    options.add("--timelimit=1");
-    options.add("--testclass=java.util.LinkedList");
-    options.add("--noprogressdisplay");
+    options.setOption("timelimit", "1");
+    options.addTestClass("java.util.LinkedList");
+    options.setFlag("noprogressdisplay");
 
-    RandoopRunDescription randoopRunDesc =
-        generateAndCompile(
-            classpath, workingPath, packageName, regressionBasename, errorBasename, options);
+    RandoopRunStatus randoopRunDesc = RandoopRunStatus.generateAndCompile(testEnvironment, options);
 
     assertThat(
         "There should be no output",
@@ -374,87 +441,64 @@ public class RandoopSystemTest {
 
   @Test
   public void runInnerClassTest() {
-    Path workingPath = createTestDirectory(workingDirsRoot, "inner-class-test");
-    String packageName = "";
-    String regressionBasename = "InnerClass";
-    String errorBasename = "InnerClass";
-
-    List<String> options =
-        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
-    options.add("--testclass=randoop.test.ClassWithInnerClass");
-    options.add("--testclass=randoop.test.ClassWithInnerClass$A");
-    options.add("--timelimit=2");
-    options.add("--outputlimit=2");
-    //    options.add("--junit-reflection-allowed=false");
-    options.add("--silently-ignore-bad-class-names");
-    options.add("--unchecked-exception=ERROR");
-    options.add("--no-regression-tests");
-    options.add("--npe-on-null-input=ERROR");
-    options.add("--npe-on-non-null-input=ERROR");
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("inner-class-test");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("");
+    options.setRegressionBasename("InnerClass");
+    options.setErrorBasename("InnerClass");
+    options.addTestClass("randoop.test.ClassWithInnerClass");
+    options.addTestClass("randoop.test.ClassWithInnerClass$A");
+    options.setOption("timelimit", "2");
+    options.setOption("outputlimit", "2");
+    //    options.setFlag("junit-reflection-allowed","false");
+    options.setFlag("silently-ignore-bad-class-names");
+    options.setOption("unchecked-exception", "ERROR");
+    options.setFlag("no-regression-tests");
+    options.setOption("npe-on-null-input", "ERROR");
+    options.setOption("npe-on-non-null-input", "ERROR");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.NONE;
     ExpectedTests expectedErrorTests = ExpectedTests.SOME;
-    generateAndTest(
-        workingPath,
-        packageName,
-        regressionBasename,
-        errorBasename,
-        options,
-        expectedRegressionTests,
-        expectedErrorTests);
+    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
   }
 
   @Test
   public void runParameterizedTypeTest() {
-    Path workingPath = createTestDirectory(workingDirsRoot, "parameterized-type");
-    String packageName = "";
-    String regressionBasename = "ParamTypeReg";
-    String errorBasename = "ParamTypeErr";
-
-    List<String> options =
-        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
-    options.add("--testclass=muse.SortContainer");
-    options.add("--outputlimit=100");
-    options.add("--timelimit=300");
-    options.add("--forbid-null");
-    options.add("--null-ratio=0");
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("parameterized-type");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("");
+    options.setRegressionBasename("ParamTypeReg");
+    options.setErrorBasename("ParamTypeErr");
+    options.addTestClass("muse.SortContainer");
+    options.setOption("outputlimit", "100");
+    options.setOption("timelimit", "300");
+    options.setFlag("forbid-null");
+    options.setOption("null-ratio", "0");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
-    generateAndTest(
-        workingPath,
-        packageName,
-        regressionBasename,
-        errorBasename,
-        options,
-        expectedRegressionTests,
-        expectedErrorTests);
+    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
   }
 
   @Test
   public void runRecursiveBoundTest() {
-    Path workingPath = createTestDirectory(workingDirsRoot, "recursive-bound");
-    String packageName = "muse";
-    String regressionBasename = "BoundsReg";
-    String errorBasename = "BoundsErr";
-    List<String> options =
-        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
-    options.add("--testclass=muse.RecursiveBound");
-    options.add("--outputlimit=100");
-    options.add("--timelimit=300");
-    options.add("--forbid-null");
-    options.add("--null-ratio=0");
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("recursive-bound");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("muse");
+    options.setRegressionBasename("BoundsReg");
+    options.setErrorBasename("BoundsErr");
+    options.addTestClass("muse.RecursiveBound");
+    options.setOption("outputlimit", "100");
+    options.setOption("timelimit", "300");
+    options.setFlag("forbid-null");
+    options.setOption("null-ratio", "0");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
-    generateAndTest(
-        workingPath,
-        packageName,
-        regressionBasename,
-        errorBasename,
-        options,
-        expectedRegressionTests,
-        expectedErrorTests);
+    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
   }
 
   /**
@@ -462,27 +506,19 @@ public class RandoopSystemTest {
    */
   @Test
   public void runDefaultPackageTest() {
-    Path workingPath = createTestDirectory(workingDirsRoot, "default-package");
-    String packageName = "";
-    String regressionBasename = "DefaultPackageReg";
-    String errorBasename = "DefaultPackageErr";
-
-    List<String> options =
-        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
-    options.add("--testclass=ClassInDefaultPackage");
-    options.add("--outputlimit=2");
-    options.add("--timelimit=3");
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("default-package");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("");
+    options.setRegressionBasename("DefaultPackageReg");
+    options.setErrorBasename("DefaultPackageErr");
+    options.addTestClass("ClassInDefaultPackage");
+    options.setOption("outputlimit", "2");
+    options.setOption("timelimit", "3");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
-    generateAndTest(
-        workingPath,
-        packageName,
-        regressionBasename,
-        errorBasename,
-        options,
-        expectedRegressionTests,
-        expectedErrorTests);
+    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
   }
 
   /**
@@ -490,144 +526,73 @@ public class RandoopSystemTest {
    */
   @Test
   public void runExceptionTest() {
-    Path workingPath = createTestDirectory(workingDirsRoot, "exception-tests");
-    String packageName = "misc";
-    String regressionBasename = "RegressionTest";
-    String errorBasename = "ErrorTest";
-
-    List<String> options =
-        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
-    options.add("--testclass=misc.ThrowsAnonymousException");
-    options.add("--outputlimit=2");
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("exception-tests");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("misc");
+    options.setRegressionBasename("RegressionTest");
+    options.setErrorBasename("ErrorTest");
+    options.addTestClass("misc.ThrowsAnonymousException");
+    options.setOption("outputlimit", "2");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
-    generateAndTest(
-        workingPath,
-        packageName,
-        regressionBasename,
-        errorBasename,
-        options,
-        expectedRegressionTests,
-        expectedErrorTests);
+    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
   }
 
   /* ------------------------------ utility methods ---------------------------------- */
 
   /**
-   * Creates a working directory for a test using the given directory name.
-   * Contains subdirectories:
-   * <ul>
-   *   <li> src - Java source of Randoop generated tests
-   *   <li> classes - binaries of Randoop generated tests
-   * </ul>
-   * Will fail calling test if an {@code IOException} is thrown
-   *
-   * @param currentWorkingDir  the parent directory for created directory
-   * @param dirname  the name of the directory to create
-   * @return the path to the created directory
-   */
-  private Path createTestDirectory(Path currentWorkingDir, String dirname) {
-    Path testDir = null;
-    try {
-      testDir = createSubDirectory(currentWorkingDir, dirname);
-      createSubDirectory(testDir, SOURCE_DIR_NAME);
-      createSubDirectory(testDir, CLASS_DIR_NAME);
-    } catch (IOException e) {
-      fail("failed to create working directory for test: " + e);
-    }
-    return testDir;
-  }
-
-  /**
-   * Creates a directory in the given parent directory with the subdirectory name.
-   *
-   * @param parentDir  the parent directory
-   * @param subdirName  the subdirectory name
-   * @return the path of the created subdirectory
-   */
-  private Path createSubDirectory(Path parentDir, String subdirName) throws IOException {
-    Path subDir = parentDir.resolve(subdirName);
-    if (!Files.exists(subDir)) {
-      Files.createDirectory(subDir);
-    }
-    return subDir;
-  }
-
-  /**
-   * Creates a list of the basic Randoop options for generating system tests
-   * including package and base names, and the working directory.
-   * Assumes a name is non-null, and that an empty string indicates that the
-   * option is not being used.
-   * Requires that at least one of the regression or error basenames be non-empty.
-   *
-   * @param workingPath  the working directory for the test
-   * @param packageName  the packageName for generated tests, empty if none
-   * @param regressionBasename  the regression test basename, empty if none
-   * @param errorBasename  the error test basename, empty if none
-   *
-   * @return the Randoop options constructed from the parameters
-   */
-  private List<String> getStandardOptions(
-      Path workingPath, String packageName, String regressionBasename, String errorBasename) {
-    assert (errorBasename.length() > 0 || regressionBasename.length() > 0)
-        : "either error or regression basenames must be nonempty";
-    List<String> options = new ArrayList<>();
-    if (regressionBasename.length() > 0) {
-      options.add("--regression-test-basename=" + regressionBasename);
-    }
-    if (errorBasename.length() > 0) {
-      options.add("--error-test-basename=" + errorBasename);
-    }
-    if (packageName.length() > 0) {
-      options.add("--junit-package-name=" + packageName);
-    }
-    Path srcDir = workingPath.resolve(SOURCE_DIR_NAME);
-    options.add("--junit-output-dir=" + srcDir);
-    options.add("--log=" + workingPath + "/randoop-log.txt");
-
-    return options;
-  }
-
-  /**
-   * Runs a basic system test:
+   * Runs a standard system test:
    * <ol>
-   *   <li>runs Randoop and compiles the generated tests</li>
-   *   <li>checks that the number of generated tests meets the expectation (none or some)</li>
-   *   <li>runs any generated tests</li>
+   *   <li>runs Randoop and compiles the generated tests,</li>
+   *   <li>checks that the number of generated tests meets the expectation (none or some),</li>
+   *   <li>runs any generated tests,</li>
+   *   <li>checks that types of tests run as expected.</li>
    * </ol>
-   * @param workingPath  the working directory
-   * @param packageName  the package name
-   * @param regressionBasename  the base name for regression tests
-   * @param errorBasename  the base name for error tests
+   *
+   * @param environment  the working environment
    * @param options  the Randoop command-line arguments
    * @param expectedRegression  the minimum expected number of regression tests
    * @param expectedError  the minimum expected number of error tests
    */
   private void generateAndTest(
-      Path workingPath,
-      String packageName,
-      String regressionBasename,
-      String errorBasename,
-      List<String> options,
+      TestEnvironment environment,
+      RandoopOptions options,
       ExpectedTests expectedRegression,
-      ExpectedTests expectedError) {
-    RandoopRunDescription randoopRunDescription =
-        generateAndCompile(
-            classpath, workingPath, packageName, regressionBasename, errorBasename, options);
+      ExpectedTests expectedError,
+      Set<String> requiredMethods,
+      Set<String> excludedMethods) {
 
-    for (String line : randoopRunDescription.processStatus.outputLines) {
-      System.out.println(line);
+    RandoopRunStatus runStatus = RandoopRunStatus.generateAndCompile(environment, options);
+
+    boolean prevLineIsBlank = false;
+    for (String line : runStatus.processStatus.outputLines) {
+      if ((line.isEmpty() && !prevLineIsBlank)
+          || (!line.isEmpty() && !line.startsWith("Progress update:"))) {
+        System.out.println(line);
+      }
+      prevLineIsBlank = line.isEmpty();
     }
 
-    TestRunDescription regressionRunDesc = null;
+    String packageName = options.getPackageName();
+
+    TestRunStatus regressionRunDesc = null;
     switch (expectedRegression) {
       case SOME:
-        assertThat(
-            "...has regression tests",
-            randoopRunDescription.regressionTestCount,
-            is(greaterThan(0)));
-        regressionRunDesc = runTests(classpath, workingPath, packageName, regressionBasename);
+        assertThat("...has regression tests", runStatus.regressionTestCount, is(greaterThan(0)));
+        String regressionBasename = options.getRegressionBasename();
+        try {
+          regressionRunDesc = TestRunStatus.runTests(environment, packageName, regressionBasename);
+        } catch (IOException e) {
+          fail("Exception collecting coverage from regression tests: " + e.getMessage());
+        }
+        if (regressionRunDesc.processStatus.exitStatus != 0) {
+          for (String line : regressionRunDesc.processStatus.outputLines) {
+            System.err.println(line);
+          }
+          fail("JUnit should exit properly");
+        }
         if (regressionRunDesc.testsSucceed != regressionRunDesc.testsRun) {
           for (String line : regressionRunDesc.processStatus.outputLines) {
             System.err.println(line);
@@ -636,20 +601,23 @@ public class RandoopSystemTest {
         }
         break;
       case NONE:
-        assertThat(
-            "...has no regression tests",
-            randoopRunDescription.regressionTestCount,
-            is(equalTo(0)));
+        assertThat("...has no regression tests", runStatus.regressionTestCount, is(equalTo(0)));
         break;
       case DONT_CARE:
         break;
     }
 
-    TestRunDescription errorRunDesc = null;
+    TestRunStatus errorRunDesc = null;
     switch (expectedError) {
       case SOME:
-        assertThat("...has error tests", randoopRunDescription.errorTestCount, is(greaterThan(0)));
-        errorRunDesc = runTests(classpath, workingPath, packageName, errorBasename);
+        assertThat("...has error tests", runStatus.errorTestCount, is(greaterThan(0)));
+        String errorBasename = options.getErrorBasename();
+        try {
+          errorRunDesc = TestRunStatus.runTests(environment, packageName, errorBasename);
+        } catch (IOException e) {
+          fail("Exception collecting coverage from error tests: " + e.getMessage());
+        }
+        assert errorRunDesc.processStatus.exitStatus != 0 : "JUnit should exit with error";
         if (errorRunDesc.testsFail != errorRunDesc.testsRun) {
           for (String line : errorRunDesc.processStatus.outputLines) {
             System.err.println(line);
@@ -658,389 +626,120 @@ public class RandoopSystemTest {
         }
         break;
       case NONE:
-        assertThat("...has no error tests", randoopRunDescription.errorTestCount, is(equalTo(0)));
+        assertThat("...has no error tests", runStatus.errorTestCount, is(equalTo(0)));
         break;
       case DONT_CARE:
         break;
     }
+
+    checkCoverage(
+        options.getClassnames(), requiredMethods, excludedMethods, regressionRunDesc, errorRunDesc);
   }
 
-  private class RandoopRunDescription {
-    final ProcessStatus processStatus;
-    final int operatorCount;
-    final int regressionTestCount;
-    final int errorTestCount;
-
-    RandoopRunDescription(
-        ProcessStatus processStatus,
-        int operatorCount,
-        int regressionTestCount,
-        int errorTestCount) {
-      this.processStatus = processStatus;
-      this.operatorCount = operatorCount;
-      this.regressionTestCount = regressionTestCount;
-      this.errorTestCount = errorTestCount;
-    }
+  private void generateAndTest(
+      TestEnvironment environment,
+      RandoopOptions options,
+      ExpectedTests expectedRegression,
+      ExpectedTests expectedError) {
+    generateAndTest(
+        environment,
+        options,
+        expectedRegression,
+        expectedError,
+        new HashSet<String>(),
+        new HashSet<String>());
   }
 
-  private RandoopRunDescription getRandoopRunDescription(ProcessStatus ps) {
-    int operatorCount = 0;
-    int regressionTestCount = 0;
-    int errorTestCount = 0;
+  private void checkCoverage(
+      Set<String> classnames,
+      Set<String> requiredMethods,
+      Set<String> excludedMethods,
+      TestRunStatus regressionStatus,
+      TestRunStatus errorStatus) {
 
-    for (String line : ps.outputLines) {
-      if (line.contains("PUBLIC MEMBERS=") || line.contains("test count:")) {
-        int count = Integer.valueOf(line.replaceFirst("\\D*(\\d*).*", "$1"));
-        if (line.contains("PUBLIC MEMBERS=")) {
-          operatorCount = count;
-        } else if (line.contains("Regression")) {
-          regressionTestCount = count;
-        } else if (line.contains("Error")) {
-          errorTestCount = count;
-        }
-      }
-    }
+    for (String classname : classnames) {
+      Set<String> methods = new HashSet<>();
 
-    return new RandoopRunDescription(ps, operatorCount, regressionTestCount, errorTestCount);
-  }
+      String canonicalClassname = classname.replace('$', '.');
+      getCoveredMethodsForClass(regressionStatus, canonicalClassname, methods);
+      getCoveredMethodsForClass(errorStatus, canonicalClassname, methods);
 
-  /**
-   * Runs Randoop and compiles.
-   *
-   * @param classpath  the classpath for running Randoop
-   * @param workingPath the working director for running Randoop
-   * @param packageName  the package name for generated tests
-   * @param regressionBasename  the base name for regression tests
-   * @param errorBasename  the base name for error tests
-   * @param randoopOptions  the command-line arguments to Randoop
-   * @return the status information collected from generation and compilation
-   */
-  private RandoopRunDescription generateAndCompile(
-      String classpath,
-      Path workingPath,
-      String packageName,
-      String regressionBasename,
-      String errorBasename,
-      List<String> randoopOptions) {
+      Set<String> missingMethods = new TreeSet<>();
+      Set<String> shouldBeMissingMethods = new TreeSet<>();
 
-    ProcessStatus randoopExitStatus = runRandoop(classpath, randoopOptions);
+      Class<?> c;
+      try {
+        c = Class.forName(classname);
 
-    // runCommand should take care of this, but let's just be sure
-    if (randoopExitStatus.exitStatus != 0) {
-      for (String line : randoopExitStatus.outputLines) {
-        System.err.println(line);
-      }
-      fail("Randoop exited badly, exit value = " + randoopExitStatus.exitStatus);
-    }
-
-    // determine whether files are really there and have the right names
-    Path srcDir = workingPath.resolve(SOURCE_DIR_NAME);
-    List<File> testClassSourceFiles = new ArrayList<>();
-    Path sourcePath = srcDir.resolve(packageName.replace('.', '/'));
-    try (DirectoryStream<Path> stream = Files.newDirectoryStream(sourcePath, "*.java")) {
-      for (Path entry : stream) {
-        String filename = entry.getFileName().toString();
-        assertThat(
-            "Test class filename should start with basename",
-            filename,
-            is(anyOf(startsWith(regressionBasename), startsWith(errorBasename))));
-        testClassSourceFiles.add(entry.toFile());
-      }
-    } catch (IOException e) {
-      fail("Exception reading working directory " + e);
-    }
-
-    // definitely cannot do anything useful if no generated test files
-    // but not sure that this is the right way to deal with it
-    // what if test is meant not to generate anything ?
-    if (testClassSourceFiles.size() == 0) {
-      for (String line : randoopExitStatus.outputLines) {
-        System.err.println(line);
-      }
-      fail("No test class source files found");
-    }
-
-    Path classDir = workingPath.resolve(CLASS_DIR_NAME);
-    CompileStatus compileStatus = compileTests(testClassSourceFiles, classDir.toString());
-    if (!compileStatus.succeeded) {
-      for (Diagnostic<? extends JavaFileObject> diag : compileStatus.diagnostics) {
-        if (diag != null) {
-          if (diag.getSource() != null) {
-            String sourceName = diag.getSource().toUri().toString();
-            if (diag.getLineNumber() >= 0) {
-              System.err.printf(
-                  "Error on %d of %s%n%s%n",
-                  diag.getLineNumber(),
-                  sourceName,
-                  diag.getMessage(null));
-            } else {
-              System.err.printf("%s%n", diag.getMessage(null));
+        for (Method m : c.getDeclaredMethods()) {
+          String methodname = methodName(m);
+          if (!isIgnoredMethod(methodname)) {
+            if (excludedMethods.contains(methodname)) {
+              if (methods.contains(methodname)) {
+                shouldBeMissingMethods.add(methodname);
+              }
+            } else if (requiredMethods.isEmpty() || requiredMethods.contains(methodname)) {
+              if (!methods.contains(methodname)) {
+                missingMethods.add(methodname);
+              }
             }
           } else {
-            System.err.printf("%s%n", diag.getMessage(null));
+            System.out.println("Ignoring coverage of : " + methodname);
           }
         }
+
+      } catch (ClassNotFoundException e) {
+        fail("Could not load input class" + classname + ": " + e.getMessage());
       }
-      fail("Compilation failed");
-    }
 
-    // collect class files for generated tests
-    List<File> testClassClassFiles = new ArrayList<>();
-    Path testFilePath = classDir.resolve(packageName.replace('.', '/'));
-    try (DirectoryStream<Path> stream = Files.newDirectoryStream(testFilePath, "*.class")) {
-      for (Path entry : stream) {
-        String filename = entry.getFileName().toString();
-        assertThat(
-            "Test class filename should start with basename",
-            filename,
-            is(anyOf(startsWith(regressionBasename), startsWith(errorBasename))));
-        testClassClassFiles.add(entry.toFile());
-      }
-    } catch (IOException e) {
-      fail("Exception reading working directory " + e);
-    }
-    assertThat(
-        "Number of compiled tests equals source tests",
-        testClassClassFiles.size(),
-        is(equalTo(testClassSourceFiles.size())));
-
-    return getRandoopRunDescription(randoopExitStatus);
-  }
-
-  private class TestRunDescription {
-    final ProcessStatus processStatus;
-    final int testsRun;
-    final int testsFail;
-    final int testsSucceed;
-
-    TestRunDescription(ProcessStatus processStatus, int testsRun, int testsFail, int testsSucceed) {
-      this.processStatus = processStatus;
-      this.testsRun = testsRun;
-      this.testsFail = testsFail;
-      this.testsSucceed = testsSucceed;
-    }
-  }
-
-  private TestRunDescription getTestRunDescription(ProcessStatus ps) {
-    int testsRun = 0;
-    int testsSucceed = 0;
-    int testsFail = 0;
-
-    for (String line : ps.outputLines) {
-      if (line.contains("OK (")) {
-        testsSucceed = Integer.valueOf(line.replaceFirst("\\D*(\\d*).*", "$1"));
-        testsRun = testsSucceed;
-      } else if (line.contains("Failures:")) {
-        String[] toks = line.split(",");
-        assert toks.length == 2;
-        testsRun = Integer.valueOf(toks[0].replaceFirst("\\D*(\\d*).*", "$1"));
-        testsFail = Integer.valueOf(toks[1].replaceFirst("\\D*(\\d*).*", "$1"));
-        testsSucceed = testsRun - testsFail;
-      }
-    }
-
-    return new TestRunDescription(ps, testsRun, testsFail, testsSucceed);
-  }
-
-  private Pair<TestRunDescription, TestRunDescription> runTests(
-      String classpath,
-      Path workingPath,
-      String packageName,
-      String regressionBasename,
-      String errorBasename,
-      RandoopRunDescription randoopRunDesc) {
-    TestRunDescription regressionRunDesc = null;
-    if (randoopRunDesc.regressionTestCount > 0) {
-      regressionRunDesc = runTests(classpath, workingPath, packageName, regressionBasename);
-      if (regressionRunDesc.testsSucceed != regressionRunDesc.testsRun) {
-        for (String line : regressionRunDesc.processStatus.outputLines) {
-          System.err.println(line);
+      if (!missingMethods.isEmpty()) {
+        String msg = String.format("Expected methods not covered:%n");
+        for (String name : missingMethods) {
+          msg += String.format("  %s%n", name);
         }
+        fail(msg);
       }
-      assertThat(
-          "all regression tests should pass",
-          regressionRunDesc.testsSucceed,
-          is(equalTo(randoopRunDesc.regressionTestCount)));
-    }
-    TestRunDescription errorRunDesc = null;
-    if (randoopRunDesc.errorTestCount > 0) {
-      errorRunDesc = runTests(classpath, workingPath, packageName, errorBasename);
-      if (errorRunDesc.testsFail != errorRunDesc.testsRun) {
-        for (String line : errorRunDesc.processStatus.outputLines) {
-          System.err.println(line);
+      if (!shouldBeMissingMethods.isEmpty()) {
+        String msg = String.format("Excluded methods covered:%n");
+        for (String name : shouldBeMissingMethods) {
+          msg += String.format("  %s%n", name);
         }
+        fail(msg);
       }
-      assertThat(
-          "all error tests should fail",
-          errorRunDesc.testsFail,
-          is(equalTo(randoopRunDesc.errorTestCount)));
-    }
-    return new Pair<>(regressionRunDesc, errorRunDesc);
-  }
-
-  private TestRunDescription runTests(
-      String classpath, Path workingPath, String packageName, String basename) {
-    Path classDir = workingPath.resolve(CLASS_DIR_NAME);
-    String testClasspath = classpath + ":" + classDir.toString();
-
-    String jUnitTestSuiteName = "";
-    if (!packageName.isEmpty()) {
-      jUnitTestSuiteName = packageName + ".";
-    }
-    jUnitTestSuiteName += basename;
-
-    ProcessStatus testRunStatus = runGeneratedTests(testClasspath, jUnitTestSuiteName);
-
-    return getTestRunDescription(testRunStatus);
-  }
-
-  /**
-   * Runs randoop using the given options.
-   * Note: the timeout is for the command process and can be different than
-   * the timeout given in the options.
-   *
-   * @param classpath  the classpath for running Randoop
-   * @param options  the Randoop options
-   */
-  //classpath should be process classpath + inputtests
-  private ProcessStatus runRandoop(String classpath, List<String> options) {
-    List<String> command = new ArrayList<>();
-    command.add("java");
-    command.add("-ea");
-    command.add("-classpath");
-    command.add(classpath);
-    command.add("randoop.main.Main");
-    command.add("gentests");
-    command.addAll(options);
-    return runCommand(command);
-  }
-
-  /**
-   * Class to hold the return status from running a command assuming that it
-   * is run in a process where stderr and stdout are linked.
-   * Includes the exit status, and the list of output lines.
-   */
-  private class ProcessStatus {
-    final List<String> command;
-    final int exitStatus;
-    final List<String> outputLines;
-
-    ProcessStatus(List<String> command, int exitStatus, List<String> outputLines) {
-      this.command = command;
-      this.exitStatus = exitStatus;
-      this.outputLines = outputLines;
     }
   }
 
-  /**
-   * Runs the given command in a new process using the given timeout.
-   *
-   * @param command  the command to be run in the process
-   * @return the exit status and combined standard stream output
-   */
-  private ProcessStatus runCommand(List<String> command) {
-
-    long timeout = 900000; // use 15 minutes for timeout
-
-    ProcessBuilder randoopBuilder = new ProcessBuilder(command);
-    randoopBuilder.redirectErrorStream(true);
-
-    TimeLimitProcess p = null;
-
-    try {
-      p = new TimeLimitProcess(randoopBuilder.start(), timeout, true);
-    } catch (IOException e) {
-      fail("Exception starting process: " + e);
-    }
-
-    int exitValue = -1;
-    try {
-      exitValue = p.waitFor();
-    } catch (InterruptedException e) {
-      // TODO (maybe) print stream (stderr is linked with stdout)
-      fail("Exception running process: " + e);
-    }
-
-    List<String> outputLines = new ArrayList<>();
-    try (BufferedReader rdr = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
-      String line = rdr.readLine();
-      while (line != null) {
-        outputLines.add(line);
-        line = rdr.readLine();
+  private void getCoveredMethodsForClass(
+      TestRunStatus testRunStatus, String classname, Set<String> methods) {
+    if (testRunStatus != null) {
+      Set<String> regressionMethods = testRunStatus.coverageMap.getMethods(classname);
+      if (regressionMethods != null) {
+        methods.addAll(regressionMethods);
       }
-    } catch (IOException e) {
-      fail("Exception getting output " + e);
-    }
-
-    if (p.timed_out()) {
-      for (String line : outputLines) {
-        System.out.println(line);
-      }
-      assert !p.timed_out() : "Process timed out after " + p.timeout_msecs() + " msecs";
-    }
-    return new ProcessStatus(command, exitValue, outputLines);
-  }
-
-  private class CompileStatus {
-
-    final Boolean succeeded;
-    final List<Diagnostic<? extends JavaFileObject>> diagnostics;
-
-    CompileStatus(Boolean succeeded, List<Diagnostic<? extends JavaFileObject>> diagnostics) {
-      this.succeeded = succeeded;
-      this.diagnostics = diagnostics;
     }
   }
-  /**
-   * Compile the test files, writing the class files to the desination directory.
-   *
-   * @param testSourceFiles  the Java source for the tests
-   * @param destinationDir  the path to the desination directory
-   * @return true if compile succeeded, false otherwise
-   */
-  private CompileStatus compileTests(List<File> testSourceFiles, String destinationDir) {
-    final Locale locale = null; // use default locale
-    final Charset charset = null; // use default charset
-    final Writer writer = null; // use System.err for output
-    final List<String> annotatedClasses = null; // no classes
 
-    List<String> options = new ArrayList<>();
-    options.add("-d");
-    options.add(destinationDir);
-
-    JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-    DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
-
-    Boolean succeeded = false;
-    try (StandardJavaFileManager fileManager =
-            compiler.getStandardFileManager(diagnostics, locale, charset)) {
-      Iterable<? extends JavaFileObject> filesToCompile =
-          fileManager.getJavaFileObjectsFromFiles(testSourceFiles);
-      succeeded =
-          compiler
-              .getTask(writer, fileManager, diagnostics, options, annotatedClasses, filesToCompile)
-              .call();
-    } catch (IOException e) {
-      fail("I/O Error while compiling generated tests: " + e);
+  private String methodName(Method m) {
+    List<String> params = new ArrayList<>();
+    for (Class<?> paramType : m.getParameterTypes()) {
+      params.add(paramType.getCanonicalName());
     }
-    return new CompileStatus(succeeded, diagnostics.getDiagnostics());
+    return m.getDeclaringClass().getCanonicalName()
+        + "."
+        + m.getName()
+        + "("
+        + UtilMDE.join(params, ", ")
+        + ")";
   }
 
   /**
-   * Runs the given JUnit suite in a separate process.
-   *
-   * @param classpath  the classpath for the tests
-   * @param junitTestName  the name of the test suite
-   * @return the capture of exit status and standard stream output for test run
+   * Pattern for excluding method names from coverage checks.
+   * Excludes JaCoCo, and Java private access inner class methods.
    */
-  private ProcessStatus runGeneratedTests(String classpath, String junitTestName) {
-    List<String> command = new ArrayList<>();
-    command.add("java");
-    command.add("-ea");
-    command.add("-classpath");
-    command.add(classpath);
-    command.add("org.junit.runner.JUnitCore");
-    command.add(junitTestName);
-    return runCommand(command);
+  private static final Pattern IGNORE_PATTERN = Pattern.compile("\\$jacocoInit|access\\$\\d{3}+");
+
+  private boolean isIgnoredMethod(String methodname) {
+    Matcher matcher = IGNORE_PATTERN.matcher(methodname);
+    return matcher.find();
   }
 }
