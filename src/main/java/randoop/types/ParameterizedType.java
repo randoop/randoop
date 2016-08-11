@@ -20,38 +20,6 @@ import plume.UtilMDE;
 public abstract class ParameterizedType extends ClassOrInterfaceType {
 
   /**
-   * {@inheritDoc}
-   * @return the name of this type
-   */
-  @Override
-  public String toString() {
-    return this.getName();
-  }
-
-  /**
-   * {@inheritDoc}
-   * @return the fully qualified name of this type with fully qualified type
-   * arguments
-   */
-  @Override
-  public String getName() {
-    return getRuntimeClass().getCanonicalName()
-        + "<"
-        + UtilMDE.join(this.getTypeArguments(), ",")
-        + ">";
-  }
-
-  @Override
-  public abstract ParameterizedType apply(Substitution<ReferenceType> substitution);
-
-  /**
-   * Returns the type arguments for this type.
-   *
-   * @return the list of type arguments
-   */
-  public abstract List<TypeArgument> getTypeArguments();
-
-  /**
    * Creates a {@link GenericClassType} for the given reflective {@link Class} object.
    *
    * @param typeClass  the class type
@@ -71,7 +39,7 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    * @param type  the reflective type object
    * @return an object of type {@code ParameterizedType}
    */
-  public static ParameterizedType forType(Type type) {
+  public static ParameterizedType forType(java.lang.reflect.Type type) {
     if (!(type instanceof java.lang.reflect.ParameterizedType)) {
       throw new IllegalArgumentException("type must be java.lang.reflect.ParameterizedType");
     }
@@ -96,9 +64,50 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
   }
 
   /**
+   * {@inheritDoc}
+   * @return the name of this type
+   */
+  @Override
+  public String toString() {
+    return this.getName();
+  }
+
+  @Override
+  public abstract ParameterizedType apply(Substitution<ReferenceType> substitution);
+
+  /**
    * Returns the {@link GenericClassType} for this parameterized type.
    *
    * @return the generic class type for this type
    */
   public abstract GenericClassType getGenericClassType();
+
+  /**
+   * {@inheritDoc}
+   * @return the fully qualified name of this type with fully qualified type
+   * arguments
+   */
+  @Override
+  public String getName() {
+    return getRuntimeClass().getCanonicalName()
+        + "<"
+        + UtilMDE.join(this.getTypeArguments(), ",")
+        + ">";
+  }
+
+  /**
+   * Returns the type arguments for this type.
+   *
+   * @return the list of type arguments
+   */
+  public abstract List<TypeArgument> getTypeArguments();
+
+  /**
+   * Indicate whether this type has a wildcard either as or in a type argument.
+   *
+   * @return true if this type has a wildcard, and false otherwise
+   */
+  public boolean hasWildcard() {
+    return false;
+  }
 }

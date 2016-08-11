@@ -3,7 +3,7 @@ package randoop.field;
 import org.junit.Test;
 
 import randoop.operation.OperationParseException;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -16,9 +16,9 @@ public class PublicFieldParserTest {
     String fieldPair = "randoop.field.ClassWithFields.oneField";
     String classname = "randoop.field.ClassWithFields";
     String fieldname = "oneField";
-    GeneralType classType = null;
+    Type classType = null;
     try {
-      classType = GeneralType.forName(classname);
+      classType = Type.forName(classname);
     } catch (ClassNotFoundException e) {
       fail("couldn't load class: " + e.getMessage());
     }
@@ -39,9 +39,9 @@ public class PublicFieldParserTest {
     String fieldPair = "randoop.field.ClassWithFields.fourField";
     String classname = "randoop.field.ClassWithFields";
     String fieldname = "fourField";
-    GeneralType classType = null;
+    Type classType = null;
     try {
-      classType = GeneralType.forName(classname);
+      classType = Type.forName(classname);
     } catch (ClassNotFoundException e) {
       fail("couldn't load class: " + e);
     }
@@ -64,9 +64,9 @@ public class PublicFieldParserTest {
     String fieldPair = "randoop.field.ClassWithFields.FIVEFIELD";
     String classname = "randoop.field.ClassWithFields";
     String fieldname = "FIVEFIELD";
-    GeneralType classType = null;
+    Type classType = null;
     try {
-      classType = GeneralType.forName(classname);
+      classType = Type.forName(classname);
     } catch (ClassNotFoundException e) {
       fail("couldn't load class: " + e);
     }

@@ -29,7 +29,7 @@ import randoop.sequence.Sequence;
 import randoop.sequence.SequenceParseException;
 import randoop.test.predicate.ExceptionBehaviorPredicate;
 import randoop.test.predicate.ExceptionPredicate;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.util.MultiMap;
 import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;
@@ -124,7 +124,7 @@ public class SequenceTests {
                 contracts, new ExceptionBehaviorPredicate(BehaviorType.ERROR)),
             new RegressionCaptureVisitor(
                 expectation,
-                new MultiMap<GeneralType, TypedOperation>(),
+                new MultiMap<Type, TypedOperation>(),
                 new LinkedHashSet<TypedOperation>(),
                 true));
   }

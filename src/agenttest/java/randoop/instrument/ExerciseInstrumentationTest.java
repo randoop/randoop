@@ -5,26 +5,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 import org.junit.Test;
 
-import randoop.main.ClassNameErrorHandler;
-import randoop.main.GenInputsAbstract;
-import randoop.main.GenTests;
-import randoop.main.ThrowClassNameError;
-import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.OperationModel;
-import randoop.reflection.PublicVisibilityPredicate;
-import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.VisibilityPredicate;
-import randoop.types.TypeNames;
+import randoop.reflection.TypeNames;
 
 public class ExerciseInstrumentationTest {
 

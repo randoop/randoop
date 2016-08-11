@@ -20,7 +20,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.test.Check;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.ReferenceType;
 import randoop.util.IdentityMultiMap;
 import randoop.util.ProgressDisplay;
@@ -426,7 +426,7 @@ public class ExecutableSequence {
     if (outputValue != null) {
       Variable outputVariable = sequence.getLastVariable();
 
-      GeneralType outputType = outputVariable.getType();
+      Type outputType = outputVariable.getType();
 
       if (outputType.isReferenceType() && !outputType.isString()) {
         ReferenceValue value = new ReferenceValue((ReferenceType) outputType, outputValue);
@@ -438,7 +438,7 @@ public class ExecutableSequence {
     for (Variable inputVariable : sequence.getInputs(sequence.size() - 1)) {
       Object inputValue = getValue(inputVariable.index);
       if (inputValue != null) {
-        GeneralType inputType = inputVariable.getType();
+        Type inputType = inputVariable.getType();
         if (inputType.isReferenceType() && !inputType.isString()) {
           values.add(new ReferenceValue((ReferenceType) inputType, inputValue));
           variableMap.put(inputValue, inputVariable);
@@ -467,7 +467,7 @@ public class ExecutableSequence {
         Object value = getValue(i);
         if (value != null) {
           Variable variable = sequence.getVariable(i);
-          GeneralType type = variable.getType();
+          Type type = variable.getType();
           if (type.isReferenceType() && !type.isString()) {
             values.add(new ReferenceValue((ReferenceType) type, value));
             variableMap.put(value, variable);

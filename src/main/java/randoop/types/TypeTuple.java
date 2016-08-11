@@ -14,14 +14,14 @@ import plume.UtilMDE;
  */
 public class TypeTuple {
 
-  private final ArrayList<GeneralType> list;
+  private final ArrayList<Type> list;
 
-  public TypeTuple(List<GeneralType> list) {
+  public TypeTuple(List<Type> list) {
     this.list = new ArrayList<>(list);
   }
 
   public TypeTuple() {
-    this(new ArrayList<GeneralType>());
+    this(new ArrayList<Type>());
   }
 
   @Override
@@ -38,13 +38,42 @@ public class TypeTuple {
     return Objects.hash(list);
   }
 
+  @Override
+  public String toString() {
+    return "(" + UtilMDE.join(list, ", ") + ")";
+  }
+
   /**
-   * Return the number of components of the tuple
+   * Applies a substitution to a type tuple, replacing any occurrences of type variables.
+   * Resulting tuple may only be partially instantiated.
    *
-   * @return the number of components of this tuple
+   * @param substitution  the substitution
+   * @return a new type tuple resulting from applying the given substitution to this tuple
    */
-  public int size() {
-    return list.size();
+  public TypeTuple apply(Substitution<ReferenceType> substitution) {
+    List<Type> typeList = new ArrayList<>();
+    for (Type type : this.list) {
+      Type newType = type.apply(substitution);
+      if (newType != null) {
+        typeList.add(newType);
+      } else {
+        typeList.add(type);
+      }
+    }
+    return new TypeTuple(typeList);
+  }
+
+  /**
+   * Applies a capture conversion to this object.
+   *
+   * @return a new type tuple after performing a capture conversion
+   */
+  public TypeTuple applyCaptureConversion() {
+    List<Type> typeList = new ArrayList<>();
+    for (Type type : this.list) {
+      typeList.add(type.applyCaptureConversion());
+    }
+    return new TypeTuple(typeList);
   }
 
   /**
@@ -53,9 +82,24 @@ public class TypeTuple {
    * @param i  the component index
    * @return the component type at the position
    */
-  public GeneralType get(int i) {
+  public Type get(int i) {
     assert 0 <= i && i < list.size();
     return list.get(i);
+  }
+
+  /**
+   * Returns the type parameters for this type tuple.
+   *
+   * @return the list of type parameters for this type tuple.
+   */
+  public List<TypeVariable> getTypeParameters() {
+    Set<TypeVariable> paramSet = new LinkedHashSet<>();
+    for (Type type : this.list) {
+      if (type.isReferenceType()) {
+        paramSet.addAll(((ReferenceType) type).getTypeParameters());
+      }
+    }
+    return new ArrayList<>(paramSet);
   }
 
   /**
@@ -64,8 +108,8 @@ public class TypeTuple {
    * @return true if there is at least one wildcard occurrence
    */
   public boolean hasWildcard() {
-    for (GeneralType type : list) {
-      if (type.hasWildcard()) {
+    for (Type type : list) {
+      if (type.isParameterized() && ((ParameterizedType) type).hasWildcard()) {
         return true;
       }
     }
@@ -87,7 +131,7 @@ public class TypeTuple {
    * @return true if any component of tuple is generic, false if none are
    */
   public boolean isGeneric() {
-    for (GeneralType type : list) {
+    for (Type type : list) {
       if (type.isGeneric()) {
         return true;
       }
@@ -95,54 +139,12 @@ public class TypeTuple {
     return false;
   }
 
-  @Override
-  public String toString() {
-    return "(" + UtilMDE.join(list, ", ") + ")";
-  }
-
   /**
-   * Applies a substitution to a type tuple, replacing any occurrences of type variables.
-   * Resulting tuple may only be partially instantiated.
+   * Return the number of components of the tuple
    *
-   * @param substitution  the substitution
-   * @return a new type tuple resulting from applying the given substitution to this tuple
+   * @return the number of components of this tuple
    */
-  public TypeTuple apply(Substitution<ReferenceType> substitution) {
-    List<GeneralType> typeList = new ArrayList<>();
-    for (GeneralType type : this.list) {
-      GeneralType newType = type.apply(substitution);
-      if (newType != null) {
-        typeList.add(newType);
-      } else {
-        typeList.add(type);
-      }
-    }
-    return new TypeTuple(typeList);
-  }
-
-  /**
-   * Applies a capture conversion to this object.
-   *
-   * @return a new type tuple after performing a capture conversion
-   */
-  public TypeTuple applyCaptureConversion() {
-    List<GeneralType> typeList = new ArrayList<>();
-    for (GeneralType type : this.list) {
-      typeList.add(type.applyCaptureConversion());
-    }
-    return new TypeTuple(typeList);
-  }
-
-  /**
-   * Returns the type parameters for this type tuple.
-   *
-   * @return the list of type parameters for this type tuple.
-   */
-  public List<TypeVariable> getTypeParameters() {
-    Set<TypeVariable> paramSet = new LinkedHashSet<>();
-    for (GeneralType type : this.list) {
-      paramSet.addAll(type.getTypeParameters());
-    }
-    return new ArrayList<>(paramSet);
+  public int size() {
+    return list.size();
   }
 }

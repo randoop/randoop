@@ -30,7 +30,7 @@ import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
 import randoop.test.TestCheckGenerator;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.util.MultiMap;
 import randoop.util.predicate.Predicate;
 
@@ -266,7 +266,7 @@ public class TestFilteringTest {
             .createTestCheckGenerator(
                 visibility,
                 new ContractSet(),
-                new MultiMap<GeneralType, TypedOperation>(),
+                new MultiMap<Type, TypedOperation>(),
                 new LinkedHashSet<TypedOperation>());
     gen.addTestCheckGenerator(checkGenerator);
     gen.addExecutionVisitor(new DummyVisitor());

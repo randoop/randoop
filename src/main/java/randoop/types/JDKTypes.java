@@ -56,87 +56,182 @@ import randoop.BugInRandoopException;
  * Defines type constants for classes in the JDK Collections.
  */
 public class JDKTypes {
+  /** The {@link GenericClassType} for {@code Collection} */
   public static final GenericClassType COLLECTION_TYPE =
       GenericClassType.forClass(Collection.class);
+
+  /** The {@link GenericClassType} for {@code Deque} */
   public static final GenericClassType DEQUE_TYPE = GenericClassType.forClass(Deque.class);
+
+  /** The {@link GenericClassType} for {@code List} */
   public static final GenericClassType LIST_TYPE = GenericClassType.forClass(List.class);
+
+  /** The {@link GenericClassType} for {@code Set} */
   public static final GenericClassType SET_TYPE = GenericClassType.forClass(Set.class);
+
+  /** The {@link GenericClassType} for {@code SortedSet} */
   public static final GenericClassType SORTED_SET_TYPE = GenericClassType.forClass(SortedSet.class);
+
+  /** The {@link GenericClassType} for {@code Queue} */
   public static final GenericClassType QUEUE_TYPE = GenericClassType.forClass(Queue.class);
+
+  /** The {@link GenericClassType} for {@code ArrayList} */
   public static final GenericClassType ARRAY_LIST_TYPE = GenericClassType.forClass(ArrayList.class);
+
+  /** The {@link GenericClassType} for {@code LinkedList} */
   public static final GenericClassType LINKED_LIST_TYPE =
       GenericClassType.forClass(LinkedList.class);
+
+  /** The {@link GenericClassType} for {@code LinkedHashSet} */
   public static final GenericClassType LINKED_HASH_SET_TYPE =
       GenericClassType.forClass(LinkedHashSet.class);
+
+  /** The {@link GenericClassType} for {@code Stack} */
   public static final GenericClassType STACK_TYPE = GenericClassType.forClass(Stack.class);
+
+  /** The {@link GenericClassType} for {@code ArrayDeque} */
   public static final GenericClassType ARRAY_DEQUE_TYPE =
       GenericClassType.forClass(ArrayDeque.class);
+
+  /** The {@link GenericClassType} for {@code TreeSet} */
   public static final GenericClassType TREE_SET_TYPE = GenericClassType.forClass(TreeSet.class);
+
+  /** The {@link GenericClassType} for {@code EnumSet} */
   public static final GenericClassType ENUM_SET_TYPE = GenericClassType.forClass(EnumSet.class);
+
+  /** The {@link GenericClassType} for {@code HashSet} */
   public static final GenericClassType HASH_SET_TYPE = GenericClassType.forClass(HashSet.class);
+
+  /** The {@link GenericClassType} for {@code Vector} */
   public static final GenericClassType VECTOR_TYPE = GenericClassType.forClass(Vector.class);
+
+  /** The {@link GenericClassType} for {@code NavigableSet} */
   public static final GenericClassType NAVIGABLE_SET_TYPE =
       GenericClassType.forClass(NavigableSet.class);
+
+  /** The {@link GenericClassType} for {@code BlockingQueue} */
   public static final GenericClassType BLOCKING_QUEUE_TYPE =
       GenericClassType.forClass(BlockingQueue.class);
+
+  /** The {@link GenericClassType} for {@code TransferQueue} */
   public static final GenericClassType TRANSFER_QUEUE_TYPE =
       GenericClassType.forClass(TransferQueue.class);
+
+  /** The {@link GenericClassType} for {@code BlockingDeque} */
   public static final GenericClassType BLOCKING_DEQUE_TYPE =
       GenericClassType.forClass(BlockingDeque.class);
+
+  /** The {@link GenericClassType} for {@code PriorityQueue} */
   public static final GenericClassType PRIORITY_QUEUE_TYPE =
       GenericClassType.forClass(PriorityQueue.class);
+
+  /** The {@link GenericClassType} for {@code ConcurrentLinkedQueue} */
   public static final GenericClassType CONCURRENT_LINKED_QUEUE_TYPE =
       GenericClassType.forClass(ConcurrentLinkedQueue.class);
+
+  /** The {@link GenericClassType} for {@code LinkedBlockingQueue} */
   public static final GenericClassType LINKED_BLOCKING_QUEUE_TYPE =
       GenericClassType.forClass(LinkedBlockingQueue.class);
+
+  /** The {@link GenericClassType} for {@code ArrayBlockingQueue} */
   public static final GenericClassType ARRAY_BLOCKING_QUEUE_TYPE =
       GenericClassType.forClass(ArrayBlockingQueue.class);
+
+  /** The {@link GenericClassType} for {@code PriorityBlockingQueue} */
   public static final GenericClassType PRIORITY_BLOCKING_QUEUE_TYPE =
       GenericClassType.forClass(PriorityBlockingQueue.class);
+
+  /** The {@link GenericClassType} for {@code DelayQueue} */
   public static final GenericClassType DELAY_QUEUE_TYPE =
       GenericClassType.forClass(DelayQueue.class);
+
+  /** The {@link GenericClassType} for {@code SynchronousQueue} */
   public static final GenericClassType SYNCHRONOUS_QUEUE_TYPE =
       GenericClassType.forClass(SynchronousQueue.class);
+
+  /** The {@link GenericClassType} for {@code LinkedBlockingDeque} */
   public static final GenericClassType LINKED_BLOCKING_DEQUE_TYPE =
       GenericClassType.forClass(LinkedBlockingDeque.class);
+
+  /** The {@link GenericClassType} for {@code LinkedTransferQueue} */
   public static final GenericClassType LINKED_TRANSFER_QUEUE_TYPE =
       GenericClassType.forClass(LinkedTransferQueue.class);
+
+  /** The {@link GenericClassType} for {@code ConcurrentSkipListSet} */
   public static final GenericClassType CONCURRENT_SKIP_LIST_SET_TYPE =
       GenericClassType.forClass(ConcurrentSkipListSet.class);
 
+  /** The {@link GenericClassType} for {@code Map} */
   public static final GenericClassType MAP_TYPE = GenericClassType.forClass(Map.class);
+
+  /** The {@link GenericClassType} for {@code SortedMap} */
   public static final GenericClassType SORTED_MAP_TYPE = GenericClassType.forClass(SortedMap.class);
+
+  /** The {@link GenericClassType} for {@code TreeMap} */
   public static final GenericClassType TREE_MAP_TYPE = GenericClassType.forClass(TreeMap.class);
+
+  /** The {@link GenericClassType} for {@code HashMap} */
   public static final GenericClassType HASH_MAP_TYPE = GenericClassType.forClass(HashMap.class);
+
+  /** The {@link GenericClassType} for {@code Hashtable} */
   public static final GenericClassType HASH_TABLE_TYPE = GenericClassType.forClass(Hashtable.class);
+
+  /** The {@link GenericClassType} for {@code LinkedHashMap} */
   public static final GenericClassType LINKED_HASH_MAP_TYPE =
       GenericClassType.forClass(LinkedHashMap.class);
+
+  /** The {@link GenericClassType} for {@code NavigableMap} */
   public static final GenericClassType NAVIGABLE_MAP_TYPE =
       GenericClassType.forClass(NavigableMap.class);
+
+  /** The {@link GenericClassType} for {@code ConcurrentMap} */
   public static final GenericClassType CONCURRENT_MAP_TYPE =
       GenericClassType.forClass(ConcurrentMap.class);
+
+  /** The {@link GenericClassType} for {@code ConcurrentNavigableMap} */
   public static final GenericClassType CONCURRENT_NAVIGABLE_MAP_TYPE =
       GenericClassType.forClass(ConcurrentNavigableMap.class);
+
+  /** The {@link GenericClassType} for {@code ConcurrentHashMap} */
   public static final GenericClassType CONCURRENT_HASH_MAP_TYPE =
       GenericClassType.forClass(ConcurrentHashMap.class);
+
+  /** The {@link GenericClassType} for {@code ConcurrentSkipListMap} */
   public static final GenericClassType CONCURRENT_SKIP_LIST_MAP_TYPE =
       GenericClassType.forClass(ConcurrentSkipListMap.class);
+
+  /** The {@link GenericClassType} for {@code IdentityHashMap} */
   public static final GenericClassType IDENTITY_HASH_MAP_TYPE =
       GenericClassType.forClass(IdentityHashMap.class);
+
+  /** The {@link GenericClassType} for {@code WeakHashMap} */
   public static final GenericClassType WEAK_HASH_MAP_TYPE =
       GenericClassType.forClass(WeakHashMap.class);
+
+  /** The {@link GenericClassType} for {@code EnumMap} */
   public static final GenericClassType ENUM_MAP_TYPE = GenericClassType.forClass(EnumMap.class);
 
+  /** The {@link GenericClassType} for {@code AbstractCollection} */
   public static final GenericClassType ABSTRACT_COLLECTION_TYPE =
       GenericClassType.forClass(AbstractCollection.class);
+
+  /** The {@link GenericClassType} for {@code AbstractSet} */
   public static final GenericClassType ABSTRACT_SET_TYPE =
       GenericClassType.forClass(AbstractSet.class);
+
+  /** The {@link GenericClassType} for {@code AbstractList} */
   public static final GenericClassType ABSTRACT_LIST_TYPE =
       GenericClassType.forClass(AbstractList.class);
+
+  /** The {@link GenericClassType} for {@code AbstractSequentialList} */
   public static final GenericClassType ABSTRACT_SEQUENTIAL_LIST_TYPE =
       GenericClassType.forClass(AbstractSequentialList.class);
+
+  /** The {@link GenericClassType} for {@code AbstractQueue} */
   public static final GenericClassType ABSTRACT_QUEUE_TYPE =
       GenericClassType.forClass(AbstractQueue.class);
+
+  /** The {@link GenericClassType} for {@code AbstractMap} */
   public static final GenericClassType ABSTRACT_MAP_TYPE =
       GenericClassType.forClass(AbstractMap.class);
 

@@ -1,4 +1,6 @@
-package randoop.types;
+package randoop.reflection;
+
+import randoop.types.PrimitiveTypes;
 
 /**
  * TypeNames provides a pair of static methods to:
@@ -21,7 +23,7 @@ public class TypeNames {
    *           if string is not a recognized type
    */
   public static Class<?> getTypeForName(String typeName) throws ClassNotFoundException {
-    Class<?> c = PrimitiveTypes.getClassForName(typeName);
+    Class<?> c = PrimitiveTypes.classForName(typeName);
     if (c == null) {
       c = Class.forName(typeName);
     }

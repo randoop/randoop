@@ -45,11 +45,6 @@ class CaptureTypeVariable extends TypeVariable {
   }
 
   @Override
-  public String toString() {
-    return getName() + " of " + wildcard;
-  }
-
-  @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof CaptureTypeVariable)) {
       return false;
@@ -66,20 +61,9 @@ class CaptureTypeVariable extends TypeVariable {
   }
 
   @Override
-  boolean isCaptureVariable() {
-    return true;
+  public String toString() {
+    return getName() + " of " + wildcard;
   }
-
-  @Override
-  public boolean isGeneric() {
-    return true;
-  }
-
-  @Override
-  public String getName() {
-    return "Capture" + varID;
-  }
-
   /**
    * Converts the bounds on this {@code CaptureTypeVariable} by including those of the formal
    * type parameters of the generic type, and applying the implied substitution between the
@@ -122,6 +106,11 @@ class CaptureTypeVariable extends TypeVariable {
     }
   }
 
+  @Override
+  public String getName() {
+    return "Capture" + varID;
+  }
+
   /**
    * Returns the type parameters in this type, which is this variable.
    *
@@ -132,5 +121,15 @@ class CaptureTypeVariable extends TypeVariable {
     List<TypeVariable> parameters = new ArrayList<>();
     parameters.add(this);
     return parameters;
+  }
+
+  @Override
+  boolean isCaptureVariable() {
+    return true;
+  }
+
+  @Override
+  public boolean isGeneric() {
+    return true;
   }
 }

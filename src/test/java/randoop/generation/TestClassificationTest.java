@@ -35,7 +35,7 @@ import randoop.test.NoExceptionCheck;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.util.MultiMap;
 import randoop.util.predicate.AlwaysTrue;
 import randoop.util.predicate.Predicate;
@@ -352,7 +352,7 @@ public class TestClassificationTest {
             .createTestCheckGenerator(
                 visibility,
                 new ContractSet(),
-                new MultiMap<GeneralType, TypedOperation>(),
+                new MultiMap<Type, TypedOperation>(),
                 new LinkedHashSet<TypedOperation>());
     gen.addTestCheckGenerator(checkGenerator);
     gen.addExecutionVisitor(new DummyVisitor());

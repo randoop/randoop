@@ -42,74 +42,6 @@ public class Substitution<T> {
   }
 
   /**
-   * {@inheritDoc}
-   * @return true if the substitution maps are identical and false otherwise
-   */
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof Substitution)) {
-      return false;
-    }
-    @SuppressWarnings("rawtypes")
-    Substitution s = (Substitution) obj;
-    return map.equals(s.map);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(map);
-  }
-
-  /**
-   * {@inheritDoc}
-   * @return a string representation of the substitution
-   */
-  @Override
-  public String toString() {
-    List<String> pairs = new ArrayList<>();
-    for (Entry<TypeVariable, T> p : map.entrySet()) {
-      pairs.add(p.getKey().toString() + " := " + p.getValue().toString());
-    }
-    return "[" + UtilMDE.join(pairs, ", ") + "]";
-  }
-
-  /**
-   * Add a type variable to concrete type mapping to the substitution.
-   * Only called by {@link #forArgs(List, List)} and {@link #forArgs(List, Object[])}.
-   *
-   * @param typeParameter  the type variable
-   * @param type  the concrete type
-   */
-  private void put(TypeVariable typeParameter, T type) {
-    map.put(typeParameter, type);
-    if (typeParameter instanceof ExplicitTypeVariable) {
-      rawMap.put(((ExplicitTypeVariable) typeParameter).getReflectionTypeVariable(), type);
-    }
-  }
-
-  /**
-   * Returns the concrete type mapped from the type variable by this substitution.
-   * Returns null if the variable is not in the substitution.
-   *
-   * @param parameter  the variable
-   * @return the concrete type mapped from the variable in this substitution, or
-   * null if there is no type for the variable
-   */
-  public T get(TypeVariable parameter) {
-    return map.get(parameter);
-  }
-
-  /**
-   * Returns the value for the given {@link java.lang.reflect.Type}
-   *
-   * @param parameter  the type variable
-   * @return  the value for the type variable, or null if there is none
-   */
-  public T get(Type parameter) {
-    return rawMap.get(parameter);
-  }
-
-  /**
    * Create a substitution from the type parameters to the corresponding type
    * arguments.
    * Requires that the number of parameters and arguments agree.
@@ -155,17 +87,35 @@ public class Substitution<T> {
   }
 
   /**
-   * Print the entries of this substitution to standard out.
+   * {@inheritDoc}
+   * @return true if the substitution maps are identical and false otherwise
    */
-  public void print() {
-    for (Entry<TypeVariable, T> entry : map.entrySet()) {
-      System.out.println(
-          entry.getKey() + "(" + entry.getKey().hashCode() + ")" + " := " + entry.getValue());
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof Substitution)) {
+      return false;
     }
+    @SuppressWarnings("rawtypes")
+    Substitution s = (Substitution) obj;
+    return map.equals(s.map);
   }
 
-  public Collection<TypeVariable> getVariables() {
-    return map.keySet();
+  @Override
+  public int hashCode() {
+    return Objects.hash(map);
+  }
+
+  /**
+   * {@inheritDoc}
+   * @return a string representation of the substitution
+   */
+  @Override
+  public String toString() {
+    List<String> pairs = new ArrayList<>();
+    for (Entry<TypeVariable, T> p : map.entrySet()) {
+      pairs.add(p.getKey().toString() + " := " + p.getValue().toString());
+    }
+    return "[" + UtilMDE.join(pairs, ", ") + "]";
   }
 
   public Substitution<T> extend(Substitution<T> substitution) {
@@ -185,5 +135,55 @@ public class Substitution<T> {
       result.rawMap.put(entry.getKey(), entry.getValue());
     }
     return result;
+  }
+
+  /**
+   * Returns the concrete type mapped from the type variable by this substitution.
+   * Returns null if the variable is not in the substitution.
+   *
+   * @param parameter  the variable
+   * @return the concrete type mapped from the variable in this substitution, or
+   * null if there is no type for the variable
+   */
+  public T get(TypeVariable parameter) {
+    return map.get(parameter);
+  }
+
+  /**
+   * Returns the value for the given {@link java.lang.reflect.Type}
+   *
+   * @param parameter  the type variable
+   * @return  the value for the type variable, or null if there is none
+   */
+  public T get(Type parameter) {
+    return rawMap.get(parameter);
+  }
+
+  public Collection<TypeVariable> getVariables() {
+    return map.keySet();
+  }
+
+  /**
+   * Print the entries of this substitution to standard out.
+   */
+  public void print() {
+    for (Entry<TypeVariable, T> entry : map.entrySet()) {
+      System.out.println(
+          entry.getKey() + "(" + entry.getKey().hashCode() + ")" + " := " + entry.getValue());
+    }
+  }
+
+  /**
+   * Add a type variable to concrete type mapping to the substitution.
+   * Only called by {@link #forArgs(List, List)} and {@link #forArgs(List, Object[])}.
+   *
+   * @param typeParameter  the type variable
+   * @param type  the concrete type
+   */
+  private void put(TypeVariable typeParameter, T type) {
+    map.put(typeParameter, type);
+    if (typeParameter instanceof ExplicitTypeVariable) {
+      rawMap.put(((ExplicitTypeVariable) typeParameter).getReflectionTypeVariable(), type);
+    }
   }
 }

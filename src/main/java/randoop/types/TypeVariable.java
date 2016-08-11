@@ -1,6 +1,5 @@
 package randoop.types;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,32 +40,18 @@ public abstract class TypeVariable extends ReferenceType {
   }
 
   /**
-   * {@inheritDoc}
-   * @return false, since an uninstantiated type variable may not be assigned to
+   * Creates a {@code TypeVariable} object for a given {@code java.lang.reflect.Type}
+   * reference, which must be a {@code java.lang.reflect.TypeVariable}.
+   *
+   * @param type  the type reference
+   * @return the {@code TypeVariable} for the given type
    */
-  @Override
-  public boolean isAssignableFrom(GeneralType sourceType) {
-    return false;
-  }
-
-  @Override
-  boolean isVariable() {
-    return true;
-  }
-
-  @Override
-  public boolean isSubtypeOf(GeneralType otherType) {
-    if (super.isSubtypeOf(otherType)) {
-      return true;
+  public static TypeVariable forType(java.lang.reflect.Type type) {
+    if (!(type instanceof java.lang.reflect.TypeVariable<?>)) {
+      throw new IllegalArgumentException("type must be a type variable, got " + type);
     }
-    if (otherType.isReferenceType()) {
-      List<TypeVariable> variableList = new ArrayList<>();
-      variableList.add(this);
-      Substitution<ReferenceType> substitution =
-          Substitution.forArgs(variableList, (ReferenceType) otherType);
-      return this.getUpperTypeBound().isLowerBound(otherType, substitution);
-    }
-    return false;
+    java.lang.reflect.TypeVariable<?> v = (java.lang.reflect.TypeVariable) type;
+    return new ExplicitTypeVariable(v, ParameterBound.forTypes(v.getBounds()));
   }
 
   @Override
@@ -79,6 +64,15 @@ public abstract class TypeVariable extends ReferenceType {
   }
 
   /**
+   * Get the lower bound for this type variable.
+   *
+   * @return {@link NullReferenceType} in default case since no lower bound is defined
+   */
+  public ParameterBound getLowerTypeBound() {
+    return lowerBound;
+  }
+
+  /**
    * Get the upper bound for for this type variable.
    *
    * @return the (upper) {@link ParameterBound} for this type variable
@@ -88,35 +82,21 @@ public abstract class TypeVariable extends ReferenceType {
   }
 
   /**
-   * Get the lower bound for this type variable.
+   * Indicate whether this type has a wildcard either as or in a type argument.
    *
-   * @return {@link NullReferenceType} in default case since no lower bound is defined
+   * @return true if this type has a wildcard, and false otherwise
    */
-  public ParameterBound getLowerTypeBound() {
-    return lowerBound;
-  }
-
-  void setUpperBound(ParameterBound upperBound) {
-    this.upperBound = upperBound;
-  }
-
-  void setLowerBound(ParameterBound lowerBound) {
-    this.lowerBound = lowerBound;
+  public boolean hasWildcard() {
+    return false;
   }
 
   /**
-   * Creates a {@code TypeVariable} object for a given {@code java.lang.reflect.Type}
-   * reference, which must be a {@code java.lang.reflect.TypeVariable}.
-   *
-   * @param type  the type reference
-   * @return the {@code TypeVariable} for the given type
+   * {@inheritDoc}
+   * @return false, since an uninstantiated type variable may not be assigned to
    */
-  public static TypeVariable forType(Type type) {
-    if (!(type instanceof java.lang.reflect.TypeVariable<?>)) {
-      throw new IllegalArgumentException("type must be a type variable, got " + type);
-    }
-    java.lang.reflect.TypeVariable<?> v = (java.lang.reflect.TypeVariable) type;
-    return new ExplicitTypeVariable(v, ParameterBound.forTypes(v.getBounds()));
+  @Override
+  public boolean isAssignableFrom(Type sourceType) {
+    return false;
   }
 
   @Override
@@ -136,5 +116,33 @@ public abstract class TypeVariable extends ReferenceType {
       return lowerbound && upperbound;
     }
     return false;
+  }
+
+  @Override
+  public boolean isSubtypeOf(Type otherType) {
+    if (super.isSubtypeOf(otherType)) {
+      return true;
+    }
+    if (otherType.isReferenceType()) {
+      List<TypeVariable> variableList = new ArrayList<>();
+      variableList.add(this);
+      Substitution<ReferenceType> substitution =
+          Substitution.forArgs(variableList, (ReferenceType) otherType);
+      return this.getUpperTypeBound().isLowerBound(otherType, substitution);
+    }
+    return false;
+  }
+
+  @Override
+  boolean isVariable() {
+    return true;
+  }
+
+  void setUpperBound(ParameterBound upperBound) {
+    this.upperBound = upperBound;
+  }
+
+  void setLowerBound(ParameterBound lowerBound) {
+    this.lowerBound = lowerBound;
   }
 }

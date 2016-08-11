@@ -8,7 +8,7 @@ import java.util.Set;
 
 import randoop.sequence.Sequence;
 import randoop.types.ConcreteTypes;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 
 /**
  * Provides functionality for creating a set of sequences that create a set of
@@ -89,10 +89,10 @@ public final class SeedSequences {
    * @param type  the type
    * @return the set of seed values with the given raw type
    */
-  static Set<Object> getSeeds(GeneralType type) {
+  static Set<Object> getSeeds(Type type) {
     Set<Object> result = new LinkedHashSet<>();
     for (Object seed : primitiveSeeds) {
-      if (type.isInstance(seed)) {
+      if (type.isAssignableFromTypeOf(seed)) {
         result.add(seed);
       }
     }

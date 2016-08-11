@@ -8,7 +8,7 @@ import randoop.BugInRandoopException;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 
 /**
  * AccessibleField represents an accessible field of a class object, which can be an instance field,
@@ -56,7 +56,7 @@ public class AccessibleField {
    *          list of input variables
    * @return string representing code representation of field
    */
-  public String toCode(GeneralType declaringType, List<Variable> inputVars) {
+  public String toCode(Type declaringType, List<Variable> inputVars) {
     StringBuilder sb = new StringBuilder();
     if (isStatic) {
       sb.append(declaringType.getName());
@@ -73,7 +73,7 @@ public class AccessibleField {
    * @param declaringType  the declaring class type for this field
    * @return a String for type-field pair describing field
    */
-  public String toParsableString(GeneralType declaringType) {
+  public String toParsableString(Type declaringType) {
     return declaringType.getName() + "." + field.getName();
   }
 

@@ -16,7 +16,7 @@ import randoop.sequence.Sequence;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.JDKTypes;
 import randoop.types.ParameterizedType;
 import randoop.types.ReferenceType;
@@ -57,9 +57,9 @@ public class CollectionGenerationTest {
     Sequence sequence = HelperSequenceCreator.createCollection(componentManager, collectionType);
     assert sequence != null : "sequence should not be null";
 
-    Set<GeneralType> outputTypeSet = new HashSet<>();
+    Set<Type> outputTypeSet = new HashSet<>();
     for (int i = 0; i < sequence.size(); i++) {
-      GeneralType outputType = sequence.getStatement(i).getOutputType();
+      Type outputType = sequence.getStatement(i).getOutputType();
       outputTypeSet.add(outputType);
       assertTrue(
           "statement type should",
@@ -79,9 +79,9 @@ public class CollectionGenerationTest {
     Sequence sequence = HelperSequenceCreator.createCollection(componentManager, collectionType);
     assert sequence != null : "sequence should not be null";
 
-    Set<GeneralType> outputTypeSet = new HashSet<>();
+    Set<Type> outputTypeSet = new HashSet<>();
     for (int i = 0; i < sequence.size(); i++) {
-      GeneralType outputType = sequence.getStatement(i).getOutputType();
+      Type outputType = sequence.getStatement(i).getOutputType();
       outputTypeSet.add(outputType);
       assertTrue(
           "statement type should be one of four types, got " + outputType,

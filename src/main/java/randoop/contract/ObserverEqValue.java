@@ -6,9 +6,9 @@ import java.util.Objects;
 
 import randoop.Globals;
 import randoop.operation.TypedOperation;
+import randoop.sequence.Value;
 import randoop.types.ConcreteTypes;
-import randoop.types.GeneralType;
-import randoop.types.PrimitiveTypes;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.Util;
 
@@ -61,18 +61,14 @@ public final class ObserverEqValue implements ObjectContract {
     assert observer.isMethodCall() : "Observer must be MethodCall, got " + observer;
     this.observer = observer;
     this.value = value;
-    assert (this.value == null)
-            || PrimitiveTypes.isBoxedPrimitiveTypeOrString(this.value.getClass())
+    Type type = Type.forClass(this.value.getClass());
+    assert (this.value == null) || type.isBoxedPrimitive() || type.isString()
         : "obs value/class = "
             + this.value
             + "/"
             + this.value.getClass()
             + " observer = "
             + observer;
-  }
-
-  public String toCodeStringPreStatement() {
-    return "";
   }
 
   @Override
@@ -100,7 +96,7 @@ public final class ObserverEqValue implements ObjectContract {
             String.format(
                 "org.junit.Assert.assertTrue(x0.%s() == %s);",
                 methodname,
-                PrimitiveTypes.toCodeString(value)));
+                Value.toCodeString(value)));
       }
     } else { // string
       // System.out.printf ("value = %s - %s\n", value, value.getClass());
@@ -108,7 +104,7 @@ public final class ObserverEqValue implements ObjectContract {
           String.format(
               "org.junit.Assert.assertEquals(x0.%s(), %s);",
               methodname,
-              PrimitiveTypes.toCodeString(value)));
+              Value.toCodeString(value)));
     }
     return b.toString();
   }
@@ -126,7 +122,7 @@ public final class ObserverEqValue implements ObjectContract {
 
   @Override
   public TypeTuple getInputTypes() {
-    List<GeneralType> inputTypes = new ArrayList<>();
+    List<Type> inputTypes = new ArrayList<>();
     inputTypes.add(ConcreteTypes.OBJECT_TYPE);
     return new TypeTuple(inputTypes);
   }

@@ -5,7 +5,7 @@ import java.util.List;
 
 import randoop.Globals;
 import randoop.types.ConcreteTypes;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
@@ -43,7 +43,7 @@ public class CompareToReflexive implements ObjectContract {
 
   @Override
   public TypeTuple getInputTypes() {
-    List<GeneralType> inputTypes = new ArrayList<>();
+    List<Type> inputTypes = new ArrayList<>();
     inputTypes.add(ConcreteTypes.COMPARABLE_TYPE);
     return new TypeTuple(inputTypes);
   }

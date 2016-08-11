@@ -3,7 +3,7 @@ package randoop.types;
 /**
  * Represents a Java primitive type.
  */
-public class PrimitiveType extends GeneralType {
+public class PrimitiveType extends Type {
 
   /** The runtime type of the primitive type */
   private final Class<?> runtimeClass;
@@ -66,28 +66,6 @@ public class PrimitiveType extends GeneralType {
 
   /**
    * {@inheritDoc}
-   * @return true since this object represents a primitive type
-   */
-  @Override
-  public boolean isPrimitive() {
-    return true;
-  }
-
-  /**
-   * {@inheritDoc}
-   * <p>
-   * Specifically implements tests for primitive types as defined in
-   * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.1">section 4.10.1 of JLS for JavaSE 8</a>.
-   * </p>
-   */
-  @Override
-  public boolean isSubtypeOf(GeneralType otherType) {
-    return otherType.isPrimitive()
-        && PrimitiveTypes.isSubtype(this.getRuntimeClass(), otherType.getRuntimeClass());
-  }
-
-  /**
-   * {@inheritDoc}
    * <p>
    * Checks for
    * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.2">primitive widening (section 5.1.2)</a>, and
@@ -97,7 +75,7 @@ public class PrimitiveType extends GeneralType {
    * @return true if this type can be assigned from the source type by primitive widening or unboxing, false otherwise
    */
   @Override
-  public boolean isAssignableFrom(GeneralType sourceType) {
+  public boolean isAssignableFrom(Type sourceType) {
 
     // check for void before identity: cannot assign to/from void
     if (this.isVoid() || sourceType.isVoid()) {
@@ -121,6 +99,28 @@ public class PrimitiveType extends GeneralType {
     return false;
   }
 
+  /**
+   * {@inheritDoc}
+   * @return true since this object represents a primitive type
+   */
+  @Override
+  public boolean isPrimitive() {
+    return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Specifically implements tests for primitive types as defined in
+   * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.1">section 4.10.1 of JLS for JavaSE 8</a>.
+   * </p>
+   */
+  @Override
+  public boolean isSubtypeOf(Type otherType) {
+    return otherType.isPrimitive()
+        && PrimitiveTypes.isSubtype(this.getRuntimeClass(), otherType.getRuntimeClass());
+  }
+
   @Override
   public PrimitiveType toPrimitive() {
     return this;
@@ -128,6 +128,6 @@ public class PrimitiveType extends GeneralType {
 
   @Override
   public ClassOrInterfaceType toBoxedPrimitive() {
-    return new SimpleClassOrInterfaceType(PrimitiveTypes.getBoxedType(this.getRuntimeClass()));
+    return new SimpleClassOrInterfaceType(PrimitiveTypes.toBoxedType(this.getRuntimeClass()));
   }
 }

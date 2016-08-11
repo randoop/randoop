@@ -34,7 +34,7 @@ import org.apache.commons.bcel6.util.ClassPath;
 
 import randoop.operation.NonreceiverTerm;
 import randoop.types.ConcreteTypes;
-import randoop.types.TypeNames;
+import randoop.reflection.TypeNames;
 
 // Implementation notes:  All string, float, and double constants are in the
 // the constant table.  Integer constants less that 64K are in the code.
