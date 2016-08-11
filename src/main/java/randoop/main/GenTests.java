@@ -50,7 +50,7 @@ import randoop.test.ValidityCheckingVisitor;
 import randoop.test.predicate.AlwaysFalseExceptionPredicate;
 import randoop.test.predicate.ExceptionBehaviorPredicate;
 import randoop.test.predicate.ExceptionPredicate;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.util.CollectionsExt;
 import randoop.util.Log;
 import randoop.util.MultiMap;
@@ -239,7 +239,7 @@ public class GenTests extends GenInputsAbstract {
         GenInputsAbstract.getStringSetFromFile(
             GenInputsAbstract.observers, "Unable to read observer file", "//.*", null);
 
-    MultiMap<GeneralType, TypedOperation> observerMap = null;
+    MultiMap<Type, TypedOperation> observerMap = null;
     try {
       observerMap = operationModel.getObservers(observerSignatures);
     } catch (OperationParseException e) {
@@ -248,7 +248,7 @@ public class GenTests extends GenInputsAbstract {
     }
     assert observerMap != null;
     Set<TypedOperation> observers = new LinkedHashSet<>();
-    for (GeneralType keyType : observerMap.keySet()) {
+    for (Type keyType : observerMap.keySet()) {
       observers.addAll(observerMap.getValues(keyType));
     }
 
@@ -539,7 +539,7 @@ public class GenTests extends GenInputsAbstract {
   public TestCheckGenerator createTestCheckGenerator(
       VisibilityPredicate visibility,
       ContractSet contracts,
-      MultiMap<GeneralType, TypedOperation> observerMap,
+      MultiMap<Type, TypedOperation> observerMap,
       Set<TypedOperation> excludeAsObservers) {
 
     // start with checking for invalid exceptions

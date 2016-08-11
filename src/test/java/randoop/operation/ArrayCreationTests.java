@@ -11,7 +11,7 @@ import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.ArrayType;
 import randoop.types.ConcreteTypes;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 import static org.junit.Assert.assertEquals;
@@ -19,9 +19,9 @@ import static org.junit.Assert.assertEquals;
 public class ArrayCreationTests {
   @Test
   public void test1() throws Exception {
-    GeneralType elementType = ConcreteTypes.STRING_TYPE;
-    GeneralType arrayType = ArrayType.ofElementType(elementType);
-    List<GeneralType> paramTypes = new ArrayList<>();
+    Type elementType = ConcreteTypes.STRING_TYPE;
+    Type arrayType = ArrayType.ofElementType(elementType);
+    List<Type> paramTypes = new ArrayList<>();
     paramTypes.add(elementType);
     TypeTuple inputTypes = new TypeTuple(paramTypes);
     ArrayCreation ad = new ArrayCreation((ArrayType) arrayType, 1);
@@ -46,10 +46,10 @@ public class ArrayCreationTests {
 
   @Test
   public void test2() throws Exception {
-    GeneralType elementType = ConcreteTypes.CHAR_TYPE;
-    GeneralType arrayType = ArrayType.ofElementType(elementType);
+    Type elementType = ConcreteTypes.CHAR_TYPE;
+    Type arrayType = ArrayType.ofElementType(elementType);
     ArrayCreation ad = new ArrayCreation((ArrayType) arrayType, 1);
-    List<GeneralType> paramTypes = new ArrayList<>();
+    List<Type> paramTypes = new ArrayList<>();
     paramTypes.add(elementType);
     TypeTuple inputTypes = new TypeTuple(paramTypes);
     TypedOperation acOp = new TypedTermOperation(ad, inputTypes, arrayType);
@@ -70,10 +70,10 @@ public class ArrayCreationTests {
 
   @Test
   public void test3() throws Exception {
-    GeneralType elementType = ArrayType.ofElementType(ConcreteTypes.CHAR_TYPE);
-    GeneralType arrayType = ArrayType.ofElementType(elementType);
+    Type elementType = ArrayType.ofElementType(ConcreteTypes.CHAR_TYPE);
+    Type arrayType = ArrayType.ofElementType(elementType);
     ArrayCreation arrayCreation = new ArrayCreation((ArrayType) arrayType, 1);
-    List<GeneralType> paramTypes = new ArrayList<>();
+    List<Type> paramTypes = new ArrayList<>();
     paramTypes.add(elementType);
     TypeTuple inputTypes = new TypeTuple(paramTypes);
     TypedOperation acOp = new TypedTermOperation(arrayCreation, inputTypes, arrayType);

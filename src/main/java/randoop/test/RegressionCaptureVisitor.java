@@ -15,8 +15,9 @@ import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Statement;
+import randoop.sequence.Value;
 import randoop.sequence.Variable;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.PrimitiveTypes;
 import randoop.util.Log;
 import randoop.util.MultiMap;
@@ -40,13 +41,13 @@ import randoop.util.MultiMap;
 public final class RegressionCaptureVisitor implements TestCheckGenerator {
 
   private ExpectedExceptionCheckGen exceptionExpectation;
-  private MultiMap<GeneralType, TypedOperation> observerMap;
+  private MultiMap<Type, TypedOperation> observerMap;
   private final Set<TypedOperation> excludeSet;
   private boolean includeAssertions;
 
   public RegressionCaptureVisitor(
       ExpectedExceptionCheckGen exceptionExpectation,
-      MultiMap<GeneralType, TypedOperation> observerMap,
+      MultiMap<Type, TypedOperation> observerMap,
       Set<TypedOperation> excludeSet,
       boolean includeAssertions) {
     this.exceptionExpectation = exceptionExpectation;
@@ -94,7 +95,7 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
           // If value's type is void (i.e. its statement is a
           // void-return method call), don't capture checks
           // (nothing interesting).
-          GeneralType tc = st.getOutputType();
+          Type tc = st.getOutputType();
           if (tc.isVoid()) continue; // no return value.
 
           // If value is the result of Object.toString() or
@@ -113,7 +114,8 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
             // Add observer test for null
             checks.add(new ObjectCheck(new IsNull(), var));
 
-          } else if (PrimitiveTypes.isBoxedPrimitiveTypeOrString(o.getClass())) {
+          } else if (PrimitiveTypes.isBoxedPrimitive(o.getClass())
+              || (o.getClass().equals(String.class))) {
 
             if (o instanceof String) {
               // System.out.printf ("considering String check for seq %08X\n",
@@ -121,7 +123,7 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
               String str = (String) o;
               // Don't create assertions over strings that look like raw object
               // references.
-              if (PrimitiveTypes.looksLikeObjectToString(str)) {
+              if (Value.looksLikeObjectToString(str)) {
                 // System.out.printf ("ignoring Object.toString obs %s%n", str);
                 continue;
               }
@@ -129,7 +131,7 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
               // long, as this can cause the generate unit tests to be
               // unreadable and/or non-compilable due to Java
               // restrictions on String constants.
-              if (!PrimitiveTypes.stringLengthOK(str)) {
+              if (!Value.stringLengthOK(str)) {
                 if (Log.isLoggingOn()) {
                   Log.logLine(
                       "Ignoring a string that exceeds the maximum length of "
@@ -201,8 +203,7 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
 
                 // Don't create assertions over string that look like raw object
                 // references.
-                if ((value instanceof String)
-                    && PrimitiveTypes.looksLikeObjectToString((String) value)) {
+                if ((value instanceof String) && Value.looksLikeObjectToString((String) value)) {
                   continue;
                 }
 

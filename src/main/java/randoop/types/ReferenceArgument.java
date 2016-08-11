@@ -1,6 +1,5 @@
 package randoop.types;
 
-import java.lang.reflect.*;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,6 +22,16 @@ public class ReferenceArgument extends TypeArgument {
     this.referenceType = referenceType;
   }
 
+  /**
+   * Creates a {@code ReferenceArgument} from the given type.
+   *
+   * @param type  the type
+   * @return a {@code ReferenceArgument} for the given type
+   */
+  public static ReferenceArgument forType(java.lang.reflect.Type type) {
+    return new ReferenceArgument(ReferenceType.forType(type));
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof ReferenceArgument)) {
@@ -40,20 +49,6 @@ public class ReferenceArgument extends TypeArgument {
   @Override
   public String toString() {
     return referenceType.toString();
-  }
-
-  @Override
-  public boolean hasWildcard() {
-    return referenceType.hasWildcard();
-  }
-
-  /**
-   * Get the reference type for this type argument.
-   *
-   * @return the reference type of this type argument
-   */
-  public ReferenceType getReferenceType() {
-    return referenceType;
   }
 
   @Override
@@ -80,24 +75,23 @@ public class ReferenceArgument extends TypeArgument {
     }
   }
 
+  /**
+   * Get the reference type for this type argument.
+   *
+   * @return the reference type of this type argument
+   */
+  public ReferenceType getReferenceType() {
+    return referenceType;
+  }
+
   @Override
   public List<TypeVariable> getTypeParameters() {
     return referenceType.getTypeParameters();
   }
 
   @Override
-  boolean isInstantiationOf(TypeArgument otherArgument) {
-    if (!(otherArgument instanceof ReferenceArgument)) {
-      return false;
-    }
-
-    ReferenceType otherReferenceType = ((ReferenceArgument) otherArgument).getReferenceType();
-
-    return referenceType.isInstantiationOf(otherReferenceType);
-  }
-
-  public boolean isCaptureVariable() {
-    return referenceType.isCaptureVariable();
+  public boolean hasWildcard() {
+    return referenceType.isParameterized() && ((ParameterizedType) referenceType).hasWildcard();
   }
 
   /**
@@ -110,13 +104,14 @@ public class ReferenceArgument extends TypeArgument {
     return referenceType.isGeneric();
   }
 
-  /**
-   * Creates a {@code ReferenceArgument} from the given type.
-   *
-   * @param type  the type
-   * @return a {@code ReferenceArgument} for the given type
-   */
-  public static ReferenceArgument forType(Type type) {
-    return new ReferenceArgument(ReferenceType.forType(type));
+  @Override
+  boolean isInstantiationOf(TypeArgument otherArgument) {
+    if (!(otherArgument instanceof ReferenceArgument)) {
+      return false;
+    }
+
+    ReferenceType otherReferenceType = ((ReferenceArgument) otherArgument).getReferenceType();
+
+    return referenceType.isInstantiationOf(otherReferenceType);
   }
 }

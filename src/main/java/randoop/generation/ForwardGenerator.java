@@ -12,18 +12,19 @@ import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
 import randoop.operation.TypedOperation;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
+import randoop.sequence.Value;
 import randoop.sequence.Variable;
 import randoop.test.DummyCheckGenerator;
 import randoop.types.ConcreteTypes;
-import randoop.types.GeneralType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
-import randoop.types.PrimitiveTypes;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
@@ -264,7 +265,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // If its runtime value is a primitive value, clear its active flag,
       // and if the value is new, add a sequence corresponding to that value.
       Class<?> objectClass = runtimeValue.getClass();
-      if (PrimitiveTypes.isBoxedOrPrimitiveOrStringType(objectClass)) {
+      if (NonreceiverTerm.isNonreceiverType(objectClass)) {
         if (Log.isLoggingOn()) {
           Log.logLine("Making index " + i + " inactive (value is a primitive)");
         }
@@ -272,10 +273,9 @@ public class ForwardGenerator extends AbstractGenerator {
 
         boolean looksLikeObjToString =
             (runtimeValue instanceof String)
-                && PrimitiveTypes.looksLikeObjectToString((String) runtimeValue);
+                && Value.looksLikeObjectToString((String) runtimeValue);
         boolean tooLongString =
-            (runtimeValue instanceof String)
-                && !PrimitiveTypes.stringLengthOK((String) runtimeValue);
+            (runtimeValue instanceof String) && !Value.stringLengthOK((String) runtimeValue);
         if (!looksLikeObjToString && !tooLongString && runtimePrimitivesSeen.add(runtimeValue)) {
           // Have not seen this value before; add it to the component set.
           componentManager.addGeneratedSequence(Sequence.createSequenceForPrimitive(runtimeValue));
@@ -541,10 +541,10 @@ public class ForwardGenerator extends AbstractGenerator {
     // i, "types" contains the types of all variables in S, and "typesToVars"
     // maps each type to all variable indices of the given type.
     SubTypeSet types = new SubTypeSet(false);
-    MultiMap<GeneralType, Integer> typesToVars = new MultiMap<>();
+    MultiMap<Type, Integer> typesToVars = new MultiMap<>();
 
     for (int i = 0; i < inputTypes.size(); i++) {
-      GeneralType inputType = inputTypes.get(i);
+      Type inputType = inputTypes.get(i);
 
       // true if statement st represents an instance method, and we are
       // currently
@@ -562,7 +562,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
         // For each type T in S compatible with inputTypes[i], add all the
         // indices in S of type T.
-        for (GeneralType match : types.getMatches(inputType)) {
+        for (Type match : types.getMatches(inputType)) {
           // Sanity check: the domain of typesToVars contains all the types in
           // variable types.
           assert typesToVars.keySet().contains(match);
@@ -728,7 +728,7 @@ public class ForwardGenerator extends AbstractGenerator {
             continue; // Prim decl not an interesting candidate for multiple
           }
           // uses.
-          GeneralType outType = stk.getOutputType();
+          Type outType = stk.getOutputType();
           types.add(outType);
           typesToVars.add(outType, totStatements + j);
         }

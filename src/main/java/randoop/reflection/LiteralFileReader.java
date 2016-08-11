@@ -9,7 +9,6 @@ import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.TypeNames;
 import randoop.util.MultiMap;
 import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;

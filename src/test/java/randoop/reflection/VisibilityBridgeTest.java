@@ -12,7 +12,7 @@ import java.util.Set;
 import randoop.operation.TypedOperation;
 import randoop.reflection.visibilitytest.PackageSubclass;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.SimpleClassOrInterfaceType;
 import randoop.types.TypeTuple;
 
@@ -30,14 +30,14 @@ public class VisibilityBridgeTest {
   //can't compare method of superclass directly to method of subclass
   //so need to convert to abstraction to allow list search
   private class FormalMethod {
-    private GeneralType returnType;
+    private Type returnType;
     private String name;
     private TypeTuple parameterTypes;
 
     FormalMethod(Method m, ClassOrInterfaceType declaringType) {
-      this.returnType = GeneralType.forClass(m.getReturnType());
+      this.returnType = Type.forClass(m.getReturnType());
       this.name = m.getName();
-      List<GeneralType> paramTypes = new ArrayList<>();
+      List<Type> paramTypes = new ArrayList<>();
       if (!Modifier.isStatic(m.getModifiers() & Modifier.methodModifiers())) {
         paramTypes.add(declaringType);
       }

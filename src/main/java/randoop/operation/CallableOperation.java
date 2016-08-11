@@ -6,7 +6,7 @@ import java.util.List;
 import randoop.ExecutionOutcome;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
@@ -98,9 +98,9 @@ public abstract class CallableOperation implements Operation {
    * @param b  the {@link StringBuilder} to which code is added
    */
   public abstract void appendCode(
-      GeneralType declaringType,
+      Type declaringType,
       TypeTuple inputTypes,
-      GeneralType outputType,
+      Type outputType,
       List<Variable> inputVars,
       StringBuilder b);
 
@@ -117,5 +117,5 @@ public abstract class CallableOperation implements Operation {
    * @return a string representation of this operation
    */
   public abstract String toParsableString(
-      GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType);
+      Type declaringType, TypeTuple inputTypes, Type outputType);
 }

@@ -9,7 +9,7 @@ import java.util.Set;
 
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.util.ListOfLists;
 import randoop.util.SimpleList;
 
@@ -33,7 +33,7 @@ public class ClassLiterals extends MappedSequences<ClassOrInterfaceType> {
       new LinkedHashMap<>();
 
   @Override
-  public SimpleList<Sequence> getSequences(ClassOrInterfaceType key, GeneralType desiredType) {
+  public SimpleList<Sequence> getSequences(ClassOrInterfaceType key, Type desiredType) {
 
     Set<ClassOrInterfaceType> superClasses = hashedSuperClasses.get(key);
     if (superClasses == null) {

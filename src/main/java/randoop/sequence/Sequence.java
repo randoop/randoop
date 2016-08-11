@@ -14,8 +14,7 @@ import randoop.operation.OperationParseException;
 import randoop.operation.OperationParser;
 import randoop.operation.TypedOperation;
 import randoop.types.ConcreteTypes;
-import randoop.types.GeneralType;
-import randoop.types.PrimitiveTypes;
+import randoop.types.Type;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.OneMoreElementList;
@@ -56,7 +55,7 @@ public final class Sequence implements WeightedElement {
    * Should be final but cannot because of serialization.
    * This info is used by some generators.
    */
-  private transient /* final */ List<GeneralType> lastStatementTypes;
+  private transient /* final */ List<Type> lastStatementTypes;
 
   /*
    * Weight is used by heuristic that favors smaller sequences so it makes sense
@@ -113,7 +112,7 @@ public final class Sequence implements WeightedElement {
    *
    * @return the types of the variables in the last statement of this sequence
    */
-  List<GeneralType> getTypesForLastStatement() {
+  List<Type> getTypesForLastStatement() {
     return this.lastStatementTypes;
   }
 
@@ -377,7 +376,7 @@ public final class Sequence implements WeightedElement {
    * @param c  the type for initialized variable
    * @return the sequence consisting of the initialization
    */
-  public static Sequence zero(GeneralType c) {
+  public static Sequence zero(Type c) {
     return new Sequence()
         .extend(TypedOperation.createNullOrZeroInitializationForType(c), new ArrayList<Variable>());
   }
@@ -521,7 +520,7 @@ public final class Sequence implements WeightedElement {
       for (int i = 0; i < statementWithInputs.inputs.size(); i++) {
         int index = statementWithInputs.inputs.get(i).index;
         if (index >= 0) throw new IllegalStateException();
-        GeneralType newRefConstraint =
+        Type newRefConstraint =
             statements.get(si + statementWithInputs.inputs.get(i).index).getOutputType();
         if (newRefConstraint == null) throw new IllegalStateException();
         if (!(statementWithInputs.getInputTypes().get(i).isAssignableFrom(newRefConstraint))) {
@@ -621,7 +620,7 @@ public final class Sequence implements WeightedElement {
     return this.getStatementsWithInputs().get(index);
   }
 
-  public Variable randomVariableForTypeLastStatement(GeneralType type) {
+  public Variable randomVariableForTypeLastStatement(Type type) {
     if (type == null) throw new IllegalArgumentException("type cannot be null.");
     List<Variable> possibleIndices = new ArrayList<>(this.lastStatementVariables.size());
     for (Variable i : this.lastStatementVariables) {
@@ -717,7 +716,7 @@ public final class Sequence implements WeightedElement {
                 + inputVariables;
         throw new IllegalArgumentException(msg);
       }
-      GeneralType newRefConstraint = statements.get(inputVariables.get(i).index).getOutputType();
+      Type newRefConstraint = statements.get(inputVariables.get(i).index).getOutputType();
       if (newRefConstraint == null) {
         String msg =
             "newRefConstraint == null for"
@@ -1064,7 +1063,7 @@ public final class Sequence implements WeightedElement {
    */
   public boolean hasUseOfMatchingClass(Pattern classNames) {
     for (int i = 0; i < statements.size(); i++) {
-      GeneralType declaringType = statements.get(i).getDeclaringClass();
+      Type declaringType = statements.get(i).getDeclaringClass();
       if (declaringType != null && classNames.matcher(declaringType.getName()).matches()) {
         return true;
       }
@@ -1091,17 +1090,17 @@ public final class Sequence implements WeightedElement {
    */
   public static Sequence createSequenceForPrimitive(Object value) {
     if (value == null) throw new IllegalArgumentException("value is null");
-    Class<?> c = value.getClass();
-    if (!PrimitiveTypes.isBoxedOrPrimitiveOrStringType(c)) {
+    Type type = Type.forValue(value);
+
+    if (!TypedOperation.isNonreceiverType(type)) {
       throw new IllegalArgumentException("value is not a (boxed) primitive or String");
     }
 
-    GeneralType type = GeneralType.forClass(c);
     if (type.isBoxedPrimitive()) {
       type = type.toPrimitive();
     }
 
-    if (type.equals(ConcreteTypes.STRING_TYPE) && !PrimitiveTypes.stringLengthOK((String) value)) {
+    if (type.equals(ConcreteTypes.STRING_TYPE) && !Value.stringLengthOK((String) value)) {
       throw new IllegalArgumentException(
           "value is a string of length > " + GenInputsAbstract.string_maxlen);
     }

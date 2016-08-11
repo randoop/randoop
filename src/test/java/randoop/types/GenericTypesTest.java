@@ -99,7 +99,7 @@ public class GenericTypesTest {
     assertEquals("has one parameter", 1, a1.getTypeParameters().size());
 
     try {
-      GeneralType it = a1.instantiate(ReferenceType.forClass(Variable1Ext.class));
+      Type it = a1.instantiate(ReferenceType.forClass(Variable1Ext.class));
       assertTrue("Parameterized type bound satisfied, object instantiated", it != null);
     } catch (IllegalArgumentException e) {
       fail("should not have gotten the exception: " + e.getMessage());
@@ -109,7 +109,7 @@ public class GenericTypesTest {
 
     try {
       @SuppressWarnings("unused")
-      GeneralType ft = a1.instantiate(pt2);
+      Type ft = a1.instantiate(pt2);
       fail("expected an IllegalArgumentException");
     } catch (IllegalArgumentException e) {
       assertEquals(
@@ -124,7 +124,7 @@ public class GenericTypesTest {
 
     ReferenceType pt3 = ReferenceType.forClass(Variable1Ext2.class);
     try {
-      GeneralType it2 = a2.instantiate(pt3);
+      Type it2 = a2.instantiate(pt3);
       assertTrue("Intersection bound satisfied", it2 != null);
     } catch (IllegalArgumentException e) {
       fail("should not have gotten an exception: " + e.getMessage());
@@ -132,7 +132,7 @@ public class GenericTypesTest {
 
     try {
       @SuppressWarnings("unused")
-      GeneralType ft2 = a2.instantiate(ReferenceType.forClass(Variable1Ext.class));
+      Type ft2 = a2.instantiate(ReferenceType.forClass(Variable1Ext.class));
       fail("expected an IllegalArgumentException");
     } catch (IllegalArgumentException e) {
       assertEquals(
@@ -150,14 +150,14 @@ public class GenericTypesTest {
     ReferenceType pt5 = ReferenceType.forClass(Variable1Ext4.class);
 
     try {
-      GeneralType it3 = a3.instantiate(pt4, pt5);
+      Type it3 = a3.instantiate(pt4, pt5);
       assertTrue("should have instantiated OK", it3 != null);
     } catch (IllegalArgumentException e) {
       fail("should not have gotten exception");
     }
 
     try {
-      GeneralType it4 = a3.instantiate(pt5, pt4);
+      Type it4 = a3.instantiate(pt5, pt4);
       assertTrue("should have instantiated OK", it4 != null);
     } catch (IllegalArgumentException e) {
       fail("should not have gotten exception");
@@ -165,7 +165,7 @@ public class GenericTypesTest {
 
     try {
       @SuppressWarnings("unused")
-      GeneralType ft3 = a3.instantiate(ReferenceType.forClass(Variable1Ext.class), pt5);
+      Type ft3 = a3.instantiate(ReferenceType.forClass(Variable1Ext.class), pt5);
       fail("expected an IllegalArgumentException");
     } catch (IllegalArgumentException e) {
       assertEquals(
@@ -176,7 +176,7 @@ public class GenericTypesTest {
 
     try {
       @SuppressWarnings("unused")
-      GeneralType ft4 = a3.instantiate(ReferenceType.forClass(Variable1Ext.class));
+      Type ft4 = a3.instantiate(ReferenceType.forClass(Variable1Ext.class));
       fail("expected an IllegalArgumentException");
     } catch (IllegalArgumentException e) {
       assertEquals(

@@ -1,6 +1,5 @@
 package randoop.types;
 
-import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +19,21 @@ import java.util.List;
 public abstract class TypeArgument {
 
   /**
+   * Converts a {@code java.lang.reflect.Type} to a {@code TypeArgument}
+   * object.
+   *
+   * @param type  the type of a type argument
+   * @return the {@code TypeArgument} for the given type
+   */
+  public static TypeArgument forType(java.lang.reflect.Type type) {
+    if (type instanceof WildcardType) {
+      return WildcardArgument.forType(type);
+    } else {
+      return ReferenceArgument.forType(type);
+    }
+  }
+
+  /**
    * Applies the type substitution to this type argument.
    *
    * @param substitution  the substitution
@@ -37,34 +51,12 @@ public abstract class TypeArgument {
   public abstract boolean contains(TypeArgument otherArgument);
 
   /**
-   * Indicates whether this type argument is generic.
+   * The type parameters for this type argument.
    *
-   * @return true if this type argument is generic, false otherwise
+   * @return the list of type parameters for this argument
    */
-  public abstract boolean isGeneric();
-
-  /**
-   * Converts a {@code java.lang.reflect.Type} to a {@code TypeArgument}
-   * object.
-   *
-   * @param type  the type of a type argument
-   * @return the {@code TypeArgument} for the given type
-   */
-  public static TypeArgument forType(Type type) {
-    if (type instanceof WildcardType) {
-      return WildcardArgument.forType(type);
-    } else {
-      return ReferenceArgument.forType(type);
-    }
-  }
-
-  /**
-   * Indicate whether this type argument is a wildcard argument.
-   *
-   * @return true if this is a wildcard argument, false otherwise
-   */
-  public boolean isWildcard() {
-    return false;
+  public List<TypeVariable> getTypeParameters() {
+    return new ArrayList<>();
   }
 
   /**
@@ -77,23 +69,11 @@ public abstract class TypeArgument {
   }
 
   /**
-   * Indicates whether this type argument is a capture variable as the result of a capture
-   * conversion constructed by {@link InstantiatedType#applyCaptureConversion()}.
+   * Indicates whether this type argument is generic.
    *
-   * @return true if this argument is a capture variable, or false otherwise
+   * @return true if this type argument is generic, false otherwise
    */
-  boolean isCaptureVariable() {
-    return false;
-  }
-
-  /**
-   * The type parameters for this type argument.
-   *
-   * @return the list of type parameters for this argument
-   */
-  public List<TypeVariable> getTypeParameters() {
-    return new ArrayList<>();
-  }
+  public abstract boolean isGeneric();
 
   /**
    * Determines whether this type argument is an instantiation of the other argument.
@@ -103,6 +83,15 @@ public abstract class TypeArgument {
    * @return true if this type is an instantiation of the other argument, false otherwise
    */
   boolean isInstantiationOf(TypeArgument otherArgument) {
+    return false;
+  }
+
+  /**
+   * Indicate whether this type argument is a wildcard argument.
+   *
+   * @return true if this is a wildcard argument, false otherwise
+   */
+  public boolean isWildcard() {
     return false;
   }
 }

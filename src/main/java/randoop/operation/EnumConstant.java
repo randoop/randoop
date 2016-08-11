@@ -7,7 +7,7 @@ import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
@@ -76,9 +76,9 @@ public class EnumConstant extends CallableOperation {
    */
   @Override
   public void appendCode(
-      GeneralType declaringType,
+      Type declaringType,
       TypeTuple inputTypes,
-      GeneralType outputType,
+      Type outputType,
       List<Variable> inputVars,
       StringBuilder b) {
     b.append(declaringType.getName()).append(".").append(this.value.name());
@@ -91,14 +91,13 @@ public class EnumConstant extends CallableOperation {
    * @see EnumConstant#parse(String)
    */
   @Override
-  public String toParsableString(
-      GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
+  public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
     return declaringType.getName() + ":" + value.name();
   }
 
   /**
    * Parses the description of an enum constant value in a string as returned by
-   * {@link EnumConstant#toParsableString(GeneralType, TypeTuple, GeneralType)}.
+   * {@link EnumConstant#toParsableString(Type, TypeTuple, Type)}.
    *
    * Valid strings may be of the form EnumType:EnumValue, or
    * OuterClass$InnerEnum:EnumValue for an enum that is an inner type of a class.
@@ -151,9 +150,9 @@ public class EnumConstant extends CallableOperation {
       throw new OperationParseException(msg);
     }
 
-    GeneralType declaringType;
+    Type declaringType;
     try {
-      declaringType = GeneralType.forName(typeName);
+      declaringType = Type.forName(typeName);
     } catch (ClassNotFoundException e) {
       String msg = errorPrefix + " The type given \"" + typeName + "\" was not recognized.";
       throw new OperationParseException(msg);

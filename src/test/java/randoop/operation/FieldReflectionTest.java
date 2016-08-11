@@ -23,7 +23,7 @@ import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.RandoopTypeException;
 import randoop.types.SimpleClassOrInterfaceType;
 import randoop.types.TypeTuple;
@@ -200,10 +200,10 @@ public class FieldReflectionTest {
   private List<TypedOperation> getOperations(Field f, ClassOrInterfaceType declaringType)
       throws RandoopTypeException {
     List<TypedOperation> statements = new ArrayList<>();
-    GeneralType fieldType = GeneralType.forType(f.getGenericType());
+    Type fieldType = Type.forType(f.getGenericType());
     AccessibleField field = new AccessibleField(f, declaringType);
-    List<GeneralType> getInputTypeList = new ArrayList<>();
-    List<GeneralType> setInputTypeList = new ArrayList<>();
+    List<Type> getInputTypeList = new ArrayList<>();
+    List<Type> setInputTypeList = new ArrayList<>();
     if (!field.isStatic()) {
       getInputTypeList.add(declaringType);
       setInputTypeList.add(declaringType);

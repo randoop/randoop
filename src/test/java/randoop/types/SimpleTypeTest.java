@@ -21,7 +21,7 @@ public class SimpleTypeTest {
    */
   @Test
   public void testPrimitive() {
-    GeneralType intType = new PrimitiveType(int.class);
+    Type intType = new PrimitiveType(int.class);
     assertEquals("name of int is int", "int", intType.getName());
     assertEquals("runtime class of int type is int.class", int.class, intType.getRuntimeClass());
     assertTrue("int type has runtime class of int.class", intType.hasRuntimeClass(int.class));
@@ -36,14 +36,14 @@ public class SimpleTypeTest {
    */
   @Test
   public void testPrimitiveWidening() {
-    GeneralType booleanType = new PrimitiveType(boolean.class);
-    GeneralType byteType = new PrimitiveType(byte.class);
-    GeneralType charType = new PrimitiveType(char.class);
-    GeneralType doubleType = new PrimitiveType(double.class);
-    GeneralType floatType = new PrimitiveType(float.class);
-    GeneralType intType = new PrimitiveType(int.class);
-    GeneralType longType = new PrimitiveType(long.class);
-    GeneralType shortType = new PrimitiveType(short.class);
+    Type booleanType = new PrimitiveType(boolean.class);
+    Type byteType = new PrimitiveType(byte.class);
+    Type charType = new PrimitiveType(char.class);
+    Type doubleType = new PrimitiveType(double.class);
+    Type floatType = new PrimitiveType(float.class);
+    Type intType = new PrimitiveType(int.class);
+    Type longType = new PrimitiveType(long.class);
+    Type shortType = new PrimitiveType(short.class);
 
     // boolean to itself
     assertTrue("boolean is assignable from boolean", booleanType.isAssignableFrom(booleanType));
@@ -141,12 +141,12 @@ public class SimpleTypeTest {
    */
   @Test
   public void testNames() {
-    GeneralType t = new SimpleClassOrInterfaceType(String.class);
+    Type t = new SimpleClassOrInterfaceType(String.class);
     assertEquals("name should match", "java.lang.String", t.getName());
     t = new SimpleClassOrInterfaceType(randoop.types.test.Subclass.class);
     assertEquals("name should match", "randoop.types.test.Subclass", t.getName());
     try {
-      t = GeneralType.forName("randoop.types.test.Subclass$Innerclass");
+      t = Type.forName("randoop.types.test.Subclass$Innerclass");
       assertEquals("name should match", "randoop.types.test.Subclass.Innerclass", t.getName());
     } catch (ClassNotFoundException e) {
       fail("did not find inner class");
@@ -160,16 +160,16 @@ public class SimpleTypeTest {
    */
   @Test
   public void testVoidDoesNotConvert() {
-    GeneralType voidType = new PrimitiveType(void.class);
-    GeneralType objectType = new SimpleClassOrInterfaceType(Object.class);
-    GeneralType booleanType = new PrimitiveType(boolean.class);
-    GeneralType byteType = new PrimitiveType(byte.class);
-    GeneralType charType = new PrimitiveType(char.class);
-    GeneralType doubleType = new PrimitiveType(double.class);
-    GeneralType floatType = new PrimitiveType(float.class);
-    GeneralType intType = new PrimitiveType(int.class);
-    GeneralType longType = new PrimitiveType(long.class);
-    GeneralType shortType = new PrimitiveType(short.class);
+    Type voidType = new PrimitiveType(void.class);
+    Type objectType = new SimpleClassOrInterfaceType(Object.class);
+    Type booleanType = new PrimitiveType(boolean.class);
+    Type byteType = new PrimitiveType(byte.class);
+    Type charType = new PrimitiveType(char.class);
+    Type doubleType = new PrimitiveType(double.class);
+    Type floatType = new PrimitiveType(float.class);
+    Type intType = new PrimitiveType(int.class);
+    Type longType = new PrimitiveType(long.class);
+    Type shortType = new PrimitiveType(short.class);
 
     assertFalse("void is not assignable from void", voidType.isAssignableFrom(voidType));
     assertFalse("void is not assignable from Object", voidType.isAssignableFrom(objectType));
@@ -198,18 +198,18 @@ public class SimpleTypeTest {
    */
   @Test
   public void testConversionsToObject() {
-    GeneralType objectType = new SimpleClassOrInterfaceType(Object.class);
-    GeneralType booleanType = new PrimitiveType(boolean.class);
-    GeneralType byteType = new PrimitiveType(byte.class);
-    GeneralType charType = new PrimitiveType(char.class);
-    GeneralType doubleType = new PrimitiveType(double.class);
-    GeneralType floatType = new PrimitiveType(float.class);
-    GeneralType intType = new PrimitiveType(int.class);
-    GeneralType longType = new PrimitiveType(long.class);
-    GeneralType shortType = new PrimitiveType(short.class);
-    GeneralType subclassType = new SimpleClassOrInterfaceType(randoop.types.test.Subclass.class);
-    GeneralType intArrayType = ArrayType.ofElementType(intType);
-    GeneralType intArrayListType;
+    Type objectType = new SimpleClassOrInterfaceType(Object.class);
+    Type booleanType = new PrimitiveType(boolean.class);
+    Type byteType = new PrimitiveType(byte.class);
+    Type charType = new PrimitiveType(char.class);
+    Type doubleType = new PrimitiveType(double.class);
+    Type floatType = new PrimitiveType(float.class);
+    Type intType = new PrimitiveType(int.class);
+    Type longType = new PrimitiveType(long.class);
+    Type shortType = new PrimitiveType(short.class);
+    Type subclassType = new SimpleClassOrInterfaceType(randoop.types.test.Subclass.class);
+    Type intArrayType = ArrayType.ofElementType(intType);
+    Type intArrayListType;
     intArrayListType =
         GenericClassType.forClass(ArrayList.class)
             .instantiate(ReferenceType.forClass(Integer.class));
@@ -234,45 +234,45 @@ public class SimpleTypeTest {
    */
   @Test
   public void testBoxingUnboxingConversions() {
-    GeneralType booleanType = new PrimitiveType(boolean.class);
-    GeneralType boxedBooleanType = new SimpleClassOrInterfaceType(Boolean.class);
+    Type booleanType = new PrimitiveType(boolean.class);
+    Type boxedBooleanType = new SimpleClassOrInterfaceType(Boolean.class);
     assertTrue("boolean assignable from boxed", booleanType.isAssignableFrom(boxedBooleanType));
     assertTrue(
         "boxed boolean assignable from unboxed", boxedBooleanType.isAssignableFrom(booleanType));
 
-    GeneralType byteType = new PrimitiveType(byte.class);
-    GeneralType boxedByteType = new SimpleClassOrInterfaceType(Byte.class);
+    Type byteType = new PrimitiveType(byte.class);
+    Type boxedByteType = new SimpleClassOrInterfaceType(Byte.class);
     assertTrue("byte assignable from boxed", byteType.isAssignableFrom(boxedByteType));
     assertTrue("boxed byte assignable from unboxed", boxedByteType.isAssignableFrom(byteType));
 
-    GeneralType charType = new PrimitiveType(char.class);
-    GeneralType boxedCharType = new SimpleClassOrInterfaceType(Character.class);
+    Type charType = new PrimitiveType(char.class);
+    Type boxedCharType = new SimpleClassOrInterfaceType(Character.class);
     assertTrue("char assignable from boxed", charType.isAssignableFrom(boxedCharType));
     assertTrue("boxed char assignable from unboxed", boxedCharType.isAssignableFrom(charType));
 
-    GeneralType doubleType = new PrimitiveType(double.class);
-    GeneralType boxedDoubleType = new SimpleClassOrInterfaceType(Double.class);
+    Type doubleType = new PrimitiveType(double.class);
+    Type boxedDoubleType = new SimpleClassOrInterfaceType(Double.class);
     assertTrue("double assignable from boxed", doubleType.isAssignableFrom(boxedDoubleType));
     assertTrue(
         "boxed double assignable from unboxed", boxedDoubleType.isAssignableFrom(doubleType));
 
-    GeneralType floatType = new PrimitiveType(float.class);
-    GeneralType boxedfloatType = new SimpleClassOrInterfaceType(Float.class);
+    Type floatType = new PrimitiveType(float.class);
+    Type boxedfloatType = new SimpleClassOrInterfaceType(Float.class);
     assertTrue("float assignable from boxed", floatType.isAssignableFrom(boxedfloatType));
     assertTrue("boxed float assignable from unboxed", boxedfloatType.isAssignableFrom(floatType));
 
-    GeneralType intType = new PrimitiveType(int.class);
-    GeneralType boxedIntType = new SimpleClassOrInterfaceType(Integer.class);
+    Type intType = new PrimitiveType(int.class);
+    Type boxedIntType = new SimpleClassOrInterfaceType(Integer.class);
     assertTrue("int assignable from boxed", intType.isAssignableFrom(boxedIntType));
     assertTrue("boxed int assignable from unboxed", boxedIntType.isAssignableFrom(intType));
 
-    GeneralType longType = new PrimitiveType(long.class);
-    GeneralType boxedLongType = new SimpleClassOrInterfaceType(Long.class);
+    Type longType = new PrimitiveType(long.class);
+    Type boxedLongType = new SimpleClassOrInterfaceType(Long.class);
     assertTrue("long assignable from boxed", longType.isAssignableFrom(boxedLongType));
     assertTrue("boxed long assignable from unboxed", boxedLongType.isAssignableFrom(longType));
 
-    GeneralType shortType = new PrimitiveType(short.class);
-    GeneralType boxedShortType = new SimpleClassOrInterfaceType(Short.class);
+    Type shortType = new PrimitiveType(short.class);
+    Type boxedShortType = new SimpleClassOrInterfaceType(Short.class);
     assertTrue("short assignable from boxed", shortType.isAssignableFrom(boxedShortType));
     assertTrue("boxed short assignable from unboxed", boxedShortType.isAssignableFrom(shortType));
     assertFalse("boxed int not assignable from short", boxedIntType.isAssignableFrom(shortType));
@@ -281,8 +281,8 @@ public class SimpleTypeTest {
 
   @Test
   public void testRawtypeAssignability() {
-    GeneralType rawALType = new SimpleClassOrInterfaceType(ArrayList.class);
-    GeneralType parameterizedALType;
+    Type rawALType = new SimpleClassOrInterfaceType(ArrayList.class);
+    Type parameterizedALType;
     parameterizedALType =
         GenericClassType.forClass(ArrayList.class)
             .instantiate(new SimpleClassOrInterfaceType(String.class));
@@ -290,11 +290,11 @@ public class SimpleTypeTest {
         "ArrayList is assignable from ArrayList<String>",
         rawALType.isAssignableFrom(parameterizedALType));
 
-    GeneralType rawCollType = new SimpleClassOrInterfaceType(Collection.class);
+    Type rawCollType = new SimpleClassOrInterfaceType(Collection.class);
     assertTrue(
         "Collection is assignable from ArrayList<String>",
         rawCollType.isAssignableFrom(parameterizedALType));
-    GeneralType rawSetType = new SimpleClassOrInterfaceType(Set.class);
+    Type rawSetType = new SimpleClassOrInterfaceType(Set.class);
     assertFalse(
         "Set is not assignable from ArrayList<String>",
         rawSetType.isAssignableFrom(parameterizedALType));
@@ -304,8 +304,8 @@ public class SimpleTypeTest {
   public void testExtendingGeneric() {
     // class I {}
     // class J<T> extends I {}
-    GeneralType iType = GeneralType.forClass(I.class);
-    GeneralType strJType =
+    Type iType = Type.forClass(I.class);
+    Type strJType =
         GenericClassType.forClass(J.class)
             .instantiate(new SimpleClassOrInterfaceType(String.class));
     assertTrue("J<String> is assignable to I", iType.isAssignableFrom(strJType));

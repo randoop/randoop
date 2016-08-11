@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import randoop.Globals;
+import randoop.sequence.Value;
 import randoop.types.ConcreteTypes;
-import randoop.types.GeneralType;
-import randoop.types.PrimitiveTypes;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
@@ -37,7 +37,7 @@ public final class PrimValue implements ObjectContract {
   // Is a primitive or String (checked during construction).
   public final Object value;
 
-  public final PrintMode printMode;
+  private final PrintMode printMode;
 
   @Override
   public boolean equals(Object o) {
@@ -67,16 +67,13 @@ public final class PrimValue implements ObjectContract {
     if (value == null) {
       throw new IllegalArgumentException("value cannot be null");
     }
-    if (!PrimitiveTypes.isBoxedPrimitiveTypeOrString(value.getClass())) {
+    Type type = Type.forClass(value.getClass());
+    if (!type.isBoxedPrimitive() && !type.isString()) {
       throw new IllegalArgumentException(
           "value is not a primitive or string : " + value.getClass());
     }
     this.value = value;
     this.printMode = printMode;
-  }
-
-  public String toCodeStringPreStatement() {
-    return "";
   }
 
   @Override
@@ -92,7 +89,7 @@ public final class PrimValue implements ObjectContract {
 
   @Override
   public TypeTuple getInputTypes() {
-    List<GeneralType> inputTypes = new ArrayList<>();
+    List<Type> inputTypes = new ArrayList<>();
     inputTypes.add(ConcreteTypes.OBJECT_TYPE);
     return new TypeTuple(inputTypes);
   }
@@ -112,8 +109,8 @@ public final class PrimValue implements ObjectContract {
 
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
-    b.append(
-        "// Regression assertion (captures the current behavior of the code)" + Globals.lineSep);
+    b.append("// Regression assertion (captures the current behavior of the code)")
+        .append(Globals.lineSep);
 
     // ValueExpression represents the value of a variable.
     // We special-case printing for this type of expression,
@@ -127,27 +124,24 @@ public final class PrimValue implements ObjectContract {
       }
       b.append("x0");
       b.append(", ");
-      b.append(PrimitiveTypes.toCodeString(value));
+      b.append(Value.toCodeString(value));
       b.append(", 0);");
     } else if (printMode.equals(PrintMode.EQUALSMETHOD)) {
       b.append("org.junit.Assert.assertTrue(");
       // First add a message
-      b.append(
-          "\"'\" + "
-              + "x0"
-              + " + \"' != '\" + "
-              + PrimitiveTypes.toCodeString(value)
-              + "+ \"'\", ");
+      b.append("\"'\" + " + "x0" + " + \"' != '\" + ")
+          .append(Value.toCodeString(value))
+          .append("+ \"'\", ");
       b.append("x0");
       b.append(".equals(");
-      b.append(PrimitiveTypes.toCodeString(value));
+      b.append(Value.toCodeString(value));
       b.append(")");
       // Close assert.
       b.append(");");
     } else {
       assert printMode.equals(PrintMode.EQUALSEQUALS);
       b.append("org.junit.Assert.assertTrue(");
-      b.append("x0 == " + PrimitiveTypes.toCodeString(value));
+      b.append("x0 == ").append(Value.toCodeString(value));
       b.append(");");
     }
 

@@ -35,7 +35,7 @@ import randoop.test.bh.Node;
 import randoop.test.bh.Tree;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
@@ -206,7 +206,7 @@ public class ForwardExplorerTests {
         .createTestCheckGenerator(
             new PublicVisibilityPredicate(),
             contracts,
-            new MultiMap<GeneralType, TypedOperation>(),
+            new MultiMap<Type, TypedOperation>(),
             new LinkedHashSet<TypedOperation>());
   }
 

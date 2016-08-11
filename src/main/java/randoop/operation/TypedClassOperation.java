@@ -7,9 +7,10 @@ import java.util.Objects;
 import java.util.Set;
 
 import randoop.sequence.Variable;
+import randoop.types.ParameterizedType;
+import randoop.types.Type;
 import randoop.types.TypeVariable;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.GeneralType;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.TypeTuple;
@@ -27,7 +28,7 @@ public class TypedClassOperation extends TypedOperation {
       CallableOperation operation,
       ClassOrInterfaceType declaringType,
       TypeTuple inputTypes,
-      GeneralType outputType) {
+      Type outputType) {
     super(operation, inputTypes, outputType);
     this.declaringType = declaringType;
   }
@@ -66,14 +67,14 @@ public class TypedClassOperation extends TypedOperation {
   public TypedClassOperation apply(Substitution<ReferenceType> substitution) {
     ClassOrInterfaceType declaringType = this.declaringType.apply(substitution);
     TypeTuple inputTypes = this.getInputTypes().apply(substitution);
-    GeneralType outputType = this.getOutputType().apply(substitution);
+    Type outputType = this.getOutputType().apply(substitution);
     return new TypedClassOperation(this.getOperation(), declaringType, inputTypes, outputType);
   }
 
   @Override
   public TypedClassOperation applyCaptureConversion() {
     TypeTuple inputTypes = this.getInputTypes().applyCaptureConversion();
-    GeneralType outputType = this.getOutputType().applyCaptureConversion();
+    Type outputType = this.getOutputType().applyCaptureConversion();
     return new TypedClassOperation(this.getOperation(), declaringType, inputTypes, outputType);
   }
 
@@ -109,10 +110,19 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   @Override
+  public boolean hasWildcardTypes() {
+    return getInputTypes().hasWildcard()
+        || (getOutputType().isParameterized()
+            && ((ParameterizedType) getOutputType()).hasWildcard());
+  }
+
+  @Override
   public List<TypeVariable> getTypeParameters() {
     Set<TypeVariable> paramSet = new LinkedHashSet<>();
     paramSet.addAll(getInputTypes().getTypeParameters());
-    paramSet.addAll(getOutputType().getTypeParameters());
+    if (getOutputType().isReferenceType()) {
+      paramSet.addAll(((ReferenceType) getOutputType()).getTypeParameters());
+    }
     return new ArrayList<>(paramSet);
   }
 }

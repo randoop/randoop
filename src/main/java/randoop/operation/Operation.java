@@ -3,7 +3,7 @@ package randoop.operation;
 import java.io.PrintStream;
 
 import randoop.reflection.ReflectionPredicate;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 
 /**
  * Operation represents the constructs that can occur in a statement as part of
@@ -22,8 +22,8 @@ import randoop.types.GeneralType;
  * op: [T1, T2, ..., Tn] &rarr; T, where [T1, T2, ..., Tn] is the list of input
  * types, and T is the output type.
  * The input types are represented by an ordered list of
- * {@link GeneralType} objects, and the output type is a single
- * {@link GeneralType} object.
+ * {@link Type} objects, and the output type is a single
+ * {@link Type} object.
  * <p>
  * For a non-static method call or instance field access, the first input type
  * is always the declaring class of the method or field. If we have a method

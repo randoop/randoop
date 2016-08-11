@@ -13,7 +13,7 @@ import randoop.field.FieldParser;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.GeneralType;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
@@ -80,9 +80,9 @@ public class FieldGet extends CallableOperation {
    */
   @Override
   public void appendCode(
-      GeneralType declaringType,
+      Type declaringType,
       TypeTuple inputTypes,
-      GeneralType outputType,
+      Type outputType,
       List<Variable> inputVars,
       StringBuilder b) {
     b.append(field.toCode(declaringType, inputVars));
@@ -93,8 +93,7 @@ public class FieldGet extends CallableOperation {
    * PublicFieldParser.
    */
   @Override
-  public String toParsableString(
-      GeneralType declaringType, TypeTuple inputTypes, GeneralType outputType) {
+  public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
     return declaringType.getName() + ".<get>(" + field.getName() + ")";
   }
 
@@ -158,10 +157,10 @@ public class FieldGet extends CallableOperation {
 
     AccessibleField accessibleField = FieldParser.parse(descr, classname, fieldname);
     ClassOrInterfaceType classType = accessibleField.getDeclaringType();
-    GeneralType fieldType;
-    fieldType = GeneralType.forType(accessibleField.getRawField().getGenericType());
+    Type fieldType;
+    fieldType = Type.forType(accessibleField.getRawField().getGenericType());
 
-    List<GeneralType> getInputTypeList = new ArrayList<>();
+    List<Type> getInputTypeList = new ArrayList<>();
     if (!accessibleField.isStatic()) {
       getInputTypeList.add(classType);
     }
