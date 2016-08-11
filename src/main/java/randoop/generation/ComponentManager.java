@@ -146,9 +146,8 @@ public class ComponentManager {
    * Removes any components sequences added so far, except for seed sequences,
    * which are preserved.
    */
-  void clearGeneratedSequences() {
-    gralComponents.clear();
-    gralComponents.addAll(this.gralSeeds);
+  public void clearGeneratedSequences() {
+    gralComponents = new SequenceCollection(this.gralSeeds);
   }
 
   /*

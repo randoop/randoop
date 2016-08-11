@@ -480,36 +480,27 @@ of that particular class in a similar way.
  public void runLiteralsTest() {
 
    // 1. Set up a working directory -- choose a unique name
-   Path workingPath = createTestDirectory(workingDirsRoot, "literals-test");
+  TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("literals-test");
 
-   // 2. Setup options for test generation
-   String packageName = "";                   // package for tests
-   String regressionBasename = "LiteralsReg"; // base filename for generated regression tests
-   String errorBasename = "LiteralsErr";      // base filename for generated error tests
+   // 2. Set options for test generation
+  RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+  options.setPackageName("");
+  options.setRegressionBasename("LiteralsReg");
+  options.setErrorBasename("LiteralsErr");
+  options.setOption("inputlimit", "1000");
+  options.addTestClass("randoop.literals.A");
+  options.addTestClass("randoop.literals.A2");
+  options.addTestClass("randoop.literals.B");
+  options.setOption("literals-level", "CLASS");
+  options.setOption("literals-file", "resources/systemTest/literalsfile.txt");
 
-   List&lt;String&gt; options =
-       getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
-   options.add("--inputlimit=1000");
-   options.add("--testclass=randoop.literals.A");
-   options.add("--testclass=randoop.literals.A2");
-   options.add("--testclass=randoop.literals.B");
-   options.add("--literals-level=CLASS");
-   options.add("--literals-file=resources/systemTest/literalsfile.txt");
+  // 3. Indicate whether you expect regression tests (if you don't care use ExpectedTests.DONT_CARE)
+  ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+  ExpectedTests expectedErrorTests = ExpectedTests.NONE;
 
-   // 3. Indicate whether you expect regression tests (if you don't care use ExpectedTests.DONT_CARE)
-   ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
-   ExpectedTests expectedErrorTests = ExpectedTests.NONE;
-
-   // 4. Run Randoop, compile and run generated tests, and check to see if expectations met
-   generateAndTest(
-        workingPath,
-        packageName,
-        regressionBasename,
-        errorBasename,
-        options,
-        expectedRegressionTests,
-        expectedErrorTests);
-
+  // 4. Run Randoop, compile and run generated tests, and check to see if expectations met
+  generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
  }
 </code></pre>
 
@@ -535,14 +526,7 @@ since the test run method only looks for JUnit suite classes.
   At a minimum, a system test always attempts to compile generated tests.
   It should also try to run any generated tests and confirm that regression tests
   pass, and that error tests fail.
-  Looking at the <code>RandoopSystemTest.generateAndTest()</code> method may be
-  helpful in understanding what can be done.
-</p>
-<p>
-  The output of the Randoop run is captured in the <code>RandoopRunDescription</code>
-  object returned by <code>generateAndCompile</code>, and the output from running
-  the tests is captured in the <code>TestRunDescription</code> returned by <code>runTests</code>.
-  This output can be used in other assertions as needed.
+  Additional information can be found in the <code>RandoopSystemTest</code> class.
 </p>
 
 
