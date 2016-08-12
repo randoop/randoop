@@ -254,6 +254,10 @@ public class CoveredClassTest {
     try {
       objectConstructor = TypedOperation.forConstructor(Object.class.getConstructor());
     } catch (NoSuchMethodException e) {
+      // [[Throughout, don't assert false because that will permit execution to
+      // proceed if assertions are not enabled at run time.  Instead, throw an
+      // exception.  Another advantage to throwing an exception is that a
+      // chained exception will give the stack trace of the original exception.]]
       assert false : "failed to get Object constructor: " + e;
     }
     assert objectConstructor != null : "object constructor is null";
