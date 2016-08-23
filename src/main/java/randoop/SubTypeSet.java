@@ -5,7 +5,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import randoop.types.Type;
-import randoop.types.Match;
 import randoop.util.IMultiMap;
 import randoop.util.ISimpleSet;
 import randoop.util.MultiMap;
@@ -105,30 +104,6 @@ public class SubTypeSet {
   }
 
   // TODO create tests for this method.
-  /**
-   * If <code>match==COMPATIBLE_TYPE</code>, returns <code>true</code> if this
-   * set contains any classes that can-be-used-as the given class <code>c</code>
-   * .
-   *
-   * <p>
-   *
-   * Otherwise, returns <code>true</code> if this set contains the given class
-   * <code>c</code>
-   *
-   * @param type  the query type
-   * @param match  the type matching criterion
-   * @return true if either there is a sequence with the query type as its output
-   *   type, or {@code match=COMPATIBLE_TYPE} and there is a sequence with a
-   *   subtype of the query type as its output type.
-   */
-  public boolean containsAssignableType(Type type, Match match) {
-    if (!subTypesWithsequences.keySet().contains(type)) {
-      addQueryType(type);
-    }
-
-    return typesWithsequences.contains(type)
-        || ((match == Match.COMPATIBLE_TYPE) && !subTypesWithsequences.getValues(type).isEmpty());
-  }
 
   public int size() {
     return typesWithsequences.size();
