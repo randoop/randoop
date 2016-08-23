@@ -62,7 +62,7 @@ class HelperSequenceCreator {
     ArrayType arrayType = (ArrayType) collectionType;
     Type elementType = arrayType.getElementType();
 
-    SimpleList<Sequence> candidates = components.getSequencesForType(elementType, false);
+    SimpleList<Sequence> candidates = components.getSequencesForType(elementType);
     int length;
     if (candidates.isEmpty()) {
       // No sequences that produce appropriate component values found,
@@ -135,7 +135,7 @@ class HelperSequenceCreator {
     variableIndices.add(creationIndex);
     totStatements += creationSequence.size();
 
-    SimpleList<Sequence> candidates = componentManager.getSequencesForType(elementType, false);
+    SimpleList<Sequence> candidates = componentManager.getSequencesForType(elementType);
     int length = 0;
     if (!candidates.isEmpty()) {
       length = Randomness.nextRandomInt(candidates.size()) + 1;

@@ -165,11 +165,10 @@ public class ComponentManager {
    * of cls).
    *
    * @param cls  the query type
-   * @param exactMatch  the flag whether or not to use subtyping in type matching
    *@return the sequences that create values of the given type
    */
-  SimpleList<Sequence> getSequencesForType(Type cls, boolean exactMatch) {
-    return gralComponents.getSequencesForType(cls, exactMatch);
+  SimpleList<Sequence> getSequencesForType(Type cls) {
+    return gralComponents.getSequencesForType(cls, false);
   }
 
   /**
