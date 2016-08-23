@@ -2,6 +2,7 @@ package randoop.operation;
 
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.util.List;
 
 import randoop.ExceptionalExecution;
@@ -201,6 +202,18 @@ public final class ConstructorCall extends CallableOperation {
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
 
+    // if this is a constructor from a non-static inner class, then first argument must
+    // be a superclass object that is non-null.  If null, then code should throw NPE, but
+    // reflection class will happily create the object. So, we have to add the correct behavior.
+    if (statementInput.length > 0 && statementInput[0] == null) {
+      Class<?> declaringClass = this.constructor.getDeclaringClass();
+      int mods = declaringClass.getModifiers() & Modifier.classModifiers();
+      if (declaringClass.isMemberClass() && !Modifier.isStatic(mods)) {
+        String message =
+            "reflection call to " + constructor.getName() + " with null for superclass argument";
+        return new ExceptionalExecution(new NullPointerException(message), 0);
+      }
+    }
     ConstructorReflectionCode code =
         new ConstructorReflectionCode(this.constructor, statementInput);
 

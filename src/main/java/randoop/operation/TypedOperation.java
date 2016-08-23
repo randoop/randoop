@@ -441,6 +441,36 @@ public abstract class TypedOperation implements Operation {
   }
 
   /**
+   * Creates an operation to cast from one type to another.
+   *
+   * @param fromType  the input type
+   * @param toType  the resulting type
+   * @return an operation that casts the input type to the result type
+   */
+  public static TypedOperation createCast(Type fromType, Type toType) {
+    List<Type> typeList = new ArrayList<>();
+    typeList.add(fromType);
+    TypeTuple inputTypes = new TypeTuple(typeList);
+    return new TypedTermOperation(new UncheckedCast(toType), inputTypes, toType);
+  }
+
+  /**
+   * Creates an operation to assign a value to an array element.
+   *
+   * @param arrayType  the type of the array
+   * @return return an operation that
+   */
+  public static TypedOperation createArrayElementAssignment(ArrayType arrayType) {
+    List<Type> typeList = new ArrayList<>();
+    typeList.add(arrayType);
+    typeList.add(ConcreteTypes.INT_TYPE);
+    typeList.add(arrayType.getElementType());
+    TypeTuple inputTypes = new TypeTuple(typeList);
+    return new TypedTermOperation(
+        new ArrayElementSet(arrayType.getElementType()), inputTypes, ConcreteTypes.VOID_TYPE);
+  }
+
+  /**
    * Determines whether the given {@link Type} is the type of a non-receiver term:
    * primitive, boxed primitive, or {@code String}.
    *
@@ -448,6 +478,13 @@ public abstract class TypedOperation implements Operation {
    * @return true if the type is primitive, boxed primitive or {@code String}; false otherwise
    */
   public static boolean isNonreceiverType(Type type) {
-    return type.isPrimitive() || type.isBoxedPrimitive() || type.isString();
+    return type.isPrimitive()
+        || type.isBoxedPrimitive()
+        || type.isString()
+        || type.getRuntimeClass().equals(Class.class);
+  }
+
+  public boolean isUncheckedCast() {
+    return operation.isUncheckedCast();
   }
 }

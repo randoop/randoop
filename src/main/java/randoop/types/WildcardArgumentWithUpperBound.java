@@ -29,6 +29,9 @@ class WildcardArgumentWithUpperBound extends WildcardArgument {
 
   @Override
   public String toString() {
+    if ((this.getTypeBound().isObject())) {
+      return "?";
+    }
     return "? extends " + this.getTypeBound().toString();
   }
 

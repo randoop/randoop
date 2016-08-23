@@ -18,7 +18,7 @@ public class ConcreteTypes {
   public static final PrimitiveType CHAR_TYPE = new PrimitiveType(char.class);
 
   /** The {@code Class<?>} {@link ClassOrInterfaceType} */
-  public static final ClassOrInterfaceType CLASS_TYPE = new SimpleClassOrInterfaceType(Class.class);
+  public static final GenericClassType CLASS_TYPE = new GenericClassType(Class.class);
 
   /** The double {@link PrimitiveType} */
   public static final PrimitiveType DOUBLE_TYPE = new PrimitiveType(double.class);

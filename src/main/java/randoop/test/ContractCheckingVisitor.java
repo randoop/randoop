@@ -94,7 +94,6 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
         inputTuples = inputTuples.extend(inputValues).extend(inputValues);
         List<ObjectContract> binaryContracts = contracts.getArity(2);
         if (!binaryContracts.isEmpty()) {
-
           check = inputTuples.findAndTransform(new ContractChecker(s, binaryContracts));
           if (check != null) {
             checks.add(check);

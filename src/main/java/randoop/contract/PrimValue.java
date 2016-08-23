@@ -2,6 +2,7 @@ package randoop.contract;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import randoop.Globals;
 import randoop.sequence.Value;
@@ -52,9 +53,7 @@ public final class PrimValue implements ObjectContract {
 
   @Override
   public int hashCode() {
-    int h = 7;
-    h = h * 31 + value.hashCode();
-    return h;
+    return Objects.hash(value);
   }
 
   /**

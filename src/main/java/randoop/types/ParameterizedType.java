@@ -95,6 +95,11 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
         + ">";
   }
 
+  @Override
+  public String getSimpleName() {
+    return getRuntimeClass().getCanonicalName();
+  }
+
   /**
    * Returns the type arguments for this type.
    *

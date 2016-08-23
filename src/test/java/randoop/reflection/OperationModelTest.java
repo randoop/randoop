@@ -17,11 +17,13 @@ import randoop.operation.TypedOperation;
 import randoop.reflection.supertypetest.InheritedEnum;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
+import randoop.types.Type;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -254,6 +256,64 @@ public class OperationModelTest {
       } else {
         fail("output type should be either String or int");
       }
+    }
+  }
+
+  /**
+   * Test whether member classes are harvested.
+   */
+  @Test
+  public void memberTypeTest() {
+    VisibilityPredicate visibilityPredicate = new PublicVisibilityPredicate();
+    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
+    Set<String> classnames = new LinkedHashSet<>();
+    classnames.add("randoop.reflection.ClassWithMemberTypes");
+    Set<String> exercisedClassname = new LinkedHashSet<>();
+    Set<String> methodSignatures = new LinkedHashSet<>();
+    ClassNameErrorHandler errorHandler = new WarnOnBadClassName();
+    List<String> literalsFileList = new ArrayList<>();
+    OperationModel model = null;
+    try {
+      model =
+          OperationModel.createModel(
+              visibilityPredicate,
+              reflectionPredicate,
+              classnames,
+              exercisedClassname,
+              methodSignatures,
+              errorHandler,
+              literalsFileList);
+    } catch (OperationParseException e) {
+      fail("failed to parse operation: " + e.getMessage());
+    } catch (NoSuchMethodException e) {
+      fail("did not find method: " + e.getMessage());
+    }
+    assert model != null : "model was not initialized";
+
+    List<ClassOrInterfaceType> expected = new ArrayList<>();
+    expected.add(ClassOrInterfaceType.forClass(ClassWithMemberTypes.class));
+    expected.add(ClassOrInterfaceType.forClass(ClassWithMemberTypes.InnerEnum.class));
+    expected.add(ClassOrInterfaceType.forClass(ClassWithMemberTypes.StaticClass.class));
+    expected.add(ClassOrInterfaceType.forClass(ClassWithMemberTypes.InnerClass.class));
+    expected.add(ClassOrInterfaceType.forClass(ClassWithMemberTypes.MemberInterface.class));
+    for (ClassOrInterfaceType t : expected) {
+      assertTrue(
+          "expected type " + t + " should be harvested", model.getConcreteClasses().contains(t));
+    }
+
+    List<ClassOrInterfaceType> notExpected = new ArrayList<>();
+    notExpected.add(
+        ClassOrInterfaceType.forClass(ClassWithMemberTypes.PackagePrivateInnerClass.class));
+    notExpected.add(
+        ClassOrInterfaceType.forClass(ClassWithMemberTypes.PackagePrivateInnerEnum.class));
+    notExpected.add(
+        ClassOrInterfaceType.forClass(ClassWithMemberTypes.PackagePrivateMemberInterface.class));
+    notExpected.add(
+        ClassOrInterfaceType.forClass(ClassWithMemberTypes.PackagePrivateStaticClass.class));
+    for (ClassOrInterfaceType t : notExpected) {
+      assertFalse(
+          "package private type " + t + " should not be harvested",
+          model.getConcreteClasses().contains(t));
     }
   }
 }

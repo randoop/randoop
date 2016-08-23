@@ -125,6 +125,20 @@ class IntersectionTypeBound extends ParameterBound {
 
   /**
    * {@inheritDoc}
+   * @return true if all types in this bound are {@code Object}, otherwise return false
+   */
+  @Override
+  public boolean isObject() {
+    for (ParameterBound b : boundList) {
+      if (!b.isObject()) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * {@inheritDoc}
    * This method should never be tested for {@link IntersectionTypeBound}.
    * Will fail if assertions are enabled.
    * @return false, always

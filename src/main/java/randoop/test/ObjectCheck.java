@@ -3,6 +3,7 @@ package randoop.test;
 import java.util.Arrays;
 import java.util.Objects;
 
+import randoop.contract.EnumValue;
 import randoop.contract.ObjectContract;
 import randoop.contract.ObjectContractUtils;
 import randoop.contract.IsNotNull;
@@ -101,6 +102,8 @@ class ObjectCheck implements Check {
       return String.format("%s", ((ObserverEqValue) contract).value);
     } else if (contract instanceof PrimValue) {
       return ((PrimValue) contract).value.toString();
+    } else if (contract instanceof EnumValue) {
+      return ((EnumValue) contract).getValueName();
     } else {
       return contract.getClass().getName();
     }

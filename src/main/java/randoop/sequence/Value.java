@@ -42,6 +42,10 @@ public class Value {
       return "\"" + escaped + "\""; // + "/*length=" + escaped.length() + "*/"
     }
 
+    if (valueType.getRuntimeClass().equals(Class.class)) {
+      return ((Class<?>) value).getName() + ".class";
+    }
+
     // conditions below require primitive types
     if (valueType.isBoxedPrimitive()) {
       valueType = valueType.toPrimitive();

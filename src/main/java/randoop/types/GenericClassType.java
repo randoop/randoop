@@ -245,6 +245,32 @@ public class GenericClassType extends ParameterizedType {
     return this.apply(substitution);
   }
 
+  /**
+   * Creates a type substitution using the given type arguments and applies it to this type.
+   * @see #apply(Substitution)
+   *
+   * @param typeArguments  the type arguments
+   * @return the type that is this type instantiated by the given type arguments
+   */
+  public InstantiatedType instantiate(List<ReferenceType> typeArguments) {
+    if (typeArguments.size() != this.getTypeParameters().size()) {
+      throw new IllegalArgumentException("number of arguments and parameters must match");
+    }
+
+    Substitution<ReferenceType> substitution =
+        Substitution.forArgs(this.getTypeParameters(), typeArguments);
+    for (int i = 0; i < parameters.size(); i++) {
+      if (!parameters.get(i).getUpperTypeBound().isUpperBound(typeArguments.get(i), substitution)) {
+        throw new IllegalArgumentException(
+            "type argument "
+                + typeArguments.get(i)
+                + " does not match parameter bound "
+                + parameters.get(i).getUpperTypeBound());
+      }
+    }
+    return this.apply(substitution);
+  }
+
   @Override
   public boolean isAbstract() {
     return Modifier.isAbstract(Modifier.classModifiers() & rawType.getModifiers());

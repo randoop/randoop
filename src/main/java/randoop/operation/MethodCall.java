@@ -97,7 +97,7 @@ public final class MethodCall extends CallableOperation {
 
     String receiverString = isStatic() ? null : inputVars.get(0).getName();
     if (isStatic()) {
-      sb.append(declaringType.getName().replace('$', '.'));
+      sb.append(declaringType.getSimpleName().replace('$', '.'));
     } else {
       Type expectedType = inputTypes.get(0);
       if (expectedType.isPrimitive()) { // explicit cast when want primitive boxed as receiver
