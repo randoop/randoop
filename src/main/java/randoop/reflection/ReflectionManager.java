@@ -4,8 +4,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -85,6 +88,8 @@ public class ReflectionManager {
   /**
    * Applies the given {@link ClassVisitor} visitor to the class object and its members that
    * satisfy the predicate of this reflection manager.
+   * <p>
+   * Sorts class members to ensure a canonical order for visits.
    *
    * @param visitor  the {@link ClassVisitor} to apply to the class
    * @param c  the class
@@ -103,13 +108,16 @@ public class ReflectionManager {
 
         // Methods
         Set<Method> methods = new HashSet<>();
-        for (Method m : c.getMethods()) { // for all class methods
+        List<Method> methodList = toSortedList(c.getMethods(), new MethodComparator());
+        List<Method> declaredMethodList =
+            toSortedList(c.getDeclaredMethods(), new MethodComparator());
+        for (Method m : methodList) { // for all class methods
           methods.add(m); // remember to avoid duplicates
           if (isVisible(m)) { // if satisfies predicate then visit
             applyTo(visitor, m);
           }
         }
-        for (Method m : c.getDeclaredMethods()) { // for all methods declared by c
+        for (Method m : declaredMethodList) { // for all methods declared by c
           // if not duplicate and satisfies predicate
           if ((!methods.contains(m)) && predicate.isVisible(m)) {
             applyTo(visitor, m);
@@ -117,20 +125,23 @@ public class ReflectionManager {
         }
 
         // Constructors
-        for (Constructor<?> co : c.getDeclaredConstructors()) {
+        List<Constructor<?>> constructorList =
+            toSortedList(c.getDeclaredConstructors(), new ConstructorComparator());
+        for (Constructor<?> co : constructorList) {
           if (isVisible(co)) {
             applyTo(visitor, co);
           }
         }
 
-        // Inner enums
-        for (Class<?> ic : c.getDeclaredClasses()) { // look for inner enums
+        // member types
+        List<Class<?>> classList = toSortedList(c.getDeclaredClasses(), new ClassComparator());
+        for (Class<?> ic : classList) {
           if (predicate.isVisible(ic)) {
-            if (ic.isEnum()) {
-              visitBefore(visitor, ic);
+            visitBefore(visitor, ic);
+            if (ic.isEnum()) { // inner enums require special attention
               applyToEnum(visitor, ic);
-              visitAfter(visitor, ic);
             }
+            visitAfter(visitor, ic);
           }
         }
 
@@ -138,13 +149,15 @@ public class ReflectionManager {
         // The set of fields declared in class c is needed to ensure we don't
         // collect inherited fields that are hidden by local declaration
         Set<String> declaredNames = new TreeSet<>();
-        for (Field f : c.getDeclaredFields()) { // for fields declared by c
+        List<Field> declaredFieldList = toSortedList(c.getDeclaredFields(), new FieldComparator());
+        List<Field> fieldList = toSortedList(c.getFields(), new FieldComparator());
+        for (Field f : declaredFieldList) { // for fields declared by c
           declaredNames.add(f.getName());
           if (predicate.isVisible(f)) {
             applyTo(visitor, f);
           }
         }
-        for (Field f : c.getFields()) { // for all public fields of c
+        for (Field f : fieldList) { // for all public fields of c
           // keep a field that satisfies filter, and is not inherited and hidden by
           // local declaration
           if (predicate.isVisible(f) && (!declaredNames.contains(f.getName()))) {
@@ -191,7 +204,8 @@ public class ReflectionManager {
       }
     }
     // get methods that are explicitly declared in the enum
-    for (Method m : c.getDeclaredMethods()) {
+    List<Method> declaredMethodList = toSortedList(c.getDeclaredMethods(), new MethodComparator());
+    for (Method m : declaredMethodList) {
       if (predicate.isVisible(m)) {
         if (!m.getName().equals("values") && !m.getName().equals("valueOf")) {
           applyTo(visitor, m);
@@ -200,7 +214,8 @@ public class ReflectionManager {
     }
     // get any inherited methods also declared in anonymous class of some
     // constant
-    for (Method m : c.getMethods()) {
+    List<Method> methodList = toSortedList(c.getMethods(), new MethodComparator());
+    for (Method m : methodList) {
       if (predicate.isVisible(m)) {
         Set<Method> methodSet = overrideMethods.get(m.getName());
         if (methodSet != null) {
@@ -221,7 +236,7 @@ public class ReflectionManager {
    */
   private void applyTo(ClassVisitor v, Field f) {
     if (Log.isLoggingOn()) {
-      Log.logLine(String.format("Considering field %s", f.toGenericString()));
+      Log.logLine(String.format("Visiting field %s", f.toGenericString()));
     }
     v.visit(f);
   }
@@ -235,7 +250,7 @@ public class ReflectionManager {
    */
   private void applyTo(ClassVisitor v, Constructor<?> co) {
     if (Log.isLoggingOn()) {
-      Log.logLine(String.format("Considering constructor %s", co.toGenericString()));
+      Log.logLine(String.format("Visiting constructor %s", co.toGenericString()));
     }
     v.visit(co);
   }
@@ -249,7 +264,7 @@ public class ReflectionManager {
    */
   private void applyTo(ClassVisitor v, Method m) {
     if (Log.isLoggingOn()) {
-      Log.logLine(String.format("Considering method %s", m.toGenericString()));
+      Log.logLine(String.format("Visiting method %s", m.toGenericString()));
     }
     v.visit(m);
   }
@@ -263,7 +278,7 @@ public class ReflectionManager {
    */
   private void applyTo(ClassVisitor v, Enum<?> e) {
     if (Log.isLoggingOn()) {
-      Log.logLine(String.format("Considering enum %s", e));
+      Log.logLine(String.format("Visiting enum %s", e));
     }
     v.visit(e);
   }
@@ -349,5 +364,92 @@ public class ReflectionManager {
       }
     }
     return true;
+  }
+
+  /**
+   * Creates a sorted list from an array of elements using the given classComparator.
+   *
+   * @param array  the array of elements to be sorted
+   * @param comparator  the classComparator over the element type
+   * @param <T>  the element type
+   * @return the sorted list of elements of the given array
+   */
+  private <T> List<T> toSortedList(T[] array, Comparator<T> comparator) {
+    List<T> list = new ArrayList<>();
+    Collections.addAll(list, array);
+    Collections.sort(list, comparator);
+    return list;
+  }
+
+  /**
+   * The classComparator for class objects.
+   * Compares by name.
+   */
+  private class ClassComparator implements Comparator<Class<?>> {
+
+    @Override
+    public int compare(Class<?> c1, Class<?> c2) {
+      return c1.getName().compareTo(c2.getName());
+    }
+  }
+
+  /**
+   * The classComparator for methods of a class.
+   * Orders by signature: compares names, number of parameters, and parameter names.
+   */
+  private class MethodComparator implements Comparator<Method> {
+
+    private ClassComparator classComparator;
+
+    MethodComparator() {
+      this.classComparator = new ClassComparator();
+    }
+
+    @Override
+    public int compare(Method m1, Method m2) {
+      int result = m1.getName().compareTo(m2.getName());
+      if (result != 0) {
+        return result;
+      }
+      result = m1.getParameterTypes().length - m2.getParameterTypes().length;
+      for (int i = 0; i < m1.getParameterTypes().length && result == 0; i++) {
+        result = classComparator.compare(m1.getParameterTypes()[i], m2.getParameterTypes()[i]);
+      }
+      return result;
+    }
+  }
+
+  /**
+   * The classComparator for constructors of a class.
+   * Orders by signature: number of parameters, and then parameter names.
+   */
+  private class ConstructorComparator implements Comparator<Constructor<?>> {
+
+    private ClassComparator classComparator;
+
+    ConstructorComparator() {
+      this.classComparator = new ClassComparator();
+    }
+
+    @Override
+    public int compare(Constructor<?> c1, Constructor<?> c2) {
+      int result = c1.getParameterTypes().length - c2.getParameterTypes().length;
+      for (int i = 0; i < c1.getParameterTypes().length && result == 0; i++) {
+        result = classComparator.compare(c1.getParameterTypes()[i], c2.getParameterTypes()[i]);
+      }
+      return result;
+    }
+  }
+
+  /**
+   * The classComparator for field members of a class.
+   * Compares by name.
+   */
+  private class FieldComparator implements Comparator<Field> {
+
+    @Override
+    public int compare(Field f1, Field f2) {
+      return f1.getName().compareTo(f2.getName());
+    }
   }
 }

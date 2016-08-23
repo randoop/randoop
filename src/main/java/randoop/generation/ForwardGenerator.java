@@ -265,7 +265,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // If its runtime value is a primitive value, clear its active flag,
       // and if the value is new, add a sequence corresponding to that value.
       Class<?> objectClass = runtimeValue.getClass();
-      if (NonreceiverTerm.isNonreceiverType(objectClass)) {
+      if (NonreceiverTerm.isNonreceiverType(objectClass) && !objectClass.equals(Class.class)) {
         if (Log.isLoggingOn()) {
           Log.logLine("Making index " + i + " inactive (value is a primitive)");
         }

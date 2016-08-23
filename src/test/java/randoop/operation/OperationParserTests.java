@@ -16,10 +16,19 @@ import randoop.types.TypeTuple;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+/**
+ * These tests are disabled in build.gradle
+ */
 public class OperationParserTests {
 
   @Test
-  public void testPrimStKind() {
+  public void testNonreceiver() {
+
+    //Class
+    checkParse(
+        new NonreceiverTerm(ConcreteTypes.CLASS_TYPE, Comparable.class),
+        new TypeTuple(),
+        ConcreteTypes.CLASS_TYPE);
 
     // String.
     checkParse(

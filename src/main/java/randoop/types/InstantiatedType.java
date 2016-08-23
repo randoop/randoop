@@ -170,6 +170,7 @@ public class InstantiatedType extends ParameterizedType {
     }
     return referenceArgList;
   }
+
   /**
    * {@inheritDoc}
    * @return the rawtype of the generic type that this type instantiates
@@ -178,6 +179,7 @@ public class InstantiatedType extends ParameterizedType {
   public Class<?> getRuntimeClass() {
     return instantiatedType.getRuntimeClass();
   }
+
   /**
    * Constructs the superclass type for this parameterized type.
    * <p>
@@ -200,6 +202,7 @@ public class InstantiatedType extends ParameterizedType {
         Substitution.forArgs(instantiatedType.getTypeParameters(), getReferenceArguments());
     return this.instantiatedType.getSuperclass(substitution);
   }
+
   /**
    * Returns the type arguments for this type.
    *
@@ -375,6 +378,14 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public boolean isSubtypeOf(Type otherType) {
+    if (this.hasWildcard()) { // JLS 4.10.2 - has to be tested first
+      return this.applyCaptureConversion().isSubtypeOf(otherType);
+    }
+
+    if (super.isSubtypeOf(otherType)) {
+      return true;
+    }
+
     if (!otherType.isParameterized()) {
 
       if (super.isSubtypeOf(otherType)) {

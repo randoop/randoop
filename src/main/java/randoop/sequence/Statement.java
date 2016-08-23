@@ -115,6 +115,9 @@ public final class Statement {
   public void appendCode(Variable variable, List<Variable> inputs, StringBuilder b) {
     Type type = operation.getOutputType();
     if (!type.isVoid()) {
+      if (operation.isUncheckedCast()) {
+        b.append("@SuppressWarnings(\"unchecked\")").append(Globals.lineSep);
+      }
       String typeName = type.getName();
       b.append(typeName);
       b.append(" ").append(Variable.classToVariableName(type)).append(variable.index).append(" = ");

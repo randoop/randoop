@@ -69,6 +69,9 @@ class VariableRenamer {
     if (type.isParameterized()) {
       InstantiatedType classType = (InstantiatedType) type;
       String varName = classType.getClassName().toLowerCase();
+      if (varName.equals("class")) {
+        return "cls";
+      }
       for (TypeArgument argument : classType.getTypeArguments()) {
         assert !argument.isWildcard()
             : "wildcards should be converted and instantiated for types of variables";

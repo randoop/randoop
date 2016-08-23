@@ -6,6 +6,7 @@ import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
+import randoop.contract.EnumValue;
 import randoop.contract.IsNotNull;
 import randoop.contract.IsNull;
 import randoop.contract.ObjectContract;
@@ -166,6 +167,9 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
             // System.out.printf ("Adding objectcheck %s to seq %08X\n",
             // oc, s.seq_id());
 
+          } else if (o.getClass().isEnum()) {
+            ObjectCheck oc = new ObjectCheck(new EnumValue((Enum<?>) o), var);
+            checks.add(oc);
           } else { // its a more complex type with a non-null value
 
             // Assert that the value is not null.

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import randoop.BugInRandoopException;
 import randoop.contract.EqualsReflexive;
@@ -107,7 +108,7 @@ public class OperationModel {
     contracts.add(CompareToTransitive.getInstance());
 
     exercisedClasses = new LinkedHashSet<>();
-    operations = new LinkedHashSet<>();
+    operations = new TreeSet<>();
   }
 
   /**

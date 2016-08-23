@@ -91,7 +91,7 @@ public class TupleSet<E> {
 
   /**
    * Finds the first tuple that the visitor is able to transform,
-   * and results the result of the transformation.
+   * and returns the result of the transformation.
    *
    * @param visitor  the visitor that transforms a tuple
    * @param <T>  the return type of the visitor

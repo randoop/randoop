@@ -170,7 +170,7 @@ public final class Sequence implements WeightedElement {
 
   @Override
   public String toString() {
-    return toParsableString();
+    return toCodeString();
   }
 
   /**
@@ -390,6 +390,25 @@ public final class Sequence implements WeightedElement {
     this(statements, computeHashcode(statements), computeNetSize(statements));
   }
 
+  /**
+   * Creates a sequence consisting of the given operation given the input.
+   *
+   * @param operation  the operation for the sequence
+   * @param inputSequences  the sequences computing inputs to the operation
+   * @param indexes  the indices of the inputs to the operation
+   * @return the sequence that applies the operation to the given inputs
+   */
+  public static Sequence createSequence(
+      TypedOperation operation, List<Sequence> inputSequences, List<Integer> indexes) {
+    Sequence inputSequence = Sequence.concatenate(inputSequences);
+    List<Variable> inputs = new ArrayList<>();
+    for (Integer inputIndex : indexes) {
+      Variable v = inputSequence.getVariable(inputIndex);
+      inputs.add(v);
+    }
+    return inputSequence.extend(operation, inputs);
+  }
+
   // The hashcode of a sequence is the sum of each statement's hashcode.
   // This seems good enough, and it makes computing hashCode of a
   // concatenation of sequences faster (it's just the addition of each
@@ -570,7 +589,7 @@ public final class Sequence implements WeightedElement {
 
   // Debugging helper for equals method.
   private boolean verifyFalse(String message, Sequence other) {
-    if (this.toString().equals(other.toString())) {
+    if (this.toParsableString().equals(other.toParsableString())) {
       throw new IllegalStateException(message + " : " + this.toString());
     }
     return false;

@@ -18,7 +18,7 @@ import randoop.util.Util;
 
 /**
  * Represents a value that either cannot (primitive or null values), or we don't
- * care to have (String) be a receiver for a method call as an {@link Operation}
+ * care to have (String, Class) be a receiver for a method call as an {@link Operation}
  * .
  *
  * As an {@link Operation} a value v of type T is formally represented by an
@@ -37,9 +37,10 @@ public final class NonreceiverTerm extends CallableOperation {
    */
   public static final String ID = "prim";
 
-  // State variables.
+  /** The {@link Type} of this non-receiver term. */
   private final Type type;
-  // This value is guaranteed to be null, a String, or a boxed primitive.
+
+  /** The value of this non-receiver term. Must be null, a String, or a boxed primitive. */
   private final Object value;
 
   /**
@@ -56,7 +57,7 @@ public final class NonreceiverTerm extends CallableOperation {
     }
 
     if (type.isVoid()) {
-      throw new IllegalArgumentException("type should not be void.class.");
+      throw new IllegalArgumentException("type should not be void.");
     }
 
     if (type.isPrimitive() || type.isBoxedPrimitive()) {
@@ -78,8 +79,8 @@ public final class NonreceiverTerm extends CallableOperation {
         throw new IllegalArgumentException(
             "String too long, length = " + ((String) value).length());
       }
-    } else {
-      // if it's not primitive or string then must be null
+    } else if (!type.equals(ConcreteTypes.CLASS_TYPE)) {
+      // if it's not primitive, a string, or Class value then must be null
       if (value != null) {
         throw new IllegalArgumentException(
             "value must be null for non-primitive, non-string type " + type + " but was " + value);
@@ -97,7 +98,10 @@ public final class NonreceiverTerm extends CallableOperation {
    * @return true if the given type is primitive, boxed primitive, or {@code String}; false otherwise
    */
   public static boolean isNonreceiverType(Class<?> c) {
-    return c.isPrimitive() || c.equals(String.class) || PrimitiveTypes.isBoxedPrimitive(c);
+    return c.isPrimitive()
+        || c.equals(String.class)
+        || PrimitiveTypes.isBoxedPrimitive(c)
+        || c.equals(Class.class);
   }
 
   /**
@@ -125,6 +129,9 @@ public final class NonreceiverTerm extends CallableOperation {
    */
   @Override
   public String toString() {
+    if (type.equals(ConcreteTypes.CLASS_TYPE)) {
+      return ((Class<?>) value).getName() + ".class";
+    }
     return value.toString();
   }
 
@@ -255,6 +262,8 @@ public final class NonreceiverTerm extends CallableOperation {
         valStr = "\"" + StringEscapeUtils.escapeJava(value.toString()) + "\"";
       } else if (type.equals(ConcreteTypes.CHAR_TYPE)) {
         valStr = Integer.toHexString((Character) value);
+      } else if (type.equals(ConcreteTypes.CLASS_TYPE)) {
+        valStr = ((Class<?>) value).getName() + ".class";
       } else {
         valStr = value.toString();
       }

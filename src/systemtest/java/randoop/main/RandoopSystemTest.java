@@ -1,24 +1,11 @@
 package randoop.main;
 
-import org.jacoco.core.analysis.IClassCoverage;
-import org.jacoco.core.analysis.IMethodCoverage;
-import org.jacoco.report.JavaNames;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import plume.UtilMDE;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -148,10 +135,11 @@ public class RandoopSystemTest {
    *
    *     By default, coverage is checked against all methods returned by Class.getDeclaredMethods()
    *     for an input class. Some tests need to specifically exclude methods that Randoop should not
-   *     generate.  These can be indicated by creating a Set<String> with these method names, and giving
-   *     them as the last argument to the alternate version of generateAndTestWithCoverage(). When excluded
-   *     methods are given, these methods may not be covered, and any method not excluded is
-   *     expected to be covered.
+   *     generate, or need to ignore methods.  These can be indicated by creating a
+   *     CoverageChecker object and adding these method names using either the exclude() or ignore()
+   *     methods, and then giving the CoverageChecker as the last argument to the alternate version
+   *     of generateAndTestWithCoverage(). When excluded methods are given, these methods may not be
+   *    covered, and, unless ignored, any method not excluded is expected to be covered.
    *
    *     As a stop-gap, the method
    *       generateAndTest(
@@ -197,10 +185,33 @@ public class RandoopSystemTest {
     options.setOption("observers", "resources/systemTest/randoop1_observers.txt");
     options.setOption("omit-field-list", "resources/systemTest/testclassomitfields.txt");
 
+    CoverageChecker coverageChecker = new CoverageChecker(options);
+    coverageChecker.exclude("java2.util2.Collections.get(java2.util2.ListIterator, int)");
+    coverageChecker.exclude(
+        "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object)");
+    coverageChecker.exclude(
+        "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object, java2.util2.Comparator)");
+    coverageChecker.exclude("java2.util2.Collections.rotate2(java2.util2.List, int)");
+    coverageChecker.exclude("java2.util2.Collections.swap(java.lang.Object[], int, int)");
+    coverageChecker.exclude("java2.util2.Collections.swap(java2.util2.List, int, int)");
+    coverageChecker.exclude(
+        "java2.util2.Collections.synchronizedCollection(java2.util2.Collection, java.lang.Object)");
+    coverageChecker.exclude(
+        "java2.util2.Collections.synchronizedList(java2.util2.List, java.lang.Object)");
+    coverageChecker.exclude(
+        "java2.util2.Collections.synchronizedSet(java2.util2.Set, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.Collections.synchronizedSortedMap(java2.util2.SortedMap)");
+    coverageChecker.exclude("java2.util2.Collections.unmodifiableSortedMap(java2.util2.SortedMap)");
+    coverageChecker.exclude("java2.util2.TreeSet.readObject(java.io.ObjectInputStream)");
+    coverageChecker.exclude("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream)");
+    coverageChecker.exclude("java2.util2.TreeSet.headSet(java.lang.Object)");
+
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
 
-    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+    generateAndTestWithCoverage(
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
 
   /**
@@ -223,10 +234,85 @@ public class RandoopSystemTest {
     options.addTestClass("java2.util2.Collections");
     options.setOption("omit-field-list", "resources/systemTest/naiveomitfields.txt");
 
+    CoverageChecker coverageChecker = new CoverageChecker(options);
+    coverageChecker.exclude("java2.util2.ArrayList.readObject(java.io.ObjectInputStream)");
+    coverageChecker.exclude("java2.util2.ArrayList.writeObject(java.io.ObjectOutputStream)");
+    coverageChecker.exclude("java2.util2.LinkedList.readObject(java.io.ObjectInputStream)");
+    coverageChecker.exclude("java2.util2.LinkedList.writeObject(java.io.ObjectOutputStream)");
+    coverageChecker.exclude("java2.util2.TreeSet.readObject(java.io.ObjectInputStream)");
+    coverageChecker.exclude("java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream)");
+
+    coverageChecker.exclude("java2.util2.ArrayList.removeRange(int, int)");
+    coverageChecker.exclude("java2.util2.Collections.get(java2.util2.ListIterator, int)");
+    coverageChecker.exclude(
+        "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object)");
+    coverageChecker.exclude(
+        "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object, java2.util2.Comparator)");
+    coverageChecker.exclude("java2.util2.Collections.rotate2(java2.util2.List, int)");
+    coverageChecker.exclude(
+        "java2.util2.Collections.synchronizedCollection(java2.util2.Collection, java.lang.Object)");
+    coverageChecker.exclude(
+        "java2.util2.Collections.synchronizedList(java2.util2.List, java.lang.Object)");
+    coverageChecker.exclude(
+        "java2.util2.Collections.synchronizedSet(java2.util2.Set, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.Collections.synchronizedSortedMap(java2.util2.SortedMap)");
+    coverageChecker.exclude("java2.util2.Collections.unmodifiableSortedMap(java2.util2.SortedMap)");
+    coverageChecker.exclude("java2.util2.ArrayList.add(int, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.ArrayList.addAll(int, java2.util2.Collection)");
+    coverageChecker.exclude("java2.util2.ArrayList.addAll(java2.util2.Collection)");
+    coverageChecker.exclude("java2.util2.ArrayList.clone()");
+    coverageChecker.exclude("java2.util2.ArrayList.get(int)");
+    coverageChecker.exclude("java2.util2.ArrayList.remove(int)");
+    coverageChecker.exclude("java2.util2.ArrayList.set(int, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.ArrayList.trimToSize()");
+    coverageChecker.exclude(
+        "java2.util2.Collections.binarySearch(java2.util2.List, java.lang.Object, java2.util2.Comparator)");
+    coverageChecker.exclude("java2.util2.Collections.eq(java.lang.Object, java.lang.Object)");
+    coverageChecker.exclude(
+        "java2.util2.Collections.indexedBinarySearch(java2.util2.List, java.lang.Object, java2.util2.Comparator)");
+    coverageChecker.exclude(
+        "java2.util2.Collections.replaceAll(java2.util2.List, java.lang.Object, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.Collections.reverse(java2.util2.List)");
+    coverageChecker.exclude("java2.util2.Collections.shuffle(java2.util2.List)");
+    coverageChecker.exclude("java2.util2.Collections.singleton(java.lang.Object)");
+    coverageChecker.exclude("java2.util2.Collections.swap(java.lang.Object[], int, int)");
+    coverageChecker.exclude("java2.util2.Collections.swap(java2.util2.List, int, int)");
+    coverageChecker.exclude("java2.util2.Collections.synchronizedList(java2.util2.List)");
+    coverageChecker.exclude("java2.util2.Collections.synchronizedMap(java2.util2.Map)");
+    coverageChecker.exclude("java2.util2.Collections.synchronizedSet(java2.util2.Set)");
+    coverageChecker.exclude("java2.util2.Collections.synchronizedSortedSet(java2.util2.SortedSet)");
+    coverageChecker.exclude("java2.util2.Collections.unmodifiableList(java2.util2.List)");
+    coverageChecker.exclude("java2.util2.Collections.unmodifiableMap(java2.util2.Map)");
+    coverageChecker.exclude("java2.util2.Collections.unmodifiableSet(java2.util2.Set)");
+    coverageChecker.exclude("java2.util2.Collections.unmodifiableSortedSet(java2.util2.SortedSet)");
+    coverageChecker.exclude("java2.util2.LinkedList.add(int, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.LinkedList.get(int)");
+    coverageChecker.exclude("java2.util2.LinkedList.getLast()");
+    coverageChecker.exclude("java2.util2.LinkedList.lastIndexOf(java.lang.Object)");
+    coverageChecker.exclude("java2.util2.LinkedList.remove(int)");
+    coverageChecker.exclude("java2.util2.LinkedList.removeLast()");
+    coverageChecker.exclude("java2.util2.LinkedList.set(int, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.TreeSet.add(java.lang.Object)");
+    coverageChecker.exclude("java2.util2.TreeSet.addAll(java2.util2.Collection)");
+    coverageChecker.exclude("java2.util2.TreeSet.clear()");
+    coverageChecker.exclude("java2.util2.TreeSet.clone()");
+    coverageChecker.exclude("java2.util2.TreeSet.comparator()");
+    coverageChecker.exclude("java2.util2.TreeSet.contains(java.lang.Object)");
+    coverageChecker.exclude("java2.util2.TreeSet.first()");
+    coverageChecker.exclude("java2.util2.TreeSet.headSet(java.lang.Object)");
+    coverageChecker.exclude("java2.util2.TreeSet.isEmpty()");
+    coverageChecker.exclude("java2.util2.TreeSet.iterator()");
+    coverageChecker.exclude("java2.util2.TreeSet.last()");
+    coverageChecker.exclude("java2.util2.TreeSet.remove(java.lang.Object)");
+    coverageChecker.exclude("java2.util2.TreeSet.size()");
+    coverageChecker.exclude("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.TreeSet.tailSet(java.lang.Object)");
+
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
 
-    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+    generateAndTestWithCoverage(
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
 
   /**
@@ -248,6 +334,8 @@ public class RandoopSystemTest {
     options.setFlag("small-tests");
     options.setFlag("clear=100");
     options.addClassList("resources/systemTest/jdk_classlist.txt");
+
+    // omit methods that use Random
     options.setOption(
         "omitmethods", "java2\\.util2\\.Collections\\.shuffle\\(java2\\.util2\\.List\\)");
 
@@ -283,25 +371,25 @@ public class RandoopSystemTest {
     ExpectedTests expectedRegressionTests = ExpectedTests.NONE;
     ExpectedTests expectedErrorTests = ExpectedTests.SOME;
 
-    Set<String> excludedMethods = new HashSet<>();
-
     // TODO check which of these should actually not be expected
-    excludedMethods.add("examples.Buggy.BuggyCompareToSubs.compareTo(java.lang.Object)");
-    excludedMethods.add("examples.Buggy.BuggyCompareToSubs.hashCode()");
-    excludedMethods.add("examples.Buggy.BuggyEqualsTransitive.hashCode()");
-    excludedMethods.add("examples.Buggy.BuggyCompareToReflexive.compareTo(java.lang.Object)");
-    excludedMethods.add("examples.Buggy.BuggyCompareToReflexive.hashCode()");
-    excludedMethods.add("examples.Buggy.BuggyCompareToAntiSymmetric.compareTo(java.lang.Object)");
-    excludedMethods.add("examples.Buggy.BuggyCompareToAntiSymmetric.hashCode()");
-    excludedMethods.add("examples.Buggy.BuggyCompareToEquals.compareTo(java.lang.Object)");
-    excludedMethods.add("examples.Buggy.BuggyCompareToEquals.hashCode()");
-    excludedMethods.add("examples.Buggy.BuggyCompareToTransitive.compareTo(java.lang.Object)");
-    excludedMethods.add("examples.Buggy.BuggyCompareToTransitive.hashCode()");
-    excludedMethods.add("examples.Buggy.hashCode()");
-    excludedMethods.add("examples.Buggy.toString()");
+    CoverageChecker coverageChecker = new CoverageChecker(options);
+    coverageChecker.exclude("examples.Buggy.BuggyCompareToSubs.compareTo(java.lang.Object)");
+    coverageChecker.exclude("examples.Buggy.BuggyCompareToSubs.hashCode()");
+    coverageChecker.exclude("examples.Buggy.BuggyEqualsTransitive.hashCode()");
+    coverageChecker.exclude("examples.Buggy.BuggyCompareToReflexive.compareTo(java.lang.Object)");
+    coverageChecker.exclude("examples.Buggy.BuggyCompareToReflexive.hashCode()");
+    coverageChecker.exclude(
+        "examples.Buggy.BuggyCompareToAntiSymmetric.compareTo(java.lang.Object)");
+    coverageChecker.exclude("examples.Buggy.BuggyCompareToAntiSymmetric.hashCode()");
+    coverageChecker.exclude("examples.Buggy.BuggyCompareToEquals.compareTo(java.lang.Object)");
+    coverageChecker.exclude("examples.Buggy.BuggyCompareToEquals.hashCode()");
+    coverageChecker.exclude("examples.Buggy.BuggyCompareToTransitive.compareTo(java.lang.Object)");
+    coverageChecker.exclude("examples.Buggy.BuggyCompareToTransitive.hashCode()");
+    coverageChecker.exclude("examples.Buggy.hashCode()");
+    coverageChecker.exclude("examples.Buggy.toString()");
 
     generateAndTestWithCoverage(
-        testEnvironment, options, expectedRegressionTests, expectedErrorTests, excludedMethods);
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
 
   /**
@@ -393,12 +481,12 @@ public class RandoopSystemTest {
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
 
-    Set<String> excludedMethods = new HashSet<>();
-    excludedMethods.add("examples.Visibility.getNonVisible()");
-    excludedMethods.add("examples.Visibility.takesNonVisible(examples.NonVisible)");
+    CoverageChecker coverageChecker = new CoverageChecker(options);
+    coverageChecker.exclude("examples.Visibility.getNonVisible()");
+    coverageChecker.exclude("examples.Visibility.takesNonVisible(examples.NonVisible)");
 
     generateAndTestWithCoverage(
-        testEnvironment, options, expectedRegressionTests, expectedErrorTests, excludedMethods);
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
 
   /**
@@ -432,20 +520,17 @@ public class RandoopSystemTest {
         systemTestEnvironment.createTestEnvironment("inner-class-test");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName("");
-    options.setRegressionBasename("InnerClass");
-    options.setErrorBasename("InnerClass");
+    options.setRegressionBasename("InnerClassRegression");
+    options.setErrorBasename("InnerClassError");
     options.addTestClass("randoop.test.ClassWithInnerClass");
     options.addTestClass("randoop.test.ClassWithInnerClass$A");
-    options.setOption("timelimit", "2");
-    options.setOption("outputlimit", "2");
-    //    options.setFlag("junit-reflection-allowed","false");
+    options.setOption("inputlimit", "20");
     options.setFlag("silently-ignore-bad-class-names");
     options.setOption("unchecked-exception", "ERROR");
-    options.setFlag("no-regression-tests");
     options.setOption("npe-on-null-input", "ERROR");
     options.setOption("npe-on-non-null-input", "ERROR");
 
-    ExpectedTests expectedRegressionTests = ExpectedTests.NONE;
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.SOME;
     generateAndTestWithCoverage(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests);
@@ -503,8 +588,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("DefaultPackageReg");
     options.setErrorBasename("DefaultPackageErr");
     options.addTestClass("ClassInDefaultPackage");
-    options.setOption("outputlimit", "2");
-    options.setOption("timelimit", "3");
+    options.setOption("inputlimit", "20");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
@@ -525,6 +609,64 @@ public class RandoopSystemTest {
     options.setErrorBasename("ErrorTest");
     options.addTestClass("misc.ThrowsAnonymousException");
     options.setOption("outputlimit", "2");
+
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+    generateAndTestWithCoverage(
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+  }
+
+  /**
+   * Test collection generation.
+   *
+   * Uses collectiongen package in testInput.
+   * Expect that generated test will cover all methods of collectiongen.InputClass
+   * as long as method input type is a test class.  This will include the enum Day and
+   * the class AnInputClass, but exclude the enum Season and the class ANonInputClass.
+   *
+   */
+  @Test
+  public void runCollectionGenerationTest() {
+    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("coll-gen-tests");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("gen");
+    options.setRegressionBasename("GenRegressionTest");
+    options.setErrorBasename("GenErrorTest");
+    options.addTestClass("collectiongen.InputClass");
+    options.addTestClass("collectiongen.Day");
+    options.addTestClass("collectiongen.AnInputClass");
+    options.setFlag("small-tests");
+    options.setOption("inputlimit", "500");
+    options.setOption("omitmethods", "hashCode\\(\\)");
+
+    CoverageChecker coverageChecker = new CoverageChecker(options);
+    coverageChecker.exclude("collectiongen.Day.valueOf(java.lang.String)");
+    coverageChecker.ignore("collectiongen.AnInputClass.hashCode()");
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+    generateAndTestWithCoverage(
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
+  }
+
+  /**
+   * Test for Enum value assertion generation.
+   *
+   * Uses examples.Option class in testInput.
+   * Only actually tests whether methods are called.
+   * <p>
+   * Need to scrape generated source file for Enum constant values.
+   */
+  @Test
+  public void runEnumAssertionTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("enum-assertions");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("check");
+    options.setRegressionBasename("EnumCheckRegression");
+    options.setErrorBasename("EnumCheckError");
+    options.addTestClass("examples.Option");
+    options.setFlag("small-tests");
+    options.setOption("inputlimit", "20");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
@@ -553,7 +695,7 @@ public class RandoopSystemTest {
       RandoopOptions options,
       ExpectedTests expectedRegression,
       ExpectedTests expectedError,
-      Set<String> excludedMethods) {
+      CoverageChecker coverageChecker) {
 
     RandoopRunStatus runStatus = generateAndCompile(environment, options);
 
@@ -565,7 +707,7 @@ public class RandoopSystemTest {
     TestRunStatus errorRunDesc =
         runErrorTests(environment, options, expectedError, runStatus, packageName);
 
-    checkCoverage(options.getClassnames(), excludedMethods, regressionRunDesc, errorRunDesc);
+    coverageChecker.checkCoverage(regressionRunDesc, errorRunDesc);
   }
 
   /**
@@ -583,7 +725,7 @@ public class RandoopSystemTest {
       ExpectedTests expectedRegression,
       ExpectedTests expectedError) {
     generateAndTestWithCoverage(
-        environment, options, expectedRegression, expectedError, new HashSet<String>());
+        environment, options, expectedRegression, expectedError, new CoverageChecker(options));
   }
 
   /**
@@ -729,130 +871,5 @@ public class RandoopSystemTest {
       prevLineIsBlank = line.isEmpty();
     }
     return runStatus;
-  }
-
-  /**
-   * Performs a coverage check for the given set of classes relative to the full set of tests.
-   * Each declared method of a class that does not satisfy {@link #isIgnoredMethod(String)} is
-   * checked for coverage.
-   * If the method occurs in the excluded methods, then it must not be covered by any test.
-   * Otherwise, the method must be covered by some test.
-   *
-   * @param classnames  the set of class names to check
-   * @param excludedMethods  the methods that should not be covered
-   * @param regressionStatus  the {@link TestRunStatus} from the regression tests
-   * @param errorStatus  the {@link TestRunStatus} from the error tests
-   */
-  private void checkCoverage(
-      Set<String> classnames,
-      Set<String> excludedMethods,
-      TestRunStatus regressionStatus,
-      TestRunStatus errorStatus) {
-
-    Set<String> missingMethods = new TreeSet<>();
-    Set<String> shouldBeMissingMethods = new TreeSet<>();
-
-    for (String classname : classnames) {
-      Set<String> methods = new HashSet<>();
-
-      String canonicalClassname = classname.replace('$', '.');
-      getCoveredMethodsForClass(regressionStatus, canonicalClassname, methods);
-      getCoveredMethodsForClass(errorStatus, canonicalClassname, methods);
-
-      Class<?> c;
-      try {
-        c = Class.forName(classname);
-
-        for (Method m : c.getDeclaredMethods()) {
-          String methodname = methodName(m);
-          if (!isIgnoredMethod(methodname)) {
-            if (excludedMethods.contains(methodname)) {
-              if (methods.contains(methodname)) {
-                shouldBeMissingMethods.add(methodname);
-              }
-            } else {
-              if (!methods.contains(methodname)) {
-                missingMethods.add(methodname);
-              }
-            }
-          } else {
-            System.out.println("Ignoring " + methodname + " in coverage checks");
-          }
-        }
-      } catch (ClassNotFoundException e) {
-        fail("Could not load input class" + classname + ": " + e.getMessage());
-      }
-    }
-
-    if (!missingMethods.isEmpty()) {
-      String msg = String.format("Expected methods not covered:%n");
-      for (String name : missingMethods) {
-        msg += String.format("  %s%n", name);
-      }
-      fail(msg);
-    }
-    if (!shouldBeMissingMethods.isEmpty()) {
-      String msg = String.format("Excluded methods that are covered:%n");
-      for (String name : shouldBeMissingMethods) {
-        msg += String.format("  %s%n", name);
-      }
-      fail(msg);
-    }
-  }
-
-  /**
-   * Adds methods from the given class to the set if they are covered in the {@link MethodCoverageMap}
-   * of the given {@link TestRunStatus}.
-   *
-   * @param testRunStatus  the {@link TestRunStatus}
-   * @param classname the name of the class
-   * @param methods  the set to which method names are added
-   */
-  private void getCoveredMethodsForClass(
-      TestRunStatus testRunStatus, String classname, Set<String> methods) {
-    if (testRunStatus != null) {
-      Set<String> regressionMethods = testRunStatus.coverageMap.getMethods(classname);
-      if (regressionMethods != null) {
-        methods.addAll(regressionMethods);
-      }
-    }
-  }
-
-  /**
-   * Constructs a method signature for a {@code java.lang.reflect.Method} object in a format that
-   * matches the name construction in
-   * {@link MethodCoverageMap#getMethodName(JavaNames, IClassCoverage, String, IMethodCoverage)}.
-   *
-   * @param m  the {@code java.lang.reflect.Method} object
-   * @return the method signature for the method object
-   */
-  private String methodName(Method m) {
-    List<String> params = new ArrayList<>();
-    for (Class<?> paramType : m.getParameterTypes()) {
-      params.add(paramType.getCanonicalName());
-    }
-    return m.getDeclaringClass().getCanonicalName()
-        + "."
-        + m.getName()
-        + "("
-        + UtilMDE.join(params, ", ")
-        + ")";
-  }
-
-  /**
-   * Pattern for excluding method names from coverage checks.
-   * Excludes JaCoCo, and Java private access inner class methods.
-   */
-  private static final Pattern IGNORE_PATTERN = Pattern.compile("\\$jacocoInit|access\\$\\d{3}+");
-
-  /**
-   * Indicates whether the given method name should be ignored during the coverage check.
-   *
-   * @param methodname  the method name
-   * @return true if the method should be ignored, false otherwise
-   */
-  private boolean isIgnoredMethod(String methodname) {
-    Matcher matcher = IGNORE_PATTERN.matcher(methodname);
-    return matcher.find();
   }
 }

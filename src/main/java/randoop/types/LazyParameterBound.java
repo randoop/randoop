@@ -190,6 +190,12 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
+  public boolean isObject() {
+    assert false : "LazyParameterBound.isObject not implemented";
+    return false;
+  }
+
+  @Override
   public boolean isSubtypeOf(ParameterBound boundType) {
     assert false : "LazyParameterBound.isSubtypeOf not implemented";
     return false;

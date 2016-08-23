@@ -186,6 +186,13 @@ public abstract class ParameterBound {
   }
 
   /**
+   * Indicate whether this bound is {@code Object}.
+   *
+   * @return true if this bound is {@code Object}, false otherwise
+   */
+  public abstract boolean isObject();
+
+  /**
    * Indicates whether the type of this bound is a subtype of the type of the given bound.
    *
    * @param boundType  the other bound

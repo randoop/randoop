@@ -91,6 +91,11 @@ class ReferenceBound extends ParameterBound {
   }
 
   @Override
+  public boolean isObject() {
+    return boundType.isObject();
+  }
+
+  @Override
   public boolean isSubtypeOf(ParameterBound bound) {
     if (bound instanceof ReferenceBound) {
       return this.boundType.isSubtypeOf(((ReferenceBound) bound).boundType);

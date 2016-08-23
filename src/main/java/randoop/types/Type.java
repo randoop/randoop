@@ -139,6 +139,16 @@ public abstract class Type {
   }
 
   /**
+   * Returns the fully-qualified name of this type without type arguments.
+   * Identical to {@link #getName()} unless this is a parameterized type.
+   *
+   * @return the fully-qualified name of this type without type arguments
+   */
+  public String getSimpleName() {
+    return this.getName();
+  }
+
+  /**
    * Indicates whether the given {@code Class<?>} object is the runtime class of this type.
    *
    * @param c  the {@code Class<?>} to check

@@ -80,4 +80,21 @@ public class ConcreteTypeTest {
     assertTrue("is not String", !rawClassType.isString());
     assertTrue("is not void", !rawClassType.isVoid());
   }
+
+  @Test
+  public void testClassType() {
+    Type classType = Type.forClass(Class.class);
+    assertTrue("is not primitive", !classType.isPrimitive());
+    assertTrue("is generic", classType.isGeneric());
+    assertTrue("is not array", !classType.isArray());
+    assertTrue("is not boxed primitive", !classType.isBoxedPrimitive());
+    assertTrue("is not enum", !classType.isEnum());
+    assertTrue("is not interface", !classType.isInterface());
+    assertTrue("is not Object", !classType.isObject());
+    assertTrue("is not Parameterized", !classType.isParameterized());
+    assertTrue("is not rawtype", !classType.isRawtype());
+    assertTrue("is reference type", classType.isReferenceType());
+    assertTrue("is not String", !classType.isString());
+    assertTrue("is not void", !classType.isVoid());
+  }
 }
