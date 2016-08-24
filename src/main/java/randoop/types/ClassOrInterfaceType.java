@@ -85,6 +85,19 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   public abstract List<ClassOrInterfaceType> getInterfaces();
 
   /**
+   * Returns the package of the runtime class of this type.
+   *
+   * @return the package of the runtime class of this type, or null if there is none
+   */
+  public Package getPackage() {
+    Class<?> c = getRuntimeClass();
+    if (c == null) {
+      throw new IllegalArgumentException("Class " + this.toString() + " has no runtime class");
+    }
+    return c.getPackage();
+  }
+
+  /**
    * Finds the parameterized type that is a supertype of this class that also matches the given
    * generic class.
    * Returns null if there is no such type.

@@ -8,6 +8,7 @@ import randoop.BugInRandoopException;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.types.ConcreteTypes;
+import randoop.types.SimpleClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.util.StringEscapeUtils;
 
@@ -48,7 +49,7 @@ public class Value {
 
     // conditions below require primitive types
     if (valueType.isBoxedPrimitive()) {
-      valueType = valueType.toPrimitive();
+      valueType = ((SimpleClassOrInterfaceType) valueType).toPrimitive();
     }
 
     if (valueType.equals(ConcreteTypes.CHAR_TYPE)) {

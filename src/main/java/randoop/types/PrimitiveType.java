@@ -92,7 +92,7 @@ public class PrimitiveType extends Type {
     }
 
     if (sourceType.isBoxedPrimitive()) { // unbox then primitive widening conversion
-      PrimitiveType primitiveSourceType = sourceType.toPrimitive();
+      PrimitiveType primitiveSourceType = ((SimpleClassOrInterfaceType) sourceType).toPrimitive();
       return this.isAssignableFrom(primitiveSourceType);
     }
 
@@ -121,13 +121,12 @@ public class PrimitiveType extends Type {
         && PrimitiveTypes.isSubtype(this.getRuntimeClass(), otherType.getRuntimeClass());
   }
 
-  @Override
-  public PrimitiveType toPrimitive() {
-    return this;
-  }
-
-  @Override
-  public ClassOrInterfaceType toBoxedPrimitive() {
+  /**
+   * Returns the boxed type for this primitive type.
+   *
+   * @return the boxed type for this primitive type
+   */
+  public SimpleClassOrInterfaceType toBoxedPrimitive() {
     return new SimpleClassOrInterfaceType(PrimitiveTypes.toBoxedType(this.getRuntimeClass()));
   }
 }

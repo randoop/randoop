@@ -75,6 +75,16 @@ public abstract class Type {
   }
 
   /**
+   * Returns the type for the given Object reference.
+   *
+   * @param value  the Object value
+   * @return the {@link Type} for the given value
+   */
+  public static Type forValue(Object value) {
+    return Type.forClass(value.getClass());
+  }
+
+  /**
    * Returns a type constructed from the object referenced by a
    * {@code java.lang.reflect.Type} reference.
    * <p>
@@ -105,17 +115,19 @@ public abstract class Type {
    * Returns the runtime {@code Class} object for this type.
    * For use when reflection is needed.
    * <p>
+   * Note that type variables and the null reference type do not have a runtime class, and this
+   * method will return null in those cases.
+   * <p>
    * This method should not be confused with the inherited {@code Object.getClass()} method,
    * which returns the {@code Class<?>} for the {@link Type} object, and not of the represented type.
    * For instance, if a {@link Type} object {@code t} represented the Java type {@code int}, then
    * {@code t.getRuntimeClass()} would return {@code int.class} while {@code t.getClass()} would return
    * {@code Type.class}.
    *
-   * @return the {@link Class} that is the runtime representation of the type
+   * @return the {@link Class} that is the runtime representation of the type, or null if this type
+   *         is a type variable or null reference type.
    */
-  public Class<?> getRuntimeClass() {
-    return null;
-  }
+  public abstract Class<?> getRuntimeClass();
 
   /**
    * Returns the fully-qualified name of this type, including type arguments if
@@ -124,19 +136,6 @@ public abstract class Type {
    * @return the fully-qualified type name for this type
    */
   public abstract String getName();
-
-  /**
-   * Returns the package of the runtime class of this type.
-   *
-   * @return the package of the runtime class of this type
-   */
-  public Package getPackage() {
-    Class<?> c = getRuntimeClass();
-    if (c != null) {
-      return c.getPackage();
-    }
-    return null;
-  }
 
   /**
    * Returns the fully-qualified name of this type without type arguments.
@@ -165,6 +164,148 @@ public abstract class Type {
    */
   public boolean isArray() {
     return false;
+  }
+
+  /**
+   * Indicates whether this is a boxed primitive type.
+   *
+   * @return true if this type is a boxed primitive, false otherwise
+   */
+  public boolean isBoxedPrimitive() {
+    return false;
+  }
+
+  /**
+   * Indicates whether this is an enum type.
+   *
+   * @return true if this is an enum type, false otherwise
+   */
+  public boolean isEnum() {
+    return false;
+  }
+
+  /**
+   * Indicate whether this type is generic.
+   * A type is <i>generic</i> if it has one or more type variables.
+   *
+   * @return true if this type is generic, false otherwise
+   */
+  public boolean isGeneric() {
+    return false;
+  }
+
+  /**
+   * Indicates whether this object is an interface type
+   *
+   * @return true if this object is an interface type, false otherwise
+   */
+  public boolean isInterface() {
+    return false;
+  }
+
+  /**
+   * Indicate whether this is the {@code Object} type.
+   *
+   * @return true if this is the {@code Object} type, false otherwise
+   */
+  public boolean isObject() {
+    return this.equals(ConcreteTypes.OBJECT_TYPE);
+  }
+
+  /**
+   * Indicates whether this type is the String type.
+   *
+   * @return true if this type is the String type, and false otherwise
+   */
+  public boolean isString() {
+    return this.equals(ConcreteTypes.STRING_TYPE);
+  }
+
+  /**
+   * Indicate whether this type is void.
+   *
+   * @return true if this type is void, false otherwise
+   */
+  public boolean isVoid() {
+    return this.equals(ConcreteTypes.VOID_TYPE);
+  }
+
+  /**
+   * Indicate whether this type is a parameterized type.
+   * (A <i>parameterized type</i> is a type {@code C<T1,...,Tk>}
+   * that instantiates a generic class {@code C<F1,...,Fk>}.
+   *
+   * @return true if this type is a parameterized type, false otherwise
+   */
+  public boolean isParameterized() {
+    return false;
+  }
+
+  /**
+   * Indicates whether this is a primitive type.
+   *
+   * @return true if this type is primitive, false otherwise
+   */
+  public boolean isPrimitive() {
+    return false;
+  }
+
+  /**
+   * Indicate whether this type is a rawtype of a generic class. The rawtype is
+   * the runtime type of the class that has type parameters erased.
+   *
+   * @return true if this type is a rawtype of a generic class, false otherwise
+   */
+  public boolean isRawtype() {
+    return false;
+  }
+
+  /**
+   * Indicates whether this is a reference type.
+   * Note: implementing classes should ensure that this is equivalent to !(this.isPrimitive())
+   *
+   * @return true if this type is a reference type, and false otherwise.
+   */
+  public boolean isReferenceType() {
+    return false;
+  }
+
+  /**
+   * Indicates whether this type is a type variable.
+   *
+   * @return true if this type is a type variable, false otherwise
+   */
+  boolean isVariable() {
+    return false;
+  }
+
+  /**
+   * Returns the type created by instantiating the type parameters of this type
+   * with {@link ReferenceType} objects.
+   * Simply returns this type if it has no type parameters.
+   * In otherwords, this type is not a {@link ParameterizedType}, which includes
+   * {@link GenericClassType}.
+   * <p>
+   * There are contexts in which it is necessary to apply a substitution to a {@link Type} and it
+   * is not clear whether the type is parameterized.  In particular, this method is defined here
+   * because {@link ArrayType} can hold arbitrary types, including type variables and parameterized
+   * types.
+   *
+   * @param substitution  the type substitution
+   * @return the {@link Type} constructed by substituting for type
+   * parameters in this type, or this type if this is not a generic class type
+   */
+  public Type apply(Substitution<ReferenceType> substitution) {
+    return this;
+  }
+
+  /**
+   * Applies a capture conversion to this type.
+   *
+   * @return a copy of this type with wildcards replaced by type conversion
+   */
+  public Type applyCaptureConversion() {
+    return this;
   }
 
   /**
@@ -201,198 +342,34 @@ public abstract class Type {
   }
 
   /**
-   * Indicates whether the given object represents a value that is assignable to this type.
+   * Indicates whether there is an assignment conversion from the type of {@code value} to
+   * this type.
+   * (Note this is equivalent to determining whether {@code value} can be assigned to an l-value of
+   * this type.)
    * If the reference is null, then returns true only if this type is not primitive.
    *
-   * @param e  the element to check
+   * @param value  the element to check
    * @param <T> the type of the value
-   * @return true if the type of {@code e} is assignable to this type, false otherwise
+   * @return true if the type of {@code value} is assignable to this type, false otherwise
    */
-  public <T> boolean isAssignableFromTypeOf(T e) {
-    if (e == null) {
+  public <T> boolean isAssignableFromTypeOf(T value) {
+    if (value == null) {
       return !this.isPrimitive();
     }
-    Type type = Type.forClass(e.getClass());
+    Type type = Type.forClass(value.getClass());
     return this.isAssignableFrom(type);
-  }
-
-  /**
-   * Indicates whether this is a boxed primitive type.
-   *
-   * @return true if this type is a boxed primitive, false otherwise
-   */
-  public boolean isBoxedPrimitive() {
-    return false;
-  }
-
-  /**
-   * Indicates whether this is an enum type.
-   *
-   * @return true if this is an enum type, false otherwise
-   */
-  public boolean isEnum() {
-    return false;
-  }
-
-  /**
-   * Indicate whether this type is generic.
-   * A type is <i>generic</i> if it has one or more type variables.
-   *
-   * @return true if this type is generic, false otherwise
-   */
-  public boolean isGeneric() {
-    return false;
-  }
-
-  /**
-   * Indicates whether this object represents a type defined by an interface.
-   *
-   * @return true if this object represents an interface type, false otherwise
-   */
-  public boolean isInterface() {
-    return false;
-  }
-
-  /**
-   * Indicate whether this is the {@code Object} type.
-   *
-   * @return true if this is the {@code Object} type, false otherwise
-   */
-  public boolean isObject() {
-    return this.equals(ConcreteTypes.OBJECT_TYPE);
-  }
-
-  /**
-   * Indicate whether this type is a parameterized type.
-   * (A <i>parameterized type</i> is a type <code>C&lt;T<sub>1</sub>,&hellip;,T<sub>k</sub>&gt;</code>
-   * where <code>C&lt;F<sub>1</sub>,&hellip;,F<sub>k</sub>&gt;</code> is a generic class
-   * instantiated by a substitution <code>[F<sub>i</sub>:=T<sub>i</sub>]</code>, and
-   * <code>T<sub>i</sub></code> is a subtype of the upper bound <code>B<sub>i</sub></code> of
-   * the type parameter <code>F<sub>i</sub></code>.)
-   *
-   * @return true if this type is a parameterized type, false otherwise
-   */
-  public boolean isParameterized() {
-    return false;
-  }
-
-  /**
-   * Indicates whether this is a primitive type.
-   *
-   * @return true if this type is primitive, false otherwise
-   */
-  public boolean isPrimitive() {
-    return false;
-  }
-
-  /**
-   * Indicate whether this type is a rawtype of a generic class. The rawtype is
-   * the runtime type of the class with type parameters erased.
-   *
-   * @return true if this type is a rawtype of a generic class, false otherwise
-   */
-  public boolean isRawtype() {
-    return false;
-  }
-
-  /**
-   * Indicates whether this is a reference type.
-   * Note: implementing classes should ensure that this is equivalent to !(this.isPrimitive())
-   *
-   * @return true if this type is a reference type, and false otherwise.
-   */
-  public boolean isReferenceType() {
-    return false;
-  }
-
-  /**
-   * Indicates whether this type is a type variable.
-   *
-   * @return true if this type is a type variable, false otherwise
-   */
-  boolean isVariable() {
-    return false;
-  }
-
-  /**
-   * Indicates whether this type is the String type.
-   *
-   * @return true if this type is the String type, and false otherwise
-   */
-  public boolean isString() {
-    return false;
   }
 
   /**
    * Test whether this type is a subtype of the given type according to
    * transitive closure of definition of the <i>direct supertype</i> relation in
    * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10">
-   * section 4.10 of JLS for JavaSE 8</a>.
+   * section 4.10 of JLS for Java SE 8</a>.
    *
    * @param otherType  the possible supertype
    * @return true if this type is a subtype of the given type, false otherwise
    */
   public boolean isSubtypeOf(Type otherType) {
     return this.equals(otherType);
-  }
-
-  /**
-   * Indicate whether this type is void.
-   *
-   * @return true if this type is void, false otherwise
-   */
-  public boolean isVoid() {
-    return this.equals(ConcreteTypes.VOID_TYPE);
-  }
-
-  /**
-   * Returns the type for this created by instantiating the type parameters of this type
-   * with {@link ReferenceType} objects.
-   *
-   * @param substitution  the type substitution
-   * @return the {@code Type} constructed by substituting for type
-   * parameters in this type, or this type if there are no type parameters
-   */
-  public Type apply(Substitution<ReferenceType> substitution) {
-    return this;
-  }
-
-  /**
-   * Applies a capture conversion to this type.
-   *
-   * @return a copy of this type with wildcards replaced by type conversion
-   */
-  public Type applyCaptureConversion() {
-    return this;
-  }
-
-  /**
-   * Unbox a boxed primitive type.
-   * Acts as the identity on primitive types, but is not legal for other types.
-   *
-   * @return the primitive type corresponding to this (boxed primitive) type
-   */
-  public PrimitiveType toPrimitive() {
-    throw new IllegalArgumentException("Type must be boxed primitive");
-  }
-
-  /**
-   * Box a primitive type.
-   * Acts as the identity on boxed primitive types, but is not legal for other types.
-   *
-   * @return the boxed primitive type corresponding to this type.
-   */
-  public ClassOrInterfaceType toBoxedPrimitive() {
-    throw new IllegalArgumentException("type must be primitive");
-  }
-
-  /**
-   * Returns the type for the given Object reference.
-   *
-   * @param value  the Object value
-   * @return the {@link Type} for the given value
-   */
-  public static Type forValue(Object value) {
-    return Type.forClass(value.getClass());
   }
 }

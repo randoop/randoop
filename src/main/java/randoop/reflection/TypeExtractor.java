@@ -7,6 +7,7 @@ import java.util.Set;
 
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ParameterizedType;
+import randoop.types.PrimitiveType;
 import randoop.types.Type;
 
 /**
@@ -72,7 +73,7 @@ class TypeExtractor extends DefaultClassVisitor {
         && !type.isGeneric()
         && !(type.isParameterized() && ((ParameterizedType) type).hasWildcard())) {
       if (type.isPrimitive()) {
-        type = type.toBoxedPrimitive();
+        type = ((PrimitiveType) type).toBoxedPrimitive();
       }
       inputTypes.add(type);
     }

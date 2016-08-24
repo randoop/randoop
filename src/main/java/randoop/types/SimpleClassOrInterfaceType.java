@@ -161,7 +161,7 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
     // otherwise, check for boxing conversion
     return sourceType.isPrimitive()
         && !sourceType.isVoid()
-        && this.isAssignableFrom(sourceType.toBoxedPrimitive());
+        && this.isAssignableFrom(((PrimitiveType) sourceType).toBoxedPrimitive());
   }
 
   @Override
@@ -208,11 +208,6 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
   }
 
   @Override
-  public boolean isString() {
-    return this.equals(ConcreteTypes.STRING_TYPE);
-  }
-
-  @Override
   public boolean isSubtypeOf(Type otherType) {
     if (super.isSubtypeOf(otherType)) {
       return true;
@@ -241,24 +236,16 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
     return false;
   }
 
-  @Override
-  public boolean isVoid() {
-    return runtimeClass.equals(void.class);
-  }
-
-  @Override
+  /**
+   * If this type is a boxed primitive, unboxes this type and returns the primitive type.
+   *
+   * @return the primitive type if this is a boxed primitive
+   * @throws IllegalArgumentException if this is not a boxed primitive type
+   */
   public PrimitiveType toPrimitive() {
     if (this.isBoxedPrimitive()) {
       return new PrimitiveType(PrimitiveTypes.toUnboxedType(this.getRuntimeClass()));
     }
     throw new IllegalArgumentException("Type must be boxed primitive");
-  }
-
-  @Override
-  public ClassOrInterfaceType toBoxedPrimitive() {
-    if (this.isBoxedPrimitive()) {
-      return this;
-    }
-    throw new IllegalArgumentException("Type must be primitive");
   }
 }

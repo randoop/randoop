@@ -146,7 +146,7 @@ public class ComponentManager {
    * Removes any components sequences added so far, except for seed sequences,
    * which are preserved.
    */
-  public void clearGeneratedSequences() {
+  void clearGeneratedSequences() {
     gralComponents = new SequenceCollection(this.gralSeeds);
   }
 
@@ -189,11 +189,10 @@ public class ComponentManager {
     if (operation instanceof TypedClassOperation) {
       if (classLiterals != null || packageLiterals != null) {
 
-        Type declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+        ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
         if (declaringCls != null) {
           if (classLiterals != null) {
-            SimpleList<Sequence> sl =
-                classLiterals.getSequences((ClassOrInterfaceType) declaringCls, neededType);
+            SimpleList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
             if (!sl.isEmpty()) {
               ret = new ListOfLists<>(ret, sl);
             }

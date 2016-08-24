@@ -26,6 +26,16 @@ class NullReferenceType extends ReferenceType {
     return this.getName();
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @return null since the {@link NullReferenceType} does not have a runtime representation
+   */
+  @Override
+  public Class<?> getRuntimeClass() {
+    return null;
+  }
+
   @Override
   public ReferenceType apply(Substitution<ReferenceType> substitution) {
     return this;

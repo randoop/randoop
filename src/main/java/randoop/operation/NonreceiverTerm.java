@@ -10,6 +10,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.sequence.Value;
 import randoop.sequence.Variable;
 import randoop.types.ConcreteTypes;
+import randoop.types.SimpleClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.types.PrimitiveTypes;
 import randoop.types.TypeTuple;
@@ -202,7 +203,7 @@ public final class NonreceiverTerm extends CallableOperation {
    */
   static NonreceiverTerm createNullOrZeroTerm(Type type) {
     if (type.isBoxedPrimitive()) {
-      type = type.toPrimitive();
+      type = ((SimpleClassOrInterfaceType) type).toPrimitive();
     }
     if (type.isString()) return new NonreceiverTerm(type, "");
     if (type.equals(ConcreteTypes.CHAR_TYPE)) {

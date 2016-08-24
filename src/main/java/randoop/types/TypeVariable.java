@@ -82,6 +82,15 @@ public abstract class TypeVariable extends ReferenceType {
   }
 
   /**
+   * {@inheritDoc}
+   *
+   * @return null since type variables do not have a runtime class
+   */
+  public Class<?> getRuntimeClass() {
+    return null;
+  }
+
+  /**
    * Indicate whether this type has a wildcard either as or in a type argument.
    *
    * @return true if this type has a wildcard, and false otherwise
