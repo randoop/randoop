@@ -10,7 +10,7 @@ import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.SimpleClassOrInterfaceType;
+import randoop.types.NonParameterizedType;
 import randoop.types.TypeTuple;
 
 import static org.junit.Assert.assertEquals;
@@ -142,7 +142,7 @@ public class EnumConstantTest {
   @Test
   public void testInheritedMethods() {
     //skipping reflection
-    ClassOrInterfaceType enumType = new SimpleClassOrInterfaceType(SimpleEnumForTests.class);
+    ClassOrInterfaceType enumType = new NonParameterizedType(SimpleEnumForTests.class);
     TypedOperation ec1 =
         new TypedClassOperation(
             new EnumConstant(SimpleEnumForTests.ONE), enumType, new TypeTuple(), enumType);
@@ -165,7 +165,7 @@ public class EnumConstantTest {
     assertTrue("Should be no input types", ec1.getInputTypes().isEmpty());
     assertEquals(
         "Output type should match enum type of constant",
-        new SimpleClassOrInterfaceType(SimpleEnumForTests.ONE.getDeclaringClass()),
+        new NonParameterizedType(SimpleEnumForTests.ONE.getDeclaringClass()),
         ec1.getOutputType());
 
     //Execution

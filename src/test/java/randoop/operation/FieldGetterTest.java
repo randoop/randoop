@@ -20,7 +20,7 @@ import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.types.PrimitiveType;
-import randoop.types.SimpleClassOrInterfaceType;
+import randoop.types.NonParameterizedType;
 import randoop.types.TypeTuple;
 
 import static org.junit.Assert.assertEquals;
@@ -38,7 +38,7 @@ public class FieldGetterTest {
   @Test
   public void testStaticField() {
     Class<?> c = ClassWithFields.class;
-    ClassOrInterfaceType classType = new SimpleClassOrInterfaceType(c);
+    ClassOrInterfaceType classType = new NonParameterizedType(c);
     try {
       Field field = c.getField("fourField");
       Type fieldType = new PrimitiveType(field.getType());
@@ -76,7 +76,7 @@ public class FieldGetterTest {
   @Test
   public void testInstanceField() {
     Class<?> c = ClassWithFields.class;
-    ClassOrInterfaceType classType = new SimpleClassOrInterfaceType(c);
+    ClassOrInterfaceType classType = new NonParameterizedType(c);
     try {
 
       Field field = c.getField("oneField");
@@ -158,7 +158,7 @@ public class FieldGetterTest {
   @Test
   public void testStaticFinalField() {
     Class<?> c = ClassWithFields.class;
-    ClassOrInterfaceType classType = new SimpleClassOrInterfaceType(c);
+    ClassOrInterfaceType classType = new NonParameterizedType(c);
     try {
 
       Field field = c.getField("FIVEFIELD");

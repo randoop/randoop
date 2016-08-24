@@ -24,8 +24,8 @@ import randoop.sequence.Variable;
 import randoop.test.DummyCheckGenerator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
+import randoop.types.NonParameterizedType;
 import randoop.types.Type;
-import randoop.types.SimpleClassOrInterfaceType;
 import randoop.types.TypeTuple;
 
 import static org.junit.Assert.assertFalse;
@@ -94,7 +94,7 @@ public class ExceptionPredicateTest {
   public void testNullNPE() {
     ExceptionalExecution exec = new ExceptionalExecution(new NullPointerException(), 0);
     Class<?> c = CUTForExceptionPredicate.class;
-    ClassOrInterfaceType classType = new SimpleClassOrInterfaceType(c);
+    ClassOrInterfaceType classType = new NonParameterizedType(c);
     Constructor<?> con = null;
     try {
       con = c.getDeclaredConstructor(Object.class);

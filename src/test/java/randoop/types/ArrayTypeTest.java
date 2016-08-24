@@ -20,14 +20,14 @@ public class ArrayTypeTest {
     Type strALArrType =
         ArrayType.ofElementType(
             GenericClassType.forClass(ArrayList.class)
-                .instantiate(new SimpleClassOrInterfaceType(String.class)));
+                .instantiate(new NonParameterizedType(String.class)));
     Type intALArrType =
         ArrayType.ofElementType(
             GenericClassType.forClass(ArrayList.class)
-                .instantiate(new SimpleClassOrInterfaceType(Integer.class)));
-    Type alArrType = ArrayType.ofElementType(new SimpleClassOrInterfaceType(ArrayList.class));
-    Type objArrType = ArrayType.ofElementType(new SimpleClassOrInterfaceType(Object.class));
-    Type intBoxArrType = ArrayType.ofElementType(new SimpleClassOrInterfaceType(Integer.class));
+                .instantiate(new NonParameterizedType(Integer.class)));
+    Type alArrType = ArrayType.ofElementType(new NonParameterizedType(ArrayList.class));
+    Type objArrType = ArrayType.ofElementType(new NonParameterizedType(Object.class));
+    Type intBoxArrType = ArrayType.ofElementType(new NonParameterizedType(Integer.class));
 
     assertTrue("can assign array of same element type", intArrType.isAssignableFrom(intArrType));
     assertTrue(
@@ -48,12 +48,12 @@ public class ArrayTypeTest {
   @Test
   public void testNames() {
     Type intArrType = ArrayType.ofElementType(new PrimitiveType(int.class));
-    Type strArrType = ArrayType.ofElementType(new SimpleClassOrInterfaceType(String.class));
+    Type strArrType = ArrayType.ofElementType(new NonParameterizedType(String.class));
     Type intALArrType =
         ArrayType.ofElementType(
             GenericClassType.forClass(ArrayList.class)
-                .instantiate(new SimpleClassOrInterfaceType(Integer.class)));
-    Type alArrType = ArrayType.ofElementType(new SimpleClassOrInterfaceType(ArrayList.class));
+                .instantiate(new NonParameterizedType(Integer.class)));
+    Type alArrType = ArrayType.ofElementType(new NonParameterizedType(ArrayList.class));
 
     assertEquals("type name", "int[]", intArrType.getName());
     assertEquals("type name", "java.lang.String[]", strArrType.getName());

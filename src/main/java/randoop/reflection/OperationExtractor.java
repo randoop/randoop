@@ -15,8 +15,8 @@ import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
+import randoop.types.NonParameterizedType;
 import randoop.types.ReferenceType;
-import randoop.types.SimpleClassOrInterfaceType;
 import randoop.types.Substitution;
 import randoop.types.TypeTuple;
 
@@ -162,7 +162,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    */
   @Override
   public void visit(Enum<?> e) {
-    ClassOrInterfaceType enumType = new SimpleClassOrInterfaceType(e.getDeclaringClass());
+    ClassOrInterfaceType enumType = new NonParameterizedType(e.getDeclaringClass());
     assert !enumType.isGeneric() : "type of enum class cannot be generic";
     EnumConstant op = new EnumConstant(e);
     addOperation(new TypedClassOperation(op, enumType, new TypeTuple(), enumType));

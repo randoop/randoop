@@ -23,9 +23,9 @@ import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
+import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.types.RandoopTypeException;
-import randoop.types.SimpleClassOrInterfaceType;
 import randoop.types.TypeTuple;
 
 import static org.junit.Assert.assertEquals;
@@ -47,7 +47,7 @@ public class FieldReflectionTest {
   @Test
   public void basicFields() {
     Class<?> c = ClassWithFields.class;
-    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(c);
+    ClassOrInterfaceType declaringType = new NonParameterizedType(c);
 
     @SuppressWarnings("unchecked")
     List<Field> fields = Arrays.asList(c.getFields());
@@ -112,7 +112,7 @@ public class FieldReflectionTest {
   @Test
   public void inheritedFields() {
     Class<?> c = SubclassWithFields.class;
-    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(c);
+    ClassOrInterfaceType declaringType = new NonParameterizedType(c);
 
     List<Field> expected = new ArrayList<>();
     List<Field> exclude = new ArrayList<>();
@@ -163,7 +163,7 @@ public class FieldReflectionTest {
   @Test
   public void filteredFields() {
     Class<?> c = ClassWithFields.class;
-    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(c);
+    ClassOrInterfaceType declaringType = new NonParameterizedType(c);
 
     //let's exclude every field
     List<Field> exclude = new ArrayList<>();

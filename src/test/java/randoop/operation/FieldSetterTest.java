@@ -21,9 +21,9 @@ import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
+import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.types.PrimitiveType;
-import randoop.types.SimpleClassOrInterfaceType;
 import randoop.types.TypeTuple;
 
 import static org.junit.Assert.assertEquals;
@@ -55,7 +55,7 @@ public class FieldSetterTest {
   @Test
   public void testStaticField() {
     Class<?> c = ClassWithFields.class;
-    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(c);
+    ClassOrInterfaceType declaringType = new NonParameterizedType(c);
     try {
       Field field = c.getField("fourField");
       AccessibleField f = new AccessibleField(field, declaringType);
@@ -112,11 +112,11 @@ public class FieldSetterTest {
   @Test
   public void testInstanceField() {
     Class<?> c = ClassWithFields.class;
-    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(c);
+    ClassOrInterfaceType declaringType = new NonParameterizedType(c);
     try {
       Field field = c.getField("oneField");
       AccessibleField f = new AccessibleField(field, declaringType);
-      Type fieldType = new SimpleClassOrInterfaceType(field.getDeclaringClass());
+      Type fieldType = new NonParameterizedType(field.getDeclaringClass());
       List<Type> setInputTypeList = new ArrayList<>();
       setInputTypeList.add(declaringType);
       setInputTypeList.add(fieldType);
@@ -198,7 +198,7 @@ public class FieldSetterTest {
   @Test
   public void testFinalField() {
     Class<?> c = ClassWithFields.class;
-    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(c);
+    ClassOrInterfaceType declaringType = new NonParameterizedType(c);
     try {
       Field field = c.getField("tenField");
       AccessibleField f = new AccessibleField(field, declaringType);
@@ -221,7 +221,7 @@ public class FieldSetterTest {
   @Test
   public void testFinalStaticField() {
     Class<?> c = ClassWithFields.class;
-    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(c);
+    ClassOrInterfaceType declaringType = new NonParameterizedType(c);
     try {
       Field field = c.getField("FIVEFIELD");
       AccessibleField f = new AccessibleField(field, declaringType);

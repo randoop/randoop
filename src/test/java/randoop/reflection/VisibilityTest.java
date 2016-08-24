@@ -26,9 +26,9 @@ import randoop.operation.TypedOperation;
 import randoop.reflection.visibilitytest.PublicClass;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
+import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.types.RandoopTypeException;
-import randoop.types.SimpleClassOrInterfaceType;
 import randoop.types.TypeTuple;
 
 import static org.junit.Assert.assertEquals;
@@ -51,7 +51,7 @@ public class VisibilityTest {
     } catch (ClassNotFoundException e) {
       fail("can't access class-under-test: PackagePrivateClass");
     }
-    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(c);
+    ClassOrInterfaceType declaringType = new NonParameterizedType(c);
 
     List<Constructor<?>> expectedConstructors = new ArrayList<>();
     for (Constructor<?> co : c.getDeclaredConstructors()) {
@@ -164,7 +164,7 @@ public class VisibilityTest {
     } catch (ClassNotFoundException e) {
       fail("can't access class-under-test: PackagePrivateClass");
     }
-    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(c);
+    ClassOrInterfaceType declaringType = new NonParameterizedType(c);
 
     List<Constructor<?>> expectedConstructors = new ArrayList<>();
     for (Constructor<?> co : c.getDeclaredConstructors()) {
@@ -273,7 +273,7 @@ public class VisibilityTest {
   @Test
   public void testStandardVisibility() {
     Class<?> c = PublicClass.class;
-    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(c);
+    ClassOrInterfaceType declaringType = new NonParameterizedType(c);
 
     List<Constructor<?>> expectedConstructors = new ArrayList<>();
     for (Constructor<?> co : c.getDeclaredConstructors()) {
@@ -393,7 +393,7 @@ public class VisibilityTest {
     if (expectedConstructors.isEmpty()) {
       fail("should have nonempty expected constructor set");
     }
-    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(c);
+    ClassOrInterfaceType declaringType = new NonParameterizedType(c);
 
     List<Enum<?>> expectedEnums = new ArrayList<>();
     for (Class<?> ic : c.getDeclaredClasses()) {
@@ -487,7 +487,7 @@ public class VisibilityTest {
     } catch (ClassNotFoundException e) {
       fail("can't access class-under-test: PackagePrivateClass");
     }
-    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(c);
+    ClassOrInterfaceType declaringType = new NonParameterizedType(c);
 
     Constructor<?> con = null;
     try {
@@ -598,7 +598,7 @@ public class VisibilityTest {
 
   private TypedOperation createEnumOperation(Enum<?> e) {
     CallableOperation eOp = new EnumConstant(e);
-    ClassOrInterfaceType enumType = new SimpleClassOrInterfaceType(e.getDeclaringClass());
+    ClassOrInterfaceType enumType = new NonParameterizedType(e.getDeclaringClass());
     return new TypedClassOperation(eOp, enumType, new TypeTuple(), enumType);
   }
 

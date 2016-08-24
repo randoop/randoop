@@ -3,7 +3,7 @@ package randoop.field;
 import org.junit.Test;
 
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.SimpleClassOrInterfaceType;
+import randoop.types.NonParameterizedType;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -15,7 +15,7 @@ public class AccessibleFieldTest {
   @Test
   public void inheritedMethods() {
     Class<?> c = ClassWithFields.class;
-    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(c);
+    ClassOrInterfaceType declaringType = new NonParameterizedType(c);
     try {
       AccessibleField pf1 = new AccessibleField(c.getField("oneField"), declaringType);
       AccessibleField pf1_2 = new AccessibleField(c.getField("oneField"), declaringType);

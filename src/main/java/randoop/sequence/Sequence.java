@@ -14,7 +14,7 @@ import randoop.operation.OperationParseException;
 import randoop.operation.OperationParser;
 import randoop.operation.TypedOperation;
 import randoop.types.ConcreteTypes;
-import randoop.types.SimpleClassOrInterfaceType;
+import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
@@ -1117,7 +1117,7 @@ public final class Sequence implements WeightedElement {
     }
 
     if (type.isBoxedPrimitive()) {
-      type = ((SimpleClassOrInterfaceType) type).toPrimitive();
+      type = ((NonParameterizedType) type).toPrimitive();
     }
 
     if (type.equals(ConcreteTypes.STRING_TYPE) && !Value.stringLengthOK((String) value)) {

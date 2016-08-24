@@ -22,7 +22,7 @@ public class GenericTypesTest {
     assertEquals("has one parameter", 1, a1.getTypeParameters().size());
     assertEquals(
         "the parameter has bound Object",
-        new ReferenceBound(new SimpleClassOrInterfaceType(Object.class)),
+        new ReferenceBound(new NonParameterizedType(Object.class)),
         a1.getTypeParameters().get(0).getUpperTypeBound());
 
     ParameterBound b1 = a1.getTypeParameters().get(0).getUpperTypeBound();
@@ -37,7 +37,7 @@ public class GenericTypesTest {
     for (TypeVariable o : a2.getTypeParameters()) {
       assertEquals(
           "both bounds are Object",
-          new ReferenceBound(new SimpleClassOrInterfaceType(Object.class)),
+          new ReferenceBound(new NonParameterizedType(Object.class)),
           o.getUpperTypeBound());
     }
   }
@@ -51,12 +51,12 @@ public class GenericTypesTest {
     assertEquals("has one parameter", 1, a1.getTypeParameters().size());
     assertEquals(
         "the bound is Number",
-        new ReferenceBound(new SimpleClassOrInterfaceType(Number.class)),
+        new ReferenceBound(new NonParameterizedType(Number.class)),
         a1.getTypeParameters().get(0).getUpperTypeBound());
 
     Substitution<ReferenceType> substitution;
     ParameterBound b1 = a1.getTypeParameters().get(0).getUpperTypeBound();
-    ReferenceType candidateType = new SimpleClassOrInterfaceType(Integer.class);
+    ReferenceType candidateType = new NonParameterizedType(Integer.class);
     substitution = Substitution.forArgs(a1.getTypeParameters(), candidateType);
     assertTrue("Integer satisfies bound Number", b1.isUpperBound(candidateType, substitution));
     candidateType = ConcreteTypes.STRING_TYPE;
@@ -71,23 +71,23 @@ public class GenericTypesTest {
     assertEquals("has one parameter", 1, a2.getTypeParameters().size());
     candidateType =
         GenericClassType.forClass(Comparable.class)
-            .instantiate(new SimpleClassOrInterfaceType(Integer.class));
+            .instantiate(new NonParameterizedType(Integer.class));
     substitution = Substitution.forArgs(a2.getTypeParameters(), candidateType);
     assertTrue(
         "Comparable<Integer> satisfies bound Comparable<Integer>",
         b2.isUpperBound(candidateType, substitution));
 
-    candidateType = new SimpleClassOrInterfaceType(Integer.class);
+    candidateType = new NonParameterizedType(Integer.class);
     substitution = Substitution.forArgs(a2.getTypeParameters(), candidateType);
     assertTrue(
         "Integer satisfies bound Comparable<Integer>",
         b2.isUpperBound(candidateType, substitution));
 
-    candidateType = new SimpleClassOrInterfaceType(String.class);
+    candidateType = new NonParameterizedType(String.class);
     substitution = Substitution.forArgs(a2.getTypeParameters(), candidateType);
     assertFalse(
         "String does not satisfy bound Comparable<Integer>",
-        b2.isUpperBound(new SimpleClassOrInterfaceType(String.class), substitution));
+        b2.isUpperBound(new NonParameterizedType(String.class), substitution));
   }
 
   @Test

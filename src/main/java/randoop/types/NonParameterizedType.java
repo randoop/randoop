@@ -5,22 +5,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {@code SimpleClassOrInterfaceType} represents a non-generic class, interface, enum, or the
- * rawtype of a generic class.
+ * {@code NonParameterizedType} represents a non-parameterized class, interface,
+ * enum, or the rawtype of a generic class.
  * It is a wrapper for a {@link Class} object, which is a runtime representation
  * of a type.
  */
-public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
+public class NonParameterizedType extends ClassOrInterfaceType {
 
-  /** The runtime type of this simple type. */
+  /** The runtime class of this simple type. */
   private final Class<?> runtimeClass;
 
   /**
-   * Create a {@link SimpleClassOrInterfaceType} object for the runtime class
+   * Create a {@link NonParameterizedType} object for the runtime class
    *
    * @param runtimeType  the runtime class for the type
    */
-  public SimpleClassOrInterfaceType(Class<?> runtimeType) {
+  public NonParameterizedType(Class<?> runtimeType) {
     assert !runtimeType.isPrimitive() : "must be reference type";
     this.runtimeClass = runtimeType;
   }
@@ -31,10 +31,10 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
    */
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof SimpleClassOrInterfaceType)) {
+    if (!(obj instanceof NonParameterizedType)) {
       return false;
     }
-    SimpleClassOrInterfaceType t = (SimpleClassOrInterfaceType) obj;
+    NonParameterizedType t = (NonParameterizedType) obj;
     return this.runtimeClass.equals(t.runtimeClass);
   }
 
@@ -45,6 +45,8 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
 
   /**
    * {@inheritDoc}
+   * @see #getName()
+   *
    * @return the name of this type
    */
   @Override
@@ -53,7 +55,7 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
   }
 
   @Override
-  public SimpleClassOrInterfaceType apply(Substitution<ReferenceType> substitution) {
+  public NonParameterizedType apply(Substitution<ReferenceType> substitution) {
     return this;
   }
 
@@ -70,9 +72,9 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
   }
 
   /**
-   * Returns the list of interfaces for this class.
+   * Returns the list of direct interfaces for this class.
    *
-   * @return the list of interfaces for this class or interface type
+   * @return the list of direct interfaces for this class or interface type
    */
   private List<ClassOrInterfaceType> getGenericInterfaces() {
     List<ClassOrInterfaceType> interfaces = new ArrayList<>();
@@ -84,7 +86,7 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
 
   /**
    * {@inheritDoc}
-   * @return the fully-qualified name of this type
+   * Returns the fully-qualified name of this type in the {@code Class.getCanonicalName()} format
    */
   @Override
   public String getName() {
@@ -92,14 +94,14 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
   }
 
   /**
-   * Returns the list of rawtype interfaces for this type.
+   * Returns the list of rawtypes for the direct interfaces for this type.
    *
-   * @return the list of rawtypes for the interfaces of this type
+   * @return the list of rawtypes for the direct interfaces of this type
    */
   private List<ClassOrInterfaceType> getRawTypeInterfaces() {
     List<ClassOrInterfaceType> interfaces = new ArrayList<>();
     for (Class<?> c : runtimeClass.getInterfaces()) {
-      interfaces.add(new SimpleClassOrInterfaceType(c));
+      interfaces.add(new NonParameterizedType(c));
     }
     return interfaces;
   }
@@ -115,13 +117,13 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
 
   @Override
   public ClassOrInterfaceType getSuperclass() {
-    if (this.equals(ConcreteTypes.OBJECT_TYPE)) {
+    if (this.isObject()) {
       return this;
     }
     if (this.isRawtype()) {
       Class<?> superclass = this.runtimeClass.getSuperclass();
       if (superclass != null) {
-        return new SimpleClassOrInterfaceType(superclass);
+        return new NonParameterizedType(superclass);
       }
     } else {
       java.lang.reflect.Type supertype = this.runtimeClass.getGenericSuperclass();
@@ -130,15 +132,6 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
       }
     }
     return null;
-  }
-
-  /**
-   * Indicate whether this type has a wildcard either as or in a type argument.
-   *
-   * @return true if this type has a wildcard, and false otherwise
-   */
-  public boolean hasWildcard() {
-    return false;
   }
 
   @Override
@@ -160,7 +153,7 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
 
     // otherwise, check for boxing conversion
     return sourceType.isPrimitive()
-        && !sourceType.isVoid()
+        && !sourceType.isVoid() // JLS doesn't say so, void is primitive
         && this.isAssignableFrom(((PrimitiveType) sourceType).toBoxedPrimitive());
   }
 
@@ -172,15 +165,6 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
   @Override
   public boolean isEnum() {
     return runtimeClass.isEnum();
-  }
-
-  /**
-   * {@inheritDoc}
-   * @return false, since a simple class is not an instantiation of any generic class
-   */
-  @Override
-  public boolean isInstantiationOf(GenericClassType genericClassType) {
-    return false;
   }
 
   @Override
@@ -195,7 +179,7 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
 
   /**
    * {@inheritDoc}
-   * @return true if the runtime type corresponds to a generic, false otherwise
+   * @return true if this class has the runtime class of a generic class type, false otherwise
    */
   @Override
   public boolean isRawtype() {
@@ -219,7 +203,8 @@ public class SimpleClassOrInterfaceType extends ClassOrInterfaceType {
           if (otherType.hasRuntimeClass(c)) {
             return true;
           }
-          SimpleClassOrInterfaceType superType = new SimpleClassOrInterfaceType(c);
+          NonParameterizedType superType =
+              new NonParameterizedType(c);
           if (superType.isSubtypeOf(otherType)) {
             return true;
           }

@@ -3,7 +3,7 @@ package randoop.sequence;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ConcreteTypes;
-import randoop.types.SimpleClassOrInterfaceType;
+import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.types.InstantiatedType;
 import randoop.types.ReferenceArgument;
@@ -53,7 +53,7 @@ class VariableRenamer {
       return "cls";
     } else if (type.isPrimitive() || type.isBoxedPrimitive()) {
       if (type.isBoxedPrimitive()) {
-        type = ((SimpleClassOrInterfaceType) type).toPrimitive();
+        type = ((NonParameterizedType) type).toPrimitive();
       }
       if (type.equals(ConcreteTypes.CHAR_TYPE)) {
         return "char";

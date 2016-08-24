@@ -12,8 +12,8 @@ import java.util.Set;
 import randoop.operation.TypedOperation;
 import randoop.reflection.visibilitytest.PackageSubclass;
 import randoop.types.ClassOrInterfaceType;
+import randoop.types.NonParameterizedType;
 import randoop.types.Type;
-import randoop.types.SimpleClassOrInterfaceType;
 import randoop.types.TypeTuple;
 
 import static org.junit.Assert.assertEquals;
@@ -42,7 +42,7 @@ public class VisibilityBridgeTest {
         paramTypes.add(declaringType);
       }
       for (Class<?> p : m.getParameterTypes()) {
-        paramTypes.add(new SimpleClassOrInterfaceType(p));
+        paramTypes.add(new NonParameterizedType(p));
       }
       this.parameterTypes = new TypeTuple(paramTypes);
     }
@@ -84,7 +84,7 @@ public class VisibilityBridgeTest {
   @Test
   public void testVisibilityBridge() {
     Class<?> sub = PackageSubclass.class;
-    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(sub);
+    ClassOrInterfaceType declaringType = new NonParameterizedType(sub);
 
     //should only inherit public non-synthetic methods of package private superclass
     List<FormalMethod> include = new ArrayList<>();

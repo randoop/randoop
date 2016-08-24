@@ -31,10 +31,10 @@ import randoop.test.OperatorEnum;
 import randoop.test.PlayingCard;
 import randoop.test.SimpleEnum;
 import randoop.types.ClassOrInterfaceType;
+import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.types.InstantiatedType;
 import randoop.types.RandoopTypeException;
-import randoop.types.SimpleClassOrInterfaceType;
 import randoop.types.TypeTuple;
 
 import static org.junit.Assert.assertEquals;
@@ -60,7 +60,7 @@ public class EnumReflectionTest {
   @Test
   public void simpleEnum() {
     Class<?> se = SimpleEnum.class;
-    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(se);
+    ClassOrInterfaceType declaringType = new NonParameterizedType(se);
 
     @SuppressWarnings("unchecked")
     List<Enum<?>> include = asList(se.getEnumConstants());
@@ -247,7 +247,7 @@ public class EnumReflectionTest {
   @Test
   public void valueEnum() {
     Class<?> coin = Coin.class;
-    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(coin);
+    ClassOrInterfaceType declaringType = new NonParameterizedType(coin);
 
     Set<TypedOperation> actual = getConcreteOperations(coin);
 
@@ -291,7 +291,7 @@ public class EnumReflectionTest {
   @Test
   public void abstractMethodEnum() {
     Class<?> op = OperatorEnum.class;
-    ClassOrInterfaceType declaringType = new SimpleClassOrInterfaceType(op);
+    ClassOrInterfaceType declaringType = new NonParameterizedType(op);
 
     Set<TypedOperation> actual = getConcreteOperations(op);
     Set<String> overrides = new TreeSet<>();
@@ -337,7 +337,7 @@ public class EnumReflectionTest {
 
   private TypedClassOperation createEnumOperation(Enum<?> e) {
     CallableOperation eOp = new EnumConstant(e);
-    ClassOrInterfaceType enumType = new SimpleClassOrInterfaceType(e.getDeclaringClass());
+    ClassOrInterfaceType enumType = new NonParameterizedType(e.getDeclaringClass());
     return new TypedClassOperation(eOp, enumType, new TypeTuple(), enumType);
   }
 
