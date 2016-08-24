@@ -309,8 +309,9 @@ public abstract class Type {
   }
 
   /**
-   * Indicates whether a value of a {@code Type} can be assigned to a
-   * variable of this type.  Returns true if this is a legal assignment:
+   * Indicates whether there is an assignment conversion from a source {@code Type} to this type.
+   * (In other words, a value of the source type can be assigned to an l-value of this type.)
+   * Returns true if this is a legal assignment conversion:
    * <code>
    * Variable<sub>this</sub> = Expression<sub>sourcetype</sub>.
    * </code>
