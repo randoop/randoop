@@ -59,10 +59,6 @@ public class NonParameterizedType extends ClassOrInterfaceType {
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   * If this is a rawtype then returns interfaces as rawtypes.
-   */
   @Override
   public List<ClassOrInterfaceType> getInterfaces() {
     if (this.isRawtype()) {
@@ -106,10 +102,6 @@ public class NonParameterizedType extends ClassOrInterfaceType {
     return interfaces;
   }
 
-  /**
-   * {@inheritDoc}
-   * @return the {@code Class} object for this simple type
-   */
   @Override
   public Class<?> getRuntimeClass() {
     return runtimeClass;
@@ -177,10 +169,6 @@ public class NonParameterizedType extends ClassOrInterfaceType {
     return runtimeClass.isMemberClass();
   }
 
-  /**
-   * {@inheritDoc}
-   * @return true if this class has the runtime class of a generic class type, false otherwise
-   */
   @Override
   public boolean isRawtype() {
     return runtimeClass.getTypeParameters().length > 0;
@@ -203,8 +191,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
           if (otherType.hasRuntimeClass(c)) {
             return true;
           }
-          NonParameterizedType superType =
-              new NonParameterizedType(c);
+          NonParameterizedType superType = new NonParameterizedType(c);
           if (superType.isSubtypeOf(otherType)) {
             return true;
           }

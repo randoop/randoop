@@ -11,9 +11,18 @@ class NullReferenceType extends ReferenceType {
 
   private NullReferenceType() {}
 
+  /**
+   * Returns the null type.
+   *
+   * @return the null type object
+   */
+  static NullReferenceType getNullType() {
+    return value;
+  }
+
   @Override
   public boolean equals(Object obj) {
-    return obj instanceof NullReferenceType;
+    return (obj instanceof NullReferenceType) && obj == value;
   }
 
   @Override
@@ -28,8 +37,8 @@ class NullReferenceType extends ReferenceType {
 
   /**
    * {@inheritDoc}
-   *
-   * @return null since the {@link NullReferenceType} does not have a runtime representation
+   * This method returns null since the {@link NullReferenceType} does not have a runtime
+   * representation
    */
   @Override
   public Class<?> getRuntimeClass() {
@@ -44,10 +53,6 @@ class NullReferenceType extends ReferenceType {
   @Override
   public String getName() {
     return "NullType";
-  }
-
-  static NullReferenceType getNullType() {
-    return value;
   }
 
   /**

@@ -4,21 +4,16 @@ import java.util.List;
 
 /**
  * Represents a class or interface type as defined in JLS Section 4.3.
+ * <p>
+ * This abstract class corresponds to the grammar in the JLS:
  * <pre>
  *   ClassOrInterfaceType:
  *     ClassType
  *     InterfaceType
- *
- *   ClassType:
- *     Identifier [ TypeArguments ]
- *     ClassOrInterfaceType . Identifier [ TypeArguments ]
- *
- *   InterfaceType:
- *     Classtype
  * </pre>
- *
- * @see SimpleClassOrInterfaceType
- * @see ParameterizedType
+ * Since InterfaceType is syntactically the same as ClassType, the subclasses of this type
+ * distinguish between types with parameters ({@link ParameterizedType}), and types without
+ * ({@link NonParameterizedType}).
  */
 public abstract class ClassOrInterfaceType extends ReferenceType {
 
@@ -26,7 +21,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * Translates a {@code Class} object that represents a class or interface into a
    * {@code ClassOrInterfaceType} object.
    * If the object has parameters, then delegates to {@link ParameterizedType#forClass(Class)}.
-   * Otherwise, creates a {@link SimpleClassOrInterfaceType} object from the given object.
+   * Otherwise, creates a {@link NonParameterizedType} object from the given object.
    *
    * @param classType  the class type to translate
    * @return the {@code ClassOrInterfaceType} object created from the given class type
@@ -40,7 +35,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return ParameterizedType.forClass(classType);
     }
 
-    return new SimpleClassOrInterfaceType(classType);
+    return new NonParameterizedType(classType);
   }
 
   /**
@@ -68,6 +63,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     throw new IllegalArgumentException("Unable to create class type from type " + type);
   }
 
+  /**
+   * {@inheritDoc}
+   * This abstract method allows substitutions to be applied to {@link ClassOrInterfaceType} objects
+   * without casting.
+   */
   @Override
   public abstract ClassOrInterfaceType apply(Substitution<ReferenceType> substitution);
 
@@ -76,7 +76,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Returns the interface types implemented or extended by this class or interface type.
+   * Returns the interface types directly implemented or extended by this class or interface type.
    * Preserves the order in the reflection method {@link Class#getGenericInterfaces()}.
    * If no interfaces are implemented/extended, then returns the empty list.
    *
@@ -100,10 +100,14 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   /**
    * Finds the parameterized type that is a supertype of this class that also matches the given
    * generic class.
+   * For example, if {@code class C<T> implements Comparator<T>} and
+   * {@code class A extends C<String>}, then when applied to {@code A}, this method would return
+   * {@code C<String>} when given {@code C<T>}, and {@code Comparator<String>} when given
+   * {@code Comparator<E>}.
    * Returns null if there is no such type.
    * <p>
-   * Performs a depth-first search of the supertype relation for this type, using a heuristic
-   * that checks whether the goal type is an interface to restrict the search.
+   * Performs a depth-first search of the supertype relation for this type.
+   * If the goal type is an interface, then searches the interfaces of this type first.
    *
    * @param goalType  the generic class type
    * @return the instantiated type matching the goal type, or null
@@ -111,10 +115,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   public ClassOrInterfaceType getMatchingSupertype(GenericClassType goalType) {
     if (this.isInstantiationOf(goalType)) {
       return this;
-    }
-
-    if (this.isObject() && !goalType.getRuntimeClass().isAssignableFrom(this.getRuntimeClass())) {
-      return null;
     }
 
     if (goalType.isInterface()) {
@@ -158,6 +158,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @return superclass of this type, or the {@code Object} type if this type has no superclass
    */
   public ClassOrInterfaceType getSuperclass() {
+    // Default implementation, overridden in subclasses
     return ConcreteTypes.OBJECT_TYPE;
   }
 
@@ -169,16 +170,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   public abstract boolean isAbstract();
 
   /**
-   * Checks whether this parameterized type is an instantiation of the given
-   * generic class type.
-   *
-   * @param genericClassType  the generic class type
-   * @return true if this type is an instantiation of the generic class, false otherwise
-   */
-  public abstract boolean isInstantiationOf(GenericClassType genericClassType);
-
-  /**
    * Indicate whether this class is a member of another class.
+   * (see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.5">JLS section 8.5</a>)
+   *
    * @return true if this class is a member class, false otherwise
    */
   public abstract boolean isMemberClass();
@@ -224,11 +218,17 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         }
       }
     }
-    // otherwise, may be interface of a superclass
+    // otherwise, if otherType is an interface, may be interface of a superclass
+
+    // Stop if this type is an interface, because does not have superclass
+    if (this.isInterface()) {
+      return false;
+    }
 
     ClassOrInterfaceType superClassType = this.getSuperclass();
-    return superClassType != null
-        && !superClassType.equals(ConcreteTypes.OBJECT_TYPE)
-        && (superClassType.equals(otherType) || superClassType.isSubtypeOf(otherType));
+
+    // If superclass is Object, then search has failed. So, stop.
+    // Otherwise, check whether superclass is a subtype
+    return !superClassType.isObject() && superClassType.isSubtypeOf(otherType);
   }
 }
