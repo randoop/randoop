@@ -16,8 +16,7 @@ import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
 import randoop.reflection.supertypetest.InheritedEnum;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.ConcreteTypes;
-import randoop.types.Type;
+import randoop.types.JavaTypes;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -224,7 +223,7 @@ public class OperationModelTest {
       Object[] inputs = new Object[2];
       ExecutionOutcome outcome;
       Object value;
-      if (operation.getOutputType().equals(ConcreteTypes.STRING_TYPE)) {
+      if (operation.getOutputType().equals(JavaTypes.STRING_TYPE)) {
         inputs[0] = InheritedEnum.ONE;
         inputs[1] = 1;
         outcome = operation.execute(inputs, null);
@@ -239,7 +238,7 @@ public class OperationModelTest {
         value = ((NormalExecution) outcome).getRuntimeValue();
         assertThat("outcome should be string \"two\"", (String) value, is(equalTo("two")));
 
-      } else if (operation.getOutputType().equals(ConcreteTypes.INT_TYPE)) {
+      } else if (operation.getOutputType().equals(JavaTypes.INT_TYPE)) {
         inputs[0] = InheritedEnum.ONE;
         inputs[1] = "one";
         outcome = operation.execute(inputs, null);

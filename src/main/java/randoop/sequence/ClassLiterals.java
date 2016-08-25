@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.ConcreteTypes;
+import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.util.ListOfLists;
 import randoop.util.SimpleList;
@@ -58,7 +58,7 @@ public class ClassLiterals extends MappedSequences<ClassOrInterfaceType> {
   private Set<ClassOrInterfaceType> getSuperClasses(ClassOrInterfaceType cls) {
     Set<ClassOrInterfaceType> ret = new LinkedHashSet<>();
     ClassOrInterfaceType sup = cls.getSuperclass();
-    while (sup != null && !sup.equals(ConcreteTypes.OBJECT_TYPE)) {
+    while (sup != null && !sup.equals(JavaTypes.OBJECT_TYPE)) {
       ret.add(sup);
       sup = sup.getSuperclass();
     }

@@ -14,7 +14,7 @@ import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.ConcreteTypes;
+import randoop.types.JavaTypes;
 import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
 import randoop.types.ReferenceType;
@@ -387,7 +387,7 @@ public abstract class TypedOperation implements Operation {
         new FieldSet(accessibleField),
         declaringType,
         new TypeTuple(inputTypes),
-        ConcreteTypes.VOID_TYPE);
+        JavaTypes.VOID_TYPE);
   }
 
   /**
@@ -463,11 +463,11 @@ public abstract class TypedOperation implements Operation {
   public static TypedOperation createArrayElementAssignment(ArrayType arrayType) {
     List<Type> typeList = new ArrayList<>();
     typeList.add(arrayType);
-    typeList.add(ConcreteTypes.INT_TYPE);
+    typeList.add(JavaTypes.INT_TYPE);
     typeList.add(arrayType.getElementType());
     TypeTuple inputTypes = new TypeTuple(typeList);
     return new TypedTermOperation(
-        new ArrayElementSet(arrayType.getElementType()), inputTypes, ConcreteTypes.VOID_TYPE);
+        new ArrayElementSet(arrayType.getElementType()), inputTypes, JavaTypes.VOID_TYPE);
   }
 
   /**

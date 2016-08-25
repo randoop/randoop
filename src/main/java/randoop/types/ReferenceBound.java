@@ -63,7 +63,7 @@ class ReferenceBound extends ParameterBound {
   public boolean isLowerBound(Type argType, Substitution<ReferenceType> subst) {
     // XXX in practice, substitution not necessary because doesn't have variables by construction
     ReferenceType boundType = this.boundType.apply(subst);
-    if (boundType.equals(ConcreteTypes.NULL_TYPE)) {
+    if (boundType.equals(JavaTypes.NULL_TYPE)) {
       return true;
     }
     if (argType.isParameterized()) {
@@ -108,7 +108,7 @@ class ReferenceBound extends ParameterBound {
   public boolean isUpperBound(Type argType, Substitution<ReferenceType> subst) {
     // XXX in practice, substitution not necessary because doesn't have variables by construction
     ReferenceType boundType = this.boundType.apply(subst);
-    if (boundType.equals(ConcreteTypes.OBJECT_TYPE)) {
+    if (boundType.equals(JavaTypes.OBJECT_TYPE)) {
       return true;
     }
     if (boundType.isParameterized()) {

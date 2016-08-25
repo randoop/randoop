@@ -27,8 +27,8 @@ public class GenericTypesTest {
 
     ParameterBound b1 = a1.getTypeParameters().get(0).getUpperTypeBound();
     Substitution<ReferenceType> subst =
-        Substitution.forArgs(a1.getTypeParameters(), (ReferenceType) ConcreteTypes.STRING_TYPE);
-    assertTrue("String satisfies bound", b1.isUpperBound(ConcreteTypes.STRING_TYPE, subst));
+        Substitution.forArgs(a1.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
+    assertTrue("String satisfies bound", b1.isUpperBound(JavaTypes.STRING_TYPE, subst));
 
     Class<?> c2 = Variable2.class;
     GenericClassType a2;
@@ -59,7 +59,7 @@ public class GenericTypesTest {
     ReferenceType candidateType = new NonParameterizedType(Integer.class);
     substitution = Substitution.forArgs(a1.getTypeParameters(), candidateType);
     assertTrue("Integer satisfies bound Number", b1.isUpperBound(candidateType, substitution));
-    candidateType = ConcreteTypes.STRING_TYPE;
+    candidateType = JavaTypes.STRING_TYPE;
     substitution = Substitution.forArgs(a1.getTypeParameters(), candidateType);
     assertFalse(
         "String does not satisfy bound Number", b1.isUpperBound(candidateType, substitution));
@@ -189,14 +189,13 @@ public class GenericTypesTest {
   @Test
   public void subtypeTransitivityTest() {
     ParameterizedType iterableType =
-        GenericClassType.forClass(Iterable.class).instantiate(ConcreteTypes.STRING_TYPE);
-    ParameterizedType collectionType =
-        JDKTypes.COLLECTION_TYPE.instantiate(ConcreteTypes.STRING_TYPE);
+        GenericClassType.forClass(Iterable.class).instantiate(JavaTypes.STRING_TYPE);
+    ParameterizedType collectionType = JDKTypes.COLLECTION_TYPE.instantiate(JavaTypes.STRING_TYPE);
     assertTrue("collection is subtype of iterable", collectionType.isSubtypeOf(iterableType));
     assertFalse(
         "iterable is supertype of collection, not subtype",
         iterableType.isSubtypeOf(collectionType));
-    ParameterizedType vectorType = JDKTypes.VECTOR_TYPE.instantiate(ConcreteTypes.STRING_TYPE);
+    ParameterizedType vectorType = JDKTypes.VECTOR_TYPE.instantiate(JavaTypes.STRING_TYPE);
     assertTrue("vector is subtype of iterable", vectorType.isSubtypeOf(iterableType));
     assertTrue("vector is subtype of collection", vectorType.isSubtypeOf(collectionType));
     assertFalse("supertype is not a subtype", iterableType.isSubtypeOf(vectorType));
@@ -207,11 +206,11 @@ public class GenericTypesTest {
   public void parameterizedSupertypeTest() {
     // subclass extends parameterized Superclass<Set<T>>
     GenericClassType genericSubtype = GenericClassType.forClass(ComplexSubclass.class);
-    InstantiatedType subtype = genericSubtype.instantiate(ConcreteTypes.STRING_TYPE);
+    InstantiatedType subtype = genericSubtype.instantiate(JavaTypes.STRING_TYPE);
 
     // make instantiated Superclass<Set<String>>
     GenericClassType genericSetType = GenericClassType.forClass(Set.class);
-    InstantiatedType stringSetType = genericSetType.instantiate(ConcreteTypes.STRING_TYPE);
+    InstantiatedType stringSetType = genericSetType.instantiate(JavaTypes.STRING_TYPE);
     GenericClassType genericSuperType = GenericClassType.forClass(Superclass.class);
     InstantiatedType stringSuperType = genericSuperType.instantiate(stringSetType);
 
@@ -222,10 +221,10 @@ public class GenericTypesTest {
 
     // try with example inspired by java.util.stream.Stream (which is Java 8)
     GenericClassType genericStreamType = GenericClassType.forClass(Stream.class);
-    InstantiatedType stringStreamType = genericStreamType.instantiate(ConcreteTypes.STRING_TYPE);
+    InstantiatedType stringStreamType = genericStreamType.instantiate(JavaTypes.STRING_TYPE);
     GenericClassType genericBaseStreamType = GenericClassType.forClass(BaseStream.class);
     InstantiatedType stringBaseStreamType =
-        genericBaseStreamType.instantiate(ConcreteTypes.STRING_TYPE, stringStreamType);
+        genericBaseStreamType.instantiate(JavaTypes.STRING_TYPE, stringStreamType);
 
     assertTrue("is subtype", stringStreamType.isSubtypeOf(stringBaseStreamType));
     assertEquals("superclass", null, stringStreamType.getSuperclass());

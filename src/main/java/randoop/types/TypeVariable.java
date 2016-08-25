@@ -23,8 +23,8 @@ public abstract class TypeVariable extends ReferenceType {
    * the {@code Object} type as upper bound.
    */
   TypeVariable() {
-    this.lowerBound = new ReferenceBound(ConcreteTypes.NULL_TYPE);
-    this.upperBound = new ReferenceBound(ConcreteTypes.OBJECT_TYPE);
+    this.lowerBound = new ReferenceBound(JavaTypes.NULL_TYPE);
+    this.upperBound = new ReferenceBound(JavaTypes.OBJECT_TYPE);
   }
 
   /**

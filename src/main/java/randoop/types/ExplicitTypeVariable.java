@@ -20,7 +20,7 @@ class ExplicitTypeVariable extends TypeVariable {
    * @param bound  the upper bound on the parameter
    */
   ExplicitTypeVariable(java.lang.reflect.TypeVariable<?> variable, ParameterBound bound) {
-    super(new ReferenceBound(ConcreteTypes.NULL_TYPE), bound);
+    super(new ReferenceBound(JavaTypes.NULL_TYPE), bound);
     this.variable = variable;
   }
 

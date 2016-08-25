@@ -52,7 +52,7 @@ public class CaptureConversionTest {
    */
   @Test
   public void captureStringTest() {
-    checkCapture(JDKTypes.LIST_TYPE, ConcreteTypes.STRING_TYPE, listOperations);
+    checkCapture(JDKTypes.LIST_TYPE, JavaTypes.STRING_TYPE, listOperations);
   }
 
   /*
@@ -71,7 +71,7 @@ public class CaptureConversionTest {
    */
   @Test
   public void captureStringContainerTest() {
-    checkCapture(containerType, ConcreteTypes.STRING_TYPE, containerOperations);
+    checkCapture(containerType, JavaTypes.STRING_TYPE, containerOperations);
   }
 
   /*

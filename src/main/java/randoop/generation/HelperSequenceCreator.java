@@ -18,7 +18,7 @@ import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.ConcreteTypes;
+import randoop.types.JavaTypes;
 import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
@@ -121,7 +121,7 @@ class HelperSequenceCreator {
     TypedOperation creationOperation;
     if (implementingType.equals(JDKTypes.ENUM_SET_TYPE)) {
       NonreceiverTerm classLiteral =
-          new NonreceiverTerm(ConcreteTypes.CLASS_TYPE, elementType.getRuntimeClass());
+          new NonreceiverTerm(JavaTypes.CLASS_TYPE, elementType.getRuntimeClass());
       creationSequence =
           creationSequence.extend(TypedOperation.createNonreceiverInitialization(classLiteral));
       creationInputs.add(creationSequence.getLastVariable());
@@ -199,8 +199,7 @@ class HelperSequenceCreator {
       int i = 0;
       for (Integer index : variables) {
         addSequence =
-            addSequence.extend(
-                TypedOperation.createPrimitiveInitialization(ConcreteTypes.INT_TYPE, i));
+            addSequence.extend(TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, i));
         List<Variable> inputs = new ArrayList<>();
         inputs.add(addSequence.getVariable(creationIndex));
         inputs.add(addSequence.getLastVariable());
@@ -264,7 +263,7 @@ class HelperSequenceCreator {
     // Array.newInstance(componentType, length)
     TypedOperation lengthTerm =
         TypedOperation.createNonreceiverInitialization(
-            new NonreceiverTerm(ConcreteTypes.INT_TYPE, length));
+            new NonreceiverTerm(JavaTypes.INT_TYPE, length));
     creationSequence = creationSequence.extend(lengthTerm, new ArrayList<Variable>());
     input = new ArrayList<>();
     input.add(creationSequence.getVariable(typeIndex));
@@ -281,7 +280,7 @@ class HelperSequenceCreator {
     creationSequence = creationSequence.extend(creationOperation, input);
 
     TypedOperation castOperation =
-        TypedOperation.createCast(ConcreteTypes.OBJECT_TYPE, ArrayType.ofElementType(elementType));
+        TypedOperation.createCast(JavaTypes.OBJECT_TYPE, ArrayType.ofElementType(elementType));
     input = new ArrayList<>();
     input.add(creationSequence.getLastVariable());
     creationSequence = creationSequence.extend(castOperation, input);
@@ -340,14 +339,14 @@ class HelperSequenceCreator {
     Class<?> enumsetClass = JDKTypes.ENUM_SET_TYPE.getRuntimeClass();
     Method method;
     try {
-      method = enumsetClass.getMethod("noneOf", ConcreteTypes.CLASS_TYPE.getRuntimeClass());
+      method = enumsetClass.getMethod("noneOf", JavaTypes.CLASS_TYPE.getRuntimeClass());
     } catch (NoSuchMethodException e) {
       throw new BugInRandoopException(
           "Can't find \"noneOf\" method for EnumSet: " + e.getMessage());
     }
     MethodCall op = new MethodCall(method);
     List<Type> paramTypes = new ArrayList<>();
-    paramTypes.add(ConcreteTypes.CLASS_TYPE);
+    paramTypes.add(JavaTypes.CLASS_TYPE);
     return new TypedClassOperation(op, creationType, new TypeTuple(paramTypes), creationType);
   }
 
@@ -390,7 +389,7 @@ class HelperSequenceCreator {
     arguments.add(collectionType);
     arguments.add(elementType);
     return new TypedClassOperation(
-        op, collectionType, new TypeTuple(arguments), ConcreteTypes.BOOLEAN_TYPE);
+        op, collectionType, new TypeTuple(arguments), JavaTypes.BOOLEAN_TYPE);
   }
 
   /**
@@ -423,6 +422,6 @@ class HelperSequenceCreator {
         op,
         ClassOrInterfaceType.forClass(collectionsClass),
         new TypeTuple(paramTypes),
-        ConcreteTypes.BOOLEAN_TYPE);
+        JavaTypes.BOOLEAN_TYPE);
   }
 }

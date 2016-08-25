@@ -10,6 +10,10 @@ import java.util.Set;
  * Utilities for working with Java primitive and boxed primitive types as {@code Class<?>} objects.
  * Provides conversion from primitive type names to {@code Class} objects, boxing and unboxing, as
  * well as primitive subtype and assignment tests.
+ * <p>
+ * Note that {@code void} is considered a primitive type by Java reflection
+ * ({@code (void.class).isPrimitive()} returns true).
+ *
  */
 public final class PrimitiveTypes {
   private PrimitiveTypes() {
@@ -44,19 +48,19 @@ public final class PrimitiveTypes {
     primitiveToBoxed.put(short.class, Short.class);
   }
 
-  /** Map from type name in {@code Class<?>.getName()} format to {@code Class<?>} objects. */
-  private static final Map<String, Class<?>> nameToPrimitive = new LinkedHashMap<>();
+  /** Map from primitive type name to {@code Class<?>} objects. */
+  private static final Map<String, Class<?>> nameToClass = new LinkedHashMap<>();
 
   static {
-    nameToPrimitive.put("void", void.class);
-    nameToPrimitive.put("int", int.class);
-    nameToPrimitive.put("boolean", boolean.class);
-    nameToPrimitive.put("float", float.class);
-    nameToPrimitive.put("char", char.class);
-    nameToPrimitive.put("double", double.class);
-    nameToPrimitive.put("long", long.class);
-    nameToPrimitive.put("short", short.class);
-    nameToPrimitive.put("byte", byte.class);
+    nameToClass.put("void", void.class); // reflection considers void a primitive
+    nameToClass.put("int", int.class);
+    nameToClass.put("boolean", boolean.class);
+    nameToClass.put("float", float.class);
+    nameToClass.put("char", char.class);
+    nameToClass.put("double", double.class);
+    nameToClass.put("long", long.class);
+    nameToClass.put("short", short.class);
+    nameToClass.put("byte", byte.class);
   }
 
   /**
@@ -90,7 +94,7 @@ public final class PrimitiveTypes {
    * @return the {@code Class<?>} object for the type, or null
    */
   public static Class<?> classForName(String typeName) {
-    return nameToPrimitive.get(typeName);
+    return nameToClass.get(typeName);
   }
 
   /**

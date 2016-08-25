@@ -190,11 +190,11 @@ public class ArrayType extends ReferenceType {
       return true;
     }
 
-    if (otherType.equals(ConcreteTypes.CLONEABLE_TYPE)) {
+    if (otherType.equals(JavaTypes.CLONEABLE_TYPE)) {
       return true;
     }
 
-    if (otherType.equals(ConcreteTypes.SERIALIZABLE_TYPE)) {
+    if (otherType.equals(JavaTypes.SERIALIZABLE_TYPE)) {
       return true;
     }
 

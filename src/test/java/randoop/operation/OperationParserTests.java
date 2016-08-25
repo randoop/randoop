@@ -9,7 +9,7 @@ import java.util.List;
 
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.ConcreteTypes;
+import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
@@ -26,48 +26,38 @@ public class OperationParserTests {
 
     //Class
     checkParse(
-        new NonreceiverTerm(ConcreteTypes.CLASS_TYPE, Comparable.class),
+        new NonreceiverTerm(JavaTypes.CLASS_TYPE, Comparable.class),
         new TypeTuple(),
-        ConcreteTypes.CLASS_TYPE);
+        JavaTypes.CLASS_TYPE);
 
     // String.
     checkParse(
-        new NonreceiverTerm(ConcreteTypes.STRING_TYPE, null),
-        new TypeTuple(),
-        ConcreteTypes.STRING_TYPE);
+        new NonreceiverTerm(JavaTypes.STRING_TYPE, null), new TypeTuple(), JavaTypes.STRING_TYPE);
     checkParse(
-        new NonreceiverTerm(ConcreteTypes.STRING_TYPE, ""),
-        new TypeTuple(),
-        ConcreteTypes.STRING_TYPE);
+        new NonreceiverTerm(JavaTypes.STRING_TYPE, ""), new TypeTuple(), JavaTypes.STRING_TYPE);
     checkParse(
-        new NonreceiverTerm(ConcreteTypes.STRING_TYPE, " "),
-        new TypeTuple(),
-        ConcreteTypes.STRING_TYPE);
+        new NonreceiverTerm(JavaTypes.STRING_TYPE, " "), new TypeTuple(), JavaTypes.STRING_TYPE);
     checkParse(
-        new NonreceiverTerm(ConcreteTypes.STRING_TYPE, "\""),
-        new TypeTuple(),
-        ConcreteTypes.STRING_TYPE);
+        new NonreceiverTerm(JavaTypes.STRING_TYPE, "\""), new TypeTuple(), JavaTypes.STRING_TYPE);
     checkParse(
-        new NonreceiverTerm(ConcreteTypes.STRING_TYPE, "\n"),
-        new TypeTuple(),
-        ConcreteTypes.STRING_TYPE);
+        new NonreceiverTerm(JavaTypes.STRING_TYPE, "\n"), new TypeTuple(), JavaTypes.STRING_TYPE);
     checkParse(
-        new NonreceiverTerm(ConcreteTypes.STRING_TYPE, "\u0000"),
+        new NonreceiverTerm(JavaTypes.STRING_TYPE, "\u0000"),
         new TypeTuple(),
-        ConcreteTypes.STRING_TYPE);
+        JavaTypes.STRING_TYPE);
 
     // Object.
     checkParse(
-        new NonreceiverTerm(ConcreteTypes.OBJECT_TYPE, null),
-        ConcreteTypes.OBJECT_TYPE,
+        new NonreceiverTerm(JavaTypes.OBJECT_TYPE, null),
+        JavaTypes.OBJECT_TYPE,
         new TypeTuple(),
-        ConcreteTypes.OBJECT_TYPE);
+        JavaTypes.OBJECT_TYPE);
     try {
       checkParse(
-          new NonreceiverTerm(ConcreteTypes.OBJECT_TYPE, new Object()),
-          ConcreteTypes.OBJECT_TYPE,
+          new NonreceiverTerm(JavaTypes.OBJECT_TYPE, new Object()),
+          JavaTypes.OBJECT_TYPE,
           new TypeTuple(),
-          ConcreteTypes.OBJECT_TYPE);
+          JavaTypes.OBJECT_TYPE);
       fail("did not throw exception");
     } catch (IllegalArgumentException e) {
       // Good.
@@ -79,62 +69,45 @@ public class OperationParserTests {
     checkParse(new NonreceiverTerm(arrayType, null), new TypeTuple(), arrayType);
 
     // Primitives.
+    checkParse(new NonreceiverTerm(JavaTypes.INT_TYPE, 0), new TypeTuple(), JavaTypes.INT_TYPE);
+    checkParse(new NonreceiverTerm(JavaTypes.INT_TYPE, 1), new TypeTuple(), JavaTypes.INT_TYPE);
+    checkParse(new NonreceiverTerm(JavaTypes.INT_TYPE, -1), new TypeTuple(), JavaTypes.INT_TYPE);
     checkParse(
-        new NonreceiverTerm(ConcreteTypes.INT_TYPE, 0), new TypeTuple(), ConcreteTypes.INT_TYPE);
-    checkParse(
-        new NonreceiverTerm(ConcreteTypes.INT_TYPE, 1), new TypeTuple(), ConcreteTypes.INT_TYPE);
-    checkParse(
-        new NonreceiverTerm(ConcreteTypes.INT_TYPE, -1), new TypeTuple(), ConcreteTypes.INT_TYPE);
-    checkParse(
-        new NonreceiverTerm(ConcreteTypes.INT_TYPE, Integer.MAX_VALUE),
+        new NonreceiverTerm(JavaTypes.INT_TYPE, Integer.MAX_VALUE),
         new TypeTuple(),
-        ConcreteTypes.INT_TYPE);
+        JavaTypes.INT_TYPE);
     checkParse(
-        new NonreceiverTerm(ConcreteTypes.INT_TYPE, Integer.MIN_VALUE),
+        new NonreceiverTerm(JavaTypes.INT_TYPE, Integer.MIN_VALUE),
         new TypeTuple(),
-        ConcreteTypes.INT_TYPE);
+        JavaTypes.INT_TYPE);
 
     checkParse(
-        new NonreceiverTerm(ConcreteTypes.BYTE_TYPE, (byte) 0),
-        new TypeTuple(),
-        ConcreteTypes.BYTE_TYPE);
+        new NonreceiverTerm(JavaTypes.BYTE_TYPE, (byte) 0), new TypeTuple(), JavaTypes.BYTE_TYPE);
     checkParse(
-        new NonreceiverTerm(ConcreteTypes.SHORT_TYPE, (short) 0),
+        new NonreceiverTerm(JavaTypes.SHORT_TYPE, (short) 0),
         new TypeTuple(),
-        ConcreteTypes.SHORT_TYPE);
+        JavaTypes.SHORT_TYPE);
     checkParse(
-        new NonreceiverTerm(ConcreteTypes.LONG_TYPE, (long) 0),
-        new TypeTuple(),
-        ConcreteTypes.LONG_TYPE);
+        new NonreceiverTerm(JavaTypes.LONG_TYPE, (long) 0), new TypeTuple(), JavaTypes.LONG_TYPE);
     checkParse(
-        new NonreceiverTerm(ConcreteTypes.FLOAT_TYPE, (float) 0),
+        new NonreceiverTerm(JavaTypes.FLOAT_TYPE, (float) 0),
         new TypeTuple(),
-        ConcreteTypes.FLOAT_TYPE);
+        JavaTypes.FLOAT_TYPE);
     checkParse(
-        new NonreceiverTerm(ConcreteTypes.DOUBLE_TYPE, (double) 0),
+        new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, (double) 0),
         new TypeTuple(),
-        ConcreteTypes.DOUBLE_TYPE);
+        JavaTypes.DOUBLE_TYPE);
     checkParse(
-        new NonreceiverTerm(ConcreteTypes.BOOLEAN_TYPE, false),
+        new NonreceiverTerm(JavaTypes.BOOLEAN_TYPE, false),
         new TypeTuple(),
-        ConcreteTypes.BOOLEAN_TYPE);
+        JavaTypes.BOOLEAN_TYPE);
 
+    checkParse(new NonreceiverTerm(JavaTypes.CHAR_TYPE, ' '), new TypeTuple(), JavaTypes.CHAR_TYPE);
     checkParse(
-        new NonreceiverTerm(ConcreteTypes.CHAR_TYPE, ' '),
-        new TypeTuple(),
-        ConcreteTypes.CHAR_TYPE);
+        new NonreceiverTerm(JavaTypes.CHAR_TYPE, '\u0000'), new TypeTuple(), JavaTypes.CHAR_TYPE);
     checkParse(
-        new NonreceiverTerm(ConcreteTypes.CHAR_TYPE, '\u0000'),
-        new TypeTuple(),
-        ConcreteTypes.CHAR_TYPE);
-    checkParse(
-        new NonreceiverTerm(ConcreteTypes.CHAR_TYPE, '\''),
-        new TypeTuple(),
-        ConcreteTypes.CHAR_TYPE);
-    checkParse(
-        new NonreceiverTerm(ConcreteTypes.CHAR_TYPE, '0'),
-        new TypeTuple(),
-        ConcreteTypes.CHAR_TYPE);
+        new NonreceiverTerm(JavaTypes.CHAR_TYPE, '\''), new TypeTuple(), JavaTypes.CHAR_TYPE);
+    checkParse(new NonreceiverTerm(JavaTypes.CHAR_TYPE, '0'), new TypeTuple(), JavaTypes.CHAR_TYPE);
   }
 
   @Test
@@ -171,7 +144,7 @@ public class OperationParserTests {
 
   @Test
   public void testArrayDecl() {
-    Type elementType = ConcreteTypes.INT_TYPE;
+    Type elementType = JavaTypes.INT_TYPE;
     ArrayType arrayType = ArrayType.ofElementType(elementType);
     List<Type> paramTypes = new ArrayList<>();
     for (int i = 0; i < 3; i++) {

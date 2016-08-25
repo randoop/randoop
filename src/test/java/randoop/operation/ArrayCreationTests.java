@@ -10,7 +10,7 @@ import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.ArrayType;
-import randoop.types.ConcreteTypes;
+import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 public class ArrayCreationTests {
   @Test
   public void test1() throws Exception {
-    Type elementType = ConcreteTypes.STRING_TYPE;
+    Type elementType = JavaTypes.STRING_TYPE;
     Type arrayType = ArrayType.ofElementType(elementType);
     List<Type> paramTypes = new ArrayList<>();
     paramTypes.add(elementType);
@@ -46,7 +46,7 @@ public class ArrayCreationTests {
 
   @Test
   public void test2() throws Exception {
-    Type elementType = ConcreteTypes.CHAR_TYPE;
+    Type elementType = JavaTypes.CHAR_TYPE;
     Type arrayType = ArrayType.ofElementType(elementType);
     ArrayCreation ad = new ArrayCreation((ArrayType) arrayType, 1);
     List<Type> paramTypes = new ArrayList<>();
@@ -70,7 +70,7 @@ public class ArrayCreationTests {
 
   @Test
   public void test3() throws Exception {
-    Type elementType = ArrayType.ofElementType(ConcreteTypes.CHAR_TYPE);
+    Type elementType = ArrayType.ofElementType(JavaTypes.CHAR_TYPE);
     Type arrayType = ArrayType.ofElementType(elementType);
     ArrayCreation arrayCreation = new ArrayCreation((ArrayType) arrayType, 1);
     List<Type> paramTypes = new ArrayList<>();

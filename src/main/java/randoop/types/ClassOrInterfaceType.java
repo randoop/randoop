@@ -159,7 +159,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    */
   public ClassOrInterfaceType getSuperclass() {
     // Default implementation, overridden in subclasses
-    return ConcreteTypes.OBJECT_TYPE;
+    return JavaTypes.OBJECT_TYPE;
   }
 
   /**

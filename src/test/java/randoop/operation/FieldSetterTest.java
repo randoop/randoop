@@ -20,7 +20,7 @@ import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.ConcreteTypes;
+import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.types.PrimitiveType;
@@ -65,20 +65,18 @@ public class FieldSetterTest {
       FieldSet setOp = new FieldSet(f);
       TypedOperation op =
           new TypedClassOperation(
-              setOp, declaringType, new TypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
+              setOp, declaringType, new TypeTuple(setInputTypeList), JavaTypes.VOID_TYPE);
 
       //types
       assertEquals("Should be one input type", 1, op.getInputTypes().size());
-      assertEquals("Output type should be void", ConcreteTypes.VOID_TYPE, op.getOutputType());
+      assertEquals("Output type should be void", JavaTypes.VOID_TYPE, op.getOutputType());
 
       //code generation
       String expected = "randoop.field.ClassWithFields.fourField = 24;" + Globals.lineSep;
       StringBuilder b = new StringBuilder();
       TypedOperation initOp =
           new TypedTermOperation(
-              new NonreceiverTerm(ConcreteTypes.INT_TYPE, 24),
-              new TypeTuple(),
-              ConcreteTypes.INT_TYPE);
+              new NonreceiverTerm(JavaTypes.INT_TYPE, 24), new TypeTuple(), JavaTypes.INT_TYPE);
       Sequence seq0 = new Sequence().extend(initOp, new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
       vars.add(new Variable(seq0, 0));
@@ -123,11 +121,11 @@ public class FieldSetterTest {
       FieldSet setOp = new FieldSet(f);
       TypedOperation op =
           new TypedClassOperation(
-              setOp, declaringType, new TypeTuple(setInputTypeList), ConcreteTypes.VOID_TYPE);
+              setOp, declaringType, new TypeTuple(setInputTypeList), JavaTypes.VOID_TYPE);
 
       //types
       assertEquals("Should be two input types", 2, op.getInputTypes().size());
-      assertEquals("Output type should be void", ConcreteTypes.VOID_TYPE, op.getOutputType());
+      assertEquals("Output type should be void", JavaTypes.VOID_TYPE, op.getOutputType());
 
       //code generation
       String expected = "classWithFields0.oneField = 24;" + Globals.lineSep;
@@ -146,9 +144,7 @@ public class FieldSetterTest {
       Sequence seq0 = new Sequence().extend(consOp, new ArrayList<Variable>());
       TypedOperation initOp =
           new TypedTermOperation(
-              new NonreceiverTerm(ConcreteTypes.INT_TYPE, 24),
-              new TypeTuple(),
-              ConcreteTypes.INT_TYPE);
+              new NonreceiverTerm(JavaTypes.INT_TYPE, 24), new TypeTuple(), JavaTypes.INT_TYPE);
       Sequence seq1 = seq0.extend(initOp, new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
       vars.add(new Variable(seq1, 0));

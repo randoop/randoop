@@ -163,7 +163,7 @@ public class SimpleTypeTest {
   @Test
   public void testVoidDoesNotConvert() {
     //Type voidType = new PrimitiveType(void.class);
-    Type voidType = ConcreteTypes.VOID_TYPE;
+    Type voidType = JavaTypes.VOID_TYPE;
     Type objectType = new NonParameterizedType(Object.class);
     Type booleanType = new PrimitiveType(boolean.class);
     Type byteType = new PrimitiveType(byte.class);

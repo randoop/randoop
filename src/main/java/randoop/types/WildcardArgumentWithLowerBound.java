@@ -48,7 +48,7 @@ class WildcardArgumentWithLowerBound extends WildcardArgument {
     if (otherArgument.isWildcard()) {
       WildcardArgument otherWildcard = (WildcardArgument) otherArgument;
       if (otherWildcard.hasUpperBound()) {
-        return otherWildcard.getTypeBound().equals(new ReferenceBound(ConcreteTypes.OBJECT_TYPE));
+        return otherWildcard.getTypeBound().equals(new ReferenceBound(JavaTypes.OBJECT_TYPE));
       } else {
         return otherWildcard.getTypeBound().isSubtypeOf(this.getTypeBound());
       }

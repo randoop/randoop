@@ -7,7 +7,7 @@ import java.util.Set;
 
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.ConcreteTypes;
+import randoop.types.JavaTypes;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 
@@ -77,8 +77,7 @@ public class OperationExtractorTest {
 
     assertTrue("should have type parameters", classType.getTypeParameters().size() > 0);
     Substitution<ReferenceType> substitution =
-        Substitution.forArgs(
-            classType.getTypeParameters(), (ReferenceType) ConcreteTypes.STRING_TYPE);
+        Substitution.forArgs(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     classType = classType.apply(substitution);
 
     mgr.apply(

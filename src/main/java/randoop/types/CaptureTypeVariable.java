@@ -96,7 +96,7 @@ class CaptureTypeVariable extends TypeVariable {
 
     // the lower bound is either the null-type or the wildcard lower bound, so only do upper bound
     ParameterBound parameterBound = typeParameter.getUpperTypeBound().apply(substitution);
-    if (getUpperTypeBound().equals(new ReferenceBound(ConcreteTypes.OBJECT_TYPE))) {
+    if (getUpperTypeBound().equals(new ReferenceBound(JavaTypes.OBJECT_TYPE))) {
       setUpperBound(parameterBound);
     } else {
       List<ParameterBound> boundList = new ArrayList<>();

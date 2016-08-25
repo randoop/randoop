@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Constants for concrete Java types.
+ * Constants for non-JDK Java types.
+ * Include primitive types, {@code Class<>}, {@code Object}, {@code Cloneable}, {@code Comparable},
+ * {@code Serializable}, {@code String}, the null type, and {@code void}.
  */
-public class ConcreteTypes {
+public class JavaTypes {
   /** The boolean {@link PrimitiveType} */
   public static final PrimitiveType BOOLEAN_TYPE = new PrimitiveType(boolean.class);
 
@@ -16,9 +18,6 @@ public class ConcreteTypes {
 
   /** The char {@link PrimitiveType} */
   public static final PrimitiveType CHAR_TYPE = new PrimitiveType(char.class);
-
-  /** The {@code Class<?>} {@link ClassOrInterfaceType} */
-  public static final GenericClassType CLASS_TYPE = new GenericClassType(Class.class);
 
   /** The double {@link PrimitiveType} */
   public static final PrimitiveType DOUBLE_TYPE = new PrimitiveType(double.class);
@@ -32,31 +31,32 @@ public class ConcreteTypes {
   /** The long {@link PrimitiveType} */
   public static final PrimitiveType LONG_TYPE = new PrimitiveType(long.class);
 
-  /** The {@code Object} {@link ClassOrInterfaceType} */
-  public static final ClassOrInterfaceType OBJECT_TYPE =
-      new SimpleClassOrInterfaceType(Object.class);
-
   /** The short {@link PrimitiveType} */
   public static final PrimitiveType SHORT_TYPE = new PrimitiveType(short.class);
 
-  /** The {@code String} {@link ClassOrInterfaceType} */
-  public static final ClassOrInterfaceType STRING_TYPE =
-      new SimpleClassOrInterfaceType(String.class);
+  /** The {@code Object} {@link ClassOrInterfaceType} */
+  public static final ClassOrInterfaceType OBJECT_TYPE = new NonParameterizedType(Object.class);
 
-  /** The void {@link PrimitiveType} */
-  public static final PrimitiveType VOID_TYPE = new PrimitiveType(void.class);
+  /** The {@code Class<?>} {@link ClassOrInterfaceType} */
+  public static final GenericClassType CLASS_TYPE = new GenericClassType(Class.class);
+
+  /** The {@code Comparable} {@link ClassOrInterfaceType} */
+  public static final GenericClassType COMPARABLE_TYPE = new GenericClassType(Comparable.class);
+
+  /** The {@code String} {@link ClassOrInterfaceType} */
+  public static final ClassOrInterfaceType STRING_TYPE = new NonParameterizedType(String.class);
 
   /** The Cloneable {@link ClassOrInterfaceType} */
-  public static final Type CLONEABLE_TYPE = new SimpleClassOrInterfaceType(Cloneable.class);
+  public static final Type CLONEABLE_TYPE = new NonParameterizedType(Cloneable.class);
 
   /** The Serializable {@link ClassOrInterfaceType} */
-  public static final Type SERIALIZABLE_TYPE = new SimpleClassOrInterfaceType(Serializable.class);
+  public static final Type SERIALIZABLE_TYPE = new NonParameterizedType(Serializable.class);
 
   /** The Null type is the lower bound of reference types and is only used in {@link randoop.types.CaptureTypeVariable} */
   public static final ReferenceType NULL_TYPE = NullReferenceType.getNullType();
 
-  /** The {@code Comparable} {@link ClassOrInterfaceType} */
-  public static final GenericClassType COMPARABLE_TYPE = new GenericClassType(Comparable.class);
+  /** The void {@link VoidType} */
+  public static final VoidType VOID_TYPE = VoidType.getVoidType();
 
   /** The list of primitive types */
   private static final List<PrimitiveType> PRIMITIVE_TYPES = new ArrayList<>();

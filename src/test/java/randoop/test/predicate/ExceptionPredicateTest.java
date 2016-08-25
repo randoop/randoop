@@ -23,7 +23,7 @@ import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 import randoop.test.DummyCheckGenerator;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.ConcreteTypes;
+import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
@@ -102,14 +102,13 @@ public class ExceptionPredicateTest {
       fail("test not setup correctly: " + e);
     }
     List<Type> paramTypes = new ArrayList<>();
-    paramTypes.add(ConcreteTypes.OBJECT_TYPE);
+    paramTypes.add(JavaTypes.OBJECT_TYPE);
     TypedOperation conOp =
         new TypedClassOperation(
             new ConstructorCall(con), classType, new TypeTuple(paramTypes), classType);
     Sequence seq =
         new Sequence()
-            .extend(
-                TypedOperation.createNullOrZeroInitializationForType(ConcreteTypes.OBJECT_TYPE));
+            .extend(TypedOperation.createNullOrZeroInitializationForType(JavaTypes.OBJECT_TYPE));
     List<Variable> inputVariables = new ArrayList<>();
     inputVariables.add(new Variable(seq, 0));
 

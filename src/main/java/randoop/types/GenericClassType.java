@@ -170,7 +170,7 @@ public class GenericClassType extends ParameterizedType {
     if (superclass != null) {
       return ClassOrInterfaceType.forClass(rawType.getSuperclass());
     } else {
-      return ConcreteTypes.OBJECT_TYPE;
+      return JavaTypes.OBJECT_TYPE;
     }
   }
 

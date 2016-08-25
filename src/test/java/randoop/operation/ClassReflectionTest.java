@@ -17,7 +17,7 @@ import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 import randoop.test.AnIntegerPredicate;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.ConcreteTypes;
+import randoop.types.JavaTypes;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -78,16 +78,16 @@ public class ClassReflectionTest {
 
     Sequence sequence = new Sequence();
     randoop.test.ClassWithInnerClass classWithInnerClass1 = new randoop.test.ClassWithInnerClass(1);
-    TypedOperation nextOp = TypedOperation.createPrimitiveInitialization(ConcreteTypes.INT_TYPE, 1);
+    TypedOperation nextOp = TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, 1);
     sequence = sequence.extend(nextOp);
     sequence = sequence.extend(constructorOp, new Variable(sequence, 0));
 
     randoop.test.ClassWithInnerClass.A a4 = classWithInnerClass1.new A("blah", 29);
     sequence =
         sequence.extend(
-            TypedOperation.createPrimitiveInitialization(ConcreteTypes.STRING_TYPE, "blah"));
+            TypedOperation.createPrimitiveInitialization(JavaTypes.STRING_TYPE, "blah"));
     sequence =
-        sequence.extend(TypedOperation.createPrimitiveInitialization(ConcreteTypes.INT_TYPE, 29));
+        sequence.extend(TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, 29));
 
     TypedOperation innerConstructorOp = null;
     for (TypedOperation op : innerActual) {

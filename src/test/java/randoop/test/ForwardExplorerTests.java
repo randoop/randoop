@@ -34,7 +34,7 @@ import randoop.test.bh.MathVector;
 import randoop.test.bh.Node;
 import randoop.test.bh.Tree;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.ConcreteTypes;
+import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.MultiMap;
@@ -220,10 +220,7 @@ public class ForwardExplorerTests {
     }
     TypedOperation op =
         new TypedClassOperation(
-            objectConstructor,
-            ConcreteTypes.OBJECT_TYPE,
-            new TypeTuple(),
-            ConcreteTypes.OBJECT_TYPE);
+            objectConstructor, JavaTypes.OBJECT_TYPE, new TypeTuple(), JavaTypes.OBJECT_TYPE);
     sequences.add((new Sequence().extend(op, new ArrayList<Variable>())));
     return (new GenTests())
         .createTestOutputPredicate(

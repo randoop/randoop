@@ -7,7 +7,7 @@ import java.util.Objects;
 import randoop.Globals;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Value;
-import randoop.types.ConcreteTypes;
+import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.Util;
@@ -123,7 +123,7 @@ public final class ObserverEqValue implements ObjectContract {
   @Override
   public TypeTuple getInputTypes() {
     List<Type> inputTypes = new ArrayList<>();
-    inputTypes.add(ConcreteTypes.OBJECT_TYPE);
+    inputTypes.add(JavaTypes.OBJECT_TYPE);
     return new TypeTuple(inputTypes);
   }
 

@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 import randoop.BugInRandoopException;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
-import randoop.types.ConcreteTypes;
+import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.util.StringEscapeUtils;
@@ -52,7 +52,7 @@ public class Value {
       valueType = ((NonParameterizedType) valueType).toPrimitive();
     }
 
-    if (valueType.equals(ConcreteTypes.CHAR_TYPE)) {
+    if (valueType.equals(JavaTypes.CHAR_TYPE)) {
       // XXX This won't always work!
       if (value.equals(' ')) {
         return "' '";
@@ -60,13 +60,13 @@ public class Value {
       return "\'" + StringEscapeUtils.escapeJavaStyleString(value.toString(), true) + "\'";
     }
 
-    if (valueType.equals(ConcreteTypes.BOOLEAN_TYPE)) {
+    if (valueType.equals(JavaTypes.BOOLEAN_TYPE)) {
       return value.toString();
     }
 
     // numeric types
     String rep;
-    if (valueType.equals(ConcreteTypes.DOUBLE_TYPE)) {
+    if (valueType.equals(JavaTypes.DOUBLE_TYPE)) {
       Double d = (Double) value;
       if (d.isNaN()) {
         return "Double.NaN";
@@ -78,7 +78,7 @@ public class Value {
       rep = d.toString();
       assert rep != null;
       rep = rep + "d";
-    } else if (valueType.equals(ConcreteTypes.FLOAT_TYPE)) {
+    } else if (valueType.equals(JavaTypes.FLOAT_TYPE)) {
       Float f = (Float) value;
       if (f.isNaN()) {
         return "Float.NaN";
@@ -90,13 +90,13 @@ public class Value {
       rep = f.toString();
       assert rep != null;
       rep = rep + "f";
-    } else if (valueType.equals(ConcreteTypes.LONG_TYPE)) {
+    } else if (valueType.equals(JavaTypes.LONG_TYPE)) {
       rep = value.toString() + "L";
-    } else if (valueType.equals(ConcreteTypes.BYTE_TYPE)) {
+    } else if (valueType.equals(JavaTypes.BYTE_TYPE)) {
       rep = "(byte)" + value.toString();
-    } else if (valueType.equals(ConcreteTypes.SHORT_TYPE)) {
+    } else if (valueType.equals(JavaTypes.SHORT_TYPE)) {
       rep = "(short)" + value.toString();
-    } else if (valueType.equals(ConcreteTypes.INT_TYPE)) {
+    } else if (valueType.equals(JavaTypes.INT_TYPE)) {
       rep = value.toString();
     } else {
       throw new BugInRandoopException("type should be a nonreceiver type: " + valueType);

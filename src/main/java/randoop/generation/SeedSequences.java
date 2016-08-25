@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import randoop.sequence.Sequence;
-import randoop.types.ConcreteTypes;
+import randoop.types.JavaTypes;
 import randoop.types.Type;
 
 /**
@@ -75,7 +75,7 @@ public final class SeedSequences {
     Set<Sequence> seedSequences = new LinkedHashSet<>();
     for (Object seed : seeds) {
       if (seed == null) {
-        seedSequences.add(Sequence.zero(ConcreteTypes.STRING_TYPE));
+        seedSequences.add(Sequence.zero(JavaTypes.STRING_TYPE));
       } else {
         seedSequences.add(Sequence.createSequenceForPrimitive(seed));
       }

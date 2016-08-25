@@ -9,7 +9,7 @@ import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.Value;
 import randoop.sequence.Variable;
-import randoop.types.ConcreteTypes;
+import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.types.PrimitiveTypes;
@@ -80,7 +80,7 @@ public final class NonreceiverTerm extends CallableOperation {
         throw new IllegalArgumentException(
             "String too long, length = " + ((String) value).length());
       }
-    } else if (!type.equals(ConcreteTypes.CLASS_TYPE)) {
+    } else if (!type.equals(JavaTypes.CLASS_TYPE)) {
       // if it's not primitive, a string, or Class value then must be null
       if (value != null) {
         throw new IllegalArgumentException(
@@ -130,7 +130,7 @@ public final class NonreceiverTerm extends CallableOperation {
    */
   @Override
   public String toString() {
-    if (type.equals(ConcreteTypes.CLASS_TYPE)) {
+    if (type.equals(JavaTypes.CLASS_TYPE)) {
       return ((Class<?>) value).getName() + ".class";
     }
     return value.toString();
@@ -206,16 +206,16 @@ public final class NonreceiverTerm extends CallableOperation {
       type = ((NonParameterizedType) type).toPrimitive();
     }
     if (type.isString()) return new NonreceiverTerm(type, "");
-    if (type.equals(ConcreteTypes.CHAR_TYPE)) {
+    if (type.equals(JavaTypes.CHAR_TYPE)) {
       return new NonreceiverTerm(type, 'a'); // TODO This is not null or zero...
     }
-    if (type.equals(ConcreteTypes.BYTE_TYPE)) return new NonreceiverTerm(type, (byte) 0);
-    if (type.equals(ConcreteTypes.SHORT_TYPE)) return new NonreceiverTerm(type, (short) 0);
-    if (type.equals(ConcreteTypes.INT_TYPE)) return new NonreceiverTerm(type, 0);
-    if (type.equals(ConcreteTypes.LONG_TYPE)) return new NonreceiverTerm(type, 0L);
-    if (type.equals(ConcreteTypes.FLOAT_TYPE)) return new NonreceiverTerm(type, 0f);
-    if (type.equals(ConcreteTypes.DOUBLE_TYPE)) return new NonreceiverTerm(type, 0d);
-    if (type.equals(ConcreteTypes.BOOLEAN_TYPE)) return new NonreceiverTerm(type, false);
+    if (type.equals(JavaTypes.BYTE_TYPE)) return new NonreceiverTerm(type, (byte) 0);
+    if (type.equals(JavaTypes.SHORT_TYPE)) return new NonreceiverTerm(type, (short) 0);
+    if (type.equals(JavaTypes.INT_TYPE)) return new NonreceiverTerm(type, 0);
+    if (type.equals(JavaTypes.LONG_TYPE)) return new NonreceiverTerm(type, 0L);
+    if (type.equals(JavaTypes.FLOAT_TYPE)) return new NonreceiverTerm(type, 0f);
+    if (type.equals(JavaTypes.DOUBLE_TYPE)) return new NonreceiverTerm(type, 0d);
+    if (type.equals(JavaTypes.BOOLEAN_TYPE)) return new NonreceiverTerm(type, false);
     return new NonreceiverTerm(type, null);
   }
 
@@ -261,9 +261,9 @@ public final class NonreceiverTerm extends CallableOperation {
     } else {
       if (type.isString()) {
         valStr = "\"" + StringEscapeUtils.escapeJava(value.toString()) + "\"";
-      } else if (type.equals(ConcreteTypes.CHAR_TYPE)) {
+      } else if (type.equals(JavaTypes.CHAR_TYPE)) {
         valStr = Integer.toHexString((Character) value);
-      } else if (type.equals(ConcreteTypes.CLASS_TYPE)) {
+      } else if (type.equals(JavaTypes.CLASS_TYPE)) {
         valStr = ((Class<?>) value).getName() + ".class";
       } else {
         valStr = value.toString();
@@ -333,7 +333,7 @@ public final class NonreceiverTerm extends CallableOperation {
     }
 
     Object value;
-    if (type.equals(ConcreteTypes.CHAR_TYPE)) {
+    if (type.equals(JavaTypes.CHAR_TYPE)) {
       try {
         value = (char) Integer.parseInt(valString, 16);
       } catch (NumberFormatException e) {
@@ -347,7 +347,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + "\") was not parsable.";
         throw new OperationParseException(msg);
       }
-    } else if (type.equals(ConcreteTypes.BYTE_TYPE)) {
+    } else if (type.equals(JavaTypes.BYTE_TYPE)) {
       try {
         value = Byte.valueOf(valString);
       } catch (NumberFormatException e) {
@@ -361,7 +361,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + "\") was not parsable.";
         throw new OperationParseException(msg);
       }
-    } else if (type.equals(ConcreteTypes.SHORT_TYPE)) {
+    } else if (type.equals(JavaTypes.SHORT_TYPE)) {
       try {
         value = Short.valueOf(valString);
       } catch (NumberFormatException e) {
@@ -375,7 +375,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + "\") was not parsable.";
         throw new OperationParseException(msg);
       }
-    } else if (type.equals(ConcreteTypes.INT_TYPE)) {
+    } else if (type.equals(JavaTypes.INT_TYPE)) {
       try {
         value = Integer.valueOf(valString);
       } catch (NumberFormatException e) {
@@ -389,7 +389,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + "\") was not parsable.";
         throw new OperationParseException(msg);
       }
-    } else if (type.equals(ConcreteTypes.LONG_TYPE)) {
+    } else if (type.equals(JavaTypes.LONG_TYPE)) {
       try {
         value = Long.valueOf(valString);
       } catch (NumberFormatException e) {
@@ -403,7 +403,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + "\") was not parsable.";
         throw new OperationParseException(msg);
       }
-    } else if (type.equals(ConcreteTypes.FLOAT_TYPE)) {
+    } else if (type.equals(JavaTypes.FLOAT_TYPE)) {
       try {
         value = Float.valueOf(valString);
       } catch (NumberFormatException e) {
@@ -417,7 +417,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + "\") was not parsable.";
         throw new OperationParseException(msg);
       }
-    } else if (type.equals(ConcreteTypes.DOUBLE_TYPE)) {
+    } else if (type.equals(JavaTypes.DOUBLE_TYPE)) {
       try {
         value = Double.valueOf(valString);
       } catch (NumberFormatException e) {
@@ -431,7 +431,7 @@ public final class NonreceiverTerm extends CallableOperation {
                 + "\") was not parsable.";
         throw new OperationParseException(msg);
       }
-    } else if (type.equals(ConcreteTypes.BOOLEAN_TYPE)) {
+    } else if (type.equals(JavaTypes.BOOLEAN_TYPE)) {
       if (valString.equals("true") || valString.equals("false")) {
         value = Boolean.valueOf(valString);
       } else {

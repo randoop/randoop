@@ -25,7 +25,7 @@ import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.visibilitytest.PublicClass;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.ConcreteTypes;
+import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.types.RandoopTypeException;
@@ -579,7 +579,7 @@ public class VisibilityTest {
               new FieldSet(field),
               declaringType,
               new TypeTuple(setInputTypeList),
-              ConcreteTypes.VOID_TYPE));
+              JavaTypes.VOID_TYPE));
     }
     return statements;
   }

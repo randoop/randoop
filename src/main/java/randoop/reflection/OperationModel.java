@@ -30,7 +30,7 @@ import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
-import randoop.types.ConcreteTypes;
+import randoop.types.JavaTypes;
 import randoop.types.ParameterBound;
 import randoop.types.Type;
 import randoop.types.TypeVariable;
@@ -433,17 +433,17 @@ public class OperationModel {
     if (parameters.isEmpty() || (parameters.size() == 1 && parameters.contains(argument))) {
       return upperBound;
     }
-    return ParameterBound.forType(ConcreteTypes.OBJECT_TYPE);
+    return ParameterBound.forType(JavaTypes.OBJECT_TYPE);
   }
 
   /**
    * Chooses the lower bound of the given argument to be tested in {@link #selectCandidates(TypeVariable)}.
    * If the bound has a type parameter other than the given argument, then the
-   * {@link ConcreteTypes#NULL_TYPE}
+   * {@link JavaTypes#NULL_TYPE}
    * is return as the bound.
    *
    * @param argument  the type argument
-   * @return the lower bound of the argument if no other type parameter is needed, the {@link ConcreteTypes#NULL_TYPE}
+   * @return the lower bound of the argument if no other type parameter is needed, the {@link JavaTypes#NULL_TYPE}
    * otherwise
    */
   private ParameterBound selectLowerBound(TypeVariable argument) {
@@ -452,7 +452,7 @@ public class OperationModel {
     if (parameters.isEmpty() || (parameters.size() == 1 && parameters.contains(argument))) {
       return lowerBound;
     }
-    return ParameterBound.forType(ConcreteTypes.NULL_TYPE);
+    return ParameterBound.forType(JavaTypes.NULL_TYPE);
   }
 
   /**

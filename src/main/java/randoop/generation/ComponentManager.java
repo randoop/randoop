@@ -12,7 +12,7 @@ import randoop.sequence.PackageLiterals;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.ConcreteTypes;
+import randoop.types.JavaTypes;
 import randoop.types.PrimitiveType;
 import randoop.types.Type;
 import randoop.util.ListOfLists;
@@ -229,10 +229,10 @@ public class ComponentManager {
     if (packageLiterals != null) {
       ret.addAll(packageLiterals.getAllSequences());
     }
-    for (PrimitiveType type : ConcreteTypes.getPrimitiveTypes()) {
+    for (PrimitiveType type : JavaTypes.getPrimitiveTypes()) {
       ret.addAll(gralComponents.getSequencesForType(type, true).toJDKList());
     }
-    ret.addAll(gralComponents.getSequencesForType(ConcreteTypes.STRING_TYPE, true).toJDKList());
+    ret.addAll(gralComponents.getSequencesForType(JavaTypes.STRING_TYPE, true).toJDKList());
     return ret;
   }
 }

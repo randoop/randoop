@@ -200,7 +200,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
       }
 
       ClassOrInterfaceType superType = this.getSuperclass();
-      if (superType != null && !superType.equals(ConcreteTypes.OBJECT_TYPE)) {
+      if (superType != null && !superType.equals(JavaTypes.OBJECT_TYPE)) {
         return otherType.equals(superType) || superType.isSubtypeOf(otherType);
       }
     }

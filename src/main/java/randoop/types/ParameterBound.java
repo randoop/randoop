@@ -25,8 +25,8 @@ import java.util.List;
  * Type parameters only have upper bounds, but variables introduced by capture conversion can have
  * lower bounds.
  * This class and its subclasses can represent both, with the default lower bound being
- * {@link ConcreteTypes#NULL_TYPE},
- * and the default upperbound being {@link ConcreteTypes#OBJECT_TYPE}.
+ * {@link JavaTypes#NULL_TYPE},
+ * and the default upperbound being {@link JavaTypes#OBJECT_TYPE}.
  *
  * @see ReferenceBound
  * @see IntersectionTypeBound

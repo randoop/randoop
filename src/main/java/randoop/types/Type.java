@@ -45,6 +45,9 @@ public abstract class Type {
    * @return the {@code Type} object for the given reflection type
    */
   public static Type forClass(Class<?> classType) {
+    if (classType.equals(void.class)) {
+      return VoidType.getVoidType();
+    }
     if (classType.isPrimitive()) {
       return new PrimitiveType(classType);
     }
@@ -209,7 +212,7 @@ public abstract class Type {
    * @return true if this is the {@code Object} type, false otherwise
    */
   public boolean isObject() {
-    return this.equals(ConcreteTypes.OBJECT_TYPE);
+    return this.equals(JavaTypes.OBJECT_TYPE);
   }
 
   /**
@@ -218,7 +221,7 @@ public abstract class Type {
    * @return true if this type is the String type, and false otherwise
    */
   public boolean isString() {
-    return this.equals(ConcreteTypes.STRING_TYPE);
+    return this.equals(JavaTypes.STRING_TYPE);
   }
 
   /**
@@ -227,7 +230,7 @@ public abstract class Type {
    * @return true if this type is void, false otherwise
    */
   public boolean isVoid() {
-    return this.equals(ConcreteTypes.VOID_TYPE);
+    return this.equals(JavaTypes.VOID_TYPE);
   }
 
   /**

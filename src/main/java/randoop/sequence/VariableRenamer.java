@@ -2,7 +2,7 @@ package randoop.sequence;
 
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.ConcreteTypes;
+import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.types.InstantiatedType;
@@ -49,19 +49,19 @@ class VariableRenamer {
       return "obj";
     } else if (type.isString()) {
       return "str";
-    } else if (type.equals(ConcreteTypes.CLASS_TYPE)) {
+    } else if (type.equals(JavaTypes.CLASS_TYPE)) {
       return "cls";
     } else if (type.isPrimitive() || type.isBoxedPrimitive()) {
       if (type.isBoxedPrimitive()) {
         type = ((NonParameterizedType) type).toPrimitive();
       }
-      if (type.equals(ConcreteTypes.CHAR_TYPE)) {
+      if (type.equals(JavaTypes.CHAR_TYPE)) {
         return "char";
       }
-      if (type.equals(ConcreteTypes.LONG_TYPE)) {
+      if (type.equals(JavaTypes.LONG_TYPE)) {
         return "long";
       }
-      if (type.equals(ConcreteTypes.BYTE_TYPE)) {
+      if (type.equals(JavaTypes.BYTE_TYPE)) {
         return "byte";
       }
       // otherwise, use the first character of the type name

@@ -2,10 +2,12 @@ package randoop.types;
 
 /**
  * Represents a Java primitive type.
+ * Corresponds to primitive types as defined in JLS
+ * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-PrimitiveType">section 4.2</a>.
  */
 public class PrimitiveType extends Type {
 
-  /** The runtime type of the primitive type */
+  /** The runtime class of the primitive type */
   private final Class<?> runtimeClass;
 
   /**
@@ -16,12 +18,13 @@ public class PrimitiveType extends Type {
   public PrimitiveType(Class<?> runtimeClass) {
     assert runtimeClass.isPrimitive()
         : "must be initialized with primitive type, got " + runtimeClass.getName();
+    assert !runtimeClass.equals(void.class) : "void should be represented by VoidType";
     this.runtimeClass = runtimeClass;
   }
 
   /**
    * {@inheritDoc}
-   * @return true if the runtime type of this primitive type and the object are the same, false otherwise
+   * @return true if the runtime class of this primitive type and the object are the same, false otherwise
    */
   @Override
   public boolean equals(Object obj) {
@@ -39,7 +42,7 @@ public class PrimitiveType extends Type {
 
   /**
    * {@inheritDoc}
-   * @return the name of this type
+   * @return the name of this type as the string representation of this type
    */
   @Override
   public String toString() {
@@ -48,7 +51,7 @@ public class PrimitiveType extends Type {
 
   /**
    * {@inheritDoc}
-   * @return the fully-qualified name of this type
+   * For primitive types returns the type name: {@code "int"}, {@code "char"}, etc.
    */
   @Override
   public String getName() {
@@ -57,7 +60,7 @@ public class PrimitiveType extends Type {
 
   /**
    * {@inheritDoc}
-   * @return the {@code Class} object for this concrete simple type
+   * @return the {@code Class} object for this primitive type
    */
   @Override
   public Class<?> getRuntimeClass() {
@@ -71,16 +74,11 @@ public class PrimitiveType extends Type {
    * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.2">primitive widening (section 5.1.2)</a>, and
    * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.8">unboxing (section 5.1.8)</a> conversions.
    * </p>
-   *
-   * @return true if this type can be assigned from the source type by primitive widening or unboxing, false otherwise
+   * For a primitive type, returns true if this type can be assigned from the source type by
+   * primitive widening or unboxing.
    */
   @Override
   public boolean isAssignableFrom(Type sourceType) {
-
-    // check for void before identity: cannot assign to/from void
-    if (this.isVoid() || sourceType.isVoid()) {
-      return false;
-    }
 
     if (super.isAssignableFrom(sourceType)) {
       return true;
@@ -92,7 +90,7 @@ public class PrimitiveType extends Type {
     }
 
     if (sourceType.isBoxedPrimitive()) { // unbox then primitive widening conversion
-      PrimitiveType primitiveSourceType = ((SimpleClassOrInterfaceType) sourceType).toPrimitive();
+      PrimitiveType primitiveSourceType = ((NonParameterizedType) sourceType).toPrimitive();
       return this.isAssignableFrom(primitiveSourceType);
     }
 
@@ -126,7 +124,7 @@ public class PrimitiveType extends Type {
    *
    * @return the boxed type for this primitive type
    */
-  public SimpleClassOrInterfaceType toBoxedPrimitive() {
-    return new SimpleClassOrInterfaceType(PrimitiveTypes.toBoxedType(this.getRuntimeClass()));
+  public NonParameterizedType toBoxedPrimitive() {
+    return new NonParameterizedType(PrimitiveTypes.toBoxedType(this.getRuntimeClass()));
   }
 }

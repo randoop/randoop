@@ -14,7 +14,7 @@ import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.ConcreteTypes;
+import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
@@ -190,7 +190,7 @@ public class FieldSet extends CallableOperation {
         new FieldSet(accessibleField),
         classType,
         new TypeTuple(setInputTypeList),
-        ConcreteTypes.VOID_TYPE);
+        JavaTypes.VOID_TYPE);
   }
 
   @Override

@@ -22,7 +22,7 @@ import randoop.reflection.ReflectionManager;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.ConcreteTypes;
+import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.types.RandoopTypeException;
@@ -220,7 +220,7 @@ public class FieldReflectionTest {
               new FieldSet(field),
               declaringType,
               new TypeTuple(setInputTypeList),
-              ConcreteTypes.VOID_TYPE));
+              JavaTypes.VOID_TYPE));
     }
     return statements;
   }

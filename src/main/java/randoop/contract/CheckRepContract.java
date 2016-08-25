@@ -9,7 +9,7 @@ import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
-import randoop.types.ConcreteTypes;
+import randoop.types.JavaTypes;
 import randoop.types.TypeTuple;
 
 /**
@@ -54,9 +54,9 @@ public final class CheckRepContract implements ObjectContract {
     assert !Modifier.isStatic(modifiers);
     assert checkRepMethod.getParameterTypes().length == 0;
     this.operation = TypedOperation.forMethod(checkRepMethod);
-    if (operation.getOutputType().equals(ConcreteTypes.BOOLEAN_TYPE)) {
+    if (operation.getOutputType().equals(JavaTypes.BOOLEAN_TYPE)) {
       this.returnsBoolean = true;
-    } else if (operation.getOutputType().equals(ConcreteTypes.VOID_TYPE)) {
+    } else if (operation.getOutputType().equals(JavaTypes.VOID_TYPE)) {
       this.returnsBoolean = false;
     } else {
       throw new IllegalArgumentException("check-rep method must have void or boolean return type");

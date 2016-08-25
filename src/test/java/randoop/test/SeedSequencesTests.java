@@ -15,7 +15,7 @@ import randoop.reflection.ReflectionManager;
 import randoop.reflection.TestValueExtractor;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
-import randoop.types.ConcreteTypes;
+import randoop.types.JavaTypes;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -90,7 +90,7 @@ public class SeedSequencesTests {
     expected.add(
         new Sequence()
             .extend(
-                TypedOperation.createNullOrZeroInitializationForType(ConcreteTypes.STRING_TYPE),
+                TypedOperation.createNullOrZeroInitializationForType(JavaTypes.STRING_TYPE),
                 new ArrayList<Variable>()));
     assertEquals(expected, s4);
   }
