@@ -338,6 +338,7 @@ public abstract class Type {
    * @return true if this type can be assigned from the source type, and false otherwise
    */
   public boolean isAssignableFrom(Type sourceType) {
+    // default behavior, refined by overrides in subclasses
     if (sourceType.isVoid()) {
       return false;
     }
@@ -374,6 +375,7 @@ public abstract class Type {
    * @return true if this type is a subtype of the given type, false otherwise
    */
   public boolean isSubtypeOf(Type otherType) {
+    // default behavior, refined by overrides in subclasses
     return this.equals(otherType);
   }
 }
