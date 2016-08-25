@@ -50,10 +50,6 @@ class ExplicitTypeVariable extends TypeVariable {
     return variable.toString();
   }
 
-  /**
-   * {@inheritDoc}
-   * @return name of type parameter of this type
-   */
   @Override
   public String getName() {
     return variable.getName();

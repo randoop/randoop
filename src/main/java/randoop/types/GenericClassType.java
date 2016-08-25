@@ -58,10 +58,6 @@ public class GenericClassType extends ParameterizedType {
     return Objects.hash(rawType);
   }
 
-  /**
-   * {@inheritDoc}
-   * @return the name of this type
-   */
   @Override
   public String toString() {
     return this.getName();
@@ -141,17 +137,14 @@ public class GenericClassType extends ParameterizedType {
 
   /**
    * {@inheritDoc}
-   * @return the fully qualified name of this type with type parameters
+   * Returns the fully qualified name of this type with type parameters.
+   * E.g., {@code java.util.List<T>}.
    */
   @Override
   public String getName() {
     return rawType.getCanonicalName() + "<" + UtilMDE.join(parameters, ",") + ">";
   }
 
-  /**
-   * {@inheritDoc}
-   * @return the rawtype of this generic class
-   */
   @Override
   public Class<?> getRuntimeClass() {
     return rawType;
@@ -196,10 +189,6 @@ public class GenericClassType extends ParameterizedType {
     return ClassOrInterfaceType.forType(superclass).apply(substitution);
   }
 
-  /**
-   * {@inheritDoc}
-   * @return list of {@link ReferenceArgument} for each parameter
-   */
   @Override
   public List<TypeArgument> getTypeArguments() {
     List<TypeArgument> argumentList = new ArrayList<>();

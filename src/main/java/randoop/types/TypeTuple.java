@@ -14,12 +14,21 @@ import plume.UtilMDE;
  */
 public class TypeTuple {
 
+  /** The sequence of types in this type tuple. */
   private final ArrayList<Type> list;
 
+  /**
+   * Creates a type tuple from the list of types, preserving the order.
+   *
+   * @param list  the list of types
+   */
   public TypeTuple(List<Type> list) {
     this.list = new ArrayList<>(list);
   }
 
+  /**
+   * Creates an empty type tuple.
+   */
   public TypeTuple() {
     this(new ArrayList<Type>());
   }
@@ -64,7 +73,7 @@ public class TypeTuple {
   }
 
   /**
-   * Applies a capture conversion to this object.
+   * Applies a capture conversion to each component of this type type tuple.
    *
    * @return a new type tuple after performing a capture conversion
    */
@@ -83,12 +92,11 @@ public class TypeTuple {
    * @return the component type at the position
    */
   public Type get(int i) {
-    assert 0 <= i && i < list.size();
     return list.get(i);
   }
 
   /**
-   * Returns the type parameters for this type tuple.
+   * Returns the type parameters that occur in any component of this type tuple.
    *
    * @return the list of type parameters for this type tuple.
    */
@@ -126,6 +134,15 @@ public class TypeTuple {
   }
 
   /**
+   * Return the number of components of the tuple
+   *
+   * @return the number of components of this tuple
+   */
+  public int size() {
+    return list.size();
+  }
+
+  /**
    * Indicates whether the tuple has any generic components.
    *
    * @return true if any component of tuple is generic, false if none are
@@ -137,14 +154,5 @@ public class TypeTuple {
       }
     }
     return false;
-  }
-
-  /**
-   * Return the number of components of the tuple
-   *
-   * @return the number of components of this tuple
-   */
-  public int size() {
-    return list.size();
   }
 }

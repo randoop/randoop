@@ -54,6 +54,9 @@ import randoop.BugInRandoopException;
 
 /**
  * Defines type constants for classes in the JDK Collections.
+ *
+ * These types should be maintained as new JDK versions are released.
+ * Updated for JDK 8.
  */
 public class JDKTypes {
   /** The {@link GenericClassType} for {@code Collection} */
@@ -235,7 +238,7 @@ public class JDKTypes {
   public static final GenericClassType ABSTRACT_MAP_TYPE =
       GenericClassType.forClass(AbstractMap.class);
 
-  /** Implementing type map for interface and abstract class types */
+  /** Maps interface and abstract class types to a selected implementing type */
   private static Map<GenericClassType, GenericClassType> implementingTypeMap =
       new LinkedHashMap<>();
 
@@ -267,7 +270,7 @@ public class JDKTypes {
     implementingTypeMap.put(ABSTRACT_MAP_TYPE, HASH_MAP_TYPE);
   }
   /**
-   * Returns a concrete collection type for each Collections type
+   * Returns an arbitrary (but fixed) concrete collection type for each Collections type
    * (e.g., returns {@code ArrayList} for {@code List}).
    * If a type is already concrete, then returns that type.
    *

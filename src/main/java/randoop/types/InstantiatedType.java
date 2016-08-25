@@ -59,10 +59,7 @@ public class InstantiatedType extends ParameterizedType {
   public int hashCode() {
     return Objects.hash(instantiatedType, argumentList);
   }
-  /**
-   * {@inheritDoc}
-   * @return the name of this type
-   */
+
   @Override
   public String toString() {
     return this.getName();
@@ -171,10 +168,6 @@ public class InstantiatedType extends ParameterizedType {
     return referenceArgList;
   }
 
-  /**
-   * {@inheritDoc}
-   * @return the rawtype of the generic type that this type instantiates
-   */
   @Override
   public Class<?> getRuntimeClass() {
     return instantiatedType.getRuntimeClass();
@@ -330,10 +323,6 @@ public class InstantiatedType extends ParameterizedType {
     return instantiatedType.isMemberClass();
   }
 
-  /**
-   * {@inheritDoc}
-   * @return true, since this is a parameterized type
-   */
   @Override
   public boolean isParameterized() {
     return true;

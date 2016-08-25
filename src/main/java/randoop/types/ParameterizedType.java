@@ -63,10 +63,6 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
     return new InstantiatedType(genericClass, typeArguments);
   }
 
-  /**
-   * {@inheritDoc}
-   * @return the name of this type
-   */
   @Override
   public String toString() {
     return this.getName();
@@ -84,8 +80,9 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
 
   /**
    * {@inheritDoc}
-   * @return the fully qualified name of this type with fully qualified type
-   * arguments
+   * Returns the fully qualified name of this type with fully qualified type
+   * arguments.
+   * E.g., {@code java.lang.List<java.lang.String>}
    */
   @Override
   public String getName() {

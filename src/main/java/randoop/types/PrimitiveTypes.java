@@ -7,13 +7,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Utilities for working with Java primitive and boxed primitive types as {@code Class<?>} objects.
- * Provides conversion from primitive type names to {@code Class} objects, boxing and unboxing, as
- * well as primitive subtype and assignment tests.
- * <p>
- * Note that {@code void} is considered a primitive type by Java reflection
- * ({@code (void.class).isPrimitive()} returns true).
- *
+ * Utilities for working with {@code Class<?> objects} that Java reflection treats as primitive,
+ * which includes primitive types and {@code void}.
+ * Provides conversion from primitive type names (and "void") to {@code Class} objects,
+ * boxing and unboxing, as well as primitive subtype and assignment tests.
  */
 public final class PrimitiveTypes {
   private PrimitiveTypes() {
@@ -48,7 +45,7 @@ public final class PrimitiveTypes {
     primitiveToBoxed.put(short.class, Short.class);
   }
 
-  /** Map from primitive type name to {@code Class<?>} objects. */
+  /** Map from primitive type name (and "void") to {@code Class<?>} objects. */
   private static final Map<String, Class<?>> nameToClass = new LinkedHashMap<>();
 
   static {
@@ -73,6 +70,7 @@ public final class PrimitiveTypes {
 
   static {
     Set<Class<?>> s = new HashSet<>();
+    wideningTable.put(double.class, new HashSet<Class<?>>());
     s.add(double.class);
     wideningTable.put(float.class, new HashSet<>(s));
     s.add(float.class);
@@ -87,8 +85,8 @@ public final class PrimitiveTypes {
   }
 
   /**
-   * Return the {@code Class<?>} object for the given primitive type name
-   * ({@code boolean}, {@code void}, and numeric types).
+   * Return the {@code Class<?>} object for the given primitive type name or "void".
+   * These are names that {@code Class.forName()} will not convert.
    *
    * @param typeName  the name of the type
    * @return the {@code Class<?>} object for the type, or null
@@ -108,18 +106,12 @@ public final class PrimitiveTypes {
    * @return true if the source type can be assigned to the target type, false otherwise
    */
   static boolean isAssignable(Class<?> target, Class<?> source) {
-    if (target == null || source == null) {
-      throw new IllegalArgumentException("types must be non null");
-    }
     if (!target.isPrimitive() || !source.isPrimitive()) {
       throw new IllegalArgumentException("types must be primitive");
     }
 
-    if (source.equals(target)) { // check identity widening
-      return true;
-    }
-    Set<Class<?>> targets = wideningTable.get(source);
-    return targets != null && targets.contains(target);
+    // check identity and primitive  widening
+    return source.equals(target) || isSubtype(source, target);
   }
 
   /**
@@ -133,8 +125,9 @@ public final class PrimitiveTypes {
   }
 
   /**
-   * Determines whether the first primitive type is a subtype of the second primitive as determined
-   * by widening.
+   * Indicates whether the first primitive type is a (transitive) subtype of the second primitive
+   * as determined by primitive widening.
+   * Note: returns false when both types are the same.
    *
    * @param first  the first primitive type
    * @param second the second primitive type
@@ -145,7 +138,7 @@ public final class PrimitiveTypes {
       throw new IllegalArgumentException("types must be primitive");
     }
     Set<Class<?>> superTypes = wideningTable.get(first);
-    return superTypes != null && superTypes.contains(second);
+    return superTypes.contains(second);
   }
 
   /**

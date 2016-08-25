@@ -111,7 +111,8 @@ class IntersectionTypeBound extends ParameterBound {
 
   /**
    * {@inheritDoc}
-   * @return true if the argument type has all of types of the member bounds of this object as an upper bound.
+   * Specifically, this method checks that the argument type is a subtype of all of the member bounds
+   * of this object.
    */
   @Override
   public boolean isLowerBound(Type otherType, Substitution<ReferenceType> subst) {
@@ -125,7 +126,7 @@ class IntersectionTypeBound extends ParameterBound {
 
   /**
    * {@inheritDoc}
-   * @return true if all types in this bound are {@code Object}, otherwise return false
+   * Determines whether all types in this bound are {@code Object}.
    */
   @Override
   public boolean isObject() {

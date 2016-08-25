@@ -101,7 +101,7 @@ public abstract class TypeVariable extends ReferenceType {
 
   /**
    * {@inheritDoc}
-   * @return false, since an uninstantiated type variable may not be assigned to
+   * Returns false, since an uninstantiated type variable may not be assigned to.
    */
   @Override
   public boolean isAssignableFrom(Type sourceType) {

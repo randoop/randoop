@@ -104,7 +104,7 @@ abstract class WildcardArgument extends TypeArgument {
 
   /**
    * {@inheritDoc}
-   * @return the type parameters of the bound of this wildcard argument
+   * Returns the type parameters of the bound of this wildcard argument
    */
   @Override
   public List<TypeVariable> getTypeParameters() {

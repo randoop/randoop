@@ -45,10 +45,6 @@ class LazyParameterBound extends ParameterBound {
     return Objects.hash(boundType);
   }
 
-  /**
-   * {@inheritDoc}
-   * @return the name of the type bound
-   */
   @Override
   public String toString() {
     return boundType.toString();

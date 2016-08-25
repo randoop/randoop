@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -59,17 +60,19 @@ public class JavaTypes {
   public static final VoidType VOID_TYPE = VoidType.getVoidType();
 
   /** The list of primitive types */
-  private static final List<PrimitiveType> PRIMITIVE_TYPES = new ArrayList<>();
+  private static final List<PrimitiveType> PRIMITIVE_TYPES;
 
   static {
-    PRIMITIVE_TYPES.add(BOOLEAN_TYPE);
-    PRIMITIVE_TYPES.add(BYTE_TYPE);
-    PRIMITIVE_TYPES.add(CHAR_TYPE);
-    PRIMITIVE_TYPES.add(DOUBLE_TYPE);
-    PRIMITIVE_TYPES.add(FLOAT_TYPE);
-    PRIMITIVE_TYPES.add(INT_TYPE);
-    PRIMITIVE_TYPES.add(LONG_TYPE);
-    PRIMITIVE_TYPES.add(SHORT_TYPE);
+    ArrayList<PrimitiveType> types = new ArrayList<>();
+    types.add(BOOLEAN_TYPE);
+    types.add(BYTE_TYPE);
+    types.add(CHAR_TYPE);
+    types.add(DOUBLE_TYPE);
+    types.add(FLOAT_TYPE);
+    types.add(INT_TYPE);
+    types.add(LONG_TYPE);
+    types.add(SHORT_TYPE);
+    PRIMITIVE_TYPES = Collections.unmodifiableList(types);
   }
 
   /**

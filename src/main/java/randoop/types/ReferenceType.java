@@ -130,7 +130,7 @@ public abstract class ReferenceType extends Type {
    * type is the same, or the other type is a type variable for which
    * this type satisfies the bounds.
    * Other cases are handled by the overriding implementations
-   * {@link InstantiatedType#isInstantiationOf(GenericClassType)} and
+   * {@link InstantiatedType#isInstantiationOf(ReferenceType)} and
    * {@link TypeVariable#isInstantiationOf(ReferenceType)}.
    *
    * @param otherType  the general reference type
@@ -152,10 +152,6 @@ public abstract class ReferenceType extends Type {
     return false;
   }
 
-  /**
-   * {@inheritDoc}
-   * @return true since this is a reference type
-   */
   @Override
   public boolean isReferenceType() {
     return true;
