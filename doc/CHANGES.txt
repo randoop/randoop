@@ -1,16 +1,17 @@
 Version 3.0.4, released August ?, 2016
 
-Randoop will now:
-- collect all member types visible to generated tests (fixes issue #88).
-- generate EnumSet objects for an Enum that is an input class (fixes issue #100)
-- generate assertions on Enum values (fixes issue #87)
-- generate Collection objects with parameterized element type (fixes issue #115)
+Randoop now:
+- collects all member types visible to generated tests (fixes issue #88).
+- generates EnumSet objects for an Enum that is an input class (fixes issue #100)
+- generates assertions on Enum values (fixes issue #87)
+- generates Collection objects with parameterized element type (fixes issue #115)
+- generates arrays with parameterized element type (fixes issue #114)
 
-Fixes bug in which uncompilable code was being generated for a call to a static
+Fixed a bug in which uncompilable code was being generated for a call to a static
 method of a generic class. Also, fixes a bug where uncompilable code to initialize
 a generic array was being generated.
 
-Fixes bug where test code was being generated that would result in an NPE when
+Fixed a bug where test code was being generated that would result in an NPE when
 an inner class constructor is called with the first parameter null. (Due to an
 apparent bug in Java reflection classes.)
 
