@@ -109,7 +109,7 @@ public abstract class TypeVariable extends ReferenceType {
   }
 
   @Override
-  boolean isInstantiationOf(ReferenceType otherType) {
+  public boolean isInstantiationOf(ReferenceType otherType) {
     if (super.isInstantiationOf(otherType)) {
       return true;
     }

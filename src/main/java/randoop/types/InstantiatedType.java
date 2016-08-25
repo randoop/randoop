@@ -278,17 +278,6 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   /**
-   * Checks whether this parameterized type is an instantiation of the given
-   * generic class type.
-   *
-   * @param genericClassType  the generic class type
-   * @return true if this type is an instantiation of the generic class, false otherwise
-   */
-  public boolean isInstantiationOf(GenericClassType genericClassType) {
-    return instantiatedType.isInstantiationOf(genericClassType);
-  }
-
-  /**
    * Checks whether this type is an instantiation of the given instantiated type.
    * This is only possible if this type is <code>A&lt;T<sub>1</sub>,&hellip;,T<sub>k</sub>&gt;</code>
    * where all <code>T<sub>i</sub></code> are instantiated by ground types (e.g., does not have type variables),
@@ -311,7 +300,7 @@ public class InstantiatedType extends ParameterizedType {
    * @return true if this type is an instantiation of the other type, false otherwise
    */
   @Override
-  boolean isInstantiationOf(ReferenceType otherType) {
+  public boolean isInstantiationOf(ReferenceType otherType) {
     if (super.isInstantiationOf(otherType)) {
       return true;
     }
@@ -327,8 +316,8 @@ public class InstantiatedType extends ParameterizedType {
       }
       return false; // instantiated generic class types are not same
     }
-
-    return false;
+    return (otherType instanceof GenericClassType)
+        && this.instantiatedType.isInstantiationOf(otherType);
   }
 
   @Override
@@ -398,7 +387,7 @@ public class InstantiatedType extends ParameterizedType {
           return true;
         }
 
-        SimpleClassOrInterfaceType rawtype = new SimpleClassOrInterfaceType(this.getRuntimeClass());
+        NonParameterizedType rawtype = new NonParameterizedType(this.getRuntimeClass());
         return rawtype.isSubtypeOf(otherType);
       }
 

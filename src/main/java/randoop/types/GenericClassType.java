@@ -282,8 +282,8 @@ public class GenericClassType extends ParameterizedType {
   }
 
   @Override
-  public boolean isInstantiationOf(GenericClassType genericClassType) {
-    return this.equals(genericClassType);
+  public boolean isInstantiationOf(ReferenceType otherType) {
+    return this.equals(otherType);
   }
 
   @Override
