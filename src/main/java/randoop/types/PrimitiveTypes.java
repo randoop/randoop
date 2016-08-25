@@ -69,8 +69,11 @@ public final class PrimitiveTypes {
   private static final Map<Class<?>, Set<Class<?>>> wideningTable = new HashMap<>();
 
   static {
-    Set<Class<?>> s = new HashSet<>();
+    // build transitive widening table for primitive types
+    // both boolean and double have no supertypes
+    wideningTable.put(boolean.class, new HashSet<Class<?>>());
     wideningTable.put(double.class, new HashSet<Class<?>>());
+    Set<Class<?>> s = new HashSet<>();
     s.add(double.class);
     wideningTable.put(float.class, new HashSet<>(s));
     s.add(float.class);
