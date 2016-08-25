@@ -110,7 +110,7 @@ public class ArrayType extends ReferenceType {
   @Override
   public ArrayType apply(Substitution<ReferenceType> substitution) {
     Type type = elementType.apply(substitution);
-    if (type != null && !type.equals(this)) {
+    if (!type.equals(this)) {
       return ArrayType.ofElementType(type);
     } else {
       return this;
@@ -126,19 +126,11 @@ public class ArrayType extends ReferenceType {
     return elementType;
   }
 
-  /**
-   * {@inheritDoc}
-   * @return the name of this array type
-   */
   @Override
   public String getName() {
     return elementType.getName() + "[]";
   }
 
-  /**
-   * {@inheritDoc}
-   * @return the {@code Class} object for the array
-   */
   @Override
   public Class<?> getRuntimeClass() {
     return runtimeClass;
@@ -153,10 +145,6 @@ public class ArrayType extends ReferenceType {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   * @return true, since this is an array
-   */
   @Override
   public boolean isArray() {
     return true;
@@ -186,10 +174,6 @@ public class ArrayType extends ReferenceType {
     return false;
   }
 
-  /**
-   * {@inheritDoc}
-   * @return true if the element type is generic, false otherwise
-   */
   @Override
   public boolean isGeneric() {
     return elementType.isGeneric();
