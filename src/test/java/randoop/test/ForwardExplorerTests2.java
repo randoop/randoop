@@ -31,6 +31,7 @@ import randoop.util.ReflectionExecutor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ForwardExplorerTests2 {
 
@@ -80,10 +81,11 @@ public class ForwardExplorerTests2 {
     // get a SequenceExceptionError when repeat_heuristic=true
     try {
       exp.explore();
-      // The timeout does not happen with 60-second timeout in RandoopSystemTest.runCollectionsTest.
       // fail("expected timeout exception");
     } catch (SequenceExceptionError e) {
       assertEquals("should be timeout", e.getMessage(), "Exception thrown before end of sequence");
+    } catch (Throwable t) {
+      fail("got an unexpected exception: " + t.getMessage());
     }
     for (Sequence s : exp.getAllSequences()) {
       s.toCodeString();
