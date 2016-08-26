@@ -566,14 +566,6 @@ merging new work with the master branch.
     is up-to-date.  Have a colleague review the changelog entry.
   </li>
   <li>
-    Pull, or clone, the Randoop gh-pages branch in a sibling subdirectory:
-    <pre>
-      (cd ../randoop-gh-pages && git pull) \
-      || (cd .. && git clone git@github.com:randoop/randoop.git randoop-gh-pages \
-          && cd randoop-gh-pages && git checkout gh-pages)
-    </pre>
-  </li>
-  <li>
     Increment the Randoop version number:
     <ol>
       <li>
@@ -621,14 +613,12 @@ merging new work with the master branch.
   </li>
   <li>Create the distribution files with <code>./gradlew clean build manual</code></li>
   <li>
-    Update the <code>gh-pages</code> branch using the sibling clone of the repository
-    created above:
+    Update the project documentation in the <code>docs</code> directory by
+    running the command
     <pre>
-  rm -rf ../randoop-gh-pages/manual
-  mv build/docs/manual ../randoop-gh-pages/
-  rm -rf ../randoop-gh-pages/api
-  mv build/docs/api ../randoop-gh-pages/
-  (cd ../randoop-gh-pages && git commit -m "Update for Randoop $NEWVERSION" && git push)</pre>
+  ./gradlew publishDocumentation
+    </pre>
+    and commit the changes.
   </li>
   <li>Follow the
     <a href="https://help.github.com/articles/creating-releases/">GitHub instructions for creating a release</a>;

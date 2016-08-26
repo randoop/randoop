@@ -390,8 +390,10 @@ task distributionZip (type: Zip , dependsOn: ['singleJar', 'copyJars', 'manual']
 
 /********************* Building manual *******************/
 /*
- * Goal is to create the contents of the manual directory deployed to gh-pages
- * branch. Has structure:
+ * Goal is to create the contents of the manual directory within buildDir to be
+ * moved to project docs directory.
+ *
+ * Has structure:
  *   docs/
  *     api/ - contains javadoc for main source set
  *     manual/
@@ -486,6 +488,14 @@ task copyManual(type:Copy, dependsOn: 'updateDevTOC') {
  */
 task manual(type: DefaultTask, dependsOn: ['copyManual', 'generateOptionsDoc', 'javadoc']) {
   description "Generates, updates and moves documentation into build/docs"
+}
+
+/*
+ * Publishes documentation to project docs directory for release.
+ */
+task publishDocumentation (type:Copy, dependsOn: 'manual') {
+  from ("${buildDir}/docs")
+  into "${projectDir}/docs"
 }
 
 /*************** Gradle Wrapper ******************/
