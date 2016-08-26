@@ -8,8 +8,6 @@ import java.util.Set;
 
 import plume.EntryReader;
 
-import static org.junit.Assert.fail;
-
 /**
  * Manages the options for a run of Randoop within a system test method so that the information
  * can be used to setup test conditions.
@@ -189,7 +187,7 @@ class RandoopOptions {
         }
       }
     } catch (IOException e) {
-      fail("Failed to load class names: " + e.getMessage());
+      System.err.println("Failed to load class names: " + e.getMessage());
     }
   }
 

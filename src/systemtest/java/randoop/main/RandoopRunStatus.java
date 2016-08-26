@@ -58,7 +58,7 @@ class RandoopRunStatus {
    * @return the status information collected from generation and compilation
    */
   static RandoopRunStatus generateAndCompile(
-      TestEnvironment testEnvironment, RandoopOptions options) {
+      TestEnvironment testEnvironment, RandoopOptions options, boolean allowRandoopFailure) {
 
     List<String> command = new ArrayList<>();
     command.add("java");
@@ -71,10 +71,11 @@ class RandoopRunStatus {
     ProcessStatus randoopExitStatus = ProcessStatus.runCommand(command);
 
     if (randoopExitStatus.exitStatus != 0) {
-      for (String line : randoopExitStatus.outputLines) {
-        System.err.println(line);
+      if (allowRandoopFailure) {
+        return getRandoopRunStatus(randoopExitStatus);
+      } else {
+        fail("Randoop exited badly, exit value = " + randoopExitStatus.exitStatus);
       }
-      fail("Randoop exited badly, exit value = " + randoopExitStatus.exitStatus);
     }
 
     String packagePathString = options.getPackageName().replace('.', '/');

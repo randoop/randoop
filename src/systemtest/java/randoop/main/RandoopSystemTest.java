@@ -6,11 +6,13 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Iterator;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
@@ -506,7 +508,8 @@ public class RandoopSystemTest {
     options.addTestClass("java.util.LinkedList");
     options.setFlag("noprogressdisplay");
 
-    RandoopRunStatus randoopRunDesc = RandoopRunStatus.generateAndCompile(testEnvironment, options);
+    RandoopRunStatus randoopRunDesc =
+        RandoopRunStatus.generateAndCompile(testEnvironment, options, false);
 
     assertThat(
         "There should be no output",
@@ -674,6 +677,25 @@ public class RandoopSystemTest {
         testEnvironment, options, expectedRegressionTests, expectedErrorTests);
   }
 
+  /**
+   * Test what happens when have empty input class names.
+   */
+  @Test
+  public void runEmptyInputNamesTest() {
+    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("empty-names");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addClassList("resources/systemTest/emptyclasslist.txt");
+
+    RandoopRunStatus result = generateAndCompile(testEnvironment, options, true);
+
+    Iterator<String> it = result.processStatus.outputLines.iterator();
+    String line = "";
+    while (!line.contains("No classes to test") && it.hasNext()) {
+      line = it.next();
+    }
+    assertTrue("should fail to find class names in file", line.contains("No classes to test"));
+  }
+
   /* ------------------------------ utility methods ---------------------------------- */
 
   /**
@@ -697,7 +719,7 @@ public class RandoopSystemTest {
       ExpectedTests expectedError,
       CoverageChecker coverageChecker) {
 
-    RandoopRunStatus runStatus = generateAndCompile(environment, options);
+    RandoopRunStatus runStatus = generateAndCompile(environment, options, false);
 
     String packageName = options.getPackageName();
 
@@ -854,13 +876,18 @@ public class RandoopSystemTest {
   /**
    * Runs Randoop using the given test environment and options, printing captured output to standard
    * output.
+   * Failure of Randoop may be allowed by passing true for {@code allowRandoopFailure}, otherwise,
+   * the test will fail.
    *
    * @param environment  the working environment for the test
    * @param options  the Randoop options
+   * @param allowRandoopFailure  flag whether to allow Randoop failure
    * @return the captured {@link RandoopRunStatus} from running Randoop
    */
-  private RandoopRunStatus generateAndCompile(TestEnvironment environment, RandoopOptions options) {
-    RandoopRunStatus runStatus = RandoopRunStatus.generateAndCompile(environment, options);
+  private RandoopRunStatus generateAndCompile(
+      TestEnvironment environment, RandoopOptions options, boolean allowRandoopFailure) {
+    RandoopRunStatus runStatus =
+        RandoopRunStatus.generateAndCompile(environment, options, allowRandoopFailure);
 
     boolean prevLineIsBlank = false;
     for (String line : runStatus.processStatus.outputLines) {
@@ -871,5 +898,17 @@ public class RandoopSystemTest {
       prevLineIsBlank = line.isEmpty();
     }
     return runStatus;
+  }
+
+  /**
+   * Runs Randoop given the test environment and options, printing captured output to standard
+   * output.
+   *
+   * @param environment  the working environment for the test
+   * @param options  the Randoop options
+   * @return the captured {@link RandoopRunStatus} from running Randoop
+   */
+  private RandoopRunStatus generateAndCompile(TestEnvironment environment, RandoopOptions options) {
+    return generateAndCompile(environment, options, false);
   }
 }
