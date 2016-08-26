@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="stylesheets/main.css" type="text/css" />
+<link rel="icon" type="image/png" href="https://randoop.github.io/randoop/images/randoop-logo.png" />
+<title>Randoop Developer's Manual</title>
+</head>
+<body>
+
+<img src="https://randoop.github.io/randoop/images/randoop-logo.png" alt="Randoop logo" style="float:right" />
+
+<h1>Randoop Developer's Manual</h1> <!-- omit from toc -->
+
+<!-- start toc.  do not edit; run html-update-toc instead -->
+<ul>
+  <li><a href="#starting">Getting Started</a></li>
+  <li><a href="#tasks">Compiling, testing, releasing, etc.</a>
+    <ul>
+      <li><a href="#compiling">Building and Testing Randoop</a>
+        <ul>
+          <li><a href="#gradlew">The Gradle wrapper</a></li>
+          <li><a href="#buildgradle">The Randoop build script</a></li>
+        </ul></li>
+      <li><a href="#usinganide">Using an IDE</a></li>
+      <li><a href="#classpath">Randoop classpath</a></li>
+      <li><a href="#maintenance">Maintaining Randoop</a>
+        <ul>
+          <li><a href="#maintaininglibraries">Updating libraries</a></li>
+          <li><a href="#documentingchanges">Documenting Changes</a></li>
+          <li><a href="#codeformatting">Formatting Randoop Source Code</a></li>
+          <li><a href="#modmanual">Modifying the manual</a></li>
+          <li><a href="#addtests">Adding Tests</a>
+            <ul>
+              <li><a href="#unit-tests">Unit Tests</a></li>
+              <li><a href="#system-tests">System Tests</a></li>
+            </ul></li>
+          <li><a href="#testing-changes">Testing your changes</a></li>
+        </ul></li>
+      <li><a href="#making_new_dist">Releasing a New Version of Randoop</a></li>
+    </ul></li>
+  <li><a href="#file-organization">Project Directory Organization</a></li>
+  <li><a href="#randoop_internals">Randoop Internals</a>
+    <ul>
+      <li><a href="#unit_tests">Unit test concepts</a></li>
+      <li><a href="#sequence">Sequences</a>
+        <ul>
+          <li><a href="#creating_sequence">Creating sequences</a></li>
+        </ul></li>
+      <li><a href="#executing_sequence">Executable Sequences</a>
+        <ul>
+          <li><a href="#executing-a-sequence">Executing a sequence</a></li>
+        </ul></li>
+      <li><a href="#inout_sequence">Writing/reading sequences to file</a>
+        <ul>
+          <li>
+            <ul>
+              <li><a href="#writing_reading_serialized">Writing/reading serialized sequences</a></li>
+              <li><a href="#writing_sequence_as_junit">Writing a sequence as a JUnit test</a></li>
+            </ul></li>
+        </ul></li>
+      <li><a href="#checks">Checks</a>
+        <ul>
+          <li><a href="#checks_">Executing Checks</a></li>
+        </ul></li>
+      <li><a href="#code-entry">Main entry points</a></li>
+      <li><a href="#code-generator">Test generator classes</a></li>
+    </ul></li>
+</ul>
+<!-- end toc -->
+
+<p>
+(Also see the <a href="index.html">Randoop Manual</a>.)
+</p>
+
+
+<hr />
+
+
+
+<h1 id="starting">Getting Started</h1>
+
+<p>Clone the repository:</p>
+
+<pre>
+  git clone git@github.com:randoop/randoop.git
+</pre>
+
+<p>
+  When working on a particular feature, create a new
+  branch and work there rather
+  than in the <code>master</code> branch.
+</p>
+
+
+<h1 id="tasks">Compiling, testing, releasing, etc.</h1>
+
+
+<h2 id="compiling">Building and Testing Randoop</h2>
+
+<p>
+  In Randoop's top-level directory, run
+</p>
+<pre>  ./gradlew build manual</pre>
+<p>
+  This command compiles Randoop, compiles the Java agents, runs all tests,
+  builds the jar files, and updates the manual from the source Javadoc.
+  Generated files are
+  placed in subdirectories named <code>build</code> in the parent directory and in
+  each of the agent subdirectories.
+  Jar files are placed in directory <code>build/libs</code>.
+</p>
+
+<p>
+  <b>Windows users:</b> you do not need to include the "<code>./</code>" when running Gradle.
+  When our instructions say to run <code>./gradlew build</code>, you will run <code>gradlew build</code> instead.
+</p>
+
+<p>
+  You can also break this process down by running separate tasks.
+  For the full list of tasks supported by the Randoop build script, type
+  <code>./gradlew tasks</code>.
+  Particular tasks that may be useful during development include
+</p>
+<table style="border:0;">
+  <tr>
+    <td><code>./gradlew jar</code></td>
+    <td>to build the Randoop jar files</td>
+  </tr>
+  <tr>
+    <td><code>./gradlew assemble</code></td>
+    <td>to compile and build Randoop and fat jar files</td>
+  </tr>
+  <tr>
+    <td><code>./gradlew singleJar</code></td>
+    <td>to build the "user" jar including all library dependencies
+  </tr>
+  <tr>
+    <td><code>./gradlew check</code></td>
+    <td>to run all of the tests</td>
+  </tr>
+  <tr>
+    <td><code>./gradlew testReport</code></td>
+    <td>to generate HTML reports from tests
+      (in <code>build/reports/allTests</code>)</td>
+  </tr>
+  <tr>
+    <td><code>./gradlew clean</code></td>
+    <td>to remove the <code>build</code> subdirectory</td>
+  </tr>
+  <tr>
+    <td><code>./gradlew compileJava</code></td>
+    <td>to compile the <code>main</code> source set</td>
+  </tr>
+  <tr>
+    <td><code>./gradlew compileTestJava</code></td>
+    <td>to compile the <code>test</code> source set</td>
+  </tr>
+  <tr>
+    <td><code>./gradlew compileAgentTestJava</code></td>
+    <td>to compile the <code>agentTest</code> source set</td>
+  </tr>
+  <tr>
+    <td><code>./gradlew manual</code></td>
+    <td>to update the manual from the source Javadoc</td>
+  </tr>
+</table>
+<p>
+  Compiling uses the concept of
+  <a href="https://docs.gradle.org/current/userguide/java_plugin.html"><i>source sets</i></a>.
+  A source set is a grouping of source files that can have its own set of
+  dependencies and tasks.
+  For instance, in the Randoop <code>build.gradle</code> there is the
+  <code>agentTest</code> source set that is separate from the <code>test</code> source
+  set because the test classes must run using the <code>exercised-class</code> Java
+  agent.
+  The Gradle Java plugin normally has two source sets named <code>main</code> and <code>test</code>,
+  and the Randoop build script defines others to better structure the build process.
+</p>
+
+<p>
+  Here are some Gradle tricks that may be useful:
+</p>
+<ul>
+  <li>Gradle allows you to run multiple tasks.  For instance, for a clean build,
+    type <code>./gradlew clean build</code>.</li>
+  <li><p>You can run a single test or smaller group of tests by using the <code>--tests</code>
+    option on the command line.
+    For instance,
+<ul>
+  <li> use
+    <pre><code>
+      ./gradlew test --tests="*GenericTypesTest"
+    </code></pre>
+    to run only the tests in <code>randoop.types.generics.GenericTypesTest</code>, and
+  </li>
+  <li> use
+    <pre><code>
+      ./gradlew test --tests="*testVar*"
+  </code></pre>
+    to run the test method <code>randoop.types.generics.GenericTypesTest.testVariableParameters</code>.
+  </li>
+  </ul></li>
+
+</ul>
+
+
+<h3 id="gradlew">The Gradle wrapper</h3>
+
+<p>
+Randoop is built with Gradle.
+The shell script named <code>./gradlew</code> and the Windows batch script
+<code>gradlew.bat</code> run the Gradle wrapper for the project, which is the
+recommended way to run Gradle commands.
+Using the wrapper means you don't have to install Gradle yourself, instead
+the wrapper will download Gradle the first time you run a build command.
+</p>
+
+<p>
+To learn more about Gradle beyond the basic commands
+given here, see the Gradle
+<a href="https://docs.gradle.org/current/userguide/tutorial_gradle_command_line.html">command-line tutorial</a>.
+</p>
+
+
+<h3 id="buildgradle">The Randoop build script</h3>
+
+<p>
+  The Gradle build tasks for Randoop are defined in the build script <code>build.gradle</code>,
+  along with the build scripts for the java agents in the corresponding subproject directories.
+  This is the file you would modify to change the Randoop build.
+  Note that the script uses plugins that each define tasks that may not be explicit
+  within the script, though it may be possible to configure them differently by
+  following the instructions at the plugin sites.
+</p>
+
+<p>
+  If you add or change a build task in a way that affects how Randoop is built,
+  you should also update this document, which appears in the gh-pages branch.
+  When you push your changes to the master branch on GitHub, you should also
+  push to the gh-pages branch.
+</p>
+
+<h2 id="usinganide">Using an IDE</h2>
+
+<p>
+  The build script supports use of IntelliJ IDEA, NetBeans, and Eclipse.
+</p>
+
+<ul>
+  <li>
+  To work with <b>IntelliJ IDEA</b>, run the command
+
+<pre>
+  ./gradlew idea
+</pre>
+
+  at the command line in the Randoop directory.
+  This uses the
+  <a href="https://docs.gradle.org/current/userguide/idea_plugin.html">IntelliJ IDEA plugin</a>
+  to create IDEA configuration files that IntelliJ uses when importing the project.
+  You can then import the project as a Gradle project in IntelliJ IDEA, following
+  any suggestions made on configuring Gradle support.
+  See the Gradle tool window documentation at the <a href="https://www.jetbrains.com/help/idea/">IDEA Help</a> site
+  on how to work with Gradle projects.
+</li>
+
+<li>
+  To work with <b>NetBeans</b>, run the command
+<pre>
+  ./gradlew idea
+</pre>
+  at the command line in the Randoop directory.
+  Then install the
+  <a href="https://github.com/kelemen/netbeans-gradle-project">NetBeans plugin</a>
+  in NetBeans.
+  This plugin uses the configuration files generated for the IDEA plugin during
+  the import into NetBeans.
+</li>
+
+<li>
+  To work with <b>Eclipse</b>, run the command
+<pre>
+  ./gradlew eclipse
+</pre>
+  at the command line in the Randoop directory.
+  This runs
+  <a href="https://docs.gradle.org/current/userguide/eclipse_plugin.html">the Gradle Eclipse plugin</a>
+  to configure the project for use with Eclipse.
+  This will allow you to import Randoop as a project within Eclipse.
+</li>
+</ul>
+
+<p>
+  Other than <code>.gitignore</code>, the tool-specific settings are not part of the
+  repository.
+  If your tool creates new configuration files, please add them to the
+  <code>.gitignore</code> file.
+  If you edit <code>build.gradle</code>,
+  please verify that it doesn't change behavior
+  from the command line using the Gradle wrapper.
+</p>
+
+
+<h2 id="classpath">Randoop classpath</h2>
+
+<p>
+  When running Randoop, you should use the file
+  <code>randoop-all-<em>X.Y.Z</em>.jar</code>
+  that includes all dependencies.
+  For more detail, see the <a href="index.html">Randoop Manual</a>.
+</p>
+
+<p>
+Otherwise, to run Randoop, your classpath must include either the Randoop class files or
+the Randoop jar file, and also must include <code>lib/plume.jar</code>.
+After the build, the classpath should include either of the following
+</p>
+<ul>
+  <li>
+<code>
+&lt;randoop-path&gt;/build/libs/randoop-3.0.0.jar:&lt;randoop-path&gt;/lib/plume.jar
+</code>
+</li>
+<li>
+<code>
+&lt;randoop-path&gt;/build/build/classes/main:&lt;randoop-path&gt;/lib/plume.jar
+</code> </li>
+</ul>
+<p>
+It is recommended that the classpath for classes under test be placed before
+Plume-lib, should there be a conflict in included classes.
+</p>
+
+<p>
+The jar files for Java agents are located in
+the <code>build/libs</code> subdirectory of both the Randoop project and the
+agent project directories.
+So, for instance, the following will work to run the <code>exercised-class</code> agent:
+</p>
+<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/exercised-class-3.0.0.jar</code></pre>
+
+
+<h2 id="maintenance">Maintaining Randoop</h2>
+
+<h3 id="maintaininglibraries">Updating libraries</h3>
+
+<p>
+  Gradle downloads the appropriate version of
+  most of the libraries that Randoop uses.
+  However, Randoop also uses other libraries that are kept in the <code>lib</code>
+  directory.
+  Periodically, you should follow the instructions in
+  <code>lib/README</code> to update these "local" libraries.
+</p>
+
+
+<h3 id="documentingchanges">Documenting Changes</h3>
+
+<p>
+  Any user-visible changes should be documented in the changelog
+  <code>doc/CHANGES.txt</code>.
+  Be sure to describe the change in terms of how it affects the user.
+  List any bug fixes that may affect any user visible behavior.
+  Optionally, mention any serious reported issues that are not fixed.
+  Order the information by importance to the user.
+  This text is used for documenting releases, so keeping it up-to-date and
+  ready for public release saves time in the long run.
+</p>
+
+
+<h3 id="codeformatting">Formatting Randoop Source Code</h3>
+
+<p>
+  The Randoop source code is formatted in
+  <a href="https://google.github.io/styleguide/javaguide.html">Google Java Format</a>
+  by using the
+   <a href="https://github.com/google/google-java-format">google-java-format</a>
+  tool.
+  The RandoopGradle build script is setup to allow this tool to be applied using
+  the following commands:
+  (Please read cautions below before running the tool.)
+</p>
+<ul>
+  <li><code>./gradlew googleJavaFormat</code> (or <code>goJF</code>) to reformat
+    all Java files in the repository. (CAUTION!)</li>
+  <li><code>./gradlew verifyGoogleJavaFormat</code> (or <code>verGJF</code>)</li>
+</ul>
+<p>
+  <b>CAUTION</b>: The first command will change every single Java file in the
+  repository, and should not be done before submitting a Pull Request against a
+  branch that is out of format. Instead, make sure that the base branch is
+  reformatted before creating the PR.
+</p>
+
+
+<h3 id="modmanual">Modifying the manual</h3>
+
+<p>
+The documentation for Randoop is in the subdirectory <code>doc</code>:
+</p>
+<ul>
+<li> <code>doc/index.html</code> has the user manual.
+<li> <code>doc/dev.html</code> is this developer manual.</li>
+</ul>
+
+<p>
+The command <code>./gradlew manual</code> creates the Javadoc for
+Randoop, updates command-line argument documentation in the user manual,
+and updates the
+table-of-contents in both manuals (in the <code>doc</code> directory).
+The Javadoc is placed in
+<code>build/docs/api/</code>, and the manuals
+are copied to <code>build/docs/manual/</code>.
+</p>
+
+
+<h3 id="addtests">Adding Tests</h3>
+
+<p>
+  As you add new functionality to Randoop, you should also add new tests.
+  Randoop has three kinds of tests:
+  unit tests of Randoop internal classes (under directory <code>src/test</code>),
+  unit tests of Randoop Java agents (under directory <code>src/agenttest</code>), and
+  system tests that run Randoop on input classes.
+</p>
+
+
+<h4 id="unit-tests">Unit Tests</h4>
+
+<p>
+  If you write JUnit tests that change the static state of either a command-line
+  argument or a static class, then you should add <code>BeforeClass</code> and <code>AfterClass</code>
+  annotated methods that save and restore the prior state.
+  For command-line arguments, this can be done by adding the following code to
+  the beginning of the test class:
+</p>
+
+<pre><code>
+  private static OptionsCache optionsCache;
+
+  @BeforeClass
+  public static void setup() {
+    optionsCache = new OptionsCache();
+    optionsCache.saveState();
+  }
+
+  @AfterClass
+  public static void restore() {
+    optionsCache.restoreState();
+  }
+</code></pre>
+
+<p>
+This uses the <code>randoop.main.OptionsCache</code> class to save the static state of
+all classes that include the definition of command-line arguments.
+For classes under test with static state that is changed, you would use the
+<code>randoop.reflection.StaticCache</code> class to save and restore the state
+of that particular class in a similar way.
+</p>
+
+<h4 id="system-tests">System Tests</h4>
+
+<p>
+  The system tests are test methods of class <code>randoop.main.RandoopSystemTest</code>
+  in the <code>src/systemtest</code> directory.
+  Each test uses one or more input classes from the <i>testInput</i> source set,
+  which resides in the <code>src/testinput/java</code> subdirectory.
+  (System tests are run with a different classpath than the other tests, and
+  will only take input classes from <code>src/testinput</code>.)
+  So, to set up a new system test, you need to add any new input classes, and add
+  a new test method to the system test class.
+</p>
+
+<p>
+  Here is an example test from <code>randoop.main.RandoopSystemTest</code> that
+  illustrates the main themes that occur in writing a system test.
+</p>
+<pre><code>
+ @Test
+ public void runLiteralsTest() {
+
+   // 1. Set up a working directory -- choose a unique name
+  TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("literals-test");
+
+   // 2. Set options for test generation
+  RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+  options.setPackageName("");
+  options.setRegressionBasename("LiteralsReg");
+  options.setErrorBasename("LiteralsErr");
+  options.setOption("inputlimit", "1000");
+  options.addTestClass("randoop.literals.A");
+  options.addTestClass("randoop.literals.A2");
+  options.addTestClass("randoop.literals.B");
+  options.setOption("literals-level", "CLASS");
+  options.setOption("literals-file", "resources/systemTest/literalsfile.txt");
+
+  // 3. Indicate whether you expect regression tests (if you don't care use ExpectedTests.DONT_CARE)
+  ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+  ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+
+  // 4. Run Randoop, compile and run generated tests, and check to see if expectations met
+  generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+ }
+</code></pre>
+
+<p>
+The options list is exactly what you would give at the command line, except for
+setting the names and package for generated tests.
+All Randoop options may be given, except for <code>--junit-reflection-allowed=false</code>
+since the test run method only looks for JUnit suite classes.
+</p>
+
+<p>
+  Most existing tests take this form, using the <code>RandoopSystemTest.generateAndTest()</code> method,
+  which checks whether Randoop generates the expected tests, that the tests compile,
+  and that regression tests pass and error tests fail when run.
+  The method also allows indicating for both kinds of tests, whether there should
+  be some (at least one) test, none, or if it doesn't matter.
+  This is done using the <code>ExpectedTests</code> enumerated type, which has
+  values <code>SOME</code>, <code>NONE</code>, and <code>DONT_CARE</code>.
+</p>
+<p>
+  However, it is possible to build a test differently using the utility methods of
+  the <code>RandoopSystemTest</code> class.
+  At a minimum, a system test always attempts to compile generated tests.
+  It should also try to run any generated tests and confirm that regression tests
+  pass, and that error tests fail.
+  Additional information can be found in the <code>RandoopSystemTest</code> class.
+</p>
+
+
+<h3 id="testing-changes">Testing your changes</h3>
+
+<p>
+You will receive email if you author or push a commit that breaks the build at
+<a href="https://travis-ci.org/randoop/randoop">https://travis-ci.org/randoop/randoop</a>.
+They currently pass if this icon is green:
+<img src="https://api.travis-ci.org/randoop/randoop.svg?branch=master" alt="Randoop Travis status icon"/>
+</p>
+
+<p>
+You can preemptively find most problems that Travis will find by running the
+commands
+</p>
+<pre><code>./gradlew clean assemble check manual</code></pre>
+<p>
+locally before doing a push to GitHub.
+However, some build problems may not occur without a clean project
+build.  Therefore, it is a good idea to push a branch to the Randoop repository
+and wait for the Travis build to succeed  before
+merging new work with the master branch.
+</p>
+
+
+
+<h2 id="making_new_dist">Releasing a New Version of Randoop</h2>
+
+<p>
+  To make a release from the master branch, follow these steps:
+</p>
+<ol>
+  <li>
+    Be sure that everything related to
+    <a href="#maintenance">maintenance</a>
+    is up-to-date.  Have a colleague review the changelog entry.
+  </li>
+  <li>
+    Pull, or clone, the Randoop gh-pages branch in a sibling subdirectory:
+    <pre>
+      (cd ../randoop-gh-pages && git pull) \
+      || (cd .. && git clone git@github.com:randoop/randoop.git randoop-gh-pages \
+          && cd randoop-gh-pages && git checkout gh-pages)
+    </pre>
+  </li>
+  <li>
+    Increment the Randoop version number:
+    <ol>
+      <li>
+        Set environment variables for the old and new version numbers.  (Don't use the examples given here!)
+        <pre>
+  OLDVERSION=<em>2.1.4</em>
+  NEWVERSION=<em>3.0.0</em></pre>
+        These are used for working with git.
+      </li>
+      <li>Also, update the version number and date in each of
+        <code>build.gradle</code>,
+        <code>src/main/java/randoop/Globals.java</code>,
+        <code>doc/CHANGES.txt</code>, and
+        <code>doc/index.html</code>.
+      </li>
+    </ol>
+  </li>
+  <li>Commit any changes; push any unpushed
+    commits.  Find out if any exist by running:
+    <pre>git status && git log --branches --not --remotes</pre>
+  </li>
+  <li>Compile and test.  If any tests fail, fix them and start over.
+    <pre>./gradlew clean build</pre>
+  </li>
+  <li>You should have been updating the changelog <code>doc/CHANGES.txt</code>
+    all along, but double-check by running a command such as this:
+    <pre>git log v$OLDVERSION..</pre>
+  </li>
+  <li>Ensure that the manual HTML is valid; commit any necessary changes:
+    <pre>./gradlew manual</pre>
+  </li>
+</ol>
+<p>
+  Once there are no more changes to make:
+</p>
+<ol>
+  <li>Commit and push any changes, and make a
+    repository tag:
+    <pre>
+  git commit . -m "Update version to $NEWVERSION"
+  git push
+  git tag -a v$NEWVERSION -m "Randoop version $NEWVERSION"
+  git push --tags</pre>
+    <!-- The gh-pages branch is not tagged. -->
+  </li>
+  <li>Create the distribution files with <code>./gradlew clean build manual</code></li>
+  <li>
+    Update the <code>gh-pages</code> branch using the sibling clone of the repository
+    created above:
+    <pre>
+  rm -rf ../randoop-gh-pages/manual
+  mv build/docs/manual ../randoop-gh-pages/
+  rm -rf ../randoop-gh-pages/api
+  mv build/docs/api ../randoop-gh-pages/
+  (cd ../randoop-gh-pages && git commit -m "Update for Randoop $NEWVERSION" && git push)</pre>
+  </li>
+  <li>Follow the
+    <a href="https://help.github.com/articles/creating-releases/">GitHub instructions for creating a release</a>;
+    in particular, start at
+    <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
+    click "Tags", click "add release notes" for the new tag (e.g., v<em>3.0.0</em>),
+    name it "Randoop version <em>3.0.0</em>", use the changelog entry as the
+    description (but remove any line breaks and check the preview), upload the
+    jar files from <code>build/libs</code>, and, finally, click "publish release".
+  </li>
+  <li>Email an announcement to randoop-discuss@googlegroups.com.
+    <br/>
+    Subject: Randoop version <em>3.0.0</em>
+    <br/>
+    Randoop <em>3.0.0</em> has been released and is available at
+    https://github.com/randoop/randoop/releases/.  The changelog appears below.
+  </li>
+</ol>
+
+
+<h1 id="file-organization">Project Directory Organization</h1>
+
+<p>
+Randoop has the following directory organization:
+</p>
+<ul>
+  <li> <i>agent</i> - subprojects for Java agents (load-time bytecode rewriting)</li>
+  <li> <i>doc</i> - documentation, such as this manual</li>
+  <li> <i>lib</i> - jar files for local copies of libraries not available via Maven</li>
+  <li> <i>src</i> - source directories for Randoop, including
+    <ul>
+      <li><i>main</i> - Randoop source code</li>
+      <li><i>test</i> - source for JUnit tests of Randoop</li>
+      <li><i>agenttest</i> - source for JUnit tests of the exercised-class Java agent</li>
+      <li><i>testinput</i> - source for libraries used in Randoop testing</li>
+      <li><i>systemtest</i> - source for Randoop system tests
+    </ul>
+  </li>
+</ul>
+<p>
+The source directories follow the conventions of the Gradle Java plugin, where
+each directory has a <i>java</i> subdirectory containing Java source, and,
+in some cases, a <i>resources</i> subdirectory containing other files.
+</p>
+
+<p>
+  There is also a <i>gradle</i> directory with the Gradle Wrapper, but you
+  shouldn't need to do anything with it.
+</p>
+
+
+<h1 id="randoop_internals">Randoop Internals</h1>
+
+<p>
+This section describes Randoop's main concepts, data structures and
+internal algorithms. To this end, it helps to understand our model of
+unit tests.
+</p>
+
+<h2 id="unit_tests">Unit test concepts</h2>
+
+<p>
+A unit test is a snippet of code that checks
+some expected property of some classes under test.
+It is helpful to think of a unit test as consisting of <i>two</i> things:
+</p>
+<ul>
+<li><b>A test input</b>:  the portions of the code that call
+constructors and method of the classes under test; this is sometimes called the setup code.</li>
+<li><b>Checks</b> or assertions: the
+portion of the code that <i>checks</i> that the test input behaves as
+expected.</li>
+</ul>
+<p>
+As a simple example, suppose we are testing the JDK's collections
+classes (<code>LinkedList</code>, <code>Collections</code>, etc.)  The
+following unit test checks that the size of a linked list is computed
+correctly after an element is added.
+</p>
+
+<pre class="code">
+1.   // Tests that the size of a list is 1 after adding an element.
+2.   public void testAdd() {
+3.      LinkedList&lt;String&gt; list = new LinkedList&lt;&gt;();
+4.      boolean b = list.add(null);
+5.      assertTrue(list.size() == 1);
+6.   }
+</pre>
+
+<p>
+The test input consists of lines 3-4, which exercises the code of the list class
+by creating a list, and then calling the <code>add</code> method.
+The test check is on line 5.
+</p>
+
+<p>
+In Randoop, a test input is represented as a
+<a href="../api/randoop/sequence/Sequence.html">Sequence</a>,
+and test checks are represented using <a href="../api/randoop/test/Check.html">Checks</a>.
+Each sequence is made up of one or more
+<a href="../api/randoop/sequence/Statement.html">Statement</a> objects.
+</p>
+
+<p>
+Randoop's generation algorithms creates Sequences, adding the appropriate Checks
+to each, and output the results to the user as unit tests.
+</p>
+
+<h2 id="sequence">Sequences</h2>
+
+<p>
+Randoop generates
+<a href="../api/randoop/sequence/Sequence.html">Sequence</a> objects, which are used
+to construct the inputs of unit tests by adding checks.
+In Randoop, all test inputs are sequences of operations that use the methods and
+constructors of the classes under test.
+</p>
+
+<p>
+Continuing with our running example,
+here is an example of a sequence of statements that calls
+methods from the classes under test:
+separate line:
+</p>
+
+<pre class="code">
+  LinkedList&lt;String&gt; l = new LinkedList&lt;&gt;();
+  String str = "hi!"
+  l.addFirst(str);
+  int i = l.size();
+  TreeSet&lt;String&gt; t = new TreeSet&lt;&gt;(l);
+  Set&lt;String&gt; s = Collections.synchronizedSet(t);
+</pre>
+
+<p>
+Notice that each statement has three elements:
+</p>
+<ol>
+<li>A specific method (or constructor) that is being called.</li>
+<li>A value (primitive or object) returned by each call
+(<code>l</code>,
+<code>str</code>,
+<code>i</code>,
+<code>t</code>, and
+<code>s</code>).</li>
+<li>Inputs to the call, all of which come from values produced in earlier statements.</li>
+</ol>
+<p>
+Rearranging the above sequence, we can see these elements more clearly:
+</p>
+<pre class="code">
+                  Result      Operation        Inputs
+                  ======      =============        ======
+statement 0:      l       =   new LinkedList       ()
+statement 1:      str     =   "hi!"                ()
+statement 2:                  addFirst             (l, str)
+statement 3:      i       =   size                 (l)
+statement 4:      t       =   new TreeSet          (l)
+statement 5:      s       =   synchronizedSet      (t)
+</pre>
+
+
+The three elements of a statement map to the following classes in Randoop:
+
+<ul>
+
+<li>
+<p>A <a href="../api/randoop/operation/Operation.html">Operation</a>
+represents the kind of operation that the statement
+performs.
+</p>
+<p>
+Randoop operations include:
+</p>
+<ul>
+<li><a href="../api/randoop/operation/MethodCall.html">MethodCall</a> represents a particular
+method call. This class is Randoop's analogue of Java
+reflection's
+<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html"><code>Method</code></a>
+class, and adds additional
+functionality useful to Randoop.
+</li>
+
+<li><a href="../api/randoop/operation/ConstructorCall.html">ConstructorCall</a>
+represents a constructor call.
+</li>
+
+<li>
+<a href="../api/randoop/operation/FieldGet.html">FieldGet</a> and <a href="../api/randoop/operation/FieldSet.html">FieldSet</a>
+represent getting and setting a public field. Fields are represented by
+instances of classes that implement <a href="../api/randoop/field/AccessibleField.html">AccessibleField</a>.
+</li>
+
+<li>
+<a href="../api/randoop/operation/EnumConstant.html">EnumConstant</a>
+represents an enum constant value.
+</li>
+
+<li><a href="../api/randoop/operation/NonreceiverTerm.html">NonreceiverTerm</a>
+represents a statement that declares and initializes a variable to primitive value, a String, or
+the <code>null</code> value (in code, <code>int x =
+1</code>, <code>String s = "s"</code>, <code>Foo f = null</code>,
+etc.).
+</li>
+
+<li><a href="../api/randoop/operation/ArrayCreation.html">ArrayCreation</a>
+represents a statement that declares and initializes an array out of values created in
+previous statements (e.g. <code>int[] x = new int[] { var0, var1
+};</code>).
+</li>
+
+</ul>
+</li>
+
+<li><a href="../api/randoop/sequence/Variable.html">Variables</a> represent
+both the inputs and the outputs of a statement. A variable is just a
+wrapper around an index in the sequence: given a
+sequence <code>s</code>, the variable <code>s.getVariable(i)</code>
+represents the value produced by the i-th statement in the sequence.
+</li>
+
+</ul>
+
+<h3 id="creating_sequence">Creating sequences</h3>
+
+<p>
+You can create sequences in a variety of ways. The first way is
+via <i>extension</i>: take a sequence and add a new statement at the
+bottom. Recall the example sequence:
+</p>
+
+<pre class="code">
+  LinkedList&lt;String&gt; l = new LinkedList&lt;&gt;();
+  String str = "hi!";
+  l.addFirst(str);
+  int i = l.size();
+  TreeSet&lt;String&gt; t = new TreeSet&lt;&gt;(l);
+  Set s = Collections.synchronizedSet(t);
+</pre>
+
+<p>
+To create this sequence by extension we need the operations.
+Because this code involves parameterized types, we need to instantiate the generic
+class types that are used in order to get the type substitution that we need.
+For instance, for the <code>LinkedList&lt;String&gt;</code> constructor call, we
+write:
+</p>
+
+<pre class="code">
+  InstantiatedType linkedListType = JDKTypes.LINKED_LIST_TYPE.instantiate(ConcreteTypes.STRING_TYPE);
+  Substitution&lt;ReferenceType&gt; substLL = linkedListType.getTypeSubstitution();
+  TypedOperation newLL = TypedOperation.forConstructor(LinkedList.class.getConstructor()).apply(substLL);
+</pre>
+
+<p>
+which first creates the parameterized type, gets the type substitution, and then
+applies the substitution to the operation created from the constructor of the
+generic class.
+The next operations aren't from generic classes, and don't require this amount of setup:
+</p>
+
+<pre class="code">
+  TypedOperation newOb = TypedOperation.createPrimitiveInitialization(ConcreteTypes.STRING_TYPE, "hi!");
+  TypedOperation addFirst = TypedOperation.forMethod(LinkedList.class.getMethod("addFirst", Object.class)).apply(substLL);
+  TypedOperation size = TypedOperation.forMethod(LinkedList.class.getMethod("size")).apply(substLL);
+</pre>
+
+<p>
+But operations with wildcards require a substitution be applied first for the
+variables in the type, a capture conversion be applied, and then a substitution
+for the variables from the capture conversion.
+</p>
+
+<pre class="code">
+  InstantiatedType treeSetType = JDKTypes.TREE_SET_TYPE.instantiate(ConcreteTypes.STRING_TYPE);
+  Substitution&lt;ReferenceType&gt; substTS = treeSetType.getTypeSubstitution();
+  TypedOperation wcTS = TypedOperation.forConstructor(TreeSet.class.getConstructor(Collection.class)).apply(substTS).applyCaptureConversion();
+  Substitution&lt;ReferenceType&gt; substWC = Substitution.forArgs(wcTS.getTypeParameters(), (ReferenceType)ConcreteTypes.STRING_TYPE);
+  TypedOperation newTS = wcTS.apply(substWC);
+</pre>
+
+<p>
+And, similarly a generic operation requires building a substitution for the
+parameter to the method:
+</p>
+
+<pre class="code">
+   TypedOperation syncA = TypedOperation.forMethod(Collections.class.getMethod("synchronizedSet", Set.class));
+   Substitution&lt;ReferenceType&gt; substA = Substitution.forArgs(syncA.getTypeParameters(), (ReferenceType)ConcreteTypes.STRING_TYPE);
+   TypedOperation syncS = syncA.apply(substA);
+</pre>
+
+<p>
+Once the operations are defined with the proper types, we can build the sequence
+by extension:
+</p>
+
+<pre class="code">
+  Sequence s = new Sequence();
+     s = s.extend(newLL);
+     s = s.extend(newOb);
+     s = s.extend(addFirst, s.getVariable(0), s.getVariable(1));
+     s = s.extend(size,    s.getVariable(0));
+     s = s.extend(newTS,   s.getVariable(0));
+     s = s.extend(syncS,   s.getVariable(4));
+</pre>
+
+<p>
+A couple notable points:
+</p>
+<ul>
+<li> Sequences are <b>immutable</b>. The <code>extend</code> operation
+returns a new sequence rather than modifying its receiver.</li>
+<li> If the above code feels somewhat onerous, keep in mind that the
+Sequences classes were designed for automatic generation, not to
+create individual sequences by hand. The purpose of these examples is
+to show you how sequences are created so that, if you need to, you can
+create new automated generation techniques.</li>
+</ul>
+<p>
+A second way to create a sequence is using <code>concatenation</code>:
+given sequences <code>s1</code>, <code>s2</code>, and <code>s3</code>,
+you can create a new sequence that is the concatenation of the three
+sequences.
+</p>
+<pre class="code">
+List&lt;Sequence&gt; seqs = new ArrayList&lt;Sequence&gt;();
+seqs.add(s1);
+seqs.add(s2);
+seqs.add(s3);
+Sequence newSeq = Sequence.concatenate(seqs);
+</pre>
+
+<p>
+If you're wondering why concatenation is useful, it is actually how
+Randoop combines sequences to create new ones. To create a new
+sequence that tests method <code>m(A a, B b)</code>, Randoop first
+finds and concatenates previously-generated sequences that create
+objects of type <code>A</code> and <code>B</code>, and then extends
+the concatenated sequence with a call of <code>m</code>. See
+<a href="http://homes.cs.washington.edu/~mernst/pubs/feedback-testgen-icse2007.pdf">Section
+2.2. of this paper</a> for more details.
+</p>
+<p>
+A third way to create a sequence is by parsing it from a String. For
+example, given a string <code>parseable</code> with the following contents:
+</p>
+<pre class="code">
+var0 =  cons : java.util.LinkedList.&lt;init&gt;() :
+var1 =  cons : java.lang.Object.&lt;init&gt;() :
+var2 =  method : java.util.LinkedList.addFirst(java.lang.Object) : var0 var1
+var3 =  method : java.util.LinkedList.size() : var0
+var4 =  cons : java.util.TreeSet.&lt;init&gt;(java.util.Collection) : var0
+var5 =  method : java.util.Collections.synchronizedSet(java.util.Set) : var4
+</pre>
+<p>
+The following call creates a sequence corresponding to our
+running-example sequence:
+</p>
+<pre class="code">
+Sequence seq = Sequence.parse(parseable);
+</pre>
+
+<h2 id="executing_sequence">Executable Sequences</h2>
+
+<p>
+An <a href="../api/randoop/sequence/ExecutableSequence.html">ExecutableSequence</a>
+ wraps a <code>Sequence</code> and adds two pieces of
+ functionality:
+</p>
+<ul>
+<li> <b>An <code>ExecutableSequence</code> can be augmented with
+checks of expected properties.</b>  A <a href="#checks">Check</a> is
+an object that represents some <i>expected property</i> of a sequence;
+for a example, that a specific method call in the sequence returns
+normally. When an executable sequence is executed, any checks that are
+present in the sequence are checked at runtime, and the
+passing/failing status of the checks is available for the client to
+inspect.
+</li>
+<li> <b>An <code>ExecutableSequence</code> can be executed.</b>
+Randoop uses Java's reflection mechanism to call the methods and
+constructors in the sequence, and uses the structure of the
+underlying <code>Sequence</code> to determine what inputs to pass to
+them.
+</li>
+</ul>
+
+
+<h3 id="executing-a-sequence">Executing a sequence</h3>
+
+<p>
+Suppose we have created a Sequence <code>s</code> The following two
+lines will execute the sequence:
+</p>
+<pre class="code">
+ExecutableSequence es = new ExecutableSequence(s);
+es.execute(null);
+</pre>
+<p>
+After the <code>execute</code> method returns, you can access the
+runtime objects created during execution via the <code>getResult(int
+i)</code> method, which returns the result of executing
+statement <code>i</code>. For example, assuming <code>s</code> refers
+to our running-example sequence from above, the following code prints
+out
+<code>1</code>, i.e. the return value of the call to
+method <code>LinkedList.size()</code>.
+</p>
+<pre class="code">
+  ExecutableSequence es = new ExecutableSequence(s);
+  es.execute(null);
+
+  // Assuming statement at index 3 returned normally, print the runtime value
+  ExecutionOutcome resultAt3 = es.getResult(3);
+  if (resultAt3 instanceof NormalExecution) {
+    System.out.println(((NormalExecution)resultAt3).getRuntimeValue());
+  }
+</pre>
+<p>
+To dig more into execution results, explore the
+classes <a href="../api/randoop/sequence/Execution.html">Execution</a> and
+<a href="../api/randoop/ExecutionOutcome.html">ExecutionOutcome</a>.
+</p>
+
+<h3>Miscellaneous Notes</h3> <!-- omit from toc -->
+
+<ul>
+<li>If the code under test prints to standard out,
+then executing statements in a sequence may result in output
+to standard out. Capturing this output is possible via
+the method
+<code>ExecutableSequence.executeStatement</code>.  This is
+accomplished by changing stdout and stderr to a memory-based
+PrintSteam and recording the results.
+</li>
+</ul>
+
+<h2 id="inout_sequence">Writing/reading sequences to file</h2>
+
+<h4 id="writing_reading_serialized">Writing/reading serialized sequences</h4>
+<p>
+Writing a list of sequences to a serialized file:
+</p>
+<pre class="code">
+  List&lt;ExecutableSequence&gt; sequences = ...;
+  FileOutputStream fileos = new FileOutputStream("MyFile.gz");
+  ObjectOutputStream objectos = new ObjectOutputStream(new GZIPOutputStream(fileos));
+  objectos.writeObject(sequences);
+  objectos.close();
+  fileos.close();
+</pre>
+<p>
+Any <a href="../api/randoop/test/Check.html">Checks</a> decorating the
+sequences will also be serialized.
+</p>
+<p>
+Reading a list of sequences from a serialized file:
+</p>
+<pre class="code">
+  FileInputStream fileis = new FileInputStream("MyFile.gz");
+  ObjectInputStream objectis = new ObjectInputStream(new GZIPInputStream(fileis));
+  List&lt;ExecutableSequence&gt; seqsfromfile = (List&lt;ExecutableSequence&gt;) objectis.readObject();
+</pre>
+
+<h4 id="writing_sequence_as_junit">Writing a sequence as a JUnit test</h4>
+<p>
+Writing a list of executed sequences as JUnit files:
+</p>
+<pre class="code">
+  List&lt;ExecutableSequence&gt; sequences = ...;
+  JunitFileWriter jfw =
+  new JunitFileWriter(output_dir, junit_package_name, junit_classname, testsperfile);
+  jfw.createJunitFiles(seq);
+</pre>
+<p>
+If you want to modify Randoop's JUnit-generating code, here are places to look:
+</p>
+<ul>
+<li>Class <code>randoop.JunitFileWriter</code> figures out how many JUnit classes/files
+to write, how many tests to put in each, what to name them, etc.
+  <ul>
+  <li><code>randoop.JunitFileWriter.writeDriverFile</code> generates the non-reflective driver file</li>
+  <li><code>randoop.JunitFileWriter.writeSuiteFile</code> generates the (reflective) test suite</li>
+  </ul>
+</li>
+<li>Methods responsible for writing the code for a single unit test:
+  <ul>
+  <li><code>randoop.ExecutableSequence.toCodeString()</code>,</li>
+  <li>implementors of <code>randoop.ObjectContract</code>,</li>
+  <li>implementors of <code>randoop.Check</code>,</li>
+  <li>and the various implementations of <code>Operation.appendCode(...)</code></li>
+  </ul>
+</li>
+</ul>
+
+
+<h2 id="checks">Checks</h2>
+
+<p>
+A <a href="../api/randoop/test/Check.html">Check</a> is an object that
+represents an <b>expected property</b> of a sequence. In terms of
+ <a href="#unit_tests">unit test concepts</a>, a check represents some
+piece of checking code (or &ldquo;test oracle&rdquo;) of a unit test.
+</p>
+<p>
+For example, consider the following unit test:
+</p>
+<pre class="code">
+ 1.  // Tests that the size of a list is 1 after adding an element.
+ 2.  @Test
+ 3.  public void testAdd() {
+ 4.     LinkedList l = new LinkedList();            // Create a list.
+ 5.     assertTrue(l.equals(l));                    // List should be equal to itself.
+ 6.     Object o = new Object();
+ 7.     boolean b = l.add(o);                       // Add an element to it.
+ 8.     org.junit.Assert.assertTrue(l.size() == 1); // List should have size 1.
+ 9.     org.junit.Assert.assertTrue(l.equals(l));   // List should still be equal to itself.
+10.     int i = 10;
+11.     try {
+12.       Object o2 = l.remove(i);                  // Removing from invalid index
+13.       org.junit.Assert.fail();                  // should throw exception.
+14.     } catch (IndexOutOfBoundsException e) {
+15.       // expected exception.
+16.     }
+17.  }
+</pre>
+<p>
+Like a typical unit test, this test combines <i>test input code</i>
+(the code creating a list, adding an element to it, removing an
+element, etc.)  with <i>checking code</i> (the code in lines 6-7
+creating assertions, and the code in lines 9, 11-14 checking that the
+correct exception is thrown). In Randoop, test input code is
+represented as a <a href="#sequence">Sequence</a> and checking code is
+represented by <code>Check</code>s associated with the sequence.
+</p>
+<p>
+More specifically, each check is associated with an index in the
+sequence, where the index represents the time at which the check
+should be performed. For example, rearranging the above test to better
+see its structure, we have:
+</p>
+
+<pre class="code">
+
+                          Checks performed
+Statement                 after statement
+=========                 ===============
+l  = new LinkedList()
+                           l.equals(l) returns true.
+o  = new Object()
+                           no checks.
+b  = l.add(o)
+                           l.size() returns 1.
+                           l.equals(l) returns true.
+i = 10;
+                           no checks.
+o2 = l.remove(i)
+                           throws IndexOutOfBoundsException.
+</pre>
+<p>
+The example illustrates how Randoop represents a test input along with
+its correctness checks.
+</p>
+
+<h3 id="distinction">Statements vs. Checks</h3> <!-- omit from toc -->
+<p>
+Looking at the above example, you may reasonably ask: why do we draw a
+distinction between &ldquo;test input code&rdquo; (the statements on the left) and
+&ldquo;checking code&rdquo; (the statements on the right)? After all, aren't the
+calls to <code>size</code> and <code>equals</code> in the checking
+column also calls of the classes under test, and why not consider them
+part of the test input?
+</p>
+<p>
+We offer an answer in terms of how Randoop works. Randoop generates
+test inputs (<a href="#sequence">Sequences</a>) <i> randomly</i>, by
+combining and extending previously-generated sequences. On the other
+hand, Randoop performs its checks <i>deterministically</i>. For every
+sequence it creates, it performs checks on all the objects of the
+sequence.
+</p>
+<p>
+Given how Randoop treats sequences and checks differently, it makes
+more sense for a call like <code>l.equals(l)</code> to be expressed as
+a <a href="../api/randoop/test/Check.html">Check</a>, so that it is always
+(not randomly) performed.
+</p>
+
+<h3 id="checks_">Executing Checks</h3>
+<p>
+(Under construction)
+</p>
+
+<h2 id="code-entry">Main entry points</h2>
+
+<ul>
+<li><a href="../api/randoop/main/GenTests.html">randoop.main.GenTests</a>
+is the main class for Randoop as it is normally used.  There are other
+mains for other purposes.
+</li>
+<li>Method <code>handle</code> is the
+main <a href="../api/randoop/main/GenTests.html">GenTests</a>
+entrypoint for Randoop. (This is not strictly true, as Randoop's true
+entrypoint is
+class <a href="../api/randoop/main/Main.html">randoop.main.Main</a>.
+But <code>GenTests</code> is where all the action starts with test
+generation.) The <code>handle</code> method is long and mostly deals with
+setting up things before the generation process, and doing things like
+outputting tests after generation.
+</li>
+<li>Most command line options are specified
+in <a href="../api/randoop/main/GenInputsAbstract.html">GenInputsAbstract</a>.
+</li>
+</ul>
+
+
+<h2 id="code-generator">Test generator classes</h2>
+
+<ul>
+<li>ForwardGenerator is the generator for Randoop's normal operation.</li>
+</ul>
+
+</body>
+</html>
+
+<!--  LocalWords:  Randoop Randoop's Makefile classpath bashrc hoc gentests JDK java gh EnumConstant enum s1 s2 s3 var0 PrintSteam plugin agentTest gradle taskName RandoopSystemTest plugins gitignore randoop changelog RandoopGradle goJF verGJF cd OLDVERSION NEWVERSION unpushed mv subprojects src agenttest  testinput systemtest FieldGetter FieldSetter PublicField init var1 var2 var3 var4 var5 resultAt3 assertTrue o2 testInput str FieldGet FieldSet AccessibleField NonreceiverTerm ArrayCreation InstantiatedType linkedListType ConcreteTypes ReferenceType substLL getTypeSubstitution TypedOperation forConstructor createPrimitiveInitialization forMethod treeSetType substTS
+ -->
+<!--  LocalWords:  google JDK's testAdd LinkedList addFirst TreeSet MethodCall th
+ -->
+<!--  LocalWords:  synchronizedSet Operation ConstructorCall ArrayDeclaration
+ -->
+<!--  LocalWords:  PrimitiveOrStringOrNullDecl newLL newOb newTS
+ -->
+<!--  LocalWords:  getRConstructor addFist getRMethod syncS getVariable seqs gz
+ -->
+<!--  LocalWords:  ArrayList newSeq parseable ExecutableSequence runtime stdout
+ -->
+<!--  LocalWords:  ExecutionOutcome resultAt getResult instanceof stderr fileos
+ -->
+<!--  LocalWords:  NormalExecution getRuntimeValue printsteam FileOutputStream
+ -->
+<!--  LocalWords:  MyFile ObjectOutputStream objectos GZIPOutputStream fileis
+ -->
+<!--  LocalWords:  writeObject FileInputStream ObjectInputStream objectis JUnit
+ -->
+<!--  LocalWords:  GZIPInputStream seqsfromfile readObject deserialized jfw dir
+ -->
+<!--  LocalWords:  JunitFileWriter junit classname testsperfile
+ -->
+<!--  LocalWords:  createJunitFiles GenTests entrypoint GenInputsAbstract
+ -->
+<!--  LocalWords:  ForwardGenerator
+ -->
