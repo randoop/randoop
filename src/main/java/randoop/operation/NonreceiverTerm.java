@@ -19,10 +19,9 @@ import randoop.util.Util;
 
 /**
  * Represents a value that either cannot (primitive or null values), or we don't
- * care to have (String, Class) be a receiver for a method call as an {@link Operation}
- * .
+ * care to have (String, Class) be a receiver for a method call as an {@link Operation}.
  *
- * As an {@link Operation} a value v of type T is formally represented by an
+ * As an {@link Operation}, a value v of type T is formally represented by an
  * operation v : [] &rarr; T, with no input types, and the type of the value as
  * the output type. This kind of operation is a <i>ground</i> term &mdash; it
  * requires no inputs.
@@ -195,6 +194,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * Returns a NonreceiverTerm holding the zero value for the specified class c.
    * In the case of characters there is no natural zero, so the value 'a' is
    * used.
+   * Also, returns null for {@link JavaTypes#CLASS_TYPE}.
    *
    * @param type
    *          the type of value desired.

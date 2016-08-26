@@ -2,13 +2,16 @@ package randoop.operation;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 
 import randoop.types.JavaTypes;
+import randoop.types.Type;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test for Term operations.
@@ -22,5 +25,23 @@ public class TermTests {
         "toString should be qualified literal name",
         classTerm.toString(),
         is(equalTo("java.util.Comparator.class")));
+
+    StringBuilder b = new StringBuilder();
+    classTerm.appendCode(null, null, null, null, b);
+    assertThat("append code returns class literal", "java.util.Comparator.class", is(b.toString()));
+
+    assertThat(
+        "getValue returns Class object", classTerm.getValue(), is((Object) Comparator.class));
+    assertThat("getType returns Class type", classTerm.getType(), is((Type) JavaTypes.CLASS_TYPE));
+    assertTrue("Class<T> is a nonreceiver type", NonreceiverTerm.isNonreceiverType(Class.class));
+    Class<? extends ArrayList> arrayListClass = (new ArrayList<String>()).getClass();
+    Class<? extends Class> typeClass = arrayListClass.getClass();
+    assertTrue(
+        "Class " + typeClass + " from type is nonreceiver type",
+        NonreceiverTerm.isNonreceiverType(typeClass));
+
+    NonreceiverTerm term = NonreceiverTerm.createNullOrZeroTerm(JavaTypes.CLASS_TYPE);
+    NonreceiverTerm nullClassTerm = new NonreceiverTerm(JavaTypes.CLASS_TYPE, null);
+    assertThat("null terms are equal ", term, is(nullClassTerm));
   }
 }
