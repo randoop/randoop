@@ -502,7 +502,7 @@ task publishDocumentation (type:Copy, dependsOn: 'manual') {
 /* Declares the Gradle version to be used when the wrapper is built */
 task wrapper(type: Wrapper) {
   description "Configure Gradle Wrapper for this project"
-  gradleVersion = '2.14.1'
+  gradleVersion = '3.0'
 }
 
 /*************** Other tool configs *************/
