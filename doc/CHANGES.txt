@@ -1,4 +1,4 @@
-Version 3.0.4, released August ?, 2016
+Version 3.0.4, released August 29, 2016
 
 Randoop now:
 - collects all member types visible to generated tests (fixes issue #88).
@@ -14,6 +14,9 @@ a generic array was being generated.
 Fixed a bug where test code was being generated that would result in an NPE when
 an inner class constructor is called with the first parameter null. (Due to an
 apparent bug in Java reflection classes.)
+
+Fixed a bug that was preventing contracts over compareTo from being tested.
+Issue thanks to Waylon Huang.
 
 
 Version 3.0.3, released July 28, 2016
