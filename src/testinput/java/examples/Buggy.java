@@ -24,6 +24,19 @@ public class Buggy {
     throw new RuntimeException("Buggy class is test input class and somehow hashCode has been called outside of contract check");
   }
 
+  public static void StackOverflowError() {
+    throw new StackOverflowError();
+  }
+
+  public static void AssertionError() {
+    throw new AssertionError();
+  }
+
+  /*
+   * violates equal-hashcode
+   *
+   * equality by identity, hashcode mutates
+   */
   public static class Buggy3 {
 
     public boolean equals(Object o) {
@@ -38,6 +51,9 @@ public class Buggy {
     }
   }
 
+  /*
+   * violates not equals null, reflexive equals
+   */
   public static class Buggy4 {
 
     private static Buggy4 one = new Buggy4();
@@ -59,6 +75,9 @@ public class Buggy {
     }
   }
 
+  /*
+   *
+   */
   public static class Buggy5 {
 
     private static Buggy5 one = new Buggy5();
@@ -103,20 +122,23 @@ public class Buggy {
 
     @Override
     public boolean equals(Object o) {
-	// Prevent violations to lower arity contracts
-	if (o == null) {
+      // Prevent violations to lower arity contracts
+      if (! (o instanceof BuggyEqualsTransitive)) {
         return false;
-	}
-	if (this == one && o == two) {
-	    return true;
-	}
-	if (this == two && o == three){
-	    return true;
-	}
-	if (this == one && o == three) {
-	    return false;
-	}
-	return true;
+      }
+      if (o == null) {
+        return false;
+      }
+      if (this == one && o == two) {
+        return true;
+      }
+      if (this == two && o == three){
+        return true;
+      }
+      if (this == one && o == three) {
+        return false;
+      }
+      return true;
     }
 
     @Override
@@ -152,6 +174,9 @@ public class Buggy {
     @Override
     public boolean equals(Object o) {
       // Prevent violations to lower arity contracts
+      if (! (o instanceof BuggyCompareToAntiSymmetric)) {
+        return false;
+      }
       if (o == null) {
         return false;
       }
@@ -165,6 +190,9 @@ public class Buggy {
     }
   }
 
+  /**
+   * Test for violations to {@code o.compareTo(o) == 0}
+   */
   public static class BuggyCompareToReflexive implements Comparable<BuggyCompareToReflexive> {
     private static BuggyCompareToReflexive one = new BuggyCompareToReflexive();
 
@@ -185,6 +213,9 @@ public class Buggy {
     @Override
     public boolean equals(Object o) {
       // Prevent violations to lower arity contracts
+      if (! (o instanceof BuggyCompareToReflexive)) {
+        return false;
+      }
       if (o == null) {
         return false;
       }
@@ -198,6 +229,9 @@ public class Buggy {
     }
   }
 
+  /**
+   * Test for consistency with equals: {@code x.compareTo(y) == 0} whenever {@code x.equals(y)}.
+   */
   public static class BuggyCompareToEquals implements Comparable<BuggyCompareToEquals>{
     private static BuggyCompareToEquals one = new BuggyCompareToEquals();
     private static BuggyCompareToEquals two = new BuggyCompareToEquals();
@@ -224,6 +258,9 @@ public class Buggy {
     @Override
     public boolean equals(Object o) {
       // Prevent violations to lower arity contracts
+      if (!(o instanceof BuggyCompareToEquals)) {
+        return false;
+      }
       if (o == null) {
         return false;
       }
@@ -269,6 +306,9 @@ public class Buggy {
     @Override
     public boolean equals(Object o) {
       // Prevent violations to lower arity contracts
+      if (!(o instanceof BuggyCompareToTransitive)) {
+        return false;
+      }
       if (o == null) {
         return false;
       }
@@ -314,6 +354,9 @@ public class Buggy {
     @Override
     public boolean equals(Object o) {
       // Prevent violations to lower arity contracts
+      if (!(o instanceof BuggyCompareToSubs)) {
+        return false;
+      }
       if (o == null) {
         return false;
       }
@@ -347,6 +390,9 @@ public class Buggy {
     @Override
     public boolean equals(Object o) {
       // Prevent violations to lower arity contracts
+      if (!(o instanceof BuggyCompareToNormal)) {
+        return false;
+      }
       if (o == null) {
         return false;
       }
@@ -360,11 +406,5 @@ public class Buggy {
     }
   }
 
-  public static void StackOverflowError() {
-    throw new StackOverflowError();
-  }
 
-  public static void AssertionError() {
-    throw new AssertionError();
-  }
 }

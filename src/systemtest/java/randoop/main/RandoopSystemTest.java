@@ -373,22 +373,26 @@ public class RandoopSystemTest {
     ExpectedTests expectedRegressionTests = ExpectedTests.NONE;
     ExpectedTests expectedErrorTests = ExpectedTests.SOME;
 
-    // TODO check which of these should actually not be expected
     CoverageChecker coverageChecker = new CoverageChecker(options);
-    coverageChecker.exclude("examples.Buggy.BuggyCompareToSubs.compareTo(java.lang.Object)");
-    coverageChecker.exclude("examples.Buggy.BuggyCompareToSubs.hashCode()");
-    coverageChecker.exclude("examples.Buggy.BuggyEqualsTransitive.hashCode()");
-    coverageChecker.exclude("examples.Buggy.BuggyCompareToReflexive.compareTo(java.lang.Object)");
-    coverageChecker.exclude("examples.Buggy.BuggyCompareToReflexive.hashCode()");
+    coverageChecker.ignore("examples.Buggy.hashCode()");
+    coverageChecker.ignore("examples.Buggy.toString()");
+    /* don't care about hashCode for compareTo input classes */
+    coverageChecker.ignore("examples.Buggy.BuggyCompareToAntiSymmetric.hashCode()");
+    coverageChecker.ignore("examples.Buggy.BuggyCompareToEquals.hashCode()");
+    coverageChecker.ignore("examples.Buggy.BuggyCompareToTransitive.hashCode()");
+    coverageChecker.ignore("examples.Buggy.BuggyCompareToReflexive.hashCode()");
+    coverageChecker.ignore("examples.Buggy.BuggyCompareToSubs.hashCode()");
+    coverageChecker.ignore("examples.Buggy.BuggyEqualsTransitive.hashCode()");
+
+    /* these should be covered, but are in failing assertions and wont show up in JaCoCo results */
     coverageChecker.exclude(
         "examples.Buggy.BuggyCompareToAntiSymmetric.compareTo(java.lang.Object)");
-    coverageChecker.exclude("examples.Buggy.BuggyCompareToAntiSymmetric.hashCode()");
     coverageChecker.exclude("examples.Buggy.BuggyCompareToEquals.compareTo(java.lang.Object)");
-    coverageChecker.exclude("examples.Buggy.BuggyCompareToEquals.hashCode()");
+    coverageChecker.exclude("examples.Buggy.BuggyCompareToEquals.equals(java.lang.Object)");
+    coverageChecker.exclude("examples.Buggy.BuggyCompareToReflexive.compareTo(java.lang.Object)");
+    coverageChecker.exclude("examples.Buggy.BuggyCompareToReflexive.equals(java.lang.Object)");
+    coverageChecker.exclude("examples.Buggy.BuggyCompareToSubs.compareTo(java.lang.Object)");
     coverageChecker.exclude("examples.Buggy.BuggyCompareToTransitive.compareTo(java.lang.Object)");
-    coverageChecker.exclude("examples.Buggy.BuggyCompareToTransitive.hashCode()");
-    coverageChecker.exclude("examples.Buggy.hashCode()");
-    coverageChecker.exclude("examples.Buggy.toString()");
 
     generateAndTestWithCoverage(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
