@@ -79,8 +79,7 @@ public class OperationExtractor extends DefaultClassVisitor {
             && declaringType.hasRuntimeClass(classType.getRuntimeClass())) {
           substitution = ((InstantiatedType) classType).getTypeSubstitution();
         } else if (!classType.isGeneric()) {
-          InstantiatedType supertype =
-              (InstantiatedType) classType.getMatchingSupertype(declaringType);
+          InstantiatedType supertype = classType.getMatchingSupertype(declaringType);
           substitution = supertype.getTypeSubstitution();
         }
         // XXX if operation is generic, then substitution will not be sufficient, have to instantiate any missing variables

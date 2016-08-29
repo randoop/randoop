@@ -152,6 +152,19 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   /**
+   * {@inheritDoc}
+   * An instantiated type may have a wildcard, and so must perform capture conversion before doing
+   * supertype search.
+   */
+  @Override
+  public InstantiatedType getMatchingSupertype(GenericClassType goalType) {
+    if (this.hasWildcard()) {
+      return this.applyCaptureConversion().getMatchingSupertype(goalType);
+    }
+    return super.getMatchingSupertype(goalType);
+  }
+
+  /**
    * Returns the list of reference type arguments of this type if there are no wildcards.
    *
    * @return the list of reference types that are arguments to this type
@@ -162,7 +175,8 @@ public class InstantiatedType extends ParameterizedType {
       if (!argument.isWildcard()) {
         referenceArgList.add(((ReferenceArgument) argument).getReferenceType());
       } else {
-        throw new IllegalArgumentException("cannot convert a wildcard to a reference type");
+        throw new IllegalArgumentException(
+            "cannot convert a wildcard to a reference type for " + this);
       }
     }
     return referenceArgList;
@@ -401,7 +415,7 @@ public class InstantiatedType extends ParameterizedType {
 
     // first clause.
     InstantiatedType pt = (InstantiatedType) otherType;
-    InstantiatedType superType = (InstantiatedType) this.getMatchingSupertype(pt.instantiatedType);
+    InstantiatedType superType = this.getMatchingSupertype(pt.instantiatedType);
 
     return superType != null && pt.equals(superType);
   }

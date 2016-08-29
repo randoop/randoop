@@ -112,9 +112,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * @param goalType  the generic class type
    * @return the instantiated type matching the goal type, or null
    */
-  public ClassOrInterfaceType getMatchingSupertype(GenericClassType goalType) {
+  public InstantiatedType getMatchingSupertype(GenericClassType goalType) {
     if (this.isInstantiationOf(goalType)) {
-      return this;
+      return (InstantiatedType) this;
     }
 
     if (goalType.isInterface()) {
@@ -124,9 +124,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
           if (interfaceType.isParameterized()) {
             InstantiatedType type = (InstantiatedType) interfaceType;
             if (type.isInstantiationOf(goalType)) {
-              return interfaceType;
+              return (InstantiatedType) interfaceType;
             }
-            ClassOrInterfaceType result = type.getMatchingSupertype(goalType);
+            InstantiatedType result = type.getMatchingSupertype(goalType);
             if (result != null) {
               return result;
             }
@@ -143,7 +143,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         && goalType.getRuntimeClass().isAssignableFrom(superclass.getRuntimeClass())) {
 
       if (superclass.isInstantiationOf(goalType)) {
-        return superclass;
+        return (InstantiatedType) superclass;
       }
 
       return superclass.getMatchingSupertype(goalType);

@@ -72,9 +72,8 @@ class ReferenceBound extends ParameterBound {
       }
       InstantiatedType argClassType = (InstantiatedType) argType.applyCaptureConversion();
       InstantiatedType boundSuperType =
-          (InstantiatedType)
-              ((ClassOrInterfaceType) boundType)
-                  .getMatchingSupertype(argClassType.getGenericClassType());
+          ((ClassOrInterfaceType) boundType)
+              .getMatchingSupertype(argClassType.getGenericClassType());
       if (boundSuperType == null) {
         return false;
       }
@@ -117,9 +116,8 @@ class ReferenceBound extends ParameterBound {
       }
       InstantiatedType boundClassType = (InstantiatedType) boundType.applyCaptureConversion();
       InstantiatedType argSuperType =
-          (InstantiatedType)
-              ((ClassOrInterfaceType) argType)
-                  .getMatchingSupertype(boundClassType.getGenericClassType());
+          ((ClassOrInterfaceType) argType)
+              .getMatchingSupertype(boundClassType.getGenericClassType());
       if (argSuperType == null) {
         return false;
       }

@@ -11,6 +11,12 @@ import randoop.contract.ObjectContractUtils;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.ReferenceValue;
 import randoop.sequence.Variable;
+import randoop.types.ClassOrInterfaceType;
+import randoop.types.GenericClassType;
+import randoop.types.InstantiatedType;
+import randoop.types.ReferenceType;
+import randoop.types.Substitution;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.Log;
 import randoop.util.Randomness;
@@ -107,17 +113,45 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
 
   /**
    * Indicates whether the given list of values matches the types in the type tuple.
+   * Contracts may have generic input types, so this method checks for consistent substitutions
+   * across value types.
    *
-   * @param inputTypes  the expected types
-   * @param valueTuple  the values
-   * @return true if the types of the values match the expected types
+   * @param inputTypes  the expected types for contract input
+   * @param valueTuple  the values to match against input types
+   * @return true if the types of the values are assignable to the expected types, false otherwise
    */
   private boolean typesMatch(TypeTuple inputTypes, List<ReferenceValue> valueTuple) {
+    if (inputTypes.size() != valueTuple.size()) {
+      return false;
+    }
+
+    Substitution<ReferenceType> substitution = new Substitution<>();
     int i = 0;
-    while (i < inputTypes.size() && valueTuple.get(i).getType().isSubtypeOf(inputTypes.get(i))) {
+    while (i < inputTypes.size()) {
+      Type inputType = inputTypes.get(i);
+      ReferenceType valueType = valueTuple.get(i).getType();
+      if (inputType.isGeneric()) { // check substitutions
+        if (valueType instanceof ClassOrInterfaceType) {
+          ClassOrInterfaceType classType = (ClassOrInterfaceType) valueType;
+          InstantiatedType superType =
+              classType.getMatchingSupertype((GenericClassType) inputTypes.get(i));
+          if (superType == null) {
+            return false;
+          }
+          Substitution<ReferenceType> subst = superType.getTypeSubstitution();
+          if (!substitution.isConsistentWith(subst)) {
+            return false;
+          }
+          substitution = substitution.extend(subst);
+        } else { // have generic input type, and non-class value
+          return false;
+        }
+      } else if (!inputType.isAssignableFrom(valueType)) {
+        return false;
+      }
       i++;
     }
-    return i == inputTypes.size();
+    return true;
   }
 
   /**

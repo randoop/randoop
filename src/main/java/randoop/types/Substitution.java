@@ -118,19 +118,53 @@ public class Substitution<T> {
     return "[" + UtilMDE.join(pairs, ", ") + "]";
   }
 
+  /**
+   * Indicates whether this substitution is disjoint from another substitution, or that if they both
+   * map the same type variable, they map it to the same type.
+   * This is the test for whether this substitution can be extended by the other substitution using
+   * {@link #extend(Substitution)}.
+   *
+   * @param substitution  the other substitution to check for consistency with this substitution
+   * @return true if the the substitutions are consistent, false otherwise
+   */
+  public boolean isConsistentWith(Substitution<T> substitution) {
+    for (Entry<TypeVariable, T> entry : substitution.map.entrySet()) {
+      if (this.map.containsKey(entry.getKey())
+          && !this.get(entry.getKey()).equals(entry.getValue())) {
+        return false;
+      }
+    }
+    for (Entry<java.lang.reflect.Type, T> entry : substitution.rawMap.entrySet()) {
+      if (this.rawMap.containsKey(entry.getKey())
+          && !this.get(entry.getKey()).equals(entry.getValue())) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Extends this substitution by adding the entries of another substitution.
+   * If both substitutions contain the same type variable, they must map to the same type.
+   *
+   * @param substitution  the substitution to add to this substitution
+   * @return a new substitution that is this substitution extended by the given substitution
+   */
   public Substitution<T> extend(Substitution<T> substitution) {
     Substitution<T> result = new Substitution<>(this);
     for (Entry<TypeVariable, T> entry : substitution.map.entrySet()) {
-      if (result.map.containsKey(entry.getKey())) {
+      if (result.map.containsKey(entry.getKey())
+          && !result.get(entry.getKey()).equals(entry.getValue())) {
         throw new IllegalArgumentException(
-            "Substitutions not disjoint, both contain " + entry.getKey());
+            "Substitutions not disjoint, and map " + entry.getKey() + " to distinct types");
       }
       result.map.put(entry.getKey(), entry.getValue());
     }
     for (Entry<java.lang.reflect.Type, T> entry : substitution.rawMap.entrySet()) {
-      if (result.rawMap.containsKey(entry.getKey())) {
+      if (result.rawMap.containsKey(entry.getKey())
+          && !result.get(entry.getKey()).equals(entry.getValue())) {
         throw new IllegalArgumentException(
-            "Substitutions not disjoint, both contain " + entry.getKey());
+            "Substitutions not disjoint, and map " + entry.getKey() + " to distinct types");
       }
       result.rawMap.put(entry.getKey(), entry.getValue());
     }

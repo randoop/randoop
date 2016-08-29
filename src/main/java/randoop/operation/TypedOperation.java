@@ -313,8 +313,7 @@ public abstract class TypedOperation implements Operation {
             ClassOrInterfaceType.forClass(m.getDeclaringClass());
         if (methodDeclaringType.isGeneric()) {
           GenericClassType genDeclaringType = (GenericClassType) methodDeclaringType;
-          InstantiatedType superType =
-              (InstantiatedType) enumType.getMatchingSupertype(genDeclaringType);
+          InstantiatedType superType = enumType.getMatchingSupertype(genDeclaringType);
           assert superType != null
               : "should exist a super type of enum instantiating " + genDeclaringType;
           Substitution<ReferenceType> substitution = superType.getTypeSubstitution();
