@@ -62,6 +62,30 @@ class HelperSequenceCreator {
     ArrayType arrayType = (ArrayType) collectionType;
     Type elementType = arrayType.getElementType();
 
+    if (elementType.isParameterized()) {
+      // XXX build elementType default construction sequence here, if cannot build one then stop
+      InstantiatedType creationType = getImplementingType((InstantiatedType) elementType);
+      if (getConstructor(creationType) == null) {
+
+        if (creationType.isRecursiveType()) {
+          elementType =
+              ((ReferenceArgument) creationType.getTypeArguments().get(0)).getReferenceType();
+        } else {
+
+          System.out.println(
+              "creating array of " + elementType + " failed because cannot create " + creationType);
+          /*
+          If has no visible default constructor,
+            - If is interface, then could be C<T> where T extends C<T>, in which case use T but only *if* has constructor.
+            - look for static creation method c : () -> C<T> and use that
+            - otherwise return nothing
+          */
+          return new ArrayListSimpleList<>();
+        }
+      }
+    }
+    //if elementType has no constructor, and is C<t> where t extends C<t> then use t, otherwise return nothing
+
     SimpleList<Sequence> candidates = components.getSequencesForType(elementType);
     int length;
     if (candidates.isEmpty()) {
@@ -235,13 +259,8 @@ class HelperSequenceCreator {
     Sequence creationSequence = new Sequence();
 
     // get constructor for element type, create object
-    Constructor<?> constructor;
-    try {
-      constructor = creationType.getRuntimeClass().getConstructor();
-    } catch (NoSuchMethodException e) {
-      throw new BugInRandoopException(
-          "element type must have accessible default constructor: " + e.getMessage());
-    }
+    Constructor<?> constructor = getConstructor(creationType);
+    assert constructor != null : "cannot procede if not able to build default object";
     TypedOperation elementTypeConstructor =
         TypedOperation.forConstructor(constructor).apply(substitution);
     // elementTypeObject = new ElementType();
@@ -287,9 +306,20 @@ class HelperSequenceCreator {
     return creationSequence;
   }
 
+  private static Constructor<?> getConstructor(ClassOrInterfaceType creationType) {
+    Constructor<?> constructor;
+    try {
+      constructor = creationType.getRuntimeClass().getConstructor();
+    } catch (NoSuchMethodException e) {
+      return null;
+    }
+    return constructor;
+  }
+
   private static InstantiatedType getImplementingType(InstantiatedType elementType) {
     InstantiatedType creationType = elementType;
-    if (elementType.getGenericClassType().isSubtypeOf(JDKTypes.COLLECTION_TYPE)) {
+    if (elementType.getGenericClassType().isSubtypeOf(JDKTypes.COLLECTION_TYPE)
+        && elementType.getPackage().equals(JDKTypes.COLLECTION_TYPE.getPackage())) {
       GenericClassType implementingType = JDKTypes.getImplementingType(elementType);
       List<ReferenceType> typeArgumentList = new ArrayList<>();
       for (TypeArgument argument : elementType.getTypeArguments()) {

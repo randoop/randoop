@@ -342,6 +342,21 @@ public class InstantiatedType extends ParameterizedType {
     return true;
   }
 
+  /**
+   * Determines if this type is recursive in the sense that the type is the bound of its type
+   * argument.
+   * So, should have a single type argument that is a subtype of this type.
+   *
+   * @return true if the type argument is a subtype of this type, false otherwise
+   */
+  public boolean isRecursiveType() {
+    if (this.argumentList.size() > 1 || this.argumentList.get(0).hasWildcard()) {
+      return false;
+    }
+    ReferenceType argType = ((ReferenceArgument) this.argumentList.get(0)).getReferenceType();
+    return argType.isSubtypeOf(this);
+  }
+
   @Override
   public boolean isStatic() {
     return instantiatedType.isStatic();

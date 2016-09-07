@@ -163,7 +163,6 @@ public class CollectionGenerationTest {
         HelperSequenceCreator.createArraySequence(componentManager, arrayType);
     Sequence sequence = sequenceList.get(0);
     assert sequence != null : "sequence should not be null";
-    System.out.println(sequence);
     Set<Type> outputTypeSet = new HashSet<>();
     for (int i = 0; i < sequence.size(); i++) {
       Type outputType = sequence.getStatement(i).getOutputType();
@@ -183,5 +182,33 @@ public class CollectionGenerationTest {
               || outputType.isVoid());
     }
     assertThat("should be nine output types", outputTypeSet.size(), is(equalTo(9)));
+  }
+
+  /*
+   * inspired by jfreechart case in Defects4J where Randoop trying to create an array of type
+   * Comparable<org.jfree.chart.plot.PlotOrientation>[].
+   * Tests that Comparable<String>[] is replaced with String[]
+   */
+  @Test
+  public void testInterfaceArray() {
+    ComponentManager componentManager = setupComponentManager();
+    ParameterizedType elementType = JavaTypes.COMPARABLE_TYPE.instantiate(JavaTypes.STRING_TYPE);
+    ArrayType arrayType = ArrayType.ofElementType(elementType);
+    ArrayType strArrayType = ArrayType.ofElementType(JavaTypes.STRING_TYPE);
+    SimpleList<Sequence> sequenceList =
+        HelperSequenceCreator.createArraySequence(componentManager, arrayType);
+    Sequence sequence = sequenceList.get(0);
+    assert sequence != null : "sequence should not be null";
+    Set<Type> outputTypeSet = new HashSet<>();
+    for (int i = 0; i < sequence.size(); i++) {
+      Type outputType = sequence.getStatement(i).getOutputType();
+      outputTypeSet.add(outputType);
+      assertTrue(
+          "statement type should be one of two types, got " + outputType,
+          !outputType.equals(elementType)
+              || outputType.equals(JavaTypes.STRING_TYPE)
+              || outputType.equals(strArrayType));
+    }
+    assertThat("should be two output types", outputTypeSet.size(), is(equalTo(2)));
   }
 }
