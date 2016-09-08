@@ -30,6 +30,7 @@ import randoop.types.Type;
 import randoop.types.TypeArgument;
 import randoop.types.TypeTuple;
 import randoop.util.ArrayListSimpleList;
+import randoop.util.Log;
 import randoop.util.Randomness;
 import randoop.util.SimpleList;
 
@@ -66,25 +67,30 @@ class HelperSequenceCreator {
       // XXX build elementType default construction sequence here, if cannot build one then stop
       InstantiatedType creationType = getImplementingType((InstantiatedType) elementType);
       if (getConstructor(creationType) == null) {
-
+        /* If has no visible default constructor, */
+        // XXX Note: OK to have any constructor that is easy to call, just need a canonical object
+        /* If element type is C<T extends C<T>, so use T */
         if (creationType.isRecursiveType()) {
+          // XXX being incautious, argument type might be parameterized
           elementType =
               ((ReferenceArgument) creationType.getTypeArguments().get(0)).getReferenceType();
         } else {
-
-          System.out.println(
-              "creating array of " + elementType + " failed because cannot create " + creationType);
           /*
-          If has no visible default constructor,
-            - If is interface, then could be C<T> where T extends C<T>, in which case use T but only *if* has constructor.
-            - look for static creation method c : () -> C<T> and use that
-            - otherwise return nothing
+              - should look for static creation method c : () -> C<T> and use that
+              - otherwise/for now, return nothing
           */
+          if (Log.isLoggingOn()) {
+            Log.logLine(
+                "creating array of "
+                    + elementType
+                    + " failed because cannot create "
+                    + creationType);
+          }
+
           return new ArrayListSimpleList<>();
         }
       }
     }
-    //if elementType has no constructor, and is C<t> where t extends C<t> then use t, otherwise return nothing
 
     SimpleList<Sequence> candidates = components.getSequencesForType(elementType);
     int length;
