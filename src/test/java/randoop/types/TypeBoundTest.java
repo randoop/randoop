@@ -6,13 +6,13 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import edu.emory.mathcs.backport.java.util.Collections;
 import randoop.reflection.ClassVisitor;
 import randoop.reflection.PackageVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
@@ -21,7 +21,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Uses {@link WildcardBoundExamples} to test handling of recursive type bounds involving variables
+ * Uses {@link WildcardBoundExamples} to test handling of
+ * type bounds involving variables
  */
 public class TypeBoundTest {
 
