@@ -65,11 +65,12 @@ public class ArrayType extends ReferenceType {
       return ArrayType.ofElementType(elementType);
     }
 
-    if (type instanceof Class<?>) {
-      return ArrayType.forClass((Class<?>) type);
+    if ((type instanceof Class<?>) && ((Class<?>) type).isArray()) {
+      Type elementType = Type.forType(((Class<?>) type).getComponentType());
+      return ArrayType.ofElementType(elementType);
     }
 
-    throw new IllegalArgumentException("type must be an array type");
+    throw new IllegalArgumentException("type " + type + " must be an array type");
   }
 
   /**

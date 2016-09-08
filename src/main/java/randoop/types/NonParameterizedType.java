@@ -21,7 +21,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    * @param runtimeType  the runtime class for the type
    */
   public NonParameterizedType(Class<?> runtimeType) {
-    assert !runtimeType.isPrimitive() : "must be reference type";
+    assert !runtimeType.isPrimitive() : "must be reference type, got " + runtimeType.getName();
     this.runtimeClass = runtimeType;
   }
 

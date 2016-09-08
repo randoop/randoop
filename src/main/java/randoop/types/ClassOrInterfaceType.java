@@ -57,7 +57,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     if (type instanceof Class<?>) {
       Class<?> classType = (Class<?>) type;
-      return ClassOrInterfaceType.forClass(classType);
+      return new NonParameterizedType(classType);
     }
 
     throw new IllegalArgumentException("Unable to create class type from type " + type);

@@ -107,7 +107,7 @@ public abstract class Type {
       throw new IllegalArgumentException("Cannot construct type for wildcard " + type);
     }
 
-    if (type instanceof Class<?>) {
+    if ((type instanceof Class) && ((Class<?>) type).isPrimitive()) {
       return Type.forClass((Class<?>) type);
     }
 
