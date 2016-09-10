@@ -37,7 +37,7 @@ public class NoExceptionCheck implements Check {
 
   @Override
   public int hashCode() {
-    return new Integer(statementIdx).hashCode();
+    return Integer.valueOf(statementIdx).hashCode();
   }
 
   @Override
