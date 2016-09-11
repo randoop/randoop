@@ -24,7 +24,7 @@ public class MultiMap<T1, T2> implements IMultiMap<T1, T2> {
 
   public void put(T1 key, Collection<? extends T2> values) {
     if (contains(key)) remove(key);
-    map.put(key, new LinkedHashSet<>(values));
+    map.put(key, new LinkedHashSet<T2>(values));
   }
 
   public void addAll(Map<? extends T1, ? extends T2> m) {
