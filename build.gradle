@@ -414,6 +414,12 @@ javadoc {
   options.addStringOption("stylesheetfile", "doc/stylesheets/javadocstyle.css")
 }
 
+javadoc.doLast {
+  exec {
+    commandLine "$buildDir/utils/plume-lib/bin/preplace", "<dt><span class=\"memberNameLink\"><a href=\".*\\(\\)</a></span> - Constructor for enum [a-zA-Z0-9_.]*<a href=\".*</a></dt>", "", "build/docs/api/index-all.html"
+  }
+}
+
 /*
  * Get the plume-lib repo using gradle-git, and save into utils/plume-lib
  */
