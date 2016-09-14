@@ -59,7 +59,7 @@ public class AccessibleField {
   public String toCode(Type declaringType, List<Variable> inputVars) {
     StringBuilder sb = new StringBuilder();
     if (isStatic) {
-      sb.append(declaringType.getName());
+      sb.append(declaringType.getSimpleName());
     } else {
       sb.append(inputVars.get(0).getName());
     }
