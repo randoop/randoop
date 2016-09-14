@@ -34,15 +34,15 @@ public class InputClass {
     return "Oh, what a " + e + "!";
   }
 
-  public static boolean checkMemberOfCollection(AnInputClass aic, Collection<AnInputClass> set) {
+  public static boolean checkMemberOfAnInputClassCollection(AnInputClass aic, Collection<AnInputClass> set) {
     return set.contains(aic);
   }
 
-  public static boolean checkMemberOfSet(AnInputClass aic, Set<AnInputClass> set) {
+  public static boolean checkMemberOfAnInputClassSet(AnInputClass aic, Set<AnInputClass> set) {
     return set.contains(aic);
   }
 
-  public static boolean checkMemberOfList(AnInputClass aic, List<AnInputClass> list) {
+  public static boolean checkMemberOfAnInputClassList(AnInputClass aic, List<AnInputClass> list) {
     return list.contains(aic);
   }
 
@@ -50,15 +50,15 @@ public class InputClass {
     return list.contains(aic);
   }
 
-  public static boolean checkMemberOfCollection(ANonInputClass aic, Collection<ANonInputClass> set) {
+  public static boolean checkMemberOfANonInputClassCollection(ANonInputClass aic, Collection<ANonInputClass> set) {
     return set.contains(aic);
   }
 
-  public static boolean checkMemberOfSet(ANonInputClass aic, Set<ANonInputClass> set) {
+  public static boolean checkMemberOfANonInputClassSet(ANonInputClass aic, Set<ANonInputClass> set) {
     return set.contains(aic);
   }
 
-  public static boolean checkMemberOfList(ANonInputClass aic, List<ANonInputClass> list) {
+  public static boolean checkMemberOfANonInputClassList(ANonInputClass aic, List<ANonInputClass> list) {
     return list.contains(aic);
   }
 
