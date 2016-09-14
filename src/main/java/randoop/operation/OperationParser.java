@@ -71,7 +71,7 @@ public class OperationParser {
             NonreceiverTerm.ID,
             MethodCall.ID,
             ConstructorCall.ID,
-            ArrayCreation.ID,
+            InitializedArrayCreation.ID,
             EnumConstant.ID,
             FieldGet.ID,
             FieldSet.ID));
@@ -83,8 +83,8 @@ public class OperationParser {
       return MethodCall.parse(descr);
     } else if (id.equals(ConstructorCall.ID)) {
       return ConstructorCall.parse(descr);
-    } else if (id.equals(ArrayCreation.ID)) {
-      return ArrayCreation.parse(descr);
+    } else if (id.equals(InitializedArrayCreation.ID)) {
+      return InitializedArrayCreation.parse(descr);
     } else if (id.equals(EnumConstant.ID)) {
       return EnumConstant.parse(descr);
     } else if (id.equals(FieldGet.ID)) {
@@ -117,7 +117,7 @@ public class OperationParser {
     if (op.getOperation() instanceof NonreceiverTerm) return NonreceiverTerm.ID;
     if (op.getOperation() instanceof MethodCall) return MethodCall.ID;
     if (op.getOperation() instanceof ConstructorCall) return ConstructorCall.ID;
-    if (op.getOperation() instanceof ArrayCreation) return ArrayCreation.ID;
+    if (op.getOperation() instanceof InitializedArrayCreation) return InitializedArrayCreation.ID;
     if (op.getOperation() instanceof EnumConstant) return EnumConstant.ID;
     if (op.getOperation() instanceof FieldGet) return FieldGet.ID;
     if (op.getOperation() instanceof FieldSet) return FieldSet.ID;

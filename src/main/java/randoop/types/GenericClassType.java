@@ -311,4 +311,13 @@ public class GenericClassType extends ParameterizedType {
     return super.isSubtypeOf(otherType)
         || otherType.isRawtype() && otherType.hasRuntimeClass(this.getRuntimeClass());
   }
+
+  /**
+   * Returns the rawtype {@code Type} for this generic class.
+   *
+   * @return the rawtype for this generic class.
+   */
+  public NonParameterizedType getRawtype() {
+    return new NonParameterizedType(rawType);
+  }
 }

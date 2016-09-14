@@ -434,4 +434,8 @@ public class InstantiatedType extends ParameterizedType {
 
     return superType != null && pt.equals(superType);
   }
+
+  public NonParameterizedType getRawtype() {
+    return instantiatedType.getRawtype();
+  }
 }

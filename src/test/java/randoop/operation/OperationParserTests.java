@@ -151,7 +151,7 @@ public class OperationParserTests {
       paramTypes.add(elementType);
     }
     TypeTuple inputTypes = new TypeTuple(paramTypes);
-    checkParse(new ArrayCreation(arrayType, 3), inputTypes, arrayType);
+    checkParse(new InitializedArrayCreation(arrayType, 3), inputTypes, arrayType);
   }
 
   private void checkParse(CallableOperation st, TypeTuple inputTypes, Type outputType) {

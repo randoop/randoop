@@ -14,82 +14,48 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * ArrayCreation is an {@link Operation} representing the construction of a
- * one-dimensional array with a given element type and length. The The
- * ArrayCreation operation requires a list of elements in an initializer. For
- * instance, <code>new int[2]</code> is the {@code ArrayCreation} in the
- * initialization<br>
- * <code>int[] x = new int[2] { 3, 7 };</code><br>
- * with the initializer list as inputs.
- * <p>
- * In terms of the notation used for the {@link Operation} class, a creation of
- * an array of elements of type <i>e</i> with length <i>n</i> has a signature [
- * <i>e,...,e</i>] &rarr; <i>t</i>, where [<i>e,...,e</i>] is a list of length
- * <i>n</i>, and <i>t</i> is the array type.
- * <p>
- * ArrayCreation objects are immutable.
+ * Created by bjkeller on 9/12/16.
  */
-public final class ArrayCreation extends CallableOperation {
+public class ArrayCreation extends CallableOperation {
 
-  /** ID for parsing purposes.
-   * @see OperationParser#parse */
-  public static final String ID = "array";
-
-  // State variables.
-  private final int length;
   private final Type elementType;
 
-  /**
-   * Creates an object representing the construction of an array that holds
-   * values of the element type and has the given length.
-   *
-   * @param length
-   *          number of objects allowed in the array
-   * @param arrayType  the type of array this operation creates
-   */
-  ArrayCreation(ArrayType arrayType, int length) {
-    assert length >= 0 : "array length may not be negative: " + length;
-
+  public ArrayCreation(ArrayType arrayType) {
     this.elementType = arrayType.getElementType();
-    this.length = length;
   }
 
-  /**
-   * Returns the length of created array.
-   *
-   * @return length of array created by this object
-   */
-  public int getLength() {
-    return this.length;
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * @return {@link NormalExecution} object containing constructed array.
-   */
   @Override
-  public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
-    if (statementInput.length > length) {
-      String msg = "Too many arguments:" + statementInput.length + " capacity:" + length;
-      throw new IllegalArgumentException(msg);
+  public boolean equals(Object obj) {
+    if (!(obj instanceof ArrayCreation)) {
+      return false;
     }
-    long startTime = System.currentTimeMillis();
-    assert statementInput.length == this.length;
-    Object theArray = Array.newInstance(this.elementType.getRuntimeClass(), this.length);
-    for (int i = 0; i < statementInput.length; i++) Array.set(theArray, i, statementInput[i]);
-    long totalTime = System.currentTimeMillis() - startTime;
-    return new NormalExecution(theArray, totalTime);
+    if (this == obj) {
+      return true;
+    }
+    ArrayCreation arrayCreation = (ArrayCreation) obj;
+    return this.elementType.equals(arrayCreation.elementType);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(elementType);
   }
 
   @Override
   public String toString() {
-    return elementType.getName() + "[" + length + "]";
+    return elementType.getName() + "[]";
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  @Override
+  public ExecutionOutcome execute(Object[] input, PrintStream out) {
+    assert input.length == 1 : "requires array length as input";
+    int length = Integer.parseInt(input[0].toString());
+    long startTime = System.currentTimeMillis();
+    Object theArray = Array.newInstance(this.elementType.getRuntimeClass(), length);
+    long totalTime = System.currentTimeMillis() - startTime;
+    return new NormalExecution(theArray, totalTime);
+  }
+
   @Override
   public void appendCode(
       Type declaringType,
@@ -97,100 +63,26 @@ public final class ArrayCreation extends CallableOperation {
       Type outputType,
       List<Variable> inputVars,
       StringBuilder b) {
-    if (inputVars.size() > length) {
-      String msg = "Too many arguments:" + inputVars.size() + " capacity:" + length;
-      throw new IllegalArgumentException(msg);
-    }
-
-    String arrayTypeName = this.elementType.getName();
-
-    b.append("new ").append(arrayTypeName).append("[] { ");
-    for (int i = 0; i < inputVars.size(); i++) {
-      if (i > 0) {
-        b.append(", ");
+    b.append("new").append(this.elementType.getName()).append("[ ");
+    String param = inputVars.get(0).getName();
+    Statement statementCreatingVar = inputVars.get(0).getDeclaringStatement();
+    if (statementCreatingVar.isPrimitiveInitialization()
+        && !statementCreatingVar.isNullInitialization()) {
+      String shortForm = statementCreatingVar.getShortForm();
+      if (shortForm != null) {
+        param = shortForm;
       }
-
-      String param = inputVars.get(i).getName();
-
-      // In the short output format, statements like "int x = 3" are not added
-      // to a sequence; instead, the value (e.g. "3") is inserted directly
-      // as arguments to method calls.
-      Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement();
-      if (statementCreatingVar.isPrimitiveInitialization()
-          && !statementCreatingVar.isNullInitialization()) {
-        String shortForm = statementCreatingVar.getShortForm();
-        if (shortForm != null) {
-          param = shortForm;
-        }
-      }
-      b.append(param);
     }
-    b.append(" }");
+    b.append(param).append(" ]");
   }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(elementType, length);
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (!(o instanceof ArrayCreation)) return false;
-    if (this == o) return true;
-    ArrayCreation otherArrayDecl = (ArrayCreation) o;
-    return this.elementType.equals(otherArrayDecl.elementType)
-        && this.length == otherArrayDecl.length;
-  }
-
-  /**
-   * {@inheritDoc} Creates string of the form TYPE[NUMELEMS] where TYPE is the
-   * type of the array, and NUMELEMS is the number of elements.
-   *
-   * Example: int[3]
-   *
-   * @return string descriptor for array creation
-   */
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
-    return elementType.getName() + "[" + Integer.toString(length) + "]";
+    return elementType.getName() + "[ " + inputTypes.get(0) + " ]";
   }
 
   @Override
   public String getName() {
     return this.toString();
-  }
-
-  /**
-   * Parses an array declaration in a string descriptor in the form generated by
-   * {@link ArrayCreation#toParsableString(Type, TypeTuple, Type)}.
-   *
-   * @see OperationParser#parse(String)
-   *
-   * @param str
-   *          the string to be parsed for the {@code ArrayCreation}.
-   * @return the array creation for the given string descriptor
-   * @throws OperationParseException
-   *           if string does not have expected form.
-   */
-  public static TypedOperation parse(String str) throws OperationParseException {
-    int openBr = str.indexOf('[');
-    int closeBr = str.indexOf(']');
-    String elementTypeName = str.substring(0, openBr);
-    String lengthStr = str.substring(openBr + 1, closeBr);
-
-    int length = Integer.parseInt(lengthStr);
-
-    Type elementType;
-    try {
-      elementType = Type.forName(elementTypeName);
-    } catch (ClassNotFoundException e) {
-      throw new OperationParseException("Type not found for array element type " + elementTypeName);
-    }
-
-    if (elementType.isGeneric()) {
-      throw new OperationParseException("Array element type may not be generic " + elementTypeName);
-    }
-
-    return TypedOperation.createArrayCreation(ArrayType.ofElementType(elementType), length);
   }
 }
