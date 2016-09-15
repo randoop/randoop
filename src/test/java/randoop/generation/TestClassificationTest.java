@@ -12,16 +12,17 @@ import java.util.List;
 import java.util.Set;
 
 import randoop.DummyVisitor;
+import randoop.ExceptionalExecution;
+import randoop.ExecutionOutcome;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.main.GenTests;
 import randoop.main.OptionsCache;
+import randoop.main.ThrowClassNameError;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.OperationExtractor;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PublicVisibilityPredicate;
-import randoop.reflection.ReflectionManager;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
@@ -34,12 +35,16 @@ import randoop.test.ExpectedExceptionCheck;
 import randoop.test.NoExceptionCheck;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
-import randoop.types.ClassOrInterfaceType;
+import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.util.MultiMap;
+import randoop.util.SimpleList;
 import randoop.util.predicate.AlwaysTrue;
 import randoop.util.predicate.Predicate;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -91,10 +96,10 @@ public class TestClassificationTest {
 
     for (ExecutableSequence s : rTests) {
       TestChecks cks = s.getChecks();
-      assertTrue("if sequence here should have checks", cks.hasChecks());
-      assertFalse("these are not error checks", cks.hasErrorBehavior());
-      assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
-
+      if (!cks.hasChecks()) {
+        assertFalse("these are not error checks", cks.hasErrorBehavior());
+        assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
+      }
       ExceptionCheck eck = cks.getExceptionCheck();
       if (eck != null) {
         String msg = "all exceptions are invalid, regression checks should be null;\n have ";
@@ -321,19 +326,75 @@ public class TestClassificationTest {
     }
   }
 
-  private ForwardGenerator buildGenerator(Class<?> c) {
-
-    Set<String> omitfields = new HashSet<>();
+  /*
+   * The tests generated here should throw an ArrayStoreException, which is a RuntimeException.
+   * Want to make that resulting sequence is not going into component manager.
+   */
+  @Test
+  public void regressionTestGeneration() {
+    GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
+    GenInputsAbstract.inputlimit = 100;
+    Class<?> c = FlakyStore.class;
+    ComponentManager componentManager = getComponentManager();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    TestCheckGenerator checkGenerator =
+        (new GenTests())
+            .createTestCheckGenerator(
+                visibility,
+                new ContractSet(),
+                new MultiMap<Type, TypedOperation>(),
+                new LinkedHashSet<TypedOperation>());
+    ForwardGenerator gen = buildGenerator(c, componentManager, visibility, checkGenerator);
+    gen.explore();
+    List<ExecutableSequence> rTests = gen.getRegressionSequences();
+    List<ExecutableSequence> eTests = gen.getErrorTestSequences();
+    assertThat("should be no error tests", eTests.size(), is(equalTo(0)));
+
+    SimpleList<Sequence> sequences = componentManager.getSequencesForType(JavaTypes.BOOLEAN_TYPE);
+    for (ExecutableSequence es : rTests) {
+      if (!es.isNormalExecution()) {
+        int exceptionIndex = es.getNonNormalExecutionIndex();
+        ExecutionOutcome outcome = es.getResult(exceptionIndex);
+        assertTrue("should be exception ", outcome instanceof ExceptionalExecution);
+        Throwable exception = ((ExceptionalExecution) outcome).getException();
+        assertTrue("should be ArrayStoreException", exception instanceof ArrayStoreException);
+
+        for (int i = 0; i < sequences.size(); i++) {
+          assertFalse(
+              "sequence with exception should not be component",
+              es.sequence.equals(sequences.get(i)));
+        }
+      }
+    }
+  }
+
+  private ForwardGenerator buildGenerator(
+      Class<?> c,
+      ComponentManager componentMgr,
+      VisibilityPredicate visibility,
+      TestCheckGenerator checkGenerator) {
+    Set<String> classnames = new HashSet<>();
+    classnames.add(c.getName());
+    Set<String> omitfields = new HashSet<>();
+
     ReflectionPredicate predicate =
         new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields);
-    final List<TypedOperation> model = new ArrayList<>();
-    ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-    ReflectionManager manager = new ReflectionManager(visibility);
-    manager.apply(new OperationExtractor(classType, model, predicate, new OperationModel()), c);
-    Collection<Sequence> components = new LinkedHashSet<>();
-    components.addAll(SeedSequences.defaultSeeds());
-    ComponentManager componentMgr = new ComponentManager(components);
+    OperationModel operationModel = null;
+    try {
+      operationModel =
+          OperationModel.createModel(
+              visibility,
+              predicate,
+              classnames,
+              new HashSet<String>(),
+              new HashSet<String>(),
+              new ThrowClassNameError(),
+              new ArrayList<String>());
+    } catch (Exception e) {
+      fail("couldn't build model " + e.getMessage());
+    }
+    final List<TypedOperation> model = operationModel.getConcreteOperations();
+
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
     ForwardGenerator gen =
         new ForwardGenerator(
@@ -347,6 +408,15 @@ public class TestClassificationTest {
             listenerMgr);
     Predicate<ExecutableSequence> isOutputTest = new AlwaysTrue<>();
     gen.addTestPredicate(isOutputTest);
+
+    gen.addTestCheckGenerator(checkGenerator);
+    gen.addExecutionVisitor(new DummyVisitor());
+    return gen;
+  }
+
+  private ForwardGenerator buildGenerator(Class<?> c) {
+    ComponentManager componentMgr = getComponentManager();
+    VisibilityPredicate visibility = new PublicVisibilityPredicate();
     TestCheckGenerator checkGenerator =
         (new GenTests())
             .createTestCheckGenerator(
@@ -354,8 +424,12 @@ public class TestClassificationTest {
                 new ContractSet(),
                 new MultiMap<Type, TypedOperation>(),
                 new LinkedHashSet<TypedOperation>());
-    gen.addTestCheckGenerator(checkGenerator);
-    gen.addExecutionVisitor(new DummyVisitor());
-    return gen;
+    return buildGenerator(c, componentMgr, visibility, checkGenerator);
+  }
+
+  private ComponentManager getComponentManager() {
+    Collection<Sequence> components = new LinkedHashSet<>();
+    components.addAll(SeedSequences.defaultSeeds());
+    return new ComponentManager(components);
   }
 }

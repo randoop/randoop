@@ -6,15 +6,18 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import randoop.DummyVisitor;
 import randoop.operation.EnumConstant;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
+import randoop.test.DummyCheckGenerator;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.JavaTypes;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
+import randoop.types.JavaTypes;
 import randoop.types.ParameterizedType;
 import randoop.types.ReferenceType;
 import randoop.types.Type;
@@ -26,7 +29,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  * Tests to check Collection generation.
@@ -52,7 +54,7 @@ public class CollectionGenerationTest {
     ComponentManager componentManager = setupComponentManager();
     ReferenceType elementType = JavaTypes.STRING_TYPE;
     ArrayType arrayType = ArrayType.ofElementType(elementType);
-    ParameterizedType collectionType = JDKTypes.ARRAY_DEQUE_TYPE.instantiate(elementType);
+    InstantiatedType collectionType = JDKTypes.ARRAY_DEQUE_TYPE.instantiate(elementType);
     Sequence sequence = HelperSequenceCreator.createCollection(componentManager, collectionType);
     assert sequence != null : "sequence should not be null";
 
@@ -68,6 +70,9 @@ public class CollectionGenerationTest {
               || outputType.equals(JavaTypes.BOOLEAN_TYPE));
     }
     assertThat("should only be four output types", outputTypeSet.size(), is(equalTo(4)));
+
+    ExecutableSequence es = new ExecutableSequence(sequence);
+    es.execute(new DummyVisitor(), new DummyCheckGenerator());
   }
 
   @Test
@@ -75,7 +80,7 @@ public class CollectionGenerationTest {
     ComponentManager componentManager = setupComponentManager();
     ReferenceType elementType = JavaTypes.STRING_TYPE;
     ArrayType arrayType = ArrayType.ofElementType(elementType);
-    ParameterizedType collectionType = JDKTypes.SET_TYPE.instantiate(elementType);
+    InstantiatedType collectionType = JDKTypes.SET_TYPE.instantiate(elementType);
     Sequence sequence = HelperSequenceCreator.createCollection(componentManager, collectionType);
     assert sequence != null : "sequence should not be null";
 
@@ -98,7 +103,7 @@ public class CollectionGenerationTest {
     ComponentManager componentManager = setupComponentManager();
     ReferenceType enumType = ClassOrInterfaceType.forClass(Day.class);
     ArrayType arrayType = ArrayType.ofElementType(enumType);
-    ParameterizedType collectionType = JDKTypes.ENUM_SET_TYPE.instantiate(enumType);
+    InstantiatedType collectionType = JDKTypes.ENUM_SET_TYPE.instantiate(enumType);
     Sequence sequence = HelperSequenceCreator.createCollection(componentManager, collectionType);
     assert sequence != null : "sequence should not be null";
 
@@ -120,14 +125,14 @@ public class CollectionGenerationTest {
   @Test
   public void testParameterizedElementCollection() {
     ComponentManager componentManager = setupComponentManager();
-    ParameterizedType elementType = JDKTypes.LIST_TYPE.instantiate(JavaTypes.STRING_TYPE);
+    InstantiatedType elementType = JDKTypes.LIST_TYPE.instantiate(JavaTypes.STRING_TYPE);
     componentManager.addGeneratedSequence(
         HelperSequenceCreator.createCollection(componentManager, elementType));
     ParameterizedType concreteElementType =
         JDKTypes.ARRAY_LIST_TYPE.instantiate(JavaTypes.STRING_TYPE);
     ArrayType arrayType = ArrayType.ofElementType(JavaTypes.STRING_TYPE);
 
-    ParameterizedType collectionType = JDKTypes.LIST_TYPE.instantiate(elementType);
+    InstantiatedType collectionType = JDKTypes.LIST_TYPE.instantiate(elementType);
     Sequence sequence = HelperSequenceCreator.createCollection(componentManager, collectionType);
     assert sequence != null : "sequence should not be null";
     Set<Type> outputTypeSet = new HashSet<>();
@@ -150,14 +155,15 @@ public class CollectionGenerationTest {
   public void testParameterizedArray() {
     Randomness.reset(999997);
     ComponentManager componentManager = setupComponentManager();
-    ParameterizedType elementType = JDKTypes.LIST_TYPE.instantiate(JavaTypes.STRING_TYPE);
+    InstantiatedType elementType = JDKTypes.LIST_TYPE.instantiate(JavaTypes.STRING_TYPE);
     componentManager.addGeneratedSequence(
         HelperSequenceCreator.createCollection(componentManager, elementType));
     componentManager.addGeneratedSequence(
         HelperSequenceCreator.createCollection(componentManager, elementType));
-    ParameterizedType concreteElementType =
+    InstantiatedType concreteElementType =
         JDKTypes.ARRAY_LIST_TYPE.instantiate(JavaTypes.STRING_TYPE);
     ArrayType arrayType = ArrayType.ofElementType(elementType);
+    ArrayType rawArrayType = ArrayType.ofElementType(JDKTypes.LIST_TYPE.getRawtype());
     ArrayType strArrayType = ArrayType.ofElementType(JavaTypes.STRING_TYPE);
     SimpleList<Sequence> sequenceList =
         HelperSequenceCreator.createArraySequence(componentManager, arrayType);
@@ -168,20 +174,17 @@ public class CollectionGenerationTest {
       Type outputType = sequence.getStatement(i).getOutputType();
       outputTypeSet.add(outputType);
       assertTrue(
-          "statement type should be one of nine types, got " + outputType,
-          outputType.equals(elementType)
-              || outputType.equals(concreteElementType)
+          "statement type should be one of 8 types, got " + outputType,
+          outputType.equals(concreteElementType)
               || outputType.equals(arrayType)
-              || outputType.equals(JavaTypes.OBJECT_TYPE)
+              || outputType.equals(rawArrayType)
               || outputType.equals(JavaTypes.INT_TYPE)
-              || (outputType.isParameterized()
-                  && ((InstantiatedType) outputType).isInstantiationOf(JavaTypes.CLASS_TYPE))
               || outputType.isString()
               || outputType.equals(strArrayType)
               || outputType.equals(JavaTypes.BOOLEAN_TYPE)
               || outputType.isVoid());
     }
-    assertThat("should be nine output types", outputTypeSet.size(), is(equalTo(9)));
+    assertThat("should be nine output types", outputTypeSet.size(), is(equalTo(8)));
   }
 
   /*

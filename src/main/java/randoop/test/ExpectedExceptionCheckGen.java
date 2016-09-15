@@ -46,7 +46,7 @@ public class ExpectedExceptionCheckGen {
    *         statement if exception is checked, and an
    *         {@code EmptyExceptionCheck} otherwise
    */
-  public ExceptionCheck getExceptionCheck(
+  ExceptionCheck getExceptionCheck(
       ExceptionalExecution exec, ExecutableSequence s, int statementIndex) {
     Throwable e = exec.getException();
     String catchClassName = getCatchClassName(e.getClass());

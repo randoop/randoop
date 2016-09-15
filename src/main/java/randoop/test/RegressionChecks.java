@@ -6,15 +6,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import randoop.test.Check;
-import randoop.test.ExceptionCheck;
-
 public class RegressionChecks implements TestChecks {
 
   private Set<Check> checks;
   private ExceptionCheck exceptionCheck;
 
-  public RegressionChecks() {
+  RegressionChecks() {
     this.checks = new LinkedHashSet<>();
     this.exceptionCheck = null;
   }
