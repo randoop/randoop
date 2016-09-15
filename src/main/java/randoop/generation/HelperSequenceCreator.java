@@ -18,19 +18,18 @@ import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.JavaTypes;
 import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
+import randoop.types.JavaTypes;
+import randoop.types.NonParameterizedType;
 import randoop.types.ParameterizedType;
 import randoop.types.ReferenceArgument;
 import randoop.types.ReferenceType;
-import randoop.types.Substitution;
 import randoop.types.Type;
 import randoop.types.TypeArgument;
 import randoop.types.TypeTuple;
 import randoop.util.ArrayListSimpleList;
-import randoop.util.Log;
 import randoop.util.Randomness;
 import randoop.util.SimpleList;
 
@@ -66,29 +65,11 @@ class HelperSequenceCreator {
     if (elementType.isParameterized()) {
       // XXX build elementType default construction sequence here, if cannot build one then stop
       InstantiatedType creationType = getImplementingType((InstantiatedType) elementType);
-      if (getConstructor(creationType) == null) {
-        /* If has no visible default constructor, */
-        // XXX Note: OK to have any constructor that is easy to call, just need a canonical object
-        /* If element type is C<T extends C<T>, so use T */
-        if (creationType.isRecursiveType()) {
-          // XXX being incautious, argument type might be parameterized
-          elementType =
-              ((ReferenceArgument) creationType.getTypeArguments().get(0)).getReferenceType();
-        } else {
-          /*
-              - should look for static creation method c : () -> C<T> and use that
-              - otherwise/for now, return nothing
-          */
-          if (Log.isLoggingOn()) {
-            Log.logLine(
-                "creating array of "
-                    + elementType
-                    + " failed because cannot create "
-                    + creationType);
-          }
-
-          return new ArrayListSimpleList<>();
-        }
+      /* If element type is C<T extends C<T>, so use T */
+      if (creationType.isRecursiveType()) {
+        // XXX being incautious, argument type might be parameterized
+        elementType =
+            ((ReferenceArgument) creationType.getTypeArguments().get(0)).getReferenceType();
       }
     }
 
@@ -125,8 +106,7 @@ class HelperSequenceCreator {
    * @return a collection of the given type
    */
   static Sequence createCollection(
-      ComponentManager componentManager, ParameterizedType collectionType) {
-    assert !collectionType.isGeneric() : "type must be instantiated";
+      ComponentManager componentManager, InstantiatedType collectionType) {
 
     // get the element type
     List<TypeArgument> argumentList = collectionType.getTypeArguments();
@@ -137,29 +117,17 @@ class HelperSequenceCreator {
     elementType = ((ReferenceArgument) argumentType).getReferenceType();
 
     // select implementing Collection type and instantiate
-    GenericClassType implementingType = JDKTypes.getImplementingType(collectionType);
-    ParameterizedType creationType;
-    creationType = implementingType.instantiate(elementType);
+    InstantiatedType implementingType = getImplementingType(collectionType);
 
     int totStatements = 0;
     List<Sequence> inputSequences = new ArrayList<>();
     List<Integer> variableIndices = new ArrayList<>();
 
     // build sequence to create a Collection object
-    Sequence creationSequence = new Sequence();
-    List<Variable> creationInputs = new ArrayList<>();
-    TypedOperation creationOperation;
-    if (implementingType.equals(JDKTypes.ENUM_SET_TYPE)) {
-      NonreceiverTerm classLiteral =
-          new NonreceiverTerm(JavaTypes.CLASS_TYPE, elementType.getRuntimeClass());
-      creationSequence =
-          creationSequence.extend(TypedOperation.createNonreceiverInitialization(classLiteral));
-      creationInputs.add(creationSequence.getLastVariable());
-      creationOperation = getEnumSetCreation(creationType);
-    } else {
-      creationOperation = getCollectionConstructor(creationType);
+    Sequence creationSequence = createCollectionCreationSequence(implementingType, elementType);
+    if (creationSequence == null) {
+      return null;
     }
-    creationSequence = creationSequence.extend(creationOperation, creationInputs);
     inputSequences.add(creationSequence);
     int creationIndex = totStatements + creationSequence.getLastVariable().index;
     variableIndices.add(creationIndex);
@@ -198,6 +166,37 @@ class HelperSequenceCreator {
   }
 
   /**
+   * Creates the creation sequence for a collection with the given type and element type.
+   *
+   * @param implementingType  the collection type
+   * @param elementType  the type of the elements
+   * @return a {@link Sequence} that creates a collection of {@code implementingType}
+   */
+  private static Sequence createCollectionCreationSequence(
+      InstantiatedType implementingType, ReferenceType elementType) {
+    Sequence creationSequence = new Sequence();
+    List<Variable> creationInputs = new ArrayList<>();
+    TypedOperation creationOperation;
+    if (implementingType.isInstantiationOf(JDKTypes.ENUM_SET_TYPE)) {
+      NonreceiverTerm classLiteral =
+          new NonreceiverTerm(JavaTypes.CLASS_TYPE, elementType.getRuntimeClass());
+      creationSequence =
+          creationSequence.extend(TypedOperation.createNonreceiverInitialization(classLiteral));
+      creationInputs.add(creationSequence.getLastVariable());
+      creationOperation = getEnumSetCreation(implementingType);
+    } else {
+      Constructor<?> constructor = getDefaultConstructor(implementingType);
+      if (constructor == null) {
+        return null;
+      }
+      ConstructorCall op = new ConstructorCall(constructor);
+      creationOperation =
+          new TypedClassOperation(op, implementingType, new TypeTuple(), implementingType);
+    }
+    return creationSequence.extend(creationOperation, creationInputs);
+  }
+
+  /**
    * Creates a sequence that builds an array of the given element type using sequences from the
    * given list of candidates.
    *
@@ -215,11 +214,11 @@ class HelperSequenceCreator {
 
     ArrayType arrayType = ArrayType.ofElementType(elementType);
     if (!elementType.isParameterized()) {
-      TypedOperation creationOperation = TypedOperation.createArrayCreation(arrayType, length);
+      TypedOperation creationOperation =
+          TypedOperation.createInitializedArrayCreation(arrayType, length);
       return Sequence.createSequence(creationOperation, inputSequences, variables);
     } else {
-      Sequence creationSequence =
-          createGenericArrayCreationSequence((InstantiatedType) elementType, length);
+      Sequence creationSequence = createGenericArrayCreationSequence(arrayType, length);
       inputSequences.add(creationSequence);
 
       TypedOperation arrayElementAssignment =
@@ -242,77 +241,48 @@ class HelperSequenceCreator {
   }
 
   /**
-   * Creates a {@link Sequence} creates an array using reflection.
-   * This is necessary for creating an array with parameterized type.
-   * For instance, to create a <code>List&lt;String&gt;[]</code>, the code is
-   * <pre><code>
-   *   Class&lt;?&gt; componentType = (new ArrayList&lt;String&gt;()).getClass();
-   *   &#64;SuppressWarnings("unchecked")
-   *   List&lt;String&gt;[] a = (List&lt;String&gt;[])(Array.newInstance(componentType, length));
-   * </code></pre>
+   * Creates a {@link Sequence} for creating an array with parameterized type.
+   * Resulting code looks like {@code (ElementType[])new RawElementType[length]}.
    * Note that the {@code SuppressWarnings} annotation is added when the assignment with the cast
    * is output.
    *
-   * @param elementType  the type of the array element
+   * @param arrayType  the type of the array
    * @param length  the length of the array to be created
    * @return the sequence to create an array with the given element type and length
    */
-  private static Sequence createGenericArrayCreationSequence(
-      InstantiatedType elementType, int length) {
-    InstantiatedType creationType = getImplementingType(elementType);
-    Substitution<ReferenceType> substitution = creationType.getTypeSubstitution();
+  private static Sequence createGenericArrayCreationSequence(ArrayType arrayType, int length) {
+    InstantiatedType elementType = (InstantiatedType) arrayType.getElementType();
+    NonParameterizedType rawElementType = elementType.getRawtype();
+    ArrayType rawArrayType = ArrayType.ofElementType(rawElementType);
 
     Sequence creationSequence = new Sequence();
 
-    // get constructor for element type, create object
-    Constructor<?> constructor = getConstructor(creationType);
-    assert constructor != null : "cannot procede if not able to build default object";
-    TypedOperation elementTypeConstructor =
-        TypedOperation.forConstructor(constructor).apply(substitution);
-    // elementTypeObject = new ElementType();
-    creationSequence = creationSequence.extend(elementTypeConstructor, new ArrayList<Variable>());
-
-    Method getClassMethod;
-    try {
-      getClassMethod = (Object.class).getMethod("getClass");
-    } catch (NoSuchMethodException e) {
-      throw new BugInRandoopException("Cannot find Object.getClass(): " + e.getMessage());
-    }
-    TypedOperation getClassMethodOp = TypedOperation.forMethod(getClassMethod);
-    // componentType = elementTypeObject.getClass()
-    List<Variable> input = new ArrayList<>();
-    input.add(creationSequence.getLastVariable());
-    creationSequence = creationSequence.extend(getClassMethodOp, input);
-    int typeIndex = creationSequence.getLastVariable().index;
-
-    // Array.newInstance(componentType, length)
+    // new RawElementType[length]
     TypedOperation lengthTerm =
         TypedOperation.createNonreceiverInitialization(
             new NonreceiverTerm(JavaTypes.INT_TYPE, length));
     creationSequence = creationSequence.extend(lengthTerm, new ArrayList<Variable>());
-    input = new ArrayList<>();
-    input.add(creationSequence.getVariable(typeIndex));
+    List<Variable> input = new ArrayList<>();
     input.add(creationSequence.getLastVariable());
 
-    Method newInstanceMethod;
-    try {
-      newInstanceMethod =
-          (java.lang.reflect.Array.class).getMethod("newInstance", Class.class, int.class);
-    } catch (NoSuchMethodException e) {
-      throw new BugInRandoopException("Cannot find Array.newInstance(): " + e.getMessage());
-    }
-    TypedOperation creationOperation = TypedOperation.forMethod(newInstanceMethod);
+    TypedOperation creationOperation = TypedOperation.createArrayCreation(rawArrayType);
     creationSequence = creationSequence.extend(creationOperation, input);
 
-    TypedOperation castOperation =
-        TypedOperation.createCast(JavaTypes.OBJECT_TYPE, ArrayType.ofElementType(elementType));
+    TypedOperation castOperation = TypedOperation.createCast(rawArrayType, arrayType);
     input = new ArrayList<>();
     input.add(creationSequence.getLastVariable());
     creationSequence = creationSequence.extend(castOperation, input);
     return creationSequence;
   }
 
-  private static Constructor<?> getConstructor(ClassOrInterfaceType creationType) {
+  /**
+   * Gets the default constructor for a {@link ClassOrInterfaceType}.
+   * Returns null if the type has none.
+   *
+   * @param creationType  the class type
+   * @return the reflection object for the default constructor of the given type; null, if there is none
+   */
+  private static Constructor<?> getDefaultConstructor(ClassOrInterfaceType creationType) {
     Constructor<?> constructor;
     try {
       constructor = creationType.getRuntimeClass().getConstructor();
@@ -322,6 +292,16 @@ class HelperSequenceCreator {
     return constructor;
   }
 
+  /**
+   * Constructs an implementing type for an abstract subtype of {@code java.util.Collection} using
+   * the {@link JDKTypes#getImplementingType(ParameterizedType)} method.
+   * Otherwise, returns the given type.
+   * <p>
+   *   Note: this should ensure that the type has some mechanism for constructing an object
+   *
+   * @param elementType  the type
+   * @return a non-abstract subtype of the given type, or the original type
+   */
   private static InstantiatedType getImplementingType(InstantiatedType elementType) {
     InstantiatedType creationType = elementType;
     if (elementType.getGenericClassType().isSubtypeOf(JDKTypes.COLLECTION_TYPE)
@@ -384,24 +364,6 @@ class HelperSequenceCreator {
     List<Type> paramTypes = new ArrayList<>();
     paramTypes.add(JavaTypes.CLASS_TYPE);
     return new TypedClassOperation(op, creationType, new TypeTuple(paramTypes), creationType);
-  }
-
-  /**
-   * Create the constructor call operation for the given type.
-   *
-   * @param creationType  the class type
-   * @return the constructor call for the given class type
-   */
-  private static TypedOperation getCollectionConstructor(ParameterizedType creationType) {
-    Constructor<?> constructor;
-    try {
-      constructor = creationType.getRuntimeClass().getConstructor();
-    } catch (NoSuchMethodException e) {
-      throw new BugInRandoopException(
-          "Can't find default constructor for Collection " + creationType + ": " + e.getMessage());
-    }
-    ConstructorCall op = new ConstructorCall(constructor);
-    return new TypedClassOperation(op, creationType, new TypeTuple(), creationType);
   }
 
   /**
