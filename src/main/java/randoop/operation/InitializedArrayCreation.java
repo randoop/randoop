@@ -15,9 +15,9 @@ import randoop.types.TypeTuple;
 
 /**
  * InitializedArrayCreation is an {@link Operation} representing the construction of a
- * one-dimensional array with a given element type and length. The The
- * InitializedArrayCreation operation requires a list of elements in an initializer. For
- * instance, <code>new int[2]</code> is the {@code InitializedArrayCreation} in the
+ * one-dimensional array with a given element type and length.
+ * The InitializedArrayCreation operation requires a list of elements in an initializer.
+ * For instance, <code>new int[2]</code> is the {@code InitializedArrayCreation} in the
  * initialization<br>
  * <code>int[] x = new int[2] { 3, 7 };</code><br>
  * with the initializer list as inputs.
@@ -191,6 +191,7 @@ public final class InitializedArrayCreation extends CallableOperation {
       throw new OperationParseException("Array element type may not be generic " + elementTypeName);
     }
 
-    return TypedOperation.createSizedArrayCreation(ArrayType.ofElementType(elementType), length);
+    return TypedOperation.createInitializedArrayCreation(
+        ArrayType.ofElementType(elementType), length);
   }
 }

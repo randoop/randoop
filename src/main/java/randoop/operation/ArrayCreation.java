@@ -14,13 +14,21 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * Created by bjkeller on 9/12/16.
+ * {@code ArrayCreation} is a {@link Operation} representing the construction of a one-dimensional
+ * array of a given type.
+ * The operation takes a length argument and creates an array of that size.
  */
 public class ArrayCreation extends CallableOperation {
 
+  /** The element type for the created array */
   private final Type elementType;
 
-  public ArrayCreation(ArrayType arrayType) {
+  /**
+   * Creates an object representing the construction of an array of the given type.
+   *
+   * @param arrayType  the type of the created array
+   */
+  ArrayCreation(ArrayType arrayType) {
     this.elementType = arrayType.getElementType();
   }
 
@@ -63,7 +71,7 @@ public class ArrayCreation extends CallableOperation {
       Type outputType,
       List<Variable> inputVars,
       StringBuilder b) {
-    b.append("new").append(this.elementType.getName()).append("[ ");
+    b.append("new").append(" ").append(this.elementType.getName()).append("[ ");
     String param = inputVars.get(0).getName();
     Statement statementCreatingVar = inputVars.get(0).getDeclaringStatement();
     if (statementCreatingVar.isPrimitiveInitialization()
