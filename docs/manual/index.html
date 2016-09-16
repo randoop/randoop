@@ -700,7 +700,7 @@ Randoop about your application, and that is how we recommend using Randoop.
       <li id="option:include-if-class-exercised"><b>--include-if-class-exercised=</b><i>filename</i>.
  File containing fully qualified names of classes that the tests must exercise.
  This option only works if Randoop is run using
- <code>-javaagent:exercised_agent.jar</code>
+ <code>-javaagent:exercised-class-<em>X.Y.Z</em>.jar</code>
  to instrument the classes. A test is output only if it exercises at least one
  of the class names in the file. A test exercises a class if it executes any
  constructor or method of the class, directly or indirectly (the constructor
@@ -870,7 +870,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>
  Literals in these files are used in addition to all other constants in the
  pool. For the format of this file, see documentation in class
- <code>randoop.reflection.LiteralFileReader</code>. The special value "CLASSES" (with no
+ <code>randoop.LiteralFileReader</code>. The special value "CLASSES" (with no
  quotes) means to read literals from all classes under test.
  </p></li>
       <li id="option:literals-level"><b>--literals-level=</b><i>enum</i>.
@@ -885,6 +885,8 @@ Randoop about your application, and that is how we recommend using Randoop.
   </li>
   <li id="optiongroup:Varying-the-nature-of-generated-tests">Varying the nature of generated tests
     <ul>
+      <li id="option:init-routine"><b>--init-routine=</b><i>string</i>.
+ Specifies initialization routine (class.method)</li>
       <li id="option:alias-ratio"><b>--alias-ratio=</b><i>double</i>.
  Try to reuse values from a sequence with the given frequency. If an alias
  ratio is given, it should be between 0 and 1.
@@ -966,6 +968,20 @@ Randoop about your application, and that is how we recommend using Randoop.
  specify the memory size (in megabytes) for recursive JVM calls [default 1000]</li>
       <li id="option:capture-output"><b>--capture-output=</b><i>boolean</i>.
  Capture all output to stdout and stderr [default false]</li>
+    </ul>
+  </li>
+  <li id="optiongroup:Serialized-input-output-of-generated-tests">Serialized input/output of generated tests
+    <ul>
+      <li id="option:componentfile-ser"><b>--componentfile-ser=</b><i>filename</i> <code>[+]</code>.
+ Read serialized test inputs from the given file</li>
+      <li id="option:componentfile-txt"><b>--componentfile-txt=</b><i>filename</i> <code>[+]</code>.
+ Read serialized test inputs from the given file (text-based)</li>
+      <li id="option:output-components"><b>--output-components=</b><i>filename</i>.
+ Output components (serialized, GZIPPED) to the given file. Suggestion: use
+ a .gz suffix in file name.</li>
+      <li id="option:output-tests-serialized"><b>--output-tests-serialized=</b><i>filename</i>.
+ Output tests (sequences plus checkers) in serialized form to the given
+ file. Suggestion: use a .gz suffix in file name.</li>
     </ul>
   </li>
   <li id="optiongroup:Controlling-randomness">Controlling randomness
