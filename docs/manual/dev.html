@@ -429,9 +429,22 @@ task described below.
   The website (without manuals) can be found in <code>src/docs/site</code>.
   These files, along with the manual and Javadoc API, are moved to the
   <code>docs</code> directory by the <code>publishSite</code> task.
-  This task includes validation of HTML.
+  This task includes validation of HTML using <code>html5validator</code>, and
+  will fail if the tool is not installed.
 </p>
 
+<p>
+  To install use either
+</p>
+<pre><code>
+  sudo pip install html5validator
+</code></pre>
+<p>
+or
+</p>
+<pre><code>
+  pip install --user html5validator
+</code></pre>
 
 <h3 id="addtests">Adding Tests</h3>
 
@@ -632,7 +645,13 @@ merging new work with the master branch.
   </li>
   <li>Create the distribution files with <code>./gradlew clean buildRelease</code>.
     This will rebuild the project site in the <code>docs</code> directory.
-    Commit those changes.
+    Commit and push those changes.
+  </li>
+  <li>
+    Check that there are no broken links on the published website by running the
+    task <code>checklink</code>.  (This executes the Perl <code>checklink</code>
+    script from the cloned copy of Plume-lib, which requires the <code>CSS::DOM</code>
+    Perl module to be installed before it will work correctly.)
   </li>
   <li>Follow the
     <a href="https://help.github.com/articles/creating-releases/">GitHub instructions for creating a release</a>;
