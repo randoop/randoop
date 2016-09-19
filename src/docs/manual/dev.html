@@ -358,7 +358,7 @@ So, for instance, the following will work to run the <code>exercised-class</code
 
 <p>
   Any user-visible changes should be documented in the changelog
-  <code>doc/CHANGES.txt</code>.
+  <code>src/docs/resources/CHANGES.txt</code>.
   Be sure to describe the change in terms of how it affects the user.
   List any bug fixes that may affect any user visible behavior.
   Optionally, mention any serious reported issues that are not fixed.
@@ -396,21 +396,39 @@ So, for instance, the following will work to run the <code>exercised-class</code
 <h3 id="modmanual">Modifying the manual</h3>
 
 <p>
-The documentation for Randoop is in the subdirectory <code>doc</code>:
+The documentation for Randoop is in the subdirectory <code>src/docs/manual</code>:
 </p>
 <ul>
-<li> <code>doc/index.html</code> has the user manual.
-<li> <code>doc/dev.html</code> is this developer manual.</li>
+<li> <code>src/docs/manual/index.html</code> has the user manual.
+<li> <code>src/docs/manual/dev.html</code> is this developer manual.</li>
 </ul>
 
 <p>
 The command <code>./gradlew manual</code> creates the Javadoc for
 Randoop, updates command-line argument documentation in the user manual,
 and updates the
-table-of-contents in both manuals (in the <code>doc</code> directory).
+table-of-contents in both manuals (in the <code>src/docs/manual</code> directory).
 The Javadoc is placed in
 <code>build/docs/api/</code>, and the manuals
 are copied to <code>build/docs/manual/</code>.
+These files are published to the project website by the <code>publishSite</code>
+task described below.
+</p>
+
+<p>
+  Additional documentation that is not published to the project website is located
+  in <code>src/docs/resources</code>.  This includes the change log, diagrams,
+  and project ideas documents.
+</p>
+
+
+<h3 id="github-site">Modifying the website</h3>
+
+<p>
+  The website (without manuals) can be found in <code>src/docs/site</code>.
+  These files, along with the manual and Javadoc API, are moved to the
+  <code>docs</code> directory by the <code>publishSite</code> task.
+  This task includes validation of HTML.
 </p>
 
 
@@ -578,8 +596,8 @@ merging new work with the master branch.
       <li>Also, update the version number and date in each of
         <code>build.gradle</code>,
         <code>src/main/java/randoop/Globals.java</code>,
-        <code>doc/CHANGES.txt</code>, and
-        <code>doc/index.html</code>.
+        <code>src/docs/resources/CHANGES.txt</code>, and
+        <code>src/docs/manualindex.html</code>.
       </li>
     </ol>
   </li>
@@ -590,12 +608,12 @@ merging new work with the master branch.
   <li>Compile and test.  If any tests fail, fix them and start over.
     <pre>./gradlew clean build</pre>
   </li>
-  <li>You should have been updating the changelog <code>doc/CHANGES.txt</code>
+  <li>You should have been updating the changelog <code>src/docs/resources/CHANGES.txt</code>
     all along, but double-check by running a command such as this:
     <pre>git log v$OLDVERSION..</pre>
   </li>
   <li>Ensure that the manual HTML is valid; commit any necessary changes:
-    <pre>./gradlew manual</pre>
+    <pre>./gradlew manual validateManual</pre>
   </li>
 </ol>
 <p>
@@ -611,14 +629,9 @@ merging new work with the master branch.
   git push --tags</pre>
     <!-- The gh-pages branch is not tagged. -->
   </li>
-  <li>Create the distribution files with <code>./gradlew clean build manual</code></li>
-  <li>
-    Update the project documentation in the <code>docs</code> directory by
-    running the command
-    <pre>
-  ./gradlew publishDocumentation
-    </pre>
-    and commit the changes.
+  <li>Create the distribution files with <code>./gradlew clean buildRelease</code>.
+    This will rebuild the project site in the <code>docs</code> directory.
+    Commit those changes.
   </li>
   <li>Follow the
     <a href="https://help.github.com/articles/creating-releases/">GitHub instructions for creating a release</a>;
