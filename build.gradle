@@ -489,7 +489,7 @@ task generateOptionsDoc(type: Javadoc, dependsOn: ['assemble', 'javadoc', 'copyM
  * Configuration of manual task to generate/update and move documentation into
  * build/docs directory.
  */
-task manual(type: DefaultTask, dependsOn: ['generateOptionsDoc', 'updateUserTOC', 'updateDevTOC']) {
+task manual(type: DefaultTask, dependsOn: ['copyManual', 'generateOptionsDoc', 'updateUserTOC', 'updateDevTOC']) {
   description "Updates documentation in build/docs"
 }
 
