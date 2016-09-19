@@ -28,8 +28,7 @@ script:
   - ./gradlew assemble
   - ./gradlew --info check
   - ./gradlew --info manual
-# TODO: this requires Java 8
-#   - ./gradlew validate
+  - ./gradlew validateManual
   - ./gradlew verifyGoogleJavaFormat
 
 after_success:

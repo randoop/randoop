@@ -167,6 +167,7 @@ compileAgentTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileSystemTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
 
+
 /*
  * Configuration for testing.
  * In terms of build, we have two kinds of tests, both using JUnit.
@@ -381,7 +382,7 @@ task distributionZip (type: Zip , dependsOn: ['singleJar', 'copyJars', 'manual']
     into 'doc'
   }
   from ('build/docs/manual/stylesheets') {
-    into 'doc/stylesheets'
+    into 'doc/manual/stylesheets'
   }
   from 'doc/READMEDIST.txt'
   exclude { details -> details.file.name.contains('randoop') && ! details.file.name.contains('-all-') }
@@ -403,6 +404,19 @@ task distributionZip (type: Zip , dependsOn: ['singleJar', 'copyJars', 'manual']
  *       stylesheets/ - contains css file for web pages
  */
 
+ /*
+  * Get the plume-lib repo using gradle-git, and save into utils/plume-lib
+  */
+ task clone << {
+   def plumeFolder = file("$buildDir/utils/plume-lib")
+   if ( ! plumeFolder.exists() ) {
+     org.ajoberstar.grgit.Grgit.clone(dir: plumeFolder, uri: 'https://github.com/mernst/plume-lib.git')
+   } else {
+     println("WARNING: not cloning plume-lib because already exists.")
+     println("         Force clone by running after clean")
+   }
+ }
+
 /*
  * Set destination directory to build/docs/api, and restrict to classes in
  * main sourceSet.
@@ -411,8 +425,11 @@ javadoc {
   destinationDir = file("${buildDir}/docs/api")
   source sourceSets.main.allJava
   options.memberLevel = JavadocMemberLevel.PRIVATE
-  options.addStringOption("stylesheetfile", "doc/stylesheets/javadocstyle.css")
+  options.addStringOption("stylesheetfile", "src/docs/resources/stylesheets/javadocstyle.css")
 }
+
+// needed for javadoc.doLast
+javadoc.dependsOn clone
 
 javadoc.doLast {
   // Work around Javadoc bug
@@ -428,88 +445,105 @@ javadoc.doLast {
   }
 }
 
-/*
- * Get the plume-lib repo using gradle-git, and save into utils/plume-lib
- */
-task clone << {
-  def plumeFolder = file("$buildDir/utils/plume-lib")
-  if ( ! plumeFolder.exists() ) {
-    org.ajoberstar.grgit.Grgit.clone(dir: plumeFolder, uri: 'https://github.com/mernst/plume-lib.git')
-  } else {
-    println("WARNING: not cloning plume-lib because already exists.")
-    println("         Force clone by running after clean")
-  }
+task copyManual(type: Copy) {
+  from ("src/docs/manual")
+  into "${buildDir}/docs/manual"
 }
 
 /*
  * Configuration of updateUserTOC task to update the table-of-contents for the
  * user documentation.
- * Operates on original file: doc/index.html
  */
-task updateUserTOC(type:Exec, dependsOn: 'clone') {
+task updateUserTOC( type:Exec, dependsOn: [ 'copyManual', 'clone' ]) {
   executable "$buildDir/utils/plume-lib/bin/html-update-toc"
-  args  "doc/index.html"
+  args  "${buildDir}/docs/manual/index.html"
   environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
 }
 
 /* Configuration of task updateDevTOC to update table of contents in developer
  * documentation.
- * Operates on original file: doc/dev.html
  */
-task updateDevTOC(type:Exec, dependsOn: 'clone') {
+task updateDevTOC( type:Exec, dependsOn: [ 'copyManual', 'clone' ]) {
   executable "$buildDir/utils/plume-lib/bin/html-update-toc"
-  args "doc/dev.html"
+  args "${buildDir}/docs/manual/dev.html"
   environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
 }
 
 /*
  * Configuration of generateOptionsDoc task that applies plume.OptionsDoclet
- * to doc/index.html to add command-line arguments extracted from the given
- * @Option annotated classes. Writes resulting file as build/docs/manual/index.html
+ * to docs/manual/index.html to add command-line arguments extracted from the given
+ * @Option annotated classes. Applied in-place.
  */
-task generateOptionsDoc(type: Javadoc, dependsOn: ['assemble', 'javadoc', 'updateUserTOC']) {
+task generateOptionsDoc(type: Javadoc, dependsOn: ['assemble', 'javadoc', 'copyManual' ]) {
   source sourceSets.main.allJava
   classpath = sourceSets.main.runtimeClasspath + sourceSets.main.compileClasspath
   title = "" // workaround to Javadoc task wanting to spit out title
   destinationDir = file("${buildDir}/docs/manual")
   options.docletpath = configurations.manual.files.asType(List)
   options.doclet = "plume.OptionsDoclet"
-  options.addStringOption("outfile", "index.html")
-  options.addStringOption("docfile", "doc/index.html")
-}
-
-/*
- * Configuration of copyManual task that copies files (other than doc/index.html)
- * into build/docs/manual directory.
- * These files include the developer documentation and text for example Randoop
- * config files.
- */
-task copyManual(type:Copy, dependsOn: 'updateDevTOC') {
-  from ('doc') {
-    include 'dev.html'
-    include '*_example.txt'
-    include 'RandoopMappedCalls.java.txt'
-  }
-  from ('doc/stylesheets') {
-    into 'stylesheets'
-  }
-  into "${buildDir}/docs/manual"
+  options.addStringOption "docfile", "src/docs/manual/index.html"
+  options.addStringOption "outfile", "${buildDir}/docs/manual/index.html"
 }
 
 /*
  * Configuration of manual task to generate/update and move documentation into
  * build/docs directory.
  */
-task manual(type: DefaultTask, dependsOn: ['copyManual', 'generateOptionsDoc', 'javadoc']) {
-  description "Generates, updates and moves documentation into build/docs"
+task manual(type: DefaultTask, dependsOn: ['generateOptionsDoc', 'updateUserTOC', 'updateDevTOC']) {
+  description "Updates documentation in build/docs"
+}
+
+/*
+ * Applies HTML5 validator to API javadoc.
+ * Note: prior to Java 9, javadoc does not comply with HTML5.
+ */
+task validateAPI(type: Exec, dependsOn: 'javadoc') {
+  description "Run html5validator to find HTML errors in API documentation"
+  if (JavaVersion.current().isJava9Compatible()) {
+    environment PATH: "$System.env.PATH"
+    commandLine "html5validator", "--root", "${buildDir}/docs/api"
+  } else {
+    commandLine "echo", "WARNING: HTML validation of API only run in Java 9+"
+  }
+}
+
+/*
+ * Applies HTML5 validator to find errors in the manual post options and TOC updates.
+ */
+task validateManual(type: Exec, dependsOn: 'manual') {
+  description "Run html5validator to find HTML errors in manual documents"
+  if (JavaVersion.current().isJava8Compatible()) {
+    environment PATH: "$System.env.PATH"
+    commandLine "html5validator", "--root", "${buildDir}/docs/manual"
+  } else {
+    commandLine "echo","WARNING: HTML validation of manuals only run in Java 8+"
+  }
 }
 
 /*
  * Publishes documentation to project docs directory for release.
  */
-task publishDocumentation (type:Copy, dependsOn: 'manual') {
+task publishSite (type:Copy, dependsOn: ['javadoc', 'validateAPI', 'manual', 'validateManual' ]) {
   from ("${buildDir}/docs")
+  from ("src/docs/site")
   into "${projectDir}/docs"
+}
+
+/*
+ * Applies HTML5 validator to project site HTML
+ */
+task validateSite(type: Exec) {
+  description "Run html5validator to find HTML errors in site files (excludes manual and api)"
+  if (JavaVersion.current().isJava9Compatible()) {
+    environment PATH: "$System.env.PATH"
+    commandLine "html5validator", "--root", "docs/", "--ignore", "docs/api"
+  } else {
+    commandLine "echo", "WARNING: HTML validation of site only run in Java 8+"
+  }
+}
+
+task buildRelease(type: DefaultTask, dependsOn: [ 'build', 'publishSite', 'validateSite' ]) {
+  description "Builds system and documentation, validates HTML, and publishes site"
 }
 
 /*************** Gradle Wrapper ******************/
@@ -527,12 +561,6 @@ task tags(type: Exec, dependsOn: 'clone') {
   commandLine "bash", "-c", "find src/ -name *.java | sort-directory-order | xargs etags"
 }
 
-/* Validate HTML files */
-task validate(type: Exec, dependsOn: 'clone') {
-  description "Run html5validator to find HTML errors"
-  environment PATH: "$System.env.PATH"
-  commandLine "html5validator", "--ignore", "/build/"
-}
 
 task installGitHooks(type: Copy) {
   from 'scripts/pre-commit'
