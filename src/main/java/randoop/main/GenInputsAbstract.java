@@ -54,7 +54,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * In the file, each class under test is specified by its fully-qualified name
    * on a separate line. See an <a href=
-   * "https://raw.githubusercontent.com/randoop/randoop/master/doc/class_list_example.txt">
+   * "https://randoop.github.io/randoop/manual/class_list_example.txt">
    * example</a>. These classes are tested in addition to any specified using
    * <code>--testclass</code>. All classes must be accessible from the package of
    * the tests (set with <code>--junit-package-name</code>).
@@ -90,7 +90,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * <p>
    * See an <a href=
-   * "https://raw.githubusercontent.com/randoop/randoop/master/doc/method_list_example.txt">
+   * "https://randoop.github.io/randoop/manual/method_list_example.txt">
    * example</a>.
    * </p>
    */
