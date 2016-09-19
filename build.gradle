@@ -482,7 +482,7 @@ task generateOptionsDoc(type: Javadoc, dependsOn: ['assemble', 'javadoc', 'copyM
   options.docletpath = configurations.manual.files.asType(List)
   options.doclet = "plume.OptionsDoclet"
   options.addStringOption "docfile", "src/docs/manual/index.html"
-  options.addStringOption "outfile", "${buildDir}/docs/manual/index.html"
+  options.addStringOption "outfile", "index.html"
 }
 
 /*
