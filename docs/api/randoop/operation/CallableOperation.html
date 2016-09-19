@@ -1,0 +1,600 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- NewPage -->
+<html lang="en">
+<head>
+
+<title>CallableOperation (randoop 3.0.4 API)</title>
+
+<link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
+<script type="text/javascript" src="../../script.js"></script>
+</head>
+<body>
+<script type="text/javascript"><!--
+    try {
+        if (location.href.indexOf('is-external=true') == -1) {
+            parent.document.title="CallableOperation (randoop 3.0.4 API)";
+        }
+    }
+    catch(err) {
+    }
+//-->
+var methods = {"i0":6,"i1":10,"i2":6,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":6};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
+var altColor = "altColor";
+var rowColor = "rowColor";
+var tableTab = "tableTab";
+var activeTableTab = "activeTableTab";
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+<!-- ========= START OF TOP NAVBAR ======= -->
+<div class="topNav"><a name="navbar.top">
+<!--   -->
+</a>
+<div class="skipNav"><a href="#skip.navbar.top" title="Skip navigation links">Skip navigation links</a></div>
+<a name="navbar.top.firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../index-all.html">Index</a></li>
+<li><a href="../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../randoop/operation/ArrayElementSet.html" title="class in randoop.operation"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../randoop/operation/ConstructorCall.html" title="class in randoop.operation"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../index.html?randoop/operation/CallableOperation.html" target="_top">Frames</a></li>
+<li><a href="CallableOperation.html" target="_top">No&nbsp;Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_top">
+<li><a href="../../allclasses-noframe.html">All&nbsp;Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_top");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method.summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method.detail">Method</a></li>
+</ul>
+</div>
+<a name="skip.navbar.top">
+<!--   -->
+</a></div>
+<!-- ========= END OF TOP NAVBAR ========= -->
+<!-- ======== START OF CLASS DATA ======== -->
+<div class="header">
+<div class="subTitle">randoop.operation</div>
+<h2 title="Class CallableOperation" class="title">Class CallableOperation</h2>
+</div>
+<div class="contentContainer">
+<ul class="inheritance">
+<li>java.lang.Object</li>
+<li>
+<ul class="inheritance">
+<li>randoop.operation.CallableOperation</li>
+</ul>
+</li>
+</ul>
+<div class="description">
+<ul class="blockList">
+<li class="blockList">
+<dl>
+<dt>All Implemented Interfaces:</dt>
+<dd>java.lang.Comparable&lt;<a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a>&gt;, <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a></dd>
+</dl>
+<dl>
+<dt>Direct Known Subclasses:</dt>
+<dd><a href="../../randoop/operation/ArrayCreation.html" title="class in randoop.operation">ArrayCreation</a>, <a href="../../randoop/operation/ArrayElementSet.html" title="class in randoop.operation">ArrayElementSet</a>, <a href="../../randoop/operation/ConstructorCall.html" title="class in randoop.operation">ConstructorCall</a>, <a href="../../randoop/operation/EnumConstant.html" title="class in randoop.operation">EnumConstant</a>, <a href="../../randoop/operation/FieldGet.html" title="class in randoop.operation">FieldGet</a>, <a href="../../randoop/operation/FieldSet.html" title="class in randoop.operation">FieldSet</a>, <a href="../../randoop/operation/InitializedArrayCreation.html" title="class in randoop.operation">InitializedArrayCreation</a>, <a href="../../randoop/operation/MethodCall.html" title="class in randoop.operation">MethodCall</a>, <a href="../../randoop/operation/NonreceiverTerm.html" title="class in randoop.operation">NonreceiverTerm</a>, <a href="../../randoop/operation/ReflectionArrayCreation.html" title="class in randoop.operation">ReflectionArrayCreation</a>, <a href="../../randoop/operation/UncheckedCast.html" title="class in randoop.operation">UncheckedCast</a></dd>
+</dl>
+<hr>
+<br>
+<pre>public abstract class <span class="typeNameLabel">CallableOperation</span>
+extends java.lang.Object
+implements <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a></pre>
+<div class="block">CallableOperation is an abstract implementation of the Operation interface to
+ provide default implementations of Operation predicates that are false except
+ for a few kinds of operations.</div>
+</li>
+</ul>
+</div>
+<div class="summary">
+<ul class="blockList">
+<li class="blockList">
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor.summary">
+<!--   -->
+</a>
+<h3>Constructor Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
+<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Constructor and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#CallableOperation--">CallableOperation</a></span>()</code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ========== METHOD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method.summary">
+<!--   -->
+</a>
+<h3>Method Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tr id="i0" class="altColor">
+<td class="colFirst"><code>abstract void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#appendCode-randoop.types.Type-randoop.types.TypeTuple-randoop.types.Type-java.util.List-java.lang.StringBuilder-">appendCode</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;declaringType,
+          <a href="../../randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a>&nbsp;inputTypes,
+          <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;outputType,
+          java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputVars,
+          java.lang.StringBuilder&nbsp;b)</code>
+<div class="block">Produces a Java source code representation of this statement and appends it
+ to the given StringBuilder.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#compareTo-randoop.operation.Operation-">compareTo</a></span>(<a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a>&nbsp;op)</code>
+<div class="block">Compares this object to an <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> object.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>abstract <a href="../../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#execute-java.lang.Object:A-java.io.PrintStream-">execute</a></span>(java.lang.Object[]&nbsp;input,
+       java.io.PrintStream&nbsp;out)</code>
+<div class="block">Performs this operation using the array of input values.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>java.lang.Object</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#getValue--">getValue</a></span>()</code>
+<div class="block">Returns the "value" of an operation that is actually a ground term, meaning
+ a constant of some form.</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#isConstructorCall--">isConstructorCall</a></span>()</code>
+<div class="block">Predicate to indicate whether object represents a call to a constructor.</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#isMessage--">isMessage</a></span>()</code>
+<div class="block">Predicate to indicate whether object represents a method-call-like
+ operation (either static or instance).</div>
+</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#isMethodCall--">isMethodCall</a></span>()</code>
+<div class="block">Indicates whether this object represents a method-call operation (either static or instance).</div>
+</td>
+</tr>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#isNonreceivingValue--">isNonreceivingValue</a></span>()</code>
+<div class="block">Predicate to indicate whether this object represents a value of a
+ non-receiving type (includes numbers, strings, and null).</div>
+</td>
+</tr>
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#isStatic--">isStatic</a></span>()</code>
+<div class="block">Predicate to indicate whether object represents a static operation on the
+ declaring class.</div>
+</td>
+</tr>
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#isUncheckedCast--">isUncheckedCast</a></span>()</code>
+<div class="block">Predicate to indicate whether this object represents an unchecked cast.</div>
+</td>
+</tr>
+<tr id="i10" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#satisfies-randoop.reflection.ReflectionPredicate-">satisfies</a></span>(<a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;predicate)</code>
+<div class="block">Checks whether reflective object contained in an <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a>
+ satisfies the predicate.</div>
+</td>
+</tr>
+<tr id="i11" class="rowColor">
+<td class="colFirst"><code>abstract java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#toParsableString-randoop.types.Type-randoop.types.TypeTuple-randoop.types.Type-">toParsableString</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;declaringType,
+                <a href="../../randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a>&nbsp;inputTypes,
+                <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;outputType)</code>
+<div class="block">Returns a string representation of this Operation, which can be read by
+ static parse method for class.</div>
+</td>
+</tr>
+</table>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
+<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.randoop.operation.Operation">
+<!--   -->
+</a>
+<h3>Methods inherited from interface&nbsp;randoop.operation.<a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a></h3>
+<code><a href="../../randoop/operation/Operation.html#getName--">getName</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="details">
+<ul class="blockList">
+<li class="blockList">
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor.detail">
+<!--   -->
+</a>
+<h3>Constructor Detail</h3>
+<a name="CallableOperation--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>CallableOperation</h4>
+<pre>public&nbsp;CallableOperation()</pre>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ============ METHOD DETAIL ========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method.detail">
+<!--   -->
+</a>
+<h3>Method Detail</h3>
+<a name="isStatic--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isStatic</h4>
+<pre>public&nbsp;boolean&nbsp;isStatic()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/operation/Operation.html#isStatic--">Operation</a></code></span></div>
+<div class="block">Predicate to indicate whether object represents a static operation on the
+ declaring class.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../randoop/operation/Operation.html#isStatic--">isStatic</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a></code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if operation corresponds to static method or field of a class,
+         and false otherwise</dd>
+</dl>
+</li>
+</ul>
+<a name="isMessage--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isMessage</h4>
+<pre>public&nbsp;boolean&nbsp;isMessage()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/operation/Operation.html#isMessage--">Operation</a></code></span></div>
+<div class="block">Predicate to indicate whether object represents a method-call-like
+ operation (either static or instance).
+ This includes field getters and setters, which are operations that access
+ fields.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../randoop/operation/Operation.html#isMessage--">isMessage</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a></code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if operation is method-like, and false otherwise</dd>
+</dl>
+</li>
+</ul>
+<a name="isMethodCall--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isMethodCall</h4>
+<pre>public&nbsp;boolean&nbsp;isMethodCall()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/operation/Operation.html#isMethodCall--">Operation</a></code></span></div>
+<div class="block">Indicates whether this object represents a method-call operation (either static or instance).
+ This excludes getters and setters.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../randoop/operation/Operation.html#isMethodCall--">isMethodCall</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a></code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if this operation is a method call, and false otherwise</dd>
+</dl>
+</li>
+</ul>
+<a name="isConstructorCall--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isConstructorCall</h4>
+<pre>public&nbsp;boolean&nbsp;isConstructorCall()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/operation/Operation.html#isConstructorCall--">Operation</a></code></span></div>
+<div class="block">Predicate to indicate whether object represents a call to a constructor.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../randoop/operation/Operation.html#isConstructorCall--">isConstructorCall</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a></code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if operation is a constructor call, and false otherwise</dd>
+</dl>
+</li>
+</ul>
+<a name="isNonreceivingValue--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isNonreceivingValue</h4>
+<pre>public&nbsp;boolean&nbsp;isNonreceivingValue()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/operation/Operation.html#isNonreceivingValue--">Operation</a></code></span></div>
+<div class="block">Predicate to indicate whether this object represents a value of a
+ non-receiving type (includes numbers, strings, and null).</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../randoop/operation/Operation.html#isNonreceivingValue--">isNonreceivingValue</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a></code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if object is a non-receiving value, and false otherwise</dd>
+</dl>
+</li>
+</ul>
+<a name="isUncheckedCast--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isUncheckedCast</h4>
+<pre>public&nbsp;boolean&nbsp;isUncheckedCast()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/operation/Operation.html#isUncheckedCast--">Operation</a></code></span></div>
+<div class="block">Predicate to indicate whether this object represents an unchecked cast.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../randoop/operation/Operation.html#isUncheckedCast--">isUncheckedCast</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a></code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if the this object is a cast, and false otherwise</dd>
+</dl>
+</li>
+</ul>
+<a name="getValue--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getValue</h4>
+<pre>public&nbsp;java.lang.Object&nbsp;getValue()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/operation/Operation.html#getValue--">Operation</a></code></span></div>
+<div class="block">Returns the "value" of an operation that is actually a ground term, meaning
+ a constant of some form.  Only null if value is null, otherwise throws an
+ exception if there is not a reasonable meaning of value for type of operation.
+ <p>
+ This is a hack to allow randoop.main.GenBranchDir to do mutation.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../randoop/operation/Operation.html#getValue--">getValue</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a></code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>object reference to value</dd>
+</dl>
+</li>
+</ul>
+<a name="compareTo-randoop.operation.Operation-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>compareTo</h4>
+<pre>public&nbsp;int&nbsp;compareTo(<a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a>&nbsp;op)</pre>
+<div class="block">Compares this object to an <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> object.
+ Uses order on result of <code>Object.toString()</code>.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code>compareTo</code>&nbsp;in interface&nbsp;<code>java.lang.Comparable&lt;<a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a>&gt;</code></dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>op</code> - the <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> to compare with this operation</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>value &lt; 0 if this parsable string is less than for op, 0 if the
+         strings are equal, and &gt; 0 if string for this object greater
+         than for op</dd>
+</dl>
+</li>
+</ul>
+<a name="satisfies-randoop.reflection.ReflectionPredicate-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>satisfies</h4>
+<pre>public&nbsp;boolean&nbsp;satisfies(<a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;predicate)</pre>
+<div class="block">Checks whether reflective object contained in an <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a>
+ satisfies the predicate. Since there is no reflective object in an
+ <code>CallableOperation</code>, returns false.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../randoop/operation/Operation.html#satisfies-randoop.reflection.ReflectionPredicate-">satisfies</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a></code></dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>predicate</code> - <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection"><code>ReflectionPredicate</code></a> against which object to be checked.</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>false as there is no object to check</dd>
+</dl>
+</li>
+</ul>
+<a name="execute-java.lang.Object:A-java.io.PrintStream-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>execute</h4>
+<pre>public abstract&nbsp;<a href="../../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</a>&nbsp;execute(java.lang.Object[]&nbsp;input,
+                                         java.io.PrintStream&nbsp;out)</pre>
+<div class="block">Performs this operation using the array of input values. Returns
+ the results of execution as an ResultOrException object and can
+ output results to specified PrintStream.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>input</code> - array containing appropriate inputs to operation</dd>
+<dd><code>out</code> - stream to output results of execution;
+            can be null if you don't want to print</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>results of executing this statement</dd>
+</dl>
+</li>
+</ul>
+<a name="appendCode-randoop.types.Type-randoop.types.TypeTuple-randoop.types.Type-java.util.List-java.lang.StringBuilder-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>appendCode</h4>
+<pre>public abstract&nbsp;void&nbsp;appendCode(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;declaringType,
+                                <a href="../../randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a>&nbsp;inputTypes,
+                                <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;outputType,
+                                java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputVars,
+                                java.lang.StringBuilder&nbsp;b)</pre>
+<div class="block">Produces a Java source code representation of this statement and appends it
+ to the given StringBuilder.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>declaringType</code> - the declaring type for this operation</dd>
+<dd><code>inputTypes</code> - the input types for this operation</dd>
+<dd><code>outputType</code> - the output type for this operation</dd>
+<dd><code>inputVars</code> - the list of variables that are inputs to operation</dd>
+<dd><code>b</code> - the <code>StringBuilder</code> to which code is added</dd>
+</dl>
+</li>
+</ul>
+<a name="toParsableString-randoop.types.Type-randoop.types.TypeTuple-randoop.types.Type-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>toParsableString</h4>
+<pre>public abstract&nbsp;java.lang.String&nbsp;toParsableString(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;declaringType,
+                                                  <a href="../../randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a>&nbsp;inputTypes,
+                                                  <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;outputType)</pre>
+<div class="block">Returns a string representation of this Operation, which can be read by
+ static parse method for class.
+ For a class C implementing the Operation interface, this method should
+ return a String s such that parsing the string
+ returns an object equivalent to this object, i.e. C.parse(this.s).equals(this).</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>declaringType</code> - the declaring type for this operation</dd>
+<dd><code>inputTypes</code> - the input types for this operation</dd>
+<dd><code>outputType</code> - the output type for this operation</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a string representation of this operation</dd>
+</dl>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<!-- ========= END OF CLASS DATA ========= -->
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<div class="bottomNav"><a name="navbar.bottom">
+<!--   -->
+</a>
+<div class="skipNav"><a href="#skip.navbar.bottom" title="Skip navigation links">Skip navigation links</a></div>
+<a name="navbar.bottom.firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../index-all.html">Index</a></li>
+<li><a href="../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../randoop/operation/ArrayElementSet.html" title="class in randoop.operation"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../randoop/operation/ConstructorCall.html" title="class in randoop.operation"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../index.html?randoop/operation/CallableOperation.html" target="_top">Frames</a></li>
+<li><a href="CallableOperation.html" target="_top">No&nbsp;Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_bottom">
+<li><a href="../../allclasses-noframe.html">All&nbsp;Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_bottom");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method.summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method.detail">Method</a></li>
+</ul>
+</div>
+<a name="skip.navbar.bottom">
+<!--   -->
+</a></div>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+</body>
+</html>
