@@ -525,6 +525,7 @@ task validateManual(type: Exec, dependsOn: 'manual') {
  */
 task publishSite (type:Copy, dependsOn: ['javadoc', 'validateAPI', 'manual', 'validateManual' ]) {
   group 'Publishing'
+  fileMode = Integer.parseInt("444", 8) //make site files read-only
   from ("${buildDir}/docs")
   from ("src/docs/site")
   into "${projectDir}/docs"
