@@ -524,6 +524,7 @@ task validateManual(type: Exec, dependsOn: 'manual') {
  * Publishes documentation to project docs directory for release.
  */
 task publishSite (type:Copy, dependsOn: ['javadoc', 'validateAPI', 'manual', 'validateManual' ]) {
+  group 'Publishing'
   from ("${buildDir}/docs")
   from ("src/docs/site")
   into "${projectDir}/docs"
@@ -543,6 +544,7 @@ task validateSite(type: Exec) {
 }
 
 task buildRelease(type: DefaultTask, dependsOn: [ 'build', 'publishSite', 'validateSite' ]) {
+  group 'Publishing'
   description "Builds system and documentation, validates HTML, and publishes site"
 }
 
@@ -559,6 +561,15 @@ task tags(type: Exec, dependsOn: 'clone') {
   description "Run etags to create an Emacs TAGS table"
   environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
   commandLine "bash", "-c", "find src/ -name *.java | sort-directory-order | xargs etags"
+}
+
+/* Run checklink */
+task checklink(type: Exec, dependsOn: 'clone') {
+  description "Run checklink on randoop.github.io/randoop and write output to checklink-log.txt"
+  environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
+  commandLine 'bash', '-c', """
+     checklink -q -r `grep -v '^#' build/utils/plume-lib/bin/checklink-args.txt` https://randoop.github.io/randoop/ &> checklink-log.txt
+  """
 }
 
 
