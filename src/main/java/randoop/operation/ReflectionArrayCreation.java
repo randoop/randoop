@@ -48,7 +48,7 @@ public class ReflectionArrayCreation extends CallableOperation {
       List<Variable> inputVars,
       StringBuilder b) {
     b.append("Array.newInstance(")
-        .append(elementType.getSimpleName())
+        .append(elementType.getCanonicalName())
         .append(", ")
         .append(length)
         .append(")");

@@ -58,6 +58,11 @@ public class PrimitiveType extends Type {
     return runtimeClass.getCanonicalName();
   }
 
+  @Override
+  public String getSimpleName() {
+    return runtimeClass.getSimpleName();
+  }
+
   /**
    * {@inheritDoc}
    * @return the {@code Class} object for this primitive type

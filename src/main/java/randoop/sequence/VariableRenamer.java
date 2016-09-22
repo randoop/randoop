@@ -1,12 +1,11 @@
 package randoop.sequence;
 
 import randoop.types.ArrayType;
-import randoop.types.ClassOrInterfaceType;
+import randoop.types.InstantiatedType;
 import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
-import randoop.types.Type;
-import randoop.types.InstantiatedType;
 import randoop.types.ReferenceArgument;
+import randoop.types.Type;
 import randoop.types.TypeArgument;
 
 class VariableRenamer {
@@ -69,7 +68,7 @@ class VariableRenamer {
     }
     if (type.isParameterized()) {
       InstantiatedType classType = (InstantiatedType) type;
-      String varName = classType.getClassName().toLowerCase();
+      String varName = classType.getSimpleName().toLowerCase();
       if (varName.equals("class")) {
         return "cls";
       }
@@ -82,7 +81,7 @@ class VariableRenamer {
       return varName;
     } else {
       // for other object types
-      String classname = ((ClassOrInterfaceType) type).getClassName();
+      String classname = type.getSimpleName();
       if (classname.length() > 0) {
         if (Character.isUpperCase(classname.charAt(0))) { // preserve camel case
           return classname.substring(0, 1).toLowerCase() + classname.substring(1);

@@ -111,6 +111,11 @@ class CaptureTypeVariable extends TypeVariable {
     return "Capture" + varID;
   }
 
+  @Override
+  public String getSimpleName() {
+    return this.getName();
+  }
+
   /**
    * Returns the type parameters in this type, which is this variable.
    *

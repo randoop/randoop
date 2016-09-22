@@ -44,6 +44,11 @@ public class VoidType extends Type {
   }
 
   @Override
+  public String getSimpleName() {
+    return this.getName();
+  }
+
+  @Override
   public boolean isVoid() {
     return true;
   }
