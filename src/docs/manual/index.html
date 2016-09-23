@@ -1474,6 +1474,12 @@ sequential Java program are:
     Mitigate other sources of nondeterminism, such as always calling
     Arrays.sort on the result of File.listFiles.
   </li>
+  <li>
+    Don't depend on wall-clock or CPU time, either in your program or in
+    Randoop (for example, by using the
+    <a href="#option:timelimit"><tt>--timelimit</tt></a> command-line
+    option).
+  </li>
 </ul>
 
 <h4 id="flaky-tests">Randoop stopped because of a flaky test</h4>
