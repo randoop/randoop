@@ -9,6 +9,7 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.ParameterizedType;
 import randoop.types.PrimitiveType;
 import randoop.types.Type;
+import randoop.util.Log;
 
 /**
  * {@code TypeExtractor} is a {@link ClassVisitor} that extracts both the class type, and concrete
@@ -18,14 +19,18 @@ class TypeExtractor extends DefaultClassVisitor {
 
   /** The set of concrete types */
   private Set<Type> inputTypes;
+  private final VisibilityPredicate predicate;
 
   /**
-   * Creates a visitor that adds discovered concrete types to the given set.
+   * Creates a visitor that adds discovered concrete types to the given set if they satisfy
+   * the visibility predicate.
    *
    * @param inputTypes  the set of concrete types
+   * @param predicate  the visibility predicate
    */
-  TypeExtractor(Set<Type> inputTypes) {
+  TypeExtractor(Set<Type> inputTypes, VisibilityPredicate predicate) {
     this.inputTypes = inputTypes;
+    this.predicate = predicate;
   }
 
   /**
@@ -42,13 +47,17 @@ class TypeExtractor extends DefaultClassVisitor {
   /**
    * {@inheritDoc}
    * Adds any concrete type among parameter and return types to the input types set of this object.
+   * Avoids bridge methods, because may have rawtypes not useful in building tests.
    */
   @Override
   public void visit(Method m) {
+    if (m.isBridge()) {
+      return;
+    }
     for (java.lang.reflect.Type paramType : m.getGenericParameterTypes()) {
       addIfConcrete(Type.forType(paramType));
     }
-    java.lang.reflect.Type returnType = m.getReturnType();
+    java.lang.reflect.Type returnType = m.getGenericReturnType();
     addIfConcrete(Type.forType(returnType));
   }
 
@@ -72,8 +81,14 @@ class TypeExtractor extends DefaultClassVisitor {
     if (!type.isVoid()
         && !type.isGeneric()
         && !(type.isParameterized() && ((ParameterizedType) type).hasWildcard())) {
+      if (!predicate.isVisible(type.getRuntimeClass())) {
+        return;
+      }
       if (type.isPrimitive()) {
         type = ((PrimitiveType) type).toBoxedPrimitive();
+      }
+      if (Log.isLoggingOn()) {
+        Log.logLine("Adding " + type + " as candidate parameter type");
       }
       inputTypes.add(type);
     }

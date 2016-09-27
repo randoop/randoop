@@ -7,13 +7,12 @@ import java.util.Objects;
 import java.util.Set;
 
 import randoop.sequence.Variable;
-import randoop.types.ParameterizedType;
-import randoop.types.Type;
-import randoop.types.TypeVariable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
+import randoop.types.TypeVariable;
 
 /**
  * Represents a type decoration for an operation that has a declaring class.
@@ -113,7 +112,7 @@ public class TypedClassOperation extends TypedOperation {
   public boolean hasWildcardTypes() {
     return getInputTypes().hasWildcard()
         || (getOutputType().isParameterized()
-            && ((ParameterizedType) getOutputType()).hasWildcard());
+            && ((ClassOrInterfaceType) getOutputType()).hasWildcard());
   }
 
   @Override

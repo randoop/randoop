@@ -161,7 +161,8 @@ public abstract class Type {
   }
 
   /**
-   * Returns the name of this type without package name, but with type arguments if parameterized.
+   * Returns the name of this type without package name, but with type arguments if parameterized,
+   * and enclosing class if a member class.
    * For instance, for {@code java.util.List<T>} would return {@code "List<T>"}.
    *
    * @return the unqualified name of this type

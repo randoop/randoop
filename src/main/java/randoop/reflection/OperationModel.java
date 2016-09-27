@@ -8,19 +8,18 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import randoop.BugInRandoopException;
-import randoop.contract.EqualsReflexive;
-import randoop.contract.EqualsReturnsNormally;
-import randoop.contract.EqualsSymmetric;
-import randoop.contract.EqualsHashcode;
-import randoop.contract.EqualsToNullRetFalse;
-import randoop.contract.EqualsTransitive;
-import randoop.contract.ObjectContract;
 import randoop.contract.CompareToAntiSymmetric;
 import randoop.contract.CompareToEquals;
 import randoop.contract.CompareToReflexive;
 import randoop.contract.CompareToSubs;
 import randoop.contract.CompareToTransitive;
+import randoop.contract.EqualsHashcode;
+import randoop.contract.EqualsReflexive;
+import randoop.contract.EqualsReturnsNormally;
+import randoop.contract.EqualsSymmetric;
+import randoop.contract.EqualsToNullRetFalse;
+import randoop.contract.EqualsTransitive;
+import randoop.contract.ObjectContract;
 import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
 import randoop.operation.MethodCall;
@@ -30,13 +29,14 @@ import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.ParameterBound;
-import randoop.types.Type;
-import randoop.types.TypeVariable;
-import randoop.types.ClassOrInterfaceType;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
+import randoop.types.Type;
+import randoop.types.TypeVariable;
+import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
 
@@ -290,7 +290,7 @@ public class OperationModel {
       List<String> literalsFileList) {
     ReflectionManager mgr = new ReflectionManager(visibility);
     mgr.add(new DeclarationExtractor(this.classDeclarationTypes, reflectionPredicate));
-    mgr.add(new TypeExtractor(this.inputTypes));
+    mgr.add(new TypeExtractor(this.inputTypes, visibility));
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
     if (literalsFileList.contains("CLASSES")) {
@@ -362,11 +362,16 @@ public class OperationModel {
       if (classType.isGeneric()) {
         List<TypeVariable> typeParameters = classType.getTypeParameters();
         List<Substitution<ReferenceType>> substitutions = getSubstitutions(typeParameters);
-        assert substitutions.size() > 0 : "didn't find types to satisfy bounds on generic";
-        Substitution<ReferenceType> substitution = Randomness.randomMember(substitutions);
-        ClassOrInterfaceType refinedClassType = classType.apply(substitution);
-        if (!refinedClassType.isGeneric()) {
-          concreteClassTypes.add(refinedClassType);
+        if (substitutions.size() > 0) {
+          Substitution<ReferenceType> substitution = Randomness.randomMember(substitutions);
+          ClassOrInterfaceType refinedClassType = classType.apply(substitution);
+          if (!refinedClassType.isGeneric()) {
+            concreteClassTypes.add(refinedClassType);
+          }
+        } else {
+          if (Log.isLoggingOn()) {
+            Log.logLine("Didn't find types to satisfy bounds on generic type: " + classType);
+          }
         }
       } else {
         concreteClassTypes.add(classType);
@@ -523,10 +528,12 @@ public class OperationModel {
     operation = instantiateOperationTypes(operation);
 
     // Note: capture conversion needs all type variables to be instantiated first
-    if (operation.hasWildcardTypes()) {
+    if (operation != null && operation.hasWildcardTypes()) {
       operation = instantiateOperationTypes(operation.applyCaptureConversion());
     }
-
+    if (operation == null) {
+      return;
+    }
     operations.add(operation);
   }
 
@@ -544,7 +551,7 @@ public class OperationModel {
     }
     List<Substitution<ReferenceType>> substitutions = getSubstitutions(typeParameters);
     if (substitutions.isEmpty()) {
-      throw new BugInRandoopException("Unable to instantiate types for operation " + operation);
+      return null;
     }
     Substitution<ReferenceType> substitution = Randomness.randomMember(substitutions);
     return operation.apply(substitution);
@@ -561,11 +568,18 @@ public class OperationModel {
   TypedClassOperation instantiateOperationTypes(
       TypedClassOperation operation, Substitution<ReferenceType> substitution) {
     List<TypeVariable> typeParameters = operation.getTypeParameters();
-    typeParameters.removeAll(substitution.getVariables());
+    if (substitution != null) {
+      typeParameters.removeAll(substitution.getVariables());
+    } else {
+      substitution = new Substitution<>();
+    }
     if (!typeParameters.isEmpty()) {
       List<Substitution<ReferenceType>> substitutions = getSubstitutions(typeParameters);
       if (substitutions.isEmpty()) {
-        throw new BugInRandoopException("Unable to instantiate types for operation " + operation);
+        if (Log.isLoggingOn()) {
+          Log.logLine("Unable to instantiate types for operation " + operation);
+        }
+        return null;
       }
       Substitution<ReferenceType> operationTypeSubstitution =
           Randomness.randomMember(substitutions);

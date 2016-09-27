@@ -90,3 +90,35 @@ class ConcreteWithOperations extends GenericWithOperations<String> {
 interface BaseStream<T, S extends BaseStream<T, S>> {}
 
 interface Stream<T> extends BaseStream<T, Stream<T>> {}
+
+class GenericWithInnerClass<T> {
+  public class InnerClass {
+    final T t;
+
+    public InnerClass(T t) {
+      this.t = t;
+    }
+  }
+
+  public InnerClass getAnInnerClass(T param) {
+    return new InnerClass(param);
+  }
+
+  public static class StaticInnerClass {}
+
+  public StaticInnerClass getAStaticInnerClass() {
+    return new StaticInnerClass();
+  }
+
+  public class GenericNestedClass<S> {}
+}
+
+class ClassWithGenericInnerClass {
+  public class GenericNestedClass<T> {}
+}
+
+class ClassWithInnerClass {
+  public class InnerClass {}
+
+  public class OtherInnerClass {}
+}

@@ -13,6 +13,7 @@ import randoop.types.Substitution;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -86,5 +87,46 @@ public class OperationExtractorTest {
         c);
 
     assertThat("there should be 20 operations", operations.size(), is(equalTo(20)));
+  }
+
+  @Test
+  public void memberOfGenericTest() {
+    final Set<TypedOperation> operations = new LinkedHashSet<>();
+    ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
+
+    String classname = "randoop.reflection.GenericTreeWithInnerNode";
+    Class<?> c = null;
+    try {
+      c = TypeNames.getTypeForName(classname);
+    } catch (ClassNotFoundException e) {
+      fail("did not find class: " + e);
+    }
+    assert c != null;
+    ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
+    assertTrue("should be a generic type", classType.isGeneric());
+    assertTrue("should have type parameters", classType.getTypeParameters().size() > 0);
+
+    Substitution<ReferenceType> substitution =
+        Substitution.forArgs(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
+    classType = classType.apply(substitution);
+
+    OperationModel model = new OperationModel();
+    mgr.apply(
+        new OperationExtractor(classType, operations, new DefaultReflectionPredicate(), model), c);
+    assertThat("should be three operations", operations.size(), is(equalTo(3)));
+
+    ClassOrInterfaceType memberType = null;
+    for (TypedOperation operation : operations) {
+      if (!operation.getOutputType().equals(classType)
+          && !operation.getOutputType().equals(JavaTypes.VOID_TYPE)) {
+        memberType = (ClassOrInterfaceType) operation.getOutputType();
+      }
+    }
+    assertThat(
+        "member type name",
+        memberType.getName(),
+        is(equalTo("randoop.reflection.GenericTreeWithInnerNode<java.lang.String>.Node")));
+    assertFalse("is generic", memberType.isGeneric());
+    assertTrue("is parameterized", memberType.isParameterized());
   }
 }

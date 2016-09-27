@@ -94,4 +94,8 @@ public abstract class TypeArgument {
   public boolean isWildcard() {
     return false;
   }
+
+  public Substitution<ReferenceType> getInstantiatingSubstitution(TypeArgument otherArgument) {
+    return null;
+  }
 }

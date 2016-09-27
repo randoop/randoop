@@ -13,7 +13,7 @@ import java.util.List;
 public class NonParameterizedType extends ClassOrInterfaceType {
 
   /** The runtime class of this simple type. */
-  private final Class<?> runtimeClass;
+  private final Class<?> runtimeType;
 
   /**
    * Create a {@link NonParameterizedType} object for the runtime class
@@ -22,7 +22,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    */
   public NonParameterizedType(Class<?> runtimeType) {
     assert !runtimeType.isPrimitive() : "must be reference type, got " + runtimeType.getName();
-    this.runtimeClass = runtimeType;
+    this.runtimeType = runtimeType;
   }
 
   /**
@@ -35,12 +35,12 @@ public class NonParameterizedType extends ClassOrInterfaceType {
       return false;
     }
     NonParameterizedType t = (NonParameterizedType) obj;
-    return this.runtimeClass.equals(t.runtimeClass);
+    return super.equals(obj) && this.runtimeType.equals(t.runtimeType);
   }
 
   @Override
   public int hashCode() {
-    return runtimeClass.hashCode();
+    return runtimeType.hashCode();
   }
 
   /**
@@ -56,7 +56,12 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public NonParameterizedType apply(Substitution<ReferenceType> substitution) {
-    return this;
+    return (NonParameterizedType) apply(substitution, new NonParameterizedType(this.runtimeType));
+  }
+
+  @Override
+  public NonParameterizedType applyCaptureConversion() {
+    return (NonParameterizedType) applyCaptureConversion(this);
   }
 
   @Override
@@ -74,19 +79,10 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    */
   private List<ClassOrInterfaceType> getGenericInterfaces() {
     List<ClassOrInterfaceType> interfaces = new ArrayList<>();
-    for (java.lang.reflect.Type type : runtimeClass.getGenericInterfaces()) {
+    for (java.lang.reflect.Type type : runtimeType.getGenericInterfaces()) {
       interfaces.add(ClassOrInterfaceType.forType(type));
     }
     return interfaces;
-  }
-
-  /**
-   * {@inheritDoc}
-   * Returns the fully-qualified name of this type in the {@code Class.getCanonicalName()} format
-   */
-  @Override
-  public String getName() {
-    return runtimeClass.getCanonicalName();
   }
 
   /**
@@ -96,7 +92,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
    */
   private List<ClassOrInterfaceType> getRawTypeInterfaces() {
     List<ClassOrInterfaceType> interfaces = new ArrayList<>();
-    for (Class<?> c : runtimeClass.getInterfaces()) {
+    for (Class<?> c : runtimeType.getInterfaces()) {
       interfaces.add(new NonParameterizedType(c));
     }
     return interfaces;
@@ -104,7 +100,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public Class<?> getRuntimeClass() {
-    return runtimeClass;
+    return runtimeType;
   }
 
   @Override
@@ -113,12 +109,12 @@ public class NonParameterizedType extends ClassOrInterfaceType {
       return this;
     }
     if (this.isRawtype()) {
-      Class<?> superclass = this.runtimeClass.getSuperclass();
+      Class<?> superclass = this.runtimeType.getSuperclass();
       if (superclass != null) {
         return new NonParameterizedType(superclass);
       }
     } else {
-      java.lang.reflect.Type supertype = this.runtimeClass.getGenericSuperclass();
+      java.lang.reflect.Type supertype = this.runtimeType.getGenericSuperclass();
       if (supertype != null) {
         return ClassOrInterfaceType.forType(supertype);
       }
@@ -128,7 +124,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public boolean isAbstract() {
-    return Modifier.isAbstract(Modifier.classModifiers() & runtimeClass.getModifiers());
+    return Modifier.isAbstract(Modifier.classModifiers() & runtimeType.getModifiers());
   }
 
   /**
@@ -156,27 +152,50 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   @Override
   public boolean isEnum() {
-    return runtimeClass.isEnum();
+    return runtimeType.isEnum();
+  }
+
+  /**
+   * {@inheritDoc}
+   * For a {@link NonParameterizedType}, if this type
+   * instantiates the {@code otherType}, which is a {@link NonParameterizedType}
+   * by {@link ClassOrInterfaceType#isInstantiationOf(ReferenceType)} also
+   * checks that runtime classes are equal. This allows for proper matching
+   * of member classes that are of {@link NonParameterizedType}.
+   */
+  @Override
+  public boolean isInstantiationOf(ReferenceType otherType) {
+    boolean instantiationOf = super.isInstantiationOf(otherType);
+    if ((otherType instanceof NonParameterizedType)) {
+      return instantiationOf && this.hasRuntimeClass(otherType.getRuntimeClass());
+    }
+    return instantiationOf;
+  }
+
+  @Override
+  public Substitution<ReferenceType> getInstantiatingSubstitution(ClassOrInterfaceType goalType) {
+    Substitution<ReferenceType> substitution = super.getInstantiatingSubstitution(goalType);
+    if (substitution == null
+        || !((goalType instanceof NonParameterizedType)
+            && this.hasRuntimeClass(goalType.getRuntimeClass()))) {
+      return null;
+    }
+    return substitution;
   }
 
   @Override
   public boolean isInterface() {
-    return runtimeClass.isInterface();
-  }
-
-  @Override
-  public boolean isMemberClass() {
-    return runtimeClass.isMemberClass();
+    return runtimeType.isInterface();
   }
 
   @Override
   public boolean isRawtype() {
-    return runtimeClass.getTypeParameters().length > 0;
+    return runtimeType.getTypeParameters().length > 0;
   }
 
   @Override
   public boolean isStatic() {
-    return Modifier.isStatic(runtimeClass.getModifiers() & Modifier.classModifiers());
+    return Modifier.isStatic(runtimeType.getModifiers() & Modifier.classModifiers());
   }
 
   @Override
@@ -187,7 +206,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
     if (otherType.isRawtype()) {
       if (otherType.isInterface()) {
-        for (Class<?> c : runtimeClass.getInterfaces()) {
+        for (Class<?> c : runtimeType.getInterfaces()) {
           if (otherType.hasRuntimeClass(c)) {
             return true;
           }
