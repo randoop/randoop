@@ -521,7 +521,9 @@ task validateManual(type: Exec, dependsOn: 'manual') {
 }
 
 /*
- * Publishes documentation to project docs directory for release.
+ * Copies documentation to docs/ directory.
+ * When committed and pushed, these files will be visible as
+ * https://randoop.github.io/randoop/ .
  */
 task publishSite (type:Copy, dependsOn: ['javadoc', 'validateAPI', 'manual', 'validateManual' ]) {
   group 'Publishing'
