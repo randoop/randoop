@@ -267,13 +267,6 @@ public class GenericClassType extends ParameterizedType {
     return true;
   }
 
-  /*
-  @Override
-  public boolean isInstantiationOf(ReferenceType otherType) {
-    return this.equals(otherType);
-  }
-  */
-
   @Override
   public boolean isInterface() {
     return rawType.isInterface();

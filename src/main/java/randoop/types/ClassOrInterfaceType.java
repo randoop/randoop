@@ -18,6 +18,7 @@ import java.util.List;
  */
 public abstract class ClassOrInterfaceType extends ReferenceType {
 
+  /** The enclosing type: non-null if this is a member class. */
   private ClassOrInterfaceType enclosingType = null;
 
   /**
@@ -238,6 +239,17 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     return null;
   }
 
+  /**
+   * Computes a substitution that can be applied to the type variables of the generic goal type to
+   * instantiate operations of this type, possibly inherited from from the goal type.
+   * The substitution will unify this type with either the given goal type, or a supertype of the
+   * goal type.
+   *
+   * If there is none, returns {@code null}.
+   *
+   * @param goalType  the generic type for which a substitution is needed
+   * @return a substitution unifying this type with either the goal type or a supertype of the goal
+   */
   public Substitution<ReferenceType> getInstantiatingSubstitution(ClassOrInterfaceType goalType) {
     assert goalType.isGeneric() : "goal type must be generic";
 

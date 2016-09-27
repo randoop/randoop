@@ -23,6 +23,15 @@ public class TypedClassOperation extends TypedOperation {
    */
   private final ClassOrInterfaceType declaringType;
 
+  /**
+   * Creates a {@link TypedClassOperation} for a given {@link CallableOperation} indicating the
+   * signature of the operation.
+   *
+   * @param operation  the {@link CallableOperation}
+   * @param declaringType  the declaring class type for this operation
+   * @param inputTypes  the input types for the operation
+   * @param outputType  the output types for the operation
+   */
   public TypedClassOperation(
       CallableOperation operation,
       ClassOrInterfaceType declaringType,
