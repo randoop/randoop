@@ -631,6 +631,11 @@ public class RandoopSystemTest {
    * as long as method input type is a test class.  This will include the enum Day and
    * the class AnInputClass, but exclude the enum Season and the class ANonInputClass.
    *
+   * Note: if this test is failing coverage for a generic method (the message says a parameter is
+   * Object), make sure that there are no overloads of the generic method with more specific
+   * arguments in InputClass. If there are, method resolution rules may lead to a call that Randoop
+   * thinks is to the generic method turning into a call to a more specific method, leading to
+   * coverage issues.
    */
   @Test
   public void runCollectionGenerationTest() {

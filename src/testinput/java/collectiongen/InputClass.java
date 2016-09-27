@@ -66,27 +66,27 @@ public class InputClass {
     return list.contains(aic);
   }
 
-  public static <E> boolean checkMemberOfParameterizedArray(List<E> l, List<E>[] array) {
+  public static <E> boolean genericCheckMemberOfParameterizedArray(List<E> l, List<E>[] array) {
     return true;
   }
 
-  public static <E> boolean checkMemberOfCollection(E e, Collection<E> set) {
+  public static <E> boolean genericCheckMemberOfCollection(E e, Collection<E> set) {
     return set.contains(e);
   }
 
-  public static <E> boolean checkMemberOfSet(E aic, Set<E> set) {
+  public static <E> boolean genericCheckMemberOfSet(E aic, Set<E> set) {
     return set.contains(aic);
   }
 
-  public static <E> boolean checkMemberOfList(E aic, List<E> list) {
+  public static <E> boolean genericCheckMemberOfList(E aic, List<E> list) {
     return list.contains(aic);
   }
 
-  public static <E> boolean checkMemberOfArrayList(E aic, ArrayList<E> list) {
+  public static <E> boolean genericCheckMemberOfArrayList(E aic, ArrayList<E> list) {
     return list.contains(aic);
   }
 
-  public static <E> boolean checkMemberOfArray(E aic, E[] array) {
+  public static <E> boolean genericCheckMemberOfArray(E aic, E[] array) {
     for (E e : array) {
       if (e.equals(aic)) {
         return true;
