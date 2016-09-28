@@ -20,6 +20,7 @@ import randoop.types.JavaTypes;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.isOneOf;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -76,9 +77,7 @@ public class OperationModelTest {
         concreteOpCount++;
       }
     }
-    assertTrue(
-        "concrete operation count (JDK7: 51, JDK8: 58)",
-        (concreteOpCount == 51) || (concreteOpCount == 58));
+    assertThat("concrete operation count (JDK7: 51, JDK8: 58)", concreteOpCount, isOneOf(51, 58));
     assertEquals("generic operation count", 0, genericOpCount);
     assertEquals("wildcard operation count", 0, wildcardTypeCount);
     assertEquals(
@@ -123,30 +122,7 @@ public class OperationModelTest {
 
   @Test
   public void instantiationTest() {
-    VisibilityPredicate visibilityPredicate = new PublicVisibilityPredicate();
-    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
-    Set<String> classnames = new LinkedHashSet<>();
-    classnames.add("randoop.reflection.GenericClass");
-    Set<String> exercisedClassname = new LinkedHashSet<>();
-    Set<String> methodSignatures = new LinkedHashSet<>();
-    ClassNameErrorHandler errorHandler = new WarnOnBadClassName();
-    List<String> literalsFileList = new ArrayList<>();
-    OperationModel model = null;
-    try {
-      model =
-          OperationModel.createModel(
-              visibilityPredicate,
-              reflectionPredicate,
-              classnames,
-              exercisedClassname,
-              methodSignatures,
-              errorHandler,
-              literalsFileList);
-    } catch (OperationParseException e) {
-      fail("failed to parse operation: " + e.getMessage());
-    } catch (NoSuchMethodException e) {
-      fail("did not find method: " + e.getMessage());
-    }
+    OperationModel model = getOperationModel("randoop.reflection.GenericClass");
     assert model != null : "model was not initialized";
 
     assertEquals("should be two classes ", 2, model.getConcreteClasses().size());
@@ -263,30 +239,8 @@ public class OperationModelTest {
    */
   @Test
   public void memberTypeTest() {
-    VisibilityPredicate visibilityPredicate = new PublicVisibilityPredicate();
-    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
-    Set<String> classnames = new LinkedHashSet<>();
-    classnames.add("randoop.reflection.ClassWithMemberTypes");
-    Set<String> exercisedClassname = new LinkedHashSet<>();
-    Set<String> methodSignatures = new LinkedHashSet<>();
-    ClassNameErrorHandler errorHandler = new WarnOnBadClassName();
-    List<String> literalsFileList = new ArrayList<>();
-    OperationModel model = null;
-    try {
-      model =
-          OperationModel.createModel(
-              visibilityPredicate,
-              reflectionPredicate,
-              classnames,
-              exercisedClassname,
-              methodSignatures,
-              errorHandler,
-              literalsFileList);
-    } catch (OperationParseException e) {
-      fail("failed to parse operation: " + e.getMessage());
-    } catch (NoSuchMethodException e) {
-      fail("did not find method: " + e.getMessage());
-    }
+    String classname = "randoop.reflection.ClassWithMemberTypes";
+    OperationModel model = getOperationModel(classname);
     assert model != null : "model was not initialized";
 
     List<ClassOrInterfaceType> expected = new ArrayList<>();
@@ -314,5 +268,51 @@ public class OperationModelTest {
           "package private type " + t + " should not be harvested",
           model.getConcreteClasses().contains(t));
     }
+  }
+
+  @Test
+  public void memberOfGenericTypeTest() {
+    String classname = "randoop.reflection.GenericTreeWithInnerNode";
+    OperationModel model = getOperationModel(classname);
+    assert model != null : " model was not initialized";
+
+    List<TypedOperation> operations = model.getConcreteOperations();
+    for (TypedOperation operation : operations) {
+      if (!operation.isConstructorCall() && !operation.getOutputType().isVoid()) {
+        assertTrue(
+            "is member class", ((ClassOrInterfaceType) operation.getOutputType()).isMemberClass());
+        assertTrue("is parameterized", operation.getOutputType().isParameterized());
+        assertFalse("is not generic", operation.getOutputType().isGeneric());
+      }
+    }
+    //fail("incomplete");
+  }
+
+  private OperationModel getOperationModel(String classname) {
+    VisibilityPredicate visibilityPredicate = new PublicVisibilityPredicate();
+    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
+    Set<String> classnames = new LinkedHashSet<>();
+    classnames.add(classname);
+    Set<String> exercisedClassname = new LinkedHashSet<>();
+    Set<String> methodSignatures = new LinkedHashSet<>();
+    ClassNameErrorHandler errorHandler = new WarnOnBadClassName();
+    List<String> literalsFileList = new ArrayList<>();
+    OperationModel model = null;
+    try {
+      model =
+          OperationModel.createModel(
+              visibilityPredicate,
+              reflectionPredicate,
+              classnames,
+              exercisedClassname,
+              methodSignatures,
+              errorHandler,
+              literalsFileList);
+    } catch (OperationParseException e) {
+      fail("failed to parse operation: " + e.getMessage());
+    } catch (NoSuchMethodException e) {
+      fail("did not find method: " + e.getMessage());
+    }
+    return model;
   }
 }

@@ -133,6 +133,11 @@ public class ArrayType extends ReferenceType {
   }
 
   @Override
+  public String getSimpleName() {
+    return elementType.getSimpleName() + "[]";
+  }
+
+  @Override
   public Class<?> getRuntimeClass() {
     return runtimeClass;
   }

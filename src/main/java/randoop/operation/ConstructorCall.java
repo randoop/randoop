@@ -123,7 +123,7 @@ public final class ConstructorCall extends CallableOperation {
         .append("new ")
         .append(
             isNonStaticMemberClass
-                ? declaringClassType.getClassName()
+                ? declaringClassType.getSimpleName()
                 : declaringClassType.getName())
         .append("(");
 

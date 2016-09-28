@@ -135,19 +135,40 @@ public abstract class Type {
   /**
    * Returns the fully-qualified name of this type, including type arguments if
    * this is a parameterized type.
+   * For {@code java.util.List<T>} return {@code "java.util.List<T>"}.
    *
    * @return the fully-qualified type name for this type
    */
   public abstract String getName();
 
   /**
-   * Returns the fully-qualified name of this type without type arguments.
-   * Identical to {@link #getName()} unless this is a parameterized type.
+   * Returns the name of this type without type arguments or package qualifiers.
+   * For {@code java.util.List<T>}, returns {@code "List"}.
    *
-   * @return the fully-qualified name of this type without type arguments
+   * @return the name of this type without type arguments
    */
-  public String getSimpleName() {
-    return this.getName();
+  public abstract String getSimpleName();
+
+  /**
+   * Returns the name of this type as the "canonical name" of the underlying runtime class.
+   * Identical to {@link #getName()} except for types with type arguments.
+   * For {@code java.util.List<T>} returns {@code "java.util.List"}.
+   *
+   * @return the fully-qualified canonical name of this type
+   */
+  public String getCanonicalName() {
+    return getRuntimeClass().getCanonicalName();
+  }
+
+  /**
+   * Returns the name of this type without package name, but with type arguments if parameterized,
+   * and enclosing class if a member class.
+   * For instance, for {@code java.util.List<T>} would return {@code "List<T>"}.
+   *
+   * @return the unqualified name of this type
+   */
+  public String getUnqualifiedName() {
+    return this.getSimpleName();
   }
 
   /**

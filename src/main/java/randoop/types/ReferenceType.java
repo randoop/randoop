@@ -130,7 +130,8 @@ public abstract class ReferenceType extends Type {
    * type is the same, or the other type is a type variable for which
    * this type satisfies the bounds.
    * Other cases are handled by the overriding implementations
-   * {@link InstantiatedType#isInstantiationOf(ReferenceType)} and
+   * {@link ClassOrInterfaceType#isInstantiationOf(ReferenceType)},
+   * {@link InstantiatedType#isInstantiationOf(ReferenceType)}, and
    * {@link TypeVariable#isInstantiationOf(ReferenceType)}.
    *
    * @param otherType  the general reference type
@@ -150,6 +151,23 @@ public abstract class ReferenceType extends Type {
           && variable.getUpperTypeBound().isUpperBound(this, substitution);
     }
     return false;
+  }
+
+  Substitution<ReferenceType> getInstantiatingSubstitution(ReferenceType otherType) {
+    if (this.equals(otherType)) {
+      return new Substitution<>();
+    }
+    if (otherType.isVariable()) {
+      TypeVariable variable = (TypeVariable) otherType;
+      List<TypeVariable> typeParameters = new ArrayList<>();
+      typeParameters.add(variable);
+      Substitution<ReferenceType> substitution = Substitution.forArgs(typeParameters, this);
+      if (variable.getLowerTypeBound().isLowerBound(this, substitution)
+          && variable.getUpperTypeBound().isUpperBound(this, substitution)) {
+        return substitution;
+      }
+    }
+    return null;
   }
 
   @Override

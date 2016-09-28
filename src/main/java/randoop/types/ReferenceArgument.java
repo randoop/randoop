@@ -91,7 +91,7 @@ public class ReferenceArgument extends TypeArgument {
 
   @Override
   public boolean hasWildcard() {
-    return referenceType.isParameterized() && ((ParameterizedType) referenceType).hasWildcard();
+    return referenceType.isParameterized() && ((ClassOrInterfaceType) referenceType).hasWildcard();
   }
 
   /**
@@ -113,5 +113,14 @@ public class ReferenceArgument extends TypeArgument {
     ReferenceType otherReferenceType = ((ReferenceArgument) otherArgument).getReferenceType();
 
     return referenceType.isInstantiationOf(otherReferenceType);
+  }
+
+  @Override
+  public Substitution<ReferenceType> getInstantiatingSubstitution(TypeArgument otherArgument) {
+    if (!(otherArgument instanceof ReferenceArgument)) {
+      return null;
+    }
+    ReferenceType otherReferenceType = ((ReferenceArgument) otherArgument).getReferenceType();
+    return referenceType.getInstantiatingSubstitution(otherReferenceType);
   }
 }

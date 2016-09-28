@@ -71,7 +71,8 @@ public class InstantiatedType extends ParameterizedType {
     for (TypeArgument argument : this.argumentList) {
       argumentList.add(argument.apply(substitution));
     }
-    return new InstantiatedType(instantiatedType, argumentList);
+    return (InstantiatedType)
+        apply(substitution, new InstantiatedType(instantiatedType, argumentList));
   }
 
   /**
@@ -124,7 +125,8 @@ public class InstantiatedType extends ParameterizedType {
       convertedArgumentList.add(new ReferenceArgument(type));
     }
 
-    return new InstantiatedType(instantiatedType, convertedArgumentList);
+    return (InstantiatedType)
+        applyCaptureConversion(new InstantiatedType(instantiatedType, convertedArgumentList));
   }
 
   /**
@@ -160,6 +162,9 @@ public class InstantiatedType extends ParameterizedType {
   public InstantiatedType getMatchingSupertype(GenericClassType goalType) {
     if (this.hasWildcard()) {
       return this.applyCaptureConversion().getMatchingSupertype(goalType);
+    }
+    if (this.isInstantiationOf(goalType)) {
+      return this;
     }
     return super.getMatchingSupertype(goalType);
   }
@@ -221,7 +226,7 @@ public class InstantiatedType extends ParameterizedType {
 
   @Override
   public List<TypeVariable> getTypeParameters() {
-    Set<TypeVariable> paramSet = new LinkedHashSet<>();
+    Set<TypeVariable> paramSet = new LinkedHashSet<>(super.getTypeParameters());
     for (TypeArgument argument : argumentList) {
       paramSet.addAll(argument.getTypeParameters());
     }
@@ -276,6 +281,9 @@ public class InstantiatedType extends ParameterizedType {
 
   @Override
   public boolean isGeneric() {
+    if (super.isGeneric()) { //enclosing type is generic
+      return true;
+    }
     for (TypeArgument argument : argumentList) {
       if (argument.isGeneric()) {
         return true;
@@ -308,7 +316,7 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public boolean isInstantiationOf(ReferenceType otherType) {
-    if (super.isInstantiationOf(otherType)) {
+    if (super.isInstantiationOf(otherType) && !(otherType instanceof InstantiatedType)) {
       return true;
     }
     if (otherType instanceof InstantiatedType) {
@@ -328,13 +336,37 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   @Override
-  public boolean isInterface() {
-    return instantiatedType.isInterface();
+  public Substitution<ReferenceType> getInstantiatingSubstitution(ClassOrInterfaceType goalType) {
+    assert goalType.isGeneric();
+    Substitution<ReferenceType> substitution;
+    substitution = super.getInstantiatingSubstitution(goalType);
+    if (goalType instanceof InstantiatedType) {
+      InstantiatedType otherInstType = (InstantiatedType) goalType;
+      if (this.instantiatedType.equals(otherInstType.instantiatedType)) {
+        for (int i = 0; i < this.argumentList.size(); i++) {
+          Substitution<ReferenceType> subst =
+              this
+                  .argumentList
+                  .get(i)
+                  .getInstantiatingSubstitution(otherInstType.argumentList.get(i));
+          if (subst == null) {
+            return null;
+          }
+          substitution.extend(subst);
+        }
+        return substitution;
+      }
+      return null;
+    }
+    if (goalType instanceof GenericClassType) {
+      return substitution;
+    }
+    return null;
   }
 
   @Override
-  public boolean isMemberClass() {
-    return instantiatedType.isMemberClass();
+  public boolean isInterface() {
+    return instantiatedType.isInterface();
   }
 
   @Override

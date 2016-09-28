@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import plume.UtilMDE;
-
 /**
  * Represents the type of a generic class.
  * Related to concrete {@link InstantiatedType} by instantiating with a
@@ -85,11 +83,18 @@ public class GenericClassType extends ParameterizedType {
                 + variable.getName()
                 + " ("
                 + variable.hashCode()
-                + ")");
+                + ") in "
+                + this.getName());
       }
       argumentList.add(new ReferenceArgument(referenceType));
     }
-    return new InstantiatedType(new GenericClassType(rawType), argumentList);
+    return (InstantiatedType)
+        apply(substitution, new InstantiatedType(new GenericClassType(rawType), argumentList));
+  }
+
+  @Override
+  public GenericClassType applyCaptureConversion() {
+    return (GenericClassType) applyCaptureConversion(this);
   }
 
   /**
@@ -133,16 +138,6 @@ public class GenericClassType extends ParameterizedType {
   @Override
   public GenericClassType getGenericClassType() {
     return this;
-  }
-
-  /**
-   * {@inheritDoc}
-   * Returns the fully qualified name of this type with type parameters.
-   * E.g., {@code java.util.List<T>}.
-   */
-  @Override
-  public String getName() {
-    return rawType.getCanonicalName() + "<" + UtilMDE.join(parameters, ",") + ">";
   }
 
   @Override
@@ -205,7 +200,9 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public List<TypeVariable> getTypeParameters() {
-    return new ArrayList<>(parameters);
+    List<TypeVariable> params = super.getTypeParameters();
+    params.addAll(parameters);
+    return params;
   }
 
   /**
@@ -271,18 +268,8 @@ public class GenericClassType extends ParameterizedType {
   }
 
   @Override
-  public boolean isInstantiationOf(ReferenceType otherType) {
-    return this.equals(otherType);
-  }
-
-  @Override
   public boolean isInterface() {
     return rawType.isInterface();
-  }
-
-  @Override
-  public boolean isMemberClass() {
-    return rawType.isMemberClass();
   }
 
   @Override

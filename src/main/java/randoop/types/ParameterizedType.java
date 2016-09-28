@@ -27,7 +27,8 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    */
   public static GenericClassType forClass(Class<?> typeClass) {
     if (typeClass.getTypeParameters().length == 0) {
-      throw new IllegalArgumentException("class must be a generic type");
+      throw new IllegalArgumentException(
+          "class must be a generic type, have " + typeClass.getName());
     }
     return new GenericClassType(typeClass);
   }
@@ -86,30 +87,11 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    */
   @Override
   public String getName() {
-    return getRuntimeClass().getCanonicalName()
-        + "<"
-        + UtilMDE.join(this.getTypeArguments(), ",")
-        + ">";
+    return super.getName() + "<" + UtilMDE.join(this.getTypeArguments(), ",") + ">";
   }
 
   @Override
-  public String getSimpleName() {
-    return getRuntimeClass().getCanonicalName();
-  }
-
-  /**
-   * Returns the type arguments for this type.
-   *
-   * @return the list of type arguments
-   */
-  public abstract List<TypeArgument> getTypeArguments();
-
-  /**
-   * Indicate whether this type has a wildcard either as or in a type argument.
-   *
-   * @return true if this type has a wildcard, and false otherwise
-   */
-  public boolean hasWildcard() {
-    return false;
+  public String getUnqualifiedName() {
+    return this.getSimpleName() + "<" + UtilMDE.join(this.getTypeArguments(), ",") + ">";
   }
 }
