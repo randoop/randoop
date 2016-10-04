@@ -13,4 +13,12 @@ public interface ClassNameErrorHandler {
    *          the name of the class for inclusion in messages.
    */
   void handle(String className);
+
+  /**
+   * Performs error handling behavior for failure to read class due to exception.
+   *
+   * @param classname  the class name to include in message
+   * @param e  the exception from loading class
+   */
+  void handle(String classname, Throwable e);
 }
