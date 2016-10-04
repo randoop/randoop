@@ -569,7 +569,7 @@ task tags(type: Exec, dependsOn: 'clone') {
 
 /* Run checklink */
 task checklink(type: Exec, dependsOn: 'clone') {
-  description "Run checklink on randoop.github.io/randoop and write output to checklink-log.txt"
+  description "Run checklink on randoop.github.io/randoop/ and write output to checklink-log.txt"
   environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
   commandLine 'bash', '-c', """
      checklink -q -r `grep -v '^#' build/utils/plume-lib/bin/checklink-args.txt` https://randoop.github.io/randoop/ &> checklink-log.txt
