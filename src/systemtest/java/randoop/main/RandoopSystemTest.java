@@ -705,6 +705,26 @@ public class RandoopSystemTest {
     assertTrue("should fail to find class names in file", line.contains("No classes to test"));
   }
 
+  /**
+   * Test for flaky NaN: the value Double.NaN and the computed NaN value are distinct.
+   * This means that the same computation over each can have different outcomes, but both are
+   * printed as Double.NaN so when run may have a different result from test during generation.
+   */
+  @Test
+  public void runFlakyNaNTest() {
+    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("flaky-nan");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("examples.NaNBadness");
+    options.setRegressionBasename("NaNRegression");
+    options.setErrorBasename("NaNError");
+    options.setOption("inputlimit", "200");
+
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+    generateAndTestWithCoverage(
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+  }
+
   /* ------------------------------ utility methods ---------------------------------- */
 
   /**
