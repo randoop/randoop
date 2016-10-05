@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ReferenceArgument (randoop 3.0.4 API)</title>
+<title>ReferenceArgument (randoop 3.0.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ReferenceArgument (randoop 3.0.4 API)";
+            parent.document.title="ReferenceArgument (randoop 3.0.5 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":9,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":9,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -200,40 +200,44 @@ extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.
 </td>
 </tr>
 <tr id="i4" class="altColor">
+<td class="colFirst"><code><a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ReferenceArgument.html#getInstantiatingSubstitution-randoop.types.TypeArgument-">getInstantiatingSubstitution</a></span>(<a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a>&nbsp;otherArgument)</code>&nbsp;</td>
+</tr>
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ReferenceArgument.html#getReferenceType--">getReferenceType</a></span>()</code>
 <div class="block">Get the reference type for this type argument.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ReferenceArgument.html#getTypeParameters--">getTypeParameters</a></span>()</code>
 <div class="block">The type parameters for this type argument.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ReferenceArgument.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ReferenceArgument.html#hasWildcard--">hasWildcard</a></span>()</code>
 <div class="block">Indicate whether this type argument has a wildcard.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ReferenceArgument.html#isGeneric--">isGeneric</a></span>()</code>
 <div class="block">Indicates whether a <code>ReferenceArgument</code> is generic.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>(package private) boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ReferenceArgument.html#isInstantiationOf-randoop.types.TypeArgument-">isInstantiationOf</a></span>(<a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a>&nbsp;otherArgument)</code>
 <div class="block">Determines whether this type argument is an instantiation of the other argument.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ReferenceArgument.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
@@ -472,7 +476,7 @@ extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.
 <a name="isInstantiationOf-randoop.types.TypeArgument-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>isInstantiationOf</h4>
 <pre>boolean&nbsp;isInstantiationOf(<a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a>&nbsp;otherArgument)</pre>
@@ -487,6 +491,19 @@ extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.
 <dd>true if this type is an instantiation of the other argument, false otherwise</dd>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../randoop/types/InstantiatedType.html#isInstantiationOf-randoop.types.ReferenceType-"><code>InstantiatedType.isInstantiationOf(ReferenceType)</code></a></dd>
+</dl>
+</li>
+</ul>
+<a name="getInstantiatingSubstitution-randoop.types.TypeArgument-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getInstantiatingSubstitution</h4>
+<pre>public&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;getInstantiatingSubstitution(<a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a>&nbsp;otherArgument)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="../../randoop/types/TypeArgument.html#getInstantiatingSubstitution-randoop.types.TypeArgument-">getInstantiatingSubstitution</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a></code></dd>
 </dl>
 </li>
 </ul>

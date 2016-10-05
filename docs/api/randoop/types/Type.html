@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Type (randoop 3.0.4 API)</title>
+<title>Type (randoop 3.0.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Type (randoop 3.0.4 API)";
+            parent.document.title="Type (randoop 3.0.5 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":9,"i3":9,"i4":9,"i5":9,"i6":6,"i7":6,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10};
+var methods = {"i0":10,"i1":10,"i2":9,"i3":9,"i4":9,"i5":9,"i6":10,"i7":6,"i8":6,"i9":6,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -220,110 +220,123 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i6" class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#getCanonicalName--">getCanonicalName</a></span>()</code>
+<div class="block">Returns the name of this type as the "canonical name" of the underlying runtime class.</div>
+</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>abstract java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#getName--">getName</a></span>()</code>
 <div class="block">Returns the fully-qualified name of this type, including type arguments if
  this is a parameterized type.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>abstract java.lang.Class&lt;?&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#getRuntimeClass--">getRuntimeClass</a></span>()</code>
 <div class="block">Returns the runtime <code>Class</code> object for this type.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code>abstract java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#getSimpleName--">getSimpleName</a></span>()</code>
-<div class="block">Returns the fully-qualified name of this type without type arguments.</div>
+<div class="block">Returns the name of this type without type arguments or package qualifiers.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#getUnqualifiedName--">getUnqualifiedName</a></span>()</code>
+<div class="block">Returns the name of this type without package name, but with type arguments if parameterized,
+ and enclosing class if a member class.</div>
+</td>
+</tr>
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#hasRuntimeClass-java.lang.Class-">hasRuntimeClass</a></span>(java.lang.Class&lt;?&gt;&nbsp;c)</code>
 <div class="block">Indicates whether the given <code>Class&lt;?&gt;</code> object is the runtime class of this type.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#isArray--">isArray</a></span>()</code>
 <div class="block">Indicates whether this object represents an array type.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#isAssignableFrom-randoop.types.Type-">isAssignableFrom</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;sourceType)</code>
 <div class="block">Indicates whether there is an assignment conversion from a source <code>Type</code> to this type.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#isAssignableFromTypeOf-T-">isAssignableFromTypeOf</a></span>(T&nbsp;value)</code>
 <div class="block">Indicates whether there is an assignment conversion from the type of <code>value</code> to
  this type.</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#isBoxedPrimitive--">isBoxedPrimitive</a></span>()</code>
 <div class="block">Indicates whether this is a boxed primitive type.</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#isEnum--">isEnum</a></span>()</code>
 <div class="block">Indicates whether this is an enum type.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#isGeneric--">isGeneric</a></span>()</code>
 <div class="block">Indicate whether this type is generic.</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#isInterface--">isInterface</a></span>()</code>
 <div class="block">Indicates whether this object is an interface type</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#isObject--">isObject</a></span>()</code>
 <div class="block">Indicate whether this is the <code>Object</code> type.</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#isParameterized--">isParameterized</a></span>()</code>
 <div class="block">Indicate whether this type is a parameterized type.</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#isPrimitive--">isPrimitive</a></span>()</code>
 <div class="block">Indicates whether this is a primitive type.</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#isRawtype--">isRawtype</a></span>()</code>
 <div class="block">Indicate whether this type is a rawtype of a generic class.</div>
 </td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#isReferenceType--">isReferenceType</a></span>()</code>
 <div class="block">Indicates whether this is a reference type.</div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#isString--">isString</a></span>()</code>
 <div class="block">Indicates whether this type is the String type.</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#isSubtypeOf-randoop.types.Type-">isSubtypeOf</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;otherType)</code>
 <div class="block">Test whether this type is a subtype of the given type according to
@@ -332,13 +345,13 @@ extends java.lang.Object</pre>
  section 4.10 of JLS for Java SE 8</a>.</div>
 </td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>(package private) boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#isVariable--">isVariable</a></span>()</code>
 <div class="block">Indicates whether this type is a type variable.</div>
 </td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#isVoid--">isVoid</a></span>()</code>
 <div class="block">Indicate whether this type is void.</div>
@@ -501,7 +514,8 @@ extends java.lang.Object</pre>
 <h4>getName</h4>
 <pre>public abstract&nbsp;java.lang.String&nbsp;getName()</pre>
 <div class="block">Returns the fully-qualified name of this type, including type arguments if
- this is a parameterized type.</div>
+ this is a parameterized type.
+ For <code>java.util.List&lt;T&gt;</code> return <code>"java.util.List&lt;T&gt;"</code>.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the fully-qualified type name for this type</dd>
@@ -514,12 +528,44 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getSimpleName</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getSimpleName()</pre>
-<div class="block">Returns the fully-qualified name of this type without type arguments.
- Identical to <a href="../../randoop/types/Type.html#getName--"><code>getName()</code></a> unless this is a parameterized type.</div>
+<pre>public abstract&nbsp;java.lang.String&nbsp;getSimpleName()</pre>
+<div class="block">Returns the name of this type without type arguments or package qualifiers.
+ For <code>java.util.List&lt;T&gt;</code>, returns <code>"List"</code>.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the fully-qualified name of this type without type arguments</dd>
+<dd>the name of this type without type arguments</dd>
+</dl>
+</li>
+</ul>
+<a name="getCanonicalName--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCanonicalName</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getCanonicalName()</pre>
+<div class="block">Returns the name of this type as the "canonical name" of the underlying runtime class.
+ Identical to <a href="../../randoop/types/Type.html#getName--"><code>getName()</code></a> except for types with type arguments.
+ For <code>java.util.List&lt;T&gt;</code> returns <code>"java.util.List"</code>.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the fully-qualified canonical name of this type</dd>
+</dl>
+</li>
+</ul>
+<a name="getUnqualifiedName--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getUnqualifiedName</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getUnqualifiedName()</pre>
+<div class="block">Returns the name of this type without package name, but with type arguments if parameterized,
+ and enclosing class if a member class.
+ For instance, for <code>java.util.List&lt;T&gt;</code> would return <code>"List&lt;T&gt;"</code>.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the unqualified name of this type</dd>
 </dl>
 </li>
 </ul>

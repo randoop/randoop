@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>OperationExtractor (randoop 3.0.4 API)</title>
+<title>OperationExtractor (randoop 3.0.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="OperationExtractor (randoop 3.0.4 API)";
+            parent.document.title="OperationExtractor (randoop 3.0.5 API)";
         }
     }
     catch(err) {
@@ -352,10 +352,12 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <pre>private&nbsp;void&nbsp;addOperation(<a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation">TypedClassOperation</a>&nbsp;operation)</pre>
 <div class="block">Adds an operation to the collection of this extractor.
  If the declaring class type is an <a href="../../randoop/types/InstantiatedType.html" title="class in randoop.types"><code>InstantiatedType</code></a>, then the substitution for that
- class is applied to the types of the operation, and this instantiated operation is returned.</div>
+ class is applied to the types of the operation, and this instantiated operation is returned.
+ Instantiation of a generic operation is handled in
+ <a href="../../randoop/reflection/OperationModel.html#instantiateOperationTypes-randoop.operation.TypedOperation-"><code>OperationModel.instantiateOperationTypes(TypedOperation)</code></a>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>operation</code> - the <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation"><code>TypedOperation</code></a></dd>
+<dd><code>operation</code> - the <a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation"><code>TypedClassOperation</code></a></dd>
 </dl>
 </li>
 </ul>

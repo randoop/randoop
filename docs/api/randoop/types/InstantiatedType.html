@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>InstantiatedType (randoop 3.0.4 API)</title>
+<title>InstantiatedType (randoop 3.0.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="InstantiatedType (randoop 3.0.4 API)";
+            parent.document.title="InstantiatedType (randoop 3.0.5 API)";
         }
     }
     catch(err) {
@@ -228,103 +228,104 @@ extends <a href="../../randoop/types/ParameterizedType.html" title="class in ran
 </td>
 </tr>
 <tr id="i4" class="altColor">
+<td class="colFirst"><code><a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/InstantiatedType.html#getInstantiatingSubstitution-randoop.types.ClassOrInterfaceType-">getInstantiatingSubstitution</a></span>(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;goalType)</code>
+<div class="block">Computes a substitution that can be applied to the type variables of the generic goal type to
+ instantiate operations of this type, possibly inherited from from the goal type.</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/InstantiatedType.html#getInterfaces--">getInterfaces</a></span>()</code>
 <div class="block">Constructs the list of interface supertypes for this parameterized type.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/types/InstantiatedType.html" title="class in randoop.types">InstantiatedType</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/InstantiatedType.html#getMatchingSupertype-randoop.types.GenericClassType-">getMatchingSupertype</a></span>(<a href="../../randoop/types/GenericClassType.html" title="class in randoop.types">GenericClassType</a>&nbsp;goalType)</code>
 <div class="block">Finds the parameterized type that is a supertype of this class that also matches the given
  generic class.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/types/NonParameterizedType.html" title="class in randoop.types">NonParameterizedType</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/InstantiatedType.html#getRawtype--">getRawtype</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>private java.util.List&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/InstantiatedType.html#getReferenceArguments--">getReferenceArguments</a></span>()</code>
 <div class="block">Returns the list of reference type arguments of this type if there are no wildcards.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>java.lang.Class&lt;?&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/InstantiatedType.html#getRuntimeClass--">getRuntimeClass</a></span>()</code>
 <div class="block">Returns the runtime <code>Class</code> object for this type.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/InstantiatedType.html#getSuperclass--">getSuperclass</a></span>()</code>
 <div class="block">Constructs the superclass type for this parameterized type.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/InstantiatedType.html#getTypeArguments--">getTypeArguments</a></span>()</code>
 <div class="block">Returns the type arguments for this type.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/InstantiatedType.html#getTypeParameters--">getTypeParameters</a></span>()</code>
 <div class="block">Returns the list of type parameters for this type.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/InstantiatedType.html#getTypeSubstitution--">getTypeSubstitution</a></span>()</code>
 <div class="block">Creates the type substitution of the type arguments of this type for the type variables of the
  instantiated class, if the type arguments are reference types.</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/InstantiatedType.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/InstantiatedType.html#hasWildcard--">hasWildcard</a></span>()</code>
 <div class="block">Indicate whether this type has a wildcard either as or in a type argument.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/InstantiatedType.html#isAbstract--">isAbstract</a></span>()</code>
 <div class="block">Indicate whether this class is abstract.</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/InstantiatedType.html#isAssignableFrom-randoop.types.Type-">isAssignableFrom</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;otherType)</code>
 <div class="block">Indicates whether there is an assignment conversion from a source <code>Type</code> to this type.</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/InstantiatedType.html#isGeneric--">isGeneric</a></span>()</code>
 <div class="block">Indicate whether this type is generic.</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/InstantiatedType.html#isInstantiationOf-randoop.types.ReferenceType-">isInstantiationOf</a></span>(<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&nbsp;otherType)</code>
 <div class="block">Checks whether this type is an instantiation of the given instantiated type.</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/InstantiatedType.html#isInterface--">isInterface</a></span>()</code>
 <div class="block">Indicates whether this object is an interface type</div>
-</td>
-</tr>
-<tr id="i20" class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/InstantiatedType.html#isMemberClass--">isMemberClass</a></span>()</code>
-<div class="block">Indicate whether this class is a member of another class.</div>
 </td>
 </tr>
 <tr id="i21" class="rowColor">
@@ -365,21 +366,21 @@ extends <a href="../../randoop/types/ParameterizedType.html" title="class in ran
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;randoop.types.<a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types">ParameterizedType</a></h3>
-<code><a href="../../randoop/types/ParameterizedType.html#forClass-java.lang.Class-">forClass</a>, <a href="../../randoop/types/ParameterizedType.html#forType-java.lang.reflect.Type-">forType</a>, <a href="../../randoop/types/ParameterizedType.html#getName--">getName</a>, <a href="../../randoop/types/ParameterizedType.html#getSimpleName--">getSimpleName</a></code></li>
+<code><a href="../../randoop/types/ParameterizedType.html#forClass-java.lang.Class-">forClass</a>, <a href="../../randoop/types/ParameterizedType.html#forType-java.lang.reflect.Type-">forType</a>, <a href="../../randoop/types/ParameterizedType.html#getName--">getName</a>, <a href="../../randoop/types/ParameterizedType.html#getUnqualifiedName--">getUnqualifiedName</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.randoop.types.ClassOrInterfaceType">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;randoop.types.<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></h3>
-<code><a href="../../randoop/types/ClassOrInterfaceType.html#getClassName--">getClassName</a>, <a href="../../randoop/types/ClassOrInterfaceType.html#getPackage--">getPackage</a></code></li>
+<code><a href="../../randoop/types/ClassOrInterfaceType.html#apply-randoop.types.Substitution-randoop.types.ClassOrInterfaceType-">apply</a>, <a href="../../randoop/types/ClassOrInterfaceType.html#applyCaptureConversion-randoop.types.ClassOrInterfaceType-">applyCaptureConversion</a>, <a href="../../randoop/types/ClassOrInterfaceType.html#getCanonicalName--">getCanonicalName</a>, <a href="../../randoop/types/ClassOrInterfaceType.html#getPackage--">getPackage</a>, <a href="../../randoop/types/ClassOrInterfaceType.html#getSimpleName--">getSimpleName</a>, <a href="../../randoop/types/ClassOrInterfaceType.html#isMemberClass--">isMemberClass</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.randoop.types.ReferenceType">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;randoop.types.<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a></h3>
-<code><a href="../../randoop/types/ReferenceType.html#isCaptureVariable--">isCaptureVariable</a>, <a href="../../randoop/types/ReferenceType.html#isReferenceType--">isReferenceType</a></code></li>
+<code><a href="../../randoop/types/ReferenceType.html#getInstantiatingSubstitution-randoop.types.ReferenceType-">getInstantiatingSubstitution</a>, <a href="../../randoop/types/ReferenceType.html#isCaptureVariable--">isCaptureVariable</a>, <a href="../../randoop/types/ReferenceType.html#isReferenceType--">isReferenceType</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.randoop.types.Type">
@@ -475,7 +476,7 @@ extends <a href="../../randoop/types/ParameterizedType.html" title="class in ran
  the same type arguments.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>equals</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+<dd><code><a href="../../randoop/types/ClassOrInterfaceType.html#equals-java.lang.Object-">equals</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -554,8 +555,8 @@ extends <a href="../../randoop/types/ParameterizedType.html" title="class in ran
  If this type has no wildcards, then returns this type.
 </p></div>
 <dl>
-<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code><a href="../../randoop/types/ReferenceType.html#applyCaptureConversion--">applyCaptureConversion</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a></code></dd>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../randoop/types/ClassOrInterfaceType.html#applyCaptureConversion--">applyCaptureConversion</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the capture conversion type for this type</dd>
 </dl>
@@ -703,8 +704,8 @@ extends <a href="../../randoop/types/ParameterizedType.html" title="class in ran
 <pre>public&nbsp;java.util.List&lt;<a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a>&gt;&nbsp;getTypeArguments()</pre>
 <div class="block">Returns the type arguments for this type.</div>
 <dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/types/ParameterizedType.html#getTypeArguments--">getTypeArguments</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types">ParameterizedType</a></code></dd>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="../../randoop/types/ClassOrInterfaceType.html#getTypeArguments--">getTypeArguments</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the list of type arguments</dd>
 </dl>
@@ -723,7 +724,7 @@ extends <a href="../../randoop/types/ParameterizedType.html" title="class in ran
  and subclasses of <a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types"><code>ParameterizedType</code></a>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code><a href="../../randoop/types/ReferenceType.html#getTypeParameters--">getTypeParameters</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a></code></dd>
+<dd><code><a href="../../randoop/types/ClassOrInterfaceType.html#getTypeParameters--">getTypeParameters</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the type parameters for this type</dd>
 </dl>
@@ -752,11 +753,11 @@ extends <a href="../../randoop/types/ParameterizedType.html" title="class in ran
 <li class="blockList">
 <h4>hasWildcard</h4>
 <pre>public&nbsp;boolean&nbsp;hasWildcard()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/ParameterizedType.html#hasWildcard--">ParameterizedType</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/ClassOrInterfaceType.html#hasWildcard--">ClassOrInterfaceType</a></code></span></div>
 <div class="block">Indicate whether this type has a wildcard either as or in a type argument.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code><a href="../../randoop/types/ParameterizedType.html#hasWildcard--">hasWildcard</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types">ParameterizedType</a></code></dd>
+<dd><code><a href="../../randoop/types/ClassOrInterfaceType.html#hasWildcard--">hasWildcard</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if this type has a wildcard, and false otherwise</dd>
 </dl>
@@ -837,7 +838,7 @@ extends <a href="../../randoop/types/ParameterizedType.html" title="class in ran
  A type is <i>generic</i> if it has one or more type variables.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code><a href="../../randoop/types/Type.html#isGeneric--">isGeneric</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>
+<dd><code><a href="../../randoop/types/ClassOrInterfaceType.html#isGeneric--">isGeneric</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if this type is generic, false otherwise</dd>
 </dl>
@@ -868,13 +869,37 @@ extends <a href="../../randoop/types/ParameterizedType.html" title="class in ran
  </ol></div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code><a href="../../randoop/types/ReferenceType.html#isInstantiationOf-randoop.types.ReferenceType-">isInstantiationOf</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a></code></dd>
+<dd><code><a href="../../randoop/types/ClassOrInterfaceType.html#isInstantiationOf-randoop.types.ReferenceType-">isInstantiationOf</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>otherType</code> - the other <a href="../../randoop/types/InstantiatedType.html" title="class in randoop.types"><code>InstantiatedType</code></a></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if this type is an instantiation of the other type, false otherwise</dd>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../randoop/types/ReferenceType.html#isInstantiationOf-randoop.types.ReferenceType-"><code>ReferenceType.isInstantiationOf(ReferenceType)</code></a></dd>
+</dl>
+</li>
+</ul>
+<a name="getInstantiatingSubstitution-randoop.types.ClassOrInterfaceType-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getInstantiatingSubstitution</h4>
+<pre>public&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;getInstantiatingSubstitution(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;goalType)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/ClassOrInterfaceType.html#getInstantiatingSubstitution-randoop.types.ClassOrInterfaceType-">ClassOrInterfaceType</a></code></span></div>
+<div class="block">Computes a substitution that can be applied to the type variables of the generic goal type to
+ instantiate operations of this type, possibly inherited from from the goal type.
+ The substitution will unify this type with either the given goal type, or a supertype of the
+ goal type.
+
+ If there is none, returns <code>null</code>.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="../../randoop/types/ClassOrInterfaceType.html#getInstantiatingSubstitution-randoop.types.ClassOrInterfaceType-">getInstantiatingSubstitution</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></code></dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>goalType</code> - the generic type for which a substitution is needed</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a substitution unifying this type with either the goal type or a supertype of the goal</dd>
 </dl>
 </li>
 </ul>
@@ -895,24 +920,6 @@ extends <a href="../../randoop/types/ParameterizedType.html" title="class in ran
 </dl>
 </li>
 </ul>
-<a name="isMemberClass--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isMemberClass</h4>
-<pre>public&nbsp;boolean&nbsp;isMemberClass()</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/ClassOrInterfaceType.html#isMemberClass--">ClassOrInterfaceType</a></code></span></div>
-<div class="block">Indicate whether this class is a member of another class.
- (see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.5">JLS section 8.5</a>)</div>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../randoop/types/ClassOrInterfaceType.html#isMemberClass--">isMemberClass</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></code></dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if this class is a member class, false otherwise</dd>
-</dl>
-</li>
-</ul>
 <a name="isParameterized--">
 <!--   -->
 </a>
@@ -926,7 +933,7 @@ extends <a href="../../randoop/types/ParameterizedType.html" title="class in ran
  that instantiates a generic class <code>C&lt;F1,...,Fk&gt;</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code><a href="../../randoop/types/Type.html#isParameterized--">isParameterized</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>
+<dd><code><a href="../../randoop/types/ClassOrInterfaceType.html#isParameterized--">isParameterized</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if this type is a parameterized type, false otherwise</dd>
 </dl>

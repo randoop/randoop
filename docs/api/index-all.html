@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Index (randoop 3.0.4 API)</title>
+<title>Index (randoop 3.0.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="javadocstyle.css" title="Style">
 <script type="text/javascript" src="script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Index (randoop 3.0.4 API)";
+            parent.document.title="Index (randoop 3.0.5 API)";
         }
     }
     catch(err) {
@@ -496,6 +496,11 @@
 <dd>
 <div class="block">Applies a substitution to a <a href="randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#apply-randoop.types.Substitution-randoop.types.ClassOrInterfaceType-">apply(Substitution&lt;ReferenceType&gt;, ClassOrInterfaceType)</a></span> - Method in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
+<dd>
+<div class="block">Applies the substitution to the enclosing type of this type and adds the result as the
+ enclosing class of the given type.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/GenericClassType.html#apply-randoop.types.Substitution-">apply(Substitution&lt;ReferenceType&gt;)</a></span> - Method in class randoop.types.<a href="randoop/types/GenericClassType.html" title="class in randoop.types">GenericClassType</a></dt>
 <dd>
 <div class="block">Instantiates this generic class using the substitution to replace the type
@@ -564,6 +569,15 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/operation/TypedTermOperation.html#applyCaptureConversion--">applyCaptureConversion()</a></span> - Method in class randoop.operation.<a href="randoop/operation/TypedTermOperation.html" title="class in randoop.operation">TypedTermOperation</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#applyCaptureConversion--">applyCaptureConversion()</a></span> - Method in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#applyCaptureConversion-randoop.types.ClassOrInterfaceType-">applyCaptureConversion(ClassOrInterfaceType)</a></span> - Method in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
+<dd>
+<div class="block">Applies capture conversion to the enclosing type of this type and adds the result as the
+ enclosing class of the given type.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/GenericClassType.html#applyCaptureConversion--">applyCaptureConversion()</a></span> - Method in class randoop.types.<a href="randoop/types/GenericClassType.html" title="class in randoop.types">GenericClassType</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/InstantiatedType.html#applyCaptureConversion--">applyCaptureConversion()</a></span> - Method in class randoop.types.<a href="randoop/types/InstantiatedType.html" title="class in randoop.types">InstantiatedType</a></dt>
 <dd>
 <div class="block">Constructs a capture conversion for this type.</div>
@@ -573,6 +587,8 @@
 <div class="block">Applies a capture conversion to any wildcard arguments in the type of this bound.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/types/LazyParameterBound.html#applyCaptureConversion--">applyCaptureConversion()</a></span> - Method in class randoop.types.<a href="randoop/types/LazyParameterBound.html" title="class in randoop.types">LazyParameterBound</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/NonParameterizedType.html#applyCaptureConversion--">applyCaptureConversion()</a></span> - Method in class randoop.types.<a href="randoop/types/NonParameterizedType.html" title="class in randoop.types">NonParameterizedType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ParameterBound.html#applyCaptureConversion--">applyCaptureConversion()</a></span> - Method in class randoop.types.<a href="randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></dt>
 <dd>
@@ -1659,6 +1675,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/sequence/MappedSequences.html#emptyList">emptyList</a></span> - Static variable in class randoop.sequence.<a href="randoop/sequence/MappedSequences.html" title="class in randoop.sequence">MappedSequences</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#enclosingType">enclosingType</a></span> - Variable in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
+<dd>
+<div class="block">The enclosing type: non-null if this is a member class.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/RecordListReader.html#endMarker">endMarker</a></span> - Variable in class randoop.util.<a href="randoop/util/RecordListReader.html" title="class in randoop.util">RecordListReader</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/JDKTypes.html#ENUM_MAP_TYPE">ENUM_MAP_TYPE</a></span> - Static variable in class randoop.types.<a href="randoop/types/JDKTypes.html" title="class in randoop.types">JDKTypes</a></dt>
@@ -1758,6 +1778,8 @@
 <dt><span class="memberNameLink"><a href="randoop/types/ArrayType.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.types.<a href="randoop/types/ArrayType.html" title="class in randoop.types">ArrayType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/CaptureTypeVariable.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.types.<a href="randoop/types/CaptureTypeVariable.html" title="class in randoop.types">CaptureTypeVariable</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ExplicitTypeVariable.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.types.<a href="randoop/types/ExplicitTypeVariable.html" title="class in randoop.types">ExplicitTypeVariable</a></dt>
 <dd>
@@ -2744,6 +2766,12 @@
 <dd>
 <div class="block">Returns the list of contracts with the given arity.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#getCanonicalName--">getCanonicalName()</a></span> - Method in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/Type.html#getCanonicalName--">getCanonicalName()</a></span> - Method in class randoop.types.<a href="randoop/types/Type.html" title="class in randoop.types">Type</a></dt>
+<dd>
+<div class="block">Returns the name of this type as the "canonical name" of the underlying runtime class.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/test/ExpectedExceptionCheckGen.html#getCatchClassName-java.lang.Class-">getCatchClassName(Class&lt;? extends Throwable&gt;)</a></span> - Method in class randoop.test.<a href="randoop/test/ExpectedExceptionCheckGen.html" title="class in randoop.test">ExpectedExceptionCheckGen</a></dt>
 <dd>
 <div class="block">Returns the canonical name for the nearest visible class that will catch an
@@ -2756,8 +2784,6 @@
 <dt><span class="memberNameLink"><a href="randoop/util/RandoopSecurityManager.html#getClassContext--">getClassContext()</a></span> - Method in class randoop.util.<a href="randoop/util/RandoopSecurityManager.html" title="class in randoop.util">RandoopSecurityManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/JarReader.html#getClasseNamesInJar-java.lang.String-">getClasseNamesInJar(String)</a></span> - Static method in class randoop.util.<a href="randoop/util/JarReader.html" title="class in randoop.util">JarReader</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#getClassName--">getClassName()</a></span> - Method in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/main/GenInputsAbstract.html#getClassnamesFromArgs--">getClassnamesFromArgs()</a></span> - Static method in class randoop.main.<a href="randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</a></dt>
 <dd>&nbsp;</dd>
@@ -3053,6 +3079,21 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/contract/HashCodeReturnsNormally.html#getInstance--">getInstance()</a></span> - Static method in class randoop.contract.<a href="randoop/contract/HashCodeReturnsNormally.html" title="class in randoop.contract">HashCodeReturnsNormally</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#getInstantiatingSubstitution-randoop.types.ClassOrInterfaceType-">getInstantiatingSubstitution(ClassOrInterfaceType)</a></span> - Method in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
+<dd>
+<div class="block">Computes a substitution that can be applied to the type variables of the generic goal type to
+ instantiate operations of this type, possibly inherited from from the goal type.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/InstantiatedType.html#getInstantiatingSubstitution-randoop.types.ClassOrInterfaceType-">getInstantiatingSubstitution(ClassOrInterfaceType)</a></span> - Method in class randoop.types.<a href="randoop/types/InstantiatedType.html" title="class in randoop.types">InstantiatedType</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/NonParameterizedType.html#getInstantiatingSubstitution-randoop.types.ClassOrInterfaceType-">getInstantiatingSubstitution(ClassOrInterfaceType)</a></span> - Method in class randoop.types.<a href="randoop/types/NonParameterizedType.html" title="class in randoop.types">NonParameterizedType</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ReferenceArgument.html#getInstantiatingSubstitution-randoop.types.TypeArgument-">getInstantiatingSubstitution(TypeArgument)</a></span> - Method in class randoop.types.<a href="randoop/types/ReferenceArgument.html" title="class in randoop.types">ReferenceArgument</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ReferenceType.html#getInstantiatingSubstitution-randoop.types.ReferenceType-">getInstantiatingSubstitution(ReferenceType)</a></span> - Method in class randoop.types.<a href="randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/TypeArgument.html#getInstantiatingSubstitution-randoop.types.TypeArgument-">getInstantiatingSubstitution(TypeArgument)</a></span> - Method in class randoop.types.<a href="randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#getInterfaces--">getInterfaces()</a></span> - Method in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
 <dd>
 <div class="block">Returns the interface types directly implemented or extended by this class or interface type.</div>
@@ -3178,18 +3219,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/CaptureTypeVariable.html#getName--">getName()</a></span> - Method in class randoop.types.<a href="randoop/types/CaptureTypeVariable.html" title="class in randoop.types">CaptureTypeVariable</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#getName--">getName()</a></span> - Method in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ExplicitTypeVariable.html#getName--">getName()</a></span> - Method in class randoop.types.<a href="randoop/types/ExplicitTypeVariable.html" title="class in randoop.types">ExplicitTypeVariable</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="randoop/types/GenericClassType.html#getName--">getName()</a></span> - Method in class randoop.types.<a href="randoop/types/GenericClassType.html" title="class in randoop.types">GenericClassType</a></dt>
-<dd>
-<div class="block">Returns the fully-qualified name of this type, including type arguments if
- this is a parameterized type.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="randoop/types/NonParameterizedType.html#getName--">getName()</a></span> - Method in class randoop.types.<a href="randoop/types/NonParameterizedType.html" title="class in randoop.types">NonParameterizedType</a></dt>
-<dd>
-<div class="block">Returns the fully-qualified name of this type, including type arguments if
- this is a parameterized type.</div>
-</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/NullReferenceType.html#getName--">getName()</a></span> - Method in class randoop.types.<a href="randoop/types/NullReferenceType.html" title="class in randoop.types">NullReferenceType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ParameterizedType.html#getName--">getName()</a></span> - Method in class randoop.types.<a href="randoop/types/ParameterizedType.html" title="class in randoop.types">ParameterizedType</a></dt>
@@ -3377,12 +3410,26 @@
 <div class="block">getShortForm constructs code expression of the operation for substitution
  into argument lists as opposed to using variable.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="randoop/types/ParameterizedType.html#getSimpleName--">getSimpleName()</a></span> - Method in class randoop.types.<a href="randoop/types/ParameterizedType.html" title="class in randoop.types">ParameterizedType</a></dt>
+<dt><span class="memberNameLink"><a href="randoop/types/ArrayType.html#getSimpleName--">getSimpleName()</a></span> - Method in class randoop.types.<a href="randoop/types/ArrayType.html" title="class in randoop.types">ArrayType</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/CaptureTypeVariable.html#getSimpleName--">getSimpleName()</a></span> - Method in class randoop.types.<a href="randoop/types/CaptureTypeVariable.html" title="class in randoop.types">CaptureTypeVariable</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#getSimpleName--">getSimpleName()</a></span> - Method in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
+<dd>
+<div class="block">Returns the name of this class type.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ExplicitTypeVariable.html#getSimpleName--">getSimpleName()</a></span> - Method in class randoop.types.<a href="randoop/types/ExplicitTypeVariable.html" title="class in randoop.types">ExplicitTypeVariable</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/NullReferenceType.html#getSimpleName--">getSimpleName()</a></span> - Method in class randoop.types.<a href="randoop/types/NullReferenceType.html" title="class in randoop.types">NullReferenceType</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/PrimitiveType.html#getSimpleName--">getSimpleName()</a></span> - Method in class randoop.types.<a href="randoop/types/PrimitiveType.html" title="class in randoop.types">PrimitiveType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/Type.html#getSimpleName--">getSimpleName()</a></span> - Method in class randoop.types.<a href="randoop/types/Type.html" title="class in randoop.types">Type</a></dt>
 <dd>
-<div class="block">Returns the fully-qualified name of this type without type arguments.</div>
+<div class="block">Returns the name of this type without type arguments or package qualifiers.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/types/VoidType.html#getSimpleName--">getSimpleName()</a></span> - Method in class randoop.types.<a href="randoop/types/VoidType.html" title="class in randoop.types">VoidType</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/sequence/Sequence.html#getStatement-int-">getStatement(int)</a></span> - Method in class randoop.sequence.<a href="randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></dt>
 <dd>
 <div class="block">The statement for the statement at the given index.</div>
@@ -3491,13 +3538,13 @@
 <dd>
 <div class="block">Returns the type of this variable.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="randoop/types/GenericClassType.html#getTypeArguments--">getTypeArguments()</a></span> - Method in class randoop.types.<a href="randoop/types/GenericClassType.html" title="class in randoop.types">GenericClassType</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="randoop/types/InstantiatedType.html#getTypeArguments--">getTypeArguments()</a></span> - Method in class randoop.types.<a href="randoop/types/InstantiatedType.html" title="class in randoop.types">InstantiatedType</a></dt>
+<dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#getTypeArguments--">getTypeArguments()</a></span> - Method in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
 <dd>
 <div class="block">Returns the type arguments for this type.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="randoop/types/ParameterizedType.html#getTypeArguments--">getTypeArguments()</a></span> - Method in class randoop.types.<a href="randoop/types/ParameterizedType.html" title="class in randoop.types">ParameterizedType</a></dt>
+<dt><span class="memberNameLink"><a href="randoop/types/GenericClassType.html#getTypeArguments--">getTypeArguments()</a></span> - Method in class randoop.types.<a href="randoop/types/GenericClassType.html" title="class in randoop.types">GenericClassType</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/InstantiatedType.html#getTypeArguments--">getTypeArguments()</a></span> - Method in class randoop.types.<a href="randoop/types/InstantiatedType.html" title="class in randoop.types">InstantiatedType</a></dt>
 <dd>
 <div class="block">Returns the type arguments for this type.</div>
 </dd>
@@ -3531,6 +3578,8 @@
 <dd>
 <div class="block">Returns the type parameters in this type, which is this variable.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#getTypeParameters--">getTypeParameters()</a></span> - Method in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ExplicitTypeVariable.html#getTypeParameters--">getTypeParameters()</a></span> - Method in class randoop.types.<a href="randoop/types/ExplicitTypeVariable.html" title="class in randoop.types">ExplicitTypeVariable</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/GenericClassType.html#getTypeParameters--">getTypeParameters()</a></span> - Method in class randoop.types.<a href="randoop/types/GenericClassType.html" title="class in randoop.types">GenericClassType</a></dt>
@@ -3581,6 +3630,15 @@
 <dd>
 <div class="block">Creates the type substitution of the type arguments of this type for the type variables of the
  instantiated class, if the type arguments are reference types.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#getUnqualifiedName--">getUnqualifiedName()</a></span> - Method in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ParameterizedType.html#getUnqualifiedName--">getUnqualifiedName()</a></span> - Method in class randoop.types.<a href="randoop/types/ParameterizedType.html" title="class in randoop.types">ParameterizedType</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/Type.html#getUnqualifiedName--">getUnqualifiedName()</a></span> - Method in class randoop.types.<a href="randoop/types/Type.html" title="class in randoop.types">Type</a></dt>
+<dd>
+<div class="block">Returns the name of this type without package name, but with type arguments if parameterized,
+ and enclosing class if a member class.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/types/TypeVariable.html#getUpperTypeBound--">getUpperTypeBound()</a></span> - Method in class randoop.types.<a href="randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a></dt>
 <dd>
@@ -3711,6 +3769,10 @@
 <dd>
 <div class="block">Performs error handling behavior for bad class name.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/main/ClassNameErrorHandler.html#handle-java.lang.String-java.lang.Throwable-">handle(String, Throwable)</a></span> - Method in interface randoop.main.<a href="randoop/main/ClassNameErrorHandler.html" title="interface in randoop.main">ClassNameErrorHandler</a></dt>
+<dd>
+<div class="block">Performs error handling behavior for failure to read class due to exception.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/main/CommandHandler.html#handle-java.lang.String:A-">handle(String[])</a></span> - Method in class randoop.main.<a href="randoop/main/CommandHandler.html" title="class in randoop.main">CommandHandler</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/main/GenTests.html#handle-java.lang.String:A-">handle(String[])</a></span> - Method in class randoop.main.<a href="randoop/main/GenTests.html" title="class in randoop.main">GenTests</a></dt>
@@ -3719,7 +3781,11 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/main/ThrowClassNameError.html#handle-java.lang.String-">handle(String)</a></span> - Method in class randoop.main.<a href="randoop/main/ThrowClassNameError.html" title="class in randoop.main">ThrowClassNameError</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/main/ThrowClassNameError.html#handle-java.lang.String-java.lang.Throwable-">handle(String, Throwable)</a></span> - Method in class randoop.main.<a href="randoop/main/ThrowClassNameError.html" title="class in randoop.main">ThrowClassNameError</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/main/WarnOnBadClassName.html#handle-java.lang.String-">handle(String)</a></span> - Method in class randoop.main.<a href="randoop/main/WarnOnBadClassName.html" title="class in randoop.main">WarnOnBadClassName</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/main/WarnOnBadClassName.html#handle-java.lang.String-java.lang.Throwable-">handle(String, Throwable)</a></span> - Method in class randoop.main.<a href="randoop/main/WarnOnBadClassName.html" title="class in randoop.main">WarnOnBadClassName</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/main/GenTests.html#handleFlakySequenceException-randoop.generation.AbstractGenerator-randoop.sequence.SequenceExceptionError-">handleFlakySequenceException(AbstractGenerator, SequenceExceptionError)</a></span> - Method in class randoop.main.<a href="randoop/main/GenTests.html" title="class in randoop.main">GenTests</a></dt>
 <dd>
@@ -3952,6 +4018,10 @@
 <dd>
 <div class="block">Indicate whether this type has a wildcard either as or in a type argument.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#hasWildcard--">hasWildcard()</a></span> - Method in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
+<dd>
+<div class="block">Indicate whether this type has a wildcard either as or in a type argument.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/InstantiatedType.html#hasWildcard--">hasWildcard()</a></span> - Method in class randoop.types.<a href="randoop/types/InstantiatedType.html" title="class in randoop.types">InstantiatedType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/IntersectionTypeBound.html#hasWildcard--">hasWildcard()</a></span> - Method in class randoop.types.<a href="randoop/types/IntersectionTypeBound.html" title="class in randoop.types">IntersectionTypeBound</a></dt>
@@ -3967,10 +4037,6 @@
 <dt><span class="memberNameLink"><a href="randoop/types/ParameterBound.html#hasWildcard--">hasWildcard()</a></span> - Method in class randoop.types.<a href="randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></dt>
 <dd>
 <div class="block">Indicates whether the type of this bound has a wildcard type argument.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="randoop/types/ParameterizedType.html#hasWildcard--">hasWildcard()</a></span> - Method in class randoop.types.<a href="randoop/types/ParameterizedType.html" title="class in randoop.types">ParameterizedType</a></dt>
-<dd>
-<div class="block">Indicate whether this type has a wildcard either as or in a type argument.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ReferenceArgument.html#hasWildcard--">hasWildcard()</a></span> - Method in class randoop.types.<a href="randoop/types/ReferenceArgument.html" title="class in randoop.types">ReferenceArgument</a></dt>
 <dd>&nbsp;</dd>
@@ -4433,6 +4499,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/CaptureTypeVariable.html#isGeneric--">isGeneric()</a></span> - Method in class randoop.types.<a href="randoop/types/CaptureTypeVariable.html" title="class in randoop.types">CaptureTypeVariable</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#isGeneric--">isGeneric()</a></span> - Method in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ExplicitTypeVariable.html#isGeneric--">isGeneric()</a></span> - Method in class randoop.types.<a href="randoop/types/ExplicitTypeVariable.html" title="class in randoop.types">ExplicitTypeVariable</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/GenericClassType.html#isGeneric--">isGeneric()</a></span> - Method in class randoop.types.<a href="randoop/types/GenericClassType.html" title="class in randoop.types">GenericClassType</a></dt>
@@ -4461,11 +4529,17 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/MethodReflectionCode.html#isInstanceMethod--">isInstanceMethod()</a></span> - Method in class randoop.util.<a href="randoop/util/MethodReflectionCode.html" title="class in randoop.util">MethodReflectionCode</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="randoop/types/GenericClassType.html#isInstantiationOf-randoop.types.ReferenceType-">isInstantiationOf(ReferenceType)</a></span> - Method in class randoop.types.<a href="randoop/types/GenericClassType.html" title="class in randoop.types">GenericClassType</a></dt>
-<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#isInstantiationOf-randoop.types.ReferenceType-">isInstantiationOf(ReferenceType)</a></span> - Method in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
+<dd>
+<div class="block">Indicates whether this type is an instantiation of a more general type.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/InstantiatedType.html#isInstantiationOf-randoop.types.ReferenceType-">isInstantiationOf(ReferenceType)</a></span> - Method in class randoop.types.<a href="randoop/types/InstantiatedType.html" title="class in randoop.types">InstantiatedType</a></dt>
 <dd>
 <div class="block">Checks whether this type is an instantiation of the given instantiated type.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/NonParameterizedType.html#isInstantiationOf-randoop.types.ReferenceType-">isInstantiationOf(ReferenceType)</a></span> - Method in class randoop.types.<a href="randoop/types/NonParameterizedType.html" title="class in randoop.types">NonParameterizedType</a></dt>
+<dd>
+<div class="block">Indicates whether this type is an instantiation of a more general type.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ReferenceArgument.html#isInstantiationOf-randoop.types.TypeArgument-">isInstantiationOf(TypeArgument)</a></span> - Method in class randoop.types.<a href="randoop/types/ReferenceArgument.html" title="class in randoop.types">ReferenceArgument</a></dt>
 <dd>&nbsp;</dd>
@@ -4521,12 +4595,6 @@
 <dd>
 <div class="block">Indicate whether this class is a member of another class.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="randoop/types/GenericClassType.html#isMemberClass--">isMemberClass()</a></span> - Method in class randoop.types.<a href="randoop/types/GenericClassType.html" title="class in randoop.types">GenericClassType</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="randoop/types/InstantiatedType.html#isMemberClass--">isMemberClass()</a></span> - Method in class randoop.types.<a href="randoop/types/InstantiatedType.html" title="class in randoop.types">InstantiatedType</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="randoop/types/NonParameterizedType.html#isMemberClass--">isMemberClass()</a></span> - Method in class randoop.types.<a href="randoop/types/NonParameterizedType.html" title="class in randoop.types">NonParameterizedType</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/operation/CallableOperation.html#isMessage--">isMessage()</a></span> - Method in class randoop.operation.<a href="randoop/operation/CallableOperation.html" title="class in randoop.operation">CallableOperation</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/operation/FieldGet.html#isMessage--">isMessage()</a></span> - Method in class randoop.operation.<a href="randoop/operation/FieldGet.html" title="class in randoop.operation">FieldGet</a></dt>
@@ -4639,6 +4707,8 @@
 <div class="block">Checks whether the length of the <code>String</code> argument meets the criterion determined by
  <a href="randoop/main/GenInputsAbstract.html#string_maxlen"><code>GenInputsAbstract.string_maxlen</code></a>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#isParameterized--">isParameterized()</a></span> - Method in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/InstantiatedType.html#isParameterized--">isParameterized()</a></span> - Method in class randoop.types.<a href="randoop/types/InstantiatedType.html" title="class in randoop.types">InstantiatedType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/Type.html#isParameterized--">isParameterized()</a></span> - Method in class randoop.types.<a href="randoop/types/Type.html" title="class in randoop.types">Type</a></dt>
@@ -5886,6 +5956,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/reflection/ReflectionManager.html#predicate">predicate</a></span> - Variable in class randoop.reflection.<a href="randoop/reflection/ReflectionManager.html" title="class in randoop.reflection">ReflectionManager</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/reflection/TypeExtractor.html#predicate">predicate</a></span> - Variable in class randoop.reflection.<a href="randoop/reflection/TypeExtractor.html" title="class in randoop.reflection">TypeExtractor</a></dt>
+<dd>
+<div class="block">The visibility predicate for checking whether a type is visible in generated tests.</div>
+</dd>
 <dt><a href="randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate"><span class="typeNameLink">Predicate</span></a>&lt;<a href="randoop/util/predicate/Predicate.html" title="type parameter in Predicate">T</a>&gt; - Interface in <a href="randoop/util/predicate/package-summary.html">randoop.util.predicate</a></dt>
 <dd>
 <div class="block">A predicate interface because we are still in Java 7.</div>
@@ -6406,16 +6480,16 @@
 <dd>
 <div class="block">The runtime type for this array</div>
 </dd>
-<dt><span class="memberNameLink"><a href="randoop/types/NonParameterizedType.html#runtimeClass">runtimeClass</a></span> - Variable in class randoop.types.<a href="randoop/types/NonParameterizedType.html" title="class in randoop.types">NonParameterizedType</a></dt>
-<dd>
-<div class="block">The runtime class of this simple type.</div>
-</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/PrimitiveType.html#runtimeClass">runtimeClass</a></span> - Variable in class randoop.types.<a href="randoop/types/PrimitiveType.html" title="class in randoop.types">PrimitiveType</a></dt>
 <dd>
 <div class="block">The runtime class of the primitive type</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/generation/ForwardGenerator.html#runtimePrimitivesSeen">runtimePrimitivesSeen</a></span> - Variable in class randoop.generation.<a href="randoop/generation/ForwardGenerator.html" title="class in randoop.generation">ForwardGenerator</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/NonParameterizedType.html#runtimeType">runtimeType</a></span> - Variable in class randoop.types.<a href="randoop/types/NonParameterizedType.html" title="class in randoop.types">NonParameterizedType</a></dt>
+<dd>
+<div class="block">The runtime class of this simple type.</div>
+</dd>
 </dl>
 <a name="I:S">
 <!--   -->
@@ -6622,6 +6696,10 @@
 <dt><span class="memberNameLink"><a href="randoop/generation/AbstractGenerator.html#setCurrentSequence-randoop.sequence.Sequence-">setCurrentSequence(Sequence)</a></span> - Method in class randoop.generation.<a href="randoop/generation/AbstractGenerator.html" title="class in randoop.generation">AbstractGenerator</a></dt>
 <dd>
 <div class="block">Sets the current sequence during exploration</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#setEnclosingType-randoop.types.ClassOrInterfaceType-">setEnclosingType(ClassOrInterfaceType)</a></span> - Method in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
+<dd>
+<div class="block">Sets the enclosing type for this class type.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/types/TypeVariable.html#setLowerBound-randoop.types.ParameterBound-">setLowerBound(ParameterBound)</a></span> - Method in class randoop.types.<a href="randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a></dt>
 <dd>&nbsp;</dd>
@@ -7601,7 +7679,10 @@
 <div class="block">Represents a type decoration for an operation that has a declaring class.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/operation/TypedClassOperation.html#TypedClassOperation-randoop.operation.CallableOperation-randoop.types.ClassOrInterfaceType-randoop.types.TypeTuple-randoop.types.Type-">TypedClassOperation(CallableOperation, ClassOrInterfaceType, TypeTuple, Type)</a></span> - Constructor for class randoop.operation.<a href="randoop/operation/TypedClassOperation.html" title="class in randoop.operation">TypedClassOperation</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Creates a <a href="randoop/operation/TypedClassOperation.html" title="class in randoop.operation"><code>TypedClassOperation</code></a> for a given <a href="randoop/operation/CallableOperation.html" title="class in randoop.operation"><code>CallableOperation</code></a> indicating the
+ signature of the operation.</div>
+</dd>
 <dt><a href="randoop/operation/TypedOperation.html" title="class in randoop.operation"><span class="typeNameLink">TypedOperation</span></a> - Class in <a href="randoop/operation/package-summary.html">randoop.operation</a></dt>
 <dd>
 <div class="block">Type decorator of <a href="randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> objects.</div>
@@ -7623,9 +7704,10 @@
 <div class="block"><code>TypeExtractor</code> is a <a href="randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> that extracts both the class type, and concrete
  types that are used in a class as either a parameter, a return type, or a field type.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="randoop/reflection/TypeExtractor.html#TypeExtractor-java.util.Set-">TypeExtractor(Set&lt;Type&gt;)</a></span> - Constructor for class randoop.reflection.<a href="randoop/reflection/TypeExtractor.html" title="class in randoop.reflection">TypeExtractor</a></dt>
+<dt><span class="memberNameLink"><a href="randoop/reflection/TypeExtractor.html#TypeExtractor-java.util.Set-randoop.reflection.VisibilityPredicate-">TypeExtractor(Set&lt;Type&gt;, VisibilityPredicate)</a></span> - Constructor for class randoop.reflection.<a href="randoop/reflection/TypeExtractor.html" title="class in randoop.reflection">TypeExtractor</a></dt>
 <dd>
-<div class="block">Creates a visitor that adds discovered concrete types to the given set.</div>
+<div class="block">Creates a visitor that adds discovered concrete types to the given set if they satisfy
+ the visibility predicate.</div>
 </dd>
 <dt><a href="randoop/reflection/TypeNames.html" title="class in randoop.reflection"><span class="typeNameLink">TypeNames</span></a> - Class in <a href="randoop/reflection/package-summary.html">randoop.reflection</a></dt>
 <dd>

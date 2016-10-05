@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>CallableOperation (randoop 3.0.4 API)</title>
+<title>CallableOperation (randoop 3.0.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="CallableOperation (randoop 3.0.4 API)";
+            parent.document.title="CallableOperation (randoop 3.0.5 API)";
         }
     }
     catch(err) {
@@ -427,14 +427,15 @@ implements <a href="../../randoop/operation/Operation.html" title="interface in 
 <h4>compareTo</h4>
 <pre>public&nbsp;int&nbsp;compareTo(<a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a>&nbsp;op)</pre>
 <div class="block">Compares this object to an <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> object.
- Uses order on result of <code>Object.toString()</code>.</div>
+ Uses order on result of <code>Object.toString()</code>, or <a href="../../randoop/operation/Operation.html#getName--"><code>Operation.getName()</code></a>
+ if <code>Object.toString()</code> returns <code>null</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>compareTo</code>&nbsp;in interface&nbsp;<code>java.lang.Comparable&lt;<a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a>&gt;</code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>op</code> - the <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> to compare with this operation</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>value &lt; 0 if this parsable string is less than for op, 0 if the
+<dd>value &lt; 0 if this string is less than for op, 0 if the
          strings are equal, and &gt; 0 if string for this object greater
          than for op</dd>
 </dl>

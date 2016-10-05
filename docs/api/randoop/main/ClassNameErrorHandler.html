@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ClassNameErrorHandler (randoop 3.0.4 API)</title>
+<title>ClassNameErrorHandler (randoop 3.0.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ClassNameErrorHandler (randoop 3.0.4 API)";
+            parent.document.title="ClassNameErrorHandler (randoop 3.0.5 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":6};
+var methods = {"i0":6,"i1":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -131,6 +131,13 @@ var activeTableTab = "activeTableTab";
 <div class="block">Performs error handling behavior for bad class name.</div>
 </td>
 </tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/ClassNameErrorHandler.html#handle-java.lang.String-java.lang.Throwable-">handle</a></span>(java.lang.String&nbsp;classname,
+      java.lang.Throwable&nbsp;e)</code>
+<div class="block">Performs error handling behavior for failure to read class due to exception.</div>
+</td>
+</tr>
 </table>
 </li>
 </ul>
@@ -149,7 +156,7 @@ var activeTableTab = "activeTableTab";
 <a name="handle-java.lang.String-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>handle</h4>
 <pre>void&nbsp;handle(java.lang.String&nbsp;className)</pre>
@@ -157,6 +164,22 @@ var activeTableTab = "activeTableTab";
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>className</code> - the name of the class for inclusion in messages.</dd>
+</dl>
+</li>
+</ul>
+<a name="handle-java.lang.String-java.lang.Throwable-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>handle</h4>
+<pre>void&nbsp;handle(java.lang.String&nbsp;classname,
+            java.lang.Throwable&nbsp;e)</pre>
+<div class="block">Performs error handling behavior for failure to read class due to exception.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>classname</code> - the class name to include in message</dd>
+<dd><code>e</code> - the exception from loading class</dd>
 </dl>
 </li>
 </ul>

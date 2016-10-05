@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>TypeExtractor (randoop 3.0.4 API)</title>
+<title>TypeExtractor (randoop 3.0.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="TypeExtractor (randoop 3.0.4 API)";
+            parent.document.title="TypeExtractor (randoop 3.0.5 API)";
         }
     }
     catch(err) {
@@ -145,6 +145,12 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <div class="block">The set of concrete types</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeExtractor.html#predicate">predicate</a></span></code>
+<div class="block">The visibility predicate for checking whether a type is visible in generated tests.</div>
+</td>
+</tr>
 </table>
 </li>
 </ul>
@@ -160,8 +166,10 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeExtractor.html#TypeExtractor-java.util.Set-">TypeExtractor</a></span>(java.util.Set&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;&nbsp;inputTypes)</code>
-<div class="block">Creates a visitor that adds discovered concrete types to the given set.</div>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeExtractor.html#TypeExtractor-java.util.Set-randoop.reflection.VisibilityPredicate-">TypeExtractor</a></span>(java.util.Set&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;&nbsp;inputTypes,
+             <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a>&nbsp;predicate)</code>
+<div class="block">Creates a visitor that adds discovered concrete types to the given set if they satisfy
+ the visibility predicate.</div>
 </td>
 </tr>
 </table>
@@ -242,11 +250,21 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <a name="inputTypes">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>inputTypes</h4>
 <pre>private&nbsp;java.util.Set&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt; inputTypes</pre>
 <div class="block">The set of concrete types</div>
+</li>
+</ul>
+<a name="predicate">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>predicate</h4>
+<pre>private final&nbsp;<a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a> predicate</pre>
+<div class="block">The visibility predicate for checking whether a type is visible in generated tests.</div>
 </li>
 </ul>
 </li>
@@ -257,17 +275,20 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="TypeExtractor-java.util.Set-">
+<a name="TypeExtractor-java.util.Set-randoop.reflection.VisibilityPredicate-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>TypeExtractor</h4>
-<pre>TypeExtractor(java.util.Set&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;&nbsp;inputTypes)</pre>
-<div class="block">Creates a visitor that adds discovered concrete types to the given set.</div>
+<pre>TypeExtractor(java.util.Set&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;&nbsp;inputTypes,
+              <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a>&nbsp;predicate)</pre>
+<div class="block">Creates a visitor that adds discovered concrete types to the given set if they satisfy
+ the visibility predicate.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>inputTypes</code> - the set of concrete types</dd>
+<dd><code>predicate</code> - the visibility predicate</dd>
 </dl>
 </li>
 </ul>
@@ -306,7 +327,8 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <h4>visit</h4>
 <pre>public&nbsp;void&nbsp;visit(java.lang.reflect.Method&nbsp;m)</pre>
 <div class="block">Perform an action on a method.
- Adds any concrete type among parameter and return types to the input types set of this object.</div>
+ Adds any concrete type among parameter and return types to the input types set of this object.
+ Avoids bridge methods, because may have rawtypes not useful in building tests.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/reflection/ClassVisitor.html#visit-java.lang.reflect.Method-">visit</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection">ClassVisitor</a></code></dd>
