@@ -305,6 +305,8 @@ public class OperationModel {
         c = TypeNames.getTypeForName(classname);
       } catch (ClassNotFoundException e) {
         errorHandler.handle(classname);
+      } catch (Throwable e) {
+        errorHandler.handle(classname, e.getCause());
       }
       // Note that c could be null if errorHandler just warns on bad names
       if (c != null && !visitedClasses.contains(c)) {
@@ -338,16 +340,19 @@ public class OperationModel {
           c = TypeNames.getTypeForName(classname);
         } catch (ClassNotFoundException e) {
           errorHandler.handle(classname);
+        } catch (Throwable e) {
+          errorHandler.handle(classname, e.getCause());
         }
-        assert c != null;
-
-        if (!visibility.isVisible(c)) {
-          System.out.println(
-              "Ignoring non-visible " + c + " specified as include-if-class-exercised target");
-        } else if (c.isInterface()) {
-          System.out.println("Ignoring " + c + " specified as include-if-class-exercised target.");
-        } else {
-          exercisedClasses.add(c);
+        if (c != null) {
+          if (!visibility.isVisible(c)) {
+            System.out.println(
+                "Ignoring non-visible " + c + " specified as include-if-class-exercised target");
+          } else if (c.isInterface()) {
+            System.out.println(
+                "Ignoring " + c + " specified as include-if-class-exercised target.");
+          } else {
+            exercisedClasses.add(c);
+          }
         }
       }
     }

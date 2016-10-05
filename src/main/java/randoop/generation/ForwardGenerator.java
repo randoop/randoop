@@ -276,6 +276,12 @@ public class ForwardGenerator extends AbstractGenerator {
                 && Value.looksLikeObjectToString((String) runtimeValue);
         boolean tooLongString =
             (runtimeValue instanceof String) && !Value.stringLengthOK((String) runtimeValue);
+        if (runtimeValue instanceof Double && Double.isNaN((double) runtimeValue)) {
+          runtimeValue = Double.NaN; // canonicalize NaN value
+        }
+        if (runtimeValue instanceof Float && Float.isNaN((float) runtimeValue)) {
+          runtimeValue = Float.NaN; // canonicalize NaN value
+        }
         if (!looksLikeObjToString && !tooLongString && runtimePrimitivesSeen.add(runtimeValue)) {
           // Have not seen this value before; add it to the component set.
           componentManager.addGeneratedSequence(Sequence.createSequenceForPrimitive(runtimeValue));

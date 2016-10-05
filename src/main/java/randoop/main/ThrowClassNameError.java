@@ -10,4 +10,9 @@ public class ThrowClassNameError implements ClassNameErrorHandler {
   public void handle(String className) {
     throw new Error("No class found for type name \"" + className + "\"");
   }
+
+  @Override
+  public void handle(String classname, Throwable e) {
+    throw new Error("Unable to load type \"" + classname + "\" due to exception: " + e);
+  }
 }

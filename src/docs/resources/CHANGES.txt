@@ -1,3 +1,18 @@
+Version 3.0.5, released October 5, 2016
+
+Randoop now ignores generic operations or classes for which it is unable to
+assign a type to a type argument. These are included in log output.
+
+Fixed bugs resulting in runtime failures:
+- a member class of a generic class was being constructed so that type
+  parameters were not tracked.
+- an exception during loading of a class would result in a failure, now ignored.
+- an enum has an override of toString() that returns null.
+
+Fixed bug in which flaky tests could be generated involving NaN. Thanks to
+Naljorpa Chagmed for reporting this issue.
+
+
 Version 3.0.4, released August 29, 2016
 
 Randoop now:

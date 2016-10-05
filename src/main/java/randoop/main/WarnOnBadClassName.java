@@ -10,4 +10,9 @@ public class WarnOnBadClassName implements ClassNameErrorHandler {
   public void handle(String className) {
     System.out.format("Warning: no class found for type name \"%s\"%n", className);
   }
+
+  @Override
+  public void handle(String classname, Throwable e) {
+    System.out.format("Warning: loading \"%s\" resulted in exception: %s%n", classname, e);
+  }
 }
