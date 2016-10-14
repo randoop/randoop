@@ -104,6 +104,7 @@ public class InstantiationTest {
 
     int methodCount = 0;
     for (TypedOperation operation : model.getConcreteOperations()) {
+      System.out.println("op: " + operation);
       if (operation.isMethodCall()) {
         methodCount++;
         if (!operation.getName().equals("m")) {
