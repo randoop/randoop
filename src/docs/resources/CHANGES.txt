@@ -1,6 +1,11 @@
+Version 3.0.7, released Octember 1, 2016
+
+Fixes...
+
+
 Version 3.0.6, released October 14, 2016
 
-Randoop uses an approach to selecting instantiations of generic types (including
+Randoop now uses an approach to selecting instantiations of generic types (including
 type arguments of generic methods/constructors) that is less likely to lead to
 an OutOfMemoryError.
 
