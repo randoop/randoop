@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>randoop.reflection (randoop 3.0.5 API)</title>
+<title>randoop.reflection (randoop 3.0.6 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="randoop.reflection (randoop 3.0.5 API)";
+            parent.document.title="randoop.reflection (randoop 3.0.6 API)";
         }
     }
     catch(err) {
@@ -153,13 +153,20 @@
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><a href="../../randoop/reflection/ListEnumerator.html" title="class in randoop.reflection">ListEnumerator</a>&lt;T&gt;</td>
+<td class="colLast">
+<div class="block">Enumerates the set of lists formed by selecting values sequentially from a list of candidates,
+ such that each generlist has a value from each candidate list.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/reflection/LiteralFileReader.html" title="class in randoop.reflection">LiteralFileReader</a></td>
 <td class="colLast">
 <div class="block">Method <a href="../../randoop/reflection/LiteralFileReader.html#parse-java.lang.String-"><code>LiteralFileReader.parse(java.lang.String)</code></a> reads a file specifying literal values to use during
  generation.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/reflection/NotPrivateVisibilityPredicate.html" title="class in randoop.reflection">NotPrivateVisibilityPredicate</a></td>
 <td class="colLast">
 <div class="block">NotPrivateVisibilityPredicate is a <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection"><code>VisibilityPredicate</code></a> that returns
@@ -167,7 +174,7 @@
  be private.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/reflection/OperationExtractor.html" title="class in randoop.reflection">OperationExtractor</a></td>
 <td class="colLast">
 <div class="block">OperationExtractor is a <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> that creates a collection of
@@ -175,40 +182,40 @@
  methods as called by <a href="../../randoop/reflection/ReflectionManager.html#apply-java.lang.Class-"><code>ReflectionManager.apply(Class)</code></a>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/reflection/OperationModel.html" title="class in randoop.reflection">OperationModel</a></td>
 <td class="colLast">
 <div class="block"><code>OperationModel</code> represents the information context from which tests are generated.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/reflection/PackageVisibilityPredicate.html" title="class in randoop.reflection">PackageVisibilityPredicate</a></td>
 <td class="colLast">
 <div class="block">A predicate that tests for visibility of a class, method, constructor, or
  field relative to a particular package.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/reflection/PublicVisibilityPredicate.html" title="class in randoop.reflection">PublicVisibilityPredicate</a></td>
 <td class="colLast">
 <div class="block">PublicVisibilityPredicate is a <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection"><code>VisibilityPredicate</code></a> that returns true
  in the case that the class/method/constructor/field is public.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/reflection/ReflectionManager.html" title="class in randoop.reflection">ReflectionManager</a></td>
 <td class="colLast">
 <div class="block">ReflectionManager reflectively visits a <code>Class</code> instance to apply a set
  of <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> objects to the class members.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/reflection/StaticCache.html" title="class in randoop.reflection">StaticCache</a></td>
 <td class="colLast">
 <div class="block">Stores the mutable state of a class, allowing it to be saved, printed and restored.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/reflection/TestValueExtractor.html" title="class in randoop.reflection">TestValueExtractor</a></td>
 <td class="colLast">
 <div class="block"><code>TestValueExtractor</code> is a <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> that inspects the fields passed to it to
@@ -216,14 +223,14 @@
  have type that is primitive, String, or an array of primitive or String.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/reflection/TypeExtractor.html" title="class in randoop.reflection">TypeExtractor</a></td>
 <td class="colLast">
 <div class="block"><code>TypeExtractor</code> is a <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> that extracts both the class type, and concrete
  types that are used in a class as either a parameter, a return type, or a field type.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/reflection/TypeNames.html" title="class in randoop.reflection">TypeNames</a></td>
 <td class="colLast">
 <div class="block">TypeNames provides a pair of static methods to:
@@ -233,7 +240,7 @@
  primitive type.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/reflection/TypeTupleSet.html" title="class in randoop.reflection">TypeTupleSet</a></td>
 <td class="colLast">
 <div class="block">Represents a set of lists of candidate type arguments for a <a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types"><code>ParameterizedType</code></a>,

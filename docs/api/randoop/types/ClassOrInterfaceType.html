@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ClassOrInterfaceType (randoop 3.0.5 API)</title>
+<title>ClassOrInterfaceType (randoop 3.0.6 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ClassOrInterfaceType (randoop 3.0.5 API)";
+            parent.document.title="ClassOrInterfaceType (randoop 3.0.6 API)";
         }
     }
     catch(err) {
@@ -49,7 +49,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/types/CaptureTypeVariable.html" title="class in randoop.types"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/types/ExplicitTypeVariable.html" title="class in randoop.types"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/types/EagerReferenceBound.html" title="class in randoop.types"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/types/ClassOrInterfaceType.html" target="_top">Frames</a></li>
@@ -702,15 +702,14 @@ extends <a href="../../randoop/types/ReferenceType.html" title="class in randoop
 <pre>public&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;getInstantiatingSubstitution(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;goalType)</pre>
 <div class="block">Computes a substitution that can be applied to the type variables of the generic goal type to
  instantiate operations of this type, possibly inherited from from the goal type.
- The substitution will unify this type with either the given goal type, or a supertype of the
- goal type.
+ The substitution will unify this type or a supertype of this type with the given goal type.
 
- If there is none, returns <code>null</code>.</div>
+ If there is no unifying substitution, returns <code>null</code>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>goalType</code> - the generic type for which a substitution is needed</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>a substitution unifying this type with either the goal type or a supertype of the goal</dd>
+<dd>a substitution unifying this type or a supertype of this type with the goal type</dd>
 </dl>
 </li>
 </ul>
@@ -951,7 +950,7 @@ extends <a href="../../randoop/types/ReferenceType.html" title="class in randoop
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/types/CaptureTypeVariable.html" title="class in randoop.types"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/types/ExplicitTypeVariable.html" title="class in randoop.types"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/types/EagerReferenceBound.html" title="class in randoop.types"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/types/ClassOrInterfaceType.html" target="_top">Frames</a></li>

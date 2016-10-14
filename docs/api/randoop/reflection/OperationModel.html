@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>OperationModel (randoop 3.0.5 API)</title>
+<title>OperationModel (randoop 3.0.6 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="OperationModel (randoop 3.0.5 API)";
+            parent.document.title="OperationModel (randoop 3.0.6 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":9,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":9,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -268,6 +268,11 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i6" class="altColor">
+<td class="colFirst"><code>private java.util.List&lt;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#collectSubstitutions-java.util.List-randoop.types.Substitution-">collectSubstitutions</a></span>(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters,
+                    <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>&nbsp;</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>static <a href="../../randoop/reflection/OperationModel.html" title="class in randoop.reflection">OperationModel</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#createModel-randoop.reflection.VisibilityPredicate-randoop.reflection.ReflectionPredicate-java.util.Set-java.util.Set-java.util.Set-randoop.main.ClassNameErrorHandler-java.util.List-">createModel</a></span>(<a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a>&nbsp;visibility,
            <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;reflectionPredicate,
@@ -279,59 +284,67 @@ extends java.lang.Object</pre>
 <div class="block">Factory method to construct an operation model for a particular set of classes</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>java.util.Set&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#getAnnotatedTestValues--">getAnnotatedTestValues</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code>private java.util.List&lt;java.util.List&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#getCandidateTypeLists-java.util.List-">getCandidateTypeLists</a></span>(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters)</code>
+<div class="block">Constructs the list of lists of candidate types for the given type parameters.</div>
+</td>
+</tr>
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>java.util.Set&lt;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#getConcreteClasses--">getConcreteClasses</a></span>()</code>
 <div class="block">Returns the set of types for concrete (non-generic) classes in this model.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#getConcreteOperations--">getConcreteOperations</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/test/ContractSet.html" title="class in randoop.test">ContractSet</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#getContracts--">getContracts</a></span>()</code>
 <div class="block">Returns all <a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract"><code>ObjectContract</code></a> objects for this run of Randoop.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>java.util.Set&lt;java.lang.Class&lt;?&gt;&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#getExercisedClasses--">getExercisedClasses</a></span>()</code>
 <div class="block">Returns the set of identified <code>Class&lt;?&gt;</code> objects for the exercised class heuristic.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i14" class="altColor">
+<td class="colFirst"><code>private java.util.List&lt;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#getInstantiations-java.util.List-randoop.types.Substitution-randoop.types.TypeCheck-">getInstantiations</a></span>(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters,
+                 <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;initialSubstitution,
+                 <a href="../../randoop/types/TypeCheck.html" title="class in randoop.types">TypeCheck</a>&nbsp;typeCheck)</code>
+<div class="block">Adds instantiating substitutions for the given parameters to the list if satisfies the given
+ type check predicate.</div>
+</td>
+</tr>
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#getObservers-java.util.Set-">getObservers</a></span>(java.util.Set&lt;java.lang.String&gt;&nbsp;observerSignatures)</code>
 <div class="block">Gets observer methods from the set of signatures.</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
-<td class="colFirst"><code>private java.util.List&lt;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#getSubstitutions-java.util.List-">getSubstitutions</a></span>(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters)</code>
-<div class="block">Constructs substitutions for the given list of type parameters that are candidates for
- instantiating a generic class type.</div>
-</td>
-</tr>
-<tr id="i14" class="altColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#hasClasses--">hasClasses</a></span>()</code>
 <div class="block">Indicate whether the model has class types.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>private void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#instantiateGenericClassTypes--">instantiateGenericClassTypes</a></span>()</code>
 <div class="block">Selects instantiations of the generic class declarations in this model from the collected set
  of instantiated input types.</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>(package private) <a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation">TypedClassOperation</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#instantiateOperationTypes-randoop.operation.TypedClassOperation-randoop.types.Substitution-">instantiateOperationTypes</a></span>(<a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation">TypedClassOperation</a>&nbsp;operation,
                          <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
@@ -339,26 +352,47 @@ extends java.lang.Object</pre>
  instantiated.</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#instantiateOperationTypes-randoop.operation.TypedOperation-">instantiateOperationTypes</a></span>(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation)</code>
 <div class="block">Selects an instantiation of the generic types of an operation, and returns a new operation with
  the types instantiated.</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i20" class="altColor">
+<td class="colFirst"><code>private <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#selectAndExtend-java.util.List-randoop.types.Substitution-">selectAndExtend</a></span>(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters,
+               <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
+<div class="block">Selects types independently for a list of type parameters, and extends the given
+ substitution by the substitution of the selected types for the parameters.</div>
+</td>
+</tr>
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>private java.util.List&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#selectCandidates-randoop.types.TypeVariable-">selectCandidates</a></span>(<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&nbsp;argument)</code>
 <div class="block">Selects all input types that potentially satisfies the bounds on the argument.</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#selectLowerBound-randoop.types.TypeVariable-">selectLowerBound</a></span>(<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&nbsp;argument)</code>
 <div class="block">Chooses the lower bound of the given argument to be tested in <a href="../../randoop/reflection/OperationModel.html#selectCandidates-randoop.types.TypeVariable-"><code>selectCandidates(TypeVariable)</code></a>.</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i23" class="rowColor">
+<td class="colFirst"><code>private <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#selectSubstitution-java.util.List-">selectSubstitution</a></span>(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters)</code>
+<div class="block">Selects an instantiating substitution for the given list of type variables.</div>
+</td>
+</tr>
+<tr id="i24" class="altColor">
+<td class="colFirst"><code>private <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#selectSubstitution-java.util.List-randoop.types.Substitution-">selectSubstitution</a></span>(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters,
+                  <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
+<div class="block">Extends the given substitution by instantiations for the given list of type variables.</div>
+</td>
+</tr>
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#selectUpperBound-randoop.types.TypeVariable-">selectUpperBound</a></span>(<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&nbsp;argument)</code>
 <div class="block">Chooses the upper bound of the given argument to test in <a href="../../randoop/reflection/OperationModel.html#selectCandidates-randoop.types.TypeVariable-"><code>selectCandidates(TypeVariable)</code></a>.</div>
@@ -683,20 +717,119 @@ extends java.lang.Object</pre>
  of instantiated input types.</div>
 </li>
 </ul>
-<a name="getSubstitutions-java.util.List-">
+<a name="selectSubstitution-java.util.List-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getSubstitutions</h4>
-<pre>private&nbsp;java.util.List&lt;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;&nbsp;getSubstitutions(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters)</pre>
-<div class="block">Constructs substitutions for the given list of type parameters that are candidates for
- instantiating a generic class type.</div>
+<h4>selectSubstitution</h4>
+<pre>private&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;selectSubstitution(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters)</pre>
+<div class="block">Selects an instantiating substitution for the given list of type variables.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>typeParameters</code> - the type parameters to be instantiated</dd>
+<dd><code>typeParameters</code> - the type variables to be instantiated</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>candidate substitutions for the given type parameters</dd>
+<dd>a substitution instantiating the type variables; null if a variable has no
+         instantiating types</dd>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../randoop/reflection/OperationModel.html#selectSubstitution-java.util.List-randoop.types.Substitution-"><code>selectSubstitution(List, Substitution)</code></a></dd>
+</dl>
+</li>
+</ul>
+<a name="selectSubstitution-java.util.List-randoop.types.Substitution-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>selectSubstitution</h4>
+<pre>private&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;selectSubstitution(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters,
+                                                       <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
+<div class="block">Extends the given substitution by instantiations for the given list of type variables.
+ If any of the type variables has a generic bound, assumes there are dependencies and
+ enumerates all possible substitutions and tests them.
+ Otherwise, independently selects an instantiating type for each variable.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>typeParameters</code> - the type variables to be instantiated</dd>
+<dd><code>substitution</code> - the substitution to extend</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the substitution extended by instantiating type variables; null if a variable has no
+         instantiating types</dd>
+</dl>
+</li>
+</ul>
+<a name="collectSubstitutions-java.util.List-randoop.types.Substitution-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>collectSubstitutions</h4>
+<pre>private&nbsp;java.util.List&lt;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;&nbsp;collectSubstitutions(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters,
+                                                                         <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
+</li>
+</ul>
+<a name="selectAndExtend-java.util.List-randoop.types.Substitution-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>selectAndExtend</h4>
+<pre>private&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;selectAndExtend(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters,
+                                                    <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
+<div class="block">Selects types independently for a list of type parameters, and extends the given
+ substitution by the substitution of the selected types for the parameters.
+
+ IMPORTANT: Should only be used for parameters that have non-generic bounds.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>parameters</code> - a list of independent type parameters</dd>
+<dd><code>substitution</code> - the substitution to extend</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the substitution extended by mapping given parameters to selected types;
+         null, if there are no candidate types for any parameter</dd>
+</dl>
+</li>
+</ul>
+<a name="getInstantiations-java.util.List-randoop.types.Substitution-randoop.types.TypeCheck-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getInstantiations</h4>
+<pre>private&nbsp;java.util.List&lt;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;&nbsp;getInstantiations(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters,
+                                                                      <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;initialSubstitution,
+                                                                      <a href="../../randoop/types/TypeCheck.html" title="class in randoop.types">TypeCheck</a>&nbsp;typeCheck)</pre>
+<div class="block">Adds instantiating substitutions for the given parameters to the list if satisfies the given
+ type check predicate.
+ Each constructed substitution extends the given initial substitution.
+ Assumes that the parameters are or are refinements of the set of parameters check by the
+ type check predicate.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>parameters</code> - the list of parameters to instantiate</dd>
+<dd><code>initialSubstitution</code> - the substitution to be extended by new substitutions</dd>
+<dd><code>typeCheck</code> - the predicate to type check a substitution</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the list of instantiating substitutions</dd>
+</dl>
+</li>
+</ul>
+<a name="getCandidateTypeLists-java.util.List-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCandidateTypeLists</h4>
+<pre>private&nbsp;java.util.List&lt;java.util.List&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;&nbsp;getCandidateTypeLists(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters)</pre>
+<div class="block">Constructs the list of lists of candidate types for the given type parameters.
+ Each list is the list of candidates for the parameter in the corresponding position of
+ the given list as determined by <a href="../../randoop/reflection/OperationModel.html#selectCandidates-randoop.types.TypeVariable-"><code>selectCandidates(TypeVariable)</code></a>.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>parameters</code> - the list of type parameters</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the list of candidate lists for the parameters; returns the empty list if any
+          parameter has no candidates</dd>
 </dl>
 </li>
 </ul>

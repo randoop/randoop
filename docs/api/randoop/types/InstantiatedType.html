@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>InstantiatedType (randoop 3.0.5 API)</title>
+<title>InstantiatedType (randoop 3.0.6 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="InstantiatedType (randoop 3.0.5 API)";
+            parent.document.title="InstantiatedType (randoop 3.0.6 API)";
         }
     }
     catch(err) {
@@ -889,17 +889,16 @@ extends <a href="../../randoop/types/ParameterizedType.html" title="class in ran
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/ClassOrInterfaceType.html#getInstantiatingSubstitution-randoop.types.ClassOrInterfaceType-">ClassOrInterfaceType</a></code></span></div>
 <div class="block">Computes a substitution that can be applied to the type variables of the generic goal type to
  instantiate operations of this type, possibly inherited from from the goal type.
- The substitution will unify this type with either the given goal type, or a supertype of the
- goal type.
+ The substitution will unify this type or a supertype of this type with the given goal type.
 
- If there is none, returns <code>null</code>.</div>
+ If there is no unifying substitution, returns <code>null</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/types/ClassOrInterfaceType.html#getInstantiatingSubstitution-randoop.types.ClassOrInterfaceType-">getInstantiatingSubstitution</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>goalType</code> - the generic type for which a substitution is needed</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>a substitution unifying this type with either the goal type or a supertype of the goal</dd>
+<dd>a substitution unifying this type or a supertype of this type with the goal type</dd>
 </dl>
 </li>
 </ul>

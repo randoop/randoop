@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ParameterBound (randoop 3.0.5 API)</title>
+<title>ParameterBound (randoop 3.0.6 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ParameterBound (randoop 3.0.5 API)";
+            parent.document.title="ParameterBound (randoop 3.0.6 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":9,"i3":9,"i4":9,"i5":6,"i6":9,"i7":6,"i8":10,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6};
+var methods = {"i0":6,"i1":6,"i2":9,"i3":9,"i4":9,"i5":6,"i6":9,"i7":6,"i8":10,"i9":10,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -139,7 +139,7 @@ extends java.lang.Object</pre>
  and the default upperbound being <a href="../../randoop/types/JavaTypes.html#OBJECT_TYPE"><code>JavaTypes.OBJECT_TYPE</code></a>.</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../randoop/types/ReferenceBound.html" title="class in randoop.types"><code>ReferenceBound</code></a>, 
+<dd><a href="../../randoop/types/EagerReferenceBound.html" title="class in randoop.types"><code>EagerReferenceBound</code></a>, 
 <a href="../../randoop/types/IntersectionTypeBound.html" title="class in randoop.types"><code>IntersectionTypeBound</code></a>, 
 <a href="../../randoop/types/LazyParameterBound.html" title="class in randoop.types"><code>LazyParameterBound</code></a></dd>
 </dl>
@@ -229,32 +229,38 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i8" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ParameterBound.html#isGeneric--">isGeneric</a></span>()</code>
+<div class="block">Indicates whether the type of this bound is generic.</div>
+</td>
+</tr>
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>(package private) boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ParameterBound.html#isLowerBound-randoop.types.ParameterBound-randoop.types.Substitution-">isLowerBound</a></span>(<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;bound,
             <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
 <div class="block">Tests whether this is a lower bound on the type of a given bound with respect to a type substitution.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>abstract boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ParameterBound.html#isLowerBound-randoop.types.Type-randoop.types.Substitution-">isLowerBound</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;argType,
             <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;subst)</code>
 <div class="block">Indicates whether this bound is a lower bound of the given argument type.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>abstract boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ParameterBound.html#isObject--">isObject</a></span>()</code>
 <div class="block">Indicate whether this bound is <code>Object</code>.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>abstract boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ParameterBound.html#isSubtypeOf-randoop.types.ParameterBound-">isSubtypeOf</a></span>(<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;boundType)</code>
 <div class="block">Indicates whether the type of this bound is a subtype of the type of the given bound.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>(package private) abstract boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ParameterBound.html#isUpperBound-randoop.types.ParameterBound-randoop.types.Substitution-">isUpperBound</a></span>(<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;bound,
             <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
@@ -262,7 +268,7 @@ extends java.lang.Object</pre>
  the type substitution.</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>abstract boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ParameterBound.html#isUpperBound-randoop.types.Type-randoop.types.Substitution-">isUpperBound</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;argType,
             <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;subst)</code>
@@ -320,7 +326,7 @@ extends java.lang.Object</pre>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>type</code> - the <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>a <a href="../../randoop/types/ReferenceBound.html" title="class in randoop.types"><code>ReferenceBound</code></a> if the type is a <a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types"><code>ClassOrInterfaceType</code></a> or
+<dd>a <a href="../../randoop/types/EagerReferenceBound.html" title="class in randoop.types"><code>EagerReferenceBound</code></a> if the type is a <a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types"><code>ClassOrInterfaceType</code></a> or
          a <a href="../../randoop/types/TypeVariable.html" title="class in randoop.types"><code>TypeVariable</code></a></dd>
 </dl>
 </li>
@@ -440,6 +446,20 @@ extends java.lang.Object</pre>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true, if this bound has a wildcard argument, and false otherwise</dd>
+</dl>
+</li>
+</ul>
+<a name="isGeneric--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isGeneric</h4>
+<pre>public&nbsp;boolean&nbsp;isGeneric()</pre>
+<div class="block">Indicates whether the type of this bound is generic.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true, if this bound type is generic, and false otherwise</dd>
 </dl>
 </li>
 </ul>

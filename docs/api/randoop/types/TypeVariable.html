@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>TypeVariable (randoop 3.0.5 API)</title>
+<title>TypeVariable (randoop 3.0.6 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="TypeVariable (randoop 3.0.5 API)";
+            parent.document.title="TypeVariable (randoop 3.0.6 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":9,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
+var methods = {"i0":10,"i1":9,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -235,23 +235,27 @@ extends <a href="../../randoop/types/ReferenceType.html" title="class in randoop
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeVariable.html#hasGenericBound--">hasGenericBound</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeVariable.html#hasWildcard--">hasWildcard</a></span>()</code>
 <div class="block">Indicate whether this type has a wildcard either as or in a type argument.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeVariable.html#isAssignableFrom-randoop.types.Type-">isAssignableFrom</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;sourceType)</code>
 <div class="block">Indicates whether there is an assignment conversion from a source <code>Type</code> to this type.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeVariable.html#isInstantiationOf-randoop.types.ReferenceType-">isInstantiationOf</a></span>(<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&nbsp;otherType)</code>
 <div class="block">Indicates whether this type is an instantiation of a more general type.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeVariable.html#isSubtypeOf-randoop.types.Type-">isSubtypeOf</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;otherType)</code>
 <div class="block">Test whether this type is a subtype of the given type according to
@@ -260,17 +264,17 @@ extends <a href="../../randoop/types/ReferenceType.html" title="class in randoop
  section 4.10 of JLS for Java SE 8</a>.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>(package private) boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeVariable.html#isVariable--">isVariable</a></span>()</code>
 <div class="block">Indicates whether this type is a type variable.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>(package private) void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeVariable.html#setLowerBound-randoop.types.ParameterBound-">setLowerBound</a></span>(<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;lowerBound)</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>(package private) void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeVariable.html#setUpperBound-randoop.types.ParameterBound-">setUpperBound</a></span>(<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;upperBound)</code>&nbsp;</td>
 </tr>
@@ -609,10 +613,19 @@ extends <a href="../../randoop/types/ReferenceType.html" title="class in randoop
 <a name="setLowerBound-randoop.types.ParameterBound-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>setLowerBound</h4>
 <pre>void&nbsp;setLowerBound(<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;lowerBound)</pre>
+</li>
+</ul>
+<a name="hasGenericBound--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>hasGenericBound</h4>
+<pre>public&nbsp;boolean&nbsp;hasGenericBound()</pre>
 </li>
 </ul>
 </li>
