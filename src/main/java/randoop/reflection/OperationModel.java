@@ -543,6 +543,7 @@ public class OperationModel {
    * @param parameters the list of parameters to instantiate
    * @param initialSubstitution the substitution to be extended by new substitutions
    * @param typeCheck the predicate to type check a substitution
+   * @return the list of instantiating substitutions
    */
   private List<Substitution<ReferenceType>> getInstantiations(
       List<TypeVariable> parameters,

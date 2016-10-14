@@ -10,14 +10,14 @@ import java.util.NoSuchElementException;
  * such that each generlist has a value from each candidate list.
  * the length of the lists .
  * For instance, given {@code [["a1", "a2"], ["b1"], ["c1", "c2", "c3"]]} enumerates
- * <code><pre>
+ * <pre>
  *   ["a1", "b1", "c1"]
  *   ["a1", "b1", "c2"]
  *   ["a1", "b1", "c3"]
  *   ["a2", "b1", "c1"]
  *   ["a2", "b1", "c2"]
  *   ["a2", "b1", "c3"]
- * </pre></code>
+ * </pre>
  * by successive calls to {@link #next()}.
  */
 class ListEnumerator<T> implements Iterator<List<T>> {
