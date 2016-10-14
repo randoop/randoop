@@ -92,9 +92,8 @@ public class OperationExtractor extends DefaultClassVisitor {
   /**
    * Creates a {@link ConstructorCall} object for the {@link Constructor}.
    *
-   * @param c
-   *          a {@link Constructor} object to be represented as an
-   *          {@link Operation}.
+   * @param c  a {@link Constructor} object to be represented as an
+   *           {@link Operation}.
    */
   @Override
   public void visit(Constructor<?> c) {
@@ -107,7 +106,6 @@ public class OperationExtractor extends DefaultClassVisitor {
     if (!predicate.test(c)) {
       return;
     }
-
     addOperation(TypedOperation.forConstructor(c));
   }
 

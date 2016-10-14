@@ -129,4 +129,32 @@ public class OperationExtractorTest {
     assertFalse("is generic", memberType.isGeneric());
     assertTrue("is parameterized", memberType.isParameterized());
   }
+
+  @Test
+  public void memberExtendingEnclosingTest() {
+    final Set<TypedOperation> operations = new LinkedHashSet<>();
+    ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
+
+    String classname = "randoop.reflection.GenericWithInnerSub$Inner";
+    Class<?> c = null;
+    try {
+      c = TypeNames.getTypeForName(classname);
+    } catch (ClassNotFoundException e) {
+      fail("did not find class: " + e);
+    }
+    assert c != null;
+    ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
+    assertFalse("static member should not be a generic type", classType.isGeneric());
+    assertFalse("should not have type parameters", classType.getTypeParameters().size() > 0);
+    assertFalse("static member is not parameterized", classType.isParameterized());
+
+    OperationModel model = new OperationModel();
+    mgr.apply(
+        new OperationExtractor(classType, operations, new DefaultReflectionPredicate(), model),
+        classType.getRuntimeClass());
+
+    assertThat("should be two operations", operations.size(), is(equalTo(2)));
+
+    //fail("not implemented");
+  }
 }

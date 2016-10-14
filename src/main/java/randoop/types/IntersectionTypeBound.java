@@ -42,7 +42,7 @@ class IntersectionTypeBound extends ParameterBound {
     if (!(obj instanceof IntersectionTypeBound)) {
       return false;
     }
-    IntersectionTypeBound b = (IntersectionTypeBound) boundList;
+    IntersectionTypeBound b = (IntersectionTypeBound) obj;
     return this.boundList.equals(b.boundList);
   }
 

@@ -28,7 +28,7 @@ import java.util.List;
  * {@link JavaTypes#NULL_TYPE},
  * and the default upperbound being {@link JavaTypes#OBJECT_TYPE}.
  *
- * @see ReferenceBound
+ * @see EagerReferenceBound
  * @see IntersectionTypeBound
  * @see LazyParameterBound
  */
@@ -38,7 +38,7 @@ public abstract class ParameterBound {
    * Constructs a parameter bound given a {@link ReferenceType}.
    *
    * @param type  the {@link ReferenceType}
-   * @return a {@link ReferenceBound} if the type is a {@link ClassOrInterfaceType} or
+   * @return a {@link EagerReferenceBound} if the type is a {@link ClassOrInterfaceType} or
    *         a {@link TypeVariable}
    */
   public static ParameterBound forType(ReferenceType type) {
@@ -46,7 +46,7 @@ public abstract class ParameterBound {
       throw new IllegalArgumentException(
           "type may only be class, interface, or type variable, got " + type);
     }
-    return new ReferenceBound(type);
+    return new EagerReferenceBound(type);
   }
 
   /**
@@ -90,11 +90,11 @@ public abstract class ParameterBound {
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
       if (!hasTypeVariable(type)) {
-        return new ReferenceBound(ParameterizedType.forType(type));
+        return new EagerReferenceBound(ParameterizedType.forType(type));
       }
     }
     if (type instanceof Class<?>) {
-      return new ReferenceBound(ClassOrInterfaceType.forType(type));
+      return new EagerReferenceBound(ClassOrInterfaceType.forType(type));
     }
     return new LazyParameterBound(type);
   }
@@ -164,6 +164,15 @@ public abstract class ParameterBound {
    * @return true, if this bound has a wildcard argument, and false otherwise
    */
   abstract boolean hasWildcard();
+
+  /**
+   * Indicates whether the type of this bound is generic.
+   *
+   * @return true, if this bound type is generic, and false otherwise
+   */
+  public boolean isGeneric() {
+    return false;
+  }
 
   /**
    * Indicates whether this bound is a lower bound of the given argument type.

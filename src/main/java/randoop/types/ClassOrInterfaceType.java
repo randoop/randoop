@@ -242,19 +242,18 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   /**
    * Computes a substitution that can be applied to the type variables of the generic goal type to
    * instantiate operations of this type, possibly inherited from from the goal type.
-   * The substitution will unify this type with either the given goal type, or a supertype of the
-   * goal type.
+   * The substitution will unify this type or a supertype of this type with the given goal type.
    *
-   * If there is none, returns {@code null}.
+   * If there is no unifying substitution, returns {@code null}.
    *
    * @param goalType  the generic type for which a substitution is needed
-   * @return a substitution unifying this type with either the goal type or a supertype of the goal
+   * @return a substitution unifying this type or a supertype of this type with the goal type
    */
   public Substitution<ReferenceType> getInstantiatingSubstitution(ClassOrInterfaceType goalType) {
     assert goalType.isGeneric() : "goal type must be generic";
 
     Substitution<ReferenceType> substitution = new Substitution<>();
-    if (this.isMemberClass()) {
+    if (this.isMemberClass() && !this.isStatic()) {
       substitution = enclosingType.getInstantiatingSubstitution(goalType);
       if (substitution == null) {
         return null;

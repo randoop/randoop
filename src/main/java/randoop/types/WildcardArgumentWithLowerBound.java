@@ -19,7 +19,7 @@ class WildcardArgumentWithLowerBound extends WildcardArgument {
     super(ParameterBound.forTypes(lowerBounds));
   }
 
-  WildcardArgumentWithLowerBound(ReferenceBound bound) {
+  WildcardArgumentWithLowerBound(EagerReferenceBound bound) {
     super(bound);
   }
 
@@ -30,7 +30,8 @@ class WildcardArgumentWithLowerBound extends WildcardArgument {
 
   @Override
   public WildcardArgument apply(Substitution<ReferenceType> substitution) {
-    return new WildcardArgumentWithLowerBound((ReferenceBound) getTypeBound().apply(substitution));
+    return new WildcardArgumentWithLowerBound(
+        (EagerReferenceBound) getTypeBound().apply(substitution));
   }
 
   /**
@@ -48,7 +49,7 @@ class WildcardArgumentWithLowerBound extends WildcardArgument {
     if (otherArgument.isWildcard()) {
       WildcardArgument otherWildcard = (WildcardArgument) otherArgument;
       if (otherWildcard.hasUpperBound()) {
-        return otherWildcard.getTypeBound().equals(new ReferenceBound(JavaTypes.OBJECT_TYPE));
+        return otherWildcard.getTypeBound().equals(new EagerReferenceBound(JavaTypes.OBJECT_TYPE));
       } else {
         return otherWildcard.getTypeBound().isSubtypeOf(this.getTypeBound());
       }

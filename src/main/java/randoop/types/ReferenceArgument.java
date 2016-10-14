@@ -69,7 +69,7 @@ public class ReferenceArgument extends TypeArgument {
   public boolean contains(TypeArgument otherArgument) {
     if (otherArgument.isWildcard()) {
       ParameterBound boundType = ((WildcardArgument) otherArgument).getTypeBound();
-      return boundType.equals(new ReferenceBound(referenceType));
+      return boundType.equals(new EagerReferenceBound(referenceType));
     } else {
       return referenceType.equals(((ReferenceArgument) otherArgument).getReferenceType());
     }

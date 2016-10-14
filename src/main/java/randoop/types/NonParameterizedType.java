@@ -173,17 +173,6 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   }
 
   @Override
-  public Substitution<ReferenceType> getInstantiatingSubstitution(ClassOrInterfaceType goalType) {
-    Substitution<ReferenceType> substitution = super.getInstantiatingSubstitution(goalType);
-    if (substitution == null
-        || !((goalType instanceof NonParameterizedType)
-            && this.hasRuntimeClass(goalType.getRuntimeClass()))) {
-      return null;
-    }
-    return substitution;
-  }
-
-  @Override
   public boolean isInterface() {
     return runtimeType.isInterface();
   }

@@ -1,23 +1,31 @@
 package randoop.types;
 
-import java.util.List;
 import java.util.Objects;
 
 /**
  * Represents a bound on a type variable where the bound is a {@link ReferenceType}.
  */
-class ReferenceBound extends ParameterBound {
+public abstract class ReferenceBound extends ParameterBound {
 
   /** The type for this bound */
   private final ReferenceType boundType;
 
   /**
-   * Creates a bound for the given reference type.
+   * Creates a {@link ReferenceBound} with the given bound type.
    *
-   * @param boundType  the reference boundType
+   * @param boundType  the {@link ReferenceType} of this bound
    */
   ReferenceBound(ReferenceType boundType) {
     this.boundType = boundType;
+  }
+
+  /**
+   * Returns the {@link ReferenceType} bound of this type.
+   *
+   * @return the type for this bound
+   */
+  ReferenceType getBoundType() {
+    return boundType;
   }
 
   @Override
@@ -40,19 +48,10 @@ class ReferenceBound extends ParameterBound {
   }
 
   @Override
-  public ReferenceBound apply(Substitution<ReferenceType> substitution) {
-    return new ReferenceBound(boundType.apply(substitution));
-  }
+  public abstract ReferenceBound apply(Substitution<ReferenceType> substitution);
 
   @Override
-  public ReferenceBound applyCaptureConversion() {
-    return new ReferenceBound(boundType.applyCaptureConversion());
-  }
-
-  @Override
-  public List<TypeVariable> getTypeParameters() {
-    return boundType.getTypeParameters();
-  }
+  public abstract ReferenceBound applyCaptureConversion();
 
   @Override
   boolean hasWildcard() {
@@ -60,75 +59,7 @@ class ReferenceBound extends ParameterBound {
   }
 
   @Override
-  public boolean isLowerBound(Type argType, Substitution<ReferenceType> subst) {
-    // XXX in practice, substitution not necessary because doesn't have variables by construction
-    ReferenceType boundType = this.boundType.apply(subst);
-    if (boundType.equals(JavaTypes.NULL_TYPE)) {
-      return true;
-    }
-    if (argType.isParameterized()) {
-      if (!(boundType instanceof ClassOrInterfaceType)) {
-        return false;
-      }
-      InstantiatedType argClassType = (InstantiatedType) argType.applyCaptureConversion();
-      InstantiatedType boundSuperType =
-          ((ClassOrInterfaceType) boundType)
-              .getMatchingSupertype(argClassType.getGenericClassType());
-      if (boundSuperType == null) {
-        return false;
-      }
-      boundSuperType = boundSuperType.applyCaptureConversion();
-      return boundSuperType.isInstantiationOf(argClassType);
-    }
-    return boundType.isSubtypeOf(argType);
-  }
-
-  @Override
-  boolean isLowerBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
-    assert bound instanceof ReferenceBound : "only handling reference bounds";
-    return isLowerBound(((ReferenceBound) bound).boundType, substitution);
-  }
-
-  @Override
   public boolean isObject() {
     return boundType.isObject();
-  }
-
-  @Override
-  public boolean isSubtypeOf(ParameterBound bound) {
-    if (bound instanceof ReferenceBound) {
-      return this.boundType.isSubtypeOf(((ReferenceBound) bound).boundType);
-    }
-    assert false : "not handling ReferenceBound subtype of other bound type";
-    return false;
-  }
-
-  @Override
-  public boolean isUpperBound(Type argType, Substitution<ReferenceType> subst) {
-    // XXX in practice, substitution not necessary because doesn't have variables by construction
-    ReferenceType boundType = this.boundType.apply(subst);
-    if (boundType.equals(JavaTypes.OBJECT_TYPE)) {
-      return true;
-    }
-    if (boundType.isParameterized()) {
-      if (!(argType instanceof ClassOrInterfaceType)) {
-        return false;
-      }
-      InstantiatedType boundClassType = (InstantiatedType) boundType.applyCaptureConversion();
-      InstantiatedType argSuperType =
-          ((ClassOrInterfaceType) argType)
-              .getMatchingSupertype(boundClassType.getGenericClassType());
-      if (argSuperType == null) {
-        return false;
-      }
-      argSuperType = argSuperType.applyCaptureConversion();
-      return argSuperType.isInstantiationOf(boundClassType);
-    }
-    return argType.isSubtypeOf(boundType);
-  }
-
-  @Override
-  boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
-    return isUpperBound(boundType, substitution);
   }
 }

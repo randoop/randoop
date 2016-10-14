@@ -1,3 +1,10 @@
+Version 3.0.6, released October X, 2016
+
+Randoop now avoids exhaustive enumeration when when selecting instantiations of
+generic types with independent type arguments. Exhaustive enumeration could
+lead to an OutOfMemoryError in extreme cases.
+
+
 Version 3.0.5, released October 5, 2016
 
 Randoop now ignores generic operations or classes for which it is unable to

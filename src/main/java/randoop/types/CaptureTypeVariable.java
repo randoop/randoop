@@ -64,6 +64,7 @@ class CaptureTypeVariable extends TypeVariable {
   public String toString() {
     return getName() + " of " + wildcard;
   }
+
   /**
    * Converts the bounds on this {@code CaptureTypeVariable} by including those of the formal
    * type parameters of the generic type, and applying the implied substitution between the
@@ -96,7 +97,7 @@ class CaptureTypeVariable extends TypeVariable {
 
     // the lower bound is either the null-type or the wildcard lower bound, so only do upper bound
     ParameterBound parameterBound = typeParameter.getUpperTypeBound().apply(substitution);
-    if (getUpperTypeBound().equals(new ReferenceBound(JavaTypes.OBJECT_TYPE))) {
+    if (getUpperTypeBound().equals(new EagerReferenceBound(JavaTypes.OBJECT_TYPE))) {
       setUpperBound(parameterBound);
     } else {
       List<ParameterBound> boundList = new ArrayList<>();
@@ -125,16 +126,35 @@ class CaptureTypeVariable extends TypeVariable {
   public List<TypeVariable> getTypeParameters() {
     List<TypeVariable> parameters = new ArrayList<>();
     parameters.add(this);
+    parameters.addAll(this.getLowerTypeBound().getTypeParameters());
+    parameters.addAll(this.getUpperTypeBound().getTypeParameters());
     return parameters;
   }
 
   @Override
-  boolean isCaptureVariable() {
+  public boolean isCaptureVariable() {
     return true;
   }
 
   @Override
   public boolean isGeneric() {
     return true;
+  }
+
+  @Override
+  public ReferenceType apply(Substitution<ReferenceType> substitution) {
+    ReferenceType type = substitution.get(this);
+    if (type != null) {
+      return type;
+    }
+    ParameterBound lowerBound = getLowerTypeBound().apply(substitution);
+    ParameterBound upperBound = getUpperTypeBound().apply(substitution);
+    if (!lowerBound.equals(getLowerTypeBound()) || !upperBound.equals(getUpperTypeBound())) {
+      CaptureTypeVariable variable = new CaptureTypeVariable(wildcard);
+      variable.setLowerBound(lowerBound);
+      variable.setUpperBound(upperBound);
+      return variable;
+    }
+    return this;
   }
 }

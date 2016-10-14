@@ -83,7 +83,7 @@ abstract class WildcardArgument extends TypeArgument {
    */
   public WildcardArgument applyCaptureConversion() {
     if (typeBound.hasWildcard()) {
-      ReferenceBound convertedType = (ReferenceBound) typeBound.applyCaptureConversion();
+      EagerReferenceBound convertedType = (EagerReferenceBound) typeBound.applyCaptureConversion();
       if (this.hasUpperBound()) {
         return new WildcardArgumentWithUpperBound(convertedType);
       } else {
@@ -126,7 +126,7 @@ abstract class WildcardArgument extends TypeArgument {
 
   @Override
   public boolean isGeneric() {
-    return false;
+    return typeBound.isGeneric();
   }
 
   @Override

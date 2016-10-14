@@ -22,7 +22,7 @@ public class GenericTypesTest {
     assertEquals("has one parameter", 1, a1.getTypeParameters().size());
     assertEquals(
         "the parameter has bound Object",
-        new ReferenceBound(new NonParameterizedType(Object.class)),
+        new EagerReferenceBound(new NonParameterizedType(Object.class)),
         a1.getTypeParameters().get(0).getUpperTypeBound());
 
     ParameterBound b1 = a1.getTypeParameters().get(0).getUpperTypeBound();
@@ -37,7 +37,7 @@ public class GenericTypesTest {
     for (TypeVariable o : a2.getTypeParameters()) {
       assertEquals(
           "both bounds are Object",
-          new ReferenceBound(new NonParameterizedType(Object.class)),
+          new EagerReferenceBound(new NonParameterizedType(Object.class)),
           o.getUpperTypeBound());
     }
   }
@@ -51,7 +51,7 @@ public class GenericTypesTest {
     assertEquals("has one parameter", 1, a1.getTypeParameters().size());
     assertEquals(
         "the bound is Number",
-        new ReferenceBound(new NonParameterizedType(Number.class)),
+        new EagerReferenceBound(new NonParameterizedType(Number.class)),
         a1.getTypeParameters().get(0).getUpperTypeBound());
 
     Substitution<ReferenceType> substitution;

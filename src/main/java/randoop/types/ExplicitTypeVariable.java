@@ -20,7 +20,7 @@ class ExplicitTypeVariable extends TypeVariable {
    * @param bound  the upper bound on the parameter
    */
   ExplicitTypeVariable(java.lang.reflect.TypeVariable<?> variable, ParameterBound bound) {
-    super(new ReferenceBound(JavaTypes.NULL_TYPE), bound);
+    super(new EagerReferenceBound(JavaTypes.NULL_TYPE), bound);
     this.variable = variable;
   }
 
@@ -75,5 +75,18 @@ class ExplicitTypeVariable extends TypeVariable {
   @Override
   public boolean isGeneric() {
     return true;
+  }
+
+  @Override
+  public ReferenceType apply(Substitution<ReferenceType> substitution) {
+    ReferenceType type = substitution.get(this);
+    if (type != null) {
+      return type;
+    }
+    ParameterBound upperBound = getUpperTypeBound().apply(substitution);
+    if (!upperBound.equals(getUpperTypeBound())) {
+      return new ExplicitTypeVariable(this.variable, upperBound);
+    }
+    return this;
   }
 }
