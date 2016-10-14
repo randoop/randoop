@@ -1,8 +1,11 @@
-Version 3.0.6, released October X, 2016
+Version 3.0.6, released October 14, 2016
 
-Randoop now avoids exhaustive enumeration when when selecting instantiations of
-generic types with independent type arguments. Exhaustive enumeration could
-lead to an OutOfMemoryError in extreme cases.
+Randoop uses an approach to selecting instantiations of generic types (including
+type arguments of generic methods/constructors) that is less likely to lead to
+an OutOfMemoryError.
+
+Fixed bug that would lead to failure involving a particular case of a static
+member class.
 
 
 Version 3.0.5, released October 5, 2016
