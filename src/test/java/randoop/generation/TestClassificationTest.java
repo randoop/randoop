@@ -393,7 +393,7 @@ public class TestClassificationTest {
     } catch (Exception e) {
       fail("couldn't build model " + e.getMessage());
     }
-    final List<TypedOperation> model = operationModel.getConcreteOperations();
+    final List<TypedOperation> model = operationModel.getOperations();
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
     ForwardGenerator gen =

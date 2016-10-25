@@ -7,6 +7,7 @@ import java.util.Set;
 
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ClassLiterals;
 import randoop.sequence.PackageLiterals;
 import randoop.sequence.Sequence;
@@ -71,6 +72,8 @@ public class ComponentManager {
    */
   // May be null, which represents no package literals present.
   private PackageLiterals packageLiterals = null;
+
+  private Set<Type> sequenceTypes;
 
   /**
    * Create an empty component manager, with an empty seed sequence set.
@@ -234,5 +237,9 @@ public class ComponentManager {
     }
     ret.addAll(gralComponents.getSequencesForType(JavaTypes.STRING_TYPE, true).toJDKList());
     return ret;
+  }
+
+  TypeInstantiator getTypeInstantiator() {
+    return gralComponents.getTypeInstantiator();
   }
 }

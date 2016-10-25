@@ -62,7 +62,7 @@ public class CaptureConversionTest {
   public void captureArrayTest() {
     checkCapture(
         JDKTypes.LIST_TYPE,
-        ArrayType.ofElementType(ReferenceType.forClass(Integer.class)),
+        ArrayType.ofComponentType(ReferenceType.forClass(Integer.class)),
         listOperations);
   }
 
@@ -90,7 +90,7 @@ public class CaptureConversionTest {
     try {
       checkCapture(
           containerType,
-          ArrayType.ofElementType(ReferenceType.forClass(Integer.class)),
+          ArrayType.ofComponentType(ReferenceType.forClass(Integer.class)),
           containerOperations);
       fail("instantiate should throw exception");
     } catch (IllegalArgumentException e) {

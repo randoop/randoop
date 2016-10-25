@@ -17,7 +17,6 @@ import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.OperationModel;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.sequence.Sequence;
@@ -97,10 +96,7 @@ public class ForwardExplorerTests2 {
     ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
     for (Class<?> c : classes) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-      mgr.apply(
-          new OperationExtractor(
-              classType, model, new DefaultReflectionPredicate(), new OperationModel()),
-          c);
+      mgr.apply(new OperationExtractor(classType, model, new DefaultReflectionPredicate()), c);
     }
     return model;
   }

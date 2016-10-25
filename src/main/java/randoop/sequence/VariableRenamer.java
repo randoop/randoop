@@ -39,7 +39,7 @@ class VariableRenamer {
       String arraySuffix = "";
       while (type.isArray()) {
         arraySuffix += "_array";
-        type = ((ArrayType) type).getElementType();
+        type = ((ArrayType) type).getComponentType();
       }
       return getVariableName(type) + arraySuffix;
     }
@@ -73,10 +73,12 @@ class VariableRenamer {
         return "cls";
       }
       for (TypeArgument argument : classType.getTypeArguments()) {
-        assert !argument.isWildcard()
-            : "wildcards should be converted and instantiated for types of variables";
-        String argumentName = getVariableName(((ReferenceArgument) argument).getReferenceType());
-        varName += "_" + argumentName;
+        if (argument.isWildcard()) {
+          varName += "_" + "wildcard";
+        } else {
+          String argumentName = getVariableName(((ReferenceArgument) argument).getReferenceType());
+          varName += "_" + argumentName;
+        }
       }
       return varName;
     } else {

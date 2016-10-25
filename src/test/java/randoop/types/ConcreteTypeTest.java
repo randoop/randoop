@@ -46,7 +46,7 @@ public class ConcreteTypeTest {
     Type arrayType = Type.forClass(arrayClass);
     assertEquals(
         "builds array type correctly",
-        ArrayType.ofElementType(new NonParameterizedType(String.class)),
+        ArrayType.ofComponentType(new NonParameterizedType(String.class)),
         arrayType);
     assertTrue("is not primitive", !arrayType.isPrimitive());
     assertTrue("is not generic", !arrayType.isGeneric());

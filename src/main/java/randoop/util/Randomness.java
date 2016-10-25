@@ -96,7 +96,7 @@ public final class Randomness {
     return CollectionsExt.getNthIteratedElement(set, randIndex);
   }
 
-  public static boolean weighedCoinFlip(double trueProb) {
+  public static boolean weightedCoinFlip(double trueProb) {
     if (trueProb < 0 || trueProb > 1) {
       throw new IllegalArgumentException("arg must be between 0 and 1.");
     }

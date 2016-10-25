@@ -20,7 +20,7 @@ public class ArrayCreationTests {
   @Test
   public void test1() throws Exception {
     Type elementType = JavaTypes.STRING_TYPE;
-    Type arrayType = ArrayType.ofElementType(elementType);
+    Type arrayType = ArrayType.ofComponentType(elementType);
     List<Type> paramTypes = new ArrayList<>();
     paramTypes.add(elementType);
     TypeTuple inputTypes = new TypeTuple(paramTypes);
@@ -47,7 +47,7 @@ public class ArrayCreationTests {
   @Test
   public void test2() throws Exception {
     Type elementType = JavaTypes.CHAR_TYPE;
-    Type arrayType = ArrayType.ofElementType(elementType);
+    Type arrayType = ArrayType.ofComponentType(elementType);
     InitializedArrayCreation ad = new InitializedArrayCreation((ArrayType) arrayType, 1);
     List<Type> paramTypes = new ArrayList<>();
     paramTypes.add(elementType);
@@ -70,8 +70,8 @@ public class ArrayCreationTests {
 
   @Test
   public void test3() throws Exception {
-    Type elementType = ArrayType.ofElementType(JavaTypes.CHAR_TYPE);
-    Type arrayType = ArrayType.ofElementType(elementType);
+    Type elementType = ArrayType.ofComponentType(JavaTypes.CHAR_TYPE);
+    Type arrayType = ArrayType.ofComponentType(elementType);
     InitializedArrayCreation arrayCreation = new InitializedArrayCreation((ArrayType) arrayType, 1);
     List<Type> paramTypes = new ArrayList<>();
     paramTypes.add(elementType);

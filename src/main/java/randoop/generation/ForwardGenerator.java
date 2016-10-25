@@ -14,7 +14,9 @@ import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
+import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
@@ -56,6 +58,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
   // For testing purposes only.
   private final List<Sequence> allsequencesAsList = new ArrayList<>();
+
+  private final TypeInstantiator instantiator;
 
   // The set of all primitive values seen during generation and execution
   // of sequences. This set is used to tell if a new primitive value has
@@ -102,6 +106,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     this.observers = observers;
     this.allSequences = new LinkedHashSet<>();
+    this.instantiator = componentManager.getTypeInstantiator();
 
     initializeRuntimePrimitivesSeen();
   }
@@ -318,7 +323,14 @@ public class ForwardGenerator extends AbstractGenerator {
       Log.logLine("Selected operation: " + operation.toString());
     }
 
-    // jhp: add flags here
+    if (operation.isGeneric()) {
+      operation = instantiator.instantiate((TypedClassOperation) operation);
+      if (operation == null) { //failed to instantiate generic
+        return null;
+      }
+    }
+
+    // add flags here
     InputsAndSuccessFlag sequences = selectInputs(operation);
 
     if (!sequences.success) {
@@ -560,7 +572,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // If alias ratio is given, attempt with some probability to use a
       // variable already in S.
       if (GenInputsAbstract.alias_ratio != 0
-          && Randomness.weighedCoinFlip(GenInputsAbstract.alias_ratio)) {
+          && Randomness.weightedCoinFlip(GenInputsAbstract.alias_ratio)) {
 
         // candidateVars will store the indices that can serve as input to the
         // i-th input in st.
@@ -681,7 +693,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // If this is the case, then use null instead with some probability.
       if (!isReceiver
           && GenInputsAbstract.null_ratio != 0
-          && Randomness.weighedCoinFlip(GenInputsAbstract.null_ratio)) {
+          && Randomness.weightedCoinFlip(GenInputsAbstract.null_ratio)) {
         if (Log.isLoggingOn()) {
           Log.logLine("null-ratio option given. Randomly decided to use null as input.");
         }

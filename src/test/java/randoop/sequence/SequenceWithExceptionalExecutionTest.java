@@ -43,8 +43,8 @@ public class SequenceWithExceptionalExecutionTest {
   @Test
   public void testArrayStoreException() {
     ArrayType arrayType =
-        ArrayType.ofElementType(JDKTypes.COLLECTION_TYPE.instantiate(JavaTypes.STRING_TYPE));
-    ArrayType rawArrayType = ArrayType.ofElementType(JDKTypes.ARRAY_LIST_TYPE.getRawtype());
+        ArrayType.ofComponentType(JDKTypes.COLLECTION_TYPE.instantiate(JavaTypes.STRING_TYPE));
+    ArrayType rawArrayType = ArrayType.ofComponentType(JDKTypes.ARRAY_LIST_TYPE.getRawtype());
     Sequence sequence = new Sequence();
     TypedOperation lengthTerm =
         TypedOperation.createNonreceiverInitialization(new NonreceiverTerm(JavaTypes.INT_TYPE, 4));

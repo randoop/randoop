@@ -23,6 +23,12 @@ public class ArrayCreation extends CallableOperation {
   /** The element type for the created array */
   private final Type elementType;
 
+  /** The component type for the created array */
+  private final Type componentType;
+
+  /** The dimensions of the created array */
+  private int dimensions;
+
   /**
    * Creates an object representing the construction of an array of the given type.
    *
@@ -30,6 +36,8 @@ public class ArrayCreation extends CallableOperation {
    */
   ArrayCreation(ArrayType arrayType) {
     this.elementType = arrayType.getElementType();
+    this.componentType = arrayType.getComponentType();
+    this.dimensions = arrayType.getDimensions();
   }
 
   @Override
@@ -41,25 +49,30 @@ public class ArrayCreation extends CallableOperation {
       return true;
     }
     ArrayCreation arrayCreation = (ArrayCreation) obj;
-    return this.elementType.equals(arrayCreation.elementType);
+    return this.elementType.equals(arrayCreation.elementType)
+        && this.dimensions == arrayCreation.dimensions;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(elementType);
+    return Objects.hash(elementType, dimensions);
   }
 
   @Override
   public String toString() {
-    return elementType.getName() + "[]";
+    String result = elementType.getName();
+    for (int i = 0; i < dimensions; i++) {
+      result += "[]";
+    }
+    return result;
   }
 
   @Override
   public ExecutionOutcome execute(Object[] input, PrintStream out) {
-    assert input.length == 1 : "requires array length as input";
+    assert input.length == 1 : "requires array dimension as input";
     int length = Integer.parseInt(input[0].toString());
     long startTime = System.currentTimeMillis();
-    Object theArray = Array.newInstance(this.elementType.getRuntimeClass(), length);
+    Object theArray = Array.newInstance(this.componentType.getRuntimeClass(), length);
     long totalTime = System.currentTimeMillis() - startTime;
     return new NormalExecution(theArray, totalTime);
   }
@@ -71,9 +84,11 @@ public class ArrayCreation extends CallableOperation {
       Type outputType,
       List<Variable> inputVars,
       StringBuilder b) {
-    b.append("new").append(" ").append(this.elementType.getName()).append("[ ");
-    String param = inputVars.get(0).getName();
-    Statement statementCreatingVar = inputVars.get(0).getDeclaringStatement();
+    Variable inputVar = inputVars.get(0);
+    b.append("new").append(" ").append(this.elementType.getName());
+    b.append("[ ");
+    String param = inputVar.getName();
+    Statement statementCreatingVar = inputVar.getDeclaringStatement();
     if (statementCreatingVar.isPrimitiveInitialization()
         && !statementCreatingVar.isNullInitialization()) {
       String shortForm = statementCreatingVar.getShortForm();
@@ -82,11 +97,18 @@ public class ArrayCreation extends CallableOperation {
       }
     }
     b.append(param).append(" ]");
+    for (int i = 1; i < dimensions; i++) {
+      b.append("[]");
+    }
   }
 
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
-    return elementType.getName() + "[ " + inputTypes.get(0) + " ]";
+    String result = elementType.getName() + "[ " + inputTypes.get(0) + " ]";
+    for (int i = 1; i < dimensions; i++) {
+      result += "[]";
+    }
+    return result;
   }
 
   @Override

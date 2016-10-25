@@ -21,7 +21,8 @@ public class NotPrivateVisibilityPredicate implements VisibilityPredicate {
    */
   @Override
   public boolean isVisible(Class<?> c) {
-    return isVisible(c.getModifiers() & Modifier.classModifiers());
+    return (c.getDeclaringClass() == null || isVisible(c.getDeclaringClass()))
+        && isVisible(c.getModifiers() & Modifier.classModifiers());
   }
 
   /**

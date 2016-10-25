@@ -10,12 +10,16 @@ import java.util.Set;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.OperationParseException;
+import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
+import randoop.types.JavaTypes;
+import randoop.types.Type;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.isOneOf;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -58,16 +62,21 @@ public class InstantiationTest {
 
     OperationModel model = createModel(classnames, packageName);
 
+    Set<TypedOperation> classOperations = new LinkedHashSet<>();
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    inputTypes.add(JavaTypes.STRING_TYPE);
+    getOperations(model, classOperations, inputTypes);
+
     int expectedClassCount = classnames.size() + 1;
     assertThat(
         "expect "
             + expectedClassCount
             + " classes: GenericBounds, SW, TW, UW, VW, WW, XW, YW, RML and Object",
-        model.getConcreteClasses().size(),
+        model.getClassTypes().size(),
         is(equalTo(expectedClassCount)));
 
     int methodCount = 0;
-    for (TypedOperation operation : model.getConcreteOperations()) {
+    for (TypedOperation operation : classOperations) {
       if (operation.isMethodCall()) {
         assertTrue(
             "method name " + operation.getName() + " should be in expected list",
@@ -99,12 +108,16 @@ public class InstantiationTest {
     int expectedClassCount = classnames.size() + 1;
     assertThat(
         "expect " + expectedClassCount + " classes",
-        model.getConcreteClasses().size(),
+        model.getClassTypes().size(),
         is(equalTo(expectedClassCount)));
 
+    Set<TypedOperation> classOperations = new LinkedHashSet<>();
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    inputTypes.add(JavaTypes.STRING_TYPE);
+    getOperations(model, classOperations, inputTypes);
+
     int methodCount = 0;
-    for (TypedOperation operation : model.getConcreteOperations()) {
-      System.out.println("op: " + operation);
+    for (TypedOperation operation : classOperations) {
       if (operation.isMethodCall()) {
         methodCount++;
         if (!operation.getName().equals("m")) {
@@ -130,10 +143,10 @@ public class InstantiationTest {
     int expectedClassCount = classnames.size() + 1;
     assertThat(
         "expect " + expectedClassCount + " classes",
-        model.getConcreteClasses().size(),
+        model.getClassTypes().size(),
         is(equalTo(expectedClassCount)));
 
-    for (ClassOrInterfaceType type : model.getConcreteClasses()) {
+    for (ClassOrInterfaceType type : model.getClassTypes()) {
       assertThat(
           "class name one of BMB, AI, AT, or Object",
           type.getSimpleName(),
@@ -167,5 +180,57 @@ public class InstantiationTest {
     }
     assert model != null : "model was not initialized";
     return model;
+  }
+
+  private void getOperations(
+      OperationModel model, Set<TypedOperation> classOperations, Set<Type> inputTypes) {
+    TypeInstantiator instantiator = new TypeInstantiator(inputTypes);
+
+    Set<TypedClassOperation> genericConstructors = new LinkedHashSet<>();
+    // prime the type set by including types from non-generic constructors
+    for (TypedOperation operation : model.getOperations()) {
+      if (operation.isConstructorCall()) {
+        if (operation.isGeneric()) { //
+          genericConstructors.add((TypedClassOperation) operation);
+        } else {
+          addTypes(operation, inputTypes);
+        }
+      }
+    }
+
+    // instantiate generic constructors
+    for (TypedClassOperation operation : genericConstructors) {
+      TypedClassOperation classOperation = instantiator.instantiate(operation);
+      assertNotNull("instantiation of " + operation + " should not be null", classOperation);
+      addTypes(classOperation, inputTypes);
+    }
+
+    for (TypedOperation operation : model.getOperations()) {
+      if (operation.isGeneric()) {
+        TypedClassOperation classOperation =
+            instantiator.instantiate((TypedClassOperation) operation);
+        assertNotNull("instantiation of " + operation + " should not be null", classOperation);
+        addTypes(classOperation, inputTypes);
+        if (classOperation.isMethodCall()) {
+          classOperations.add(classOperation);
+        }
+      } else {
+        if (operation.isMethodCall()) {
+          classOperations.add(operation);
+        }
+      }
+    }
+  }
+
+  private void addTypes(TypedOperation operation, Set<Type> typeSet) {
+    if (operation.getOutputType().isReferenceType()) {
+      typeSet.add(operation.getOutputType());
+    }
+    for (int i = 0; i < operation.getInputTypes().size(); i++) {
+      Type type = operation.getInputTypes().get(i);
+      if (type.isReferenceType()) {
+        typeSet.add(type);
+      }
+    }
   }
 }

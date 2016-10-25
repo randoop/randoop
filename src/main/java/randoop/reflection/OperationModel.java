@@ -30,16 +30,8 @@ import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.JavaTypes;
-import randoop.types.ParameterBound;
-import randoop.types.ReferenceType;
-import randoop.types.Substitution;
 import randoop.types.Type;
-import randoop.types.TypeCheck;
-import randoop.types.TypeVariable;
-import randoop.util.Log;
 import randoop.util.MultiMap;
-import randoop.util.Randomness;
 
 import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
 
@@ -59,13 +51,13 @@ import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
 public class OperationModel {
 
   /** The set of class declaration types for this model */
-  private Set<ClassOrInterfaceType> classDeclarationTypes;
+  private Set<ClassOrInterfaceType> classTypes;
 
-  private Set<ClassOrInterfaceType> concreteClassTypes;
+  /** The count of classes under test for this model */
+  private int classCount;
 
   /** The set of input types for this model */
   private Set<Type> inputTypes;
-  // TODO decide if should only collect ReferenceTypes.
 
   /** The set of class objects used in the exercised-class test filter */
   private final LinkedHashSet<Class<?>> exercisedClasses;
@@ -84,14 +76,9 @@ public class OperationModel {
 
   /**
    * Create an empty model of test context.
-   *
-   * <i>Note:</i> public because used in tests, but use
-   * {@link #createModel(VisibilityPredicate, ReflectionPredicate, Set, Set, Set, ClassNameErrorHandler, List)}
-   * instead.
    */
-  public OperationModel() {
-    classDeclarationTypes = new LinkedHashSet<>();
-    concreteClassTypes = new LinkedHashSet<>();
+  private OperationModel() {
+    classTypes = new LinkedHashSet<>();
     inputTypes = new LinkedHashSet<>();
     classLiteralMap = new MultiMap<>();
     annotatedTestValues = new LinkedHashSet<>();
@@ -110,6 +97,7 @@ public class OperationModel {
 
     exercisedClasses = new LinkedHashSet<>();
     operations = new TreeSet<>();
+    classCount = 0;
   }
 
   /**
@@ -148,8 +136,8 @@ public class OperationModel {
         exercisedClassnames,
         errorHandler,
         literalsFileList);
-    model.instantiateGenericClassTypes();
-    model.addOperations(model.concreteClassTypes, visibility, reflectionPredicate);
+
+    model.addOperations(model.classTypes, visibility, reflectionPredicate);
     model.addOperations(methodSignatures);
     model.addObjectConstructor();
 
@@ -224,6 +212,15 @@ public class OperationModel {
   }
 
   /**
+   * Returns the set of types for classes under test.
+   *
+   * @return the set of class types
+   */
+  public Set<ClassOrInterfaceType> getClassTypes() {
+    return classTypes;
+  }
+
+  /**
    * Returns the set of identified {@code Class<?>} objects for the exercised class heuristic.
    *
    * @return the set of exercised classes
@@ -233,13 +230,13 @@ public class OperationModel {
   }
 
   /**
-   * Returns the set of types for concrete (non-generic) classes in this model.
-   * Includes all instantiated generic classes.
+   * Returns the set of input types that occur as parameters in classes under test.
+   * @see TypeExtractor
    *
-   * @return the set of concrete types for the classes in this model
+   * @return the set of input types that occur in classes under test
    */
-  public Set<ClassOrInterfaceType> getConcreteClasses() {
-    return concreteClassTypes;
+  public Set<Type> getInputTypes() {
+    return inputTypes;
   }
 
   /**
@@ -248,10 +245,10 @@ public class OperationModel {
    * @return true if the model has class types, and false if the class type set is empty
    */
   public boolean hasClasses() {
-    return !classDeclarationTypes.isEmpty();
+    return classCount > 0;
   }
 
-  public List<TypedOperation> getConcreteOperations() {
+  public List<TypedOperation> getOperations() {
     return new ArrayList<>(operations);
   }
 
@@ -290,7 +287,7 @@ public class OperationModel {
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList) {
     ReflectionManager mgr = new ReflectionManager(visibility);
-    mgr.add(new DeclarationExtractor(this.classDeclarationTypes, reflectionPredicate));
+    mgr.add(new DeclarationExtractor(this.classTypes, reflectionPredicate));
     mgr.add(new TypeExtractor(this.inputTypes, visibility));
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
@@ -332,6 +329,7 @@ public class OperationModel {
         }
       }
     }
+    classCount = this.classTypes.size();
 
     // Collect exercised classes
     for (String classname : exercisedClassnames) {
@@ -360,302 +358,6 @@ public class OperationModel {
   }
 
   /**
-   * Selects instantiations of the generic class declarations in this model from the collected set
-   * of instantiated input types.
-   */
-  private void instantiateGenericClassTypes() {
-    for (ClassOrInterfaceType classType : classDeclarationTypes) {
-      if (classType.isGeneric()) {
-        List<TypeVariable> typeParameters = classType.getTypeParameters();
-        Substitution<ReferenceType> substitution = selectSubstitution(typeParameters);
-        if (substitution != null) {
-          ClassOrInterfaceType refinedClassType = classType.apply(substitution);
-          if (!refinedClassType.isGeneric()) {
-            concreteClassTypes.add(refinedClassType);
-          } else {
-            if (Log.isLoggingOn()) {
-              Log.logLine("Didn't find types to satisfy bounds on generic type: " + classType);
-            }
-          }
-        }
-      } else {
-        concreteClassTypes.add(classType);
-      }
-    }
-  }
-
-  /**
-   * Selects an instantiating substitution for the given list of type variables.
-   * @see #selectSubstitution(List, Substitution)
-   *
-   * @param typeParameters  the type variables to be instantiated
-   * @return a substitution instantiating the type variables; null if a variable has no
-   *         instantiating types
-   */
-  private Substitution<ReferenceType> selectSubstitution(List<TypeVariable> typeParameters) {
-    Substitution<ReferenceType> substitution = new Substitution<>();
-    return selectSubstitution(typeParameters, substitution);
-  }
-
-  /**
-   * Extends the given substitution by instantiations for the given list of type variables.
-   * If any of the type variables has a generic bound, assumes there are dependencies and
-   * enumerates all possible substitutions and tests them.
-   * Otherwise, independently selects an instantiating type for each variable.
-   *
-   * @param typeParameters  the type variables to be instantiated
-   * @param substitution  the substitution to extend
-   * @return the substitution extended by instantiating type variables; null if a variable has no
-   *         instantiating types
-   */
-  private Substitution<ReferenceType> selectSubstitution(
-      List<TypeVariable> typeParameters, Substitution<ReferenceType> substitution) {
-    List<Substitution<ReferenceType>> substitutionList;
-    substitutionList = collectSubstitutions(typeParameters, substitution);
-    if (substitutionList.isEmpty()) {
-      return null;
-    }
-    return Randomness.randomMember(substitutionList);
-  }
-
-  private List<Substitution<ReferenceType>> collectSubstitutions(
-      List<TypeVariable> typeParameters, Substitution<ReferenceType> substitution) {
-    /*
-     * partition parameters based on whether might have independent bounds:
-     * - parameters with generic bounds may be dependent on other parameters
-     */
-    List<TypeVariable> genericParameters = new ArrayList<>();
-    /*
-     * - parameters with nongeneric bounds can be selected independently, but may be used by
-     *   generic bounds of other parameters.
-     */
-    List<TypeVariable> nongenericParameters = new ArrayList<>();
-    /*
-     * - wildcard capture variables without generic bounds can be selected independently, and
-     *   may not be used in the bounds of another parameter.
-     */
-    List<TypeVariable> captureParameters = new ArrayList<>();
-
-    for (TypeVariable variable : typeParameters) {
-      if (variable.hasGenericBound()) {
-        genericParameters.add(variable);
-      } else {
-        if (variable.isCaptureVariable()) {
-          captureParameters.add(variable);
-        } else {
-          nongenericParameters.add(variable);
-        }
-      }
-    }
-
-    List<Substitution<ReferenceType>> substitutionList = new ArrayList<>();
-    if (!genericParameters.isEmpty()) {
-      // if there are type parameters with generic bounds
-      TypeCheck typeCheck = TypeCheck.forParameters(genericParameters);
-      if (!nongenericParameters.isEmpty()) {
-        // if there are type parameters with non-generic bounds, these may be variables in
-        // generic-bounded parameters
-        List<List<ReferenceType>> nonGenCandidates = getCandidateTypeLists(nongenericParameters);
-        if (nonGenCandidates.isEmpty()) {
-          return new ArrayList<>();
-        }
-        ListEnumerator<ReferenceType> enumerator = new ListEnumerator<>(nonGenCandidates);
-        while (enumerator.hasNext()) {
-          // choose instantiating substitution for non-generic bounded parameters
-          Substitution<ReferenceType> initialSubstitution =
-              substitution.extend(Substitution.forArgs(nongenericParameters, enumerator.next()));
-          // apply selected substitution to all generic-bounded parameters
-          List<TypeVariable> parameters = new ArrayList<>();
-          for (TypeVariable variable : genericParameters) {
-            TypeVariable param = (TypeVariable) variable.apply(initialSubstitution);
-            parameters.add(param);
-          }
-          // choose instantiation for parameters with generic-bounds
-          substitutionList.addAll(collectSubstitutions(parameters, initialSubstitution));
-        }
-      } else {
-        // if no parameters with non-generic bounds, choose instantiation for parameters
-        // with generic bounds
-        substitutionList = getInstantiations(genericParameters, substitution, typeCheck);
-      }
-      if (substitutionList.isEmpty()) {
-        return substitutionList;
-      }
-    } else if (!nongenericParameters.isEmpty()) {
-      // if there are no type parameters with generic bounds, can select others independently
-      substitution = selectAndExtend(nongenericParameters, substitution);
-      if (substitution == null) {
-        return new ArrayList<>();
-      }
-      substitutionList.add(substitution);
-    }
-
-    // Can always select captured wildcards independently
-    if (!captureParameters.isEmpty()) {
-      List<Substitution<ReferenceType>> substList = new ArrayList<>();
-      if (substitutionList.isEmpty()) {
-        substList.add(selectAndExtend(captureParameters, substitution));
-      } else {
-        for (Substitution<ReferenceType> s : substitutionList) {
-          substList.add(selectAndExtend(captureParameters, s));
-        }
-      }
-      substitutionList = substList;
-    }
-
-    return substitutionList;
-  }
-
-  /**
-   * Selects types independently for a list of type parameters, and extends the given
-   * substitution by the substitution of the selected types for the parameters.
-   *
-   * IMPORTANT: Should only be used for parameters that have non-generic bounds.
-   *
-   * @param parameters  a list of independent type parameters
-   * @param substitution  the substitution to extend
-   * @return the substitution extended by mapping given parameters to selected types;
-   *         null, if there are no candidate types for any parameter
-   */
-  private Substitution<ReferenceType> selectAndExtend(
-      List<TypeVariable> parameters, Substitution<ReferenceType> substitution) {
-    List<ReferenceType> selectedTypes = new ArrayList<>();
-    for (TypeVariable typeArgument : parameters) {
-      List<ReferenceType> candidates = selectCandidates(typeArgument);
-      if (candidates.isEmpty()) {
-        if (Log.isLoggingOn()) {
-          Log.logLine("No candidate types for " + typeArgument);
-        }
-        return null;
-      }
-      selectedTypes.add(Randomness.randomMember(candidates));
-    }
-    return substitution.extend(Substitution.forArgs(parameters, selectedTypes));
-  }
-
-  /**
-   * Adds instantiating substitutions for the given parameters to the list if satisfies the given
-   * type check predicate.
-   * Each constructed substitution extends the given initial substitution.
-   * Assumes that the parameters are or are refinements of the set of parameters check by the
-   * type check predicate.
-   *
-   * @param parameters the list of parameters to instantiate
-   * @param initialSubstitution the substitution to be extended by new substitutions
-   * @param typeCheck the predicate to type check a substitution
-   * @return the list of instantiating substitutions
-   */
-  private List<Substitution<ReferenceType>> getInstantiations(
-      List<TypeVariable> parameters,
-      Substitution<ReferenceType> initialSubstitution,
-      TypeCheck typeCheck) {
-    List<Substitution<ReferenceType>> substitutionList = new ArrayList<>();
-    List<List<ReferenceType>> candidateTypes = getCandidateTypeLists(parameters);
-    if (candidateTypes.isEmpty()) {
-      return new ArrayList<>();
-    }
-    ListEnumerator<ReferenceType> enumerator = new ListEnumerator<>(candidateTypes);
-    while (enumerator.hasNext()) {
-      List<ReferenceType> tuple = enumerator.next();
-      Substitution<ReferenceType> partialSubstitution = Substitution.forArgs(parameters, tuple);
-      Substitution<ReferenceType> substitution = initialSubstitution.extend(partialSubstitution);
-      if (typeCheck.test(tuple, substitution)) {
-        substitutionList.add(substitution);
-      }
-    }
-    return substitutionList;
-  }
-
-  /**
-   * Constructs the list of lists of candidate types for the given type parameters.
-   * Each list is the list of candidates for the parameter in the corresponding position of
-   * the given list as determined by {@link #selectCandidates(TypeVariable)}.
-   *
-   * @param parameters  the list of type parameters
-   * @return  the list of candidate lists for the parameters; returns the empty list if any
-   *          parameter has no candidates
-   */
-  private List<List<ReferenceType>> getCandidateTypeLists(List<TypeVariable> parameters) {
-    List<List<ReferenceType>> candidateTypes = new ArrayList<>();
-    for (TypeVariable typeArgument : parameters) {
-      List<ReferenceType> candidates = selectCandidates(typeArgument);
-      if (candidates.isEmpty()) {
-        if (Log.isLoggingOn()) {
-          Log.logLine("No candidate types for " + typeArgument);
-        }
-        return new ArrayList<>();
-      }
-      candidateTypes.add(candidates);
-    }
-    return candidateTypes;
-  }
-
-  /**
-   * Selects all input types that potentially satisfies the bounds on the argument.
-   * If a bound has another type parameter, then the default bound is tested.
-   *
-   * @param argument  the type arguments
-   * @return the list of candidate types to include in tested tuples
-   */
-  private List<ReferenceType> selectCandidates(TypeVariable argument) {
-    ParameterBound lowerBound = selectLowerBound(argument);
-    ParameterBound upperBound = selectUpperBound(argument);
-
-    List<TypeVariable> typeVariableList = new ArrayList<>();
-    typeVariableList.add(argument);
-    List<ReferenceType> typeList = new ArrayList<>();
-    for (Type inputType : inputTypes) {
-      if (inputType.isReferenceType()) {
-        ReferenceType inputRefType = (ReferenceType) inputType;
-        Substitution<ReferenceType> substitution =
-            Substitution.forArgs(typeVariableList, inputRefType);
-        if (lowerBound.isLowerBound(inputRefType, substitution)
-            && upperBound.isUpperBound(inputRefType, substitution)) {
-          typeList.add(inputRefType);
-        }
-      }
-    }
-    return typeList;
-  }
-
-  /**
-   * Chooses the upper bound of the given argument to test in {@link #selectCandidates(TypeVariable)}.
-   * If the bound contains a type parameter other than the given argument, then the bound for
-   * the {@code Object} type is returned.
-   *
-   * @param argument  the type argument
-   * @return the upperbound of the argument if no other type parameter is needed, the {@code Object}
-   * bound otherwise
-   */
-  private ParameterBound selectUpperBound(TypeVariable argument) {
-    ParameterBound upperBound = argument.getUpperTypeBound();
-    List<TypeVariable> parameters = upperBound.getTypeParameters();
-    if (parameters.isEmpty() || (parameters.size() == 1 && parameters.contains(argument))) {
-      return upperBound;
-    }
-    return ParameterBound.forType(JavaTypes.OBJECT_TYPE);
-  }
-
-  /**
-   * Chooses the lower bound of the given argument to be tested in {@link #selectCandidates(TypeVariable)}.
-   * If the bound has a type parameter other than the given argument, then the
-   * {@link JavaTypes#NULL_TYPE}
-   * is return as the bound.
-   *
-   * @param argument  the type argument
-   * @return the lower bound of the argument if no other type parameter is needed, the {@link JavaTypes#NULL_TYPE}
-   * otherwise
-   */
-  private ParameterBound selectLowerBound(TypeVariable argument) {
-    ParameterBound lowerBound = argument.getLowerTypeBound();
-    List<TypeVariable> parameters = lowerBound.getTypeParameters();
-    if (parameters.isEmpty() || (parameters.size() == 1 && parameters.contains(argument))) {
-      return lowerBound;
-    }
-    return ParameterBound.forType(JavaTypes.NULL_TYPE);
-  }
-
-  /**
    * Iterates through a set of simple and instantiated class types and uses reflection to extract
    * the operations that satisfy both the visibility and reflection predicates, and then adds them
    * to the operation set of this model.
@@ -672,11 +374,11 @@ public class OperationModel {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (ClassOrInterfaceType classType : concreteClassTypes) {
       mgr.apply(
-          new OperationExtractor(classType, operationSet, reflectionPredicate, this),
+          new OperationExtractor(classType, operationSet, reflectionPredicate),
           classType.getRuntimeClass());
     }
     for (TypedOperation operation : operationSet) {
-      addOperation(operation);
+      operations.add(operation);
     }
   }
 
@@ -690,7 +392,7 @@ public class OperationModel {
   private void addOperations(Set<String> methodSignatures) throws OperationParseException {
     for (String sig : methodSignatures) {
       TypedOperation operation = OperationParser.parse(sig);
-      addOperation(operation);
+      operations.add(operation);
     }
   }
 
@@ -706,78 +408,7 @@ public class OperationModel {
       System.exit(1);
     }
     TypedClassOperation operation = TypedOperation.forConstructor(objectConstructor);
-    concreteClassTypes.add(operation.getDeclaringType());
-    addOperation(operation);
-  }
-
-  /**
-   * Instantiates and adds the given {@link TypedOperation} to this model.
-   * Any type parameters of the operation are first instantiated by selecting from the input types
-   * of this model.
-   * Then, if the operation has wildcard types, capture conversion is applied, and any created
-   * type variables are instantiated.
-   *
-   * @param operation the operation to instantiate and add to this model
-   */
-  private void addOperation(TypedOperation operation) {
-    operation = instantiateOperationTypes(operation);
-
-    // Note: capture conversion needs all type variables to be instantiated first
-    if (operation != null && operation.hasWildcardTypes()) {
-      operation = instantiateOperationTypes(operation.applyCaptureConversion());
-    }
-    if (operation == null) {
-      return;
-    }
-
+    classTypes.add(operation.getDeclaringType());
     operations.add(operation);
-  }
-
-  /**
-   * Selects an instantiation of the generic types of an operation, and returns a new operation with
-   * the types instantiated.
-   *
-   * @param operation  the operation
-   * @return the operation with generic types instantiated
-   */
-  private TypedOperation instantiateOperationTypes(TypedOperation operation) {
-    List<TypeVariable> typeParameters = operation.getTypeParameters();
-    if (typeParameters.isEmpty()) {
-      return operation;
-    }
-
-    Substitution<ReferenceType> substitution = selectSubstitution(typeParameters);
-    if (substitution == null) {
-      return null;
-    }
-    return operation.apply(substitution);
-  }
-
-  /**
-   * Selects an instantiation of a generic operation, and returns a new operation with the types
-   * instantiated.
-   *
-   * @param operation  the operation
-   * @param substitution  the substitution for class type parameters
-   * @return the operation with generic types instantiated
-   */
-  TypedClassOperation instantiateOperationTypes(
-      TypedClassOperation operation, Substitution<ReferenceType> substitution) {
-    List<TypeVariable> typeParameters = operation.getTypeParameters();
-    if (substitution != null) {
-      typeParameters.removeAll(substitution.getVariables());
-    } else {
-      substitution = new Substitution<>();
-    }
-    if (!typeParameters.isEmpty()) {
-      substitution = selectSubstitution(typeParameters, substitution);
-      if (substitution == null) {
-        if (Log.isLoggingOn()) {
-          Log.logLine("Unable to instantiate types for operation " + operation);
-        }
-        return null;
-      }
-    }
-    return operation.apply(substitution);
   }
 }

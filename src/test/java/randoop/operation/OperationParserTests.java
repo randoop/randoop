@@ -145,7 +145,7 @@ public class OperationParserTests {
   @Test
   public void testArrayDecl() {
     Type elementType = JavaTypes.INT_TYPE;
-    ArrayType arrayType = ArrayType.ofElementType(elementType);
+    ArrayType arrayType = ArrayType.ofComponentType(elementType);
     List<Type> paramTypes = new ArrayList<>();
     for (int i = 0; i < 3; i++) {
       paramTypes.add(elementType);

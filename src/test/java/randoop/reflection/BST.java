@@ -7,11 +7,17 @@ package randoop.reflection;
  */
 interface C_BST<E extends Comparable<E>> {}
 
-class B_BST implements C_BST<Long> {}
+class B_BST implements C_BST<Long> {
+  public B_BST() {}
+}
 
-class D_BST implements C_BST<String> {}
+class D_BST implements C_BST<String> {
+  public D_BST() {}
+}
 
 public class BST<E extends Comparable<E>> {
+  public BST() {}
+
   public <T extends C_BST<E>> T m(T c) {
     return null;
   }

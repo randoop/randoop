@@ -85,6 +85,11 @@ public class NonParameterizedType extends ClassOrInterfaceType {
     return interfaces;
   }
 
+  @Override
+  public NonParameterizedType getRawtype() {
+    return this;
+  }
+
   /**
    * Returns the list of rawtypes for the direct interfaces for this type.
    *

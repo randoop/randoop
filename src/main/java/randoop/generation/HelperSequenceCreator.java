@@ -22,7 +22,6 @@ import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
-import randoop.types.NonParameterizedType;
 import randoop.types.ParameterizedType;
 import randoop.types.ReferenceArgument;
 import randoop.types.ReferenceType;
@@ -60,30 +59,35 @@ class HelperSequenceCreator {
     }
 
     ArrayType arrayType = (ArrayType) collectionType;
-    Type elementType = arrayType.getElementType();
+    Type componentType = arrayType.getComponentType();
 
-    if (elementType.isParameterized()) {
-      // XXX build elementType default construction sequence here, if cannot build one then stop
-      InstantiatedType creationType = getImplementingType((InstantiatedType) elementType);
-      /* If element type is C<T extends C<T>, so use T */
-      if (creationType.isRecursiveType()) {
-        // XXX being incautious, argument type might be parameterized
-        elementType =
-            ((ReferenceArgument) creationType.getTypeArguments().get(0)).getReferenceType();
+    SimpleList<Sequence> candidates;
+    if (componentType.isArray()) {
+      candidates = createArraySequence(components, componentType);
+    } else {
+      if (componentType.isParameterized()) {
+        // XXX build elementType default construction sequence here, if cannot build one then stop
+        InstantiatedType creationType = getImplementingType((InstantiatedType) componentType);
+        /* If element type is C<T extends C<T>, so use T */
+        if (creationType.isRecursiveType()) {
+          // XXX being incautious, argument type might be parameterized
+          componentType =
+              ((ReferenceArgument) creationType.getTypeArguments().get(0)).getReferenceType();
+        }
       }
+      candidates = components.getSequencesForType(componentType);
     }
 
-    SimpleList<Sequence> candidates = components.getSequencesForType(elementType);
     int length;
     if (candidates.isEmpty()) {
       // No sequences that produce appropriate component values found,
       // if null allowed, create an array containing null, otherwise create empty array
       ArrayListSimpleList<Sequence> seqList = new ArrayListSimpleList<>();
       if (!GenInputsAbstract.forbid_null) {
-        if (!Randomness.weighedCoinFlip(0.5)) {
+        if (!Randomness.weightedCoinFlip(0.5)) {
           seqList.add(
               new Sequence()
-                  .extend(TypedOperation.createNullOrZeroInitializationForType(elementType)));
+                  .extend(TypedOperation.createNullOrZeroInitializationForType(componentType)));
         }
       }
       length = seqList.size();
@@ -91,7 +95,7 @@ class HelperSequenceCreator {
     } else {
       length = Randomness.nextRandomInt(MAX_LENGTH);
     }
-    Sequence s = createAnArray(candidates, elementType, length);
+    Sequence s = createAnArray(candidates, componentType, length);
     assert s != null;
     ArrayListSimpleList<Sequence> l = new ArrayListSimpleList<>();
     l.add(s);
@@ -140,7 +144,8 @@ class HelperSequenceCreator {
     }
     assert !candidates.isEmpty() || length == 0 : "if there are no candidates, length must be zero";
 
-    if (!elementType.isParameterized()) {
+    if (!elementType.isParameterized()
+        && !(elementType.isArray() && ((ArrayType) elementType).hasParameterizedElementType())) {
       // build sequence to create array of element type
       Sequence inputSequence = createAnArray(candidates, elementType, length);
       inputSequences.add(inputSequence);
@@ -212,8 +217,9 @@ class HelperSequenceCreator {
     List<Integer> variables = new ArrayList<>();
     createElementSequences(candidates, length, elementType, inputSequences, 0, variables);
 
-    ArrayType arrayType = ArrayType.ofElementType(elementType);
-    if (!elementType.isParameterized()) {
+    ArrayType arrayType = ArrayType.ofComponentType(elementType);
+    if (!elementType.isParameterized()
+        && !(elementType.isArray() && ((ArrayType) elementType).hasParameterizedElementType())) {
       TypedOperation creationOperation =
           TypedOperation.createInitializedArrayCreation(arrayType, length);
       return Sequence.createSequence(creationOperation, inputSequences, variables);
@@ -242,7 +248,7 @@ class HelperSequenceCreator {
 
   /**
    * Creates a {@link Sequence} for creating an array with parameterized type.
-   * Resulting code looks like {@code (ElementType[])new RawElementType[length]}.
+   * Resulting code looks like {@code (ElementType[])new RawElementType[dim0]}.
    * Note that the {@code SuppressWarnings} annotation is added when the assignment with the cast
    * is output.
    *
@@ -251,18 +257,18 @@ class HelperSequenceCreator {
    * @return the sequence to create an array with the given element type and length
    */
   private static Sequence createGenericArrayCreationSequence(ArrayType arrayType, int length) {
-    InstantiatedType elementType = (InstantiatedType) arrayType.getElementType();
-    NonParameterizedType rawElementType = elementType.getRawtype();
-    ArrayType rawArrayType = ArrayType.ofElementType(rawElementType);
+
+    ArrayType rawArrayType = arrayType.getRawTypeArray();
 
     Sequence creationSequence = new Sequence();
 
     // new RawElementType[length]
+    List<Variable> input = new ArrayList<>();
+
     TypedOperation lengthTerm =
         TypedOperation.createNonreceiverInitialization(
             new NonreceiverTerm(JavaTypes.INT_TYPE, length));
     creationSequence = creationSequence.extend(lengthTerm, new ArrayList<Variable>());
-    List<Variable> input = new ArrayList<>();
     input.add(creationSequence.getLastVariable());
 
     TypedOperation creationOperation = TypedOperation.createArrayCreation(rawArrayType);
@@ -414,7 +420,7 @@ class HelperSequenceCreator {
     collectionType = JDKTypes.COLLECTION_TYPE.instantiate(elementType);
 
     paramTypes.add(collectionType);
-    paramTypes.add(ArrayType.ofElementType(elementType));
+    paramTypes.add(ArrayType.ofComponentType(elementType));
 
     return new TypedClassOperation(
         op,

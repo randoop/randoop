@@ -22,7 +22,6 @@ import randoop.main.OptionsCache;
 import randoop.operation.TypedOperation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.OperationModel;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.test.issta2006.BinTree;
@@ -91,10 +90,7 @@ public class ICSE07ContainersTest {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
       mgr.apply(
           new OperationExtractor(
-              classType,
-              model,
-              new DefaultReflectionPredicate(omitMethodPattern, excludeNames),
-              new OperationModel()),
+              classType, model, new DefaultReflectionPredicate(omitMethodPattern, excludeNames)),
           c);
     }
     assertTrue("model should not be empty", !model.isEmpty());

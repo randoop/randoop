@@ -37,7 +37,6 @@ public class OperationExtractor extends DefaultClassVisitor {
 
   /** The collection of operations */
   private final Collection<TypedOperation> operations;
-  private final OperationModel model;
 
   /** The class type of the declaring class for the collected operations */
   private ClassOrInterfaceType classType;
@@ -49,38 +48,33 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param classType  the declaring classtype for collected operations
    * @param operations  the collection of operations
    * @param predicate  the reflection predicate
-   * @param model  the {@link OperationModel}
    */
   public OperationExtractor(
       ClassOrInterfaceType classType,
       Collection<TypedOperation> operations,
-      ReflectionPredicate predicate,
-      OperationModel model) {
+      ReflectionPredicate predicate) {
     this.classType = classType;
     this.operations = operations;
     this.predicate = predicate;
-    this.model = model;
   }
 
   /**
    * Adds an operation to the collection of this extractor.
    * If the declaring class type is an {@link InstantiatedType}, then the substitution for that
    * class is applied to the types of the operation, and this instantiated operation is returned.
-   * Instantiation of a generic operation is handled in
-   * {@link OperationModel#instantiateOperationTypes(TypedOperation)}.
    *
    * @param operation  the {@link TypedClassOperation}
    */
   private void addOperation(TypedClassOperation operation) {
     if (operation != null) {
-      if (operation.getDeclaringType().isGeneric()) {
+      if (!classType.isGeneric() && operation.getDeclaringType().isGeneric()) {
         // if the declaring class is generic, then need substitution to instantiate type arguments
         Substitution<ReferenceType> substitution =
             classType.getInstantiatingSubstitution(operation.getDeclaringType());
         if (substitution == null) { //no unifying substitution found
           return;
         }
-        operation = model.instantiateOperationTypes(operation, substitution);
+        operation = operation.apply(substitution);
         if (operation == null) { //will be null if instantiation failed
           return;
         }

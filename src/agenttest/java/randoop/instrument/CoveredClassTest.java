@@ -212,7 +212,7 @@ public class CoveredClassTest {
     }
     assert operationModel != null;
 
-    List<TypedOperation> model = operationModel.getConcreteOperations();
+    List<TypedOperation> model = operationModel.getOperations();
     Set<Sequence> components = new LinkedHashSet<>();
     components.addAll(SeedSequences.defaultSeeds());
     components.addAll(operationModel.getAnnotatedTestValues());

@@ -20,19 +20,33 @@ interface IW<E> {}
 
 interface TI {}
 
-class TW extends AW<TI> implements TI {}
+class TW extends AW<TI> implements TI {
+  public TW() {}
+}
 
-class SW extends AW<BW<? super SW>> {}
+class SW extends AW<BW<? super SW>> {
+  public SW() {}
+}
 
-class UW extends CW<AW<UW>, BW<? super UW>> {}
+class UW extends CW<AW<UW>, BW<? super UW>> {
+  public UW() {}
+}
 
-class VW extends AW<DW<VW>> {}
+class VW extends AW<DW<VW>> {
+  public VW() {}
+}
 
-class WW extends DW<AW<? extends WW>> {}
+class WW extends DW<AW<? extends WW>> {
+  public WW() {}
+}
 
-class XW extends AW<YW> {}
+class XW extends AW<YW> {
+  public XW() {}
+}
 
-class YW extends BW<XW> {}
+class YW extends BW<XW> {
+  public YW() {}
+}
 
 interface ML<Z extends IW<Z>> {
   Z getZ();

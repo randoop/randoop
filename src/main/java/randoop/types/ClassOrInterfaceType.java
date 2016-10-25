@@ -61,7 +61,6 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType) type;
-
       // non-generic member classes of a generic class show up as ParameterizedType
       // treat these as Class<?>
       Class<?> rawType = (Class<?>) t.getRawType();
@@ -73,7 +72,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
     if (type instanceof Class<?>) {
       Class<?> classType = (Class<?>) type;
-      // if the type is generic, we assume that the rawtype is being used
+      // if the type is generic, forcing the type to be a parameterized type can result in errors
+      // because type parameters will be from the class declaration rather than the context of
+      // the type in the code.  In this case, it is possible to have two distinct
+      // java.lang.reflect.TypeVariables that represent the same type parameter.
+      //
       return new NonParameterizedType(classType);
     }
 
@@ -187,6 +190,13 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     }
     return c.getPackage();
   }
+
+  /**
+   * Returns the non-parameterized form of this class type.
+   *
+   * @return  the non-parameterized form of this class type
+   */
+  public abstract NonParameterizedType getRawtype();
 
   /**
    * Finds the parameterized type that is a supertype of this class that also matches the given
@@ -417,5 +427,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       return enclosingType.getTypeParameters();
     }
     return new ArrayList<>();
+  }
+
+  public boolean isClassType() {
+    return true;
   }
 }

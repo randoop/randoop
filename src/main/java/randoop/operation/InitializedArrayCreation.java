@@ -50,7 +50,7 @@ public final class InitializedArrayCreation extends CallableOperation {
   InitializedArrayCreation(ArrayType arrayType, int length) {
     assert length >= 0 : "array length may not be negative: " + length;
 
-    this.elementType = arrayType.getElementType();
+    this.elementType = arrayType.getComponentType();
     this.length = length;
   }
 
@@ -192,6 +192,6 @@ public final class InitializedArrayCreation extends CallableOperation {
     }
 
     return TypedOperation.createInitializedArrayCreation(
-        ArrayType.ofElementType(elementType), length);
+        ArrayType.ofComponentType(elementType), length);
   }
 }

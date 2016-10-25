@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import randoop.BugInRandoopException;
+
 /**
  * A lazy representation of a type bound in which a type variable occurs.
  * Prevents type recognition from having to deal with recursive type bounds.
@@ -51,7 +53,7 @@ class LazyParameterBound extends ParameterBound {
   }
 
   @Override
-  public ReferenceBound apply(Substitution<ReferenceType> substitution) {
+  public ParameterBound apply(Substitution<ReferenceType> substitution) {
     if (boundType instanceof java.lang.reflect.TypeVariable) {
       ReferenceType referenceType = substitution.get(boundType);
       if (referenceType != null) {
@@ -60,9 +62,7 @@ class LazyParameterBound extends ParameterBound {
         }
         return new EagerReferenceBound(referenceType);
       }
-      // XXX should be safe to return
-      throw new IllegalArgumentException(
-          "substitution does not instantiate type variable: " + boundType);
+      return this;
     }
 
     if (boundType instanceof java.lang.reflect.ParameterizedType) {
@@ -85,7 +85,8 @@ class LazyParameterBound extends ParameterBound {
       return new EagerReferenceBound(instantiatedType);
     }
 
-    return null;
+    throw new BugInRandoopException(
+        "lazy parameter bounds should be either a type variable or parameterized type");
   }
 
   /**
@@ -195,7 +196,11 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public boolean isLowerBound(Type argType, Substitution<ReferenceType> substitution) {
-    ReferenceBound b = this.apply(substitution);
+    ParameterBound b = this.apply(substitution);
+    if (b.equals(this)) {
+      throw new IllegalArgumentException(
+          "substitution " + substitution + " does not instantiate " + this);
+    }
     return b.isLowerBound(argType, substitution);
   }
 
@@ -218,7 +223,11 @@ class LazyParameterBound extends ParameterBound {
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution<ReferenceType> substitution) {
-    ReferenceBound b = this.apply(substitution);
+    ParameterBound b = this.apply(substitution);
+    if (b.equals(this)) {
+      throw new IllegalArgumentException(
+          "substitution " + substitution + " does not instantiate " + this);
+    }
     return b.isUpperBound(argType, substitution);
   }
 

@@ -11,6 +11,7 @@ import java.util.Set;
 import randoop.Globals;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
+import randoop.reflection.TypeInstantiator;
 import randoop.types.Type;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
@@ -55,6 +56,8 @@ public class SequenceCollection {
   private Map<Type, ArrayListSimpleList<Sequence>> sequenceMap = new LinkedHashMap<>();
 
   private SubTypeSet typeSet = new SubTypeSet(false);
+
+  private Set<Type> sequenceTypes = new LinkedHashSet<>();
 
   private int sequenceCount = 0;
 
@@ -159,6 +162,7 @@ public class SequenceCollection {
               + argument.getType().getName();
       if (sequence.isActive(argument.getDeclIndex())) {
         Type type = formalTypes.get(i);
+        sequenceTypes.add(type);
         typeSet.add(type);
         updateCompatibleMap(sequence, type);
       }
@@ -239,5 +243,9 @@ public class SequenceCollection {
       result.addAll(a.theList);
     }
     return result;
+  }
+
+  public TypeInstantiator getTypeInstantiator() {
+    return new TypeInstantiator(sequenceTypes);
   }
 }

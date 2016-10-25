@@ -245,10 +245,6 @@ public abstract class TypedOperation implements Operation {
    * @return the typed operation for the given method
    */
   public static TypedClassOperation forMethod(Method method) {
-    //    MethodCall op;
-    //    ClassOrInterfaceType declaringType;
-    // TypeTuple inputTypes;
-    // Type outputType;
 
     List<Type> methodParamTypes = new ArrayList<>();
     for (java.lang.reflect.Type t : method.getGenericParameterTypes()) {
@@ -433,7 +429,7 @@ public abstract class TypedOperation implements Operation {
   public static TypedOperation createInitializedArrayCreation(ArrayType arrayType, int size) {
     List<Type> typeList = new ArrayList<>();
     for (int i = 0; i < size; i++) {
-      typeList.add(arrayType.getElementType());
+      typeList.add(arrayType.getComponentType());
     }
     TypeTuple inputTypes = new TypeTuple(typeList);
     return new TypedTermOperation(
@@ -477,10 +473,10 @@ public abstract class TypedOperation implements Operation {
     List<Type> typeList = new ArrayList<>();
     typeList.add(arrayType);
     typeList.add(JavaTypes.INT_TYPE);
-    typeList.add(arrayType.getElementType());
+    typeList.add(arrayType.getComponentType());
     TypeTuple inputTypes = new TypeTuple(typeList);
     return new TypedTermOperation(
-        new ArrayElementSet(arrayType.getElementType()), inputTypes, JavaTypes.VOID_TYPE);
+        new ArrayElementSet(arrayType.getComponentType()), inputTypes, JavaTypes.VOID_TYPE);
   }
 
   /**

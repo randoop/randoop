@@ -13,24 +13,26 @@ import java.util.Objects;
  *     ClassOrInterfaceType [ ] { [ ] }
  *     TypeVariable [ ] { [ ] }
  * </pre>
- * An array may have elements of any type.
+ * The type preceding the rightmost set of brackets is the <i>component</i> type, while the
+ * type preceding the brackets is the <i>element</i> type.
+ * An array may have components of any type.
  */
 public class ArrayType extends ReferenceType {
 
-  /** The type of elements in this array */
-  private final Type elementType;
+  /** The type of components in this array */
+  private final Type componentType;
 
   /** The runtime type for this array */
   private final Class<?> runtimeClass;
 
   /**
-   * Creates an {@code ArrayType} with the given element type and runtime class.
+   * Creates an {@code ArrayType} with the given component type and runtime class.
    *
-   * @param elementType  the element type
+   * @param componentType  the component type
    * @param runtimeClass  the runtime class
    */
-  private ArrayType(Type elementType, Class<?> runtimeClass) {
-    this.elementType = elementType;
+  private ArrayType(Type componentType, Class<?> runtimeClass) {
+    this.componentType = componentType;
     this.runtimeClass = runtimeClass;
   }
 
@@ -45,8 +47,8 @@ public class ArrayType extends ReferenceType {
       throw new IllegalArgumentException("type must be an array");
     }
 
-    Type elementType = Type.forClass(arrayClass.getComponentType());
-    return new ArrayType(elementType, arrayClass);
+    Type componentType = Type.forClass(arrayClass.getComponentType());
+    return new ArrayType(componentType, arrayClass);
   }
 
   /**
@@ -61,32 +63,32 @@ public class ArrayType extends ReferenceType {
   public static ArrayType forType(java.lang.reflect.Type type) {
     if (type instanceof java.lang.reflect.GenericArrayType) {
       java.lang.reflect.GenericArrayType arrayType = (java.lang.reflect.GenericArrayType) type;
-      Type elementType = Type.forType(arrayType.getGenericComponentType());
-      return ArrayType.ofElementType(elementType);
+      Type componentType = Type.forType(arrayType.getGenericComponentType());
+      return ArrayType.ofComponentType(componentType);
     }
 
     if ((type instanceof Class<?>) && ((Class<?>) type).isArray()) {
-      Type elementType = Type.forType(((Class<?>) type).getComponentType());
-      return ArrayType.ofElementType(elementType);
+      Type componentType = Type.forType(((Class<?>) type).getComponentType());
+      return ArrayType.ofComponentType(componentType);
     }
 
     throw new IllegalArgumentException("type " + type + " must be an array type");
   }
 
   /**
-   * Creates an {@code ArrayType} for the given element type.
-   * If the element type is a type variable then creates a type with an {@link Object} array as the
+   * Creates an {@code ArrayType} for the given component type.
+   * If the component type is a type variable then creates a type with an {@link Object} array as the
    * rawtype.
    *
-   * @param elementType  the element type
-   * @return an {@code ArrayType} with the given element type
+   * @param componentType  the component type
+   * @return an {@code ArrayType} with the given component type
    */
-  public static ArrayType ofElementType(Type elementType) {
-    if (elementType instanceof TypeVariable) {
-      return new ArrayType(elementType, Array.newInstance(Object.class, 0).getClass());
+  public static ArrayType ofComponentType(Type componentType) {
+    if (componentType instanceof TypeVariable) {
+      return new ArrayType(componentType, Array.newInstance(Object.class, 0).getClass());
     }
     return new ArrayType(
-        elementType, Array.newInstance(elementType.getRuntimeClass(), 0).getClass());
+        componentType, Array.newInstance(componentType.getRuntimeClass(), 0).getClass());
   }
 
   @Override
@@ -95,46 +97,60 @@ public class ArrayType extends ReferenceType {
       return false;
     }
     ArrayType t = (ArrayType) obj;
-    return elementType.equals(t.elementType) && runtimeClass.equals(t.runtimeClass);
+    return componentType.equals(t.componentType) && runtimeClass.equals(t.runtimeClass);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(elementType, runtimeClass);
+    return Objects.hash(componentType, runtimeClass);
   }
 
   @Override
   public String toString() {
-    return elementType + "[]";
+    return componentType + "[]";
   }
 
   @Override
   public ArrayType apply(Substitution<ReferenceType> substitution) {
-    Type type = elementType.apply(substitution);
+    Type type = componentType.apply(substitution);
     if (!type.equals(this)) {
-      return ArrayType.ofElementType(type);
+      return ArrayType.ofComponentType(type);
     } else {
       return this;
     }
   }
 
   /**
+   * Returns the component type of this array type.
+   *
+   * @return the component type of this array type
+   */
+  public Type getComponentType() {
+    return componentType;
+  }
+
+  /**
    * Returns the element type of this array type.
+   * If the component type of this array type is not an array type, the element type is the
+   * component type. Otherwise, the element type is the element type of the component type.
    *
    * @return the element type of this array type
    */
   public Type getElementType() {
-    return elementType;
+    if (componentType.isArray()) {
+      return ((ArrayType) componentType).getElementType();
+    }
+    return componentType;
   }
 
   @Override
   public String getName() {
-    return elementType.getName() + "[]";
+    return componentType.getName() + "[]";
   }
 
   @Override
   public String getSimpleName() {
-    return elementType.getSimpleName() + "[]";
+    return componentType.getSimpleName() + "[]";
   }
 
   @Override
@@ -144,8 +160,8 @@ public class ArrayType extends ReferenceType {
 
   @Override
   public List<TypeVariable> getTypeParameters() {
-    if (elementType.isReferenceType()) {
-      return ((ReferenceType) elementType).getTypeParameters();
+    if (componentType.isReferenceType()) {
+      return ((ReferenceType) componentType).getTypeParameters();
     } else {
       return new ArrayList<>();
     }
@@ -163,7 +179,7 @@ public class ArrayType extends ReferenceType {
    * occurs when this type is
    * <code>C&lt;T<sub>1</sub>,&hellip;,T<sub>k</sub>&gt;[]</code>
    * and other type is
-   * <code>C[]</code> (e.g., the element type is the rawtype <code>C</code>).
+   * <code>C[]</code> (e.g., the component type is the rawtype <code>C</code>).
    */
   @Override
   public boolean isAssignableFrom(Type otherType) {
@@ -171,10 +187,10 @@ public class ArrayType extends ReferenceType {
       return true;
     }
 
-    if (otherType.isArray() && this.elementType.isParameterized()) {
-      Type otherElementType = ((ArrayType) otherType).elementType;
+    if (otherType.isArray() && this.componentType.isParameterized()) {
+      Type otherElementType = ((ArrayType) otherType).componentType;
       return otherElementType.isRawtype()
-          && otherElementType.hasRuntimeClass(this.elementType.getRuntimeClass());
+          && otherElementType.hasRuntimeClass(this.componentType.getRuntimeClass());
     }
 
     return false;
@@ -182,7 +198,7 @@ public class ArrayType extends ReferenceType {
 
   @Override
   public boolean isGeneric() {
-    return elementType.isGeneric();
+    return componentType.isGeneric();
   }
 
   /**
@@ -204,10 +220,10 @@ public class ArrayType extends ReferenceType {
       return true;
     }
 
-    if (otherType.isArray() && elementType.isReferenceType()) {
+    if (otherType.isArray() && componentType.isReferenceType()) {
       ArrayType otherArrayType = (ArrayType) otherType;
-      return otherArrayType.elementType.isReferenceType()
-          && this.elementType.isSubtypeOf(otherArrayType.elementType);
+      return otherArrayType.componentType.isReferenceType()
+          && this.componentType.isSubtypeOf(otherArrayType.componentType);
     }
 
     return false;
@@ -220,5 +236,43 @@ public class ArrayType extends ReferenceType {
    */
   public boolean hasWildcard() {
     return false;
+  }
+
+  /**
+   * Indicates whether this array type has a parameterized element type.
+   *
+   * @return true if the element type is parameterized; false otherwise
+   */
+  public boolean hasParameterizedElementType() {
+    return getElementType().isParameterized();
+  }
+
+  /**
+   * Returns the non-parameterized form for this array type.
+   * For instance, converts
+   * {@code List<String>[]} to {@code List[]},
+   * {@code List<String>[][]} to {@code List[][]}, and
+   * {@code int[]} to {@code int[]}.
+   *
+   * @return  the non-parameterized form of this array type
+   */
+  public ArrayType getRawTypeArray() {
+    Type rawElementType;
+    if (this.componentType.isArray()) {
+      rawElementType = ((ArrayType) componentType).getRawTypeArray();
+    } else if (this.componentType.isClassType()) {
+      rawElementType = ((ClassOrInterfaceType) componentType).getRawtype();
+    } else {
+      return this;
+    }
+    return ArrayType.ofComponentType(rawElementType);
+  }
+
+  public int getDimensions() {
+    int dimensions = 1;
+    if (componentType.isArray()) {
+      dimensions += ((ArrayType) componentType).getDimensions();
+    }
+    return dimensions;
   }
 }

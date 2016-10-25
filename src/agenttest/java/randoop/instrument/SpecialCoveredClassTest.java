@@ -34,6 +34,9 @@ import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.Predicate;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -86,9 +89,9 @@ public class SpecialCoveredClassTest {
     assert operationModel != null;
 
     Set<Class<?>> coveredClasses = operationModel.getExercisedClasses();
-    Set<ClassOrInterfaceType> classes = operationModel.getConcreteClasses();
+    Set<ClassOrInterfaceType> classes = operationModel.getClassTypes();
     //
-    assertTrue("should be one covered classes", coveredClasses.size() == 1);
+    assertThat("should be one covered classes", coveredClasses.size(), is(equalTo(1)));
     for (Class<?> c : coveredClasses) {
       assertEquals(
           "name should be AbstractTarget",
@@ -102,7 +105,7 @@ public class SpecialCoveredClassTest {
       assertTrue("should not be interface: " + c.getName(), !c.isInterface());
     }
     //
-    List<TypedOperation> model = operationModel.getConcreteOperations();
+    List<TypedOperation> model = operationModel.getOperations();
     //
     assertEquals("model operations", 6, model.size());
     //

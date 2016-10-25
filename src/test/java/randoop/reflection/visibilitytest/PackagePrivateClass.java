@@ -1,6 +1,6 @@
 package randoop.reflection.visibilitytest;
 
-public class PackagePrivateClass {
+class PackagePrivateClass {
   public PackagePrivateClass(int i) {}
 
   PackagePrivateClass(double d) {}

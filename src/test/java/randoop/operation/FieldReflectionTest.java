@@ -16,7 +16,6 @@ import randoop.field.ClassWithFields;
 import randoop.field.SubclassWithFields;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
-import randoop.reflection.OperationModel;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 import randoop.reflection.ReflectionPredicate;
@@ -24,8 +23,8 @@ import randoop.reflection.VisibilityPredicate;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
-import randoop.types.Type;
 import randoop.types.RandoopTypeException;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 import static org.junit.Assert.assertEquals;
@@ -98,8 +97,7 @@ public class FieldReflectionTest {
       Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     final Set<TypedOperation> operations = new LinkedHashSet<>();
-    OperationExtractor extractor =
-        new OperationExtractor(classType, operations, predicate, new OperationModel());
+    OperationExtractor extractor = new OperationExtractor(classType, operations, predicate);
     ReflectionManager manager = new ReflectionManager(visibilityPredicate);
     manager.apply(extractor, c);
     return operations;

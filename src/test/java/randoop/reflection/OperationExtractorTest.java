@@ -39,10 +39,7 @@ public class OperationExtractorTest {
     }
     assert c != null;
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-    mgr.apply(
-        new OperationExtractor(
-            classType, operations, new DefaultReflectionPredicate(), new OperationModel()),
-        c);
+    mgr.apply(new OperationExtractor(classType, operations, new DefaultReflectionPredicate()), c);
     assertThat("name should be", classType.getName(), is(equalTo(c.getName())));
 
     assertThat("class has 12 operations", operations.size(), is(equalTo(12)));
@@ -81,10 +78,7 @@ public class OperationExtractorTest {
         Substitution.forArgs(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     classType = classType.apply(substitution);
 
-    mgr.apply(
-        new OperationExtractor(
-            classType, operations, new DefaultReflectionPredicate(), new OperationModel()),
-        c);
+    mgr.apply(new OperationExtractor(classType, operations, new DefaultReflectionPredicate()), c);
 
     assertThat("there should be 20 operations", operations.size(), is(equalTo(20)));
   }
@@ -110,9 +104,7 @@ public class OperationExtractorTest {
         Substitution.forArgs(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     classType = classType.apply(substitution);
 
-    OperationModel model = new OperationModel();
-    mgr.apply(
-        new OperationExtractor(classType, operations, new DefaultReflectionPredicate(), model), c);
+    mgr.apply(new OperationExtractor(classType, operations, new DefaultReflectionPredicate()), c);
     assertThat("should be three operations", operations.size(), is(equalTo(3)));
 
     ClassOrInterfaceType memberType = null;
@@ -122,6 +114,7 @@ public class OperationExtractorTest {
         memberType = (ClassOrInterfaceType) operation.getOutputType();
       }
     }
+    assert memberType != null : "member type should not be null";
     assertThat(
         "member type name",
         memberType.getName(),
@@ -148,13 +141,35 @@ public class OperationExtractorTest {
     assertFalse("should not have type parameters", classType.getTypeParameters().size() > 0);
     assertFalse("static member is not parameterized", classType.isParameterized());
 
-    OperationModel model = new OperationModel();
     mgr.apply(
-        new OperationExtractor(classType, operations, new DefaultReflectionPredicate(), model),
+        new OperationExtractor(classType, operations, new DefaultReflectionPredicate()),
         classType.getRuntimeClass());
 
     assertThat("should be two operations", operations.size(), is(equalTo(2)));
+  }
 
-    //fail("not implemented");
+  @Test
+  public void partialInstantiationTest() {
+    final Set<TypedOperation> operations = new LinkedHashSet<>();
+    ReflectionManager mgr =
+        new ReflectionManager(new PackageVisibilityPredicate(this.getClass().getPackage()));
+
+    String classname = "randoop.reflection.PartialBindingInput";
+    Class<?> c = null;
+    try {
+      c = TypeNames.getTypeForName(classname);
+    } catch (ClassNotFoundException e) {
+      fail("did not find class: " + e);
+    }
+    assert c != null;
+    ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
+    assertFalse("class type should not be generic", classType.isGeneric());
+    assertFalse("class type is not parameterized", classType.isParameterized());
+    assertFalse("should not have type parameters", classType.getTypeParameters().size() > 0);
+
+    mgr.apply(
+        new OperationExtractor(classType, operations, new DefaultReflectionPredicate()),
+        classType.getRuntimeClass());
+    assertThat("should be 3 operations", operations.size(), is(equalTo(3)));
   }
 }

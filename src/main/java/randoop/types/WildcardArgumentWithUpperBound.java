@@ -23,7 +23,7 @@ class WildcardArgumentWithUpperBound extends WildcardArgument {
    * Creates a wildcard argument with the given reference type as an Upper bound.
    * @param bound  the bound type
    */
-  WildcardArgumentWithUpperBound(EagerReferenceBound bound) {
+  WildcardArgumentWithUpperBound(ParameterBound bound) {
     super(bound);
   }
 
@@ -37,8 +37,11 @@ class WildcardArgumentWithUpperBound extends WildcardArgument {
 
   @Override
   public WildcardArgument apply(Substitution<ReferenceType> substitution) {
-    return new WildcardArgumentWithUpperBound(
-        (EagerReferenceBound) getTypeBound().apply(substitution));
+    ParameterBound b = getTypeBound().apply(substitution);
+    if (b.equals(getTypeBound())) {
+      return this;
+    }
+    return new WildcardArgumentWithUpperBound(b);
   }
 
   /**

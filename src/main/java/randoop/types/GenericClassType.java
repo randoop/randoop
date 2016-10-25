@@ -71,20 +71,11 @@ public class GenericClassType extends ParameterizedType {
    */
   @Override
   public InstantiatedType apply(Substitution<ReferenceType> substitution) {
-    if (substitution == null) {
-      throw new IllegalArgumentException("substitution must be non-null");
-    }
     List<TypeArgument> argumentList = new ArrayList<>();
     for (TypeVariable variable : parameters) {
       ReferenceType referenceType = substitution.get(variable);
       if (referenceType == null) {
-        throw new IllegalArgumentException(
-            "substitution has no value for variable "
-                + variable.getName()
-                + " ("
-                + variable.hashCode()
-                + ") in "
-                + this.getName());
+        referenceType = variable;
       }
       argumentList.add(new ReferenceArgument(referenceType));
     }

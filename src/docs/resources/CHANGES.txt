@@ -1,6 +1,8 @@
 Version 3.0.7, released Octember 1, 2016
 
-Fixes...
+Randoop now instantiates generic classes and operations on-the-fly using the
+types in previously generated test sequences. As a result, is able to generate
+more diverse instantiations of generics, as well as multidimensional arrays.
 
 
 Version 3.0.6, released October 14, 2016

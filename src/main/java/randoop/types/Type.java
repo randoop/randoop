@@ -399,4 +399,13 @@ public abstract class Type {
     // default behavior, refined by overrides in subclasses
     return this.equals(otherType);
   }
+
+  /**
+   * Indicate whether this type is a class or interface type.
+   *
+   * @return true if this type is a class or interface type; false, otherwise
+   */
+  public boolean isClassType() {
+    return false;
+  }
 }

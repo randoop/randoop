@@ -63,12 +63,12 @@ public class OperationModelTest {
 
     assertThat(
         "only expect the LinkedList and Object classes",
-        model.getConcreteClasses().size(),
+        model.getClassTypes().size(),
         is(equalTo(2)));
     int genericOpCount = 0;
     int concreteOpCount = 0;
     int wildcardTypeCount = 0;
-    for (TypedOperation operation : model.getConcreteOperations()) {
+    for (TypedOperation operation : model.getOperations()) {
       if (operation.isGeneric()) {
         genericOpCount++;
       } else if (operation.hasWildcardTypes()) {
@@ -77,11 +77,13 @@ public class OperationModelTest {
         concreteOpCount++;
       }
     }
-    assertThat("concrete operation count (JDK7: 51, JDK8: 58)", concreteOpCount, isOneOf(51, 58));
-    assertEquals("generic operation count", 0, genericOpCount);
+    assertThat("concrete operation count ", concreteOpCount, is(equalTo(1)));
+    assertThat("generic operation count (JDK7: 51, JDK8: 58)", genericOpCount, isOneOf(50, 57));
     assertEquals("wildcard operation count", 0, wildcardTypeCount);
     assertEquals(
-        "all operations instantiated", model.getConcreteOperations().size(), concreteOpCount);
+        "all operations generic or concrete",
+        model.getOperations().size(),
+        concreteOpCount + genericOpCount);
   }
 
   @Test
@@ -114,10 +116,10 @@ public class OperationModelTest {
     assert model != null : "model was not initialized";
     assertThat(
         "should have both outer and inner classes, plus Object",
-        model.getConcreteClasses().size(),
+        model.getClassTypes().size(),
         is(equalTo(3)));
 
-    assertTrue("should have nonzero operations set", model.getConcreteOperations().size() > 1);
+    assertTrue("should have nonzero operations set", model.getOperations().size() > 1);
   }
 
   @Test
@@ -125,34 +127,33 @@ public class OperationModelTest {
     OperationModel model = getOperationModel("randoop.reflection.GenericClass");
     assert model != null : "model was not initialized";
 
-    assertEquals("should be two classes ", 2, model.getConcreteClasses().size());
+    assertEquals("should be two classes ", 2, model.getClassTypes().size());
 
-    for (ClassOrInterfaceType classType : model.getConcreteClasses()) {
-      assertTrue("classes are all non generic", !classType.isGeneric());
+    for (ClassOrInterfaceType classType : model.getClassTypes()) {
+      assertTrue(
+          "types should be Object or generic", classType.isObject() || classType.isGeneric());
     }
 
     int genericOpCount = 0;
     int wildcardOpCount = 0;
     int concreteOpCount = 0;
 
-    for (TypedOperation operation : model.getConcreteOperations()) {
-
+    for (TypedOperation operation : model.getOperations()) {
       if (operation.isGeneric()) {
         genericOpCount++;
-        System.out.println(operation);
       } else if (operation.hasWildcardTypes()) {
         wildcardOpCount++;
       } else {
         concreteOpCount++;
       }
     }
-    assertEquals("should be no generic operations", 0, genericOpCount);
+    assertEquals("should be 20 generic operations", 20, genericOpCount);
     assertEquals("should be no wildcard operations", 0, wildcardOpCount);
     assertEquals(
-        "all operations should be instantiated ",
-        model.getConcreteOperations().size(),
+        "all operations should be concrete or generic ",
+        model.getOperations().size() - genericOpCount,
         concreteOpCount);
-    assertEquals("should have 21 operations", 21, model.getConcreteOperations().size());
+    assertEquals("should have 21 operations", 21, model.getOperations().size());
   }
 
   /**
@@ -188,7 +189,7 @@ public class OperationModelTest {
     assert model != null : "model was not initialized";
 
     List<TypedOperation> alphaOps = new ArrayList<>();
-    for (TypedOperation operation : model.getConcreteOperations()) {
+    for (TypedOperation operation : model.getOperations()) {
       if (operation.getName().equals("alpha")) {
         alphaOps.add(operation);
       }
@@ -250,8 +251,7 @@ public class OperationModelTest {
     expected.add(ClassOrInterfaceType.forClass(ClassWithMemberTypes.InnerClass.class));
     expected.add(ClassOrInterfaceType.forClass(ClassWithMemberTypes.MemberInterface.class));
     for (ClassOrInterfaceType t : expected) {
-      assertTrue(
-          "expected type " + t + " should be harvested", model.getConcreteClasses().contains(t));
+      assertTrue("expected type " + t + " should be harvested", model.getClassTypes().contains(t));
     }
 
     List<ClassOrInterfaceType> notExpected = new ArrayList<>();
@@ -266,7 +266,7 @@ public class OperationModelTest {
     for (ClassOrInterfaceType t : notExpected) {
       assertFalse(
           "package private type " + t + " should not be harvested",
-          model.getConcreteClasses().contains(t));
+          model.getClassTypes().contains(t));
     }
   }
 
@@ -276,13 +276,13 @@ public class OperationModelTest {
     OperationModel model = getOperationModel(classname);
     assert model != null : " model was not initialized";
 
-    List<TypedOperation> operations = model.getConcreteOperations();
+    List<TypedOperation> operations = model.getOperations();
     for (TypedOperation operation : operations) {
       if (!operation.isConstructorCall() && !operation.getOutputType().isVoid()) {
         assertTrue(
             "is member class", ((ClassOrInterfaceType) operation.getOutputType()).isMemberClass());
-        assertTrue("is parameterized", operation.getOutputType().isParameterized());
-        assertFalse("is not generic", operation.getOutputType().isGeneric());
+        assertFalse("is not parameterized", operation.getOutputType().isParameterized());
+        assertTrue("is generic", operation.getOutputType().isGeneric());
       }
     }
     //fail("incomplete");

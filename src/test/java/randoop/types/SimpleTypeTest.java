@@ -212,7 +212,7 @@ public class SimpleTypeTest {
     Type longType = new PrimitiveType(long.class);
     Type shortType = new PrimitiveType(short.class);
     Type subclassType = new NonParameterizedType(randoop.types.test.Subclass.class);
-    Type intArrayType = ArrayType.ofElementType(intType);
+    Type intArrayType = ArrayType.ofComponentType(intType);
     Type intArrayListType;
     intArrayListType =
         GenericClassType.forClass(ArrayList.class)

@@ -210,7 +210,7 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     }
 
-    List<TypedOperation> model = operationModel.getConcreteOperations();
+    List<TypedOperation> model = operationModel.getOperations();
 
     if (model.isEmpty()) {
       Log.out.println("There are no methods to test. Exiting.");

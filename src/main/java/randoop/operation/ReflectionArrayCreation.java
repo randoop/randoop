@@ -22,7 +22,7 @@ public class ReflectionArrayCreation extends CallableOperation {
   private final int length;
 
   public ReflectionArrayCreation(ArrayType arrayType, int length) {
-    this.elementType = arrayType.getElementType();
+    this.elementType = arrayType.getComponentType();
     this.length = length;
   }
 

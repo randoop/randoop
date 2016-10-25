@@ -42,7 +42,8 @@ public class PackageVisibilityPredicate implements VisibilityPredicate {
   @Override
   public boolean isVisible(Class<?> c) {
     int mods = c.getModifiers() & Modifier.classModifiers();
-    return isVisible(mods, c.getPackage());
+    return (c.getDeclaringClass() == null || isVisible(c.getDeclaringClass()))
+        && isVisible(mods, c.getPackage());
   }
 
   /**
