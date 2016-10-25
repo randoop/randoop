@@ -117,7 +117,8 @@ class HelperSequenceCreator {
     assert argumentList.size() == 1 : "Collection classes should have one type argument";
     TypeArgument argumentType = argumentList.get(0);
     ReferenceType elementType;
-    assert argumentType instanceof ReferenceArgument : "type argument must be reference type";
+    assert argumentType instanceof ReferenceArgument
+        : "type argument must be reference type, have " + argumentType;
     elementType = ((ReferenceArgument) argumentType).getReferenceType();
 
     // select implementing Collection type and instantiate

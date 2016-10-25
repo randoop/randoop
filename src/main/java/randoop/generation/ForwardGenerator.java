@@ -323,7 +323,7 @@ public class ForwardGenerator extends AbstractGenerator {
       Log.logLine("Selected operation: " + operation.toString());
     }
 
-    if (operation.isGeneric()) {
+    if (operation.isGeneric() || operation.hasWildcardTypes()) {
       operation = instantiator.instantiate((TypedClassOperation) operation);
       if (operation == null) { //failed to instantiate generic
         return null;
