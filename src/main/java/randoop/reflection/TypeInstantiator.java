@@ -53,6 +53,7 @@ public class TypeInstantiator {
       if (operation.isConstructorCall()
           || (operation.isStatic() && operation.getOutputType().equals(genericDeclaringType))) {
         substitution = instantiateDeclaringClass(genericDeclaringType);
+        //XXX handle SortedSet types here
       } else { //otherwise, select from existing one
         substitution = selectMatch(genericDeclaringType);
       }
@@ -63,6 +64,8 @@ public class TypeInstantiator {
       operation = operation.apply(substitution);
     }
     // type parameters of declaring type are instantiated
+
+    //XXX make sure do not have remaining generic SortedSet before otherwise instantiating operation
 
     operation = instantiateOperationTypes(operation);
 
