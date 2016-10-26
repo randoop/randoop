@@ -353,7 +353,7 @@ public class ForwardGenerator extends AbstractGenerator {
     if (GenInputsAbstract.repeat_heuristic && Randomness.nextRandomInt(10) == 0) {
       int times = Randomness.nextRandomInt(100);
       newSequence = repeat(newSequence, operation, times);
-      if (Log.isLoggingOn()) Log.log(">>>" + times + newSequence.toCodeString());
+      if (Log.isLoggingOn()) Log.log("repeat-heuristic>>>" + times + newSequence.toCodeString());
     }
 
     // If parameterless statement, subsequence inputs

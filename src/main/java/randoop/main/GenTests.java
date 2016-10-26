@@ -444,7 +444,7 @@ public class GenTests extends GenInputsAbstract {
           Log.logLine(opName);
         }
       } else {
-        System.out.printf(
+        System.err.printf(
             "Unable to find a previous occurrence of subsequence%n"
                 + "%s%n"
                 + "where exception was thrown%n"
