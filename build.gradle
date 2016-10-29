@@ -567,6 +567,13 @@ task tags(type: Exec, dependsOn: 'clone') {
   commandLine "bash", "-c", "find src/ -name *.java | sort-directory-order | xargs etags"
 }
 
+/* Make Emacs TAGS table, with only Randoop code (not test code) */
+task tagsNoTests(type: Exec, dependsOn: 'clone') {
+  description "Run etags to create an Emacs TAGS table"
+  environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
+  commandLine "bash", "-c", "find src/ -name *.java | sort-directory-order | grep -v /testinput/ | xargs etags"
+}
+
 /* Run checklink */
 task checklink(type: Exec, dependsOn: 'clone') {
   description "Run checklink on randoop.github.io/randoop/ and write output to checklink-log.txt"
