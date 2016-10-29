@@ -153,7 +153,7 @@ class IntersectionTypeBound extends ParameterBound {
   /**
    * {@inheritDoc}
    * @return true if the argument type satisfies all of the bounds in this
-   * intersection type bound.
+   * intersection type bound
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution<ReferenceType> subst) {
@@ -168,7 +168,7 @@ class IntersectionTypeBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * @return true if the argument bound has all of the member bounds of this object as an upper bound.
+   * @return true if the argument bound has all of the member bounds of this object as an upper bound
    */
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution) {

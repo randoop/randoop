@@ -105,7 +105,7 @@ public class EnumConstant extends CallableOperation {
    * @param desc string representing type-value pair for an enum constant
    * @return the enum constant operation for the string descriptor
    * @throws OperationParseException
-   *           if desc does not match expected form.
+   *           if desc does not match expected form
    */
   public static TypedClassOperation parse(String desc) throws OperationParseException {
     if (desc == null) {

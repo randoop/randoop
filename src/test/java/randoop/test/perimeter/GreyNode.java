@@ -8,7 +8,7 @@ public class GreyNode extends QuadTreeNode {
   /**
    * Construct a <tt>grey</tt> image node.
    * @param quadrant the quadrant that this node represents
-   * @param parent the parent node in the quad tree.
+   * @param parent the parent node in the quad tree
    **/
   public GreyNode(Quadrant quadrant, QuadTreeNode parent) {
     super(quadrant, parent);
@@ -18,7 +18,7 @@ public class GreyNode extends QuadTreeNode {
    * Compute the perimeter for a grey node using Samet's algorithm.
    *
    * @param size the size of the image that this node represents
-   * @return the perimeter of the image represented by this node.
+   * @return the perimeter of the image represented by this node
    **/
   @Override
   public int perimeter(int size) {

@@ -6,7 +6,6 @@ package randoop.util;
  * timer is in a stopped state.
  *
  * Time is measured in milliseconds, using System.currentTimeMillis().
- *
  */
 public class Timer {
 
@@ -16,7 +15,6 @@ public class Timer {
 
   /**
    * Creates a timer. Timer starts in stopped state.
-   *
    */
   public Timer() {
     this.timeElapsed = 0;

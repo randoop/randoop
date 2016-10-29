@@ -26,7 +26,7 @@ public class Hospital {
 
   /**
    * Add a patient to this hospital
-   * @param p the patient.
+   * @param p the patient
    **/
   public final void putInHospital(Patient p) {
     int num = p.hospitalsVisited;

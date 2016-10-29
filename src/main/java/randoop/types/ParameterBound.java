@@ -103,7 +103,7 @@ public abstract class ParameterBound {
    * Applies the given substitution to this type bound by replacing type variables.
    *
    * @param substitution  the type substitution
-   * @return this bound with the type after the substitution has been applied.
+   * @return this bound with the type after the substitution has been applied
    */
   public abstract ParameterBound apply(Substitution<ReferenceType> substitution);
 

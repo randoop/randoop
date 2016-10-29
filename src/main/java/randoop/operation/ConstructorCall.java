@@ -48,7 +48,7 @@ public final class ConstructorCall extends CallableOperation {
    * Creates object corresponding to the given reflection constructor.
    *
    * @param constructor
-   *          reflective object for a constructor.
+   *          reflective object for a constructor
    */
   public ConstructorCall(Constructor<?> constructor) {
     if (constructor == null) throw new IllegalArgumentException("constructor should not be null.");
@@ -94,9 +94,9 @@ public final class ConstructorCall extends CallableOperation {
    *
    * @param inputVars
    *          a list of variables representing the actual arguments for the
-   *          constructor call.
+   *          constructor call
    * @param b
-   *          the StringBuilder to which the output is appended.
+   *          the StringBuilder to which the output is appended
    * @see TypedClassOperation#appendCode(List, StringBuilder)
    */
   @Override
@@ -194,9 +194,9 @@ public final class ConstructorCall extends CallableOperation {
    *
    * @param statementInput
    *          is an array of values corresponding to signature of the
-   *          constructor.
+   *          constructor
    * @param out
-   *          is a stream for any output.
+   *          is a stream for any output
    * @see TypedOperation#execute(Object[], PrintStream)
    */
   @Override
@@ -261,10 +261,10 @@ public final class ConstructorCall extends CallableOperation {
    * @see OperationParser#parse(String)
    *
    * @param signature
-   *          a string descriptor of a constructor call.
+   *          a string descriptor of a constructor call
    * @return the constructor call for the given string descriptor
    * @throws OperationParseException
-   *           if no constructor found for signature.
+   *           if no constructor found for signature
    */
   public static TypedClassOperation parse(String signature) throws OperationParseException {
     if (signature == null) {

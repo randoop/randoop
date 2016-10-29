@@ -46,7 +46,6 @@ import static org.junit.Assert.fail;
  * to verify what is collected from enums and classes using enums. In particular,
  * want to collect enum constants, methods of enum (esp. if abstract), enums that are
  * are inner types.
- *
  */
 public class EnumReflectionTest {
 
@@ -94,7 +93,6 @@ public class EnumReflectionTest {
    * innerEnum tests that Reflection.getStatements is collecting simple
    * enum constants from a class. Uses randoop.test.PlayingCard, which has
    * two public enums, one private enum, and one enum with package access.
-   *
    */
   @SuppressWarnings("unchecked")
   @Test

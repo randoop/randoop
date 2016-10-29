@@ -223,7 +223,7 @@ public class StringEscapeUtils {
    * </p>
    *
    * @param ch
-   *          The character to convert.
+   *          The character to convert
    * @return an upper case hexadecimal <code>String</code>
    */
   private static String hex(char ch) {

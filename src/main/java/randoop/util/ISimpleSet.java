@@ -10,7 +10,7 @@ public interface ISimpleSet<T> {
    * Precondition: the given elt is not already in the set.
    *
    * @param elt
-   *          cannot be null.
+   *          cannot be null
    */
   void add(T elt);
 
@@ -20,7 +20,7 @@ public interface ISimpleSet<T> {
    * Precondition: the given elt is in the set.
    *
    * @param elt
-   *          cannot be null.
+   *          cannot be null
    */
   void remove(T elt);
 
@@ -28,7 +28,7 @@ public interface ISimpleSet<T> {
    * Returns true if elt is in this set.
    *
    * @param elt
-   *          cannot be null.
+   *          cannot be null
    * @return true if this set contains the element, false otherwise
    */
   boolean contains(T elt);

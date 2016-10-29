@@ -71,7 +71,7 @@ public class Perimeter {
 
   /**
    * Parse the command line options.
-   * @param args the command line options.
+   * @param args the command line options
    **/
   private static final void parseCmdLine(String[] args) {
     int i = 0;

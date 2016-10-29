@@ -63,7 +63,7 @@ public class NotPrivateVisibilityPredicate implements VisibilityPredicate {
    * not have private set.
    *
    * @param mods
-   *          the modifiers value.
+   *          the modifiers value
    * @return true if the private bit is not set, false otherwise
    */
   private boolean isVisible(int mods) {

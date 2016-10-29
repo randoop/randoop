@@ -20,7 +20,7 @@ public class WhiteNode extends QuadTreeNode {
    * that is represented as a quadtree using Samet's algorithm.
    *
    * @param size the size of the image that this node represents (size X size)
-   * @return the size of the perimeter of the image.
+   * @return the size of the perimeter of the image
    **/
   @Override
   public int perimeter(int size) {

@@ -104,7 +104,7 @@ public final class PrimitiveTypes {
    *
    * @param target  the target type for assignment; that is, the lvalue or left-hand side.
    *    Must be primitive.
-   * @param source  the source type for assignment; that is, the rvalue or right-hand side
+   * @param source  the source type for assignment; that is, the rvalue or right-hand side.
    *    Must be primitive.
    * @return true if the source type can be assigned to the target type, false otherwise
    */

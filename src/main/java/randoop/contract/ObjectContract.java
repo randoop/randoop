@@ -43,7 +43,7 @@ public interface ObjectContract {
   /**
    * Returns the input types for this contract.
    *
-   * @return the input types for this contract.
+   * @return the input types for this contract
    */
   TypeTuple getInputTypes();
 

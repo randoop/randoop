@@ -49,7 +49,7 @@ public class FieldGet extends CallableOperation {
    * @param out  the stream for printing output (unused)
    * @return outcome of access
    * @throws BugInRandoopException
-   *           if field access throws bug exception.
+   *           if field access throws bug exception
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
@@ -74,9 +74,9 @@ public class FieldGet extends CallableOperation {
    * StringBuilder.
    *
    * @param inputVars
-   *          the list of variables to be used (ignored).
+   *          the list of variables to be used (ignored)
    * @param b
-   *          the StringBuilder that strings are appended to.
+   *          the StringBuilder that strings are appended to
    */
   @Override
   public void appendCode(
@@ -126,7 +126,7 @@ public class FieldGet extends CallableOperation {
    * " and "&gt;" included), and field-descriptor is as recognized by
    *
    * @param descr
-   *          the string containing descriptor of getter for a field.
+   *          the string containing descriptor of getter for a field
    * @return the getter operation for the given string descriptor
    * @throws OperationParseException
    *           if any error in descriptor string

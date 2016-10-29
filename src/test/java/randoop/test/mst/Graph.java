@@ -48,7 +48,7 @@ public class Graph {
 
   /**
    * Return the first node in the graph.
-   * @return the first node in the graph.
+   * @return the first node in the graph
    **/
   public Vertex firstNode() {
     return nodes[0];
@@ -77,7 +77,7 @@ public class Graph {
   /**
    * Compute the distance between two edges.  A random number generator
    * is used to compute the distance.
-   **/
+   */
   private int computeDist(int i, int j, int numvert) {
     int less, gt;
     if (i < j) {

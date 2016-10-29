@@ -53,7 +53,7 @@ public class ReflectionManager {
    *
    * @param predicate
    *          the predicate to indicate whether classes and class members should
-   *          be visited.
+   *          be visited
    */
   public ReflectionManager(VisibilityPredicate predicate) {
     this.predicate = predicate;
@@ -232,7 +232,7 @@ public class ReflectionManager {
    *
    * @param v  the {@link ClassVisitor}
    * @param f
-   *          the field to be visited.
+   *          the field to be visited
    */
   private void applyTo(ClassVisitor v, Field f) {
     if (Log.isLoggingOn()) {
@@ -246,7 +246,7 @@ public class ReflectionManager {
    *
    * @param v  the {@link ClassVisitor}
    * @param co
-   *          the constructor to be visited.
+   *          the constructor to be visited
    */
   private void applyTo(ClassVisitor v, Constructor<?> co) {
     if (Log.isLoggingOn()) {
@@ -260,7 +260,7 @@ public class ReflectionManager {
    *
    * @param v  the {@link ClassVisitor}
    * @param m
-   *          the method to be visited.
+   *          the method to be visited
    */
   private void applyTo(ClassVisitor v, Method m) {
     if (Log.isLoggingOn()) {
@@ -274,7 +274,7 @@ public class ReflectionManager {
    *
    * @param v  the {@link ClassVisitor}
    * @param e
-   *          the enum value to be visited.
+   *          the enum value to be visited
    */
   private void applyTo(ClassVisitor v, Enum<?> e) {
     if (Log.isLoggingOn()) {
@@ -289,7 +289,7 @@ public class ReflectionManager {
    *
    * @param v  the {@link ClassVisitor}
    * @param c
-   *          the class to be visited.
+   *          the class to be visited
    */
   private void visitAfter(ClassVisitor v, Class<?> c) {
     v.visitAfter(c);
@@ -300,7 +300,7 @@ public class ReflectionManager {
    * {@link #apply(Class)}.
    *
    * @param v  the {@link ClassVisitor}
-   * @param c  the class to be visited.
+   * @param c  the class to be visited
    */
   private void visitBefore(ClassVisitor v, Class<?> c) {
     v.visitBefore(c);

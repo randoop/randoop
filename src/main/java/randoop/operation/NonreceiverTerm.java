@@ -197,7 +197,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * Also, returns null for {@link JavaTypes#CLASS_TYPE}.
    *
    * @param type
-   *          the type of value desired.
+   *          the type of value desired
    * @return a {@link NonreceiverTerm} with a canonical representative of the
    *         given type.
    */
@@ -278,10 +278,10 @@ public final class NonreceiverTerm extends CallableOperation {
    * {@link NonreceiverTerm#toParsableString(Type, TypeTuple, Type)}
    *
    * @param s
-   *          a string representing a value of a non-receiver type.
+   *          a string representing a value of a non-receiver type
    * @return the non-receiver term for the given string descriptor
    * @throws OperationParseException
-   *           if string does not represent valid object.
+   *           if string does not represent valid object
    */
   public static TypedOperation parse(String s) throws OperationParseException {
     if (s == null) throw new IllegalArgumentException("s cannot be null.");

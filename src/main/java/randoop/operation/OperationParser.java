@@ -39,10 +39,10 @@ public class OperationParser {
    * classes implementing Operation.
    *
    * @param str
-   *          the string to be parsed.
+   *          the string to be parsed
    * @return the operation for the given string descriptor
    * @throws OperationParseException
-   *           if the string does not have expected format.
+   *           if the string does not have expected format
    */
   public static TypedOperation parse(String str) throws OperationParseException {
     if (str == null || str.length() == 0) {
@@ -109,7 +109,7 @@ public class OperationParser {
    * such as "prim". It is not a unique identifier for individual Operations.
    *
    * @param op
-   *          the operation.
+   *          the operation
    * @return the ID string for the operation
    */
   public static String getId(TypedOperation op) {

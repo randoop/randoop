@@ -21,15 +21,15 @@ public class Health {
   private static int maxTime = 0;
   /**
    * A seed value for the random no. generator.
-   **/
+   */
   private static int seed = 0;
   /**
    * Set to true to print the results.
-   **/
+   */
   private static boolean printResult = false;
   /**
    * Set to true to print information messages.
-   **/
+   */
   private static boolean printMsgs = false;
 
   /**

@@ -49,7 +49,7 @@ class StringPrintWriter extends PrintWriter {
    * Constructs a new instance using the specified initial string-buffer size.
    *
    * @param initialSize
-   *          an int specifying the initial size of the buffer.
+   *          an int specifying the initial size of the buffer
    */
   public StringPrintWriter(int initialSize) {
     super(new StringWriter(initialSize));

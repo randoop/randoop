@@ -4,7 +4,7 @@ package randoop.test.bh;
  * several math operations.  To improve speed we implement the
  * vector as an array of doubles rather than use the exising
  * code in the java.util.Vector class.
- **/
+ */
 public class MathVector implements Cloneable {
   /**
    * The number of dimensions in the vector
@@ -46,7 +46,7 @@ public class MathVector implements Cloneable {
   /**
    * Return the value at the i'th index of the vector.
    * @param i the vector index
-   * @return the value at the i'th index of the vector.
+   * @return the value at the i'th index of the vector
    **/
   public final double value(int i) {
     return data[i];
@@ -84,7 +84,7 @@ public class MathVector implements Cloneable {
   /**
    * Subtract two vectors and the result is placed in this vector.
    * This vector contain the first operand.
-   * @param u the other operand of the subtraction.
+   * @param u the other operand of the subtraction
    **/
   public final void subtraction(MathVector u) {
     for (int i = 0; i < NDIM; i++) {
@@ -126,7 +126,7 @@ public class MathVector implements Cloneable {
 
   /**
    * Divide each element of the vector by a scalar value.
-   * @param s the scalar value.
+   * @param s the scalar value
    **/
   public final void divScalar(double s) {
     for (int i = 0; i < NDIM; i++) {
@@ -136,7 +136,7 @@ public class MathVector implements Cloneable {
 
   /**
    * Return the dot product of a vector.
-   * @return the dot product of a vector.
+   * @return the dot product of a vector
    **/
   public final double dotProduct() {
     double s = 0.0;

@@ -73,13 +73,13 @@ public class JunitFileWriter {
    * the specified directory and with the specified class name.
    *
    * @param junitOutputDir
-   *          directory where files are to be written.
+   *          directory where files are to be written
    * @param packageName
-   *          package name for test classes.
+   *          package name for test classes
    * @param es
-   *          executable sequence to be written to test class.
+   *          executable sequence to be written to test class
    * @param className
-   *          name of test class.
+   *          name of test class
    * @return the File that new test class was written to
    */
   public static File writeJUnitTestFile(
@@ -97,7 +97,7 @@ public class JunitFileWriter {
    *
    * @param seqPartition
    *          suite of test classes as a list of lists of executable sequences
-   * @return list of File objects corresponding to test class files generated.
+   * @return list of File objects corresponding to test class files generated
    *
    * @see #writeSuiteFile
    * @see #writeDriverFile
@@ -124,9 +124,9 @@ public class JunitFileWriter {
    * name.
    *
    * @param sequences
-   *          list of executable sequences for method bodies.
+   *          list of executable sequences for method bodies
    * @param testClassName
-   *          name of test class.
+   *          name of test class
    * @return the File object for generated java file
    */
   private File writeTestClass(List<ExecutableSequence> sequences, String testClassName) {
@@ -175,11 +175,11 @@ public class JunitFileWriter {
    * Writes a test method to the output stream for the sequence s.
    *
    * @param out
-   *          the output stream for test class file.
+   *          the output stream for test class file
    * @param className
-   *          the name of test class.
+   *          the name of test class
    * @param methodName
-   *          the name of test method.
+   *          the name of test method
    * @param s
    *          the {@link ExecutableSequence} for test method.
    */
@@ -222,7 +222,7 @@ public class JunitFileWriter {
    * in a class whose name is the {@link #masterTestClassName}.
    *
    * @param additionalTestClassNames
-   *          a list of class names to be added to suite.
+   *          a list of class names to be added to suite
    * @return {@link File} object for test suite file.
    */
   public File writeSuiteFile(List<String> additionalTestClassNames) {
@@ -343,7 +343,7 @@ public class JunitFileWriter {
      * Creates an instance that generates names beginning with prefix, count
      * starting at the initialValue, and 0-padded to digits digits.
      *
-     * @param prefix a string to be used as the prefix for all generated names.
+     * @param prefix a string to be used as the prefix for all generated names
      *
      * @param initialValue integer starting value for name counter
      *

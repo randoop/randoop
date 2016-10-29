@@ -12,7 +12,6 @@ import plume.UtilMDE;
  * This class maintains an "executor" thread. Code is executed on that thread.
  * If the code takes longer than the specified timeout, the thread is killed and
  * a TimeoutExceededException exception is reported.
- *
  */
 public final class ReflectionExecutor {
 
@@ -94,7 +93,7 @@ public final class ReflectionExecutor {
    *
    * @param code  the {@link ReflectionCode} to be executed
    * @param out
-   *          stream to print message to or null if message is to be ignored.
+   *          stream to print message to or null if message is to be ignored
    * @return null or the exception thrown
    */
   @SuppressWarnings("deprecation")

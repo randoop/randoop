@@ -19,7 +19,6 @@ import randoop.types.TypeTuple;
  * Statement represents a statement involving an operation (or term), and the
  * list of inputs for the statement. The inputs are variables, but are
  * represented by indexing into the enclosing sequence.
- *
  */
 public final class Statement {
 
@@ -52,7 +51,7 @@ public final class Statement {
    * Creates a statement based on the given operation
    *
    * @param operation
-   *          the operation for action of this statement.
+   *          the operation for action of this statement
    */
   public Statement(TypedOperation operation) {
     this(operation, new ArrayList<RelativeNegativeIndex>());
@@ -108,7 +107,7 @@ public final class Statement {
    * @param variable
    *          the {@link Variable} to be used if an initialization.
    * @param inputs
-   *          the input list for the operation of the statement.
+   *          the input list for the operation of the statement
    * @param b
    *          the {@code StringBuilder} to which code text is appended.
    */
@@ -172,9 +171,9 @@ public final class Statement {
    * returns outcome.
    *
    * @param inputs
-   *          list of objects to use as inputs to execution.
+   *          list of objects to use as inputs to execution
    * @param out
-   *          stream for any output.
+   *          stream for any output
    * @return object representing outcome of computation
    */
   public ExecutionOutcome execute(Object[] inputs, PrintStream out) {

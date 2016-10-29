@@ -222,8 +222,10 @@ public class GenTests extends GenInputsAbstract {
 
     /*
      * Initialize components:
-     * - Add default seeds for primitive types
-     * - Add any values for TestValue annotated static fields in operationModel
+     * <ul>
+     *   <li>Add default seeds for primitive types
+     *   <li>Add any values for TestValue annotated static fields in operationModel
+     * </ul>
      */
     Set<Sequence> components = new LinkedHashSet<>();
     components.addAll(SeedSequences.defaultSeeds());
@@ -578,14 +580,14 @@ public class GenTests extends GenInputsAbstract {
    * Writes the sequences as JUnit files to the specified directory.
    *
    * @param output_dir
-   *          string name of output directory.
+   *          string name of output directory
    * @param seqList
-   *          a list of sequences to write.
+   *          a list of sequences to write
    * @param additionalJUnitClasses
-   *          other classes to write (may be null).
+   *          other classes to write (may be null)
    * @param junitClassname
    *          the base name for the class
-   * @return list of files written.
+   * @return list of files written
    **/
   private static List<File> writeJUnitTests(
       String output_dir,

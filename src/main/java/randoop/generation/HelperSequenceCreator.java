@@ -402,7 +402,7 @@ class HelperSequenceCreator {
    * allows initialization of a {@link Collection} object.
    *
    * @param elementType  the element type of the collection
-   * @return the operation to initialize a collection from an array.
+   * @return the operation to initialize a collection from an array
    */
   private static TypedOperation getCollectionAddAllOperation(ReferenceType elementType) {
     Class<?> collectionsClass = Collections.class;

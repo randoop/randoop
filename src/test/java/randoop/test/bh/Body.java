@@ -254,7 +254,7 @@ public final class Body extends Node {
 
   /**
    * Return a string represenation of a body.
-   * @return a string represenation of a body.
+   * @return a string represenation of a body
    **/
   @Override
   public String toString() {

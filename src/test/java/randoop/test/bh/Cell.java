@@ -9,7 +9,7 @@ public final class Cell extends Node {
   /**
    * The children of this cell node.  Each entry may contain either
    * another cell or a body.
-   **/
+   */
   Node[] subp;
   Cell next;
 
@@ -80,7 +80,7 @@ public final class Cell extends Node {
 
   /**
    * Decide if the cell is too close to accept as a single term.
-   * @return true if the cell is too close.
+   * @return true if the cell is too close
    **/
   public final boolean subdivp(double dsq, HG hg) {
     MathVector dr = new MathVector();
@@ -93,7 +93,7 @@ public final class Cell extends Node {
 
   /**
    * Return a string represenation of a cell.
-   * @return a string represenation of a cell.
+   * @return a string represenation of a cell
    **/
   @Override
   public String toString() {

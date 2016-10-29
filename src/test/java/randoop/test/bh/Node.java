@@ -43,7 +43,7 @@ public abstract class Node {
 
   /**
    * Return a string representation of a node.
-   * @return a string representation of a node.
+   * @return a string representation of a node
    **/
   @Override
   public String toString() {
