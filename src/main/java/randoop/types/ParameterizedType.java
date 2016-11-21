@@ -46,7 +46,6 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
     }
 
     java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType) type;
-
     Type rawType = t.getRawType();
     assert (rawType instanceof Class<?>) : "rawtype not an instance of Class<?> type ";
 

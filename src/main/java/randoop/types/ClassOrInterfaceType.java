@@ -1,6 +1,8 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -291,6 +293,26 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   public ClassOrInterfaceType getSuperclass() {
     // Default implementation, overridden in subclasses
     return JavaTypes.OBJECT_TYPE;
+  }
+
+  public Collection<ClassOrInterfaceType> getSuperTypes() {
+    Collection<ClassOrInterfaceType> supertypes = new HashSet<>();
+    if (this.isObject()) {
+      return supertypes;
+    }
+    ClassOrInterfaceType superclass = this.getSuperclass();
+    if (superclass != null) {
+      supertypes.add(superclass);
+      supertypes.addAll(superclass.getSuperTypes());
+    }
+    List<ClassOrInterfaceType> interfaces = this.getInterfaces();
+    for (ClassOrInterfaceType interfaceType : interfaces) {
+      if (interfaceType != null) {
+        supertypes.add(interfaceType);
+        supertypes.addAll(interfaceType.getSuperTypes());
+      }
+    }
+    return supertypes;
   }
 
   /**

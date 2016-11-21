@@ -54,6 +54,9 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public ParameterBound apply(Substitution<ReferenceType> substitution) {
+    if (substitution.isEmpty()) {
+      return this;
+    }
     if (boundType instanceof java.lang.reflect.TypeVariable) {
       ReferenceType referenceType = substitution.get(boundType);
       if (referenceType != null) {
@@ -72,7 +75,7 @@ class LazyParameterBound extends ParameterBound {
           ((ParameterizedType) boundType).getActualTypeArguments()) {
         TypeArgument typeArgument = apply(parameter, substitution);
         isLazy =
-            (parameter instanceof java.lang.reflect.TypeVariable)
+            (isTypeVariable(parameter))
                 && ((ReferenceArgument) typeArgument).getReferenceType().isVariable();
         argumentList.add(typeArgument);
       }
@@ -132,7 +135,7 @@ class LazyParameterBound extends ParameterBound {
         ParameterBound bound =
             ParameterBound.forTypes(wildcardType.getLowerBounds()).apply(substitution);
 
-        return new WildcardArgumentWithLowerBound((EagerReferenceBound) bound);
+        return new WildcardArgumentWithLowerBound(bound);
       }
       // a wildcard always has an upper bound
       assert wildcardType.getUpperBounds().length == 1

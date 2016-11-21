@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.lang.reflect.WildcardType;
+import java.util.Collection;
 
 /**
  * The superclass of a class hierarchy representing Java types defined in JLS Section 4.1.

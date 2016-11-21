@@ -87,7 +87,6 @@ public abstract class ParameterBound {
    *         bound
    */
   private static ParameterBound forType(java.lang.reflect.Type type) {
-
     if (type instanceof java.lang.reflect.ParameterizedType) {
       if (!hasTypeVariable(type)) {
         return new EagerReferenceBound(ParameterizedType.forType(type));
@@ -95,6 +94,10 @@ public abstract class ParameterBound {
     }
     if (type instanceof Class<?>) {
       return new EagerReferenceBound(ClassOrInterfaceType.forType(type));
+    }
+    if (isTypeVariable(type)) {
+      TypeVariable eagerBound = TypeVariable.forType(type);
+      return new EagerReferenceBound(eagerBound);
     }
     return new LazyParameterBound(type);
   }
@@ -131,7 +134,7 @@ public abstract class ParameterBound {
    * @return true if the type has a type variable, and false otherwise
    */
   private static boolean hasTypeVariable(java.lang.reflect.Type type) {
-    if (type instanceof java.lang.reflect.TypeVariable) {
+    if (isTypeVariable(type)) {
       return true;
     }
     if (type instanceof java.lang.reflect.ParameterizedType) {
@@ -156,6 +159,16 @@ public abstract class ParameterBound {
       }
     }
     return false;
+  }
+
+  /**
+   * Indicates whether the type is a type variable.
+   *
+   * @param type  the type to test
+   * @return  true if the type is a type variable, false otherwise
+   */
+  static boolean isTypeVariable(java.lang.reflect.Type type) {
+    return type instanceof java.lang.reflect.TypeVariable;
   }
 
   /**

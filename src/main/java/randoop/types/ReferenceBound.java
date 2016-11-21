@@ -24,7 +24,7 @@ public abstract class ReferenceBound extends ParameterBound {
    *
    * @return the type for this bound
    */
-  ReferenceType getBoundType() {
+  public ReferenceType getBoundType() {
     return boundType;
   }
 
@@ -56,6 +56,11 @@ public abstract class ReferenceBound extends ParameterBound {
   @Override
   boolean hasWildcard() {
     return boundType.isParameterized() && ((ParameterizedType) boundType).hasWildcard();
+  }
+
+  @Override
+  public boolean isGeneric() {
+    return boundType.isGeneric();
   }
 
   @Override
