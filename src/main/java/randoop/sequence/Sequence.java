@@ -58,6 +58,12 @@ public final class Sequence implements WeightedElement {
    */
   private transient /* final */ List<Type> lastStatementTypes;
 
+  /**
+   * The list of statement indices that as determined by construction define outputs of this
+   * sequence.
+   */
+  private List<Integer> outputIndices;
+
   /*
    * Weight is used by heuristic that favors smaller sequences so it makes sense
    * to define weight as the inverse of size.
@@ -138,6 +144,17 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
+   * Returns the list of output indices for use when sequences are dealt with compositionally.
+   * What is an output index is determined by how the sequence is created, but generally is the
+   * index of the last statement.
+   *
+   * @return the list of output indices for this sequence
+   */
+  public List<Integer> getOutputIndices() {
+    return outputIndices;
+  }
+
+  /**
    * The inputs for the ith statement. Includes the receiver.
    *
    * @param statementIndex  the index for the statement
@@ -152,8 +169,9 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Returns the Java source code representation of this sequence. Similar to
-   * {@link ExecutableSequence#toCodeString()} except does not include checks.
+   * Returns the Java source code representation of this sequence with values substituted for
+   * simple initializations.
+   * Similar to  * {@link ExecutableSequence#toCodeString()} except does not include checks.
    *
    * @return a string containing Java code for this sequence
    */
@@ -164,6 +182,22 @@ public final class Sequence implements WeightedElement {
       if (getStatement(i).getShortForm() != null) {
         continue;
       }
+      appendCode(b, i);
+    }
+    return b.toString();
+  }
+
+  /**
+   * Returns the Java source representation of this sequence showing all statements.
+   * Simplifications performed in {@link #toCodeString()} are preserved but initializations used
+   * will also be printed.
+   *
+   * @return a string containing Java code for this sequence
+   */
+  public String toFullCodeString() {
+    // XXX can we do this so that substitutions don't happen?
+    StringBuilder b = new StringBuilder();
+    for (int i = 0; i < size(); i++) {
       appendCode(b, i);
     }
     return b.toString();
@@ -410,6 +444,27 @@ public final class Sequence implements WeightedElement {
     return inputSequence.extend(operation, inputs);
   }
 
+  public static Sequence createSequence(TypedOperation operation, Sequence inputSequence) {
+    List<Variable> inputs = new ArrayList<>();
+    for (int index : inputSequence.getOutputIndices()) {
+      inputs.add(inputSequence.getVariable(index));
+    }
+    return inputSequence.extend(operation, inputs);
+  }
+
+  public static Sequence createSequence(List<Sequence> sequences, List<Integer> variables) {
+    assert sequences.size() == variables.size() : "must be one variable for each sequence";
+    Sequence sequence = Sequence.concatenate(sequences);
+    List<Integer> outputIndices = new ArrayList<>();
+    int size = 0;
+    for (int i = 0; i < sequences.size(); i++) {
+      outputIndices.add(size + variables.get(i));
+      size += sequences.get(i).size();
+    }
+    sequence.outputIndices = outputIndices;
+    return sequence;
+  }
+
   // The hashcode of a sequence is the sum of each statement's hashcode.
   // This seems good enough, and it makes computing hashCode of a
   // concatenation of sequences faster (it's just the addition of each
@@ -454,6 +509,8 @@ public final class Sequence implements WeightedElement {
     this.savedHashCode = hashCode;
     this.savedNetSize = netSize;
     computeLastStatementInfo();
+    this.outputIndices = new ArrayList<>();
+    outputIndices.add(this.statements.size() - 1);
     this.activeFlags = new BitSet(this.size());
     setAllActiveFlags();
     checkRep();
@@ -471,8 +528,8 @@ public final class Sequence implements WeightedElement {
 
       // Process return value
       if (!lastStatement.getOutputType().isVoid()) {
-        lastStatementTypes.add(lastStatement.getOutputType());
-        lastStatementVariables.add(new Variable(this, lastStatementIndex));
+        this.lastStatementTypes.add(lastStatement.getOutputType());
+        this.lastStatementVariables.add(new Variable(this, lastStatementIndex));
       }
 
       // Process input arguments.
@@ -493,8 +550,8 @@ public final class Sequence implements WeightedElement {
       for (int i = 0; i < v.size(); i++) {
         Variable actualArgument = v.get(i);
         assert lastStatement.getInputTypes().get(i).isAssignableFrom(actualArgument.getType());
-        lastStatementTypes.add(actualArgument.getType());
-        lastStatementVariables.add(actualArgument);
+        this.lastStatementTypes.add(actualArgument.getType());
+        this.lastStatementVariables.add(actualArgument);
       }
     }
   }
@@ -754,12 +811,12 @@ public final class Sequence implements WeightedElement {
       if (!(operation.getInputTypes().get(i).isAssignableFrom(newRefConstraint))) {
         String msg =
             i
-                + "th input constraint "
+                + "th given type "
                 + newRefConstraint
                 + " does not imply "
-                + "statement's "
+                + "operations's "
                 + i
-                + "th input constraint "
+                + "th input type "
                 + operation.getInputTypes().get(i)
                 + Globals.lineSep
                 + ".Sequence:"

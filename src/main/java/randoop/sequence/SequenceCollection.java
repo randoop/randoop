@@ -12,6 +12,7 @@ import randoop.Globals;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
 import randoop.reflection.TypeInstantiator;
+import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
@@ -163,6 +164,9 @@ public class SequenceCollection {
       if (sequence.isActive(argument.getDeclIndex())) {
         Type type = formalTypes.get(i);
         sequenceTypes.add(type);
+        if (type.isClassType()) {
+          sequenceTypes.addAll(((ClassOrInterfaceType) type).getSuperTypes());
+        }
         typeSet.add(type);
         updateCompatibleMap(sequence, type);
       }
