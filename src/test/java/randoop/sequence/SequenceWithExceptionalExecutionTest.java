@@ -79,7 +79,6 @@ public class SequenceWithExceptionalExecutionTest {
     input.add(sequence.getLastVariable());
     input.add(sequence.getVariable(linkedHashSetIndex));
     sequence = sequence.extend(TypedOperation.createArrayElementAssignment(arrayType), input);
-    System.out.println(sequence);
 
     ExecutableSequence es = new ExecutableSequence(sequence);
     TestCheckGenerator gen =
