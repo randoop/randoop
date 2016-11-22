@@ -511,6 +511,50 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Name of the package for the generated JUnit files")
   public static String junit_package_name = "";
 
+  /**
+   * Name of file containing code text to be added to the Before-annotated method of
+   * each generated test class.
+   * Code is uninterpreted, and, so, is not run during generation.
+   * Intended for use when run-time behavior of classes under test requires setup
+   * behavior that is not needed for execution by reflection.
+   * (The annotation Before is JUnit 4, and BeforeEach is JUnit 5.)
+   */
+  @Option("Filename for code to include in Before-annotated method of test classes")
+  public static String junit_before_each = null;
+
+  /**
+   * Name of file containing code text to be added to the After-annotated method of
+   * each generated test class.
+   * Intended for use when run-time behavior of classes under test requires
+   * tear-down behavior that is not needed for execution by reflection.
+   * Code is uninterpreted, and, so, is not run during generation.
+   * (The annotation After is JUnit 4, and AfterEach is JUnit 5.)
+   */
+  @Option("Filename for code to include in After-annotated method of test classes")
+  public static String junit_after_each = null;
+
+  /**
+   * Name of file containing code text to be added to the BeforeClass-annotated method of
+   * each generated test class.
+   * Intended for use when run-time behavior of classes under test requires setup
+   * behavior that is not needed for execution by reflection.
+   * Code is uninterpreted, and, so, is not run during generation.
+   * (The annotation BeforeClass is JUnit 4, and BeforeAll is JUnit 5.)
+   */
+  @Option("Filename for code to include in BeforeClass-annotated method of test classes")
+  public static String junit_before_all = null;
+
+  /**
+   * Name of file containing code text to be added to the AfterClass-annotated method of
+   * each generated test class.
+   * Intended for use when run-time behavior of classes under test requires
+   * tear-down behavior that is not needed for execution by reflection.
+   * Code is uninterpreted, and, so, is not run during generation.
+   * (The annotation After is JUnit 4, and AfterEach is JUnit 5.)
+   */
+  @Option("Filename for code to include in AfterClass-annotated method of test classes")
+  public static String junit_after_all = null;
+
   /** Name of the directory to which JUnit files should be written */
   @Option("Name of the directory to which JUnit files should be written")
   public static String junit_output_dir = null;

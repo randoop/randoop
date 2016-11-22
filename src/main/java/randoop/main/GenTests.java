@@ -1,6 +1,7 @@
 package randoop.main;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -10,11 +11,13 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
+import plume.EntryReader;
 import plume.Options;
 import plume.Options.ArgException;
 import plume.SimpleLog;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
+import randoop.Globals;
 import randoop.JunitFileWriter;
 import randoop.MultiVisitor;
 import randoop.generation.AbstractGenerator;
@@ -601,6 +604,26 @@ public class GenTests extends GenInputsAbstract {
 
       JunitFileWriter jfw = new JunitFileWriter(output_dir, junit_package_name, junitClassname);
 
+      List<String> beforeAllText = getFileText(GenInputsAbstract.junit_before_all);
+      if (beforeAllText != null) {
+        jfw.addBeforeAll(beforeAllText);
+      }
+
+      List<String> afterAllText = getFileText(GenInputsAbstract.junit_after_all);
+      if (afterAllText != null) {
+        jfw.addAfterAll(afterAllText);
+      }
+
+      List<String> beforeEachText = getFileText(GenInputsAbstract.junit_before_each);
+      if (beforeEachText != null) {
+        jfw.addBeforeEach(beforeEachText);
+      }
+
+      List<String> afterEachText = getFileText(GenInputsAbstract.junit_after_each);
+      if (afterEachText != null) {
+        jfw.addAfterEach(afterEachText);
+      }
+
       files.addAll(jfw.writeJUnitTestFiles(seqPartition));
 
       if (GenInputsAbstract.junit_reflection_allowed) {
@@ -643,5 +666,22 @@ public class GenTests extends GenInputsAbstract {
 
   private static void usage(String format, Object... args) {
     usage(null, format, args);
+  }
+
+  private static List<String> getFileText(String filename) {
+    if (filename != null) {
+      List<String> textList = new ArrayList<>();
+      textList.add("// code from file " + filename);
+      try (EntryReader er = new EntryReader(filename)) {
+        for (String line : er) {
+          textList.add(line.trim());
+        }
+      } catch (IOException e) {
+        System.err.println("Unable to read " + filename);
+        return null;
+      }
+      return textList;
+    }
+    return null;
   }
 }

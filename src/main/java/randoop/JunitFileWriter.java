@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -19,8 +18,7 @@ import randoop.util.Log;
  * files containing one JUnit4 test method per sequence. An object manages the
  * information for a suite of tests (name, package, and directory) and is used
  * by first running writeJUnitTestFiles and then writeSuiteFile or
- * writeDriverFile. Alternatively, a single test file can be written using the
- * static method writeJUnitTestFile.
+ * writeDriverFile.
  */
 public class JunitFileWriter {
 
@@ -32,8 +30,6 @@ public class JunitFileWriter {
 
   // The directory where the JUnit files should be written to.
   private final String dirName;
-
-  private static boolean includeParsableString = false;
 
   /**
    * testClassCount indicates the number of test classes written for the code
@@ -49,6 +45,42 @@ public class JunitFileWriter {
    * i.
    */
   private Map<String, Integer> classMethodCounts = new LinkedHashMap<>();
+
+  /** The Java text for BeforeAll method of generated test class. */
+  private List<String> beforeAllText = null;
+
+  /** The Java text for AfterAll method of generated test class. */
+  private List<String> afterAllText = null;
+
+  /** The Java text for BeforeEach method of generated test class. */
+  private List<String> beforeEachText = null;
+
+  /** The Java text for AfterEach method of generated test class. */
+  private List<String> afterEachText = null;
+
+  /** The JUnit annotation for the BeforeAll option */
+  private static final String BEFORE_ALL = "@BeforeClass";
+
+  /** The JUnit annotation for the AfterAll option */
+  private static final String AFTER_ALL = "@AfterClass";
+
+  /** The JUnit annotation for the BeforeEach option */
+  private static final String BEFORE_EACH = "@Before";
+
+  /** The JUnit annotation for the AfterEach option */
+  private static final String AFTER_EACH = "@After";
+
+  /** The method name for the BeforeAll option */
+  private static final String BEFORE_ALL_METHOD = "setupAll";
+
+  /** The method name for the AfterAll option */
+  private static final String AFTER_ALL_METHOD = "teardownAll";
+
+  /** The method name for the BeforeEach option */
+  private static final String BEFORE_EACH_METHOD = "setup";
+
+  /** The method name for the AfterEach option */
+  private static final String AFTER_EACH_METHOD = "teardown";
 
   /**
    * JunitFileWriter creates an instance of class holding information needed to
@@ -67,26 +99,36 @@ public class JunitFileWriter {
     this.masterTestClassName = masterTestClassName;
   }
 
-  // called by PluginBridge.outputSequence
   /**
-   * writeJUnitTestFile is a static method that writes a single test class to
-   * the specified directory and with the specified class name.
-   *
-   * @param junitOutputDir
-   *          directory where files are to be written.
-   * @param packageName
-   *          package name for test classes.
-   * @param es
-   *          executable sequence to be written to test class.
-   * @param className
-   *          name of test class.
-   * @return the File that new test class was written to
+   * Add text for BeforeClass-annotated method in each generated test class.
+   * @param text  the (Java) text for method
    */
-  public static File writeJUnitTestFile(
-      String junitOutputDir, String packageName, ExecutableSequence es, String className) {
-    JunitFileWriter writer = new JunitFileWriter(junitOutputDir, packageName, "dummy");
-    writer.createOutputDir();
-    return writer.writeTestClass(Collections.singletonList(es), className);
+  public void addBeforeAll(List<String> text) {
+    this.beforeAllText = text;
+  }
+
+  /**
+   * Add text for AfterClass-annotated method in each generated text class.
+   * @param text  the (Java) text for method
+   */
+  public void addAfterAll(List<String> text) {
+    this.afterAllText = text;
+  }
+
+  /**
+   * Add text for Before-annotated method in each generated test class.
+   * @param text  the (Java) text for method
+   */
+  public void addBeforeEach(List<String> text) {
+    this.beforeEachText = text;
+  }
+
+  /**
+   * Add text for After-annotated method in each generated test class.
+   * @param text  the (Java) text for method
+   */
+  public void addAfterEach(List<String> text) {
+    this.afterEachText = text;
   }
 
   /**
@@ -139,6 +181,18 @@ public class JunitFileWriter {
     try {
       outputPackageName(out, packageName);
       out.println();
+      if (afterEachText != null) {
+        out.println("import org.junit.After;");
+      }
+      if (afterAllText != null) {
+        out.println("import org.junit.AfterClass;");
+      }
+      if (beforeEachText != null) {
+        out.println("import org.junit.Before;");
+      }
+      if (beforeAllText != null) {
+        out.println("import org.junit.BeforeClass;");
+      }
       out.println("import org.junit.FixMethodOrder;");
       out.println("import org.junit.Test;");
       out.println("import org.junit.runners.MethodSorters;");
@@ -149,13 +203,20 @@ public class JunitFileWriter {
       out.println("  public static boolean debug = false;");
       out.println();
 
-      for (ExecutableSequence s : sequences) {
-        if (includeParsableString) {
-          out.println("/*");
-          out.println(s.sequence.toString());
-          out.println("*/");
-        }
+      if (beforeAllText != null) {
+        writeFixture(out, BEFORE_ALL, "static", BEFORE_ALL_METHOD, beforeAllText);
+      }
+      if (afterAllText != null) {
+        writeFixture(out, AFTER_ALL, "static", AFTER_ALL_METHOD, afterAllText);
+      }
+      if (beforeEachText != null) {
+        writeFixture(out, BEFORE_EACH, "", BEFORE_EACH_METHOD, beforeEachText);
+      }
+      if (afterEachText != null) {
+        writeFixture(out, AFTER_EACH, "", AFTER_EACH_METHOD, afterEachText);
+      }
 
+      for (ExecutableSequence s : sequences) {
         writeTest(out, testClassName, methodNameGen.next(), s);
         out.println();
       }
@@ -166,6 +227,34 @@ public class JunitFileWriter {
     }
 
     return file;
+  }
+
+  /**
+   * Writes a single text fixture to the output stream.
+   *
+   * @param out  the output stream for writing test class
+   * @param annotation  the fixture annotation
+   * @param methodName  the method name for fixture method
+   * @param bodyText  the text of the fixture method
+   */
+  private void writeFixture(
+      PrintStream out,
+      String annotation,
+      String modifier,
+      String methodName,
+      List<String> bodyText) {
+    String indent = "  ";
+    out.println(indent + annotation);
+    out.print(indent + "public ");
+    if (!modifier.isEmpty()) {
+      out.print(modifier + " ");
+    }
+    out.println("void " + methodName + "() {");
+    for (String line : bodyText) {
+      out.println(indent + indent + line);
+    }
+    out.println(indent + "}");
+    out.println();
   }
 
   /*
@@ -195,7 +284,6 @@ public class JunitFileWriter {
                 + "."
                 + methodName
                 + "\"); }"));
-    out.println();
     out.println(indent(s.toCodeString()));
     out.println("  }");
   }
@@ -289,6 +377,13 @@ public class JunitFileWriter {
 
       NameGenerator instanceNameGen = new NameGenerator("t");
       for (String testClass : testClassNames) {
+
+        if (beforeAllText != null) {
+          out.println();
+          out.println("    " + testClass + "." + BEFORE_ALL_METHOD + "();");
+          out.println();
+        }
+
         String testVariable = instanceNameGen.next();
         out.println("    " + testClass + " " + testVariable + "= new " + testClass + "();");
 
@@ -296,6 +391,10 @@ public class JunitFileWriter {
         NameGenerator methodGen = new NameGenerator("test", 1, numDigits(classMethodCount));
 
         while (methodGen.nameCount() < classMethodCount) {
+          out.println();
+          if (beforeEachText != null) {
+            out.println("    " + testVariable + "." + BEFORE_EACH_METHOD + "();");
+          }
           String methodName = methodGen.next();
           out.println("    try {");
           out.println("      " + testVariable + "." + methodName + "();");
@@ -303,6 +402,13 @@ public class JunitFileWriter {
           out.println("      wasSuccessful = false;");
           out.println("      e.printStackTrace();");
           out.println("    }");
+          if (afterEachText != null) {
+            out.println("    " + testVariable + "." + AFTER_EACH_METHOD + "();");
+          }
+        }
+
+        if (afterAllText != null) {
+          out.println("    " + testClass + "." + AFTER_ALL_METHOD + "();");
         }
 
         out.println();
