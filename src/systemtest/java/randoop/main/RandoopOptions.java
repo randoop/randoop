@@ -74,6 +74,15 @@ class RandoopOptions {
   }
 
   /**
+   * Adds an option-flag set to false.
+   *
+   * @param option  the name of the option flag to be set to false
+   */
+  void unsetFlag(String option) {
+    setOption(option, "false");
+  }
+
+  /**
    * Sets the package name for generated tests, and adds the option to this set.
    *
    * @param packageName  the package name
