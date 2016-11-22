@@ -6,7 +6,9 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -723,6 +725,117 @@ public class RandoopSystemTest {
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
     generateAndTestWithCoverage(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+  }
+
+  /**
+   * Test for inserted test fixtures.
+   *
+   */
+  @Test
+  public void runFixtureTest() {
+    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("fixtures");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("examples.Dummy");
+    options.setRegressionBasename("FixtureRegression");
+    options.setOption("junit-before-all", "resources/systemTest/beforeallcode.txt");
+    options.setOption("junit-after-all", "resources/systemTest/afterallcode.txt");
+    options.setOption("junit-before-each", "resources/systemTest/beforeeachcode.txt");
+    options.setOption("junit-after-each", "resources/systemTest/aftereachcode.txt");
+    options.setOption("inputlimit", "200");
+    options.setFlag("no-error-revealing-tests");
+
+    RandoopRunStatus runStatus = generateAndCompile(testEnvironment, options, false);
+    String packageName = options.getPackageName();
+    TestRunStatus regressionRunDesc =
+        runRegressionTests(testEnvironment, options, ExpectedTests.SOME, runStatus, packageName);
+
+    int beforeAllCount = 0;
+    int beforeEachCount = 0;
+    int afterAllCount = 0;
+    int afterEachCount = 0;
+    for (String line : regressionRunDesc.processStatus.outputLines) {
+      if (line.contains("Before All")) {
+        beforeAllCount++;
+      }
+      if (line.contains("Before Each")) {
+        beforeEachCount++;
+      }
+      if (line.contains("After All")) {
+        afterAllCount++;
+      }
+      if (line.contains("After Each")) {
+        afterEachCount++;
+      }
+    }
+
+    assertThat("should only have one BeforeAll", beforeAllCount, is(equalTo(1)));
+    assertThat("should have one AfterAll", afterAllCount, is(equalTo(1)));
+    assertThat(
+        "should have one BeforeEach for each test",
+        beforeEachCount,
+        is(equalTo(regressionRunDesc.testsRun)));
+    assertThat(
+        "should have one AfterEach for each test",
+        afterEachCount,
+        is(equalTo(regressionRunDesc.testsRun)));
+  }
+
+  /**
+   * Runs the FixtureTest except with a driver instead of a JUnit test suite.
+   */
+  @Test
+  public void runFixtureDriverTest() {
+    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("fixture-driver");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("examples.Dummy");
+    options.setRegressionBasename("FixtureRegression");
+    options.setOption("junit-before-all", "resources/systemTest/beforeallcode.txt");
+    options.setOption("junit-after-all", "resources/systemTest/afterallcode.txt");
+    options.setOption("junit-before-each", "resources/systemTest/beforeeachcode.txt");
+    options.setOption("junit-after-each", "resources/systemTest/aftereachcode.txt");
+    options.setOption("inputlimit", "200");
+    options.setFlag("no-error-revealing-tests");
+    options.unsetFlag("junit-reflection-allowed");
+
+    RandoopRunStatus runStatus = generateAndCompile(testEnvironment, options, false);
+    String driverName = options.getRegressionBasename() + "Driver";
+    List<String> command = new ArrayList<>();
+    command.add("java");
+    command.add("-ea");
+    command.add("-classpath");
+    command.add(testEnvironment.testClassPath);
+    command.add(driverName);
+    ProcessStatus status = ProcessStatus.runCommand(command);
+
+    int beforeAllCount = 0;
+    int beforeEachCount = 0;
+    int afterAllCount = 0;
+    int afterEachCount = 0;
+    for (String line : status.outputLines) {
+      if (line.contains("Before All")) {
+        beforeAllCount++;
+      }
+      if (line.contains("Before Each")) {
+        beforeEachCount++;
+      }
+      if (line.contains("After All")) {
+        afterAllCount++;
+      }
+      if (line.contains("After Each")) {
+        afterEachCount++;
+      }
+    }
+
+    assertThat("should only have one BeforeAll", beforeAllCount, is(equalTo(1)));
+    assertThat("should have one AfterAll", afterAllCount, is(equalTo(1)));
+    assertThat(
+        "should have one BeforeEach for each test",
+        beforeEachCount,
+        is(equalTo(runStatus.regressionTestCount)));
+    assertThat(
+        "should have one AfterEach for each test",
+        afterEachCount,
+        is(equalTo(runStatus.regressionTestCount)));
   }
 
   /* ------------------------------ utility methods ---------------------------------- */
