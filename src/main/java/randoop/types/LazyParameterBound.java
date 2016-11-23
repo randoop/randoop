@@ -132,8 +132,18 @@ class LazyParameterBound extends ParameterBound {
       if (wildcardType.getLowerBounds().length > 0) {
         assert wildcardType.getLowerBounds().length == 1
             : "a wildcard is defined by the JLS to only have one bound";
-        ParameterBound bound =
-            ParameterBound.forTypes(wildcardType.getLowerBounds()).apply(substitution);
+        java.lang.reflect.Type lowerBound = wildcardType.getLowerBounds()[0];
+        ParameterBound bound;
+        if (lowerBound instanceof java.lang.reflect.TypeVariable) {
+          ReferenceType boundType = substitution.get(lowerBound);
+          if (boundType != null) {
+            bound = ParameterBound.forType(boundType);
+          } else {
+            bound = new LazyParameterBound(lowerBound);
+          }
+        } else {
+          bound = ParameterBound.forType(lowerBound).apply(substitution);
+        }
 
         return new WildcardArgumentWithLowerBound(bound);
       }

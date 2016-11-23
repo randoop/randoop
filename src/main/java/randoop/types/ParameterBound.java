@@ -86,11 +86,12 @@ public abstract class ParameterBound {
    * @return a type bound that ensures the given type is satisfied as an upper
    *         bound
    */
-  private static ParameterBound forType(java.lang.reflect.Type type) {
+  static ParameterBound forType(java.lang.reflect.Type type) {
     if (type instanceof java.lang.reflect.ParameterizedType) {
       if (!hasTypeVariable(type)) {
         return new EagerReferenceBound(ParameterizedType.forType(type));
       }
+      return new LazyParameterBound(type);
     }
     if (type instanceof Class<?>) {
       return new EagerReferenceBound(ClassOrInterfaceType.forType(type));
