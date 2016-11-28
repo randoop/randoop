@@ -1,12 +1,14 @@
-Version 3.0.7, released November 2X, 2016
+Version 3.0.7, released November 28, 2016
 
 Randoop now
 - instantiates generic classes and operations on-the-fly using the
-  types in previously generated test sequences. As a result, is able to generate
-  more diverse instantiations of generics, as well as multidimensional arrays.
+  types in previously generated test sequences. As a result, Randoop is able to
+  generate more diverse instantiations of generics, as well as multidimensional
+  arrays.
 - supports insertion of Java code into text fixtures when tests are written to
   disk. Given as filename to new command-line arguments: --junit-before-each,
   --junit-after-each, --junit-before-all, and --junit-after-each.
+
 
 Version 3.0.6, released October 14, 2016
 
