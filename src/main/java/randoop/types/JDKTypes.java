@@ -9,6 +9,7 @@ import java.util.AbstractSet;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -62,6 +63,9 @@ public class JDKTypes {
   /** The {@link GenericClassType} for {@code Collection} */
   public static final GenericClassType COLLECTION_TYPE =
       GenericClassType.forClass(Collection.class);
+
+  /** The {@link GenericClassType} for {@code Comparator} */
+  public static final GenericClassType COMPARATOR_TYPE = new GenericClassType(Comparator.class);
 
   /** The {@link GenericClassType} for {@code Deque} */
   public static final GenericClassType DEQUE_TYPE = GenericClassType.forClass(Deque.class);

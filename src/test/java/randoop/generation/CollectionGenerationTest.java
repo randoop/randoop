@@ -29,7 +29,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  * Tests to check Collection generation.
@@ -136,6 +135,7 @@ public class CollectionGenerationTest {
     InstantiatedType collectionType = JDKTypes.LIST_TYPE.instantiate(elementType);
     Sequence sequence = HelperSequenceCreator.createCollection(componentManager, collectionType);
     assert sequence != null : "sequence should not be null";
+
     Set<Type> outputTypeSet = new HashSet<>();
     for (int i = 0; i < sequence.size(); i++) {
       Type outputType = sequence.getStatement(i).getOutputType();
@@ -170,6 +170,7 @@ public class CollectionGenerationTest {
         HelperSequenceCreator.createArraySequence(componentManager, arrayType);
     Sequence sequence = sequenceList.get(0);
     assert sequence != null : "sequence should not be null";
+
     Set<Type> outputTypeSet = new HashSet<>();
     for (int i = 0; i < sequence.size(); i++) {
       Type outputType = sequence.getStatement(i).getOutputType();
@@ -214,6 +215,7 @@ public class CollectionGenerationTest {
         HelperSequenceCreator.createArraySequence(componentManager, arrayOfArrayType);
     Sequence sequence = sequenceList.get(0);
     assert sequence != null : "sequence should not be null";
+
     Set<Type> outputTypeSet = new HashSet<>();
     for (int i = 0; i < sequence.size(); i++) {
       Type outputType = sequence.getStatement(i).getOutputType();
@@ -249,6 +251,7 @@ public class CollectionGenerationTest {
         HelperSequenceCreator.createArraySequence(componentManager, arrayType);
     Sequence sequence = sequenceList.get(0);
     assert sequence != null : "sequence should not be null";
+
     Set<Type> outputTypeSet = new HashSet<>();
     for (int i = 0; i < sequence.size(); i++) {
       Type outputType = sequence.getStatement(i).getOutputType();

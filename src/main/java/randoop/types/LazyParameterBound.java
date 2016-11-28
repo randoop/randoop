@@ -54,6 +54,9 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public ParameterBound apply(Substitution<ReferenceType> substitution) {
+    if (substitution.isEmpty()) {
+      return this;
+    }
     if (boundType instanceof java.lang.reflect.TypeVariable) {
       ReferenceType referenceType = substitution.get(boundType);
       if (referenceType != null) {
@@ -72,7 +75,7 @@ class LazyParameterBound extends ParameterBound {
           ((ParameterizedType) boundType).getActualTypeArguments()) {
         TypeArgument typeArgument = apply(parameter, substitution);
         isLazy =
-            (parameter instanceof java.lang.reflect.TypeVariable)
+            (isTypeVariable(parameter))
                 && ((ReferenceArgument) typeArgument).getReferenceType().isVariable();
         argumentList.add(typeArgument);
       }
@@ -129,10 +132,20 @@ class LazyParameterBound extends ParameterBound {
       if (wildcardType.getLowerBounds().length > 0) {
         assert wildcardType.getLowerBounds().length == 1
             : "a wildcard is defined by the JLS to only have one bound";
-        ParameterBound bound =
-            ParameterBound.forTypes(wildcardType.getLowerBounds()).apply(substitution);
+        java.lang.reflect.Type lowerBound = wildcardType.getLowerBounds()[0];
+        ParameterBound bound;
+        if (lowerBound instanceof java.lang.reflect.TypeVariable) {
+          ReferenceType boundType = substitution.get(lowerBound);
+          if (boundType != null) {
+            bound = ParameterBound.forType(boundType);
+          } else {
+            bound = new LazyParameterBound(lowerBound);
+          }
+        } else {
+          bound = ParameterBound.forType(lowerBound).apply(substitution);
+        }
 
-        return new WildcardArgumentWithLowerBound((EagerReferenceBound) bound);
+        return new WildcardArgumentWithLowerBound(bound);
       }
       // a wildcard always has an upper bound
       assert wildcardType.getUpperBounds().length == 1

@@ -35,6 +35,9 @@ public class JDKTypesTest {
     }
 
     for (GenericClassType classType : collectionTypes) {
+      if (classType.equals(JDKTypes.COMPARATOR_TYPE)) {
+        continue;
+      }
       GenericClassType implementingType = JDKTypes.getImplementingType(classType);
       if (classType.equals(JDKTypes.ENUM_SET_TYPE)) { // EnumSet is a special case
         assertTrue("EnumSet should be implemented by itself", classType.equals(implementingType));

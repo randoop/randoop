@@ -95,7 +95,9 @@ class HelperSequenceCreator {
     } else {
       length = Randomness.nextRandomInt(MAX_LENGTH);
     }
-    Sequence s = createAnArray(candidates, componentType, length);
+
+    Sequence elementSequence = createElementSequence(candidates, length, componentType);
+    Sequence s = createAnArray(elementSequence, componentType, length);
     assert s != null;
     ArrayListSimpleList<Sequence> l = new ArrayListSimpleList<>();
     l.add(s);
@@ -124,51 +126,71 @@ class HelperSequenceCreator {
     // select implementing Collection type and instantiate
     InstantiatedType implementingType = getImplementingType(collectionType);
 
-    int totStatements = 0;
-    List<Sequence> inputSequences = new ArrayList<>();
-    List<Integer> variableIndices = new ArrayList<>();
-
-    // build sequence to create a Collection object
-    Sequence creationSequence = createCollectionCreationSequence(implementingType, elementType);
-    if (creationSequence == null) {
-      return null;
-    }
-    inputSequences.add(creationSequence);
-    int creationIndex = totStatements + creationSequence.getLastVariable().index;
-    variableIndices.add(creationIndex);
-    totStatements += creationSequence.size();
-
     SimpleList<Sequence> candidates = componentManager.getSequencesForType(elementType);
     int length = 0;
     if (!candidates.isEmpty()) {
       length = Randomness.nextRandomInt(candidates.size()) + 1;
     }
     assert !candidates.isEmpty() || length == 0 : "if there are no candidates, length must be zero";
+    Sequence elementSequence = createElementSequence(candidates, length, elementType);
+
+    // build sequence to create a Collection object
+    Sequence creationSequence = createCollectionCreationSequence(implementingType, elementType);
+    if (creationSequence == null) {
+      return null;
+    }
 
     if (!elementType.isParameterized()
         && !(elementType.isArray() && ((ArrayType) elementType).hasParameterizedElementType())) {
       // build sequence to create array of element type
-      Sequence inputSequence = createAnArray(candidates, elementType, length);
+      int totStatements = 0;
+      List<Sequence> inputSequences = new ArrayList<>();
+      List<Integer> variableIndices = new ArrayList<>();
+      Sequence inputSequence = createAnArray(elementSequence, elementType, length);
       inputSequences.add(inputSequence);
-      variableIndices.add(totStatements + inputSequence.getLastVariable().index);
+      int inputIndex = totStatements + inputSequence.getLastVariable().index;
+      totStatements += inputSequence.size();
+      inputSequences.add(creationSequence);
+      int creationIndex = totStatements + creationSequence.getLastVariable().index;
+      variableIndices.add(creationIndex);
+      variableIndices.add(inputIndex);
+
       // call Collections.addAll(c, inputArray)
       TypedOperation addOperation = getCollectionAddAllOperation(elementType);
       return Sequence.createSequence(addOperation, inputSequences, variableIndices);
     } else {
-      // build sequence creating selected values
-      List<Integer> variables = new ArrayList<>();
-      createElementSequences(
-          candidates, length, elementType, inputSequences, totStatements, variables);
-      Sequence addSequence = Sequence.concatenate(inputSequences);
-      // add each value to the collection
-      for (Integer index : variables) {
-        List<Variable> inputs = new ArrayList<>();
-        inputs.add(addSequence.getVariable(creationIndex));
-        inputs.add(addSequence.getVariable(index));
-        addSequence = addSequence.extend(getAddOperation(collectionType, elementType), inputs);
-      }
-      return addSequence;
+      final TypedOperation addOperation = getAddOperation(collectionType, elementType);
+      SequenceExtender addExtender =
+          new SequenceExtender() {
+            @Override
+            public Sequence extend(Sequence addSequence, int creationIndex, Integer index, int i) {
+              List<Variable> inputs = new ArrayList<>();
+              inputs.add(addSequence.getVariable(creationIndex));
+              inputs.add(addSequence.getVariable(index));
+              return addSequence.extend(addOperation, inputs);
+            }
+          };
+      return buildAddSequence(creationSequence, elementSequence, addExtender);
     }
+  }
+
+  private interface SequenceExtender {
+    Sequence extend(Sequence addSequence, int creationIndex, Integer index, int i);
+  }
+
+  private static Sequence buildAddSequence(
+      Sequence creationSequence, Sequence elementSequence, SequenceExtender addSequenceExtender) {
+    List<Sequence> inputSequences = new ArrayList<>();
+    inputSequences.add(elementSequence);
+    inputSequences.add(creationSequence);
+    Sequence addSequence = Sequence.concatenate(inputSequences);
+    int creationIndex = addSequence.getLastVariable().index;
+    int i = 0;
+    for (Integer index : elementSequence.getOutputIndices()) {
+      addSequence = addSequenceExtender.extend(addSequence, creationIndex, index, i);
+      i++;
+    }
+    return addSequence;
   }
 
   /**
@@ -206,44 +228,38 @@ class HelperSequenceCreator {
    * Creates a sequence that builds an array of the given element type using sequences from the
    * given list of candidates.
    *
-   * @param candidates  the list of candidate elements
+   * @param elementSequence  the sequence creating element values
    * @param elementType  the type of elements for the array
    * @param length  the length of the array
    * @return a sequence that creates an array with the given element type
    */
-  private static Sequence createAnArray(
-      SimpleList<Sequence> candidates, Type elementType, int length) {
-    assert !candidates.isEmpty() || length == 0 : "if there are no candidates, length must be zero";
-    List<Sequence> inputSequences = new ArrayList<>();
-    List<Integer> variables = new ArrayList<>();
-    createElementSequences(candidates, length, elementType, inputSequences, 0, variables);
+  private static Sequence createAnArray(Sequence elementSequence, Type elementType, int length) {
 
     ArrayType arrayType = ArrayType.ofComponentType(elementType);
     if (!elementType.isParameterized()
         && !(elementType.isArray() && ((ArrayType) elementType).hasParameterizedElementType())) {
       TypedOperation creationOperation =
           TypedOperation.createInitializedArrayCreation(arrayType, length);
-      return Sequence.createSequence(creationOperation, inputSequences, variables);
+      return Sequence.createSequence(creationOperation, elementSequence);
     } else {
-      Sequence creationSequence = createGenericArrayCreationSequence(arrayType, length);
-      inputSequences.add(creationSequence);
-
-      TypedOperation arrayElementAssignment =
+      Sequence createSequence = createGenericArrayCreationSequence(arrayType, length);
+      final TypedOperation arrayElementAssignment =
           TypedOperation.createArrayElementAssignment(arrayType);
-      Sequence addSequence = Sequence.concatenate(inputSequences);
-      int creationIndex = addSequence.getLastVariable().index;
-      int i = 0;
-      for (Integer index : variables) {
-        addSequence =
-            addSequence.extend(TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, i));
-        List<Variable> inputs = new ArrayList<>();
-        inputs.add(addSequence.getVariable(creationIndex));
-        inputs.add(addSequence.getLastVariable());
-        inputs.add(addSequence.getVariable(index));
-        addSequence = addSequence.extend(arrayElementAssignment, inputs);
-        i++;
-      }
-      return addSequence;
+      SequenceExtender addExtender =
+          new SequenceExtender() {
+            @Override
+            public Sequence extend(Sequence addSequence, int creationIndex, Integer index, int i) {
+              addSequence =
+                  addSequence.extend(
+                      TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, i));
+              List<Variable> inputs = new ArrayList<>();
+              inputs.add(addSequence.getVariable(creationIndex));
+              inputs.add(addSequence.getLastVariable());
+              inputs.add(addSequence.getVariable(index));
+              return addSequence.extend(arrayElementAssignment, inputs);
+            }
+          };
+      return buildAddSequence(createSequence, elementSequence, addExtender);
     }
   }
 
@@ -326,30 +342,24 @@ class HelperSequenceCreator {
   }
 
   /**
-   * Selects sequences as values for creating a collection.
+   * Selects sequences as element values for creating a collection.
    *
    * @param candidates  the sequences from which to select
    * @param length  the number of values to select
    * @param elementType  the type of elements
-   * @param inputSequences  the prior sequences in the construction
-   * @param totStatements  the number of previous statements
-   * @param variables  the list of variable indicies
    */
-  private static void createElementSequences(
-      SimpleList<Sequence> candidates,
-      int length,
-      Type elementType,
-      List<Sequence> inputSequences,
-      int totStatements,
-      List<Integer> variables) {
+  private static Sequence createElementSequence(
+      SimpleList<Sequence> candidates, int length, Type elementType) {
+    List<Sequence> sequences = new ArrayList<>();
+    List<Integer> variables = new ArrayList<>();
     for (int i = 0; i < length; i++) {
-      Sequence inputSeq = candidates.get(Randomness.nextRandomInt(candidates.size()));
-      inputSequences.add(inputSeq);
-      Variable inputVar = inputSeq.randomVariableForTypeLastStatement(elementType);
-      assert inputVar != null;
-      variables.add(totStatements + inputVar.index);
-      totStatements += inputSeq.size();
+      Sequence sequence = candidates.get(Randomness.nextRandomInt(candidates.size()));
+      sequences.add(sequence);
+      Variable element = sequence.randomVariableForTypeLastStatement(elementType);
+      assert element != null;
+      variables.add(element.index);
     }
+    return Sequence.createSequence(sequences, variables);
   }
 
   /**

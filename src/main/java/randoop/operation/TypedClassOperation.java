@@ -74,6 +74,9 @@ public class TypedClassOperation extends TypedOperation {
    * @return the concrete operation with type variables replaced by substitution
    */
   public TypedClassOperation apply(Substitution<ReferenceType> substitution) {
+    if (substitution.isEmpty()) {
+      return this;
+    }
     ClassOrInterfaceType declaringType = this.declaringType.apply(substitution);
     TypeTuple inputTypes = this.getInputTypes().apply(substitution);
     Type outputType = this.getOutputType().apply(substitution);
@@ -83,7 +86,7 @@ public class TypedClassOperation extends TypedOperation {
   @Override
   public TypedClassOperation applyCaptureConversion() {
     TypeTuple inputTypes = this.getInputTypes().applyCaptureConversion();
-    Type outputType = this.getOutputType().applyCaptureConversion();
+    Type outputType = this.getOutputType();
     return new TypedClassOperation(this.getOperation(), declaringType, inputTypes, outputType);
   }
 

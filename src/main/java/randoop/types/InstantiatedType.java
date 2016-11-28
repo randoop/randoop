@@ -95,6 +95,7 @@ public class InstantiatedType extends ParameterizedType {
    * @return the capture conversion type for this type
    */
   public InstantiatedType applyCaptureConversion() {
+
     if (!this.hasWildcard()) {
       return this;
     }
@@ -352,7 +353,7 @@ public class InstantiatedType extends ParameterizedType {
           if (subst == null) {
             return null;
           }
-          substitution.extend(subst);
+          substitution = substitution.extend(subst);
         }
         return substitution;
       }

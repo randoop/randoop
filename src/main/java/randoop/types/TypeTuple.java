@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -12,7 +13,7 @@ import plume.UtilMDE;
  * {@code TypeTuple} represents an ordered tuple of type objects.
  * Type tuples primarily used to represent the input types of operations.
  */
-public class TypeTuple {
+public class TypeTuple implements Iterable<Type> {
 
   /** The sequence of types in this type tuple. */
   private final ArrayList<Type> list;
@@ -154,5 +155,34 @@ public class TypeTuple {
       }
     }
     return false;
+  }
+
+  @Override
+  public Iterator<Type> iterator() {
+    return new TypeIterator(list.iterator());
+  }
+
+  private class TypeIterator implements Iterator<Type> {
+
+    private Iterator<Type> iterator;
+
+    public TypeIterator(Iterator<Type> iterator) {
+      this.iterator = iterator;
+    }
+
+    @Override
+    public boolean hasNext() {
+      return iterator.hasNext();
+    }
+
+    @Override
+    public Type next() {
+      return iterator.next();
+    }
+
+    @Override
+    public void remove() {
+      throw new UnsupportedOperationException();
+    }
   }
 }

@@ -41,6 +41,12 @@ public class Substitution<T> {
     rawMap = new LinkedHashMap<>(substitution.rawMap);
   }
 
+  public static <T> Substitution<T> forArg(TypeVariable parameter, T argument) {
+    Substitution<T> s = new Substitution<>();
+    s.put(parameter, argument);
+    return s;
+  }
+
   /**
    * Create a substitution from the type parameters to the corresponding type
    * arguments.
@@ -219,5 +225,14 @@ public class Substitution<T> {
     if (typeParameter instanceof ExplicitTypeVariable) {
       rawMap.put(((ExplicitTypeVariable) typeParameter).getReflectionTypeVariable(), type);
     }
+  }
+
+  /**
+   * Indicates whether this substitution has any variable-type pairs.
+   *
+   * @return true if there are no substitution pairs, false otherwise
+   */
+  public boolean isEmpty() {
+    return map.isEmpty();
   }
 }
