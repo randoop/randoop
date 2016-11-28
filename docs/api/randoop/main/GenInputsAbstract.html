@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>GenInputsAbstract (randoop 3.0.6 API)</title>
+<title>GenInputsAbstract (randoop 3.0.7 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="GenInputsAbstract (randoop 3.0.6 API)";
+            parent.document.title="GenInputsAbstract (randoop 3.0.7 API)";
         }
     }
     catch(err) {
@@ -255,6 +255,34 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#inputlimit">inputlimit</a></span></code>
 <div class="block">Maximum number of test method candidates generated.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#junit_after_all">junit_after_all</a></span></code>
+<div class="block">Name of file containing code text to be added to the AfterClass-annotated method of
+ each generated test class.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#junit_after_each">junit_after_each</a></span></code>
+<div class="block">Name of file containing code text to be added to the After-annotated method of
+ each generated test class.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#junit_before_all">junit_before_all</a></span></code>
+<div class="block">Name of file containing code text to be added to the BeforeClass-annotated method of
+ each generated test class.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#junit_before_each">junit_before_each</a></span></code>
+<div class="block">Name of file containing code text to be added to the Before-annotated method of
+ each generated test class.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -1134,6 +1162,66 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
  are used to determine whether to include the class or class members in a
  test. Tests can be restricted to public members only by using the option
  <code>--only-test-public-members</code>.</div>
+</li>
+</ul>
+<a name="junit_before_each">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>junit_before_each</h4>
+<pre>public static&nbsp;java.lang.String junit_before_each</pre>
+<div class="block">Name of file containing code text to be added to the Before-annotated method of
+ each generated test class.
+ Code is uninterpreted, and, so, is not run during generation.
+ Intended for use when run-time behavior of classes under test requires setup
+ behavior that is not needed for execution by reflection.
+ (The annotation Before is JUnit 4, and BeforeEach is JUnit 5.)</div>
+</li>
+</ul>
+<a name="junit_after_each">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>junit_after_each</h4>
+<pre>public static&nbsp;java.lang.String junit_after_each</pre>
+<div class="block">Name of file containing code text to be added to the After-annotated method of
+ each generated test class.
+ Intended for use when run-time behavior of classes under test requires
+ tear-down behavior that is not needed for execution by reflection.
+ Code is uninterpreted, and, so, is not run during generation.
+ (The annotation After is JUnit 4, and AfterEach is JUnit 5.)</div>
+</li>
+</ul>
+<a name="junit_before_all">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>junit_before_all</h4>
+<pre>public static&nbsp;java.lang.String junit_before_all</pre>
+<div class="block">Name of file containing code text to be added to the BeforeClass-annotated method of
+ each generated test class.
+ Intended for use when run-time behavior of classes under test requires setup
+ behavior that is not needed for execution by reflection.
+ Code is uninterpreted, and, so, is not run during generation.
+ (The annotation BeforeClass is JUnit 4, and BeforeAll is JUnit 5.)</div>
+</li>
+</ul>
+<a name="junit_after_all">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>junit_after_all</h4>
+<pre>public static&nbsp;java.lang.String junit_after_all</pre>
+<div class="block">Name of file containing code text to be added to the AfterClass-annotated method of
+ each generated test class.
+ Intended for use when run-time behavior of classes under test requires
+ tear-down behavior that is not needed for execution by reflection.
+ Code is uninterpreted, and, so, is not run during generation.
+ (The annotation After is JUnit 4, and AfterEach is JUnit 5.)</div>
 </li>
 </ul>
 <a name="junit_output_dir">

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>JunitFileWriter (randoop 3.0.6 API)</title>
+<title>JunitFileWriter (randoop 3.0.7 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="JunitFileWriter (randoop 3.0.6 API)";
+            parent.document.title="JunitFileWriter (randoop 3.0.7 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":9,"i2":10,"i3":10,"i4":9,"i5":10,"i6":9,"i7":10,"i8":9,"i9":10,"i10":10,"i11":10,"i12":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":9,"i6":10,"i7":10,"i8":9,"i9":10,"i10":9,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -114,8 +114,7 @@ extends java.lang.Object</pre>
  files containing one JUnit4 test method per sequence. An object manages the
  information for a suite of tests (name, package, and directory) and is used
  by first running writeJUnitTestFiles and then writeSuiteFile or
- writeDriverFile. Alternatively, a single test file can be written using the
- static method writeJUnitTestFile.</div>
+ writeDriverFile.</div>
 </li>
 </ul>
 </div>
@@ -154,6 +153,78 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>private static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#AFTER_ALL">AFTER_ALL</a></span></code>
+<div class="block">The JUnit annotation for the AfterAll option</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#AFTER_ALL_METHOD">AFTER_ALL_METHOD</a></span></code>
+<div class="block">The method name for the AfterAll option</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#AFTER_EACH">AFTER_EACH</a></span></code>
+<div class="block">The JUnit annotation for the AfterEach option</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#AFTER_EACH_METHOD">AFTER_EACH_METHOD</a></span></code>
+<div class="block">The method name for the AfterEach option</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private java.util.List&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#afterAllText">afterAllText</a></span></code>
+<div class="block">The Java text for AfterAll method of generated test class.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private java.util.List&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#afterEachText">afterEachText</a></span></code>
+<div class="block">The Java text for AfterEach method of generated test class.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#BEFORE_ALL">BEFORE_ALL</a></span></code>
+<div class="block">The JUnit annotation for the BeforeAll option</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#BEFORE_ALL_METHOD">BEFORE_ALL_METHOD</a></span></code>
+<div class="block">The method name for the BeforeAll option</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#BEFORE_EACH">BEFORE_EACH</a></span></code>
+<div class="block">The JUnit annotation for the BeforeEach option</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#BEFORE_EACH_METHOD">BEFORE_EACH_METHOD</a></span></code>
+<div class="block">The method name for the BeforeEach option</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private java.util.List&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#beforeAllText">beforeAllText</a></span></code>
+<div class="block">The Java text for BeforeAll method of generated test class.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private java.util.List&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#beforeEachText">beforeEachText</a></span></code>
+<div class="block">The Java text for BeforeEach method of generated test class.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>private java.util.Map&lt;java.lang.String,java.lang.Integer&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#classMethodCounts">classMethodCounts</a></span></code>
 <div class="block">classMethodCounts maps test class names to the number of methods in each
@@ -165,18 +236,14 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#dirName">dirName</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private static boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#includeParsableString">includeParsableString</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>private java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#masterTestClassName">masterTestClassName</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>private java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#packageName">packageName</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>private int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#testClassCount">testClassCount</a></span></code>
 <div class="block">testClassCount indicates the number of test classes written for the code
@@ -221,71 +288,95 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#addAfterAll-java.util.List-">addAfterAll</a></span>(java.util.List&lt;java.lang.String&gt;&nbsp;text)</code>
+<div class="block">Add text for AfterClass-annotated method in each generated text class.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#addAfterEach-java.util.List-">addAfterEach</a></span>(java.util.List&lt;java.lang.String&gt;&nbsp;text)</code>
+<div class="block">Add text for After-annotated method in each generated test class.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#addBeforeAll-java.util.List-">addBeforeAll</a></span>(java.util.List&lt;java.lang.String&gt;&nbsp;text)</code>
+<div class="block">Add text for BeforeClass-annotated method in each generated test class.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#addBeforeEach-java.util.List-">addBeforeEach</a></span>(java.util.List&lt;java.lang.String&gt;&nbsp;text)</code>
+<div class="block">Add text for Before-annotated method in each generated test class.</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>private void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#createOutputDir--">createOutputDir</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>private static java.io.PrintStream</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#createTextOutputStream-java.io.File-">createTextOutputStream</a></span>(java.io.File&nbsp;file)</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>private java.io.File</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#getDir--">getDir</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>private java.util.List&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#getTestClassNames--">getTestClassNames</a></span>()</code>
 <div class="block">Generates the list of test class names for previously generated test
  suites.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>private static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#indent-java.lang.String-">indent</a></span>(java.lang.String&nbsp;codeString)</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>private int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#numDigits-int-">numDigits</a></span>(int&nbsp;n)</code>
 <div class="block">Returns the number of digits in the printed representation of the argument.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>private static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#outputPackageName-java.io.PrintStream-java.lang.String-">outputPackageName</a></span>(java.io.PrintStream&nbsp;out,
                  java.lang.String&nbsp;packageName)</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>java.io.File</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#writeDriverFile--">writeDriverFile</a></span>()</code>
 <div class="block">writeDriverFile writes non-reflective driver for tests as a main class.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
-<td class="colFirst"><code>static java.io.File</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#writeJUnitTestFile-java.lang.String-java.lang.String-randoop.sequence.ExecutableSequence-java.lang.String-">writeJUnitTestFile</a></span>(java.lang.String&nbsp;junitOutputDir,
-                  java.lang.String&nbsp;packageName,
-                  <a href="../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;es,
-                  java.lang.String&nbsp;className)</code>
-<div class="block">writeJUnitTestFile is a static method that writes a single test class to
- the specified directory and with the specified class name.</div>
+<tr id="i12" class="altColor">
+<td class="colFirst"><code>private void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#writeFixture-java.io.PrintStream-java.lang.String-java.lang.String-java.lang.String-java.util.List-">writeFixture</a></span>(java.io.PrintStream&nbsp;out,
+            java.lang.String&nbsp;annotation,
+            java.lang.String&nbsp;modifier,
+            java.lang.String&nbsp;methodName,
+            java.util.List&lt;java.lang.String&gt;&nbsp;bodyText)</code>
+<div class="block">Writes a single text fixture to the output stream.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;java.io.File&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#writeJUnitTestFiles-java.util.List-">writeJUnitTestFiles</a></span>(java.util.List&lt;java.util.List&lt;<a href="../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt;&gt;&nbsp;seqPartition)</code>
 <div class="block">writeJUnitTestFiles writes a suite of test class files from a list of lists
  of executable sequences.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>java.io.File</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#writeSuiteFile-java.util.List-">writeSuiteFile</a></span>(java.util.List&lt;java.lang.String&gt;&nbsp;additionalTestClassNames)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#writeSuiteFile--">writeSuiteFile</a></span>()</code>
 <div class="block">Writes a JUnit4 suite consisting of test classes from
  <a href="../randoop/JunitFileWriter.html#writeJUnitTestFiles-java.util.List-"><code>writeJUnitTestFiles(List)</code></a> and additional classes provided as a
  parameter.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>private void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#writeTest-java.io.PrintStream-java.lang.String-java.lang.String-randoop.sequence.ExecutableSequence-">writeTest</a></span>(java.io.PrintStream&nbsp;out,
          java.lang.String&nbsp;className,
@@ -294,7 +385,7 @@ extends java.lang.Object</pre>
 <div class="block">Writes a test method to the output stream for the sequence s.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>private java.io.File</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#writeTestClass-java.util.List-java.lang.String-">writeTestClass</a></span>(java.util.List&lt;<a href="../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt;&nbsp;sequences,
               java.lang.String&nbsp;testClassName)</code>
@@ -351,15 +442,6 @@ extends java.lang.Object</pre>
 <pre>private final&nbsp;java.lang.String dirName</pre>
 </li>
 </ul>
-<a name="includeParsableString">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>includeParsableString</h4>
-<pre>private static&nbsp;boolean includeParsableString</pre>
-</li>
-</ul>
 <a name="testClassCount">
 <!--   -->
 </a>
@@ -375,7 +457,7 @@ extends java.lang.Object</pre>
 <a name="classMethodCounts">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>classMethodCounts</h4>
 <pre>private&nbsp;java.util.Map&lt;java.lang.String,java.lang.Integer&gt; classMethodCounts</pre>
@@ -383,6 +465,158 @@ extends java.lang.Object</pre>
  class. This is used to generate lists of method names for a class, since
  current convention is that a test method is named "test"+i for some integer
  i.</div>
+</li>
+</ul>
+<a name="beforeAllText">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>beforeAllText</h4>
+<pre>private&nbsp;java.util.List&lt;java.lang.String&gt; beforeAllText</pre>
+<div class="block">The Java text for BeforeAll method of generated test class.</div>
+</li>
+</ul>
+<a name="afterAllText">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>afterAllText</h4>
+<pre>private&nbsp;java.util.List&lt;java.lang.String&gt; afterAllText</pre>
+<div class="block">The Java text for AfterAll method of generated test class.</div>
+</li>
+</ul>
+<a name="beforeEachText">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>beforeEachText</h4>
+<pre>private&nbsp;java.util.List&lt;java.lang.String&gt; beforeEachText</pre>
+<div class="block">The Java text for BeforeEach method of generated test class.</div>
+</li>
+</ul>
+<a name="afterEachText">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>afterEachText</h4>
+<pre>private&nbsp;java.util.List&lt;java.lang.String&gt; afterEachText</pre>
+<div class="block">The Java text for AfterEach method of generated test class.</div>
+</li>
+</ul>
+<a name="BEFORE_ALL">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>BEFORE_ALL</h4>
+<pre>private static final&nbsp;java.lang.String BEFORE_ALL</pre>
+<div class="block">The JUnit annotation for the BeforeAll option</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../constant-values.html#randoop.JunitFileWriter.BEFORE_ALL">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a name="AFTER_ALL">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>AFTER_ALL</h4>
+<pre>private static final&nbsp;java.lang.String AFTER_ALL</pre>
+<div class="block">The JUnit annotation for the AfterAll option</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../constant-values.html#randoop.JunitFileWriter.AFTER_ALL">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a name="BEFORE_EACH">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>BEFORE_EACH</h4>
+<pre>private static final&nbsp;java.lang.String BEFORE_EACH</pre>
+<div class="block">The JUnit annotation for the BeforeEach option</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../constant-values.html#randoop.JunitFileWriter.BEFORE_EACH">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a name="AFTER_EACH">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>AFTER_EACH</h4>
+<pre>private static final&nbsp;java.lang.String AFTER_EACH</pre>
+<div class="block">The JUnit annotation for the AfterEach option</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../constant-values.html#randoop.JunitFileWriter.AFTER_EACH">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a name="BEFORE_ALL_METHOD">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>BEFORE_ALL_METHOD</h4>
+<pre>private static final&nbsp;java.lang.String BEFORE_ALL_METHOD</pre>
+<div class="block">The method name for the BeforeAll option</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../constant-values.html#randoop.JunitFileWriter.BEFORE_ALL_METHOD">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a name="AFTER_ALL_METHOD">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>AFTER_ALL_METHOD</h4>
+<pre>private static final&nbsp;java.lang.String AFTER_ALL_METHOD</pre>
+<div class="block">The method name for the AfterAll option</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../constant-values.html#randoop.JunitFileWriter.AFTER_ALL_METHOD">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a name="BEFORE_EACH_METHOD">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>BEFORE_EACH_METHOD</h4>
+<pre>private static final&nbsp;java.lang.String BEFORE_EACH_METHOD</pre>
+<div class="block">The method name for the BeforeEach option</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../constant-values.html#randoop.JunitFileWriter.BEFORE_EACH_METHOD">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a name="AFTER_EACH_METHOD">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>AFTER_EACH_METHOD</h4>
+<pre>private static final&nbsp;java.lang.String AFTER_EACH_METHOD</pre>
+<div class="block">The method name for the AfterEach option</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../constant-values.html#randoop.JunitFileWriter.AFTER_EACH_METHOD">Constant Field Values</a></dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -420,26 +654,59 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="writeJUnitTestFile-java.lang.String-java.lang.String-randoop.sequence.ExecutableSequence-java.lang.String-">
+<a name="addBeforeAll-java.util.List-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>writeJUnitTestFile</h4>
-<pre>public static&nbsp;java.io.File&nbsp;writeJUnitTestFile(java.lang.String&nbsp;junitOutputDir,
-                                              java.lang.String&nbsp;packageName,
-                                              <a href="../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;es,
-                                              java.lang.String&nbsp;className)</pre>
-<div class="block">writeJUnitTestFile is a static method that writes a single test class to
- the specified directory and with the specified class name.</div>
+<h4>addBeforeAll</h4>
+<pre>public&nbsp;void&nbsp;addBeforeAll(java.util.List&lt;java.lang.String&gt;&nbsp;text)</pre>
+<div class="block">Add text for BeforeClass-annotated method in each generated test class.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>junitOutputDir</code> - directory where files are to be written.</dd>
-<dd><code>packageName</code> - package name for test classes.</dd>
-<dd><code>es</code> - executable sequence to be written to test class.</dd>
-<dd><code>className</code> - name of test class.</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the File that new test class was written to</dd>
+<dd><code>text</code> - the (Java) text for method</dd>
+</dl>
+</li>
+</ul>
+<a name="addAfterAll-java.util.List-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addAfterAll</h4>
+<pre>public&nbsp;void&nbsp;addAfterAll(java.util.List&lt;java.lang.String&gt;&nbsp;text)</pre>
+<div class="block">Add text for AfterClass-annotated method in each generated text class.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>text</code> - the (Java) text for method</dd>
+</dl>
+</li>
+</ul>
+<a name="addBeforeEach-java.util.List-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addBeforeEach</h4>
+<pre>public&nbsp;void&nbsp;addBeforeEach(java.util.List&lt;java.lang.String&gt;&nbsp;text)</pre>
+<div class="block">Add text for Before-annotated method in each generated test class.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>text</code> - the (Java) text for method</dd>
+</dl>
+</li>
+</ul>
+<a name="addAfterEach-java.util.List-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addAfterEach</h4>
+<pre>public&nbsp;void&nbsp;addAfterEach(java.util.List&lt;java.lang.String&gt;&nbsp;text)</pre>
+<div class="block">Add text for After-annotated method in each generated test class.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>text</code> - the (Java) text for method</dd>
 </dl>
 </li>
 </ul>
@@ -458,9 +725,9 @@ extends java.lang.Object</pre>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>seqPartition</code> - suite of test classes as a list of lists of executable sequences</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>list of File objects corresponding to test class files generated.</dd>
+<dd>list of File objects corresponding to test class files generated</dd>
 <dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../randoop/JunitFileWriter.html#writeSuiteFile-java.util.List-"><code>writeSuiteFile(java.util.List&lt;java.lang.String&gt;)</code></a>, 
+<dd><a href="../randoop/JunitFileWriter.html#writeSuiteFile--"><code>writeSuiteFile()</code></a>, 
 <a href="../randoop/JunitFileWriter.html#writeDriverFile--"><code>writeDriverFile()</code></a></dd>
 </dl>
 </li>
@@ -478,10 +745,32 @@ extends java.lang.Object</pre>
  name.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>sequences</code> - list of executable sequences for method bodies.</dd>
-<dd><code>testClassName</code> - name of test class.</dd>
+<dd><code>sequences</code> - list of executable sequences for method bodies</dd>
+<dd><code>testClassName</code> - name of test class</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the File object for generated java file</dd>
+</dl>
+</li>
+</ul>
+<a name="writeFixture-java.io.PrintStream-java.lang.String-java.lang.String-java.lang.String-java.util.List-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>writeFixture</h4>
+<pre>private&nbsp;void&nbsp;writeFixture(java.io.PrintStream&nbsp;out,
+                          java.lang.String&nbsp;annotation,
+                          java.lang.String&nbsp;modifier,
+                          java.lang.String&nbsp;methodName,
+                          java.util.List&lt;java.lang.String&gt;&nbsp;bodyText)</pre>
+<div class="block">Writes a single text fixture to the output stream.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>out</code> - the output stream for writing test class</dd>
+<dd><code>annotation</code> - the fixture annotation</dd>
+<dd><code>modifier</code> - text prefix for method declaration</dd>
+<dd><code>methodName</code> - the method name for fixture method</dd>
+<dd><code>bodyText</code> - the text of the fixture method</dd>
 </dl>
 </li>
 </ul>
@@ -498,9 +787,9 @@ extends java.lang.Object</pre>
 <div class="block">Writes a test method to the output stream for the sequence s.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>out</code> - the output stream for test class file.</dd>
-<dd><code>className</code> - the name of test class.</dd>
-<dd><code>methodName</code> - the name of test method.</dd>
+<dd><code>out</code> - the output stream for test class file</dd>
+<dd><code>className</code> - the name of test class</dd>
+<dd><code>methodName</code> - the name of test method</dd>
 <dd><code>s</code> - the <a href="../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence"><code>ExecutableSequence</code></a> for test method.</dd>
 </dl>
 </li>
@@ -520,20 +809,18 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="writeSuiteFile-java.util.List-">
+<a name="writeSuiteFile--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>writeSuiteFile</h4>
-<pre>public&nbsp;java.io.File&nbsp;writeSuiteFile(java.util.List&lt;java.lang.String&gt;&nbsp;additionalTestClassNames)</pre>
+<pre>public&nbsp;java.io.File&nbsp;writeSuiteFile()</pre>
 <div class="block">Writes a JUnit4 suite consisting of test classes from
  <a href="../randoop/JunitFileWriter.html#writeJUnitTestFiles-java.util.List-"><code>writeJUnitTestFiles(List)</code></a> and additional classes provided as a
  parameter. The file is written to the directory pointed to by writer object
  in a class whose name is the <a href="../randoop/JunitFileWriter.html#masterTestClassName"><code>masterTestClassName</code></a>.</div>
 <dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>additionalTestClassNames</code> - a list of class names to be added to suite.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd><code>File</code> object for test suite file.</dd>
 </dl>

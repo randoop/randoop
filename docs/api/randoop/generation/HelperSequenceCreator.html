@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>HelperSequenceCreator (randoop 3.0.6 API)</title>
+<title>HelperSequenceCreator (randoop 3.0.7 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="HelperSequenceCreator (randoop 3.0.6 API)";
+            parent.document.title="HelperSequenceCreator (randoop 3.0.7 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9,"i9":9,"i10":9};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9,"i9":9,"i10":9,"i11":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -49,7 +49,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/generation/ForwardGenerator.html" title="class in randoop.generation"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/generation/IEventListener.html" title="interface in randoop.generation"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/generation/HelperSequenceCreator.SequenceExtender.html" title="interface in randoop.generation"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/generation/HelperSequenceCreator.html" target="_top">Frames</a></li>
@@ -73,7 +73,7 @@ var activeTableTab = "activeTableTab";
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
@@ -116,6 +116,25 @@ extends java.lang.Object</pre>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested.class.summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Nested Class Summary table, listing nested classes, and an explanation">
+<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Class and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private static interface&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.SequenceExtender.html" title="interface in randoop.generation">HelperSequenceCreator.SequenceExtender</a></span></code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.summary">
@@ -149,14 +168,20 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>private static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#createAnArray-randoop.util.SimpleList-randoop.types.Type-int-">createAnArray</a></span>(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;candidates,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#buildAddSequence-randoop.sequence.Sequence-randoop.sequence.Sequence-randoop.generation.HelperSequenceCreator.SequenceExtender-">buildAddSequence</a></span>(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;creationSequence,
+                <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;elementSequence,
+                <a href="../../randoop/generation/HelperSequenceCreator.SequenceExtender.html" title="interface in randoop.generation">HelperSequenceCreator.SequenceExtender</a>&nbsp;addSequenceExtender)</code>&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>private static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#createAnArray-randoop.sequence.Sequence-randoop.types.Type-int-">createAnArray</a></span>(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;elementSequence,
              <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;elementType,
              int&nbsp;length)</code>
 <div class="block">Creates a sequence that builds an array of the given element type using sequences from the
  given list of candidates.</div>
 </td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>(package private) static <a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#createArraySequence-randoop.generation.ComponentManager-randoop.types.Type-">createArraySequence</a></span>(<a href="../../randoop/generation/ComponentManager.html" title="class in randoop.generation">ComponentManager</a>&nbsp;components,
                    <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;collectionType)</code>
@@ -164,65 +189,62 @@ extends java.lang.Object</pre>
  class.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>(package private) static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#createCollection-randoop.generation.ComponentManager-randoop.types.InstantiatedType-">createCollection</a></span>(<a href="../../randoop/generation/ComponentManager.html" title="class in randoop.generation">ComponentManager</a>&nbsp;componentManager,
                 <a href="../../randoop/types/InstantiatedType.html" title="class in randoop.types">InstantiatedType</a>&nbsp;collectionType)</code>
 <div class="block">Generates a sequence that creates a Collection.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>private static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#createCollectionCreationSequence-randoop.types.InstantiatedType-randoop.types.ReferenceType-">createCollectionCreationSequence</a></span>(<a href="../../randoop/types/InstantiatedType.html" title="class in randoop.types">InstantiatedType</a>&nbsp;implementingType,
                                 <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&nbsp;elementType)</code>
 <div class="block">Creates the creation sequence for a collection with the given type and element type.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code>private static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#createElementSequences-randoop.util.SimpleList-int-randoop.types.Type-java.util.List-int-java.util.List-">createElementSequences</a></span>(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;candidates,
-                      int&nbsp;length,
-                      <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;elementType,
-                      java.util.List&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;inputSequences,
-                      int&nbsp;totStatements,
-                      java.util.List&lt;java.lang.Integer&gt;&nbsp;variables)</code>
-<div class="block">Selects sequences as values for creating a collection.</div>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>private static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#createElementSequence-randoop.util.SimpleList-int-randoop.types.Type-">createElementSequence</a></span>(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;candidates,
+                     int&nbsp;length,
+                     <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;elementType)</code>
+<div class="block">Selects sequences as element values for creating a collection.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>private static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#createGenericArrayCreationSequence-randoop.types.ArrayType-int-">createGenericArrayCreationSequence</a></span>(<a href="../../randoop/types/ArrayType.html" title="class in randoop.types">ArrayType</a>&nbsp;arrayType,
                                   int&nbsp;length)</code>
 <div class="block">Creates a <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence"><code>Sequence</code></a> for creating an array with parameterized type.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>private static <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#getAddOperation-randoop.types.ParameterizedType-randoop.types.ReferenceType-">getAddOperation</a></span>(<a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types">ParameterizedType</a>&nbsp;collectionType,
                <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&nbsp;elementType)</code>
 <div class="block">Create a method call operation for the <code>add()</code> method of the given collection type.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>private static <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#getCollectionAddAllOperation-randoop.types.ReferenceType-">getCollectionAddAllOperation</a></span>(<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&nbsp;elementType)</code>
 <div class="block">Create the operation to call <code>Collections.addAll(Collection, Object[])</code> that
  allows initialization of a <code>Collection</code> object.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>private static java.lang.reflect.Constructor&lt;?&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#getDefaultConstructor-randoop.types.ClassOrInterfaceType-">getDefaultConstructor</a></span>(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;creationType)</code>
 <div class="block">Gets the default constructor for a <a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types"><code>ClassOrInterfaceType</code></a>.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>private static <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#getEnumSetCreation-randoop.types.ParameterizedType-">getEnumSetCreation</a></span>(<a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types">ParameterizedType</a>&nbsp;creationType)</code>
 <div class="block">Create the operation needed to create an empty EnumSet of the given type.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>private static <a href="../../randoop/types/InstantiatedType.html" title="class in randoop.types">InstantiatedType</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#getImplementingType-randoop.types.InstantiatedType-">getImplementingType</a></span>(<a href="../../randoop/types/InstantiatedType.html" title="class in randoop.types">InstantiatedType</a>&nbsp;elementType)</code>
 <div class="block">Constructs an implementing type for an abstract subtype of <code>java.util.Collection</code> using
@@ -308,6 +330,17 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
+<a name="buildAddSequence-randoop.sequence.Sequence-randoop.sequence.Sequence-randoop.generation.HelperSequenceCreator.SequenceExtender-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>buildAddSequence</h4>
+<pre>private static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;buildAddSequence(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;creationSequence,
+                                         <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;elementSequence,
+                                         <a href="../../randoop/generation/HelperSequenceCreator.SequenceExtender.html" title="interface in randoop.generation">HelperSequenceCreator.SequenceExtender</a>&nbsp;addSequenceExtender)</pre>
+</li>
+</ul>
 <a name="createCollectionCreationSequence-randoop.types.InstantiatedType-randoop.types.ReferenceType-">
 <!--   -->
 </a>
@@ -326,20 +359,20 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="createAnArray-randoop.util.SimpleList-randoop.types.Type-int-">
+<a name="createAnArray-randoop.sequence.Sequence-randoop.types.Type-int-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>createAnArray</h4>
-<pre>private static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;createAnArray(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;candidates,
+<pre>private static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;createAnArray(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;elementSequence,
                                       <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;elementType,
                                       int&nbsp;length)</pre>
 <div class="block">Creates a sequence that builds an array of the given element type using sequences from the
  given list of candidates.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>candidates</code> - the list of candidate elements</dd>
+<dd><code>elementSequence</code> - the sequence creating element values</dd>
 <dd><code>elementType</code> - the type of elements for the array</dd>
 <dd><code>length</code> - the length of the array</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -356,7 +389,7 @@ extends java.lang.Object</pre>
 <pre>private static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;createGenericArrayCreationSequence(<a href="../../randoop/types/ArrayType.html" title="class in randoop.types">ArrayType</a>&nbsp;arrayType,
                                                            int&nbsp;length)</pre>
 <div class="block">Creates a <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence"><code>Sequence</code></a> for creating an array with parameterized type.
- Resulting code looks like <code>(ElementType[])new RawElementType[length]</code>.
+ Resulting code looks like <code>(ElementType[])new RawElementType[dim0]</code>.
  Note that the <code>SuppressWarnings</code> annotation is added when the assignment with the cast
  is output.</div>
 <dl>
@@ -405,27 +438,23 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="createElementSequences-randoop.util.SimpleList-int-randoop.types.Type-java.util.List-int-java.util.List-">
+<a name="createElementSequence-randoop.util.SimpleList-int-randoop.types.Type-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>createElementSequences</h4>
-<pre>private static&nbsp;void&nbsp;createElementSequences(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;candidates,
-                                           int&nbsp;length,
-                                           <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;elementType,
-                                           java.util.List&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;inputSequences,
-                                           int&nbsp;totStatements,
-                                           java.util.List&lt;java.lang.Integer&gt;&nbsp;variables)</pre>
-<div class="block">Selects sequences as values for creating a collection.</div>
+<h4>createElementSequence</h4>
+<pre>private static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;createElementSequence(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;candidates,
+                                              int&nbsp;length,
+                                              <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;elementType)</pre>
+<div class="block">Selects sequences as element values for creating a collection.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>candidates</code> - the sequences from which to select</dd>
 <dd><code>length</code> - the number of values to select</dd>
 <dd><code>elementType</code> - the type of elements</dd>
-<dd><code>inputSequences</code> - the prior sequences in the construction</dd>
-<dd><code>totStatements</code> - the number of previous statements</dd>
-<dd><code>variables</code> - the list of variable indicies</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a sequence with subsequences that create element values for a collection</dd>
 </dl>
 </li>
 </ul>
@@ -476,7 +505,7 @@ extends java.lang.Object</pre>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>elementType</code> - the element type of the collection</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the operation to initialize a collection from an array.</dd>
+<dd>the operation to initialize a collection from an array</dd>
 </dl>
 </li>
 </ul>
@@ -508,7 +537,7 @@ extends java.lang.Object</pre>
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/generation/ForwardGenerator.html" title="class in randoop.generation"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/generation/IEventListener.html" title="interface in randoop.generation"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/generation/HelperSequenceCreator.SequenceExtender.html" title="interface in randoop.generation"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/generation/HelperSequenceCreator.html" target="_top">Frames</a></li>
@@ -532,7 +561,7 @@ extends java.lang.Object</pre>
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>

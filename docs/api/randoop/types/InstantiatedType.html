@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>InstantiatedType (randoop 3.0.6 API)</title>
+<title>InstantiatedType (randoop 3.0.7 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="InstantiatedType (randoop 3.0.6 API)";
+            parent.document.title="InstantiatedType (randoop 3.0.7 API)";
         }
     }
     catch(err) {
@@ -249,7 +249,9 @@ extends <a href="../../randoop/types/ParameterizedType.html" title="class in ran
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/types/NonParameterizedType.html" title="class in randoop.types">NonParameterizedType</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/InstantiatedType.html#getRawtype--">getRawtype</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/InstantiatedType.html#getRawtype--">getRawtype</a></span>()</code>
+<div class="block">Returns the non-parameterized form of this class type.</div>
+</td>
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>private java.util.List&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;</code></td>
@@ -373,7 +375,7 @@ extends <a href="../../randoop/types/ParameterizedType.html" title="class in ran
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;randoop.types.<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></h3>
-<code><a href="../../randoop/types/ClassOrInterfaceType.html#apply-randoop.types.Substitution-randoop.types.ClassOrInterfaceType-">apply</a>, <a href="../../randoop/types/ClassOrInterfaceType.html#applyCaptureConversion-randoop.types.ClassOrInterfaceType-">applyCaptureConversion</a>, <a href="../../randoop/types/ClassOrInterfaceType.html#getCanonicalName--">getCanonicalName</a>, <a href="../../randoop/types/ClassOrInterfaceType.html#getPackage--">getPackage</a>, <a href="../../randoop/types/ClassOrInterfaceType.html#getSimpleName--">getSimpleName</a>, <a href="../../randoop/types/ClassOrInterfaceType.html#isMemberClass--">isMemberClass</a></code></li>
+<code><a href="../../randoop/types/ClassOrInterfaceType.html#apply-randoop.types.Substitution-randoop.types.ClassOrInterfaceType-">apply</a>, <a href="../../randoop/types/ClassOrInterfaceType.html#applyCaptureConversion-randoop.types.ClassOrInterfaceType-">applyCaptureConversion</a>, <a href="../../randoop/types/ClassOrInterfaceType.html#getCanonicalName--">getCanonicalName</a>, <a href="../../randoop/types/ClassOrInterfaceType.html#getPackage--">getPackage</a>, <a href="../../randoop/types/ClassOrInterfaceType.html#getSimpleName--">getSimpleName</a>, <a href="../../randoop/types/ClassOrInterfaceType.html#getSuperTypes--">getSuperTypes</a>, <a href="../../randoop/types/ClassOrInterfaceType.html#isClassType--">isClassType</a>, <a href="../../randoop/types/ClassOrInterfaceType.html#isMemberClass--">isMemberClass</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.randoop.types.ReferenceType">
@@ -1020,6 +1022,14 @@ extends <a href="../../randoop/types/ParameterizedType.html" title="class in ran
 <li class="blockList">
 <h4>getRawtype</h4>
 <pre>public&nbsp;<a href="../../randoop/types/NonParameterizedType.html" title="class in randoop.types">NonParameterizedType</a>&nbsp;getRawtype()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/ClassOrInterfaceType.html#getRawtype--">ClassOrInterfaceType</a></code></span></div>
+<div class="block">Returns the non-parameterized form of this class type.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../randoop/types/ClassOrInterfaceType.html#getRawtype--">getRawtype</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the non-parameterized form of this class type</dd>
+</dl>
 </li>
 </ul>
 </li>

@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 <link rel="stylesheet" href="stylesheets/main.css" type="text/css" />
 <link rel="icon" type="image/png" href="https://randoop.github.io/randoop/images/randoop-logo.png" />
 <title>Randoop Manual</title>
@@ -13,7 +14,7 @@
 <h1>Randoop Manual</h1> <!-- omit from toc -->
 
 <p>
-This is the manual for Randoop version 3.0.6, released October 14, 2016.
+This is the manual for Randoop version 3.0.7, released November 28, 2016.
 The Randoop homepage is
 <a href="https://randoop.github.io/randoop/">https://randoop.github.io/randoop/</a>.
 </p>
@@ -930,6 +931,34 @@ Randoop about your application, and that is how we recommend using Randoop.
  are used to determine whether to include the class or class members in a
  test. Tests can be restricted to public members only by using the option
  <code>--only-test-public-members</code>. [default ]</li>
+      <li id="option:junit-before-each"><b>--junit-before-each=</b><i>string</i>.
+ Name of file containing code text to be added to the Before-annotated method of
+ each generated test class.
+ Code is uninterpreted, and, so, is not run during generation.
+ Intended for use when run-time behavior of classes under test requires setup
+ behavior that is not needed for execution by reflection.
+ (The annotation Before is JUnit 4, and BeforeEach is JUnit 5.)</li>
+      <li id="option:junit-after-each"><b>--junit-after-each=</b><i>string</i>.
+ Name of file containing code text to be added to the After-annotated method of
+ each generated test class.
+ Intended for use when run-time behavior of classes under test requires
+ tear-down behavior that is not needed for execution by reflection.
+ Code is uninterpreted, and, so, is not run during generation.
+ (The annotation After is JUnit 4, and AfterEach is JUnit 5.)</li>
+      <li id="option:junit-before-all"><b>--junit-before-all=</b><i>string</i>.
+ Name of file containing code text to be added to the BeforeClass-annotated method of
+ each generated test class.
+ Intended for use when run-time behavior of classes under test requires setup
+ behavior that is not needed for execution by reflection.
+ Code is uninterpreted, and, so, is not run during generation.
+ (The annotation BeforeClass is JUnit 4, and BeforeAll is JUnit 5.)</li>
+      <li id="option:junit-after-all"><b>--junit-after-all=</b><i>string</i>.
+ Name of file containing code text to be added to the AfterClass-annotated method of
+ each generated test class.
+ Intended for use when run-time behavior of classes under test requires
+ tear-down behavior that is not needed for execution by reflection.
+ Code is uninterpreted, and, so, is not run during generation.
+ (The annotation After is JUnit 4, and AfterEach is JUnit 5.)</li>
       <li id="option:junit-output-dir"><b>--junit-output-dir=</b><i>string</i>.
  Name of the directory to which JUnit files should be written</li>
       <li id="option:dont-output-tests"><b>--dont-output-tests=</b><i>boolean</i>.

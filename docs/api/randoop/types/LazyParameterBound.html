@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>LazyParameterBound (randoop 3.0.6 API)</title>
+<title>LazyParameterBound (randoop 3.0.7 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="LazyParameterBound (randoop 3.0.6 API)";
+            parent.document.title="LazyParameterBound (randoop 3.0.7 API)";
         }
     }
     catch(err) {
@@ -178,7 +178,7 @@ extends <a href="../../randoop/types/ParameterBound.html" title="class in randoo
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code><a href="../../randoop/types/ReferenceBound.html" title="class in randoop.types">ReferenceBound</a></code></td>
+<td class="colFirst"><code><a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/LazyParameterBound.html#apply-randoop.types.Substitution-">apply</a></span>(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
 <div class="block">Applies the given substitution to this type bound by replacing type variables.</div>
 </td>
@@ -273,7 +273,7 @@ extends <a href="../../randoop/types/ParameterBound.html" title="class in randoo
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;randoop.types.<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></h3>
-<code><a href="../../randoop/types/ParameterBound.html#forType-randoop.types.ReferenceType-">forType</a>, <a href="../../randoop/types/ParameterBound.html#forTypes-java.lang.reflect.Type:A-">forTypes</a>, <a href="../../randoop/types/ParameterBound.html#isLowerBound-randoop.types.ParameterBound-randoop.types.Substitution-">isLowerBound</a></code></li>
+<code><a href="../../randoop/types/ParameterBound.html#forType-randoop.types.ReferenceType-">forType</a>, <a href="../../randoop/types/ParameterBound.html#forType-java.lang.reflect.Type-">forType</a>, <a href="../../randoop/types/ParameterBound.html#forTypes-java.lang.reflect.Type:A-">forTypes</a>, <a href="../../randoop/types/ParameterBound.html#isLowerBound-randoop.types.ParameterBound-randoop.types.Substitution-">isLowerBound</a>, <a href="../../randoop/types/ParameterBound.html#isTypeVariable-java.lang.reflect.Type-">isTypeVariable</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -384,7 +384,7 @@ extends <a href="../../randoop/types/ParameterBound.html" title="class in randoo
 <ul class="blockList">
 <li class="blockList">
 <h4>apply</h4>
-<pre>public&nbsp;<a href="../../randoop/types/ReferenceBound.html" title="class in randoop.types">ReferenceBound</a>&nbsp;apply(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
+<pre>public&nbsp;<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;apply(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/ParameterBound.html#apply-randoop.types.Substitution-">ParameterBound</a></code></span></div>
 <div class="block">Applies the given substitution to this type bound by replacing type variables.</div>
 <dl>
@@ -393,7 +393,7 @@ extends <a href="../../randoop/types/ParameterBound.html" title="class in randoo
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>substitution</code> - the type substitution</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>this bound with the type after the substitution has been applied.</dd>
+<dd>this bound with the type after the substitution has been applied</dd>
 </dl>
 </li>
 </ul>

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>SequenceCollection (randoop 3.0.6 API)</title>
+<title>SequenceCollection (randoop 3.0.7 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="SequenceCollection (randoop 3.0.6 API)";
+            parent.document.title="SequenceCollection (randoop 3.0.7 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -167,6 +167,10 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#sequenceMap">sequenceMap</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>private java.util.Set&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#sequenceTypes">sequenceTypes</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/SubTypeSet.html" title="class in randoop">SubTypeSet</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#typeSet">typeSet</a></span></code>&nbsp;</td>
 </tr>
@@ -252,10 +256,14 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i7" class="rowColor">
+<td class="colFirst"><code><a href="../../randoop/reflection/TypeInstantiator.html" title="class in randoop.reflection">TypeInstantiator</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#getTypeInstantiator--">getTypeInstantiator</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#size--">size</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>private void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#updateCompatibleMap-randoop.sequence.Sequence-randoop.types.Type-">updateCompatibleMap</a></span>(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;sequence,
                    <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type)</code>
@@ -300,6 +308,15 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>typeSet</h4>
 <pre>private&nbsp;<a href="../../randoop/SubTypeSet.html" title="class in randoop">SubTypeSet</a> typeSet</pre>
+</li>
+</ul>
+<a name="sequenceTypes">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>sequenceTypes</h4>
+<pre>private&nbsp;java.util.Set&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt; sequenceTypes</pre>
 </li>
 </ul>
 <a name="sequenceCount">
@@ -467,7 +484,7 @@ extends java.lang.Object</pre>
 <a name="getAllSequences--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getAllSequences</h4>
 <pre>public&nbsp;java.util.Set&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;getAllSequences()</pre>
@@ -476,6 +493,15 @@ extends java.lang.Object</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the set of all sequences in this collection</dd>
 </dl>
+</li>
+</ul>
+<a name="getTypeInstantiator--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getTypeInstantiator</h4>
+<pre>public&nbsp;<a href="../../randoop/reflection/TypeInstantiator.html" title="class in randoop.reflection">TypeInstantiator</a>&nbsp;getTypeInstantiator()</pre>
 </li>
 </ul>
 </li>

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ForwardGenerator (randoop 3.0.6 API)</title>
+<title>ForwardGenerator (randoop 3.0.7 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ForwardGenerator (randoop 3.0.6 API)";
+            parent.document.title="ForwardGenerator (randoop 3.0.7 API)";
         }
     }
     catch(err) {
@@ -150,14 +150,18 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#allsequencesAsList">allsequencesAsList</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>private <a href="../../randoop/reflection/TypeInstantiator.html" title="class in randoop.reflection">TypeInstantiator</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#instantiator">instantiator</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>private java.util.Set&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#observers">observers</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>private java.util.Set&lt;java.lang.Object&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#runtimePrimitivesSeen">runtimePrimitivesSeen</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>private java.util.Set&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#subsumed_sequences">subsumed_sequences</a></span></code>
 <div class="block">Sequences that are used in other sequences (and are thus redundant)</div>
@@ -359,6 +363,15 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 <li class="blockList">
 <h4>allsequencesAsList</h4>
 <pre>private final&nbsp;java.util.List&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt; allsequencesAsList</pre>
+</li>
+</ul>
+<a name="instantiator">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>instantiator</h4>
+<pre>private final&nbsp;<a href="../../randoop/reflection/TypeInstantiator.html" title="class in randoop.reflection">TypeInstantiator</a> instantiator</pre>
 </li>
 </ul>
 <a name="runtimePrimitivesSeen">

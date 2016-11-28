@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Substitution (randoop 3.0.6 API)</title>
+<title>Substitution (randoop 3.0.7 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Substitution (randoop 3.0.6 API)";
+            parent.document.title="Substitution (randoop 3.0.7 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":9,"i3":9,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
+var methods = {"i0":10,"i1":10,"i2":9,"i3":9,"i4":9,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -195,12 +195,17 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;T&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Substitution.html#forArg-randoop.types.TypeVariable-T-">forArg</a></span>(<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&nbsp;parameter,
+      T&nbsp;argument)</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;T&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Substitution.html#forArgs-java.util.List-java.util.List-">forArgs</a></span>(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters,
        java.util.List&lt;T&gt;&nbsp;arguments)</code>
 <div class="block">Create a substitution from the type parameters and the list of arguments.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;T&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Substitution.html#forArgs-java.util.List-T...-">forArgs</a></span>(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters,
        T...&nbsp;arguments)</code>
@@ -208,47 +213,53 @@ extends java.lang.Object</pre>
  arguments.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/types/Substitution.html" title="type parameter in Substitution">T</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Substitution.html#get-java.lang.reflect.Type-">get</a></span>(java.lang.reflect.Type&nbsp;parameter)</code>
 <div class="block">Returns the value for the given <code>Type</code></div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/types/Substitution.html" title="type parameter in Substitution">T</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Substitution.html#get-randoop.types.TypeVariable-">get</a></span>(<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&nbsp;parameter)</code>
 <div class="block">Returns the concrete type mapped from the type variable by this substitution.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.util.Collection&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Substitution.html#getVariables--">getVariables</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Substitution.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Substitution.html#isConsistentWith-randoop.types.Substitution-">isConsistentWith</a></span>(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/Substitution.html" title="type parameter in Substitution">T</a>&gt;&nbsp;substitution)</code>
 <div class="block">Indicates whether this substitution is disjoint from another substitution, or that if they both
  map the same type variable, they map it to the same type.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Substitution.html#isEmpty--">isEmpty</a></span>()</code>
+<div class="block">Indicates whether this substitution has any variable-type pairs.</div>
+</td>
+</tr>
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Substitution.html#print--">print</a></span>()</code>
 <div class="block">Print the entries of this substitution to standard out.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>private void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Substitution.html#put-randoop.types.TypeVariable-T-">put</a></span>(<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&nbsp;typeParameter,
    <a href="../../randoop/types/Substitution.html" title="type parameter in Substitution">T</a>&nbsp;type)</code>
 <div class="block">Add a type variable to concrete type mapping to the substitution.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Substitution.html#toString--">toString</a></span>()</code></td>
 </tr>
@@ -329,6 +340,18 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="forArg-randoop.types.TypeVariable-java.lang.Object-">
+<!--   -->
+</a><a name="forArg-randoop.types.TypeVariable-T-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>forArg</h4>
+<pre>public static&nbsp;&lt;T&gt;&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;T&gt;&nbsp;forArg(<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&nbsp;parameter,
+                                         T&nbsp;argument)</pre>
+</li>
+</ul>
 <a name="forArgs-java.util.List-java.lang.Object:A-">
 <!--   -->
 </a><a name="forArgs-java.util.List-T...-">
@@ -511,7 +534,7 @@ public static&nbsp;&lt;T&gt;&nbsp;<a href="../../randoop/types/Substitution.html
 </a><a name="put-randoop.types.TypeVariable-T-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>put</h4>
 <pre>private&nbsp;void&nbsp;put(<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&nbsp;typeParameter,
@@ -522,6 +545,20 @@ public static&nbsp;&lt;T&gt;&nbsp;<a href="../../randoop/types/Substitution.html
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>typeParameter</code> - the type variable</dd>
 <dd><code>type</code> - the concrete type</dd>
+</dl>
+</li>
+</ul>
+<a name="isEmpty--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>isEmpty</h4>
+<pre>public&nbsp;boolean&nbsp;isEmpty()</pre>
+<div class="block">Indicates whether this substitution has any variable-type pairs.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if there are no substitution pairs, false otherwise</dd>
 </dl>
 </li>
 </ul>
