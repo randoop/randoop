@@ -309,19 +309,14 @@ public class JunitFileWriter {
    * parameter. The file is written to the directory pointed to by writer object
    * in a class whose name is the {@link #masterTestClassName}.
    *
-   * @param additionalTestClassNames
-   *          a list of class names to be added to suite
    * @return {@link File} object for test suite file.
    */
-  public File writeSuiteFile(List<String> additionalTestClassNames) {
+  public File writeSuiteFile() {
     File dir = this.getDir();
     String suiteClassName = masterTestClassName;
     File file = new File(dir, suiteClassName + ".java");
 
     List<String> testClassNames = getTestClassNames();
-    if (additionalTestClassNames != null && !additionalTestClassNames.isEmpty()) {
-      testClassNames.addAll(additionalTestClassNames);
-    }
 
     try (PrintStream out = createTextOutputStream(file)) {
       outputPackageName(out, packageName);

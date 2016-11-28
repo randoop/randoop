@@ -17,7 +17,6 @@ import plume.Options.ArgException;
 import plume.SimpleLog;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
-import randoop.Globals;
 import randoop.JunitFileWriter;
 import randoop.MultiVisitor;
 import randoop.generation.AbstractGenerator;
@@ -518,7 +517,7 @@ public class GenTests extends GenInputsAbstract {
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.printf("Writing JUnit tests...%n");
     }
-    writeJUnitTests(junit_output_dir, sequences, null, junitPrefix);
+    writeJUnitTests(junit_output_dir, sequences, junitPrefix);
   }
 
   /**
@@ -586,17 +585,12 @@ public class GenTests extends GenInputsAbstract {
    *          string name of output directory
    * @param seqList
    *          a list of sequences to write
-   * @param additionalJUnitClasses
-   *          other classes to write (may be null)
    * @param junitClassname
    *          the base name for the class
    * @return list of files written
    **/
   private static List<File> writeJUnitTests(
-      String output_dir,
-      List<ExecutableSequence> seqList,
-      List<String> additionalJUnitClasses,
-      String junitClassname) {
+      String output_dir, List<ExecutableSequence> seqList, String junitClassname) {
 
     List<File> files = new ArrayList<>();
 
@@ -629,7 +623,7 @@ public class GenTests extends GenInputsAbstract {
       files.addAll(jfw.writeJUnitTestFiles(seqPartition));
 
       if (GenInputsAbstract.junit_reflection_allowed) {
-        files.add(jfw.writeSuiteFile(additionalJUnitClasses));
+        files.add(jfw.writeSuiteFile());
       } else {
         files.add(jfw.writeDriverFile());
       }
