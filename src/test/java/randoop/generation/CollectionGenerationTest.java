@@ -217,7 +217,7 @@ public class CollectionGenerationTest {
         HelperSequenceCreator.createArraySequence(componentManager, arrayOfArrayType);
     Sequence sequence = sequenceList.get(0);
     assert sequence != null : "sequence should not be null";
-    System.out.println(sequence.toCodeString());
+
     Set<Type> outputTypeSet = new HashSet<>();
     for (int i = 0; i < sequence.size(); i++) {
       Type outputType = sequence.getStatement(i).getOutputType();
