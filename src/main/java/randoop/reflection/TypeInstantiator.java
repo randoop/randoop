@@ -228,6 +228,18 @@ public class TypeInstantiator {
       }
     }
 
+    // return types don't have to exist, but do need to be selected
+    if (operation.getOutputType().isReferenceType()) {
+      Type workingType = operation.getOutputType().apply(substitution);
+      if (workingType.isGeneric()) {
+        typeParameters.addAll(((ReferenceType) workingType).getTypeParameters());
+      }
+    }
+
+    if (!typeParameters.isEmpty()) {
+      typeParameters.removeAll(substitution.getVariables());
+    }
+
     if (!typeParameters.isEmpty()) {
       substitution = selectSubstitution(typeParameters, substitution);
       if (substitution == null) {
