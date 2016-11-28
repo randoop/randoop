@@ -82,10 +82,10 @@ public final class CollectionsExt {
     if (maxLength <= 0) {
       throw new IllegalArgumentException("maxLength must be > 0 but was " + maxLength);
     }
-    int numberOfSublists = list.size() / maxLength;
+    int numberOfFullSublists = list.size() / maxLength;
 
-    List<List<T>> result = new ArrayList<>(numberOfSublists + 1);
-    for (int i = 0; i < numberOfSublists; i++) {
+    List<List<T>> result = new ArrayList<>(numberOfFullSublists + 1);
+    for (int i = 0; i < numberOfFullSublists; i++) {
       List<T> subList = list.subList(i * maxLength, (i + 1) * maxLength);
       if (subList.size() != maxLength) {
         throw new IllegalStateException(
@@ -93,7 +93,7 @@ public final class CollectionsExt {
       }
       result.add(subList);
     }
-    List<T> lastSublist = list.subList(numberOfSublists * maxLength, list.size());
+    List<T> lastSublist = list.subList(numberOfFullSublists * maxLength, list.size());
     if (!lastSublist.isEmpty()) result.add(lastSublist);
     return Collections.unmodifiableList(result);
   }
