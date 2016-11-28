@@ -9,7 +9,7 @@ public class NorthWest implements Quadrant {
    * Return true iff this quadrant is adjacent to the boundary
    * of an image in the given direction.
    * @param direction the image boundary
-   * @return true if the quadrant is adjacent, false otherwise.
+   * @return true if the quadrant is adjacent, false otherwise
    **/
   public boolean adjacent(int direction) {
     return (direction == QuadTreeNode.NORTH || direction == QuadTreeNode.WEST);

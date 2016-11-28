@@ -39,15 +39,15 @@ public class Tree {
 
   /**
    * Return an enumeration of the bodies.
-   * @return an enumeration of the bodies.
+   * @return an enumeration of the bodies
    **/
   public final Enumeration<Body> bodies() {
     return bodyTab.elements();
   }
 
   /**
-   * Return an enumeration of the bodies - in reverse.
-   * @return an enumeration of the bodies - in reverse.
+   * Return an enumeration of the bodies, in reverse.
+   * @return an enumeration of the bodies, in reverse
    **/
   public final Enumeration<Body> bodiesRev() {
     return bodyTabRev.elementsRev();

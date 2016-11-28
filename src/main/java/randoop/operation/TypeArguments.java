@@ -23,11 +23,11 @@ class TypeArguments {
    * of types.
    *
    * @param argStr
-   *          the string containing type arguments for a signature.
+   *          the string containing type arguments for a signature
    * @return the array of {@link Class} objects for the type arguments in
    *         argStr.
    * @throws OperationParseException
-   *           if a type name in the string is not a valid type.
+   *           if a type name in the string is not a valid type
    */
   static Class<?>[] getTypeArgumentsForString(String argStr) throws OperationParseException {
     Class<?>[] argTypes = new Class<?>[0];

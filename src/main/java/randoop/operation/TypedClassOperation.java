@@ -60,7 +60,7 @@ public class TypedClassOperation extends TypedOperation {
    * Returns the class in which the operation is defined, or, if the operation represents a value,
    * the type of the value.
    *
-   * @return class to which the operation belongs.
+   * @return class to which the operation belongs
    */
   public ClassOrInterfaceType getDeclaringType() {
     return declaringType;
@@ -91,7 +91,7 @@ public class TypedClassOperation extends TypedOperation {
    * Produces a Java source code representation of this statement and append it to the given
    * StringBuilder.
    *
-   * @param inputVars the list of variables that are inputs to operation.
+   * @param inputVars the list of variables that are inputs to operation
    * @param b         the {@link StringBuilder} to which code is added.
    */
   public void appendCode(List<Variable> inputVars, StringBuilder b) {

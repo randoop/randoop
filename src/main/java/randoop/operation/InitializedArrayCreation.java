@@ -170,7 +170,7 @@ public final class InitializedArrayCreation extends CallableOperation {
    *          the string to be parsed for the {@code InitializedArrayCreation}.
    * @return the array creation for the given string descriptor
    * @throws OperationParseException
-   *           if string does not have expected form.
+   *           if string does not have expected form
    */
   public static TypedOperation parse(String str) throws OperationParseException {
     int openBr = str.indexOf('[');

@@ -111,7 +111,7 @@ public interface Operation extends Comparable<Operation> {
    * This is a hack to allow randoop.main.GenBranchDir to do mutation.
    *
    * @return object reference to value
-   * @throws IllegalArgumentException if no meaningful definition of "value" for type.
+   * @throws IllegalArgumentException if no meaningful definition of "value" for type
    */
   Object getValue();
 

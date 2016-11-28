@@ -35,9 +35,9 @@ public class FieldSet extends CallableOperation {
    * exception if the field is static final.
    *
    * @param field
-   *          the field object to be set by setter statements.
+   *          the field object to be set by setter statements
    * @throws IllegalArgumentException
-   *           if field is static final.
+   *           if field is static final
    */
   public FieldSet(AccessibleField field) {
     if (field.isFinal()) {
@@ -56,13 +56,13 @@ public class FieldSet extends CallableOperation {
    * {@link IllegalArgumentException} and {@link IllegalAccessException}).
    *
    * @param statementInput
-   *          the inputs for statement.
+   *          the inputs for statement
    * @param out
-   *          the stream for printing output (unused).
+   *          the stream for printing output (unused)
    * @return outcome of access, either void normal execution or captured
    *         exception
    * @throws BugInRandoopException
-   *           if field access throws bug exception.
+   *           if field access throws bug exception
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
@@ -102,7 +102,7 @@ public class FieldSet extends CallableOperation {
    *          the list of input variables. Last element is value to assign. If
    *          an instance field, first is instance, second is value.
    * @param b
-   *          the StringBuilder to which code is issued.
+   *          the StringBuilder to which code is issued
    */
   @Override
   public void appendCode(
@@ -146,10 +146,10 @@ public class FieldSet extends CallableOperation {
    * "&lt;set&gt;" is literally what is expected.
    *
    * @param descr
-   *          string containing descriptor of field setter.
+   *          string containing descriptor of field setter
    * @return the field setter for the given string descriptor
    * @throws OperationParseException
-   *           if descr does not have expected form.
+   *           if descr does not have expected form
    */
   public static TypedOperation parse(String descr) throws OperationParseException {
     String errorPrefix = "Error parsing " + descr + " as description for field set statement: ";

@@ -43,7 +43,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * for inclusion of reflection objects.
    *
    * @param omitMethods
-   *          pattern for methods to omit, if null then no methods omitted.
+   *          pattern for methods to omit, if null then no methods omitted
    * @param omitFields
    *          set of field names to omit
    */

@@ -27,7 +27,7 @@ public class AccessibleField {
   /**
    * Create the public field object for the given {@code Field}.
    *
-   * @param field  the field.
+   * @param field  the field
    * @param declaringType  the type for the declaring class of this field
    */
   public AccessibleField(Field field, ClassOrInterfaceType declaringType) {
@@ -105,7 +105,7 @@ public class AccessibleField {
    * initialized.
    *
    * @param object
-   *          - instance to which field belongs, or null if field is static.
+   *          instance to which field belongs, or null if field is static
    * @return reference to value of field
    * @throws BugInRandoopException
    *           if field access throws {@link IllegalArgumentException} or
@@ -129,9 +129,9 @@ public class AccessibleField {
    * Suppresses exceptions that occur because setup was incorrect.
    *
    * @param object
-   *          - instance to which field belongs, or null if static.
+   *          instance to which field belongs, or null if static
    * @param value
-   *          - new value to assign to field
+   *          new value to assign to field
    * @throws BugInRandoopException
    *           if field access throws {@link IllegalArgumentException} or
    *           {@link IllegalAccessException}.

@@ -288,7 +288,7 @@ public abstract class Type {
    * Indicates whether this is a reference type.
    * Note: implementing classes should ensure that this is equivalent to !(this.isPrimitive())
    *
-   * @return true if this type is a reference type, and false otherwise.
+   * @return true if this type is a reference type, and false otherwise
    */
   public boolean isReferenceType() {
     return false;

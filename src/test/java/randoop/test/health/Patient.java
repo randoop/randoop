@@ -10,7 +10,7 @@ public class Patient {
 
   /**
    * Construct a new patient that is from the specified village.
-   * @param v the home village of the patient.
+   * @param v the home village of the patient
    **/
   public Patient(Village v) {
     home = v;

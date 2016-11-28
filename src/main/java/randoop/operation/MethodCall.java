@@ -227,7 +227,7 @@ public final class MethodCall extends CallableOperation {
    * @param signature  a string descriptor
    * @return the method call operation for the given string descriptor
    * @throws OperationParseException
-   *           if s does not match expected descriptor.
+   *           if s does not match expected descriptor
    */
   public static TypedClassOperation parse(String signature) throws OperationParseException {
     if (signature == null) {

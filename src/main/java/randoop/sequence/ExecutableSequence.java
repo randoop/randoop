@@ -115,8 +115,9 @@ public class ExecutableSequence {
   public long exectime = -1;
 
   /**
-   * Flag to record whether execution of sequence has a null input. [this is
-   * wonky really belongs to execution]
+   * Flag to record whether execution of sequence has a null input.
+   *
+   * [This is wonky, it really belongs to execution.]
    */
   private boolean hasNullInput;
 
@@ -330,7 +331,7 @@ public class ExecutableSequence {
    * @param vars
    *          a list of {@link Variable} objects.
    * @param execution
-   *          the object representing outcome of executing this sequence.
+   *          the object representing outcome of executing this sequence
    * @return array of values corresponding to variables
    */
   public static Object[] getRuntimeValuesForVars(List<Variable> vars, Execution execution) {

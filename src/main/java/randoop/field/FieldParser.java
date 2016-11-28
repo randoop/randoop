@@ -64,9 +64,9 @@ public class FieldParser {
    * Searches the field list of a class for a field that has the given name.
    *
    * @param type
-   *          - class object.
+   *          class object
    * @param fieldName
-   *          - field name for which to search the class.
+   *          field name for which to search the class
    * @return field of the class with the given name
    */
   private static Field fieldForName(Class<?> type, String fieldName) {

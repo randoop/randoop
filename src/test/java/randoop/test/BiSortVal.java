@@ -30,7 +30,7 @@ public class BiSortVal {
    *
    * @param size the number of values to create
    * @param seed a random number generator seed value
-   * @return the root of the (sub) tree.
+   * @return the root of the (sub) tree
    **/
   public static BiSortVal createTree(int size, int seed) {
     if (size > 1) {
@@ -51,7 +51,7 @@ public class BiSortVal {
    *
    * @param spr_val the "spare" value in the algorithm
    * @param direction the direction of the sort (forward or backward)
-   * @return the new "spare" value.
+   * @return the new "spare" value
    **/
   public int bisort(int spr_val, boolean direction) {
     if (left == null) {
@@ -127,7 +127,7 @@ public class BiSortVal {
 
   /**
    * Swap the values and the right subtrees.
-   * @param n the other subtree involved in the swap.
+   * @param n the other subtree involved in the swap
    **/
   public void swapValRight(BiSortVal n) {
     int tmpv = n.value;
@@ -142,7 +142,7 @@ public class BiSortVal {
 
   /**
    * Swap the values and the left subtrees.
-   * @param n the other subtree involved in the swap.
+   * @param n the other subtree involved in the swap
    **/
   public void swapValLeft(BiSortVal n) {
     int tmpv = n.value;
@@ -167,7 +167,7 @@ public class BiSortVal {
   /**
    * A random generator.  The original Olden benchmark uses its
    * own random generator.  We use the same one in the Java version.
-   * @return the next random number in the sequence.
+   * @return the next random number in the sequence
    **/
   private static int mult(int p, int q) {
     int p1 = p / CONST_m1;
@@ -179,7 +179,7 @@ public class BiSortVal {
 
   /**
    * A routine to skip the next <i>n</i> random numbers.
-   * @param seed the current random no. seed
+   * @param seed the current random number seed
    * @param n the number of numbers to skip
    **/
   private static int skiprand(int seed, int n) {
@@ -190,7 +190,7 @@ public class BiSortVal {
   /**
    * Return a random number based upon the seed value.
    * @param seed the random number seed value
-   * @return a random number based upon the seed value.
+   * @return a random number based upon the seed value
    **/
   public static int random(int seed) {
     int tmp = mult(seed, CONST_b) + 1;

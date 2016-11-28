@@ -698,7 +698,7 @@ public final class Sequence implements WeightedElement {
    * @param statement
    *          is a {@link Statement} object from which the operation is copied.
    * @param inputs
-   *          is the list of variables for input.
+   *          is the list of variables for input
    * @return sequence constructed from this one plus the operation
    * @see Sequence#extend(TypedOperation, List)
    */
@@ -847,7 +847,7 @@ public final class Sequence implements WeightedElement {
    * used a separator between statements.
    *
    * @param statementSep
-   *          the statement separator.
+   *          the statement separator
    * @return the string representation of this sequence
    */
   private String toParsableString(String statementSep) {

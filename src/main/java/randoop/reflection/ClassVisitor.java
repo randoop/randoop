@@ -24,7 +24,7 @@ public interface ClassVisitor {
    * Perform action on a constructor.
    *
    * @param c
-   *          the constructor.
+   *          the constructor
    */
   void visit(Constructor<?> c);
 
@@ -32,7 +32,7 @@ public interface ClassVisitor {
    * Perform an action on a method.
    *
    * @param m
-   *          the method.
+   *          the method
    */
   void visit(Method m);
 
@@ -40,7 +40,7 @@ public interface ClassVisitor {
    * Perform an action on a field.
    *
    * @param f
-   *          the field.
+   *          the field
    */
   void visit(Field f);
 
@@ -48,7 +48,7 @@ public interface ClassVisitor {
    * Perform an action on an enum value.
    *
    * @param e
-   *          the enum value.
+   *          the enum value
    */
   void visit(Enum<?> e);
 
@@ -56,7 +56,7 @@ public interface ClassVisitor {
    * Perform an action on a class. Occurs before other visit methods are called.
    *
    * @param c
-   *          the class to visit.
+   *          the class to visit
    */
   void visitBefore(Class<?> c);
 
@@ -64,7 +64,7 @@ public interface ClassVisitor {
    * Perform an action on a class. Called after other visit methods are called.
    *
    * @param c
-   *          the class to visit.
+   *          the class to visit
    */
   void visitAfter(Class<?> c);
 }

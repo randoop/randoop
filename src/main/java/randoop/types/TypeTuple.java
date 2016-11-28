@@ -98,7 +98,7 @@ public class TypeTuple {
   /**
    * Returns the type parameters that occur in any component of this type tuple.
    *
-   * @return the list of type parameters for this type tuple.
+   * @return the list of type parameters for this type tuple
    */
   public List<TypeVariable> getTypeParameters() {
     Set<TypeVariable> paramSet = new LinkedHashSet<>();

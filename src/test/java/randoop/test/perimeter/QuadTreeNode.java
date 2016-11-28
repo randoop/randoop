@@ -95,28 +95,28 @@ public abstract class QuadTreeNode {
 
   /**
    * Return the node representing the north west quadrant.
-   * @return the node representing the north west quadrant.
+   * @return the node representing the north west quadrant
    **/
   public final QuadTreeNode getNorthWest() {
     return nw;
   }
   /**
    * Return the node representing the north east quadrant.
-   * @return the node representing the north east quadrant.
+   * @return the node representing the north east quadrant
    **/
   public final QuadTreeNode getNorthEast() {
     return ne;
   }
   /**
    * Return the node representing the south west quadrant.
-   * @return the node representing the south west quadrant.
+   * @return the node representing the south west quadrant
    **/
   public final QuadTreeNode getSouthWest() {
     return sw;
   }
   /**
    * Return the node representing the south east quadrant.
-   * @return the node representing the south east quadrant.
+   * @return the node representing the south east quadrant
    **/
   public final QuadTreeNode getSouthEast() {
     return se;
@@ -169,7 +169,7 @@ public abstract class QuadTreeNode {
    * as a quadtree using Samet's algorithm.
    *
    * @param size the size of the image that this node represents (size X size)
-   * @return the size of the perimeter of the image.
+   * @return the size of the perimeter of the image
    **/
   abstract public int perimeter(int size);
 
@@ -211,7 +211,7 @@ public abstract class QuadTreeNode {
 
   /**
    * Count the number of leaves in the quad tree.
-   * @return the number of leaves in the quad tree.
+   * @return the number of leaves in the quad tree
    **/
   public int countTree() {
     if (nw == null && ne == null && sw == null && se == null) {

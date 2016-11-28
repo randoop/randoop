@@ -69,7 +69,7 @@ public class ProgressDisplay extends Thread {
   /**
    * Clients should set this variable instead of calling Thread.stop(), which is
    * deprecated. Typically a client calls "display()" before setting this.
-   **/
+   */
   public boolean shouldStop = false;
 
   @Override
@@ -142,7 +142,7 @@ public class ProgressDisplay extends Thread {
     }
   }
 
-  /** Clear the display; good to do before printing to System.out. * */
+  /** Clear the display; good to do before printing to System.out. */
   public void clear() {
     if (GenInputsAbstract.progressinterval == -1) return;
     // "display("");" is wrong because it leaves the timestamp and writes

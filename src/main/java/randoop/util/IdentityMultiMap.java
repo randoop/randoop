@@ -38,7 +38,7 @@ public class IdentityMultiMap<K, V> {
    * Returns the set of values that correspond to the given key in the map.
    *
    * @param key  the key value
-   * @return the set of values that correspond to the key, null if none.
+   * @return the set of values that correspond to the key, null if none
    */
   public Set<V> get(K key) {
     return map.get(key);

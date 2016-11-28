@@ -12,9 +12,9 @@ public interface IMultiMap<T1, T2> {
    * Precondition: the mapping key&rarr;value is not already in the map.
    *
    * @param key
-   *          cannot be null.
+   *          cannot be null
    * @param value
-   *          cannot be null.
+   *          cannot be null
    */
   void add(T1 key, T2 value);
 
@@ -22,9 +22,9 @@ public interface IMultiMap<T1, T2> {
    * Precondition: the mapping key&rarr;value is in the map.
    *
    * @param key
-   *          cannot be null.
+   *          cannot be null
    * @param value
-   *          cannot be null.
+   *          cannot be null
    */
   void remove(T1 key, T2 value);
 
@@ -32,7 +32,7 @@ public interface IMultiMap<T1, T2> {
    * Returns the values that the given key maps to.
    *
    * @param key
-   *          cannot be null.
+   *          cannot be null
    * @return the set of values for the given key
    */
   Set<T2> getValues(T1 key);

@@ -14,7 +14,7 @@ public interface ReflectionPredicate {
    * Indicate whether Randoop should use a class.
    *
    * @param c
-   *          the class to test.
+   *          the class to test
    * @return true if the class meets the predicate criteria, false otherwise
    */
   boolean test(Class<?> c);
@@ -23,7 +23,7 @@ public interface ReflectionPredicate {
    * Indicate whether Randoop should use a method.
    *
    * @param m
-   *          the method to test.
+   *          the method to test
    * @return true if the method meets the predicate criteria, false otherwise
    */
   boolean test(Method m);
@@ -32,7 +32,7 @@ public interface ReflectionPredicate {
    * Indicate whether Randoop should use a constructor.
    *
    * @param m
-   *          the constructor to test.
+   *          the constructor to test
    * @return true if the constructor meets the predicate criteria, false
    *         otherwise
    */
@@ -42,7 +42,7 @@ public interface ReflectionPredicate {
    * Indicate whether Randoop should use a field.
    *
    * @param f
-   *          the field to test.
+   *          the field to test
    * @return true if the field meets the predicate criteria, false otherwise
    */
   boolean test(Field f);

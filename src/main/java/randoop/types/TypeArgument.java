@@ -62,7 +62,7 @@ public abstract class TypeArgument {
   /**
    * Indicate whether this type argument has a wildcard.
    *
-   * @return true if this argument has a wildcard argument.
+   * @return true if this argument has a wildcard argument
    */
   public boolean hasWildcard() {
     return false;

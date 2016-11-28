@@ -12,7 +12,7 @@ public class TreeNode {
    * Create a node in the tree with a given value and two children.
    * @param v the node's value
    * @param l the left child
-   * @param r the right child.
+   * @param r the right child
    **/
   public TreeNode(int v, TreeNode l, TreeNode r) {
     value = v;
@@ -23,7 +23,7 @@ public class TreeNode {
   /**
    * Create a tree node given the two children.  The initial node
    * value is 1.
-   **/
+   */
   public TreeNode(TreeNode l, TreeNode r) {
     this(1, l, r);
   }
@@ -31,7 +31,7 @@ public class TreeNode {
   /**
    * Create a tree node given the two children.  The initial node
    * value is 1.
-   **/
+   */
   public TreeNode() {
     this(1, null, null);
   }
@@ -81,7 +81,7 @@ public class TreeNode {
   /**
    * Add the value of this node with the cumulative values
    * of the children of this node.
-   * @return the cumulative value of this tree.
+   * @return the cumulative value of this tree
    **/
   public int addTree() {
     int total = value;
