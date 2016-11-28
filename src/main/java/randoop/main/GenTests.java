@@ -596,7 +596,7 @@ public class GenTests extends GenInputsAbstract {
 
     if (!seqList.isEmpty()) {
       List<List<ExecutableSequence>> seqPartition =
-          CollectionsExt.chunkUp(new ArrayList<>(seqList), testsperfile);
+          CollectionsExt.formSublists(new ArrayList<>(seqList), testsperfile);
 
       JunitFileWriter jfw = new JunitFileWriter(output_dir, junit_package_name, junitClassname);
 
@@ -646,22 +646,15 @@ public class GenTests extends GenInputsAbstract {
   /**
    * Print out usage error and stack trace and then exit
    *
-   * @param t  the exception for the error
    * @param format  the string format
    * @param args  the arguments
    */
-  private static void usage(Throwable t, String format, Object... args) {
-
+  private static void usage(String format, Object... args) {
     System.out.print("ERROR: ");
     System.out.printf(format, args);
     System.out.println();
     System.out.println(options.usage());
-    if (t != null) t.printStackTrace();
     System.exit(-1);
-  }
-
-  private static void usage(String format, Object... args) {
-    usage(null, format, args);
   }
 
   private static List<String> getFileText(String filename) {
@@ -674,6 +667,7 @@ public class GenTests extends GenInputsAbstract {
         }
       } catch (IOException e) {
         System.err.println("Unable to read " + filename);
+        //TODO this should really throw an exception
         return null;
       }
       return textList;
