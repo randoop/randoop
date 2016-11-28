@@ -28,7 +28,7 @@ public class UtilTests extends TestCase {
   public void testChunkUp1() throws Exception {
     List<String> list = makeList(243);
     int maxLength = 100;
-    List<List<String>> chunks = CollectionsExt.chunkUp(list, maxLength);
+    List<List<String>> chunks = CollectionsExt.formSublists(list, maxLength);
     assertEquals(3, chunks.size());
     assertEquals(100, chunks.get(0).size());
     assertEquals(100, chunks.get(1).size());
@@ -38,7 +38,7 @@ public class UtilTests extends TestCase {
   public void testChunkUp2() throws Exception {
     List<String> list = makeList(43);
     int maxLength = 100;
-    List<List<String>> chunks = CollectionsExt.chunkUp(list, maxLength);
+    List<List<String>> chunks = CollectionsExt.formSublists(list, maxLength);
     assertEquals(1, chunks.size());
     assertEquals(43, chunks.get(0).size());
   }
@@ -46,14 +46,14 @@ public class UtilTests extends TestCase {
   public void testChunkUp3() throws Exception {
     List<String> list = makeList(0);
     int maxLength = 100;
-    List<List<String>> chunks = CollectionsExt.chunkUp(list, maxLength);
+    List<List<String>> chunks = CollectionsExt.formSublists(list, maxLength);
     assertEquals(0, chunks.size());
   }
 
   public void testChunkUp4() throws Exception {
     List<String> list = makeList(200);
     int maxLength = 100;
-    List<List<String>> chunks = CollectionsExt.chunkUp(list, maxLength);
+    List<List<String>> chunks = CollectionsExt.formSublists(list, maxLength);
     assertEquals(2, chunks.size());
     assertEquals(100, chunks.get(0).size());
     assertEquals(100, chunks.get(1).size());
@@ -132,102 +132,6 @@ public class UtilTests extends TestCase {
     assertEquals(2, Util.occurCount(text, s));
   }
 
-  public void testUniqueList1() {
-    List<Integer> lst = Arrays.asList(1, 2, 3, 4);
-    assertEquals(lst, CollectionsExt.unique(lst));
-  }
-
-  public void testUniqueList2() {
-    List<Integer> lst = Arrays.asList(1, 2, 1, 4);
-    List<Integer> lstU = Arrays.asList(1, 2, 4);
-    assertEquals(lstU, CollectionsExt.unique(lst));
-  }
-
-  public void testRemoveMatching1() {
-    List<String> lst = new ArrayList<>(Arrays.asList("foo", "bar", "baz"));
-    List<String> expected = Arrays.asList("foo");
-    assertEquals(expected, CollectionsExt.removeMatching("ba.", lst));
-  }
-
-  public void testJoin1() {
-    List<String> lst = Arrays.asList("foo", "bar", "baz");
-    assertEquals("fooXbarXbaz", CollectionsExt.join("X", lst));
-  }
-
-  @SuppressWarnings("unchecked")
-  public void testAllCombinations() throws Exception {
-    List<List<String>> all =
-        CollectionsExt.allCombinations(
-            Arrays.<List<String>>asList(
-                Arrays.<String>asList("1", "2"), Arrays.<String>asList("a", "b")));
-    assertEquals(all.toString(), 4, all.size());
-  }
-
-  @SuppressWarnings("unchecked")
-  public void testAllCombinations2() throws Exception {
-    List<List<String>> all =
-        CollectionsExt.allCombinations(
-            Arrays.<List<String>>asList(Arrays.<String>asList("1", "2")));
-    assertEquals(all.toString(), 2, all.size());
-  }
-
-  @SuppressWarnings("unchecked")
-  public void testAllCombinations3() throws Exception {
-    List<List<String>> all =
-        CollectionsExt.allCombinations(
-            Arrays.<List<String>>asList(
-                Arrays.<String>asList("1", "2"),
-                Arrays.<String>asList("a", "b", "c"),
-                Arrays.<String>asList("q", "w", "e", "r")));
-    assertEquals(all.toString(), 2 * 3 * 4, all.size());
-  }
-
-  @SuppressWarnings("unchecked")
-  public void testAllCombinations4() throws Exception {
-    List<List<String>> all =
-        CollectionsExt.allCombinations(
-            Arrays.<List<String>>asList(Arrays.<String>asList("1", "2")));
-    assertEquals(all.toString(), 2, all.size());
-  }
-
-  @SuppressWarnings("unchecked")
-  public void testAllCombinations5() throws Exception {
-    List<List<String>> all =
-        CollectionsExt.allCombinations(Arrays.<List<String>>asList(Arrays.<String>asList()));
-    assertEquals(all.toString(), 0, all.size());
-  }
-
-  @SuppressWarnings("unchecked")
-  public void testAllCombinations6() throws Exception {
-    List<List<String>> all = CollectionsExt.allCombinations(Arrays.<List<String>>asList());
-    assertEquals(all.toString(), 1, all.size());
-  }
-
-  public void testcreatePerArityGroups1() throws Exception {
-    Map<Integer, Set<Object[]>> name =
-        CollectionsExt.createPerArityGroups(new Object[] {"a", "b"}, 2);
-    assertEquals(7, totalArrayCount(name));
-  }
-
-  public void testcreatePerArityGroups2() throws Exception {
-    Map<Integer, Set<Object[]>> name =
-        CollectionsExt.createPerArityGroups(new Object[] {"a", "b"}, 3);
-    assertEquals(15, totalArrayCount(name));
-  }
-
-  public void testcreatePerArityGroups3() throws Exception {
-    Map<Integer, Set<Object[]>> name =
-        CollectionsExt.createPerArityGroups(new Object[] {"a", "b", "c"}, 2);
-    assertEquals(13, totalArrayCount(name));
-  }
-
-  public void testcreatePerArityGroups4() throws Exception {
-    Map<Integer, Set<Object[]>> name =
-        CollectionsExt.createPerArityGroups(new Object[] {"a", "b", "c"}, 3);
-    //  printAll(name);
-    assertEquals(40, totalArrayCount(name));
-  }
-
   @SuppressWarnings("unused") //debugging
   private void printAll(Map<Integer, Set<Object[]>> name) {
     for (int x : name.keySet()) {
@@ -243,15 +147,5 @@ public class UtilTests extends TestCase {
       result += map.get(x).size();
     }
     return result;
-  }
-
-  public void testMap() throws Exception {
-    List<Integer> ints = Arrays.asList(3, 4, 5);
-    Map<Integer, Integer> m = new LinkedHashMap<>();
-    m.put(3, 9);
-    m.put(4, 16);
-    m.put(5, 25);
-    List<Integer> result = CollectionsExt.map(ints, m);
-    assertEquals(Arrays.asList(9, 16, 25), result);
   }
 }
