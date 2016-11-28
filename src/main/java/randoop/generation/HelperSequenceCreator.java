@@ -347,6 +347,7 @@ class HelperSequenceCreator {
    * @param candidates  the sequences from which to select
    * @param length  the number of values to select
    * @param elementType  the type of elements
+   * @return a sequence with subsequences that create element values for a collection
    */
   private static Sequence createElementSequence(
       SimpleList<Sequence> candidates, int length, Type elementType) {

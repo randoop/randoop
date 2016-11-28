@@ -234,6 +234,7 @@ public class JunitFileWriter {
    *
    * @param out  the output stream for writing test class
    * @param annotation  the fixture annotation
+   * @param modifier  text prefix for method declaration
    * @param methodName  the method name for fixture method
    * @param bodyText  the text of the fixture method
    */
