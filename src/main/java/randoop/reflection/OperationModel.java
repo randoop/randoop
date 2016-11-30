@@ -370,15 +370,11 @@ public class OperationModel {
       Set<ClassOrInterfaceType> concreteClassTypes,
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate) {
-    Set<TypedOperation> operationSet = new LinkedHashSet<>();
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (ClassOrInterfaceType classType : concreteClassTypes) {
       mgr.apply(
-          new OperationExtractor(classType, operationSet, reflectionPredicate),
+          new OperationExtractor(classType, operations, reflectionPredicate),
           classType.getRuntimeClass());
-    }
-    for (TypedOperation operation : operationSet) {
-      operations.add(operation);
     }
   }
 
