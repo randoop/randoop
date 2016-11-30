@@ -288,11 +288,40 @@ public class OperationModelTest {
     //fail("incomplete");
   }
 
+  @Test
+  public void orderModelTest() {
+    Set<String> classnames1 = new LinkedHashSet<>();
+    classnames1.add("randoop.reflection.ClassWithMemberTypes");
+    classnames1.add("randoop.reflection.GenericTreeWithInnerNode");
+    classnames1.add("randoop.reflection.supertypetest.InheritedEnum");
+    classnames1.add("randoop.reflection.visibilitytest.PublicClass");
+    OperationModel model1 = getOperationModel(classnames1);
+    List<TypedOperation> operations1 = model1.getOperations();
+
+    Set<String> classnames2 = new LinkedHashSet<>();
+    classnames2.add("randoop.reflection.visibilitytest.PublicClass");
+    classnames2.add("randoop.reflection.GenericTreeWithInnerNode");
+    classnames2.add("randoop.reflection.supertypetest.InheritedEnum");
+    classnames2.add("randoop.reflection.ClassWithMemberTypes");
+    OperationModel model2 = getOperationModel(classnames2);
+    List<TypedOperation> operations2 = model2.getOperations();
+
+    assertThat(
+        "operations lists should be same length",
+        operations1.size(),
+        is(equalTo(operations2.size())));
+    assertEquals("should be same elements", operations1, operations2);
+  }
+
   private OperationModel getOperationModel(String classname) {
-    VisibilityPredicate visibilityPredicate = new PublicVisibilityPredicate();
-    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Set<String> classnames = new LinkedHashSet<>();
     classnames.add(classname);
+    return getOperationModel(classnames);
+  }
+
+  private OperationModel getOperationModel(Set<String> classnames) {
+    VisibilityPredicate visibilityPredicate = new PublicVisibilityPredicate();
+    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Set<String> exercisedClassname = new LinkedHashSet<>();
     Set<String> methodSignatures = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new WarnOnBadClassName();

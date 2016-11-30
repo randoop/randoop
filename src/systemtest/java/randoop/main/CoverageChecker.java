@@ -95,6 +95,7 @@ class CoverageChecker {
       try {
         c = Class.forName(classname);
 
+        boolean firstLine = true;
         for (Method m : c.getDeclaredMethods()) {
           String methodname = methodName(m);
           if (!isIgnoredMethod(methodname) && !dontCareMethods.contains(methodname)) {
@@ -108,6 +109,10 @@ class CoverageChecker {
               }
             }
           } else {
+            if (firstLine) {
+              System.out.println();
+              firstLine = false;
+            }
             System.out.println("Ignoring " + methodname + " in coverage checks");
           }
         }
