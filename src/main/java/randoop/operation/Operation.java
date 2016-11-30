@@ -52,7 +52,7 @@ import randoop.types.Type;
  *  <li> Update method OperationParser.getId(Operation) to handle operations of type C.
  *  </ul>
  */
-public interface Operation extends Comparable<Operation> {
+public interface Operation {
 
   /**
    * Predicate to indicate whether object represents a static operation on the

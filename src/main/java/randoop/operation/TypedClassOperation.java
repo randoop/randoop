@@ -57,6 +57,30 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   /**
+   * Compares this operation to another {@link TypedOperation}.
+   * Ensures that any {@link TypedTermOperation} objects precedes a {@link TypedClassOperation}.
+   * Otherwise, orders {@link TypedClassOperation} objects by first comparing the declaring types,
+   * and then comparing by {@link super#compareTo(TypedOperation)}.
+   *
+   * @param op  the {@link TypedOperation} to compare with this operation
+   * @return value &lt; 0 if this operation precedes {@code op}, 0 if the
+   *         operations are identical, and &gt; 0 if this operation succeeds op
+   */
+  @Override
+  public int compareTo(TypedOperation op) {
+    int result = 0;
+    if (op instanceof TypedTermOperation) {
+      return 1;
+    }
+    TypedClassOperation other = (TypedClassOperation) op;
+    result = declaringType.compareTo(other.declaringType);
+    if (result != 0) {
+      return result;
+    }
+    return super.compareTo(other);
+  }
+
+  /**
    * Returns the class in which the operation is defined, or, if the operation represents a value,
    * the type of the value.
    *

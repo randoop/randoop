@@ -53,24 +53,6 @@ public abstract class CallableOperation implements Operation {
   }
 
   /**
-   * Compares this object to an {@link Operation} object.
-   * Uses order on result of {@link #toString()}, or {@link #getName()}
-   * if {@link #toString()} returns {@code null}.
-   *
-   * @param op
-   *          the {@link Operation} to compare with this operation
-   * @return value &lt; 0 if this string is less than for op, 0 if the
-   *         strings are equal, and &gt; 0 if string for this object greater
-   *         than for op
-   */
-  @Override
-  public int compareTo(Operation op) {
-    String thisString = this.toString() != null ? this.toString() : this.getName();
-    String opString = op.toString() != null ? op.toString() : op.getName();
-    return (thisString).compareTo(opString);
-  }
-
-  /**
    * Checks whether reflective object contained in an {@link Operation}
    * satisfies the predicate. Since there is no reflective object in an
    * {@code CallableOperation}, returns false.

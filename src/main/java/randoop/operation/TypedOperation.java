@@ -29,7 +29,7 @@ import randoop.types.TypeVariable;
  * @see randoop.operation.TypedClassOperation
  * @see randoop.operation.TypedTermOperation
  */
-public abstract class TypedOperation implements Operation {
+public abstract class TypedOperation implements Operation, Comparable<TypedOperation> {
 
   /** The operation to be decorated */
   private final CallableOperation operation;
@@ -66,6 +66,28 @@ public abstract class TypedOperation implements Operation {
     return getOperation().equals(op.getOperation())
         && inputTypes.equals(op.inputTypes)
         && outputType.equals(op.outputType);
+  }
+
+  /**
+   * Compares this {@link TypedOperation} to another.
+   * Orders operations by lexicographical comparison, alphabetically comparing operation names,
+   * then input type names, and finally output type names.
+   *
+   * @param op  the {@link TypedOperation} to compare with this operation
+   * @return value &lt; 0 if this operation precedes {@code op}, 0 if the
+   *         operations are identical, and &gt; 0 if this operation succeeds op
+   */
+  @Override
+  public int compareTo(TypedOperation op) {
+    int result = this.operation.getName().compareTo(op.getName());
+    if (result != 0) {
+      return result;
+    }
+    result = this.inputTypes.compareTo(op.inputTypes);
+    if (result != 0) {
+      return result;
+    }
+    return this.outputType.compareTo(op.outputType);
   }
 
   @Override
@@ -160,11 +182,6 @@ public abstract class TypedOperation implements Operation {
   @Override
   public boolean satisfies(ReflectionPredicate reflectionPredicate) {
     return operation.satisfies(reflectionPredicate);
-  }
-
-  @Override
-  public int compareTo(Operation o) {
-    return operation.compareTo(o);
   }
 
   /**
