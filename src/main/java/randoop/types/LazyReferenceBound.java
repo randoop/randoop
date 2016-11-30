@@ -21,6 +21,10 @@ class LazyReferenceBound extends ReferenceBound {
 
   @Override
   public ReferenceBound apply(Substitution<ReferenceType> substitution) {
+    if (substitution.isEmpty()) {
+      return this;
+    }
+
     ReferenceType referenceType = getBoundType().apply(substitution);
 
     if (referenceType.equals(getBoundType())) {
