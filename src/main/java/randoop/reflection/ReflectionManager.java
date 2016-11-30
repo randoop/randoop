@@ -395,7 +395,7 @@ public class ReflectionManager {
 
   /**
    * The classComparator for methods of a class.
-   * Orders by signature: compares names, number of parameters, and parameter names.
+   * Orders by signature: compares names, number of parameters, and parameter type names.
    */
   private class MethodComparator implements Comparator<Method> {
 
@@ -407,7 +407,11 @@ public class ReflectionManager {
 
     @Override
     public int compare(Method m1, Method m2) {
-      int result = m1.getName().compareTo(m2.getName());
+      int result = classComparator.compare(m1.getDeclaringClass(), m2.getDeclaringClass());
+      if (result != 0) {
+        return result;
+      }
+      result = m1.getName().compareTo(m2.getName());
       if (result != 0) {
         return result;
       }
@@ -421,7 +425,7 @@ public class ReflectionManager {
 
   /**
    * The classComparator for constructors of a class.
-   * Orders by signature: number of parameters, and then parameter names.
+   * Orders by signature: number of parameters, and then parameter type names.
    */
   private class ConstructorComparator implements Comparator<Constructor<?>> {
 
@@ -433,7 +437,11 @@ public class ReflectionManager {
 
     @Override
     public int compare(Constructor<?> c1, Constructor<?> c2) {
-      int result = c1.getParameterTypes().length - c2.getParameterTypes().length;
+      int result = classComparator.compare(c1.getDeclaringClass(), c2.getDeclaringClass());
+      if (result != 0) {
+        return result;
+      }
+      result = c1.getParameterTypes().length - c2.getParameterTypes().length;
       for (int i = 0; i < c1.getParameterTypes().length && result == 0; i++) {
         result = classComparator.compare(c1.getParameterTypes()[i], c2.getParameterTypes()[i]);
       }
@@ -447,8 +455,18 @@ public class ReflectionManager {
    */
   private class FieldComparator implements Comparator<Field> {
 
+    private ClassComparator classComparator;
+
+    FieldComparator() {
+      this.classComparator = new ClassComparator();
+    }
+
     @Override
     public int compare(Field f1, Field f2) {
+      int result = classComparator.compare(f1.getDeclaringClass(), f2.getDeclaringClass());
+      if (result != 0) {
+        return result;
+      }
       return f1.getName().compareTo(f2.getName());
     }
   }
