@@ -52,18 +52,17 @@ public class TypeInstantiator {
     ClassOrInterfaceType declaringType = operation.getDeclaringType();
     if (declaringType.isGeneric()) {
       Substitution<ReferenceType> substitution;
-      ParameterizedType genericDeclaringType = (ParameterizedType) declaringType;
 
       // if operation creates objects of its declaring type, may create new instantiation
       if (operation.isConstructorCall()
-          || (operation.isStatic() && operation.getOutputType().equals(genericDeclaringType))) {
-        if (genericDeclaringType.isSubtypeOf(JDKTypes.SORTED_SET_TYPE)) {
+          || (operation.isStatic() && operation.getOutputType().equals(declaringType))) {
+        if (declaringType.isSubtypeOf(JDKTypes.SORTED_SET_TYPE)) {
           substitution = instantiateSortedSetType(operation);
         } else {
-          substitution = instantiateDeclaringClass(genericDeclaringType);
+          substitution = instantiateDeclaringClass(declaringType);
         }
       } else { //otherwise, select from existing one
-        substitution = selectMatch(genericDeclaringType);
+        substitution = selectMatch(declaringType);
       }
       if (substitution == null) { // return null if fail to find instantiation
         return null;
@@ -155,7 +154,8 @@ public class TypeInstantiator {
    * @param declaringType  the type to be instantiated
    * @return a substitution instantiating the given type; null if none is found
    */
-  private Substitution<ReferenceType> instantiateDeclaringClass(ParameterizedType declaringType) {
+  private Substitution<ReferenceType> instantiateDeclaringClass(
+      ClassOrInterfaceType declaringType) {
     if (Randomness.weightedCoinFlip(0.5)) {
       Substitution<ReferenceType> substitution = selectMatch(declaringType);
       if (substitution != null) {
@@ -165,7 +165,7 @@ public class TypeInstantiator {
     List<TypeVariable> typeParameters = declaringType.getTypeParameters();
     Substitution<ReferenceType> substitution = selectSubstitution(typeParameters);
     if (substitution != null) {
-      ParameterizedType instantiatingType = declaringType.apply(substitution);
+      ClassOrInterfaceType instantiatingType = declaringType.apply(substitution);
       if (!instantiatingType.isGeneric()) {
         return substitution;
       } else {
@@ -188,7 +188,7 @@ public class TypeInstantiator {
    * @param declaringType  the generic type for which instantiation is to be found
    * @return a substitution instantiating given type as an existing type; null if no such type
    */
-  private Substitution<ReferenceType> selectMatch(ParameterizedType declaringType) {
+  private Substitution<ReferenceType> selectMatch(ClassOrInterfaceType declaringType) {
     List<InstantiatedType> matches = new ArrayList<>();
     for (Type type : inputTypes) {
       if (type.isParameterized() && ((InstantiatedType) type).isInstantiationOf(declaringType)) {
