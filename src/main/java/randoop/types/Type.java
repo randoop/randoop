@@ -1,7 +1,6 @@
 package randoop.types;
 
 import java.lang.reflect.WildcardType;
-import java.util.Collection;
 
 /**
  * The superclass of a class hierarchy representing Java types defined in JLS Section 4.1.
@@ -35,7 +34,7 @@ import java.util.Collection;
  * {@link #forName(String)}.
  * These methods translate the reflection types into objects of subclasses of this type.
  */
-public abstract class Type {
+public abstract class Type implements Comparable<Type> {
 
   /**
    * Translates a {@code Class} into a {@link Type} object.
@@ -408,5 +407,10 @@ public abstract class Type {
    */
   public boolean isClassType() {
     return false;
+  }
+
+  @Override
+  public int compareTo(Type type) {
+    return this.getCanonicalName().compareTo(type.getCanonicalName());
   }
 }

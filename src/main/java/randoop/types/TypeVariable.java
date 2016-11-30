@@ -63,6 +63,11 @@ public abstract class TypeVariable extends ReferenceType {
     return this;
   }
 
+  @Override
+  public String getCanonicalName() {
+    return this.getName();
+  }
+
   /**
    * Get the lower bound for this type variable.
    *

@@ -60,6 +60,11 @@ class NullReferenceType extends ReferenceType {
     return this.getName();
   }
 
+  @Override
+  public String getCanonicalName() {
+    return this.getName();
+  }
+
   /**
    * Indicate whether this type has a wildcard either as or in a type argument.
    *

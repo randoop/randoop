@@ -13,7 +13,7 @@ import plume.UtilMDE;
  * {@code TypeTuple} represents an ordered tuple of type objects.
  * Type tuples primarily used to represent the input types of operations.
  */
-public class TypeTuple implements Iterable<Type> {
+public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
 
   /** The sequence of types in this type tuple. */
   private final ArrayList<Type> list;
@@ -160,6 +160,21 @@ public class TypeTuple implements Iterable<Type> {
   @Override
   public Iterator<Type> iterator() {
     return new TypeIterator(list.iterator());
+  }
+
+  @Override
+  public int compareTo(TypeTuple tuple) {
+    if (this.size() < tuple.size()) {
+      return -1;
+    }
+    if (this.size() > tuple.size()) {
+      return 1;
+    }
+    int result = 0;
+    for (int i = 0; i < this.size() && result == 0; i++) {
+      result = list.get(i).getCanonicalName().compareTo(tuple.list.get(i).getCanonicalName());
+    }
+    return result;
   }
 
   private class TypeIterator implements Iterator<Type> {
