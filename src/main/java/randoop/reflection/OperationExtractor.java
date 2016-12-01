@@ -114,7 +114,20 @@ public class OperationExtractor extends DefaultClassVisitor {
     if (!predicate.test(method)) {
       return;
     }
-    addOperation(TypedOperation.forMethod(method));
+    TypedClassOperation operation = TypedOperation.forMethod(method);
+    if (classType.isSubtypeOf(operation.getDeclaringType()) && operation.isStatic()) {
+      int declaringClassMods =
+          method.getDeclaringClass().getModifiers() & Modifier.classModifiers();
+      if (!Modifier.isPublic(declaringClassMods)) {
+        operation =
+            new TypedClassOperation(
+                operation.getOperation(),
+                classType,
+                operation.getInputTypes(),
+                operation.getOutputType());
+      }
+    }
+    addOperation(operation);
   }
 
   /**
