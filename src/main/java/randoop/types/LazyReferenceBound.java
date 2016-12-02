@@ -21,8 +21,14 @@ class LazyReferenceBound extends ReferenceBound {
 
   @Override
   public ReferenceBound apply(Substitution<ReferenceType> substitution) {
+    // if the substitution has no effect on this bound just return this
     if (substitution.isEmpty()) {
       return this;
+    }
+    for (TypeVariable parameter : getTypeParameters()) {
+      if (!substitution.getVariables().contains(parameter)) {
+        return this;
+      }
     }
 
     ReferenceType referenceType = getBoundType().apply(substitution);
@@ -57,6 +63,12 @@ class LazyReferenceBound extends ReferenceBound {
     List<TypeVariable> parameters = new ArrayList<>();
     if (getBoundType().isVariable()) {
       parameters.add((TypeVariable) getBoundType());
+    } else if (getBoundType().isParameterized()) {
+      for (ReferenceType argType : ((InstantiatedType) getBoundType()).getReferenceArguments()) {
+        if (argType.isVariable()) {
+          parameters.add((TypeVariable) argType);
+        }
+      }
     }
     return parameters;
   }
@@ -64,7 +76,7 @@ class LazyReferenceBound extends ReferenceBound {
   @Override
   public boolean isLowerBound(Type argType, Substitution<ReferenceType> substitution) {
     ReferenceBound b = this.apply(substitution);
-    return b.isLowerBound(argType, substitution);
+    return !this.equals(b) && b.isLowerBound(argType, substitution);
   }
 
   @Override
@@ -76,7 +88,7 @@ class LazyReferenceBound extends ReferenceBound {
   @Override
   public boolean isUpperBound(Type argType, Substitution<ReferenceType> substitution) {
     ReferenceBound b = this.apply(substitution);
-    return b.isUpperBound(argType, substitution);
+    return !this.equals(b) && b.isUpperBound(argType, substitution);
   }
 
   @Override

@@ -1,3 +1,16 @@
+Version 3.0.8, released December X, 2016
+
+Fixes
+- a failure when instantiating the generic containing type of a non-generic
+  member class.
+- generation of different tests between runs over the same classes
+  where the classes were given in different order.
+- generation of invalid calls to a static member of an inaccessible class when
+  inherited by an accessible subclass.
+- a failure when checking type instantiations against certain kinds of bounds
+  on type variables.
+
+
 Version 3.0.7, released November 28, 2016
 
 Randoop now

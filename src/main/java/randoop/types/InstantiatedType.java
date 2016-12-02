@@ -175,7 +175,7 @@ public class InstantiatedType extends ParameterizedType {
    *
    * @return the list of reference types that are arguments to this type
    */
-  private List<ReferenceType> getReferenceArguments() {
+  List<ReferenceType> getReferenceArguments() {
     List<ReferenceType> referenceArgList = new ArrayList<>();
     for (TypeArgument argument : argumentList) {
       if (!argument.isWildcard()) {
