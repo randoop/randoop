@@ -198,7 +198,24 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   boolean hasWildcard() {
-    assert false : "wildcard argument check not implemented in lazy bound";
+    return hasWildcard(boundType);
+  }
+
+  private static boolean hasWildcard(java.lang.reflect.Type type) {
+    if (type instanceof java.lang.reflect.WildcardType) {
+      return true;
+    }
+    if (type instanceof java.lang.reflect.TypeVariable) {
+      return false;
+    }
+    if (type instanceof java.lang.reflect.ParameterizedType) {
+      java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
+      for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
+        if (hasWildcard(argType)) {
+          return true;
+        }
+      }
+    }
     return false;
   }
 
