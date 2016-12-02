@@ -1,6 +1,5 @@
 package randoop.types;
 
-import java.lang.reflect.*;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
@@ -128,7 +127,7 @@ class LazyParameterBound extends ParameterBound {
     }
 
     if (type instanceof java.lang.reflect.WildcardType) {
-      final WildcardType wildcardType = (WildcardType) type;
+      final java.lang.reflect.WildcardType wildcardType = (java.lang.reflect.WildcardType) type;
       if (wildcardType.getLowerBounds().length > 0) {
         assert wildcardType.getLowerBounds().length == 1
             : "a wildcard is defined by the JLS to only have one bound";
@@ -152,7 +151,7 @@ class LazyParameterBound extends ParameterBound {
           : "a wildcard is defined by the JLS to only have one bound";
       ParameterBound bound = ParameterBound.forTypes(wildcardType.getUpperBounds());
       bound = bound.apply(substitution);
-      return new WildcardArgumentWithUpperBound((EagerReferenceBound) bound);
+      return new WildcardArgumentWithUpperBound(bound);
     }
 
     return null;

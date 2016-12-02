@@ -57,7 +57,7 @@ class TypedTermOperation extends TypedOperation {
    * Compares this operation to another {@link TypedOperation}.
    * Ensures that any {@link TypedTermOperation} objects precedes a {@link TypedClassOperation}.
    * Otherwise, orders {@link TypedTermOperation} objects with
-   * {@link super#compareTo(TypedOperation)}.
+   * {@link TypedOperation#compareTo(TypedOperation)}.
    *
    * @param op  the {@link TypedOperation} to compare with this operation
    * @return value &lt; 0 if this operation precedes {@code op}, 0 if the

@@ -60,7 +60,7 @@ public class TypedClassOperation extends TypedOperation {
    * Compares this operation to another {@link TypedOperation}.
    * Ensures that any {@link TypedTermOperation} objects precedes a {@link TypedClassOperation}.
    * Otherwise, orders {@link TypedClassOperation} objects by first comparing the declaring types,
-   * and then comparing by {@link super#compareTo(TypedOperation)}.
+   * and then comparing by {@link TypedOperation#compareTo(TypedOperation)}.
    *
    * @param op  the {@link TypedOperation} to compare with this operation
    * @return value &lt; 0 if this operation precedes {@code op}, 0 if the
