@@ -9,9 +9,9 @@ Fixes
   inherited by an accessible subclass.
 - a failure when checking type instantiations against certain kinds of bounds
   on type variables.
-- generation of uncompilable code when a static final field is ambiguously
-  inherited by a class under test.
-  
+- generation of uncompilable code when static final fields with same name are
+  inherited by a class under test from more than one class or interface.
+
 
 Version 3.0.7, released November 28, 2016
 
