@@ -89,6 +89,13 @@ public interface Operation {
   boolean isConstructorCall();
 
   /**
+   * Predicate to indicate whether this object represents a constant field.
+   *
+   * @return true if this operation is a constant field, and false otherwise
+   */
+  boolean isConstantField();
+
+  /**
    * Predicate to indicate whether this object represents a value of a
    * non-receiving type (includes numbers, strings, and null).
    *

@@ -38,6 +38,11 @@ public abstract class CallableOperation implements Operation {
   }
 
   @Override
+  public boolean isConstantField() {
+    return false;
+  }
+
+  @Override
   public boolean isNonreceivingValue() {
     return false;
   }

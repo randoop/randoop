@@ -165,6 +165,11 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   @Override
+  public boolean isConstantField() {
+    return operation.isConstantField();
+  }
+
+  @Override
   public boolean isConstructorCall() {
     return operation.isConstructorCall();
   }
