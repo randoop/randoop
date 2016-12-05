@@ -217,6 +217,7 @@ test {
   exclude 'randoop/test/EmptyTest.*'
   exclude 'randoop/test/RandoopPerformanceTest.*' /* had target but not run */
   exclude 'randoop/test/ForwardExplorerPerformanceTest.*'
+  exclude 'randoop/test/ForwardExplorerTests2' /* sporadic heap space issue */
   exclude 'randoop/test/Test_SomeDuplicates.*'
   exclude 'randoop/test/Test_SomePass.*'
   exclude 'randoop/operation/OperationParserTests.*'

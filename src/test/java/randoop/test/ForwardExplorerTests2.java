@@ -32,6 +32,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+/*
+ * This test is disabled in build.gradle.
+ * It has a sporadic Java heap space exception caught by the Throwable clause of the try block for
+ * the call to exp.explore() in test5().
+ * Mostly occurs when testing on Travis in Oracle JDK 7 or Open JDK 7 configurations, but I have
+ * also gotten it during runs on Oracle JDK 8 on my mac.
+ * Tried setting maxHeapSize in the test task configuration in the build script, but only took it
+ * down to 200.  Plus, it is not clear what the heap size is on Travis, so need to check that.
+ */
 public class ForwardExplorerTests2 {
 
   private static OptionsCache optionsCache;
