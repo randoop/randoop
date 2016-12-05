@@ -144,14 +144,14 @@ class LazyParameterBound extends ParameterBound {
           bound = ParameterBound.forType(lowerBound).apply(substitution);
         }
 
-        return new WildcardArgumentWithLowerBound(bound);
+        return new WildcardArgument(new WildcardType(bound, false));
       }
       // a wildcard always has an upper bound
       assert wildcardType.getUpperBounds().length == 1
           : "a wildcard is defined by the JLS to only have one bound";
       ParameterBound bound = ParameterBound.forTypes(wildcardType.getUpperBounds());
       bound = bound.apply(substitution);
-      return new WildcardArgumentWithUpperBound(bound);
+      return new WildcardArgument(new WildcardType(bound, true));
     }
 
     return null;

@@ -181,8 +181,7 @@ public class InstantiatedType extends ParameterizedType {
       if (!argument.isWildcard()) {
         referenceArgList.add(((ReferenceArgument) argument).getReferenceType());
       } else {
-        throw new IllegalArgumentException(
-            "cannot convert a wildcard to a reference type for " + this);
+        referenceArgList.add(((WildcardArgument) argument).getWildcardType());
       }
     }
     return referenceArgList;

@@ -1,35 +1,26 @@
 package randoop.types;
 
-import java.lang.reflect.WildcardType;
 import java.util.List;
 import java.util.Objects;
 
 /**
  * Represents a wildcard type argument to a parameterized type.
- * A wildcard may have either an upper or lower bound as defined in
- * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.
- * <pre>
- *   ? [ extends ReferenceType ]
- *   ? [ super ReferenceType ]
- * </pre>
+ *
  * <p>
  * The subclasses represent the type bound as given for the wildcard.
- *
- * @see WildcardArgumentWithLowerBound
- * @see WildcardArgumentWithUpperBound
  */
-abstract class WildcardArgument extends TypeArgument {
+class WildcardArgument extends TypeArgument {
 
-  /** the bound type */
-  private final ParameterBound typeBound;
+  /** the wildcard type */
+  private final WildcardType argumentType;
 
   /**
    * Initializes the bound type.
    *
-   * @param boundType  the bound type
+   * @param argumentType  the wildcard type
    */
-  WildcardArgument(ParameterBound boundType) {
-    this.typeBound = boundType;
+  WildcardArgument(WildcardType argumentType) {
+    this.argumentType = argumentType;
   }
 
   /**
@@ -40,24 +31,12 @@ abstract class WildcardArgument extends TypeArgument {
    * @return the {@code WildcardArgument} created from the given {@code Type}
    */
   public static WildcardArgument forType(java.lang.reflect.Type type) {
-    if (!(type instanceof WildcardType)) {
+    if (!(type instanceof java.lang.reflect.WildcardType)) {
       throw new IllegalArgumentException("Must be a wildcard type " + type);
     }
-    WildcardType wildcardType = (WildcardType) type;
+    java.lang.reflect.WildcardType wildcardType = (java.lang.reflect.WildcardType) type;
 
-    // Note: every wildcard has an upper bound, so need to check lower first
-    if (wildcardType.getLowerBounds().length > 0) {
-      assert wildcardType.getLowerBounds().length == 1
-          : "a wildcard is defined by the JLS to only have one bound";
-      return new WildcardArgumentWithLowerBound(wildcardType.getLowerBounds());
-    }
-    if (wildcardType.getUpperBounds().length > 0) {
-      assert wildcardType.getUpperBounds().length == 1
-          : "a wildcard is defined by the JLS to only have one bound";
-      return new WildcardArgumentWithUpperBound(wildcardType.getUpperBounds());
-    }
-
-    throw new IllegalArgumentException("A wildcard must have either upper or lower bounds");
+    return new WildcardArgument(WildcardType.forType(wildcardType));
   }
 
   @Override
@@ -66,12 +45,26 @@ abstract class WildcardArgument extends TypeArgument {
       return false;
     }
     WildcardArgument wildcardArgument = (WildcardArgument) obj;
-    return this.typeBound.equals(wildcardArgument.typeBound);
+    return this.argumentType.equals(wildcardArgument.argumentType);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(typeBound);
+    return Objects.hash(argumentType);
+  }
+
+  @Override
+  public String toString() {
+    return argumentType.toString();
+  }
+
+  @Override
+  public WildcardArgument apply(Substitution<ReferenceType> substitution) {
+    WildcardType argType = this.argumentType.apply(substitution);
+    if (argType.equals(this.argumentType)) {
+      return this;
+    }
+    return new WildcardArgument(argType);
   }
 
   /**
@@ -82,15 +75,17 @@ abstract class WildcardArgument extends TypeArgument {
    * @return this wildcard argument with capture conversion applied to the type bound
    */
   public WildcardArgument applyCaptureConversion() {
-    if (typeBound.hasWildcard()) {
-      EagerReferenceBound convertedType = (EagerReferenceBound) typeBound.applyCaptureConversion();
-      if (this.hasUpperBound()) {
-        return new WildcardArgumentWithUpperBound(convertedType);
-      } else {
-        return new WildcardArgumentWithLowerBound(convertedType);
-      }
+    WildcardType wildcardType = argumentType.applyCaptureConversion();
+    if (wildcardType.equals(argumentType)) {
+      return this;
     }
-    return this;
+    return new WildcardArgument(wildcardType);
+  }
+
+  @Override
+  public boolean contains(TypeArgument argument) {
+    return argument.isWildcard()
+        && argumentType.contains(((WildcardArgument) argument).argumentType);
   }
 
   /**
@@ -99,7 +94,7 @@ abstract class WildcardArgument extends TypeArgument {
    * @return the type of the bound of this wildcard argument
    */
   ParameterBound getTypeBound() {
-    return typeBound;
+    return argumentType.getTypeBound();
   }
 
   /**
@@ -108,7 +103,7 @@ abstract class WildcardArgument extends TypeArgument {
    */
   @Override
   public List<TypeVariable> getTypeParameters() {
-    return typeBound.getTypeParameters();
+    return argumentType.getTypeParameters();
   }
 
   /**
@@ -117,7 +112,9 @@ abstract class WildcardArgument extends TypeArgument {
    *
    * @return true if this wildcard argument has an upper bound, false if it has a lower bound
    */
-  public abstract boolean hasUpperBound();
+  boolean hasUpperBound() {
+    return argumentType.hasUpperBound();
+  }
 
   @Override
   public boolean hasWildcard() {
@@ -126,11 +123,15 @@ abstract class WildcardArgument extends TypeArgument {
 
   @Override
   public boolean isGeneric() {
-    return typeBound.isGeneric();
+    return argumentType.isGeneric();
   }
 
   @Override
   public boolean isWildcard() {
     return true;
+  }
+
+  public WildcardType getWildcardType() {
+    return argumentType;
   }
 }

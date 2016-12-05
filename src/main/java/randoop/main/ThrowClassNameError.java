@@ -8,11 +8,17 @@ public class ThrowClassNameError implements ClassNameErrorHandler {
 
   @Override
   public void handle(String className) {
-    throw new Error("No class found for type name \"" + className + "\"");
+    throw new RandoopClassNameError(
+        "No class with name \"" + className + "\" found on the classpath");
   }
 
   @Override
   public void handle(String classname, Throwable e) {
-    throw new Error("Unable to load type \"" + classname + "\" due to exception: " + e);
+    if (e != null) {
+      throw new RandoopClassNameError(
+          "Unable to load class \"" + classname + "\" due to exception: " + e);
+    }
+    throw new RandoopClassNameError(
+        "No class with name \"" + classname + "\" found on the classpath");
   }
 }

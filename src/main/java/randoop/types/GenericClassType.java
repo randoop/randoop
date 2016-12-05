@@ -47,7 +47,6 @@ public class GenericClassType extends ParameterizedType {
       return false;
     }
     GenericClassType t = (GenericClassType) obj;
-
     return this.rawType.equals(t.rawType);
   }
 

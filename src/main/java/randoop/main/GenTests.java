@@ -199,10 +199,21 @@ public class GenTests extends GenInputsAbstract {
               classNameErrorHandler,
               GenInputsAbstract.literals_file);
     } catch (OperationParseException e) {
-      System.out.printf("Error: parse exception thrown %s%n", e);
+      System.out.printf("%nError: parse exception thrown %s%n", e);
+      System.out.println("Exiting Randoop.");
       System.exit(1);
     } catch (NoSuchMethodException e) {
-      System.out.printf("Error building operation model: %s%n", e);
+      System.out.printf("%nError building operation model: %s%n", e);
+      System.out.println("Exiting Randoop.");
+      System.exit(1);
+    } catch (RandoopClassNameError e) {
+      System.out.printf("Error: %s%n", e.getMessage());
+      System.out.println(
+          "       This is most likely a problem with the classpath. It may be wrong, or");
+      System.out.println(
+          "       it is formatted incorrectly on the command line. The other possibility");
+      System.out.println("       is that the wrong class name is given.");
+      System.out.println("Exiting Randoop.");
       System.exit(1);
     }
     assert operationModel != null;

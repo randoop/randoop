@@ -5,26 +5,15 @@ import java.util.List;
 
 /**
  * An abstract class representing type variables.
- * Assumes a type variable has both upper and lower bounds.
- *
- * @see ExplicitTypeVariable
- * @see CaptureTypeVariable
  */
-public abstract class TypeVariable extends ReferenceType {
-
-  /** The lower bound on this type */
-  private ParameterBound lowerBound;
-
-  /** The upper bound on this type */
-  private ParameterBound upperBound;
+public abstract class TypeVariable extends ParameterType {
 
   /**
    * Creates a type variable with {@link NullReferenceType} as the lower bound, and
    * the {@code Object} type as upper bound.
    */
   TypeVariable() {
-    this.lowerBound = new EagerReferenceBound(JavaTypes.NULL_TYPE);
-    this.upperBound = new EagerReferenceBound(JavaTypes.OBJECT_TYPE);
+    super();
   }
 
   /**
@@ -35,8 +24,7 @@ public abstract class TypeVariable extends ReferenceType {
    * @param upperBound  the upper type bound on this variable
    */
   TypeVariable(ParameterBound lowerBound, ParameterBound upperBound) {
-    this.lowerBound = lowerBound;
-    this.upperBound = upperBound;
+    super(lowerBound, upperBound);
   }
 
   /**
@@ -61,38 +49,6 @@ public abstract class TypeVariable extends ReferenceType {
       return type;
     }
     return this;
-  }
-
-  @Override
-  public String getCanonicalName() {
-    return this.getName();
-  }
-
-  /**
-   * Get the lower bound for this type variable.
-   *
-   * @return {@link NullReferenceType} in default case since no lower bound is defined
-   */
-  public ParameterBound getLowerTypeBound() {
-    return lowerBound;
-  }
-
-  /**
-   * Get the upper bound for for this type variable.
-   *
-   * @return the (upper) {@link ParameterBound} for this type variable
-   */
-  public ParameterBound getUpperTypeBound() {
-    return upperBound;
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * @return null since type variables do not have a runtime class
-   */
-  public Class<?> getRuntimeClass() {
-    return null;
   }
 
   /**
@@ -125,8 +81,10 @@ public abstract class TypeVariable extends ReferenceType {
       typeParameters.add(variable);
       Substitution<ReferenceType> substitution =
           Substitution.forArgs(typeParameters, (ReferenceType) this);
-      boolean lowerbound = variable.getLowerTypeBound().isLowerBound(lowerBound, substitution);
-      boolean upperbound = variable.getUpperTypeBound().isUpperBound(upperBound, substitution);
+      boolean lowerbound =
+          variable.getLowerTypeBound().isLowerBound(getLowerTypeBound(), substitution);
+      boolean upperbound =
+          variable.getUpperTypeBound().isUpperBound(getUpperTypeBound(), substitution);
       return lowerbound && upperbound;
     }
     return false;
@@ -150,17 +108,5 @@ public abstract class TypeVariable extends ReferenceType {
   @Override
   boolean isVariable() {
     return true;
-  }
-
-  void setUpperBound(ParameterBound upperBound) {
-    this.upperBound = upperBound;
-  }
-
-  void setLowerBound(ParameterBound lowerBound) {
-    this.lowerBound = lowerBound;
-  }
-
-  public boolean hasGenericBound() {
-    return getUpperTypeBound().isGeneric() || getLowerTypeBound().isGeneric();
   }
 }
