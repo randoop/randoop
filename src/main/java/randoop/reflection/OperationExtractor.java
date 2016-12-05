@@ -147,12 +147,17 @@ public class OperationExtractor extends DefaultClassVisitor {
     if (!predicate.test(field)) {
       return;
     }
+
+    int mods = field.getModifiers() & Modifier.fieldModifiers();
+
     ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(field.getDeclaringClass());
-    if (!(declaringType.isGeneric() && classType.isInstantiationOf(declaringType))) {
+    if (!(declaringType.isGeneric() && classType.isInstantiationOf(declaringType))
+        && !(Modifier.isStatic(mods) && Modifier.isFinal(mods))) {
       declaringType = classType;
     }
+
     addOperation(TypedOperation.createGetterForField(field, declaringType));
-    if (!(Modifier.isFinal(field.getModifiers() & Modifier.fieldModifiers()))) {
+    if (!(Modifier.isFinal(mods))) {
       addOperation(TypedOperation.createSetterForField(field, declaringType));
     }
   }
