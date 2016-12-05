@@ -3,6 +3,7 @@ package randoop.reflection;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,6 +14,7 @@ import randoop.main.ClassNameErrorHandler;
 import randoop.main.ThrowClassNameError;
 import randoop.main.WarnOnBadClassName;
 import randoop.operation.OperationParseException;
+import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.supertypetest.InheritedEnum;
 import randoop.types.ClassOrInterfaceType;
@@ -21,6 +23,7 @@ import randoop.types.JavaTypes;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isOneOf;
+import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -311,6 +314,32 @@ public class OperationModelTest {
         operations1.size(),
         is(equalTo(operations2.size())));
     assertEquals("should be same elements", operations1, operations2);
+  }
+
+  @Test
+  public void staticFinalFieldTest() {
+    Set<String> classnames = new LinkedHashSet<>();
+    classnames.add("randoop.reflection.FieldInheritingClass");
+    OperationModel model = getOperationModel(classnames);
+    List<TypedOperation> operations = model.getOperations();
+
+    Set<TypedClassOperation> constantOps = new HashSet<>();
+    for (TypedOperation operation : operations) {
+      if (!operation.isConstructorCall() && operation instanceof TypedClassOperation) {
+        TypedClassOperation op = (TypedClassOperation) operation;
+        if (op.getName().equals("<get>(CONSTANT)")) {
+          constantOps.add(op);
+        }
+      }
+    }
+    assertThat("should be two constant operations", constantOps.size(), is(equalTo(2)));
+    for (TypedClassOperation operation : constantOps) {
+      assertThat(
+          "declaring type should be interface",
+          operation.getDeclaringType().getSimpleName(),
+          anyOf(is(equalTo("ConstantFieldParent")), is(equalTo("ConstantFieldChild"))));
+      assertTrue("operation is a constant", operation.isConstantField());
+    }
   }
 
   private OperationModel getOperationModel(String classname) {

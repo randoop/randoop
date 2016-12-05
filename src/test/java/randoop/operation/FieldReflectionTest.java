@@ -207,18 +207,30 @@ public class FieldReflectionTest {
       setInputTypeList.add(declaringType);
     }
 
-    statements.add(
-        new TypedClassOperation(
-            new FieldGet(field), declaringType, new TypeTuple(getInputTypeList), fieldType));
+    FieldGet fieldGet = new FieldGet(field);
+    TypedClassOperation getOperation;
+    if (field.isFinal() && field.isStatic()) {
+      ClassOrInterfaceType fieldDeclaringType =
+          ClassOrInterfaceType.forClass(f.getDeclaringClass());
+      getOperation =
+          new TypedClassOperation(
+              fieldGet, fieldDeclaringType, new TypeTuple(getInputTypeList), fieldType);
+    } else {
+      getOperation =
+          new TypedClassOperation(
+              new FieldGet(field), declaringType, new TypeTuple(getInputTypeList), fieldType);
+    }
+    statements.add(getOperation);
 
     if (!field.isFinal()) {
       setInputTypeList.add(fieldType);
-      statements.add(
+      TypedClassOperation operation =
           new TypedClassOperation(
               new FieldSet(field),
               declaringType,
               new TypeTuple(setInputTypeList),
-              JavaTypes.VOID_TYPE));
+              JavaTypes.VOID_TYPE);
+      statements.add(operation);
     }
     return statements;
   }
