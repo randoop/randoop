@@ -38,22 +38,16 @@ public abstract class ParameterBound {
    * Constructs a parameter bound given a {@link ReferenceType}.
    *
    * @param type  the {@link ReferenceType}
-   * @return a {@link EagerReferenceBound} if the type is a {@link ClassOrInterfaceType} or
-   *         a {@link TypeVariable}
+   * @return a {@link EagerReferenceBound} with the given type
    */
   public static ParameterBound forType(ReferenceType type) {
-    if (type instanceof ArrayType) {
-      throw new IllegalArgumentException(
-          "type may only be class, interface, or type variable, got " + type);
-    }
     return new EagerReferenceBound(type);
   }
 
   /**
    * Creates a bound from the array of bounds of a {@code java.lang.reflect.TypeVariable}.
    * <p>
-   * The bounds may be either be a single type variable, or a class/interface type followed by a
-   * conjunction of interface types.
+   * The bounds of a type parameter are restricted, but those of a wildcard may be any reference type.
    * See
    * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.1.2">JLS section 8.1.2</a>.
    *
