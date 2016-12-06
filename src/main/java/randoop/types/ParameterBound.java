@@ -178,9 +178,7 @@ public abstract class ParameterBound {
    *
    * @return true, if this bound type is generic, and false otherwise
    */
-  public boolean isGeneric() {
-    return false;
-  }
+  public abstract boolean isGeneric();
 
   /**
    * Indicates whether this bound is a lower bound of the given argument type.

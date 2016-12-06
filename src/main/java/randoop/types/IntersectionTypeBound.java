@@ -109,6 +109,16 @@ class IntersectionTypeBound extends ParameterBound {
     return false;
   }
 
+  @Override
+  public boolean isGeneric() {
+    for (ParameterBound b : boundList) {
+      if (b.isGeneric()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   /**
    * {@inheritDoc}
    * Specifically, this method checks that the argument type is a subtype of all of the member bounds

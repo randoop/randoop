@@ -13,12 +13,14 @@ import randoop.main.ThrowClassNameError;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.reflection.intersectiontypes.AccessibleInterval;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -194,6 +196,31 @@ public class InstantiationTest {
 
   }
   */
+
+  /**
+   * Based on a case from imglib2.
+   */
+  @Test
+  public void testIntersectionType() {
+    Set<String> classnames = new LinkedHashSet<>();
+    classnames.add("randoop.reflection.intersectiontypes.ExtendedBase");
+    Package pkg = randoop.reflection.intersectiontypes.ExtendedBase.class.getPackage();
+    assert pkg != null;
+    OperationModel model = createModel(classnames, pkg.getName());
+
+    Set<TypedOperation> classOperations = new LinkedHashSet<>();
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
+    addTypes(ClassOrInterfaceType.forClass(AccessibleInterval.class), inputTypes);
+    Set<String> nullOKNames = new HashSet<>();
+    getOperations(model, classOperations, inputTypes, nullOKNames);
+
+    assertTrue("should be some operations", classOperations.size() > 0);
+    for (TypedOperation operation : classOperations) {
+      assertFalse("should not be generic " + operation, operation.getInputTypes().isGeneric());
+      assertFalse("should not have wildcards" + operation, operation.getInputTypes().hasWildcard());
+    }
+  }
 
   private OperationModel createModel(Set<String> names, String packageName) {
     VisibilityPredicate visibility =
