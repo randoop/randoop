@@ -57,17 +57,11 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
     if (exception.getClass().isAnonymousClass()) {
       condition = "e.getClass().isAnonymousClass()";
       message = "Expected anonymous exception, got \" + e.getClass().getCanonicalName()";
-    } else {
-      condition = "e.getClass().getCanonicalName().equals(\"" + getExceptionName() + "\")";
-      message =
-          "Expected exception of type "
-              + getExceptionName()
-              + ", got \" + e.getClass().getCanonicalName()";
+      String assertion = "org.junit.Assert.fail(\"" + message + ")";
+      b.append("  if (! ").append(condition).append(") {").append(Globals.lineSep);
+      b.append("    ").append(assertion).append(";").append(Globals.lineSep);
+      b.append("  }").append(Globals.lineSep);
     }
-    String assertion = "org.junit.Assert.fail(\"" + message + ")";
-    b.append("  if (! ").append(condition).append(") {").append(Globals.lineSep);
-    b.append("    ").append(assertion).append(";").append(Globals.lineSep);
-    b.append("  }").append(Globals.lineSep);
   }
 
   /**
