@@ -24,6 +24,7 @@ import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
+import randoop.reflection.VisibilityPredicate;
 import randoop.test.issta2006.BinTree;
 import randoop.test.issta2006.BinomialHeap;
 import randoop.test.issta2006.FibHeap;
@@ -85,12 +86,16 @@ public class ICSE07ContainersTest {
     System.out.println("GenInputsAbstract.small_tests=" + GenInputsAbstract.small_tests);
 
     final List<TypedOperation> model = new ArrayList<>();
-    ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
+    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    ReflectionManager mgr = new ReflectionManager(visibility);
     for (Class<?> c : classList) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
       mgr.apply(
           new OperationExtractor(
-              classType, model, new DefaultReflectionPredicate(omitMethodPattern, excludeNames)),
+              classType,
+              model,
+              new DefaultReflectionPredicate(omitMethodPattern, excludeNames),
+              visibility),
           c);
     }
     assertTrue("model should not be empty", !model.isEmpty());

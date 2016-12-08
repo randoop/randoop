@@ -13,6 +13,7 @@ import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
+import randoop.reflection.VisibilityPredicate;
 import randoop.types.ClassOrInterfaceType;
 
 import static org.junit.Assert.assertFalse;
@@ -62,10 +63,13 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
 
   private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
     final List<TypedOperation> model = new ArrayList<>();
-    ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
+    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    ReflectionManager mgr = new ReflectionManager(visibility);
     for (Class<?> c : classes) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-      mgr.apply(new OperationExtractor(classType, model, new DefaultReflectionPredicate()), c);
+      mgr.apply(
+          new OperationExtractor(classType, model, new DefaultReflectionPredicate(), visibility),
+          c);
     }
     return model;
   }

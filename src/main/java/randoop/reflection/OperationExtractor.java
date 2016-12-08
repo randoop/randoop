@@ -35,6 +35,9 @@ public class OperationExtractor extends DefaultClassVisitor {
   /** The predicate that implements reflection policy for collecting operations */
   private final ReflectionPredicate predicate;
 
+  /** The predicate to test visibility */
+  private final VisibilityPredicate visibilityPredicate;
+
   /** The collection of operations */
   private final Collection<TypedOperation> operations;
 
@@ -52,10 +55,12 @@ public class OperationExtractor extends DefaultClassVisitor {
   public OperationExtractor(
       ClassOrInterfaceType classType,
       Collection<TypedOperation> operations,
-      ReflectionPredicate predicate) {
+      ReflectionPredicate predicate,
+      VisibilityPredicate visibilityPredicate) {
     this.classType = classType;
     this.operations = operations;
     this.predicate = predicate;
+    this.visibilityPredicate = visibilityPredicate;
   }
 
   /**
@@ -148,12 +153,22 @@ public class OperationExtractor extends DefaultClassVisitor {
       return;
     }
 
-    int mods = field.getModifiers() & Modifier.fieldModifiers();
-
     ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(field.getDeclaringClass());
-    if (!(declaringType.isGeneric() && classType.isInstantiationOf(declaringType))
-        && !(Modifier.isStatic(mods) && Modifier.isFinal(mods))) {
-      declaringType = classType;
+
+    int mods = field.getModifiers() & Modifier.fieldModifiers();
+    if (!visibilityPredicate.isVisible(field.getDeclaringClass())) {
+      if (Modifier.isStatic(mods) && Modifier.isFinal(mods)) {
+        //XXX this is a stop-gap to handle potentially ambiguous inherited constants
+        /* An static final field of a non-public class may be accessible via a subclass, but only
+         * if the field is not ambiguously inherited in the subclass. Without knowing for sure
+         * whether there are two inherited fields with the same name, we cannot decide which case
+         * is presented. So, assuming that there is an ambiguity and bailing on type.
+         */
+        return;
+      }
+      if (!(declaringType.isGeneric() && classType.isInstantiationOf(declaringType))) {
+        declaringType = classType;
+      }
     }
 
     addOperation(TypedOperation.createGetterForField(field, declaringType));

@@ -39,7 +39,10 @@ public class OperationExtractorTest {
     }
     assert c != null;
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-    mgr.apply(new OperationExtractor(classType, operations, new DefaultReflectionPredicate()), c);
+    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    mgr.apply(
+        new OperationExtractor(classType, operations, new DefaultReflectionPredicate(), visibility),
+        c);
     assertThat("name should be", classType.getName(), is(equalTo(c.getName())));
 
     assertThat("class has 12 operations", operations.size(), is(equalTo(12)));
@@ -77,8 +80,10 @@ public class OperationExtractorTest {
     Substitution<ReferenceType> substitution =
         Substitution.forArgs(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     classType = classType.apply(substitution);
-
-    mgr.apply(new OperationExtractor(classType, operations, new DefaultReflectionPredicate()), c);
+    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    mgr.apply(
+        new OperationExtractor(classType, operations, new DefaultReflectionPredicate(), visibility),
+        c);
 
     assertThat("there should be 20 operations", operations.size(), is(equalTo(20)));
   }
@@ -103,8 +108,10 @@ public class OperationExtractorTest {
     Substitution<ReferenceType> substitution =
         Substitution.forArgs(classType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     classType = classType.apply(substitution);
-
-    mgr.apply(new OperationExtractor(classType, operations, new DefaultReflectionPredicate()), c);
+    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    mgr.apply(
+        new OperationExtractor(classType, operations, new DefaultReflectionPredicate(), visibility),
+        c);
     assertThat("should be three operations", operations.size(), is(equalTo(3)));
 
     ClassOrInterfaceType memberType = null;
@@ -140,9 +147,9 @@ public class OperationExtractorTest {
     assertFalse("static member should not be a generic type", classType.isGeneric());
     assertFalse("should not have type parameters", classType.getTypeParameters().size() > 0);
     assertFalse("static member is not parameterized", classType.isParameterized());
-
+    VisibilityPredicate visibility = new PublicVisibilityPredicate();
     mgr.apply(
-        new OperationExtractor(classType, operations, new DefaultReflectionPredicate()),
+        new OperationExtractor(classType, operations, new DefaultReflectionPredicate(), visibility),
         classType.getRuntimeClass());
 
     assertThat("should be two operations", operations.size(), is(equalTo(2)));
@@ -166,9 +173,9 @@ public class OperationExtractorTest {
     assertFalse("class type should not be generic", classType.isGeneric());
     assertFalse("class type is not parameterized", classType.isParameterized());
     assertFalse("should not have type parameters", classType.getTypeParameters().size() > 0);
-
+    VisibilityPredicate visibility = new PublicVisibilityPredicate();
     mgr.apply(
-        new OperationExtractor(classType, operations, new DefaultReflectionPredicate()),
+        new OperationExtractor(classType, operations, new DefaultReflectionPredicate(), visibility),
         classType.getRuntimeClass());
     assertThat("should be 3 operations", operations.size(), is(equalTo(3)));
   }

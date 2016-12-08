@@ -373,7 +373,7 @@ public class OperationModel {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (ClassOrInterfaceType classType : concreteClassTypes) {
       mgr.apply(
-          new OperationExtractor(classType, operations, reflectionPredicate),
+          new OperationExtractor(classType, operations, reflectionPredicate, visibility),
           classType.getRuntimeClass());
     }
   }
