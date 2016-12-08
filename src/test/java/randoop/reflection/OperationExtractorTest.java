@@ -10,6 +10,7 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
+import randoop.types.Type;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -178,5 +179,27 @@ public class OperationExtractorTest {
         new OperationExtractor(classType, operations, new DefaultReflectionPredicate(), visibility),
         classType.getRuntimeClass());
     assertThat("should be 3 operations", operations.size(), is(equalTo(3)));
+  }
+
+  @Test
+  public void inaccessibleArgumentTest() {
+    final Set<TypedOperation> operations = new LinkedHashSet<>();
+    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    ReflectionManager mgr = new ReflectionManager(visibility);
+    String classname = "randoop.reflection.visibilitytest.InaccessibleArgumentInput";
+    Class<?> c = null;
+    try {
+      c = TypeNames.getTypeForName(classname);
+    } catch (ClassNotFoundException e) {
+      fail("did not find class: " + e);
+    }
+    assert c != null;
+    ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
+    mgr.apply(
+        new OperationExtractor(classType, operations, new DefaultReflectionPredicate(), visibility),
+        classType.getRuntimeClass());
+    //XXX this test is disabled until code can be fixed
+    //    assertTrue("should be no usable operations", operations.isEmpty());
+
   }
 }
