@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>GenTests (randoop 3.0.7 API)</title>
+<title>GenTests (randoop 3.0.8-prerelease API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="GenTests (randoop 3.0.7 API)";
+            parent.document.title="GenTests (randoop 3.0.8-prerelease API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":9,"i3":10,"i4":10,"i5":10,"i6":9,"i7":9,"i8":9};
+var methods = {"i0":10,"i1":10,"i2":9,"i3":10,"i4":10,"i5":10,"i6":9,"i7":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -288,17 +288,11 @@ extends <a href="../../randoop/main/GenInputsAbstract.html" title="class in rand
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>private static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenTests.html#usage-java.lang.String-java.lang.Object...-">usage</a></span>(java.lang.String&nbsp;format,
-     java.lang.Object...&nbsp;args)</code>&nbsp;</td>
-</tr>
-<tr id="i7" class="rowColor">
-<td class="colFirst"><code>private static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenTests.html#usage-java.lang.Throwable-java.lang.String-java.lang.Object...-">usage</a></span>(java.lang.Throwable&nbsp;t,
-     java.lang.String&nbsp;format,
      java.lang.Object...&nbsp;args)</code>
 <div class="block">Print out usage error and stack trace and then exit</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>private static java.util.List&lt;java.io.File&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenTests.html#writeJUnitTests-java.lang.String-java.util.List-java.lang.String-">writeJUnitTests</a></span>(java.lang.String&nbsp;output_dir,
                java.util.List&lt;<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt;&nbsp;seqList,
@@ -619,24 +613,6 @@ extends <a href="../../randoop/main/GenInputsAbstract.html" title="class in rand
 </dl>
 </li>
 </ul>
-<a name="usage-java.lang.Throwable-java.lang.String-java.lang.Object...-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>usage</h4>
-<pre>private static&nbsp;void&nbsp;usage(java.lang.Throwable&nbsp;t,
-                          java.lang.String&nbsp;format,
-                          java.lang.Object...&nbsp;args)</pre>
-<div class="block">Print out usage error and stack trace and then exit</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>t</code> - the exception for the error</dd>
-<dd><code>format</code> - the string format</dd>
-<dd><code>args</code> - the arguments</dd>
-</dl>
-</li>
-</ul>
 <a name="usage-java.lang.String-java.lang.Object...-">
 <!--   -->
 </a>
@@ -645,6 +621,12 @@ extends <a href="../../randoop/main/GenInputsAbstract.html" title="class in rand
 <h4>usage</h4>
 <pre>private static&nbsp;void&nbsp;usage(java.lang.String&nbsp;format,
                           java.lang.Object...&nbsp;args)</pre>
+<div class="block">Print out usage error and stack trace and then exit</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>format</code> - the string format</dd>
+<dd><code>args</code> - the arguments</dd>
+</dl>
 </li>
 </ul>
 <a name="getFileText-java.lang.String-">

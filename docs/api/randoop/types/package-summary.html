@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>randoop.types (randoop 3.0.7 API)</title>
+<title>randoop.types (randoop 3.0.8-prerelease API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="randoop.types (randoop 3.0.7 API)";
+            parent.document.title="randoop.types (randoop 3.0.8-prerelease API)";
         }
     }
     catch(err) {
@@ -184,103 +184,104 @@
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><a href="../../randoop/types/ParameterType.html" title="class in randoop.types">ParameterType</a></td>
+<td class="colLast">
+<div class="block">An abstract class representing kinds of type parameters, which are either type variables or
+ wildcard types.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/types/PrimitiveType.html" title="class in randoop.types">PrimitiveType</a></td>
 <td class="colLast">
 <div class="block">Represents a Java primitive type.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/types/PrimitiveTypes.html" title="class in randoop.types">PrimitiveTypes</a></td>
 <td class="colLast">
 <div class="block">Utilities for working with <code>Class&lt;?&gt; objects</code> that Java reflection treats as primitive,
  which includes primitive types and <code>void</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/types/RandoopTypeException.html" title="class in randoop.types">RandoopTypeException</a></td>
 <td class="colLast">
 <div class="block">Exception used to indicate when a type problem has occurred in Randoop.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/types/ReferenceArgument.html" title="class in randoop.types">ReferenceArgument</a></td>
 <td class="colLast">
 <div class="block">Represents a reference type as a type argument to a parameterized type.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/types/ReferenceBound.html" title="class in randoop.types">ReferenceBound</a></td>
 <td class="colLast">
 <div class="block">Represents a bound on a type variable where the bound is a <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a></td>
 <td class="colLast">
 <div class="block">Represents a reference type defined in
  <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.3">JLS Section 4.3</a></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;T&gt;</td>
 <td class="colLast">
 <div class="block">Manages the substitution of concrete types for type variables and wildcards in an
  instantiation of a generic class as a parameterized type.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></td>
 <td class="colLast">
 <div class="block">The superclass of a class hierarchy representing Java types defined in JLS Section 4.1.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a></td>
 <td class="colLast">
 <div class="block">Represents a type argument of a parameterized type as described in
  <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/types/TypeCheck.html" title="class in randoop.types">TypeCheck</a></td>
 <td class="colLast">
 <div class="block">Predicate to check the type of a substitution for a list of type variables.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a></td>
 <td class="colLast">
 <div class="block"><code>TypeTuple</code> represents an ordered tuple of type objects.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a></td>
 <td class="colLast">
 <div class="block">An abstract class representing type variables.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/types/VoidType.html" title="class in randoop.types">VoidType</a></td>
 <td class="colLast">
 <div class="block">Represents <code>void</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/types/WildcardArgument.html" title="class in randoop.types">WildcardArgument</a></td>
 <td class="colLast">
 <div class="block">Represents a wildcard type argument to a parameterized type.</div>
 </td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><a href="../../randoop/types/WildcardArgumentWithLowerBound.html" title="class in randoop.types">WildcardArgumentWithLowerBound</a></td>
-<td class="colLast">
-<div class="block">Represents a wildcard type that has a lower bound (e.g., <code>? super T</code>).</div>
-</td>
-</tr>
 <tr class="altColor">
-<td class="colFirst"><a href="../../randoop/types/WildcardArgumentWithUpperBound.html" title="class in randoop.types">WildcardArgumentWithUpperBound</a></td>
+<td class="colFirst"><a href="../../randoop/types/WildcardType.html" title="class in randoop.types">WildcardType</a></td>
 <td class="colLast">
-<div class="block">Represents a wildcard type that has an upper bound (e.g., <code>? extends T</code>).</div>
+<div class="block">Represents a wildcard type, which occurs as a type argument to a parameterized type.</div>
 </td>
 </tr>
 </tbody>

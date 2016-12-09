@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>NullReferenceType (randoop 3.0.7 API)</title>
+<title>NullReferenceType (randoop 3.0.8-prerelease API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="NullReferenceType (randoop 3.0.7 API)";
+            parent.document.title="NullReferenceType (randoop 3.0.8-prerelease API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":9,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":9,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -116,6 +116,10 @@ var activeTableTab = "activeTableTab";
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
+<dl>
+<dt>All Implemented Interfaces:</dt>
+<dd>java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;</dd>
+</dl>
 <hr>
 <br>
 <pre>class <span class="typeNameLabel">NullReferenceType</span>
@@ -191,40 +195,46 @@ extends <a href="../../randoop/types/ReferenceType.html" title="class in randoop
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/NullReferenceType.html#getCanonicalName--">getCanonicalName</a></span>()</code>
+<div class="block">Returns the name of this type as the "canonical name" of the underlying runtime class.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/NullReferenceType.html#getName--">getName</a></span>()</code>
 <div class="block">Returns the fully-qualified name of this type, including type arguments if
  this is a parameterized type.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>(package private) static <a href="../../randoop/types/NullReferenceType.html" title="class in randoop.types">NullReferenceType</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/NullReferenceType.html#getNullType--">getNullType</a></span>()</code>
 <div class="block">Returns the null type.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>java.lang.Class&lt;?&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/NullReferenceType.html#getRuntimeClass--">getRuntimeClass</a></span>()</code>
 <div class="block">Returns the runtime <code>Class</code> object for this type.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/NullReferenceType.html#getSimpleName--">getSimpleName</a></span>()</code>
 <div class="block">Returns the name of this type without type arguments or package qualifiers.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/NullReferenceType.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/NullReferenceType.html#hasWildcard--">hasWildcard</a></span>()</code>
 <div class="block">Indicate whether this type has a wildcard either as or in a type argument.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/NullReferenceType.html#isSubtypeOf-randoop.types.Type-">isSubtypeOf</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;otherType)</code>
 <div class="block">Test whether this type is a subtype of the given type according to
@@ -233,7 +243,7 @@ extends <a href="../../randoop/types/ReferenceType.html" title="class in randoop
  section 4.10 of JLS for Java SE 8</a>.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/NullReferenceType.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
@@ -250,7 +260,7 @@ extends <a href="../../randoop/types/ReferenceType.html" title="class in randoop
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;randoop.types.<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></h3>
-<code><a href="../../randoop/types/Type.html#forName-java.lang.String-">forName</a>, <a href="../../randoop/types/Type.html#forValue-java.lang.Object-">forValue</a>, <a href="../../randoop/types/Type.html#getCanonicalName--">getCanonicalName</a>, <a href="../../randoop/types/Type.html#getUnqualifiedName--">getUnqualifiedName</a>, <a href="../../randoop/types/Type.html#hasRuntimeClass-java.lang.Class-">hasRuntimeClass</a>, <a href="../../randoop/types/Type.html#isArray--">isArray</a>, <a href="../../randoop/types/Type.html#isAssignableFromTypeOf-T-">isAssignableFromTypeOf</a>, <a href="../../randoop/types/Type.html#isBoxedPrimitive--">isBoxedPrimitive</a>, <a href="../../randoop/types/Type.html#isClassType--">isClassType</a>, <a href="../../randoop/types/Type.html#isEnum--">isEnum</a>, <a href="../../randoop/types/Type.html#isGeneric--">isGeneric</a>, <a href="../../randoop/types/Type.html#isInterface--">isInterface</a>, <a href="../../randoop/types/Type.html#isObject--">isObject</a>, <a href="../../randoop/types/Type.html#isParameterized--">isParameterized</a>, <a href="../../randoop/types/Type.html#isPrimitive--">isPrimitive</a>, <a href="../../randoop/types/Type.html#isRawtype--">isRawtype</a>, <a href="../../randoop/types/Type.html#isString--">isString</a>, <a href="../../randoop/types/Type.html#isVariable--">isVariable</a>, <a href="../../randoop/types/Type.html#isVoid--">isVoid</a></code></li>
+<code><a href="../../randoop/types/Type.html#compareTo-randoop.types.Type-">compareTo</a>, <a href="../../randoop/types/Type.html#forName-java.lang.String-">forName</a>, <a href="../../randoop/types/Type.html#forValue-java.lang.Object-">forValue</a>, <a href="../../randoop/types/Type.html#getUnqualifiedName--">getUnqualifiedName</a>, <a href="../../randoop/types/Type.html#hasRuntimeClass-java.lang.Class-">hasRuntimeClass</a>, <a href="../../randoop/types/Type.html#isArray--">isArray</a>, <a href="../../randoop/types/Type.html#isAssignableFromTypeOf-T-">isAssignableFromTypeOf</a>, <a href="../../randoop/types/Type.html#isBoxedPrimitive--">isBoxedPrimitive</a>, <a href="../../randoop/types/Type.html#isClassType--">isClassType</a>, <a href="../../randoop/types/Type.html#isEnum--">isEnum</a>, <a href="../../randoop/types/Type.html#isGeneric--">isGeneric</a>, <a href="../../randoop/types/Type.html#isInterface--">isInterface</a>, <a href="../../randoop/types/Type.html#isObject--">isObject</a>, <a href="../../randoop/types/Type.html#isParameterized--">isParameterized</a>, <a href="../../randoop/types/Type.html#isPrimitive--">isPrimitive</a>, <a href="../../randoop/types/Type.html#isRawtype--">isRawtype</a>, <a href="../../randoop/types/Type.html#isString--">isString</a>, <a href="../../randoop/types/Type.html#isVariable--">isVariable</a>, <a href="../../randoop/types/Type.html#isVoid--">isVoid</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -447,6 +457,25 @@ extends <a href="../../randoop/types/ReferenceType.html" title="class in randoop
 <dd><code><a href="../../randoop/types/Type.html#getSimpleName--">getSimpleName</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the name of this type without type arguments</dd>
+</dl>
+</li>
+</ul>
+<a name="getCanonicalName--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCanonicalName</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getCanonicalName()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/Type.html#getCanonicalName--">Type</a></code></span></div>
+<div class="block">Returns the name of this type as the "canonical name" of the underlying runtime class.
+ Identical to <a href="../../randoop/types/Type.html#getName--"><code>Type.getName()</code></a> except for types with type arguments.
+ For <code>java.util.List&lt;T&gt;</code> returns <code>"java.util.List"</code>.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="../../randoop/types/Type.html#getCanonicalName--">getCanonicalName</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the fully-qualified canonical name of this type</dd>
 </dl>
 </li>
 </ul>

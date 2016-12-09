@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Main (randoop 3.0.8-prerelease API)</title>
+<title>RandoopClassNameError (randoop 3.0.8-prerelease API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,18 +12,12 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Main (randoop 3.0.8-prerelease API)";
+            parent.document.title="RandoopClassNameError (randoop 3.0.8-prerelease API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":10};
-var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
-var altColor = "altColor";
-var rowColor = "rowColor";
-var tableTab = "tableTab";
-var activeTableTab = "activeTableTab";
 </script>
 <noscript>
 <div>JavaScript is disabled on your browser.</div>
@@ -48,12 +42,12 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../randoop/main/Help.html" title="class in randoop.main"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/main/OptionsCache.html" title="class in randoop.main"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/main/OptionsCache.html" title="class in randoop.main"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../randoop/main/RandoopTextuiException.html" title="class in randoop.main"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../index.html?randoop/main/Main.html" target="_top">Frames</a></li>
-<li><a href="Main.html" target="_top">No&nbsp;Frames</a></li>
+<li><a href="../../index.html?randoop/main/RandoopClassNameError.html" target="_top">Frames</a></li>
+<li><a href="RandoopClassNameError.html" target="_top">No&nbsp;Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_top">
 <li><a href="../../allclasses-noframe.html">All&nbsp;Classes</a></li>
@@ -76,13 +70,13 @@ var activeTableTab = "activeTableTab";
 <li>Nested&nbsp;|&nbsp;</li>
 <li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method.summary">Method</a></li>
+<li><a href="#methods.inherited.from.class.java.lang.Throwable">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method.detail">Method</a></li>
+<li>Method</li>
 </ul>
 </div>
 <a name="skip.navbar.top">
@@ -92,26 +86,43 @@ var activeTableTab = "activeTableTab";
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="subTitle">randoop.main</div>
-<h2 title="Class Main" class="title">Class Main</h2>
+<h2 title="Class RandoopClassNameError" class="title">Class RandoopClassNameError</h2>
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li>randoop.main.Main</li>
+<li>java.lang.Throwable</li>
+<li>
+<ul class="inheritance">
+<li>java.lang.Error</li>
+<li>
+<ul class="inheritance">
+<li>randoop.main.RandoopClassNameError</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
+<dl>
+<dt>All Implemented Interfaces:</dt>
+<dd>java.io.Serializable</dd>
+</dl>
 <hr>
 <br>
-<pre>public class <span class="typeNameLabel">Main</span>
-extends java.lang.Object</pre>
-<div class="block">Main entry point for Randoop. Asks the command handlers who can handle the
- command given by the user, and passes control to whoever does.</div>
+<pre>public class <span class="typeNameLabel">RandoopClassNameError</span>
+extends java.lang.Error</pre>
+<div class="block">Exception for classname errors</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../serialized-form.html#randoop.main.RandoopClassNameError">Serialized Form</a></dd>
+</dl>
 </li>
 </ul>
 </div>
@@ -131,8 +142,8 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static java.util.List&lt;<a href="../../randoop/main/CommandHandler.html" title="class in randoop.main">CommandHandler</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Main.html#handlers">handlers</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>private static long</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/RandoopClassNameError.html#serialVersionUID">serialVersionUID</a></span></code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -149,7 +160,11 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/main/Main.html#Main--">Main</a></span>()</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/main/RandoopClassNameError.html#RandoopClassNameError-java.lang.String-">RandoopClassNameError</a></span>(java.lang.String&nbsp;message)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/main/RandoopClassNameError.html#RandoopClassNameError-java.lang.String-java.lang.Throwable-">RandoopClassNameError</a></span>(java.lang.String&nbsp;message,
+                     java.lang.Throwable&nbsp;cause)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -160,27 +175,19 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Summary</h3>
-<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Method and Description</th>
-</tr>
-<tr id="i0" class="altColor">
-<td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Main.html#main-java.lang.String:A-">main</a></span>(java.lang.String[]&nbsp;args)</code>&nbsp;</td>
-</tr>
-<tr id="i1" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/Main.html#nonStaticMain-java.lang.String:A-">nonStaticMain</a></span>(java.lang.String[]&nbsp;args)</code>&nbsp;</td>
-</tr>
-</table>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.java.lang.Throwable">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;java.lang.Throwable</h3>
+<code>addSuppressed, fillInStackTrace, getCause, getLocalizedMessage, getMessage, getStackTrace, getSuppressed, initCause, printStackTrace, printStackTrace, printStackTrace, setStackTrace, toString</code></li>
+</ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -196,13 +203,17 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="handlers">
+<a name="serialVersionUID">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>handlers</h4>
-<pre>public static&nbsp;java.util.List&lt;<a href="../../randoop/main/CommandHandler.html" title="class in randoop.main">CommandHandler</a>&gt; handlers</pre>
+<h4>serialVersionUID</h4>
+<pre>private static final&nbsp;long serialVersionUID</pre>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../constant-values.html#randoop.main.RandoopClassNameError.serialVersionUID">Constant Field Values</a></dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -213,39 +224,23 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="Main--">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>Main</h4>
-<pre>public&nbsp;Main()</pre>
-</li>
-</ul>
-</li>
-</ul>
-<!-- ============ METHOD DETAIL ========== -->
-<ul class="blockList">
-<li class="blockList"><a name="method.detail">
-<!--   -->
-</a>
-<h3>Method Detail</h3>
-<a name="main-java.lang.String:A-">
+<a name="RandoopClassNameError-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>main</h4>
-<pre>public static&nbsp;void&nbsp;main(java.lang.String[]&nbsp;args)</pre>
+<h4>RandoopClassNameError</h4>
+<pre>public&nbsp;RandoopClassNameError(java.lang.String&nbsp;message)</pre>
 </li>
 </ul>
-<a name="nonStaticMain-java.lang.String:A-">
+<a name="RandoopClassNameError-java.lang.String-java.lang.Throwable-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>nonStaticMain</h4>
-<pre>public&nbsp;void&nbsp;nonStaticMain(java.lang.String[]&nbsp;args)</pre>
+<h4>RandoopClassNameError</h4>
+<pre>public&nbsp;RandoopClassNameError(java.lang.String&nbsp;message,
+                             java.lang.Throwable&nbsp;cause)</pre>
 </li>
 </ul>
 </li>
@@ -275,12 +270,12 @@ extends java.lang.Object</pre>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../randoop/main/Help.html" title="class in randoop.main"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/main/OptionsCache.html" title="class in randoop.main"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/main/OptionsCache.html" title="class in randoop.main"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../randoop/main/RandoopTextuiException.html" title="class in randoop.main"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../index.html?randoop/main/Main.html" target="_top">Frames</a></li>
-<li><a href="Main.html" target="_top">No&nbsp;Frames</a></li>
+<li><a href="../../index.html?randoop/main/RandoopClassNameError.html" target="_top">Frames</a></li>
+<li><a href="RandoopClassNameError.html" target="_top">No&nbsp;Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_bottom">
 <li><a href="../../allclasses-noframe.html">All&nbsp;Classes</a></li>
@@ -303,13 +298,13 @@ extends java.lang.Object</pre>
 <li>Nested&nbsp;|&nbsp;</li>
 <li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method.summary">Method</a></li>
+<li><a href="#methods.inherited.from.class.java.lang.Throwable">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method.detail">Method</a></li>
+<li>Method</li>
 </ul>
 </div>
 <a name="skip.navbar.bottom">

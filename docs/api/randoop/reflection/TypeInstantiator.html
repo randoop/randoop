@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>TypeInstantiator (randoop 3.0.7 API)</title>
+<title>TypeInstantiator (randoop 3.0.8-prerelease API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="TypeInstantiator (randoop 3.0.7 API)";
+            parent.document.title="TypeInstantiator (randoop 3.0.8-prerelease API)";
         }
     }
     catch(err) {
@@ -204,7 +204,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#instantiateDeclaringClass-randoop.types.ParameterizedType-">instantiateDeclaringClass</a></span>(<a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types">ParameterizedType</a>&nbsp;declaringType)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#instantiateDeclaringClass-randoop.types.ClassOrInterfaceType-">instantiateDeclaringClass</a></span>(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;declaringType)</code>
 <div class="block">Chooses an instantiating substitution for the given declaring class.</div>
 </td>
 </tr>
@@ -243,7 +243,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#selectMatch-randoop.types.ParameterizedType-">selectMatch</a></span>(<a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types">ParameterizedType</a>&nbsp;declaringType)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#selectMatch-randoop.types.ClassOrInterfaceType-">selectMatch</a></span>(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;declaringType)</code>
 <div class="block">Selects an existing type that instantiates the given generic declaring type
  and returns the instantiating substitution.</div>
 </td>
@@ -370,13 +370,13 @@ extends java.lang.Object</pre>
                                                               java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters)</pre>
 </li>
 </ul>
-<a name="instantiateDeclaringClass-randoop.types.ParameterizedType-">
+<a name="instantiateDeclaringClass-randoop.types.ClassOrInterfaceType-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>instantiateDeclaringClass</h4>
-<pre>private&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;instantiateDeclaringClass(<a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types">ParameterizedType</a>&nbsp;declaringType)</pre>
+<pre>private&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;instantiateDeclaringClass(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;declaringType)</pre>
 <div class="block">Chooses an instantiating substitution for the given declaring class.
  Performs a coin flip to determine whether to use a previous instantiation,
  or to create a new one.
@@ -392,13 +392,13 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="selectMatch-randoop.types.ParameterizedType-">
+<a name="selectMatch-randoop.types.ClassOrInterfaceType-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>selectMatch</h4>
-<pre>private&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;selectMatch(<a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types">ParameterizedType</a>&nbsp;declaringType)</pre>
+<pre>private&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;selectMatch(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;declaringType)</pre>
 <div class="block">Selects an existing type that instantiates the given generic declaring type
  and returns the instantiating substitution.
  <p>

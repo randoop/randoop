@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Operation (randoop 3.0.7 API)</title>
+<title>Operation (randoop 3.0.8-prerelease API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Operation (randoop 3.0.7 API)";
+            parent.document.title="Operation (randoop 3.0.8-prerelease API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6};
+var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -99,17 +99,12 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <dl>
-<dt>All Superinterfaces:</dt>
-<dd>java.lang.Comparable&lt;<a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a>&gt;</dd>
-</dl>
-<dl>
 <dt>All Known Implementing Classes:</dt>
 <dd><a href="../../randoop/operation/ArrayCreation.html" title="class in randoop.operation">ArrayCreation</a>, <a href="../../randoop/operation/ArrayElementSet.html" title="class in randoop.operation">ArrayElementSet</a>, <a href="../../randoop/operation/CallableOperation.html" title="class in randoop.operation">CallableOperation</a>, <a href="../../randoop/operation/ConstructorCall.html" title="class in randoop.operation">ConstructorCall</a>, <a href="../../randoop/operation/EnumConstant.html" title="class in randoop.operation">EnumConstant</a>, <a href="../../randoop/operation/FieldGet.html" title="class in randoop.operation">FieldGet</a>, <a href="../../randoop/operation/FieldSet.html" title="class in randoop.operation">FieldSet</a>, <a href="../../randoop/operation/InitializedArrayCreation.html" title="class in randoop.operation">InitializedArrayCreation</a>, <a href="../../randoop/operation/MethodCall.html" title="class in randoop.operation">MethodCall</a>, <a href="../../randoop/operation/NonreceiverTerm.html" title="class in randoop.operation">NonreceiverTerm</a>, <a href="../../randoop/operation/ReflectionArrayCreation.html" title="class in randoop.operation">ReflectionArrayCreation</a>, <a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation">TypedClassOperation</a>, <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>, <a href="../../randoop/operation/TypedTermOperation.html" title="class in randoop.operation">TypedTermOperation</a>, <a href="../../randoop/operation/UncheckedCast.html" title="class in randoop.operation">UncheckedCast</a></dd>
 </dl>
 <hr>
 <br>
-<pre>public interface <span class="typeNameLabel">Operation</span>
-extends java.lang.Comparable&lt;<a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a>&gt;</pre>
+<pre>public interface <span class="typeNameLabel">Operation</span></pre>
 <div class="block">Operation represents the constructs that can occur in a statement as part of
  a test sequence.
  These include method calls, constructor calls, field accesses, enum constant
@@ -190,44 +185,50 @@ extends java.lang.Comparable&lt;<a href="../../randoop/operation/Operation.html"
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/Operation.html#isConstantField--">isConstantField</a></span>()</code>
+<div class="block">Predicate to indicate whether this object represents a constant field.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/Operation.html#isConstructorCall--">isConstructorCall</a></span>()</code>
 <div class="block">Predicate to indicate whether object represents a call to a constructor.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/Operation.html#isMessage--">isMessage</a></span>()</code>
 <div class="block">Predicate to indicate whether object represents a method-call-like
  operation (either static or instance).</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/Operation.html#isMethodCall--">isMethodCall</a></span>()</code>
 <div class="block">Indicates whether this object represents a method-call operation (either static or instance).</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/Operation.html#isNonreceivingValue--">isNonreceivingValue</a></span>()</code>
 <div class="block">Predicate to indicate whether this object represents a value of a
  non-receiving type (includes numbers, strings, and null).</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/Operation.html#isStatic--">isStatic</a></span>()</code>
 <div class="block">Predicate to indicate whether object represents a static operation on the
  declaring class.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/Operation.html#isUncheckedCast--">isUncheckedCast</a></span>()</code>
 <div class="block">Predicate to indicate whether this object represents an unchecked cast.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/Operation.html#satisfies-randoop.reflection.ReflectionPredicate-">satisfies</a></span>(<a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;reflectionPredicate)</code>
 <div class="block">Determines whether the reflective object in this <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> satisfies
@@ -235,13 +236,6 @@ extends java.lang.Comparable&lt;<a href="../../randoop/operation/Operation.html"
 </td>
 </tr>
 </table>
-<ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.java.lang.Comparable">
-<!--   -->
-</a>
-<h3>Methods inherited from interface&nbsp;java.lang.Comparable</h3>
-<code>compareTo</code></li>
-</ul>
 </li>
 </ul>
 </li>
@@ -315,6 +309,20 @@ extends java.lang.Comparable&lt;<a href="../../randoop/operation/Operation.html"
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if operation is a constructor call, and false otherwise</dd>
+</dl>
+</li>
+</ul>
+<a name="isConstantField--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isConstantField</h4>
+<pre>boolean&nbsp;isConstantField()</pre>
+<div class="block">Predicate to indicate whether this object represents a constant field.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if this operation is a constant field, and false otherwise</dd>
 </dl>
 </li>
 </ul>

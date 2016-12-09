@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ParameterBound (randoop 3.0.7 API)</title>
+<title>ParameterBound (randoop 3.0.8-prerelease API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ParameterBound (randoop 3.0.7 API)";
+            parent.document.title="ParameterBound (randoop 3.0.8-prerelease API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":9,"i3":9,"i4":9,"i5":6,"i6":9,"i7":6,"i8":10,"i9":10,"i10":6,"i11":6,"i12":6,"i13":9,"i14":6,"i15":6};
+var methods = {"i0":6,"i1":6,"i2":9,"i3":9,"i4":9,"i5":6,"i6":9,"i7":6,"i8":6,"i9":10,"i10":6,"i11":6,"i12":6,"i13":9,"i14":6,"i15":6};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -229,7 +229,7 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i8" class="altColor">
-<td class="colFirst"><code>boolean</code></td>
+<td class="colFirst"><code>abstract boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ParameterBound.html#isGeneric--">isGeneric</a></span>()</code>
 <div class="block">Indicates whether the type of this bound is generic.</div>
 </td>
@@ -332,8 +332,7 @@ extends java.lang.Object</pre>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>type</code> - the <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>a <a href="../../randoop/types/EagerReferenceBound.html" title="class in randoop.types"><code>EagerReferenceBound</code></a> if the type is a <a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types"><code>ClassOrInterfaceType</code></a> or
-         a <a href="../../randoop/types/TypeVariable.html" title="class in randoop.types"><code>TypeVariable</code></a></dd>
+<dd>a <a href="../../randoop/types/EagerReferenceBound.html" title="class in randoop.types"><code>EagerReferenceBound</code></a> with the given type</dd>
 </dl>
 </li>
 </ul>
@@ -346,8 +345,7 @@ extends java.lang.Object</pre>
 <pre>static&nbsp;<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;forTypes(java.lang.reflect.Type[]&nbsp;bounds)</pre>
 <div class="block">Creates a bound from the array of bounds of a <code>java.lang.reflect.TypeVariable</code>.
  <p>
- The bounds may be either be a single type variable, or a class/interface type followed by a
- conjunction of interface types.
+ The bounds of a type parameter are restricted, but those of a wildcard may be any reference type.
  See
  <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.1.2">JLS section 8.1.2</a>.</div>
 <dl>
@@ -477,7 +475,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>isGeneric</h4>
-<pre>public&nbsp;boolean&nbsp;isGeneric()</pre>
+<pre>public abstract&nbsp;boolean&nbsp;isGeneric()</pre>
 <div class="block">Indicates whether the type of this bound is generic.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
