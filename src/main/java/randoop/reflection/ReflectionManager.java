@@ -2,7 +2,13 @@ package randoop.reflection;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -320,15 +326,15 @@ public class ReflectionManager {
       }
       return false;
     }
-    if (!predicate.isVisible(m.getReturnType())) {
+    if (!isVisible(m.getGenericReturnType())) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + m.toGenericString());
         Log.logLine("  reason: the method's return type is not visible from test classes");
       }
       return false;
     }
-    for (Class<?> p : m.getParameterTypes()) {
-      if (!predicate.isVisible(p)) {
+    for (Type p : m.getGenericParameterTypes()) {
+      if (!isVisible(p)) {
         if (Log.isLoggingOn()) {
           Log.logLine("Will not use: " + m.toGenericString());
           Log.logLine("  reason: the method has a parameter that is not visible from test classes");
@@ -353,8 +359,8 @@ public class ReflectionManager {
       }
       return false;
     }
-    for (Class<?> p : c.getParameterTypes()) {
-      if (!predicate.isVisible(p)) {
+    for (Type p : c.getGenericParameterTypes()) {
+      if (!isVisible(p)) {
         if (Log.isLoggingOn()) {
           Log.logLine("Will not use: " + c.toGenericString());
           Log.logLine(
@@ -364,6 +370,35 @@ public class ReflectionManager {
       }
     }
     return true;
+  }
+
+  /**
+   * Determines whether a {@code java.lang.reflect.Type} is a type visible to the generated tests.
+   *
+   * @param type  the type to check
+   * @return true if the type is visible, false otherwise
+   */
+  private boolean isVisible(Type type) {
+    if (type instanceof GenericArrayType) {
+      return isVisible(((GenericArrayType) type).getGenericComponentType());
+    } else if (type instanceof ParameterizedType) {
+      if (!isVisible(((ParameterizedType) type).getRawType())) {
+        return false;
+      }
+      for (Type argType : ((ParameterizedType) type).getActualTypeArguments()) {
+        if (!isVisible(argType)) {
+          return false;
+        }
+      }
+      return true;
+    } else if (type instanceof TypeVariable) {
+      return true;
+    } else if (type instanceof WildcardType) {
+      return true;
+    }
+    // if type is none of the types above then must be Class<?>, which predicate can handle
+    Class<?> rawType = (Class<?>) type;
+    return predicate.isVisible(rawType);
   }
 
   /**
