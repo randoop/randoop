@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
@@ -12,6 +13,7 @@ import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
 
+import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
@@ -198,8 +200,12 @@ public class OperationExtractorTest {
     mgr.apply(
         new OperationExtractor(classType, operations, new DefaultReflectionPredicate(), visibility),
         classType.getRuntimeClass());
-    //XXX this test is disabled until code can be fixed
-    //    assertTrue("should be no usable operations", operations.isEmpty());
-
+    assertTrue("should be two usable operations", operations.size() == 2);
+    for (TypedOperation operation : operations) {
+      assertThat(
+          "should be wildcard or variable",
+          operation.getName(),
+          anyOf(is(equalTo("mTypeVariable")), is(equalTo("mWildcard"))));
+    }
   }
 }
