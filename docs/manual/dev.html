@@ -55,7 +55,6 @@
         <ul>
           <li>
             <ul>
-              <li><a href="#writing_reading_serialized">Writing/reading serialized sequences</a></li>
               <li><a href="#writing_sequence_as_junit">Writing a sequence as a JUnit test</a></li>
             </ul></li>
         </ul></li>
@@ -1091,31 +1090,6 @@ PrintSteam and recording the results.
 </ul>
 
 <h2 id="inout_sequence">Writing/reading sequences to file</h2>
-
-<h4 id="writing_reading_serialized">Writing/reading serialized sequences</h4>
-<p>
-Writing a list of sequences to a serialized file:
-</p>
-<pre class="code">
-  List&lt;ExecutableSequence&gt; sequences = ...;
-  FileOutputStream fileos = new FileOutputStream("MyFile.gz");
-  ObjectOutputStream objectos = new ObjectOutputStream(new GZIPOutputStream(fileos));
-  objectos.writeObject(sequences);
-  objectos.close();
-  fileos.close();
-</pre>
-<p>
-Any <a href="../api/randoop/test/Check.html">Checks</a> decorating the
-sequences will also be serialized.
-</p>
-<p>
-Reading a list of sequences from a serialized file:
-</p>
-<pre class="code">
-  FileInputStream fileis = new FileInputStream("MyFile.gz");
-  ObjectInputStream objectis = new ObjectInputStream(new GZIPInputStream(fileis));
-  List&lt;ExecutableSequence&gt; seqsfromfile = (List&lt;ExecutableSequence&gt;) objectis.readObject();
-</pre>
 
 <h4 id="writing_sequence_as_junit">Writing a sequence as a JUnit test</h4>
 <p>
