@@ -409,15 +409,17 @@ task distributionZip (type: Zip , dependsOn: ['singleJar', 'copyJars', 'manual']
  /*
   * Get the plume-lib repo using gradle-git, and save into utils/plume-lib
   */
- task clone << {
-   def plumeFolder = file("$buildDir/utils/plume-lib")
-   if ( ! plumeFolder.exists() ) {
-     org.ajoberstar.grgit.Grgit.clone(dir: plumeFolder, uri: 'https://github.com/mernst/plume-lib.git')
-   } else {
-     println("WARNING: not cloning plume-lib because already exists.")
-     println("         Force clone by running after clean")
-   }
- }
+task clone {
+  doLast {
+    def plumeFolder = file("$buildDir/utils/plume-lib")
+    if ( ! plumeFolder.exists() ) {
+      org.ajoberstar.grgit.Grgit.clone(dir: plumeFolder, uri: 'https://github.com/mernst/plume-lib.git')
+    } else {
+      println("WARNING: not cloning plume-lib because already exists.")
+      println("         Force clone by running after clean")
+    }
+  }
+}
 
 /*
  * Set destination directory to build/docs/api, and restrict to classes in
@@ -557,7 +559,7 @@ task buildRelease(type: DefaultTask, dependsOn: [ 'build', 'publishSite', 'valid
 /* Declares the Gradle version to be used when the wrapper is built */
 task wrapper(type: Wrapper) {
   description "Configure Gradle Wrapper for this project"
-  gradleVersion = '3.0'
+  gradleVersion = '3.2.1'
 }
 
 /*************** Other tool configs *************/
