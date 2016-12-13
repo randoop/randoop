@@ -1,7 +1,8 @@
 Version 3.0.9, released X X, 20X
 
 Fixes generation of uncompilable code was generated due to an inaccessible type
-that was a type argument to a parameterized type occurring as a parameter type.
+that was a type argument to a parameterized type occurring as the type of a
+formal parameter of a method.
 
 
 Version 3.0.8, released December 8, 2016
