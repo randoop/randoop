@@ -48,10 +48,12 @@ public class JavaTypes {
   public static final ClassOrInterfaceType STRING_TYPE = new NonParameterizedType(String.class);
 
   /** The Cloneable {@link ClassOrInterfaceType} */
-  public static final Type CLONEABLE_TYPE = new NonParameterizedType(Cloneable.class);
+  public static final ClassOrInterfaceType CLONEABLE_TYPE =
+      new NonParameterizedType(Cloneable.class);
 
   /** The Serializable {@link ClassOrInterfaceType} */
-  public static final Type SERIALIZABLE_TYPE = new NonParameterizedType(Serializable.class);
+  public static final ClassOrInterfaceType SERIALIZABLE_TYPE =
+      new NonParameterizedType(Serializable.class);
 
   /** The Null type is the lower bound of reference types and is only used in {@link randoop.types.CaptureTypeVariable} */
   public static final ReferenceType NULL_TYPE = NullReferenceType.getNullType();
