@@ -1,6 +1,10 @@
 package randoop.operation;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
@@ -44,7 +48,7 @@ public final class MethodCall extends CallableOperation {
    */
   public static final String ID = "method";
 
-  private final Method method;
+  private transient final Method method;
   private final boolean isStatic;
 
   /**
@@ -305,5 +309,40 @@ public final class MethodCall extends CallableOperation {
   @Override
   public boolean satisfies(ReflectionPredicate predicate) {
     return predicate.test(method);
+  }
+
+  /**
+   * Serializes this method call
+   * @param out default output stream to serialize this class to
+   * @throws IOException
+   */
+  private void writeObject(ObjectOutputStream out) throws IOException {
+    out.writeObject(method.getDeclaringClass());
+    out.writeUTF(method.getName());
+    out.writeObject(method.getParameterTypes());
+  }
+
+  /**
+   * Converts input stream to a method call
+   * @param in inputstream to read the object from
+   * @throws IOException
+   * @throws ClassNotFoundException
+   * @throws NoSuchMethodException
+   * @throws NoSuchFieldException
+   * @throws IllegalAccessException
+   */
+  private void readObject(ObjectInputStream in)
+      throws IOException, ClassNotFoundException, NoSuchMethodException, NoSuchFieldException,
+          IllegalAccessException {
+    Class<?> declaringClass = (Class<?>) in.readObject();
+    String methodName = in.readUTF();
+    Class<?>[] parameterTypes = (Class<?>[]) in.readObject();
+
+    // Hacking with reflection to write in final transient fields
+    Field finalMethodField = MethodCall.class.getDeclaredField("method");
+    finalMethodField.setAccessible(true);
+    Method deserializedMethod = declaringClass.getMethod(methodName, parameterTypes);
+    deserializedMethod.setAccessible(true);
+    finalMethodField.set(this, deserializedMethod);
   }
 }

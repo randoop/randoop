@@ -1,6 +1,7 @@
 package randoop.operation;
 
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.List;
 
 import randoop.ExecutionOutcome;
@@ -15,7 +16,7 @@ import randoop.types.TypeTuple;
  * for a few kinds of operations.
  *
  */
-public abstract class CallableOperation implements Operation {
+public abstract class CallableOperation implements Operation, Serializable {
 
   @Override
   public boolean isStatic() {

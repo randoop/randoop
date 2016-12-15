@@ -1,7 +1,11 @@
 package randoop.operation;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
@@ -36,7 +40,7 @@ public final class ConstructorCall extends CallableOperation {
    */
   public static final String ID = "cons";
 
-  private final Constructor<?> constructor;
+  private transient final Constructor<?> constructor;
 
   // Cached values (for improved performance). Their values
   // are computed upon the first invocation of the respective
@@ -325,5 +329,42 @@ public final class ConstructorCall extends CallableOperation {
   @Override
   public boolean satisfies(ReflectionPredicate predicate) {
     return predicate.test(constructor);
+  }
+
+  /**
+   * Serializes this constructor call
+   * @param out default output stream to serialize this class to
+   * @throws IOException
+   */
+  private void writeObject(ObjectOutputStream out) throws IOException {
+    out.defaultWriteObject();
+    out.writeObject(constructor.getDeclaringClass());
+    out.writeObject(constructor.getParameterTypes());
+  }
+
+  /**
+   * Converts input stream to a constructor call
+   * @param in inputstream to read the object from
+   * @throws IOException
+   * @throws ClassNotFoundException
+   * @throws NoSuchMethodException
+   * @throws NoSuchFieldException
+   * @throws IllegalAccessException
+   */
+  private void readObject(ObjectInputStream in)
+      throws IOException, ClassNotFoundException, NoSuchMethodException, NoSuchFieldException,
+          IllegalAccessException {
+    in.defaultReadObject();
+
+    Class<?> declaringClass = (Class<?>) in.readObject();
+    Class<?>[] parameterTypes = (Class<?>[]) in.readObject();
+
+    // Hacking with reflection to write in final transient fields
+    Field constructorField = ConstructorCall.class.getDeclaredField("constructor");
+    constructorField.setAccessible(true);
+    Constructor<?> deserializedConstructor;
+    deserializedConstructor = declaringClass.getConstructor(parameterTypes);
+    deserializedConstructor.setAccessible(true);
+    constructorField.set(this, deserializedConstructor);
   }
 }

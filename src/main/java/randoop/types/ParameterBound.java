@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +33,7 @@ import java.util.List;
  * @see IntersectionTypeBound
  * @see LazyParameterBound
  */
-public abstract class ParameterBound {
+public abstract class ParameterBound implements Serializable {
 
   /**
    * Constructs a parameter bound given a {@link ReferenceType}.
