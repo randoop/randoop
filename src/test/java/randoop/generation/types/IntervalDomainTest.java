@@ -2,7 +2,9 @@ package randoop.generation.types;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import randoop.types.JavaTypes;
@@ -195,5 +197,56 @@ public class IntervalDomainTest {
     expected = a1100Up;
     assertFalse("not empty", restrictedDomain.isEmpty());
     assertThat("should be " + expected, restrictedDomain, is(equalTo(expected)));
+  }
+
+  @Test
+  public void supertypeSubtypeTest() {
+    ReferenceType a1000 = ReferenceType.forClass(A1000.class);
+    ReferenceType a0111 = ReferenceType.forClass(A0111.class);
+    List<ReferenceType> typeList = new ArrayList<>();
+    typeList.add(a1000);
+    typeList.add(a0111);
+    ReferenceType a0100 = ReferenceType.forClass(A0100.class);
+    typeList.add(a0100);
+    ReferenceType a0010 = ReferenceType.forClass(A0010.class);
+    typeList.add(a0010);
+    ReferenceType a0001 = ReferenceType.forClass(A0001.class);
+    typeList.add(a0001);
+    typeList.add(ReferenceType.forClass(A1100.class));
+    typeList.add(ReferenceType.forClass(A1010.class));
+    typeList.add(ReferenceType.forClass(A1001.class));
+    typeList.add(ReferenceType.forClass(A0101.class));
+    typeList.add(ReferenceType.forClass(A0110.class));
+    typeList.add(ReferenceType.forClass(A0011.class));
+    ReferenceType a1110 = ReferenceType.forClass(A1110.class);
+    typeList.add(a1110);
+    ReferenceType a1101 = ReferenceType.forClass(A1101.class);
+    typeList.add(a1101);
+    ReferenceType a1011 = ReferenceType.forClass(A1011.class);
+    typeList.add(a1011);
+
+    TypeDomain trivial = IntervalDomain.createDomain(JavaTypes.NULL_TYPE, JavaTypes.OBJECT_TYPE);
+    //sanity check
+    TypeDomain empty = IntervalDomain.createDomain(a0111, a1000);
+
+    assertTrue("is empty", empty.isEmpty());
+
+    TypeDomain a1000Down = trivial.restrictDown(a1000);
+    TypeDomain a0111Up = trivial.restrictUp(a0111);
+    for (ReferenceType type : typeList) {
+      if (a0111.isSubtypeOf(type)) {
+        assertFalse("should not have supertype: " + type, a1000Down.hasSupertypeOf(type));
+      } else {
+        assertTrue("should have supertype: " + type, a1000Down.hasSupertypeOf(type));
+      }
+      if (type.isSubtypeOf(a1000)) {
+        assertFalse("should not have subtype: " + type, a0111Up.hasSubtypeOf(type));
+      } else {
+        assertTrue("should have subtype: " + type, a0111Up.hasSubtypeOf(type));
+      }
+    }
+
+    TypeDomain a0111a1110Up = a0111Up.restrictUp(a1110);
+    System.out.println(a0111a1110Up);
   }
 }

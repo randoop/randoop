@@ -54,8 +54,5 @@ public class EmptyDomainTest {
     assertTrue("the empty domain should be empty ", restrictedEmptyDomain.isEmpty());
     restrictedEmptyDomain = emptyDomain.restrictUp(trivialDomain);
     assertTrue("the empty domain should be empty ", restrictedEmptyDomain.isEmpty());
-
-    Iterator<ReferenceType> it = emptyDomain.iterator();
-    assertFalse("iterator should not have next", it.hasNext());
   }
 }

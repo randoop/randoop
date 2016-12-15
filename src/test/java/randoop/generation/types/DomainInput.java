@@ -23,5 +23,7 @@ interface A0011 extends A0010, A0001 {}
 class A1110 implements A1100, A1010, A0110 {}
 
 class A1101 implements A1100, A1001, A0101 {}
-//class A1011 implements A1010, A1001, A0011 {}
+
+class A1011 implements A1010, A1001, A0011 {}
+
 class A0111 implements A0110, A0101, A0011 {}

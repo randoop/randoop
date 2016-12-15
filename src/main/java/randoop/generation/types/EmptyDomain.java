@@ -56,22 +56,4 @@ public class EmptyDomain implements TypeDomain {
   public TypeDomain restrictUp(TypeDomain lowerDomain) {
     return this;
   }
-
-  @Override
-  public Iterator<ReferenceType> iterator() {
-    return new Iterator<ReferenceType>() {
-      @Override
-      public boolean hasNext() {
-        return false;
-      }
-
-      @Override
-      public ReferenceType next() {
-        return null;
-      }
-
-      @Override
-      public void remove() {}
-    };
-  }
 }

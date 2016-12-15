@@ -10,7 +10,7 @@ import randoop.types.ReferenceType;
 /**
  * Represents a type domain that is simply a set of types.
  */
-public class SetDomain implements TypeDomain {
+public class SetDomain implements TypeDomain, Iterable<ReferenceType> {
 
   private final Set<ReferenceType> types;
 

@@ -1,7 +1,6 @@
 package randoop.generation.types;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 
@@ -198,11 +197,6 @@ public class IntervalDomain implements TypeDomain {
     return EmptyDomain.createDomain();
   }
 
-  @Override
-  public Iterator<ReferenceType> iterator() {
-    return null;
-  }
-
   private static Set<ReferenceType> join(ReferenceType type, Set<ReferenceType> bounds) {
     if (isSubtypeOf(type, bounds)) { // type <: all bounds
       return bounds;
@@ -227,6 +221,7 @@ public class IntervalDomain implements TypeDomain {
     return joinSet;
   }
 
+  // TODO: factor in that for two distinct class types the meet is null unless one is a subtype of the other
   private static Set<ReferenceType> meet(ReferenceType type, Set<ReferenceType> bounds) {
     if (isSubtypeOf(bounds, type)) { // all bounds <: type
       return bounds;

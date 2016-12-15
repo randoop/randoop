@@ -70,7 +70,7 @@ public class SetDomainTest {
 
     // TODO check restriction by different types of domains
 
-    Iterator<ReferenceType> it = setDomain.iterator();
+    Iterator<ReferenceType> it = ((SetDomain) setDomain).iterator();
     assertTrue("should have next", it.hasNext());
     // TODO check iterator completely
 

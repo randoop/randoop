@@ -1,17 +1,13 @@
 package randoop.generation.types;
 
-import java.util.Set;
-
-import randoop.types.ParameterBound;
 import randoop.types.ReferenceType;
-import randoop.types.Type;
 
 /**
  * The interface for type domains used in propagation of type constraints.
  * A type domain consists of a set of ground (aka, not generic) reference types.
  * Some domains are determined by type bounds, and others are simply sets.
  */
-public interface TypeDomain extends Iterable<ReferenceType> {
+public interface TypeDomain {
 
   /**
    * Indicates whether this type domain is empty not.
