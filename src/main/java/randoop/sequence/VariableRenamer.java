@@ -85,7 +85,11 @@ class VariableRenamer {
     } else {
       // for other object types
       String classname = type.getSimpleName();
+
       if (classname.length() > 0) {
+        if (Character.isDigit(classname.charAt(classname.length() - 1))) {
+          classname += "_";
+        }
         if (Character.isUpperCase(classname.charAt(0))) { // preserve camel case
           return classname.substring(0, 1).toLowerCase() + classname.substring(1);
         } else {
