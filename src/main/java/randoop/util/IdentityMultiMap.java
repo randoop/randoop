@@ -1,5 +1,6 @@
 package randoop.util;
 
+import java.io.Serializable;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -7,7 +8,7 @@ import java.util.Set;
 /**
  * A multi-map using key identity rather than equality.
  */
-public class IdentityMultiMap<K, V> {
+public class IdentityMultiMap<K, V> implements Serializable {
 
   /** the underlying map */
   private IdentityHashMap<K, Set<V>> map;

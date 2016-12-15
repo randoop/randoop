@@ -29,7 +29,8 @@ import randoop.types.TypeVariable;
  * @see randoop.operation.TypedClassOperation
  * @see randoop.operation.TypedTermOperation
  */
-public abstract class TypedOperation implements Operation, Comparable<TypedOperation> {
+public abstract class TypedOperation
+    implements Operation, Comparable<TypedOperation>, java.io.Serializable {
 
   /** The operation to be decorated */
   private final CallableOperation operation;

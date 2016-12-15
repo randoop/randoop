@@ -20,7 +20,7 @@ import randoop.types.TypeTuple;
  * list of inputs for the statement. The inputs are variables, but are
  * represented by indexing into the enclosing sequence.
  */
-public final class Statement {
+public final class Statement implements java.io.Serializable {
 
   /**
    * The operation (method call, constructor call, primitive values declaration,
