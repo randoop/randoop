@@ -118,7 +118,6 @@ class WildcardType extends ParameterType {
   }
 
   /**
-   * {@inheritDoc}
    * If this type has an upper bound, checks for containment cases:
    * <ul>
    *   <li>{@code ? extends T} contains {@code ? extends S} if {@code T.isSubtypeOf(S)}</li>
