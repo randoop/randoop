@@ -164,7 +164,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * <code>--no-regression-tests</code>. Restricting output can
    * result in long runs if the default values of <code>--inputlimit</code> and
    * <code>--timelimit</code> are used.
-   * </p>
    */
   ///////////////////////////////////////////////////////////////////////////
   @OptionGroup("Which tests to output")
@@ -177,7 +176,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * <code>--no-error-revealing-tests</code>. Restricting output
    * can result in long runs if the default values of <code>--inputlimit</code>
    * and <code>--timelimit</code> are used.
-   * </p>
    */
   @Option("Whether to output regression tests")
   public static boolean no_regression_tests = false;
@@ -217,7 +215,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * If a test throws an unchecked exception other than <code>OutOfMemoryError</code> and
-   * <code>NullPointerException</coed>, should the test be included in the
+   * <code>NullPointerException</code>, should the test be included in the
    * error-revealing test suite (value: ERROR), regression test suite (value:
    * EXPECTED), or should it be discarded (value: INVALID)?
    *
