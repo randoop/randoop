@@ -9,15 +9,15 @@ package randoop.test.health;
  * Time Warp," In SCS Multiconference on Distributed Simulation, pages 50-55,
  * Feb. 1988.
  * </cite>
- **/
+ */
 public class Health {
   /**
    * The size of the health-care system.
-   **/
+   */
   private static int maxLevel = 0;
   /**
    * The maximum amount of time to use in the simulation.
-   **/
+   */
   private static int maxTime = 0;
   /**
    * A seed value for the random no. generator.
@@ -36,7 +36,7 @@ public class Health {
    * The main routnie which creates the data structures for the Columbian
    * health-care system and executes the simulation for a specified time.
    * @param args the command line arguments
-   **/
+   */
   public static final void main(String[] args) {
     parseCmdLine(args);
 
@@ -111,7 +111,7 @@ public class Health {
 
   /**
    * The usage routine which describes the program options.
-   **/
+   */
   private static final void usage() {
     System.err.println("usage: java Health -l <levels> -t <time> -s <seed> [-p] [-m] [-h]");
     System.err.println("    -l the size of the health care system");

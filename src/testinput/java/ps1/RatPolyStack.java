@@ -228,7 +228,7 @@ public class RatPolyStack {
     push(top.differentiate());
   }
 
-  /** @return the size of this sequence.
+  /** @return the size of this sequence
    */
   public int size() {
     return size;

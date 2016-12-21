@@ -105,7 +105,7 @@ public class RatNum {
   /** requires rn != null
    * @return a negative number if this < rn,
    * 0 if this = rn,
-   * a positive number if this > rn.
+   * a positive number if this > rn
    */
   public int compareTo(RatNum rn) {
     checkRep();
@@ -237,7 +237,7 @@ public class RatNum {
 
   /** Standard hashCode function.
    * @return an int that all objects equal to this will also
-   * return.
+   * return
    */
   @Override
   public int hashCode() {

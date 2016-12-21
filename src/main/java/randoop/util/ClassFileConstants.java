@@ -47,7 +47,7 @@ import randoop.reflection.TypeNames;
 /**
  * Reads literals from a class file, including from the constant pool and from
  * bytecodes that take immediate arguments.
- **/
+ */
 public class ClassFileConstants {
 
   // Some test values when this class file is used as input.

@@ -462,7 +462,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * Creates a simple array creation operation for the given type.
    *
    * @param arrayType  the desired array type
-   * @return An operation to create an array of the given type
+   * @return an operation to create an array of the given type
    */
   public static TypedOperation createArrayCreation(ArrayType arrayType) {
     List<Type> typeList = new ArrayList<>();

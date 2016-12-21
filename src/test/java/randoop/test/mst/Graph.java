@@ -2,11 +2,11 @@ package randoop.test.mst;
 
 /**
  * A class that represents a graph data structure.
- **/
+ */
 public class Graph {
   /**
    * List of vertices in the graph.
-   **/
+   */
   private Vertex[] nodes;
 
   // parameters for the random number generater
@@ -17,7 +17,7 @@ public class Graph {
   /**
    * Create a graph.
    * @param numvert the number of vertices in the graph
-   **/
+   */
   public Graph(int numvert) {
     nodes = new Vertex[numvert];
     Vertex v = null;
@@ -33,7 +33,7 @@ public class Graph {
    * Create a graph.  This is just another method for
    * creating the graph data structure.
    * @param numvert the size of the graph
-   **/
+   */
   public void createGraph(int numvert) {
     nodes = new Vertex[numvert];
     Vertex v = null;
@@ -49,7 +49,7 @@ public class Graph {
   /**
    * Return the first node in the graph.
    * @return the first node in the graph
-   **/
+   */
   public Vertex firstNode() {
     return nodes[0];
   }
@@ -58,7 +58,7 @@ public class Graph {
    * Add edges to the graph.  Edges are added to/from every node
    * in the graph and a distance is computed for each of them.
    * @param numvert the number of nodes in the graph
-   **/
+   */
   private void addEdges(int numvert) {
     int count1 = 0;
 

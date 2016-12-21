@@ -11,19 +11,19 @@ package randoop.test.mst;
  * <p>
  * As with the original C version, this one uses its own implementation
  * of hashtable.
- **/
+ */
 public class MST {
   /**
    * The number of vertices in the graph.
-   **/
+   */
   private static int vertices = 0;
   /**
    * Set to true to print the final result.
-   **/
+   */
   private static boolean printResult = false;
   /**
    * Set to true to print information messages and timing values
-   **/
+   */
   private static boolean printMsgs = false;
 
   public static void main(String[] args) {
@@ -57,7 +57,7 @@ public class MST {
    * @param graph the graph data structure
    * @param numvert the number of vertices in the graph
    * @return the minimum spanning tree cost
-   **/
+   */
   public static int computeMST(Graph graph, int numvert) {
     int cost = 0;
 
@@ -142,7 +142,7 @@ public class MST {
   /**
    * Parse the command line options.
    * @param args the command line options
-   **/
+   */
   private static final void parseCmdLine(String[] args) {
     int i = 0;
     String arg;
@@ -167,7 +167,7 @@ public class MST {
 
   /**
    * The usage routine which describes the program options.
-   **/
+   */
   private static final void usage() {
     System.err.println("usage: java MST -v <levels> [-p] [-m] [-h]");
     System.err.println("    -v the number of vertices in the graph");
@@ -180,7 +180,7 @@ public class MST {
 
 /**
  * Not really sure what this is for?
- **/
+ */
 class BlueReturn {
   private Vertex vert;
   private int dist;

@@ -599,7 +599,7 @@ public class GenTests extends GenInputsAbstract {
    * @param junitClassname
    *          the base name for the class
    * @return list of files written
-   **/
+   */
   private static List<File> writeJUnitTests(
       String output_dir, List<ExecutableSequence> seqList, String junitClassname) {
 

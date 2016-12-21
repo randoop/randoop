@@ -5,7 +5,7 @@ import java.util.Enumeration;
 /**
  * A class represnting a village in the Columbian health care system
  * simulation.
- **/
+ */
 public class Village {
   private Village[] forward;
   private Village back;
@@ -27,7 +27,7 @@ public class Village {
    * @param l the unique label for the village
    * @param p a reference to the "parent" village
    * @param s the user supplied seed value
-   **/
+   */
   public Village(int level, int l, Village p, int s) {
     back = p;
     label = l;
@@ -43,7 +43,7 @@ public class Village {
    *
    * @param i the village number
    * @param c the village to add
-   **/
+   */
   public void addVillage(int i, Village c) {
     forward[i] = c;
   }
@@ -52,7 +52,7 @@ public class Village {
    * Return true if a patient should stay in this village or
    * move up to the "parent" village.
    * @return true if a patient says in this village
-   **/
+   */
   public final boolean staysHere() {
     float rand = myRand(seed);
     seed = (int) (rand * IM);
@@ -69,7 +69,7 @@ public class Village {
    * @param back a link to the "parent" village
    * @param seed the user supplied seed value
    * @return the village that was created
-   **/
+   */
   public static final Village createVillage(int level, int label, Village back, int seed) {
     if (level == 0) {
       return null;
@@ -86,7 +86,7 @@ public class Village {
   /**
    * Simulate the Columbian health care system for a village.
    * @return a list of patients refered to the next village
-   **/
+   */
   public List simulate() {
     // the list of patients refered from each child village
     List[] val = new List[4];
@@ -125,7 +125,7 @@ public class Village {
   /**
    * Summarize results of the simulation for the Village
    * @return a summary of the simulation results for the village
-   **/
+   */
   public Results getResults() {
     Results[] fval = new Results[4];
     for (int i = 3; i >= 0; i--) {
@@ -157,7 +157,7 @@ public class Village {
   /**
    * Try to generate more patients for the village.
    * @return a new patient or null if a new patient isn't created
-   **/
+   */
   private Patient generatePatient() {
     float rand = myRand(seed);
     seed = (int) (rand * IM);
@@ -175,7 +175,7 @@ public class Village {
 
   /**
    * Random number generator.
-   **/
+   */
   public static float myRand(int idum) {
     idum ^= MASK;
     int k = idum / IQ;

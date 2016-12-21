@@ -11,26 +11,26 @@ package randoop.test;
  * The benchmarks sorts N numbers where N is a power of 2.  If the user provides
  * an input value that is not a power of 2, then we use the nearest power of
  * 2 value that is less than the input value.
- **/
+ */
 public class BiSort {
   /**
    * The number of values to sort.
-   **/
+   */
   private static int size = 0;
 
   /**
    * Print information messages
-   **/
+   */
   private static boolean printMsgs = false;
   /**
    * Print the tree after each step
-   **/
+   */
   private static boolean printResults = false;
 
   /**
    * The main routine which creates a tree and sorts it a couple of times.
    * @param args the command line arguments
-   **/
+   */
   public static final void main(String[] args) {
     parseCmdLine(args);
 
@@ -82,7 +82,7 @@ public class BiSort {
   /**
    * Parse the command line options.
    * @param args the command line options
-   **/
+   */
   private static final void parseCmdLine(String[] args) {
     int i = 0;
     String arg;
@@ -110,7 +110,7 @@ public class BiSort {
 
   /**
    * The usage routine which describes the program options.
-   **/
+   */
   private static final void usage() {
     // Commented out to avoid confusing printout during tests.
     //    System.err.println("usage: java BiSort -s <size> [-p] [-i] [-h]");

@@ -2,15 +2,15 @@ package randoop.test.bh;
 /**
  * A class that represents the common fields of a cell or body
  * data structure.
- **/
+ */
 public abstract class Node {
   /**
    * Mass of the node.
-   **/
+   */
   double mass;
   /**
    * Position of the node
-   **/
+   */
   MathVector pos;
 
   // highest bit of int coord
@@ -21,7 +21,7 @@ public abstract class Node {
 
   /**
    * Construct an empty node
-   **/
+   */
   protected Node() {
     mass = 0.0;
     pos = new MathVector();
@@ -44,7 +44,7 @@ public abstract class Node {
   /**
    * Return a string representation of a node.
    * @return a string representation of a node
-   **/
+   */
   @Override
   public String toString() {
     return mass + " : " + pos;
@@ -52,7 +52,7 @@ public abstract class Node {
 
   /**
    * Compute a single body-body or body-cell interaction
-   **/
+   */
   public final HG gravSub(HG hg) {
     MathVector dr = new MathVector();
     dr.subtraction(pos, hg.pos0);
@@ -71,30 +71,30 @@ public abstract class Node {
   /**
    * A class which is used to compute and save information during the
    * gravity computation phse.
-   **/
+   */
   protected class HG {
     /**
      * Body to skip in force evaluation
-     **/
+     */
     Body pskip;
     /**
      * Point at which to evaluate field
-     **/
+     */
     MathVector pos0;
     /**
      * Computed potential at pos0
-     **/
+     */
     double phi0;
     /**
      * computed acceleration at pos0
-     **/
+     */
     MathVector acc0;
 
     /**
      * Create a HG  object.
      * @param b the body object
      * @param p a vector that represents the body
-     **/
+     */
     HG(Body b, MathVector p) {
       pskip = b;
       pos0 = (MathVector) p.clone();
