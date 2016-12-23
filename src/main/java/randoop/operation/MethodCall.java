@@ -334,6 +334,7 @@ public final class MethodCall extends CallableOperation {
   private void readObject(ObjectInputStream in)
       throws IOException, ClassNotFoundException, NoSuchMethodException, NoSuchFieldException,
           IllegalAccessException {
+
     Class<?> declaringClass = (Class<?>) in.readObject();
     String methodName = in.readUTF();
     Class<?>[] parameterTypes = (Class<?>[]) in.readObject();
@@ -344,5 +345,10 @@ public final class MethodCall extends CallableOperation {
     Method deserializedMethod = declaringClass.getMethod(methodName, parameterTypes);
     deserializedMethod.setAccessible(true);
     finalMethodField.set(this, deserializedMethod);
+
+    Field isStaticField = MethodCall.class.getDeclaredField("isStatic");
+    isStaticField.setAccessible(true);
+    isStaticField.set(
+        this, Modifier.isStatic(deserializedMethod.getModifiers() & Modifier.methodModifiers()));
   }
 }
