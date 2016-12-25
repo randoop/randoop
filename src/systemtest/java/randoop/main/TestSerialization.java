@@ -7,13 +7,17 @@ import randoop.NormalExecution;
 import randoop.operation.TypedOperation;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
+import randoop.sequence.Statement;
 import randoop.test.DummyCheckGenerator;
 import randoop.types.*;
+import randoop.util.SimpleList;
 
+import javax.swing.plaf.nimbus.State;
 import java.io.*;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
@@ -127,21 +131,34 @@ public class TestSerialization {
       throws NoSuchMethodException, IOException, ClassNotFoundException {
     final int SIZE_STATEMENT_INDEX = 3;
 
-    ExecutableSequence esDeserialized = getExecutionFileFromFile();
+    ExecutableSequence actual = getExecutionFileFromFile();
 
-    if (esDeserialized == null) {
+    if (actual == null) {
       fail("Deserialezed to null sequence.");
     } else {
       ExecutableSequence expected = createExecutableSequenceForSerialization();
 
-      esDeserialized.execute(new DummyVisitor(), new DummyCheckGenerator());
-      ExecutionOutcome result2 = esDeserialized.getResult(SIZE_STATEMENT_INDEX);
+      actual.execute(new DummyVisitor(), new DummyCheckGenerator());
+      ExecutionOutcome result2 = actual.getResult(SIZE_STATEMENT_INDEX);
 
       if (result2 instanceof NormalExecution) {
         Object valueAfterSerialization = ((NormalExecution) result2).getRuntimeValue();
 
-        assertEquals(1, valueAfterSerialization);
-        assertEquals(esDeserialized.toCodeString(), expected.toCodeString());
+        SimpleList<Statement> expectedStatements = expected.sequence.statements;
+        SimpleList<Statement> actualStatements = actual.sequence.statements;
+
+        if (actualStatements.size() != expectedStatements.size()) {
+          fail("Deserialized sequence does not contain all the original statements.");
+        } else {
+          for (int i = 0; i < expectedStatements.size(); i++) {
+            Statement es = expectedStatements.get(i);
+            Statement as = actualStatements.get(i);
+
+            assertTrue(es.equals(as));
+          }
+        }
+        // assertEquals(1, valueAfterSerialization);
+        // assertEquals(esDeserialized.toCodeString(), expected.toCodeString());
       } else {
         fail("Deserialized sequence not resulting in normal execution.");
       }

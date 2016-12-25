@@ -1,5 +1,10 @@
 package randoop.types;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectStreamException;
+import java.lang.reflect.Field;
+
 /**
  * Represents {@code void}.
  * Technically, {@code void} is used to indicate that a method has no return values, and is not a
@@ -69,5 +74,9 @@ public class VoidType extends Type {
   @Override
   public boolean isAssignableFrom(Type sourceType) {
     return false;
+  }
+
+  private Object readResolve() throws ObjectStreamException {
+    return getVoidType();
   }
 }
