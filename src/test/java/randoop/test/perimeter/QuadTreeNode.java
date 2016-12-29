@@ -1,41 +1,41 @@
 package randoop.test.perimeter;
 /**
  * A class representing a node in the quad tree.
- **/
+ */
 public abstract class QuadTreeNode {
   /**
    * Variable used to determine the x-axis size of the image
-   **/
+   */
   static int gcmp = 4194304;
   /**
    * Variable used to determine the y-axis size of the image
-   **/
+   */
   static int lcmp = 1048576;
 
   /**
    * The quadrant that this node represents (i.e., northwest, northeast,
    * southwest, or southeast).
-   **/
+   */
   protected Quadrant quadrant;
   /**
    * Node that represents the northwest quadrant of the image
-   **/
+   */
   protected QuadTreeNode nw;
   /**
    * Node that represents the northeast quadrant of the image
-   **/
+   */
   protected QuadTreeNode ne;
   /**
    * Node that represents the southwest quadrant of the image
-   **/
+   */
   protected QuadTreeNode sw;
   /**
    * Node that represents the southeast quadrant of the image
-   **/
+   */
   protected QuadTreeNode se;
   /**
    * Node that represents the parent quadrant of the image
-   **/
+   */
   protected QuadTreeNode parent;
 
   // enumeration for direction
@@ -49,7 +49,7 @@ public abstract class QuadTreeNode {
    *
    * @param quad childType if there's a parent, the type of child this node represents
    * @param parent the parent quad tree node
-   **/
+   */
   public QuadTreeNode(Quadrant quad, QuadTreeNode parent) {
     this(quad, null, null, null, null, parent);
   }
@@ -62,7 +62,7 @@ public abstract class QuadTreeNode {
    * @param ne the node represent the northeast quadrant
    * @param sw the node represent the southwest quadrant
    * @param se the node represent the southeast quadrant
-   **/
+   */
   private QuadTreeNode(
       Quadrant quad,
       QuadTreeNode nw,
@@ -85,7 +85,7 @@ public abstract class QuadTreeNode {
    * @param ne the node represent the northeast quadrant
    * @param sw the node represent the southwest quadrant
    * @param se the node represent the southeast quadrant
-   **/
+   */
   protected void setChildren(QuadTreeNode nw, QuadTreeNode ne, QuadTreeNode sw, QuadTreeNode se) {
     this.nw = nw;
     this.ne = ne;
@@ -96,28 +96,28 @@ public abstract class QuadTreeNode {
   /**
    * Return the node representing the north west quadrant.
    * @return the node representing the north west quadrant
-   **/
+   */
   public final QuadTreeNode getNorthWest() {
     return nw;
   }
   /**
    * Return the node representing the north east quadrant.
    * @return the node representing the north east quadrant
-   **/
+   */
   public final QuadTreeNode getNorthEast() {
     return ne;
   }
   /**
    * Return the node representing the south west quadrant.
    * @return the node representing the south west quadrant
-   **/
+   */
   public final QuadTreeNode getSouthWest() {
     return sw;
   }
   /**
    * Return the node representing the south east quadrant.
    * @return the node representing the south east quadrant
-   **/
+   */
   public final QuadTreeNode getSouthEast() {
     return se;
   }
@@ -130,7 +130,7 @@ public abstract class QuadTreeNode {
    * @param parent parent quad tree node
    * @param quadrant the quadrant that the sub tree is in
    * @param level the level of the tree
-   **/
+   */
   public static QuadTreeNode createTree(
       int size, int center_x, int center_y, QuadTreeNode parent, Quadrant quadrant, int level) {
     QuadTreeNode node;
@@ -170,7 +170,7 @@ public abstract class QuadTreeNode {
    *
    * @param size the size of the image that this node represents (size X size)
    * @return the size of the perimeter of the image
-   **/
+   */
   abstract public int perimeter(int size);
 
   /**
@@ -181,7 +181,7 @@ public abstract class QuadTreeNode {
    * @param quad2 the second specified quadrant
    * @param size the size of the image represented by this node
    * @return the perimeter of the adjacent nodes
-   **/
+   */
   abstract public int sumAdjacent(Quadrant quad1, Quadrant quad2, int size);
 
   /**
@@ -193,7 +193,7 @@ public abstract class QuadTreeNode {
    *
    * @param dir the direction of the neighbor
    * @return the appropriate neighbor based upon the direction, or null
-   **/
+   */
   public QuadTreeNode gtEqualAdjNeighbor(int dir) {
     QuadTreeNode q;
     if (parent != null && quadrant.adjacent(dir)) {
@@ -212,7 +212,7 @@ public abstract class QuadTreeNode {
   /**
    * Count the number of leaves in the quad tree.
    * @return the number of leaves in the quad tree
-   **/
+   */
   public int countTree() {
     if (nw == null && ne == null && sw == null && se == null) {
       return 1;

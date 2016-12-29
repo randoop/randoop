@@ -121,7 +121,7 @@ public class ExecutableSequence {
    */
   private boolean hasNullInput;
 
-  /** Output buffer used to capture the output from the executed sequence **/
+  /** Output buffer used to capture the output from the executed sequence */
   private static ByteArrayOutputStream output_buffer = new ByteArrayOutputStream();
   private static PrintStream ps_output_buffer = new PrintStream(output_buffer);
 

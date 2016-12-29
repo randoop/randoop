@@ -39,18 +39,21 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * The fully-qualified name of a class to test. This class is tested in
+   * The fully-qualified name of a class to test.
+   * All of its methods are methods under test.
+   * This class is tested in
    * addition to any specified using <code>--classlist</code>, and must be
    * accessible from the package of the tests (set with
    * <code>--junit-package-name</code>).
    */
   ///////////////////////////////////////////////////////////////////
-  @OptionGroup("Code under test")
+  @OptionGroup("Code under test:  which methods may be called by a test")
   @Option("The fully-qualified name of a class under test")
   public static List<String> testclass = new ArrayList<>();
 
   /**
    * File that lists classes to test.
+   * All of their methods are methods under test.
    *
    * In the file, each class under test is specified by its fully-qualified name
    * on a separate line. See an <a href=
@@ -68,13 +71,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * File that lists methods to test.
    *
    * In the file, each each method under test is specified on a separate line.
-   * The list of methods given by this argument augment any methods derived via
+   * The list of methods given by this argument augment any methods determined via
    * the <code>--testclass</code> or <code>--classlist</code> option.
    *
    * <p>
    * A constructor line begins with <code>"cons :"</code> followed by the
-   * classname, the string <code>&lt;init&gt;</code> and the constructor's
-   * parameter types, enclosed in parentheses. Methods are specified in a
+   * classname, the string <code>&lt;init&gt;</code>, and the constructor's
+   * parameter types enclosed in parentheses. Methods are specified in a
    * similar way. For example:
    * </p>
    *
@@ -98,14 +101,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static File methodlist = null;
 
   /**
-   * File containing side-effect-free observer methods. These are used to create
-   * regression assertions, and to prune tests.
-   */
-  @Option("File containing observer functions")
-  // This file is used to populate RegressionCaptureVisitor.observer_map
-  public static File observers = null;
-
-  /**
    * Randoop will not attempt to directly call methods whose
    * {@link java.lang.reflect.Method#toString()} matches the regular expression
    * given. This does not prevent indirect calls to such methods from other,
@@ -123,8 +118,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * File that contains fully-qualified field names to be excluded
-   * from test generation. Otherwise, Randoop includes all public fields of a
-   * visible class.
+   * from test generation. Otherwise, Randoop includes all public fields
+   * of classes under test as observer methods.
    */
   @Option("File containing field names to omit from generated tests")
   public static File omit_field_list = null;
@@ -144,7 +139,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * Classes, one of which every test must use. Randoop will only output tests
-   * that have at least one use of a member of a class whose name matches the
+   * whose source code has at least one use of a member of a class whose name matches the
    * regular expression.
    */
   @Option("Classes, one of which every test must use")
@@ -165,27 +160,22 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * Whether to output error-revealing tests.
-   *
-   * <p>
-   * Will completely disable output when used with
-   * <code>--no-regression-tests</code>. Be aware that restricting output can
+   * Disables all output when used with
+   * <code>--no-regression-tests</code>. Restricting output can
    * result in long runs if the default values of <code>--inputlimit</code> and
    * <code>--timelimit</code> are used.
-   * </p>
    */
-  @OptionGroup("Test classification")
+  ///////////////////////////////////////////////////////////////////////////
+  @OptionGroup("Which tests to output")
   @Option("Whether to output error-revealing tests")
   public static boolean no_error_revealing_tests = false;
 
   /**
    * Whether to output regression tests.
-   *
-   * <p>
-   * Will completely disable output when used with
-   * <code>--no-error-revealing-tests</code>. Be aware that restricting output
+   * Disables all output when used with
+   * <code>--no-error-revealing-tests</code>. Restricting output
    * can result in long runs if the default values of <code>--inputlimit</code>
    * and <code>--timelimit</code> are used.
-   * </p>
    */
   @Option("Whether to output regression tests")
   public static boolean no_regression_tests = false;
@@ -218,11 +208,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * error-revealing test suite (value: ERROR), regression test suite (value:
    * EXPECTED), or should it be discarded (value: INVALID)?
    */
+  ///////////////////////////////////////////////////////////////////////////
+  @OptionGroup("Test classification")
   @Option("Whether checked exception is an ERROR, EXPECTED or INVALID")
   public static BehaviorType checked_exception = BehaviorType.EXPECTED;
 
   /**
-   * If a test throws an unchecked exception, should the test be included in the
+   * If a test throws an unchecked exception other than <code>OutOfMemoryError</code> and
+   * <code>NullPointerException</code>, should the test be included in the
    * error-revealing test suite (value: ERROR), regression test suite (value:
    * EXPECTED), or should it be discarded (value: INVALID)?
    *
@@ -236,7 +229,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static BehaviorType unchecked_exception = BehaviorType.EXPECTED;
 
   /**
-   * If a test where a <code>null</code> value is given as an input throws a
+   * If a test that passes <code>null</code> as an argument throws a
    * <code>NullPointerException</code>, should the test be be included in the
    * error-revealing test suite (value: ERROR), regression test suite (value:
    * EXPECTED), or should it be discarded (value: INVALID)?
@@ -245,8 +238,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static BehaviorType npe_on_null_input = BehaviorType.EXPECTED;
 
   /**
-   * If a test where no <code>null</code> values are given as an input throws a
-   * <code>NullPointerExceptoin</code>, should the test be included in the
+   * If a test that never passes <code>null</code> as an argument throws a
+   * <code>NullPointerException</code>, should the test be included in the
    * error-revealing test suite (value: ERROR), regression test suite (value:
    * EXPECTED), or should it be discarded (value: INVALID)?
    */
@@ -278,6 +271,17 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean ignore_flaky_tests = false;
 
   /**
+   * File containing side-effect-free observer methods.
+   * Specifying observers has 2 benefits:  it makes regression tests stronger,
+   * and it helps Randoop create smaller tests.
+   */
+  ///////////////////////////////////////////////////////////////////
+  @OptionGroup("Observer methods")
+  @Option("File containing observer functions")
+  // This file is used to populate RegressionCaptureVisitor.observer_map
+  public static File observers = null;
+
+  /**
    * Maximum number of seconds to spend generating tests.
    *
    * Test generation stops when either the time limit (--timelimit) is reached,
@@ -305,42 +309,28 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * limit (--outputlimit).
    *
    * <p>
-   * This option affects how many tests will occur in the output, as opposed to
-   * --inputlimit, which affects the number of test method candidates that are
-   * generated internally. This option is a better choice for controlling the
-   * tests you get, because the number of candidates generated will always be
-   * larger than the number output since redundant and invalid tests are
-   * filtered. However, the current implementation means that the actual number
-   * of tests in the output can still be substantially smaller than this limit.
+   * In the current implementation, the number
+   * of tests in the output can be substantially smaller than this limit.
    * </p>
    *
    * <p>
-   * This limit will have no effect if there is no output, which occurs when
+   * If there is no output, this limit has no effect.  There is no output when
    * using either <code>--dont-output-tests</code> or
    * <code>--no-error-revealing-tests</code> together with
-   * <code>--no-regression-tests</code>. In this case, the option
-   * <code>--inputlimit</code> should be used.
+   * <code>--no-regression-tests</code>.
    * </p>
    */
   @Option("Maximum number of tests to ouput; contrast to --inputlimit")
   public static int outputlimit = 100000000;
 
   /**
-   * Maximum number of test method candidates generated. Test generation stops
+   * Maximum number of test method candidates generated internally. Test generation stops
    * when either the time limit (--timelimit) is reached, OR the number of
    * generated sequences reaches the input limit (--inputlimit), OR the number
    * of error-revealing and regression tests reaches the output limit
    * (--outputlimit). The number of tests output will be smaller than then
    * number of test candidates generated, because redundant and illegal tests
-   * may be discarded.
-   *
-   * <p>
-   * This limit should be used when no tests are output, which occurs when using
-   * either <code>--dont-output-tests</code> or
-   * <code>--no-error-revealing-tests</code> together with
-   * <code>--no-regression-tests</code>. Otherwise the
-   * <code>--outputlimit</code> command-line option is usually more appropriate.
-   * </p>
+   * will be discarded.
    */
   @Option("Maximum number of tests generated")
   public static int inputlimit = 100000000;
@@ -367,18 +357,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static double null_ratio = 0.05;
 
   /**
-   * Do not use <code>null</code> as input to methods or constructors when no
+   * Do not use <code>null</code> as input to methods or constructors, even when no
    * other argument value can be generated.
    *
    * <p>
    * If true, Randoop will not generate a test when unable to find a non-null
    * value of appropriate type as an input. This could result in certain class
    * members being untested.
-   * </p>
-   *
-   * <p>
-   * Does not affect the behavior based on --null_ratio, which independently
-   * determines the frequency that <code>null</code> is used as an input.
    * </p>
    */
   @Option("Never use null as input to methods or constructors")
@@ -512,45 +497,49 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static String junit_package_name = "";
 
   /**
-   * Name of file containing code text to be added to the Before-annotated method of
+   * Name of file containing code text to be added to the
+   * <a href="http://junit.sourceforge.net/javadoc/org/junit/Before.html"><code>@Before</code></a>-annotated method of
    * each generated test class.
    * Code is uninterpreted, and, so, is not run during generation.
    * Intended for use when run-time behavior of classes under test requires setup
    * behavior that is not needed for execution by reflection.
-   * (The annotation Before is JUnit 4, and BeforeEach is JUnit 5.)
+   * (The annotation <code>@Before</code> is JUnit 4, and <code>@BeforeEach</code> is JUnit 5.)
    */
   @Option("Filename for code to include in Before-annotated method of test classes")
   public static String junit_before_each = null;
 
   /**
-   * Name of file containing code text to be added to the After-annotated method of
+   * Name of file containing code text to be added to the
+   * <a href="http://junit.sourceforge.net/javadoc/org/junit/After.html"><code>@After</code></a>-annotated method of
    * each generated test class.
    * Intended for use when run-time behavior of classes under test requires
    * tear-down behavior that is not needed for execution by reflection.
    * Code is uninterpreted, and, so, is not run during generation.
-   * (The annotation After is JUnit 4, and AfterEach is JUnit 5.)
+   * (The annotation <code>@After</code> is JUnit 4, and <code>@AfterEach</code> is JUnit 5.)
    */
   @Option("Filename for code to include in After-annotated method of test classes")
   public static String junit_after_each = null;
 
   /**
-   * Name of file containing code text to be added to the BeforeClass-annotated method of
+   * Name of file containing code text to be added to the
+   * <a href="http://junit.sourceforge.net/javadoc/org/junit/BeforeClass.html"><code>@BeforeClass</code></a>-annotated method of
    * each generated test class.
    * Intended for use when run-time behavior of classes under test requires setup
    * behavior that is not needed for execution by reflection.
    * Code is uninterpreted, and, so, is not run during generation.
-   * (The annotation BeforeClass is JUnit 4, and BeforeAll is JUnit 5.)
+   * (The annotation <code>@BeforeClass</code> is JUnit 4, and <code>@BeforeAll</code> is JUnit 5.)
    */
   @Option("Filename for code to include in BeforeClass-annotated method of test classes")
   public static String junit_before_all = null;
 
   /**
-   * Name of file containing code text to be added to the AfterClass-annotated method of
+   * Name of file containing code text to be added to the
+   * <a href="http://junit.sourceforge.net/javadoc/org/junit/AfterClass.html"><code>@AfterClass</code></a>-annotated method of
    * each generated test class.
    * Intended for use when run-time behavior of classes under test requires
    * tear-down behavior that is not needed for execution by reflection.
    * Code is uninterpreted, and, so, is not run during generation.
-   * (The annotation After is JUnit 4, and AfterEach is JUnit 5.)
+   * (The annotation <code>@AfterClass</code> is JUnit 4, and <code>@AfterAll</code> is JUnit 5.)
    */
   @Option("Filename for code to include in AfterClass-annotated method of test classes")
   public static String junit_after_all = null;
@@ -577,8 +566,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * JUnit's reflective invocations can interfere with code instrumentation,
    * such as by the DynComp tool. If that is a problem, then set this to false
    * and Randoop will output tests that use direct method calls instead of
-   * reflection. The tests will execute methods and assertions, but won't be
-   * JUnit suites. The tests will include a <code>main</code> method.
+   * reflection. The tests will include a <code>main</code> method and
+   * will execute methods and assertions, but won't be
+   * JUnit suites.
    */
   @Option("If true, use JUnit's reflective invocation; if false, use direct method calls")
   public static boolean junit_reflection_allowed = true;
@@ -610,8 +600,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * The random seed to use in the generation process. Note that Randoop is
-   * deterministic: running it twice will produce the same test suite. If you
-   * want to produced multiple different test suites, run Randoop multiple times
+   * deterministic: running it twice will produce the same test suite,
+   * so long as the program under test is deterministic. If you
+   * want to produce multiple different test suites, run Randoop multiple times
    * with a different random seed.
    */
   ///////////////////////////////////////////////////////////////////
@@ -620,23 +611,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int randomseed = (int) Randomness.SEED;
 
   ///////////////////////////////////////////////////////////////////
-  @OptionGroup("Notifications")
+  @OptionGroup("Logging, notifications, and troubleshooting Randoop")
   @Option("Do not display progress update message to console")
   public static boolean noprogressdisplay = false;
 
   @Option("Display progress message every <int> milliseconds")
   public static long progressinterval = 5000;
 
-  /**
-   * Install the given runtime visitor. See class randoop.ExecutionVisitor.
-   */
-  ///////////////////////////////////////////////////////////////////
-  @OptionGroup(value = "Advanced extension points")
-  @Option("Install the given runtime visitor")
-  public static List<String> visitor = new ArrayList<>();
-
-  ///////////////////////////////////////////////////////////////////
-  @OptionGroup(value = "Logging and troubleshooting Randoop")
   @Option("Perform expensive internal checks (for Randoop debugging)")
   public static boolean debug_checks = false;
 
@@ -647,9 +628,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("<filename> Name of a file to which to log lots of information")
   public static FileWriter log = null;
 
-  ///////////////////////////////////////////////////////////////////
-  // Options used when testing Randoop.
-
   /**
    * Create sequences but never execute them. Used to test performance of
    * Randoop's sequence generation code.
@@ -657,6 +635,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Unpublicized
   @Option("Create sequences but never execute them")
   public static boolean dontexecute = false;
+
+  /**
+   * Install the given runtime visitor. See class randoop.ExecutionVisitor.
+   */
+  ///////////////////////////////////////////////////////////////////
+  @OptionGroup(value = "Advanced extension points")
+  @Option("Install the given runtime visitor")
+  public static List<String> visitor = new ArrayList<>();
 
   ///////////////////////////////////////////////////////////////////
   // This is only here to keep the ICSE07ContainersTest working

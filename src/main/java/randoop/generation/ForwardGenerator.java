@@ -47,7 +47,7 @@ public class ForwardGenerator extends AbstractGenerator {
   private final Set<Sequence> allSequences;
   private final Set<TypedOperation> observers;
 
-  /** Sequences that are used in other sequences (and are thus redundant) **/
+  /** Sequences that are used in other sequences (and are thus redundant) */
   private Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
 
   // For testing purposes only. If Globals.randooptestrun==false then the array

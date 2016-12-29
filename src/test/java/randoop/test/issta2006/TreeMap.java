@@ -284,7 +284,7 @@ public class TreeMap {
     return (p == null) ? null : p.right;
   }
 
-  /** From CLR **/
+  /** From CLR */
   private void rotateLeft(Entry p) {
     Entry r = p.right;
     p.right = r.left;
@@ -307,7 +307,7 @@ public class TreeMap {
     p.parent = r;
   }
 
-  /** From CLR **/
+  /** From CLR */
   private void rotateRight(Entry p) {
     Entry l = p.left;
     p.left = l.right;
@@ -330,7 +330,7 @@ public class TreeMap {
     p.parent = l;
   }
 
-  /** From CLR **/
+  /** From CLR */
   private void fixAfterInsertion(Entry x) {
     x.color = RED;
 
@@ -440,7 +440,7 @@ public class TreeMap {
     }
   }
 
-  /** From CLR **/
+  /** From CLR */
   private void fixAfterDeletion(Entry x) {
     while (x != root && colorOf(x) == BLACK) {
       if (x == leftOf(parentOf(x))) {

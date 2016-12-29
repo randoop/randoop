@@ -8,16 +8,16 @@ package randoop.test.bh;
 public class MathVector implements Cloneable {
   /**
    * The number of dimensions in the vector
-   **/
+   */
   public final static int NDIM = 3;
   /**
    * An array containing the values in the vector.
-   **/
+   */
   private double[] data;
 
   /**
    * Construct an empty 3 dimensional vector for use in Barnes-Hut algorithm.
-   **/
+   */
   public MathVector() {
     data = new double[NDIM];
     for (int i = 0; i < NDIM; i++) {
@@ -28,7 +28,7 @@ public class MathVector implements Cloneable {
   /**
    * Create a copy of the vector.
    * @return a clone of the math vector
-   **/
+   */
   @Override
   public Object clone() {
     try {
@@ -47,7 +47,7 @@ public class MathVector implements Cloneable {
    * Return the value at the i'th index of the vector.
    * @param i the vector index
    * @return the value at the i'th index of the vector
-   **/
+   */
   public final double value(int i) {
     return data[i];
   }
@@ -56,7 +56,7 @@ public class MathVector implements Cloneable {
    * Set the value of the i'th index of the vector.
    * @param i the vector index
    * @param v the value to store
-   **/
+   */
   public final void value(int i, double v) {
     data[i] = v;
   }
@@ -64,7 +64,7 @@ public class MathVector implements Cloneable {
   /**
    * Set one of the dimensions of the vector to 1.0
    * param j the dimension to set.
-   **/
+   */
   public final void unit(int j) {
     for (int i = 0; i < NDIM; i++) {
       data[i] = (i == j ? 1.0 : 0.0);
@@ -74,7 +74,7 @@ public class MathVector implements Cloneable {
   /**
    * Add two vectors and the result is placed in this vector.
    * @param u the other operand of the addition
-   **/
+   */
   public final void addition(MathVector u) {
     for (int i = 0; i < NDIM; i++) {
       data[i] += u.data[i];
@@ -85,7 +85,7 @@ public class MathVector implements Cloneable {
    * Subtract two vectors and the result is placed in this vector.
    * This vector contain the first operand.
    * @param u the other operand of the subtraction
-   **/
+   */
   public final void subtraction(MathVector u) {
     for (int i = 0; i < NDIM; i++) {
       data[i] -= u.data[i];
@@ -96,7 +96,7 @@ public class MathVector implements Cloneable {
    * Subtract two vectors and the result is placed in this vector.
    * @param u the first operand of the subtraction
    * @param v the second opernd of the subtraction
-   **/
+   */
   public final void subtraction(MathVector u, MathVector v) {
     for (int i = 0; i < NDIM; i++) {
       data[i] = u.data[i] - v.data[i];
@@ -106,7 +106,7 @@ public class MathVector implements Cloneable {
   /**
    * Multiply the vector times a scalar.
    * @param s the scalar value
-   **/
+   */
   public final void multScalar(double s) {
     for (int i = 0; i < NDIM; i++) {
       data[i] *= s;
@@ -117,7 +117,7 @@ public class MathVector implements Cloneable {
    * Multiply the vector times a scalar and place the result in this vector.
    * @param u the vector
    * @param s the scalar value
-   **/
+   */
   public final void multScalar(MathVector u, double s) {
     for (int i = 0; i < NDIM; i++) {
       data[i] = u.data[i] * s;
@@ -127,7 +127,7 @@ public class MathVector implements Cloneable {
   /**
    * Divide each element of the vector by a scalar value.
    * @param s the scalar value
-   **/
+   */
   public final void divScalar(double s) {
     for (int i = 0; i < NDIM; i++) {
       data[i] /= s;
@@ -137,7 +137,7 @@ public class MathVector implements Cloneable {
   /**
    * Return the dot product of a vector.
    * @return the dot product of a vector
-   **/
+   */
   public final double dotProduct() {
     double s = 0.0;
     for (int i = 0; i < NDIM; i++) {
@@ -197,7 +197,7 @@ public class MathVector implements Cloneable {
    * result in this vector.
    * @param u a vector
    * @param s the scalar
-   **/
+   */
   public final void addScalar(MathVector u, double s) {
     for (int i = 0; i < NDIM; i++) {
       data[i] = u.data[i] + s;
@@ -206,7 +206,7 @@ public class MathVector implements Cloneable {
 
   /**
    * Return the string representation of the vector
-   **/
+   */
   @Override
   public String toString() {
     StringBuilder s = new StringBuilder();

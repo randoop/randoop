@@ -4,7 +4,7 @@ import java.util.Enumeration;
 
 /**
  * A linked list container.
- **/
+ */
 public class List {
   ListNode head;
   ListNode tail;

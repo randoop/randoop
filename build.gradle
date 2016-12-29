@@ -526,6 +526,7 @@ task validateManual(type: Exec, dependsOn: 'manual') {
 
 /*
  * Copies documentation to docs/ directory.
+ * This should only be done as part of the release process.
  * When committed and pushed, these files will be visible as
  * https://randoop.github.io/randoop/ .
  */

@@ -16,25 +16,25 @@ package randoop.test.perimeter;
  * The benchmark creates an image, count the number of leaves on the
  * quadtree and then computes the perimeter of the image using Samet's
  * algorithm.
- **/
+ */
 public class Perimeter {
   /**
    * The number of levels in the tree/image.
-   **/
+   */
   private static int levels = 0;
   /**
    * Set to true to print the final result.
-   **/
+   */
   private static boolean printResult = false;
   /**
    * Set to true to print information messages.
-   **/
+   */
   private static boolean printMsgs = false;
 
   /**
    * The entry point to computing the perimeter of an image.
    * @param args the command line arguments
-   **/
+   */
   public static void main(String[] args) {
 
     parseCmdLine(args);
@@ -72,7 +72,7 @@ public class Perimeter {
   /**
    * Parse the command line options.
    * @param args the command line options
-   **/
+   */
   private static final void parseCmdLine(String[] args) {
     int i = 0;
     String arg;
@@ -99,7 +99,7 @@ public class Perimeter {
 
   /**
    * The usage routine which describes the program options.
-   **/
+   */
   private static final void usage() {
     System.err.println("usage: java Perimeter -l <num> [-p] [-m] [-h]");
     System.err.println("    -l number of levels in the quadtree (image size = 2^l)");
