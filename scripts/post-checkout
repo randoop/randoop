@@ -1,0 +1,3 @@
+#!/bin/bash
+# force all files in docs to be read-only
+find docs -type f -exec chmod 444 {} \;
