@@ -166,7 +166,7 @@ occasions when they fail and reveal a bug or a regression failure.
    <code>mapcall-3.0.8.jar</code>),
   and this documentation.
 -->
-  Set an environment variable 
+  Set an environment variable
   <code>RANDOOP_PATH</code> to
   the path of the unzipped archive.
 </p>
@@ -425,7 +425,7 @@ Depending on your needs, you can override Randoop's default.
 <p>
 A thrown exception is <em>not</em> considered a contract violation unless it is
 tagged as error behavior. This is because a method may have a precondition that
-is unknown to Randoop. 
+is unknown to Randoop.
 For example, a binary search implementation might
 require that its input is sorted.  Randoop should not mark the method
 as buggy just because it throws an exception when Randoop passes it an
@@ -640,9 +640,9 @@ Randoop about your application, and that is how we recommend using Randoop.
  File that lists classes to test.
 
  In the file, each class under test is specified by its fully-qualified name
- on a separate line.
- See an <a href="class_list_example.txt">example</a>.
- These classes are tested in addition to any specified using
+ on a separate line. See an <a href=
+ "https://randoop.github.io/randoop/manual/class_list_example.txt">
+ example</a>. These classes are tested in addition to any specified using
  <code>--testclass</code>. All classes must be accessible from the package of
  the tests (set with <code>--junit-package-name</code>).</li>
       <li id="option:methodlist"><b>--methodlist=</b><i>filename</i>.
@@ -670,7 +670,9 @@ Randoop about your application, and that is how we recommend using Randoop.
  </p>
 
  <p>
- See an <a href="method_list_example.txt">example</a>.
+ See an <a href=
+ "https://randoop.github.io/randoop/manual/method_list_example.txt">
+ example</a>.
  </p></li>
       <li id="option:observers"><b>--observers=</b><i>filename</i>.
  File containing side-effect-free observer methods. These are used to create
@@ -936,6 +938,34 @@ Randoop about your application, and that is how we recommend using Randoop.
  are used to determine whether to include the class or class members in a
  test. Tests can be restricted to public members only by using the option
  <code>--only-test-public-members</code>. [default ]</li>
+      <li id="option:junit-before-each"><b>--junit-before-each=</b><i>string</i>.
+ Name of file containing code text to be added to the Before-annotated method of
+ each generated test class.
+ Code is uninterpreted, and, so, is not run during generation.
+ Intended for use when run-time behavior of classes under test requires setup
+ behavior that is not needed for execution by reflection.
+ (The annotation Before is JUnit 4, and BeforeEach is JUnit 5.)</li>
+      <li id="option:junit-after-each"><b>--junit-after-each=</b><i>string</i>.
+ Name of file containing code text to be added to the After-annotated method of
+ each generated test class.
+ Intended for use when run-time behavior of classes under test requires
+ tear-down behavior that is not needed for execution by reflection.
+ Code is uninterpreted, and, so, is not run during generation.
+ (The annotation After is JUnit 4, and AfterEach is JUnit 5.)</li>
+      <li id="option:junit-before-all"><b>--junit-before-all=</b><i>string</i>.
+ Name of file containing code text to be added to the BeforeClass-annotated method of
+ each generated test class.
+ Intended for use when run-time behavior of classes under test requires setup
+ behavior that is not needed for execution by reflection.
+ Code is uninterpreted, and, so, is not run during generation.
+ (The annotation BeforeClass is JUnit 4, and BeforeAll is JUnit 5.)</li>
+      <li id="option:junit-after-all"><b>--junit-after-all=</b><i>string</i>.
+ Name of file containing code text to be added to the AfterClass-annotated method of
+ each generated test class.
+ Intended for use when run-time behavior of classes under test requires
+ tear-down behavior that is not needed for execution by reflection.
+ Code is uninterpreted, and, so, is not run during generation.
+ (The annotation After is JUnit 4, and AfterEach is JUnit 5.)</li>
       <li id="option:junit-output-dir"><b>--junit-output-dir=</b><i>string</i>.
  Name of the directory to which JUnit files should be written</li>
       <li id="option:dont-output-tests"><b>--dont-output-tests=</b><i>boolean</i>.
@@ -1222,7 +1252,7 @@ method call.</p>
 <li><b>Command line.</b> An easy way to specify additional seed
 values in to use the <code>--literals-file</code> command-line option to
 either use literals from a file you specify or to read literals out of
-the source code you that Randoop is analyzing.</li>
+the source code that Randoop is analyzing.</li>
 
 <li><b>Programmatically.</b> You can declare a class that stores
 primitive values, using the <code>@TestValue</code> annotation:
@@ -1358,7 +1388,8 @@ java -ea -classpath $(RANDOOP_PATH)/randoop-all-3.0.8.jar randoop.main.Main help
   it easier for them to diagnose the problem, fix Randoop, and verify the
   fix.  This generally includes
   <ul>
-    <li>the version of Randoop (please use the most recent released version or the current version from the version control repository),</li>
+    <li>the version of Randoop (please use the most recent released
+  version, or the current version from the <a href="https://github.com/randoop/randoop">GitHub version control repository</a>),</li>
     <li>the exact commands you ran (we recommend using the <code>-ea</code> option to java when running Randoop, which makes diagnosis easier),</li>
     <li>the exact and complete output of the commands, and</li>
     <li>all the files that are necessary to run those commands.</li>

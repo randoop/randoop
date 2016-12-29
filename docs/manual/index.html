@@ -166,7 +166,7 @@ occasions when they fail and reveal a bug or a regression failure.
    <code>mapcall-3.0.8.jar</code>),
   and this documentation.
 -->
-  Set an environment variable 
+  Set an environment variable
   <code>RANDOOP_PATH</code> to
   the path of the unzipped archive.
 </p>
@@ -425,7 +425,7 @@ Depending on your needs, you can override Randoop's default.
 <p>
 A thrown exception is <em>not</em> considered a contract violation unless it is
 tagged as error behavior. This is because a method may have a precondition that
-is unknown to Randoop. 
+is unknown to Randoop.
 For example, a binary search implementation might
 require that its input is sorted.  Randoop should not mark the method
 as buggy just because it throws an exception when Randoop passes it an
