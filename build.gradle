@@ -588,7 +588,7 @@ task checklink(type: Exec, dependsOn: 'clone') {
 
 
 task installGitHooks(type: Copy) {
-  from 'scripts/pre-commit'
+  from 'scripts/'
   into '.git/hooks'
 }
 /* Always run this task. */
