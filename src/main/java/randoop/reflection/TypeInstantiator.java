@@ -74,6 +74,9 @@ public class TypeInstantiator {
 
     // if necessary, do capture conversion first
     if (operation != null && operation.hasWildcardTypes()) {
+      if (Log.isLoggingOn()) {
+        Log.logLine("Applying capture conversion to " + operation);
+      }
       operation = operation.applyCaptureConversion();
     }
     if (operation != null) {
