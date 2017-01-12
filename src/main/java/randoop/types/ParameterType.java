@@ -1,5 +1,7 @@
 package randoop.types;
 
+import java.util.Objects;
+
 /**
  * An abstract class representing kinds of type parameters, which are either type variables or
  * wildcard types.
@@ -21,6 +23,25 @@ public abstract class ParameterType extends ReferenceType {
   ParameterType(ParameterBound lowerBound, ParameterBound upperBound) {
     this.lowerBound = lowerBound;
     this.upperBound = upperBound;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (!(object instanceof ParameterType)) {
+      return false;
+    }
+    ParameterType other = (ParameterType) object;
+    return this.lowerBound.equals(other.lowerBound) && this.upperBound.equals(other.upperBound);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(lowerBound, upperBound);
+  }
+
+  @Override
+  public String toString() {
+    return "ParameterType [ " + lowerBound + ", " + upperBound + " ]";
   }
 
   @Override
