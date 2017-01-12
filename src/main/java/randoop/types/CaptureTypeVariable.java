@@ -57,7 +57,7 @@ class CaptureTypeVariable extends TypeVariable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(varID, wildcard, super.hashCode());
+    return Objects.hash(varID, wildcard);
   }
 
   @Override
