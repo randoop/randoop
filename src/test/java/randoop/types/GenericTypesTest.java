@@ -7,6 +7,8 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import randoop.types.test.ComplexSubclass;
@@ -229,5 +231,41 @@ public class GenericTypesTest {
     assertTrue("is subtype", stringStreamType.isSubtypeOf(stringBaseStreamType));
     assertEquals("superclass", null, stringStreamType.getSuperclass());
     assertTrue("interface", stringStreamType.getInterfaces().contains(stringBaseStreamType));
+  }
+
+  @Test
+  public void wildcardAssignabilityTest() {
+    // List<? extends Number> list;
+    //ArrayList<? extends Number> arrayList = new ArrayList<>();
+    //list = arrayList;
+
+    ParameterBound bound = ParameterBound.forType(ReferenceType.forClass(Number.class));
+    WildcardType wildcardType = new WildcardType(bound, true);
+    TypeArgument argument = new WildcardArgument(wildcardType);
+    List<TypeArgument> arguments = new ArrayList<>();
+    arguments.add(argument);
+    InstantiatedType list = new InstantiatedType(JDKTypes.LIST_TYPE, arguments);
+    InstantiatedType arraylist = new InstantiatedType(JDKTypes.ARRAY_LIST_TYPE, arguments);
+
+    assertTrue("? extends Number should contain itself", argument.contains(argument));
+
+    List<TypeArgument> listTypeArguments = list.getTypeArguments();
+    List<TypeArgument> arraylistTypeArguments = arraylist.getTypeArguments();
+    assertEquals(
+        "number of arguments should be same",
+        listTypeArguments.size(),
+        arraylistTypeArguments.size());
+    for (int i = 0; i < listTypeArguments.size(); i++) {
+      assertTrue(
+          "list args should contain arraylist args",
+          listTypeArguments.get(i).contains(arraylistTypeArguments.get(i)));
+    }
+
+    assertTrue(
+        "List<? extends Number> is assignable from ArrayList<? extends Number>",
+        list.isAssignableFrom(arraylist));
+    assertFalse(
+        "ArrayList<? extends Number> is not assignable from List<? extends Number>",
+        arraylist.isAssignableFrom(list));
   }
 }
