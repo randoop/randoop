@@ -7,6 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import randoop.operation.TypedOperation;
+import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OperationExtractor;
+import randoop.reflection.PublicVisibilityPredicate;
+import randoop.reflection.ReflectionManager;
+import randoop.reflection.ReflectionPredicate;
+import randoop.reflection.VisibilityPredicate;
 import randoop.types.test.CaptureTestClass;
 import randoop.types.test.Container;
 import randoop.types.test.Gibberish;
@@ -98,6 +104,36 @@ public class CaptureConversionTest {
           "instantiate exception mismatch: " + e.getMessage(),
           e.getMessage().contains("type argument java.lang.Integer[] does not match"));
     }
+  }
+
+  @Test
+  public void lazyParameterBoundTest() {
+    ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(CapConvInput.class);
+    List<TypedOperation> operationList = new ArrayList<>();
+    ReflectionPredicate predicate = new DefaultReflectionPredicate();
+    VisibilityPredicate visibilityPredicate = new PublicVisibilityPredicate();
+    OperationExtractor extractor =
+        new OperationExtractor(classType, operationList, predicate, visibilityPredicate);
+    ReflectionManager mgr = new ReflectionManager(visibilityPredicate);
+    mgr.apply(extractor, classType.getRuntimeClass());
+    for (TypedOperation operation : operationList) {
+      if (operation.isStatic() && operation.isMethodCall()) {
+        Type generalTypeArgument = operation.getInputTypes().get(0);
+        assertTrue("should be parameterized type", generalTypeArgument.isParameterized());
+        InstantiatedType instantiatedType = (InstantiatedType) generalTypeArgument;
+        List<TypeArgument> arguments = instantiatedType.getTypeArguments();
+        assertTrue("should have only one argument", arguments.size() == 1);
+        TypeArgument argument = arguments.get(0);
+        assertTrue("should be wildcard", argument.isWildcard());
+        WildcardArgument wildcardArgument = (WildcardArgument) argument;
+        WildcardType wildcardType = wildcardArgument.getWildcardType();
+        ParameterBound upperBound = wildcardType.getUpperTypeBound();
+        System.out.println(upperBound);
+        assertTrue("should be a LazyParameterBound", upperBound instanceof LazyParameterBound);
+      }
+    }
+    // test is not complete, but disabling for now
+    // fail("incomplete");
   }
 
   /**
