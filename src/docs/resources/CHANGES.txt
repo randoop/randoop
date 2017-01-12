@@ -1,9 +1,10 @@
 Version 3.0.9, released X X, 20X
 
 Fixes
-- generation of uncompilable code was generated due to an inaccessible type
-  that was a type argument to a parameterized type occurring as the type of a
-  formal parameter of a method.
+- broken assignability test on parameterized types with wildcard arguments.
+- generation of uncompilable code due to an inaccessible type that was a type
+  argument to a parameterized type occurring as the type of a formal parameter
+  of a method.
 - potential variable name clash when a type name ends in a digit.
 
 
