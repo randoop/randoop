@@ -104,10 +104,10 @@ class LazyParameterBound extends ParameterBound {
     if (type instanceof java.lang.reflect.TypeVariable) {
       ReferenceType referenceType = substitution.get(type);
       if (referenceType != null) {
-        return new ReferenceArgument(referenceType);
+        return TypeArgument.forType(referenceType);
       }
       // should trigger construction of a LazyReferenceBound
-      return new ReferenceArgument(TypeVariable.forType(type));
+      return TypeArgument.forType(TypeVariable.forType(type));
     }
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
@@ -119,11 +119,11 @@ class LazyParameterBound extends ParameterBound {
       GenericClassType classType =
           GenericClassType.forClass((Class<?>) ((ParameterizedType) type).getRawType());
       InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);
-      return new ReferenceArgument(instantiatedType);
+      return TypeArgument.forType(instantiatedType);
     }
 
     if (type instanceof Class) {
-      return new ReferenceArgument(ClassOrInterfaceType.forType(type));
+      return TypeArgument.forType(ClassOrInterfaceType.forType(type));
     }
 
     if (type instanceof java.lang.reflect.WildcardType) {
