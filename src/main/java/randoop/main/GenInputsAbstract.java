@@ -39,7 +39,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * The fully-qualified name of a class to test.
+   * The fully-qualified name of a class to test;
+   * for example, <code>--testclass=java.util.TreeSet</code>.
    * All of its methods are methods under test.
    * This class is tested in
    * addition to any specified using <code>--classlist</code>, and must be
