@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
-
 import plume.EntryReader;
 import plume.Options;
 import plume.Options.ArgException;
@@ -209,10 +208,8 @@ public class GenTests extends GenInputsAbstract {
     } catch (RandoopClassNameError e) {
       System.out.printf("Error: %s%n", e.getMessage());
       System.out.println(
-          "       This is most likely a problem with the classpath. It may be wrong, or");
-      System.out.println(
-          "       it is formatted incorrectly on the command line. The other possibility");
-      System.out.println("       is that the wrong class name is given.");
+          "   Most likely the claspath is wrong or was formatted incorrectly on the");
+      System.out.println("   command line; or, maybe you gave the class name incorrectly.");
       System.out.println("Exiting Randoop.");
       System.exit(1);
     }
@@ -403,15 +400,13 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Handles the occurrence of a {@code SequenceExceptionError} that indicates a
-   * flaky test has been found. Prints information to help user identify source
-   * of flakiness, including exception, statement that threw the exception, the
-   * full sequence where exception was thrown, and the input subsequence.
+   * Handles the occurrence of a {@code SequenceExceptionError} that indicates a flaky test has been
+   * found. Prints information to help user identify source of flakiness, including exception,
+   * statement that threw the exception, the full sequence where exception was thrown, and the input
+   * subsequence.
    *
-   * @param explorer
-   *          the test generator
-   * @param e
-   *          the sequence exception
+   * @param explorer the test generator
+   * @param e the sequence exception
    */
   private void handleFlakySequenceException(AbstractGenerator explorer, SequenceExceptionError e) {
 
@@ -470,15 +465,12 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Builds the test predicate that determines whether a particular sequence
-   * will be included in the output based on command-line arguments.
+   * Builds the test predicate that determines whether a particular sequence will be included in the
+   * output based on command-line arguments.
    *
-   * @param excludeSet
-   *          the set of sequences to exclude
-   * @param coveredClasses
-   *          the list of classes to test for coverage
-   * @param includePattern
-   *          the pattern for method name inclusion
+   * @param excludeSet the set of sequences to exclude
+   * @param coveredClasses the list of classes to test for coverage
+   * @param includePattern the pattern for method name inclusion
    * @return the predicate
    */
   public Predicate<ExecutableSequence> createTestOutputPredicate(
@@ -519,10 +511,8 @@ public class GenTests extends GenInputsAbstract {
   /**
    * Outputs JUnit tests for the sequence list.
    *
-   * @param sequences
-   *          the sequences to output
-   * @param junitPrefix
-   *          the filename prefix for test output
+   * @param sequences the sequences to output
+   * @param junitPrefix the filename prefix for test output
    */
   private void outputTests(List<ExecutableSequence> sequences, String junitPrefix) {
     if (!GenInputsAbstract.noprogressdisplay) {
@@ -532,24 +522,18 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Creates the test check generator for this run based on the command-line
-   * arguments. The goal of the generator is to produce all appropriate checks
-   * for each sequence it is applied to. Validity and contract checks are always
-   * needed to determine which sequences have invalid or error behaviors, even
-   * if only regression tests are desired. So, this generator will always be
-   * built. If in addition regression tests are to be generated, then the
-   * regression checks generator is added.
+   * Creates the test check generator for this run based on the command-line arguments. The goal of
+   * the generator is to produce all appropriate checks for each sequence it is applied to. Validity
+   * and contract checks are always needed to determine which sequences have invalid or error
+   * behaviors, even if only regression tests are desired. So, this generator will always be built.
+   * If in addition regression tests are to be generated, then the regression checks generator is
+   * added.
    *
-   * @param visibility
-   *          the visibility predicate
-   * @param contracts
-   *          the contract checks
-   * @param observerMap
-   *          the map from types to observer methods
-   * @param excludeAsObservers
-   *          methods to exclude when generating observer map
-   * @return the {@code TestCheckGenerator} that reflects command line
-   *         arguments.
+   * @param visibility the visibility predicate
+   * @param contracts the contract checks
+   * @param observerMap the map from types to observer methods
+   * @param excludeAsObservers methods to exclude when generating observer map
+   * @return the {@code TestCheckGenerator} that reflects command line arguments.
    */
   public TestCheckGenerator createTestCheckGenerator(
       VisibilityPredicate visibility,
@@ -592,12 +576,9 @@ public class GenTests extends GenInputsAbstract {
   /**
    * Writes the sequences as JUnit files to the specified directory.
    *
-   * @param output_dir
-   *          string name of output directory
-   * @param seqList
-   *          a list of sequences to write
-   * @param junitClassname
-   *          the base name for the class
+   * @param output_dir string name of output directory
+   * @param seqList a list of sequences to write
+   * @param junitClassname the base name for the class
    * @return list of files written
    */
   private static List<File> writeJUnitTests(
@@ -657,8 +638,8 @@ public class GenTests extends GenInputsAbstract {
   /**
    * Print out usage error and stack trace and then exit
    *
-   * @param format  the string format
-   * @param args  the arguments
+   * @param format the string format
+   * @param args the arguments
    */
   private static void usage(String format, Object... args) {
     System.out.print("ERROR: ");
