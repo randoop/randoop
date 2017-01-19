@@ -123,7 +123,6 @@ public class GenericTypesTest {
     Class<?> c2 = IntersectionBounds.class;
     GenericClassType a2 = GenericClassType.forClass(c2);
     assertEquals("has one parameter", 1, a2.getTypeParameters().size());
-
     ReferenceType pt3 = ReferenceType.forClass(Variable1Ext2.class);
     try {
       Type it2 = a2.instantiate(pt3);

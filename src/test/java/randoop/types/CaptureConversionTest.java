@@ -106,6 +106,9 @@ public class CaptureConversionTest {
     }
   }
 
+  /*
+   * shouldn't actually get a lazyparameterbound on a wildcard, but ...
+   */
   @Test
   public void lazyParameterBoundTest() {
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(CapConvInput.class);
@@ -128,8 +131,9 @@ public class CaptureConversionTest {
         WildcardArgument wildcardArgument = (WildcardArgument) argument;
         WildcardType wildcardType = wildcardArgument.getWildcardType();
         ParameterBound upperBound = wildcardType.getUpperTypeBound();
-        System.out.println(upperBound);
-        assertTrue("should be a LazyParameterBound", upperBound instanceof LazyParameterBound);
+        assertTrue(
+            "should be a EagerReferenceBound, got " + upperBound.getClass(),
+            upperBound instanceof EagerReferenceBound);
       }
     }
     // test is not complete, but disabling for now

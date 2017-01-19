@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -141,7 +142,9 @@ class LazyParameterBound extends ParameterBound {
             bound = new LazyParameterBound(lowerBound);
           }
         } else {
-          bound = ParameterBound.forType(lowerBound).apply(substitution);
+          bound =
+              ParameterBound.forType(new HashSet<java.lang.reflect.TypeVariable<?>>(), lowerBound)
+                  .apply(substitution);
         }
 
         return new WildcardArgument(new WildcardType(bound, false));
@@ -149,7 +152,9 @@ class LazyParameterBound extends ParameterBound {
       // a wildcard always has an upper bound
       assert wildcardType.getUpperBounds().length == 1
           : "a wildcard is defined by the JLS to only have one bound";
-      ParameterBound bound = ParameterBound.forTypes(wildcardType.getUpperBounds());
+      ParameterBound bound =
+          ParameterBound.forTypes(
+              new HashSet<java.lang.reflect.TypeVariable<?>>(), wildcardType.getUpperBounds());
       bound = bound.apply(substitution);
       return new WildcardArgument(new WildcardType(bound, true));
     }
