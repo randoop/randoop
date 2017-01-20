@@ -5,7 +5,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
+import randoop.condition.Condition;
+import randoop.condition.ConditionCollection;
 import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
 import randoop.operation.MethodCall;
@@ -41,6 +45,9 @@ public class OperationExtractor extends DefaultClassVisitor {
   /** The collection of operations */
   private final Collection<TypedOperation> operations;
 
+  /** The collection of pre/post/throws-conditions to add to operations */
+  private final ConditionCollection operationConditions;
+
   /** The class type of the declaring class for the collected operations */
   private ClassOrInterfaceType classType;
 
@@ -57,11 +64,21 @@ public class OperationExtractor extends DefaultClassVisitor {
       ClassOrInterfaceType classType,
       Collection<TypedOperation> operations,
       ReflectionPredicate predicate,
-      VisibilityPredicate visibilityPredicate) {
+      VisibilityPredicate visibilityPredicate,
+      ConditionCollection operationConditions) {
     this.classType = classType;
     this.operations = operations;
     this.predicate = predicate;
     this.visibilityPredicate = visibilityPredicate;
+    this.operationConditions = operationConditions;
+  }
+
+  public OperationExtractor(
+      ClassOrInterfaceType classType,
+      Collection<TypedOperation> operations,
+      ReflectionPredicate predicate,
+      VisibilityPredicate visibilityPredicate) {
+    this(classType, operations, predicate, visibilityPredicate, null);
   }
 
   /**
@@ -92,21 +109,26 @@ public class OperationExtractor extends DefaultClassVisitor {
   /**
    * Creates a {@link ConstructorCall} object for the {@link Constructor}.
    *
-   * @param c  a {@link Constructor} object to be represented as an
+   * @param constructor  a {@link Constructor} object to be represented as an
    *           {@link Operation}.
    */
   @Override
-  public void visit(Constructor<?> c) {
-    assert c.getDeclaringClass().equals(classType.getRuntimeClass())
+  public void visit(Constructor<?> constructor) {
+    assert constructor.getDeclaringClass().equals(classType.getRuntimeClass())
         : "classType "
             + classType
             + " and declaring class "
-            + c.getDeclaringClass().getName()
+            + constructor.getDeclaringClass().getName()
             + " should be same";
-    if (!predicate.test(c)) {
+    if (!predicate.test(constructor)) {
       return;
     }
-    addOperation(TypedOperation.forConstructor(c));
+    TypedClassOperation operation = TypedOperation.forConstructor(constructor);
+    if (operationConditions != null) {
+      operation.addConditions(operationConditions.getPreconditions(constructor));
+      operation.addConditions(operationConditions.getThrowsConditions(constructor));
+    }
+    addOperation(operation);
   }
 
   /**
@@ -132,6 +154,10 @@ public class OperationExtractor extends DefaultClassVisitor {
                 operation.getInputTypes(),
                 operation.getOutputType());
       }
+    }
+    if (operationConditions != null) {
+      operation.addConditions(operationConditions.getPreconditions(method));
+      operation.addConditions(operationConditions.getThrowsConditions(method));
     }
     addOperation(operation);
   }

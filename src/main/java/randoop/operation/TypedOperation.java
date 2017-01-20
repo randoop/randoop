@@ -5,12 +5,17 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
+import plume.Pair;
 import randoop.ExecutionOutcome;
 import randoop.field.AccessibleField;
 import randoop.reflection.ReflectionPredicate;
+import randoop.condition.Condition;
 import randoop.sequence.Variable;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
@@ -44,6 +49,12 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    */
   private final Type outputType;
 
+  /** The preconditions for this operation */
+  private List<Condition> preconditions;
+
+  /** The throws-conditions for this operation */
+  private Map<Condition, ClassOrInterfaceType> throwsConditions;
+
   /**
    * Create typed operation for the given {@link Operation}.
    *
@@ -55,6 +66,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     this.operation = operation;
     this.inputTypes = inputTypes;
     this.outputType = outputType;
+    this.preconditions = new ArrayList<>();
+    this.throwsConditions = new HashMap<>();
   }
 
   @Override
@@ -517,5 +530,69 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
 
   public boolean isUncheckedCast() {
     return operation.isUncheckedCast();
+  }
+
+  /**
+   * Checks that the preconditions for this operation are met by the given values.
+   *
+   * @param values  the input values
+   * @return true if the values satisfy the preconditions or there are no preconditions; false otherwise
+   */
+  public boolean checkPreconditions(Object[] values) {
+    Object[] args = fixArguments(values);
+
+    for (Condition condition : preconditions) {
+      if (!condition.check(args)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Checks whether this operation has any {@code throws} clause that is satisfied by the argument
+   * values, and if so returns the corresponding {@code Throwable}.
+   *
+   * @param values  the argument values
+   * @return the type of the exception whose condition is satisfied by the values
+   */
+  public Pair<Condition, ClassOrInterfaceType> getExpectedThrows(Object[] values) {
+    Object[] args = fixArguments(values);
+    for (Map.Entry<Condition, ClassOrInterfaceType> entry : throwsConditions.entrySet()) {
+      Condition throwsCondition = entry.getKey();
+      if (throwsCondition.check(args)) {
+        return new Pair<>(entry.getKey(), entry.getValue());
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Fixes the argument array for checking an {@link Operation} -- inserting {@code null} as first argument
+   * when this operation is static.
+   *
+   * @param values  the argument array for this operation
+   * @return the corresponding operation array for checking a {@link Condition}
+   */
+  private Object[] fixArguments(Object[] values) {
+    Object[] args = values;
+    if (this.isStatic()) {
+      args = new Object[values.length + 1];
+      args[0] = null;
+      System.arraycopy(values, 0, args, 1, values.length);
+    }
+    return args;
+  }
+
+  public void addConditions(List<Condition> preconditions) {
+    if (preconditions != null) {
+      this.preconditions.addAll(preconditions);
+    }
+  }
+
+  public void addConditions(Map<Condition, ClassOrInterfaceType> throwsConditions) {
+    if (throwsConditions != null) {
+      this.throwsConditions.putAll(throwsConditions);
+    }
   }
 }

@@ -68,6 +68,7 @@ sourceSets {
     }
     resources {
       srcDir 'src/systemtest/resources'
+      srcDir 'src/testinput/resources'
     }
     output.dir(workingDirectories, builtBy: 'generateWorkingDirs')
   }
@@ -77,6 +78,12 @@ sourceSets {
     java {
       srcDir 'src/testinput/java'
     }
+    resources {
+      srcDir 'src/testinput/resources'
+    }
+  }
+
+  test {
     resources {
       srcDir 'src/testinput/resources'
     }
@@ -107,6 +114,7 @@ configurations {
 dependencies {
   /* Randoop uses local copy of Plume */
   compile files('lib/plume.jar')
+  compile 'com.google.code.gson:gson:2.7'
 
   /* sourceSet test uses JUnit and some use testInput source set */
   testCompile group: 'junit', name: 'junit', version: '4.+'
@@ -183,6 +191,7 @@ compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
  * Runs all tests in test sourceSet except those excluded below.
  */
 test {
+
   /*
    * Set the working directory for JUnit tests to the resources directory
    * instead of the project directory.
@@ -295,6 +304,7 @@ task extractJacocoAgent(type: Copy) {
  * JUnit tests assume that working directories can be found in the build directory.
  */
 task systemTest(type: Test, dependsOn: [ 'extractJacocoAgent', 'generateWorkingDirs' ]) {
+
   workingDir = file("$buildDir")
   testClassesDir = sourceSets.systemTest.output.classesDir
   classpath = sourceSets.systemTest.runtimeClasspath
@@ -496,7 +506,8 @@ task generateOptionsDoc(type: Javadoc, dependsOn: ['assemble', 'javadoc', 'copyM
  * build/docs directory.
  */
 task manual(type: DefaultTask, dependsOn: ['copyManual', 'generateOptionsDoc', 'updateUserTOC', 'updateDevTOC']) {
-  description "Updates documentation in build/docs"
+  group 'Documentation'
+  description "Adds options and TOC to documentation in build/docs"
 }
 
 /*
@@ -534,6 +545,7 @@ task validateManual(type: Exec, dependsOn: 'manual') {
  */
 task publishSite (type:Copy, dependsOn: ['javadoc', 'validateAPI', 'manual', 'validateManual' ]) {
   group 'Publishing'
+  description "Copies files into docs directory from build/docs and src/docs/site"
   fileMode = Integer.parseInt("444", 8) //make site files read-only
   from ("${buildDir}/docs")
   from ("src/docs/site")

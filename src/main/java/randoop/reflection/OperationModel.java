@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import randoop.condition.ConditionCollection;
 import randoop.contract.CompareToAntiSymmetric;
 import randoop.contract.CompareToEquals;
 import randoop.contract.CompareToReflexive;
@@ -124,7 +125,8 @@ public class OperationModel {
       Set<String> exercisedClassnames,
       Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
-      List<String> literalsFileList)
+      List<String> literalsFileList,
+      ConditionCollection operationCollection)
       throws OperationParseException, NoSuchMethodException {
 
     OperationModel model = new OperationModel();
@@ -137,11 +139,31 @@ public class OperationModel {
         errorHandler,
         literalsFileList);
 
-    model.addOperations(model.classTypes, visibility, reflectionPredicate);
+    model.addOperations(model.classTypes, visibility, reflectionPredicate, operationCollection);
     model.addOperations(methodSignatures);
     model.addObjectConstructor();
 
     return model;
+  }
+
+  public static OperationModel createModel(
+      VisibilityPredicate visibility,
+      ReflectionPredicate reflectionPredicate,
+      Set<String> classnames,
+      Set<String> exercisedClassnames,
+      Set<String> methodSignatures,
+      ClassNameErrorHandler errorHandler,
+      List<String> literalsFileList)
+      throws NoSuchMethodException, OperationParseException {
+    return createModel(
+        visibility,
+        reflectionPredicate,
+        classnames,
+        exercisedClassnames,
+        methodSignatures,
+        errorHandler,
+        literalsFileList,
+        null);
   }
 
   /**
@@ -369,11 +391,13 @@ public class OperationModel {
   private void addOperations(
       Set<ClassOrInterfaceType> concreteClassTypes,
       VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate) {
+      ReflectionPredicate reflectionPredicate,
+      ConditionCollection operationConditions) {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (ClassOrInterfaceType classType : concreteClassTypes) {
       mgr.apply(
-          new OperationExtractor(classType, operations, reflectionPredicate, visibility),
+          new OperationExtractor(
+              classType, operations, reflectionPredicate, visibility, operationConditions),
           classType.getRuntimeClass());
     }
   }
@@ -385,6 +409,7 @@ public class OperationModel {
    * @throws OperationParseException if any signature is invalid
    */
   // TODO collect input types from added methods
+  // TODO add operation conditions
   private void addOperations(Set<String> methodSignatures) throws OperationParseException {
     for (String sig : methodSignatures) {
       TypedOperation operation = OperationParser.parse(sig);

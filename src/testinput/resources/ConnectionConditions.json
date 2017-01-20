@@ -1,0 +1,157 @@
+[
+  {
+    "containingClass": {
+      "qualifiedName": "net.Connection",
+      "name": "Connection",
+      "isArray": false
+    },
+    "name": "isOpen",
+    "returnType": {
+      "qualifiedName": "boolean",
+      "name": "boolean",
+      "isArray": false
+    },
+    "parameters": [],
+    "paramTags": [],
+    "isVarArgs": false,
+    "throwsTags": [],
+    "signature": "isOpen()",
+    "targetClass": "net.Connection"
+  },
+  {
+    "containingClass": {
+      "qualifiedName": "net.Connection",
+      "name": "Connection",
+      "isArray": false
+    },
+    "name": "open",
+    "returnType": {
+      "qualifiedName": "void",
+      "name": "void",
+      "isArray": false
+    },
+    "parameters": [],
+    "paramTags": [],
+    "isVarArgs": false,
+    "throwsTags": [
+      {
+        "exception": {
+          "qualifiedName": "java.lang.IllegalStateException",
+          "name": "IllegalStateException",
+          "isArray": false
+        },
+        "codeTags": [],
+        "comment": "if the connection is already open",
+        "kind": "THROWS",
+        "condition": "target.isOpen()"
+      }
+    ],
+    "signature": "open()",
+    "targetClass": "net.Connection"
+  },
+  {
+    "containingClass": {
+      "qualifiedName": "net.Connection",
+      "name": "Connection",
+      "isArray": false
+    },
+    "name": "send",
+    "returnType": {
+      "qualifiedName": "void",
+      "name": "void",
+      "isArray": false
+    },
+    "parameters": [
+      {
+        "type": {
+          "qualifiedName": "java.lang.String",
+          "name": "String",
+          "isArray": false
+        },
+        "name": "message"
+      }
+    ],
+    "paramTags": [],
+    "isVarArgs": false,
+    "throwsTags": [
+      {
+        "exception": {
+          "qualifiedName": "java.lang.NullPointerException",
+          "name": "NullPointerException",
+          "isArray": false
+        },
+        "codeTags": [],
+        "comment": "if message is null",
+        "kind": "THROWS",
+        "condition": "args[0]==null"
+      },
+      {
+        "exception": {
+          "qualifiedName": "java.lang.IllegalStateException",
+          "name": "IllegalStateException",
+          "isArray": false
+        },
+        "codeTags": [],
+        "comment": "if the connection is not open",
+        "kind": "THROWS",
+        "condition": "(target.isOpen()) == false"
+      }
+    ],
+    "signature": "send(java.lang.String message)",
+    "targetClass": "net.Connection"
+  },
+  {
+    "containingClass": {
+      "qualifiedName": "net.Connection",
+      "name": "Connection",
+      "isArray": false
+    },
+    "name": "send",
+    "returnType": {
+      "qualifiedName": "void",
+      "name": "void",
+      "isArray": false
+    },
+    "parameters": [
+      {
+        "type": {
+          "qualifiedName": "int",
+          "name": "int",
+          "isArray": false
+        },
+        "name": "code"
+      }
+    ],
+    "paramTags": [
+      {
+        "parameter": {
+          "type": {
+            "qualifiedName": "int",
+            "name": "int",
+            "isArray": false
+          },
+          "name": "code"
+        },
+        "comment": "the code, must be positive",
+        "kind": "PARAM",
+        "condition": "args[0]>0"
+      }
+    ],
+    "isVarArgs": false,
+    "throwsTags": [
+      {
+        "exception": {
+          "qualifiedName": "java.lang.IllegalStateException",
+          "name": "IllegalStateException",
+          "isArray": false
+        },
+        "codeTags": [],
+        "comment": "if the connection is not open",
+        "kind": "THROWS",
+        "condition": "(target.isOpen()) == false"
+      }
+    ],
+    "signature": "send(int code)",
+    "targetClass": "net.Connection"
+  }
+]
