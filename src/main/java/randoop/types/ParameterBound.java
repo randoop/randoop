@@ -87,7 +87,6 @@ public abstract class ParameterBound {
   static ParameterBound forType(
       Set<java.lang.reflect.TypeVariable<?>> variableSet, java.lang.reflect.Type type) {
     if (type instanceof java.lang.reflect.ParameterizedType) {
-      System.out.println("pb.forType: " + variableSet.size() + ", " + type);
       if (!hasTypeVariable(type, variableSet)) {
         return new EagerReferenceBound(ParameterizedType.forType(type));
       }
