@@ -136,6 +136,9 @@ class WildcardType extends ParameterType {
    *   <li>{@code ? super T} contains {@code ? extends Object}</li>
    * </ul>
    * The last two being equivalent from the perspective of reflection.
+   *
+   * @param otherType  the type to check for
+   * @return true if this type contains the other type, false otherwise
    */
   public boolean contains(WildcardType otherType) {
     if (this.hasUpperBound) {

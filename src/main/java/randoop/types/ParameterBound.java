@@ -52,6 +52,7 @@ public abstract class ParameterBound {
    * See
    * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.1.2">JLS section 8.1.2</a>.
    *
+   * @param variableSet  the set of variables affected by this bound
    * @param bounds  the type bounds
    * @return the {@code ParameterBound} for the given types
    */
