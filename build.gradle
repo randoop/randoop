@@ -108,6 +108,8 @@ dependencies {
   /* Randoop uses local copy of Plume */
   compile files('lib/plume.jar')
 
+  compile 'com.github.javaparser:javaparser-core:3.0.0-alpha.4'
+
   /* sourceSet test uses JUnit and some use testInput source set */
   testCompile group: 'junit', name: 'junit', version: '4.+'
   testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
