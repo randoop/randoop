@@ -1,7 +1,9 @@
 package randoop.main;
 
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -40,6 +42,7 @@ import static org.junit.Assert.fail;
  * The Makefile also checked diffs of generated tests for some of the tests.
  * These methods do not do this check.
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RandoopSystemTest {
 
   private static SystemTestEnvironment systemTestEnvironment;
@@ -111,6 +114,10 @@ public class RandoopSystemTest {
    *      options.setOption(optionName, optionValue);
    *    This object will also set options for output directories and logging, so only options
    *    affecting generation are needed.
+   *
+   *    Input files should be placed in src/systemtest/resources (or src/inputtest/resources if they
+   *    relate to classes in the inputTest source set), and can be used in option using the path
+   *    prefix resources/systemTest/.
    *
    *
    *  3. Run Randoop and compile generated tests.
@@ -800,6 +807,35 @@ public class RandoopSystemTest {
         "should have one AfterEach for each test",
         afterEachCount,
         is(equalTo(runStatus.regressionTestCount)));
+  }
+
+  @Test
+  public void runToradocuInputTest() {
+    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("toradocu-input");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("net.Connection");
+    options.setOption("toradocu-conditions", "resources/systemTest/ConnectionConditions.json");
+    options.setErrorBasename("ConditionError");
+    options.setRegressionBasename("ConditionRegression");
+    options.setOption("timelimit", "30");
+    options.setOption("outputlimit", "200");
+
+    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.SOME);
+  }
+
+  @Test
+  public void runInheritedToradocuTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("toradocu-inherited");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("pkg.SubClass");
+    options.setOption("toradocu-conditions", "resources/systemTest/SubClassConditions.json");
+    options.setErrorBasename("ConditionError");
+    options.setRegressionBasename("ConditionRegression");
+    options.setOption("timelimit", "30");
+    options.setOption("outputlimit", "200");
+
+    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
   /* ------------------------------ utility methods ---------------------------------- */

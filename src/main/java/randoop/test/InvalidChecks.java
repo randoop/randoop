@@ -3,20 +3,17 @@ package randoop.test;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import randoop.test.Check;
-import randoop.test.ExceptionCheck;
-
 /**
  * Implements a set of checks capturing invalid behavior in a sequence.
  */
 public class InvalidChecks implements TestChecks {
 
-  private ExceptionCheck exceptionCheck;
+  private Check check;
 
   @Override
   public int count() {
     int result = 0;
-    if (exceptionCheck != null) {
+    if (check != null) {
       result = 1;
     }
     return result;
@@ -25,15 +22,15 @@ public class InvalidChecks implements TestChecks {
   @Override
   public Map<Check, Boolean> get() {
     Map<Check, Boolean> mp = new LinkedHashMap<>();
-    if (exceptionCheck != null) {
-      mp.put(exceptionCheck, false);
+    if (check != null) {
+      mp.put(check, false);
     }
     return mp;
   }
 
   @Override
   public boolean hasChecks() {
-    return exceptionCheck != null;
+    return check != null;
   }
 
   @Override
@@ -43,14 +40,15 @@ public class InvalidChecks implements TestChecks {
 
   @Override
   public ExceptionCheck getExceptionCheck() {
-    return exceptionCheck;
+    if (check instanceof ExceptionCheck) {
+      return (ExceptionCheck) check;
+    }
+    return null;
   }
 
   @Override
   public void add(Check check) {
-    if (check instanceof ExceptionCheck) {
-      exceptionCheck = (ExceptionCheck) check;
-    }
+    this.check = check;
   }
 
   @Override
@@ -60,14 +58,14 @@ public class InvalidChecks implements TestChecks {
     }
     InvalidChecks ic = (InvalidChecks) checks;
     TestChecks common = new InvalidChecks();
-    if (this.exceptionCheck != null && exceptionCheck.equals(ic.exceptionCheck)) {
-      common.add(exceptionCheck);
+    if (this.check != null && check.equals(ic.check)) {
+      common.add(check);
     }
     return common;
   }
 
   @Override
   public boolean hasInvalidBehavior() {
-    return exceptionCheck != null;
+    return check != null;
   }
 }

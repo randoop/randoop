@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -104,10 +105,10 @@ class LazyParameterBound extends ParameterBound {
     if (type instanceof java.lang.reflect.TypeVariable) {
       ReferenceType referenceType = substitution.get(type);
       if (referenceType != null) {
-        return new ReferenceArgument(referenceType);
+        return TypeArgument.forType(referenceType);
       }
       // should trigger construction of a LazyReferenceBound
-      return new ReferenceArgument(TypeVariable.forType(type));
+      return TypeArgument.forType(TypeVariable.forType(type));
     }
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
@@ -119,11 +120,11 @@ class LazyParameterBound extends ParameterBound {
       GenericClassType classType =
           GenericClassType.forClass((Class<?>) ((ParameterizedType) type).getRawType());
       InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);
-      return new ReferenceArgument(instantiatedType);
+      return TypeArgument.forType(instantiatedType);
     }
 
     if (type instanceof Class) {
-      return new ReferenceArgument(ClassOrInterfaceType.forType(type));
+      return TypeArgument.forType(ClassOrInterfaceType.forType(type));
     }
 
     if (type instanceof java.lang.reflect.WildcardType) {
@@ -141,7 +142,9 @@ class LazyParameterBound extends ParameterBound {
             bound = new LazyParameterBound(lowerBound);
           }
         } else {
-          bound = ParameterBound.forType(lowerBound).apply(substitution);
+          bound =
+              ParameterBound.forType(new HashSet<java.lang.reflect.TypeVariable<?>>(), lowerBound)
+                  .apply(substitution);
         }
 
         return new WildcardArgument(new WildcardType(bound, false));
@@ -149,7 +152,9 @@ class LazyParameterBound extends ParameterBound {
       // a wildcard always has an upper bound
       assert wildcardType.getUpperBounds().length == 1
           : "a wildcard is defined by the JLS to only have one bound";
-      ParameterBound bound = ParameterBound.forTypes(wildcardType.getUpperBounds());
+      ParameterBound bound =
+          ParameterBound.forTypes(
+              new HashSet<java.lang.reflect.TypeVariable<?>>(), wildcardType.getUpperBounds());
       bound = bound.apply(substitution);
       return new WildcardArgument(new WildcardType(bound, true));
     }

@@ -18,7 +18,7 @@ public class ReferenceArgument extends TypeArgument {
    *
    * @param referenceType  the {@link ReferenceType}
    */
-  ReferenceArgument(ReferenceType referenceType) {
+  private ReferenceArgument(ReferenceType referenceType) {
     this.referenceType = referenceType;
   }
 
@@ -29,7 +29,11 @@ public class ReferenceArgument extends TypeArgument {
    * @return a {@code ReferenceArgument} for the given type
    */
   public static ReferenceArgument forType(java.lang.reflect.Type type) {
-    return new ReferenceArgument(ReferenceType.forType(type));
+    return forType(ReferenceType.forType(type));
+  }
+
+  public static ReferenceArgument forType(ReferenceType referenceType) {
+    return new ReferenceArgument(referenceType);
   }
 
   @Override
@@ -52,8 +56,8 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   @Override
-  public ReferenceArgument apply(Substitution<ReferenceType> substitution) {
-    return new ReferenceArgument(referenceType.apply(substitution));
+  public TypeArgument apply(Substitution<ReferenceType> substitution) {
+    return TypeArgument.forType(referenceType.apply(substitution));
   }
 
   /**

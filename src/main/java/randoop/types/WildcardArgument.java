@@ -39,6 +39,11 @@ class WildcardArgument extends TypeArgument {
     return new WildcardArgument(WildcardType.forType(wildcardType));
   }
 
+  public static WildcardArgument forType(ReferenceType argumentType) {
+    assert argumentType instanceof WildcardType : "argument type must be wildcard type";
+    return new WildcardArgument((WildcardType) argumentType);
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof WildcardArgument)) {
@@ -127,11 +132,16 @@ class WildcardArgument extends TypeArgument {
   }
 
   @Override
+  boolean isInstantiationOf(TypeArgument otherArgument) {
+    return this.equals(otherArgument);
+  }
+
+  @Override
   public boolean isWildcard() {
     return true;
   }
 
-  public WildcardType getWildcardType() {
+  WildcardType getWildcardType() {
     return argumentType;
   }
 }

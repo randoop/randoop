@@ -123,7 +123,7 @@ public class InstantiatedType extends ParameterizedType {
 
     List<TypeArgument> convertedArgumentList = new ArrayList<>();
     for (ReferenceType type : convertedTypeList) {
-      convertedArgumentList.add(new ReferenceArgument(type));
+      convertedArgumentList.add(TypeArgument.forType(type));
     }
 
     return (InstantiatedType)
@@ -161,9 +161,11 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public InstantiatedType getMatchingSupertype(GenericClassType goalType) {
+    /*
     if (this.hasWildcard()) {
       return this.applyCaptureConversion().getMatchingSupertype(goalType);
     }
+    */
     if (this.isInstantiationOf(goalType)) {
       return this;
     }
@@ -228,7 +230,8 @@ public class InstantiatedType extends ParameterizedType {
   public List<TypeVariable> getTypeParameters() {
     Set<TypeVariable> paramSet = new LinkedHashSet<>(super.getTypeParameters());
     for (TypeArgument argument : argumentList) {
-      paramSet.addAll(argument.getTypeParameters());
+      List<TypeVariable> params = argument.getTypeParameters();
+      paramSet.addAll(params);
     }
     return new ArrayList<>(paramSet);
   }
@@ -417,54 +420,44 @@ public class InstantiatedType extends ParameterizedType {
    */
   @Override
   public boolean isSubtypeOf(Type otherType) {
-    if (this.hasWildcard()) { // JLS 4.10.2 - has to be tested first
-      return this.applyCaptureConversion().isSubtypeOf(otherType);
+    if (otherType.isParameterized()) {
+
+      // second clause: rawtype same and parameters S_i of otherType contains T_i of this
+      if (otherType.hasRuntimeClass(this.getRuntimeClass())) {
+        ParameterizedType otherParameterizedType = (ParameterizedType) otherType;
+        List<TypeArgument> otherTypeArguments = otherParameterizedType.getTypeArguments();
+        List<TypeArgument> thisTypeArguments = this.getTypeArguments();
+        assert otherTypeArguments.size() == thisTypeArguments.size();
+        int i = 0;
+        while (i < thisTypeArguments.size()
+            && otherTypeArguments.get(i).contains(thisTypeArguments.get(i))) {
+          i++;
+        }
+        if (i == thisTypeArguments.size()) {
+          return true;
+        }
+      }
+
+      // first clause.
+      InstantiatedType otherInstandiatedType = (InstantiatedType) otherType;
+      InstantiatedType superType =
+          this.getMatchingSupertype(otherInstandiatedType.instantiatedType);
+      if (superType != null && superType.equals(otherType)) {
+        return true;
+      }
     }
 
     if (super.isSubtypeOf(otherType)) {
       return true;
     }
 
-    if (!otherType.isParameterized()) {
-
-      if (super.isSubtypeOf(otherType)) {
-        return true;
-      }
-
-      // rawtype is a direct supertype (see JLS section 4.10.2)
-      if (otherType.isRawtype()) {
-        if (otherType.hasRuntimeClass(this.getRuntimeClass())) {
-          return true;
-        }
-
-        NonParameterizedType rawtype = new NonParameterizedType(this.getRuntimeClass());
-        return rawtype.isSubtypeOf(otherType);
-      }
-
-      return false;
+    // wildcard clause
+    if (this.hasWildcard()) { // JLS 4.10.2
+      // old note says this has to be tested first
+      return this.applyCaptureConversion().isSubtypeOf(otherType);
     }
 
-    // second clause: rawtype same and parameters S_i of otherType contains T_i of this
-    if (otherType.hasRuntimeClass(this.getRuntimeClass())) {
-      ParameterizedType otherParameterizedType = (ParameterizedType) otherType;
-      List<TypeArgument> otherTypeArguments = otherParameterizedType.getTypeArguments();
-      List<TypeArgument> thisTypeArguments = this.getTypeArguments();
-      assert otherTypeArguments.size() == thisTypeArguments.size();
-      int i = 0;
-      while (i < thisTypeArguments.size()
-          && otherTypeArguments.get(i).contains(thisTypeArguments.get(i))) {
-        i++;
-      }
-      if (i == thisTypeArguments.size()) {
-        return true;
-      }
-    }
-
-    // first clause.
-    InstantiatedType pt = (InstantiatedType) otherType;
-    InstantiatedType superType = this.getMatchingSupertype(pt.instantiatedType);
-
-    return superType != null && pt.equals(superType);
+    return this.getRawtype().isSubtypeOf(otherType);
   }
 
   public NonParameterizedType getRawtype() {

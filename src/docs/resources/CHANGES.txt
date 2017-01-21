@@ -1,9 +1,17 @@
 Version 3.0.9, released X X, 20X
 
+Adds
+- an option --toradocu-conditions to input Toradocu generated conditions derived
+  from javadoc @param and @throws tags in class documentation. These conditions
+  can override classification of generated tests by exception.
+
 Fixes
-- generation of uncompilable code was generated due to an inaccessible type
-  that was a type argument to a parameterized type occurring as the type of a
-  formal parameter of a method.
+- overly conservative test for recursive type bounds that was preventing
+  capture conversion on wildcard types with complex bounds.
+- broken assignability test on parameterized types with wildcard arguments.
+- generation of uncompilable code due to an inaccessible type that was a type
+  argument to a parameterized type occurring as the type of a formal parameter
+  of a method.
 - potential variable name clash when a type name ends in a digit.
 
 

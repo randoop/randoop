@@ -1,7 +1,9 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * An abstract class representing type variables.
@@ -39,7 +41,9 @@ public abstract class TypeVariable extends ParameterType {
       throw new IllegalArgumentException("type must be a type variable, got " + type);
     }
     java.lang.reflect.TypeVariable<?> v = (java.lang.reflect.TypeVariable) type;
-    return new ExplicitTypeVariable(v, ParameterBound.forTypes(v.getBounds()));
+    Set<java.lang.reflect.TypeVariable<?>> variableSet = new HashSet<>();
+    variableSet.add(v);
+    return new ExplicitTypeVariable(v, ParameterBound.forTypes(variableSet, v.getBounds()));
   }
 
   @Override

@@ -2,6 +2,7 @@ package randoop.types;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a type bound on a type variable or wildcard occurring as a type parameter of
@@ -51,20 +52,22 @@ public abstract class ParameterBound {
    * See
    * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.1.2">JLS section 8.1.2</a>.
    *
+   * @param variableSet  the set of variables affected by this bound
    * @param bounds  the type bounds
    * @return the {@code ParameterBound} for the given types
    */
-  static ParameterBound forTypes(java.lang.reflect.Type[] bounds) {
+  static ParameterBound forTypes(
+      Set<java.lang.reflect.TypeVariable<?>> variableSet, java.lang.reflect.Type[] bounds) {
     if (bounds == null) {
       throw new IllegalArgumentException("bounds must be non null");
     }
 
     if (bounds.length == 1) {
-      return ParameterBound.forType(bounds[0]);
+      return ParameterBound.forType(variableSet, bounds[0]);
     } else {
       List<ParameterBound> boundList = new ArrayList<>();
       for (java.lang.reflect.Type type : bounds) {
-        boundList.add(ParameterBound.forType(type));
+        boundList.add(ParameterBound.forType(variableSet, type));
       }
       return new IntersectionTypeBound(boundList);
     }
@@ -76,13 +79,15 @@ public abstract class ParameterBound {
    * Tests for types that are represented by {@code Class} objects, or
    * {@code java.lang.reflect.ParameterizedType} objects.
    *
+   * @param variableSet  the set of type variables bound by this type
    * @param type  the type for type bound
    * @return a type bound that ensures the given type is satisfied as an upper
    *         bound
    */
-  static ParameterBound forType(java.lang.reflect.Type type) {
+  static ParameterBound forType(
+      Set<java.lang.reflect.TypeVariable<?>> variableSet, java.lang.reflect.Type type) {
     if (type instanceof java.lang.reflect.ParameterizedType) {
-      if (!hasTypeVariable(type)) {
+      if (!hasTypeVariable(type, variableSet)) {
         return new EagerReferenceBound(ParameterizedType.forType(type));
       }
       return new LazyParameterBound(type);
@@ -126,16 +131,27 @@ public abstract class ParameterBound {
    * variable occurs.
    *
    * @param type  the reflection type
+   * @param variableSet the set of variables
    * @return true if the type has a type variable, and false otherwise
    */
-  private static boolean hasTypeVariable(java.lang.reflect.Type type) {
+  private static boolean hasTypeVariable(
+      java.lang.reflect.Type type, Set<java.lang.reflect.TypeVariable<?>> variableSet) {
     if (isTypeVariable(type)) {
-      return true;
+      java.lang.reflect.TypeVariable<?> variable = (java.lang.reflect.TypeVariable) type;
+      if (variableSet.contains(variable)) {
+        return true;
+      }
+      variableSet.add(variable);
+      for (java.lang.reflect.Type boundType : variable.getBounds()) {
+        if (hasTypeVariable(boundType, variableSet)) {
+          return true;
+        }
+      }
     }
     if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
       for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {
-        if (hasTypeVariable(argType)) {
+        if (hasTypeVariable(argType, variableSet)) {
           return true;
         }
       }
@@ -143,12 +159,12 @@ public abstract class ParameterBound {
     if (type instanceof java.lang.reflect.WildcardType) {
       java.lang.reflect.WildcardType wt = (java.lang.reflect.WildcardType) type;
       for (java.lang.reflect.Type boundType : wt.getUpperBounds()) {
-        if (hasTypeVariable(boundType)) {
+        if (hasTypeVariable(boundType, variableSet)) {
           return true;
         }
       }
       for (java.lang.reflect.Type boundType : wt.getLowerBounds()) {
-        if (hasTypeVariable(boundType)) {
+        if (hasTypeVariable(boundType, variableSet)) {
           return true;
         }
       }

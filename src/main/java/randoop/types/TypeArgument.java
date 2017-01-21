@@ -33,6 +33,13 @@ public abstract class TypeArgument {
     }
   }
 
+  public static TypeArgument forType(ReferenceType referenceType) {
+    if (referenceType instanceof randoop.types.WildcardType) {
+      return WildcardArgument.forType(referenceType);
+    }
+    return ReferenceArgument.forType(referenceType);
+  }
+
   /**
    * Applies the type substitution to this type argument.
    *
