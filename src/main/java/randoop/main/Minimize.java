@@ -45,7 +45,7 @@ public class Minimize extends CommandHandler {
         null,
         "Complete path to Java file to be minimized, complete classpath to compile and run the Java file, maximum time (in seconds) allowed for a single unit test case to run before it times out.",
         "A minimized JUnit test suite (as one Java file) named \"InputFileMinimized.java\" if \"InputFile.java\" were the name of the input file.",
-        "java randoop.main.Main minimize \"C:\\RandoopTests\\src\\ErrorTestLang.java\" \"C:\\RandoopTests\\commons-lang3-3.5.jar;C:\\RandoopTests\\junit-4.12.jar;C:\\RandoopTests\\hamcrest-core-1.3.jar\" \"30\"",
+        "java randoop.main.Main minimize \"~/RandoopTests/src/ErrorTestLang.java\" \"~/RandoopTestscommons-lang3-3.5.jar:~/RandoopTests/junit-4.12.jar:~/RandoopTests/hamcrest-core-1.3.jar\" \"30\"",
         new Options(Minimize.class));
   }
 
@@ -79,10 +79,8 @@ public class Minimize extends CommandHandler {
 
     // Read and parse input Java file.
     CompilationUnit compUnit;
-    try {
-      FileInputStream inputStream = new FileInputStream(filePath);
+    try (FileInputStream inputStream = new FileInputStream(filePath)) {
       compUnit = JavaParser.parse(inputStream);
-      inputStream.close();
     } catch (IOException e) {
       System.err.println("Error parsing Java file " + filePath);
       System.err.println(e);
