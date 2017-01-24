@@ -22,7 +22,7 @@ public class TestInput1 {
     org.apache.commons.lang3.math.Fraction fraction4 = fraction0.divideBy(fraction1);
     org.apache.commons.lang3.mutable.MutableByte mutableByte5 =
         new org.apache.commons.lang3.mutable.MutableByte((Number) fraction1);
-    byte byte6 = mutableByte5.getAndDecrement();
+    // byte byte6 = mutableByte5.getAndDecrement();
 
     // Checks the contract: compareTo-equals on fraction1 and fraction4
     org.junit.Assert.assertTrue(

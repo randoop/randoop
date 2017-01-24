@@ -1,14 +1,13 @@
 package randoop.main;
 
+import plume.Option;
 import plume.Options;
+import plume.TimeLimitProcess;
 
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 import org.apache.commons.io.IOUtils;
 
@@ -17,10 +16,8 @@ import com.github.javaparser.ast.*;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.*;
-import com.github.javaparser.ast.type.PrimitiveType;
-import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.ast.type.*;
 import com.github.javaparser.ast.visitor.*;
-import plume.TimeLimitProcess;
 
 /**
  * Minimizer minimizes failing unit tests. The program takes two command-line
@@ -34,6 +31,22 @@ import plume.TimeLimitProcess;
 public class Minimize extends CommandHandler {
 
   public static PrintStream out = System.out;
+
+  /* The complete file path to the Java file. */
+  @Option("complete input file path")
+  public static String filepath;
+
+  /* Second argument is the classpath that includes dependencies needed to
+  compile and run the Java file. */
+  @Option("complete class path to compile and run input file")
+  public static String fileclasspath;
+
+  /* Maximum number of seconds allowed for a unit test within the test
+  suite to run. */
+  @Option("timeout value for a unit test case")
+  public static int testcasetimeout = -1;
+
+  private static Options options = new Options(Minimize.class);
 
   public Minimize() {
     super(
@@ -55,25 +68,32 @@ public class Minimize extends CommandHandler {
    * @param args first parameter is the complete path to the Java file to be
    *             minimized and the second parameter is the complete classpath
    *             needed to compile and run the Java file
-   * @throws IOException
+   * @throws RandoopTextuiException thrown if unrecognized arguments passed
    */
   @Override
   public boolean handle(String[] args) throws RandoopTextuiException {
-    if (args.length != 3) {
-      System.out.println("Usage: [path to Java file] [classpath] [timeout limit]");
-      return false;
+    try {
+      String[] nonargs = options.parse(args);
+      if (nonargs.length > 0) {
+        throw new Options.ArgException("Unrecognized arguments: " + Arrays.toString(nonargs));
+      }
+    } catch (Options.ArgException ae) {
+      usage("while parsing command-line arguments: %s", ae.getMessage());
     }
 
-    // First argument is the complete path to the Java file.
-    String filePath = args[0];
+    if (Minimize.filepath == null) {
+      System.out.println("You must specify an input file path.");
+      System.out.println("Use the --filepath option.");
+      System.exit(1);
+    } else if (Minimize.testcasetimeout < 0) {
+      System.out.println("You must specify an input file path.");
+      System.out.println("Use the --testcasetimeout option.");
+      System.exit(1);
+    }
 
-    // Second argument is the classpath that includes dependencies needed to
-    // compile and run the Java file.
-    String classpath = args[1];
-
-    // Maximum number of seconds allowed for a unit test within the test
-    // suite to run.
-    int timeoutLimit = Integer.parseInt(args[2]);
+    String filePath = Minimize.filepath;
+    String classpath = Minimize.fileclasspath;
+    int timeoutLimit = Minimize.testcasetimeout;
 
     System.out.println("Reading and parsing: " + filePath);
 
@@ -219,11 +239,13 @@ public class Minimize extends CommandHandler {
       boolean replacementFound = false;
       for (Statement stmt : replacements) {
         // Add replacement statement to the method's body.
+        // If stmt is null, we won't add anything since null will represent
+        // a complete removal of the statement.
         if (stmt != null) {
           statements.add(i, stmt);
         }
 
-        // Write, compile, and run the new Java file.
+        // Write, compile, and run the new Java file with the new suffix "Minimized".
         String newFilePath = writeToFile(compUnit, filePath, "Minimized");
         if (checkCorrectlyMinimized(
             newFilePath, classpath, expectedOutput, packageName, timeoutLimit)) {
@@ -232,10 +254,13 @@ public class Minimize extends CommandHandler {
           // use simplified statement and continue.
           replacementFound = true;
 
+          // We will check to see if the statement is an assertion regarding
+          // a value that can be used in a simplification later on.
           if (currStmt instanceof ExpressionStmt) {
             Expression exp = ((ExpressionStmt) currStmt).getExpression();
             if (exp instanceof MethodCallExpr) {
               MethodCallExpr mCall = (MethodCallExpr) exp;
+              // Check if the method call is an assertTrue statement
               if (mCall.getName().equals("assertTrue")) {
                 // Is an assertTrue statement.
                 List<Expression> mArgs = mCall.getArgs();
@@ -261,7 +286,7 @@ public class Minimize extends CommandHandler {
       }
       if (!replacementFound) {
         // No other correct simplifications found, add back the
-        // original statement.
+        // original statement to the list of statements.
         statements.add(i, currStmt);
       }
     }
@@ -858,5 +883,19 @@ public class Minimize extends CommandHandler {
       this.compOut = compOut;
       this.runOut = runOut;
     }
+  }
+
+  /**
+   * Print out usage error and stack trace and then exit
+   *
+   * @param format the string format
+   * @param args   the arguments
+   */
+  private static void usage(String format, Object... args) {
+    System.out.print("ERROR: ");
+    System.out.printf(format, args);
+    System.out.println();
+    System.out.println(options.usage());
+    System.exit(-1);
   }
 }

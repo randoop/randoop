@@ -15,7 +15,7 @@ public class TestInput2 {
       System.out.format("%n%s%n", "ErrorTest0.test01");
     }
 
-    org.apache.commons.lang3.tuple.MutablePair[] mutablePair_array1 =
+    /*org.apache.commons.lang3.tuple.MutablePair[] mutablePair_array1 =
         new org.apache.commons.lang3.tuple.MutablePair[0];
     @SuppressWarnings("unchecked")
     org.apache.commons.lang3.tuple.MutablePair<
@@ -154,5 +154,6 @@ public class TestInput2 {
             == -Math.signum(
                 mutablepair_circuitBreakingException_oPTION23.compareTo(
                     mutablepair_circuitBreakingException_oPTION9)));
+                    */
   }
 }
