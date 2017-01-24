@@ -158,7 +158,7 @@ public class Minimize extends CommandHandler {
   /**
    * Visit and minimize every method within a Java file.
    *
-   * @param cu             the compilation unit through which we visit each method
+   * @param cu             the compilation unit through which we visit each method, the compilation unit will be modified if a correct minimization of a method is found
    * @param filePath       the complete file path to the Java program that is being
    *                       processed
    * @param classpath      classpath used to compile and run the Java file
@@ -166,8 +166,6 @@ public class Minimize extends CommandHandler {
    * @param packageName    the name of the package that the Java file is in
    * @param timeoutLimit   maximum number of seconds allowed for any one unit test case
    *                       to run
-   * @modifies cu, the compilation unit will be modified if a correct
-   * minimization of a method is found
    */
   private static void minimizeTestSuite(
       CompilationUnit cu,
@@ -194,21 +192,23 @@ public class Minimize extends CommandHandler {
 
   /**
    * Minimize a method.
+   * The possible minimizations are:
+   * - Remove a statement entirely
+   * - Replace right hand side to a calculated value obtained from a passing assertion
+   * - Replace the right hand side expression with 0/null depending on type
+   * - Remove the left hand side of a statement, retaining only the expression on the right
    *
    * @param method         current method that we are minimizing within the compilation
-   *                       unit
+   *                       unit, the given method will be modified if a correct
+   *                       minimization of the method is found
    * @param compUnit       compilation unit that contains the AST for the Java file that
-   *                       we are minimizing
+   *                       we are minimizing, the compilation unit will be modified if a correct minimization of a method is found
    * @param filePath       complete path to the Java file that we are minimizing
    * @param classpath      classpath needed to compile and run the Java file
    * @param expectedOutput expected standard output from running the JUnit test suite
    * @param packageName    the name of the package that the Java file is in
    * @param timeoutLimit   the maximum number of seconds allowed for any one unit test
    *                       case to run
-   * @modifies method, the given method will be modified if a correct
-   * minimization of the method is found
-   * @modifies compUnit, the compilation unit will be modified if a correct
-   * minimization of the method is found
    */
   private static void minimizeMethod(
       MethodDeclaration method,
@@ -422,17 +422,14 @@ public class Minimize extends CommandHandler {
    * Simplify the variable type names in a method. For example,
    * java.lang.String should be simplified to String.
    *
-   * @param method         a method within the Java file
-   * @param compUnit       compilation unit containing an AST for a Java file
+   * @param method         a method within the Java file, the given method will be modified if a correct minimization of the method is found
+   * @param compUnit       compilation unit containing an AST for a Java file, the compilation unit will be modified if a correct minimization of the method is found
+   * @param filePath       complete file path to the input Java file
    * @param classpath      classpath needed to compile and run the Java file
    * @param expectedOutput expected standard output from running the JUnit test suite
    * @param packageName    the name of the package that the Java file is in
    * @param timeoutLimit   the maximum number of seconds allowed for any one unit test
    *                       case to run
-   * @modifies method, the given method will be modified if a correct
-   * minimization of the method is found
-   * @modifies compUnit, the compilation unit will be modified if a correct
-   * minimization of the method is found
    */
   private static void simplifyVariableTypeNames(
       MethodDeclaration method,
