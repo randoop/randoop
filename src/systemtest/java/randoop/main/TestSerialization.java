@@ -25,8 +25,10 @@ import static org.junit.Assert.fail;
  */
 public class TestSerialization {
 
-  private static void writeToFile(ByteArrayOutputStream out) throws IOException {
-    File file = new File("c:\\windows\\temp\\serialized_sequence.txt");
+  private static String FILE_PATH = "src/systemtest/resources/serialized_sequence.txt";
+
+  private void writeToFile(ByteArrayOutputStream out) throws IOException {
+    File file = new File(FILE_PATH);
 
     if (!file.exists()) {
       file.createNewFile();
@@ -84,13 +86,11 @@ public class TestSerialization {
   }
 
   private ExecutableSequence getExecutionFileFromFile() throws IOException, ClassNotFoundException {
-    String filePath = "c:\\windows\\temp\\serialized_sequence.txt";
-
     ExecutableSequence es = null;
     ObjectInputStream ois = null;
     FileInputStream fin = null;
     try {
-      fin = new FileInputStream(filePath);
+      fin = new FileInputStream(FILE_PATH);
       ois = new ObjectInputStream(fin);
       Object des = ois.readObject();
       es = (ExecutableSequence) des;
@@ -172,7 +172,7 @@ public class TestSerialization {
    * l.addFirst(str);
    * int i = l.size();
    */
-  private static Sequence createSequence() throws NoSuchMethodException {
+  private Sequence createSequence() throws NoSuchMethodException {
     Sequence s = new Sequence();
 
     InstantiatedType linkedListType = JDKTypes.LINKED_LIST_TYPE.instantiate(JavaTypes.STRING_TYPE);
@@ -213,7 +213,7 @@ public class TestSerialization {
     return s;
   }
 
-  private static ExecutableSequence createExecutableSequenceForSerialization()
+  private ExecutableSequence createExecutableSequenceForSerialization()
       throws NoSuchMethodException {
     Sequence sampleSeq = createSequence();
 
@@ -238,7 +238,7 @@ public class TestSerialization {
     return bos;
   }
 
-  public static ExecutableSequence getDeserializedExecutableSequence(ByteArrayInputStream input)
+  public ExecutableSequence getDeserializedExecutableSequence(ByteArrayInputStream input)
       throws IOException, ClassNotFoundException {
     ExecutableSequence es = null;
 

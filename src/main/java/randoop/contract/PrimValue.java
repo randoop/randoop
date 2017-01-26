@@ -1,5 +1,6 @@
 package randoop.contract;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -23,7 +24,7 @@ import randoop.types.TypeTuple;
  * represents a <i>regression</i> as it captures the behavior of the code when
  * it is executed.
  */
-public final class PrimValue implements ObjectContract {
+public final class PrimValue implements ObjectContract, Serializable {
 
   /**
    * Specifies how the contract is to be printed. <code>EQUALSEQUALS</code>

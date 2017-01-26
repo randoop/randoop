@@ -1,5 +1,6 @@
 package randoop.test;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -36,7 +37,7 @@ import randoop.sequence.Variable;
  * sequence that the check is over.
  * </ul>
  */
-class ObjectCheck implements Check {
+class ObjectCheck implements Check, Serializable {
 
   private final ObjectContract contract;
   private final Variable[] vars;
