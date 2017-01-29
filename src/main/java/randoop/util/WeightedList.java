@@ -45,10 +45,13 @@ public class WeightedList implements WeightedRandomSampler {
 
   @Override
   public WeightedElement getRandomElement() {
+    if (theList.size() == 0) {
+      return null;
+    }
     return theList.get(getRandomIndex());
   }
 
-  public int getRandomIndex() {
+  private int getRandomIndex() {
 
     // Find interval length. TODO cache max value.
     assert totalWeight > 0;
@@ -64,7 +67,7 @@ public class WeightedList implements WeightedRandomSampler {
     int low = 0;
     int high = theList.size();
     int mid = (low + high) / 2;
-    while (!(cumulativeWeights.get(mid) < point && cumulativeWeights.get(mid + 1) <= mid)) {
+    while (!(cumulativeWeights.get(mid) < point && cumulativeWeights.get(mid + 1) >= point)) {
       if (cumulativeWeights.get(mid) < point) {
         low = mid;
       } else {
