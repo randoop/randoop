@@ -5,19 +5,26 @@ import java.util.List;
 
 import randoop.BugInRandoopException;
 
-public class WeightedList {
+public class WeightedList implements WeightedRandomSampler {
 
   private List<WeightedElement> theList;
+  private double totalWeight = 0;
 
   public WeightedList() {
     theList = new ArrayList<>();
   }
 
+  @Override
   public void add(WeightedElement elt) {
     if (elt == null) throw new IllegalArgumentException("element to be added cannot be null.");
     theList.add(elt);
+    totalWeight += elt.getWeight();
   }
 
+  @Override
+  public void update(WeightedElement weightedElement) {}
+
+  @Override
   public WeightedElement getRandomElement() {
     return theList.get(getRandomIndex());
   }
