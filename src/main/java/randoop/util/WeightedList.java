@@ -15,6 +15,7 @@ public class WeightedList implements WeightedRandomSampler {
     theList = new ArrayList<>();
     cumulativeWeights = new ArrayList<>();
     totalWeight = 0.0;
+    cumulativeWeights.add(0.0);
   }
 
   // For now assuming that this is a new element, will decide later if that is a good design decision
@@ -28,8 +29,19 @@ public class WeightedList implements WeightedRandomSampler {
   }
 
   // TODO think about how we want to do update here.
+  // Assuming weighted element is already updated.
   @Override
-  public void update(WeightedElement weightedElement) {}
+  public void update(WeightedElement weightedElement) {
+    // this will be O(n), but it is what it is.
+    int index = theList.indexOf(weightedElement);
+    if (index >= 0) {
+      double weight = cumulativeWeights.get(index + 1) - cumulativeWeights.get(index);
+      weight -= weightedElement.getWeight();
+      for (int i = index + 1; i < cumulativeWeights.size(); i++) {
+        cumulativeWeights.set(i, cumulativeWeights.get(i) - weight);
+      }
+    }
+  }
 
   @Override
   public WeightedElement getRandomElement() {
@@ -43,12 +55,23 @@ public class WeightedList implements WeightedRandomSampler {
 
     // Select a random point in interval and find its corresponding element.
     double randomPoint = Randomness.random.nextDouble() * totalWeight;
-    return binarySearchForIndex(randomPoint, theList.size() / 2);
+    return binarySearchForIndex(randomPoint);
   }
 
   // Assumes that point is between 0 and totalWeight.
   // TODO
-  private int binarySearchForIndex(double point, int index) {
-    return 0;
+  private int binarySearchForIndex(double point) {
+    int low = 0;
+    int high = theList.size();
+    int mid = (low + high) / 2;
+    while (!(cumulativeWeights.get(mid) < point && cumulativeWeights.get(mid + 1) <= mid)) {
+      if (cumulativeWeights.get(mid) < point) {
+        low = mid;
+      } else {
+        high = mid;
+      }
+      mid = (low + high) / 2;
+    }
+    return mid;
   }
 }
