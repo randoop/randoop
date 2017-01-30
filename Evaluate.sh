@@ -12,14 +12,24 @@ if [ ! -d "defects4j" ]; then
 	cd defects4j
 	./init.sh
 	export PATH=$PATH:./framework/bin
+
+	# Get 3.0.8 release of randoop for running tests
+	# TODO: figure out how to get compile a jar from our version of randoop in order to use that
+	wget https://github.com/randoop/randoop/releases/download/v3.0.8/randoop-3.0.8.zip
+	unzip randoop-3.0.8.zip
+
+	# Install Perl DBI
+	yes | sudo perl -MCPAN -e 'install Bundle::DBI'
 else
 	cd defects4j
 fi
 
+# Create working directory for running tests on Defects4j projects
 if [ ! -d "tmp" ]; then
 	mkdir $work_dir
 fi
 
+# Compile Defects4j projects and then run generated tests on them
 for project in $projects
 do
 	defects4j checkout -p $project -v 1b -w $work_dir
@@ -27,4 +37,5 @@ do
 	defects4j coverage -w $work_dir
 done
 
-#java -ea -classpath 
+# TODO: specify package so that defects4j can correctly run the tests
+#java -ea -classpath randoop-all-3.0.8.jar randoop.main.Main gentests --classlist=myclasses.txt --literals-level=CLASS
