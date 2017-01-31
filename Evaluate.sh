@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 init=false
 usage() {
 	echo "Usage: ./Evaluate.sh [-i]"
@@ -23,11 +24,16 @@ done
 
 work_dir=tmp
 projects=("Chart" "Closure" "Lang" "Math" "Time")
+time_limits=(2 10 30 60 120)
 
 # Set up defects4j repo
 cd ..
 
-if [ ! -d "defects4j" -o $init ]; then
+#if [ $init ]; then
+#	rm -rf defects4j
+#fi
+
+if [ ! -d "defects4j" ] ; then
 
 	git clone https://github.com/rjust/defects4j
 	cd defects4j
@@ -40,7 +46,7 @@ if [ ! -d "defects4j" -o $init ]; then
 	unzip randoop-3.0.8.zip
 
 	# Install Perl DBI
-	yes | sudo perl -MCPAN -e 'install Bundle::DBI'
+	#yes | sudo perl -MCPAN -e 'install Bundle::DBI'
 else
 	cd defects4j
 	export PATH=$PATH:./framework/bin
@@ -57,13 +63,37 @@ do
 	# Checkout and compile current project
 	defects4j checkout -p $project -v 1b -w $curr_dir
 	defects4j compile -w $curr_dir
-	defects4j coverage -w $curr_dir
+	#defects4j coverage -w $curr_dir
 
 	# Run randoop on the current project, outputting the tests to $work_dir$project/test
 	mkdir $curr_dir/test
-	find $curr_dir/build/ -name \*.class >myclasslist.txt
+	find $curr_dir/build/ -name \*.class >$project}classlist.txt
 	sed -i 's/\//\./g' myclasslist.txt
 	sed -i 's/\(^.*build\.\)//g' myclasslist.txt
 	sed -i 's/\.class//g' myclasslist.txt
-	java -ea -classpath ${curr_dir}/build/:randoop-all-3.0.8.jar randoop.main.Main gentests --classlist=myclasslist.txt --literals-level=CLASS --junit-output-dir=$curr_dir/test
+
+	find $curr_dir -name \*.jar > jars.txt
+	jars=`tr '\n' ':' < jars.txt`
+
+	java -ea -classpath $jars${curr_dir}/build/:randoop-all-3.0.8.jar randoop.main.Main gentests --classlist=myclasslist.txt --literals-level=CLASS --junit-output-dir=$curr_dir/test
 done
+
+
+# for time in $time_limits
+# do
+# 	for i in `seq 1 10`
+# 	do
+		
+# 		for project in $projects
+# 		do
+# 			curr_dir=$work_dir$project
+
+# 			# Run randoop on the current project, outputting the tests to $work_dir$project/test
+# 			rm -rf $curr_dir/test
+# 			mkdir $curr_dir/test
+
+# 			java -ea -classpath $jars${curr_dir}/build/:randoop-all-3.0.8.jar randoop.main.Main gentests --classlist=myclasslist.txt --literals-level=CLASS --junit-output-dir=$curr_dir/test --timelimit=$time
+# 		done
+# 	done
+# done
+
