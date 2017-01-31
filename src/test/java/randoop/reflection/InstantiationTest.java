@@ -15,7 +15,10 @@ import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.intersectiontypes.AccessibleInterval;
 import randoop.types.ClassOrInterfaceType;
+import randoop.types.GenericClassType;
 import randoop.types.JavaTypes;
+import randoop.types.ReferenceType;
+import randoop.types.Substitution;
 import randoop.types.Type;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -219,6 +222,35 @@ public class InstantiationTest {
     for (TypedOperation operation : classOperations) {
       assertFalse("should not be generic " + operation, operation.getInputTypes().isGeneric());
       assertFalse("should not have wildcards" + operation, operation.getInputTypes().hasWildcard());
+    }
+  }
+
+  /**
+   * Based on a case from Apache Commons Collections.
+   */
+  @Test
+  public void testCaptureConvInstantiation() {
+    Set<String> classnames = new LinkedHashSet<>();
+    classnames.add("randoop.reflection.CaptureInstantiationCase");
+    OperationModel model = createModel(classnames, "randoop.reflection");
+    Set<TypedOperation> classOperations = new LinkedHashSet<>();
+    GenericClassType predicateType =
+        GenericClassType.forClass(CaptureInstantiationCase.LocalPredicate.class);
+    Substitution<ReferenceType> subst =
+        Substitution.forArgs(predicateType.getTypeParameters(), JavaTypes.SERIALIZABLE_TYPE);
+
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
+    addTypes(ClassOrInterfaceType.forClass(AnIterable.class), inputTypes);
+    addTypes(predicateType.apply(subst), inputTypes);
+
+    Set<String> nullOKNames = new HashSet<>();
+    getOperations(model, classOperations, inputTypes, nullOKNames);
+    assertTrue("should be some operations", classOperations.size() > 0);
+    for (TypedOperation operation : classOperations) {
+      if (operation.getName().equals("filter")) {
+        assertFalse("filter operation should be instantiated ", operation.isGeneric());
+      }
     }
   }
 
