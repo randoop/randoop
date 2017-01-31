@@ -1,13 +1,12 @@
 package randoop.util;
 
+import randoop.sequence.Sequence;
+
 import java.util.HashMap;
 
-/**
- * Created by Justin on 1/28/2017.
- */
 public class WeightedBalancedTree implements WeightedRandomSampler {
 
-  private HashMap<WeightedElement, Node> currentElements;
+  private HashMap<Sequence, Node> currentElements;
   private Node root;
   private Node currentParent;
   private Node prevChild;
@@ -19,7 +18,7 @@ public class WeightedBalancedTree implements WeightedRandomSampler {
   }
 
   @Override
-  public WeightedElement getRandomElement() {
+  public Sequence getRandomElement() {
     if (root == null) {
       return null;
     }
@@ -36,7 +35,7 @@ public class WeightedBalancedTree implements WeightedRandomSampler {
 
   // TODO test this
   private Node getRandomNode(Node node) {
-    double totalWeight = node.data.getWeight();
+    double totalWeight = node.weight;
     if (node.left != null) {
       totalWeight += node.left.weight;
     }
@@ -45,7 +44,7 @@ public class WeightedBalancedTree implements WeightedRandomSampler {
     }
 
     double randomValue = totalWeight * Randomness.random.nextDouble();
-    if (randomValue <= node.data.getWeight()) {
+    if (randomValue <= node.weight) {
       return node;
       // Don't need to consider the node.left == null and node.right == null case because
       // it would be guaranteed to be in this if statement
@@ -54,7 +53,7 @@ public class WeightedBalancedTree implements WeightedRandomSampler {
     } else if (node.right == null) {
       return node.left.child;
     } else {
-      if (randomValue <= (node.left.weight + node.data.getWeight())) {
+      if (randomValue <= (node.left.weight + node.weight)) {
         return node.left.child;
       } else {
         return node.right.child;
@@ -63,41 +62,45 @@ public class WeightedBalancedTree implements WeightedRandomSampler {
   }
 
   @Override
+  public void add(Sequence weightedElement) {
+    add(weightedElement, weightedElement.getWeight());
+  }
+
   // TODO test this.
-  public void add(WeightedElement weightedElement) {
+  public void add(Sequence weightedElement, double weight) {
     // This method is going to be tricky, hope this works out :)
     if (currentElements.containsKey(weightedElement)) {
       throw new IllegalArgumentException("Cannot add an element already in the Tree");
     }
-    Node n = new Node(weightedElement);
+    Node n = new Node(weightedElement, weight);
     if (root == null) {
       root = n;
       furthestLeftChild = n;
       currentParent = n;
     } else if (currentParent.left == null) {
       // I think this will only be hit for the second call?
-      currentParent.left = new Edge(currentParent, n, n.data.getWeight());
+      currentParent.left = new Edge(currentParent, n, n.weight);
       furthestLeftChild = currentParent.left.child;
     } else if (currentParent.right == null) {
-      currentParent.right = new Edge(currentParent, n, n.data.getWeight());
+      currentParent.right = new Edge(currentParent, n, n.weight);
       prevChild.adj = currentParent.right.child;
     } else {
       if (currentParent.adj == null) {
         // go to the furthest left element
         currentParent = furthestLeftChild;
-        currentParent.left = new Edge(currentParent, n, n.data.getWeight());
+        currentParent.left = new Edge(currentParent, n, n.weight);
         furthestLeftChild = currentParent.left.child;
       } else {
         currentParent = currentParent.adj;
-        currentParent.left = new Edge(currentParent, n, n.data.getWeight());
+        currentParent.left = new Edge(currentParent, n, n.weight);
         prevChild.adj = currentParent.left.child;
       }
     }
     prevChild = n;
-  
+
     Node traversal = n;
     while (traversal.parent != null) {
-      traversal.parent.weight += n.data.getWeight();
+      traversal.parent.weight += n.weight;
     }
     currentElements.put(weightedElement, n);
   }
@@ -108,11 +111,12 @@ public class WeightedBalancedTree implements WeightedRandomSampler {
     public Edge right;
     public Node adj; // represents a right pointer to the adjacent node.
 
-    public WeightedElement data;
+    public Sequence data;
     public double weight;
-    public Node(WeightedElement data) {
+
+    public Node(Sequence data, double weight) {
       this.data = data;
-      weight = data.getWeight();
+      this.weight = weight;
     }
   }
 
