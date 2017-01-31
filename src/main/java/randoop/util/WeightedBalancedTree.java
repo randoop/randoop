@@ -94,7 +94,11 @@ public class WeightedBalancedTree implements WeightedRandomSampler {
       }
     }
     prevChild = n;
-
+  
+    Node traversal = n;
+    while (traversal.parent != null) {
+      traversal.parent.weight += n.data.getWeight();
+    }
     currentElements.put(weightedElement, n);
   }
 
@@ -105,9 +109,10 @@ public class WeightedBalancedTree implements WeightedRandomSampler {
     public Node adj; // represents a right pointer to the adjacent node.
 
     public WeightedElement data;
-
+    public double weight;
     public Node(WeightedElement data) {
       this.data = data;
+      weight = data.getWeight();
     }
   }
 
