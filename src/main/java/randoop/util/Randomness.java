@@ -55,6 +55,13 @@ public final class Randomness {
     return list.get(nextRandomInt(list.size()));
   }
 
+  public static <T> T randomMember(SimpleList<T> list) {
+    if (list == null || list.isEmpty()) {
+      throw new IllegalArgumentException("Expected non-empty list");
+    }
+    return list.get(nextRandomInt(list.size()));
+  }
+
   public static <T> T randomSetMember(Collection<T> set) {
     int randIndex = Randomness.nextRandomInt(set.size());
     return CollectionsExt.getNthIteratedElement(set, randIndex);

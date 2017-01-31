@@ -710,11 +710,8 @@ public class ForwardGenerator extends AbstractGenerator {
       // a
       // randomly-chosen sequence from the list.
       Sequence chosenSeq;
-      if (GenInputsAbstract.small_tests) {
-        chosenSeq = Randomness.randomMemberWeighted(l);
-      } else {
-        chosenSeq = Randomness.randomMember(l);
-      }
+      // TODO CHANGE THIS TO USE WEIGHTED VALUES
+      chosenSeq = Randomness.randomMember(l);
 
       // Now, find values that satisfy the constraint set.
       Variable randomVariable = chosenSeq.randomVariableForTypeLastStatement(inputType);

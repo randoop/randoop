@@ -4,11 +4,11 @@ import java.util.HashMap;
 
 public class WeightedBalancedTree<T> implements WeightedRandomSampler<T> {
 
-  private HashMap<T, Node> currentElements;
-  private Node root;
-  private Node currentParent;
-  private Node prevChild;
-  private Node furthestLeftChild;
+  private HashMap<T, Node<T>> currentElements;
+  private Node<T> root;
+  private Node<T> currentParent;
+  private Node<T> prevChild;
+  private Node<T> furthestLeftChild;
 
   public WeightedBalancedTree() {
     currentElements = new HashMap<>();
@@ -20,9 +20,9 @@ public class WeightedBalancedTree<T> implements WeightedRandomSampler<T> {
     if (root == null) {
       return null;
     }
-    Node node = root;
+    Node<T> node = root;
     while (node.left != null && node.right != null) {
-      Node randomChoice = getRandomNode(node);
+      Node<T> randomChoice = getRandomNode(node);
       if (randomChoice == node) {
         return node.data;
       }
@@ -32,8 +32,8 @@ public class WeightedBalancedTree<T> implements WeightedRandomSampler<T> {
   }
 
   // TODO test this
-  private Node getRandomNode(Node node) {
-    double totalWeight = node.weight;
+  private Node<T> getRandomNode(Node<T> node) {
+    double totalWeight = node.data.getWeight();
     if (node.left != null) {
       totalWeight += node.left.weight;
     }
@@ -42,7 +42,7 @@ public class WeightedBalancedTree<T> implements WeightedRandomSampler<T> {
     }
 
     double randomValue = totalWeight * Randomness.random.nextDouble();
-    if (randomValue <= node.weight) {
+    if (randomValue <= node.data.getWeight()) {
       return node;
       // Don't need to consider the node.left == null and node.right == null case because
       // it would be guaranteed to be in this if statement
@@ -51,7 +51,7 @@ public class WeightedBalancedTree<T> implements WeightedRandomSampler<T> {
     } else if (node.right == null) {
       return node.left.child;
     } else {
-      if (randomValue <= (node.left.weight + node.weight)) {
+      if (randomValue <= (node.left.weight + node.data.getWeight())) {
         return node.left.child;
       } else {
         return node.right.child;
@@ -70,35 +70,35 @@ public class WeightedBalancedTree<T> implements WeightedRandomSampler<T> {
     if (currentElements.containsKey(weightedElement)) {
       throw new IllegalArgumentException("Cannot add an element already in the Tree");
     }
-    Node n = new Node(weightedElement, weight);
+    Node<T> n = new Node<T>(weightedElement);
     if (root == null) {
       root = n;
       furthestLeftChild = n;
       currentParent = n;
     } else if (currentParent.left == null) {
       // I think this will only be hit for the second call?
-      currentParent.left = new Edge(currentParent, n, n.weight);
+      currentParent.left = new Edge<T>(currentParent, n, n.data.getWeight());
       furthestLeftChild = currentParent.left.child;
     } else if (currentParent.right == null) {
-      currentParent.right = new Edge(currentParent, n, n.weight);
+      currentParent.right = new Edge<T>(currentParent, n, n.data.getWeight());
       prevChild.adj = currentParent.right.child;
     } else {
       if (currentParent.adj == null) {
         // go to the furthest left element
         currentParent = furthestLeftChild;
-        currentParent.left = new Edge(currentParent, n, n.weight);
+        currentParent.left = new Edge<T>(currentParent, n, n.data.getWeight());
         furthestLeftChild = currentParent.left.child;
       } else {
         currentParent = currentParent.adj;
-        currentParent.left = new Edge(currentParent, n, n.weight);
+        currentParent.left = new Edge<T>(currentParent, n, n.data.getWeight());
         prevChild.adj = currentParent.left.child;
       }
     }
     prevChild = n;
 
-    Node traversal = n;
+    Node<T> traversal = n;
     while (traversal.parent != null) {
-      traversal.parent.weight += n.weight;
+      traversal.parent.weight += n.data.getWeight();
     }
     currentElements.put(weightedElement.getData(), n);
   }
@@ -110,26 +110,24 @@ public class WeightedBalancedTree<T> implements WeightedRandomSampler<T> {
   }
 
   private static class Node<T> {
-    public Edge parent;
-    public Edge left;
-    public Edge right;
-    public Node adj; // represents a right pointer to the adjacent node.
+    public Edge<T> parent;
+    public Edge<T> left;
+    public Edge<T> right;
+    public Node<T> adj; // represents a right pointer to the adjacent node.
 
     public WeightedElement<T> data;
-    public double weight;
 
-    public Node(WeightedElement<T> data, double weight) {
+    public Node(WeightedElement<T> data) {
       this.data = data;
-      this.weight = weight;
     }
   }
 
-  private static class Edge {
-    public Node parent;
-    public Node child;
+  private static class Edge<T> {
+    public Node<T> parent;
+    public Node<T> child;
     public double weight;
 
-    public Edge(Node parent, Node child, double weight) {
+    public Edge(Node<T> parent, Node<T> child, double weight) {
       this.parent = parent;
       this.child = child;
       this.weight = weight;
