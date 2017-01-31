@@ -44,6 +44,21 @@ class CaptureTypeVariable extends TypeVariable {
     }
   }
 
+  /**
+   * Creates a {@link CaptureTypeVariable} with explicitly given {@code ID}, wildcard, and bounds.
+   *
+   * @param varID  the variable ID for the created variable
+   * @param wildcard  the wildcard for the created variable
+   * @param lowerBound  the lower type bound of the variable
+   * @param upperBound  the upper type bound of the variable
+   */
+  private CaptureTypeVariable(
+      int varID, WildcardArgument wildcard, ParameterBound lowerBound, ParameterBound upperBound) {
+    super(lowerBound, upperBound);
+    this.varID = varID;
+    this.wildcard = wildcard;
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof CaptureTypeVariable)) {
@@ -149,11 +164,10 @@ class CaptureTypeVariable extends TypeVariable {
     }
     ParameterBound lowerBound = getLowerTypeBound().apply(substitution);
     ParameterBound upperBound = getUpperTypeBound().apply(substitution);
+
     if (!lowerBound.equals(getLowerTypeBound()) || !upperBound.equals(getUpperTypeBound())) {
-      CaptureTypeVariable variable = new CaptureTypeVariable(wildcard);
-      variable.setLowerBound(lowerBound);
-      variable.setUpperBound(upperBound);
-      return variable;
+      WildcardArgument updatedWildcard = wildcard.apply(substitution);
+      return new CaptureTypeVariable(this.varID, updatedWildcard, lowerBound, upperBound);
     }
     return this;
   }
