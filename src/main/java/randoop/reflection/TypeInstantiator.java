@@ -182,6 +182,36 @@ public class TypeInstantiator {
   }
 
   /**
+   * Selects an existing type that instantiates the given pattern type which is an instantiation
+   * of a generic declaring type and returns the instantiating substitution for the more general
+   * type.
+   * The pattern type makes it possible to select matches for partial instantiations of a generic
+   * type.
+   * <p>
+   * Note: for all uses to work properly, the input types need to be closed on supertypes:
+   * if a type is in the input types, then so are all of its supertypes.
+   *
+   * @param declaringType  the generic type for which instantiation is to be found
+   * @param patternType   the generic type from which match is to be determined, must be instantiation
+   *                      of {@code declaringType}.
+   * @return a substitution instantiating given type as an existing type; null if no such type
+   */
+  private Substitution<ReferenceType> selectMatch(
+      ClassOrInterfaceType declaringType, ClassOrInterfaceType patternType) {
+    List<InstantiatedType> matches = new ArrayList<>();
+    for (Type type : inputTypes) {
+      if (type.isParameterized() && ((InstantiatedType) type).isInstantiationOf(patternType)) {
+        matches.add((InstantiatedType) type);
+      }
+    }
+    if (matches.isEmpty()) {
+      return null;
+    }
+    InstantiatedType selectedType = Randomness.randomSetMember(matches);
+    return selectedType.getInstantiatingSubstitution(declaringType);
+  }
+
+  /**
    * Selects an existing type that instantiates the given generic declaring type
    * and returns the instantiating substitution.
    * <p>
@@ -192,17 +222,7 @@ public class TypeInstantiator {
    * @return a substitution instantiating given type as an existing type; null if no such type
    */
   private Substitution<ReferenceType> selectMatch(ClassOrInterfaceType declaringType) {
-    List<InstantiatedType> matches = new ArrayList<>();
-    for (Type type : inputTypes) {
-      if (type.isParameterized() && ((InstantiatedType) type).isInstantiationOf(declaringType)) {
-        matches.add((InstantiatedType) type);
-      }
-    }
-    if (matches.isEmpty()) {
-      return null;
-    }
-    InstantiatedType selectedType = Randomness.randomSetMember(matches);
-    return selectedType.getInstantiatingSubstitution(declaringType);
+    return selectMatch(declaringType, declaringType);
   }
 
   /**
@@ -220,7 +240,8 @@ public class TypeInstantiator {
       Type workingType = parameterType.apply(substitution);
       if (workingType.isGeneric()) {
         if (workingType.isClassType()) {
-          Substitution<ReferenceType> subst = selectMatch((ParameterizedType) workingType);
+          Substitution<ReferenceType> subst =
+              selectMatch((ParameterizedType) parameterType, (ParameterizedType) workingType);
           if (subst == null) {
             return null;
           }
@@ -230,7 +251,6 @@ public class TypeInstantiator {
         }
       }
     }
-
     // return types don't have to exist, but do need to be selected
     if (operation.getOutputType().isReferenceType()) {
       Type workingType = operation.getOutputType().apply(substitution);
@@ -249,7 +269,6 @@ public class TypeInstantiator {
         return null;
       }
     }
-
     return operation.apply(substitution);
   }
 
