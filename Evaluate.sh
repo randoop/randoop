@@ -1,12 +1,33 @@
 #!/bin/bash
 
+init=false
+usage() {
+	echo "Usage: ./Evaluate.sh [-i]"
+}
+
+while getopts ":i" opt; do
+	case $opt in
+		i)
+			init=true
+			;;
+		\?)
+			echo "Unknown flag"
+			usage
+			exit 1
+			;;
+		:)
+			echo "No flag" >&2
+			;;
+	esac
+done
+
 work_dir=tmp
 projects=("Chart" "Closure" "Lang" "Math" "Time")
 
 # Set up defects4j repo
 cd ..
 
-if [ ! -d "defects4j" ]; then
+if [ ! -d "defects4j" -o $init ]; then
 
 	git clone https://github.com/rjust/defects4j
 	cd defects4j
@@ -22,20 +43,27 @@ if [ ! -d "defects4j" ]; then
 	yes | sudo perl -MCPAN -e 'install Bundle::DBI'
 else
 	cd defects4j
-fi
-
-# Create working directory for running tests on Defects4j projects
-if [ ! -d "tmp" ]; then
-	mkdir $work_dir
+	export PATH=$PATH:./framework/bin
 fi
 
 # Compile Defects4j projects and then run generated tests on them
 for project in $projects
 do
-	defects4j checkout -p $project -v 1b -w $work_dir
-	defects4j compile -w $work_dir
-	defects4j coverage -w $work_dir
-done
+	# Create working directory for running tests on Defects4j projects
+	curr_dir=$work_dir$project
+	rm -rf $curr_dir
+	mkdir $curr_dir
 
-# TODO: specify package so that defects4j can correctly run the tests
-#java -ea -classpath randoop-all-3.0.8.jar randoop.main.Main gentests --classlist=myclasses.txt --literals-level=CLASS
+	# Checkout and compile current project
+	defects4j checkout -p $project -v 1b -w $curr_dir
+	defects4j compile -w $curr_dir
+	defects4j coverage -w $curr_dir
+
+	# Run randoop on the current project, outputting the tests to $work_dir$project/test
+	mkdir $curr_dir/test
+	find $curr_dir/build/ -name \*.class >myclasslist.txt
+	sed -i 's/\//\./g' myclasslist.txt
+	sed -i 's/\(^.*build\.\)//g' myclasslist.txt
+	sed -i 's/\.class//g' myclasslist.txt
+	java -ea -classpath ${curr_dir}/build/:randoop-all-3.0.8.jar randoop.main.Main gentests --classlist=myclasslist.txt --literals-level=CLASS --junit-output-dir=$curr_dir/test
+done
