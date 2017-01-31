@@ -29,8 +29,13 @@ public class WeightedList<T> implements WeightedRandomSampler<T> {
     cumulativeWeights.add(cumulativeWeights.get(cumulativeWeights.size() - 1) + elt.getWeight());
   }
 
+  public void add(T elt, double weight) {
+    add(new WeightedElement<T>(elt, weight));
+  }
+
   // TODO think about how we want to do update here.
   // Assuming weighted element is already updated.
+
   public void update(WeightedElement<T> weightedElement) {
     // this will be O(n), but it is what it is.
     int index = theList.indexOf(weightedElement);
