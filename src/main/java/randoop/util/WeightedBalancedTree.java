@@ -107,6 +107,14 @@ public class WeightedBalancedTree<T> implements WeightedRandomSampler<T> {
     if (!currentElements.containsKey(sequence)) {
       throw new IllegalArgumentException("Object is not in set of nodes");
     }
+    Node<T> node = currentElements.get(sequence);
+    double prevWeight = node.data.getWeight();
+    double diff = newWeight - prevWeight;
+    node.data.setWeight(newWeight);
+    Node<T> traversal = node;
+    while (traversal.parent != null) {
+      traversal.parent.weight += diff;
+    }
   }
 
   private static class Node<T> {

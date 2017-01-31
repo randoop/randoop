@@ -17,4 +17,7 @@ public class WeightedElement<T> {
   public T getData() {
     return data;
   }
+  public void setWeight(double weight) {
+    this.weight = weight;
+  }
 }
