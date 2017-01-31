@@ -62,35 +62,6 @@ public final class Randomness {
     return list.get(nextRandomInt(list.size()));
   }
 
-  // Warning: iterates through the entire list twice (once to compute interval
-  // length, once to select element).
-  public static <T extends WeightedElement> T randomMemberWeighted(SimpleList<T> list) {
-
-    // Find interval length.
-    double max = 0;
-    for (int i = 0; i < list.size(); i++) {
-      double weight = list.get(i).getWeight();
-      if (weight <= 0) throw new BugInRandoopException("weight was " + weight);
-      max += weight;
-    }
-    assert max > 0;
-
-    // Select a random point in interval and find its corresponding element.
-    totalCallsToRandom++;
-    if (Log.isLoggingOn()) {
-      Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
-    }
-    double randomPoint = Randomness.random.nextDouble() * max;
-    double currentPoint = 0;
-    for (int i = 0; i < list.size(); i++) {
-      currentPoint += list.get(i).getWeight();
-      if (currentPoint >= randomPoint) {
-        return list.get(i);
-      }
-    }
-    throw new BugInRandoopException();
-  }
-
   public static <T> T randomSetMember(Collection<T> set) {
     int randIndex = Randomness.nextRandomInt(set.size());
     return CollectionsExt.getNthIteratedElement(set, randIndex);
