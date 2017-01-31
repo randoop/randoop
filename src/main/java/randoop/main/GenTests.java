@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import plume.EntryReader;
@@ -131,26 +132,28 @@ public class GenTests extends GenInputsAbstract {
 
     checkOptionsValid();
 
+    // Check that there are classes to test
+    if (classlist == null && methodlist == null && testclass.isEmpty()) {
+      System.out.println("You must specify some classes or methods to test.");
+      System.out.println("Use the --classlist, --testclass, or --methodlist options.");
+      System.exit(1);
+    }
+
     Randomness.reset(randomseed);
 
     java.security.Policy policy = java.security.Policy.getPolicy();
 
-    if (!GenInputsAbstract.noprogressdisplay) {
-      System.out.printf("policy = %s%n", policy);
-    }
+    // This is distracting to the user as the first thing shown, and is not very informative.
+    // Reinstate it with a --verbose option.
+    // if (!GenInputsAbstract.noprogressdisplay) {
+    //   System.out.printf("Using security policy %s%n", policy);
+    // }
 
     // If some properties were specified, set them
     for (String prop : GenInputsAbstract.system_props) {
       String[] pa = prop.split("=", 2);
       if (pa.length != 2) usage("invalid property definition: %s%n", prop);
       System.setProperty(pa[0], pa[1]);
-    }
-
-    // Check that there are classes to test
-    if (classlist == null && methodlist == null && testclass.isEmpty()) {
-      System.out.println("You must specify some classes or methods to test.");
-      System.out.println("Use the --classlist, --testclass, or --methodlist options.");
-      System.exit(1);
     }
 
     /*
@@ -227,10 +230,27 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     } catch (RandoopClassNameError e) {
       System.out.printf("Error: %s%n", e.getMessage());
-      System.out.println(
-          "   Most likely the claspath is wrong or was formatted incorrectly on the");
-      System.out.println("   command line; or, maybe you gave the class name incorrectly.");
-      System.out.println("Exiting Randoop.");
+      if (e.getMessage().startsWith("No class with name \"")) {
+        String classpath = System.getProperty("java.class.path");
+        // System.out.println("Your classpath is " + classpath);
+        System.out.println("More specifically, none of the following files could be found:");
+        StringTokenizer tokenizer = new StringTokenizer(classpath, File.pathSeparator);
+        while (tokenizer.hasMoreTokens()) {
+          String classPathElt = tokenizer.nextToken();
+          if (classPathElt.endsWith(".jar")) {
+            String classFileName = e.className.replace(".", "/") + ".class";
+            System.out.println("  " + classFileName + " in " + classPathElt);
+          } else {
+            String classFileName = e.className.replace(".", File.separator) + ".class";
+            if (!classPathElt.endsWith(File.separator)) {
+              classPathElt += File.separator;
+            }
+            System.out.println("  " + classPathElt + classFileName);
+          }
+        }
+        System.out.println("Correct your classpath or the class name and re-run Randoop.");
+      }
+      // System.out.println("Exiting Randoop.");
       System.exit(1);
     }
     assert operationModel != null;
