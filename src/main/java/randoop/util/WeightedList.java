@@ -30,7 +30,6 @@ public class WeightedList implements WeightedRandomSampler {
 
   // TODO think about how we want to do update here.
   // Assuming weighted element is already updated.
-  @Override
   public void update(WeightedElement weightedElement) {
     // this will be O(n), but it is what it is.
     int index = theList.indexOf(weightedElement);
