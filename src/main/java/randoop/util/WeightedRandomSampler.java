@@ -8,5 +8,7 @@ public interface WeightedRandomSampler<T> {
 
   void add(WeightedElement<T> weightedElement);
 
+  void add(T t, double weight);
+
   // TODO decide if the weightedElement should be update outside or inside update
 }
