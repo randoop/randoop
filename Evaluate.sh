@@ -1,12 +1,33 @@
 #!/bin/bash
 
+init=false
+usage() {
+	echo "Usage: ./Evaluate.sh [-i]"
+}
+
+while getopts ":i" opt; do
+	case $opt in
+		i)
+			init=true
+			;;
+		\?)
+			echo "Unknown flag"
+			usage
+			exit 1
+			;;
+		:)
+			echo "No flag" >&2
+			;;
+	esac
+done
+
 work_dir=tmp
 projects=("Chart" "Closure" "Lang" "Math" "Time")
 
 # Set up defects4j repo
 cd ..
 
-if [ ! -d "defects4j" ]; then
+if [ ! -d "defects4j" -o $init ]; then
 
 	git clone https://github.com/rjust/defects4j
 	cd defects4j
@@ -22,6 +43,7 @@ if [ ! -d "defects4j" ]; then
 	yes | sudo perl -MCPAN -e 'install Bundle::DBI'
 else
 	cd defects4j
+	export PATH=$PATH:./framework/bin
 fi
 
 # Compile Defects4j projects and then run generated tests on them
