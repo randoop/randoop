@@ -6,9 +6,9 @@ import java.util.List;
 import randoop.BugInRandoopException;
 import randoop.sequence.Sequence;
 
-public class WeightedList implements WeightedRandomSampler {
+public class WeightedList<T> implements WeightedRandomSampler<T> {
 
-  private List<Sequence> theList;
+  private List<WeightedElement<T>> theList;
   private List<Double> cumulativeWeights;
   private double totalWeight;
 
@@ -21,7 +21,7 @@ public class WeightedList implements WeightedRandomSampler {
 
   // For now assuming that this is a new element, will decide later if that is a good design decision
   @Override
-  public void add(Sequence elt) {
+  public void add(WeightedElement<T> elt) {
     if (elt == null) throw new IllegalArgumentException("element to be added cannot be null.");
     if (elt.getWeight() < 0) throw new BugInRandoopException("weight is less than 0");
     theList.add(elt);
@@ -31,7 +31,7 @@ public class WeightedList implements WeightedRandomSampler {
 
   // TODO think about how we want to do update here.
   // Assuming weighted element is already updated.
-  public void update(Sequence weightedElement) {
+  public void update(WeightedElement<T> weightedElement) {
     // this will be O(n), but it is what it is.
     int index = theList.indexOf(weightedElement);
     if (index >= 0) {
@@ -44,7 +44,7 @@ public class WeightedList implements WeightedRandomSampler {
   }
 
   @Override
-  public Sequence getRandomElement() {
+  public WeightedElement<T> getRandomElement() {
     if (theList.size() == 0) {
       return null;
     }

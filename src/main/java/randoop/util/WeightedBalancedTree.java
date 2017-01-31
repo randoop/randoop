@@ -1,12 +1,10 @@
 package randoop.util;
 
-import randoop.sequence.Sequence;
-
 import java.util.HashMap;
 
-public class WeightedBalancedTree implements WeightedRandomSampler {
+public class WeightedBalancedTree<T> implements WeightedRandomSampler<T> {
 
-  private HashMap<Sequence, Node> currentElements;
+  private HashMap<T, Node> currentElements;
   private Node root;
   private Node currentParent;
   private Node prevChild;
@@ -18,7 +16,7 @@ public class WeightedBalancedTree implements WeightedRandomSampler {
   }
 
   @Override
-  public Sequence getRandomElement() {
+  public WeightedElement<T> getRandomElement() {
     if (root == null) {
       return null;
     }
@@ -62,12 +60,12 @@ public class WeightedBalancedTree implements WeightedRandomSampler {
   }
 
   @Override
-  public void add(Sequence weightedElement) {
+  public void add(WeightedElement<T> weightedElement) {
     add(weightedElement, weightedElement.getWeight());
   }
 
   // TODO test this.
-  public void add(Sequence weightedElement, double weight) {
+  public void add(WeightedElement<T> weightedElement, double weight) {
     // This method is going to be tricky, hope this works out :)
     if (currentElements.containsKey(weightedElement)) {
       throw new IllegalArgumentException("Cannot add an element already in the Tree");
@@ -102,19 +100,25 @@ public class WeightedBalancedTree implements WeightedRandomSampler {
     while (traversal.parent != null) {
       traversal.parent.weight += n.weight;
     }
-    currentElements.put(weightedElement, n);
+    currentElements.put(weightedElement.getData(), n);
   }
 
-  private static class Node {
+  public void update(T sequence, double newWeight) {
+    if (!currentElements.containsKey(sequence)) {
+      throw new IllegalArgumentException("Object is not in set of nodes");
+    }
+  }
+
+  private static class Node<T> {
     public Edge parent;
     public Edge left;
     public Edge right;
     public Node adj; // represents a right pointer to the adjacent node.
 
-    public Sequence data;
+    public WeightedElement<T> data;
     public double weight;
 
-    public Node(Sequence data, double weight) {
+    public Node(WeightedElement<T> data, double weight) {
       this.data = data;
       this.weight = weight;
     }

@@ -2,11 +2,11 @@ package randoop.util;
 
 import randoop.sequence.Sequence;
 
-public interface WeightedRandomSampler {
+public interface WeightedRandomSampler<T> {
 
-  Sequence getRandomElement();
+  WeightedElement<T> getRandomElement();
 
-  void add(Sequence weightedElement);
+  void add(WeightedElement<T> weightedElement);
 
   // TODO decide if the weightedElement should be update outside or inside update
 }

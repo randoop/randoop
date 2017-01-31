@@ -1,6 +1,20 @@
 package randoop.util;
 
-public interface WeightedElement {
+public class WeightedElement<T> {
 
-  double getWeight();
+  private T data;
+  private double weight;
+
+  public WeightedElement(T data, double weight) {
+    this.data = data;
+    this.weight = weight;
+  }
+
+  public double getWeight() {
+    return weight;
+  }
+
+  public T getData() {
+    return data;
+  }
 }

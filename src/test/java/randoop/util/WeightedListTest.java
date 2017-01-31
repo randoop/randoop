@@ -13,25 +13,19 @@ public class WeightedListTest {
     assertTrue(wl.getRandomElement() == null);
   }
 
+  // TODO fix this.
   @Test
   public void testOneElement() {
     WeightedList wl = new WeightedList();
-    WeightObject expected = new WeightObject(3);
+    WeightedElement<WeightObject> expected =
+        new WeightedElement<WeightObject>(new WeightObject(), 3);
     wl.add(expected);
     WeightedElement result = wl.getRandomElement();
     assertEquals(expected, result);
   }
 
-  private class WeightObject implements WeightedElement {
+  // TODO make new interface,
+  private class WeightObject {
     public double weight = 0.0;
-
-    public WeightObject(double weight) {
-      this.weight = weight;
-    }
-
-    @Override
-    public double getWeight() {
-      return weight;
-    }
   }
 }
