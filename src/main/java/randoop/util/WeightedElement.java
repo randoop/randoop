@@ -31,6 +31,7 @@ public class WeightedElement<T extends Comparable<T>> {
     WeightedElement element = (WeightedElement) o;
     return element.data.equals(this.data);
   }
+
   @Override
   public int hashCode() {
     return data.hashCode();
