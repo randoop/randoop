@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -13,7 +14,7 @@ import plume.UtilMDE;
  * {@code TypeTuple} represents an ordered tuple of type objects.
  * Type tuples primarily used to represent the input types of operations.
  */
-public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
+public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple>, Serializable {
 
   /** The sequence of types in this type tuple. */
   private final ArrayList<Type> list;

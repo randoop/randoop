@@ -4,13 +4,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 import randoop.DummyVisitor;
 import randoop.Globals;
@@ -29,7 +24,7 @@ import randoop.sequence.Sequence;
 import randoop.sequence.SequenceParseException;
 import randoop.test.predicate.ExceptionBehaviorPredicate;
 import randoop.test.predicate.ExceptionPredicate;
-import randoop.types.Type;
+import randoop.types.*;
 import randoop.util.MultiMap;
 import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;

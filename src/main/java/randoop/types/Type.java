@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.io.Serializable;
 import java.lang.reflect.WildcardType;
 
 /**
@@ -34,7 +35,7 @@ import java.lang.reflect.WildcardType;
  * {@link #forName(String)}.
  * These methods translate the reflection types into objects of subclasses of this type.
  */
-public abstract class Type implements Comparable<Type> {
+public abstract class Type implements Comparable<Type>, Serializable {
 
   /**
    * Translates a {@code Class} into a {@link Type} object.

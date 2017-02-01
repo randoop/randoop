@@ -1,5 +1,11 @@
 package randoop.types;
 
+import randoop.operation.ConstructorCall;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -11,7 +17,7 @@ import java.util.Objects;
 class ExplicitTypeVariable extends TypeVariable {
 
   /** the type parameter */
-  private final java.lang.reflect.TypeVariable<?> variable;
+  private transient final java.lang.reflect.TypeVariable<?> variable;
 
   /**
    * Create a {@code ExplicitTypeVariable} for the given type parameter

@@ -1,5 +1,6 @@
 package randoop.contract;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import randoop.types.TypeTuple;
  * represents a <i>regression</i> as it captures the behavior of the code when
  * it is executed.
  */
-public final class IsNull implements ObjectContract {
+public final class IsNull implements ObjectContract, Serializable {
 
   @Override
   public boolean equals(Object o) {

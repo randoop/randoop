@@ -1,6 +1,7 @@
 package randoop.sequence;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -92,7 +93,7 @@ import randoop.util.ProgressDisplay;
  * </ul>
  *
  */
-public class ExecutableSequence {
+public class ExecutableSequence implements java.io.Serializable {
 
   /** The underlying sequence. */
   public Sequence sequence;
@@ -659,5 +660,14 @@ public class ExecutableSequence {
    */
   public boolean coversClass(Class<?> c) {
     return executionResults.getCoveredClasses().contains(c);
+  }
+
+  private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+    out.defaultWriteObject();
+  }
+
+  private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    executionResults = new Execution(this.sequence);
   }
 }

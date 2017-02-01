@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.io.Serializable;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
  * @see ReferenceArgument
  * @see WildcardArgument
  */
-public abstract class TypeArgument {
+public abstract class TypeArgument implements Serializable {
 
   /**
    * Converts a {@code java.lang.reflect.Type} to a {@code TypeArgument}

@@ -2,8 +2,10 @@ package randoop.sequence;
 
 import randoop.types.Type;
 
+import java.io.Serializable;
+
 /** Represents the result of a statement call in a sequence. */
-public class Variable implements Comparable<Variable> {
+public class Variable implements Comparable<Variable>, Serializable {
 
   // The index of the statement that creates this value.
   public final int index;

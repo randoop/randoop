@@ -1,5 +1,6 @@
 package randoop.sequence;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -35,7 +36,7 @@ import randoop.util.WeightedElement;
  * of the sequence. The class randoop.ExecutableSequence adds functionality that
  * executes the sequence.
  */
-public final class Sequence implements WeightedElement {
+public final class Sequence implements WeightedElement, java.io.Serializable {
 
   public double lastTimeUsed = java.lang.System.currentTimeMillis();
 
@@ -342,7 +343,7 @@ public final class Sequence implements WeightedElement {
   // Now concatenation is easier: to concatenate two sequences, concatenate
   // their statements. Also, we do not need to create any new
   // statements.
-  static final class RelativeNegativeIndex {
+  static final class RelativeNegativeIndex implements Serializable {
 
     public final int index;
 

@@ -1,12 +1,13 @@
 package randoop.test;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public class RegressionChecks implements TestChecks {
+public class RegressionChecks implements TestChecks, Serializable {
 
   private Set<Check> checks;
   private ExceptionCheck exceptionCheck;
