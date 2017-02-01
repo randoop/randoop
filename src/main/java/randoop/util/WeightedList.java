@@ -82,4 +82,10 @@ public class WeightedList<T> implements WeightedRandomSampler<T> {
     }
     return mid;
   }
+
+  @Override
+  // returns number of elements
+  public int getSize() {
+    return theList.size();
+  }
 }

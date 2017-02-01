@@ -129,6 +129,12 @@ public class WeightedBalancedTree<T> implements WeightedRandomSampler<T> {
     }
   }
 
+  @Override
+  // returns number of elements
+  public int getSize() {
+    return currentElements.size();
+  }
+
   private static class Node<T> {
     public Edge<T> parentEdge;
     public Edge<T> leftEdge;

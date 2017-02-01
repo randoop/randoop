@@ -10,5 +10,7 @@ public interface WeightedRandomSampler<T> {
 
   void add(T t, double weight);
 
+  int getSize();
+
   // TODO decide if the weightedElement should be update outside or inside update
 }
