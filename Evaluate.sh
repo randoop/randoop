@@ -82,6 +82,10 @@ fi
 # Compile Defects4j projects and then run generated tests on them
 #TODO: only run this if we are performing first time set up
 for project in ${projects[@]}; do
+	classes_dir=build/classes
+	if [ "$project" == "Chart" ]; then
+		classes_dir=build
+	fi
 
 	# Create working directory for running tests on Defects4j projects
 	curr_dir=$work_dir$project
@@ -102,9 +106,8 @@ for project in ${projects[@]}; do
 	defects4j compile -w $curr_dir
 
 	# Create the classlist and jar list for this project.
-	# TODO: generalize build/classes
     # TODO: pull this into a function and add specific logic for each project based on project directory structure
-	find $curr_dir/build/classes/ -name \*.class >${project}classlist.txt
+	find ${curr_dir}/${classes_dir}/ -name \*.class >${project}classlist.txt
 	sed -i 's/\//\./g' ${project}classlist.txt
 	sed -i 's/\(^.*build\.classes\.\)//g' ${project}classlist.txt
 	sed -i 's/\.class$//g' ${project}classlist.txt
@@ -118,6 +121,11 @@ done
 for time in ${time_limits[@]}; do
 	for i in `seq 1 10`; do
 		for project in ${projects[@]}; do
+			classes_dir=build/classes
+			if [ "$project" == "Chart" ]; then
+				classes_dir=build
+			fi
+
 			echo "Performing evaluation #${i} for project ${project}..."
 			
 			# Set up local variables based on the project name that we are currently evaluating
@@ -136,7 +144,7 @@ for time in ${time_limits[@]}; do
 			# TODO: figure out why constant mining doesn't work
 			# TODO: is it correct to run Randoop separately over each project, or should we somehow run it over the combination of all of them?
 			echo "Running Randoop with time limit set to ${time}, project ${project} iteration #${i}"
-			java -ea -classpath ${jars}${curr_dir}/build/classes:$randoop_jar randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --timelimit=20 --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests
+			java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$randoop_jar randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --timelimit=20 --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests
 
 			# Change the generated test handlers to end with "Tests.java" So they are picked up by the ant task for running tests"
 			mv $test_dir/RegressionTestDriver.java $test_dir/RegressionTests.java
