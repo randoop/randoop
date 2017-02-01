@@ -11,6 +11,7 @@ import static org.junit.Assert.assertTrue;
 public class WeightedListTest {
 
   public final double epsilon = .01;
+
   @Test
   public void testEmptyList() {
     WeightedList wl = new WeightedList();
@@ -27,7 +28,6 @@ public class WeightedListTest {
     WeightedElement<WeightObject> result = wl.getRandomElement();
     assertEquals(expected, result);
   }
-
 
   @Test
   public void testMutlipleElements() {
@@ -62,6 +62,7 @@ public class WeightedListTest {
 
   private class WeightObject {
     public double weight = 0.0;
+
     public WeightObject() {}
   }
 }
