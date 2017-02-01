@@ -1,7 +1,6 @@
 #!/bin/bash
 
 echo "Running DigDog Evaluation Script"
-init=false
 usage() {
 	echo "Usage: ./Evaluate.sh [-i]"
 }
@@ -9,11 +8,15 @@ usage() {
 # Read the flag options that were passed in when the script was run.
 # Options include:
     # -i (init): If set, will re-do all initialization work, including cloning the defects4j repository, initializing the defects4j projects, and creating the classlists and jarlists for each project.
+    # -b (build): If set, randoop will be built using the gradle wrapper
     # TODO: Add more options.
-while getopts ":i" opt; do
+while getopts ":i:b" opt; do
 	case $opt in
 		i)
 			init=true
+			;;
+		b)
+			build=true
 			;;
 		\?)
 			echo "Unknown flag"
@@ -31,6 +34,15 @@ work_dir=proj
 projects=("Closure")
 # "Chart" "Closure" "Lang" "Math" "Time"
 time_limits=(2 10 30 60 120)
+
+# If the build flag was set or if there is no randoop jar
+# Build the randoop jar
+if [ $build ] || [ ! -f ./build/libs/randoop-all-3.0.8.jar ]; then
+	echo "Building Randoop jar"
+	./gradlew clean
+	./gradlew jar
+	randoop_jar=`pwd`/build/libs/randoop-all-3.0.8.jar
+fi
 
 # Go up one level to the directory that contains this repository
 cd ..
@@ -57,13 +69,7 @@ if [ ! -d "defects4j" ] ; then
 	./init.sh
     # TODO: this line doesn't do anything, I think
 	export PATH=$PATH:./framework/bin
-
-    echo "Downloading the Randoop release jar"
-	# Get 3.0.8 release of randoop, which will be used as one of the test generation tools
-	# TODO: figure out how to get compile a jar from our version of randoop in order to use that
-	wget https://github.com/randoop/randoop/releases/download/v3.0.8/randoop-3.0.8.zip
-	unzip randoop-3.0.8.zip
-
+    
 	# Install Perl DBI
 	printf 'y\ny\n\n' | perl -MCPAN -e 'install Bundle::DBI'
 else
@@ -130,7 +136,7 @@ for time in ${time_limits[@]}; do
 			# TODO: figure out why constant mining doesn't work
 			# TODO: is it correct to run Randoop separately over each project, or should we somehow run it over the combination of all of them?
 			echo "Running Randoop with time limit set to ${time}, project ${project} iteration #${i}"
-			java -ea -classpath ${jars}${curr_dir}/build/classes:randoop-all-3.0.8.jar randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --timelimit=20 --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests
+			java -ea -classpath ${jars}${curr_dir}/build/classes:$randoop_jar randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --timelimit=20 --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests
 
 			# Change the generated test handlers to end with "Tests.java" So they are picked up by the ant task for running tests"
 			mv $test_dir/RegressionTestDriver.java $test_dir/RegressionTests.java
