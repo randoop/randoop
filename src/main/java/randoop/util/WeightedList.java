@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import randoop.BugInRandoopException;
-import randoop.sequence.Sequence;
 
-public class WeightedList<T> implements WeightedRandomSampler<T> {
+public class WeightedList<T extends Comparable<T>> implements WeightedRandomSampler<T> {
 
   private List<WeightedElement<T>> theList;
   private List<Double> cumulativeWeights;
@@ -32,9 +31,6 @@ public class WeightedList<T> implements WeightedRandomSampler<T> {
   public void add(T elt, double weight) {
     add(new WeightedElement<T>(elt, weight));
   }
-
-  // TODO think about how we want to do update here.
-  // Assuming weighted element is already updated.
 
   public void update(WeightedElement<T> weightedElement) {
     // this will be O(n), but it is what it is.

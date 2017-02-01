@@ -23,9 +23,9 @@ public class WeightedRuntimeChecker {
     ArrayList<Double> weightedRandomAvgTreeResults = new ArrayList<Double>();
     ArrayList<Double> weightedUpdateAvgTreeResults = new ArrayList<Double>();
     // initializing the roots
-    WeightedRandomSampler<Object> weightedList = new WeightedList<Object>();
-    WeightedRandomSampler<Object> weightedTree = new WeightedBalancedTree<Object>();
-    Object root = new Object();
+    WeightedRandomSampler<Integer> weightedList = new WeightedList<Integer>();
+    WeightedRandomSampler<Integer> weightedTree = new WeightedBalancedTree<Integer>();
+    Integer root = new Integer(1);
     weightedList.add(root, 1);
     weightedTree.add(root, 1);
 
@@ -38,7 +38,7 @@ public class WeightedRuntimeChecker {
 
       long res = 0;
       for (int j = 0; j < NUMBER_OF_TESTS; j++) {
-        res += testAdd(new WeightedList<Object>());
+        res += testAdd(new WeightedList<Integer>());
       }
       double weightedAddAvgList = res * 1.0 / NUMBER_OF_TESTS;
       weightedAddAvgListResults.add(weightedAddAvgList);
@@ -54,7 +54,7 @@ public class WeightedRuntimeChecker {
 
       res = 0;
       for (int j = 0; j < NUMBER_OF_TESTS; j++) {
-        res += testUpdateWeightedList(new WeightedList<Object>());
+        res += testUpdateWeightedList(new WeightedList<Integer>());
       }
       double weightedUpdateAvgList = res * 1.0 / NUMBER_OF_TESTS;
       weightedUpdateAvgListResults.add(weightedUpdateAvgList);
@@ -64,7 +64,7 @@ public class WeightedRuntimeChecker {
 
       res = 0;
       for (int j = 0; j < NUMBER_OF_TESTS; j++) {
-        res += testAdd(new WeightedBalancedTree<Object>());
+        res += testAdd(new WeightedBalancedTree<Integer>());
       }
       double weightedAddAvgTree = res * 1.0 / NUMBER_OF_TESTS;
       weightedAddAvgTreeResults.add(weightedAddAvgTree);
@@ -80,7 +80,7 @@ public class WeightedRuntimeChecker {
 
       res = 0;
       for (int j = 0; j < NUMBER_OF_TESTS; j++) {
-        res += testUpdateWeightedBalancedTree(new WeightedBalancedTree<Object>());
+        res += testUpdateWeightedBalancedTree(new WeightedBalancedTree<Integer>());
       }
       double weightedUpdateAvgTree = res * 1.0 / NUMBER_OF_TESTS;
       weightedUpdateAvgTreeResults.add(weightedUpdateAvgTree);
@@ -101,21 +101,21 @@ public class WeightedRuntimeChecker {
   }
 
   // Fills the input with additonal objects up to the sizeOfStructs
-  public static WeightedRandomSampler<Object> fillWeightedRandomSampler(
-      WeightedRandomSampler<Object> input) {
+  public static WeightedRandomSampler<Integer> fillWeightedRandomSampler(
+      WeightedRandomSampler<Integer> input) {
     // Construct the struct
     for (int i = input.getSize(); i < sizeOfStructs; i++) {
       int weight = i;
-      input.add(new Object(), weight);
+      input.add(new Integer(1), weight);
     }
     return input;
   }
 
-  public static long testAdd(WeightedRandomSampler<Object> struct) {
+  public static long testAdd(WeightedRandomSampler<Integer> struct) {
     long start = System.nanoTime();
     for (int i = 1; i < sizeOfStructs; i++) {
       int weight = i;
-      struct.add(new Object(), weight);
+      struct.add(new Integer(1), weight);
     }
     long total = System.nanoTime() - start;
     return total;
@@ -123,16 +123,16 @@ public class WeightedRuntimeChecker {
 
   // Tests the update in WeightedBalancedTree
   // This also must create and fill a new WeightedBalancedTree, but the time is only updating
-  public static long testUpdateWeightedBalancedTree(WeightedBalancedTree<Object> struct) {
+  public static long testUpdateWeightedBalancedTree(WeightedBalancedTree<Integer> struct) {
     // Need to construct the struct, because we need reference to the exact root
-    Object root = new Object();
+    Integer root = new Integer(1);
     // Construct the struct
     struct.add(root, 1);
     for (int i = 1; i < sizeOfStructs; i++) {
       int weight = i;
-      struct.add(new Object(), weight);
+      struct.add(new Integer(1), weight);
     }
-    //TODO: Test: root =  new Object(); -> IllegalArgumentException: Object is not in set of nodes, but not always verified due to hashmap?
+    //TODO: Test: root =  new Integer(); -> IllegalArgumentException: Integer is not in set of nodes, but not always verified due to hashmap?
 
     // Now update
     long start = System.nanoTime();
@@ -145,16 +145,16 @@ public class WeightedRuntimeChecker {
 
   // Tests the update in WeightedList
   // This also must create and fill a new WeightedList, but the time is only updating
-  public static long testUpdateWeightedList(WeightedList<Object> struct) {
-    WeightedElement<Object> root = new WeightedElement<>(new Object(), 1);
+  public static long testUpdateWeightedList(WeightedList<Integer> struct) {
+    WeightedElement<Integer> root = new WeightedElement<>(new Integer(1), 1);
     // Need to construct the struct, because we need reference to the exact root
     //TODO: Test: struct.add(root, 1); --> also leads to index out of bounds
     struct.add(root);
     for (int i = 1; i < sizeOfStructs; i++) {
       int weight = i;
-      struct.add(new Object(), weight);
+      struct.add(new Integer(1), weight);
     }
-    //TODO:  Test: root = new WeightedElement<>(new Object(), 1); --> leads to index out of bounds
+    //TODO:  Test: root = new WeightedElement<>(new Integer(), 1); --> leads to index out of bounds
     // Now update
     long start = System.nanoTime();
     for (int i = 1; i < sizeOfStructs; i++) {
@@ -166,11 +166,11 @@ public class WeightedRuntimeChecker {
   }
 
   // Tests the getRandomElement() sizeOfStructs times
-  public static long testGetRandom(WeightedRandomSampler<Object> struct) {
+  public static long testGetRandom(WeightedRandomSampler<Integer> struct) {
     // Test the random
     long start = System.nanoTime();
     for (int i = 0; i < sizeOfStructs; i++) {
-      WeightedElement<Object> w = struct.getRandomElement();
+      WeightedElement<Integer> w = struct.getRandomElement();
     }
     long total = System.nanoTime() - start;
     return total;

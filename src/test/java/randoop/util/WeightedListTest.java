@@ -21,22 +21,22 @@ public class WeightedListTest {
   // TODO fix this.
   @Test
   public void testOneElement() {
-    WeightedList<WeightObject> wl = new WeightedList<>();
-    WeightedElement<WeightObject> expected =
-        new WeightedElement<WeightObject>(new WeightObject(), 3);
+    WeightedList<Integer> wl = new WeightedList<>();
+    WeightedElement<Integer> expected =
+        new WeightedElement<Integer>(new Integer(1), 3);
     wl.add(expected);
-    WeightedElement<WeightObject> result = wl.getRandomElement();
+    WeightedElement<Integer> result = wl.getRandomElement();
     assertEquals(expected, result);
   }
 
   @Test
   public void testMutlipleElements() {
     // Create a list of weighted elements.
-    WeightedList<WeightObject> list = new WeightedList<>();
+    WeightedList<Integer> list = new WeightedList<>();
     int sumOfAllWeights = 0;
     for (int i = 1; i < 10; i++) {
       int weight = i;
-      list.add(new WeightedElement<WeightObject>(new WeightObject(), i));
+      list.add(new WeightedElement<Integer>(new Integer(1), i));
       sumOfAllWeights += weight;
     }
 
@@ -45,7 +45,7 @@ public class WeightedListTest {
 
     // Select lots of times.
     for (int i = 0; i < 100000; i++) {
-      WeightedElement<WeightObject> w = list.getRandomElement();
+      WeightedElement<Integer> w = list.getRandomElement();
       Integer timesSelected = weightToTimesSelected.get(w.getWeight());
       if (timesSelected == null) timesSelected = 0;
       weightToTimesSelected.put(w.getWeight(), timesSelected + 1);
@@ -58,11 +58,5 @@ public class WeightedListTest {
       double expectedRatio = e.getKey() / (double) sumOfAllWeights;
       assertTrue(Math.abs(actualRatio - expectedRatio) < epsilon);
     }
-  }
-
-  private class WeightObject {
-    public double weight = 0.0;
-
-    public WeightObject() {}
   }
 }

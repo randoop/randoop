@@ -2,7 +2,7 @@ package randoop.util;
 
 import randoop.sequence.Sequence;
 
-public interface WeightedRandomSampler<T> {
+public interface WeightedRandomSampler<T extends Comparable<T>> {
 
   WeightedElement<T> getRandomElement();
 

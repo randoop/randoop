@@ -2,7 +2,7 @@ package randoop.util;
 
 import java.util.HashMap;
 
-public class WeightedBalancedTree<T> implements WeightedRandomSampler<T> {
+public class WeightedBalancedTree<T extends Comparable<T>> implements WeightedRandomSampler<T> {
 
   // TODO may be issues with using T in hashmap, consider making WeightedElement
   private HashMap<T, Node<T>> currentElements;
@@ -135,7 +135,7 @@ public class WeightedBalancedTree<T> implements WeightedRandomSampler<T> {
     return currentElements.size();
   }
 
-  private static class Node<T> {
+  private static class Node<T extends Comparable<T>> {
     public Edge<T> parentEdge;
     public Edge<T> leftEdge;
     public Edge<T> rightEdge;
@@ -148,7 +148,7 @@ public class WeightedBalancedTree<T> implements WeightedRandomSampler<T> {
     }
   }
 
-  private static class Edge<T> {
+  private static class Edge<T extends Comparable<T>> {
     public Node<T> parent;
     public Node<T> child;
     public double weight;
