@@ -22,7 +22,8 @@ while getopts ":i" opt; do
 done
 
 work_dir=tmp
-projects=("Chart" "Closure" "Lang" "Math" "Time")
+projects=("Closure")
+# "Chart" "Closure" "Lang" "Math" "Time"
 time_limits=(2 10 30 60 120)
 
 # Set up defects4j repo
@@ -62,51 +63,51 @@ for project in ${projects[@]}; do
 	# Checkout and compile current project
 	defects4j checkout -p $project -v 1b -w $curr_dir
 	defects4j compile -w $curr_dir
-	defects4j coverage -w $curr_dir
 
 	# Run randoop on the current project, outputting the tests to $work_dir$project/test
-	mkdir $test_dir
-	find $curr_dir/build/ -name \*.class >${project}classlist.txt
+	# TODO: generalize build/classes
+	find $curr_dir/build/classes/ -name \*.class >${project}classlist.txt
 	sed -i 's/\//\./g' ${project}classlist.txt
-	sed -i 's/\(^.*build\.\)//g' ${project}classlist.txt
-	sed -i 's/\.class//g' ${project}classlist.txt
+	sed -i 's/\(^.*build\.classes\.\)//g' ${project}classlist.txt
+	sed -i 's/\.class$//g' ${project}classlist.txt
+	sed -i '/\$/d' ${project}classlist.txt
 
 	find $curr_dir -name \*.jar > ${project}jars.txt
-	jars=`tr '\n' ':' < ${project}jars.txt`
-
-	java -ea -classpath ${jars}${curr_dir}/build/:randoop-all-3.0.8.jar randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --timelimit=10 --junit-reflection-allowed=false --junit-package-name=tmpChart.gentests
-	mv $test_dir/RegressionTestDriver.java $test_dir/RegressionTests.java
-	sed -i 's/RegressionTestDriver/RegressionTests/' $test_dir/RegressionTests.java
-	
-	mv $test_dir/ErrorTestDriver.java $test_dir/ErrorTests.java
-	sed -i 's/ErrorTestDriver/ErrorTests/' $test_dir/ErrorTests.java
-
-	tar -cvf ${curr_dir}/randoop.tar $test_dir
-	bzip2 ${curr_dir}/randoop.tar
-
-	defects4j coverage -w $curr_dir -s ${curr_dir}/randoop.tar.bz2
 done
 
-# for time in $time_limits; do
-# 
-# 	for i in `seq 1 10`; do
-# 	
-		
-# 		for project in $projects; do
-# 		
-# 			curr_dir=$work_dir$project
-#			test_dir=${curr_dir}/gentests
+for time in ${time_limits[@]}; do
+	for i in `seq 1 10`; do
+		for project in ${projects[@]}; do
+			curr_dir=$work_dir$project
+			test_dir=${curr_dir}/gentests
+			jars=`tr '\n' ':' < ${project}jars.txt`
 
-# 			# Run randoop on the current project, outputting the tests to $work_dir$project/test
-# 			rm -rf $test_dir
-# 			mkdir $test_dir
+			# Run randoop on the current project, outputting the tests to $work_dir$project/test
+			rm -rf $test_dir
+			mkdir $test_dir
 
-#			java -ea -classpath ${jars}${curr_dir}/build/:randoop-all-3.0.8.jar randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --timelimit=$time --junit-reflection-allowed=false --junit-package-name=tmpChart.gentests
+			# TODO: figure out why constant mining doesn't work
+			java -ea -classpath ${jars}${curr_dir}/build/classes:randoop-all-3.0.8.jar randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --timelimit=20 --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests
 
-#			tar -cvf ${curr_dir}/randoop.tar $test_dir
-#		 	bzip2 ${curr_dir}/randoop.tar
+			mv $test_dir/RegressionTestDriver.java $test_dir/RegressionTests.java
+			sed -i 's/RegressionTestDriver/RegressionTests/' $test_dir/RegressionTests.java
+			
+			mv $test_dir/ErrorTestDriver.java $test_dir/ErrorTests.java
+			sed -i 's/ErrorTestDriver/ErrorTests/' $test_dir/ErrorTests.java
 
-#		 	defects4j coverage -w curr_dir -s ${curr_dir}/randoop.tar.bz2
-# 		done
-# 	done
-# done
+			tar -cvf ${curr_dir}/randoop.tar $test_dir
+			bzip2 ${curr_dir}/randoop.tar
+
+			defects4j coverage -w $curr_dir -s ${curr_dir}/randoop.tar.bz2 > results.txt
+			grep 'Lines total' results.txt > numbers.txt
+			grep 'Lines covered' results.txt >> numbers.txt
+			grep 'Conditions total' results.txt >> numbers.txt
+			grep 'Conditions covered' results.txt >> numbers.txt
+
+			sed -i 's/[^0-9]//g' numbers.txt
+			cat numbers.txt
+
+			rm "${curr_dir}/randoop.tar.bz2"
+		done
+	done
+done
