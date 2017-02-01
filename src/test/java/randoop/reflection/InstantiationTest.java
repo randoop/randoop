@@ -16,6 +16,8 @@ import randoop.operation.TypedOperation;
 import randoop.reflection.intersectiontypes.AccessibleInterval;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GenericClassType;
+import randoop.types.InstantiatedType;
+import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
@@ -234,14 +236,27 @@ public class InstantiationTest {
     classnames.add("randoop.reflection.CaptureInstantiationCase");
     OperationModel model = createModel(classnames, "randoop.reflection");
     Set<TypedOperation> classOperations = new LinkedHashSet<>();
-    GenericClassType predicateType =
-        GenericClassType.forClass(CaptureInstantiationCase.LocalPredicate.class);
-    Substitution<ReferenceType> subst =
-        Substitution.forArgs(predicateType.getTypeParameters(), JavaTypes.SERIALIZABLE_TYPE);
-
     Set<Type> inputTypes = new LinkedHashSet<>();
     addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
     addTypes(ClassOrInterfaceType.forClass(AnIterable.class), inputTypes);
+    Substitution<ReferenceType> subst;
+    GenericClassType predicateType =
+        GenericClassType.forClass(CaptureInstantiationCase.LocalPredicate.class);
+    subst = Substitution.forArgs(predicateType.getTypeParameters(), JavaTypes.SERIALIZABLE_TYPE);
+    addTypes(predicateType.apply(subst), inputTypes);
+    GenericClassType onePredicateType =
+        GenericClassType.forClass(CaptureInstantiationCase.OnePredicate.class);
+    subst = Substitution.forArgs(onePredicateType.getTypeParameters(), JavaTypes.SERIALIZABLE_TYPE);
+    InstantiatedType oneSerializablePredicateType = onePredicateType.apply(subst);
+    addTypes(oneSerializablePredicateType, inputTypes);
+    subst =
+        Substitution.forArgs(
+            JDKTypes.TREE_SET_TYPE.getTypeParameters(),
+            (ReferenceType) oneSerializablePredicateType);
+    addTypes(JDKTypes.TREE_SET_TYPE.apply(subst), inputTypes);
+    subst =
+        Substitution.forArgs(
+            predicateType.getTypeParameters(), (ReferenceType) oneSerializablePredicateType);
     addTypes(predicateType.apply(subst), inputTypes);
 
     Set<String> nullOKNames = new HashSet<>();
@@ -250,6 +265,9 @@ public class InstantiationTest {
     for (TypedOperation operation : classOperations) {
       if (operation.getName().equals("filter")) {
         assertFalse("filter operation should be instantiated ", operation.isGeneric());
+      }
+      if (operation.getName().equals("oneOf")) {
+        assertFalse("oneOf operation should be instantiated", operation.isGeneric());
       }
     }
   }
