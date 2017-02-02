@@ -22,6 +22,7 @@ class AbstractTag implements Tag {
   /**
    * Constructs a {@code Tag} with the given comment.
    *
+   * @param kind  the kind of the created tag
    * @param comment the comment associated with the exception
    * @throws NullPointerException if comment is null
    */
