@@ -1,4 +1,4 @@
-package randoop.main;
+package minimizer;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;

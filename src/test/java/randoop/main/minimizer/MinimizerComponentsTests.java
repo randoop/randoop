@@ -1,7 +1,8 @@
-package randoop.main;
+package randoop.main.minimizer;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
+import randoop.main.Minimize;
 
 import java.util.HashSet;
 import java.util.Set;

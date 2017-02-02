@@ -29,24 +29,25 @@ import com.github.javaparser.ast.visitor.*;
  * </ol>
  */
 public class Minimize extends CommandHandler {
-
-  public static PrintStream out = System.out;
-
-  /* The complete file path to the Java file. */
+  /**
+   * The complete file path to the Java file.
+   */
   @Option("complete input file path")
   public static String filepath;
 
-  /* Second argument is the classpath that includes dependencies needed to
-  compile and run the Java file. */
+  /**
+   * Second argument is the classpath that includes dependencies needed to
+   * compile and run the Java file.
+   */
   @Option("complete class path to compile and run input file")
   public static String fileclasspath;
 
-  /* Maximum number of seconds allowed for a unit test within the test
-  suite to run. */
+  /**
+   * Maximum number of seconds allowed for a unit test within the test
+   * suite to run.
+   */
   @Option("timeout value for a unit test case")
   public static int testcasetimeout = -1;
-
-  private static Options options = new Options(Minimize.class);
 
   public Minimize() {
     super(
@@ -73,7 +74,7 @@ public class Minimize extends CommandHandler {
   @Override
   public boolean handle(String[] args) throws RandoopTextuiException {
     try {
-      String[] nonargs = options.parse(args);
+      String[] nonargs = foptions.parse(args);
       if (nonargs.length > 0) {
         throw new Options.ArgException("Unrecognized arguments: " + Arrays.toString(nonargs));
       }
@@ -91,6 +92,18 @@ public class Minimize extends CommandHandler {
       System.exit(1);
     }
 
+    // Main minimize method
+    return mainMinimize();
+  }
+
+  /**
+   * Main starting point to minimize the input test file.
+   * Uses the options to determine filepath, classpath and timeout limit.
+   *
+   * @return boolean flag indicating minimization status. True indicates success,
+   * false indicates that there was an error.
+   */
+  private boolean mainMinimize() {
     String filePath = Minimize.filepath;
     String classpath = Minimize.fileclasspath;
     int timeoutLimit = Minimize.testcasetimeout;
@@ -499,7 +512,7 @@ public class Minimize extends CommandHandler {
   /**
    * Get the set of all the names of the different types that appear in a
    * fully qualified type name. For example the fully qualified type name:
-   * Map<String, Pair<Integer, Double>> should return the set: {Map, String,
+   * {@code Map<String, Pair<Integer, Double>>} should return the set: {Map, String,
    * Pair, Integer, Double}.
    *
    * @param typeName fully qualified type name
@@ -719,13 +732,6 @@ public class Minimize extends CommandHandler {
       return null;
     }
 
-    // Wait for process to complete.
-    /*
-     * if (!process.waitFor(timeoutLimit, TimeUnit.SECONDS)) { // Process
-     * timed out. System.out.println("Destroy"); process.destroy(); return
-     * null; }
-     */
-
     // Run and collect the results from the standard output and error output
     return new Outputs(stdOutput.get(), errOutput.get());
   }
@@ -888,11 +894,11 @@ public class Minimize extends CommandHandler {
    * @param format the string format
    * @param args   the arguments
    */
-  private static void usage(String format, Object... args) {
+  private void usage(String format, Object... args) {
     System.out.print("ERROR: ");
     System.out.printf(format, args);
     System.out.println();
-    System.out.println(options.usage());
+    System.out.println(foptions.usage());
     System.exit(-1);
   }
 }

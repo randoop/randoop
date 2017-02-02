@@ -1,4 +1,4 @@
-package randoop.main;
+package randoop.main.minimizer;
 
 import static org.junit.Assert.*;
 
@@ -15,23 +15,30 @@ public class MinimizerTests {
   private static final String pathSeparator = System.getProperty("path.separator");
   private static final String fileSeparator = System.getProperty("file.separator");
 
-  private static final String testDir = "src" + fileSeparator + "test" + fileSeparator;
+  private static final String testDir =
+      ".."
+          + fileSeparator
+          + ".."
+          + fileSeparator
+          + ".."
+          + fileSeparator
+          + ".."
+          + fileSeparator
+          + "resources"
+          + fileSeparator
+          + "minimizer";
   private static final String dependencyDir = testDir + "dependencies" + fileSeparator;
 
   /**
    * Test the minimizer with an input file
    *
-   * @param inputFilePath
-   *            input file to minimize
-   * @param dependecies
-   *            dependencies needed to compile and run the input file
-   * @param timeoutLimit
-   *            maximum number of seconds allowed for any test case within the
-   *            input file to run
-   * @throws IOException
-   *             thrown if output or expected output files can't be read
+   * @param inputFilePath input file to minimize
+   * @param dependencies   dependencies needed to compile and run the input file
+   * @param timeoutLimit  maximum number of seconds allowed for any test case within the
+   *                      input file to run
+   * @throws IOException thrown if output or expected output files can't be read
    */
-  private void testWithInput(String inputFilePath, String[] dependecies, String timeoutLimit)
+  private void testWithInput(String inputFilePath, String[] dependencies, String timeoutLimit)
       throws IOException {
     String outputFilePath =
         new StringBuilder(inputFilePath)
@@ -49,7 +56,7 @@ public class MinimizerTests {
 
     // Classpath obtained by adding the necessary components together
     String classPath = "";
-    for (String s : dependecies) {
+    for (String s : dependencies) {
       File file = new File(s);
       classPath += (pathSeparator + file.getAbsolutePath());
     }
@@ -72,13 +79,10 @@ public class MinimizerTests {
   /**
    * Read a file and return the String representation
    *
-   * @param filePath
-   *            path to file
-   * @param encoding
-   *            character encoding
+   * @param filePath path to file
+   * @param encoding character encoding
    * @return String representation of the input file
-   * @throws IOException
-   *             if the file can't be read
+   * @throws IOException if the file can't be read
    */
   private static String readFile(String filePath, Charset encoding) throws IOException {
     byte[] encoded = Files.readAllBytes(Paths.get(filePath));
