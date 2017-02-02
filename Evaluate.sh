@@ -1,19 +1,24 @@
 #!/bin/bash
 
 echo "Running DigDog Evaluation Script"
-init=false
 usage() {
-	echo "Usage: ./Evaluate.sh [-i]"
+	echo "Usage: ./Evaluate.sh [-i][-b]"
 }
 
 # Read the flag options that were passed in when the script was run.
 # Options include:
     # -i (init): If set, will re-do all initialization work, including cloning the defects4j repository, initializing the defects4j projects, and creating the classlists and jarlists for each project.
+    # -b (build): If set, randoop will be built using the gradle wrapper
     # TODO: Add more options.
-while getopts ":i" opt; do
+while getopts ":i:b" opt; do
 	case $opt in
 		i)
 			init=true
+			echo "Found command line option: -i"
+			;;
+		b)
+			build=true
+			echo "Found command line option: -b"
 			;;
 		\?)
 			echo "Unknown flag"
@@ -31,6 +36,19 @@ work_dir=proj
 projects=("Closure")
 # "Chart" "Closure" "Lang" "Math" "Time"
 time_limits=(2 10 30 60 120)
+
+# If the build flag was set or if there is no randoop jar
+# Build the randoop jar
+if [ $build ] ; then
+	echo "Building Randoop jar"
+	./gradlew clean
+	./gradlew jar
+else
+	# Get 3.0.8 release of randoop, which will be used as one of the test generation tools
+ 	wget https://github.com/randoop/randoop/releases/download/v3.0.8/randoop-3.0.8.zip
+ 	unzip randoop-3.0.8.zip -d build/libs
+fi
+randoop_jar=`pwd`/build/libs/randoop-all-3.0.8.jar
 
 # Go up one level to the directory that contains this repository
 cd ..
@@ -57,13 +75,7 @@ if [ ! -d "defects4j" ] ; then
 	./init.sh
     # TODO: this line doesn't do anything, I think
 	export PATH=$PATH:./framework/bin
-
-    echo "Downloading the Randoop release jar"
-	# Get 3.0.8 release of randoop, which will be used as one of the test generation tools
-	# TODO: figure out how to get compile a jar from our version of randoop in order to use that
-	wget https://github.com/randoop/randoop/releases/download/v3.0.8/randoop-3.0.8.zip
-	unzip randoop-3.0.8.zip
-
+    
 	# Install Perl DBI
 	printf 'y\ny\n\n' | perl -MCPAN -e 'install Bundle::DBI'
 else
@@ -76,19 +88,23 @@ fi
 # Compile Defects4j projects and then run generated tests on them
 #TODO: only run this if we are performing first time set up
 for project in ${projects[@]}; do
+	classes_dir=build/classes
+	if [ "$project" == "Chart" ]; then
+		classes_dir=build
+	fi
 
 	# Create working directory for running tests on Defects4j projects
 	curr_dir=$work_dir$project
 	test_dir=${curr_dir}/gentests
-    echo "Setting directories for new project: ${project}..."
-    echo "Working directory set to ${curr_dir}"
-    echo "Test directory set to ${test_dir}"
-    # If our project directory already exists, we remove it so we can start fresh
-    if [ -d "${curr_dir}" ]; then
-        echo "Working directory already existed, removing it...."
+	echo "Setting directories for new project: ${project}..."
+	echo "Working directory set to ${curr_dir}"
+	echo "Test directory set to ${test_dir}"
+	# If our project directory already exists, we remove it so we can start fresh
+	if [ -d "${curr_dir}" ]; then
+		echo "Working directory already existed, removing it...."
 		rm -rf $curr_dir
-    fi
-    echo "Initializing working directory (${curr_dir})..."
+	fi
+	echo "Initializing working directory (${curr_dir})..."
 	mkdir $curr_dir
 
 	# Checkout and compile current project
@@ -96,9 +112,8 @@ for project in ${projects[@]}; do
 	defects4j compile -w $curr_dir
 
 	# Create the classlist and jar list for this project.
-	# TODO: generalize build/classes
     # TODO: pull this into a function and add specific logic for each project based on project directory structure
-	find $curr_dir/build/classes/ -name \*.class >${project}classlist.txt
+	find ${curr_dir}/${classes_dir}/ -name \*.class >${project}classlist.txt
 	sed -i 's/\//\./g' ${project}classlist.txt
 	sed -i 's/\(^.*build\.classes\.\)//g' ${project}classlist.txt
 	sed -i 's/\.class$//g' ${project}classlist.txt
@@ -112,6 +127,12 @@ done
 for time in ${time_limits[@]}; do
 	for i in `seq 1 10`; do
 		for project in ${projects[@]}; do
+			classes_dir=build/classes
+			if [ "$project" == "Chart" ]; then
+				echo "Using special directory structure for Chart project..."
+				classes_dir=build
+			fi
+
 			echo "Performing evaluation #${i} for project ${project}..."
 			
 			# Set up local variables based on the project name that we are currently evaluating
@@ -130,29 +151,33 @@ for time in ${time_limits[@]}; do
 			# TODO: figure out why constant mining doesn't work
 			# TODO: is it correct to run Randoop separately over each project, or should we somehow run it over the combination of all of them?
 			echo "Running Randoop with time limit set to ${time}, project ${project} iteration #${i}"
-			java -ea -classpath ${jars}${curr_dir}/build/classes:randoop-all-3.0.8.jar randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --timelimit=20 --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests
+			echo "Randoop jar location: ${randoop_jar}"
+			java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$randoop_jar randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --timelimit=20 --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests
 
-			# Change the generated test handlers to end with "Tests.java" So they are picked up by the ant task for running tests"
+			# Change the generated test handlers to end with "Tests.java" 
+			# so they are picked up by the ant task for running tests"
 			mv $test_dir/RegressionTestDriver.java $test_dir/RegressionTests.java
 			sed -i 's/RegressionTestDriver/RegressionTests/' $test_dir/RegressionTests.java
 			mv $test_dir/ErrorTestDriver.java $test_dir/ErrorTests.java
 			sed -i 's/ErrorTestDriver/ErrorTests/' $test_dir/ErrorTests.java
 
-			# Package the test suite generated by Randoop (in $test_dir) to be the correct format for the defects4j coverage task
+			# Package the test suite generated by Randoop (in $test_dir) to be 
+			# the correct format for the defects4j coverage task
 			echo "Packaging generated test suite into .tar.bz2 format"
 			tar -cvf ${curr_dir}/randoop.tar $test_dir
 			bzip2 ${curr_dir}/randoop.tar
 
 			# Run the defects4j coverage task over the newly generated test suite.
-			# Results are stored into results.txt, and the specific lines used to generate coverage are put into numbers.txt
+			# Results are stored into results.txt, and the specific lines used to
+			# generate coverage are put into numbers.txt
 			defects4j coverage -w $curr_dir -s ${curr_dir}/randoop.tar.bz2 > results.txt
 			grep 'Lines total' results.txt > numbers.txt
 			grep 'Lines covered' results.txt >> numbers.txt
 			grep 'Conditions total' results.txt >> numbers.txt
 			grep 'Conditions covered' results.txt >> numbers.txt
 
-			# Remove everything but the digits from the numbers.txt file. This leaves a set of 4 lines,
-			# displaying:
+			# Remove everything but the digits from the numbers.txt file. This leaves
+			# a set of 4 lines, displaying:
 				# Total number of lines
 				# Number of lines covered
 				# Total number of conditions
