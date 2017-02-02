@@ -69,6 +69,7 @@ public class Minimize extends CommandHandler {
    * @param args first parameter is the complete path to the Java file to be
    *             minimized and the second parameter is the complete classpath
    *             needed to compile and run the Java file
+   * @return boolean flag to indicate success of handling the command if true, false otherwise
    * @throws RandoopTextuiException thrown if unrecognized arguments passed
    */
   @Override
