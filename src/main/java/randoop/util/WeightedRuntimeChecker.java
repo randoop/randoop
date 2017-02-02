@@ -100,7 +100,7 @@ public class WeightedRuntimeChecker {
     }
   }
 
-  // Fills the input with additonal objects up to the sizeOfStructs
+  // Fills the input with additional objects up to the sizeOfStructs
   public static WeightedRandomSampler<Integer> fillWeightedRandomSampler(
       WeightedRandomSampler<Integer> input) {
     // Construct the struct
@@ -125,19 +125,21 @@ public class WeightedRuntimeChecker {
   // This also must create and fill a new WeightedBalancedTree, but the time is only updating
   public static long testUpdateWeightedBalancedTree(WeightedBalancedTree<Integer> struct) {
     // Need to construct the struct, because we need reference to the exact root
-    Integer root = new Integer(1);
+    WeightedElement<Integer> testNode = new WeightedElement<>(new Integer(1), 1);
     // Construct the struct
-    struct.add(root, 1);
+    struct.add(testNode);
     for (int i = 1; i < sizeOfStructs; i++) {
       int weight = i;
-      struct.add(new Integer(1), weight);
+      WeightedElement<Integer> node = new WeightedElement<>(new Integer(1), i);
+      struct.add(node, weight);
+      testNode = node;
     }
     //TODO: Test: root =  new Integer(); -> IllegalArgumentException: Integer is not in set of nodes, but not always verified due to hashmap?
 
     // Now update
     long start = System.nanoTime();
     for (int i = 1; i < sizeOfStructs; i++) {
-      struct.update(root, i + 1);
+      struct.update(testNode, i + 1);
     }
     long total = System.nanoTime() - start;
     return total;
@@ -185,7 +187,7 @@ public class WeightedRuntimeChecker {
       ArrayList<Double> weightedRandomAvgTreeResults,
       ArrayList<Double> weightedUpdateAvgTreeResults)
       throws FileNotFoundException {
-    PrintWriter pw = new PrintWriter(new File("weightedRuntimeResults.csv"));
+    PrintWriter pw = new PrintWriter(new File("runtimeResults.csv"));
     StringBuilder sb = new StringBuilder();
     sb.append("sizeOfStructs");
     sb.append(',');

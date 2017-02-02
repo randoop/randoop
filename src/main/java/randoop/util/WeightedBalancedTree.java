@@ -2,10 +2,10 @@ package randoop.util;
 
 import java.util.HashMap;
 
-public class WeightedBalancedTree<T extends Comparable<T>> implements WeightedRandomSampler<T> {
+public class WeightedBalancedTree<T> implements WeightedRandomSampler<T> {
 
   // TODO may be issues with using T in hashmap, consider making WeightedElement
-  private HashMap<T, Node<T>> currentElements;
+  private HashMap<WeightedElement<T>, Node<T>> currentElements;
   private Node<T> root;
   private Node<T> currentParent;
   private Node<T> prevChild;
@@ -111,14 +111,14 @@ public class WeightedBalancedTree<T extends Comparable<T>> implements WeightedRa
       traversal.parentEdge.weight += n.data.getWeight();
       traversal = traversal.parentEdge.parent;
     }
-    currentElements.put(weightedElement.getData(), n);
+    currentElements.put(weightedElement, n);
   }
 
-  public void update(T sequence, double newWeight) {
-    if (!currentElements.containsKey(sequence)) {
+  public void update(WeightedElement<T> ele, double newWeight) {
+    if (!currentElements.containsKey(ele)) {
       throw new IllegalArgumentException("Object is not in set of nodes");
     }
-    Node<T> node = currentElements.get(sequence);
+    Node<T> node = currentElements.get(ele);
     double prevWeight = node.data.getWeight();
     double diff = newWeight - prevWeight;
     node.data.setWeight(newWeight);
@@ -135,7 +135,7 @@ public class WeightedBalancedTree<T extends Comparable<T>> implements WeightedRa
     return currentElements.size();
   }
 
-  private static class Node<T extends Comparable<T>> {
+  private static class Node<T> {
     public Edge<T> parentEdge;
     public Edge<T> leftEdge;
     public Edge<T> rightEdge;
@@ -148,7 +148,7 @@ public class WeightedBalancedTree<T extends Comparable<T>> implements WeightedRa
     }
   }
 
-  private static class Edge<T extends Comparable<T>> {
+  private static class Edge<T> {
     public Node<T> parent;
     public Node<T> child;
     public double weight;

@@ -5,7 +5,7 @@ import java.util.List;
 
 import randoop.BugInRandoopException;
 
-public class WeightedList<T extends Comparable<T>> implements WeightedRandomSampler<T> {
+public class WeightedList<T> implements WeightedRandomSampler<T> {
 
   private List<WeightedElement<T>> theList;
   private List<Double> cumulativeWeights;

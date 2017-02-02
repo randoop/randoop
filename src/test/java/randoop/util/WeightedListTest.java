@@ -22,8 +22,7 @@ public class WeightedListTest {
   @Test
   public void testOneElement() {
     WeightedList<Integer> wl = new WeightedList<>();
-    WeightedElement<Integer> expected =
-        new WeightedElement<Integer>(new Integer(1), 3);
+    WeightedElement<Integer> expected = new WeightedElement<Integer>(new Integer(1), 3);
     wl.add(expected);
     WeightedElement<Integer> result = wl.getRandomElement();
     assertEquals(expected, result);
