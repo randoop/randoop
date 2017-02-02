@@ -129,30 +129,4 @@ public class MinimizerTests {
 
     testWithInput(inputFilePath, new String[] {jUnitPath, hamcrestPath}, timeout);
   }
-
-  @Test
-  public void test4() throws IOException {
-    // Paths to input file
-    String inputFilePath = testDir + "TestInput4.java";
-
-    String jUnitPath = dependencyDir + "junit-4.12.jar";
-    String hamcrestPath = dependencyDir + "hamcrest-core-1.3.jar";
-
-    String timeout = "10";
-
-    testWithInput(inputFilePath, new String[] {jUnitPath, hamcrestPath}, timeout);
-  }
-
-  @Test
-  public void test5() throws IOException {
-    // Paths to input file
-    String inputFilePath = testDir + "TestInput5.java";
-
-    String jUnitPath = dependencyDir + "junit-4.12.jar";
-    String hamcrestPath = dependencyDir + "hamcrest-core-1.3.jar";
-
-    String timeout = "10";
-
-    testWithInput(inputFilePath, new String[] {jUnitPath, hamcrestPath}, timeout);
-  }
 }

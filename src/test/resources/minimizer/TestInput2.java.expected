@@ -3,27 +3,18 @@ package test;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.commons.lang3.SerializationException;
-import org.apache.commons.lang3.concurrent.CircuitBreakingException;
-import org.apache.commons.lang3.text.translate.NumericEntityUnescaper.OPTION;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class TestInput2Minimized {
+public class TestInput4Minimized {
 
-    public static boolean debug = false;
-
+    // Test simplification of programs with while loops
     @Test
     public void test1() throws Throwable {
-        SerializationException serializationException5 = null;
-        CircuitBreakingException circuitBreakingException7 = new CircuitBreakingException("hi!", (java.lang.Throwable) serializationException5);
-        OPTION oPTION8 = null;
-        MutablePair<CircuitBreakingException, OPTION> mutablepair_circuitBreakingException_oPTION9 = MutablePair.of(circuitBreakingException7, oPTION8);
-        SerializationException serializationException19 = null;
-        CircuitBreakingException circuitBreakingException21 = new CircuitBreakingException("hi!", (java.lang.Throwable) serializationException19);
-        OPTION oPTION22 = null;
-        MutablePair<CircuitBreakingException, OPTION> mutablepair_circuitBreakingException_oPTION23 = MutablePair.of(circuitBreakingException21, oPTION22);
-        // Checks the contract: compareTo-anti-symmetric on mutablepair_circuitBreakingException_oPTION9 and mutablepair_circuitBreakingException_oPTION23
-        org.junit.Assert.assertTrue("Contract failed: compareTo-anti-symmetric on mutablepair_circuitBreakingException_oPTION9 and mutablepair_circuitBreakingException_oPTION23", Math.signum(mutablepair_circuitBreakingException_oPTION9.compareTo(mutablepair_circuitBreakingException_oPTION23)) == -Math.signum(mutablepair_circuitBreakingException_oPTION23.compareTo(mutablepair_circuitBreakingException_oPTION9)));
+        int a = 10;
+        int x = 0;
+        while (x < a) {
+            x++;
+        }
+        org.junit.Assert.assertTrue(x == 0);
     }
 }

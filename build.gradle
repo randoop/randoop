@@ -118,8 +118,6 @@ dependencies {
 
   /* JavaParser used by Minimize */
   compile 'com.github.javaparser:javaparser-core:3.0.0-alpha.4'
-  /* Apache Commons Lang used by test input classes */
-  compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
 
   /* sourceSet test uses JUnit and some use testInput source set */
   testCompile group: 'junit', name: 'junit', version: '4.+'
