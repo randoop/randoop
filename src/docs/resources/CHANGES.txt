@@ -1,4 +1,4 @@
-Version 3.0.9, released X X, 20X
+Version 3.0.9, released February 6, 2017
 
 Adds
 - an option --toradocu-conditions to input Toradocu generated conditions derived
@@ -6,13 +6,15 @@ Adds
   can override classification of generated tests by exception.
 
 Fixes
+- failure to instantiate capture conversion variables for wildcards with type
+  variable as a bound. (#144)
 - overly conservative test for recursive type bounds that was preventing
-  capture conversion on wildcard types with complex bounds.
+  capture conversion on wildcard types with complex bounds. (#143)
 - broken assignability test on parameterized types with wildcard arguments.
 - generation of uncompilable code due to an inaccessible type that was a type
   argument to a parameterized type occurring as the type of a formal parameter
-  of a method.
-- potential variable name clash when a type name ends in a digit.
+  of a method. (#128)
+- potential variable name clash when a type name ends in a digit. (#132)
 
 
 Version 3.0.8, released December 8, 2016
