@@ -1,6 +1,10 @@
 package randoop.types;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * An abstract class representing kinds of type parameters, which are either type variables or
@@ -55,6 +59,14 @@ public abstract class ParameterType extends ReferenceType {
 
   public ParameterBound getUpperTypeBound() {
     return upperBound;
+  }
+
+  @Override
+  public List<TypeVariable> getTypeParameters() {
+    Set<TypeVariable> parameters = new HashSet<>();
+    parameters.addAll(lowerBound.getTypeParameters());
+    parameters.addAll(upperBound.getTypeParameters());
+    return new ArrayList<>(parameters);
   }
 
   /**
