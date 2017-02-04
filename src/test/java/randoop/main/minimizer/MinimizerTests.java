@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import org.junit.Test;
+import randoop.main.Minimize;
 
 public class MinimizerTests {
   // Obtain system separators for path and file
@@ -62,8 +63,7 @@ public class MinimizerTests {
     }
 
     // Create the arguments array and invoke the minimizer
-    String[] args = {inputFilePath, classPath, timeoutLimit};
-    // Minimize.handle(args);
+    Minimize.mainMinimize(inputFilePath, classPath, Integer.parseInt(timeoutLimit));
 
     // Compare obtained and expected output
     String obtainedOutput = readFile(outputFilePath, Charset.defaultCharset());
@@ -88,6 +88,9 @@ public class MinimizerTests {
     byte[] encoded = Files.readAllBytes(Paths.get(filePath));
     return new String(encoded, encoding);
   }
+
+  // @BeforeClass
+  //
 
   @Test
   public void test1() throws IOException {

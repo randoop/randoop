@@ -5,6 +5,7 @@ import plume.Options;
 import plume.TimeLimitProcess;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.*;
@@ -88,13 +89,13 @@ public class Minimize extends CommandHandler {
       System.out.println("Use the --filepath option.");
       System.exit(1);
     } else if (Minimize.testcasetimeout < 0) {
-      System.out.println("You must specify an input file path.");
+      System.out.println("You must specify a timeout value.");
       System.out.println("Use the --testcasetimeout option.");
       System.exit(1);
     }
 
     // Main minimize method
-    return mainMinimize();
+    return mainMinimize(filepath, fileclasspath, testcasetimeout);
   }
 
   /**
@@ -104,11 +105,7 @@ public class Minimize extends CommandHandler {
    * @return boolean flag indicating minimization status. True indicates success,
    * false indicates that there was an error.
    */
-  private boolean mainMinimize() {
-    String filePath = Minimize.filepath;
-    String classpath = Minimize.fileclasspath;
-    int timeoutLimit = Minimize.testcasetimeout;
-
+  public static boolean mainMinimize(String filePath, String classPath, int timeoutLimit) {
     System.out.println("Reading and parsing: " + filePath);
 
     // Read and parse input Java file.
@@ -129,14 +126,17 @@ public class Minimize extends CommandHandler {
     // Find the package name if it exists
     String packageName = "";
     try {
-      packageName = compUnit.getPackage().getPackageName();
+      PackageDeclaration classPackage = compUnit.getPackage();
+      if (classPackage != null) {
+        packageName = classPackage.getPackageName();
+      }
     } catch (NoSuchElementException e) {
       // No package declaration
     }
 
     // Run the test suite once to obtain expected output.
     String newFilePath = writeToFile(compUnit, filePath, "Minimized");
-    Results res = compileAndRun(newFilePath, classpath, packageName, timeoutLimit);
+    Results res = compileAndRun(newFilePath, classPath, packageName, timeoutLimit);
 
     if (res == null) {
       // There was an error when compiling or running.
@@ -159,7 +159,7 @@ public class Minimize extends CommandHandler {
     long start = System.currentTimeMillis();
 
     // Minimize the Java test suite and output to a new Java file.
-    minimizeTestSuite(compUnit, filePath, classpath, expectedOutput, packageName, timeoutLimit);
+    minimizeTestSuite(compUnit, filePath, classPath, expectedOutput, packageName, timeoutLimit);
     writeToFile(compUnit, filePath, "Minimized");
 
     long end = System.currentTimeMillis();
@@ -606,22 +606,32 @@ public class Minimize extends CommandHandler {
   private static Results compileAndRun(
       String filePath, String classpath, String packageName, int timeoutLimit) {
     try {
+      String pathSeparator = System.getProperty("path.separator");
+
       // Obtain directory path from file path.
-      String dirPath = Paths.get(filePath).getParent().toString();
+      Path fPath = Paths.get(filePath).getParent();
+      String dirPath = null;
+      if (fPath != null) {
+        dirPath = fPath.toString();
+      }
 
       // Obtain directory to carry out compilation and execution step
       String executionDir = getExecutionDirectory(filePath, packageName);
 
+      String cp = System.getProperty("java.class.path");
+      String command = "javac -classpath " + cp;
+      if (classpath != null) {
+        command += pathSeparator + classpath;
+      }
+      command += " " + filePath;
+
       // Compile specified Java file.
-      Outputs cRes =
-          runProcess("javac -classpath " + classpath + " " + filePath, executionDir, timeoutLimit);
+      Outputs cRes = runProcess(command, executionDir, timeoutLimit);
 
       // Check compilation results for compilation error.
       if (cRes == null || !cRes.errout.isEmpty()) {
         return null;
       }
-
-      String pathSeparator = System.getProperty("path.separator");
 
       // Add the package name if it exists
       String className = getClassName(filePath);
@@ -629,17 +639,17 @@ public class Minimize extends CommandHandler {
         className = packageName + "." + className;
       }
 
+      command = "java -classpath " + cp;
+      if (dirPath != null) {
+        command += pathSeparator + dirPath;
+      }
+      if (classpath != null) {
+        command += pathSeparator + classpath;
+      }
+      command += " org.junit.runner.JUnitCore " + className;
+
       // Run the specified Java file.
-      Outputs rRes =
-          runProcess(
-              "java -classpath "
-                  + dirPath
-                  + pathSeparator
-                  + classpath
-                  + " org.junit.runner.JUnitCore "
-                  + className,
-              executionDir,
-              timeoutLimit);
+      Outputs rRes = runProcess(command, executionDir, timeoutLimit);
 
       // Check execution results for runtime error.
       if (rRes == null) {
@@ -688,7 +698,7 @@ public class Minimize extends CommandHandler {
       throws Exception {
     Process process;
 
-    if (executionDir == null) {
+    if (executionDir == null || executionDir.isEmpty()) {
       // Execution directory is null, execute command in default directory
       process = Runtime.getRuntime().exec(command);
     } else {
