@@ -1,11 +1,9 @@
-package test;
-
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class TestInput4Minimized {
+public class TestInput2Minimized {
 
     // Test simplification of programs with while loops
     @Test

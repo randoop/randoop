@@ -16,19 +16,8 @@ public class MinimizerTests {
   private static final String pathSeparator = System.getProperty("path.separator");
   private static final String fileSeparator = System.getProperty("file.separator");
 
-  private static final String testDir =
-      ".."
-          + fileSeparator
-          + ".."
-          + fileSeparator
-          + ".."
-          + fileSeparator
-          + ".."
-          + fileSeparator
-          + "resources"
-          + fileSeparator
-          + "minimizer";
-  private static final String dependencyDir = testDir + "dependencies" + fileSeparator;
+  // Directory to test inputs
+  private static final String testDir = "test" + fileSeparator + "minimizer" + fileSeparator;
 
   /**
    * Test the minimizer with an input file
@@ -56,10 +45,13 @@ public class MinimizerTests {
     outputFilePath = outputFile.getAbsolutePath();
 
     // Classpath obtained by adding the necessary components together
-    String classPath = "";
-    for (String s : dependencies) {
-      File file = new File(s);
-      classPath += (pathSeparator + file.getAbsolutePath());
+    String classPath = null;
+    if (dependencies != null) {
+      classPath = "";
+      for (String s : dependencies) {
+        File file = new File(s);
+        classPath += (pathSeparator + file.getAbsolutePath());
+      }
     }
 
     // Create the arguments array and invoke the minimizer
@@ -89,47 +81,30 @@ public class MinimizerTests {
     return new String(encoded, encoding);
   }
 
-  // @BeforeClass
-  //
-
   @Test
   public void test1() throws IOException {
     // Paths to input file
     String inputFilePath = testDir + "TestInput1.java";
-
-    String commonsLangPath = dependencyDir + "commons-lang3-3.5.jar";
-    String jUnitPath = dependencyDir + "junit-4.12.jar";
-    String hamcrestPath = dependencyDir + "hamcrest-core-1.3.jar";
-
     String timeout = "30";
 
-    testWithInput(inputFilePath, new String[] {commonsLangPath, jUnitPath, hamcrestPath}, timeout);
+    testWithInput(inputFilePath, null, timeout);
   }
 
   @Test
   public void test2() throws IOException {
     // Paths to input file
     String inputFilePath = testDir + "TestInput2.java";
-
-    String commonsLangPath = dependencyDir + "commons-lang3-3.5.jar";
-    String jUnitPath = dependencyDir + "junit-4.12.jar";
-    String hamcrestPath = dependencyDir + "hamcrest-core-1.3.jar";
-
     String timeout = "30";
 
-    testWithInput(inputFilePath, new String[] {commonsLangPath, jUnitPath, hamcrestPath}, timeout);
+    testWithInput(inputFilePath, null, timeout);
   }
 
   @Test
   public void test3() throws IOException {
     // Paths to input file
     String inputFilePath = testDir + "TestInput3.java";
-
-    String jUnitPath = dependencyDir + "junit-4.12.jar";
-    String hamcrestPath = dependencyDir + "hamcrest-core-1.3.jar";
-
     String timeout = "10";
 
-    testWithInput(inputFilePath, new String[] {jUnitPath, hamcrestPath}, timeout);
+    testWithInput(inputFilePath, null, timeout);
   }
 }
