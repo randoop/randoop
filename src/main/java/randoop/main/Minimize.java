@@ -45,13 +45,13 @@ public class Minimize extends CommandHandler {
 
   /**
    * Maximum number of seconds allowed for a unit test within the test
-   * suite to run.
+   * suite to run. The default value is 10 seconds.
    * This is used for unit test cases that potentially will not terminate
    * when run. This timeout limit should be large enough so that unit test
    * cases that do terminate, have enough time to run until completion.
    */
   @Option("timeout value for a unit test case")
-  public static int testcasetimeout = -1;
+  public static int testcasetimeout = 10;
 
   public Minimize() {
     super(
@@ -91,8 +91,8 @@ public class Minimize extends CommandHandler {
       System.out.println("You must specify an input file path.");
       System.out.println("Use the --filepath option.");
       System.exit(1);
-    } else if (Minimize.testcasetimeout < 0) {
-      System.out.println("You must specify a timeout value.");
+    } else if (Minimize.testcasetimeout <= 0) {
+      System.out.println("You must specify a positive timeout value.");
       System.out.println("Use the --testcasetimeout option.");
       System.exit(1);
     }
@@ -630,7 +630,7 @@ public class Minimize extends CommandHandler {
       // Add current directory to class path
       command += pathSeparator + ".";
       if (classpath != null) {
-        // Add specified class path
+        // Add specified classpath to command
         command += pathSeparator + classpath;
       }
       command += " " + filePath;
@@ -643,7 +643,7 @@ public class Minimize extends CommandHandler {
         return null;
       }
 
-      // Add the package name if it exists
+      // Add the package name to the class name if it exists
       String className = getClassName(filePath);
       if (packageName != null) {
         className = packageName + "." + className;
