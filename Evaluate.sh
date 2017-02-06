@@ -157,7 +157,7 @@ for time in ${time_limits[@]}; do
 			# TODO: is it correct to run Randoop separately over each project, or should we somehow run it over the combination of all of them?
 			echo "Running Randoop with time limit set to ${time}, project ${project} iteration #${i}"
 			echo "Randoop jar location: ${randoop_jar}"
-			java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$randoop_jar randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --timelimit=20 --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests
+			java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$randoop_jar randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --timelimit=20 --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --literals-file=CLASSES
 
 			# Change the generated test handlers to end with "Tests.java"
 			# so they are picked up by the ant task for running tests"
