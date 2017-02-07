@@ -144,11 +144,7 @@ public abstract class ReferenceType extends Type {
     }
     if (otherType.isVariable()) {
       TypeVariable variable = (TypeVariable) otherType;
-      List<TypeVariable> typeParameters = new ArrayList<>();
-      typeParameters.add(variable);
-      Substitution<ReferenceType> substitution = Substitution.forArgs(typeParameters, this);
-      return variable.getLowerTypeBound().isLowerBound(this, substitution)
-          && variable.getUpperTypeBound().isUpperBound(this, substitution);
+      return variable.canBeInstantiatedBy(this);
     }
     return false;
   }

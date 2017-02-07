@@ -81,10 +81,7 @@ public abstract class TypeVariable extends ParameterType {
 
     if (otherType.isVariable()) {
       TypeVariable variable = (TypeVariable) otherType;
-      List<TypeVariable> typeParameters = new ArrayList<>();
-      typeParameters.add(variable);
-      Substitution<ReferenceType> substitution =
-          Substitution.forArgs(typeParameters, (ReferenceType) this);
+      Substitution<ReferenceType> substitution = getSubstitution(variable, this);
       boolean lowerbound =
           variable.getLowerTypeBound().isLowerBound(getLowerTypeBound(), substitution);
       boolean upperbound =
@@ -100,17 +97,83 @@ public abstract class TypeVariable extends ParameterType {
       return true;
     }
     if (otherType.isReferenceType()) {
-      List<TypeVariable> variableList = new ArrayList<>();
-      variableList.add(this);
-      Substitution<ReferenceType> substitution =
-          Substitution.forArgs(variableList, (ReferenceType) otherType);
+      Substitution<ReferenceType> substitution = getSubstitution(this, (ReferenceType) otherType);
       return this.getUpperTypeBound().isLowerBound(otherType, substitution);
     }
     return false;
   }
 
+  /**
+   * Creates a substitution of the given {@link ReferenceType} for the {@link TypeVariable}.
+   *
+   * @param variable  the variable
+   * @param otherType  the replacement type
+   * @return a substitution that replaces {@code variable} with {@code otherType}
+   */
+  private static Substitution<ReferenceType> getSubstitution(
+      TypeVariable variable, ReferenceType otherType) {
+    List<TypeVariable> variableList = new ArrayList<>();
+    variableList.add(variable);
+    return Substitution.forArgs(variableList, otherType);
+  }
+
   @Override
-  boolean isVariable() {
+  public boolean isVariable() {
     return true;
   }
+
+  /**
+   * Indicates whether this {@link TypeVariable} can be instantiated by the {@link ReferenceType}.
+   * Does not require that all bounds of this variable be instantiated.
+   *
+   * @param otherType  the possibly instantiating type, not a variable
+   * @return true if the given type can instantiate this variable, false otherwise
+   */
+  boolean canBeInstantiatedBy(ReferenceType otherType) {
+    Substitution<ReferenceType> substitution;
+    if (getLowerTypeBound().isVariable()) {
+      TypeVariable boundType =
+          (TypeVariable) ((EagerReferenceBound) getLowerTypeBound()).getBoundType();
+      substitution = getSubstitution(this, otherType);
+      TypeVariable checkType = (TypeVariable) boundType.apply(substitution);
+      if (!checkType.canBeInstantiatedBy(otherType)) {
+        return false;
+      }
+    } else {
+      substitution = getSubstitution(this, otherType);
+      if (!getLowerTypeBound().isLowerBound(otherType, substitution)) {
+        return false;
+      }
+    }
+    if (getUpperTypeBound().isVariable()) {
+      TypeVariable boundType =
+          (TypeVariable) ((EagerReferenceBound) getUpperTypeBound()).getBoundType();
+      substitution = getSubstitution(this, otherType);
+      TypeVariable checkType = (TypeVariable) boundType.apply(substitution);
+      if (!checkType.canBeInstantiatedBy(otherType)) {
+        return false;
+      }
+    } else {
+      substitution = getSubstitution(this, otherType);
+      if (!getUpperTypeBound().isUpperBound(otherType, substitution)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Returns the type parameters in this type, which is this variable.
+   *
+   * @return this variable
+   */
+  @Override
+  public List<TypeVariable> getTypeParameters() {
+    Set<TypeVariable> parameters = new HashSet<>(super.getTypeParameters());
+    parameters.add(this);
+    return new ArrayList<>(parameters);
+  }
+
+  public abstract TypeVariable createCopyWithBounds(
+      ParameterBound lowerBound, ParameterBound upperBound);
 }

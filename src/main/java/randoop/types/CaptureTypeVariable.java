@@ -72,7 +72,7 @@ class CaptureTypeVariable extends TypeVariable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(varID, wildcard);
+    return Objects.hash(varID, wildcard, super.hashCode());
   }
 
   @Override
@@ -109,10 +109,9 @@ class CaptureTypeVariable extends TypeVariable {
    * @param substitution  the capture conversion substitution
    */
   public void convert(TypeVariable typeParameter, Substitution<ReferenceType> substitution) {
-
     // the lower bound is either the null-type or the wildcard lower bound, so only do upper bound
     ParameterBound parameterBound = typeParameter.getUpperTypeBound().apply(substitution);
-    if (getUpperTypeBound().equals(new EagerReferenceBound(JavaTypes.OBJECT_TYPE))) {
+    if (getUpperTypeBound().isObject()) {
       setUpperBound(parameterBound);
     } else {
       List<ParameterBound> boundList = new ArrayList<>();
@@ -132,20 +131,6 @@ class CaptureTypeVariable extends TypeVariable {
     return this.getName();
   }
 
-  /**
-   * Returns the type parameters in this type, which is this variable.
-   *
-   * @return this variable
-   */
-  @Override
-  public List<TypeVariable> getTypeParameters() {
-    List<TypeVariable> parameters = new ArrayList<>();
-    parameters.add(this);
-    parameters.addAll(this.getLowerTypeBound().getTypeParameters());
-    parameters.addAll(this.getUpperTypeBound().getTypeParameters());
-    return parameters;
-  }
-
   @Override
   public boolean isCaptureVariable() {
     return true;
@@ -159,16 +144,32 @@ class CaptureTypeVariable extends TypeVariable {
   @Override
   public ReferenceType apply(Substitution<ReferenceType> substitution) {
     ReferenceType type = substitution.get(this);
-    if (type != null) {
+    // if this variable replaced by non-variable, return non-variable
+    if (type != null && !type.isVariable()) {
       return type;
     }
+    // otherwise, apply to bounds
     ParameterBound lowerBound = getLowerTypeBound().apply(substitution);
     ParameterBound upperBound = getUpperTypeBound().apply(substitution);
 
-    if (!lowerBound.equals(getLowerTypeBound()) || !upperBound.equals(getUpperTypeBound())) {
-      WildcardArgument updatedWildcard = wildcard.apply(substitution);
-      return new CaptureTypeVariable(this.varID, updatedWildcard, lowerBound, upperBound);
+    if (type == null) {
+      //if bounds are affected, return a new copy of this variable with new bounds
+      if (!lowerBound.equals(getLowerTypeBound()) || !upperBound.equals(getUpperTypeBound())) {
+        WildcardArgument updatedWildcard = wildcard.apply(substitution);
+        return new CaptureTypeVariable(this.varID, updatedWildcard, lowerBound, upperBound);
+      }
+      return this;
     }
-    return this;
+
+    if (!lowerBound.equals(getLowerTypeBound()) || !upperBound.equals(getUpperTypeBound())) {
+      // need a new variable based on type with updated bounds
+      return ((TypeVariable) type).createCopyWithBounds(lowerBound, upperBound);
+    }
+    return type;
+  }
+
+  @Override
+  public TypeVariable createCopyWithBounds(ParameterBound lowerBound, ParameterBound upperBound) {
+    return new CaptureTypeVariable(this.varID, this.wildcard, lowerBound, upperBound);
   }
 }

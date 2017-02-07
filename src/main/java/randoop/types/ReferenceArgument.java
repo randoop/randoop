@@ -127,4 +127,9 @@ public class ReferenceArgument extends TypeArgument {
     ReferenceType otherReferenceType = ((ReferenceArgument) otherArgument).getReferenceType();
     return referenceType.getInstantiatingSubstitution(otherReferenceType);
   }
+
+  @Override
+  public boolean isVariable() {
+    return referenceType.isVariable();
+  }
 }

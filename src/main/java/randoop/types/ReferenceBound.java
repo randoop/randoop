@@ -67,4 +67,9 @@ public abstract class ReferenceBound extends ParameterBound {
   public boolean isObject() {
     return boundType.isObject();
   }
+
+  @Override
+  public boolean isVariable() {
+    return boundType.isVariable();
+  }
 }
