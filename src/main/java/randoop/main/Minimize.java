@@ -21,11 +21,12 @@ import com.github.javaparser.ast.type.*;
 import com.github.javaparser.ast.visitor.*;
 
 /**
- * Minimizer minimizes failing unit tests. The program takes two command-line
+ * Minimizer minimizes failing unit tests. The program can take three command-line
  * arguments:
  * <ol>
  * <li>the complete path to the Java file that will be minimized, and
  * <li>the classpath containing dependencies needed to compile and run the Java
+ * <li>the timeout limit, in seconds, allowed for any unit test case to be executed
  * file.
  * </ol>
  */
@@ -37,8 +38,8 @@ public class Minimize extends CommandHandler {
   public static String filepath;
 
   /**
-   * The classpath that includes dependencies needed to
-   * compile and run the input Java file specified by the filepath parameter.
+   * The classpath that includes dependencies needed to compile
+   * and run the input Java file specified by the filepath parameter.
    */
   @Option("complete class path to compile and run input file")
   public static String fileclasspath;
@@ -109,7 +110,7 @@ public class Minimize extends CommandHandler {
    * @param classPath    classpath used to compile and run the Java file
    * @param timeoutLimit maximum number of seconds allowed for any one unit test case
    *                     to run
-   * @return boolean indicating minimization status. True indicates success,
+   * @return {@code Boolean} indicating minimization status. True indicates success,
    * false indicates that there was an error.
    */
   public static boolean mainMinimize(String filePath, String classPath, int timeoutLimit) {
@@ -122,8 +123,6 @@ public class Minimize extends CommandHandler {
     } catch (IOException e) {
       System.err.println("Error parsing Java file " + filePath);
       System.err.println(e);
-      // This return statement is dead code, but Java's definite assignment analysis
-      // needs it to recognize that compUnit really gets assigned. :-(
       return false;
     }
 
@@ -214,7 +213,7 @@ public class Minimize extends CommandHandler {
    * The possible minimizations are:
    * - Remove a statement entirely
    * - Replace right hand side to a calculated value obtained from a passing assertion
-   * - Replace the right hand side expression with 0/null depending on type
+   * - Replace the right hand side expression with {@code 0/null} depending on type
    * - Remove the left hand side of a statement, retaining only the expression on the right
    *
    * @param method         current method that we are minimizing within the compilation
@@ -312,14 +311,12 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Return a list of statements that are a simplification of a given
-   * statement.
+   * Return a list of statements that are a simplification of a given statement.
    *
    * @param currStmt        statement to simplify
    * @param primitiveValues map of primitive variable names to expressions representing
    *                        their values
-   * @return non-null list of statements, where each is a possible
-   * simplification of currStmt
+   * @return non-null list of statements, where each is a possible simplification of {@code currStmt}
    */
   private static List<Statement> getReplacements(
       Statement currStmt, Map<String, String> primitiveValues) {
@@ -350,7 +347,7 @@ public class Minimize extends CommandHandler {
    *                        statement to simplify
    * @param primitiveValues a map of primitive variable names to expressions representing
    *                        their values
-   * @return a Statement object representing the simplified variable
+   * @return a {@code Statement} object representing the simplified variable
    * declaration expression
    */
   private static Statement rightHandSideSimplificationStatement(
@@ -420,7 +417,7 @@ public class Minimize extends CommandHandler {
    *
    * @param vdExpr variable declaration expression that represents the statement
    *               to simplify
-   * @return a Statement object that is equal to vdExpr without the assignment
+   * @return a {@code Statement} object that is equal to {@code vdExpr} without the assignment
    * to the declared variable
    */
   private static Statement removeLeftHandSideSimplifiation(VariableDeclarationExpr vdExpr) {
@@ -439,7 +436,7 @@ public class Minimize extends CommandHandler {
 
   /**
    * Simplify the variable type names in a method. For example,
-   * java.lang.String should be simplified to String.
+   * {@code java.lang.String} should be simplified to {@code String}.
    *
    * @param method         a method within the Java file, the given method will be modified if a correct minimization of the method is found
    * @param compUnit       compilation unit containing an AST for a Java file, the compilation unit will be modified if a correct minimization of the method is found
@@ -518,8 +515,8 @@ public class Minimize extends CommandHandler {
   /**
    * Get the set of all the names of the different types that appear in a
    * fully qualified type name. For example the fully qualified type name:
-   * {@code Map<String, Pair<Integer, Double>>} should return the set: {Map, String,
-   * Pair, Integer, Double}.
+   * {@code Map<String, Pair<Integer, Double>>} should return the set: {@code {Map, String,
+   * Pair, Integer, Double}}.
    *
    * @param typeName fully qualified type name
    * @return set of the different type names
@@ -558,10 +555,10 @@ public class Minimize extends CommandHandler {
 
   /**
    * Get the simple type name of a fully qualified type name. For example,
-   * java.lang.String should be simplified to String.
+   * {@code java.lang.String} should be simplified to {@code String}.
    *
    * @param typeName fully qualified type name
-   * @return simple type name of typeName
+   * @return simple type name of {@code typeName}
    */
   public static String getSimpleTypeName(String typeName) {
     int indexOflastSeparator = typeName.lastIndexOf('.');
@@ -707,7 +704,7 @@ public class Minimize extends CommandHandler {
    * @param command      the input command to be run
    * @param executionDir the directory where the process commands should be executed
    * @param timeoutLimit the maximum number of seconds allowed for the process to run
-   * @return an Outputs object containing the standard and error output
+   * @return an {@code Outputs} object containing the standard and error output
    * @throws Exception if the input command is unable to be run
    */
   private static Outputs runProcess(String command, String executionDir, int timeoutLimit)
@@ -766,14 +763,14 @@ public class Minimize extends CommandHandler {
   /**
    * Normalize the standard output obtained from running a JUnit test suite.
    *
-   * @param input the String produced from running a JUnit test suite
-   * @return a String which contains several String pairs of output from the
+   * @param input the {@code String} produced from running a JUnit test suite
+   * @return a {@code String} which contains several {@code String} pairs of output from the
    * JUnit test suite. Each pair's first element is the index of the
    * failing test along with the name of the method containing the
    * failing assertion. Each pair's second element is the output from
-   * the failing assertion. For example: 1)
-   * test10(ErrorTestLangMinimized) java.lang.AssertionError: Contract
-   * failed: compareTo-equals on fraction1 and fraction4
+   * the failing assertion. For example:
+   * {@code 1) test10(ErrorTestLangMinimized) java.lang.AssertionError: Contract
+   * failed: compareTo-equals on fraction1 and fraction4}
    */
   private static String normalizeJUnitOutput(String input) {
     Scanner scn = new Scanner(input);
@@ -803,8 +800,8 @@ public class Minimize extends CommandHandler {
    * @param compUnit the compilation unit to write to file
    * @param filePath the origin of the Java file that was processed
    * @param suffix   the suffix to append to the name of the new Java file
-   * @return string representing the complete path to the newly written Java
-   * file. Returns null if error occurred in writing to the new file
+   * @return {@code String} representing the complete path to the newly written Java
+   * file. Returns {@code null} if error occurred in writing to the new file
    */
   private static String writeToFile(CompilationUnit compUnit, String filePath, String suffix) {
     // Rename the overall class to [old class name][suffix]
@@ -831,7 +828,7 @@ public class Minimize extends CommandHandler {
    * the class name of the file.
    *
    * @param filePath complete path to a Java program
-   * @return string representing the class name
+   * @return {@code String} representing the class name
    */
   public static String getClassName(String filePath) {
     if (filePath == null) {
@@ -866,7 +863,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Contains two Strings which represent standard output and error output.
+   * Contains two {@code String} objects which represent standard output and error output.
    */
   private static class Outputs {
     /**
@@ -891,7 +888,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Contains two Outputs for compilation and execution.
+   * Contains two {@code Output} objects for compilation and execution.
    */
   private static class Results {
     /**
