@@ -327,7 +327,8 @@ public class InstantiationTest {
     // instantiate generic constructors
     for (TypedClassOperation operation : genericConstructors) {
       TypedClassOperation classOperation = instantiator.instantiate(operation);
-      assertNotNull("instantiation of " + operation + " should not be null", classOperation);
+      assertNotNull(
+          "instantiation of constructor " + operation + " should not be null", classOperation);
       addTypes(classOperation, inputTypes);
     }
 
@@ -337,7 +338,8 @@ public class InstantiationTest {
           TypedClassOperation classOperation =
               instantiator.instantiate((TypedClassOperation) operation);
           if (!operation.getName().equals("m09")) {
-            assertNotNull("instantiation of " + operation + " should not be null", classOperation);
+            assertNotNull(
+                "instantiation of method " + operation + " should not be null", classOperation);
             addTypes(classOperation, inputTypes);
             if (classOperation.isMethodCall()) {
               classOperations.add(classOperation);

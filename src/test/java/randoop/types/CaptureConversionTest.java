@@ -7,12 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import randoop.operation.TypedOperation;
-import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.OperationExtractor;
-import randoop.reflection.PublicVisibilityPredicate;
-import randoop.reflection.ReflectionManager;
-import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.VisibilityPredicate;
 import randoop.types.test.CaptureTestClass;
 import randoop.types.test.Container;
 import randoop.types.test.Gibberish;

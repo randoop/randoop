@@ -1,8 +1,5 @@
 package randoop.types.test;
 
-/**
- * Created by bjkeller on 2/3/17.
- */
 public class ParameterInput {
   public <T> void m(
       Iterable<String> s,
