@@ -115,6 +115,7 @@ dependencies {
   /* Randoop uses local copy of Plume */
   compile files('lib/plume.jar')
   compile 'com.google.code.gson:gson:2.8.0'
+  compile group: 'junit', name: 'junit', version: '4.+'
 
   /* sourceSet test uses JUnit and some use testInput source set */
   testCompile group: 'junit', name: 'junit', version: '4.+'
