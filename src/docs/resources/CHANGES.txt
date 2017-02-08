@@ -16,8 +16,8 @@ Fixes
   of a method. (#128)
 - potential variable name clash when a type name ends in a digit. (#132)
 - failure in certain situations where a generic method or constructor has a
-  parameter type that is a wildcard with about bound that includes the type
-  parameter (e.g., Iterable<? extends T>).
+  argument type that has a wildcard with a bound that includes the type
+  parameter of the generic (e.g., Iterable<? extends T>).
 
 Changes classpath error message to explain alternatives for why a class with
   a given classname is not found.
