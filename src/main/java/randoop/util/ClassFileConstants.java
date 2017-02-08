@@ -584,7 +584,7 @@ public class ClassFileConstants {
         map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
       }
       for (String x : cs.strings) {
-        if(!Value.stringLengthOK(x)) {
+        if (!Value.stringLengthOK(x)) {
           map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
         }
       }
