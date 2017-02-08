@@ -33,6 +33,11 @@ done
 work_dir=proj
 projects=("Chart")
 # "Chart" "Closure" "Lang" "Math" "Time"
+# Chart: 501
+# Lang: 86
+# Math: 520
+# Time: 79
+
 time_limits=(2 10 30 60 120)
 project_sizes=(  )
 randoop_path=`pwd`"/build/libs/randoop-baseline-3.0.8.jar"
@@ -95,10 +100,17 @@ fi
 # Compile Defects4j projects and then run generated tests on them
 #TODO: only run this if we are performing first time set up
 for project in ${projects[@]}; do
-	classes_dir=build/classes
-	if [ "$project" == "Chart" ]; then
-		classes_dir=build
-	fi
+	case $project in
+		Chart)
+			classes_dir="build"
+			;;
+		Closure)
+			classes_dir="build/classes"
+			;;
+		*)
+			classes_dir="target/classes"
+			;;
+	esac
 
 	# Create working directory for running tests on Defects4j projects
 	curr_dir=$work_dir$project
@@ -135,11 +147,17 @@ done
 for time in ${time_limits[@]}; do
 	for i in `seq 1 10`; do
 		for project in ${projects[@]}; do
-			classes_dir=build/classes
-			if [ "$project" == "Chart" ]; then
-				echo "Using special directory structure for Chart project..."
-				classes_dir=build
-			fi
+			case $project in
+				Chart)
+					classes_dir="build"
+					;;
+				Closure)
+					classes_dir="build/classes"
+					;;
+				*)
+					classes_dir="target/classes"
+					;;
+			esac
 
 			echo "Performing evaluation #${i} for project ${project}..."
 
