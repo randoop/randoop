@@ -1,5 +1,7 @@
 package randoop.types.test;
 
+import java.util.List;
+
 public class VariablesInput {
   public <T extends Comparable<T>> void m00(T t) {}
 
@@ -22,6 +24,10 @@ public class VariablesInput {
   public <U extends Comparable<U>, W extends U, T extends W> void m09(T t) {}
 
   public <U extends Comparable<T>, W extends U, T extends W> void m10(T t) {}
+
+  public <O extends Comparable<? super O>> List<O> m11(O a) {
+    return null;
+  }
 
   /*
   public void check() {

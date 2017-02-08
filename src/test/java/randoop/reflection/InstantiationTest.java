@@ -272,6 +272,26 @@ public class InstantiationTest {
     }
   }
 
+  /* disabled until fix type parameter management
+  @Test
+  public void testLazyConversionInstantiation() {
+    Set<String> classnames = new LinkedHashSet<>();
+    classnames.add("randoop.reflection.LazyConversionInstantiationCase");
+    OperationModel model = createModel(classnames, "randoop.reflection");
+    Set<TypedOperation> classOperations = new LinkedHashSet<>();
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    Substitution<ReferenceType> substitution;
+    substitution = Substitution.forArgs(JDKTypes.TREE_SET_TYPE.getTypeParameters(), (ReferenceType)JavaTypes.STRING_TYPE);
+    addTypes(JDKTypes.TREE_SET_TYPE.apply(substitution), inputTypes);
+
+    Set<String> nullOKNames = new HashSet<>();
+    getOperations(model, classOperations, inputTypes, nullOKNames);
+    assertTrue("should be some operations", classOperations.size() > 0);
+
+  }
+  */
+
   private OperationModel createModel(Set<String> names, String packageName) {
     VisibilityPredicate visibility =
         new PackageVisibilityPredicate(Package.getPackage(packageName));
