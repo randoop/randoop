@@ -56,15 +56,6 @@ public abstract class TypeVariable extends ParameterType {
   }
 
   /**
-   * Indicate whether this type has a wildcard either as or in a type argument.
-   *
-   * @return true if this type has a wildcard, and false otherwise
-   */
-  public boolean hasWildcard() {
-    return false;
-  }
-
-  /**
    * {@inheritDoc}
    * Returns false, since an uninstantiated type variable may not be assigned to.
    */
@@ -132,10 +123,9 @@ public abstract class TypeVariable extends ParameterType {
   boolean canBeInstantiatedBy(ReferenceType otherType) {
     Substitution<ReferenceType> substitution;
     if (getLowerTypeBound().isVariable()) {
-      TypeVariable boundType =
-          (TypeVariable) ((EagerReferenceBound) getLowerTypeBound()).getBoundType();
       substitution = getSubstitution(this, otherType);
-      TypeVariable checkType = (TypeVariable) boundType.apply(substitution);
+      ParameterBound boundType = getLowerTypeBound().apply(substitution);
+      TypeVariable checkType = (TypeVariable) ((ReferenceBound) boundType).getBoundType();
       if (!checkType.canBeInstantiatedBy(otherType)) {
         return false;
       }
@@ -146,10 +136,9 @@ public abstract class TypeVariable extends ParameterType {
       }
     }
     if (getUpperTypeBound().isVariable()) {
-      TypeVariable boundType =
-          (TypeVariable) ((EagerReferenceBound) getUpperTypeBound()).getBoundType();
       substitution = getSubstitution(this, otherType);
-      TypeVariable checkType = (TypeVariable) boundType.apply(substitution);
+      ParameterBound boundType = getUpperTypeBound().apply(substitution);
+      TypeVariable checkType = (TypeVariable) ((ReferenceBound) boundType).getBoundType();
       if (!checkType.canBeInstantiatedBy(otherType)) {
         return false;
       }
