@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -141,9 +142,10 @@ public abstract class ParameterBound {
       if (variableSet.contains(variable)) {
         return true;
       }
-      variableSet.add(variable);
+      Set<java.lang.reflect.TypeVariable<?>> recursiveSet = new HashSet<>(variableSet);
+      recursiveSet.add(variable);
       for (java.lang.reflect.Type boundType : variable.getBounds()) {
-        if (hasTypeVariable(boundType, variableSet)) {
+        if (hasTypeVariable(boundType, recursiveSet)) {
           return true;
         }
       }
