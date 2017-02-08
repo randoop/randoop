@@ -1,6 +1,7 @@
 package randoop.reflection;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -84,7 +85,6 @@ public class TypeInstantiator {
     }
 
     // if operation == null failed to build instantiation
-
     return operation;
   }
 
@@ -234,7 +234,7 @@ public class TypeInstantiator {
    */
   private TypedClassOperation instantiateOperationTypes(TypedClassOperation operation) {
     // answer question: what type instantiation would allow a call to this operation?
-    List<TypeVariable> typeParameters = new ArrayList<>();
+    Set<TypeVariable> typeParameters = new LinkedHashSet<>();
     Substitution<ReferenceType> substitution = new Substitution<>();
     for (Type parameterType : operation.getInputTypes()) {
       Type workingType = parameterType.apply(substitution);
@@ -264,12 +264,17 @@ public class TypeInstantiator {
     }
 
     if (!typeParameters.isEmpty()) {
-      substitution = selectSubstitution(typeParameters, substitution);
+      substitution = selectSubstitution(new ArrayList<>(typeParameters), substitution);
       if (substitution == null) {
         return null;
       }
     }
-    return operation.apply(substitution);
+
+    operation = operation.apply(substitution);
+    if (operation.isGeneric()) {
+      return null;
+    }
+    return operation;
   }
 
   /**
@@ -347,10 +352,10 @@ public class TypeInstantiator {
     List<Substitution<ReferenceType>> substitutionList = new ArrayList<>();
     if (!genericParameters.isEmpty()) {
       // if there are type parameters with generic bounds
-      TypeCheck typeCheck = TypeCheck.forParameters(genericParameters);
       if (!nongenericParameters.isEmpty()) {
         // if there are type parameters with non-generic bounds, these may be variables in
         // generic-bounded parameters
+
         List<List<ReferenceType>> nonGenCandidates = getCandidateTypeLists(nongenericParameters);
         if (nonGenCandidates.isEmpty()) {
           return new ArrayList<>();
@@ -374,6 +379,7 @@ public class TypeInstantiator {
       } else {
         // if no parameters with non-generic bounds, choose instantiation for parameters
         // with generic bounds
+        TypeCheck typeCheck = TypeCheck.forParameters(genericParameters);
         substitutionList = getInstantiations(genericParameters, substitution, typeCheck);
       }
       if (substitutionList.isEmpty()) {
