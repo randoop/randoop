@@ -131,6 +131,7 @@ public class ToradocuConditionCollection implements ConditionCollection {
    *
    * @param declaringClass  the declaring class of the member
    * @param documentedMethod the Toradocu tagged method or constructor
+   * @param parameterTypes  the types of the parameters for the method or constructor
    * @return the reflection object for the given method or constructor
    */
   private static AccessibleObject getCallableObject(
@@ -174,6 +175,8 @@ public class ToradocuConditionCollection implements ConditionCollection {
    * @param conditionClass  the enclosing class of the condition method
    * @param methodName  the name of the condition method
    * @param tag  the tag to which the condition belongs
+   * @param declaringClass  the declaring class for the subject method
+   * @param subjectParameters  the parameter types for the subject method
    * @return the reflective method object if the method has a condition
    */
   private static Method getConditionMethod(
@@ -249,6 +252,8 @@ public class ToradocuConditionCollection implements ConditionCollection {
    * method.
    * By convention, this is {@code { Object, Object[] } }.
    *
+   * @param declaringClass  the declaring class for the subject method
+   * @param subjectParameters  the parameter types for the subject method
    * @return the type parameters for a condition method
    */
   private static Class<?>[] createConditionMethodParameters(

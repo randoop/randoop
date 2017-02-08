@@ -55,7 +55,7 @@ public abstract class ReferenceBound extends ParameterBound {
 
   @Override
   boolean hasWildcard() {
-    return boundType.isParameterized() && ((ParameterizedType) boundType).hasWildcard();
+    return boundType.hasWildcard();
   }
 
   @Override
@@ -66,5 +66,10 @@ public abstract class ReferenceBound extends ParameterBound {
   @Override
   public boolean isObject() {
     return boundType.isObject();
+  }
+
+  @Override
+  public boolean isVariable() {
+    return boundType.isVariable();
   }
 }

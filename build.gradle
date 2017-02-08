@@ -37,7 +37,7 @@ allprojects {
   }
 
   /* Randoop version number - added to generated jar files */
-  version = '3.0.8'
+  version = '3.0.9'
 }
 
 /******
@@ -114,7 +114,8 @@ configurations {
 dependencies {
   /* Randoop uses local copy of Plume */
   compile files('lib/plume.jar')
-  compile 'com.google.code.gson:gson:2.7'
+  compile 'com.google.code.gson:gson:2.8.0'
+  compile group: 'junit', name: 'junit', version: '4.+'
 
   /* JavaParser used by Minimize */
   compile 'com.github.javaparser:javaparser-core:3.0.0-alpha.4'

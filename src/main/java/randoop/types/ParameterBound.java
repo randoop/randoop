@@ -250,4 +250,13 @@ public abstract class ParameterBound {
    * @return true if this bound is an upper bound on the type of the given bound, false otherwise
    */
   abstract boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution);
+
+  /**
+   * Indicates whether this bound is a type variable.
+   *
+   * @return true if this bound is a type variable, false otherwise
+   */
+  public boolean isVariable() {
+    return false;
+  }
 }

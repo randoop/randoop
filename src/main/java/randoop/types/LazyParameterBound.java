@@ -74,9 +74,10 @@ class LazyParameterBound extends ParameterBound {
       for (java.lang.reflect.Type parameter :
           ((ParameterizedType) boundType).getActualTypeArguments()) {
         TypeArgument typeArgument = apply(parameter, substitution);
-        isLazy =
-            (isTypeVariable(parameter))
-                && ((ReferenceArgument) typeArgument).getReferenceType().isVariable();
+        if (typeArgument == null) {
+          return this;
+        }
+        isLazy = isTypeVariable(parameter) && typeArgument.isVariable();
         argumentList.add(typeArgument);
       }
       GenericClassType classType =
@@ -107,8 +108,7 @@ class LazyParameterBound extends ParameterBound {
       if (referenceType != null) {
         return TypeArgument.forType(referenceType);
       }
-      // should trigger construction of a LazyReferenceBound
-      return TypeArgument.forType(TypeVariable.forType(type));
+      return null;
     }
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
@@ -164,7 +164,7 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public ParameterBound applyCaptureConversion() {
-    assert false : "unable to do capture conversion on lazy bound";
+    assert false : "unable to do capture conversion on lazy bound + this";
     return this;
   }
 
@@ -210,6 +210,11 @@ class LazyParameterBound extends ParameterBound {
       return true;
     }
     if (type instanceof java.lang.reflect.TypeVariable) {
+      for (java.lang.reflect.Type bound : ((java.lang.reflect.TypeVariable) type).getBounds()) {
+        if (hasWildcard(bound)) {
+          return true;
+        }
+      }
       return false;
     }
     if (type instanceof java.lang.reflect.ParameterizedType) {
@@ -269,5 +274,10 @@ class LazyParameterBound extends ParameterBound {
   boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
     assert false : " not quite sure what to do with lazy type bound";
     return false;
+  }
+
+  @Override
+  public boolean isVariable() {
+    return boundType instanceof java.lang.reflect.TypeVariable;
   }
 }

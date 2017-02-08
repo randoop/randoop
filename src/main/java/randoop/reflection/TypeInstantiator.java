@@ -364,8 +364,8 @@ public class TypeInstantiator {
           List<TypeVariable> parameters = new ArrayList<>();
           for (TypeVariable variable : genericParameters) {
             ReferenceType paramType = variable.apply(initialSubstitution);
-            if (paramType instanceof TypeVariable) {
-              parameters.add((TypeVariable) paramType);
+            if (paramType.isVariable()) {
+              parameters.add(variable);
             }
           }
           // choose instantiation for parameters with generic-bounds

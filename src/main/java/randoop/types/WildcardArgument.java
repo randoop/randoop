@@ -141,6 +141,11 @@ class WildcardArgument extends TypeArgument {
     return true;
   }
 
+  @Override
+  public boolean isVariable() {
+    return false;
+  }
+
   WildcardType getWildcardType() {
     return argumentType;
   }

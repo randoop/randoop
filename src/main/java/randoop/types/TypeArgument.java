@@ -105,4 +105,11 @@ public abstract class TypeArgument {
   public Substitution<ReferenceType> getInstantiatingSubstitution(TypeArgument otherArgument) {
     return null;
   }
+
+  /**
+   * Indicate whether this type argument is a type variable.
+   *
+   * @return true if this argument is a type variable, false otherwise
+   */
+  public abstract boolean isVariable();
 }
