@@ -164,7 +164,7 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public ParameterBound applyCaptureConversion() {
-    assert false : "unable to do capture conversion on lazy bound";
+    assert false : "unable to do capture conversion on lazy bound + this";
     return this;
   }
 
@@ -210,6 +210,11 @@ class LazyParameterBound extends ParameterBound {
       return true;
     }
     if (type instanceof java.lang.reflect.TypeVariable) {
+      for (java.lang.reflect.Type bound : ((java.lang.reflect.TypeVariable) type).getBounds()) {
+        if (hasWildcard(bound)) {
+          return true;
+        }
+      }
       return false;
     }
     if (type instanceof java.lang.reflect.ParameterizedType) {

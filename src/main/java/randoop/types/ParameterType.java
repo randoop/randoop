@@ -87,6 +87,11 @@ public abstract class ParameterType extends ReferenceType {
     this.lowerBound = lowerBound;
   }
 
+  @Override
+  public boolean hasWildcard() {
+    return getLowerTypeBound().hasWildcard() || getUpperTypeBound().hasWildcard();
+  }
+
   public boolean hasGenericBound() {
     return getUpperTypeBound().isGeneric() || getLowerTypeBound().isGeneric();
   }

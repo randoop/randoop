@@ -55,7 +55,7 @@ public abstract class ReferenceBound extends ParameterBound {
 
   @Override
   boolean hasWildcard() {
-    return boundType.isParameterized() && ((ParameterizedType) boundType).hasWildcard();
+    return boundType.hasWildcard();
   }
 
   @Override

@@ -97,6 +97,15 @@ public abstract class ReferenceType extends Type {
   }
 
   /**
+   * Indicates whether this {@link ReferenceType} has a wildcard.
+   *
+   * @return true if this type has a wildcard, false otherwise
+   */
+  public boolean hasWildcard() {
+    return false;
+  }
+
+  /**
    * {@inheritDoc}
    * <p>
    * For assignment to {@link ReferenceType}, checks for widening reference conversion when the
