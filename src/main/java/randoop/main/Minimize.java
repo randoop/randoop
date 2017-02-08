@@ -5,6 +5,7 @@ import plume.Options;
 import plume.TimeLimitProcess;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -725,7 +726,7 @@ public class Minimize extends CommandHandler {
           @Override
           public String call() throws Exception {
             try {
-              return IOUtils.toString(tp.getInputStream());
+              return IOUtils.toString(tp.getInputStream(), Charset.defaultCharset());
             } catch (IOException e) {
               // Error
               return null;
@@ -738,7 +739,7 @@ public class Minimize extends CommandHandler {
           @Override
           public String call() throws Exception {
             try {
-              return IOUtils.toString(tp.getErrorStream());
+              return IOUtils.toString(tp.getErrorStream(), Charset.defaultCharset());
             } catch (IOException e) {
               // Error
               return null;
