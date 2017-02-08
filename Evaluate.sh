@@ -33,9 +33,31 @@ done
 
 # Set up some fixed values to be used throughout the script
 work_dir=proj
-projects=("Closure")
+projects=("Chart")
 # "Chart" "Closure" "Lang" "Math" "Time"
 time_limits=(2 10 30 60 120)
+project_sizes=(  )
+randoop_path=`pwd`"/build/libs/randoop-baseline-3.0.8.jar"
+digdog_path=`pwd`"/build/libs/randoop-3.0.8.jar"
+
+# Get 3.0.8 release of randoop, which will be used as one of the test generation tools
+if [ ! -f $randoop_path ]; then
+	wget https://github.com/randoop/randoop/releases/download/v3.0.8/randoop-3.0.8.zip
+	unzip randoop-3.0.8.zip -d build/libs
+	rm -f randoop-3.0.8.zip
+
+	cd build/libs
+	mv randoop-all-3.0.8.jar randoop-baseline-3.0.8.jar
+	cd ../..
+fi
+
+# If the build flag was set or if there is no randoop jar
+# Build the randoop jar
+if [ $build ] || [ ! -f $digdog_path ]; then
+	echo "Building Randoop jar"
+	./gradlew clean
+	./gradlew jar
+fi
 
 # Go up one level to the directory that contains this repository
 cd ..
@@ -49,24 +71,6 @@ if [ $init ]; then
         echo "Init flag was set and defects4j repository existed, removing..."
         rm -rf defects4j
     fi
-fi
-
-# If the build flag was set or if there is no randoop jar
-# Build the randoop jar
-if [ $build ]; then
-	echo "Building Randoop jar"
-	./gradlew clean
-	./gradlew jar
-	randoop_jar=`pwd`/build/libs/randoop-all-3.0.8.jar
-else
-	if [ -f "randoop-all-3.0.8.jar" ]; then
-		rm -f randoop-all-3.0.8.jar
-	fi
-
-	# Get 3.0.8 release of randoop, which will be used as one of the test generation tools
- 	wget https://github.com/randoop/randoop/releases/download/v3.0.8/randoop-3.0.8.zip
- 	unzip randoop-3.0.8.zip -d build/libs
-	randoop_jar="randoop-all-3.0.8.jar"
 fi
 
 # If there is no defects4j repository sitting alongside our randoop repository, we need to perform initial set up.
@@ -120,7 +124,8 @@ for project in ${projects[@]}; do
     # TODO: pull this into a function and add specific logic for each project based on project directory structure
 	find ${curr_dir}/${classes_dir}/ -name \*.class >${project}classlist.txt
 	sed -i 's/\//\./g' ${project}classlist.txt
-	sed -i 's/\(^.*build\.classes\.\)//g' ${project}classlist.txt
+	sed -i 's/\(^.*build\.\)//g' ${project}classlist.txt
+	sed -i 's/\(^.*classes\.\)//g' ${project}classlist.txt
 	sed -i 's/\.class$//g' ${project}classlist.txt
 	sed -i '/\$/d' ${project}classlist.txt
 
@@ -157,7 +162,9 @@ for time in ${time_limits[@]}; do
 			# TODO: is it correct to run Randoop separately over each project, or should we somehow run it over the combination of all of them?
 			echo "Running Randoop with time limit set to ${time}, project ${project} iteration #${i}"
 			echo "Randoop jar location: ${randoop_jar}"
-			java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$randoop_jar randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --timelimit=20 --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --literals-file=CLASSES
+			java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$randoop_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --timelimit=20 --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --literals-file=CLASSES --log=log.txt
+
+			exit 1
 
 			# Change the generated test handlers to end with "Tests.java"
 			# so they are picked up by the ant task for running tests"
@@ -192,7 +199,7 @@ for time in ${time_limits[@]}; do
 
 			# Remove test suite archive so we can generate again on the next iteration
 			echo "Removing archive of the generated test suite..."
-			rm "${curr_dir}/randoop.tar.bz2"
+			rm -f "${curr_dir}/randoop.tar.bz2"
 		done
 	done
 done
