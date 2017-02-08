@@ -10,25 +10,23 @@ usage() {
     # -i (init): If set, will re-do all initialization work, including cloning the defects4j repository, initializing the defects4j projects, and creating the classlists and jarlists for each project.
     # -b (build): If set, randoop will be built using the gradle wrapper
     # TODO: Add more options.
-while getopts ":i:b" opt; do
-	case $opt in
-		i)
+while [[ $# -gt 0 ]]; do
+	key="$1"
+	case $key in
+		-i|--init)
 			init=true
 			echo "Found command line option: -i"
 			;;
-		b)
+		-b|--build)
 			build=true
 			echo "Found command line option: -b"
 			;;
-		\?)
-			echo "Unknown flag"
-			usage
+		*)
+			echo "Unknown flag: ${key}"
 			exit 1
 			;;
-		:)
-			echo "No flag" >&2
-			;;
 	esac
+	shift
 done
 
 # Set up some fixed values to be used throughout the script
