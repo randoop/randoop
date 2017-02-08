@@ -33,6 +33,7 @@ import org.apache.commons.bcel6.generic.MethodGen;
 import org.apache.commons.bcel6.util.ClassPath;
 
 import randoop.operation.NonreceiverTerm;
+import randoop.sequence.Value;
 import randoop.types.JavaTypes;
 import randoop.reflection.TypeNames;
 
@@ -583,7 +584,9 @@ public class ClassFileConstants {
         map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
       }
       for (String x : cs.strings) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
+        if(!Value.stringLengthOK(x)) {
+          map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
+        }
       }
       for (Class<?> x : cs.classes) {
         map.add(clazz, new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
