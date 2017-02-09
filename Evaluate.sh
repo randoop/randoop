@@ -1,8 +1,8 @@
 #!/bin/bash
 
 log() {
-    echo
     echo "[DIGDOG] $1"
+    echo
 }
 
 usage() {
@@ -36,7 +36,7 @@ done
 
 # Set up some fixed values to be used throughout the script
 work_dir=proj
-projects=("Time")
+projects=("Time" "Lang" "Chart" "Math")
 # "Chart" "Closure" "Lang" "Math" "Time"
 # Chart: 501
 # Lang: 86
@@ -172,7 +172,6 @@ adjustTestNames() {
             sed -i 's/ErrorTestDriver/ErrorTests/' $test_dir/ErrorTests.java
             ;;
     esac
-    ls $test_dir
 }
 
 # Performs the necessary prep for a project before the test generation tool is run.
@@ -236,6 +235,21 @@ recordCoverage() {
         # Number of conditions covered
     sed -i 's/[^0-9]//g' numbers.txt
     cat numbers.txt
+    nums=()
+    while read num; do
+        log "num = $num"
+        nums+=("${num}")
+    done <numbers.txt
+    if [ "${nums[1]}" -ne "0" ]; then
+        echo "${nums[1]}" >> ${line_file}
+        echo "${nums[0]}" >> ${line_file}
+        echo "${nums[3]}" >> ${branch_file}
+        echo "${nums[2]}" >> ${branch_file}
+    else
+        echo "${project}, ${time}" >> "${exp_dir}/failure_counts.txt"
+        log "i = $i"
+        i=$((i-1))
+    fi
 }
 
 doIndividualExperiment() {
@@ -257,20 +271,22 @@ doIndividualExperiment() {
         for time in ${indiv_time_limits[@]}; do
             echo "TIME ${time}" >> ${line_file}
             echo "TIME ${time}" >> ${branch_file}
-            for i in `seq 1 10`; do
+            i=0
+            while [ $i -lt 10 ]; do
                 case $1 in
                     Randoop)
                         #TODO: add back constant mining here
                         log "Running base Randoop with time limit=${time}, ${project} #${i}"
-			            java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$randoop_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM
+			            java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$randoop_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM
                         ;;
                     *)
-			            java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$digdog_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM
+			            java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$digdog_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM
                         ;;
                 esac
                 adjustTestNames
                 packageTests
                 recordCoverage #TODO: this needs to be modified to store info correctly
+                i=$((i+1))
             done
         done
     done
