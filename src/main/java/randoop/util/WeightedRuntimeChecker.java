@@ -6,12 +6,12 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 
 /**
- * Took me ~50min to generate results
+ * Took me 1hr to generate results on lab unix pc
  * TODO: handling when file already exists, improve efficiency, implement related test cases,
  */
 public class WeightedRuntimeChecker {
   private static final int NUMBER_OF_TESTS = 100;
-  private static final int MAX_NUMBER_OF_ELEMENTS = 10000;
+  private static final int MAX_NUMBER_OF_ELEMENTS = 100000;
   private static int sizeOfStructs;
 
   // Tests runtime of the 2 ADT's methods
