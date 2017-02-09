@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public class WeightedRuntimeChecker {
   private static final int NUMBER_OF_TESTS = 100;
-  private static final int MAX_NUMBER_OF_ELEMENTS = 100000;
+  private static final int MAX_NUMBER_OF_ELEMENTS = 10000;
   private static int sizeOfStructs;
 
   // Tests runtime of the 2 ADT's methods
@@ -31,7 +31,7 @@ public class WeightedRuntimeChecker {
 
     // Get some results over a range of increasing elements
     for (sizeOfStructs = 1; sizeOfStructs < MAX_NUMBER_OF_ELEMENTS; sizeOfStructs *= 2) {
-      System.out.println(sizeOfStructs);
+      System.out.println("Running  methods for ADT's of size: " + sizeOfStructs);
       // fill the ADTs up to the sizeOfStructs
       weightedList = fillWeightedRandomSampler(weightedList);
       weightedTree = fillWeightedRandomSampler(weightedTree);
@@ -187,21 +187,22 @@ public class WeightedRuntimeChecker {
       ArrayList<Double> weightedRandomAvgTreeResults,
       ArrayList<Double> weightedUpdateAvgTreeResults)
       throws FileNotFoundException {
+    System.out.println("Writing results to ~/runtimeResults.csv");
     PrintWriter pw = new PrintWriter(new File("runtimeResults.csv"));
     StringBuilder sb = new StringBuilder();
     sb.append("sizeOfStructs");
     sb.append(',');
-    sb.append("weightedAddAvgListResults");
+    sb.append("weightedAddAvgListResults (ns)");
     sb.append(',');
-    sb.append("weightedRandomAvgListResults");
+    sb.append("weightedRandomAvgListResults (ns)");
     sb.append(',');
-    sb.append("weightedUpdateAvgListResults");
+    sb.append("weightedUpdateAvgListResults (ns)");
     sb.append(',');
-    sb.append("weightedAddAvgTreeResults");
+    sb.append("weightedAddAvgTreeResults (nsec)");
     sb.append(',');
-    sb.append("weightedRandomAvgTreeResults");
+    sb.append("weightedRandomAvgTreeResults (ns)");
     sb.append(',');
-    sb.append("weightedUpdateAvgTreeResults");
+    sb.append("weightedUpdateAvgTreeResults (ns)");
     sb.append('\n');
     for (int i = 0; i < weightedAddAvgListResults.size(); i++) {
       double n = Math.pow(2, i);
@@ -220,8 +221,43 @@ public class WeightedRuntimeChecker {
       sb.append(weightedUpdateAvgTreeResults.get(i));
       sb.append('\n');
     }
+
+    // generate second table, same values but in seconds
+    sb.append('\n');
+    sb.append("sizeOfStructs");
+    sb.append(',');
+    sb.append("weightedAddAvgListResults (sec)");
+    sb.append(',');
+    sb.append("weightedRandomAvgListResults (sec)");
+    sb.append(',');
+    sb.append("weightedUpdateAvgListResults (sec)");
+    sb.append(',');
+    sb.append("weightedAddAvgTreeResults (sec)");
+    sb.append(',');
+    sb.append("weightedRandomAvgTreeResults (sec)");
+    sb.append(',');
+    sb.append("weightedUpdateAvgTreeResults (sec)");
+    sb.append('\n');
+    for (int i = 0; i < weightedAddAvgListResults.size(); i++) {
+      double n = Math.pow(2, i);
+      double nanoPerSec = 1000000000.0; // 1e9 ns in a sec
+      sb.append(n);
+      sb.append(',');
+      sb.append(weightedAddAvgListResults.get(i) / nanoPerSec);
+      sb.append(',');
+      sb.append(weightedRandomAvgListResults.get(i) / nanoPerSec);
+      sb.append(',');
+      sb.append(weightedUpdateAvgListResults.get(i) / nanoPerSec);
+      sb.append(',');
+      sb.append(weightedAddAvgTreeResults.get(i) / nanoPerSec);
+      sb.append(',');
+      sb.append(weightedRandomAvgTreeResults.get(i) / nanoPerSec);
+      sb.append(',');
+      sb.append(weightedUpdateAvgTreeResults.get(i) / nanoPerSec);
+      sb.append('\n');
+    }
     pw.write(sb.toString());
     pw.close();
-    System.out.println("done!");
+    System.out.println("Done!");
   }
 }
