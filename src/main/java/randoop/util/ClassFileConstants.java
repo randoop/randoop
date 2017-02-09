@@ -584,8 +584,10 @@ public class ClassFileConstants {
         map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
       }
       for (String x : cs.strings) {
-        if (!Value.stringLengthOK(x)) {
+        try {
           map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
+        } catch (IllegalArgumentException e) {
+          System.out.println("Ignoring String constant value: " + e.getMessage());
         }
       }
       for (Class<?> x : cs.classes) {

@@ -31,7 +31,7 @@ done
 
 # Set up some fixed values to be used throughout the script
 work_dir=proj
-projects=("Chart")
+projects=("Chart" "Lang" "Math" "Time")
 # "Chart" "Closure" "Lang" "Math" "Time"
 # Chart: 501
 # Lang: 86
@@ -39,7 +39,7 @@ projects=("Chart")
 # Time: 79
 
 time_limits=(2 10 30 60 120)
-project_sizes=(  )
+project_sizes=(501 86 520 79)
 randoop_path=`pwd`"/build/libs/randoop-baseline-3.0.8.jar"
 digdog_path=`pwd`"/build/libs/randoop-all-3.0.8.jar"
 
@@ -67,8 +67,8 @@ cd ..
 echo "Stepping up to the containing directory"
 
 # If the init flag is set, we want to re-start the initial process, so
-# we remove the defects 4j repository if it already exists. This will trigger
-# the rest of the defects4j set up as though the script were running for the first time.
+# we remove the defects 4j repository if it already exists. This is necessary
+# since we will be re-cloning the repository.
 if [ $init ]; then
     if [ -d "defects4j" ]; then
         echo "Init flag was set and defects4j repository existed, removing..."
@@ -77,16 +77,19 @@ if [ $init ]; then
 fi
 
 # If there is no defects4j repository sitting alongside our randoop repository, we need to perform initial set up.
-# This will always be true if we have set the initialization option.
 if [ ! -d "defects4j" ] ; then
+    echo "No defects4j repository found, setting init to true."
+    init=true
+fi
 
+# Perform initialization process, cloning the defects4j repository,
+# initializing the repository, and installing the perl DBI.
+if [ $init ]; then
     echo "Preparing the defects4j repository..."
     # Clone the defects4j repository, and run the init script
 	git clone https://github.com/rjust/defects4j
 	cd defects4j
 	./init.sh
-  # TODO: this line doesn't do anything, I think,
-	export PATH=$PATH:./framework/bin
 
 	# Install Perl DBI
 	printf 'y\ny\n\n' | perl -MCPAN -e 'install Bundle::DBI'
@@ -94,53 +97,56 @@ else
 	# If we already have the defects4j repository cloned, we just step inside
 	echo "Defects4j repository already exists, assuming that set up has already been performed. If this is in error, re-run this script with the -i option"
 	cd defects4j
-	export PATH=$PATH:./framework/bin
 fi
+export PATH=$PATH:./framework/bin
 
 # Compile Defects4j projects and then run generated tests on them
-#TODO: only run this if we are performing first time set up
-for project in ${projects[@]}; do
-	case $project in
-		Chart)
-			classes_dir="build"
-			;;
-		Closure)
-			classes_dir="build/classes"
-			;;
-		*)
-			classes_dir="target/classes"
-			;;
-	esac
+if [ $init ]; then
+    for project in ${projects[@]}; do
+	    # Set the directory of classes based on the structure of the project
+	    case $project in
+		    Chart)
+			    classes_dir="build"
+			    ;;
+		    Closure)
+			    classes_dir="build/classes"
+			    ;;
+		    *)
+			    classes_dir="target/classes"
+			    ;;
+	    esac
 
-	# Create working directory for running tests on Defects4j projects
-	curr_dir=$work_dir$project
-	test_dir=${curr_dir}/gentests
-	echo "Setting directories for new project: ${project}..."
-	echo "Working directory set to ${curr_dir}"
-	echo "Test directory set to ${test_dir}"
-	# If our project directory already exists, we remove it so we can start fresh
-	if [ -d "${curr_dir}" ]; then
-		echo "Working directory already existed, removing it...."
-		rm -rf $curr_dir
-	fi
-	echo "Initializing working directory (${curr_dir})..."
-	mkdir $curr_dir
+	    # Create working directory for running tests on Defects4j projects
+	    curr_dir=$work_dir$project
+	    test_dir=${curr_dir}/gentests
+	    echo "Setting directories for new project: ${project}..."
+	    # If our project directory already exists, we remove it so we can start fresh
+	    if [ -d "${curr_dir}" ]; then
+		    echo "Working directory already existed, removing it...."
+		    rm -rf $curr_dir
+	    fi
+	    echo "Initializing working directory (${curr_dir})..."
+	    mkdir $curr_dir
 
-	# Checkout and compile current project
-	defects4j checkout -p $project -v 1b -w $curr_dir
-	defects4j compile -w $curr_dir
+	    # Checkout and compile current project
+	    defects4j checkout -p $project -v 1b -w $curr_dir
+	    defects4j compile -w $curr_dir
 
-	# Create the classlist and jar list for this project.
-    # TODO: pull this into a function and add specific logic for each project based on project directory structure
-	find ${curr_dir}/${classes_dir}/ -name \*.class >${project}classlist.txt
-	sed -i 's/\//\./g' ${project}classlist.txt
-	sed -i 's/\(^.*build\.\)//g' ${project}classlist.txt
-	sed -i 's/\(^.*classes\.\)//g' ${project}classlist.txt
-	sed -i 's/\.class$//g' ${project}classlist.txt
-	sed -i '/\$/d' ${project}classlist.txt
+	    # Create the classlist and jar list for this project.
+	    echo "Setting up class list for project ${project}"
+	    find ${curr_dir}/${classes_dir}/ -name \*.class >${project}classlist.txt
+	    sed -i 's/\//\./g' ${project}classlist.txt
+	    sed -i 's/\(^.*build\.\)//g' ${project}classlist.txt
+	    sed -i 's/\(^.*classes\.\)//g' ${project}classlist.txt
+	    sed -i 's/\.class$//g' ${project}classlist.txt
+	    sed -i '/\$/d' ${project}classlist.txt
 
-	find $curr_dir -name \*.jar > ${project}jars.txt
-done
+	    # Get a list of all .jar files in this project, to be added to the
+	    # classpath when running randoop/digdog.
+	    echo "Setting up jar list for project ${project}"
+	    find $curr_dir -name \*.jar > ${project}jars.txt
+    done
+fi
 
 # Iterate over each time limit. For each time limit, perform 10 iterations of test generation and coverage calculations with Randoop.
 # TODO: integrate the other tools into the evaluation framework here
@@ -174,8 +180,6 @@ for time in ${time_limits[@]}; do
 			echo "Setting up test directory ${test_dir}"
 			mkdir $test_dir
 
-			# TODO: figure out why constant mining doesn't work
-			# TODO: is it correct to run Randoop separately over each project, or should we somehow run it over the combination of all of them?
 			echo "Running Randoop with time limit set to ${time}, project ${project} iteration #${i}"
 			echo "Randoop jar location: ${digdog_path}"
 			java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$digdog_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --timelimit=20 --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --literals-file=CLASSES
