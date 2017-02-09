@@ -1,10 +1,16 @@
 #!/bin/bash
 
-echo "Running DigDog Evaluation Script"
-usage() {
-	echo "Usage: ./Evaluate.sh [-i][-b]"
+log() {
+    echo "\n[DIGDOG] $1"
 }
 
+usage() {
+    log "Usage: ./Evaluate.sh [-i][-b]"
+}
+
+
+
+log "Running DigDog Evaluation Script"
 # Read the flag options that were passed in when the script was run.
 # Options include:
     # -i (init): If set, will re-do all initialization work, including cloning the defects4j repository, initializing the defects4j projects, and creating the classlists and jarlists for each project.
@@ -15,14 +21,14 @@ while [[ $# -gt 0 ]]; do
 	case $key in
 		-i|--init)
 			init=true
-			echo "Found command line option: -i"
+			log "Found command line option: -i"
 			;;
 		-b|--build)
 			build=true
-			echo "Found command line option: -b"
+			log "Found command line option: -b"
 			;;
 		*)
-			echo "Unknown flag: ${key}"
+			log "Unknown flag: ${key}"
 			exit 1
 			;;
 	esac
@@ -46,7 +52,7 @@ digdog_path=`pwd`"/build/libs/randoop-all-3.0.8.jar"
 # If the build flag was set or if there is no randoop jar
 # Build the randoop jar
 if [ $build ] || [ ! -f $digdog_path ]; then
-	echo "Building Randoop jar"
+	log "Building Randoop jar"
 	./gradlew clean
 	./gradlew assemble
 fi
@@ -64,28 +70,28 @@ fi
 
 # Go up one level to the directory that contains this repository
 cd ..
-echo "Stepping up to the containing directory"
+log "Stepping up to the containing directory"
 
 # If the init flag is set, we want to re-start the initial process, so
 # we remove the defects 4j repository if it already exists. This is necessary
 # since we will be re-cloning the repository.
 if [ $init ]; then
     if [ -d "defects4j" ]; then
-        echo "Init flag was set and defects4j repository existed, removing..."
+        log "Init flag was set and defects4j repository existed, removing..."
         rm -rf defects4j
     fi
 fi
 
 # If there is no defects4j repository sitting alongside our randoop repository, we need to perform initial set up.
 if [ ! -d "defects4j" ] ; then
-    echo "No defects4j repository found, setting init to true."
+    log "No defects4j repository found, setting init to true."
     init=true
 fi
 
 # Perform initialization process, cloning the defects4j repository,
 # initializing the repository, and installing the perl DBI.
 if [ $init ]; then
-    echo "Preparing the defects4j repository..."
+    log "Preparing the defects4j repository..."
     # Clone the defects4j repository, and run the init script
 	git clone https://github.com/rjust/defects4j
 	cd defects4j
@@ -95,7 +101,7 @@ if [ $init ]; then
 	printf 'y\ny\n\n' | perl -MCPAN -e 'install Bundle::DBI'
 else
 	# If we already have the defects4j repository cloned, we just step inside
-	echo "Defects4j repository already exists, assuming that set up has already been performed. If this is in error, re-run this script with the -i option"
+	log "Defects4j repository already exists, assuming that set up has already been performed. If this is in error, re-run this script with the -i option"
 	cd defects4j
 fi
 export PATH=$PATH:./framework/bin
@@ -119,13 +125,13 @@ if [ $init ]; then
 	    # Create working directory for running tests on Defects4j projects
 	    curr_dir=$work_dir$project
 	    test_dir=${curr_dir}/gentests
-	    echo "Setting directories for new project: ${project}..."
+	    log "Setting directories for new project: ${project}..."
 	    # If our project directory already exists, we remove it so we can start fresh
 	    if [ -d "${curr_dir}" ]; then
-		    echo "Working directory already existed, removing it...."
+		    log "Working directory already existed, removing it...."
 		    rm -rf $curr_dir
 	    fi
-	    echo "Initializing working directory (${curr_dir})..."
+	    log "Initializing working directory (${curr_dir})..."
 	    mkdir $curr_dir
 
 	    # Checkout and compile current project
@@ -133,7 +139,7 @@ if [ $init ]; then
 	    defects4j compile -w $curr_dir
 
 	    # Create the classlist and jar list for this project.
-	    echo "Setting up class list for project ${project}"
+	    log "Setting up class list for project ${project}"
 	    find ${curr_dir}/${classes_dir}/ -name \*.class >${project}classlist.txt
 	    sed -i 's/\//\./g' ${project}classlist.txt
 	    sed -i 's/\(^.*build\.\)//g' ${project}classlist.txt
@@ -143,7 +149,7 @@ if [ $init ]; then
 
 	    # Get a list of all .jar files in this project, to be added to the
 	    # classpath when running randoop/digdog.
-	    echo "Setting up jar list for project ${project}"
+	    log "Setting up jar list for project ${project}"
 	    find $curr_dir -name \*.jar > ${project}jars.txt
     done
 fi
@@ -165,7 +171,7 @@ for time in ${time_limits[@]}; do
 					;;
 			esac
 
-			echo "Performing evaluation #${i} for project ${project}..."
+			log "Performing evaluation #${i} for project ${project}..."
 
 			# Set up local variables based on the project name that we are currently evaluating
 			curr_dir=$work_dir$project
@@ -174,14 +180,14 @@ for time in ${time_limits[@]}; do
 
 			# Set up the test dir
 			if [ -d "${test_dir}" ]; then
-				echo "Test directory ${test_dir} existed, clearing..."
+				log "Test directory ${test_dir} existed, clearing..."
 				rm -rf $test_dir
 			fi
-			echo "Setting up test directory ${test_dir}"
+			log "Setting up test directory ${test_dir}"
 			mkdir $test_dir
 
-			echo "Running Randoop with time limit set to ${time}, project ${project} iteration #${i}"
-			echo "Randoop jar location: ${digdog_path}"
+			log "Running Randoop with time limit set to ${time}, project ${project} iteration #${i}"
+			log "Randoop jar location: ${digdog_path}"
 			java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$digdog_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --timelimit=20 --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --literals-file=CLASSES
 
 			# Change the generated test handlers to end with "Tests.java"
@@ -193,7 +199,7 @@ for time in ${time_limits[@]}; do
 
 			# Package the test suite generated by Randoop (in $test_dir) to be
 			# the correct format for the defects4j coverage task
-			echo "Packaging generated test suite into .tar.bz2 format"
+			log "Packaging generated test suite into .tar.bz2 format"
 			tar -cvf ${curr_dir}/randoop.tar $test_dir
 			bzip2 ${curr_dir}/randoop.tar
 
@@ -216,7 +222,7 @@ for time in ${time_limits[@]}; do
 			cat numbers.txt
 
 			# Remove test suite archive so we can generate again on the next iteration
-			echo "Removing archive of the generated test suite..."
+			log "Removing archive of the generated test suite..."
 			rm -f "${curr_dir}/randoop.tar.bz2"
 		done
 	done
