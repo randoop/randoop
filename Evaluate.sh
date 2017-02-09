@@ -240,7 +240,7 @@ recordCoverage() {
         log "num = $num"
         nums+=("${num}")
     done <numbers.txt
-    if [ "${nums[1]}" -ne "0" ]; then
+    if [ 0 -ne ${nums[1]} ]; then
         echo "${nums[1]}" >> ${line_file}
         echo "${nums[0]}" >> ${line_file}
         echo "${nums[3]}" >> ${branch_file}
