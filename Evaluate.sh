@@ -45,11 +45,11 @@ projects=("Time")
 
 time_limits=(2 10 30 60 120)
 project_sizes=(501 86 520 79)
-randoop_path=`pwd`"/build/libs/randoop-baseline-3.0.8.jar"
+randoop_path=`pwd`"/experiments/randoop-baseline-3.0.9.jar"
 digdog_path=`pwd`"/build/libs/randoop-all-3.0.8.jar"
 
-# If the build flag was set or if there is no randoop jar
-# Build the randoop jar
+# If the build flag was set or if there is no digdog jar
+# Build the jar from the local files
 if [ $build ] || [ ! -f $digdog_path ]; then
 	log "Building Randoop jar"
 	./gradlew clean
@@ -57,15 +57,16 @@ if [ $build ] || [ ! -f $digdog_path ]; then
 fi
 
 # Get 3.0.8 release of randoop, which will be used as one of the test generation tools
-if [ ! -f $randoop_path ]; then
-	wget https://github.com/randoop/randoop/releases/download/v3.0.8/randoop-3.0.8.zip
-	mkdir tmp
-	unzip randoop-3.0.8.zip -d tmp
-	rm -f randoop-3.0.8.zip
+#if [ ! -f $randoop_path ]; then
+#	wget https://github.com/randoop/randoop/releases/download/v3.0.8/randoop-3.0.8.zip
+#	mkdir tmp
+#	unzip randoop-3.0.8.zip -d tmp
+#	rm -f randoop-3.0.8.zip
 
-	mv tmp/randoop-all-3.0.8.jar build/libs/randoop-baseline-3.0.8.jar
-	rm -rf tmp
-fi
+#	mv tmp/randoop-all-3.0.8.jar build/libs/randoop-baseline-3.0.8.jar
+#	rm -rf tmp
+
+#fi
 
 # Go up one level to the directory that contains this repository
 cd ..
