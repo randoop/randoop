@@ -1,10 +1,6 @@
 package randoop.generation;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import randoop.BugInRandoopException;
 import randoop.DummyVisitor;
@@ -28,12 +24,7 @@ import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
-import randoop.util.ArrayListSimpleList;
-import randoop.util.ListOfLists;
-import randoop.util.Log;
-import randoop.util.MultiMap;
-import randoop.util.Randomness;
-import randoop.util.SimpleList;
+import randoop.util.*;
 
 /**
  * Randoop's forward, component-based generator.
@@ -46,6 +37,10 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   private final Set<Sequence> allSequences;
   private final Set<TypedOperation> observers;
+
+  private final Map<WeightedElement, Double> weightMap = new HashMap<WeightedElement, Double>();
+  private final Map<WeightedElement, Integer> sequenceExecutionNumber =
+      new HashMap<WeightedElement, Integer>();
 
   /** Sequences that are used in other sequences (and are thus redundant) */
   private Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
@@ -159,6 +154,17 @@ public class ForwardGenerator extends AbstractGenerator {
     endTime = System.nanoTime();
 
     eSeq.exectime = endTime - startTime;
+
+    // Orienteering stuff
+    Sequence temp = eSeq.sequence;
+    if (sequenceExecutionNumber.containsKey(temp)) {
+      sequenceExecutionNumber.put(temp, sequenceExecutionNumber.get(temp) + 1);
+    } else {
+      sequenceExecutionNumber.put(temp, 1);
+    }
+    double weight = 1.0 / (sequenceExecutionNumber.get(temp) * Math.sqrt(temp.size()));
+    weightMap.put(eSeq.sequence, weight);
+
     startTime = endTime; // reset start time.
 
     processSequence(eSeq);
@@ -717,15 +723,11 @@ public class ForwardGenerator extends AbstractGenerator {
       chosenSeq = Randomness.randomMemberOurWeightedSelection
       */
 
-      /*
-      // TODO: Did we mean to remove this
       if (GenInputsAbstract.small_tests) {
-        chosenSeq = Randomness.randomMemberWeighted(l);
+        chosenSeq = Randomness.randomMemberWeighted(l, weightMap);
       } else {
         chosenSeq = Randomness.randomMember(l);
       }
-      */
-      chosenSeq = Randomness.randomMember(l);
 
       // Now, find values that satisfy the constraint set.
       Variable randomVariable = chosenSeq.randomVariableForTypeLastStatement(inputType);

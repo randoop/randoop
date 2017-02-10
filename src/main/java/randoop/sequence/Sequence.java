@@ -16,11 +16,7 @@ import randoop.operation.TypedOperation;
 import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
 import randoop.types.Type;
-import randoop.util.ArrayListSimpleList;
-import randoop.util.ListOfLists;
-import randoop.util.OneMoreElementList;
-import randoop.util.Randomness;
-import randoop.util.SimpleList;
+import randoop.util.*;
 
 /**
  * Immutable.
@@ -34,7 +30,7 @@ import randoop.util.SimpleList;
  * of the sequence. The class randoop.ExecutableSequence adds functionality that
  * executes the sequence.
  */
-public final class Sequence {
+public final class Sequence implements WeightedElement {
 
   public double lastTimeUsed = java.lang.System.currentTimeMillis();
 
