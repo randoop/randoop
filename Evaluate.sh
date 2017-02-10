@@ -54,8 +54,8 @@ while [[ $# -gt 0 ]]; do
 	shift
 done
 
-if [! $exp_arg ]; then
-    specified_experiments=("Randoop" "Orienteering")
+if [ ! $exp_arg ]; then
+    specified_experiments=("Orienteering")
 fi
 
 # Set up some fixed values to be used throughout the script
@@ -334,7 +334,7 @@ doIndividualExperiment() {
 }
 
 # Perform each experiment that was specified
-for exp in ${exp_arg[@]}; do
+for exp in ${specified_experiments[@]}; do
     doIndividualExperiment $exp
 done
 exit 0
