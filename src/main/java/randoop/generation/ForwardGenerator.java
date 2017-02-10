@@ -724,8 +724,8 @@ public class ForwardGenerator extends AbstractGenerator {
       */
 
       //if (GenInputsAbstract.small_tests) { // Randoop's orienteering-esque flag
-      boolean orienteering_flag = false;
-      if (orienteering_flag) {
+
+      if (GenInputsAbstract.orienteering) {
         chosenSeq = Randomness.randomMemberWeighted(l, weightMap);
       } else {
         chosenSeq = Randomness.randomMember(l);

@@ -128,6 +128,7 @@ else
 	cd defects4j
 fi
 export PATH=$PATH:./framework/bin
+#printf 'y\ny\n\n' | perl -MCPAN -e 'install Bundle::DBD'
 
 # Compile Defects4j projects and then run generated tests on them
 if [ $init ]; then
@@ -244,6 +245,8 @@ recordCoverage() {
     # Run the defects4j coverage task over the newly generated test suite.
     # Results are stored into results.txt, and the specific lines used to
     # generate coverage are put into numbers.txt
+    #./framework/bin/run_bug_detection.pl -p ${project} -d ${curr_dir} -o ../randoop/experiments/fault_detection
+    #exit 1
     defects4j coverage -i ${project}classlist.txt -w $curr_dir -s ${curr_dir}/randoop.tar.bz2 > results.txt
     grep 'Lines total' results.txt > numbers.txt
     grep 'Lines covered' results.txt >> numbers.txt
@@ -311,6 +314,10 @@ doIndividualExperiment() {
                     Randoop)
                         log "Running base Randoop with time limit=${time}, ${project} #${i}"
 			            java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$randoop_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM
+                        ;;
+                    Orienteering)
+                        log "Running digDog with orienteering, time limit=${time}, ${project} #${i}"
+			            java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$digdog_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM --orienteering=true
                         ;;
                     *)
                         log "Running digDog with time limit=${time}, ${project} #${i}"

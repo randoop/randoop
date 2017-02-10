@@ -136,6 +136,9 @@ public class GenTests extends GenInputsAbstract {
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.printf("policy = %s%n", policy);
     }
+    if (GenInputsAbstract.orienteering) {
+      System.out.println("Orienteering is enabled");
+    }
 
     // If some properties were specified, set them
     for (String prop : GenInputsAbstract.system_props) {
