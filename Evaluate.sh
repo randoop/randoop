@@ -47,6 +47,7 @@ time_limits=(2 10 30 60 120)
 project_sizes=(501 86 520 79)
 randoop_path=`pwd`"/experiments/randoop-baseline-3.0.9.jar"
 digdog_path=`pwd`"/build/libs/randoop-all-3.0.8.jar"
+plot_path=`pwd`"/Plot.py"
 
 # If the build flag was set or if there is no digdog jar
 # Build the jar from the local files
@@ -289,6 +290,12 @@ doIndividualExperiment() {
                 i=$((i+1))
             done
         done
+	
+	# Run Plot.py to generate a plot for this experiment
+        #python $plot_path line_file
+        # TODO: remove
+        #exit 0 
+        #python $plot_path branch_file
     done
 }
 
