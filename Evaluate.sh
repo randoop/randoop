@@ -9,6 +9,8 @@ usage() {
     log "Usage: ./Evaluate.sh [-i][-b]"
 }
 
+specified_experiments=("Randoop")
+
 log "Running DigDog Evaluation Script"
 # Read the flag options that were passed in when the script was run.
 # Options include:
@@ -54,14 +56,10 @@ while [[ $# -gt 0 ]]; do
 	shift
 done
 
-if [! $exp_arg ]; then
-    specified_experiments=("Randoop" "Orienteering")
-fi
-
 # Set up some fixed values to be used throughout the script
 work_dir=proj
-projects=("Chart" "Time" "Lang" "Math")
-# "Chart" "Closure" "Lang" "Math" "Time"
+projects=("Chart")
+# "Chart" "Lang" "Math" "Time"
 # Chart: 501
 # Lang: 86
 # Math: 520
@@ -246,7 +244,7 @@ recordCoverage() {
     # Run the defects4j coverage task over the newly generated test suite.
     # Results are stored into results.txt, and the specific lines used to
     # generate coverage are put into numbers.txt
-    defects4j coverage -w $curr_dir -s ${curr_dir}/randoop.tar.bz2 > results.txt
+    defects4j coverage -i ${project}classlist.txt -w $curr_dir -s ${curr_dir}/randoop.tar.bz2 > results.txt
     grep 'Lines total' results.txt > numbers.txt
     grep 'Lines covered' results.txt >> numbers.txt
     grep 'Conditions total' results.txt >> numbers.txt
@@ -307,14 +305,15 @@ doIndividualExperiment() {
         for time in ${indiv_time_limits[@]}; do
             echo "TIME ${time}" >> ${line_file}
             echo "TIME ${time}" >> ${branch_file}
-            i=0
-            while [ $i -lt 10 ]; do
+            i=1
+            while [ $i -le 10 ]; do
                 case $1 in
                     Randoop)
                         log "Running base Randoop with time limit=${time}, ${project} #${i}"
 			            java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$randoop_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM
                         ;;
                     *)
+                        log "Running digDog with time limit=${time}, ${project} #${i}"
 			            java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$digdog_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM
                         ;;
                 esac
@@ -334,7 +333,7 @@ doIndividualExperiment() {
 }
 
 # Perform each experiment that was specified
-for exp in ${exp_arg[@]}; do
+for exp in ${specified_experiments[@]}; do
     doIndividualExperiment $exp
 done
 exit 0
