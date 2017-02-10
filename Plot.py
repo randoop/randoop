@@ -21,19 +21,25 @@ def generatePlot(fileName, project, exp, condition, metric):
 	if exp == 'Complete':
 		pass	
 	elif exp == 'Individual':
-		data = {2:[0, 0], 10:[0, 0], 30:[0, 0], 60:[0, 0]}
+		# Store the data in the format timeLimit: [covered[], total]
+		data = {5:[numpy.array(), 0], 100:[numpy.array(), 0], 150:[numpy.array(), 0], 200:[numpy.array(), 0]}
 
 	lines = f.readlines()
-	time = lines[0]
-	for i in range(0, len(lines), 2):
+
+	# Set time to int in header 'TIME 5'
+	time = lines[0].split(' ')[1]
+	for i in range(len(lines)):
 		if lines[i] == '\n':
 			i += 1
 			time = lines[i]
 
+			# Set Total Lines for this time limit
 			i += 1
+			data[time][1] = int(lines[i])
+
 		
-		data[time][0] += int(lines[i])
-		data[time][1] += int(lines[i + 1])
+		# Add to lines covered
+		data[time][1].append(int(lines[i]))
 
 def main():
 	fileName = sys.argv[1]
