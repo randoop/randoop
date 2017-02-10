@@ -279,7 +279,7 @@ doIndividualExperiment() {
     if [ $time_arg ]; then
         indiv_time_limits=$specified_times
     else
-        indiv_time_limits=(50 100 150 200 250 300 350 400 450 500 550 600)
+        indiv_time_limits=(50 100 150 200 250)
     fi
 
     log "Running Individual Experiment with $1"
