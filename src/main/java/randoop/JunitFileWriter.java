@@ -243,17 +243,17 @@ public class JunitFileWriter {
       classMethodCounts.put(testClassName, methodNameGen.nameCount());
 
       // Serialize sequences
-      try (FileOutputStream fileos =
-              new FileOutputStream(new File(getDir(), testClassName + "_serialized.gz"))) {
-        ObjectOutputStream objectos = new ObjectOutputStream(new GZIPOutputStream(fileos));
-        objectos.writeObject(new ArrayList<>(sequences));
-        objectos.close();
-        fileos.close();
-      } catch (FileNotFoundException e) {
-        e.printStackTrace();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+      //      try (FileOutputStream fileos =
+      //              new FileOutputStream(new File(getDir(), testClassName + "_serialized.gz"))) {
+      //        ObjectOutputStream objectos = new ObjectOutputStream(new GZIPOutputStream(fileos));
+      //        objectos.writeObject(new ArrayList<>(sequences));
+      //        objectos.close();
+      //        fileos.close();
+      //      } catch (FileNotFoundException e) {
+      //        e.printStackTrace();
+      //      } catch (IOException e) {
+      //        e.printStackTrace();
+      //      }
 
     } finally {
       if (out != null) out.close();

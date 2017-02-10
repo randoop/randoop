@@ -278,6 +278,8 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
     }
   }
 
+  int currentOperationIndex = 0;
+
   /**
    * Tries to create and execute a new sequence. If the sequence is new (not
    * already in the specified component manager), then it is executed and added
@@ -297,10 +299,7 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
     }
 
     // Select a StatementInfo
-    TypedOperation operation = Randomness.randomMember(this.operations);
-    if (Log.isLoggingOn()) {
-      Log.logLine("Selected operation: " + operation.toString());
-    }
+    TypedOperation operation = selectOperationForNewUniqueSequence();
 
     if (operation.isGeneric() || operation.hasWildcardTypes()) {
       operation = instantiator.instantiate((TypedClassOperation) operation);
@@ -385,6 +384,18 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
     }
 
     return new ExecutableSequence(newSequence);
+  }
+
+  private TypedOperation selectOperationForNewUniqueSequence() {
+    TypedOperation operation = this.operations.get(this.currentOperationIndex);
+    this.currentOperationIndex++;
+    if (currentOperationIndex == this.operations.size()) {
+      currentOperationIndex = 0;
+    }
+    if (Log.isLoggingOn()) {
+      Log.logLine("Selected operation: " + operation.toString());
+    }
+    return operation;
   }
 
   /**

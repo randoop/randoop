@@ -27,8 +27,8 @@ allprojects {
   apply plugin: 'eclipse'
   apply plugin: 'idea'
   apply plugin: 'jacoco'
-  sourceCompatibility = 1.7
-  targetCompatibility = 1.7
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
 
   /* Use Maven Central when have external dependencies */
   repositories {
@@ -107,6 +107,7 @@ configurations {
 dependencies {
   /* Randoop uses local copy of Plume */
   compile files('lib/plume.jar')
+  compile group: 'com.google.guava', name: 'guava', version: '19.0'
 
   /* sourceSet test uses JUnit and some use testInput source set */
   testCompile group: 'junit', name: 'junit', version: '4.+'

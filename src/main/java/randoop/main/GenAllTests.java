@@ -673,7 +673,9 @@ public class GenAllTests extends GenInputsAbstract {
       List<List<ExecutableSequence>> seqPartition =
           CollectionsExt.formSublists(new ArrayList<>(seqList), testsperfile);
 
-      JunitFileWriter jfw = new JunitFileWriter(output_dir, junit_package_name, junitClassname);
+      if (jfw == null) {
+        jfw = new JunitFileWriter(output_dir, junit_package_name, junitClassname);
+      }
 
       List<String> beforeAllText = getFileText(GenInputsAbstract.junit_before_all);
       if (beforeAllText != null) {
