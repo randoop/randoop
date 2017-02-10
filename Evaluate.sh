@@ -14,6 +14,7 @@ log "Running DigDog Evaluation Script"
 # Options include:
     # -i (init): If set, will re-do all initialization work, including cloning the defects4j repository, initializing the defects4j projects, and creating the classlists and jarlists for each project.
     # -b (build): If set, randoop will be built using the gradle wrapper
+    # -t (time): If set, will only run the experiment for the given time value.
     # TODO: Add more options.
 while [[ $# -gt 0 ]]; do
 	key="$1"
@@ -26,6 +27,25 @@ while [[ $# -gt 0 ]]; do
 			build=true
 			log "Found command line option: -b"
 			;;
+        -t|--time)
+            time_arg=true
+            shift
+            oldIFS=$IFS
+            IFS=","
+            declare -a specified_times=(${1})
+            IFS=$oldIFS
+            log "Found command line option: -t"
+            log "Times set to: ${specified_times[@]}"
+            ;;
+        -e|--exp|--experiments)
+            exp_arg=true
+            shift
+            oldIFS=$IFS
+            IFS=","
+            declare -a specified_experiments=(${1})
+            IFS=$oldIFS
+            log "Experiments set to ${specified_experiments[@]}"
+            ;;
 		*)
 			log "Unknown flag: ${key}"
 			exit 1
@@ -34,9 +54,13 @@ while [[ $# -gt 0 ]]; do
 	shift
 done
 
+if [! $exp_arg ]; then
+    specified_experiments=("Randoop" "Orienteering")
+fi
+
 # Set up some fixed values to be used throughout the script
 work_dir=proj
-projects=("Time" "Lang" "Chart" "Math")
+projects=("Chart" "Time" "Lang" "Math")
 # "Chart" "Closure" "Lang" "Math" "Time"
 # Chart: 501
 # Lang: 86
@@ -246,19 +270,30 @@ recordCoverage() {
         echo "${nums[3]}" >> ${branch_file}
         echo "${nums[2]}" >> ${branch_file}
     else
-        echo "${project}, ${time}" >> "${exp_dir}/failure_counts.txt"
+        echo "${project}, ${time}" >> ${failure_file}
         log "i = $i"
         i=$((i-1))
     fi
 }
 
 doIndividualExperiment() {
-    indiv_time_limits=(50 100 150 200 250 300 350 400 450 500 550 600)
+    if [ $time_arg ]; then
+        indiv_time_limits=$specified_times
+    else
+        indiv_time_limits=(50 100 150 200 250 300 350 400 450 500 550 600)
+    fi
+
     log "Running Individual Experiment with $1"
     exp_dir="../randoop/experiments"
+    failure_file="${exp_dir}/failure_counts.txt"
+
+    if [ -f ${failure_file} ]; then
+        rm -f ${failure_file}
+    fi
     if [ ! -d ${exp_dir} ]; then
         mkdir ${exp_dir}
     fi
+
     for project in ${projects[@]}; do
         #TODO: introduce some logic to not clobber files, incrementing a counter
         # and appending that value to the filename until we find a filename that doesn't conflict
@@ -275,7 +310,6 @@ doIndividualExperiment() {
             while [ $i -lt 10 ]; do
                 case $1 in
                     Randoop)
-                        #TODO: add back constant mining here
                         log "Running base Randoop with time limit=${time}, ${project} #${i}"
 			            java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$randoop_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM
                         ;;
@@ -285,14 +319,17 @@ doIndividualExperiment() {
                 esac
                 adjustTestNames
                 packageTests
-                recordCoverage #TODO: this needs to be modified to store info correctly
+                recordCoverage
                 i=$((i+1))
             done
         done
     done
 }
 
-doIndividualExperiment "Randoop"
+# Perform each experiment that was specified
+for exp in ${exp_arg[@]}; do
+    doIndividualExperiment $exp
+done
 exit 0
 
 # Iterate over each time limit. For each time limit, perform 10 iterations of test generation and coverage calculations with Randoop.
