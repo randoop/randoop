@@ -2,13 +2,13 @@ package randoop.util;
 
 import randoop.sequence.Sequence;
 
-public interface WeightedRandomSampler<T> {
+public interface WeightedRandomSampler {
 
-  WeightedElement<T> getRandomElement();
+  WeightedElement getRandomElement();
 
-  void add(WeightedElement<T> weightedElement);
+  void add(WeightedElement weightedElement);
 
-  void add(T t, double weight);
+  void add(WeightedElement t, double weight);
 
   int getSize();
 
