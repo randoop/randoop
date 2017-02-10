@@ -452,7 +452,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * </p>
    */
   @Option("Favor shorter tests during generation")
-  public static boolean small_tests = true;
+  public static boolean small_tests = false;
 
   /**
    * Clear the component set each time it contains the given number of inputs.
