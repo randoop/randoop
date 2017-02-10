@@ -711,6 +711,20 @@ public class ForwardGenerator extends AbstractGenerator {
       // randomly-chosen sequence from the list.
       Sequence chosenSeq;
       // TODO CHANGE THIS TO USE WEIGHTED VALUES
+      /*
+      double weight;
+      weight = 1.0 / (sum from i->k of seq.exec_time * sqrt(seq.meth_size));
+      chosenSeq = Randomness.randomMemberOurWeightedSelection
+      */
+
+      /*
+      // TODO: Did we mean to remove this
+      if (GenInputsAbstract.small_tests) {
+        chosenSeq = Randomness.randomMemberWeighted(l);
+      } else {
+        chosenSeq = Randomness.randomMember(l);
+      }
+      */
       chosenSeq = Randomness.randomMember(l);
 
       // Now, find values that satisfy the constraint set.
