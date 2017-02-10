@@ -58,10 +58,10 @@ def main():
 
 	# Print out median coverage %
 	# data = [sorted(lst) for lst in data]
-	# data = [lst[5] + lst[6] / 2.0 for lst in data]
+	# data = [(lst[5] + lst[6]) / 2.0 for lst in data]
 	# print data
 	# data2 = [sorted(lst) for lst in data2]
-	# data2 = [lst[5] + lst[6] / 2.0 for lst in data2]
+	# data2 = [(lst[5] + lst[6]) / 2.0 for lst in data2]
 	# print data2
 
 	# Plots will be in the form plt.boxplot(data, labels=labels)
