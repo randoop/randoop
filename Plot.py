@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import numpy, re, sys
 import matplotlib.patches as mpatches
 
-
 projects = ['Chart', 'Math', 'Time', 'Lang']
 times = [50, 100, 150, 200, 250]
 labels = [50, 50, 100, 100, 150, 150, 200, 200, 250, 250]
@@ -48,42 +47,36 @@ def readData(fileName):
 	title = '%s Coverage Percentage' % (metric,)
 	return (title, data)
 
-def main():
-	fileName = sys.argv[1]
-	fileName2 = sys.argv[2]
+# Accepts a list of lists and returns a 1 dimensional interspersion of the lists
+# Ex: [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+# 	  returns [1, 4, 7, 2, 5, 8, 3, 6, 8]
+def intersperse(lst):
+	return [val for group in zip(*lst) for val in group]
 
-	# Extract infor for plot being generated from filename
-	title, data = readData(fileName)
-	title2, data2 = readData(fileName2)
-
-	# Print out median coverage %
-	# data = [sorted(lst) for lst in data]
-	# data = [(lst[5] + lst[6]) / 2.0 for lst in data]
-	# print data
-	# data2 = [sorted(lst) for lst in data2]
-	# data2 = [(lst[5] + lst[6]) / 2.0 for lst in data2]
-	# print data2
-
-	# Plots will be in the form plt.boxplot(data, labels=labels)
-	# Data will be a list of lists, each inner list is the data for one
-	# boxplot, and each value in the list labels, is the label for that boxplot
-
-	# plt.boxplot(data, labels=labels)
-
+# Accepts a list of lists, each inner list contains 10 lists
+# These innermost lists contain the information for one boxplot
+# A plot is then generated with boxplots comparing each of the datasets within lst
+# This plot is then saved to title.png
+def boxplot(title, lst):
 	plt.figure()
 	plt.title(title)
 	plt.xlabel('Global Time Limit (s)')
 	plt.ylabel('Coverage (%)')
 	plt.ylim(0, 30)
 
-	combined = []
-	for i in range(len(data)):
-		combined.append(data[i])
-		combined.append(data2[i])
+	# TODO: Check if this is equivalent to new intersperse method
+	# combined = []
+	# for i in range(len(data)):
+	# 	combined.append(data[i])
+	# 	combined.append(data2[i])
+
+	combined = intersperse(lst)
 
 	bplot = plt.boxplot(combined, labels=labels, patch_artist=True)
 
-	print bplot['boxes']
+	# TODO: Generalize to work to color more than two datasets
+	#		start with list of colors, and then set colors to colors[i % numDatasets]
+	# Color the boxplots in alternating colors
 	for i in range(len(bplot['boxes'])):
 		patch = bplot['boxes'][i]
 		if i % 2 == 0:
@@ -91,7 +84,7 @@ def main():
 		else:
 			patch.set_facecolor('lightblue')
 
-
+	# TODO: Also generalize for more datasets
 	randoop = mpatches.Patch(color='pink', label='Randoop')
 	orienteering = mpatches.Patch(color='lightblue', label='Orienteering')
 
@@ -99,7 +92,30 @@ def main():
 
 	# Set Percent Formatter
 	plt.savefig('experiments/%s' % title, fromat='png')
+
+	# Display plot
 	plt.show()
 
+# Accepts a list of lists, the inner lists contain coverage percentages
+# Returns a list of the median coverage percentage of the inner lists
+def getMedians(lst):
+	lst = [sorted(coverageData) for coverageData in lst]
+	return [(coverageData[5] + coverageData[6]) / 2.0 for coverageData in lst]
+
+def main():
+	# TODO: Generalize to accept any number of files
+	fileName = sys.argv[1]
+	fileName2 = sys.argv[2]
+
+	# Extract infor for plot being generated from filename
+	title1, data1 = readData(fileName)
+	title2, data2 = readData(fileName2)
+
+	boxplot(title, [data1, data2])
+	
+	# Print Medians of coverage %
+	print getMedians(data1)
+	print getMedians(data2)
+	
 if __name__ == '__main__':
     main()
