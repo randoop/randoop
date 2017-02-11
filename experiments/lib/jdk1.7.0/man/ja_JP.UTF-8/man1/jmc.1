@@ -1,0 +1,106 @@
+." Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
+."
+.TH jmc 1 "11 Jul 2013"
+
+.LP
+.SH "NAME"
+jmc \- Java Mission Controlは、プロファイリング、監視および診断ツール・スイートです。
+.SH "形式"
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+jmc [ \fIoptions\fR ]
+.fi
+.if n \{\
+.RE
+.\}
+.PP
+オプションを使用する場合、コマンド名の直後に記述してください。オプションの指定順序に決まりはありません。\fIjmc\fRコマンドで使用されるオプションの詳細は、オプションを参照してください。
+.SH "説明"
+.PP
+Java Mission Controlは、HotSpot JVMの本番稼働時のプロファイリングおよび診断用のツールです。Java Mission Controlの2つの主要機能はManagement ConsoleとJava Flight Recorderですが、他にもいくつかの機能がプラグインとして提供されており、ツールからダウンロードできます。Java Mission Controlは、Eclipse IDEのプラグインのセットとしても使用可能です。
+.SH "オプション"
+.PP
+Java Mission Controlを起動する際に、次のオプションを使用できます。
+.PP
+\-help
+.RS 4
+\fIjmc\fRコマンドのヘルプを出力します。
+.RE
+.PP
+\-version
+.RS 4
+Java Mission Controlのバージョンを出力して終了します。
+.RE
+.PP
+\-showversion
+.RS 4
+Java Mission Controlのバージョンを出力して続行します。
+.RE
+.PP
+\-debug
+.RS 4
+デバッグ出力を有効にします。
+.RE
+.PP
+\-consoleLog
+.RS 4
+Eclipseログをコンソールに出力します。(Eclipseからのフラグ)。
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+.fi
+.if n \{\
+.RE
+.\}
+.RE
+.PP
+\-data \fIworkspace\fR
+.RS 4
+Java Mission Controlの実行中に使用される\fIワークスペース\fRを設定します。デフォルトのワークスペースは\fI$HOME/\&.jmc\fRです。(Eclipseからのフラグ)。
+.RE
+.PP
+\-open file
+.RS 4
+Java Mission Controlに\fIfile\fRを開きます。たとえば、Flight Recordingファイル(\fI\&.jfr\fRファイル)を開きます。
+.RE
+.PP
+\fIeclipse\-option\fR
+.RS 4
+この\fIeclipse\-option\fRを基礎となるEclipseプラットフォームに渡します。
+.RE
+.PP
+\-J\fIjvm\-option\fR
+.RS 4
+この\fIjvm\-option\fRを実行中のJava仮想マシンに渡します。
+.RE
+.SH "関連項目"
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+http://www\&.oracle\&.com/us/technologies/java/standard\-edition/advanced\-suite/overview/index\&.html
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+http://docs\&.oracle\&.com/javase/7/docs/technotes/guides/jmc/index\&.html
+.RE
+.br
+'pl 8.5i
+'bp

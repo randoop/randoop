@@ -1,0 +1,75 @@
+." Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
+."
+.TH jmc 1 "18 Jul 2013"
+
+.LP
+.SH "Name"
+jmc \- Java Mission Control, a profiling, monitoring, and diagnostics tools suite
+.LP
+.SH "SYNOPSIS"
+.LP
+.nf
+\f3
+.fl
+\fP\f3jmc\fP [ \f2options\fP ]
+.fl
+.fi
+
+.LP
+.LP
+Options, if used, should follow immediately after the command name. Options may be in any order. For more information about the options used with the \f3jmc\fP command, see Options.
+.LP
+.SH "DESCRIPTION"
+.LP
+.LP
+Java Mission Control is a tool for production time profiling and diagnostics for the HotSpot JVM. The two main features of Java Mission Control are the Management Console and Java Flight Recorder, but several more features are offered as plug\-ins, which can be downloaded from the tool. Java Mission Control is also available as a set of plug\-ins for the Eclipse IDE.
+.LP
+.SH "OPTIONS"
+.LP
+.LP
+The following options are available when you launch Java Mission Control.
+.LP
+.RS 3
+.TP 3
+\-help 
+Prints \f3jmc\fP command help. 
+.TP 3
+\-version 
+Prints the version of Java Mission Control and exit. 
+.TP 3
+\-showversion 
+Prints the version of Java Mission Control and continue. 
+.TP 3
+\-debug 
+Enables debug output. 
+.TP 3
+\-consoleLog 
+Prints the Eclipse log on the console. (Flag from Eclipse). 
+.TP 3
+\-data workspace 
+Sets the \f2workspace\fP used while running Java Mission Control. The default workspace is \f3$HOME/.jmc\fP. (Flag from Eclipse). 
+.TP 3
+\-open file 
+Opens the \f2file\fP in Java Mission Control. For example, to open a Flight Recording file (\f3.jfr\fP file). 
+.TP 3
+eclipse\-option 
+Passes this \f2eclipse\-option\fP to the underlying Eclipse platform. 
+.TP 3
+\-Jjvm\-option 
+Passes this \f2jvm\-option\fP to the running Java Virtual Machine. 
+.RE
+
+.LP
+.SH "SEE ALSO"
+.LP
+.RS 3
+.TP 2
+o
+\f2Oracle Java SE Advanced and Oracle Java SE Suite\fP at http://www.oracle.com/us/technologies/java/standard\-edition/advanced\-suite/overview/index.html 
+.TP 2
+o
+\f2JMC Developer Guid\fPe at http://docs.oracle.com/javase/7/docs/technotes/guides/jmc/index.html 
+.RE
+
+.LP
+ 
