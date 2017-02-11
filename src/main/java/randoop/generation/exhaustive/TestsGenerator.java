@@ -1,5 +1,8 @@
 package randoop.generation.exhaustive;
 
+import randoop.generation.AbstractGenerator;
+import randoop.generation.ForwardExhaustiveGenerator;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;

@@ -1,6 +1,8 @@
 package randoop.generation;
 
+import com.google.common.collect.Lists;
 import randoop.*;
+import randoop.generation.exhaustive.SequenceGenerator;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
@@ -13,6 +15,7 @@ import randoop.types.*;
 import randoop.util.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Randoop's forward, component-based generator.
@@ -45,6 +48,29 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
   // been generated, to add the value to the components.
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
+  /* Class used to generate all permutations of typed operations (not including constructors). */
+  private SequenceGenerator<TypedOperation> sequenceGenerator;
+
+  private Set<TypedOperation> constructors;
+
+  // Sequence to be used to instantiate current class.
+  private Sequence constructorPrefix;
+
+  public ForwardExhaustiveGenerator(
+      List<TypedOperation> operations,
+      ComponentManager componentManager,
+      RandoopListenerManager listenerManager) {
+    this(
+        operations,
+        null,
+        Long.MAX_VALUE,
+        Integer.MAX_VALUE,
+        Integer.MAX_VALUE,
+        componentManager,
+        null,
+        listenerManager);
+  }
+
   public ForwardExhaustiveGenerator(
       List<TypedOperation> operations,
       Set<TypedOperation> observers,
@@ -75,7 +101,7 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
       RandoopListenerManager listenerManager) {
 
     super(
-        operations,
+        operations.stream().filter(op -> !op.isConstructorCall()).collect(Collectors.toList()),
         timeMillis,
         maxGenSequences,
         maxOutSequences,
@@ -86,8 +112,16 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
     this.observers = observers;
     this.allSequences = new LinkedHashSet<>();
     this.instantiator = componentManager.getTypeInstantiator();
-
+    this.sequenceGenerator = new SequenceGenerator<>(operations, GenInputsAbstract.maxsize);
     initializeRuntimePrimitivesSeen();
+    this.constructors =
+        operations.stream().filter(o -> o.isConstructorCall()).collect(Collectors.toSet());
+    this.constructorPrefix = selectConstructorPrefixSequence();
+
+    if (constructorPrefix == null) {
+      throw new RuntimeException(
+          "Not possible to generate tests due to the impossibility of selecting constructors.");
+    }
   }
 
   /**
@@ -280,6 +314,31 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
 
   int currentOperationIndex = 0;
 
+  /*
+   Selects the new permutation in the set of possible permutations
+  * */
+  private List<TypedOperation> selectNextSequenceOfOperationsForNewUniqueSequence() {
+    List<TypedOperation> nextPermutation = sequenceGenerator.next();
+    List<TypedOperation> nextSequence = Lists.newArrayList();
+
+    for (TypedOperation op : nextPermutation) {
+      if (op.isGeneric() || op.hasWildcardTypes()) {
+        op = instantiator.instantiate((TypedClassOperation) op);
+        if (op == null) { //failed to instantiate generic
+          return null;
+        }
+      }
+      nextSequence.add(op);
+    }
+
+    if (Log.isLoggingOn()) {
+      List<String> operations =
+          nextSequence.stream().map(to -> to.getName()).collect(Collectors.toList());
+      Log.logLine("Selected sequence of operations: " + String.join(",", operations));
+    }
+
+    return nextSequence;
+  }
   /**
    * Tries to create and execute a new sequence. If the sequence is new (not
    * already in the specified component manager), then it is executed and added
@@ -294,108 +353,139 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
       Log.logLine("-------------------------------------------");
     }
 
-    if (this.operations.isEmpty()) {
+    if (!this.sequenceGenerator.hasNext()) {
       return null;
     }
 
-    // Select a StatementInfo
-    TypedOperation operation = selectOperationForNewUniqueSequence();
+    List<TypedOperation> nextSequence = selectNextSequenceOfOperationsForNewUniqueSequence();
 
-    if (operation.isGeneric() || operation.hasWildcardTypes()) {
-      operation = instantiator.instantiate((TypedClassOperation) operation);
-      if (operation == null) { //failed to instantiate generic
+    if (nextSequence == null) {
+      return null;
+    }
+
+    Sequence newSequence = null;
+    Sequence previousSequence = null;
+
+    for (TypedOperation to : nextSequence) {
+      // add flags here
+      InputsAndSuccessFlag sequences = selectInputs(to);
+
+      if (!sequences.success) {
+        if (Log.isLoggingOn()) Log.logLine("Failed to find inputs for statement.");
         return null;
       }
-    }
 
-    // add flags here
-    InputsAndSuccessFlag sequences = selectInputs(operation);
-
-    if (!sequences.success) {
-      if (Log.isLoggingOn()) Log.logLine("Failed to find inputs for statement.");
-      return null;
-    }
-
-    Sequence concatSeq = Sequence.concatenate(sequences.sequences);
-
-    // Figure out input variables.
-    List<Variable> inputs = new ArrayList<>();
-    for (Integer oneinput : sequences.indices) {
-      Variable v = concatSeq.getVariable(oneinput);
-      inputs.add(v);
-    }
-
-    Sequence newSequence = concatSeq.extend(operation, inputs);
-
-    // With .5 probability, do a primitive value heuristic.
-    if (GenInputsAbstract.repeat_heuristic && Randomness.nextRandomInt(10) == 0) {
-      int times = Randomness.nextRandomInt(100);
-      newSequence = repeat(newSequence, operation, times);
-      if (Log.isLoggingOn()) Log.log("repeat-heuristic>>>" + times + newSequence.toCodeString());
-    }
-
-    // If parameterless statement, subsequence inputs
-    // will all be redundant, so just remove it from list of statements.
-    // XXX does this make sense? especially in presence of side-effects
-    if (operation.getInputTypes().isEmpty()) {
-      operations.remove(operation);
-    }
-
-    // Discard if sequence is larger than size limit
-    if (newSequence.size() > GenInputsAbstract.maxsize) {
-      if (Log.isLoggingOn()) {
-        Log.logLine(
-            "Sequence discarded because size "
-                + newSequence.size()
-                + " exceeds maximum allowed size "
-                + GenInputsAbstract.maxsize);
+      if (previousSequence != null) {
+        sequences.sequences.add(0, previousSequence);
       }
-      return null;
-    }
 
-    randoopConsistencyTests(newSequence);
+      Sequence concatSeq = Sequence.concatenate(sequences.sequences);
 
-    if (this.allSequences.contains(newSequence)) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Sequence discarded because the same sequence was previously created.");
+      // Figure out input variables.
+      List<Variable> inputs = new ArrayList<>();
+      for (Integer oneinput : sequences.indices) {
+        // Assuming previous sequence has already had variables attributed to it:
+        if (oneinput == 0) {
+          continue;
+        }
+        Variable v = concatSeq.getVariable(oneinput);
+        inputs.add(v);
       }
-      return null;
+
+      newSequence = concatSeq.extend(to, inputs);
+      newSequence = Sequence.concatenate(Lists.newArrayList(constructorPrefix, newSequence));
+
+      // With .5 probability, do a primitive value heuristic.
+      //      if (GenInputsAbstract.repeat_heuristic && Randomness.nextRandomInt(10) == 0) {
+      //        int times = Randomness.nextRandomInt(100);
+      //        newSequence = repeat(newSequence, to, times);
+      //        if (Log.isLoggingOn()) Log.log("repeat-heuristic>>>" + times + newSequence.toCodeString());
+      //      }
+
+      // Discard if sequence is larger than size limit
+      if (newSequence.size() > GenInputsAbstract.maxsize) {
+        if (Log.isLoggingOn()) {
+          Log.logLine(
+              "Sequence discarded because size "
+                  + newSequence.size()
+                  + " exceeds maximum allowed size "
+                  + GenInputsAbstract.maxsize);
+        }
+        return null;
+      }
+
+      randoopConsistencyTests(newSequence);
+
+      if (this.allSequences.contains(newSequence)) {
+        if (Log.isLoggingOn()) {
+          Log.logLine("Sequence discarded because the same sequence was previously created.");
+        }
+        return null;
+      }
+
+      for (Sequence s : sequences.sequences) {
+        s.lastTimeUsed = System.currentTimeMillis();
+      }
+
+      previousSequence = newSequence;
+
+      // Keep track of any input sequences that are used in this sequence.
+      // Tests that contain only these sequences are probably redundant.
+      for (Sequence is : sequences.sequences) {
+        subsumed_sequences.add(is);
+      }
     }
 
     this.allSequences.add(newSequence);
-
-    for (Sequence s : sequences.sequences) {
-      s.lastTimeUsed = System.currentTimeMillis();
-    }
-
     randoopConsistencyTest2(newSequence);
 
     if (Log.isLoggingOn()) {
       Log.logLine(
           String.format("Successfully created new unique sequence:%n%s%n", newSequence.toString()));
     }
-    // System.out.println("###" + statement.toStringVerbose() + "###" +
-    // statement.getClass());
-
-    // Keep track of any input sequences that are used in this sequence.
-    // Tests that contain only these sequences are probably redundant.
-    for (Sequence is : sequences.sequences) {
-      subsumed_sequences.add(is);
-    }
 
     return new ExecutableSequence(newSequence);
   }
 
-  private TypedOperation selectOperationForNewUniqueSequence() {
-    TypedOperation operation = this.operations.get(this.currentOperationIndex);
-    this.currentOperationIndex++;
-    if (currentOperationIndex == this.operations.size()) {
-      currentOperationIndex = 0;
+  // Select a constructor to be used as a prefix to the generated sequences of classes' methods.
+  private Sequence selectConstructorPrefixSequence() {
+    Sequence ctrSequence = null;
+
+    // Try to find a parameterless constructor first:
+    Optional<TypedOperation> parameterlessCtr =
+        constructors
+            .stream()
+            .filter(
+                c
+                    -> c.getInputTypes().isEmpty()
+                        && c.getOutputType() != Type.forClass(Object.class))
+            .findFirst();
+
+    if (parameterlessCtr.isPresent()) {
+      InputsAndSuccessFlag sequences = selectInputs(parameterlessCtr.get());
+      Sequence concatSeq = Sequence.concatenate(sequences.sequences);
+      ctrSequence = concatSeq.extend(parameterlessCtr.get(), new ArrayList<>());
+      return ctrSequence;
     }
-    if (Log.isLoggingOn()) {
-      Log.logLine("Selected operation: " + operation.toString());
+
+    // If not successful, returns the first constructor to be successfuly executed:
+    for (TypedOperation cto : constructors) {
+      InputsAndSuccessFlag sequences = selectInputs(cto);
+
+      if (sequences.success) {
+        Sequence concatSeq = Sequence.concatenate(sequences.sequences);
+        // Figure out input variables.
+        List<Variable> inputs = new ArrayList<>();
+        for (Integer oneinput : sequences.indices) {
+          Variable v = concatSeq.getVariable(oneinput);
+          inputs.add(v);
+        }
+        ctrSequence = concatSeq.extend(cto, inputs);
+        return ctrSequence;
+      }
     }
-    return operation;
+
+    return ctrSequence;
   }
 
   /**
