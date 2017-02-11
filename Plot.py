@@ -8,6 +8,11 @@ import matplotlib.patches as mpatches
 projects = ['Chart', 'Math', 'Time', 'Lang']
 times = [50, 100, 150, 200, 250]
 labels = [50, 50, 100, 100, 150, 150, 200, 200, 250, 250]
+colors = ['pink', 'lightblue', 'thistle', 'paletuquoise', 'lightcoral', 'lightgreen']
+# Marker codes for pyplot
+markers = ['o', 's', 'D', '^', 'p', '*']
+# Linestyles for pyplot
+linestyles = ['-', '--', ':', '_.']
 
 def readData(fileName):
 	f = open(fileName, 'r')
@@ -44,53 +49,83 @@ def readData(fileName):
 
 		i+=2
 
-	title = '%s Coverage Percentage' % (metric,)
+	title = '%s %s Coverage Percentage' % (project, metric,)
 	return (title, data)
 
-# Accepts a list of lists and returns a 1 dimensional interspersion of the lists
+
+# list[list]	lst 		List of lists of any type
+# Returns a 1 dimensional interspersion of the lists
 # Ex: [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
 # 	  returns [1, 4, 7, 2, 5, 8, 3, 6, 8]
 def intersperse(lst):
 	return [val for group in zip(*lst) for val in group]
 
-# Accepts a list of lists, each inner list contains 10 lists
-# These innermost lists contain the information for one boxplot
-# A plot is then generated with boxplots comparing each of the datasets within lst
-# This plot is then saved to title.png
-def boxplot(title, lst):
+
+# string		title 		Title to be used in the saving of the chart
+# lst[String]	dataLabels	A list of the dataSeries' names
+#							Ex: ['Randoop', 'Orienteering']
+# list[list]	lst 		A list of lists, each inner list contains 10 lists
+#							The innermost lists contain the information for one boxplot
+# A plot is generated with boxplots comparing each of the datasets within lst
+# This plot is saved to `title`.png
+def boxplot(title, dataLabels, lst):
 	plt.figure()
 	plt.title(title)
 	plt.xlabel('Global Time Limit (s)')
 	plt.ylabel('Coverage (%)')
 	plt.ylim(0, 30)
 
-	# TODO: Check if this is equivalent to new intersperse method
-	# combined = []
-	# for i in range(len(data)):
-	# 	combined.append(data[i])
-	# 	combined.append(data2[i])
-
 	combined = intersperse(lst)
-
 	bplot = plt.boxplot(combined, labels=labels, patch_artist=True)
 
-	# TODO: Generalize to work to color more than two datasets
-	#		start with list of colors, and then set colors to colors[i % numDatasets]
-	# Color the boxplots in alternating colors
+	# Set colors for dataset labels for the legend
+	patches = []
+	for i in range(len(lst)):
+		color = color = colors[i % len(lst)]
+		patches.append(mpatches.Patch(color=color, label=dataLabels[i]))
+
+	plt.legend(handles=patches)
+
+
+	# Color the boxplots in colors corresponding to their dataset
 	for i in range(len(bplot['boxes'])):
 		patch = bplot['boxes'][i]
-		if i % 2 == 0:
-			patch.set_facecolor('pink')
-		else:
-			patch.set_facecolor('lightblue')
+		color = colors[i % len(lst)]
+		patch.set_facecolor(color)
 
-	# TODO: Also generalize for more datasets
-	randoop = mpatches.Patch(color='pink', label='Randoop')
-	orienteering = mpatches.Patch(color='lightblue', label='Orienteering')
 
-	plt.legend(handles=[randoop, orienteering])
+	# Save plot
+	plt.savefig('experiments/%s' % title, fromat='png')
 
-	# Set Percent Formatter
+	# Display plot
+	plt.show()
+
+
+# string		title 		Title to be used in the saving of the chart
+# lst[String]	dataLabels	A list of the dataSeries' names
+#							Ex: ['Randoop', 'Orienteering']
+# list[list]	lst 		A list of lists, each inner list contains 10 elements
+#							that are the median coverage values of that dataset
+# A plot is generated with lineplots comparing each of the datasets within lst
+# This plot is saved to `title`.png
+def lineplot(title, dataLabels, lst):
+	plt.figure()
+
+	# Set colors for dataset labels for the legend
+	patches = []
+	for i in range(len(lst)):
+		color = color = colors[i % len(lst)]
+		patches.append(mpatches.Patch(color=color, label=dataLabels[i]))
+	
+	plt.legend(handles=patches)
+
+	for i in len(lst):
+		series = lst[i]
+		seriesIdx = i % len(lst)
+		plt.plot(times, series, marker=markers[seriesIdx], linestyle=Linestyles[seriesIdx], color=colors[seriesIdx])
+
+
+	# Save plot
 	plt.savefig('experiments/%s' % title, fromat='png')
 
 	# Display plot
@@ -111,7 +146,7 @@ def main():
 	title1, data1 = readData(fileName)
 	title2, data2 = readData(fileName2)
 
-	boxplot(title, [data1, data2])
+	boxplot(title, ['Randoop', 'Orienteering'], [data1, data2])
 	
 	# Print Medians of coverage %
 	print getMedians(data1)
