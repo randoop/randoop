@@ -138,19 +138,21 @@ def getMedians(lst):
 	return [(coverageData[5] + coverageData[6]) / 2.0 for coverageData in lst]
 
 def main():
-	# TODO: Generalize to accept any number of files
-	fileName = sys.argv[1]
-	fileName2 = sys.argv[2]
+	numFiles = len(sys.argv) - 1
 
-	# Extract infor for plot being generated from filename
-	title1, data1 = readData(fileName)
-	title2, data2 = readData(fileName2)
+	titles = []
+	data = []
+	# Extract info for plot from the filename arguments
+	for i in range(numFiles):
+		fileName = sys.argv[i + 1]
+		currTitle, currData = readData(fileName)
 
-	boxplot(title, ['Randoop', 'Orienteering'], [data1, data2])
+	
+	boxplot(titles[0], ['Randoop', 'Orienteering'], data)
 	
 	# Print Medians of coverage %
-	print getMedians(data1)
-	print getMedians(data2)
+	for i in range(numFiles):
+		print getMedians(data[i])
 	
 if __name__ == '__main__':
     main()
