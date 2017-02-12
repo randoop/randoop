@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<config transient="false" date="1423862911632">
+<config transient="false" date="1423863009532">
 	<site enabled="true" updateable="true" policy="USER-EXCLUDE" url="platform:/base/">
 		<feature id="org.eclipse.rcp" url="features/org.eclipse.rcp_4.4.0.v20141007-2301/" version="4.4.0.v20141007-2301">
 		</feature>
