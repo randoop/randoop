@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?><module codename="org.openide.util.lookup">
+    <module_version install_time="1420813144185" last="true" origin="installer" specification_version="8.24.1">
+        <file crc="2419600605" name="lib/org-openide-util-lookup.jar"/>
+    </module_version>
+</module>

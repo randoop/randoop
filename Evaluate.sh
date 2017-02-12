@@ -67,8 +67,9 @@ projects=("Chart")
 
 time_limits=(2 10 30 60 120)
 project_sizes=(501 86 520 79)
-randoop_path=`pwd`"/experiments/randoop-baseline-3.0.9.jar"
+randoop_path=`pwd`"/experiments/lib/randoop-baseline-3.0.9.jar"
 digdog_path=`pwd`"/build/libs/randoop-all-3.0.8.jar"
+#java_path=`pwd`"/experiments/lib/jdk1.7.0/bin/java"
 plot_path=`pwd`"/Plot.py"
 
 # If the build flag was set or if there is no digdog jar

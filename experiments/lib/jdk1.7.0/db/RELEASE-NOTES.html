@@ -1,0 +1,599 @@
+<html lang="en">
+<title>Release Notes for Apache Derby 10.8.3.0</title>
+<body>
+<h1>
+<a name="Release Notes for Apache Derby 10.8.3.0"></a>Release Notes for Apache Derby 10.8.3.0</h1>
+<div>
+<p>These notes describe the difference between Apache Derby release 10.8.3.0 and the preceding release 10.8.2.2.</p>
+</div>
+<ul>
+<li>
+<a href="#Overview">Overview</a>
+</li>
+<li>
+<a href="#New Features">New Features</a>
+</li>
+<li>
+<a href="#Bug Fixes">Bug Fixes</a>
+</li>
+<li>
+<a href="#Issues">Issues</a>
+</li>
+<li>
+<a href="#Build Environment">Build Environment</a>
+</li>
+<li>
+<a href="#Verifying Releases">Verifying Releases</a>
+</li>
+</ul>
+<h2>
+<a name="Overview"></a>Overview</h2>
+<div>
+
+
+<p>
+The most up to date information about Derby releases can be found on the
+<a href="http://db.apache.org/derby/derby_downloads.html">Derby download page</a>.
+</p>
+
+
+<p>
+Apache Derby is a pure Java relational database engine using standard SQL and
+JDBC as its APIs. More information about Derby can be found on the
+<a href="http://db.apache.org/derby/">Apache web site</a>.
+Derby functionality includes:
+</p>
+
+
+<ul>
+
+<li>Embedded engine with JDBC drivers</li>
+
+<li>Network Server</li>
+
+<li>Network client JDBC drivers</li>
+
+<li>Command line tools: ij (SQL scripting), dblook (schema dump) and sysinfo (system info)</li>
+
+</ul>
+
+
+<p>
+Java and JDBC versions supported:
+</p>
+
+<ul>
+  
+<li>Java SE 1.4 and higher with
+    JDBC 2.1, 3.0, 4.0 and 4.1</li>
+  
+<li>Java ME CDC/Foundation Profile 1.1 with
+    JSR-169 JDBC Optional Package for CDC/Foundation Profile.</li>
+
+</ul>
+
+</div>
+<h2>
+<a name="New Features"></a>New Features</h2>
+<div>
+
+
+<p>
+This is a bug fix release. No new features were added.
+</p>
+
+
+</div>
+<h2>
+<a name="Bug Fixes"></a>Bug Fixes</h2>
+<div>
+<p>The following issues are addressed by Derby release 10.8.3.0. These issues are not addressed in the preceding 10.8.2.2 release.</p>
+<table border="2">
+<tr>
+<td><b>Issue Id</b></td><td><b>Description</b></td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5951">DERBY-5951</a></td><td>Missing method exception raised when using Clobs with territory based collation</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5937">DERBY-5937</a></td><td>File handle is leaked when a Slave replication is shutdown with failover=true</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5925">DERBY-5925</a></td><td>Document derby.log changes resulting from DERBY-5240</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5918">DERBY-5918</a></td><td>CREATE TABLE AS SELECT doesn't work on tables with BOOLEAN columns</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5916">DERBY-5916</a></td><td>java.lang.NullPointerException org.apache.derby.impl.store.raw.data.BaseDataFileFactory.stop() connecting to network server</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5912">DERBY-5912</a></td><td>testIsValidImplemented fails for NetworkServer in some slow running machines/configurations</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5911">DERBY-5911</a></td><td>WHERE condition getting pushed into sub-query with FETCH</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5910">DERBY-5910</a></td><td>Document use of Connection.close() with try-with-resources</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5909">DERBY-5909</a></td><td>The lang attribute in toc.html always says 'en-us'</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5906">DERBY-5906</a></td><td>In the Reference Manual, sin() is used as the example for the sinh() function.</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5905">DERBY-5905</a></td><td>Derby html documentation doesn't render properly and prints garbage on Internet Explorer</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5900">DERBY-5900</a></td><td>Need to correct Reference Guide description of contents of SYS.SYSPERMS.OBJECTTYPE</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5898">DERBY-5898</a></td><td>add ibm18 class to functionTests.harness</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5838">DERBY-5838</a></td><td>By using syscs_set_database_property, you can set the database version to a garbage string which prevents you from booting the database.</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5830">DERBY-5830</a></td><td>Make DoubleProperties.propertyNames() thread-safe</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5822">DERBY-5822</a></td><td>Document the new SQL standard behavior of the SPACE_TABLE vti</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5805">DERBY-5805</a></td><td>Database encryption topics in Reference Manual need more information</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5799">DERBY-5799</a></td><td>add more info on when Derby chooses 32k page size for tables.</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5775">DERBY-5775</a></td><td>Upgrade tests should  print full IOException stack trace when it fails to access old versions</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5727">DERBY-5727</a></td><td>Update POMs to deploy Maven artifacts to repository.apache.org and use ASF parent POM</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5692">DERBY-5692</a></td><td>intermittent test failure in storetests/st_derby715.java</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5691">DERBY-5691</a></td><td>Document that  Write Caching  must be disabled to avoid possible database corruption</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5681">DERBY-5681</a></td><td>When a foreign key constraint on a table is dropped, the associated statistics row for the conglomerate is not removed</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5663">DERBY-5663</a></td><td>Getting NPE when trying to set derby.language.logStatementText property to true inside a junit suite.</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5649">DERBY-5649</a></td><td>make improvements to nstest so it's easier to run/analyze/debug</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5638">DERBY-5638</a></td><td>intermittent test failure in test_05_ClobNegative when running full largedata._Suite; LobLimitsTestjava.sql.SQLException: Table/View 'BLOBTBL' already exists in Schema 'APP'.</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5633">DERBY-5633</a></td><td>Add tests for state transition and behavior with Lock Timeout in XA Transaction (DERBY-5552 testing task)</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5624">DERBY-5624</a></td><td>System can run out of stack space while processing DropOnCommit requests.</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5622">DERBY-5622</a></td><td>Reduce the chance for hash collisions when checking bootPassword at boot time and when changing password.</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5617">DERBY-5617</a></td><td>Improve process handling in SpawnedProcess</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5616">DERBY-5616</a></td><td>demo/vtis/sql/demoFileVtis.sql needs to be adjusted: messages_en.properties has moved</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5614">DERBY-5614</a></td><td>NullPointerException with INSERT INTO [global temporary table] SELECT ... FROM [VTI]</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5609">DERBY-5609</a></td><td>Prepare old test harness for running tests on Java 8</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5608">DERBY-5608</a></td><td>BaseTestCase.readProcessOutput should read getInputStream()  and getErrorStream() in separate threads</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5603">DERBY-5603</a></td><td>EmbedConnection.clearLOBMapping() incorrectly clears lobFiles causing a ConcurrentModificationException</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5599">DERBY-5599</a></td><td>readlocks.sql fails with extra locks.</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5598">DERBY-5598</a></td><td>testStartWithPrintWriter(org.apache.derbyTesting.functionTests.tests.derbynet.DerbyNetNewServerTest)junit.framework.AssertionFailedError: Num of log item should add</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5586">DERBY-5586</a></td><td>Remove the fo2html.xsl script from the docs repository and fix the docs and release builds so that they don't build monohtml versions of the Derby manuals.</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5584">DERBY-5584</a></td><td>Select statement with subqueries with group by and count distinct statements returns wrong number of results</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5582">DERBY-5582</a></td><td>Access denied (java.lang.RuntimePermission modifyThreadGroup) in IndexStatisticsDaemonImpl.schedule()</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5574">DERBY-5574</a></td><td>encryption test in encryption nightly suite test fails with ERROR XBM0S: Unable to rename file error</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5567">DERBY-5567</a></td><td>AlterTableTest#testDropColumn fails: drop view cannot be performed due to dependency</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5564">DERBY-5564</a></td><td>Code does different things depending if derby.locks.deadlockTrace=true is set</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5562">DERBY-5562</a></td><td>An read-only XA transaction that has a timeout never has the timer canceled when the transaction is complete</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5561">DERBY-5561</a></td><td>Race conditions in LogicalConnection checking for a null physical connection</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5552">DERBY-5552</a></td><td>Derby threads hanging when using ClientXADataSource and a deadlock or lock timeout occurs</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5547">DERBY-5547</a></td><td>NSSecurityMechanismTest fixture testNetworkServerSecurityMechanism fails intermittentlyt</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5531">DERBY-5531</a></td><td>Assert failure when inserting NULL into indexed column with territory-based collation</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5530">DERBY-5530</a></td><td>SQLChar.getCollationKey NPE in index-stat-thread</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5527">DERBY-5527</a></td><td>Documentation problem: 5 - Verifying the copy of the files</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5526">DERBY-5526</a></td><td>on upgrade from 10.5 to 10.8.2 , getting  ERROR XBM0A: The database directory 'C:\cygwin\home\debugfat\clientdb' exists. However, it does not contain the expected 'service.properties' file.</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5517">DERBY-5517</a></td><td>testReplication_Local_3_p1_StateNegativeTests failed with connection refused</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5509">DERBY-5509</a></td><td>javadoc for NetServlet and NetworkServerControl are missing a few closing tags</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5508">DERBY-5508</a></td><td>Improve backup/restore documentation visibility and content to encourage proper backups and restore procedures</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5467">DERBY-5467</a></td><td>Copyright notice in the API documentation (generated by the Javadoc tool) is outdated</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5465">DERBY-5465</a></td><td>Broken null checks in NsTest</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5456">DERBY-5456</a></td><td>Problems running SecureServerTest and replication tests on Open JDK 7 for Mac OS X</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5454">DERBY-5454</a></td><td>ERROR 40001 deadlock in nstest on select max(serialkey)</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5449">DERBY-5449</a></td><td>10.8 client with 10.5 server gives java.lang.ClassCastException: java.lang.Boolean incompatible with java.lang.Short in NetStatementRequest.buildFDODTA with CursorTest.testCursorParam()</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5440">DERBY-5440</a></td><td>test failure in testBTreeForwardScan_fetchRows_resumeAfterWait_nonUnique_split(org.apache.derbyTesting.functionTests.tests.store.IndexSplitDeadlockTest)junit.framework.AssertionFailedError: expected:&lt;1&gt; but was:&lt;0&gt;</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5427">DERBY-5427</a></td><td>Unauthorized shutdown should not generate thread dump and javacore. AuthenticationTest dumps over 20 javacores with IBM JVM for normal user errors</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5425">DERBY-5425</a></td><td>Updateable holdable ResultSet terminates early after 65638 updates</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5407">DERBY-5407</a></td><td>When run across the network, dblook produces unusable DDL for VARCHAR FOR BIT DATA columns.</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5406">DERBY-5406</a></td><td>Intermittent failures in CompressTableTest and TruncateTableTest</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5379">DERBY-5379</a></td><td>testDERBY5120NumRowsInSydependsForTrigger - The number of values assigned is not the same as the number of specified or implied columns.</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5377">DERBY-5377</a></td><td>AssertionFailedError in testCaseCS4595B_NonUniqueIndex in AccessTest</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5370">DERBY-5370</a></td><td>The toSQL method of the org.apache.derby.vti.Restriction class does not output correct constants for VARCHAR, Timestamp, Date, Time, or CHAR FOR BIT DATA types</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5369">DERBY-5369</a></td><td>Restricted Table Function support should pass NOT EQUAL restrictions to initScan</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5358">DERBY-5358</a></td><td>SYSCS_COMPRESS_TABLE failed with conglomerate not found exception</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5305">DERBY-5305</a></td><td>Convert store/updatelocks.sql to JUnit</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5272">DERBY-5272</a></td><td>Stop building Eclipse plugins as Derby release artifacts</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5240">DERBY-5240</a></td><td>Log Operating system information to derby.log on boot</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-5096">DERBY-5096</a></td><td>DisconnectException: "Connection was refused because the database DB was not found" when creating db for first time</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-4631">DERBY-4631</a></td><td>Wrong join column returned by right outer join with NATURAL or USING and territory-based collation</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-4291">DERBY-4291</a></td><td>Intermittent failure in 'store/updatelocks.sql' on Windows Vista</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-4279">DERBY-4279</a></td><td>Statement cache deadlock</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-4229">DERBY-4229</a></td><td>encryptionKeyLength connection attribute should be documented</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-4201">DERBY-4201</a></td><td>SecureServerTest AssertionFailedError: Timed out waiting for network server to start</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-3823">DERBY-3823</a></td><td>NullPointerException in stress.multi test</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-3808">DERBY-3808</a></td><td>Convert subquery.sql to junit</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-3740">DERBY-3740</a></td><td>BlobClob4BlobTest.testLockingWithLongRowBlob fails with .AssertionFailedError: FAIL - statement should timeout</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-2687">DERBY-2687</a></td><td>store/encryptDatabase.sql fails intermittently with ClassNotFoundException, Log Corrupted</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-1913">DERBY-1913</a></td><td>storetests/st_reclaim_longcol.java fails intermittently</td>
+</tr>
+<tr>
+<td><a href="https://issues.apache.org/jira/browse/DERBY-1721">DERBY-1721</a></td><td>DOCS - Remove duplicate information in Dev Guide re: Encryption</td>
+</tr>
+</table>
+</div>
+<h2>
+<a name="Issues"></a>Issues</h2>
+<div>
+<p>Compared with the previous release (10.8.2.2), Derby release 10.8.3.0 introduces the following new features and incompatibilities. These merit your special attention.</p>
+<ul>
+<li>
+<a href="#Note for DERBY-5564"><span>Note for DERBY-5564: 
+The SQL state of the error returned from a lock timeout when the property "derby.locks.deadlockTrace=true" is set will return 40XL1 rather than 40XL2.
+
+</span></a>
+</li>
+<li>
+<a href="#Note for DERBY-4631"><span>Note for DERBY-4631: 
+Derby can pick incorrect join column value for a RIGHT OUTER JOIN with NATURAL/USING clause. 
+</span></a>
+</li>
+</ul>
+<hr>
+<h3>
+<a name="Note for DERBY-5564"></a>Note for DERBY-5564</h3>
+<div>
+
+<!-- 
+-->
+
+
+<h4>Summary of Change</h4>
+
+<p>
+The SQL state of the error returned from a lock timeout when the property "derby.locks.deadlockTrace=true" is set will return 40XL1 rather than 40XL2.
+
+</p>
+
+
+<!-- 
+-->
+
+
+<h4>Symptoms Seen by Applications Affected by Change</h4>
+
+<p>
+  In the previous release, applications which set 
+  "derby.locks.deadlockTrace=true" would get error 40XL2 when a lock timeout
+  was received.  This was confusing as simply setting the system to return
+  extra diagnostic information would change the SQL state of the error
+  returned by the system for a lock timeout.
+</p>
+
+
+<!-- 
+-->
+
+
+<h4>Incompatibilities with Previous Release</h4>
+
+<p>
+  Applications which explicitly tested for SQL state error 40XL2 as a lock
+  timeout will no longer get that error.  40XL1 will now always be returned
+  for a lock timeout error whether lock diagnostics are enabled or not.
+</p>
+
+
+<!-- 
+
+  
+  DESCRIBE WHY THE CHANGE WAS MADE.
+
+  For instance:
+
+-->
+
+
+<h4>Rationale for Change</h4>
+
+<p>
+  The previous behavior was not intended.  Lock timeout should generate same
+  SQL state whether diagnostics are enabled or not.  Only the text of the error
+  will change based on the requested diagnostic level. 
+</p>
+
+
+<!-- 
+  OPTIONAL: DESCRIBE HOW TO REVERT TO THE PREVIOUS BEHAVIOR OR
+  OTHERWISE AVOID THE INCOMPATIBILITIES INTRODUCED BY THIS CHANGE.
+
+  For instance:
+
+  Users must recode applications which open multiple streams on the same column.
+-->
+
+
+<h4>Application Changes Required</h4>
+
+<p>
+  If the application has been explicitly coded to take action when getting
+  error 40XL2 and does not do the same action for 40XL1, then the application
+  should be changed.  This action is usually retry logic based on a lock
+  timeout or deadlock.
+</p>
+
+
+
+</div>
+<hr>
+<h3>
+<a name="Note for DERBY-4631"></a>Note for DERBY-4631</h3>
+<div>
+
+<!-- 
+  SUMMARIZE THE ISSUE. This is a one line summary of the issue.
+
+  For instance:
+
+  Applications may no longer open two InputStreams on the same ResultSet column.
+-->
+
+
+<h4>Summary of Change</h4>
+
+<p>
+Derby can pick incorrect join column value for a RIGHT OUTER JOIN with NATURAL/USING clause. 
+</p>
+
+
+<!-- 
+  DESCRIBE WHAT IT IS THAT THE USER ACTUALLY SEES WHEN THE PROBLEM OCCURS.
+
+  For instance:
+
+  In the previous release, applications were able to open two
+  InputStreams on the same column. Depending on how these streams
+  interacted, the value siphoned out of the column was erratic. Now
+  Derby raises a SQLException when the application attempts to create
+  the second InputStream.
+-->
+
+
+<h4>Symptoms Seen by Applications Affected by Change</h4>
+
+<p>
+In case of RIGHT OUTER JOIN with NATURAL/USING clause, Derby always picked the join column's value from the 
+right table. This could lead to incorrect join column value depending on the data in the tables. The correct
+value should be determined by doing equivalent of COALESCE(leftTableValue, rightTableValue). This correct 
+behavior has been implemented as a fix for DERBY-4631.
+</p>
+
+
+<!-- 
+  OPTIONAL: DESCRIBE INCOMPATIBILITIES WITH PREVIOUS RELEASE, IF ANY.
+
+  For instance:
+
+  Applications which open two InputStreams on the ResultSet column now
+  fail.
+-->
+
+
+<h4>Incompatibilities with Previous Release</h4>
+
+<p>
+The data returned for join column value for a RIGHT OUTER JOIN with NATURAL/USING clause can now be different(and correct).
+</p>
+
+
+
+</div>
+</div>
+<h2>
+<a name="Build Environment"></a>Build Environment</h2>
+<div>
+<p>Derby release 10.8.3.0 was built using the following environment:</p>
+<ul>
+<li>
+<b>Branch</b> - Source code came from the 10.8 branch.</li>
+<li>
+<b>Machine</b> - Cygwin on Windows 7 Service Pack 1 </li>
+<li>
+<b>Ant</b> - Apache Ant version 1.7.0 compiled on December 13 2006.</li>
+<li>
+<b>JDK 1.4</b> -  Classic VM (build 1.4.2, J2RE 1.4.2 IBM Windows 32 build cn142ifx-20110211 (SR13 FP8+PM31983) (JIT enabled: jitc))
+</li>
+<li>
+<b>Java 6</b> - 
+java version "1.6.0"
+Java(TM) SE Runtime Environment (build pwi3260sr9fp1-20110208_03(SR9 FP1))
+IBM J9 VM (build 2.4, JRE 1.6.0 IBM J9 2.4 Windows 7 x86-32 jvmwi3260sr9-20110203_74623 (JIT enabled, AOT enabled)
+J9VM - 20110203_074623
+JIT  - r9_20101028_17488ifx3
+GC   - 20101027_AA)
+JCL  - 20110203_01
+</li>
+<li>
+<b>Compiler</b> - The IBM javac 1.6.0  javac was used to compile all classes.</li>
+<li>
+<b>JSR 169</b> -  Java ME support was built using libraries from IBM's j9 jvm from WEME 6.2.</li>
+</ul>
+</div>
+<h2>
+<a name="Verifying Releases"></a>Verifying Releases</h2>
+<div>
+
+
+<p>It is essential that you verify the integrity of the downloaded
+files using the PGP and MD5 signatures.  MD5 verification ensures the
+file was not corrupted during the download process.  PGP verification
+ensures that the file came from a certain person.</p>
+
+
+<p>The PGP signatures can be verified using
+<a href="http://www.pgpi.org/">PGP</a> or
+<a href="http://www.gnupg.org/">GPG</a>.
+First download the Apache Derby
+<a href="http://svn.apache.org/repos/asf/db/derby/code/trunk/KEYS">KEYS</a>
+as well as the <code>asc</code> signature file for the particular
+distribution. It is important that you get these files from the ultimate
+trusted source - the main ASF distribution site, rather than from a mirror.
+Then verify the signatures using ...</p>
+
+
+<pre>
+% pgpk -a KEYS
+% pgpv db-derby-X.Y.tar.gz.asc
+
+<em>or</em>
+
+% pgp -ka KEYS
+% pgp db-derby-X.Y.tar.gz.asc
+
+<em>or</em>
+
+% gpg --import KEYS
+% gpg --verify db-derby-X.Y.tar.gz.asc
+
+</pre>
+
+
+<p>To verify the MD5 signature on the files, you need to use a program
+called <code>md5</code> or <code>md5sum</code>, which is
+included in many unix distributions.  It is also available as part of
+<a href="http://www.gnu.org/software/textutils/textutils.html">GNU
+Textutils</a>.  Windows users can get binary md5 programs from <a href="http://www.fourmilab.ch/md5/">here</a>, <a href="http://www.pc-tools.net/win32/freeware/console/">here</a>, or
+<a href="http://www.slavasoft.com/fsum/">here</a>.</p>
+
+
+<p>We strongly recommend that you verify your downloads with both PGP and MD5.</p>
+
+
+
+</div>
+</body>
+</html>
