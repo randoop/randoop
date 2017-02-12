@@ -17,6 +17,7 @@ public class Main {
   static {
     handlers = new ArrayList<>();
     handlers.add(new GenAllTests());
+    //     handlers.add(new GenTests());
     handlers.add(new Help());
   }
 

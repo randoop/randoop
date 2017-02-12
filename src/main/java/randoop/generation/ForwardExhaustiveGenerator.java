@@ -3,12 +3,14 @@ package randoop.generation;
 import com.google.common.collect.Lists;
 import randoop.*;
 import randoop.generation.exhaustive.SequenceGenerator;
+import randoop.main.GenAllTests;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.TypeInstantiator;
+import randoop.reflection.TypeNames;
 import randoop.sequence.*;
 import randoop.test.DummyCheckGenerator;
 import randoop.types.*;
@@ -55,6 +57,8 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
 
   // Sequence to be used to instantiate current class.
   private Sequence constructorPrefix;
+
+  private ExecutableSequence executableConstructorPrefix;
 
   public ForwardExhaustiveGenerator(
       List<TypedOperation> operations,
@@ -112,7 +116,7 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
     this.observers = observers;
     this.allSequences = new LinkedHashSet<>();
     this.instantiator = componentManager.getTypeInstantiator();
-    this.sequenceGenerator = new SequenceGenerator<>(operations, GenInputsAbstract.maxsize);
+    this.sequenceGenerator = new SequenceGenerator<>(this.operations, GenInputsAbstract.maxsize);
     initializeRuntimePrimitivesSeen();
     this.constructors =
         operations.stream().filter(o -> o.isConstructorCall()).collect(Collectors.toSet());
@@ -121,6 +125,8 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
     if (constructorPrefix == null) {
       throw new RuntimeException(
           "Not possible to generate tests due to the impossibility of selecting constructors.");
+    } else {
+      this.executableConstructorPrefix = new ExecutableSequence(this.constructorPrefix);
     }
   }
 
@@ -150,7 +156,11 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
       componentManager.clearGeneratedSequences();
     }
 
-    ExecutableSequence eSeq = createNewUniqueSequence();
+    ExecutableSequence eSeq = null;
+    try {
+      eSeq = createNewUniqueSequence();
+    } catch (ClassNotFoundException e) {
+    }
 
     if (eSeq == null) {
       return null;
@@ -318,7 +328,13 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
    Selects the new permutation in the set of possible permutations
   * */
   private List<TypedOperation> selectNextSequenceOfOperationsForNewUniqueSequence() {
+
+    if (this.executableConstructorPrefix.hasNonExecutedStatements()) {
+      this.prepareConstructorPrefix();
+    }
+
     List<TypedOperation> nextPermutation = sequenceGenerator.next();
+
     List<TypedOperation> nextSequence = Lists.newArrayList();
 
     for (TypedOperation op : nextPermutation) {
@@ -339,6 +355,16 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
 
     return nextSequence;
   }
+
+  private void prepareConstructorPrefix() {
+    this.executableConstructorPrefix.execute(executionVisitor, checkGenerator);
+    processSequence(executableConstructorPrefix);
+
+    if (this.constructorPrefix.hasActiveFlags()) {
+      componentManager.addGeneratedSequence(this.constructorPrefix);
+    }
+  }
+
   /**
    * Tries to create and execute a new sequence. If the sequence is new (not
    * already in the specified component manager), then it is executed and added
@@ -347,7 +373,7 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
    *
    * @return a new sequence, or null
    */
-  private ExecutableSequence createNewUniqueSequence() {
+  private ExecutableSequence createNewUniqueSequence() throws ClassNotFoundException {
 
     if (Log.isLoggingOn()) {
       Log.logLine("-------------------------------------------");
@@ -385,15 +411,11 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
       List<Variable> inputs = new ArrayList<>();
       for (Integer oneinput : sequences.indices) {
         // Assuming previous sequence has already had variables attributed to it:
-        if (oneinput == 0) {
-          continue;
-        }
         Variable v = concatSeq.getVariable(oneinput);
         inputs.add(v);
       }
 
       newSequence = concatSeq.extend(to, inputs);
-      newSequence = Sequence.concatenate(Lists.newArrayList(constructorPrefix, newSequence));
 
       // With .5 probability, do a primitive value heuristic.
       //      if (GenInputsAbstract.repeat_heuristic && Randomness.nextRandomInt(10) == 0) {
@@ -403,7 +425,9 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
       //      }
 
       // Discard if sequence is larger than size limit
-      if (newSequence.size() > GenInputsAbstract.maxsize) {
+      String cutName = GenAllTests.getClassnamesFromArgs().iterator().next();
+      Class<?> classUnderTest = TypeNames.getTypeForName(cutName);
+      if (newSequence.getNumberOfClassStatements(classUnderTest) > GenInputsAbstract.maxsize) {
         if (Log.isLoggingOn()) {
           Log.logLine(
               "Sequence discarded because size "
@@ -462,30 +486,47 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
             .findFirst();
 
     if (parameterlessCtr.isPresent()) {
-      InputsAndSuccessFlag sequences = selectInputs(parameterlessCtr.get());
-      Sequence concatSeq = Sequence.concatenate(sequences.sequences);
-      ctrSequence = concatSeq.extend(parameterlessCtr.get(), new ArrayList<>());
-      return ctrSequence;
-    }
+      ctrSequence = getSequenceWithInputsFromTypedOperation(parameterlessCtr.get());
 
-    // If not successful, returns the first constructor to be successfuly executed:
-    for (TypedOperation cto : constructors) {
-      InputsAndSuccessFlag sequences = selectInputs(cto);
-
-      if (sequences.success) {
-        Sequence concatSeq = Sequence.concatenate(sequences.sequences);
-        // Figure out input variables.
-        List<Variable> inputs = new ArrayList<>();
-        for (Integer oneinput : sequences.indices) {
-          Variable v = concatSeq.getVariable(oneinput);
-          inputs.add(v);
-        }
-        ctrSequence = concatSeq.extend(cto, inputs);
+      if (ctrSequence != null) {
         return ctrSequence;
       }
     }
 
-    return ctrSequence;
+    // If not successful, returns the first constructor to be successfuly executed:
+    for (TypedOperation cto : constructors) {
+      ctrSequence = getSequenceWithInputsFromTypedOperation(cto);
+      if (ctrSequence != null) {
+        return ctrSequence;
+      }
+    }
+
+    return null;
+  }
+
+  private Sequence getSequenceWithInputsFromTypedOperation(TypedOperation to) {
+
+    if (to.isGeneric() || to.hasWildcardTypes()) {
+      to = instantiator.instantiate((TypedClassOperation) to);
+      if (to == null) {
+        return null;
+      }
+    }
+
+    InputsAndSuccessFlag sequences = selectInputs(to);
+    Sequence seq = null;
+
+    if (sequences.success) {
+      Sequence concatSeq = Sequence.concatenate(sequences.sequences);
+      // Figure out input variables.
+      List<Variable> inputs = new ArrayList<>();
+      for (Integer oneinput : sequences.indices) {
+        Variable v = concatSeq.getVariable(oneinput);
+        inputs.add(v);
+      }
+      seq = concatSeq.extend(to, inputs);
+    }
+    return seq;
   }
 
   /**

@@ -313,6 +313,10 @@ public class ForwardGenerator extends AbstractGenerator {
       Log.logLine("-------------------------------------------");
     }
 
+    this.operations.removeIf(op -> op.isConstructorCall() && op.getInputTypes().size() > 0);
+    this
+        .operations.removeIf(
+            op -> op.isConstructorCall() && op.getOutputType().equals(Type.forClass(Object.class)));
     if (this.operations.isEmpty()) {
       return null;
     }

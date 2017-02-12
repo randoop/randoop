@@ -24,6 +24,8 @@ import randoop.util.Randomness;
 import randoop.util.SimpleList;
 import randoop.util.WeightedElement;
 
+import javax.swing.plaf.nimbus.State;
+
 /**
  * Immutable.
  * <p>
@@ -91,6 +93,29 @@ public final class Sequence implements WeightedElement, java.io.Serializable {
    */
   public final int size() {
     return statements.size();
+  }
+
+  public int getNumberOfClassStatements(Class<?> clazz) {
+    if (clazz == null) {
+      throw new IllegalArgumentException("clazz");
+    }
+
+    if (statements == null || statements.isEmpty()) {
+      return 0;
+    }
+
+    int count = 0;
+
+    for (int i = 0; i < statements.size(); i++) {
+      Statement st = statements.get(i);
+
+      if (st.getDeclaringClass() != null
+          && st.getDeclaringClass().getRuntimeClass().equals(clazz)) {
+        count++;
+      }
+    }
+
+    return count;
   }
 
   /**
