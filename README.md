@@ -7,13 +7,14 @@ Welcome to the DigDog Repository! To get started, clone this repository on your 
 Then, step into the newly cloned directory, and run the evaluation script:
 `cd randoop`
 
-`./Evaluate.sh -i -b`
+`./Evaluate.sh -i -b -o`
 
-(TODO: by tomorrow night, fix script so that it properly defaults to both experiment, and verify that the time limits are set according to the data we've already successfully gathered)
+A few notes about this:
+- the `-i` flag tells the script to perform the initial set up, which includes cloning the defects4j repository in the parent directory. If you have a folder named defects4j in the directory alongside this repository, it will remove that folder! It will then checkout the necessary projects from defects4j.
+- the `-b` flag ensures that the local files will be packaged into a .jar file to be used in the experiment which gathers metrics from DigDog
+- the `-o` flag tells the script to overwrite any existing data files for the experiments that it will run
 
 This will run both Randoop and DigDog (so far, just the orienteering feature that has been implemented) over the Chart defects4j project. It will run 10 trials of each tool with varying time limits (currently ranging from 50 to 250 seconds). During each run, the coverage metrics are recorded and stored in files in the `experiments/` directory. This data is also used by the script to create graphs, which will be generated in the `experiments/plots/` directory, named `Branch Coverage Percentage.png` and `Line Coverage Percentage.png`. Please note that running this script will take a long time. In order for the plots to be generated successfully you may need to install matplotlib and numpy for python, this can be done by calling `pip install matplotlib` and `pip install numpy`.
-
-TODO: more correctly/completely describe the graph/csv output here
 
 ### Evaluation Script
 To run the script and gather data on the performance of DigDog: `./Evaluate.sh`. You may need to change the permissions with `chmod u+x ./Evaluate.sh` first.
