@@ -7,7 +7,9 @@ import matplotlib.patches as mpatches
 
 projects = ['Chart', 'Math', 'Time', 'Lang']
 times = [50, 100, 150, 200, 250]
+#times = [50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550]
 labels = [50, 50, 100, 100, 150, 150, 200, 200, 250, 250]
+#labels = [50, 50, 100, 100, 150, 150, 200, 200, 250, 250, 300, 300, 350, 350, 400, 400, 450, 450, 500, 500, 550, 550]
 colors = ['pink', 'lightblue', 'thistle', 'paletuquoise', 'lightcoral', 'lightgreen']
 # Marker codes for pyplot
 markers = ['o', 's', 'D', '^', 'p', '*']
@@ -35,8 +37,14 @@ def readData(fileName):
 	while i < len(lines):
 		line = lines[i].lstrip().rstrip()
 		if "TIME" in line:
+
+			# TODO: Generalize to work when different datasets have different upper time limits
+			time = int(line.split(' ')[1])
+			if time > 250:
+				break
+
 			# Set time to int in header 'TIME 5'
-			timeIndex = times.index(int(line.split(' ')[1]))
+			timeIndex = times.index(time)
 
 			i += 1
 			line = lines[i].lstrip().rstrip()
@@ -76,6 +84,7 @@ def boxplot(title, dataLabels, lst):
 	plt.ylim(0, 30)
 
 	combined = intersperse(lst)
+	print labels
 	bplot = plt.boxplot(combined, labels=labels, patch_artist=True)
 
 	# Set colors for dataset labels for the legend
@@ -127,7 +136,7 @@ def lineplot(title, dataLabels, lst):
 
 
 	# Save plot
-	plt.savefig('experiments/%s' % title, fromat='png')
+	plt.savefig('experiments/%s' % title, format='png')
 
 	# Display plot
 	plt.show()
