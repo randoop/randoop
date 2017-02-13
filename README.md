@@ -18,10 +18,11 @@ A few notes:
 - you may need to run `chmod u+x ./Evaluate.sh` to get the script to execute the first time
 
 This will run both Randoop and DigDog (so far, just the orienteering feature that has been implemented) over the Chart defects4j project. It will run 10 trials of each tool with varying time limits (currently ranging from 50 to 250 seconds). During each run, the coverage metrics are recorded and stored in files in the `experiments/` directory. Specifically, the following files will be created:
--`experiments/Chart_Individual_Randoop_Line.txt`
--`experiments/Chart_Individual_Randoop_Branch.txt`
--`experiments/Chart_Individual_Orienteering_Line.txt`
--`experiments/Chart_Individual_Orienteering_Branch.txt`
+- `experiments/Chart_Individual_Randoop_Line.txt`
+- `experiments/Chart_Individual_Randoop_Branch.txt`
+- `experiments/Chart_Individual_Orienteering_Line.txt`
+- `experiments/Chart_Individual_Orienteering_Branch.txt`
+
 Each file will include the coverage information for each trial that was performed for that condition, separated by the time limit. Files store data in [# covered, total #] line pairs.
 
 This data can be easily used to create graphs, which will be generated in the `experiments/plots/` directory, named `Branch Coverage Percentage.png` and `Line Coverage Percentage.png`. Please note that running this script will take a long time. In order for the plots to be generated successfully you may need to install matplotlib and numpy for python, this can be done by calling `pip install matplotlib` and `pip install numpy`.
