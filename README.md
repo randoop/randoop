@@ -1,21 +1,22 @@
-## Randoop
-
-Randoop is a unit test generator for Java.
-It automatically creates unit tests for your classes, in JUnit format.
-
-More about Randoop:
-
-* [Randoop homepage](https://randoop.github.io/randoop/).
-* [Randoop manual](https://randoop.github.io/randoop/manual/index.html)
-* [Randoop release](https://github.com/randoop/randoop/releases/latest)
-* [Randoop developer's manual](https://randoop.github.io/randoop/manual/dev.html)
-* [Randoop Javadoc](https://randoop.github.io/randoop/api/)
-
-
 ## DigDog
 
+### Getting Started
+Welcome to the DigDog Repository! To get started, clone this repository on your system:
+`git clone https://github.com/jkotalik/randoop.git`
+
+Then, step into the newly cloned directory, and run the evaluation script:
+`cd randoop`
+
+`./Evaluate.sh -i -b`
+
+(TODO: by tomorrow night, fix script so that it properly defaults to both experiment, and verify that the time limits are set according to the data we've already successfully gathered)
+
+This will run both Randoop and DigDog (so far, just the orienteering feature that has been implemented) over the Chart defects4j project. It will run 10 trials of each tool with varying time limits (currently ranging from 50 to 250 seconds). During each run, the coverage metrics are recorded and stored in files in the `experiments/` directory. This data is also used by the script to create graphs, which will be generated in the `experiments/plots/` directory, named `Branch Coverage Percentage.png` and `Line Coverage Percentage.png`. Please note that running this script will take a long time. In order for the plots to be generated successfully you may need to install matplotlib and numpy for python, this can be done by calling `pip install matplotlib` and `pip install numpy`.
+
+TODO: more correctly/completely describe the graph/csv output here
+
 ### Evaluation Script
-To run the script: `./Evaluate.sh`. You may need to change the permissions with `chmod u+x ./Evaluate.sh` first.
+To run the script and gather data on the performance of DigDog: `./Evaluate.sh`. You may need to change the permissions with `chmod u+x ./Evaluate.sh` first.
 
 Currently accepted flags:
 - `-i (--init)` Performs first-time set up of the defects4j repository, including cloning, checking out the projects, and setting up the Perl DBI. Only needs to be included if the defects4j repository already exists.
@@ -53,3 +54,16 @@ Measures the metrics across each of the 4 defects4j projects, considering each a
 
 The file will have a section for each time limit (50, 100, ..., 600 seconds). Each section will start with a line that contains
 `TIME x`, where x is the time limit for that section. Within each section, the data will be stored as pairs of lines, each pair starting with # covered/found on the first line, and number representing the total on the second line.
+
+## Randoop
+
+Randoop is a unit test generator for Java.
+It automatically creates unit tests for your classes, in JUnit format.
+
+More about Randoop:
+
+* [Randoop homepage](https://randoop.github.io/randoop/).
+* [Randoop manual](https://randoop.github.io/randoop/manual/index.html)
+* [Randoop release](https://github.com/randoop/randoop/releases/latest)
+* [Randoop developer's manual](https://randoop.github.io/randoop/manual/dev.html)
+* [Randoop Javadoc](https://randoop.github.io/randoop/api/)

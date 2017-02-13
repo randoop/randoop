@@ -50,7 +50,7 @@ def readData(fileName):
 		i+=2
 
 	title = '%s %s Coverage Percentage' % (project, metric,)
-	return (title, data)
+	return (title, condition, data)
 
 
 # list[list]	lst 		List of lists of any type
@@ -95,7 +95,8 @@ def boxplot(title, dataLabels, lst):
 
 
 	# Save plot
-	plt.savefig('experiments/%s' % title, fromat='png')
+	print title
+	plt.savefig('plots/%s' % title, format='png')
 
 	# Display plot
 	plt.show()
@@ -140,15 +141,14 @@ def getMedians(lst):
 def main():
 	numFiles = len(sys.argv) - 1
 
-	titles = []
-	data = []
+	titles, seriesLabels, data = ([0 for i in range(numFiles)] for j in range(3))
 	# Extract info for plot from the filename arguments
 	for i in range(numFiles):
 		fileName = sys.argv[i + 1]
-		currTitle, currData = readData(fileName)
 
+		titles[i], seriesLabels[i], data[i] = readData(fileName)
 	
-	boxplot(titles[0], ['Randoop', 'Orienteering'], data)
+	boxplot(titles[0], seriesLabels, data)
 	
 	# Print Medians of coverage %
 	for i in range(numFiles):
