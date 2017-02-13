@@ -16,7 +16,7 @@ A few notes:
 - the `-b` flag ensures that the local files will be packaged into a .jar file to be used in the experiment which gathers metrics from DigDog
 - the `-o` flag tells the script to overwrite any existing data files for the experiments that it will run
 - you may need to run `chmod u+x ./Evaluate.sh` to get the script to execute the first time
-- please note that running this script will take a long time.
+- please note that running this script will take a long time
 
 This will run both Randoop and DigDog (so far, just the orienteering feature that has been implemented) over the Chart defects4j project. It will run 10 trials of each tool with varying time limits (currently ranging from 50 to 250 seconds). During each run, the coverage metrics are recorded and stored in files in the `experiments/` directory. Specifically, the following files will be created:
 - `experiments/Chart_Individual_Randoop_Line.txt`
@@ -35,21 +35,29 @@ The data can then be used to generate graphs comparing the various tools:
 
 The graph will be saved in the `experiments/plots` directory, named `'Project' 'CoverageType' Coverage Percentage.png`.
 
-### Evaluation Script
+Thus, performing `./Evaluate.sh -i -b -o && python Plot.py experiments/Chart_Individual_Randoop_Line.txt experiments/Chart_Orienteering_Line.txt && python Plot.py experiments/Chart_Individual_Randoop_Branch.txt && experiments/Chart_Individual_Orienteering_Line.txt` will replicate our initial results, creating charts called experiments/plots/Chart Branch Coverage Percentage.png and experiments/plots/Chart Line Coverage Percentage.png.
+
+### Further documentation of Evaluate.sh
 To run the script and gather data on the performance of DigDog: `./Evaluate.sh`. You may need to change the permissions with `chmod u+x ./Evaluate.sh` first.
 
-Currently accepted flags:
-- `-i (--init)` Performs first-time set up of the defects4j repository, including cloning, checking out the projects, and setting up the Perl DBI. Only needs to be included if the defects4j repository already exists.
-- `-b (--build)` Builds the digdog .jar file based on the current state of your local files.
-- More coming, primarily for specifying which experiments to run.
+Flags with values should have the values as a separate, comma-separated token. Currently accepted flags:
+- `[-i|--init]` Performs first-time set up of the defects4j repository, including cloning, checking out the projects, and setting up the Perl DBI. This behavior is default unless the defects4j repository exists alongside this repository.
+- `[-b|--build]` Builds the digdog .jar file based on the current state of your local files. This behavior is default if there isn't already a .jar file in the expected build path of this project (`build/libs/randoop-all-3.0.8.jar`).
+- `[-o|--overwrite]` If set, removes the existing data files from the `experiments/` directory before beginning data collection. Default behavior when not set is to append the new values to the existing data file.
+- `[-t|--time]` Time limit values to use for experiments, in seconds, as a comma separated list of time limits. Default value is 50,100,150,200,250.
+- `[-e|--exp|--experiments]` Which experiments should be performed. If not set, defaults to run both Randoop and Orienteering. 
+    * Accepted values: Randoop, Orienteering
+- `[-p|--proj|--projects]` Which defects4j projects to run the experiments over. Defaults to "Chart".
+    * Accepted values: Chart, Lang, Math, Time
+- More coming.
 
 #### Experiments/Output:
 
-The output from the evaluation will be placed into intermediate result files to be processed by a graphing/tabling script. The files will be located in a `/experiments` directory at the root of this repository. The files will be named according to the specific experiment, the names will be of the form `project_experiment_condition_type.csv`.
+The output from the evaluation will be placed into intermediate result files to be processed by a graphing/tabling script. The files will be located in the `/experiments` directory at the root of this repository. The files will be named according to the specific experiment, the names will be of the form `project_experiment_condition_type.txt`. CSV files coming soon.
 
-**Complete**
+**Complete** (not yet implemented)
 
-Measures the metrics across the whole repository (the 4 defects4j projects that we are considering), averaging the coverage metrics across 5 trials. Time limit is number of seconds/class. The files are named according to the following grammar:
+Measures coverage and fault detection metrics across each of the defects4j projects, considering each as its own benchmark. Compares the DigDog implementation with all enhancements to the base Randoop configuration. Time limit is number of seconds/class. The files are named according to the following grammar:
 ```
 - Filename ::= proj_exp_condition_type.txt
 - proj ::= 'Chart' | 'Math' | 'Time' | 'Lang'
@@ -63,7 +71,7 @@ The file will have a section for each time limit (2, 10, 30, and 60/class). Each
 
 **Individual**
 
-Measures the metrics across each of the 4 defects4j projects, considering each as its own code base. Averages the coverage metrics across 10 trials, using a global time limit.
+Measures the metrics across each of the 4 defects4j projects, considering each as its own code base. Compares the base Randoop configuration with each individual enhancement of DigDog, as well as the full DigDog implementation. Averages the coverage metrics across 10 trials, using a global time limit.
 ```
 - Filename ::= proj_exp_condition_time_type.txt
 - proj ::= 'Chart' | 'Math' | 'Time' | 'Lang'
@@ -88,7 +96,7 @@ In order for the plots to be generated successfully you may need to install matp
 
 ## Randoop
 
-Randoop is a unit test generator for Java.
+DigDog is an extension of Randoop, a unit test generator for Java.
 It automatically creates unit tests for your classes, in JUnit format.
 
 More about Randoop:
