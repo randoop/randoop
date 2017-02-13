@@ -136,7 +136,7 @@ def lineplot(title, dataLabels, lst):
 
 
 	# Save plot
-	plt.savefig('experiments/%s' % title, format='png')
+	plt.savefig('experiments/plots/%s' % title, format='png')
 
 	# Display plot
 	plt.show()

@@ -342,10 +342,6 @@ doIndividualExperiment() {
                 recordCoverage
                 i=$((i+1))
             done
-
-            # Add newlines to format for reading by python script
-            # echo "" >> ${line_file}
-            # echo "" >> ${branch_file}
         done
 	
         # Run Plot.py to generate a plot for this experiment
