@@ -137,7 +137,7 @@ else
 	log "Defects4j repository already exists, assuming that set up has already been performed. If this is in error, re-run this script with the -i option"
 	cd defects4j
 fi
-export PATH=$PATH:./framework/bin
+export PATH=$PATH:`pwd`/framework/bin
 #printf 'y\ny\n\n' | perl -MCPAN -e 'install Bundle::DBD'
 
 # Check out the project for fault detection
@@ -275,6 +275,7 @@ packageTestsForFaultDetection() {
 
 countFaultDetection() {
     perl ./framework/bin/run_bug_detection.pl -p $project -d $fault_suite_path -o ../randoop/experiments/fault_detection -v ${version}b -D
+    exit 1
 }
 
 recordCoverage() {
@@ -379,8 +380,9 @@ doIndividualExperiment() {
 initFaultDetectionClasses() {
     # Create the classlist and jar list for this project.
     log "Setting up class list for project ${project}_${version}b"
-    defects4j export -p classes.modified -o ${curr_dir}/${project}_${version}b_classlist.txt
-    
+    cd ${curr_dir}
+    defects4j export -p classes.modified -o ${project}_${version}b_classlist.txt
+    cd .. 
     # Get a list of all .jar files in this project, to be added to the
     # classpath when running randoop/digdog.
     log "Setting up jar list for project ${project}_${version}b"
@@ -432,8 +434,8 @@ doFaultDetection() {
                 ;;
         esac
 
-        version=1
-        while[ $version -le num_versions ]; do
+        version=2
+        while [ "$version" -le "$num_versions" ]; do
             checkoutProject
 
             initFaultDetectionClasses
