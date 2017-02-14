@@ -248,6 +248,7 @@ public abstract class AbstractGenerator {
   protected boolean stop() {
     return (listenerMgr != null && listenerMgr.stopGeneration())
         || (timer.getTimeElapsedMillis() >= maxTimeMillis)
+        || (GenInputsAbstract.stop_on_error_test && numErrorSequences() > 0)
         || (numOutputSequences() >= maxOutputSequences)
         || (numGeneratedSequences() >= maxGeneratedSequences)
         || (stopper != null && stopper.stop());
@@ -268,6 +269,15 @@ public abstract class AbstractGenerator {
    */
   public int numOutputSequences() {
     return outErrorSeqs.size() + outRegressionSeqs.size();
+  }
+
+  /**
+   * Returns the count of generated error-revealing sequences.
+   *
+   * @return the number of error test sequences
+   */
+  private int numErrorSequences() {
+    return outErrorSeqs.size();
   }
 
   /**
