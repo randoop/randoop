@@ -96,13 +96,6 @@ def boxplot(title, seriesLabels, lst):
 		color = colors[i % len(lst)]
 		patch.set_facecolor(color)
 
-
-	
-
-	# Display plot
-	plt.show()
-
-
 # string		title 			Title to be used in the saving of the chart
 # lst[String]	seriesLabels	A list of the dataSeries' names
 #								Ex: ['Randoop', 'Orienteering']
@@ -123,12 +116,6 @@ def lineplot(title, seriesLabels, lst):
 		series = lst[i]
 		seriesIdx = i % len(lst)
 		plt.plot(times, series, marker=markers[seriesIdx], linestyle=linestyles[seriesIdx], color=colors[seriesIdx])
-
-	# Save plot
-	plt.savefig('plots/%s' % title, format='png')
-
-	# Display plot
-	plt.show()
 
 # Accepts a list of lists, the inner lists contain coverage percentages
 # Returns a list of the median coverage percentage of the inner lists
