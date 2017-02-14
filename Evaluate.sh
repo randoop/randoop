@@ -65,6 +65,10 @@ while [[ $# -gt 0 ]]; do
             IFS=$oldIFS
             log "Projects set to [${projects[*]}]"
             ;;
+        -f|--faults)
+            run_fault_detection=true
+            log "Setting fault detection to true"
+            ;;
 		*)
 			log "Unknown flag: ${key}"
 			exit 1
@@ -257,8 +261,8 @@ recordCoverage() {
     # Run the defects4j coverage task over the newly generated test suite.
     # Results are stored into results.txt, and the specific lines used to
     # generate coverage are put into numbers.txt
-    #./framework/bin/run_bug_detection.pl -p ${project} -d ${curr_dir} -o ../randoop/experiments/fault_detection
-    #exit 1
+    ./framework/bin/run_bug_detection.pl -p ${project} -d ${curr_dir} -o ../randoop/experiments/fault_detection
+    exit 1
     defects4j coverage -i ${project}classlist.txt -w $curr_dir -s ${curr_dir}/randoop.tar.bz2 > results.txt
     grep 'Lines total' results.txt > numbers.txt
     grep 'Lines covered' results.txt >> numbers.txt
