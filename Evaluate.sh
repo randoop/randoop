@@ -87,6 +87,7 @@ digdog_path=`pwd`"/build/libs/randoop-all-3.0.8.jar"
 java_path=`pwd`"/experiments/lib/jdk1.7.0/bin/java"
 plot_path=`pwd`"/Plot.py"
 
+chmod u+x $java_path
 # If the build flag was set or if there is no digdog jar
 # Build the jar from the local files
 if [ $build ] || [ ! -f $digdog_path ]; then
@@ -126,6 +127,7 @@ if [ $init ]; then
 
 	# Install Perl DBI
 	printf 'y\ny\n\n' | perl -MCPAN -e 'install Bundle::DBI'
+    printf 'y\n\n' | perl -MCPAN -e 'install DBD::CSV'
 else
 	# If we already have the defects4j repository cloned, we just step inside
 	log "Defects4j repository already exists, assuming that set up has already been performed. If this is in error, re-run this script with the -i option"
@@ -243,6 +245,12 @@ packageTests() {
         rm -f ${curr_dir}/randoop.tar.bz2
     fi
     bzip2 ${curr_dir}/randoop.tar
+
+    # remove the existing tests.
+    # If Randoop finishes early (ie, because of a flaky test)
+    # failing to delete the generated tests would cause them to
+    # be mistakenly re-used on the next coverage evaluation
+    rm $test_dir/*
 }
 
 recordCoverage() {
@@ -286,7 +294,7 @@ doIndividualExperiment() {
     if [ $time_arg ]; then
         indiv_time_limits=$specified_times
     else
-        indiv_time_limits=(50 100 150 200 250)
+        indiv_time_limits=(50 100 150 200 250 300 350 400 450 500 550 600)
     fi
 
     log "Running Individual Experiment with $1"
@@ -326,15 +334,15 @@ doIndividualExperiment() {
                 case $1 in
                     Randoop)
                         log "Running base Randoop with time limit=${time}, ${project} #${i}"
-			            $java_path -ea -classpath ${jars}${curr_dir}/${classes_dir}:$randoop_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM
+			            $java_path -ea -classpath ${jars}${curr_dir}/${classes_dir}:$randoop_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM --ignore-flaky-tests=true
                         ;;
                     Orienteering)
                         log "Running digDog with orienteering, time limit=${time}, ${project} #${i}"
-			            $java_path -ea -classpath ${jars}${curr_dir}/${classes_dir}:$digdog_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM --orienteering=true
+			            $java_path -ea -classpath ${jars}${curr_dir}/${classes_dir}:$digdog_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM --orienteering=true --ignore-flaky-tests=true
                         ;;
                     *)
                         log "Running digDog with time limit=${time}, ${project} #${i}"
-			            $java_path -ea -classpath ${jars}${curr_dir}/${classes_dir}:$digdog_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM
+			            $java_path -ea -classpath ${jars}${curr_dir}/${classes_dir}:$digdog_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM --ignore-flaky-tests=true
                         ;;
                 esac
                 adjustTestNames
