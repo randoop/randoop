@@ -84,7 +84,7 @@ time_limits=(2 10 30 60 120)
 project_sizes=(501 86 520 79) #TODO: include this where we calculate the time limits
 randoop_path=`pwd`"/experiments/lib/randoop-baseline-3.0.9.jar"
 digdog_path=`pwd`"/build/libs/randoop-all-3.0.8.jar"
-#java_path=`pwd`"/experiments/lib/jdk1.7.0/bin/java"
+java_path=`pwd`"/experiments/lib/jdk1.7.0/bin/java"
 plot_path=`pwd`"/Plot.py"
 
 # If the build flag was set or if there is no digdog jar
@@ -326,15 +326,15 @@ doIndividualExperiment() {
                 case $1 in
                     Randoop)
                         log "Running base Randoop with time limit=${time}, ${project} #${i}"
-			            java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$randoop_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM
+			            $java_path -ea -classpath ${jars}${curr_dir}/${classes_dir}:$randoop_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM
                         ;;
                     Orienteering)
                         log "Running digDog with orienteering, time limit=${time}, ${project} #${i}"
-			            java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$digdog_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM --orienteering=true
+			            $java_path -ea -classpath ${jars}${curr_dir}/${classes_dir}:$digdog_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM --orienteering=true
                         ;;
                     *)
                         log "Running digDog with time limit=${time}, ${project} #${i}"
-			            java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$digdog_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM
+			            $java_path -ea -classpath ${jars}${curr_dir}/${classes_dir}:$digdog_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM
                         ;;
                 esac
                 adjustTestNames
@@ -366,7 +366,7 @@ for time in ${time_limits[@]}; do
             prepProjectForGeneration
 			log "Running Randoop with time limit set to ${time}, project ${project} iteration #${i}"
 			log "Randoop jar location: ${digdog_path}"
-			java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$digdog_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --timelimit=10 --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --literals-file=CLASSES --randomseed=$RANDOM
+			$java_path -ea -classpath ${jars}${curr_dir}/${classes_dir}:$digdog_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --timelimit=10 --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --literals-file=CLASSES --randomseed=$RANDOM
             
             adjustTestNames
 
