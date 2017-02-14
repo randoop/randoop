@@ -61,7 +61,7 @@ def readData(fileName):
 	return (title, condition, data)
 
 
-# list[list]	lst 		List of lists of any type
+# list[list]	lst 			List of lists of any type
 # Returns a 1 dimensional interspersion of the lists
 # Ex: [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
 # 	  returns [1, 4, 7, 2, 5, 8, 3, 6, 8]
@@ -69,20 +69,14 @@ def intersperse(lst):
 	return [val for group in zip(*lst) for val in group]
 
 
-# string		title 		Title to be used in the saving of the chart
-# lst[String]	dataLabels	A list of the dataSeries' names
-#							Ex: ['Randoop', 'Orienteering']
-# list[list]	lst 		A list of lists, each inner list contains 10 lists
-#							The innermost lists contain the information for one boxplot
+# string		title 			Title to be used in the saving of the chart
+# lst[String]	seriesLabels	A list of the dataSeries' names
+#								Ex: ['Randoop', 'Orienteering']
+# list[list]	lst 			A list of lists, each inner list contains 10 lists
+#								The innermost lists contain the information for one boxplot
 # A plot is generated with boxplots comparing each of the datasets within lst
 # This plot is saved to `title`.png
-def boxplot(title, dataLabels, lst):
-	plt.figure()
-	plt.title(title)
-	plt.xlabel('Global Time Limit (s)')
-	plt.ylabel('Coverage (%)')
-	plt.ylim(0, 30)
-
+def boxplot(title, seriesLabels, lst):
 	combined = intersperse(lst)
 	print labels
 	bplot = plt.boxplot(combined, labels=labels, patch_artist=True)
@@ -91,7 +85,7 @@ def boxplot(title, dataLabels, lst):
 	patches = []
 	for i in range(len(lst)):
 		color = color = colors[i % len(lst)]
-		patches.append(mpatches.Patch(color=color, label=dataLabels[i]))
+		patches.append(mpatches.Patch(color=color, label=seriesLabels[i]))
 
 	plt.legend(handles=patches)
 
@@ -103,40 +97,35 @@ def boxplot(title, dataLabels, lst):
 		patch.set_facecolor(color)
 
 
-	# Save plot
-	print title
-	plt.savefig('plots/%s' % title, format='png')
+	
 
 	# Display plot
 	plt.show()
 
 
-# string		title 		Title to be used in the saving of the chart
-# lst[String]	dataLabels	A list of the dataSeries' names
-#							Ex: ['Randoop', 'Orienteering']
-# list[list]	lst 		A list of lists, each inner list contains 10 elements
-#							that are the median coverage values of that dataset
+# string		title 			Title to be used in the saving of the chart
+# lst[String]	seriesLabels	A list of the dataSeries' names
+#								Ex: ['Randoop', 'Orienteering']
+# list[list]	lst 			A list of lists, each inner list contains 10 elements
+#								that are the median coverage values of that dataset
 # A plot is generated with lineplots comparing each of the datasets within lst
 # This plot is saved to `title`.png
-def lineplot(title, dataLabels, lst):
-	plt.figure()
-
+def lineplot(title, seriesLabels, lst):
 	# Set colors for dataset labels for the legend
 	patches = []
 	for i in range(len(lst)):
 		color = color = colors[i % len(lst)]
-		patches.append(mpatches.Patch(color=color, label=dataLabels[i]))
+		patches.append(mpatches.Patch(color=color, label=seriesLabels[i]))
 	
 	plt.legend(handles=patches)
 
-	for i in len(lst):
+	for i in range(len(lst)):
 		series = lst[i]
 		seriesIdx = i % len(lst)
-		plt.plot(times, series, marker=markers[seriesIdx], linestyle=Linestyles[seriesIdx], color=colors[seriesIdx])
-
+		plt.plot(times, series, marker=markers[seriesIdx], linestyle=linestyles[seriesIdx], color=colors[seriesIdx])
 
 	# Save plot
-	plt.savefig('experiments/plots/%s' % title, format='png')
+	plt.savefig('plots/%s' % title, format='png')
 
 	# Display plot
 	plt.show()
@@ -147,7 +136,36 @@ def getMedians(lst):
 	lst = [sorted(coverageData) for coverageData in lst]
 	return [(coverageData[5] + coverageData[6]) / 2.0 for coverageData in lst]
 
+def avg(lst):
+	return sum(lst) / len(lst)
+
+def plot(isLinePlot, title, seriesLabels, data):
+	plt.figure()
+	plt.title(title)
+	plt.xlabel('Global Time Limit (s)')
+	plt.ylabel('Coverage (%)')
+	plt.ylim(0, 30)
+
+	if isLinePlot:
+		data = [[avg(y) for y in x] for x in data]
+		lineplot(title, seriesLabels, data)
+	else:
+		boxplot(title, seriesLabels, data)
+
+	# Save plot
+	print title
+	plt.savefig('plots/%s' % title, format='png')
+
 def main():
+	# Set line plot option
+	isLinePlot = False
+	if '-l' in sys.argv:
+		isLinePlot = True
+		sys.argv.remove('-l')
+	elif '--line' in sys.argv:
+		isLinePlot = True
+		sys.argv.remove('--line')
+	
 	numFiles = len(sys.argv) - 1
 
 	titles, seriesLabels, data = ([0 for i in range(numFiles)] for j in range(3))
@@ -155,9 +173,9 @@ def main():
 	for i in range(numFiles):
 		fileName = sys.argv[i + 1]
 
-		titles[i], seriesLabels[i], data[i] = readData(fileName)
-	
-	boxplot(titles[0], seriesLabels, data)
+		titles[i], seriesLabels[i], data[i] = readData(fileName)	
+
+	plot(isLinePlot, titles[0], seriesLabels, data)
 	
 	# Print Medians of coverage %
 	for i in range(numFiles):
