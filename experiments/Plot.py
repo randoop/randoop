@@ -117,7 +117,6 @@ def getLabelPositions(dataPositions, numSeries):
 	labelPositions.append(currSum / float(numSeries))
 	return labelPositions
 
-
 # string		title 			Title to be used in the saving of the chart
 # lst[String]	seriesLabels	A list of the dataSeries' names
 #								Ex: ['Randoop', 'Orienteering']
@@ -132,7 +131,7 @@ def lineplot(title, seriesLabels, lst):
 		color = color = colors[i % len(lst)]
 		patches.append(mpatches.Patch(color=color, label=seriesLabels[i]))
 	
-	plt.legend(handles=patches)
+	plt.legend(loc=4, borderaxespad=1, handles=patches, fontsize=12)
 
 	for i in range(len(lst)):
 		series = lst[i]
@@ -142,27 +141,37 @@ def lineplot(title, seriesLabels, lst):
 # Accepts a list of lists, the inner lists contain coverage percentages
 # Returns a list of the median coverage percentage of the inner lists
 def getMedians(lst):
-	lst = [sorted(coverageData) for coverageData in lst]
-	return [(coverageData[5] + coverageData[6]) / 2.0 for coverageData in lst]
+	lst = [sorted(x) for x in lst]
+	return [(((x[len(x) / 2] + x[len(x) / 2 + 1]) / 2.0) if len(x) % 2 == 0 else x[len(x) / 2]) for x in lst]
 
-def avg(lst):
-	return sum(lst) / len(lst)
+def flatten(lst):
+  out = []
+  for item in lst:
+    if isinstance(item, (list, tuple)):
+      out.extend(flatten(item))
+    else:
+      out.append(item)
+  return out
+
+def getMaxPoint(lst):
+	return sorted(flatten(lst), reverse=True)[0]
 
 def plot(isLinePlot, title, seriesLabels, data):
 	plt.figure()
-	plt.title(title)
-	plt.xlabel('Global Time Limit (s)')
-	plt.ylabel('Coverage (%)')
-	plt.ylim(0, 30)
+	
 
 	if isLinePlot:
-		data = [[avg(y) for y in x] for x in data]
+		data = [getMedians(x) for x in data]
 		lineplot(title, seriesLabels, data)
 	else:
 		boxplot(title, seriesLabels, data)
 
+	plt.title(title)
+	plt.xlabel('Global Time Limit (s)')
+	plt.ylabel('Coverage (%)')
+	plt.ylim(0, getMaxPoint(data) * 1.1)
+
 	# Save plot
-	print title
 	plt.savefig('plots/%s' % title, format='png')
 
 def main():
@@ -187,8 +196,8 @@ def main():
 	plot(isLinePlot, titles[0], seriesLabels, data)
 	
 	# Print Medians of coverage %
-	for i in range(numFiles):
-		print getMedians(data[i])
+	# for i in range(numFiles):
+	# 	print getMedians(data[i])
 	
 if __name__ == '__main__':
     main()
