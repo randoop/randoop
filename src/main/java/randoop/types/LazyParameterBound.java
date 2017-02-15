@@ -164,7 +164,7 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public ParameterBound applyCaptureConversion() {
-    assert false : "unable to do capture conversion on lazy bound + this";
+    assert false : "unable to do capture conversion on lazy bound " + this;
     return this;
   }
 

@@ -4,6 +4,9 @@ Adds
 - an option --toradocu-conditions to input Toradocu generated conditions derived
   from javadoc @param and @throws tags in class documentation. These conditions
   can override classification of generated tests by exception.
+- an option --stop-on-error-test that stops test generation once an
+  error-revealing test is generated.  This is useful during cycles of fixing
+  errors discovered by Randoop.
 
 Fixes
 - failure to instantiate capture conversion variables for wildcards with type

@@ -354,6 +354,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int maxsize = 100;
 
   /**
+   * Stop generation once an error-revealing test has been generated.
+   */
+  @Option("Stop test generation once an error-revealing test has been generated")
+  public static boolean stop_on_error_test = false;
+
+  /**
    * Use null with the given frequency as an argument to method calls.
    *
    * For example, a null ratio of 0.05 directs Randoop to use <code>null</code>
