@@ -156,6 +156,9 @@ dependencies {
    */
   manual files('lib/plume.jar')
   manual sourceSets.main.output
+
+  /* JavaParser used by Minimize for the manual */
+  manual group: 'com.github.javaparser', name: 'javaparser-core', version: '3.0.0-alpha.4'
 }
 
 /*
@@ -506,6 +509,10 @@ task generateOptionsDoc(type: Javadoc, dependsOn: ['assemble', 'javadoc', 'copyM
   options.doclet = "plume.OptionsDoclet"
   options.addStringOption "docfile", "src/docs/manual/index.html"
   options.addStringOption "outfile", "index.html"
+  include '**/GenInputsAbstract.java'
+  include '**/AbstractGenerator.java'
+  include '**/Minimize.java'
+  include '**/ReflectionExecutor.java'
 }
 
 /*

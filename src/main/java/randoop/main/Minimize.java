@@ -25,6 +25,7 @@ import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 import plume.Option;
+import plume.OptionGroup;
 import plume.Options;
 import plume.TimeLimitProcess;
 
@@ -64,6 +65,7 @@ import org.apache.commons.io.IOUtils;
  * </ol>
  */
 public class Minimize extends CommandHandler {
+  @OptionGroup(value = "Minimize options")
   /**
    * The complete file path to the Java file that will be minimized.
    */
