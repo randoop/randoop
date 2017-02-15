@@ -138,12 +138,21 @@ else
 	cd defects4j
 fi
 export PATH=$PATH:`pwd`/framework/bin
-#printf 'y\ny\n\n' | perl -MCPAN -e 'install Bundle::DBD'
 
 # Check out the project for fault detection
 checkoutProject() {
     curr_dir=$work_dir$project
     test_dir=${curr_dir}/gentests
+
+
+    # If our project directory already exists, we remove it so we can start fresh
+    if [ -d "${curr_dir}" ]; then
+        log "Working directory already existed, removing it...."
+        rm -rf $curr_dir
+    fi
+    log "Initializing working directory (${curr_dir})..."
+    mkdir $curr_dir
+
     # Checkout and compile current project
     defects4j checkout -p $project -v ${version}b -w $curr_dir
     defects4j compile -w $curr_dir
@@ -169,13 +178,6 @@ if [ $init ]; then
 	    curr_dir=$work_dir$project
 	    test_dir=${curr_dir}/gentests
 	    log "Setting directories for new project: ${project}..."
-	    # If our project directory already exists, we remove it so we can start fresh
-	    if [ -d "${curr_dir}" ]; then
-		    log "Working directory already existed, removing it...."
-		    rm -rf $curr_dir
-	    fi
-	    log "Initializing working directory (${curr_dir})..."
-	    mkdir $curr_dir
 
 	    # Checkout and compile current project
         version=1
@@ -268,14 +270,13 @@ packageTestsForFaultDetection() {
     packageTests
 
     log "Renaming packaged tests for fault detection task"
-    log "${project}-${version}b-randoop.tar.bz2"
-    fault_suite_path=${curr_dir}/${project}-${version}b-randoop.tar.bz2
+    log "${project}-${version}b-${time}.tar.bz2"
+    fault_suite_path=${curr_dir}/${project}-${version}b-${time}.tar.bz2
     mv ${curr_dir}/randoop.tar.bz2 $fault_suite_path
 }
 
 countFaultDetection() {
-    perl ./framework/bin/run_bug_detection.pl -p $project -d ${curr_dir} -o ../randoop/experiments/fault_detection -v ${version}b -D
-    exit 1
+    perl ./framework/bin/run_bug_detection.pl -p $project -d ${curr_dir} -o ../randoop/experiments/fault_detection -v ${version}b
 }
 
 recordCoverage() {
@@ -389,11 +390,22 @@ initFaultDetectionClasses() {
     find $curr_dir -name \*.jar > ${curr_dir}/${project}_${version}b_jars.txt
 }
 
+checkForEmptyRandoopExec () {
+    log "checking if randoop execution was empty"
+    cat $randoop_output_file
+    if grep -Fxq "No classes to test" $randoop_output_file ; then
+        randoop_empty=true
+    else
+        randoop_empty=false
+    fi
+    log "randoop_empty is $randoop_empty"
+}
+
 doFaultDetection() {
     if [ $time_arg ]; then
         time_limits=$specified_times
     else
-        time_limits=(5 120 300 600)
+        time_limits=(120 300 600)
     fi
 
     log "Running Fault Detection with $1"
@@ -406,9 +418,10 @@ doFaultDetection() {
     for project in ${projects[@]}; do
         #TODO: introduce some logic to not clobber files, incrementing a counter
         # and appending that value to the filename until we find a filename that doesn't conflict
-        fault_file="${exp_dir}/${project}_Fault_${1}_Line.txt"
+        fault_file="${exp_dir}/${project}_Fault_${1}.txt"
         log "Fault file is: ${fault_file}"
-        
+        randoop_output_file="${exp_dir}/Randoop_output.txt"
+
         if [ $overwrite ];then
             if [ -f $fault_file ]; then
                 rm $fault_file
@@ -434,7 +447,7 @@ doFaultDetection() {
                 ;;
         esac
 
-        version=2
+        version=1
         while [ "$version" -le "$num_versions" ]; do
             checkoutProject
 
@@ -448,16 +461,24 @@ doFaultDetection() {
                     case $1 in
                         Randoop)
                             log "Running base Randoop with time limit=${time}, ${project} #${i}"
-                            $java_path -ea -classpath ${jars}${curr_dir}/${classes_dir}:$randoop_path randoop.main.Main gentests --classlist=${curr_dir}/${project}_${version}b_classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM --ignore-flaky-tests=true
+                            $java_path -ea -classpath ${jars}${curr_dir}/${classes_dir}:$randoop_path randoop.main.Main gentests --classlist=${curr_dir}/${project}_${version}b_classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM --ignore-flaky-tests=true > $randoop_output_file
+                            checkForEmptyRandoopExec
+                            if [ "$randoop_empty" = true ]; then
+                                log "Randoop was empty for project ${project} v ${version}, moving on"
+                                i=5
+                            fi
                             ;;
                         *)
                             log "Unknown condition in fault detection experiment"
                             exit 1
                             ;;
                     esac
-                    adjustTestNames
-                    packageTestsForFaultDetection
-                    countFaultDetection
+                    if [ "$randoop_empty" = false ]; then
+                        log "randoop was not empty for project ${project} v ${version}, attempting fault detection."
+                        adjustTestNames
+                        packageTestsForFaultDetection
+                        countFaultDetection
+                    fi
                     i=$((i+1))
                 done
             done
