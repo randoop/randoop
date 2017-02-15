@@ -6,10 +6,8 @@ import numpy, re, sys
 import matplotlib.patches as mpatches
 
 projects = ['Chart', 'Math', 'Time', 'Lang']
-times = [50, 100, 150, 200, 250]
-#times = [50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550]
-labels = [50, 50, 100, 100, 150, 150, 200, 200, 250, 250]
-#labels = [50, 50, 100, 100, 150, 150, 200, 200, 250, 250, 300, 300, 350, 350, 400, 400, 450, 450, 500, 500, 550, 550]
+times = []
+labels = []
 colors = ['pink', 'lightblue', 'thistle', 'paletuquoise', 'lightcoral', 'lightgreen']
 # Marker codes for pyplot
 markers = ['o', 's', 'D', '^', 'p', '*']
@@ -26,7 +24,7 @@ def readData(fileName):
 		pass	
 	elif exp == 'Individual':
 		# Store the data in the format timeLimit: [covered[], total]
-		data = [[] for i in range(len(times))]
+		data = []
 
 	lines = f.readlines()
 
@@ -40,8 +38,16 @@ def readData(fileName):
 
 			# TODO: Generalize to work when different datasets have different upper time limits
 			time = int(line.split(' ')[1])
+			
 			if time > 250:
 				break
+
+			# Always append to duplicates, we need one time step for each boxplot for each dataset we have
+			labels.append(time)
+			if not time in times:
+				times.append(time)
+
+			data.append([])
 
 			# Set time to int in header 'TIME 5'
 			timeIndex = times.index(time)
@@ -160,7 +166,11 @@ def main():
 	for i in range(numFiles):
 		fileName = sys.argv[i + 1]
 
-		titles[i], seriesLabels[i], data[i] = readData(fileName)	
+		titles[i], seriesLabels[i], data[i] = readData(fileName)
+
+	# Sort the time labels for the boxplots
+	global labels
+	labels = sorted(labels)
 
 	plot(isLinePlot, titles[0], seriesLabels, data)
 	
