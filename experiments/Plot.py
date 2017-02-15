@@ -7,7 +7,6 @@ import matplotlib.patches as mpatches
 
 projects = ['Chart', 'Math', 'Time', 'Lang']
 times = []
-labels = []
 colors = ['pink', 'lightblue', 'thistle', 'paletuquoise', 'lightcoral', 'lightgreen']
 # Marker codes for pyplot
 markers = ['o', 's', 'D', '^', 'p', '*']
@@ -42,8 +41,6 @@ def readData(fileName):
 			if time > 250:
 				break
 
-			# Always append to duplicates, we need one time step for each boxplot for each dataset we have
-			labels.append(time)
 			if not time in times:
 				times.append(time)
 
@@ -61,7 +58,7 @@ def readData(fileName):
 		# Add to lines covered
 		data[timeIndex].append(float(line) * 100 / totalLines)
 
-		i+=2
+		i += 2
 
 	title = '%s %s Coverage Percentage' % (project, metric,)
 	return (title, condition, data)
@@ -84,14 +81,18 @@ def intersperse(lst):
 # This plot is saved to `title`.png
 def boxplot(title, seriesLabels, lst):
 	combined = intersperse(lst)
-	print labels
-	bplot = plt.boxplot(combined, labels=labels, patch_artist=True)
+	positions=[i for i in range(len(times) * len(lst))]
+	bplot = plt.boxplot(combined, positions=positions, patch_artist=True)
 
 	# Set colors for dataset labels for the legend
 	patches = []
 	for i in range(len(lst)):
 		color = color = colors[i % len(lst)]
 		patches.append(mpatches.Patch(color=color, label=seriesLabels[i]))
+
+	axes = plt.axes()
+	axes.set_xticklabels(times)
+	axes.set_xticks(getLabelPositions(positions, len(lst)))
 
 	plt.legend(handles=patches)
 
@@ -101,6 +102,21 @@ def boxplot(title, seriesLabels, lst):
 		patch = bplot['boxes'][i]
 		color = colors[i % len(lst)]
 		patch.set_facecolor(color)
+
+def getLabelPositions(dataPositions, numSeries):
+	labelPositions = []
+
+	currSum = 0
+	for i in range(len(dataPositions)):
+		if i % numSeries == 0 and i != 0:
+			labelPositions.append(currSum / float(numSeries))
+			currSum = 0
+
+		currSum += dataPositions[i]
+
+	labelPositions.append(currSum / float(numSeries))
+	return labelPositions
+
 
 # string		title 			Title to be used in the saving of the chart
 # lst[String]	seriesLabels	A list of the dataSeries' names
@@ -167,10 +183,6 @@ def main():
 		fileName = sys.argv[i + 1]
 
 		titles[i], seriesLabels[i], data[i] = readData(fileName)
-
-	# Sort the time labels for the boxplots
-	global labels
-	labels = sorted(labels)
 
 	plot(isLinePlot, titles[0], seriesLabels, data)
 	
