@@ -436,6 +436,9 @@ public class GenTests extends GenInputsAbstract {
       }
     }
 
+    if (!GenInputsAbstract.noprogressdisplay) {
+      System.out.printf("%nInvalid tests generated: %d", explorer.invalidSequenceCount);
+    }
     return true;
   }
 

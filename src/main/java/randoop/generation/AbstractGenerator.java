@@ -44,8 +44,11 @@ public abstract class AbstractGenerator {
   @RandoopStat("Number of sequences generated.")
   public int num_sequences_generated = 0;
 
-  @RandoopStat("Number of sequences generated that reveal a failure.")
+  @RandoopStat("Number of failing sequences generated.")
   public int num_failing_sequences = 0;
+
+  @RandoopStat("Number of invalid sequences generated.")
+  public int invalidSequenceCount = 0;
 
   /**
    * The timer used to determine how much time has elapsed since the start of
@@ -355,6 +358,8 @@ public abstract class AbstractGenerator {
           } else {
             outRegressionSeqs.add(eSeq);
           }
+        } else {
+          invalidSequenceCount++;
         }
       }
 
@@ -376,8 +381,8 @@ public abstract class AbstractGenerator {
 
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.println();
-      System.out.println("Normal method executions:" + ReflectionExecutor.normalExecs());
-      System.out.println("Exceptional method executions:" + ReflectionExecutor.excepExecs());
+      System.out.println("Normal method executions: " + ReflectionExecutor.normalExecs());
+      System.out.println("Exceptional method executions: " + ReflectionExecutor.excepExecs());
       System.out.println();
       System.out.println(
           "Average method execution time (normal termination):      "
