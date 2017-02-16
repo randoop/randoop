@@ -114,6 +114,12 @@ public abstract class AbstractGenerator {
   public static Sequence currSeq = null;
 
   /**
+   * This field is set by Randoop to point to the sequence which was the last one
+   * Randoop generated (not necessarily executed).
+   */
+  public static Sequence lastGeneratedSequence = null;
+
+  /**
    * The list of error test sequences to be output as JUnit tests. May include
    * subsequences of other sequences in the list.
    */
@@ -248,8 +254,13 @@ public abstract class AbstractGenerator {
   protected boolean stop() {
     return (listenerMgr != null && listenerMgr.stopGeneration())
         || (timer.getTimeElapsedMillis() >= maxTimeMillis)
-        || (numOutputSequences() >= maxOutputSequences)
-        || (numGeneratedSequences() >= maxGeneratedSequences)
+        // || (numOutputSequences() >= maxOutputSequences)
+        // || (numGeneratedSequences() >= maxGeneratedSequences)
+        || (currSeq != null
+            && currSeq.getNumberOfStatementsForCutFirstVariable() > GenInputsAbstract.maxsize)
+        || (lastGeneratedSequence != null
+            && lastGeneratedSequence.getNumberOfStatementsForCutFirstVariable()
+                > GenInputsAbstract.maxsize)
         || (stopper != null && stopper.stop());
   }
 

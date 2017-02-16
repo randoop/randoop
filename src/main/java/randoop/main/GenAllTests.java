@@ -112,6 +112,7 @@ public class GenAllTests extends GenInputsAbstract {
 
     checkOptionsValid();
 
+    errorSubsequenceEndIndex = regressionSubsequenceEndIndex = testsperfile;
     Randomness.reset(randomseed);
 
     java.security.Policy policy = java.security.Policy.getPolicy();

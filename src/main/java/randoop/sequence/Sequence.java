@@ -95,13 +95,34 @@ public final class Sequence implements WeightedElement, java.io.Serializable {
     return statements.size();
   }
 
-  public int getNumberOfClassStatements(Class<?> clazz) {
-    if (clazz == null) {
-      throw new IllegalArgumentException("clazz");
-    }
+  /**
+   * Return the code representation of the i'th statement.
+   * @param i  the statement index
+   * @return the string representation of the statement
+   */
+  public String statementToCodeString(int i) {
+    StringBuilder oneStatement = new StringBuilder();
+    this.appendCode(oneStatement, i);
+    return oneStatement.toString();
+  }
+
+  // Assuming the CUT is the first instantiated variable's class.
+  public int getNumberOfStatementsForCutFirstVariable() {
 
     if (statements == null || statements.isEmpty()) {
       return 0;
+    }
+
+    int cutConstructionIndex;
+    String tracedVariable = "";
+
+    for (cutConstructionIndex = 0; cutConstructionIndex < this.size(); cutConstructionIndex++) {
+      if (this.getStatement(cutConstructionIndex).isConstructorCall()) {
+        String cs = this.statementToCodeString(cutConstructionIndex);
+        // Find the variable name between blank space and equals sign, given the pattern type var = <value>';
+        tracedVariable = cs.substring(cs.indexOf(" ") + 1, cs.indexOf("=") - 1).trim();
+        break;
+      }
     }
 
     int count = 0;
@@ -109,8 +130,7 @@ public final class Sequence implements WeightedElement, java.io.Serializable {
     for (int i = 0; i < statements.size(); i++) {
       Statement st = statements.get(i);
 
-      if (st.getDeclaringClass() != null
-          && st.getDeclaringClass().getRuntimeClass().equals(clazz)) {
+      if (this.statementToCodeString(i).indexOf(tracedVariable + ".") >= 0) {
         count++;
       }
     }

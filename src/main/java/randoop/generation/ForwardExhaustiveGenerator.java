@@ -156,11 +156,7 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
       componentManager.clearGeneratedSequences();
     }
 
-    ExecutableSequence eSeq = null;
-    try {
-      eSeq = createNewUniqueSequence();
-    } catch (ClassNotFoundException e) {
-    }
+    ExecutableSequence eSeq = createNewUniqueSequence();
 
     if (eSeq == null) {
       return null;
@@ -373,7 +369,7 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
    *
    * @return a new sequence, or null
    */
-  private ExecutableSequence createNewUniqueSequence() throws ClassNotFoundException {
+  private ExecutableSequence createNewUniqueSequence() {
 
     if (Log.isLoggingOn()) {
       Log.logLine("-------------------------------------------");
@@ -397,8 +393,8 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
       InputsAndSuccessFlag sequences = selectInputs(to);
 
       if (!sequences.success) {
-        if (Log.isLoggingOn()) Log.logLine("Failed to find inputs for statement.");
-        return null;
+        if (Log.isLoggingOn()) Log.logLine("Failed to find inputs for statement " + to.toString());
+        //        return null;
       }
 
       if (previousSequence != null) {
@@ -417,17 +413,10 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
 
       newSequence = concatSeq.extend(to, inputs);
 
-      // With .5 probability, do a primitive value heuristic.
-      //      if (GenInputsAbstract.repeat_heuristic && Randomness.nextRandomInt(10) == 0) {
-      //        int times = Randomness.nextRandomInt(100);
-      //        newSequence = repeat(newSequence, to, times);
-      //        if (Log.isLoggingOn()) Log.log("repeat-heuristic>>>" + times + newSequence.toCodeString());
-      //      }
+      lastGeneratedSequence = newSequence;
 
       // Discard if sequence is larger than size limit
-      String cutName = GenAllTests.getClassnamesFromArgs().iterator().next();
-      Class<?> classUnderTest = TypeNames.getTypeForName(cutName);
-      if (newSequence.getNumberOfClassStatements(classUnderTest) > GenInputsAbstract.maxsize) {
+      if (newSequence.getNumberOfStatementsForCutFirstVariable() > GenInputsAbstract.maxsize) {
         if (Log.isLoggingOn()) {
           Log.logLine(
               "Sequence discarded because size "
