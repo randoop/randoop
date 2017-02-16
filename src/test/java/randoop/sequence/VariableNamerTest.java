@@ -22,7 +22,7 @@ public class VariableNamerTest {
     ClassOrInterfaceType nonParamType =
         ClassOrInterfaceType.forClass(NonparameterizedTypeWithDigit19.class);
     String name = VariableRenamer.getVariableName(nonParamType);
-    assertFalse("last character not a digit: " + name, lastCharIsDigit(name));
+    assertFalse("last character should not be a digit: " + name, lastCharIsDigit(name));
 
     GenericClassType genericType = ParameterizedType.forClass(GenericTypeWithDigit2.class);
     InstantiatedType type;
@@ -31,14 +31,14 @@ public class VariableNamerTest {
             genericType.getTypeParameters(), (ReferenceType) JavaTypes.STRING_TYPE);
     type = genericType.apply(substitution);
     name = VariableRenamer.getVariableName(type);
-    assertFalse("last character not a digit: " + name, lastCharIsDigit(name));
+    assertFalse("last character should not be a digit: " + name, lastCharIsDigit(name));
 
     genericType = JDKTypes.LIST_TYPE;
     substitution =
         Substitution.forArgs(genericType.getTypeParameters(), (ReferenceType) nonParamType);
     InstantiatedType listType = genericType.apply(substitution);
     name = VariableRenamer.getVariableName(listType);
-    assertFalse("last character not a digit: " + name, lastCharIsDigit(name));
+    assertFalse("last character should not be a digit: " + name, lastCharIsDigit(name));
   }
 
   private boolean lastCharIsDigit(String name) {
