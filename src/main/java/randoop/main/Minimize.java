@@ -672,6 +672,7 @@ public class Minimize extends CommandHandler {
 
       // Check compilation results for compilation error.
       if (cRes == null || !cRes.errout.isEmpty()) {
+	System.out.println(cRes.errout);
         return null;
       }
 
