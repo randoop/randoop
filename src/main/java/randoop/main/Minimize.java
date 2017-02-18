@@ -182,7 +182,7 @@ public class Minimize extends CommandHandler {
       // There was an error when compiling or running.
       System.err.println("Error when compiling or running file " + filePath + ". Aborting");
       return false;
-    } else if (!res.compOut.errout.isEmpty()) {
+    } else if (res.compOut.exitValue != 0) {
       System.err.println("Error when compiling file " + filePath + ". Aborting");
       System.err.println(res.compOut.errout);
       return false;
@@ -623,7 +623,7 @@ public class Minimize extends CommandHandler {
     Results res = compileAndRun(filePath, classpath, packageName, timeoutLimit);
 
     return res != null
-        && res.compOut.errout.isEmpty()
+        && res.compOut.exitValue == 0
         && res.runOut.errout.isEmpty()
         && expectedOutput.equals(normalizeJUnitOutput(res.runOut.stdout));
   }
@@ -671,8 +671,7 @@ public class Minimize extends CommandHandler {
       Outputs cRes = runProcess(command, executionDir, timeoutLimit);
 
       // Check compilation results for compilation error.
-      if (cRes == null || !cRes.errout.isEmpty()) {
-	System.out.println(cRes.errout);
+      if (cRes == null || cRes.exitValue != 0) {
         return null;
       }
 
@@ -789,11 +788,12 @@ public class Minimize extends CommandHandler {
 
     tp.waitFor();
     if (tp.timed_out()) {
+      tp.destroy();
       return null;
     }
 
     // Run and collect the results from the standard output and error output
-    return new Outputs(stdOutput.get(), errOutput.get());
+    return new Outputs(stdOutput.get(), errOutput.get(), tp.exitValue());
   }
 
   /**
@@ -912,14 +912,21 @@ public class Minimize extends CommandHandler {
     private String errout;
 
     /**
+     * Exit value from running a process
+     */
+    private int exitValue;
+
+    /**
      * Create an Outputs object
      *
      * @param stdout standard output
      * @param errout error output
+     * @param exitValue exit value of process
      */
-    public Outputs(String stdout, String errout) {
+    public Outputs(String stdout, String errout, int exitValue) {
       this.stdout = stdout;
       this.errout = errout;
+      this.exitValue = exitValue;
     }
   }
 
