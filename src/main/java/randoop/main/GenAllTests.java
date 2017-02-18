@@ -454,10 +454,12 @@ public class GenAllTests extends GenInputsAbstract {
             regressionSubsequenceEndIndex += testsperfile;
           }
         } else {
-          outputTests(
-              regressionSequences.subList(
-                  regressionSubsequenceStartIndex, regressionSequences.size()),
-              GenInputsAbstract.regression_test_basename);
+          if (regressionSequences.size() >= regressionSubsequenceStartIndex) {
+            outputTests(
+                regressionSequences.subList(
+                    regressionSubsequenceStartIndex, regressionSequences.size()),
+                GenInputsAbstract.regression_test_basename);
+          }
         }
       } else {
         if (!GenInputsAbstract.noprogressdisplay) {

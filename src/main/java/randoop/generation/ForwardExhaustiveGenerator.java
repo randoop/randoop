@@ -1,6 +1,7 @@
 package randoop.generation;
 
 import com.google.common.collect.Lists;
+import org.apache.commons.lang.NotImplementedException;
 import randoop.*;
 import randoop.generation.exhaustive.SequenceGenerator;
 import randoop.main.GenAllTests;
@@ -59,6 +60,9 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
   private Sequence constructorPrefix;
 
   private ExecutableSequence executableConstructorPrefix;
+
+  // Since this generator is intended to generate for just one class, stores the CUT in this variable.
+  private Type classUnderTest;
 
   public ForwardExhaustiveGenerator(
       List<TypedOperation> operations,
@@ -127,6 +131,12 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
           "Not possible to generate tests due to the impossibility of selecting constructors.");
     } else {
       this.executableConstructorPrefix = new ExecutableSequence(this.constructorPrefix);
+      this.classUnderTest =
+          executableConstructorPrefix
+              .sequence
+              .statements
+              .get(executableConstructorPrefix.sequence.size() - 1)
+              .getOutputType();
     }
   }
 
@@ -390,7 +400,7 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
 
     for (TypedOperation to : nextSequence) {
       // add flags here
-      InputsAndSuccessFlag sequences = selectInputs(to);
+      InputsAndSuccessFlag sequences = selectSimplestInputs(to);
 
       if (!sequences.success) {
         if (Log.isLoggingOn()) Log.logLine("Failed to find inputs for statement " + to.toString());
@@ -475,7 +485,8 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
             .findFirst();
 
     if (parameterlessCtr.isPresent()) {
-      ctrSequence = getSequenceWithInputsFromTypedOperation(parameterlessCtr.get());
+      TypedOperation ctr = parameterlessCtr.get();
+      ctrSequence = getSequenceWithInputsFromTypedOperation(ctr);
 
       if (ctrSequence != null) {
         return ctrSequence;
@@ -608,6 +619,93 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
     }
   }
 
+  private InputsAndSuccessFlag selectSimplestInputs(TypedOperation operation) {
+    InputsAndSuccessFlag result = null;
+
+    if (constructorPrefix == null) {
+      return new InputsAndSuccessFlag(true, new ArrayList<>(), new ArrayList<>());
+    }
+
+    TypeTuple inputTypes = operation.getInputTypes();
+
+    List<Integer> variableIndices = new ArrayList<>(inputTypes.size());
+    variableIndices.add(this.constructorPrefix.getLastVariable().index);
+    List<Sequence> sequences = new ArrayList<>(inputTypes.size());
+
+    int totStatements = this.constructorPrefix.size();
+
+    for (int i = 1; i < inputTypes.size(); i++) {
+      Type inputType = inputTypes.get(i);
+      SimpleList<Sequence> l;
+
+      if (inputType.isArray()) {
+        throw new NotImplementedException();
+      }
+
+      if (JDKTypes.isSubtypeOfJDKCollectionType(inputType)) {
+        InstantiatedType classType = (InstantiatedType) inputType;
+
+        SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i);
+        if (Log.isLoggingOn()) {
+          Log.logLine("Collection creation heuristic: will create helper of type " + classType);
+        }
+        ArrayListSimpleList<Sequence> l2 = new ArrayListSimpleList<>();
+        Sequence creationSequence =
+            HelperSequenceCreator.createCollection(componentManager, classType);
+        if (creationSequence != null) {
+          l2.add(creationSequence);
+        }
+        l = new ListOfLists<>(l1, l2);
+
+      } else {
+        // 2. COMMON CASE: ask the component manager for all sequences that
+        // yield the required type.
+        if (Log.isLoggingOn()) {
+          Log.logLine("Will query component set for objects of type" + inputType);
+        }
+        l = componentManager.getSequencesForType(operation, i);
+      }
+
+      Sequence chosenSeq;
+      if (GenInputsAbstract.small_tests) {
+        chosenSeq = Randomness.randomMemberWeighted(l);
+      } else {
+        chosenSeq = Randomness.randomMember(l);
+      }
+
+      // Now, find values that satisfy the constraint set.
+      Variable randomVariable = chosenSeq.randomVariableForTypeLastStatement(inputType);
+
+      // We are not done yet: we have chosen a sequence that yields a value of
+      // the required
+      // type inputTypes[i], but there may be more than one such value. Our last
+      // random
+      // selection step is to select from among all possible values.
+      // if (i == 0 && statement.isInstanceMethod()) m = Match.EXACT_TYPE;
+      if (randomVariable == null) {
+        throw new BugInRandoopException("type: " + inputType + ", sequence: " + chosenSeq);
+      }
+
+      // Fail, if we were unlucky and selected a null or primitive value as the
+      // receiver for a method call.
+      if (i == 0
+          && operation.isMessage()
+          && !(operation.isStatic())
+          && (chosenSeq.getCreatingStatement(randomVariable).isPrimitiveInitialization()
+              || randomVariable.getType().isPrimitive())) {
+
+        return new InputsAndSuccessFlag(false, null, null);
+      }
+
+      variableIndices.add(totStatements + randomVariable.index);
+      sequences.add(chosenSeq);
+      totStatements += chosenSeq.size();
+    }
+
+    result = new InputsAndSuccessFlag(true, null, variableIndices);
+    return result;
+  }
+
   // This method is responsible for doing two things:
   //
   // 1. Selecting at random a collection of sequences that can be used to
@@ -629,6 +727,18 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
     // statement given as a parameter to the selectInputs method.
 
     TypeTuple inputTypes = operation.getInputTypes();
+
+    if (inputTypes.size() >= 1) {
+      if (inputTypes.get(0).isAssignableFrom(this.classUnderTest)) {
+        List<Type> newInputTypes = new LinkedList<>();
+        newInputTypes.add(this.classUnderTest);
+        for (int i = 1; i < inputTypes.size(); i++) {
+          newInputTypes.add(inputTypes.get(i));
+        }
+
+        inputTypes = new TypeTuple(newInputTypes);
+      }
+    }
 
     // The rest of the code in this method will attempt to create
     // a sequence that creates at least one value of type T for
@@ -662,6 +772,15 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
 
     List<Integer> variables = new ArrayList<>();
 
+    // Start off with current constructor
+    if (this.constructorPrefix != null) {
+      sequences.add(this.constructorPrefix);
+      Variable randomVariable =
+          constructorPrefix.randomVariableForTypeLastStatement(classUnderTest);
+      variables.add(randomVariable.index);
+      totStatements = constructorPrefix.size();
+    }
+
     // [Optimization]
     // The following two variables are used in the loop below only when
     // an alias ratio is present (GenInputsAbstract.alias_ratio != null).
@@ -671,43 +790,13 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
     SubTypeSet types = new SubTypeSet(false);
     MultiMap<Type, Integer> typesToVars = new MultiMap<>();
 
-    for (int i = 0; i < inputTypes.size(); i++) {
+    for (int i = 1; i < inputTypes.size(); i++) {
       Type inputType = inputTypes.get(i);
 
       // true if statement st represents an instance method, and we are
       // currently
       // selecting a value to act as the receiver for the method.
       boolean isReceiver = (i == 0 && (operation.isMessage()) && (!operation.isStatic()));
-
-      // If alias ratio is given, attempt with some probability to use a
-      // variable already in S.
-      if (GenInputsAbstract.alias_ratio != 0
-          && Randomness.weightedCoinFlip(GenInputsAbstract.alias_ratio)) {
-
-        // candidateVars will store the indices that can serve as input to the
-        // i-th input in st.
-        List<SimpleList<Integer>> candidateVars = new ArrayList<>();
-
-        // For each type T in S compatible with inputTypes[i], add all the
-        // indices in S of type T.
-        for (Type match : types.getMatches(inputType)) {
-          // Sanity check: the domain of typesToVars contains all the types in
-          // variable types.
-          assert typesToVars.keySet().contains(match);
-          candidateVars.add(
-              new ArrayListSimpleList<>(new ArrayList<>(typesToVars.getValues(match))));
-        }
-
-        // If any type-compatible variables found, pick one at random as the
-        // i-th input to st.
-        SimpleList<Integer> candidateVars2 = new ListOfLists<>(candidateVars);
-        if (!candidateVars2.isEmpty()) {
-          int randVarIdx = Randomness.nextRandomInt(candidateVars2.size());
-          Integer randVar = candidateVars2.get(randVarIdx);
-          variables.add(randVar);
-          continue;
-        }
-      }
 
       // If we got here, it means we will not attempt to use a value already
       // defined in S,

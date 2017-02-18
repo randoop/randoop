@@ -300,4 +300,14 @@ public class JDKTypes {
       }
     }
   }
+
+  public static boolean isSubtypeOfJDKCollectionType(Type type) {
+    if (type == null) return false;
+
+    InstantiatedType instantiatedType = (InstantiatedType) type;
+
+    if (instantiatedType == null) return false;
+
+    return instantiatedType.getGenericClassType().isSubtypeOf(JDKTypes.COLLECTION_TYPE);
+  }
 }

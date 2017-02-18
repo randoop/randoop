@@ -138,6 +138,10 @@ public class OperationModel {
         literalsFileList);
 
     model.addOperations(model.classTypes, visibility, reflectionPredicate);
+
+    // Remove methods from java 8
+    model.operations.removeIf(
+        op -> op.getName().indexOf("stream") >= 0 || op.getName().indexOf("forEach") >= 0);
     model.addOperations(methodSignatures);
     model.addObjectConstructor();
 
