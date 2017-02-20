@@ -398,6 +398,7 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
     }
 
     Sequence newSequence = null;
+    InputsAndSuccessFlag previousInputs = null;
     Sequence previousSequence = null;
 
     for (TypedOperation to : nextSequence) {
@@ -407,10 +408,6 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
       if (!sequences.success) {
         if (Log.isLoggingOn()) Log.logLine("Failed to find inputs for statement " + to.toString());
         return null;
-      }
-
-      if (previousSequence != null) {
-        sequences.sequences.add(0, previousSequence);
       }
 
       Sequence concatSeq = Sequence.concatenate(sequences.sequences);
@@ -425,7 +422,11 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
 
       newSequence = concatSeq.extend(to, inputs);
 
-      lastGeneratedSequence = newSequence;
+      if (previousSequence != null) {
+        newSequence = Sequence.concatenate(Arrays.asList(previousSequence, newSequence));
+      }
+
+      previousSequence = newSequence;
 
       // Discard if sequence is larger than size limit
       if (newSequence.getNumberOfStatementsForCutFirstVariable() > GenInputsAbstract.maxsize) {
@@ -452,7 +453,7 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
         s.lastTimeUsed = System.currentTimeMillis();
       }
 
-      previousSequence = newSequence;
+      previousInputs = sequences;
 
       // Keep track of any input sequences that are used in this sequence.
       // Tests that contain only these sequences are probably redundant.
