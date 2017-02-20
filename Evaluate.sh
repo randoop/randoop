@@ -11,12 +11,8 @@ usage() {
 
 #initialize some default options before parsing the command line arguments
 specified_experiments=("Randoop" "Orienteering")
-projects=("Chart")
+projects=("Chart" "Lang" "Math" "Time")
 # "Chart" "Lang" "Math" "Time"
-# Chart: 501
-# Lang: 86
-# Math: 520
-# Time: 79
 
 log "Running DigDog Evaluation Script"
 # Read the flag options that were passed in when the script was run.
@@ -58,12 +54,17 @@ while [[ $# -gt 0 ]]; do
             log "Experiments set to [${specified_experiments[*]}]"
             ;;
         -p|--proj|--projects)
+            projects_arg=true
             shift
             oldIFS=$IFS
             IFS=","
             declare -a projects=(${1})
             IFS=$oldIFS
             log "Projects set to [${projects[*]}]"
+            ;;
+        -c|--complete|--complete)
+            run_complete_experiment=true
+            log "Complete experiments set"
             ;;
         -f|--faults)
             run_fault_detection=true
@@ -159,7 +160,7 @@ checkoutProject() {
 }
 
 # Compile Defects4j projects and then run generated tests on them
-if [ $init ]; then
+if [ $init ] || [ $projects_arg ]; then
     for project in ${projects[@]}; do
 	    # Set the directory of classes based on the structure of the project
 	    case $project in
@@ -314,14 +315,25 @@ recordCoverage() {
     fi
 }
 
+doCompleteExperiment() {
+    doCoverage $1 "Complete" 5
+}
+
 doIndividualExperiment() {
+    doCoverage $1 "Individual" 10
+}
+
+doCoverage() {
     if [ $time_arg ]; then
         time_limits=$specified_times
+    elif [ $2 = "Complete" ]; then
+        time_limits=(2 10 30 60)
     else
         time_limits=(50 100 150 200 250 300 350 400 450 500 550 600)
     fi
 
-    log "Running Individual Experiment with $1"
+    log "Running ${2} Experiment with $1"
+    log "Times are: [${time_limits[*]}]"
     exp_dir="../randoop/experiments"
     failure_file="${exp_dir}/failure_counts.txt"
 
@@ -333,13 +345,11 @@ doIndividualExperiment() {
     fi
 
     for project in ${projects[@]}; do
-        #TODO: introduce some logic to not clobber files, incrementing a counter
-        # and appending that value to the filename until we find a filename that doesn't conflict
-        line_file="${exp_dir}/${project}_Individual_${1}_Line.txt"
+        line_file="${exp_dir}/${project}_${2}_${1}_Line.txt"
         log "Line file is: ${line_file}"
-        branch_file="${exp_dir}/${project}_Individual_${1}_Branch.txt"
+        branch_file="${exp_dir}/${project}_${2}_${1}_Branch.txt"
         log "Branch file is: ${branch_file}"
-        
+
         if [ $overwrite ];then
             if [ -f $line_file ]; then
                 rm $line_file
@@ -354,7 +364,26 @@ doIndividualExperiment() {
             echo "TIME ${time}" >> ${line_file}
             echo "TIME ${time}" >> ${branch_file}
             i=1
-            while [ $i -le 10 ]; do
+
+# Chart: 501
+# Lang: 86
+# Math: 520
+# Time: 79
+            case $project in
+                Chart)
+                    time=$((time*501))
+                    ;;
+                Math)
+                    time=$((time*520))
+                    ;;
+                Time)
+                    time=$((time*79))
+                    ;;
+                Lang)
+                    time=$((time*86))
+                    ;;
+            esac
+            while [ $i -le $3 ]; do
                 case $1 in
                     Randoop)
                         log "Running base Randoop with time limit=${time}, ${project} #${i}"
@@ -382,8 +411,15 @@ initFaultDetectionClasses() {
     # Create the classlist and jar list for this project.
     log "Setting up class list for project ${project}_${version}b"
     cd ${curr_dir}
-    defects4j export -p classes.modified -o ${project}_${version}b_classlist.txt
-    cd .. 
+    defects4j export -p tests.trigger -o ${project}_${version}b_relevant_tests.txt
+    log "exported tests"
+    test_file=`cat ${project}_${version}b_relevant_tests.txt`
+    for line in $test_file; do
+        defects4j test -t $line
+        defects4j monitor.test -t $line -w .
+    done
+    cd ..
+    exit 0 
     # Get a list of all .jar files in this project, to be added to the
     # classpath when running randoop/digdog.
     log "Setting up jar list for project ${project}_${version}b"
@@ -447,7 +483,7 @@ doFaultDetection() {
                 ;;
         esac
 
-        version=1
+        version=2
         while [ "$version" -le "$num_versions" ]; do
             checkoutProject
 
@@ -493,7 +529,13 @@ if [ $run_fault_detection ]; then
     exit 0
 fi
 
-# Perform each experiment that was specified
-for exp in ${specified_experiments[@]}; do
-    doIndividualExperiment $exp
-done
+if [ $run_complete_experiment ]; then
+    for exp in ${specified_experiments[@]}; do
+        doCompleteExperiment $exp
+    done
+else
+    # Perform each experiment that was specified
+    for exp in ${specified_experiments[@]}; do
+        doIndividualExperiment $exp
+    done
+fi
