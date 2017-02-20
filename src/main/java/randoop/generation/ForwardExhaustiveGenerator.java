@@ -371,6 +371,8 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
     }
   }
 
+  private List<TypedOperation> previousPermutation;
+
   /**
    * Tries to create and execute a new sequence. If the sequence is new (not
    * already in the specified component manager), then it is executed and added
@@ -404,7 +406,7 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
 
       if (!sequences.success) {
         if (Log.isLoggingOn()) Log.logLine("Failed to find inputs for statement " + to.toString());
-        //        return null;
+        return null;
       }
 
       if (previousSequence != null) {
@@ -467,6 +469,7 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
           String.format("Successfully created new unique sequence:%n%s%n", newSequence.toString()));
     }
 
+    previousPermutation = new LinkedList<>(nextSequence);
     return new ExecutableSequence(newSequence);
   }
 
@@ -619,6 +622,24 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
     }
   }
 
+  private TypeTuple replaceInputTypesIfPossibleByClassUnderTest(TypeTuple tuple) {
+    TypeTuple newTuple;
+    List<Type> newTypes = new LinkedList<>();
+
+    for (int i = 0; i < tuple.size(); i++) {
+      Type ti = tuple.get(i);
+
+      if (ti.isAssignableFrom(classUnderTest)) {
+        newTypes.add(classUnderTest);
+      } else {
+        newTypes.add(ti);
+      }
+    }
+
+    newTuple = new TypeTuple(newTypes);
+    return newTuple;
+  }
+
   private InputsAndSuccessFlag selectSimplestInputs(TypedOperation operation) {
     InputsAndSuccessFlag result = null;
 
@@ -631,70 +652,37 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
     List<Integer> variableIndices = new ArrayList<>(inputTypes.size());
     variableIndices.add(this.constructorPrefix.getLastVariable().index);
     List<Sequence> sequences = new ArrayList<>(inputTypes.size());
+    sequences.add(this.constructorPrefix);
 
     int totStatements = this.constructorPrefix.size();
 
     for (int i = 1; i < inputTypes.size(); i++) {
       Type inputType = inputTypes.get(i);
-      SimpleList<Sequence> l;
+      SimpleList<Sequence> l = null;
 
-      if (inputType.isArray()) {
-        throw new NotImplementedException();
-      }
-
-      if (JDKTypes.isSubtypeOfJDKCollectionType(inputType)) {
-        InstantiatedType classType = (InstantiatedType) inputType;
-
-        SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i);
-        if (Log.isLoggingOn()) {
-          Log.logLine("Collection creation heuristic: will create helper of type " + classType);
-        }
-        ArrayListSimpleList<Sequence> l2 = new ArrayListSimpleList<>();
-        Sequence creationSequence =
-            HelperSequenceCreator.createCollection(componentManager, classType);
-        if (creationSequence != null) {
-          l2.add(creationSequence);
-        }
-        l = new ListOfLists<>(l1, l2);
-
-      } else {
-        // 2. COMMON CASE: ask the component manager for all sequences that
-        // yield the required type.
-        if (Log.isLoggingOn()) {
+      switch (inputType.getCategory()) {
+        case Array:
+          l = getCandidateSequencesForArrayType(operation, i, inputType);
+          break;
+        case JDKCollectionSubtype:
+          l =
+              getCandidateSequencesForJDKCollectionSubtype(
+                  operation, i, (InstantiatedType) inputType);
+          break;
+        case Other:
           Log.logLine("Will query component set for objects of type" + inputType);
-        }
-        l = componentManager.getSequencesForType(operation, i);
+          l = componentManager.getSequencesForType(operation, i);
+          break;
       }
 
-      Sequence chosenSeq;
-      if (GenInputsAbstract.small_tests) {
-        chosenSeq = Randomness.randomMemberWeighted(l);
-      } else {
-        chosenSeq = Randomness.randomMember(l);
-      }
+      // Choose a sequence favoring small tests
+      Sequence chosenSeq = Randomness.randomMemberWeighted(l);
 
       // Now, find values that satisfy the constraint set.
       Variable randomVariable = chosenSeq.randomVariableForTypeLastStatement(inputType);
 
-      // We are not done yet: we have chosen a sequence that yields a value of
-      // the required
-      // type inputTypes[i], but there may be more than one such value. Our last
-      // random
-      // selection step is to select from among all possible values.
-      // if (i == 0 && statement.isInstanceMethod()) m = Match.EXACT_TYPE;
       if (randomVariable == null) {
         throw new BugInRandoopException("type: " + inputType + ", sequence: " + chosenSeq);
-      }
-
-      // Fail, if we were unlucky and selected a null or primitive value as the
-      // receiver for a method call.
-      if (i == 0
-          && operation.isMessage()
-          && !(operation.isStatic())
-          && (chosenSeq.getCreatingStatement(randomVariable).isPrimitiveInitialization()
-              || randomVariable.getType().isPrimitive())) {
-
-        return new InputsAndSuccessFlag(false, null, null);
       }
 
       variableIndices.add(totStatements + randomVariable.index);
@@ -702,8 +690,49 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
       totStatements += chosenSeq.size();
     }
 
-    result = new InputsAndSuccessFlag(true, null, variableIndices);
+    result = new InputsAndSuccessFlag(true, sequences, variableIndices);
     return result;
+  }
+
+  private SimpleList<Sequence> getCandidateSequencesForArrayType(
+      TypedOperation operation, int i, Type inputType) {
+    // 1. If T=inputTypes[i] is an array type, ask the component manager for
+    // all sequences
+    // of type T (list l1), but also try to directly build some sequences
+    // that create arrays (list l2).
+
+    SimpleList<Sequence> l;
+    SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i);
+    if (Log.isLoggingOn()) {
+      Log.logLine("Array creation heuristic: will create helper array of type " + inputType);
+    }
+    SimpleList<Sequence> l2 =
+        HelperSequenceCreator.createArraySequence(componentManager, inputType);
+    l = new ListOfLists<>(l1, l2);
+    return l;
+  }
+
+  private SimpleList<Sequence> getCandidateSequencesForJDKCollectionSubtype(
+      TypedOperation operation, int i, InstantiatedType inputType) {
+    SimpleList<Sequence> l;
+    InstantiatedType classType = inputType;
+
+    SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i);
+    if (Log.isLoggingOn()) {
+      Log.logLine("Collection creation heuristic: will create helper of type " + classType);
+    }
+    ArrayListSimpleList<Sequence> l2 = new ArrayListSimpleList<>();
+    Sequence creationSequence = HelperSequenceCreator.createCollection(componentManager, classType);
+    if (creationSequence != null) {
+      l2.add(creationSequence);
+    }
+
+    if (l1.get(0).equals(constructorPrefix)) {
+      l = new ListOfLists<>(l2);
+    } else {
+      l = new ListOfLists<>(l1, l2);
+    }
+    return l;
   }
 
   // This method is responsible for doing two things:

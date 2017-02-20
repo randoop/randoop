@@ -3,6 +3,10 @@ package randoop.types;
 import java.io.Serializable;
 import java.lang.reflect.WildcardType;
 
+import static randoop.types.Type.TypeCategory.Array;
+import static randoop.types.Type.TypeCategory.JDKCollectionSubtype;
+import static randoop.types.Type.TypeCategory.Other;
+
 /**
  * The superclass of a class hierarchy representing Java types defined in JLS Section 4.1.
  * This class corresponds directly to <i>Type</i> defined in the JLS, which is defined by
@@ -36,6 +40,24 @@ import java.lang.reflect.WildcardType;
  * These methods translate the reflection types into objects of subclasses of this type.
  */
 public abstract class Type implements Comparable<Type>, Serializable {
+
+  public enum TypeCategory {
+    Array,
+    JDKCollectionSubtype,
+    Other
+  }
+
+  public TypeCategory getCategory() {
+    if (this.isArray()) {
+      return Array;
+    } else {
+      if (JDKTypes.isSubtypeOfJDKCollectionType(this)) {
+        return JDKCollectionSubtype;
+      }
+    }
+
+    return Other;
+  }
 
   /**
    * Translates a {@code Class} into a {@link Type} object.
