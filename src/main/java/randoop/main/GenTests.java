@@ -34,6 +34,7 @@ import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PackageVisibilityPredicate;
 import randoop.reflection.PublicVisibilityPredicate;
+import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
@@ -398,6 +399,11 @@ public class GenTests extends GenInputsAbstract {
 
       handleFlakySequenceException(explorer, e);
 
+      System.exit(1);
+    } catch (RandoopInstantiationError e) {
+      System.out.printf("%nError instantiating operation: %n%s%n", e.getOpName());
+      System.out.printf("%s%n", e.getException());
+      e.printStackTrace();
       System.exit(1);
     }
 

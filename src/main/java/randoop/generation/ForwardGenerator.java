@@ -16,6 +16,7 @@ import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
@@ -324,7 +325,14 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     if (operation.isGeneric() || operation.hasWildcardTypes()) {
-      operation = instantiator.instantiate((TypedClassOperation) operation);
+      try {
+        operation = instantiator.instantiate((TypedClassOperation) operation);
+      } catch (AssertionError e) {
+        if (operation.isMethodCall() || operation.isConstructorCall()) {
+          String opName = operation.getOperation().getReflectionObject().toString();
+          throw new RandoopInstantiationError(opName, e);
+        }
+      }
       if (operation == null) { //failed to instantiate generic
         return null;
       }
