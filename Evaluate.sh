@@ -146,10 +146,9 @@ checkoutProject() {
 
     # If our project directory already exists, we remove it so we can start fresh
     if [ -d "${curr_dir}" ]; then
-        log "Working directory already existed, removing it...."
         rm -rf $curr_dir
     fi
-    log "Initializing working directory (${curr_dir})..."
+    log "Initializing working directory for ${project}${version}..."
     mkdir $curr_dir
 
     # Checkout and compile current project
@@ -266,28 +265,33 @@ packageTests() {
 }
 
 packageTestsForFaultDetection() {
-    rm -f $test_dir/Error*
+    rm -f $test_dir/*Regression*
     packageTests
 
     log "Renaming packaged tests for fault detection task"
-    log "${project}-${version}b-${time}.tar.bz2"
-    fault_suite_path=${curr_dir}/${project}-${version}b-${time}.tar.bz2
+    log "${project}-${version}f-${time}.tar.bz2"
+    fault_suite_path=${curr_dir}/${project}-${version}f-${time}.tar.bz2
     mv ${curr_dir}/randoop.tar.bz2 $fault_suite_path
 }
 
 countFaultDetection() {
-    perl ./framework/bin/run_bug_detection.pl -p $project -d ${curr_dir} -o ../randoop/experiments/fault_detection -v ${version}b
+	perl ./framework/util/fix_test_suite.pl -p $project -d $curr_dir
+    log "finished fixing test suite"
+    rm -rf ../randoop/experiments/fault_detection
+    perl ./framework/bin/run_bug_detection.pl -p $project -d ${curr_dir} -o ../randoop/experiments/fault_detection -v ${version}f
+    fault_data=`cat ../randoop/experiments/fault_detection/bug_detection`
+    echo "${fault_data}" >> $fault_file
 }
 
 recordCoverage() {
     # Run the defects4j coverage task over the newly generated test suite.
     # Results are stored into results.txt, and the specific lines used to
     # generate coverage are put into numbers.txt
-    defects4j coverage -i ${project}classlist.txt -w $curr_dir -s ${curr_dir}/randoop.tar.bz2 > results.txt
-    grep 'Lines total' results.txt > numbers.txt
-    grep 'Lines covered' results.txt >> numbers.txt
-    grep 'Conditions total' results.txt >> numbers.txt
-    grep 'Conditions covered' results.txt >> numbers.txt
+    defects4j coverage -i ${project}classlist.txt -w $curr_dir -s ${curr_dir}/randoop.tar.bz2 > ${curr_dir}/results.txt
+    grep 'Lines total' ${curr_dir}/results.txt > ${curr_dir}/numbers.txt
+    grep 'Lines covered' ${curr_dir}/results.txt >> ${curr_dir}/numbers.txt
+    grep 'Conditions total' ${curr_dir}/results.txt >> ${curr_dir}/numbers.txt
+    grep 'Conditions covered' ${curr_dir}/results.txt >> ${curr_dir}/numbers.txt
 
     # Remove everything but the digits from the numbers.txt file. This leaves
     # a set of 4 lines, displaying:
@@ -295,13 +299,13 @@ recordCoverage() {
         # Number of lines covered
         # Total number of conditions
         # Number of conditions covered
-    sed -i 's/[^0-9]//g' numbers.txt
-    cat numbers.txt
+    sed -i 's/[^0-9]//g' ${curr_dir}/numbers.txt
+    cat ${curr_dir}/numbers.txt
     nums=()
     while read num; do
         log "num = $num"
         nums+=("${num}")
-    done <numbers.txt
+    done <${curr_dir}/numbers.txt
     if [ 0 -ne ${nums[1]} ]; then
         echo "${nums[1]}" >> ${line_file}
         echo "${nums[0]}" >> ${line_file}
@@ -454,7 +458,7 @@ doFaultDetection() {
     if [ $time_arg ]; then
         time_limits=$specified_times
     else
-        time_limits=(120 300 600)
+        time_limits=(120)
     fi
 
     log "Running Fault Detection with $1"
@@ -496,15 +500,16 @@ doFaultDetection() {
                 ;;
         esac
 
-        version=1
+        version=2
         while [ "$version" -le "$num_versions" ]; do
             jar_path="jarList/${project}_${version}_jars.txt"
             classlist_path="classList/${project}_${version}_classlist.txt"
-            checkoutProject "f"
             if [ ! -f $jar_path ] || [ ! -f $classlist_path ]; then
+                checkoutProject "f"
                 initFaultDetectionClasses
             fi
-
+            
+            checkoutProject "b"
             prepProjectForGeneration ${jar_path}
             for time in ${time_limits[@]}; do
                 echo "TIME ${time}" >> ${fault_file}
@@ -530,6 +535,10 @@ doFaultDetection() {
                         adjustTestNames
                         packageTestsForFaultDetection
                         countFaultDetection
+                        if grep -Fxq "Fail" $fault_data ; then
+                            log "found failing test on ${project} ${version}"
+                            i=5
+                        fi
                     fi
                     i=$((i+1))
                 done

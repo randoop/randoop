@@ -2,14 +2,11 @@
 # you will need to install it, run `pip install matplotlib`,
 # if you don't have pip, run `sudo yum install python-pip python-wheel`
 import matplotlib.pyplot as plt
-import numpy, re, sys
+import numpy, re, sys, os
 import matplotlib.patches as mpatches
 
 projects = ['Chart', 'Math', 'Time', 'Lang']
-times = [50, 100, 150, 200, 250]
-#times = [50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550]
-labels = [50, 50, 100, 100, 150, 150, 200, 200, 250, 250]
-#labels = [50, 50, 100, 100, 150, 150, 200, 200, 250, 250, 300, 300, 350, 350, 400, 400, 450, 450, 500, 500, 550, 550]
+times = []
 colors = ['pink', 'lightblue', 'thistle', 'paletuquoise', 'lightcoral', 'lightgreen']
 # Marker codes for pyplot
 markers = ['o', 's', 'D', '^', 'p', '*']
@@ -26,7 +23,7 @@ def readData(fileName):
 		pass	
 	elif exp == 'Individual':
 		# Store the data in the format timeLimit: [covered[], total]
-		data = [[] for i in range(len(times))]
+		data = []
 
 	lines = f.readlines()
 
@@ -40,8 +37,11 @@ def readData(fileName):
 
 			# TODO: Generalize to work when different datasets have different upper time limits
 			time = int(line.split(' ')[1])
-			if time > 250:
-				break
+
+			if not time in times:
+				times.append(time)
+
+			data.append([])
 
 			# Set time to int in header 'TIME 5'
 			timeIndex = times.index(time)
@@ -55,7 +55,7 @@ def readData(fileName):
 		# Add to lines covered
 		data[timeIndex].append(float(line) * 100 / totalLines)
 
-		i+=2
+		i += 2
 
 	title = '%s %s Coverage Percentage' % (project, metric,)
 	return (title, condition, data)
@@ -78,14 +78,18 @@ def intersperse(lst):
 # This plot is saved to `title`.png
 def boxplot(title, seriesLabels, lst):
 	combined = intersperse(lst)
-	print labels
-	bplot = plt.boxplot(combined, labels=labels, patch_artist=True)
+	positions=[i for i in range(len(times) * len(lst))]
+	bplot = plt.boxplot(combined, positions=positions, patch_artist=True)
 
 	# Set colors for dataset labels for the legend
 	patches = []
 	for i in range(len(lst)):
 		color = color = colors[i % len(lst)]
 		patches.append(mpatches.Patch(color=color, label=seriesLabels[i]))
+
+	axes = plt.axes()
+	axes.set_xticklabels(times)
+	axes.set_xticks(getLabelPositions(positions, len(lst)))
 
 	plt.legend(handles=patches)
 
@@ -95,6 +99,20 @@ def boxplot(title, seriesLabels, lst):
 		patch = bplot['boxes'][i]
 		color = colors[i % len(lst)]
 		patch.set_facecolor(color)
+
+def getLabelPositions(dataPositions, numSeries):
+	labelPositions = []
+
+	currSum = 0
+	for i in range(len(dataPositions)):
+		if i % numSeries == 0 and i != 0:
+			labelPositions.append(currSum / float(numSeries))
+			currSum = 0
+
+		currSum += dataPositions[i]
+
+	labelPositions.append(currSum / float(numSeries))
+	return labelPositions
 
 # string		title 			Title to be used in the saving of the chart
 # lst[String]	seriesLabels	A list of the dataSeries' names
@@ -110,7 +128,7 @@ def lineplot(title, seriesLabels, lst):
 		color = color = colors[i % len(lst)]
 		patches.append(mpatches.Patch(color=color, label=seriesLabels[i]))
 	
-	plt.legend(handles=patches)
+	plt.legend(loc=4, borderaxespad=1, handles=patches, fontsize=12)
 
 	for i in range(len(lst)):
 		series = lst[i]
@@ -120,28 +138,59 @@ def lineplot(title, seriesLabels, lst):
 # Accepts a list of lists, the inner lists contain coverage percentages
 # Returns a list of the median coverage percentage of the inner lists
 def getMedians(lst):
-	lst = [sorted(coverageData) for coverageData in lst]
-	return [(coverageData[5] + coverageData[6]) / 2.0 for coverageData in lst]
+	lst = [sorted(x) for x in lst]
+	return [(((x[len(x) / 2] + x[len(x) / 2 + 1]) / 2.0) if len(x) % 2 == 0 else x[len(x) / 2]) for x in lst]
 
-def avg(lst):
-	return sum(lst) / len(lst)
+def flatten(lst):
+  out = []
+  for item in lst:
+    if isinstance(item, (list, tuple)):
+      out.extend(flatten(item))
+    else:
+      out.append(item)
+  return out
+
+def getMaxPoint(lst):
+	return sorted(flatten(lst), reverse=True)[0]
 
 def plot(isLinePlot, title, seriesLabels, data):
 	plt.figure()
-	plt.title(title)
-	plt.xlabel('Global Time Limit (s)')
-	plt.ylabel('Coverage (%)')
-	plt.ylim(0, 30)
+	
 
 	if isLinePlot:
-		data = [[avg(y) for y in x] for x in data]
+		data = [getMedians(x) for x in data]
 		lineplot(title, seriesLabels, data)
 	else:
 		boxplot(title, seriesLabels, data)
 
+	plt.title(title)
+	plt.xlabel('Global Time Limit (s)')
+	plt.ylabel('Coverage (%)')
+	plt.ylim(0, getMaxPoint(data) * 1.1)
+
 	# Save plot
-	print title
 	plt.savefig('plots/%s' % title, format='png')
+
+# Output the medians of the datasets to a csv
+def outputCsv(numFiles, labels, title, data):
+	os.remove('csv/%s' % (title,))
+	f = open('csv/%s' % (title,), 'w')
+
+	medians = [getMedians(x) for x in data]
+
+	print >> f 'Time,',
+	for i in range(numFiles):
+		print >> f seriesLabels[i],
+
+	print >> f
+
+	for i in range(len(times)):
+		print >> f times[i],
+
+		for j in range(numFiles):
+			print >> f medians[j][i]
+
+		print >> f
 
 def main():
 	# Set line plot option
@@ -160,13 +209,20 @@ def main():
 	for i in range(numFiles):
 		fileName = sys.argv[i + 1]
 
-		titles[i], seriesLabels[i], data[i] = readData(fileName)	
+		titles[i], seriesLabels[i], data[i] = readData(fileName)
+
+	# Cut down all datasets to the size of the smallest dataset
+	minLength = len(data[0])
+	for i in len(data):
+		min(minLength, len(data[i]))
+
+	for i in len(data):
+		times = times[:minLength]
+		data[i] = data[i][:minLength]
 
 	plot(isLinePlot, titles[0], seriesLabels, data)
-	
-	# Print Medians of coverage %
-	for i in range(numFiles):
-		print getMedians(data[i])
-	
+
+	outputCsv(numFiles, seriesLabels, titles[0], data)
+
 if __name__ == '__main__':
     main()
