@@ -37,9 +37,6 @@ def readData(fileName):
 
 			# TODO: Generalize to work when different datasets have different upper time limits
 			time = int(line.split(' ')[1])
-			
-			if time > 250:
-				break
 
 			if not time in times:
 				times.append(time)
@@ -193,11 +190,16 @@ def main():
 
 		titles[i], seriesLabels[i], data[i] = readData(fileName)
 
+	# Cut down all datasets to the size of the smallest dataset
+	minLength = len(data[0])
+	for i in len(data):
+		min(minLength, len(data[i]))
+
+	for i in len(data):
+		times = times[:minLength]
+		data[i] = data[i][:minLength]
+
 	plot(isLinePlot, titles[0], seriesLabels, data)
-	
-	# Print Medians of coverage %
-	# for i in range(numFiles):
-	# 	print getMedians(data[i])
-	
+
 if __name__ == '__main__':
     main()
