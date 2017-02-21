@@ -629,7 +629,7 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
   }
 
   private InputsAndSuccessFlag selectSimplestInputs(TypedOperation operation, Sequence prefix) {
-    InputsAndSuccessFlag result = null;
+    InputsAndSuccessFlag result;
 
     if (constructorPrefix == null) {
       return new InputsAndSuccessFlag(true, new ArrayList<>(), new ArrayList<>());
@@ -655,21 +655,29 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
       Type inputType = inputTypes.get(i);
       SimpleList<Sequence> l = null;
 
-      switch (inputType.getCategory()) {
-        case Array:
-          l = getCandidateSequencesForArrayType(operation, i, inputType);
-          break;
-        case JDKCollectionSubtype:
-          l =
-              getCandidateSequencesForJDKCollectionSubtype(
-                  operation, i, (InstantiatedType) inputType);
-          break;
-        case Other:
-          Log.logLine("Will query component set for objects of type" + inputType);
-          l = componentManager.getSequencesForType(operation, i);
-          break;
-      }
+      boolean inputTypeExistsInCurrentSequence =
+          prefix != null && prefix.randomVariableForTypeLastStatement(inputType) != null;
 
+      if (inputTypeExistsInCurrentSequence) {
+        ArrayList<Sequence> l1 = new ArrayList<>();
+        l1.add(prefix);
+        l = new ArrayListSimpleList<>(l1);
+      } else {
+        switch (inputType.getCategory()) {
+          case Array:
+            l = getCandidateSequencesForArrayType(operation, i, inputType);
+            break;
+          case JDKCollectionSubtype:
+            l =
+                getCandidateSequencesForJDKCollectionSubtype(
+                    operation, i, (InstantiatedType) inputType);
+            break;
+          case Other:
+            Log.logLine("Will query component set for objects of type" + inputType);
+            l = componentManager.getSequencesForType(operation, i);
+            break;
+        }
+      }
       // Choose a sequence favoring small tests
       Sequence chosenSeq = Randomness.randomMemberWeighted(l);
 
@@ -680,9 +688,13 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
         throw new BugInRandoopException("type: " + inputType + ", sequence: " + chosenSeq);
       }
 
-      variableIndices.add(totStatements + randomVariable.index);
-      sequences.add(chosenSeq);
-      totStatements += chosenSeq.size();
+      if (inputTypeExistsInCurrentSequence) {
+        variableIndices.add(randomVariable.index);
+      } else {
+        variableIndices.add(totStatements + randomVariable.index);
+        totStatements += chosenSeq.size();
+        sequences.add(chosenSeq);
+      }
     }
 
     result = new InputsAndSuccessFlag(true, sequences, variableIndices);
