@@ -276,6 +276,7 @@ packageTestsForFaultDetection() {
 }
 
 countFaultDetection() {
+	perl ./framework/bin/fix_test_suite.pl -p $project -d $curr_dir -v ${version}b
     perl ./framework/bin/run_bug_detection.pl -p $project -d ${curr_dir} -o ../randoop/experiments/fault_detection -v ${version}b
 }
 
