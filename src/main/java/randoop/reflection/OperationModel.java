@@ -77,6 +77,7 @@ public class OperationModel {
     classTypes = new LinkedHashSet<>();
     inputTypes = new LinkedHashSet<>();
     classLiteralMap = new MultiMap<>();
+    tfFrequency = new HashMap<>();
 
     annotatedTestValues = new LinkedHashSet<>();
     contracts = new ContractSet();
