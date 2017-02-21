@@ -2,11 +2,7 @@ package randoop.reflection;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import randoop.contract.CompareToAntiSymmetric;
 import randoop.contract.CompareToEquals;
@@ -22,6 +18,7 @@ import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
 import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
+import randoop.main.GenInputsAbstract;
 import randoop.operation.MethodCall;
 import randoop.operation.OperationParseException;
 import randoop.operation.OperationParser;
@@ -31,6 +28,7 @@ import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
+import randoop.util.FrequencyMultiMap;
 import randoop.util.MultiMap;
 
 import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
@@ -81,6 +79,7 @@ public class OperationModel {
     classTypes = new LinkedHashSet<>();
     inputTypes = new LinkedHashSet<>();
     classLiteralMap = new MultiMap<>();
+
     annotatedTestValues = new LinkedHashSet<>();
     contracts = new ContractSet();
     contracts.add(EqualsReflexive.getInstance());
@@ -158,7 +157,6 @@ public class OperationModel {
 
     // Add a (1-element) sequence corresponding to each literal to the component
     // manager.
-
     for (String filename : literalsFile) {
       MultiMap<ClassOrInterfaceType, Sequence> literalmap;
       if (filename.equals("CLASSES")) {

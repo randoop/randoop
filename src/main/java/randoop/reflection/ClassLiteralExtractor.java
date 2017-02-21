@@ -23,6 +23,9 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     this.literalMap = literalMap;
   }
 
+  // So I have no idea if we will have sequence equality here, leading to capturing
+  // TODO This may guarantee that constants are not repeated through class file constants,
+  // fix if needed
   @Override
   public void visitBefore(Class<?> c) {
     Collection<ClassFileConstants.ConstantSet> constList = new ArrayList<>();
