@@ -108,8 +108,8 @@ org.eclipse.core.expressions,3.4.600.v20140128-0851,plugins/org.eclipse.core.exp
 org.eclipse.core.filesystem,1.4.100.v20140514-1614,plugins/org.eclipse.core.filesystem_1.4.100.v20140514-1614.jar,4,false
 org.eclipse.core.jobs,3.6.0.v20140424-0053,plugins/org.eclipse.core.jobs_3.6.0.v20140424-0053.jar,4,false
 org.eclipse.core.net,1.2.200.v20140124-2013,plugins/org.eclipse.core.net_1.2.200.v20140124-2013.jar,4,false
-org.eclipse.core.net.linux.x86.nl_ja,4.4.0.v20140623020002,plugins/org.eclipse.core.net.linux.x86.nl_ja_4.4.0.v20140623020002.jar,4,false
-org.eclipse.core.net.linux.x86.nl_zh,4.4.0.v20140623020002,plugins/org.eclipse.core.net.linux.x86.nl_zh_4.4.0.v20140623020002.jar,4,false
+org.eclipse.core.net.linux.x86_64.nl_ja,4.4.0.v20140623020002,plugins/org.eclipse.core.net.linux.x86_64.nl_ja_4.4.0.v20140623020002.jar,4,false
+org.eclipse.core.net.linux.x86_64.nl_zh,4.4.0.v20140623020002,plugins/org.eclipse.core.net.linux.x86_64.nl_zh_4.4.0.v20140623020002.jar,4,false
 org.eclipse.core.net.nl_ja,4.4.0.v20140623020002,plugins/org.eclipse.core.net.nl_ja_4.4.0.v20140623020002.jar,4,false
 org.eclipse.core.net.nl_zh,4.4.0.v20140623020002,plugins/org.eclipse.core.net.nl_zh_4.4.0.v20140623020002.jar,4,false
 org.eclipse.core.resources,3.9.1.v20140825-1431,plugins/org.eclipse.core.resources_3.9.1.v20140825-1431.jar,4,false
@@ -191,9 +191,9 @@ org.eclipse.equinox.http.servlet,1.1.500.v20140318-1755,plugins/org.eclipse.equi
 org.eclipse.equinox.jsp.jasper,1.0.400.v20130327-1442,plugins/org.eclipse.equinox.jsp.jasper_1.0.400.v20130327-1442.jar,4,false
 org.eclipse.equinox.jsp.jasper.registry,1.0.300.v20130327-1442,plugins/org.eclipse.equinox.jsp.jasper.registry_1.0.300.v20130327-1442.jar,4,false
 org.eclipse.equinox.launcher,1.3.0.v20140415-2008,plugins/org.eclipse.equinox.launcher_1.3.0.v20140415-2008.jar,4,false
-org.eclipse.equinox.launcher.gtk.linux.x86,1.1.200.v20141007-2033,plugins/org.eclipse.equinox.launcher.gtk.linux.x86_1.1.200.v20141007-2033/,4,false
-org.eclipse.equinox.launcher.gtk.linux.x86.nl_ja,4.4.0.v20140623020002,plugins/org.eclipse.equinox.launcher.gtk.linux.x86.nl_ja_4.4.0.v20140623020002.jar,4,false
-org.eclipse.equinox.launcher.gtk.linux.x86.nl_zh,4.4.0.v20140623020002,plugins/org.eclipse.equinox.launcher.gtk.linux.x86.nl_zh_4.4.0.v20140623020002.jar,4,false
+org.eclipse.equinox.launcher.gtk.linux.x86_64,1.1.200.v20141007-2033,plugins/org.eclipse.equinox.launcher.gtk.linux.x86_64_1.1.200.v20141007-2033/,4,false
+org.eclipse.equinox.launcher.gtk.linux.x86_64.nl_ja,4.4.0.v20140623020002,plugins/org.eclipse.equinox.launcher.gtk.linux.x86_64.nl_ja_4.4.0.v20140623020002.jar,4,false
+org.eclipse.equinox.launcher.gtk.linux.x86_64.nl_zh,4.4.0.v20140623020002,plugins/org.eclipse.equinox.launcher.gtk.linux.x86_64.nl_zh_4.4.0.v20140623020002.jar,4,false
 org.eclipse.equinox.launcher.nl_ja,4.4.0.v20140623020002,plugins/org.eclipse.equinox.launcher.nl_ja_4.4.0.v20140623020002.jar,4,false
 org.eclipse.equinox.launcher.nl_zh,4.4.0.v20140623020002,plugins/org.eclipse.equinox.launcher.nl_zh_4.4.0.v20140623020002.jar,4,false
 org.eclipse.equinox.p2.artifact.repository,1.1.300.v20131211-1531,plugins/org.eclipse.equinox.p2.artifact.repository_1.1.300.v20131211-1531.jar,4,false
@@ -321,9 +321,9 @@ org.eclipse.osgi.services.nl_ja,4.4.0.v20140623020002,plugins/org.eclipse.osgi.s
 org.eclipse.osgi.services.nl_zh,4.4.0.v20140623020002,plugins/org.eclipse.osgi.services.nl_zh_4.4.0.v20140623020002.jar,4,false
 org.eclipse.rcp,4.3.100.v20141007-2301,plugins/org.eclipse.rcp_4.3.100.v20141007-2301.jar,4,false
 org.eclipse.swt,3.103.1.v20140903-1938,plugins/org.eclipse.swt_3.103.1.v20140903-1938.jar,4,false
-org.eclipse.swt.gtk.linux.x86,3.103.1.v20140903-1947,plugins/org.eclipse.swt.gtk.linux.x86_3.103.1.v20140903-1947.jar,4,false
-org.eclipse.swt.gtk.linux.x86.nl_ja,4.4.0.v20140623020002,plugins/org.eclipse.swt.gtk.linux.x86.nl_ja_4.4.0.v20140623020002.jar,4,false
-org.eclipse.swt.gtk.linux.x86.nl_zh,4.4.0.v20140623020002,plugins/org.eclipse.swt.gtk.linux.x86.nl_zh_4.4.0.v20140623020002.jar,4,false
+org.eclipse.swt.gtk.linux.x86_64,3.103.1.v20140903-1947,plugins/org.eclipse.swt.gtk.linux.x86_64_3.103.1.v20140903-1947.jar,4,false
+org.eclipse.swt.gtk.linux.x86_64.nl_ja,4.4.0.v20140623020002,plugins/org.eclipse.swt.gtk.linux.x86_64.nl_ja_4.4.0.v20140623020002.jar,4,false
+org.eclipse.swt.gtk.linux.x86_64.nl_zh,4.4.0.v20140623020002,plugins/org.eclipse.swt.gtk.linux.x86_64.nl_zh_4.4.0.v20140623020002.jar,4,false
 org.eclipse.swt.nl_ja,4.4.0.v20140623020002,plugins/org.eclipse.swt.nl_ja_4.4.0.v20140623020002.jar,4,false
 org.eclipse.swt.nl_zh,4.4.0.v20140623020002,plugins/org.eclipse.swt.nl_zh_4.4.0.v20140623020002.jar,4,false
 org.eclipse.text,3.5.300.v20130515-1451,plugins/org.eclipse.text_3.5.300.v20130515-1451.jar,4,false

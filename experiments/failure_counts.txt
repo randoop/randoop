@@ -1,0 +1,15 @@
+Chart, 200
+Chart, 400
+Chart, 450
+Chart, 450
+Chart, 450
+Chart, 500
+Chart, 500
+Chart, 500
+Chart, 500
+Chart, 500
+Chart, 550
+Chart, 550
+Chart, 550
+Chart, 550
+Chart, 600

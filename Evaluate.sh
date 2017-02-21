@@ -11,12 +11,8 @@ usage() {
 
 #initialize some default options before parsing the command line arguments
 specified_experiments=("Randoop" "Orienteering")
-projects=("Chart")
+projects=("Chart" "Lang" "Math" "Time")
 # "Chart" "Lang" "Math" "Time"
-# Chart: 501
-# Lang: 86
-# Math: 520
-# Time: 79
 
 log "Running DigDog Evaluation Script"
 # Read the flag options that were passed in when the script was run.
@@ -58,12 +54,21 @@ while [[ $# -gt 0 ]]; do
             log "Experiments set to [${specified_experiments[*]}]"
             ;;
         -p|--proj|--projects)
+            projects_arg=true
             shift
             oldIFS=$IFS
             IFS=","
             declare -a projects=(${1})
             IFS=$oldIFS
             log "Projects set to [${projects[*]}]"
+            ;;
+        -c|--complete|--complete)
+            run_complete_experiment=true
+            log "Complete experiments set"
+            ;;
+        -f|--faults)
+            run_fault_detection=true
+            log "Setting fault detection to true"
             ;;
 		*)
 			log "Unknown flag: ${key}"
@@ -84,9 +89,10 @@ time_limits=(2 10 30 60 120)
 project_sizes=(501 86 520 79) #TODO: include this where we calculate the time limits
 randoop_path=`pwd`"/experiments/lib/randoop-baseline-3.0.9.jar"
 digdog_path=`pwd`"/build/libs/randoop-all-3.0.8.jar"
-#java_path=`pwd`"/experiments/lib/jdk1.7.0/bin/java"
+java_path=`pwd`"/experiments/lib/jdk1.7.0/bin/java"
 plot_path=`pwd`"/Plot.py"
 
+chmod u+x $java_path
 # If the build flag was set or if there is no digdog jar
 # Build the jar from the local files
 if [ $build ] || [ ! -f $digdog_path ]; then
@@ -126,16 +132,35 @@ if [ $init ]; then
 
 	# Install Perl DBI
 	printf 'y\ny\n\n' | perl -MCPAN -e 'install Bundle::DBI'
+    printf 'y\n\n' | perl -MCPAN -e 'install DBD::CSV'
 else
 	# If we already have the defects4j repository cloned, we just step inside
 	log "Defects4j repository already exists, assuming that set up has already been performed. If this is in error, re-run this script with the -i option"
 	cd defects4j
 fi
-export PATH=$PATH:./framework/bin
-#printf 'y\ny\n\n' | perl -MCPAN -e 'install Bundle::DBD'
+export PATH=$PATH:`pwd`/framework/bin
+
+# Check out the project for fault detection
+checkoutProject() {
+    curr_dir=$work_dir$project
+    test_dir=${curr_dir}/gentests
+
+
+    # If our project directory already exists, we remove it so we can start fresh
+    if [ -d "${curr_dir}" ]; then
+        log "Working directory already existed, removing it...."
+        rm -rf $curr_dir
+    fi
+    log "Initializing working directory (${curr_dir})..."
+    mkdir $curr_dir
+
+    # Checkout and compile current project
+    defects4j checkout -p $project -v ${version}b -w $curr_dir
+    defects4j compile -w $curr_dir
+}
 
 # Compile Defects4j projects and then run generated tests on them
-if [ $init ]; then
+if [ $init ] || [ $projects_arg ]; then
     for project in ${projects[@]}; do
 	    # Set the directory of classes based on the structure of the project
 	    case $project in
@@ -154,17 +179,10 @@ if [ $init ]; then
 	    curr_dir=$work_dir$project
 	    test_dir=${curr_dir}/gentests
 	    log "Setting directories for new project: ${project}..."
-	    # If our project directory already exists, we remove it so we can start fresh
-	    if [ -d "${curr_dir}" ]; then
-		    log "Working directory already existed, removing it...."
-		    rm -rf $curr_dir
-	    fi
-	    log "Initializing working directory (${curr_dir})..."
-	    mkdir $curr_dir
 
 	    # Checkout and compile current project
-	    defects4j checkout -p $project -v 1b -w $curr_dir
-	    defects4j compile -w $curr_dir
+        version=1
+	    checkoutProject
 
 	    # Create the classlist and jar list for this project.
 	    log "Setting up class list for project ${project}"
@@ -220,9 +238,7 @@ prepProjectForGeneration() {
 
     # Set up local directories and jars based on the project
     # that we are currently evaluating
-    curr_dir=$work_dir$project
-    test_dir=${curr_dir}/gentests
-    jars=`tr '\n' ':' < ${project}jars.txt`
+    jars=`tr '\n' ':' < $1`
 
     # Set up the test dir
     if [ -d "${test_dir}" ]; then
@@ -243,14 +259,31 @@ packageTests() {
         rm -f ${curr_dir}/randoop.tar.bz2
     fi
     bzip2 ${curr_dir}/randoop.tar
+
+    # remove the existing tests.
+    # If Randoop finishes early (ie, because of a flaky test)
+    # failing to delete the generated tests would cause them to
+    # be mistakenly re-used on the next coverage evaluation
+    rm $test_dir/*
+}
+
+packageTestsForFaultDetection() {
+    packageTests
+
+    log "Renaming packaged tests for fault detection task"
+    log "${project}-${version}b-${time}.tar.bz2"
+    fault_suite_path=${curr_dir}/${project}-${version}b-${time}.tar.bz2
+    mv ${curr_dir}/randoop.tar.bz2 $fault_suite_path
+}
+
+countFaultDetection() {
+    perl ./framework/bin/run_bug_detection.pl -p $project -d ${curr_dir} -o ../randoop/experiments/fault_detection -v ${version}b
 }
 
 recordCoverage() {
     # Run the defects4j coverage task over the newly generated test suite.
     # Results are stored into results.txt, and the specific lines used to
     # generate coverage are put into numbers.txt
-    #./framework/bin/run_bug_detection.pl -p ${project} -d ${curr_dir} -o ../randoop/experiments/fault_detection
-    #exit 1
     defects4j coverage -i ${project}classlist.txt -w $curr_dir -s ${curr_dir}/randoop.tar.bz2 > results.txt
     grep 'Lines total' results.txt > numbers.txt
     grep 'Lines covered' results.txt >> numbers.txt
@@ -282,14 +315,25 @@ recordCoverage() {
     fi
 }
 
+doCompleteExperiment() {
+    doCoverage $1 "Complete" 5
+}
+
 doIndividualExperiment() {
+    doCoverage $1 "Individual" 10
+}
+
+doCoverage() {
     if [ $time_arg ]; then
-        indiv_time_limits=$specified_times
+        time_limits=$specified_times
+    elif [ $2 = "Complete" ]; then
+        time_limits=(2 10 30 60)
     else
-        indiv_time_limits=(50 100 150 200 250)
+        time_limits=(50 100 150 200 250 300 350 400 450 500 550 600)
     fi
 
-    log "Running Individual Experiment with $1"
+    log "Running ${2} Experiment with $1"
+    log "Times are: [${time_limits[*]}]"
     exp_dir="../randoop/experiments"
     failure_file="${exp_dir}/failure_counts.txt"
 
@@ -301,13 +345,11 @@ doIndividualExperiment() {
     fi
 
     for project in ${projects[@]}; do
-        #TODO: introduce some logic to not clobber files, incrementing a counter
-        # and appending that value to the filename until we find a filename that doesn't conflict
-        line_file="${exp_dir}/${project}_Individual_${1}_Line.txt"
+        line_file="${exp_dir}/${project}_${2}_${1}_Line.txt"
         log "Line file is: ${line_file}"
-        branch_file="${exp_dir}/${project}_Individual_${1}_Branch.txt"
+        branch_file="${exp_dir}/${project}_${2}_${1}_Branch.txt"
         log "Branch file is: ${branch_file}"
-        
+
         if [ $overwrite ];then
             if [ -f $line_file ]; then
                 rm $line_file
@@ -317,24 +359,43 @@ doIndividualExperiment() {
             fi
         fi
 
-        prepProjectForGeneration
-        for time in ${indiv_time_limits[@]}; do
+        prepProjectForGeneration ${project}jars.txt
+        for time in ${time_limits[@]}; do
             echo "TIME ${time}" >> ${line_file}
             echo "TIME ${time}" >> ${branch_file}
             i=1
-            while [ $i -le 10 ]; do
+
+# Chart: 501
+# Lang: 86
+# Math: 520
+# Time: 79
+            case $project in
+                Chart)
+                    time=$((time*501))
+                    ;;
+                Math)
+                    time=$((time*520))
+                    ;;
+                Time)
+                    time=$((time*79))
+                    ;;
+                Lang)
+                    time=$((time*86))
+                    ;;
+            esac
+            while [ $i -le $3 ]; do
                 case $1 in
                     Randoop)
                         log "Running base Randoop with time limit=${time}, ${project} #${i}"
-			            java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$randoop_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM
+			            $java_path -ea -classpath ${jars}${curr_dir}/${classes_dir}:$randoop_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM --ignore-flaky-tests=true
                         ;;
                     Orienteering)
                         log "Running digDog with orienteering, time limit=${time}, ${project} #${i}"
-			            java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$digdog_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM --orienteering=true
+			            $java_path -ea -classpath ${jars}${curr_dir}/${classes_dir}:$digdog_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM --orienteering=true --ignore-flaky-tests=true
                         ;;
                     *)
-                        log "Running digDog with time limit=${time}, ${project} #${i}"
-			            java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$digdog_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM
+                        log "Unkown experiment condition"
+                        exit 1
                         ;;
                 esac
                 adjustTestNames
@@ -343,65 +404,138 @@ doIndividualExperiment() {
                 i=$((i+1))
             done
         done
-	
-        # Run Plot.py to generate a plot for this experiment
-        #python $plot_path line_file
-        # TODO: remove
-        #exit 0 
-        #python $plot_path branch_file
     done
 }
 
-# Perform each experiment that was specified
-for exp in ${specified_experiments[@]}; do
-    doIndividualExperiment $exp
-done
-exit 0
+initFaultDetectionClasses() {
+    # Create the classlist and jar list for this project.
+    log "Setting up class list for project ${project}_${version}b"
+    cd ${curr_dir}
+    defects4j export -p tests.trigger -o ${project}_${version}b_relevant_tests.txt
+    log "exported tests"
+    test_file=`cat ${project}_${version}b_relevant_tests.txt`
+    for line in $test_file; do
+        defects4j test -t $line
+        defects4j monitor.test -t $line -w .
+    done
+    cd ..
+    exit 0 
+    # Get a list of all .jar files in this project, to be added to the
+    # classpath when running randoop/digdog.
+    log "Setting up jar list for project ${project}_${version}b"
+    find $curr_dir -name \*.jar > ${curr_dir}/${project}_${version}b_jars.txt
+}
 
-# Iterate over each time limit. For each time limit, perform 10 iterations of test generation and coverage calculations with Randoop.
-# TODO: integrate the other tools into the evaluation framework here
-for time in ${time_limits[@]}; do
-	for i in `seq 1 10`; do
-		for project in ${projects[@]}; do
-            prepProjectForGeneration
-			log "Running Randoop with time limit set to ${time}, project ${project} iteration #${i}"
-			log "Randoop jar location: ${digdog_path}"
-			java -ea -classpath ${jars}${curr_dir}/${classes_dir}:$digdog_path randoop.main.Main gentests --classlist=${project}classlist.txt --literals-level=CLASS --timelimit=10 --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --literals-file=CLASSES --randomseed=$RANDOM
-            
-            adjustTestNames
+checkForEmptyRandoopExec () {
+    log "checking if randoop execution was empty"
+    cat $randoop_output_file
+    if grep -Fxq "No classes to test" $randoop_output_file ; then
+        randoop_empty=true
+    else
+        randoop_empty=false
+    fi
+    log "randoop_empty is $randoop_empty"
+}
 
-			# Package the test suite generated by Randoop (in $test_dir) to be
-			# the correct format for the defects4j coverage task
-			log "Packaging generated test suite into .tar.bz2 format"
-            if [ -f ${curr_dir}/randoop.tar ]; then
-                rm -f ${curr_dir}/randoop.tar
+doFaultDetection() {
+    if [ $time_arg ]; then
+        time_limits=$specified_times
+    else
+        time_limits=(120 300 600)
+    fi
+
+    log "Running Fault Detection with $1"
+    exp_dir="../randoop/experiments"
+
+    if [ ! -d ${exp_dir} ]; then
+        mkdir ${exp_dir}
+    fi
+
+    for project in ${projects[@]}; do
+        #TODO: introduce some logic to not clobber files, incrementing a counter
+        # and appending that value to the filename until we find a filename that doesn't conflict
+        fault_file="${exp_dir}/${project}_Fault_${1}.txt"
+        log "Fault file is: ${fault_file}"
+        randoop_output_file="${exp_dir}/Randoop_output.txt"
+
+        if [ $overwrite ];then
+            if [ -f $fault_file ]; then
+                rm $fault_file
             fi
-			tar -cvf ${curr_dir}/randoop.tar $test_dir
-			if [ -f ${curr_dir}/randoop.tar.bz2 ]; then
-                rm -f ${curr_dir}/randoop.tar.bz2
-            fi
-            bzip2 ${curr_dir}/randoop.tar
+        fi
 
-			# Run the defects4j coverage task over the newly generated test suite.
-			# Results are stored into results.txt, and the specific lines used to
-			# generate coverage are put into numbers.txt
-			defects4j coverage -w $curr_dir -s ${curr_dir}/randoop.tar.bz2 > results.txt
-			grep 'Lines total' results.txt > numbers.txt
-			grep 'Lines covered' results.txt >> numbers.txt
-			grep 'Conditions total' results.txt >> numbers.txt
-			grep 'Conditions covered' results.txt >> numbers.txt
+        case $project in
+            Chart)
+                num_versions=26
+                ;;
+            Math)
+                num_versions=106
+                ;;
+            Lang)
+                num_versions=65
+                ;;
+            Time)
+                num_versions=27
+                ;;
+            *)
+                log "Unknown project"
+                exit 1
+                ;;
+        esac
 
-			# Remove everything but the digits from the numbers.txt file. This leaves
-			# a set of 4 lines, displaying:
-				# Total number of lines
-				# Number of lines covered
-				# Total number of conditions
-				# Number of conditions covered
-			sed -i 's/[^0-9]//g' numbers.txt
-			cat numbers.txt
+        version=2
+        while [ "$version" -le "$num_versions" ]; do
+            checkoutProject
 
-			# Remove test suite archive so we can generate again on the next iteration
-			rm -f "${curr_dir}/randoop.tar.bz2"
-		done
-	done
-done
+            initFaultDetectionClasses
+
+            prepProjectForGeneration ${curr_dir}/${project}_${version}b_jars.txt
+            for time in ${time_limits[@]}; do
+                echo "TIME ${time}" >> ${fault_file}
+                i=1
+                while [ $i -le 5 ]; do
+                    case $1 in
+                        Randoop)
+                            log "Running base Randoop with time limit=${time}, ${project} #${i}"
+                            $java_path -ea -classpath ${jars}${curr_dir}/${classes_dir}:$randoop_path randoop.main.Main gentests --classlist=${curr_dir}/${project}_${version}b_classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM --ignore-flaky-tests=true > $randoop_output_file
+                            checkForEmptyRandoopExec
+                            if [ "$randoop_empty" = true ]; then
+                                log "Randoop was empty for project ${project} v ${version}, moving on"
+                                i=5
+                            fi
+                            ;;
+                        *)
+                            log "Unknown condition in fault detection experiment"
+                            exit 1
+                            ;;
+                    esac
+                    if [ "$randoop_empty" = false ]; then
+                        log "randoop was not empty for project ${project} v ${version}, attempting fault detection."
+                        adjustTestNames
+                        packageTestsForFaultDetection
+                        countFaultDetection
+                    fi
+                    i=$((i+1))
+                done
+            done
+
+            version=$((version+1))
+        done
+    done
+}
+
+if [ $run_fault_detection ]; then
+    doFaultDetection "Randoop"
+    exit 0
+fi
+
+if [ $run_complete_experiment ]; then
+    for exp in ${specified_experiments[@]}; do
+        doCompleteExperiment $exp
+    done
+else
+    # Perform each experiment that was specified
+    for exp in ${specified_experiments[@]}; do
+        doIndividualExperiment $exp
+    done
+fi
