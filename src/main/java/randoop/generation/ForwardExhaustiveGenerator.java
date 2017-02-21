@@ -397,12 +397,11 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
       return null;
     }
 
-    Sequence newSequence = null;
-    Sequence previousSequence = null;
+    Sequence currentSequence = null;
 
     for (TypedOperation to : nextSequence) {
       // add flags here
-      InputsAndSuccessFlag sequences = selectSimplestInputs(to, previousSequence);
+      InputsAndSuccessFlag sequences = selectSimplestInputs(to, currentSequence);
 
       if (!sequences.success) {
         if (Log.isLoggingOn()) Log.logLine("Failed to find inputs for statement " + to.toString());
@@ -419,29 +418,23 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
         inputs.add(v);
       }
 
-      newSequence = concatSeq.extend(to, inputs);
-
-      if (previousSequence != null) {
-        newSequence = Sequence.concatenate(Arrays.asList(previousSequence, newSequence));
-      }
-
-      previousSequence = newSequence;
+      currentSequence = concatSeq.extend(to, inputs);
 
       // Discard if sequence is larger than size limit
-      if (newSequence.getNumberOfStatementsForCutFirstVariable() > GenInputsAbstract.maxsize) {
+      if (currentSequence.getNumberOfStatementsForCutFirstVariable() > GenInputsAbstract.maxsize) {
         if (Log.isLoggingOn()) {
           Log.logLine(
               "Sequence discarded because size "
-                  + newSequence.size()
+                  + currentSequence.size()
                   + " exceeds maximum allowed size "
                   + GenInputsAbstract.maxsize);
         }
         return null;
       }
 
-      randoopConsistencyTests(newSequence);
+      randoopConsistencyTests(currentSequence);
 
-      if (this.allSequences.contains(newSequence)) {
+      if (this.allSequences.contains(currentSequence)) {
         if (Log.isLoggingOn()) {
           Log.logLine("Sequence discarded because the same sequence was previously created.");
         }
@@ -449,16 +442,17 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
       }
     }
 
-    this.allSequences.add(newSequence);
-    randoopConsistencyTest2(newSequence);
+    this.allSequences.add(currentSequence);
+    randoopConsistencyTest2(currentSequence);
 
     if (Log.isLoggingOn()) {
       Log.logLine(
-          String.format("Successfully created new unique sequence:%n%s%n", newSequence.toString()));
+          String.format(
+              "Successfully created new unique sequence:%n%s%n", currentSequence.toString()));
     }
 
     previousPermutation = new LinkedList<>(nextSequence);
-    return new ExecutableSequence(newSequence);
+    return new ExecutableSequence(currentSequence);
   }
 
   // Select a constructor to be used as a prefix to the generated sequences of classes' methods.
