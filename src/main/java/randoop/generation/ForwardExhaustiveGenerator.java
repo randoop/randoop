@@ -339,6 +339,10 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
       this.prepareConstructorPrefix();
     }
 
+    if (!this.sequenceGenerator.hasNext()) {
+      return null;
+    }
+
     List<TypedOperation> nextPermutation = sequenceGenerator.next();
 
     List<TypedOperation> nextSequence = Lists.newArrayList();
@@ -385,10 +389,6 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
 
     if (Log.isLoggingOn()) {
       Log.logLine("-------------------------------------------");
-    }
-
-    if (!this.sequenceGenerator.hasNext()) {
-      return null;
     }
 
     List<TypedOperation> nextSequence = selectNextSequenceOfOperationsForNewUniqueSequence();
@@ -1009,5 +1009,10 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
   @Override
   public int numGeneratedSequences() {
     return allSequences.size();
+  }
+
+  @Override
+  protected boolean stop() {
+    return !this.sequenceGenerator.hasNext() || super.stop();
   }
 }
