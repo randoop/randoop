@@ -2,7 +2,7 @@
 # you will need to install it, run `pip install matplotlib`,
 # if you don't have pip, run `sudo yum install python-pip python-wheel`
 import matplotlib.pyplot as plt
-import numpy, re, sys
+import numpy, re, sys, os
 import matplotlib.patches as mpatches
 
 projects = ['Chart', 'Math', 'Time', 'Lang']
@@ -37,9 +37,6 @@ def readData(fileName):
 
 			# TODO: Generalize to work when different datasets have different upper time limits
 			time = int(line.split(' ')[1])
-			
-			if time > 250:
-				break
 
 			if not time in times:
 				times.append(time)
@@ -174,6 +171,27 @@ def plot(isLinePlot, title, seriesLabels, data):
 	# Save plot
 	plt.savefig('plots/%s' % title, format='png')
 
+# Output the medians of the datasets to a csv
+def outputCsv(numFiles, labels, title, data):
+	os.remove('csv/%s' % (title,))
+	f = open('csv/%s' % (title,), 'w')
+
+	medians = [getMedians(x) for x in data]
+
+	print >> f 'Time,',
+	for i in range(numFiles):
+		print >> f seriesLabels[i],
+
+	print >> f
+
+	for i in range(len(times)):
+		print >> f times[i],
+
+		for j in range(numFiles):
+			print >> f medians[j][i]
+
+		print >> f
+
 def main():
 	# Set line plot option
 	isLinePlot = False
@@ -193,11 +211,18 @@ def main():
 
 		titles[i], seriesLabels[i], data[i] = readData(fileName)
 
+	# Cut down all datasets to the size of the smallest dataset
+	minLength = len(data[0])
+	for i in len(data):
+		min(minLength, len(data[i]))
+
+	for i in len(data):
+		times = times[:minLength]
+		data[i] = data[i][:minLength]
+
 	plot(isLinePlot, titles[0], seriesLabels, data)
-	
-	# Print Medians of coverage %
-	# for i in range(numFiles):
-	# 	print getMedians(data[i])
-	
+
+	outputCsv(numFiles, seriesLabels, titles[0], data)
+
 if __name__ == '__main__':
     main()
