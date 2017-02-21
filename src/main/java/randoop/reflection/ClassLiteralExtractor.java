@@ -2,7 +2,10 @@ package randoop.reflection;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
+import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
@@ -19,8 +22,12 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
 
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
-  ClassLiteralExtractor(MultiMap<ClassOrInterfaceType, Sequence> literalMap) {
+  private Map<Sequence, Integer> tfFrequency;
+
+  ClassLiteralExtractor(
+      MultiMap<ClassOrInterfaceType, Sequence> literalMap, Map<Sequence, Integer> tfFrequency) {
     this.literalMap = literalMap;
+    this.tfFrequency = tfFrequency;
   }
 
   // So I have no idea if we will have sequence equality here, leading to capturing
@@ -40,6 +47,13 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
                     TypedOperation.createNonreceiverInitialization(term),
                     new ArrayList<Variable>());
         literalMap.add(constantType, seq);
+        if (GenInputsAbstract.constant_mining) {
+          if (tfFrequency.containsKey(term)) {
+            tfFrequency.put(seq, tfFrequency.get(term) + 1);
+          } else {
+            tfFrequency.put(seq, 1);
+          }
+        }
       }
     }
   }

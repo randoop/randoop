@@ -1,17 +1,12 @@
 package randoop.generation;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
+import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.TypeInstantiator;
-import randoop.sequence.ClassLiterals;
-import randoop.sequence.PackageLiterals;
-import randoop.sequence.Sequence;
-import randoop.sequence.SequenceCollection;
+import randoop.sequence.*;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.PrimitiveType;
@@ -50,6 +45,8 @@ public class ComponentManager {
   // and seed sequences.
   private SequenceCollection gralComponents;
 
+  private Map<Sequence, Integer> frequencyMap;
+
   /**
    * The subset of the sequences that were given pre-generation to the component
    * manager (via its constructor).
@@ -80,10 +77,9 @@ public class ComponentManager {
    */
   public ComponentManager() {
     if (GenInputsAbstract.constant_mining) {
-      gralComponents = new WeightedSequenceCollection();
-    } else {
-      gralComponents = new SequenceCollection();
+      frequencyMap = new LinkedHashMap<>();
     }
+    gralComponents = new SequenceCollection();
     gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
   }
 
@@ -123,7 +119,6 @@ public class ComponentManager {
     if (classLiterals == null) {
       classLiterals = new ClassLiterals();
     }
-    classLiterals.addSequence(type, seq);
   }
 
   /**
@@ -143,10 +138,17 @@ public class ComponentManager {
   /**
    * Add a component sequence.
    *
-   * @param sequence the sequence
+   * @param seq the sequence
    */
-  public void addGeneratedSequence(Sequence sequence) {
-    gralComponents.add(sequence);
+  public void addGeneratedSequence(Sequence seq) {
+    gralComponents.add(seq);
+    if (GenInputsAbstract.constant_mining) {
+      if (frequencyMap.containsKey(seq)) {
+        frequencyMap.put(seq, frequencyMap.get(seq) + 1);
+      } else {
+        frequencyMap.put(seq, 1);
+      }
+    }
   }
 
   /**
@@ -218,6 +220,10 @@ public class ComponentManager {
       }
     }
     return ret;
+  }
+
+  public Map<Sequence, Integer> getFrequencyMap() {
+    return frequencyMap;
   }
 
   /**

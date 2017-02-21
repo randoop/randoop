@@ -8,6 +8,7 @@ import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
+import randoop.main.GenTests;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
 import randoop.operation.TypedClassOperation;
@@ -35,12 +36,14 @@ public class ForwardGenerator extends AbstractGenerator {
    * The set of ALL sequences ever generated, including sequences that were
    * executed and then discarded.
    */
-  private final Set<Sequence> allSequences;
-  private final Set<TypedOperation> observers;
+  private Set<Sequence> allSequences;
+  private Set<TypedOperation> observers;
 
   private final Map<WeightedElement, Double> weightMap = new HashMap<WeightedElement, Double>();
   private final Map<WeightedElement, Integer> sequenceExecutionNumber =
       new HashMap<WeightedElement, Integer>();
+
+  private final Map<WeightedElement, Double> initialConstantWeights = new HashMap<>();
 
   /** Sequences that are used in other sequences (and are thus redundant) */
   private Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
@@ -54,7 +57,7 @@ public class ForwardGenerator extends AbstractGenerator {
   // For testing purposes only.
   private final List<Sequence> allsequencesAsList = new ArrayList<>();
 
-  private final TypeInstantiator instantiator;
+  private TypeInstantiator instantiator;
 
   // The set of all primitive values seen during generation and execution
   // of sequences. This set is used to tell if a new primitive value has
@@ -77,7 +80,9 @@ public class ForwardGenerator extends AbstractGenerator {
         maxOutSequences,
         componentManager,
         null,
-        listenerManager);
+        listenerManager,
+        0,
+        null);
   }
 
   public ForwardGenerator(
@@ -89,6 +94,53 @@ public class ForwardGenerator extends AbstractGenerator {
       ComponentManager componentManager,
       IStopper stopper,
       RandoopListenerManager listenerManager) {
+    this(
+        operations,
+        observers,
+        timeMillis,
+        maxGenSequences,
+        maxOutSequences,
+        componentManager,
+        stopper,
+        listenerManager,
+        0,
+        null);
+  }
+
+  public ForwardGenerator(
+      List<TypedOperation> operations,
+      Set<TypedOperation> observers,
+      long timeMillis,
+      int maxGenSequences,
+      int maxOutSequences,
+      ComponentManager componentManager,
+      RandoopListenerManager listenerManager,
+      int numClasses,
+      Map<Sequence, Integer> tfFrequency) {
+    this(
+        operations,
+        observers,
+        timeMillis,
+        maxGenSequences,
+        maxOutSequences,
+        componentManager,
+        null,
+        listenerManager,
+        numClasses,
+        tfFrequency);
+  }
+
+  public ForwardGenerator(
+      List<TypedOperation> operations,
+      Set<TypedOperation> observers,
+      long timeMillis,
+      int maxGenSequences,
+      int maxOutSequences,
+      ComponentManager componentManager,
+      IStopper stopper,
+      RandoopListenerManager listenerManager,
+      int numClasses,
+      Map<Sequence, Integer> tfFrequency) {
 
     super(
         operations,
@@ -104,6 +156,20 @@ public class ForwardGenerator extends AbstractGenerator {
     this.instantiator = componentManager.getTypeInstantiator();
 
     initializeRuntimePrimitivesSeen();
+
+    if (GenInputsAbstract.constant_mining) {
+      int num_constants = 0;
+      for (Sequence s : tfFrequency.keySet()) {
+        num_constants += tfFrequency.get(s);
+      }
+      for (Map.Entry<Sequence, Integer> m : componentManager.getFrequencyMap().entrySet()) {
+        double weight =
+            ((double) tfFrequency.get(m.getKey()) / num_constants)
+                * Math.log((double) (numClasses + 1) / ((numClasses + 1) - m.getValue()));
+        weightMap.put(m.getKey(), weight);
+        initialConstantWeights.put(m.getKey(), weight);
+      }
+    }
   }
 
   /**
@@ -156,17 +222,24 @@ public class ForwardGenerator extends AbstractGenerator {
     eSeq.exectime = endTime - startTime;
 
     // Orienteering stuff
-    Sequence temp = eSeq.sequence;
-    if (sequenceExecutionNumber.containsKey(temp)) {
-      sequenceExecutionNumber.put(temp, sequenceExecutionNumber.get(temp) + 1);
-    } else {
-      sequenceExecutionNumber.put(temp, 1);
+    if (GenInputsAbstract.orienteering) {
+      Sequence temp = eSeq.sequence;
+      if (sequenceExecutionNumber.containsKey(temp)) {
+        sequenceExecutionNumber.put(temp, sequenceExecutionNumber.get(temp) + 1);
+      } else {
+        sequenceExecutionNumber.put(temp, 1);
+      }
+      double weight =
+          1.0 / (eSeq.exectime * sequenceExecutionNumber.get(temp) * Math.sqrt(temp.size()));
+      if (GenInputsAbstract.constant_mining) {
+        if (initialConstantWeights.containsKey(temp)) {
+          weight *= initialConstantWeights.get(temp);
+        }
+      }
+      weightMap.put(eSeq.sequence, weight);
     }
-    double weight = 1.0 / (sequenceExecutionNumber.get(temp) * Math.sqrt(temp.size()));
-    weightMap.put(eSeq.sequence, weight);
 
     startTime = endTime; // reset start time.
-
     processSequence(eSeq);
 
     if (eSeq.sequence.hasActiveFlags()) {
@@ -716,16 +789,13 @@ public class ForwardGenerator extends AbstractGenerator {
       // a
       // randomly-chosen sequence from the list.
       Sequence chosenSeq;
-      // TODO CHANGE THIS TO USE WEIGHTED VALUES
       /*
       double weight;
       weight = 1.0 / (sum from i->k of seq.exec_time * sqrt(seq.meth_size));
       chosenSeq = Randomness.randomMemberOurWeightedSelection
       */
 
-      //if (GenInputsAbstract.small_tests) { // Randoop's orienteering-esque flag
-
-      if (GenInputsAbstract.orienteering) {
+      if (GenInputsAbstract.orienteering || GenInputsAbstract.constant_mining) {
         chosenSeq = Randomness.randomMemberWeighted(l, weightMap);
       } else {
         chosenSeq = Randomness.randomMember(l);
