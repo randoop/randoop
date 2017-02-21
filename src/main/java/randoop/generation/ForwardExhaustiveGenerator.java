@@ -398,12 +398,11 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
     }
 
     Sequence newSequence = null;
-    InputsAndSuccessFlag previousInputs = null;
     Sequence previousSequence = null;
 
     for (TypedOperation to : nextSequence) {
       // add flags here
-      InputsAndSuccessFlag sequences = selectSimplestInputs(to);
+      InputsAndSuccessFlag sequences = selectSimplestInputs(to, previousSequence);
 
       if (!sequences.success) {
         if (Log.isLoggingOn()) Log.logLine("Failed to find inputs for statement " + to.toString());
@@ -447,18 +446,6 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
           Log.logLine("Sequence discarded because the same sequence was previously created.");
         }
         return null;
-      }
-
-      for (Sequence s : sequences.sequences) {
-        s.lastTimeUsed = System.currentTimeMillis();
-      }
-
-      previousInputs = sequences;
-
-      // Keep track of any input sequences that are used in this sequence.
-      // Tests that contain only these sequences are probably redundant.
-      for (Sequence is : sequences.sequences) {
-        subsumed_sequences.add(is);
       }
     }
 
@@ -641,7 +628,7 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
     return newTuple;
   }
 
-  private InputsAndSuccessFlag selectSimplestInputs(TypedOperation operation) {
+  private InputsAndSuccessFlag selectSimplestInputs(TypedOperation operation, Sequence prefix) {
     InputsAndSuccessFlag result = null;
 
     if (constructorPrefix == null) {
@@ -652,10 +639,17 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
 
     List<Integer> variableIndices = new ArrayList<>(inputTypes.size());
     variableIndices.add(this.constructorPrefix.getLastVariable().index);
-    List<Sequence> sequences = new ArrayList<>(inputTypes.size());
-    sequences.add(this.constructorPrefix);
 
-    int totStatements = this.constructorPrefix.size();
+    List<Sequence> sequences = new ArrayList<>(inputTypes.size());
+    int totStatements;
+
+    if (prefix == null) {
+      sequences.add(this.constructorPrefix);
+      totStatements = this.constructorPrefix.size();
+    } else {
+      sequences.add(prefix);
+      totStatements = prefix.size();
+    }
 
     for (int i = 1; i < inputTypes.size(); i++) {
       Type inputType = inputTypes.get(i);
@@ -693,6 +687,10 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
 
     result = new InputsAndSuccessFlag(true, sequences, variableIndices);
     return result;
+  }
+
+  private InputsAndSuccessFlag selectSimplestInputs(TypedOperation operation) {
+    return selectSimplestInputs(operation, null);
   }
 
   private SimpleList<Sequence> getCandidateSequencesForArrayType(
