@@ -155,7 +155,7 @@ checkoutProject() {
     mkdir $curr_dir
 
     # Checkout and compile current project
-    defects4j checkout -p $project -v ${version}b -w $curr_dir
+    defects4j checkout -p $project -v ${version}${1} -w $curr_dir
     defects4j compile -w $curr_dir
 }
 
@@ -182,7 +182,7 @@ if [ $init ] || [ $projects_arg ]; then
 
 	    # Checkout and compile current project
         version=1
-	    checkoutProject
+	    checkoutProject "b"
 
 	    # Create the classlist and jar list for this project.
 	    log "Setting up class list for project ${project}"
@@ -268,6 +268,7 @@ packageTests() {
 }
 
 packageTestsForFaultDetection() {
+    rm -f $test_dir/Error*
     packageTests
 
     log "Renaming packaged tests for fault detection task"
@@ -414,16 +415,28 @@ initFaultDetectionClasses() {
     defects4j export -p tests.trigger -o ${project}_${version}b_relevant_tests.txt
     log "exported tests"
     test_file=`cat ${project}_${version}b_relevant_tests.txt`
+    class_list_file="${project}_${version}_classlist.txt"
+    if [ -f $class_list_file ]; then
+        rm -f $class_list_file
+    fi
     for line in $test_file; do
-        defects4j test -t $line
-        defects4j monitor.test -t $line -w .
+        defects4j monitor.test -t $line
+        cat loaded_classes.src >> $class_list_file
     done
     cd ..
-    exit 0 
+    log "Now displaying all relevant classes:"
+    cat $curr_dir/$class_list_file
+    if [ ! -d "classList" ]; then
+        mkdir classList
+    fi
+    if [ ! -d "jarList" ]; then
+        mkdir jarList
+    fi
+    mv $curr_dir/$class_list_file classList
     # Get a list of all .jar files in this project, to be added to the
     # classpath when running randoop/digdog.
-    log "Setting up jar list for project ${project}_${version}b"
-    find $curr_dir -name \*.jar > ${curr_dir}/${project}_${version}b_jars.txt
+    log "Setting up jar list for project ${project}_${version}"
+    find $curr_dir -name \*.jar > jarList/${project}_${version}_jars.txt
 }
 
 checkForEmptyRandoopExec () {
@@ -483,13 +496,16 @@ doFaultDetection() {
                 ;;
         esac
 
-        version=2
+        version=1
         while [ "$version" -le "$num_versions" ]; do
-            checkoutProject
+            jar_path="jarList/${project}_${version}_jars.txt"
+            classlist_path="classList/${project}_${version}_classlist.txt"
+            checkoutProject "f"
+            if [ ! -f $jar_path ] || [ ! -f $classlist_path ]; then
+                initFaultDetectionClasses
+            fi
 
-            initFaultDetectionClasses
-
-            prepProjectForGeneration ${curr_dir}/${project}_${version}b_jars.txt
+            prepProjectForGeneration ${jar_path}
             for time in ${time_limits[@]}; do
                 echo "TIME ${time}" >> ${fault_file}
                 i=1
@@ -497,7 +513,7 @@ doFaultDetection() {
                     case $1 in
                         Randoop)
                             log "Running base Randoop with time limit=${time}, ${project} #${i}"
-                            $java_path -ea -classpath ${jars}${curr_dir}/${classes_dir}:$randoop_path randoop.main.Main gentests --classlist=${curr_dir}/${project}_${version}b_classlist.txt --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM --ignore-flaky-tests=true > $randoop_output_file
+                            $java_path -ea -classpath ${jars}${curr_dir}/${classes_dir}:$randoop_path randoop.main.Main gentests --classlist=${classlist_path} --literals-level=CLASS --literals-file=CLASSES --timelimit=${time} --junit-reflection-allowed=false --junit-package-name=${curr_dir}.gentests --randomseed=$RANDOM --ignore-flaky-tests=true > $randoop_output_file
                             checkForEmptyRandoopExec
                             if [ "$randoop_empty" = true ]; then
                                 log "Randoop was empty for project ${project} v ${version}, moving on"
