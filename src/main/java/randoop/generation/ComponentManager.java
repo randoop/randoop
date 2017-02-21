@@ -12,6 +12,7 @@ import randoop.types.JavaTypes;
 import randoop.types.PrimitiveType;
 import randoop.types.Type;
 import randoop.util.ListOfLists;
+import randoop.util.Randomness;
 import randoop.util.SimpleList;
 
 /**
@@ -195,7 +196,7 @@ public class ComponentManager {
   @SuppressWarnings("unchecked")
   SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i) {
     if (GenInputsAbstract.constant_mining) {
-      return getSequencesForTypeGRT(operation, i)
+      return getSequencesForTypeGRT(operation, i);
     }
     Type neededType = operation.getInputTypes().get(i);
     SimpleList<Sequence> ret = gralComponents.getSequencesForType(neededType, false);
