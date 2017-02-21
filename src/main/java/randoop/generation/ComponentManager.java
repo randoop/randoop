@@ -92,6 +92,9 @@ public class ComponentManager {
    *          is considered empty.
    */
   public ComponentManager(Collection<Sequence> generalSeeds) {
+    if (GenInputsAbstract.constant_mining) {
+      frequencyMap = new LinkedHashMap<>();
+    }
     Set<Sequence> seedSet = new LinkedHashSet<>(generalSeeds.size());
     seedSet.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSet);
