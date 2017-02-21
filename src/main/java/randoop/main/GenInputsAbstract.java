@@ -196,6 +196,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   @Option("Whether to use GRT constant mining in regression tests")
   public static boolean constant_mining = false;
+
+  // TODO: p_const commenting
+  public static double p_const = .01;
   /**
    * The possible values for exception behavior types. The order INVALID, ERROR,
    * EXPECTED should be maintained.

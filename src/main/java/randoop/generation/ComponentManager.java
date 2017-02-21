@@ -194,9 +194,10 @@ public class ComponentManager {
    */
   @SuppressWarnings("unchecked")
   SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i) {
-
+    if (GenInputsAbstract.constant_mining) {
+      return getSequencesForTypeGRT(operation, i)
+    }
     Type neededType = operation.getInputTypes().get(i);
-
     SimpleList<Sequence> ret = gralComponents.getSequencesForType(neededType, false);
     if (operation instanceof TypedClassOperation) {
       if (classLiterals != null || packageLiterals != null) {
@@ -223,6 +224,23 @@ public class ComponentManager {
       }
     }
     return ret;
+  }
+
+  //TODO: commenting
+  SimpleList<Sequence> getSequencesForTypeGRT(TypedOperation operation, int i) {
+    Type neededType = operation.getInputTypes().get(i);
+    if (Randomness.weightedCoinFlip(GenInputsAbstract.p_const)) {
+      ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+      if (declaringCls != null) {
+        if (classLiterals != null) {
+          SimpleList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
+          return sl;
+        }
+      }
+    } else {
+      return gralComponents.getSequencesForType(neededType, false);
+    }
+    return null;
   }
 
   public Map<Sequence, Integer> getFrequencyMap() {
