@@ -85,8 +85,6 @@ fi
 # Set up some fixed values to be used throughout the script
 work_dir=proj
 
-time_limits=(2 10 30 60 120)
-project_sizes=(501 86 520 79) #TODO: include this where we calculate the time limits
 randoop_path=`pwd`"/experiments/lib/randoop-baseline-3.0.9.jar"
 digdog_path=`pwd`"/build/libs/randoop-all-3.0.8.jar"
 java_path=`pwd`"/experiments/lib/jdk1.7.0/bin/java"
@@ -370,20 +368,22 @@ doCoverage() {
 # Lang: 86
 # Math: 520
 # Time: 79
-            case $project in
-                Chart)
-                    time=$((time*501))
-                    ;;
-                Math)
-                    time=$((time*520))
-                    ;;
-                Time)
-                    time=$((time*79))
-                    ;;
-                Lang)
-                    time=$((time*86))
-                    ;;
-            esac
+            if [ $2 = "Complete" ]; then
+                case $project in
+                    Chart)
+                        time=$((time*501))
+                        ;;
+                    Math)
+                        time=$((time*520))
+                        ;;
+                    Time)
+                        time=$((time*79))
+                        ;;
+                    Lang)
+                        time=$((time*86))
+                        ;;
+                esac
+            fi
             while [ $i -le $3 ]; do
                 case $1 in
                     Randoop)
