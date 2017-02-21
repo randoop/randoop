@@ -2,7 +2,6 @@ package randoop.input.toradocu;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Objects;
 
 import randoop.condition.Condition;
