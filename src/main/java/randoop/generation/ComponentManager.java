@@ -79,7 +79,11 @@ public class ComponentManager {
    * Create an empty component manager, with an empty seed sequence set.
    */
   public ComponentManager() {
-    gralComponents = new SequenceCollection();
+    if (GenInputsAbstract.constant_mining) {
+      gralComponents = new WeightedSequenceCollection();
+    } else {
+      gralComponents = new SequenceCollection();
+    }
     gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
   }
 
