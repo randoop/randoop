@@ -59,10 +59,11 @@ public final class DocumentedMethod {
    * @param returnType the fully qualified return type of the method or {@code null} if the {@code
    *     DocumentedMethod} is a constructor
    * @param parameters the parameters of the {@code DocumentedMethod}
-   * @param paramTags the {@code @param tags} of the {@code DocumentedMethod}
+   * @param paramTags the {@code @param} tags of the {@code DocumentedMethod}
    * @param isVarArgs true if the {@code DocumentedMethod} takes a variable number of arguments,
    *     false otherwise
-   * @param throwsTags the {@code @throws tags} of the {@code DocumentedMethod}
+   * @param throwsTags the {@code @throws} tags of the {@code DocumentedMethod}
+   * @param returnTag the {@code @return} tag of the {@code DocumentedMethod}
    * @param signature  the signature of the method
    * @param targetClass  the class on which Toradocu was run
    * @throws NullPointerException if {@code containingClass} or {@code name} is null
