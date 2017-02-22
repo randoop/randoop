@@ -388,7 +388,7 @@ task singleJar (type: Jar) {
 
 assemble.dependsOn singleJar
 
-task distributionZip (type: Zip , dependsOn: ['singleJar', 'copyJars', 'manual']) {
+task distributionZip (type: Zip , dependsOn: ['clean', 'singleJar', 'copyJars', 'manual']) {
   description "Assemble a zip file with jar files and user documentation"
   def dirName = "$baseName-$version"
   from 'build/libs/'
