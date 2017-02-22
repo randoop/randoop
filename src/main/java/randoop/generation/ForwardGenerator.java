@@ -1,8 +1,8 @@
 package randoop.generation;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import randoop.BugInRandoopException;
@@ -226,9 +226,10 @@ public class ForwardGenerator extends AbstractGenerator {
 
     eSeq.exectime = endTime - startTime;
 
-    double weight = eSeq.sequence.getWeight(); // default
+    double initialWeight = eSeq.sequence.getWeight(); // default
     double orienteeringWeight = -1; // dummy values
     double constantMiningWeight = -1;
+    double weight = initialWeight; // weight to use
 
     // Orienteering stuff
     if (GenInputsAbstract.orienteering) {
@@ -273,39 +274,67 @@ public class ForwardGenerator extends AbstractGenerator {
     if (GenInputsAbstract.grt_debug_checks) {
       //TODO: output stuff for tests
       //TODO: make sure file isn't overwwritten over and over again
+
+      Path buildDir = Paths.get("").toAbsolutePath().normalize();
+      Path currentPath = Paths.get("");
+      String curSPath = currentPath.toAbsolutePath().toString();
+      File tempDir = new File(curSPath + "test.txt");
+
       try {
+        if (!tempDir.exists()) {
+          tempDir.createNewFile();
+        }
+        FileWriter fw = new FileWriter("test.txt", true);
+        BufferedWriter bw = new BufferedWriter(fw);
+        PrintWriter out = new PrintWriter(bw);
+
         Sequence temp = eSeq.sequence;
-        PrintWriter writer = new PrintWriter(new File("test.txt"));
+
+        PrintWriter writer = new PrintWriter(tempDir);
         StringBuilder s = new StringBuilder();
         s.append("stuff we want");
         s.append(',');
 
         s.append("Sequence:");
         s.append(temp.toString());
+        s.append(',');
+        s.append(
+            "initial sequence weight:"); // weight before GRT mods, not necessarily original initial weight
+        s.append(initialWeight);
 
         s.append("orienteering?");
         s.append(GenInputsAbstract.orienteering);
+        s.append(',');
         s.append("executionNumb:");
         s.append(sequenceExecutionNumber.get(temp));
+        s.append(',');
         s.append("sequenceSize(not sqrt):");
         s.append(temp.size());
+        s.append(',');
         s.append("execTime:");
         s.append(eSeq.exectime);
+        s.append(',');
         s.append("orienteeringWeight:");
         s.append(orienteeringWeight);
 
         s.append("constantmining?");
         s.append(GenInputsAbstract.constant_mining);
+        s.append(',');
         s.append("initialConstantsWeights:");
         s.append(initialConstantWeights.get(temp));
+        s.append(',');
         s.append("ConstantMiningWeight:");
         s.append(constantMiningWeight);
+        s.append(',');
         s.append("weight:");
         s.append(weight);
         // more
+        out.println(s.toString());
+        /*
         writer.write(s.toString());
         writer.close();
-      } catch (IOException e) {
+        */
+      } catch (Exception e) {
         e.printStackTrace();
         System.out.println("Error in writing grt-debug output");
       }
