@@ -274,66 +274,67 @@ public class ForwardGenerator extends AbstractGenerator {
     if (GenInputsAbstract.grt_debug_checks) {
       //TODO: output stuff for tests
       //TODO: make sure file isn't overwwritten over and over again
+      //TODO: faster writes
 
-      Path buildDir = Paths.get("").toAbsolutePath().normalize();
-      Path currentPath = Paths.get("");
-      String curSPath = currentPath.toAbsolutePath().toString();
-      File tempDir = new File(curSPath + "test.txt");
-
+      File tempDir = new File("test.txt");
       try {
+        FileWriter fw;
+        PrintStream out;
         if (!tempDir.exists()) {
           tempDir.createNewFile();
+          out = createTextOutputStream("test.txt"); // TODO: maybe just new FileOutputStream(..)
+        } else {
+          out = new PrintStream(new FileOutputStream("test.txt", true));
         }
-        FileWriter fw = new FileWriter("test.txt", true);
-        BufferedWriter bw = new BufferedWriter(fw);
-        PrintWriter out = new PrintWriter(bw);
 
         Sequence temp = eSeq.sequence;
 
-        PrintWriter writer = new PrintWriter(tempDir);
         StringBuilder s = new StringBuilder();
-        s.append("stuff we want");
-        s.append(',');
+        s.append("One Sequence's updates:\n");
 
-        s.append("Sequence:");
+        s.append("Sequence: ");
         s.append(temp.toString());
-        s.append(',');
+        s.append(", \t");
         s.append(
-            "initial sequence weight:"); // weight before GRT mods, not necessarily original initial weight
+            "initial sequence weight: "); // weight before GRT mods, not necessarily original initial weight
         s.append(initialWeight);
+        s.append("\n");
 
         s.append("orienteering?");
         s.append(GenInputsAbstract.orienteering);
-        s.append(',');
+        s.append(", \t");
         s.append("executionNumb:");
         s.append(sequenceExecutionNumber.get(temp));
-        s.append(',');
+        s.append(", \t");
         s.append("sequenceSize(not sqrt):");
         s.append(temp.size());
-        s.append(',');
+        s.append(", \t");
         s.append("execTime:");
         s.append(eSeq.exectime);
-        s.append(',');
+        s.append(", \t");
         s.append("orienteeringWeight:");
         s.append(orienteeringWeight);
+        s.append(", \n");
 
         s.append("constantmining?");
         s.append(GenInputsAbstract.constant_mining);
-        s.append(',');
+        s.append(", \t");
         s.append("initialConstantsWeights:");
         s.append(initialConstantWeights.get(temp));
-        s.append(',');
+        s.append(", \t");
         s.append("ConstantMiningWeight:");
         s.append(constantMiningWeight);
-        s.append(',');
+        s.append(", \n");
+
         s.append("weight:");
         s.append(weight);
+        s.append("This sequence done. \n");
         // more
         out.println(s.toString());
-        /*
-        writer.write(s.toString());
-        writer.close();
-        */
+        //bw.write(s.toString());
+
+        //writer.write(s.toString());
+        //writer.close();
       } catch (Exception e) {
         e.printStackTrace();
         System.out.println("Error in writing grt-debug output");
@@ -958,5 +959,16 @@ public class ForwardGenerator extends AbstractGenerator {
   @Override
   public int numGeneratedSequences() {
     return allSequences.size();
+  }
+
+  private static PrintStream createTextOutputStream(String fileName) {
+    try {
+      return new PrintStream(new File(fileName));
+    } catch (FileNotFoundException e) {
+      Log.out.println("Exception thrown while creating text print stream:" + fileName);
+      e.printStackTrace();
+      System.exit(1);
+      throw new Error("This can't happen");
+    }
   }
 }

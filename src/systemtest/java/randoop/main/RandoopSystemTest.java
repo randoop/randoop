@@ -2,8 +2,9 @@ package randoop.main;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import randoop.util.Log;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -816,12 +817,20 @@ public class RandoopSystemTest {
 
     options.setOption("inputlimit", "1000");
     options.addTestClass("digdog.orienteering.Trivial");
-    /*
-      ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
-      ExpectedTests expectedErrorTests = ExpectedTests.NONE;
-      generateAndTestWithCoverage(
-              testEnvironment, options, expectedRegressionTests, expectedErrorTests);
-    */
+
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+
+    generateAndTestWithCoverage(
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+
+    File tempDir = new File("test.txt");
+    File result = new File("orienteering.txt");
+    boolean success = tempDir.renameTo(result);
+    if (!success) {
+      fail("couldn't rename file");
+    }
+
     assertTrue(true);
   }
 
@@ -839,12 +848,20 @@ public class RandoopSystemTest {
 
     options.setOption("inputlimit", "1000");
     options.addTestClass("digdog.constantmining.Trivial");
-    /*
-      ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
-      ExpectedTests expectedErrorTests = ExpectedTests.NONE;
-      generateAndTestWithCoverage(
-              testEnvironment, options, expectedRegressionTests, expectedErrorTests);
-    */
+
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+
+    generateAndTestWithCoverage(
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+
+    File tempDir = new File("test.txt");
+    File result = new File("constantmining.txt");
+    boolean success = tempDir.renameTo(result);
+    if (!success) {
+      fail("couldn't rename file");
+    }
+
     assertTrue(true);
   }
 
@@ -863,12 +880,31 @@ public class RandoopSystemTest {
 
     options.setOption("inputlimit", "1000");
     options.addTestClass("digdog.orienteering.Trivial");
+
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+
     /*
-      ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
-      ExpectedTests expectedErrorTests = ExpectedTests.NONE;
-      generateAndTestWithCoverage(
-              testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+    try {
+      //FileWriter fw;
+      if (!tempDir.exists()) {
+        tempDir.createNewFile();
+        //fw = new FileWriter("test.txt");
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     */
+
+    generateAndTestWithCoverage(
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+
+    File tempDir = new File("test.txt");
+    File result = new File("harder-orienteering.txt");
+    boolean success = tempDir.renameTo(result);
+    if (!success) {
+      fail("couldn't rename file");
+    }
     assertTrue(true);
   }
 
@@ -887,12 +923,20 @@ public class RandoopSystemTest {
 
     options.setOption("inputlimit", "1000");
     options.addTestClass("digdog.constantmining.Trivial");
-    /*
-      ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
-      ExpectedTests expectedErrorTests = ExpectedTests.NONE;
-      generateAndTestWithCoverage(
-              testEnvironment, options, expectedRegressionTests, expectedErrorTests);
-    */
+
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+
+    generateAndTestWithCoverage(
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+
+    File tempDir = new File("test.txt");
+    File result = new File("harder-constantmining.txt");
+    boolean success = tempDir.renameTo(result);
+    if (!success) {
+      fail("couldn't rename file");
+    }
+
     assertTrue(true);
   }
 
@@ -1111,5 +1155,16 @@ public class RandoopSystemTest {
    */
   private RandoopRunStatus generateAndCompile(TestEnvironment environment, RandoopOptions options) {
     return generateAndCompile(environment, options, false);
+  }
+
+  private static PrintStream createTextOutputStream(String fileName) {
+    try {
+      return new PrintStream(new File(fileName));
+    } catch (FileNotFoundException e) {
+      Log.out.println("Exception thrown while creating text print stream:" + fileName);
+      e.printStackTrace();
+      System.exit(1);
+      throw new Error("This can't happen");
+    }
   }
 }
