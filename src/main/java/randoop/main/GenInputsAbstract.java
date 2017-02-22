@@ -346,17 +346,17 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * number of test candidates generated, because redundant and illegal tests
    * will be discarded.
    */
-  @Option("Maximum number of tests generated")
+  @Option("Maximum number of candidate tests generated")
   public static int inputlimit = 100000000;
 
-  /** Do not generate tests with more than this many statements */
-  @Option("Do not generate tests with more than <int> statements")
+  /** Do not generate tests with more than this many statements. */
+  @Option("Do not generate tests with more than this many statements")
   public static int maxsize = 100;
 
   /**
    * Stop generation once an error-revealing test has been generated.
    */
-  @Option("Stop test generation once an error-revealing test has been generated")
+  @Option("Stop after generating any error-revealing test")
   public static boolean stop_on_error_test = false;
 
   /**
