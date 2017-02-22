@@ -328,7 +328,7 @@ doIndividualExperiment() {
 
 doCoverage() {
     if [ $time_arg ]; then
-        time_limits=$specified_times
+        time_limits=${specified_times[*]}
     elif [ $2 = "Complete" ]; then
         time_limits=(2 10 30 60)
     else
@@ -535,7 +535,7 @@ doFaultDetection() {
                         adjustTestNames
                         packageTestsForFaultDetection
                         countFaultDetection
-                        if grep -Fxq "Fail" $fault_data ; then
+                        if grep -Fxq "Fail" "$fault_data" ; then
                             log "found failing test on ${project} ${version}"
                             i=5
                         fi
