@@ -221,23 +221,42 @@ public class ForwardGenerator extends AbstractGenerator {
 
     eSeq.exectime = endTime - startTime;
 
+    double weight = eSeq.sequence.getWeight(); // default
+
     // Orienteering stuff
     if (GenInputsAbstract.orienteering) {
       Sequence temp = eSeq.sequence;
+
+      // track # times a sequence has been executed
       if (sequenceExecutionNumber.containsKey(temp)) {
         sequenceExecutionNumber.put(temp, sequenceExecutionNumber.get(temp) + 1);
       } else {
         sequenceExecutionNumber.put(temp, 1);
       }
-      double weight =
-          1.0 / (eSeq.exectime * sequenceExecutionNumber.get(temp) * Math.sqrt(temp.size()));
-      if (GenInputsAbstract.constant_mining) {
-        if (initialConstantWeights.containsKey(temp)) {
-          weight *= initialConstantWeights.get(temp);
+
+      // Orienteering's weight formula
+      weight = 1.0 / (eSeq.exectime * sequenceExecutionNumber.get(temp) * Math.sqrt(temp.size()));
+    }
+
+    // Incorporate Constant mining weights on top
+    if (GenInputsAbstract.constant_mining) {
+      Sequence temp = eSeq.sequence;
+
+      if (initialConstantWeights.containsKey(temp)) {
+        if (GenInputsAbstract.orienteering) {
+          // TODO: is this what we really want?
+          weight *= initialConstantWeights.get(temp); // combine the td-idf formula w/Orienteering
+        } else {
+          weight =
+              initialConstantWeights.get(
+                  temp); // TODO: do we want to incorporate with Randoop's default weight?
         }
       }
-      weightMap.put(eSeq.sequence, weight);
     }
+
+    weightMap.put(eSeq.sequence, weight); // add a weight no matter what
+    // TODO: might screw things up
+    // TODO: but, we need to think about (when only doing C.M.) how to incorporate C.M. weights
 
     startTime = endTime; // reset start time.
     processSequence(eSeq);
@@ -789,12 +808,8 @@ public class ForwardGenerator extends AbstractGenerator {
       // a
       // randomly-chosen sequence from the list.
       Sequence chosenSeq;
-      /*
-      double weight;
-      weight = 1.0 / (sum from i->k of seq.exec_time * sqrt(seq.meth_size));
-      chosenSeq = Randomness.randomMemberOurWeightedSelection
-      */
 
+      // Orienteering and Constant mining Stuff
       if (GenInputsAbstract.orienteering || GenInputsAbstract.constant_mining) {
         chosenSeq = Randomness.randomMemberWeighted(l, weightMap);
       } else {
