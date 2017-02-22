@@ -16,9 +16,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import plume.Pair;
 import randoop.condition.Condition;
 import randoop.condition.ConditionCollection;
 import randoop.reflection.TypeNames;
+import randoop.test.ExpectedExceptionGenerator;
+import randoop.test.PostConditionCheckGenerator;
+import randoop.test.TestCheckGenerator;
 import randoop.types.ClassOrInterfaceType;
 
 /**
@@ -30,19 +34,21 @@ public class ToradocuConditionCollection implements ConditionCollection {
   private final Map<AccessibleObject, List<Condition>> conditionMap;
 
   /** The condition-exception-type pairs for constructors/methods */
-  private final Map<AccessibleObject, Map<Condition, ClassOrInterfaceType>> exceptionMap;
+  private final Map<AccessibleObject, Map<Condition, Pair<TestCheckGenerator, TestCheckGenerator>>>
+      postconditionMap;
 
   /**
    * Creates a {@link ToradocuConditionCollection} for the given preconditions and throws-conditions.
    *
    * @param conditionMap  the precondition map
-   * @param exceptionMap  the throws-conditions map
+   * @param postconditionMap  the throws-conditions map
    */
   private ToradocuConditionCollection(
       Map<AccessibleObject, List<Condition>> conditionMap,
-      Map<AccessibleObject, Map<Condition, ClassOrInterfaceType>> exceptionMap) {
+      Map<AccessibleObject, Map<Condition, Pair<TestCheckGenerator, TestCheckGenerator>>>
+          postconditionMap) {
     this.conditionMap = conditionMap;
-    this.exceptionMap = exceptionMap;
+    this.postconditionMap = postconditionMap;
   }
 
   /**
@@ -53,52 +59,117 @@ public class ToradocuConditionCollection implements ConditionCollection {
    */
   public static ToradocuConditionCollection createToradocuConditions(List<File> filenames) {
     Map<AccessibleObject, List<Condition>> conditionMap = new LinkedHashMap<>();
-    Map<AccessibleObject, Map<Condition, ClassOrInterfaceType>> exceptionMap =
-        new LinkedHashMap<>();
+    Map<AccessibleObject, Map<Condition, Pair<TestCheckGenerator, TestCheckGenerator>>>
+        postconditionMap = new LinkedHashMap<>();
     for (File filename : filenames) {
       List<DocumentedMethod> methodList = read(filename);
       for (int methodIndex = 0; methodIndex < methodList.size(); methodIndex++) {
         DocumentedMethod method = methodList.get(methodIndex);
-        if (method.paramTags().isEmpty() && method.throwsTags().isEmpty()) {
+        if (method.paramTags().isEmpty()
+            && method.throwsTags().isEmpty()
+            && method.returnTag() == null) {
           continue;
         }
         Class<?> declaringClass = getClass(method.getContainingClass());
         Class<?>[] parameterTypes = getSubjectMethodParameters(method);
+        Class<?>[] parameters = parameterTypes;
+        if (!method.isConstructor()) {
+          parameters = createConditionMethodParameters(declaringClass, parameterTypes);
+        }
         AccessibleObject subject = getCallableObject(declaringClass, method, parameterTypes);
 
         assert conditionMap.get(subject) == null : "do not visit a method more than once";
+        Class<?> conditionClass = getConditionClass(method);
 
         List<Tag> paramTagList = new ArrayList<Tag>(method.paramTags());
         List<Condition> conditionList = new ArrayList<>();
         for (int tagIndex = 0; tagIndex < paramTagList.size(); tagIndex++) {
           Tag paramTag = paramTagList.get(tagIndex);
-          String methodName = buildConditionMethodName(paramTag, tagIndex, methodIndex);
-          Method conditionMethod =
-              getConditionMethod(
-                  getConditionClass(method), methodName, paramTag, declaringClass, parameterTypes);
-          if (conditionMethod != null) {
-            conditionList.add(new ToradocuCondition(paramTag, conditionMethod));
+          String tagCondition = paramTag.getCondition();
+          if (tagCondition != null && !tagCondition.isEmpty()) {
+            String methodName = buildConditionMethodName(paramTag, tagIndex, methodIndex);
+            Method conditionMethod = getConditionMethod(conditionClass, methodName, parameters);
+            if (conditionMethod != null) {
+              conditionList.add(new ToradocuCondition(paramTag, conditionMethod));
+            }
           }
         }
         conditionMap.put(subject, conditionList);
 
-        Map<Condition, ClassOrInterfaceType> throwsMap = new LinkedHashMap<>();
+        Map<Condition, Pair<TestCheckGenerator, TestCheckGenerator>> throwsMap =
+            new LinkedHashMap<>();
         List<Tag> throwsTagList = new ArrayList<Tag>(method.throwsTags());
         for (int tagIndex = 0; tagIndex < throwsTagList.size(); tagIndex++) {
           Tag throwsTag = throwsTagList.get(tagIndex);
-          String methodName = buildConditionMethodName(throwsTag, tagIndex, methodIndex);
-          Method conditionMethod =
-              getConditionMethod(
-                  getConditionClass(method), methodName, throwsTag, declaringClass, parameterTypes);
-          if (conditionMethod != null) {
-            ClassOrInterfaceType exceptionType = getType(((ThrowsTag) throwsTag).exception());
-            throwsMap.put(new ToradocuCondition(throwsTag, conditionMethod), exceptionType);
+          String tagCondition = throwsTag.getCondition();
+          if (tagCondition != null && !tagCondition.isEmpty()) {
+            String methodName = buildConditionMethodName(throwsTag, tagIndex, methodIndex);
+            Method conditionMethod = getConditionMethod(conditionClass, methodName, parameters);
+            if (conditionMethod != null) {
+              ClassOrInterfaceType exceptionType = getType(((ThrowsTag) throwsTag).exception());
+              ToradocuCondition condition = new ToradocuCondition(throwsTag, conditionMethod);
+              throwsMap.put(
+                  condition,
+                  new Pair<TestCheckGenerator, TestCheckGenerator>(
+                      new ExpectedExceptionGenerator(exceptionType, condition.getComment()), null));
+            }
           }
         }
-        exceptionMap.put(subject, throwsMap);
+
+        if (method.returnTag() != null) {
+          ReturnTag returnTag = method.returnTag();
+          String tagCondition = returnTag.getCondition();
+          String[] conditionToks = tagCondition.split("[?:]");
+          String preconditionString = conditionToks[0].trim();
+          if (conditionToks.length >= 2 && !conditionToks[0].trim().isEmpty()) {
+            System.out.println("condition " + tagCondition);
+            String preMethodName = buildConditionMethodName(returnTag, 0, methodIndex, "pre");
+            Method preconditionMethod =
+                getConditionMethod(conditionClass, preMethodName, parameters);
+
+            if (preconditionMethod != null) {
+              ToradocuReturnCondition precondition =
+                  new ToradocuReturnCondition(returnTag, preconditionString, preconditionMethod);
+              String postTrueMethodName =
+                  buildConditionMethodName(returnTag, 0, methodIndex, "truepost");
+              Method postTrueConditionMethod =
+                  getConditionMethod(conditionClass, postTrueMethodName, parameters);
+
+              if (postTrueConditionMethod != null) {
+                ToradocuReturnCondition truePostCondition =
+                    new ToradocuReturnCondition(
+                        returnTag, conditionToks[1].trim(), postTrueConditionMethod);
+                if (conditionToks.length == 3) {
+                  String postFalseMethodName =
+                      buildConditionMethodName(returnTag, 0, methodIndex, "falsepost");
+                  Method postFalseConditionMethod =
+                      getConditionMethod(conditionClass, postFalseMethodName, parameters);
+                  if (postFalseConditionMethod != null) {
+                    ToradocuReturnCondition falsePostCondition =
+                        new ToradocuReturnCondition(
+                            returnTag, conditionToks[2].trim(), postFalseConditionMethod);
+                    throwsMap.put(
+                        precondition,
+                        new Pair<TestCheckGenerator, TestCheckGenerator>(
+                            new PostConditionCheckGenerator(truePostCondition),
+                            new PostConditionCheckGenerator(falsePostCondition)));
+                    //condition is "precondition ? truePostCondition : falsePostCondition"
+                  } else {
+                    //condition is "precondition ? truePostCondition : true"
+                    throwsMap.put(
+                        precondition,
+                        new Pair<TestCheckGenerator, TestCheckGenerator>(
+                            new PostConditionCheckGenerator(truePostCondition), null));
+                  }
+                }
+              }
+            }
+          }
+        }
+        postconditionMap.put(subject, throwsMap);
       }
     }
-    return new ToradocuConditionCollection(conditionMap, exceptionMap);
+    return new ToradocuConditionCollection(conditionMap, postconditionMap);
   }
 
   /**
@@ -121,8 +192,9 @@ public class ToradocuConditionCollection implements ConditionCollection {
    * @param member  either a {@code java.lang.reflect.Method} or {@code java.lang.reflect.ConstructorCall}
    * @return the map of throws-conditions for the given constructor/method
    */
-  public Map<Condition, ClassOrInterfaceType> getThrowsConditions(AccessibleObject member) {
-    return exceptionMap.get(member);
+  public Map<Condition, Pair<TestCheckGenerator, TestCheckGenerator>> getThrowsConditions(
+      AccessibleObject member) {
+    return postconditionMap.get(member);
   }
 
   /**
@@ -174,31 +246,20 @@ public class ToradocuConditionCollection implements ConditionCollection {
    *
    * @param conditionClass  the enclosing class of the condition method
    * @param methodName  the name of the condition method
-   * @param tag  the tag to which the condition belongs
-   * @param declaringClass  the declaring class for the subject method
-   * @param subjectParameters  the parameter types for the subject method
+   * @param parameters  the parameter types for the subject method
    * @return the reflective method object if the method has a condition
    */
   private static Method getConditionMethod(
-      Class<?> conditionClass,
-      String methodName,
-      Tag tag,
-      Class<?> declaringClass,
-      Class<?>[] subjectParameters) {
+      Class<?> conditionClass, String methodName, Class<?>[] parameters) {
     Method conditionMethod = null;
-    String condition = tag.getCondition();
-    if (condition != null && !condition.isEmpty()) {
-      @SuppressWarnings("rawtypes")
-      Class[] parameters = createConditionMethodParameters(declaringClass, subjectParameters);
-      try {
-        conditionMethod = conditionClass.getMethod(methodName, parameters);
-      } catch (NoSuchMethodException e) {
-        throw new IllegalArgumentException(
-            "Unable to find Toradocu condition method "
-                + methodName
-                + " in class "
-                + conditionClass.getName());
-      }
+    try {
+      conditionMethod = conditionClass.getMethod(methodName, parameters);
+    } catch (NoSuchMethodException e) {
+      throw new IllegalArgumentException(
+          "Unable to find Toradocu condition method "
+              + methodName
+              + " in class "
+              + conditionClass.getName());
     }
     return conditionMethod;
   }
@@ -317,6 +378,11 @@ public class ToradocuConditionCollection implements ConditionCollection {
     return "m" + methodIndex + "_" + tagKindString(tag) + tagIndex;
   }
 
+  private static String buildConditionMethodName(
+      Tag tag, int tagIndex, int methodIndex, String methodQualifier) {
+    return "m" + "_" + methodQualifier + methodIndex + "_" + tagKindString(tag) + tagIndex;
+  }
+
   /**
    * Returns a string representing the type of the given tag.
    *
@@ -331,6 +397,8 @@ public class ToradocuConditionCollection implements ConditionCollection {
         return "p";
       case THROWS:
         return "t";
+      case RETURN:
+        return "r";
       default:
         throw new IllegalStateException("Tag class " + tag.getClass() + " not supported.");
     }

@@ -4,6 +4,8 @@ import java.lang.reflect.AccessibleObject;
 import java.util.List;
 import java.util.Map;
 
+import plume.Pair;
+import randoop.test.TestCheckGenerator;
 import randoop.types.ClassOrInterfaceType;
 
 /**
@@ -27,5 +29,6 @@ public interface ConditionCollection {
    * @param member  either a {@code java.lang.reflect.Method} or {@code java.lang.reflect.ConstructorCall}
    * @return the list of throws conditions for the given method or constructor
    */
-  Map<Condition, ClassOrInterfaceType> getThrowsConditions(AccessibleObject member);
+  Map<Condition, Pair<TestCheckGenerator, TestCheckGenerator>> getThrowsConditions(
+      AccessibleObject member);
 }

@@ -23,6 +23,7 @@ import randoop.condition.ConditionCollection;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
+import randoop.generation.RandoopGenerationError;
 import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
 import randoop.input.toradocu.ToradocuConditionCollection;
@@ -402,6 +403,13 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     } catch (RandoopInstantiationError e) {
       System.out.printf("%nError instantiating operation: %n%s%n", e.getOpName());
+      System.out.printf("%s%n", e.getException());
+      e.printStackTrace();
+      System.exit(1);
+    } catch (RandoopGenerationError e) {
+      System.out.printf(
+          "%nError in generation with operation: %n%s%n", e.getInstantiatedOperation());
+      System.out.printf("Operation reflection name: %s%n", e.getOperationName());
       System.out.printf("%s%n", e.getException());
       e.printStackTrace();
       System.exit(1);

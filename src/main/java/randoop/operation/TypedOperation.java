@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import plume.Pair;
 import randoop.ExecutionOutcome;
@@ -16,6 +17,7 @@ import randoop.condition.Condition;
 import randoop.field.AccessibleField;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
+import randoop.test.TestCheckGenerator;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GenericClassType;
@@ -52,7 +54,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   private List<Condition> preconditions;
 
   /** The throws-conditions for this operation */
-  private Map<Condition, ClassOrInterfaceType> throwsConditions;
+  private Map<Condition, Pair<TestCheckGenerator, TestCheckGenerator>> postconditions;
 
   /**
    * Create typed operation for the given {@link Operation}.
@@ -66,7 +68,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     this.inputTypes = inputTypes;
     this.outputType = outputType;
     this.preconditions = new ArrayList<>();
-    this.throwsConditions = new HashMap<>();
+    this.postconditions = new HashMap<>();
   }
 
   @Override
@@ -549,18 +551,21 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Checks whether this operation has any {@code throws} clause that is satisfied by the argument
-   * values, and if so returns the corresponding {@code Throwable}.
+   * Checks whether this operation has a postcondition clause that is satisfied by the argument
+   * values, and if so returns the corresponding {@link TestCheckGenerator}.
    *
    * @param values  the argument values
-   * @return the type of the exception whose condition is satisfied by the values
+   * @return the {@link TestCheckGenerator} to test postcondition, based on precondition satisfied by the values
    */
-  public Pair<Condition, ClassOrInterfaceType> getExpectedThrows(Object[] values) {
+  public TestCheckGenerator getPostCheckGenerator(Object[] values) {
     Object[] args = fixArguments(values);
-    for (Map.Entry<Condition, ClassOrInterfaceType> entry : throwsConditions.entrySet()) {
+    for (Map.Entry<Condition, Pair<TestCheckGenerator, TestCheckGenerator>> entry :
+        postconditions.entrySet()) {
       Condition throwsCondition = entry.getKey();
       if (throwsCondition.check(args)) {
-        return new Pair<>(entry.getKey(), entry.getValue());
+        return entry.getValue().a;
+      } else {
+        return entry.getValue().b;
       }
     }
     return null;
@@ -589,9 +594,10 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     }
   }
 
-  public void addConditions(Map<Condition, ClassOrInterfaceType> throwsConditions) {
-    if (throwsConditions != null) {
-      this.throwsConditions.putAll(throwsConditions);
+  public void addConditions(
+      Map<Condition, Pair<TestCheckGenerator, TestCheckGenerator>> conditions) {
+    if (conditions != null) {
+      this.postconditions.putAll(conditions);
     }
   }
 }
