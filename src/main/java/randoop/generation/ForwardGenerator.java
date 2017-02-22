@@ -223,6 +223,10 @@ public class ForwardGenerator extends AbstractGenerator {
 
     double weight = eSeq.sequence.getWeight(); // default
 
+    if (GenInputsAbstract.grt_debug_checks) {
+      //TODO: output stuff for tests
+    }
+
     // Orienteering stuff
     if (GenInputsAbstract.orienteering) {
       Sequence temp = eSeq.sequence;

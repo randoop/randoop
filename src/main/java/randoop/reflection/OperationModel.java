@@ -193,6 +193,9 @@ public class OperationModel {
 
   // TODO test
   public void addClassLiteralsGRT(ComponentManager compMgr, List<String> literalsFile) {
+    if (GenInputsAbstract.grt_debug_checks) {
+      //TODO: output stuff for tests
+    }
     for (String filename : literalsFile) {
       MultiMap<ClassOrInterfaceType, Sequence> literalmap;
       if (filename.equals("CLASSES")) {

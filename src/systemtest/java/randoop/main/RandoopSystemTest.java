@@ -802,6 +802,100 @@ public class RandoopSystemTest {
         is(equalTo(runStatus.regressionTestCount)));
   }
 
+  // TODO: finish
+  @Test
+  public void runOrienteeringTest() {
+    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("orienteering");
+
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("");
+    options.setRegressionBasename("OrienteeringReg");
+    options.setErrorBasename("OrienteeringErr");
+    options.setFlag("orienteering");
+    options.setFlag("grt-debug-checks");
+
+    options.setOption("inputlimit", "1000");
+    options.addTestClass("digdog.orienteering.Trivial");
+    /*
+      ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+      ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+      generateAndTestWithCoverage(
+              testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+    */
+    assertTrue(true);
+  }
+
+  // TODO: finish
+  @Test
+  public void runConstantMiningTest() {
+    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("constantmining");
+
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("");
+    options.setRegressionBasename("ConstantMiningReg");
+    options.setErrorBasename("ConstantMiningErr");
+    options.setFlag("constant-mining");
+    options.setFlag("grt-debug-checks");
+
+    options.setOption("inputlimit", "1000");
+    options.addTestClass("digdog.constantmining.Trivial");
+    /*
+      ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+      ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+      generateAndTestWithCoverage(
+              testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+    */
+    assertTrue(true);
+  }
+
+  // TODO: finish
+  @Test
+  public void runHarderOrienteeringTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("harder-orienteering");
+
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("");
+    options.setRegressionBasename("HarderOrienteeringeg");
+    options.setErrorBasename("HarderOrienteeringErr");
+    options.setFlag("orienteering");
+    options.setFlag("grt-debug-checks");
+
+    options.setOption("inputlimit", "1000");
+    options.addTestClass("digdog.orienteering.Trivial");
+    /*
+      ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+      ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+      generateAndTestWithCoverage(
+              testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+    */
+    assertTrue(true);
+  }
+
+  // TODO: finish
+  @Test
+  public void runHarderConstantMiningTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("harder-constantmining");
+
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("");
+    options.setRegressionBasename("HarderConstantMiningReg");
+    options.setErrorBasename("HarderConstantMiningErr");
+    options.setFlag("constant-mining");
+    options.setFlag("grt-debug-checks");
+
+    options.setOption("inputlimit", "1000");
+    options.addTestClass("digdog.constantmining.Trivial");
+    /*
+      ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+      ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+      generateAndTestWithCoverage(
+              testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+    */
+    assertTrue(true);
+  }
+
   /* ------------------------------ utility methods ---------------------------------- */
 
   /**
