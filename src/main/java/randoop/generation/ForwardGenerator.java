@@ -162,27 +162,17 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (GenInputsAbstract.constant_mining) {
 
-      for (Map.Entry<Sequence, Integer> f : tfFrequency.entrySet()) {
-        System.out.println(
-            "Value in tfFrequency: " + f.getKey().toString() + " " + f.getValue().toString());
-      }
       int num_constants = 0;
       for (Sequence s : tfFrequency.keySet()) {
         num_constants += tfFrequency.get(s);
       }
       for (Map.Entry<Sequence, Integer> m : componentManager.getFrequencyMap().entrySet()) {
-        System.out.println(
-            "Value of frequencies in frequencyMap:" + m.getKey().toString() + " " + m.getValue());
+
         double weight =
             ((double) tfFrequency.get(m.getKey()) / num_constants)
                 * Math.log((double) (numClasses + 1) / ((numClasses + 1) - m.getValue()));
         weightMap.put(m.getKey(), weight);
         initialConstantWeights.put(m.getKey(), weight);
-      }
-
-      for (Map.Entry<Sequence, Double> f : initialConstantWeights.entrySet()) {
-        System.out.println(
-            "Value of constantWeights:" + f.getKey().toString() + " " + f.getValue());
       }
     }
   }

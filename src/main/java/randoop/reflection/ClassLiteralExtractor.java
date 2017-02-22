@@ -49,10 +49,8 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
         literalMap.add(constantType, seq);
         if (GenInputsAbstract.constant_mining) {
           if (tfFrequency.containsKey(seq)) {
-            System.out.println("Adding a repeated constant");
             tfFrequency.put(seq, tfFrequency.get(seq) + 1);
           } else {
-            System.out.println("New constant");
             tfFrequency.put(seq, 1);
           }
         }
