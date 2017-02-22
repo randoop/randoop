@@ -1,5 +1,8 @@
 package randoop.generation;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 import randoop.BugInRandoopException;
@@ -222,10 +225,8 @@ public class ForwardGenerator extends AbstractGenerator {
     eSeq.exectime = endTime - startTime;
 
     double weight = eSeq.sequence.getWeight(); // default
-
-    if (GenInputsAbstract.grt_debug_checks) {
-      //TODO: output stuff for tests
-    }
+    double orienteeringWeight = -1; // dummy values
+    double constantMiningWeight = -1;
 
     // Orienteering stuff
     if (GenInputsAbstract.orienteering) {
@@ -239,7 +240,9 @@ public class ForwardGenerator extends AbstractGenerator {
       }
 
       // Orienteering's weight formula
-      weight = 1.0 / (eSeq.exectime * sequenceExecutionNumber.get(temp) * Math.sqrt(temp.size()));
+      orienteeringWeight =
+          1.0 / (eSeq.exectime * sequenceExecutionNumber.get(temp) * Math.sqrt(temp.size()));
+      weight = orienteeringWeight;
     }
 
     // Incorporate Constant mining weights on top
@@ -247,20 +250,64 @@ public class ForwardGenerator extends AbstractGenerator {
       Sequence temp = eSeq.sequence;
 
       if (initialConstantWeights.containsKey(temp)) {
+        constantMiningWeight = initialConstantWeights.get(temp);
         if (GenInputsAbstract.orienteering) {
           // TODO: is this what we really want?
-          weight *= initialConstantWeights.get(temp); // combine the td-idf formula w/Orienteering
+          weight *= constantMiningWeight; // combine the td-idf formula w/Orienteering
         } else {
           weight =
-              initialConstantWeights.get(
-                  temp); // TODO: do we want to incorporate with Randoop's default weight?
+              constantMiningWeight; // TODO: do we want to incorporate with Randoop's default weight?
         }
       }
     }
 
+    assert weight >= 0;
+    assert eSeq.sequence != null;
+
     weightMap.put(eSeq.sequence, weight); // add a weight no matter what
     // TODO: might screw things up
     // TODO: but, we need to think about (when only doing C.M.) how to incorporate C.M. weights
+
+    if (GenInputsAbstract.grt_debug_checks) {
+      //TODO: output stuff for tests
+      //TODO: make sure file isn't overwwritten over and over again
+      try {
+        Sequence temp = eSeq.sequence;
+        PrintWriter writer = new PrintWriter(new File("test.txt"));
+        StringBuilder s = new StringBuilder();
+        s.append("stuff we want");
+        s.append(',');
+
+        s.append("Sequence:");
+        s.append(temp.toString());
+
+        s.append("orienteering?");
+        s.append(GenInputsAbstract.orienteering);
+        s.append("executionNumb:");
+        s.append(sequenceExecutionNumber.get(temp));
+        s.append("sequenceSize(not sqrt):");
+        s.append(temp.size());
+        s.append("execTime:");
+        s.append(eSeq.exectime);
+        s.append("orienteeringWeight:");
+        s.append(orienteeringWeight);
+
+        s.append("constantmining?");
+        s.append(GenInputsAbstract.constant_mining);
+        s.append("initialConstantsWeights:");
+        s.append(initialConstantWeights.get(temp));
+        s.append("ConstantMiningWeight:");
+        s.append(constantMiningWeight);
+        s.append("weight:");
+        s.append(weight);
+        // more
+        writer.write(s.toString());
+        writer.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+        System.out.println("Error in writing grt-debug output");
+      }
+    }
 
     startTime = endTime; // reset start time.
     processSequence(eSeq);
