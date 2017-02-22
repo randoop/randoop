@@ -339,7 +339,16 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     // add flags here
-    InputsAndSuccessFlag sequences = selectInputs(operation);
+    InputsAndSuccessFlag sequences;
+    try {
+      sequences = selectInputs(operation);
+    } catch (AssertionError e) {
+      String opName = operation.getOperation().getReflectionObject().toString();
+      throw new RandoopGenerationError(opName, operation, e);
+    }
+    if (sequences == null) {
+      return null;
+    }
 
     if (!sequences.success) {
       if (Log.isLoggingOn()) Log.logLine("Failed to find inputs for statement.");
