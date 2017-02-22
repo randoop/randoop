@@ -171,6 +171,8 @@ public class ForwardGenerator extends AbstractGenerator {
         num_constants += tfFrequency.get(s);
       }
       for (Map.Entry<Sequence, Integer> m : componentManager.getFrequencyMap().entrySet()) {
+        System.out.println(
+            "Value of frequencies in frequencyMap:" + m.getKey().toString() + " " + m.getValue());
         double weight =
             ((double) tfFrequency.get(m.getKey()) / num_constants)
                 * Math.log((double) (numClasses + 1) / ((numClasses + 1) - m.getValue()));
