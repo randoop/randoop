@@ -1,30 +1,21 @@
-Version 3.0.9, released February 6, 2017
+Version 3.0.9, released February 22, 2017
 
 Adds
-- an option --toradocu-conditions to input Toradocu generated conditions derived
-  from javadoc @param and @throws tags in class documentation. These conditions
-  can override classification of generated tests by exception.
-- an option --stop-on-error-test that stops test generation once an
-  error-revealing test is generated.  This is useful during cycles of fixing
-  errors discovered by Randoop.
+- New option --stop-on-error-test stops test generation once an
+  error-revealing test is generated.  This is useful during cycles of
+  fixing errors discovered by Randoop.
+
+Classpath error message explains why a class is not found.
 
 Fixes
-- failure to instantiate capture conversion variables for wildcards with type
-  variable as a bound. (#144)
-- overly conservative test for recursive type bounds that was preventing
-  capture conversion on wildcard types with complex bounds. (#143)
-- broken assignability test on parameterized types with wildcard arguments.
-- generation of uncompilable code due to an inaccessible type that was a type
-  argument to a parameterized type occurring as the type of a formal parameter
-  of a method. (#128)
-- potential variable name clash when a type name ends in a digit. (#132)
-- failure in certain situations where a generic method or constructor has a
+- Many fixes, mostly related to Java generics, including the following.
+- Fixed issues: 123, 128, 132, 139, 141, 143, 144, 145.
+- Fixed assignability for parameterized types with wildcard arguments.
+- Fixed failure when a generic method or constructor has a
   argument type that has a wildcard with a bound that includes the type
   parameter of the generic (e.g., Iterable<? extends T>).
 
-Changes classpath error message to explain alternatives for why a class with
-  a given classname is not found.
-
+Thanks to Marko Dimjasevic for issue reports.
 
 
 Version 3.0.8, released December 8, 2016
