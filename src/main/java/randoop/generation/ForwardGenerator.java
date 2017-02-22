@@ -46,7 +46,7 @@ public class ForwardGenerator extends AbstractGenerator {
   private final Map<WeightedElement, Integer> sequenceExecutionNumber =
       new HashMap<WeightedElement, Integer>();
 
-  private final Map<WeightedElement, Double> initialConstantWeights = new HashMap<>();
+  private final Map<Sequence, Double> initialConstantWeights = new HashMap<>();
 
   /** Sequences that are used in other sequences (and are thus redundant) */
   private Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
@@ -163,7 +163,7 @@ public class ForwardGenerator extends AbstractGenerator {
     if (GenInputsAbstract.constant_mining) {
 
       for (Map.Entry<Sequence, Integer> f : tfFrequency.entrySet()) {
-        System.out.println(f.getKey() + " " + f.getValue().toString());
+        System.out.println(f.getKey().toString() + " " + f.getValue().toString());
       }
       int num_constants = 0;
       for (Sequence s : tfFrequency.keySet()) {
@@ -177,7 +177,7 @@ public class ForwardGenerator extends AbstractGenerator {
         initialConstantWeights.put(m.getKey(), weight);
       }
 
-      for (Map.Entry<WeightedElement, Double> f : initialConstantWeights.entrySet()) {
+      for (Map.Entry<Sequence, Double> f : initialConstantWeights.entrySet()) {
         System.out.println(f.getKey().toString() + " " + f.getValue());
       }
     }
