@@ -10,24 +10,20 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import plume.Pair;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
-import randoop.condition.Condition;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.test.Check;
-import randoop.test.ExpectedExceptionGenerator;
 import randoop.test.ExtendGenerator;
 import randoop.test.InvalidChecks;
 import randoop.test.InvalidValueCheck;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
-import randoop.types.ClassOrInterfaceType;
 import randoop.types.ReferenceType;
 import randoop.types.Type;
 import randoop.util.IdentityMultiMap;
@@ -299,12 +295,10 @@ public class ExecutableSequence {
             return;
           }
           // if the operation is expected to throw an exception for these inputs
-          Pair<Condition, ClassOrInterfaceType> expected = operation.getExpectedThrows(inputValues);
+          TestCheckGenerator expected = operation.getPostCheckGenerator(inputValues);
           if (expected != null) {
-            //then extend TestCheckGenerator gen with check for expected exception
-            gen =
-                new ExtendGenerator(
-                    new ExpectedExceptionGenerator(expected.b, expected.a.getComment()), gen);
+            //then extend TestCheckGenerator gen with check for postcondition/exception
+            gen = new ExtendGenerator(expected, gen);
           }
         }
       }
