@@ -161,6 +161,10 @@ public class ForwardGenerator extends AbstractGenerator {
     initializeRuntimePrimitivesSeen();
 
     if (GenInputsAbstract.constant_mining) {
+
+      for (Map.Entry<Sequence, Integer> f : tfFrequency.entrySet()) {
+        System.out.println(f.getKey() + " " + f.getValue().toString());
+      }
       int num_constants = 0;
       for (Sequence s : tfFrequency.keySet()) {
         num_constants += tfFrequency.get(s);
@@ -171,6 +175,10 @@ public class ForwardGenerator extends AbstractGenerator {
                 * Math.log((double) (numClasses + 1) / ((numClasses + 1) - m.getValue()));
         weightMap.put(m.getKey(), weight);
         initialConstantWeights.put(m.getKey(), weight);
+      }
+
+      for (Map.Entry<WeightedElement, Double> f : initialConstantWeights.entrySet()) {
+        System.out.println(f.getKey().toString() + " " + f.getValue());
       }
     }
   }
