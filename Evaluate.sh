@@ -535,7 +535,7 @@ doFaultDetection() {
                         adjustTestNames
                         packageTestsForFaultDetection
                         countFaultDetection
-                        if grep -Fxq "Fail" $fault_data ; then
+                        if grep -Fxq "Fail" "$fault_data" ; then
                             log "found failing test on ${project} ${version}"
                             i=5
                         fi
