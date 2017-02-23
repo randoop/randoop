@@ -632,15 +632,28 @@ merging new work with the master branch.
     all along, but double-check by running a command such as this:
     <pre>git log v$OLDVERSION..</pre>
   </li>
-  <li>Ensure that the manual HTML is valid; commit any necessary changes:
+  <li>Ensure that the manual HTML is valid:
     <pre>./gradlew manual validateManual</pre>
+  </li>
+  <li>
+    Commit any changes.
   </li>
 </ol>
 <p>
   Once there are no more changes to make:
 </p>
 <ol>
-  <li>Commit and push any changes, and make a
+  <li>Create the distribution files with <code>./gradlew clean buildRelease</code>.
+    This will rebuild the project site in the <code>docs</code> directory.
+  </li>
+  <li>
+    Check that there are no broken links on the published website by running the
+    task <code>checklink</code>.
+  </li>
+  <li>
+    Commit and push those changes.
+  </li>
+  <li>Make a
     repository tag:
     <pre>
   git commit . -m "Update version to $NEWVERSION"
@@ -648,14 +661,6 @@ merging new work with the master branch.
   git tag -a v$NEWVERSION -m "Randoop version $NEWVERSION"
   git push --tags</pre>
     <!-- The gh-pages branch is not tagged. -->
-  </li>
-  <li>Create the distribution files with <code>./gradlew clean buildRelease</code>.
-    This will rebuild the project site in the <code>docs</code> directory.
-    Commit and push those changes.
-  </li>
-  <li>
-    Check that there are no broken links on the published website by running the
-    task <code>checklink</code>.
   </li>
   <li>Follow the
     <a href="https://help.github.com/articles/creating-releases/">GitHub instructions for creating a release</a>;
