@@ -1,22 +1,18 @@
 package randoop.generation;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
+import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.TypeInstantiator;
-import randoop.sequence.ClassLiterals;
-import randoop.sequence.PackageLiterals;
-import randoop.sequence.Sequence;
-import randoop.sequence.SequenceCollection;
+import randoop.sequence.*;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.PrimitiveType;
 import randoop.types.Type;
 import randoop.util.ListOfLists;
+import randoop.util.Randomness;
 import randoop.util.SimpleList;
 
 /**
@@ -50,6 +46,8 @@ public class ComponentManager {
   // and seed sequences.
   private SequenceCollection gralComponents;
 
+  private Map<Sequence, Integer> frequencyMap;
+
   /**
    * The subset of the sequences that were given pre-generation to the component
    * manager (via its constructor).
@@ -79,6 +77,9 @@ public class ComponentManager {
    * Create an empty component manager, with an empty seed sequence set.
    */
   public ComponentManager() {
+    if (GenInputsAbstract.constant_mining) {
+      frequencyMap = new LinkedHashMap<>();
+    }
     gralComponents = new SequenceCollection();
     gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
   }
@@ -92,6 +93,9 @@ public class ComponentManager {
    *          is considered empty.
    */
   public ComponentManager(Collection<Sequence> generalSeeds) {
+    if (GenInputsAbstract.constant_mining) {
+      frequencyMap = new LinkedHashMap<>();
+    }
     Set<Sequence> seedSet = new LinkedHashSet<>(generalSeeds.size());
     seedSet.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSet);
@@ -119,7 +123,6 @@ public class ComponentManager {
     if (classLiterals == null) {
       classLiterals = new ClassLiterals();
     }
-    classLiterals.addSequence(type, seq);
   }
 
   /**
@@ -139,10 +142,17 @@ public class ComponentManager {
   /**
    * Add a component sequence.
    *
-   * @param sequence the sequence
+   * @param seq the sequence
    */
-  public void addGeneratedSequence(Sequence sequence) {
-    gralComponents.add(sequence);
+  public void addGeneratedSequence(Sequence seq) {
+    gralComponents.add(seq);
+    if (GenInputsAbstract.constant_mining) {
+      if (frequencyMap.containsKey(seq)) {
+        frequencyMap.put(seq, frequencyMap.get(seq) + 1);
+      } else {
+        frequencyMap.put(seq, 1);
+      }
+    }
   }
 
   /**
@@ -185,9 +195,10 @@ public class ComponentManager {
    */
   @SuppressWarnings("unchecked")
   SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i) {
-
+    if (GenInputsAbstract.constant_mining) {
+      return getSequencesForTypeGRT(operation, i);
+    }
     Type neededType = operation.getInputTypes().get(i);
-
     SimpleList<Sequence> ret = gralComponents.getSequencesForType(neededType, false);
     if (operation instanceof TypedClassOperation) {
       if (classLiterals != null || packageLiterals != null) {
@@ -214,6 +225,30 @@ public class ComponentManager {
       }
     }
     return ret;
+  }
+
+  //TODO: commenting
+  SimpleList<Sequence> getSequencesForTypeGRT(TypedOperation operation, int i) {
+    if (GenInputsAbstract.grt_debug_checks) {
+      //TODO: output stuff for tests
+    }
+    Type neededType = operation.getInputTypes().get(i);
+    if (Randomness.weightedCoinFlip(GenInputsAbstract.p_const)) {
+      ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+      if (declaringCls != null) {
+        if (classLiterals != null) {
+          SimpleList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
+          return sl;
+        }
+      }
+    } else {
+      return gralComponents.getSequencesForType(neededType, false);
+    }
+    return null;
+  }
+
+  public Map<Sequence, Integer> getFrequencyMap() {
+    return frequencyMap;
   }
 
   /**

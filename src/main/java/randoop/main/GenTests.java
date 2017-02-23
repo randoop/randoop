@@ -2,14 +2,10 @@ package randoop.main;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.regex.Pattern;
+
+import org.checkerframework.checker.igj.qual.I;
 import plume.EntryReader;
 import plume.Options;
 import plume.Options.ArgException;
@@ -24,6 +20,7 @@ import randoop.generation.ForwardGenerator;
 import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
 import randoop.instrument.ExercisedClassVisitor;
+import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
@@ -267,13 +264,24 @@ public class GenTests extends GenInputsAbstract {
       observers.addAll(observerMap.getValues(keyType));
     }
 
+    int num_classes = operationModel.getClassTypes().size();
+
+    Map<Sequence, Integer> tfFrequencies = operationModel.getTfFrequency();
     /*
      * Create the generator for this session.
      */
     AbstractGenerator explorer;
     explorer =
         new ForwardGenerator(
-            model, observers, timelimit * 1000, inputlimit, outputlimit, componentMgr, listenerMgr);
+            model,
+            observers,
+            timelimit * 1000,
+            inputlimit,
+            outputlimit,
+            componentMgr,
+            listenerMgr,
+            num_classes,
+            tfFrequencies);
 
     /*
      * setup for check generation
