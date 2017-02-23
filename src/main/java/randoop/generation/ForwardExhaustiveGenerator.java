@@ -339,11 +339,14 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
       this.prepareConstructorPrefix();
     }
 
-    if (!this.sequenceGenerator.hasNext()) {
-      return null;
-    }
-
     List<TypedOperation> nextPermutation = sequenceGenerator.next();
+
+    if (Log.isLoggingOn()) {
+      List<String> operations =
+          nextPermutation.stream().map(to -> to.getName()).collect(Collectors.toList());
+      Log.logLine(
+          "Sequence generator selected the following operations: " + String.join(",", operations));
+    }
 
     List<TypedOperation> nextSequence = Lists.newArrayList();
 
@@ -355,12 +358,6 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
         }
       }
       nextSequence.add(op);
-    }
-
-    if (Log.isLoggingOn()) {
-      List<String> operations =
-          nextSequence.stream().map(to -> to.getName()).collect(Collectors.toList());
-      Log.logLine("Selected sequence of operations: " + String.join(",", operations));
     }
 
     return nextSequence;

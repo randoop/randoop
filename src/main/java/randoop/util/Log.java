@@ -73,6 +73,12 @@ public final class Log {
     }
   }
 
+  public static void logLineIfOn(String line) {
+    if (isLoggingOn()) {
+      logLine(line);
+    }
+  }
+
   public static void log(List<TypedOperation> model) {
     if (!isLoggingOn()) {
       return;
