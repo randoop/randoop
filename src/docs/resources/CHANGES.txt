@@ -1,9 +1,8 @@
 Version 3.0.9, released February 22, 2017
 
-Adds
-- New option --stop-on-error-test stops test generation once an
-  error-revealing test is generated.  This is useful during cycles of
-  fixing errors discovered by Randoop.
+New option --stop-on-error-test stops test generation once an
+error-revealing test is generated.  This is useful during cycles of
+fixing errors discovered by Randoop.
 
 Classpath error message explains why a class is not found.
 
@@ -11,7 +10,7 @@ Fixes
 - Many fixes, mostly related to Java generics, including the following.
 - Fixed issues: 123, 128, 132, 139, 141, 143, 144, 145.
 - Fixed assignability for parameterized types with wildcard arguments.
-- Fixed failure when a generic method or constructor has a
+- Fixed failure when a generic method or constructor has an
   argument type that has a wildcard with a bound that includes the type
   parameter of the generic (e.g., Iterable<? extends T>).
 
