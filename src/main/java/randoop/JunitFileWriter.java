@@ -372,9 +372,9 @@ public class JunitFileWriter {
         }
         String testVariable = instanceNameGen.next();
         testClassToTestVariable.put(testClass, testVariable);
-        out.println("  " + testClass + " " + testVariable + "= new " + testClass + "();");
+        out.println("  static " + testClass + " " + testVariable + "= new " + testClass + "();");
       }
-      out.println("  boolean wasSuccessful = true;");
+      out.println("  static boolean wasSuccessful = true;");
       out.println("  public static void main(String[] args) {");
 
       int totalCallCount = 0;
