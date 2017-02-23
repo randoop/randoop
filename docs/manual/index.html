@@ -154,16 +154,16 @@ occasions when they fail and reveal a bug or a regression failure.
 
 <p>
   Download and unzip the file
-  <a href="https://github.com/randoop/randoop/releases/download/v3.0.8/randoop-3.0.8.zip"><code>randoop-3.0.8.zip</code></a>.
+  <a href="https://github.com/randoop/randoop/releases/download/v3.0.9/randoop-3.0.9.zip"><code>randoop-3.0.9.zip</code></a>.
 <!-- from the
   <a href="https://github.com/randoop/randoop/releases/latest">latest
     release</a>.
 -->
 <!--
   This zip archive contains the Randoop jar file
-  <code>randoop-all-3.0.8.jar</code>, the Java agent jar files
-  (<code>exercised-class-3.0.8.jar</code> and
-   <code>mapcall-3.0.8.jar</code>),
+  <code>randoop-all-3.0.9.jar</code>, the Java agent jar files
+  (<code>exercised-class-3.0.9.jar</code> and
+   <code>mapcall-3.0.9.jar</code>),
   and this documentation.
 -->
   Set an environment variable
@@ -189,7 +189,7 @@ Run Randoop by invoking its main class <code>randoop.main.Main</code>:
 </p>
 
 <pre class="code">
-java -ea -classpath <em>&lt;classpath-for-classes-under-test&gt;</em>:$(RANDOOP_PATH)/randoop-all-3.0.8.jar randoop.main.Main <em>command</em> <em>args...</em>
+java -ea -classpath <em>&lt;classpath-for-classes-under-test&gt;</em>:$(RANDOOP_PATH)/randoop-all-3.0.9.jar randoop.main.Main <em>command</em> <em>args...</em>
 </pre>
 
 <p>
@@ -199,16 +199,16 @@ For instance, if the current working directory contains a directory named <code>
 </p>
 
 <pre class="code">
-  -classpath bin:$(RANDOOP_PATH)/randoop-all-3.0.8.jar
+  -classpath bin:$(RANDOOP_PATH)/randoop-all-3.0.9.jar
 </pre>
 
  <p>
 (On Windows, adjust the classpath, such as using semicolon instead of colon
 as the separator.)
 Note that you don't need the <code>-classpath</code> argument if you add
-<code>randoop-all-3.0.8.jar</code> to your classpath.
+<code>randoop-all-3.0.9.jar</code> to your classpath.
 (Note that if you are using the recommended installation from the zip file,
-the path to the jar file is <code>/randoop-all-3.0.8.jar</code>.)
+the path to the jar file is <code>/randoop-all-3.0.9.jar</code>.)
 </p>
 
 <p>
@@ -221,8 +221,8 @@ For details, see <a href="#getting_help">Getting Help</a>.
 Example uses:
 
 <pre class="code">
-java -ea -classpath $(RANDOOP_PATH)/randoop-all-3.0.8.jar randoop.main.Main help
-java -ea -classpath $(RANDOOP_PATH)/randoop-all-3.0.8.jar randoop.main.Main help gentests
+java -ea -classpath $(RANDOOP_PATH)/randoop-all-3.0.9.jar randoop.main.Main help
+java -ea -classpath $(RANDOOP_PATH)/randoop-all-3.0.9.jar randoop.main.Main help gentests
 </pre>
 </li>
 
@@ -230,7 +230,7 @@ java -ea -classpath $(RANDOOP_PATH)/randoop-all-3.0.8.jar randoop.main.Main help
 see <a href="#generating_tests">Generating Tests</a>. Example use:
 
 <pre class="code">
-java -classpath bin:randoop-all-3.0.8.jar randoop.main.Main gentests --testclass=java.util.TreeSet --timelimit=60
+java -classpath bin:randoop-all-3.0.9.jar randoop.main.Main gentests --testclass=java.util.TreeSet --timelimit=60
 </pre>
 </li>
 
@@ -284,7 +284,7 @@ java.util.TreeSet</pre>
 <p>
 and invoke Randoop as follows: </p>
 
-<pre class="code">java -classpath $(RANDOOP_PATH)/randoop-all-3.0.8.jar randoop.main.Main gentests --classlist=myclasses.txt --timelimit=60</pre>
+<pre class="code">java -classpath $(RANDOOP_PATH)/randoop-all-3.0.9.jar randoop.main.Main gentests --classlist=myclasses.txt --timelimit=60</pre>
 
 
 <p>After 60 seconds, Randoop stops generating tests. The last thing Randoop prints out is the name of the JUnit files containing the tests it generated. You should see a message similar to the following: </p>
@@ -1126,13 +1126,13 @@ that you provide.
 
 <p>
 To transform calls to undesired methods, use the Java agent in the
-<code>mapcall-3.0.8.jar</code>
+<code>mapcall-3.0.9.jar</code>
 file (either in the unzipped distribution file, or downloaded from the
 <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>).
 Then use this file pass the following command-line option to <code>java</code> when running Randoop:
 </p>
 <pre>
-    -javaagent:$(RANDOOP_PATH)/mapcall-3.0.8.jar=--map_calls=map_calls.txt
+    -javaagent:$(RANDOOP_PATH)/mapcall-3.0.9.jar=--map_calls=map_calls.txt
 </pre>
 <p>
 (<b>Note:</b> If you supply the <code>-javaagent</code> option to <code>java</code>
@@ -1254,17 +1254,17 @@ exception escaping the method as the rep invariant being violated.
   <code>--include-if-class-exercised</code> option.
   However, for this option to work, the classes must be instrumented to indicate
   when they are exercised.
-  To instrument classes for this filter, also use the <code>exercised-class-3.0.8.jar</code>
+  To instrument classes for this filter, also use the <code>exercised-class-3.0.9.jar</code>
   by giving the following command-line option for java
 </p>
 <pre><code>
-  -javaagent:$(RANDOOP_PATH)/exercised-class-3.0.8.jar
+  -javaagent:$(RANDOOP_PATH)/exercised-class-3.0.9.jar
 </code></pre>
 <p>
   This will instrument any non-abstract constructor and method of loaded
   classes so that the use of a class can be detected.
   (The instrumentation is not done on any JDK or JUnit classes.)
-  (The <code>exercised-class-3.0.8.jar</code> file can be found in the
+  (The <code>exercised-class-3.0.9.jar</code> file can be found in the
     unzipped distribution archive, or can be downloaded from the
     <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.)
 </p>
@@ -1402,19 +1402,19 @@ taking too long to execute and cannot be killed by Randoop.
 <li><strong>Randoop's <code>help</code> command</strong>:  For help on
   usage, use Randoop's <code>help</code> command. To print Randoop's main help message, run:
 
-<pre class="code">java -classpath $(RANDOOP_PATH)/randoop-all-3.0.8.jar randoop.main.Main help</pre>
+<pre class="code">java -classpath $(RANDOOP_PATH)/randoop-all-3.0.9.jar randoop.main.Main help</pre>
 
 To print help for test generation (the <code>gentests</code> command), run:
 
 <pre class="code">
-java -ea -classpath $(RANDOOP_PATH)/randoop-all-3.0.8.jar randoop.main.Main help gentests
+java -ea -classpath $(RANDOOP_PATH)/randoop-all-3.0.9.jar randoop.main.Main help gentests
 </pre>
 
 To also include unpublicized (due to being experimental or unsupported)
  options for a command, use the <code>--unpub</code> flag:
 
 <pre class="code">
-java -ea -classpath $(RANDOOP_PATH)/randoop-all-3.0.8.jar randoop.main.Main help --unpub gentests
+java -ea -classpath $(RANDOOP_PATH)/randoop-all-3.0.9.jar randoop.main.Main help --unpub gentests
 </pre>
 
 
