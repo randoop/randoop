@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Index (randoop 3.0.8-prerelease API)</title>
+<title>Index (randoop 3.0.9 API)</title>
 
 <link rel="stylesheet" type="text/css" href="javadocstyle.css" title="Style">
 <script type="text/javascript" src="script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Index (randoop 3.0.8-prerelease API)";
+            parent.document.title="Index (randoop 3.0.9 API)";
         }
     }
     catch(err) {
@@ -104,6 +104,14 @@
 <dt><span class="memberNameLink"><a href="randoop/generation/AbstractGenerator.html#AbstractGenerator-java.util.List-long-int-int-randoop.generation.ComponentManager-randoop.generation.IStopper-randoop.generation.RandoopListenerManager-">AbstractGenerator(List&lt;TypedOperation&gt;, long, int, int, ComponentManager, IStopper, RandoopListenerManager)</a></span> - Constructor for class randoop.generation.<a href="randoop/generation/AbstractGenerator.html" title="class in randoop.generation">AbstractGenerator</a></dt>
 <dd>
 <div class="block">Constructs a generator with the given parameters.</div>
+</dd>
+<dt><a href="randoop/input/toradocu/AbstractTag.html" title="class in randoop.input.toradocu"><span class="typeNameLink">AbstractTag</span></a> - Class in <a href="randoop/input/toradocu/package-summary.html">randoop.input.toradocu</a></dt>
+<dd>
+<div class="block">This is a Toradocu class borrowed to allow deserialization of JSON.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/AbstractTag.html#AbstractTag-randoop.input.toradocu.Tag.Kind-java.lang.String-">AbstractTag(Tag.Kind, String)</a></span> - Constructor for class randoop.input.toradocu.<a href="randoop/input/toradocu/AbstractTag.html" title="class in randoop.input.toradocu">AbstractTag</a></dt>
+<dd>
+<div class="block">Constructs a <code>Tag</code> with the given comment.</div>
 </dd>
 <dt><a href="randoop/field/AccessibleField.html" title="class in randoop.field"><span class="typeNameLink">AccessibleField</span></a> - Class in <a href="randoop/field/package-summary.html">randoop.field</a></dt>
 <dd>
@@ -229,6 +237,10 @@
 <dd>
 <div class="block">Gathers class types to be used in a run of Randoop and adds them to this <code>OperationModel</code>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/operation/TypedOperation.html#addConditions-java.util.List-">addConditions(List&lt;Condition&gt;)</a></span> - Method in class randoop.operation.<a href="randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/operation/TypedOperation.html#addConditions-java.util.Map-">addConditions(Map&lt;Condition, Pair&lt;TestCheckGenerator, TestCheckGenerator&gt;&gt;)</a></span> - Method in class randoop.operation.<a href="randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/sequence/ExecutableSequence.html#addCoveredClass-java.lang.Class-">addCoveredClass(Class&lt;?&gt;)</a></span> - Method in class randoop.sequence.<a href="randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a></dt>
 <dd>
 <div class="block">Adds a covered class to the most recent execution results of this sequence.</div>
@@ -259,7 +271,7 @@
 <dd>
 <div class="block">Adds an operation to the collection of this extractor.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="randoop/reflection/OperationModel.html#addOperations-java.util.Set-randoop.reflection.VisibilityPredicate-randoop.reflection.ReflectionPredicate-">addOperations(Set&lt;ClassOrInterfaceType&gt;, VisibilityPredicate, ReflectionPredicate)</a></span> - Method in class randoop.reflection.<a href="randoop/reflection/OperationModel.html" title="class in randoop.reflection">OperationModel</a></dt>
+<dt><span class="memberNameLink"><a href="randoop/reflection/OperationModel.html#addOperations-java.util.Set-randoop.reflection.VisibilityPredicate-randoop.reflection.ReflectionPredicate-randoop.condition.ConditionCollection-">addOperations(Set&lt;ClassOrInterfaceType&gt;, VisibilityPredicate, ReflectionPredicate, ConditionCollection)</a></span> - Method in class randoop.reflection.<a href="randoop/reflection/OperationModel.html" title="class in randoop.reflection">OperationModel</a></dt>
 <dd>
 <div class="block">Iterates through a set of simple and instantiated class types and uses reflection to extract
  the operations that satisfy both the visibility and reflection predicates, and then adds them
@@ -807,6 +819,16 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/generation/HelperSequenceCreator.html#buildAddSequence-randoop.sequence.Sequence-randoop.sequence.Sequence-randoop.generation.HelperSequenceCreator.SequenceExtender-">buildAddSequence(Sequence, Sequence, HelperSequenceCreator.SequenceExtender)</a></span> - Static method in class randoop.generation.<a href="randoop/generation/HelperSequenceCreator.html" title="class in randoop.generation">HelperSequenceCreator</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuConditionCollection.html#buildConditionClassName-randoop.input.toradocu.DocumentedMethod-">buildConditionClassName(DocumentedMethod)</a></span> - Static method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuConditionCollection.html" title="class in randoop.input.toradocu">ToradocuConditionCollection</a></dt>
+<dd>
+<div class="block">Constructs the condition class name using the convention with Toradocu.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuConditionCollection.html#buildConditionMethodName-randoop.input.toradocu.Tag-int-int-">buildConditionMethodName(Tag, int, int)</a></span> - Static method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuConditionCollection.html" title="class in randoop.input.toradocu">ToradocuConditionCollection</a></dt>
+<dd>
+<div class="block">Constructs the condition method name using the convention with Toradocu.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuConditionCollection.html#buildConditionMethodName-randoop.input.toradocu.Tag-int-int-java.lang.String-">buildConditionMethodName(Tag, int, int, String)</a></span> - Static method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuConditionCollection.html" title="class in randoop.input.toradocu">ToradocuConditionCollection</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/JavaTypes.html#BYTE_TYPE">BYTE_TYPE</a></span> - Static variable in class randoop.types.<a href="randoop/types/JavaTypes.html" title="class in randoop.types">JavaTypes</a></dt>
 <dd>
 <div class="block">The byte <a href="randoop/types/PrimitiveType.html" title="class in randoop.types"><code>PrimitiveType</code></a></div>
@@ -833,6 +855,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/operation/CallableOperation.html#CallableOperation--">CallableOperation()</a></span> - Constructor for class randoop.operation.<a href="randoop/operation/CallableOperation.html" title="class in randoop.operation">CallableOperation</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/TypeVariable.html#canBeInstantiatedBy-randoop.types.ReferenceType-">canBeInstantiatedBy(ReferenceType)</a></span> - Method in class randoop.types.<a href="randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a></dt>
+<dd>
+<div class="block">Indicates whether this <a href="randoop/types/TypeVariable.html" title="class in randoop.types"><code>TypeVariable</code></a> can be instantiated by the <a href="randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/reflection/ListEnumerator.html#candidates">candidates</a></span> - Variable in class randoop.reflection.<a href="randoop/reflection/ListEnumerator.html" title="class in randoop.reflection">ListEnumerator</a></dt>
 <dd>
 <div class="block">Lists of candidate values for each position in generated lists.</div>
@@ -847,17 +873,29 @@
 <dd>
 <div class="block">Creates a <a href="randoop/types/CaptureTypeVariable.html" title="class in randoop.types"><code>CaptureTypeVariable</code></a> for the given wildcard.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/types/CaptureTypeVariable.html#CaptureTypeVariable-int-randoop.types.WildcardArgument-randoop.types.ParameterBound-randoop.types.ParameterBound-">CaptureTypeVariable(int, WildcardArgument, ParameterBound, ParameterBound)</a></span> - Constructor for class randoop.types.<a href="randoop/types/CaptureTypeVariable.html" title="class in randoop.types">CaptureTypeVariable</a></dt>
+<dd>
+<div class="block">Creates a <a href="randoop/types/CaptureTypeVariable.html" title="class in randoop.types"><code>CaptureTypeVariable</code></a> with explicitly given <code>ID</code>, wildcard, and bounds.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/test/ExceptionCheck.html#catchClassName">catchClassName</a></span> - Variable in class randoop.test.<a href="randoop/test/ExceptionCheck.html" title="class in randoop.test">ExceptionCheck</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/JavaTypes.html#CHAR_TYPE">CHAR_TYPE</a></span> - Static variable in class randoop.types.<a href="randoop/types/JavaTypes.html" title="class in randoop.types">JavaTypes</a></dt>
 <dd>
 <div class="block">The char <a href="randoop/types/PrimitiveType.html" title="class in randoop.types"><code>PrimitiveType</code></a></div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/condition/Condition.html#check-java.lang.Object:A-">check(Object[])</a></span> - Method in interface randoop.condition.<a href="randoop/condition/Condition.html" title="interface in randoop.condition">Condition</a></dt>
+<dd>
+<div class="block">Indicate whether this condition is satisfied by the given values.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuCondition.html#check-java.lang.Object:A-">check(Object[])</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuCondition.html" title="class in randoop.input.toradocu">ToradocuCondition</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="randoop/test/Check.html" title="interface in randoop.test"><span class="typeNameLink">Check</span></a> - Interface in <a href="randoop/test/package-summary.html">randoop.test</a></dt>
 <dd>
 <div class="block">A Check represents the expected runtime behavior of a Sequence, at a
  particular offset.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/test/InvalidChecks.html#check">check</a></span> - Variable in class randoop.test.<a href="randoop/test/InvalidChecks.html" title="class in randoop.test">InvalidChecks</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/RandoopSecurityManager.html#checkAccept-java.lang.String-int-">checkAccept(String, int)</a></span> - Method in class randoop.util.<a href="randoop/util/RandoopSecurityManager.html" title="class in randoop.util">RandoopSecurityManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/RandoopSecurityManager.html#checkAccess-java.lang.Thread-">checkAccess(Thread)</a></span> - Method in class randoop.util.<a href="randoop/util/RandoopSecurityManager.html" title="class in randoop.util">RandoopSecurityManager</a></dt>
@@ -923,6 +961,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/RandoopSecurityManager.html#checkPermission-java.security.Permission-">checkPermission(Permission)</a></span> - Method in class randoop.util.<a href="randoop/util/RandoopSecurityManager.html" title="class in randoop.util">RandoopSecurityManager</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/operation/TypedOperation.html#checkPreconditions-java.lang.Object:A-">checkPreconditions(Object[])</a></span> - Method in class randoop.operation.<a href="randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></dt>
+<dd>
+<div class="block">Checks that the preconditions for this operation are met by the given values.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/RandoopSecurityManager.html#checkPrintJobAccess--">checkPrintJobAccess()</a></span> - Method in class randoop.util.<a href="randoop/util/RandoopSecurityManager.html" title="class in randoop.util">RandoopSecurityManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/RandoopSecurityManager.html#checkPropertiesAccess--">checkPropertiesAccess()</a></span> - Method in class randoop.util.<a href="randoop/util/RandoopSecurityManager.html" title="class in randoop.util">RandoopSecurityManager</a></dt>
@@ -1072,6 +1114,8 @@
 <div class="block">classMethodCounts maps test class names to the number of methods in each
  class.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/main/RandoopClassNameError.html#className">className</a></span> - Variable in error randoop.main.<a href="randoop/main/RandoopClassNameError.html" title="class in randoop.main">RandoopClassNameError</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/reflection/LiteralFileReader.html#CLASSNAME">CLASSNAME</a></span> - Static variable in class randoop.reflection.<a href="randoop/reflection/LiteralFileReader.html" title="class in randoop.reflection">LiteralFileReader</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/ClassFileConstants.ConstantSet.html#classname">classname</a></span> - Variable in class randoop.util.<a href="randoop/util/ClassFileConstants.ConstantSet.html" title="class in randoop.util">ClassFileConstants.ConstantSet</a></dt>
@@ -1147,6 +1191,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/RunnerThread.html#code">code</a></span> - Variable in class randoop.util.<a href="randoop/util/RunnerThread.html" title="class in randoop.util">RunnerThread</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ThrowsTag.html#codeTags">codeTags</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/ThrowsTag.html" title="class in randoop.input.toradocu">ThrowsTag</a></dt>
+<dd>
+<div class="block">Code tags specified in the method's Javadoc.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/JDKTypes.html#COLLECTION_TYPE">COLLECTION_TYPE</a></span> - Static variable in class randoop.types.<a href="randoop/types/JDKTypes.html" title="class in randoop.types">JDKTypes</a></dt>
 <dd>
 <div class="block">The <a href="randoop/types/GenericClassType.html" title="class in randoop.types"><code>GenericClassType</code></a> for <code>Collection</code></div>
@@ -1173,6 +1221,10 @@
 <dt><span class="memberNameLink"><a href="randoop/main/CommandHandler.html#CommandHandler-java.lang.String-java.lang.String-java.lang.String-java.lang.String-java.lang.String-java.util.List-java.lang.String-java.lang.String-java.lang.String-plume.Options-">CommandHandler(String, String, String, String, String, List&lt;String&gt;, String, String, String, Options)</a></span> - Constructor for class randoop.main.<a href="randoop/main/CommandHandler.html" title="class in randoop.main">CommandHandler</a></dt>
 <dd>
 <div class="block">No arguments should be null.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/AbstractTag.html#comment">comment</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/AbstractTag.html" title="class in randoop.input.toradocu">AbstractTag</a></dt>
+<dd>
+<div class="block">The comment associated with the exception.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/test/ErrorRevealingChecks.html#commonChecks-randoop.test.TestChecks-">commonChecks(TestChecks)</a></span> - Method in class randoop.test.<a href="randoop/test/ErrorRevealingChecks.html" title="class in randoop.test">ErrorRevealingChecks</a></dt>
 <dd>&nbsp;</dd>
@@ -1277,6 +1329,10 @@
 <div class="block">Create a component manager, initially populated with the given sequences,
  which are considered seed sequences.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Type.html#componentType">componentType</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a></dt>
+<dd>
+<div class="block">If this type is an array, componentType is the type of the contained elements.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/operation/ArrayCreation.html#componentType">componentType</a></span> - Variable in class randoop.operation.<a href="randoop/operation/ArrayCreation.html" title="class in randoop.operation">ArrayCreation</a></dt>
 <dd>
 <div class="block">The component type for the created array</div>
@@ -1322,6 +1378,32 @@
 <dd>
 <div class="block">The <a href="randoop/types/GenericClassType.html" title="class in randoop.types"><code>GenericClassType</code></a> for <code>ConcurrentSkipListSet</code></div>
 </dd>
+<dt><a href="randoop/condition/Condition.html" title="interface in randoop.condition"><span class="typeNameLink">Condition</span></a> - Interface in <a href="randoop/condition/package-summary.html">randoop.condition</a></dt>
+<dd>
+<div class="block">Represents a condition on an operation.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/AbstractTag.html#condition">condition</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/AbstractTag.html" title="class in randoop.input.toradocu">AbstractTag</a></dt>
+<dd>
+<div class="block">Java boolean condition translated from the comment for this <code>ThrowsTag</code>.</div>
+</dd>
+<dt><a href="randoop/condition/ConditionCollection.html" title="interface in randoop.condition"><span class="typeNameLink">ConditionCollection</span></a> - Interface in <a href="randoop/condition/package-summary.html">randoop.condition</a></dt>
+<dd>
+<div class="block">Represents a collection of preconditions and throws-conditions.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/test/ExpectedExceptionGenerator.html#conditionComment">conditionComment</a></span> - Variable in class randoop.test.<a href="randoop/test/ExpectedExceptionGenerator.html" title="class in randoop.test">ExpectedExceptionGenerator</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/test/MissingExceptionCheck.html#conditionComment">conditionComment</a></span> - Variable in class randoop.test.<a href="randoop/test/MissingExceptionCheck.html" title="class in randoop.test">MissingExceptionCheck</a></dt>
+<dd>
+<div class="block">The comment describing the condition when the exception should be thrown</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuConditionCollection.html#conditionMap">conditionMap</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuConditionCollection.html" title="class in randoop.input.toradocu">ToradocuConditionCollection</a></dt>
+<dd>
+<div class="block">The lists of preconditions for constructor/method</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuCondition.html#conditionMethod">conditionMethod</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuCondition.html" title="class in randoop.input.toradocu">ToradocuCondition</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuReturnCondition.html#conditionString">conditionString</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuReturnCondition.html" title="class in randoop.input.toradocu">ToradocuReturnCondition</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/ClassFileConstants.ConstantSet.html#ConstantSet--">ConstantSet()</a></span> - Constructor for class randoop.util.<a href="randoop/util/ClassFileConstants.ConstantSet.html" title="class in randoop.util">ClassFileConstants.ConstantSet</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/operation/ConstructorCall.html#constructor">constructor</a></span> - Variable in class randoop.operation.<a href="randoop/operation/ConstructorCall.html" title="class in randoop.operation">ConstructorCall</a></dt>
@@ -1347,6 +1429,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/util/ConstructorReflectionCode.html#ConstructorReflectionCode-java.lang.reflect.Constructor-java.lang.Object:A-">ConstructorReflectionCode(Constructor&lt;?&gt;, Object[])</a></span> - Constructor for class randoop.util.<a href="randoop/util/ConstructorReflectionCode.html" title="class in randoop.util">ConstructorReflectionCode</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#containingClass">containingClass</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">Class in which the method is contained.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ReferenceArgument.html#contains-randoop.types.TypeArgument-">contains(TypeArgument)</a></span> - Method in class randoop.types.<a href="randoop/types/ReferenceArgument.html" title="class in randoop.types">ReferenceArgument</a></dt>
 <dd>
 <div class="block">Checks whether this type argument contains another argument, using relationship defined in
@@ -1361,8 +1447,7 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/WildcardType.html#contains-randoop.types.WildcardType-">contains(WildcardType)</a></span> - Method in class randoop.types.<a href="randoop/types/WildcardType.html" title="class in randoop.types">WildcardType</a></dt>
 <dd>
-<div class="block">
- If this type has an upper bound, checks for containment cases:
+<div class="block">If this type has an upper bound, checks for containment cases:
  
    <code>? extends T</code> contains <code>? extends S</code> if <code>T.isSubtypeOf(S)</code>
    <code>? extends T</code> contains <code>?</code>
@@ -1504,6 +1589,17 @@
 <dd>
 <div class="block">Creates the creation sequence for a collection with the given type and element type.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuConditionCollection.html#createConditionMethodParameters-java.lang.Class-java.lang.Class:A-">createConditionMethodParameters(Class&lt;?&gt;, Class&lt;?&gt;[])</a></span> - Static method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuConditionCollection.html" title="class in randoop.input.toradocu">ToradocuConditionCollection</a></dt>
+<dd>
+<div class="block">Creates the array of <code>Class&lt;?&gt;</code> objects representing the type parameters of a condition
+ method.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/CaptureTypeVariable.html#createCopyWithBounds-randoop.types.ParameterBound-randoop.types.ParameterBound-">createCopyWithBounds(ParameterBound, ParameterBound)</a></span> - Method in class randoop.types.<a href="randoop/types/CaptureTypeVariable.html" title="class in randoop.types">CaptureTypeVariable</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ExplicitTypeVariable.html#createCopyWithBounds-randoop.types.ParameterBound-randoop.types.ParameterBound-">createCopyWithBounds(ParameterBound, ParameterBound)</a></span> - Method in class randoop.types.<a href="randoop/types/ExplicitTypeVariable.html" title="class in randoop.types">ExplicitTypeVariable</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/TypeVariable.html#createCopyWithBounds-randoop.types.ParameterBound-randoop.types.ParameterBound-">createCopyWithBounds(ParameterBound, ParameterBound)</a></span> - Method in class randoop.types.<a href="randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="randoop/runtime/CreatedJUnitFile.html" title="class in randoop.runtime"><span class="typeNameLink">CreatedJUnitFile</span></a> - Class in <a href="randoop/runtime/package-summary.html">randoop.runtime</a></dt>
 <dd>
 <div class="block">A message indicating that Randoop created a specific JUnit file containing
@@ -1529,10 +1625,12 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/JavaFileWriter.html#createJavaFiles-java.util.List-java.lang.String-int-">createJavaFiles(List&lt;Sequence&gt;, String, int)</a></span> - Static method in class randoop.<a href="randoop/JavaFileWriter.html" title="class in randoop">JavaFileWriter</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="randoop/reflection/OperationModel.html#createModel-randoop.reflection.VisibilityPredicate-randoop.reflection.ReflectionPredicate-java.util.Set-java.util.Set-java.util.Set-randoop.main.ClassNameErrorHandler-java.util.List-">createModel(VisibilityPredicate, ReflectionPredicate, Set&lt;String&gt;, Set&lt;String&gt;, Set&lt;String&gt;, ClassNameErrorHandler, List&lt;String&gt;)</a></span> - Static method in class randoop.reflection.<a href="randoop/reflection/OperationModel.html" title="class in randoop.reflection">OperationModel</a></dt>
+<dt><span class="memberNameLink"><a href="randoop/reflection/OperationModel.html#createModel-randoop.reflection.VisibilityPredicate-randoop.reflection.ReflectionPredicate-java.util.Set-java.util.Set-java.util.Set-randoop.main.ClassNameErrorHandler-java.util.List-randoop.condition.ConditionCollection-">createModel(VisibilityPredicate, ReflectionPredicate, Set&lt;String&gt;, Set&lt;String&gt;, Set&lt;String&gt;, ClassNameErrorHandler, List&lt;String&gt;, ConditionCollection)</a></span> - Static method in class randoop.reflection.<a href="randoop/reflection/OperationModel.html" title="class in randoop.reflection">OperationModel</a></dt>
 <dd>
 <div class="block">Factory method to construct an operation model for a particular set of classes</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/reflection/OperationModel.html#createModel-randoop.reflection.VisibilityPredicate-randoop.reflection.ReflectionPredicate-java.util.Set-java.util.Set-java.util.Set-randoop.main.ClassNameErrorHandler-java.util.List-">createModel(VisibilityPredicate, ReflectionPredicate, Set&lt;String&gt;, Set&lt;String&gt;, Set&lt;String&gt;, ClassNameErrorHandler, List&lt;String&gt;)</a></span> - Static method in class randoop.reflection.<a href="randoop/reflection/OperationModel.html" title="class in randoop.reflection">OperationModel</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/generation/ForwardGenerator.html#createNewUniqueSequence--">createNewUniqueSequence()</a></span> - Method in class randoop.generation.<a href="randoop/generation/ForwardGenerator.html" title="class in randoop.generation">ForwardGenerator</a></dt>
 <dd>
 <div class="block">Tries to create and execute a new sequence.</div>
@@ -1573,18 +1671,21 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/main/GenTests.html#createTestCheckGenerator-randoop.reflection.VisibilityPredicate-randoop.test.ContractSet-randoop.util.MultiMap-java.util.Set-">createTestCheckGenerator(VisibilityPredicate, ContractSet, MultiMap&lt;Type, TypedOperation&gt;, Set&lt;TypedOperation&gt;)</a></span> - Method in class randoop.main.<a href="randoop/main/GenTests.html" title="class in randoop.main">GenTests</a></dt>
 <dd>
-<div class="block">Creates the test check generator for this run based on the command-line
- arguments.</div>
+<div class="block">Creates the test check generator for this run based on the command-line arguments.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/main/GenTests.html#createTestOutputPredicate-java.util.Set-java.util.Set-java.util.regex.Pattern-">createTestOutputPredicate(Set&lt;Sequence&gt;, Set&lt;Class&lt;?&gt;&gt;, Pattern)</a></span> - Method in class randoop.main.<a href="randoop/main/GenTests.html" title="class in randoop.main">GenTests</a></dt>
 <dd>
-<div class="block">Builds the test predicate that determines whether a particular sequence
- will be included in the output based on command-line arguments.</div>
+<div class="block">Builds the test predicate that determines whether a particular sequence will be included in the
+ output based on command-line arguments.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/JavaFileWriter.html#createTextOutputStream-java.lang.String-">createTextOutputStream(String)</a></span> - Static method in class randoop.<a href="randoop/JavaFileWriter.html" title="class in randoop">JavaFileWriter</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/JunitFileWriter.html#createTextOutputStream-java.io.File-">createTextOutputStream(File)</a></span> - Static method in class randoop.<a href="randoop/JunitFileWriter.html" title="class in randoop">JunitFileWriter</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuConditionCollection.html#createToradocuConditions-java.util.List-">createToradocuConditions(List&lt;File&gt;)</a></span> - Static method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuConditionCollection.html" title="class in randoop.input.toradocu">ToradocuConditionCollection</a></dt>
+<dd>
+<div class="block">Creates a <a href="randoop/condition/ConditionCollection.html" title="interface in randoop.condition"><code>ConditionCollection</code></a> from Toradocu generated JSON files and condition classes.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/RandoopSecurityManager.html#currentClassLoader--">currentClassLoader()</a></span> - Method in class randoop.util.<a href="randoop/util/RandoopSecurityManager.html" title="class in randoop.util">RandoopSecurityManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/RandoopSecurityManager.html#currentLoadedClass--">currentLoadedClass()</a></span> - Method in class randoop.util.<a href="randoop/util/RandoopSecurityManager.html" title="class in randoop.util">RandoopSecurityManager</a></dt>
@@ -1674,6 +1775,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/runtime/ErrorRevealed.html#description">description</a></span> - Variable in class randoop.runtime.<a href="randoop/runtime/ErrorRevealed.html" title="class in randoop.runtime">ErrorRevealed</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Type.html#dimension--">dimension()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a></dt>
+<dd>
+<div class="block">Returns the dimension of this type.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/operation/ArrayCreation.html#dimensions">dimensions</a></span> - Variable in class randoop.operation.<a href="randoop/operation/ArrayCreation.html" title="class in randoop.operation">ArrayCreation</a></dt>
 <dd>
 <div class="block">The dimensions of the created array</div>
@@ -1691,6 +1796,15 @@
 <dt><span class="memberNameLink"><a href="randoop/util/ProgressDisplay.html#display-java.lang.String-">display(String)</a></span> - Method in class randoop.util.<a href="randoop/util/ProgressDisplay.html" title="class in randoop.util">ProgressDisplay</a></dt>
 <dd>
 <div class="block">Displays the given message.</div>
+</dd>
+<dt><a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu"><span class="typeNameLink">DocumentedMethod</span></a> - Class in <a href="randoop/input/toradocu/package-summary.html">randoop.input.toradocu</a></dt>
+<dd>
+<div class="block">DocumentedMethod represents the Javadoc documentation for a method in a class.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#DocumentedMethod-randoop.input.toradocu.Type-java.lang.String-randoop.input.toradocu.Type-java.util.List-java.util.Collection-boolean-java.util.Collection-randoop.input.toradocu.ReturnTag-java.lang.String-java.lang.String-">DocumentedMethod(Type, String, Type, List&lt;Parameter&gt;, Collection&lt;ParamTag&gt;, boolean, Collection&lt;ThrowsTag&gt;, ReturnTag, String, String)</a></span> - Constructor for class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">Constructs a <code>DocumentedMethod</code> contained in a given <code>containingClass</code> with the
+ given <code>name</code>, <code>returnType</code>, <code>parameters</code>, and <code>throwsTags</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/reflection/DefaultReflectionPredicate.html#doNotUseSpecialCase-java.lang.reflect.Method-">doNotUseSpecialCase(Method)</a></span> - Method in class randoop.reflection.<a href="randoop/reflection/DefaultReflectionPredicate.html" title="class in randoop.reflection">DefaultReflectionPredicate</a></dt>
 <dd>&nbsp;</dd>
@@ -1807,6 +1921,38 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/field/AccessibleField.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.field.<a href="randoop/field/AccessibleField.html" title="class in randoop.field">AccessibleField</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/AbstractTag.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/AbstractTag.html" title="class in randoop.input.toradocu">AbstractTag</a></dt>
+<dd>
+<div class="block">Returns true if this <code>AbstractTag</code> and the specified object are equal.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">Returns true if this <code>DocumentedMethod</code> and the specified object are equal.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Parameter.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/Parameter.html" title="class in randoop.input.toradocu">Parameter</a></dt>
+<dd>
+<div class="block">Returns true if this <code>Parameter</code> and the specified object are equal.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ParamTag.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ParamTag.html" title="class in randoop.input.toradocu">ParamTag</a></dt>
+<dd>
+<div class="block">Returns true if this <code>ParamTag</code> and the specified object are equal.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ReturnTag.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ReturnTag.html" title="class in randoop.input.toradocu">ReturnTag</a></dt>
+<dd>
+<div class="block">Returns true if this <code>ReturnTag</code> and the specified object are equal.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ThrowsTag.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ThrowsTag.html" title="class in randoop.input.toradocu">ThrowsTag</a></dt>
+<dd>
+<div class="block">Returns true if this <code>ThrowsTag</code> and the specified object are equal.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuCondition.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuCondition.html" title="class in randoop.input.toradocu">ToradocuCondition</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuReturnCondition.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuReturnCondition.html" title="class in randoop.input.toradocu">ToradocuReturnCondition</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Type.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a></dt>
+<dd>
+<div class="block">Returns true if this <code>Type</code> and the specified object are equal.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/operation/ArrayCreation.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.operation.<a href="randoop/operation/ArrayCreation.html" title="class in randoop.operation">ArrayCreation</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/operation/ConstructorCall.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.operation.<a href="randoop/operation/ConstructorCall.html" title="class in randoop.operation">ConstructorCall</a></dt>
@@ -1858,6 +2004,8 @@
 <dd>
 <div class="block">Determines if two <code>ExceptionCheck</code> objects are equal.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/test/MissingExceptionCheck.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.test.<a href="randoop/test/MissingExceptionCheck.html" title="class in randoop.test">MissingExceptionCheck</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/test/NoExceptionCheck.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.test.<a href="randoop/test/NoExceptionCheck.html" title="class in randoop.test">NoExceptionCheck</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/test/ObjectCheck.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.test.<a href="randoop/test/ObjectCheck.html" title="class in randoop.test">ObjectCheck</a></dt>
@@ -1890,6 +2038,8 @@
 <dt><span class="memberNameLink"><a href="randoop/types/LazyParameterBound.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.types.<a href="randoop/types/LazyParameterBound.html" title="class in randoop.types">LazyParameterBound</a></dt>
 <dt><span class="memberNameLink"><a href="randoop/types/NonParameterizedType.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.types.<a href="randoop/types/NonParameterizedType.html" title="class in randoop.types">NonParameterizedType</a></dt>
 <dt><span class="memberNameLink"><a href="randoop/types/NullReferenceType.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.types.<a href="randoop/types/NullReferenceType.html" title="class in randoop.types">NullReferenceType</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ParameterType.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.types.<a href="randoop/types/ParameterType.html" title="class in randoop.types">ParameterType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/PrimitiveType.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.types.<a href="randoop/types/PrimitiveType.html" title="class in randoop.types">PrimitiveType</a></dt>
 <dt><span class="memberNameLink"><a href="randoop/types/ReferenceArgument.html#equals-java.lang.Object-">equals(Object)</a></span> - Method in class randoop.types.<a href="randoop/types/ReferenceArgument.html" title="class in randoop.types">ReferenceArgument</a></dt>
@@ -1936,6 +2086,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/contract/EqualsSymmetric.html#EqualsSymmetric--">EqualsSymmetric()</a></span> - Constructor for class randoop.contract.<a href="randoop/contract/EqualsSymmetric.html" title="class in randoop.contract">EqualsSymmetric</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Type.html#equalsTo-java.lang.Class-">equalsTo(Class&lt;?&gt;)</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a></dt>
+<dd>
+<div class="block">Compares this type with a Java Class type.</div>
+</dd>
 <dt><a href="randoop/contract/EqualsToNullRetFalse.html" title="class in randoop.contract"><span class="typeNameLink">EqualsToNullRetFalse</span></a> - Class in <a href="randoop/contract/package-summary.html">randoop.contract</a></dt>
 <dd>
 <div class="block">The contract: <code>x0.equals(null)==false</code>.</div>
@@ -2098,6 +2252,12 @@
 <dd>
 <div class="block">Evaluates this check on the given execution of a sequence.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/test/InvalidValueCheck.html#evaluate-randoop.sequence.Execution-">evaluate(Execution)</a></span> - Method in class randoop.test.<a href="randoop/test/InvalidValueCheck.html" title="class in randoop.test">InvalidValueCheck</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/test/MissingExceptionCheck.html#evaluate-randoop.sequence.Execution-">evaluate(Execution)</a></span> - Method in class randoop.test.<a href="randoop/test/MissingExceptionCheck.html" title="class in randoop.test">MissingExceptionCheck</a></dt>
+<dd>
+<div class="block">Evaluates this check on the given execution of a sequence.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/test/NoExceptionCheck.html#evaluate-randoop.sequence.Execution-">evaluate(Execution)</a></span> - Method in class randoop.test.<a href="randoop/test/NoExceptionCheck.html" title="class in randoop.test">NoExceptionCheck</a></dt>
 <dd>
 <div class="block">Evaluates this check on the given execution of a sequence.</div>
@@ -2123,6 +2283,18 @@
 <dt><span class="memberNameLink"><a href="randoop/util/ReflectionExecutor.html#excepExecs--">excepExecs()</a></span> - Static method in class randoop.util.<a href="randoop/util/ReflectionExecutor.html" title="class in randoop.util">ReflectionExecutor</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/ExceptionalExecution.html#exception">exception</a></span> - Variable in class randoop.<a href="randoop/ExceptionalExecution.html" title="class in randoop">ExceptionalExecution</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/generation/RandoopGenerationError.html#exception">exception</a></span> - Variable in error randoop.generation.<a href="randoop/generation/RandoopGenerationError.html" title="class in randoop.generation">RandoopGenerationError</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ThrowsTag.html#exception">exception</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/ThrowsTag.html" title="class in randoop.input.toradocu">ThrowsTag</a></dt>
+<dd>
+<div class="block">The exception described in this <code>ThrowsTag</code>.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ThrowsTag.html#exception--">exception()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ThrowsTag.html" title="class in randoop.input.toradocu">ThrowsTag</a></dt>
+<dd>
+<div class="block">Returns the type of the exception in this throws tag.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/reflection/RandoopInstantiationError.html#exception">exception</a></span> - Variable in error randoop.reflection.<a href="randoop/reflection/RandoopInstantiationError.html" title="class in randoop.reflection">RandoopInstantiationError</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/test/ExceptionCheck.html#exception">exception</a></span> - Variable in class randoop.test.<a href="randoop/test/ExceptionCheck.html" title="class in randoop.test">ExceptionCheck</a></dt>
 <dd>&nbsp;</dd>
@@ -2158,8 +2330,6 @@
 <dd>
 <div class="block">Creates an exception check for the statement at the statement index.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="randoop/test/InvalidChecks.html#exceptionCheck">exceptionCheck</a></span> - Variable in class randoop.test.<a href="randoop/test/InvalidChecks.html" title="class in randoop.test">InvalidChecks</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/test/RegressionChecks.html#exceptionCheck">exceptionCheck</a></span> - Variable in class randoop.test.<a href="randoop/test/RegressionChecks.html" title="class in randoop.test">RegressionChecks</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/test/RegressionCaptureVisitor.html#exceptionExpectation">exceptionExpectation</a></span> - Variable in class randoop.test.<a href="randoop/test/RegressionCaptureVisitor.html" title="class in randoop.test">RegressionCaptureVisitor</a></dt>
@@ -2332,6 +2502,12 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/util/ProgressDisplay.html#exit_if_no_new_sequences_after_mseconds">exit_if_no_new_sequences_after_mseconds</a></span> - Static variable in class randoop.util.<a href="randoop/util/ProgressDisplay.html" title="class in randoop.util">ProgressDisplay</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/test/ExpectedExceptionGenerator.html#expected">expected</a></span> - Variable in class randoop.test.<a href="randoop/test/ExpectedExceptionGenerator.html" title="class in randoop.test">ExpectedExceptionGenerator</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/test/MissingExceptionCheck.html#expected">expected</a></span> - Variable in class randoop.test.<a href="randoop/test/MissingExceptionCheck.html" title="class in randoop.test">MissingExceptionCheck</a></dt>
+<dd>
+<div class="block">The type of the expected exception</div>
+</dd>
 <dt><a href="randoop/test/ExpectedExceptionCheck.html" title="class in randoop.test"><span class="typeNameLink">ExpectedExceptionCheck</span></a> - Class in <a href="randoop/test/package-summary.html">randoop.test</a></dt>
 <dd>
 <div class="block">An <code>ExceptionCheck</code> that enforces the expectation of an exception being
@@ -2353,6 +2529,13 @@
 <div class="block">Create an object that generates expected exception checks for exceptions
  that satisfy the given predicate, and empty exception checks for others.</div>
 </dd>
+<dt><a href="randoop/test/ExpectedExceptionGenerator.html" title="class in randoop.test"><span class="typeNameLink">ExpectedExceptionGenerator</span></a> - Class in <a href="randoop/test/package-summary.html">randoop.test</a></dt>
+<dd>
+<div class="block">A <a href="randoop/test/TestCheckGenerator.html" title="interface in randoop.test"><code>TestCheckGenerator</code></a> that generates checks for exceptions that are expected at a
+ particular statement.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/test/ExpectedExceptionGenerator.html#ExpectedExceptionGenerator-randoop.types.ClassOrInterfaceType-java.lang.String-">ExpectedExceptionGenerator(ClassOrInterfaceType, String)</a></span> - Constructor for class randoop.test.<a href="randoop/test/ExpectedExceptionGenerator.html" title="class in randoop.test">ExpectedExceptionGenerator</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="randoop/types/ExplicitTypeVariable.html" title="class in randoop.types"><span class="typeNameLink">ExplicitTypeVariable</span></a> - Class in <a href="randoop/types/package-summary.html">randoop.types</a></dt>
 <dd>
 <div class="block">Represents a type variable that is a type parameter.</div>
@@ -2494,6 +2677,11 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/test/ExtendGenerator.html#firstGenerator">firstGenerator</a></span> - Variable in class randoop.test.<a href="randoop/test/ExtendGenerator.html" title="class in randoop.test">ExtendGenerator</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/operation/TypedOperation.html#fixArguments-java.lang.Object:A-">fixArguments(Object[])</a></span> - Method in class randoop.operation.<a href="randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></dt>
+<dd>
+<div class="block">Fixes the argument array for checking an <a href="randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> -- inserting <code>null</code> as first argument
+ when this operation is static.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/JavaTypes.html#FLOAT_TYPE">FLOAT_TYPE</a></span> - Static variable in class randoop.types.<a href="randoop/types/JavaTypes.html" title="class in randoop.types">JavaTypes</a></dt>
 <dd>
 <div class="block">The float <a href="randoop/types/PrimitiveType.html" title="class in randoop.types"><code>PrimitiveType</code></a></div>
@@ -2517,7 +2705,7 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/main/GenInputsAbstract.html#forbid_null">forbid_null</a></span> - Static variable in class randoop.main.<a href="randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</a></dt>
 <dd>
-<div class="block">Do not use <code>null</code> as input to methods or constructors when no
+<div class="block">Do not use <code>null</code> as input to methods or constructors, even when no
  other argument value can be generated.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ArrayType.html#forClass-java.lang.Class-">forClass(Class&lt;?&gt;)</a></span> - Static method in class randoop.types.<a href="randoop/types/ArrayType.html" title="class in randoop.types">ArrayType</a></dt>
@@ -2578,7 +2766,7 @@
 <dd>
 <div class="block">Constructs a parameter bound given a <a href="randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="randoop/types/ParameterBound.html#forType-java.lang.reflect.Type-">forType(Type)</a></span> - Static method in class randoop.types.<a href="randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></dt>
+<dt><span class="memberNameLink"><a href="randoop/types/ParameterBound.html#forType-java.util.Set-java.lang.reflect.Type-">forType(Set&lt;TypeVariable&lt;?&gt;&gt;, Type)</a></span> - Static method in class randoop.types.<a href="randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></dt>
 <dd>
 <div class="block">Creates a <code>ParameterBound</code> object from a single
  <code>java.lang.reflect.Type</code>.</div>
@@ -2592,6 +2780,8 @@
 <dd>
 <div class="block">Creates a <code>ReferenceArgument</code> from the given type.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ReferenceArgument.html#forType-randoop.types.ReferenceType-">forType(ReferenceType)</a></span> - Static method in class randoop.types.<a href="randoop/types/ReferenceArgument.html" title="class in randoop.types">ReferenceArgument</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ReferenceType.html#forType-java.lang.reflect.Type-">forType(Type)</a></span> - Static method in class randoop.types.<a href="randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a></dt>
 <dd>
 <div class="block">Creates a <code>ReferenceType</code> for the given <code>java.lang.reflect.Type</code>.</div>
@@ -2606,6 +2796,8 @@
 <div class="block">Converts a <code>java.lang.reflect.Type</code> to a <code>TypeArgument</code>
  object.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/types/TypeArgument.html#forType-randoop.types.ReferenceType-">forType(ReferenceType)</a></span> - Static method in class randoop.types.<a href="randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/TypeVariable.html#forType-java.lang.reflect.Type-">forType(Type)</a></span> - Static method in class randoop.types.<a href="randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a></dt>
 <dd>
 <div class="block">Creates a <code>TypeVariable</code> object for a given <code>java.lang.reflect.Type</code>
@@ -2615,11 +2807,13 @@
 <dd>
 <div class="block">Creates a <code>WildcardArgument</code> from a <code>java.lang.reflect.Type</code>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/types/WildcardArgument.html#forType-randoop.types.ReferenceType-">forType(ReferenceType)</a></span> - Static method in class randoop.types.<a href="randoop/types/WildcardArgument.html" title="class in randoop.types">WildcardArgument</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/WildcardType.html#forType-java.lang.reflect.WildcardType-">forType(WildcardType)</a></span> - Static method in class randoop.types.<a href="randoop/types/WildcardType.html" title="class in randoop.types">WildcardType</a></dt>
 <dd>
 <div class="block">Creates a wildcard type from a given reflection type.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="randoop/types/ParameterBound.html#forTypes-java.lang.reflect.Type:A-">forTypes(Type[])</a></span> - Static method in class randoop.types.<a href="randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></dt>
+<dt><span class="memberNameLink"><a href="randoop/types/ParameterBound.html#forTypes-java.util.Set-java.lang.reflect.Type:A-">forTypes(Set&lt;TypeVariable&lt;?&gt;&gt;, Type[])</a></span> - Static method in class randoop.types.<a href="randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></dt>
 <dd>
 <div class="block">Creates a bound from the array of bounds of a <code>java.lang.reflect.TypeVariable</code>.</div>
 </dd>
@@ -2873,6 +3067,11 @@
 <dd>
 <div class="block">Returns the <a href="randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> bound of this type.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuConditionCollection.html#getCallableObject-java.lang.Class-randoop.input.toradocu.DocumentedMethod-java.lang.Class:A-">getCallableObject(Class&lt;?&gt;, DocumentedMethod, Class&lt;?&gt;[])</a></span> - Static method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuConditionCollection.html" title="class in randoop.input.toradocu">ToradocuConditionCollection</a></dt>
+<dd>
+<div class="block">Returns the <code>AccessibleObject</code> reference to the <code>java.lang.reflect.Method</code> or
+ <code>java.lang.reflect.Constructor</code> for the given <a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu"><code>DocumentedMethod</code></a>.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/reflection/TypeInstantiator.html#getCandidateTypeLists-java.util.List-">getCandidateTypeLists(List&lt;TypeVariable&gt;)</a></span> - Method in class randoop.reflection.<a href="randoop/reflection/TypeInstantiator.html" title="class in randoop.reflection">TypeInstantiator</a></dt>
 <dd>
 <div class="block">Constructs the list of lists of candidate types for the given type parameters.</div>
@@ -2896,6 +3095,10 @@
 <dd>
 <div class="block">Return the set of test checks for the most recent execution.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuConditionCollection.html#getClass-randoop.input.toradocu.Type-">getClass(Type)</a></span> - Static method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuConditionCollection.html" title="class in randoop.input.toradocu">ToradocuConditionCollection</a></dt>
+<dd>
+<div class="block">Returns the <code>Class&lt;?&gt;</code> for the given <a href="randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu"><code>Type</code></a>.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/RandoopSecurityManager.html#getClassContext--">getClassContext()</a></span> - Method in class randoop.util.<a href="randoop/util/RandoopSecurityManager.html" title="class in randoop.util">RandoopSecurityManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/JarReader.html#getClasseNamesInJar-java.lang.String-">getClasseNamesInJar(String)</a></span> - Static method in class randoop.util.<a href="randoop/util/JarReader.html" title="class in randoop.util">JarReader</a></dt>
@@ -2915,9 +3118,42 @@
 <div class="block">Create the operation to call <code>Collections.addAll(Collection, Object[])</code> that
  allows initialization of a <code>Collection</code> object.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/condition/Condition.html#getComment--">getComment()</a></span> - Method in interface randoop.condition.<a href="randoop/condition/Condition.html" title="interface in randoop.condition">Condition</a></dt>
+<dd>
+<div class="block">Return text that describes this condition.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/AbstractTag.html#getComment--">getComment()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/AbstractTag.html" title="class in randoop.input.toradocu">AbstractTag</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Tag.html#getComment--">getComment()</a></span> - Method in interface randoop.input.toradocu.<a href="randoop/input/toradocu/Tag.html" title="interface in randoop.input.toradocu">Tag</a></dt>
+<dd>
+<div class="block">Returns the comment associated with the exception in this tag.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuCondition.html#getComment--">getComment()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuCondition.html" title="class in randoop.input.toradocu">ToradocuCondition</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuReturnCondition.html#getComment--">getComment()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuReturnCondition.html" title="class in randoop.input.toradocu">ToradocuReturnCondition</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Type.html#getComponentType--">getComponentType()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a></dt>
+<dd>
+<div class="block">Returns the <code>Type</code> representing the component type of an array.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ArrayType.html#getComponentType--">getComponentType()</a></span> - Method in class randoop.types.<a href="randoop/types/ArrayType.html" title="class in randoop.types">ArrayType</a></dt>
 <dd>
 <div class="block">Returns the component type of this array type.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/AbstractTag.html#getCondition--">getCondition()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/AbstractTag.html" title="class in randoop.input.toradocu">AbstractTag</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Tag.html#getCondition--">getCondition()</a></span> - Method in interface randoop.input.toradocu.<a href="randoop/input/toradocu/Tag.html" title="interface in randoop.input.toradocu">Tag</a></dt>
+<dd>
+<div class="block">Returns the translated Java boolean condition for this tag as an optional which is empty if
+ translation has not been attempted yet.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuConditionCollection.html#getConditionClass-randoop.input.toradocu.DocumentedMethod-">getConditionClass(DocumentedMethod)</a></span> - Static method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuConditionCollection.html" title="class in randoop.input.toradocu">ToradocuConditionCollection</a></dt>
+<dd>
+<div class="block">Returns the <code>Class&lt;?&gt;</code> for the condition class of the given method.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuConditionCollection.html#getConditionMethod-java.lang.Class-java.lang.String-java.lang.Class:A-">getConditionMethod(Class&lt;?&gt;, String, Class&lt;?&gt;[])</a></span> - Static method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuConditionCollection.html" title="class in randoop.input.toradocu">ToradocuConditionCollection</a></dt>
+<dd>
+<div class="block">Gets the <code>java.lang.reflect.Method</code> for the condition method with the given name.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/util/ClassFileConstants.html#getConstants-java.lang.String-">getConstants(String)</a></span> - Static method in class randoop.util.<a href="randoop/util/ClassFileConstants.html" title="class in randoop.util">ClassFileConstants</a></dt>
 <dd>
@@ -2934,6 +3170,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/util/ConstructorReflectionCode.html#getConstructor--">getConstructor()</a></span> - Method in class randoop.util.<a href="randoop/util/ConstructorReflectionCode.html" title="class in randoop.util">ConstructorReflectionCode</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#getContainingClass--">getContainingClass()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">Returns the class in which this method is contained.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/reflection/OperationModel.html#getContracts--">getContracts()</a></span> - Method in class randoop.reflection.<a href="randoop/reflection/OperationModel.html" title="class in randoop.reflection">OperationModel</a></dt>
 <dd>
 <div class="block">Returns all <a href="randoop/contract/ObjectContract.html" title="interface in randoop.contract"><code>ObjectContract</code></a> objects for this run of Randoop.</div>
@@ -2978,6 +3218,10 @@
 <dd>
 <div class="block">Gets the default constructor for a <a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types"><code>ClassOrInterfaceType</code></a>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Type.html#getDimension-java.lang.String-">getDimension(String)</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a></dt>
+<dd>
+<div class="block">Returns the dimension of the given type.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ArrayType.html#getDimensions--">getDimensions()</a></span> - Method in class randoop.types.<a href="randoop/types/ArrayType.html" title="class in randoop.types">ArrayType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/JunitFileWriter.html#getDir--">getDir()</a></span> - Method in class randoop.<a href="randoop/JunitFileWriter.html" title="class in randoop">JunitFileWriter</a></dt>
@@ -3011,6 +3255,10 @@
 <div class="block">Returns the generated error-revealing test sequences for output.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/ExceptionalExecution.html#getException--">getException()</a></span> - Method in class randoop.<a href="randoop/ExceptionalExecution.html" title="class in randoop">ExceptionalExecution</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/generation/RandoopGenerationError.html#getException--">getException()</a></span> - Method in error randoop.generation.<a href="randoop/generation/RandoopGenerationError.html" title="class in randoop.generation">RandoopGenerationError</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/reflection/RandoopInstantiationError.html#getException--">getException()</a></span> - Method in error randoop.reflection.<a href="randoop/reflection/RandoopInstantiationError.html" title="class in randoop.reflection">RandoopInstantiationError</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/test/ExceptionCheck.html#getException--">getException()</a></span> - Method in class randoop.test.<a href="randoop/test/ExceptionCheck.html" title="class in randoop.test">ExceptionCheck</a></dt>
 <dd>
@@ -3090,6 +3338,10 @@
 <dt><span class="memberNameLink"><a href="randoop/test/ExceptionCheck.html#getID--">getID()</a></span> - Method in class randoop.test.<a href="randoop/test/ExceptionCheck.html" title="class in randoop.test">ExceptionCheck</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/test/InvalidExceptionCheck.html#getID--">getID()</a></span> - Method in class randoop.test.<a href="randoop/test/InvalidExceptionCheck.html" title="class in randoop.test">InvalidExceptionCheck</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/test/InvalidValueCheck.html#getID--">getID()</a></span> - Method in class randoop.test.<a href="randoop/test/InvalidValueCheck.html" title="class in randoop.test">InvalidValueCheck</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/test/MissingExceptionCheck.html#getID--">getID()</a></span> - Method in class randoop.test.<a href="randoop/test/MissingExceptionCheck.html" title="class in randoop.test">MissingExceptionCheck</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/test/NoExceptionCheck.html#getID--">getID()</a></span> - Method in class randoop.test.<a href="randoop/test/NoExceptionCheck.html" title="class in randoop.test">NoExceptionCheck</a></dt>
 <dd>&nbsp;</dd>
@@ -3204,6 +3456,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/contract/HashCodeReturnsNormally.html#getInstance--">getInstance()</a></span> - Static method in class randoop.contract.<a href="randoop/contract/HashCodeReturnsNormally.html" title="class in randoop.contract">HashCodeReturnsNormally</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/generation/RandoopGenerationError.html#getInstantiatedOperation--">getInstantiatedOperation()</a></span> - Method in error randoop.generation.<a href="randoop/generation/RandoopGenerationError.html" title="class in randoop.generation">RandoopGenerationError</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#getInstantiatingSubstitution-randoop.types.ClassOrInterfaceType-">getInstantiatingSubstitution(ClassOrInterfaceType)</a></span> - Method in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
 <dd>
 <div class="block">Computes a substitution that can be applied to the type variables of the generic goal type to
@@ -3241,6 +3495,12 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/types/NonParameterizedType.html#getInterfaces--">getInterfaces()</a></span> - Method in class randoop.types.<a href="randoop/types/NonParameterizedType.html" title="class in randoop.types">NonParameterizedType</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/AbstractTag.html#getKind--">getKind()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/AbstractTag.html" title="class in randoop.input.toradocu">AbstractTag</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Tag.html#getKind--">getKind()</a></span> - Method in interface randoop.input.toradocu.<a href="randoop/input/toradocu/Tag.html" title="interface in randoop.input.toradocu">Tag</a></dt>
+<dd>
+<div class="block">Returns the kind of this tag (e.g., @throws, @param).</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/sequence/ExecutableSequence.html#getLastStatementValues--">getLastStatementValues()</a></span> - Method in class randoop.sequence.<a href="randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a></dt>
 <dd>
 <div class="block">Returns the list of (reference type) values created and used by the last statement
@@ -3286,6 +3546,14 @@
 <dt><span class="memberNameLink"><a href="randoop/field/AccessibleField.html#getName--">getName()</a></span> - Method in class randoop.field.<a href="randoop/field/AccessibleField.html" title="class in randoop.field">AccessibleField</a></dt>
 <dd>
 <div class="block">Returns the declared name of the field.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#getName--">getName()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">Returns the simple name of this method.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Parameter.html#getName--">getName()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/Parameter.html" title="class in randoop.input.toradocu">Parameter</a></dt>
+<dd>
+<div class="block">Returns the name of the parameter.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/operation/ArrayCreation.html#getName--">getName()</a></span> - Method in class randoop.operation.<a href="randoop/operation/ArrayCreation.html" title="class in randoop.operation">ArrayCreation</a></dt>
 <dd>&nbsp;</dd>
@@ -3381,6 +3649,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/CollectionsExt.html#getNthIteratedElement-java.util.Iterator-int-">getNthIteratedElement(Iterator&lt;? extends T&gt;, int)</a></span> - Static method in class randoop.util.<a href="randoop/util/CollectionsExt.html" title="class in randoop.util">CollectionsExt</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Parameter.html#getNullability--">getNullability()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/Parameter.html" title="class in randoop.input.toradocu">Parameter</a></dt>
+<dd>
+<div class="block">Returns <code>true</code> if the parameter is nullable, <code>false</code> if it is nonnull, or <code>null</code> if its nullability is unspecified.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/NullReferenceType.html#getNullType--">getNullType()</a></span> - Static method in class randoop.types.<a href="randoop/types/NullReferenceType.html" title="class in randoop.types">NullReferenceType</a></dt>
 <dd>
 <div class="block">Returns the null type.</div>
@@ -3402,7 +3674,11 @@
 <div class="block">getTypedOperation is meant to be a temporary solution to type confusion in
  generators.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/generation/RandoopGenerationError.html#getOperationName--">getOperationName()</a></span> - Method in error randoop.generation.<a href="randoop/generation/RandoopGenerationError.html" title="class in randoop.generation">RandoopGenerationError</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/reflection/OperationModel.html#getOperations--">getOperations()</a></span> - Method in class randoop.reflection.<a href="randoop/reflection/OperationModel.html" title="class in randoop.reflection">OperationModel</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/reflection/RandoopInstantiationError.html#getOpName--">getOpName()</a></span> - Method in error randoop.reflection.<a href="randoop/reflection/RandoopInstantiationError.html" title="class in randoop.reflection">RandoopInstantiationError</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/sequence/Sequence.html#getOutputIndices--">getOutputIndices()</a></span> - Method in class randoop.sequence.<a href="randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></dt>
 <dd>
@@ -3414,13 +3690,38 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/sequence/Statement.html#getOutputType--">getOutputType()</a></span> - Method in class randoop.sequence.<a href="randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Type.html#getPackage-java.lang.String-">getPackage(String)</a></span> - Static method in class randoop.input.toradocu.<a href="randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a></dt>
+<dd>
+<div class="block">Returns the package of the given <code>type</code>.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#getPackage--">getPackage()</a></span> - Method in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
 <dd>
 <div class="block">Returns the package of the runtime class of this type.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#getParameters--">getParameters()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">Returns an unmodifiable list view of the parameters in this method.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/operation/TypedOperation.html#getPostCheckGenerator-java.lang.Object:A-">getPostCheckGenerator(Object[])</a></span> - Method in class randoop.operation.<a href="randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></dt>
+<dd>
+<div class="block">Checks whether this operation has a postcondition clause that is satisfied by the argument
+ values, and if so returns the corresponding <a href="randoop/test/TestCheckGenerator.html" title="interface in randoop.test"><code>TestCheckGenerator</code></a>.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/condition/ConditionCollection.html#getPreconditions-java.lang.reflect.AccessibleObject-">getPreconditions(AccessibleObject)</a></span> - Method in interface randoop.condition.<a href="randoop/condition/ConditionCollection.html" title="interface in randoop.condition">ConditionCollection</a></dt>
+<dd>
+<div class="block">Returns the preconditions for the given method or constructor.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuConditionCollection.html#getPreconditions-java.lang.reflect.AccessibleObject-">getPreconditions(AccessibleObject)</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuConditionCollection.html" title="class in randoop.input.toradocu">ToradocuConditionCollection</a></dt>
+<dd>
+<div class="block">Returns the list of preconditions for the given constructor/method.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/JavaTypes.html#getPrimitiveTypes--">getPrimitiveTypes()</a></span> - Static method in class randoop.types.<a href="randoop/types/JavaTypes.html" title="class in randoop.types">JavaTypes</a></dt>
 <dd>
 <div class="block">Returns the list of (non-void) primitive types.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Type.html#getQualifiedName--">getQualifiedName()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a></dt>
+<dd>
+<div class="block">Returns the fully qualified name of this <code>Type</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/util/WeightedList.html#getRandomElement--">getRandomElement()</a></span> - Method in class randoop.util.<a href="randoop/util/WeightedList.html" title="class in randoop.util">WeightedList</a></dt>
 <dd>&nbsp;</dd>
@@ -3460,6 +3761,12 @@
 <dd>
 <div class="block">Get the reference type for this type argument.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/operation/CallableOperation.html#getReflectionObject--">getReflectionObject()</a></span> - Method in class randoop.operation.<a href="randoop/operation/CallableOperation.html" title="class in randoop.operation">CallableOperation</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/operation/ConstructorCall.html#getReflectionObject--">getReflectionObject()</a></span> - Method in class randoop.operation.<a href="randoop/operation/ConstructorCall.html" title="class in randoop.operation">ConstructorCall</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/operation/MethodCall.html#getReflectionObject--">getReflectionObject()</a></span> - Method in class randoop.operation.<a href="randoop/operation/MethodCall.html" title="class in randoop.operation">MethodCall</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ExplicitTypeVariable.html#getReflectionTypeVariable--">getReflectionTypeVariable()</a></span> - Method in class randoop.types.<a href="randoop/types/ExplicitTypeVariable.html" title="class in randoop.types">ExplicitTypeVariable</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/generation/AbstractGenerator.html#getRegressionSequences--">getRegressionSequences()</a></span> - Method in class randoop.generation.<a href="randoop/generation/AbstractGenerator.html" title="class in randoop.generation">AbstractGenerator</a></dt>
@@ -3474,6 +3781,10 @@
 <dt><span class="memberNameLink"><a href="randoop/sequence/ExecutableSequence.html#getResult-int-">getResult(int)</a></span> - Method in class randoop.sequence.<a href="randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a></dt>
 <dd>
 <div class="block">This method is typically used by ExecutionVisitors.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#getReturnType--">getReturnType()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">Returns the return type of this method or null if this is a constructor.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/util/ConstructorReflectionCode.html#getReturnVariable--">getReturnVariable()</a></span> - Method in class randoop.util.<a href="randoop/util/ConstructorReflectionCode.html" title="class in randoop.util">ConstructorReflectionCode</a></dt>
 <dd>&nbsp;</dd>
@@ -3556,6 +3867,14 @@
 <div class="block">getShortForm constructs code expression of the operation for substitution
  into argument lists as opposed to using variable.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#getSignature--">getSignature()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">Returns the signature of this method.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Type.html#getSimpleName--">getSimpleName()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a></dt>
+<dd>
+<div class="block">Returns the simple name of this <code>Type</code>.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ArrayType.html#getSimpleName--">getSimpleName()</a></span> - Method in class randoop.types.<a href="randoop/types/ArrayType.html" title="class in randoop.types">ArrayType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/CaptureTypeVariable.html#getSimpleName--">getSimpleName()</a></span> - Method in class randoop.types.<a href="randoop/types/CaptureTypeVariable.html" title="class in randoop.types">CaptureTypeVariable</a></dt>
@@ -3606,6 +3925,11 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/main/GenInputsAbstract.html#getStringSetFromFile-java.io.File-java.lang.String-java.lang.String-java.lang.String-">getStringSetFromFile(File, String, String, String)</a></span> - Static method in class randoop.main.<a href="randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuConditionCollection.html#getSubjectMethodParameters-randoop.input.toradocu.DocumentedMethod-">getSubjectMethodParameters(DocumentedMethod)</a></span> - Static method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuConditionCollection.html" title="class in randoop.input.toradocu">ToradocuConditionCollection</a></dt>
+<dd>
+<div class="block">Get the parameters for the subject method of the <a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu"><code>DocumentedMethod</code></a> in the form
+ required to retrieve the reflection method object.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/ArrayListSimpleList.html#getSublist-int-">getSublist(int)</a></span> - Method in class randoop.util.<a href="randoop/util/ArrayListSimpleList.html" title="class in randoop.util">ArrayListSimpleList</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/ListOfLists.html#getSublist-int-">getSublist(int)</a></span> - Method in class randoop.util.<a href="randoop/util/ListOfLists.html" title="class in randoop.util">ListOfLists</a></dt>
@@ -3626,6 +3950,10 @@
 <dd>
 <div class="block">Returns the input sequence containing the statement that threw the
  exception.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/TypeVariable.html#getSubstitution-randoop.types.TypeVariable-randoop.types.ReferenceType-">getSubstitution(TypeVariable, ReferenceType)</a></span> - Static method in class randoop.types.<a href="randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a></dt>
+<dd>
+<div class="block">Creates a substitution of the given <a href="randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> for the <a href="randoop/types/TypeVariable.html" title="class in randoop.types"><code>TypeVariable</code></a>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/generation/AbstractGenerator.html#getSubsumedSequences--">getSubsumedSequences()</a></span> - Method in class randoop.generation.<a href="randoop/generation/AbstractGenerator.html" title="class in randoop.generation">AbstractGenerator</a></dt>
 <dd>
@@ -3662,6 +3990,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#getSuperTypes--">getSuperTypes()</a></span> - Method in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#getTargetClass--">getTargetClass()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">Returns the target class as specified with the command line option --target-class.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/JunitFileWriter.html#getTestClassNames--">getTestClassNames()</a></span> - Method in class randoop.<a href="randoop/JunitFileWriter.html" title="class in randoop">JunitFileWriter</a></dt>
 <dd>
 <div class="block">Generates the list of test class names for previously generated test
@@ -3669,9 +4001,25 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/util/RandoopSecurityManager.html#getThreadGroup--">getThreadGroup()</a></span> - Method in class randoop.util.<a href="randoop/util/RandoopSecurityManager.html" title="class in randoop.util">RandoopSecurityManager</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/condition/ConditionCollection.html#getThrowsConditions-java.lang.reflect.AccessibleObject-">getThrowsConditions(AccessibleObject)</a></span> - Method in interface randoop.condition.<a href="randoop/condition/ConditionCollection.html" title="interface in randoop.condition">ConditionCollection</a></dt>
+<dd>
+<div class="block">Returns the throws-conditions for the given method or constructor.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuConditionCollection.html#getThrowsConditions-java.lang.reflect.AccessibleObject-">getThrowsConditions(AccessibleObject)</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuConditionCollection.html" title="class in randoop.input.toradocu">ToradocuConditionCollection</a></dt>
+<dd>
+<div class="block">Returns the map from conditions to exceptions for the given constructor/method.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/Timer.html#getTimeElapsedMillis--">getTimeElapsedMillis()</a></span> - Method in class randoop.util.<a href="randoop/util/Timer.html" title="class in randoop.util">Timer</a></dt>
 <dd>
 <div class="block">The total testtime elapsed.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Parameter.html#getType--">getType()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/Parameter.html" title="class in randoop.input.toradocu">Parameter</a></dt>
+<dd>
+<div class="block">Returns the type of the parameter.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuConditionCollection.html#getType-randoop.input.toradocu.Type-">getType(Type)</a></span> - Static method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuConditionCollection.html" title="class in randoop.input.toradocu">ToradocuConditionCollection</a></dt>
+<dd>
+<div class="block">Returns the <a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types"><code>ClassOrInterfaceType</code></a> for the given <a href="randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu"><code>Type</code></a>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/operation/NonreceiverTerm.html#getType--">getType()</a></span> - Method in class randoop.operation.<a href="randoop/operation/NonreceiverTerm.html" title="class in randoop.operation">NonreceiverTerm</a></dt>
 <dd>&nbsp;</dd>
@@ -3725,15 +4073,9 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ArrayType.html#getTypeParameters--">getTypeParameters()</a></span> - Method in class randoop.types.<a href="randoop/types/ArrayType.html" title="class in randoop.types">ArrayType</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="randoop/types/CaptureTypeVariable.html#getTypeParameters--">getTypeParameters()</a></span> - Method in class randoop.types.<a href="randoop/types/CaptureTypeVariable.html" title="class in randoop.types">CaptureTypeVariable</a></dt>
-<dd>
-<div class="block">Returns the type parameters in this type, which is this variable.</div>
-</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#getTypeParameters--">getTypeParameters()</a></span> - Method in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/EagerReferenceBound.html#getTypeParameters--">getTypeParameters()</a></span> - Method in class randoop.types.<a href="randoop/types/EagerReferenceBound.html" title="class in randoop.types">EagerReferenceBound</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="randoop/types/ExplicitTypeVariable.html#getTypeParameters--">getTypeParameters()</a></span> - Method in class randoop.types.<a href="randoop/types/ExplicitTypeVariable.html" title="class in randoop.types">ExplicitTypeVariable</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/GenericClassType.html#getTypeParameters--">getTypeParameters()</a></span> - Method in class randoop.types.<a href="randoop/types/GenericClassType.html" title="class in randoop.types">GenericClassType</a></dt>
 <dd>
@@ -3757,6 +4099,8 @@
 <dd>
 <div class="block">Returns any type parameters in the type of this bound.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ParameterType.html#getTypeParameters--">getTypeParameters()</a></span> - Method in class randoop.types.<a href="randoop/types/ParameterType.html" title="class in randoop.types">ParameterType</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ReferenceArgument.html#getTypeParameters--">getTypeParameters()</a></span> - Method in class randoop.types.<a href="randoop/types/ReferenceArgument.html" title="class in randoop.types">ReferenceArgument</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ReferenceType.html#getTypeParameters--">getTypeParameters()</a></span> - Method in class randoop.types.<a href="randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a></dt>
@@ -3770,6 +4114,10 @@
 <dt><span class="memberNameLink"><a href="randoop/types/TypeTuple.html#getTypeParameters--">getTypeParameters()</a></span> - Method in class randoop.types.<a href="randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a></dt>
 <dd>
 <div class="block">Returns the type parameters that occur in any component of this type tuple.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/TypeVariable.html#getTypeParameters--">getTypeParameters()</a></span> - Method in class randoop.types.<a href="randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a></dt>
+<dd>
+<div class="block">Returns the type parameters in this type, which is this variable.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/types/WildcardArgument.html#getTypeParameters--">getTypeParameters()</a></span> - Method in class randoop.types.<a href="randoop/types/WildcardArgument.html" title="class in randoop.types">WildcardArgument</a></dt>
 <dd>
@@ -3838,6 +4186,10 @@
 <div class="block">Returns a short string that can be used to uniquely identify this check.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/test/InvalidExceptionCheck.html#getValue--">getValue()</a></span> - Method in class randoop.test.<a href="randoop/test/InvalidExceptionCheck.html" title="class in randoop.test">InvalidExceptionCheck</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/test/InvalidValueCheck.html#getValue--">getValue()</a></span> - Method in class randoop.test.<a href="randoop/test/InvalidValueCheck.html" title="class in randoop.test">InvalidValueCheck</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/test/MissingExceptionCheck.html#getValue--">getValue()</a></span> - Method in class randoop.test.<a href="randoop/test/MissingExceptionCheck.html" title="class in randoop.test">MissingExceptionCheck</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/test/NoExceptionCheck.html#getValue--">getValue()</a></span> - Method in class randoop.test.<a href="randoop/test/NoExceptionCheck.html" title="class in randoop.test">NoExceptionCheck</a></dt>
 <dd>&nbsp;</dd>
@@ -3942,8 +4294,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/main/GenTests.html#handleFlakySequenceException-randoop.generation.AbstractGenerator-randoop.sequence.SequenceExceptionError-">handleFlakySequenceException(AbstractGenerator, SequenceExceptionError)</a></span> - Method in class randoop.main.<a href="randoop/main/GenTests.html" title="class in randoop.main">GenTests</a></dt>
 <dd>
-<div class="block">Handles the occurrence of a <code>SequenceExceptionError</code> that indicates a
- flaky test has been found.</div>
+<div class="block">Handles the occurrence of a <code>SequenceExceptionError</code> that indicates a flaky test has been
+ found.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/main/Main.html#handlers">handlers</a></span> - Static variable in class randoop.main.<a href="randoop/main/Main.html" title="class in randoop.main">Main</a></dt>
 <dd>&nbsp;</dd>
@@ -4019,6 +4371,30 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/field/AccessibleField.html#hashCode--">hashCode()</a></span> - Method in class randoop.field.<a href="randoop/field/AccessibleField.html" title="class in randoop.field">AccessibleField</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/AbstractTag.html#hashCode--">hashCode()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/AbstractTag.html" title="class in randoop.input.toradocu">AbstractTag</a></dt>
+<dd>
+<div class="block">Returns the hash code of this object.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#hashCode--">hashCode()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">Returns the hash code of this object.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Parameter.html#hashCode--">hashCode()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/Parameter.html" title="class in randoop.input.toradocu">Parameter</a></dt>
+<dd>
+<div class="block">Returns the hash code of this object.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ParamTag.html#hashCode--">hashCode()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ParamTag.html" title="class in randoop.input.toradocu">ParamTag</a></dt>
+<dd>
+<div class="block">Returns the hash code of this object.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ThrowsTag.html#hashCode--">hashCode()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ThrowsTag.html" title="class in randoop.input.toradocu">ThrowsTag</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuCondition.html#hashCode--">hashCode()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuCondition.html" title="class in randoop.input.toradocu">ToradocuCondition</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Type.html#hashCode--">hashCode()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a></dt>
+<dd>
+<div class="block">Returns the hash code of this object.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/operation/ArrayCreation.html#hashCode--">hashCode()</a></span> - Method in class randoop.operation.<a href="randoop/operation/ArrayCreation.html" title="class in randoop.operation">ArrayCreation</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/operation/ConstructorCall.html#hashCode--">hashCode()</a></span> - Method in class randoop.operation.<a href="randoop/operation/ConstructorCall.html" title="class in randoop.operation">ConstructorCall</a></dt>
@@ -4059,6 +4435,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/test/ExceptionCheck.html#hashCode--">hashCode()</a></span> - Method in class randoop.test.<a href="randoop/test/ExceptionCheck.html" title="class in randoop.test">ExceptionCheck</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/test/MissingExceptionCheck.html#hashCode--">hashCode()</a></span> - Method in class randoop.test.<a href="randoop/test/MissingExceptionCheck.html" title="class in randoop.test">MissingExceptionCheck</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/test/NoExceptionCheck.html#hashCode--">hashCode()</a></span> - Method in class randoop.test.<a href="randoop/test/NoExceptionCheck.html" title="class in randoop.test">NoExceptionCheck</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/test/ObjectCheck.html#hashCode--">hashCode()</a></span> - Method in class randoop.test.<a href="randoop/test/ObjectCheck.html" title="class in randoop.test">ObjectCheck</a></dt>
@@ -4079,9 +4457,17 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/LazyParameterBound.html#hashCode--">hashCode()</a></span> - Method in class randoop.types.<a href="randoop/types/LazyParameterBound.html" title="class in randoop.types">LazyParameterBound</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/LazyReferenceBound.html#hashCode--">hashCode()</a></span> - Method in class randoop.types.<a href="randoop/types/LazyReferenceBound.html" title="class in randoop.types">LazyReferenceBound</a></dt>
+<dd>
+<div class="block">
+ <a href="randoop/types/LazyReferenceBound.html" title="class in randoop.types"><code>LazyReferenceBound</code></a> can be part of a recursive type, and so the hash code is based on
+ the string representation of the bound to avoid recursive calls on <code>hashCode()</code>.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/NonParameterizedType.html#hashCode--">hashCode()</a></span> - Method in class randoop.types.<a href="randoop/types/NonParameterizedType.html" title="class in randoop.types">NonParameterizedType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/NullReferenceType.html#hashCode--">hashCode()</a></span> - Method in class randoop.types.<a href="randoop/types/NullReferenceType.html" title="class in randoop.types">NullReferenceType</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ParameterType.html#hashCode--">hashCode()</a></span> - Method in class randoop.types.<a href="randoop/types/ParameterType.html" title="class in randoop.types">ParameterType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/PrimitiveType.html#hashCode--">hashCode()</a></span> - Method in class randoop.types.<a href="randoop/types/PrimitiveType.html" title="class in randoop.types">PrimitiveType</a></dt>
 <dd>&nbsp;</dd>
@@ -4161,7 +4547,7 @@
 <dd>
 <div class="block">Indicates whether the given <code>Class&lt;?&gt;</code> object is the runtime class of this type.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="randoop/types/ParameterBound.html#hasTypeVariable-java.lang.reflect.Type-">hasTypeVariable(Type)</a></span> - Static method in class randoop.types.<a href="randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></dt>
+<dt><span class="memberNameLink"><a href="randoop/types/ParameterBound.html#hasTypeVariable-java.lang.reflect.Type-java.util.Set-">hasTypeVariable(Type, Set&lt;TypeVariable&lt;?&gt;&gt;)</a></span> - Static method in class randoop.types.<a href="randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></dt>
 <dd>
 <div class="block">Indicates whether the given (reflection) type reference represents a type in which a type
  variable occurs.</div>
@@ -4205,10 +4591,16 @@
 <dd>
 <div class="block">Indicates whether the type of this bound has a wildcard type argument.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ParameterType.html#hasWildcard--">hasWildcard()</a></span> - Method in class randoop.types.<a href="randoop/types/ParameterType.html" title="class in randoop.types">ParameterType</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ReferenceArgument.html#hasWildcard--">hasWildcard()</a></span> - Method in class randoop.types.<a href="randoop/types/ReferenceArgument.html" title="class in randoop.types">ReferenceArgument</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ReferenceBound.html#hasWildcard--">hasWildcard()</a></span> - Method in class randoop.types.<a href="randoop/types/ReferenceBound.html" title="class in randoop.types">ReferenceBound</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ReferenceType.html#hasWildcard--">hasWildcard()</a></span> - Method in class randoop.types.<a href="randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a></dt>
+<dd>
+<div class="block">Indicates whether this <a href="randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> has a wildcard.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/TypeArgument.html#hasWildcard--">hasWildcard()</a></span> - Method in class randoop.types.<a href="randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a></dt>
 <dd>
 <div class="block">Indicate whether this type argument has a wildcard.</div>
@@ -4216,10 +4608,6 @@
 <dt><span class="memberNameLink"><a href="randoop/types/TypeTuple.html#hasWildcard--">hasWildcard()</a></span> - Method in class randoop.types.<a href="randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a></dt>
 <dd>
 <div class="block">Indicates whether any of the types in this type tuple contains a wildcard.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="randoop/types/TypeVariable.html#hasWildcard--">hasWildcard()</a></span> - Method in class randoop.types.<a href="randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a></dt>
-<dd>
-<div class="block">Indicate whether this type has a wildcard either as or in a type argument.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/types/WildcardArgument.html#hasWildcard--">hasWildcard()</a></span> - Method in class randoop.types.<a href="randoop/types/WildcardArgument.html" title="class in randoop.types">WildcardArgument</a></dt>
 <dd>&nbsp;</dd>
@@ -4363,6 +4751,12 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/sequence/Variable.html#index">index</a></span> - Variable in class randoop.sequence.<a href="randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/test/InvalidValueCheck.html#index">index</a></span> - Variable in class randoop.test.<a href="randoop/test/InvalidValueCheck.html" title="class in randoop.test">InvalidValueCheck</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/test/MissingExceptionCheck.html#index">index</a></span> - Variable in class randoop.test.<a href="randoop/test/MissingExceptionCheck.html" title="class in randoop.test">MissingExceptionCheck</a></dt>
+<dd>
+<div class="block">The index of the statement where the exception should be thrown</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/generation/InputsAndSuccessFlag.html#indices">indices</a></span> - Variable in class randoop.generation.<a href="randoop/generation/InputsAndSuccessFlag.html" title="class in randoop.generation">InputsAndSuccessFlag</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/DummyVisitor.html#initialize-randoop.sequence.ExecutableSequence-">initialize(ExecutableSequence)</a></span> - Method in class randoop.<a href="randoop/DummyVisitor.html" title="class in randoop">DummyVisitor</a></dt>
@@ -4401,7 +4795,7 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/main/GenInputsAbstract.html#inputlimit">inputlimit</a></span> - Static variable in class randoop.main.<a href="randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</a></dt>
 <dd>
-<div class="block">Maximum number of test method candidates generated.</div>
+<div class="block">Maximum number of test method candidates generated internally.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/sequence/Statement.html#inputs">inputs</a></span> - Variable in class randoop.sequence.<a href="randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a></dt>
 <dd>&nbsp;</dd>
@@ -4533,6 +4927,15 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/test/InvalidExceptionCheck.html#InvalidExceptionCheck-java.lang.Throwable-int-java.lang.String-">InvalidExceptionCheck(Throwable, int, String)</a></span> - Constructor for class randoop.test.<a href="randoop/test/InvalidExceptionCheck.html" title="class in randoop.test">InvalidExceptionCheck</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/generation/AbstractGenerator.html#invalidSequenceCount">invalidSequenceCount</a></span> - Variable in class randoop.generation.<a href="randoop/generation/AbstractGenerator.html" title="class in randoop.generation">AbstractGenerator</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="randoop/test/InvalidValueCheck.html" title="class in randoop.test"><span class="typeNameLink">InvalidValueCheck</span></a> - Class in <a href="randoop/test/package-summary.html">randoop.test</a></dt>
+<dd>
+<div class="block">Represents the occurrence of an invalid value for a <a href="randoop/condition/Condition.html" title="interface in randoop.condition"><code>Condition</code></a> of the
+ <a href="randoop/operation/TypedOperation.html" title="class in randoop.operation"><code>TypedOperation</code></a> in a <a href="randoop/sequence/Statement.html" title="class in randoop.sequence"><code>Statement</code></a>.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/test/InvalidValueCheck.html#InvalidValueCheck-randoop.sequence.ExecutableSequence-int-">InvalidValueCheck(ExecutableSequence, int)</a></span> - Constructor for class randoop.test.<a href="randoop/test/InvalidValueCheck.html" title="class in randoop.test">InvalidValueCheck</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ClassOrInterfaceType.html#isAbstract--">isAbstract()</a></span> - Method in class randoop.types.<a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></dt>
 <dd>
 <div class="block">Indicate whether this class is abstract.</div>
@@ -4545,6 +4948,14 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/sequence/Sequence.html#isActive-int-">isActive(int)</a></span> - Method in class randoop.sequence.<a href="randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Type.html#isArray">isArray</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a></dt>
+<dd>
+<div class="block">Flag <code>true</code> when this <code>Type</code> is an array type (e.g., java.lang.String[]).</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Type.html#isArray--">isArray()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a></dt>
+<dd>
+<div class="block">Returns true if this Type represents an array type (e.g.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ArrayType.html#isArray--">isArray()</a></span> - Method in class randoop.types.<a href="randoop/types/ArrayType.html" title="class in randoop.types">ArrayType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/Type.html#isArray--">isArray()</a></span> - Method in class randoop.types.<a href="randoop/types/Type.html" title="class in randoop.types">Type</a></dt>
@@ -4629,6 +5040,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/operation/TypedOperation.html#isConstantField--">isConstantField()</a></span> - Method in class randoop.operation.<a href="randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#isConstructor--">isConstructor()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">Returns true if this method is a constructor, false otherwise.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/operation/CallableOperation.html#isConstructorCall--">isConstructorCall()</a></span> - Method in class randoop.operation.<a href="randoop/operation/CallableOperation.html" title="class in randoop.operation">CallableOperation</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/operation/ConstructorCall.html#isConstructorCall--">isConstructorCall()</a></span> - Method in class randoop.operation.<a href="randoop/operation/ConstructorCall.html" title="class in randoop.operation">ConstructorCall</a></dt>
@@ -4755,6 +5170,8 @@
 <div class="block">Determines whether this type argument is an instantiation of the other argument.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/types/TypeVariable.html#isInstantiationOf-randoop.types.ReferenceType-">isInstantiationOf(ReferenceType)</a></span> - Method in class randoop.types.<a href="randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/WildcardArgument.html#isInstantiationOf-randoop.types.TypeArgument-">isInstantiationOf(TypeArgument)</a></span> - Method in class randoop.types.<a href="randoop/types/WildcardArgument.html" title="class in randoop.types">WildcardArgument</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/TestCoverageInfo.html#isInstrumented-java.lang.Class-">isInstrumented(Class&lt;?&gt;)</a></span> - Static method in class randoop.util.<a href="randoop/util/TestCoverageInfo.html" title="class in randoop.util">TestCoverageInfo</a></dt>
 <dd>&nbsp;</dd>
@@ -5144,11 +5561,35 @@
 <dd>
 <div class="block">True iff this sequence contains a statement at the given index.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#isVarArgs">isVarArgs</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">Flag indicating whether this method takes a variable number of arguments.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#isVarArgs--">isVarArgs()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">Returns true if this method takes a variable number of arguments, false otherwise.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/LazyParameterBound.html#isVariable--">isVariable()</a></span> - Method in class randoop.types.<a href="randoop/types/LazyParameterBound.html" title="class in randoop.types">LazyParameterBound</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ParameterBound.html#isVariable--">isVariable()</a></span> - Method in class randoop.types.<a href="randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></dt>
+<dd>
+<div class="block">Indicates whether this bound is a type variable.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ReferenceArgument.html#isVariable--">isVariable()</a></span> - Method in class randoop.types.<a href="randoop/types/ReferenceArgument.html" title="class in randoop.types">ReferenceArgument</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ReferenceBound.html#isVariable--">isVariable()</a></span> - Method in class randoop.types.<a href="randoop/types/ReferenceBound.html" title="class in randoop.types">ReferenceBound</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/Type.html#isVariable--">isVariable()</a></span> - Method in class randoop.types.<a href="randoop/types/Type.html" title="class in randoop.types">Type</a></dt>
 <dd>
 <div class="block">Indicates whether this type is a type variable.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/types/TypeArgument.html#isVariable--">isVariable()</a></span> - Method in class randoop.types.<a href="randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a></dt>
+<dd>
+<div class="block">Indicate whether this type argument is a type variable.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/TypeVariable.html#isVariable--">isVariable()</a></span> - Method in class randoop.types.<a href="randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/WildcardArgument.html#isVariable--">isVariable()</a></span> - Method in class randoop.types.<a href="randoop/types/WildcardArgument.html" title="class in randoop.types">WildcardArgument</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/reflection/NotPrivateVisibilityPredicate.html#isVisible-java.lang.Class-">isVisible(Class&lt;?&gt;)</a></span> - Method in class randoop.reflection.<a href="randoop/reflection/NotPrivateVisibilityPredicate.html" title="class in randoop.reflection">NotPrivateVisibilityPredicate</a></dt>
 <dd>
@@ -5216,6 +5657,10 @@
 <dt><span class="memberNameLink"><a href="randoop/reflection/ReflectionManager.html#isVisible-java.lang.reflect.Constructor-">isVisible(Constructor&lt;?&gt;)</a></span> - Method in class randoop.reflection.<a href="randoop/reflection/ReflectionManager.html" title="class in randoop.reflection">ReflectionManager</a></dt>
 <dd>
 <div class="block">Determines whether a constructor and each of its parameter types are visible.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/reflection/ReflectionManager.html#isVisible-java.lang.reflect.Type-">isVisible(Type)</a></span> - Method in class randoop.reflection.<a href="randoop/reflection/ReflectionManager.html" title="class in randoop.reflection">ReflectionManager</a></dt>
+<dd>
+<div class="block">Determines whether a <code>java.lang.reflect.Type</code> is a type visible to the generated tests.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/reflection/VisibilityPredicate.html#isVisible-java.lang.Class-">isVisible(Class&lt;?&gt;)</a></span> - Method in interface randoop.reflection.<a href="randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a></dt>
 <dd>
@@ -5290,22 +5735,26 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/main/GenInputsAbstract.html#junit_after_all">junit_after_all</a></span> - Static variable in class randoop.main.<a href="randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</a></dt>
 <dd>
-<div class="block">Name of file containing code text to be added to the AfterClass-annotated method of
+<div class="block">Name of file containing code text to be added to the
+ <a href="http://junit.sourceforge.net/javadoc/org/junit/AfterClass.html"><code>@AfterClass</code></a>-annotated method of
  each generated test class.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/main/GenInputsAbstract.html#junit_after_each">junit_after_each</a></span> - Static variable in class randoop.main.<a href="randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</a></dt>
 <dd>
-<div class="block">Name of file containing code text to be added to the After-annotated method of
+<div class="block">Name of file containing code text to be added to the
+ <a href="http://junit.sourceforge.net/javadoc/org/junit/After.html"><code>@After</code></a>-annotated method of
  each generated test class.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/main/GenInputsAbstract.html#junit_before_all">junit_before_all</a></span> - Static variable in class randoop.main.<a href="randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</a></dt>
 <dd>
-<div class="block">Name of file containing code text to be added to the BeforeClass-annotated method of
+<div class="block">Name of file containing code text to be added to the
+ <a href="http://junit.sourceforge.net/javadoc/org/junit/BeforeClass.html"><code>@BeforeClass</code></a>-annotated method of
  each generated test class.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/main/GenInputsAbstract.html#junit_before_each">junit_before_each</a></span> - Static variable in class randoop.main.<a href="randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</a></dt>
 <dd>
-<div class="block">Name of file containing code text to be added to the Before-annotated method of
+<div class="block">Name of file containing code text to be added to the
+ <a href="http://junit.sourceforge.net/javadoc/org/junit/Before.html"><code>@Before</code></a>-annotated method of
  each generated test class.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/main/GenInputsAbstract.html#junit_output_dir">junit_output_dir</a></span> - Static variable in class randoop.main.<a href="randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</a></dt>
@@ -5353,6 +5802,12 @@
 <dt><a href="randoop/util/KeyToMultiSet.html" title="class in randoop.util"><span class="typeNameLink">KeyToMultiSet</span></a>&lt;<a href="randoop/util/KeyToMultiSet.html" title="type parameter in KeyToMultiSet">T1</a>,<a href="randoop/util/KeyToMultiSet.html" title="type parameter in KeyToMultiSet">T2</a>&gt; - Class in <a href="randoop/util/package-summary.html">randoop.util</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/KeyToMultiSet.html#KeyToMultiSet--">KeyToMultiSet()</a></span> - Constructor for class randoop.util.<a href="randoop/util/KeyToMultiSet.html" title="class in randoop.util">KeyToMultiSet</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/AbstractTag.html#kind">kind</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/AbstractTag.html" title="class in randoop.input.toradocu">AbstractTag</a></dt>
+<dd>
+<div class="block">The kind of this tag (e.g., @throws, @param).</div>
+</dd>
+
 <dd>&nbsp;</dd>
 </dl>
 <a name="I:L">
@@ -5595,7 +6050,7 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/main/GenInputsAbstract.html#maxsize">maxsize</a></span> - Static variable in class randoop.main.<a href="randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</a></dt>
 <dd>
-<div class="block">Do not generate tests with more than this many statements</div>
+<div class="block">Do not generate tests with more than this many statements.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/generation/AbstractGenerator.html#maxTimeMillis">maxTimeMillis</a></span> - Variable in class randoop.generation.<a href="randoop/generation/AbstractGenerator.html" title="class in randoop.generation">AbstractGenerator</a></dt>
 <dd>
@@ -5634,6 +6089,15 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/TestCoverageInfo.html#methodToIndices">methodToIndices</a></span> - Variable in class randoop.util.<a href="randoop/util/TestCoverageInfo.html" title="class in randoop.util">TestCoverageInfo</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="randoop/test/MissingExceptionCheck.html" title="class in randoop.test"><span class="typeNameLink">MissingExceptionCheck</span></a> - Class in <a href="randoop/test/package-summary.html">randoop.test</a></dt>
+<dd>
+<div class="block">Represents the fact that a statement should throw an exception, but did not.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/test/MissingExceptionCheck.html#MissingExceptionCheck-randoop.types.ClassOrInterfaceType-java.lang.String-int-">MissingExceptionCheck(ClassOrInterfaceType, String, int)</a></span> - Constructor for class randoop.test.<a href="randoop/test/MissingExceptionCheck.html" title="class in randoop.test">MissingExceptionCheck</a></dt>
+<dd>
+<div class="block">Creates a <a href="randoop/test/MissingExceptionCheck.html" title="class in randoop.test"><code>MissingExceptionCheck</code></a> object for the expected exception type
+ at the given statement.</div>
+</dd>
 
 <dd>&nbsp;</dd>
 <dt><a href="randoop/util/MultiMap.html" title="class in randoop.util"><span class="typeNameLink">MultiMap</span></a>&lt;<a href="randoop/util/MultiMap.html" title="type parameter in MultiMap">T1</a>,<a href="randoop/util/MultiMap.html" title="type parameter in MultiMap">T2</a>&gt; - Class in <a href="randoop/util/package-summary.html">randoop.util</a></dt>
@@ -5662,6 +6126,18 @@
 </a>
 <h2 class="title">N</h2>
 <dl>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#name">name</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">Simple name of the method.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Parameter.html#name">name</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/Parameter.html" title="class in randoop.input.toradocu">Parameter</a></dt>
+<dd>
+<div class="block">The name of the parameter.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Type.html#name">name</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a></dt>
+<dd>
+<div class="block">Simple name of this <code>Type</code>.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/JunitFileWriter.NameGenerator.html#nameCount--">nameCount()</a></span> - Method in class randoop.<a href="randoop/JunitFileWriter.NameGenerator.html" title="class in randoop">JunitFileWriter.NameGenerator</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/JunitFileWriter.NameGenerator.html#NameGenerator-java.lang.String-int-int-">NameGenerator(String, int, int)</a></span> - Constructor for class randoop.<a href="randoop/JunitFileWriter.NameGenerator.html" title="class in randoop">JunitFileWriter.NameGenerator</a></dt>
@@ -5788,14 +6264,14 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/main/GenInputsAbstract.html#npe_on_non_null_input">npe_on_non_null_input</a></span> - Static variable in class randoop.main.<a href="randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</a></dt>
 <dd>
-<div class="block">If a test where no <code>null</code> values are given as an input throws a
- <code>NullPointerExceptoin</code>, should the test be included in the
+<div class="block">If a test that never passes <code>null</code> as an argument throws a
+ <code>NullPointerException</code>, should the test be included in the
  error-revealing test suite (value: ERROR), regression test suite (value:
  EXPECTED), or should it be discarded (value: INVALID)?</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/main/GenInputsAbstract.html#npe_on_null_input">npe_on_null_input</a></span> - Static variable in class randoop.main.<a href="randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</a></dt>
 <dd>
-<div class="block">If a test where a <code>null</code> value is given as an input throws a
+<div class="block">If a test that passes <code>null</code> as an argument throws a
  <code>NullPointerException</code>, should the test be be included in the
  error-revealing test suite (value: ERROR), regression test suite (value:
  EXPECTED), or should it be discarded (value: INVALID)?</div>
@@ -5807,6 +6283,10 @@
 <dt><span class="memberNameLink"><a href="randoop/types/JavaTypes.html#NULL_TYPE">NULL_TYPE</a></span> - Static variable in class randoop.types.<a href="randoop/types/JavaTypes.html" title="class in randoop.types">JavaTypes</a></dt>
 <dd>
 <div class="block">The Null type is the lower bound of reference types and is only used in <a href="randoop/types/CaptureTypeVariable.html" title="class in randoop.types"><code>CaptureTypeVariable</code></a></div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Parameter.html#nullable">nullable</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/Parameter.html" title="class in randoop.input.toradocu">Parameter</a></dt>
+<dd>
+<div class="block">True if this parameter is nullable, false if nonnull, and null if unspecified.</div>
 </dd>
 <dt><a href="randoop/types/NullReferenceType.html" title="class in randoop.types"><span class="typeNameLink">NullReferenceType</span></a> - Class in <a href="randoop/types/package-summary.html">randoop.types</a></dt>
 <dd>
@@ -5823,6 +6303,10 @@
 <dt><span class="memberNameLink"><a href="randoop/JunitFileWriter.html#numDigits-int-">numDigits(int)</a></span> - Method in class randoop.<a href="randoop/JunitFileWriter.html" title="class in randoop">JunitFileWriter</a></dt>
 <dd>
 <div class="block">Returns the number of digits in the printed representation of the argument.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/generation/AbstractGenerator.html#numErrorSequences--">numErrorSequences()</a></span> - Method in class randoop.generation.<a href="randoop/generation/AbstractGenerator.html" title="class in randoop.generation">AbstractGenerator</a></dt>
+<dd>
+<div class="block">Returns the count of generated error-revealing sequences.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/generation/AbstractGenerator.html#numGeneratedSequences--">numGeneratedSequences()</a></span> - Method in class randoop.generation.<a href="randoop/generation/AbstractGenerator.html" title="class in randoop.generation">AbstractGenerator</a></dt>
 <dd>
@@ -5942,6 +6426,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/contract/CheckRepContract.html#operation">operation</a></span> - Variable in class randoop.contract.<a href="randoop/contract/CheckRepContract.html" title="class in randoop.contract">CheckRepContract</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/generation/RandoopGenerationError.html#operation">operation</a></span> - Variable in error randoop.generation.<a href="randoop/generation/RandoopGenerationError.html" title="class in randoop.generation">RandoopGenerationError</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="randoop/operation/Operation.html" title="interface in randoop.operation"><span class="typeNameLink">Operation</span></a> - Interface in <a href="randoop/operation/package-summary.html">randoop.operation</a></dt>
 <dd>
 <div class="block">Operation represents the constructs that can occur in a statement as part of
@@ -5956,17 +6442,23 @@
 <div class="block">The operation (method call, constructor call, primitive values declaration,
  etc.).</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/reflection/OperationExtractor.html#operationConditions">operationConditions</a></span> - Variable in class randoop.reflection.<a href="randoop/reflection/OperationExtractor.html" title="class in randoop.reflection">OperationExtractor</a></dt>
+<dd>
+<div class="block">The collection of pre/post/throws-conditions to add to operations</div>
+</dd>
 <dt><a href="randoop/reflection/OperationExtractor.html" title="class in randoop.reflection"><span class="typeNameLink">OperationExtractor</span></a> - Class in <a href="randoop/reflection/package-summary.html">randoop.reflection</a></dt>
 <dd>
 <div class="block">OperationExtractor is a <a href="randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> that creates a collection of
  <a href="randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> objects for a particular <a href="randoop/types/ClassOrInterfaceType.html" title="class in randoop.types"><code>ClassOrInterfaceType</code></a> through its visit
  methods as called by <a href="randoop/reflection/ReflectionManager.html#apply-java.lang.Class-"><code>ReflectionManager.apply(Class)</code></a>.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="randoop/reflection/OperationExtractor.html#OperationExtractor-randoop.types.ClassOrInterfaceType-java.util.Collection-randoop.reflection.ReflectionPredicate-randoop.reflection.VisibilityPredicate-">OperationExtractor(ClassOrInterfaceType, Collection&lt;TypedOperation&gt;, ReflectionPredicate, VisibilityPredicate)</a></span> - Constructor for class randoop.reflection.<a href="randoop/reflection/OperationExtractor.html" title="class in randoop.reflection">OperationExtractor</a></dt>
+<dt><span class="memberNameLink"><a href="randoop/reflection/OperationExtractor.html#OperationExtractor-randoop.types.ClassOrInterfaceType-java.util.Collection-randoop.reflection.ReflectionPredicate-randoop.reflection.VisibilityPredicate-randoop.condition.ConditionCollection-">OperationExtractor(ClassOrInterfaceType, Collection&lt;TypedOperation&gt;, ReflectionPredicate, VisibilityPredicate, ConditionCollection)</a></span> - Constructor for class randoop.reflection.<a href="randoop/reflection/OperationExtractor.html" title="class in randoop.reflection">OperationExtractor</a></dt>
 <dd>
 <div class="block">Creates a visitor object that collects the <a href="randoop/operation/TypedOperation.html" title="class in randoop.operation"><code>TypedOperation</code></a> objects corresponding to
  members of the class type and satisfying the given predicate.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/reflection/OperationExtractor.html#OperationExtractor-randoop.types.ClassOrInterfaceType-java.util.Collection-randoop.reflection.ReflectionPredicate-randoop.reflection.VisibilityPredicate-">OperationExtractor(ClassOrInterfaceType, Collection&lt;TypedOperation&gt;, ReflectionPredicate, VisibilityPredicate)</a></span> - Constructor for class randoop.reflection.<a href="randoop/reflection/OperationExtractor.html" title="class in randoop.reflection">OperationExtractor</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="randoop/reflection/OperationModel.html" title="class in randoop.reflection"><span class="typeNameLink">OperationModel</span></a> - Class in <a href="randoop/reflection/package-summary.html">randoop.reflection</a></dt>
 <dd>
 <div class="block"><code>OperationModel</code> represents the information context from which tests are generated.</div>
@@ -5975,6 +6467,8 @@
 <dd>
 <div class="block">Create an empty model of test context.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/generation/RandoopGenerationError.html#operationName">operationName</a></span> - Variable in error randoop.generation.<a href="randoop/generation/RandoopGenerationError.html" title="class in randoop.generation">RandoopGenerationError</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="randoop/operation/OperationParseException.html" title="class in randoop.operation"><span class="typeNameLink">OperationParseException</span></a> - Exception in <a href="randoop/operation/package-summary.html">randoop.operation</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/operation/OperationParseException.html#OperationParseException-java.lang.String-">OperationParseException(String)</a></span> - Constructor for exception randoop.operation.<a href="randoop/operation/OperationParseException.html" title="class in randoop.operation">OperationParseException</a></dt>
@@ -5998,6 +6492,8 @@
 <dd>
 <div class="block">Set of concrete operations extracted from classes</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/reflection/RandoopInstantiationError.html#opName">opName</a></span> - Variable in error randoop.reflection.<a href="randoop/reflection/RandoopInstantiationError.html" title="class in randoop.reflection">RandoopInstantiationError</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/ReversibleMultiMap.html#ops">ops</a></span> - Variable in class randoop.util.<a href="randoop/util/ReversibleMultiMap.html" title="class in randoop.util">ReversibleMultiMap</a></dt>
 <dd>&nbsp;</dd>
 
@@ -6123,6 +6619,26 @@
 <dd>
 <div class="block">Create a predicate that tests visibility.</div>
 </dd>
+<dt><a href="randoop/input/toradocu/Parameter.html" title="class in randoop.input.toradocu"><span class="typeNameLink">Parameter</span></a> - Class in <a href="randoop/input/toradocu/package-summary.html">randoop.input.toradocu</a></dt>
+<dd>
+<div class="block">This is a Toradocu class borrowed to allow deserialization of JSON.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Parameter.html#Parameter-randoop.input.toradocu.Type-java.lang.String-java.lang.Boolean-">Parameter(Type, String, Boolean)</a></span> - Constructor for class randoop.input.toradocu.<a href="randoop/input/toradocu/Parameter.html" title="class in randoop.input.toradocu">Parameter</a></dt>
+<dd>
+<div class="block">Constructs a parameter with the given type and name.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Parameter.html#Parameter-randoop.input.toradocu.Type-java.lang.String-">Parameter(Type, String)</a></span> - Constructor for class randoop.input.toradocu.<a href="randoop/input/toradocu/Parameter.html" title="class in randoop.input.toradocu">Parameter</a></dt>
+<dd>
+<div class="block">Constructs a parameter with the given type and name.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ParamTag.html#parameter">parameter</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/ParamTag.html" title="class in randoop.input.toradocu">ParamTag</a></dt>
+<dd>
+<div class="block">The parameter associated with the param tag</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ParamTag.html#parameter--">parameter()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ParamTag.html" title="class in randoop.input.toradocu">ParamTag</a></dt>
+<dd>
+<div class="block">Returns the parameter associated to the tag.</div>
+</dd>
 <dt><a href="randoop/types/ParameterBound.html" title="class in randoop.types"><span class="typeNameLink">ParameterBound</span></a> - Class in <a href="randoop/types/package-summary.html">randoop.types</a></dt>
 <dd>
 <div class="block">Represents a type bound on a type variable or wildcard occurring as a type parameter of
@@ -6136,6 +6652,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ParameterizedType.html#ParameterizedType--">ParameterizedType()</a></span> - Constructor for class randoop.types.<a href="randoop/types/ParameterizedType.html" title="class in randoop.types">ParameterizedType</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#parameters">parameters</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">Method's parameters.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/GenericClassType.html#parameters">parameters</a></span> - Variable in class randoop.types.<a href="randoop/types/GenericClassType.html" title="class in randoop.types">GenericClassType</a></dt>
 <dd>
 <div class="block">The type parameters of the generic class.</div>
@@ -6153,6 +6673,22 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ParameterType.html#ParameterType-randoop.types.ParameterBound-randoop.types.ParameterBound-">ParameterType(ParameterBound, ParameterBound)</a></span> - Constructor for class randoop.types.<a href="randoop/types/ParameterType.html" title="class in randoop.types">ParameterType</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="randoop/input/toradocu/ParamTag.html" title="class in randoop.input.toradocu"><span class="typeNameLink">ParamTag</span></a> - Class in <a href="randoop/input/toradocu/package-summary.html">randoop.input.toradocu</a></dt>
+<dd>
+<div class="block">This is a Toradocu class borrowed to allow deserialization of JSON.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ParamTag.html#ParamTag-randoop.input.toradocu.Parameter-java.lang.String-">ParamTag(Parameter, String)</a></span> - Constructor for class randoop.input.toradocu.<a href="randoop/input/toradocu/ParamTag.html" title="class in randoop.input.toradocu">ParamTag</a></dt>
+<dd>
+<div class="block">Constructs a <code>ParamTag</code> with the given exception and comment.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#paramTags">paramTags</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">Param tags specified in the method's Javadoc introduced in order.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#paramTags--">paramTags()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">Returns an unmodifiable view of the param tags in this method.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/field/FieldParser.html#parse-java.lang.String-java.lang.String-java.lang.String-">parse(String, String, String)</a></span> - Static method in class randoop.field.<a href="randoop/field/FieldParser.html" title="class in randoop.field">FieldParser</a></dt>
 <dd>
 <div class="block">Recognizes a field from a string description, using class and field name
@@ -6221,6 +6757,28 @@
 <dt><span class="memberNameLink"><a href="randoop/sequence/SequenceExceptionError.html#position">position</a></span> - Variable in error randoop.sequence.<a href="randoop/sequence/SequenceExceptionError.html" title="class in randoop.sequence">SequenceExceptionError</a></dt>
 <dd>
 <div class="block">The position of the statement that threw the exception</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/test/PostConditionCheckGenerator.html#postcondition">postcondition</a></span> - Variable in class randoop.test.<a href="randoop/test/PostConditionCheckGenerator.html" title="class in randoop.test">PostConditionCheckGenerator</a></dt>
+<dd>
+<div class="block">the post-condition</div>
+</dd>
+<dt><a href="randoop/test/PostConditionCheckGenerator.html" title="class in randoop.test"><span class="typeNameLink">PostConditionCheckGenerator</span></a> - Class in <a href="randoop/test/package-summary.html">randoop.test</a></dt>
+<dd>
+<div class="block">Checks the given post-condition</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/test/PostConditionCheckGenerator.html#PostConditionCheckGenerator-randoop.condition.Condition-">PostConditionCheckGenerator(Condition)</a></span> - Constructor for class randoop.test.<a href="randoop/test/PostConditionCheckGenerator.html" title="class in randoop.test">PostConditionCheckGenerator</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuConditionCollection.html#postconditionMap">postconditionMap</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuConditionCollection.html" title="class in randoop.input.toradocu">ToradocuConditionCollection</a></dt>
+<dd>
+<div class="block">The condition-exception-type pairs for constructors/methods</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/operation/TypedOperation.html#postconditions">postconditions</a></span> - Variable in class randoop.operation.<a href="randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></dt>
+<dd>
+<div class="block">The throws-conditions for this operation</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/operation/TypedOperation.html#preconditions">preconditions</a></span> - Variable in class randoop.operation.<a href="randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></dt>
+<dd>
+<div class="block">The preconditions for this operation</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/reflection/DeclarationExtractor.html#predicate">predicate</a></span> - Variable in class randoop.reflection.<a href="randoop/reflection/DeclarationExtractor.html" title="class in randoop.reflection">DeclarationExtractor</a></dt>
 <dd>&nbsp;</dd>
@@ -6377,6 +6935,10 @@
 </a>
 <h2 class="title">Q</h2>
 <dl>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Type.html#qualifiedName">qualifiedName</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a></dt>
+<dd>
+<div class="block">Fully qualified name of this <code>Type</code></div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/JDKTypes.html#QUEUE_TYPE">QUEUE_TYPE</a></span> - Static variable in class randoop.types.<a href="randoop/types/JDKTypes.html" title="class in randoop.types">JDKTypes</a></dt>
 <dd>
 <div class="block">The <a href="randoop/types/GenericClassType.html" title="class in randoop.types"><code>GenericClassType</code></a> for <code>Queue</code></div>
@@ -6413,11 +6975,15 @@
 <dd>&nbsp;</dd>
 <dt><a href="randoop/package-summary.html">randoop</a> - package randoop</dt>
 <dd>&nbsp;</dd>
+<dt><a href="randoop/condition/package-summary.html">randoop.condition</a> - package randoop.condition</dt>
+<dd>&nbsp;</dd>
 <dt><a href="randoop/contract/package-summary.html">randoop.contract</a> - package randoop.contract</dt>
 <dd>&nbsp;</dd>
 <dt><a href="randoop/field/package-summary.html">randoop.field</a> - package randoop.field</dt>
 <dd>&nbsp;</dd>
 <dt><a href="randoop/generation/package-summary.html">randoop.generation</a> - package randoop.generation</dt>
+<dd>&nbsp;</dd>
+<dt><a href="randoop/input/toradocu/package-summary.html">randoop.input.toradocu</a> - package randoop.input.toradocu</dt>
 <dd>&nbsp;</dd>
 <dt><a href="randoop/instrument/package-summary.html">randoop.instrument</a> - package randoop.instrument</dt>
 <dd>&nbsp;</dd>
@@ -6447,9 +7013,9 @@
 <dd>
 <div class="block">Exception for classname errors</div>
 </dd>
-<dt><span class="memberNameLink"><a href="randoop/main/RandoopClassNameError.html#RandoopClassNameError-java.lang.String-">RandoopClassNameError(String)</a></span> - Constructor for error randoop.main.<a href="randoop/main/RandoopClassNameError.html" title="class in randoop.main">RandoopClassNameError</a></dt>
+<dt><span class="memberNameLink"><a href="randoop/main/RandoopClassNameError.html#RandoopClassNameError-java.lang.String-java.lang.String-">RandoopClassNameError(String, String)</a></span> - Constructor for error randoop.main.<a href="randoop/main/RandoopClassNameError.html" title="class in randoop.main">RandoopClassNameError</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="randoop/main/RandoopClassNameError.html#RandoopClassNameError-java.lang.String-java.lang.Throwable-">RandoopClassNameError(String, Throwable)</a></span> - Constructor for error randoop.main.<a href="randoop/main/RandoopClassNameError.html" title="class in randoop.main">RandoopClassNameError</a></dt>
+<dt><span class="memberNameLink"><a href="randoop/main/RandoopClassNameError.html#RandoopClassNameError-java.lang.String-java.lang.String-java.lang.Throwable-">RandoopClassNameError(String, String, Throwable)</a></span> - Constructor for error randoop.main.<a href="randoop/main/RandoopClassNameError.html" title="class in randoop.main">RandoopClassNameError</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/generation/ForwardGenerator.html#randoopConsistencyTest2-randoop.sequence.Sequence-">randoopConsistencyTest2(Sequence)</a></span> - Method in class randoop.generation.<a href="randoop/generation/ForwardGenerator.html" title="class in randoop.generation">ForwardGenerator</a></dt>
 <dd>&nbsp;</dd>
@@ -6460,6 +7026,16 @@
 <div class="block">A message indicating that Randoop is finished generating tests.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/runtime/RandoopFinished.html#RandoopFinished--">RandoopFinished()</a></span> - Constructor for class randoop.runtime.<a href="randoop/runtime/RandoopFinished.html" title="class in randoop.runtime">RandoopFinished</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="randoop/generation/RandoopGenerationError.html" title="class in randoop.generation"><span class="typeNameLink">RandoopGenerationError</span></a> - Error in <a href="randoop/generation/package-summary.html">randoop.generation</a></dt>
+<dd>
+<div class="block">Created by bjkeller on 2/22/17.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/generation/RandoopGenerationError.html#RandoopGenerationError-java.lang.String-randoop.operation.TypedOperation-java.lang.Throwable-">RandoopGenerationError(String, TypedOperation, Throwable)</a></span> - Constructor for error randoop.generation.<a href="randoop/generation/RandoopGenerationError.html" title="class in randoop.generation">RandoopGenerationError</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="randoop/reflection/RandoopInstantiationError.html" title="class in randoop.reflection"><span class="typeNameLink">RandoopInstantiationError</span></a> - Error in <a href="randoop/reflection/package-summary.html">randoop.reflection</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/reflection/RandoopInstantiationError.html#RandoopInstantiationError-java.lang.String-java.lang.Throwable-">RandoopInstantiationError(String, Throwable)</a></span> - Constructor for error randoop.reflection.<a href="randoop/reflection/RandoopInstantiationError.html" title="class in randoop.reflection">RandoopInstantiationError</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="randoop/generation/RandoopListenerManager.html" title="class in randoop.generation"><span class="typeNameLink">RandoopListenerManager</span></a> - Class in <a href="randoop/generation/package-summary.html">randoop.generation</a></dt>
 <dd>&nbsp;</dd>
@@ -6503,6 +7079,11 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/util/CountDownTimer.html#reachedZero--">reachedZero()</a></span> - Method in class randoop.util.<a href="randoop/util/CountDownTimer.html" title="class in randoop.util">CountDownTimer</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuConditionCollection.html#read-java.io.File-">read(File)</a></span> - Static method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuConditionCollection.html" title="class in randoop.input.toradocu">ToradocuConditionCollection</a></dt>
+<dd>
+<div class="block">Reads the <a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu"><code>DocumentedMethod</code></a> objects from the given JSON file into a list, preserving
+ the order of the objects in the JSON file.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/RecordListReader.html#readOneRecord-java.io.BufferedReader-">readOneRecord(BufferedReader)</a></span> - Method in class randoop.util.<a href="randoop/util/RecordListReader.html" title="class in randoop.util">RecordListReader</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/MethodReflectionCode.html#receiver">receiver</a></span> - Variable in class randoop.util.<a href="randoop/util/MethodReflectionCode.html" title="class in randoop.util">MethodReflectionCode</a></dt>
@@ -6696,6 +7277,26 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/contract/CheckRepContract.html#returnsBoolean">returnsBoolean</a></span> - Variable in class randoop.contract.<a href="randoop/contract/CheckRepContract.html" title="class in randoop.contract">CheckRepContract</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#returnTag">returnTag</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">return tags specified in the method's Javadoc introduced in order.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#returnTag--">returnTag()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">Returns the return tag in this method.</div>
+</dd>
+<dt><a href="randoop/input/toradocu/ReturnTag.html" title="class in randoop.input.toradocu"><span class="typeNameLink">ReturnTag</span></a> - Class in <a href="randoop/input/toradocu/package-summary.html">randoop.input.toradocu</a></dt>
+<dd>
+<div class="block">This class represents a throws tag in a method.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ReturnTag.html#ReturnTag-java.lang.String-">ReturnTag(String)</a></span> - Constructor for class randoop.input.toradocu.<a href="randoop/input/toradocu/ReturnTag.html" title="class in randoop.input.toradocu">ReturnTag</a></dt>
+<dd>
+<div class="block">Constructs a <code>ThrowsTag</code> with the given exception, comment, and words tagged with @code</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#returnType">returnType</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">Return type of the method.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/ConstructorReflectionCode.html#retval">retval</a></span> - Variable in class randoop.util.<a href="randoop/util/ConstructorReflectionCode.html" title="class in randoop.util">ConstructorReflectionCode</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/MethodReflectionCode.html#retval">retval</a></span> - Variable in class randoop.util.<a href="randoop/util/MethodReflectionCode.html" title="class in randoop.util">MethodReflectionCode</a></dt>
@@ -6855,6 +7456,12 @@
 <dd>
 <div class="block">Chooses the lower bound of the given argument to be tested in <a href="randoop/reflection/TypeInstantiator.html#selectCandidates-randoop.types.TypeVariable-"><code>TypeInstantiator.selectCandidates(TypeVariable)</code></a>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/reflection/TypeInstantiator.html#selectMatch-randoop.types.ClassOrInterfaceType-randoop.types.ClassOrInterfaceType-">selectMatch(ClassOrInterfaceType, ClassOrInterfaceType)</a></span> - Method in class randoop.reflection.<a href="randoop/reflection/TypeInstantiator.html" title="class in randoop.reflection">TypeInstantiator</a></dt>
+<dd>
+<div class="block">Selects an existing type that instantiates the given pattern type which is an instantiation
+ of a generic declaring type and returns the instantiating substitution for the more general
+ type.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/reflection/TypeInstantiator.html#selectMatch-randoop.types.ClassOrInterfaceType-">selectMatch(ClassOrInterfaceType)</a></span> - Method in class randoop.reflection.<a href="randoop/reflection/TypeInstantiator.html" title="class in randoop.reflection">TypeInstantiator</a></dt>
 <dd>
 <div class="block">Selects an existing type that instantiates the given generic declaring type
@@ -6871,6 +7478,11 @@
 <dt><span class="memberNameLink"><a href="randoop/reflection/TypeInstantiator.html#selectUpperBound-randoop.types.TypeVariable-">selectUpperBound(TypeVariable)</a></span> - Method in class randoop.reflection.<a href="randoop/reflection/TypeInstantiator.html" title="class in randoop.reflection">TypeInstantiator</a></dt>
 <dd>
 <div class="block">Chooses the upper bound of the given argument to test in <a href="randoop/reflection/TypeInstantiator.html#selectCandidates-randoop.types.TypeVariable-"><code>TypeInstantiator.selectCandidates(TypeVariable)</code></a>.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Type.html#SEPARATOR">SEPARATOR</a></span> - Static variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a></dt>
+<dd>
+<div class="block">Separator used in Java to separate identifiers (e.g., Foo.toString() where "." separates class
+ and method identifiers)</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/sequence/ExecutableSequence.html#sequence">sequence</a></span> - Variable in class randoop.sequence.<a href="randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a></dt>
 <dd>
@@ -6896,6 +7508,8 @@
 <dd>
 <div class="block">The sequence in which every variable will be renamed</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/test/InvalidValueCheck.html#sequence">sequence</a></span> - Variable in class randoop.test.<a href="randoop/test/InvalidValueCheck.html" title="class in randoop.test">InvalidValueCheck</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="randoop/sequence/Sequence.RelativeNegativeIndex.html" title="class in randoop.sequence"><span class="typeNameLink">Sequence.RelativeNegativeIndex</span></a> - Class in <a href="randoop/sequence/package-summary.html">randoop.sequence</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="randoop/sequence/SequenceCollection.html" title="class in randoop.sequence"><span class="typeNameLink">SequenceCollection</span></a> - Class in <a href="randoop/sequence/package-summary.html">randoop.sequence</a></dt>
@@ -6941,11 +7555,15 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/BugInRandoopException.html#serialVersionUID">serialVersionUID</a></span> - Static variable in exception randoop.<a href="randoop/BugInRandoopException.html" title="class in randoop">BugInRandoopException</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/generation/RandoopGenerationError.html#serialVersionUID">serialVersionUID</a></span> - Static variable in error randoop.generation.<a href="randoop/generation/RandoopGenerationError.html" title="class in randoop.generation">RandoopGenerationError</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/main/RandoopClassNameError.html#serialVersionUID">serialVersionUID</a></span> - Static variable in error randoop.main.<a href="randoop/main/RandoopClassNameError.html" title="class in randoop.main">RandoopClassNameError</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/main/RandoopTextuiException.html#serialVersionUID">serialVersionUID</a></span> - Static variable in exception randoop.main.<a href="randoop/main/RandoopTextuiException.html" title="class in randoop.main">RandoopTextuiException</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/operation/OperationParseException.html#serialVersionUID">serialVersionUID</a></span> - Static variable in exception randoop.operation.<a href="randoop/operation/OperationParseException.html" title="class in randoop.operation">OperationParseException</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/reflection/RandoopInstantiationError.html#serialVersionUID">serialVersionUID</a></span> - Static variable in error randoop.reflection.<a href="randoop/reflection/RandoopInstantiationError.html" title="class in randoop.reflection">RandoopInstantiationError</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/ReplayFailureException.html#serialVersionUID">serialVersionUID</a></span> - Static variable in exception randoop.<a href="randoop/ReplayFailureException.html" title="class in randoop">ReplayFailureException</a></dt>
 <dd>&nbsp;</dd>
@@ -6991,6 +7609,12 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/sequence/Sequence.html#setAllActiveFlags--">setAllActiveFlags()</a></span> - Method in class randoop.sequence.<a href="randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/AbstractTag.html#setCondition-java.lang.String-">setCondition(String)</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/AbstractTag.html" title="class in randoop.input.toradocu">AbstractTag</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Tag.html#setCondition-java.lang.String-">setCondition(String)</a></span> - Method in interface randoop.input.toradocu.<a href="randoop/input/toradocu/Tag.html" title="interface in randoop.input.toradocu">Tag</a></dt>
+<dd>
+<div class="block">Sets the translated condition for this tag to the given condition.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/generation/AbstractGenerator.html#setCurrentSequence-randoop.sequence.Sequence-">setCurrentSequence(Sequence)</a></span> - Method in class randoop.generation.<a href="randoop/generation/AbstractGenerator.html" title="class in randoop.generation">AbstractGenerator</a></dt>
 <dd>
 <div class="block">Sets the current sequence during exploration</div>
@@ -7019,6 +7643,10 @@
 <dd>
 <div class="block">Clients should set this variable instead of calling Thread.stop(), which is
  deprecated.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#signature">signature</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">Method signature in the format method_name(type1 arg1, type2 arg2, ...).</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/main/GenInputsAbstract.html#silently_ignore_bad_class_names">silently_ignore_bad_class_names</a></span> - Static variable in class randoop.main.<a href="randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</a></dt>
 <dd>&nbsp;</dd>
@@ -7173,6 +7801,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/generation/IStopper.html#stop--">stop()</a></span> - Method in interface randoop.generation.<a href="randoop/generation/IStopper.html" title="interface in randoop.generation">IStopper</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/main/GenInputsAbstract.html#stop_on_error_test">stop_on_error_test</a></span> - Static variable in class randoop.main.<a href="randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</a></dt>
+<dd>
+<div class="block">Stop generation once an error-revealing test has been generated.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/generation/IEventListener.html#stopGeneration--">stopGeneration()</a></span> - Method in interface randoop.generation.<a href="randoop/generation/IEventListener.html" title="interface in randoop.generation">IEventListener</a></dt>
 <dd>
 <div class="block">Called by AbstractGenerator to determine if generation should stop.</div>
@@ -7290,6 +7922,22 @@
 </a>
 <h2 class="title">T</h2>
 <dl>
+<dt><a href="randoop/input/toradocu/Tag.html" title="interface in randoop.input.toradocu"><span class="typeNameLink">Tag</span></a> - Interface in <a href="randoop/input/toradocu/package-summary.html">randoop.input.toradocu</a></dt>
+<dd>
+<div class="block">This is a Toradocu class borrowed to allow deserialization of JSON.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuCondition.html#tag">tag</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuCondition.html" title="class in randoop.input.toradocu">ToradocuCondition</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="randoop/input/toradocu/Tag.Kind.html" title="enum in randoop.input.toradocu"><span class="typeNameLink">Tag.Kind</span></a> - Enum in <a href="randoop/input/toradocu/package-summary.html">randoop.input.toradocu</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuConditionCollection.html#tagKindString-randoop.input.toradocu.Tag-">tagKindString(Tag)</a></span> - Static method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuConditionCollection.html" title="class in randoop.input.toradocu">ToradocuConditionCollection</a></dt>
+<dd>
+<div class="block">Returns a string representing the type of the given tag.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#targetClass">targetClass</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">Target class passed to Toradocu with the option --target-class.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/reflection/DefaultReflectionPredicate.html#test-java.lang.Class-">test(Class&lt;?&gt;)</a></span> - Method in class randoop.reflection.<a href="randoop/reflection/DefaultReflectionPredicate.html" title="class in randoop.reflection">DefaultReflectionPredicate</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/reflection/DefaultReflectionPredicate.html#test-java.lang.reflect.Method-">test(Method)</a></span> - Method in class randoop.reflection.<a href="randoop/reflection/DefaultReflectionPredicate.html" title="class in randoop.reflection">DefaultReflectionPredicate</a></dt>
@@ -7390,7 +8038,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/main/GenInputsAbstract.html#testclass">testclass</a></span> - Static variable in class randoop.main.<a href="randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</a></dt>
 <dd>
-<div class="block">The fully-qualified name of a class to test.</div>
+<div class="block">The fully-qualified name of a class to test;
+ for example, <code>--testclass=java.util.TreeSet</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/JunitFileWriter.html#testClassCount">testClassCount</a></span> - Variable in class randoop.<a href="randoop/JunitFileWriter.html" title="class in randoop">JunitFileWriter</a></dt>
 <dd>
@@ -7436,8 +8085,8 @@
 </dd>
 <dt><a href="randoop/main/ThrowClassNameError.html" title="class in randoop.main"><span class="typeNameLink">ThrowClassNameError</span></a> - Class in <a href="randoop/main/package-summary.html">randoop.main</a></dt>
 <dd>
-<div class="block">ThrowClassNameError is used to handle a class name error by throwing an
- <code>Error</code> with the message.</div>
+<div class="block">ThrowClassNameError is used to handle a class name error by throwing an <code>Error</code> with the
+ message.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/main/ThrowClassNameError.html#ThrowClassNameError--">ThrowClassNameError()</a></span> - Constructor for class randoop.main.<a href="randoop/main/ThrowClassNameError.html" title="class in randoop.main">ThrowClassNameError</a></dt>
 <dd>&nbsp;</dd>
@@ -7452,6 +8101,26 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/sequence/ExecutableSequence.html#throwsException-java.lang.Class-">throwsException(Class&lt;?&gt;)</a></span> - Method in class randoop.sequence.<a href="randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="randoop/input/toradocu/ThrowsTag.html" title="class in randoop.input.toradocu"><span class="typeNameLink">ThrowsTag</span></a> - Class in <a href="randoop/input/toradocu/package-summary.html">randoop.input.toradocu</a></dt>
+<dd>
+<div class="block">This is a Toradocu class borrowed to allow deserialization of JSON.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ThrowsTag.html#ThrowsTag-randoop.input.toradocu.Type-java.lang.String-java.util.Collection-">ThrowsTag(Type, String, Collection&lt;String&gt;)</a></span> - Constructor for class randoop.input.toradocu.<a href="randoop/input/toradocu/ThrowsTag.html" title="class in randoop.input.toradocu">ThrowsTag</a></dt>
+<dd>
+<div class="block">Constructs a <code>ThrowsTag</code> with the given exception, comment, and words tagged with @code</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ThrowsTag.html#ThrowsTag-randoop.input.toradocu.Type-java.lang.String-">ThrowsTag(Type, String)</a></span> - Constructor for class randoop.input.toradocu.<a href="randoop/input/toradocu/ThrowsTag.html" title="class in randoop.input.toradocu">ThrowsTag</a></dt>
+<dd>
+<div class="block">Constructs a <code>ThrowsTag</code> with the given exception and comment.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#throwsTags">throwsTags</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">Throws tags specified in the method's Javadoc.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#throwsTags--">throwsTags()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">Returns an unmodifiable view of the throws tags in this method.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/util/Timer.html#timeElapsed">timeElapsed</a></span> - Variable in class randoop.util.<a href="randoop/util/Timer.html" title="class in randoop.util">Timer</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/main/GenInputsAbstract.html#timelimit">timelimit</a></span> - Static variable in class randoop.main.<a href="randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</a></dt>
@@ -7563,6 +8232,10 @@
 <div class="block">Returns a string of Java source code to be emitted after a statement
  containing this check.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/test/InvalidValueCheck.html#toCodeStringPostStatement--">toCodeStringPostStatement()</a></span> - Method in class randoop.test.<a href="randoop/test/InvalidValueCheck.html" title="class in randoop.test">InvalidValueCheck</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/test/MissingExceptionCheck.html#toCodeStringPostStatement--">toCodeStringPostStatement()</a></span> - Method in class randoop.test.<a href="randoop/test/MissingExceptionCheck.html" title="class in randoop.test">MissingExceptionCheck</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/test/NoExceptionCheck.html#toCodeStringPostStatement--">toCodeStringPostStatement()</a></span> - Method in class randoop.test.<a href="randoop/test/NoExceptionCheck.html" title="class in randoop.test">NoExceptionCheck</a></dt>
 <dd>
 <div class="block">Returns the empty string: there is no code associated with this check (if
@@ -7580,6 +8253,10 @@
 <div class="block">Returns a string of Java source code to be emitted before a statement
  containing this check.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/test/InvalidValueCheck.html#toCodeStringPreStatement--">toCodeStringPreStatement()</a></span> - Method in class randoop.test.<a href="randoop/test/InvalidValueCheck.html" title="class in randoop.test">InvalidValueCheck</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/test/MissingExceptionCheck.html#toCodeStringPreStatement--">toCodeStringPreStatement()</a></span> - Method in class randoop.test.<a href="randoop/test/MissingExceptionCheck.html" title="class in randoop.test">MissingExceptionCheck</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/test/NoExceptionCheck.html#toCodeStringPreStatement--">toCodeStringPreStatement()</a></span> - Method in class randoop.test.<a href="randoop/test/NoExceptionCheck.html" title="class in randoop.test">NoExceptionCheck</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/test/ObjectCheck.html#toCodeStringPreStatement--">toCodeStringPreStatement()</a></span> - Method in class randoop.test.<a href="randoop/test/ObjectCheck.html" title="class in randoop.test">ObjectCheck</a></dt>
@@ -7733,6 +8410,31 @@
 <dd>
 <div class="block">If this type is a boxed primitive, unboxes this type and returns the primitive type.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/main/GenInputsAbstract.html#toradocu_conditions">toradocu_conditions</a></span> - Static variable in class randoop.main.<a href="randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</a></dt>
+<dd>
+<div class="block">Read Toradocu JSON condition file to use Toradocu generated conditions to control how tests are
+ classified.</div>
+</dd>
+<dt><a href="randoop/input/toradocu/ToradocuCondition.html" title="class in randoop.input.toradocu"><span class="typeNameLink">ToradocuCondition</span></a> - Class in <a href="randoop/input/toradocu/package-summary.html">randoop.input.toradocu</a></dt>
+<dd>
+<div class="block">Represents a Toradocu harvested condition.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuCondition.html#ToradocuCondition-randoop.input.toradocu.Tag-java.lang.reflect.Method-">ToradocuCondition(Tag, Method)</a></span> - Constructor for class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuCondition.html" title="class in randoop.input.toradocu">ToradocuCondition</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="randoop/input/toradocu/ToradocuConditionCollection.html" title="class in randoop.input.toradocu"><span class="typeNameLink">ToradocuConditionCollection</span></a> - Class in <a href="randoop/input/toradocu/package-summary.html">randoop.input.toradocu</a></dt>
+<dd>
+<div class="block">A <a href="randoop/condition/ConditionCollection.html" title="interface in randoop.condition"><code>ConditionCollection</code></a> for Toradocu generated conditions.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuConditionCollection.html#ToradocuConditionCollection-java.util.Map-java.util.Map-">ToradocuConditionCollection(Map&lt;AccessibleObject, List&lt;Condition&gt;&gt;, Map&lt;AccessibleObject, Map&lt;Condition, Pair&lt;TestCheckGenerator, TestCheckGenerator&gt;&gt;&gt;)</a></span> - Constructor for class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuConditionCollection.html" title="class in randoop.input.toradocu">ToradocuConditionCollection</a></dt>
+<dd>
+<div class="block">Creates a <a href="randoop/input/toradocu/ToradocuConditionCollection.html" title="class in randoop.input.toradocu"><code>ToradocuConditionCollection</code></a> for the given preconditions and throws-conditions.</div>
+</dd>
+<dt><a href="randoop/input/toradocu/ToradocuReturnCondition.html" title="class in randoop.input.toradocu"><span class="typeNameLink">ToradocuReturnCondition</span></a> - Class in <a href="randoop/input/toradocu/package-summary.html">randoop.input.toradocu</a></dt>
+<dd>
+<div class="block">Represents a component of a Toradocu harvested return condition.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuReturnCondition.html#ToradocuReturnCondition-randoop.input.toradocu.ReturnTag-java.lang.String-java.lang.reflect.Method-">ToradocuReturnCondition(ReturnTag, String, Method)</a></span> - Constructor for class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuReturnCondition.html" title="class in randoop.input.toradocu">ToradocuReturnCondition</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/reflection/ReflectionManager.html#toSortedList-T:A-java.util.Comparator-">toSortedList(T[], Comparator&lt;T&gt;)</a></span> - Method in class randoop.reflection.<a href="randoop/reflection/ReflectionManager.html" title="class in randoop.reflection">ReflectionManager</a></dt>
 <dd>
 <div class="block">Creates a sorted list from an array of elements using the given classComparator.</div>
@@ -7751,6 +8453,35 @@
 <dt><span class="memberNameLink"><a href="randoop/field/AccessibleField.html#toString--">toString()</a></span> - Method in class randoop.field.<a href="randoop/field/AccessibleField.html" title="class in randoop.field">AccessibleField</a></dt>
 <dd>
 <div class="block">Returns string representation of underlying <code>Field</code> object.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/AbstractTag.html#toString--">toString()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/AbstractTag.html" title="class in randoop.input.toradocu">AbstractTag</a></dt>
+<dd>
+<div class="block">Returns a string representation of this tag.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/DocumentedMethod.html#toString--">toString()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a></dt>
+<dd>
+<div class="block">Returns return type (when present), fully qualified class, and signature of this method in the
+ format "&lt;RETURN TYPE&gt; &lt;CLASS TYPE.METHOD SIGNATURE&gt;"</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Parameter.html#toString--">toString()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/Parameter.html" title="class in randoop.input.toradocu">Parameter</a></dt>
+<dd>
+<div class="block">Returns a string representation of this parameter.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ParamTag.html#toString--">toString()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ParamTag.html" title="class in randoop.input.toradocu">ParamTag</a></dt>
+<dd>
+<div class="block">Returns a string representation of this param tag.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Tag.Kind.html#toString--">toString()</a></span> - Method in enum randoop.input.toradocu.<a href="randoop/input/toradocu/Tag.Kind.html" title="enum in randoop.input.toradocu">Tag.Kind</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ThrowsTag.html#toString--">toString()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ThrowsTag.html" title="class in randoop.input.toradocu">ThrowsTag</a></dt>
+<dd>
+<div class="block">Returns a string representation of this throws tag.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/ToradocuCondition.html#toString--">toString()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/ToradocuCondition.html" title="class in randoop.input.toradocu">ToradocuCondition</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Type.html#toString--">toString()</a></span> - Method in class randoop.input.toradocu.<a href="randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a></dt>
+<dd>
+<div class="block">Returns the fully qualified name of this <code>Type</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/NormalExecution.html#toString--">toString()</a></span> - Method in class randoop.<a href="randoop/NormalExecution.html" title="class in randoop">NormalExecution</a></dt>
 <dd>
@@ -7823,6 +8554,8 @@
 <dt><span class="memberNameLink"><a href="randoop/types/NullReferenceType.html#toString--">toString()</a></span> - Method in class randoop.types.<a href="randoop/types/NullReferenceType.html" title="class in randoop.types">NullReferenceType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/ParameterizedType.html#toString--">toString()</a></span> - Method in class randoop.types.<a href="randoop/types/ParameterizedType.html" title="class in randoop.types">ParameterizedType</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/types/ParameterType.html#toString--">toString()</a></span> - Method in class randoop.types.<a href="randoop/types/ParameterType.html" title="class in randoop.types">ParameterType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/PrimitiveType.html#toString--">toString()</a></span> - Method in class randoop.types.<a href="randoop/types/PrimitiveType.html" title="class in randoop.types">PrimitiveType</a></dt>
 <dt><span class="memberNameLink"><a href="randoop/types/ReferenceArgument.html#toString--">toString()</a></span> - Method in class randoop.types.<a href="randoop/types/ReferenceArgument.html" title="class in randoop.types">ReferenceArgument</a></dt>
@@ -7937,6 +8670,18 @@
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/contract/EnumValue.html#type">type</a></span> - Variable in class randoop.contract.<a href="randoop/contract/EnumValue.html" title="class in randoop.contract">EnumValue</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Parameter.html#type">type</a></span> - Variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/Parameter.html" title="class in randoop.input.toradocu">Parameter</a></dt>
+<dd>
+<div class="block">The type of the parameter.</div>
+</dd>
+<dt><a href="randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu"><span class="typeNameLink">Type</span></a> - Class in <a href="randoop/input/toradocu/package-summary.html">randoop.input.toradocu</a></dt>
+<dd>
+<div class="block">This is a Toradocu class borrowed to allow deserialization of JSON.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Type.html#Type-java.lang.String-">Type(String)</a></span> - Constructor for class randoop.input.toradocu.<a href="randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a></dt>
+<dd>
+<div class="block">Creates a new <code>Type</code> with a given fully qualified name.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/operation/NonreceiverTerm.html#type">type</a></span> - Variable in class randoop.operation.<a href="randoop/operation/NonreceiverTerm.html" title="class in randoop.operation">NonreceiverTerm</a></dt>
 <dd>
 <div class="block">The <a href="randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> of this non-receiver term.</div>
@@ -8091,7 +8836,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/main/GenInputsAbstract.html#unchecked_exception">unchecked_exception</a></span> - Static variable in class randoop.main.<a href="randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</a></dt>
 <dd>
-<div class="block">If a test throws an unchecked exception, should the test be included in the
+<div class="block">If a test throws an unchecked exception other than <code>OutOfMemoryError</code> and
+ <code>NullPointerException</code>, should the test be included in the
  error-revealing test suite (value: ERROR), regression test suite (value:
  EXPECTED), or should it be discarded (value: INVALID)?</div>
 </dd>
@@ -8196,6 +8942,10 @@
 <dd>
 <div class="block">Returns the enum constant of this type with the specified name.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Tag.Kind.html#valueOf-java.lang.String-">valueOf(String)</a></span> - Static method in enum randoop.input.toradocu.<a href="randoop/input/toradocu/Tag.Kind.html" title="enum in randoop.input.toradocu">Tag.Kind</a></dt>
+<dd>
+<div class="block">Returns the enum constant of this type with the specified name.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/main/GenInputsAbstract.BehaviorType.html#valueOf-java.lang.String-">valueOf(String)</a></span> - Static method in enum randoop.main.<a href="randoop/main/GenInputsAbstract.BehaviorType.html" title="enum in randoop.main">GenInputsAbstract.BehaviorType</a></dt>
 <dd>
 <div class="block">Returns the enum constant of this type with the specified name.</div>
@@ -8225,6 +8975,11 @@
 <div class="block">Returns the enum constant of this type with the specified name.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/contract/PrimValue.PrintMode.html#values--">values()</a></span> - Static method in enum randoop.contract.<a href="randoop/contract/PrimValue.PrintMode.html" title="enum in randoop.contract">PrimValue.PrintMode</a></dt>
+<dd>
+<div class="block">Returns an array containing the constants of this enum type, in
+the order they are declared.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Tag.Kind.html#values--">values()</a></span> - Static method in enum randoop.input.toradocu.<a href="randoop/input/toradocu/Tag.Kind.html" title="enum in randoop.input.toradocu">Tag.Kind</a></dt>
 <dd>
 <div class="block">Returns an array containing the constants of this enum type, in
 the order they are declared.</div>
@@ -8370,11 +9125,18 @@ the order they are declared.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="randoop/test/DummyCheckGenerator.html#visit-randoop.sequence.ExecutableSequence-">visit(ExecutableSequence)</a></span> - Method in class randoop.test.<a href="randoop/test/DummyCheckGenerator.html" title="class in randoop.test">DummyCheckGenerator</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/test/ExpectedExceptionGenerator.html#visit-randoop.sequence.ExecutableSequence-">visit(ExecutableSequence)</a></span> - Method in class randoop.test.<a href="randoop/test/ExpectedExceptionGenerator.html" title="class in randoop.test">ExpectedExceptionGenerator</a></dt>
+<dd>
+<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code>
+ based on the criteria of this generator.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/test/ExtendGenerator.html#visit-randoop.sequence.ExecutableSequence-">visit(ExecutableSequence)</a></span> - Method in class randoop.test.<a href="randoop/test/ExtendGenerator.html" title="class in randoop.test">ExtendGenerator</a></dt>
 <dd>
 <div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code>
  based on the criteria of this generator.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="randoop/test/PostConditionCheckGenerator.html#visit-randoop.sequence.ExecutableSequence-">visit(ExecutableSequence)</a></span> - Method in class randoop.test.<a href="randoop/test/PostConditionCheckGenerator.html" title="class in randoop.test">PostConditionCheckGenerator</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/test/RegressionCaptureVisitor.html#visit-randoop.sequence.ExecutableSequence-">visit(ExecutableSequence)</a></span> - Method in class randoop.test.<a href="randoop/test/RegressionCaptureVisitor.html" title="class in randoop.test">RegressionCaptureVisitor</a></dt>
 <dd>
 <div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code>
@@ -8458,6 +9220,10 @@ the order they are declared.</div>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="randoop/reflection/ReflectionManager.html#visitors">visitors</a></span> - Variable in class randoop.reflection.<a href="randoop/reflection/ReflectionManager.html" title="class in randoop.reflection">ReflectionManager</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="randoop/input/toradocu/Type.html#VOID">VOID</a></span> - Static variable in class randoop.input.toradocu.<a href="randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a></dt>
+<dd>
+<div class="block">Void type that can be used to represent the void return type</div>
+</dd>
 <dt><span class="memberNameLink"><a href="randoop/types/JavaTypes.html#VOID_TYPE">VOID_TYPE</a></span> - Static variable in class randoop.types.<a href="randoop/types/JavaTypes.html" title="class in randoop.types">JavaTypes</a></dt>
 <dd>
 <div class="block">The void <a href="randoop/types/VoidType.html" title="class in randoop.types"><code>VoidType</code></a></div>

@@ -13,7 +13,10 @@
 
 <!-- start toc.  do not edit; run html-update-toc instead -->
 <ul>
-  <li><a href="#starting">Getting Started</a></li>
+  <li><a href="#starting">Getting Started</a>
+    <ul>
+      <li><a href="#prerequisites">Prerequisites</a></li>
+    </ul></li>
   <li><a href="#tasks">Compiling, testing, releasing, etc.</a>
     <ul>
       <li><a href="#compiling">Building and Testing Randoop</a>
@@ -90,6 +93,19 @@
   branch and work there rather
   than in the <code>master</code> branch.
 </p>
+
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<p>
+  Install the <code>CSS::DOM</code> Perl module.
+</p>
+
+<p>
+  Install <code>html5validator</code>, using one of the the following two command lines:
+</p>
+<pre><code>sudo pip install html5validator
+pip install --user html5validator</code></pre>
 
 
 <h1 id="tasks">Compiling, testing, releasing, etc.</h1>
@@ -345,12 +361,12 @@ So, for instance, the following will work to run the <code>exercised-class</code
 <h3 id="maintaininglibraries">Updating libraries</h3>
 
 <p>
-  Gradle downloads the appropriate version of
+  Periodically, follow the instructions in
+  <code>lib/README</code> to update local libraries.
+  (Background:  Gradle downloads the appropriate version of
   most of the libraries that Randoop uses.
-  However, Randoop also uses other libraries that are kept in the <code>lib</code>
-  directory.
-  Periodically, you should follow the instructions in
-  <code>lib/README</code> to update these "local" libraries.
+  However, Randoop also uses other local libraries that are kept in the <code>lib</code>
+  directory.)
 </p>
 
 
@@ -359,12 +375,15 @@ So, for instance, the following will work to run the <code>exercised-class</code
 <p>
   Any user-visible changes should be documented in the changelog
   <code>src/docs/resources/CHANGES.txt</code>.
-  Be sure to describe the change in terms of how it affects the user.
-  List any bug fixes that may affect any user visible behavior.
-  Optionally, mention any serious reported issues that are not fixed.
-  Order the information by importance to the user.
   This text is used for documenting releases, so keeping it up-to-date and
   ready for public release saves time in the long run.
+  Order the information by importance to the user.
+  Be sure to describe the change in terms of how it affects the user.
+  List all fixed bugs, which you can obtain by
+  <a href="https://github.com/randoop/randoop/issues?q=is%3Aissue+is%3Aclosed+sort%3Aupdated-desc">querying
+  GitHub</a>.  There is no need to describe each one individually unless
+  users need to know about them individually.
+  Optionally, mention any serious reported issues that are not fixed.
 </p>
 
 
@@ -428,22 +447,8 @@ task described below.
   The website (without manuals) can be found in <code>src/docs/site</code>.
   These files, along with the manual and Javadoc API, are moved to the
   <code>docs</code> directory by the <code>publishSite</code> task.
-  This task includes validation of HTML using <code>html5validator</code>, and
-  will fail if the tool is not installed.
 </p>
 
-<p>
-  To install use either
-</p>
-<pre><code>
-  sudo pip install html5validator
-</code></pre>
-<p>
-or
-</p>
-<pre><code>
-  pip install --user html5validator
-</code></pre>
 
 <h3 id="addtests">Adding Tests</h3>
 
@@ -606,11 +611,13 @@ merging new work with the master branch.
   NEWVERSION=<em>3.0.0</em></pre>
         These are used for working with git.
       </li>
-      <li>Also, update the version number and date in each of
-        <code>build.gradle</code>,
-        <code>src/main/java/randoop/Globals.java</code>,
-        <code>src/docs/resources/CHANGES.txt</code>, and
-        <code>src/docs/manual/index.html</code>.
+      <li>Update the version number and date in each of:
+        <ul>
+          <li><code>build.gradle</code></li>
+          <li><code>src/main/java/randoop/Globals.java</code></li>
+          <li><code>src/docs/resources/CHANGES.txt</code></li>
+          <li><code>src/docs/manual/index.html</code></li>
+        </ul>
       </li>
     </ol>
   </li>
@@ -648,9 +655,7 @@ merging new work with the master branch.
   </li>
   <li>
     Check that there are no broken links on the published website by running the
-    task <code>checklink</code>.  (This executes the Perl <code>checklink</code>
-    script from the cloned copy of Plume-lib, which requires the <code>CSS::DOM</code>
-    Perl module to be installed before it will work correctly.)
+    task <code>checklink</code>.
   </li>
   <li>Follow the
     <a href="https://help.github.com/articles/creating-releases/">GitHub instructions for creating a release</a>;
