@@ -17,6 +17,7 @@ def readData(fileName):
 	f = open(fileName, 'r')
 
 	# Extract information from filename
+	fileName = re.split('/', fileName)[-1]
 	project, exp, condition, metric, ext = re.split('[_.]', fileName)
 
 	if exp == 'Complete':
@@ -173,22 +174,26 @@ def plot(isLinePlot, title, seriesLabels, data):
 
 # Output the medians of the datasets to a csv
 def outputCsv(numFiles, labels, title, data):
-	os.remove('csv/%s' % (title,))
-	f = open('csv/%s' % (title,), 'w')
+	try:
+		os.remove('csv/%s' % (title,))
+	except OSError:
+		pass
+
+	f = open('csv/%s' % (title,), 'w+')
 
 	medians = [getMedians(x) for x in data]
 
-	print >> f 'Time,',
+	print >> f, 'Time,',
 	for i in range(numFiles):
-		print >> f seriesLabels[i],
+		print >> f, '%s,' % labels[i],
 
 	print >> f
 
 	for i in range(len(times)):
-		print >> f times[i],
+		print >> f, '%s,' % times[i],
 
 		for j in range(numFiles):
-			print >> f medians[j][i]
+			print >> f, '%s,' % medians[j][i],
 
 		print >> f
 
@@ -213,12 +218,14 @@ def main():
 
 	# Cut down all datasets to the size of the smallest dataset
 	minLength = len(data[0])
-	for i in len(data):
-		min(minLength, len(data[i]))
+	for i in range(len(data)):
+		minLength = min(minLength, len(data[i]))
 
-	for i in len(data):
+	for i in range(len(data)):
+		global times
 		times = times[:minLength]
 		data[i] = data[i][:minLength]
+
 
 	plot(isLinePlot, titles[0], seriesLabels, data)
 
