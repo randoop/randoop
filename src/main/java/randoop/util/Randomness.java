@@ -3,6 +3,7 @@ package randoop.util;
 import java.util.*;
 
 import randoop.BugInRandoopException;
+import randoop.main.GenInputsAbstract;
 
 public final class Randomness {
 
@@ -91,6 +92,10 @@ public final class Randomness {
 
   public static <T extends WeightedElement> T randomMemberWeighted(
       SimpleList<T> list, Map<WeightedElement, Double> weights) {
+
+    if (GenInputsAbstract.grt_debug_checks) {
+      //TODO: output stuff for tests
+    }
 
     // Find interval length.
     double max = 0;

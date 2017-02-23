@@ -2,11 +2,7 @@ package randoop.reflection;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import randoop.contract.CompareToAntiSymmetric;
 import randoop.contract.CompareToEquals;
@@ -22,11 +18,8 @@ import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
 import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
-import randoop.operation.MethodCall;
-import randoop.operation.OperationParseException;
-import randoop.operation.OperationParser;
-import randoop.operation.TypedClassOperation;
-import randoop.operation.TypedOperation;
+import randoop.main.GenInputsAbstract;
+import randoop.operation.*;
 import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
 import randoop.types.ClassOrInterfaceType;
@@ -65,6 +58,9 @@ public class OperationModel {
   /** Map for singleton sequences of literals extracted from classes. */
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
+  /** For Constant Mining */
+  private Map<Sequence, Integer> tfFrequency;
+
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
 
@@ -81,6 +77,8 @@ public class OperationModel {
     classTypes = new LinkedHashSet<>();
     inputTypes = new LinkedHashSet<>();
     classLiteralMap = new MultiMap<>();
+    tfFrequency = new HashMap<>();
+
     annotatedTestValues = new LinkedHashSet<>();
     contracts = new ContractSet();
     contracts.add(EqualsReflexive.getInstance());
@@ -158,7 +156,10 @@ public class OperationModel {
 
     // Add a (1-element) sequence corresponding to each literal to the component
     // manager.
-
+    if (GenInputsAbstract.constant_mining) {
+      addClassLiteralsGRT(compMgr, literalsFile);
+      return;
+    }
     for (String filename : literalsFile) {
       MultiMap<ClassOrInterfaceType, Sequence> literalmap;
       if (filename.equals("CLASSES")) {
@@ -185,6 +186,27 @@ public class OperationModel {
               throw new Error(
                   "Unexpected error in GenTests -- please report at https://github.com/randoop/randoop/issues");
           }
+        }
+      }
+    }
+  }
+
+  // TODO test
+  public void addClassLiteralsGRT(ComponentManager compMgr, List<String> literalsFile) {
+    if (GenInputsAbstract.grt_debug_checks) {
+      //TODO: output stuff for tests
+    }
+    for (String filename : literalsFile) {
+      MultiMap<ClassOrInterfaceType, Sequence> literalmap;
+      if (filename.equals("CLASSES")) {
+        literalmap = classLiteralMap;
+      } else {
+        literalmap = LiteralFileReader.parse(filename);
+      }
+      for (ClassOrInterfaceType type : literalmap.keySet()) {
+        for (Sequence seq : literalmap.getValues(type)) {
+          compMgr.addClassLevelLiteral(type, seq);
+          compMgr.addGeneratedSequence(seq);
         }
       }
     }
@@ -266,6 +288,10 @@ public class OperationModel {
     return annotatedTestValues;
   }
 
+  public Map<Sequence, Integer> getTfFrequency() {
+    return tfFrequency;
+  }
+
   /**
    * Gathers class types to be used in a run of Randoop and adds them to this {@code OperationModel}.
    * Specifically, collects types for classes-under-test, objects for exercised-class heuristic,
@@ -292,7 +318,7 @@ public class OperationModel {
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
     if (literalsFileList.contains("CLASSES")) {
-      mgr.add(new ClassLiteralExtractor(this.classLiteralMap));
+      mgr.add(new ClassLiteralExtractor(this.classLiteralMap, this.tfFrequency));
     }
 
     // Collect classes under test
