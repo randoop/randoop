@@ -418,7 +418,7 @@ public class JunitFileWriter {
             out.println("    " + classMethodName + "();");
             out.println("  }");
             out.println();
-            out.println("  public void " + classMethodName + "() {");
+            out.println("  public static void " + classMethodName + "() {");
             totalCallCount = 0;
           }
         }
