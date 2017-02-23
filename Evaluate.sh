@@ -179,7 +179,7 @@ if [ $init ] || [ $projects_arg ]; then
 
 	    # Checkout and compile current project
         version=1
-	    checkoutProject "b"
+	    checkoutProject "f"
 
 	    # Create the classlist and jar list for this project.
 	    log "Setting up class list for project ${project}"
