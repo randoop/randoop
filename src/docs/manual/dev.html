@@ -601,6 +601,16 @@ merging new work with the master branch.
     <a href="#maintenance">maintenance</a>
     is up-to-date.  Have a colleague review the changelog entry.
   </li>
+  <li>Commit any changes; push any unpushed
+    commits.  Find out if any exist by running:
+    <pre>git status && git log --branches --not --remotes</pre>
+  </li>
+  <li>Compile and test.  If any tests fail, fix them and start over.
+    <pre>./gradlew clean build</pre>
+  </li>
+  <li>Ensure that the manual HTML is valid:
+    <pre>./gradlew manual validateManual</pre>
+  </li>
   <li>
     Increment the Randoop version number:
     <ol>
@@ -621,22 +631,9 @@ merging new work with the master branch.
       </li>
     </ol>
   </li>
-  <li>Commit any changes; push any unpushed
-    commits.  Find out if any exist by running:
-    <pre>git status && git log --branches --not --remotes</pre>
-  </li>
-  <li>Compile and test.  If any tests fail, fix them and start over.
-    <pre>./gradlew clean build</pre>
-  </li>
   <li>You should have been updating the changelog <code>src/docs/resources/CHANGES.txt</code>
     all along, but double-check by running a command such as this:
     <pre>git log v$OLDVERSION..</pre>
-  </li>
-  <li>Ensure that the manual HTML is valid:
-    <pre>./gradlew manual validateManual</pre>
-  </li>
-  <li>
-    Commit any changes.
   </li>
 </ol>
 <p>
@@ -647,17 +644,20 @@ merging new work with the master branch.
     This will rebuild the project site in the <code>docs</code> directory.
   </li>
   <li>
-    Check that there are no broken links on the published website by running the
-    task <code>checklink</code>.
+    Check that there are no broken links on the published website:
+    <pre>./gradlew checklink</pre>
+    If it succeeds, run: <pre>\rm -f checklink-log.txt</pre>
   </li>
   <li>
     Commit and push those changes.
+<pre>
+  git commit . -m "Update version to $NEWVERSION"
+  git push
+</pre>    
   </li>
   <li>Make a
     repository tag:
     <pre>
-  git commit . -m "Update version to $NEWVERSION"
-  git push
   git tag -a v$NEWVERSION -m "Randoop version $NEWVERSION"
   git push --tags</pre>
     <!-- The gh-pages branch is not tagged. -->
