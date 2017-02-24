@@ -406,7 +406,15 @@ public class GenTests extends GenInputsAbstract {
         }
       }
     }
+    // TODO: output test results here I think instead of ForwardGenerator
+    /*
+    if (GenInputsAbstract.grt_debug_checks) {
+      ForwardGenerator fExplorer = (ForwardGenerator) explorer; // hope this works
+      Map<Sequence, List<String>> debugMap = fExplorer.getDebugMap();
 
+      outputTestInfo();
+    }
+    */
     return true;
   }
 

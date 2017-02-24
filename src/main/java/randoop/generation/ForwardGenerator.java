@@ -1,8 +1,8 @@
 package randoop.generation;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import randoop.BugInRandoopException;
@@ -47,6 +47,8 @@ public class ForwardGenerator extends AbstractGenerator {
       new HashMap<WeightedElement, Integer>();
 
   private final Map<Sequence, Double> initialConstantWeights = new HashMap<>();
+
+  private final Map<Sequence, List<String>> debugMap = new HashMap<>();
 
   /** Sequences that are used in other sequences (and are thus redundant) */
   private Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
@@ -178,6 +180,14 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
+   * Should only be called once we're done with generating tests, so internal exposure shouldn't matter
+   * @return
+   */
+  public Map<Sequence, List<String>> getDebugMap() {
+    return debugMap;
+  }
+
+  /**
    * The runtimePrimitivesSeen set contains primitive values seen during
    * generation/execution and is used to determine new values that should be
    * added to the component set. The component set initially contains a set of
@@ -226,9 +236,10 @@ public class ForwardGenerator extends AbstractGenerator {
 
     eSeq.exectime = endTime - startTime;
 
-    double weight = eSeq.sequence.getWeight(); // default
+    double initialWeight = eSeq.sequence.getWeight(); // default
     double orienteeringWeight = -1; // dummy values
     double constantMiningWeight = -1;
+    double weight = initialWeight; // weight to use
 
     // Orienteering stuff
     if (GenInputsAbstract.orienteering) {
@@ -244,7 +255,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // Orienteering's weight formula
       orienteeringWeight =
           1.0 / (eSeq.exectime * sequenceExecutionNumber.get(temp) * Math.sqrt(temp.size()));
-      weight = orienteeringWeight;
+      weight *= orienteeringWeight;
     }
 
     // Incorporate Constant mining weights on top
@@ -253,13 +264,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
       if (initialConstantWeights.containsKey(temp)) {
         constantMiningWeight = initialConstantWeights.get(temp);
-        if (GenInputsAbstract.orienteering) {
-          // TODO: is this what we really want?
-          weight *= constantMiningWeight; // combine the td-idf formula w/Orienteering
-        } else {
-          weight =
-              constantMiningWeight; // TODO: do we want to incorporate with Randoop's default weight?
-        }
+        weight *= constantMiningWeight;
       }
     }
 
@@ -273,39 +278,71 @@ public class ForwardGenerator extends AbstractGenerator {
     if (GenInputsAbstract.grt_debug_checks) {
       //TODO: output stuff for tests
       //TODO: make sure file isn't overwwritten over and over again
+      //TODO: faster writes
+
+      File tempDir = new File("test.txt");
       try {
+        //FileWriter fw;
+        PrintStream out;
+        if (!tempDir.exists()) {
+          tempDir.createNewFile();
+          out = createTextOutputStream("test.txt"); // TODO: maybe just new FileOutputStream(..)
+        } else {
+          out = new PrintStream(new FileOutputStream("test.txt", true));
+        }
+
         Sequence temp = eSeq.sequence;
-        PrintWriter writer = new PrintWriter(new File("test.txt"));
+
         StringBuilder s = new StringBuilder();
-        s.append("stuff we want");
-        s.append(',');
+        s.append("One Sequence's updates:\n");
 
-        s.append("Sequence:");
-        s.append(temp.toString());
+        s.append("Sequence hash: ");
+        s.append(temp.hashCode());
+        s.append("\n");
+        s.append(
+            "initial sequence weight: "); // weight before GRT mods, not necessarily original initial weight
+        s.append(initialWeight);
+        s.append("\n");
 
-        s.append("orienteering?");
+        s.append("orienteering?: ");
         s.append(GenInputsAbstract.orienteering);
-        s.append("executionNumb:");
+        s.append(", \t");
+        s.append("executionNumb: ");
         s.append(sequenceExecutionNumber.get(temp));
-        s.append("sequenceSize(not sqrt):");
+        s.append(", \t");
+        s.append("sequenceSize(not sqrt): ");
         s.append(temp.size());
-        s.append("execTime:");
+        s.append(", \t");
+        s.append("execTime: ");
         s.append(eSeq.exectime);
-        s.append("orienteeringWeight:");
+        s.append(", \t");
+        s.append("orienteeringWeight: ");
         s.append(orienteeringWeight);
+        s.append(", \n");
 
-        s.append("constantmining?");
+        s.append("constantmining?: ");
         s.append(GenInputsAbstract.constant_mining);
-        s.append("initialConstantsWeights:");
+        s.append(", \t");
+        s.append("sequence has a constantWeight?: ");
+        s.append(initialConstantWeights.containsKey(temp));
+        s.append(", \t");
+        s.append("initialConstantsWeights: ");
         s.append(initialConstantWeights.get(temp));
-        s.append("ConstantMiningWeight:");
+        s.append(", \t");
+        s.append("ConstantMiningWeight: ");
         s.append(constantMiningWeight);
-        s.append("weight:");
+        s.append(", \n");
+
+        s.append("final weight actually used: ");
         s.append(weight);
+        s.append("This sequence done on this iteration. \n");
         // more
-        writer.write(s.toString());
-        writer.close();
-      } catch (IOException e) {
+        out.println(s.toString());
+        //bw.write(s.toString());
+
+        //writer.write(s.toString());
+        //writer.close();
+      } catch (Exception e) {
         e.printStackTrace();
         System.out.println("Error in writing grt-debug output");
       }
@@ -929,5 +966,16 @@ public class ForwardGenerator extends AbstractGenerator {
   @Override
   public int numGeneratedSequences() {
     return allSequences.size();
+  }
+
+  private static PrintStream createTextOutputStream(String fileName) {
+    try {
+      return new PrintStream(new File(fileName));
+    } catch (FileNotFoundException e) {
+      Log.out.println("Exception thrown while creating text print stream:" + fileName);
+      e.printStackTrace();
+      System.exit(1);
+      throw new Error("This can't happen");
+    }
   }
 }
