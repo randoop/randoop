@@ -1,7 +1,6 @@
 package randoop.main;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -407,15 +406,70 @@ public class GenTests extends GenInputsAbstract {
       }
     }
     // TODO: output test results here I think instead of ForwardGenerator
-    /*
+
     if (GenInputsAbstract.grt_debug_checks) {
       ForwardGenerator fExplorer = (ForwardGenerator) explorer; // hope this works
       Map<Sequence, List<String>> debugMap = fExplorer.getDebugMap();
-
-      outputTestInfo();
+      writeTestInfo(debugMap);
     }
-    */
+
     return true;
+  }
+
+  private void writeTestInfo(Map<Sequence, List<String>> debugMap) {
+    File tempDir = new File("test.txt");
+    PrintStream out;
+    try {
+      if (!tempDir.exists()) {
+        tempDir.createNewFile();
+        out = createTextOutputStream("test.txt"); // TODO: maybe just new FileOutputStream(..)
+      } else {
+        out = new PrintStream(new FileOutputStream("test.txt", true)); // shouldn't really happen
+      }
+      StringBuilder header = new StringBuilder();
+      header.append("Sequence hash");
+      header.append(',');
+      header.append("Initial Sequence weight");
+      header.append(',');
+      header.append("Orienteering?");
+      header.append(',');
+      header.append("ExecutionNumber");
+      header.append(',');
+      header.append("SequenceSize (not sqrt)");
+      header.append(',');
+      header.append("execTime");
+      header.append(',');
+      header.append("orienteeringWeight");
+      header.append(',');
+      header.append("constantMining?");
+      header.append(',');
+      header.append("sequence has a weight from constantMining?");
+      header.append(',');
+      header.append("constantMiningWeight");
+      header.append(',');
+      header.append("weight actually used");
+      StringBuilder body = new StringBuilder();
+
+      for (Sequence seq : debugMap.keySet()) {
+        body.append(seq.hashCode());
+        int i = 0;
+        for (String str : debugMap.get(seq)) {
+          if (i != 0) {
+            body.append("-------");
+          }
+          body.append(',');
+          body.append(str);
+          body.append('\n');
+          i++;
+        }
+        body.append('\n');
+      }
+      out.println(header.toString());
+      out.println(body.toString());
+    } catch (IOException e) {
+      System.out.println("Couldn't create test-output file");
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -684,5 +738,16 @@ public class GenTests extends GenInputsAbstract {
       return textList;
     }
     return null;
+  }
+
+  private static PrintStream createTextOutputStream(String fileName) {
+    try {
+      return new PrintStream(new File(fileName));
+    } catch (FileNotFoundException e) {
+      Log.out.println("Exception thrown while creating text print stream:" + fileName);
+      e.printStackTrace();
+      System.exit(1);
+      throw new Error("This can't happen");
+    }
   }
 }

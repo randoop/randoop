@@ -261,7 +261,6 @@ public class ForwardGenerator extends AbstractGenerator {
     // Incorporate Constant mining weights on top
     if (GenInputsAbstract.constant_mining) {
       Sequence temp = eSeq.sequence;
-
       if (initialConstantWeights.containsKey(temp)) {
         constantMiningWeight = initialConstantWeights.get(temp);
         weight *= constantMiningWeight;
@@ -272,79 +271,31 @@ public class ForwardGenerator extends AbstractGenerator {
     assert eSeq.sequence != null;
 
     weightMap.put(eSeq.sequence, weight); // add a weight no matter what
-    // TODO: might screw things up
-    // TODO: but, we need to think about (when only doing C.M.) how to incorporate C.M. weights
 
     if (GenInputsAbstract.grt_debug_checks) {
-      //TODO: output stuff for tests
-      //TODO: make sure file isn't overwwritten over and over again
-      //TODO: faster writes
+      Sequence temp = eSeq.sequence;
+      String result = ""; // csv string of this sequence's important info
+      result = result + initialWeight + ',';
+      result = result + GenInputsAbstract.orienteering + ',';
+      result = result + sequenceExecutionNumber.get(temp) + ',';
+      result = result + temp.size() + ',';
+      result = result + eSeq.exectime + ',';
+      result = result + orienteeringWeight + ',';
 
-      File tempDir = new File("test.txt");
-      try {
-        //FileWriter fw;
-        PrintStream out;
-        if (!tempDir.exists()) {
-          tempDir.createNewFile();
-          out = createTextOutputStream("test.txt"); // TODO: maybe just new FileOutputStream(..)
-        } else {
-          out = new PrintStream(new FileOutputStream("test.txt", true));
-        }
+      result = result + GenInputsAbstract.constant_mining + ',';
 
-        Sequence temp = eSeq.sequence;
+      result = result + initialConstantWeights.containsKey(temp) + ',';
+      result = result + constantMiningWeight + ',';
+      result = result + weight;
 
-        StringBuilder s = new StringBuilder();
-        s.append("One Sequence's updates:\n");
-
-        s.append("Sequence hash: ");
-        s.append(temp.hashCode());
-        s.append("\n");
-        s.append(
-            "initial sequence weight: "); // weight before GRT mods, not necessarily original initial weight
-        s.append(initialWeight);
-        s.append("\n");
-
-        s.append("orienteering?: ");
-        s.append(GenInputsAbstract.orienteering);
-        s.append(", \t");
-        s.append("executionNumb: ");
-        s.append(sequenceExecutionNumber.get(temp));
-        s.append(", \t");
-        s.append("sequenceSize(not sqrt): ");
-        s.append(temp.size());
-        s.append(", \t");
-        s.append("execTime: ");
-        s.append(eSeq.exectime);
-        s.append(", \t");
-        s.append("orienteeringWeight: ");
-        s.append(orienteeringWeight);
-        s.append(", \n");
-
-        s.append("constantmining?: ");
-        s.append(GenInputsAbstract.constant_mining);
-        s.append(", \t");
-        s.append("sequence has a constantWeight?: ");
-        s.append(initialConstantWeights.containsKey(temp));
-        s.append(", \t");
-        s.append("initialConstantsWeights: ");
-        s.append(initialConstantWeights.get(temp));
-        s.append(", \t");
-        s.append("ConstantMiningWeight: ");
-        s.append(constantMiningWeight);
-        s.append(", \n");
-
-        s.append("final weight actually used: ");
-        s.append(weight);
-        s.append("This sequence done on this iteration. \n");
-        // more
-        out.println(s.toString());
-        //bw.write(s.toString());
-
-        //writer.write(s.toString());
-        //writer.close();
-      } catch (Exception e) {
-        e.printStackTrace();
-        System.out.println("Error in writing grt-debug output");
+      List<String> debugList = new ArrayList<String>();
+      if (debugMap.containsKey(temp)) {
+        List<String> addedToList = debugMap.get(temp);
+        addedToList.add(result);
+        debugMap.put(temp, addedToList);
+      } else {
+        debugList.add(result);
+        debugMap.put(temp, debugList);
       }
     }
 
@@ -966,16 +917,5 @@ public class ForwardGenerator extends AbstractGenerator {
   @Override
   public int numGeneratedSequences() {
     return allSequences.size();
-  }
-
-  private static PrintStream createTextOutputStream(String fileName) {
-    try {
-      return new PrintStream(new File(fileName));
-    } catch (FileNotFoundException e) {
-      Log.out.println("Exception thrown while creating text print stream:" + fileName);
-      e.printStackTrace();
-      System.exit(1);
-      throw new Error("This can't happen");
-    }
   }
 }
