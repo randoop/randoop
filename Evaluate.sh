@@ -349,6 +349,7 @@ doCoverage() {
 
     for project in ${projects[@]}; do
 	curr_dir=$work_dir$project
+	test_dir=${curr_dir}/gentests
         line_file="${exp_dir}/${project}_${2}_${1}_Line.txt"
         log "Line file is: ${line_file}"
         branch_file="${exp_dir}/${project}_${2}_${1}_Branch.txt"
