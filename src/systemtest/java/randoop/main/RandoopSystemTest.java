@@ -815,14 +815,34 @@ public class RandoopSystemTest {
     options.setFlag("orienteering");
     options.setFlag("grt-debug-checks");
 
-    options.setOption("inputlimit", "1000");
-    options.addTestClass("digdog.orienteering.Trivial");
+    //options.setOption("inputlimit", "1000");
+    //options.addTestClass("digdog.constantmining.Trivial");
+    //options.setPackageName("jdktests");
+    //options.setRegressionBasename("JDK_Tests_regression");
+    //options.setErrorBasename("JDK_Tests_error");
 
+    options.setOption("inputlimit", "1000");
+    options.setOption("null-ratio", "0.3");
+    options.setOption("alias-ratio", "0.3");
+    options.setFlag("small-tests");
+    options.setFlag("clear=100");
+    options.addClassList("resources/systemTest/jdk_classlist.txt");
+
+    // omit methods that use Random
+    options.setOption(
+        "omitmethods", "java2\\.util2\\.Collections\\.shuffle\\(java2\\.util2\\.List\\)");
+
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
+
+    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+    /*
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
 
     generateAndTestWithCoverage(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+    */
 
     File tempDir = new File("test.txt");
     File result = new File("orienteering.txt");
@@ -846,14 +866,34 @@ public class RandoopSystemTest {
     options.setFlag("constant-mining");
     options.setFlag("grt-debug-checks");
 
-    options.setOption("inputlimit", "1000");
-    options.addTestClass("digdog.constantmining.Trivial");
+    //options.setOption("inputlimit", "1000");
+    //options.addTestClass("digdog.constantmining.Trivial");
+    //options.setPackageName("jdktests");
+    //options.setRegressionBasename("JDK_Tests_regression");
+    //options.setErrorBasename("JDK_Tests_error");
 
+    options.setOption("inputlimit", "1000");
+    options.setOption("null-ratio", "0.3");
+    options.setOption("alias-ratio", "0.3");
+    options.setFlag("small-tests");
+    options.setFlag("clear=100");
+    options.addClassList("resources/systemTest/jdk_classlist.txt");
+
+    // omit methods that use Random
+    options.setOption(
+        "omitmethods", "java2\\.util2\\.Collections\\.shuffle\\(java2\\.util2\\.List\\)");
+
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
+
+    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+    /*
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
 
     generateAndTestWithCoverage(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+    */
 
     File tempDir = new File("test.txt");
     File result = new File("constantmining.txt");
@@ -878,26 +918,34 @@ public class RandoopSystemTest {
     options.setFlag("orienteering");
     options.setFlag("grt-debug-checks");
 
-    options.setOption("inputlimit", "1000");
-    options.addTestClass("digdog.orienteering.Trivial");
+    //options.setOption("inputlimit", "1000");
+    //options.addTestClass("digdog.constantmining.Trivial");
+    //options.setPackageName("jdktests");
+    //options.setRegressionBasename("JDK_Tests_regression");
+    //options.setErrorBasename("JDK_Tests_error");
 
+    options.setOption("inputlimit", "1000");
+    options.setOption("null-ratio", "0.3");
+    options.setOption("alias-ratio", "0.3");
+    options.setFlag("small-tests");
+    options.setFlag("clear=100");
+    options.addClassList("resources/systemTest/jdk_classlist.txt");
+
+    // omit methods that use Random
+    options.setOption(
+        "omitmethods", "java2\\.util2\\.Collections\\.shuffle\\(java2\\.util2\\.List\\)");
+
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
+
+    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+    /*
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
 
-    /*
-    try {
-      //FileWriter fw;
-      if (!tempDir.exists()) {
-        tempDir.createNewFile();
-        //fw = new FileWriter("test.txt");
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    */
-
     generateAndTestWithCoverage(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+    */
 
     File tempDir = new File("test.txt");
     File result = new File("harder-orienteering.txt");
@@ -921,14 +969,34 @@ public class RandoopSystemTest {
     options.setFlag("constant-mining");
     options.setFlag("grt-debug-checks");
 
-    options.setOption("inputlimit", "1000");
-    options.addTestClass("digdog.constantmining.Trivial");
+    //options.setOption("inputlimit", "1000");
+    //options.addTestClass("digdog.constantmining.Trivial");
+    //options.setPackageName("jdktests");
+    //options.setRegressionBasename("JDK_Tests_regression");
+    //options.setErrorBasename("JDK_Tests_error");
 
+    options.setOption("inputlimit", "1000");
+    options.setOption("null-ratio", "0.3");
+    options.setOption("alias-ratio", "0.3");
+    options.setFlag("small-tests");
+    options.setFlag("clear=100");
+    options.addClassList("resources/systemTest/jdk_classlist.txt");
+
+    // omit methods that use Random
+    options.setOption(
+        "omitmethods", "java2\\.util2\\.Collections\\.shuffle\\(java2\\.util2\\.List\\)");
+
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
+
+    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+    /*
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
 
     generateAndTestWithCoverage(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+    */
 
     File tempDir = new File("test.txt");
     File result = new File("harder-constantmining.txt");

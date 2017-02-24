@@ -48,6 +48,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
   private final Map<Sequence, Double> initialConstantWeights = new HashMap<>();
 
+  private final Map<Sequence, List<String>> debugMap = new HashMap<>();
+
   /** Sequences that are used in other sequences (and are thus redundant) */
   private Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
 
@@ -178,6 +180,14 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
+   * Should only be called once we're done with generating tests, so internal exposure shouldn't matter
+   * @return
+   */
+  public Map<Sequence, List<String>> getDebugMap() {
+    return debugMap;
+  }
+
+  /**
    * The runtimePrimitivesSeen set contains primitive values seen during
    * generation/execution and is used to determine new values that should be
    * added to the component set. The component set initially contains a set of
@@ -245,7 +255,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // Orienteering's weight formula
       orienteeringWeight =
           1.0 / (eSeq.exectime * sequenceExecutionNumber.get(temp) * Math.sqrt(temp.size()));
-      weight = orienteeringWeight;
+      weight *= orienteeringWeight;
     }
 
     // Incorporate Constant mining weights on top
@@ -254,13 +264,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
       if (initialConstantWeights.containsKey(temp)) {
         constantMiningWeight = initialConstantWeights.get(temp);
-        if (GenInputsAbstract.orienteering) {
-          // TODO: is this what we really want?
-          weight *= constantMiningWeight; // combine the td-idf formula w/Orienteering
-        } else {
-          weight =
-              constantMiningWeight; // TODO: do we want to incorporate with Randoop's default weight?
-        }
+        weight *= constantMiningWeight;
       }
     }
 
@@ -278,7 +282,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
       File tempDir = new File("test.txt");
       try {
-        FileWriter fw;
+        //FileWriter fw;
         PrintStream out;
         if (!tempDir.exists()) {
           tempDir.createNewFile();
@@ -292,43 +296,46 @@ public class ForwardGenerator extends AbstractGenerator {
         StringBuilder s = new StringBuilder();
         s.append("One Sequence's updates:\n");
 
-        s.append("Sequence: ");
-        s.append(temp.toString());
-        s.append(", \t");
+        s.append("Sequence hash: ");
+        s.append(temp.hashCode());
+        s.append("\n");
         s.append(
             "initial sequence weight: "); // weight before GRT mods, not necessarily original initial weight
         s.append(initialWeight);
         s.append("\n");
 
-        s.append("orienteering?");
+        s.append("orienteering?: ");
         s.append(GenInputsAbstract.orienteering);
         s.append(", \t");
-        s.append("executionNumb:");
+        s.append("executionNumb: ");
         s.append(sequenceExecutionNumber.get(temp));
         s.append(", \t");
-        s.append("sequenceSize(not sqrt):");
+        s.append("sequenceSize(not sqrt): ");
         s.append(temp.size());
         s.append(", \t");
-        s.append("execTime:");
+        s.append("execTime: ");
         s.append(eSeq.exectime);
         s.append(", \t");
-        s.append("orienteeringWeight:");
+        s.append("orienteeringWeight: ");
         s.append(orienteeringWeight);
         s.append(", \n");
 
-        s.append("constantmining?");
+        s.append("constantmining?: ");
         s.append(GenInputsAbstract.constant_mining);
         s.append(", \t");
-        s.append("initialConstantsWeights:");
+        s.append("sequence has a constantWeight?: ");
+        s.append(initialConstantWeights.containsKey(temp));
+        s.append(", \t");
+        s.append("initialConstantsWeights: ");
         s.append(initialConstantWeights.get(temp));
         s.append(", \t");
-        s.append("ConstantMiningWeight:");
+        s.append("ConstantMiningWeight: ");
         s.append(constantMiningWeight);
         s.append(", \n");
 
-        s.append("weight:");
+        s.append("final weight actually used: ");
         s.append(weight);
-        s.append("This sequence done. \n");
+        s.append("This sequence done on this iteration. \n");
         // more
         out.println(s.toString());
         //bw.write(s.toString());
