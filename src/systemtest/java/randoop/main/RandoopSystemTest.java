@@ -822,7 +822,9 @@ public class RandoopSystemTest {
     options.setOption("timelimit", "30");
     options.setOption("outputlimit", "200");
 
-    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+    //TODO should check for invalid test count
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
   }
 
   @Test
@@ -837,7 +839,8 @@ public class RandoopSystemTest {
     options.setOption("timelimit", "30");
     options.setOption("outputlimit", "200");
 
-    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
   }
 
   /* ------------------------------ utility methods ---------------------------------- */
