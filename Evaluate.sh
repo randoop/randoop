@@ -319,11 +319,11 @@ recordCoverage() {
 }
 
 doCompleteExperiment() {
-    doCoverage $1 "Complete" 5
+    doCoverage $1 "Complete" 3
 }
 
 doIndividualExperiment() {
-    doCoverage $1 "Individual" 10
+    doCoverage $1 "Individual" 5
 }
 
 doCoverage() {
