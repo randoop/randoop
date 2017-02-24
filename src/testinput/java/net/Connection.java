@@ -5,7 +5,7 @@ package net;
  * generate the {@code net_Connection} class at the top level of the testinput source set.
  * If this class is modified, it should be run through Toradocu again to generate that input file
  * again.
- * java -jar ../build/libs/toradocu-1.0-all.jar \
+ * java -jar ../build/libs/toradocu-1.0-all.jar org.toradocu.Toradocu \
  * --target-class net.Connection \
  * --source-dir src --class-dir src \
  * --condition-translator-output ConnectionConditions.json \
