@@ -327,7 +327,7 @@ public class ForwardGenerator extends AbstractGenerator {
     if (operation.isGeneric() || operation.hasWildcardTypes()) {
       try {
         operation = instantiator.instantiate((TypedClassOperation) operation);
-      } catch (AssertionError e) {
+      } catch (Throwable e) {
         if (GenInputsAbstract.fail_on_generation_error) {
           if (operation.isMethodCall() || operation.isConstructorCall()) {
             String opName = operation.getOperation().getReflectionObject().toString();
@@ -351,7 +351,7 @@ public class ForwardGenerator extends AbstractGenerator {
     InputsAndSuccessFlag sequences;
     try {
       sequences = selectInputs(operation);
-    } catch (AssertionError e) {
+    } catch (Throwable e) {
       if (GenInputsAbstract.fail_on_generation_error) {
         String opName = operation.getOperation().getReflectionObject().toString();
         throw new RandoopGenerationError(opName, operation, e);
