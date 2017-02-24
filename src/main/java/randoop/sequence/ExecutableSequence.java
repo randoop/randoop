@@ -335,6 +335,10 @@ public class ExecutableSequence {
     checks = gen.visit(this);
   }
 
+  public Object[] getRuntimeInputs(List<Variable> inputs) {
+    return getRuntimeInputs(executionResults.theList, inputs);
+  }
+
   private Object[] getRuntimeInputs(List<ExecutionOutcome> outcome, List<Variable> inputs) {
     Object[] ros = getRuntimeValuesForVars(inputs, outcome);
     for (Object ro : ros) {

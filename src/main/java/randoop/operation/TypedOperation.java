@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import plume.Pair;
 import randoop.ExecutionOutcome;
@@ -540,7 +539,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return true if the values satisfy the preconditions or there are no preconditions; false otherwise
    */
   public boolean checkPreconditions(Object[] values) {
-    Object[] args = fixArguments(values);
+    Object[] args = addNullReceiver(values);
 
     for (Condition condition : preconditions) {
       if (!condition.check(args)) {
@@ -558,7 +557,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return the {@link TestCheckGenerator} to test postcondition, based on precondition satisfied by the values
    */
   public TestCheckGenerator getPostCheckGenerator(Object[] values) {
-    Object[] args = fixArguments(values);
+    Object[] args = addNullReceiver(values);
     for (Map.Entry<Condition, Pair<TestCheckGenerator, TestCheckGenerator>> entry :
         postconditions.entrySet()) {
       Condition throwsCondition = entry.getKey();
@@ -578,7 +577,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param values  the argument array for this operation
    * @return the corresponding operation array for checking a {@link Condition}
    */
-  private Object[] fixArguments(Object[] values) {
+  private Object[] addNullReceiver(Object[] values) {
     Object[] args = values;
     if (this.isStatic()) {
       args = new Object[values.length + 1];

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import plume.Pair;
+import plume.UtilMDE;
 import randoop.condition.Condition;
 import randoop.condition.ConditionCollection;
 import randoop.reflection.TypeNames;
@@ -118,20 +119,20 @@ public class ToradocuConditionCollection implements ConditionCollection {
 
         if (method.returnTag() != null) {
           ReturnTag returnTag = method.returnTag();
-          String tagCondition = returnTag.getCondition();
+          String tagCondition =
+              convertParameters(returnTag.getCondition(), method.getParameters().size());
           String[] conditionToks = tagCondition.split("[?:]");
           String preconditionString = conditionToks[0].trim();
           if (conditionToks.length >= 2 && !conditionToks[0].trim().isEmpty()) {
-            System.out.println("condition " + tagCondition);
-            String preMethodName = buildConditionMethodName(returnTag, 0, methodIndex, "pre");
+            String preMethodName = buildReturnConditionMethodName(returnTag, methodIndex, "pre");
             Method preconditionMethod =
                 getConditionMethod(conditionClass, preMethodName, parameters);
-
+            parameters = addReturnType(parameters, method);
             if (preconditionMethod != null) {
               ToradocuReturnCondition precondition =
                   new ToradocuReturnCondition(returnTag, preconditionString, preconditionMethod);
               String postTrueMethodName =
-                  buildConditionMethodName(returnTag, 0, methodIndex, "truepost");
+                  buildReturnConditionMethodName(returnTag, methodIndex, "truepost");
               Method postTrueConditionMethod =
                   getConditionMethod(conditionClass, postTrueMethodName, parameters);
 
@@ -141,7 +142,7 @@ public class ToradocuConditionCollection implements ConditionCollection {
                         returnTag, conditionToks[1].trim(), postTrueConditionMethod);
                 if (conditionToks.length == 3) {
                   String postFalseMethodName =
-                      buildConditionMethodName(returnTag, 0, methodIndex, "falsepost");
+                      buildReturnConditionMethodName(returnTag, methodIndex, "falsepost");
                   Method postFalseConditionMethod =
                       getConditionMethod(conditionClass, postFalseMethodName, parameters);
                   if (postFalseConditionMethod != null) {
@@ -170,6 +171,25 @@ public class ToradocuConditionCollection implements ConditionCollection {
       }
     }
     return new ToradocuConditionCollection(conditionMap, postconditionMap);
+  }
+
+  /**
+   * Replaces the Toradocu generated parameters in a return-condition string with variable names
+   * following the {@link randoop.contract.ObjectContract} convention using {@code "x0"} to
+   * {@code "xn"}, for {@code n} being the number of condition method parameters.
+   * Replaces {@code "target"} with {@code x0} and {@code "result"} with {@code xn}.
+   *
+   * @param conditionString  the {@code String} representation of the return-condition
+   * @param numMethodParameters  the number of subject method parameters
+   * @return the {@code conditionString} with Toradocu generated parameter names replaced by {@code "xi"}
+   */
+  private static String convertParameters(String conditionString, int numMethodParameters) {
+    conditionString = conditionString.replace("target", "x0");
+    conditionString = conditionString.replace("result", "x" + (numMethodParameters + 1));
+    for (int index = 0; index < numMethodParameters; index++) {
+      conditionString = conditionString.replace("args[" + index + "]", "x" + (index + 1));
+    }
+    return conditionString;
   }
 
   /**
@@ -241,6 +261,20 @@ public class ToradocuConditionCollection implements ConditionCollection {
   }
 
   /**
+   * Fixes the condition method parameters for {@link ReturnTag} condition.
+   *
+   * @param parameters  the {@code Class<>} array of parameter types
+   * @param method  the subject method to which parameters belong
+   * @return {@code parameters} extended by the {@code Class<>} for the subject method return type
+   */
+  private static Class<?>[] addReturnType(Class<?>[] parameters, DocumentedMethod method) {
+    Class<?>[] conditionMethodParameters = new Class<?>[parameters.length + 1];
+    System.arraycopy(parameters, 0, conditionMethodParameters, 0, parameters.length);
+    conditionMethodParameters[parameters.length] = getClass(method.getReturnType());
+    return conditionMethodParameters;
+  }
+
+  /**
    * Gets the {@code java.lang.reflect.Method} for the condition method with the given name.
    * A condition method only exists if the corresponding tag has a condition.
    *
@@ -251,13 +285,19 @@ public class ToradocuConditionCollection implements ConditionCollection {
    */
   private static Method getConditionMethod(
       Class<?> conditionClass, String methodName, Class<?>[] parameters) {
-    Method conditionMethod = null;
+    Method conditionMethod;
     try {
       conditionMethod = conditionClass.getMethod(methodName, parameters);
     } catch (NoSuchMethodException e) {
+      List<String> paramTypes = new ArrayList<>();
+      for (Class<?> parameter : parameters) {
+        paramTypes.add(parameter.getName());
+      }
       throw new IllegalArgumentException(
           "Unable to find Toradocu condition method "
               + methodName
+              + "("
+              + UtilMDE.join(paramTypes, ",")
               + " in class "
               + conditionClass.getName());
     }
@@ -378,9 +418,20 @@ public class ToradocuConditionCollection implements ConditionCollection {
     return "m" + methodIndex + "_" + tagKindString(tag) + tagIndex;
   }
 
-  private static String buildConditionMethodName(
-      Tag tag, int tagIndex, int methodIndex, String methodQualifier) {
-    return "m" + "_" + methodQualifier + methodIndex + "_" + tagKindString(tag) + tagIndex;
+  /**
+   * Constructs the condition method name for a {@link ReturnTag}.
+   * Similar to  {@link #buildConditionMethodName(Tag, int, int)} except this method inserts a
+   * qualifier into the method name, allowing <i>pre</i>- and <i>post</i>-conditions to be identified.
+   * (Also, there is only one return tag so the tag index is always 0.)
+   *
+   * @param tag  the return tag
+   * @param methodIndex  the position of the method in the JSON list.
+   * @param methodQualifier  the qualifier for the method name
+   * @return the constructed method name
+   */
+  private static String buildReturnConditionMethodName(
+      Tag tag, int methodIndex, String methodQualifier) {
+    return "m" + "_" + methodQualifier + methodIndex + "_" + tagKindString(tag) + 0;
   }
 
   /**

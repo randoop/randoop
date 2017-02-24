@@ -1,6 +1,6 @@
 package randoop.test;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -16,18 +16,50 @@ public class PostConditionCheckGenerator implements TestCheckGenerator {
   /** the post-condition */
   private final Condition postcondition;
 
+  /**
+   * Create a {@link TestCheckGenerator} to test the given post-condition.
+   *
+   * @param postcondition  the post-condition to be tested in generated {@link TestChecks}
+   */
   public PostConditionCheckGenerator(Condition postcondition) {
     this.postcondition = postcondition;
   }
 
+  /**
+   * Tests the post-condition against the values in the given {@link ExecutableSequence}, and
+   * if the condition is not satisfied returns a {@link ErrorRevealingChecks}.
+   * <p>
+   * Note that the operation input values passed to the post-condition are the values post-execution.
+   *
+   * @param s  the sequence for which checks are generated
+   *
+   * @return the {@link ErrorRevealingChecks} with a {@link PostConditionCheck} if the post-condition
+   *          fails on the sequence, an {@code null} otherwise
+   */
   @Override
   public TestChecks visit(ExecutableSequence s) {
-    int lastStatementPos = s.sequence.size() - 1;
-    ExecutionOutcome result = s.getResult(lastStatementPos);
+    int finalIndex = s.sequence.size() - 1;
+    ExecutionOutcome result = s.getResult(finalIndex);
+    TestChecks checks = new ErrorRevealingChecks();
     if (result instanceof NormalExecution) {
-      List<Variable> inputs = s.sequence.getInputs(lastStatementPos);
-      //inputValues = s.getRuntimeValuesForVars()
+      ArrayList<Variable> inputs = new ArrayList<>(s.sequence.getInputs(finalIndex));
+      inputs.add(s.sequence.getVariable(finalIndex));
+      Object[] inputValues = s.getRuntimeInputs(inputs);
+      //inputValues[inputValues.length - 1] = ((NormalExecution) result).getRuntimeValue();
+      if (s.sequence.getStatement(finalIndex).getOperation().isStatic()) {
+        inputValues = addNullReceiver(inputValues);
+      }
+      if (!postcondition.check(inputValues)) {
+        checks.add(new PostConditionCheck(postcondition, inputs));
+      }
     }
-    return null;
+    return checks;
+  }
+
+  private Object[] addNullReceiver(Object[] values) {
+    Object[] args = new Object[values.length + 1];
+    args[0] = null;
+    System.arraycopy(values, 0, args, 1, values.length);
+    return args;
   }
 }

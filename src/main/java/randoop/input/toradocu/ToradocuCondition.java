@@ -60,4 +60,9 @@ public class ToradocuCondition implements Condition {
   public String getComment() {
     return tag.getComment();
   }
+
+  @Override
+  public String getConditionString() {
+    return tag.getCondition();
+  }
 }
