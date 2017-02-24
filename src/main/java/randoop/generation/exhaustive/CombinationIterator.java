@@ -26,10 +26,8 @@ public class CombinationIterator<T> implements Iterator<Set<T>> {
     this.finished = false;
 
     if (currentCombinationIndices == null) {
-      current = new int[choose];
-      for (int i = 0; i < choose; i++) {
-        current[i] = i;
-      }
+      current = getInitialCombinationIndices(choose);
+
     } else {
       if (currentCombinationIndices.length != choose) {
         throw new IllegalArgumentException(
@@ -44,6 +42,14 @@ public class CombinationIterator<T> implements Iterator<Set<T>> {
       }
       this.current = currentCombinationIndices;
     }
+  }
+
+  public static int[] getInitialCombinationIndices(int choose) {
+    int[] indices = new int[choose];
+    for (int i = 0; i < choose; i++) {
+      indices[i] = i;
+    }
+    return indices;
   }
 
   public int[] getCurrentIndices() {
@@ -64,8 +70,29 @@ public class CombinationIterator<T> implements Iterator<Set<T>> {
       result.add(items.get(current[i]));
     }
 
-    int n = items.size();
-    finished = true;
+    current = getNextCombinationIndices(items.size(), choose, current);
+
+    if (current == null) {
+      finished = true;
+    }
+    return result;
+  }
+
+  public static int[] getNextCombinationIndices(
+      int numberOfItems, int choose, int[] currentCombinationIndices) {
+    if (currentCombinationIndices == null) {
+      throw new IllegalArgumentException("currentCombinationIndices");
+    }
+
+    if (choose <= 0 || choose > numberOfItems) {
+      throw new IllegalArgumentException("choose");
+    }
+
+    int[] current = Arrays.copyOf(currentCombinationIndices, choose);
+
+    boolean finished = true;
+
+    int n = numberOfItems;
     for (int i = choose - 1; i >= 0; i--) {
       if (current[i] < n - choose + i) {
         current[i]++;
@@ -77,7 +104,11 @@ public class CombinationIterator<T> implements Iterator<Set<T>> {
       }
     }
 
-    return result;
+    if (finished) {
+      return null;
+    } else {
+      return current;
+    }
   }
 
   public void remove() {

@@ -3,10 +3,7 @@ package randoop.generation.exhaustive;
 import com.google.common.collect.Lists;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class SequenceGenerator<T> implements Iterator<List<T>> {
   long totalSequences;
@@ -100,7 +97,45 @@ public class SequenceGenerator<T> implements Iterator<List<T>> {
     return next;
   }
 
-  class SequenceIndex implements Serializable {
+  public static SequenceIndex getNextIndex(
+      SequenceIndex current, int maximumSequenceLength, int numberOfItems) {
+    if (current == null) {
+      throw new IllegalArgumentException("'current' cannot be null.");
+    }
+
+    if (current.getSequenceLength() > maximumSequenceLength) {
+      return null;
+    }
+
+    int sequenceSize = current.getSequenceLength();
+    int[] nextCombIndices =
+        CombinationIterator.getNextCombinationIndices(
+            numberOfItems, current.getSequenceLength(), current.getCurrentCombinationIndices());
+    int[] nextPermutationIndices;
+
+    nextPermutationIndices =
+        PermutationIterator.getNextPermutationIndices(current.getCurrentPermutationIndices());
+
+    if (nextPermutationIndices == null) {
+
+      // No more permutations of the current size. Checks if it's possible to generate sequences of size n+1
+      sequenceSize++;
+
+      if (sequenceSize > maximumSequenceLength) {
+        return null;
+      }
+
+      nextCombIndices = CombinationIterator.getInitialCombinationIndices(sequenceSize);
+      nextPermutationIndices =
+          PermutationIterator.getInitialPermutationIndices(nextCombIndices.length);
+    } else {
+      nextCombIndices = Arrays.copyOf(nextCombIndices, nextCombIndices.length);
+    }
+
+    return new SequenceIndex(sequenceSize, nextCombIndices, nextPermutationIndices);
+  }
+
+  static class SequenceIndex implements Serializable {
     private static final long serialVersionUID = 2496849987065726718L;
 
     private int[] currentCombinationIndices;
@@ -117,24 +152,12 @@ public class SequenceGenerator<T> implements Iterator<List<T>> {
       return currentCombinationIndices;
     }
 
-    public void setCurrentCombinationIndices(int[] currentCombinationIndices) {
-      this.currentCombinationIndices = currentCombinationIndices;
-    }
-
     public int[] getCurrentPermutationIndices() {
       return currentPermutationIndices;
     }
 
-    public void setCurrentPermutationIndices(int[] currentPermutationIndices) {
-      this.currentPermutationIndices = currentPermutationIndices;
-    }
-
     public int getSequenceLength() {
       return sequenceLength;
-    }
-
-    public void setSequenceLength(int sequenceLength) {
-      this.sequenceLength = sequenceLength;
     }
   }
 

@@ -20,15 +20,22 @@ public class PermutationIterator<T> implements Iterator<List<T>> {
 
     if (currentPermutationIndices == null) {
       shouldUseInitialIndicesAsAPermutation = true;
-      this.indices = new int[allElements.size()];
+      this.indices = getInitialPermutationIndices(allElements.size());
 
-      for (int i = 0; i < this.indices.length; ++i) {
-        this.indices[i] = i;
-      }
     } else {
       shouldUseInitialIndicesAsAPermutation = false;
       this.indices = currentPermutationIndices;
     }
+  }
+
+  public static int[] getInitialPermutationIndices(int numberOfElements) {
+    int[] indices = new int[numberOfElements];
+
+    for (int i = 0; i < indices.length; ++i) {
+      indices[i] = i;
+    }
+
+    return indices;
   }
 
   PermutationIterator(List<T> allElements) {
@@ -63,20 +70,29 @@ public class PermutationIterator<T> implements Iterator<List<T>> {
     return Arrays.copyOf(indices, indices.length);
   }
 
-  private void generateNextPermutation() {
-    int i = getNextIndexToPermute();
+  public static int[] getNextPermutationIndices(int[] currentIndices) {
+    if (currentIndices == null) {
+      throw new IllegalArgumentException("currentIndices");
+    }
+
+    int[] next = getIndicesForNextPermutation(currentIndices);
+
+    return next;
+  }
+
+  private static int[] getIndicesForNextPermutation(int[] currentIndices) {
+    int i = getNextPositionToPermute(currentIndices);
 
     if (i == -1) {
-      // No more new permutations.
-      nextPermutation = null;
-      return;
+      return null;
     }
 
     int j = i + 1;
-    int min = indices[j];
+    int min = currentIndices[j];
     int minIndex = j;
+    int[] indices = Arrays.copyOf(currentIndices, currentIndices.length);
 
-    while (j < indices.length) {
+    while (j < currentIndices.length) {
       if (indices[i] < indices[j] && indices[j] < min) {
         min = indices[j];
         minIndex = j;
@@ -94,15 +110,30 @@ public class PermutationIterator<T> implements Iterator<List<T>> {
       swap(indices, i++, j--);
     }
 
-    loadPermutation();
+    return indices;
   }
 
-  private int getNextIndexToPermute() {
+  private void generateNextPermutation() {
+    this.indices = getIndicesForNextPermutation(this.getCurrentIndices());
+
+    if (indices == null) {
+      nextPermutation = null;
+    } else {
+      loadPermutation();
+    }
+  }
+
+  private static int getNextPositionToPermute(int[] indices) {
     int i = indices.length - 2;
 
     while (i >= 0 && indices[i] > indices[i + 1]) {
       --i;
     }
+    return i;
+  }
+
+  private int getNextIndexToPermute() {
+    int i = getNextPositionToPermute(this.indices);
     return i;
   }
 
