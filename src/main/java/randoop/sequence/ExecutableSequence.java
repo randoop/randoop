@@ -287,7 +287,6 @@ public class ExecutableSequence {
 
       inputValues = getRuntimeInputs(executionResults.theList, inputs);
 
-
       if (i == this.sequence.size() - 1) {
         TypedOperation operation = this.sequence.getStatement(i).getOperation();
         if (operation.isConstructorCall() || operation.isMethodCall()) {
