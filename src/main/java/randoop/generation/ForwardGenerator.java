@@ -328,9 +328,18 @@ public class ForwardGenerator extends AbstractGenerator {
       try {
         operation = instantiator.instantiate((TypedClassOperation) operation);
       } catch (AssertionError e) {
-        if (operation.isMethodCall() || operation.isConstructorCall()) {
-          String opName = operation.getOperation().getReflectionObject().toString();
-          throw new RandoopInstantiationError(opName, e);
+        if (GenInputsAbstract.fail_on_generation_error) {
+          if (operation.isMethodCall() || operation.isConstructorCall()) {
+            String opName = operation.getOperation().getReflectionObject().toString();
+            throw new RandoopInstantiationError(opName, e);
+          }
+        } else {
+          if (Log.isLoggingOn()) {
+            Log.logLine("Instantiation error for operation " + operation);
+            Log.logLine("error message: " + e.getMessage());
+          }
+          System.out.println("Instantiation error for operation " + operation);
+          operation = null;
         }
       }
       if (operation == null) { //failed to instantiate generic
@@ -343,8 +352,17 @@ public class ForwardGenerator extends AbstractGenerator {
     try {
       sequences = selectInputs(operation);
     } catch (AssertionError e) {
-      String opName = operation.getOperation().getReflectionObject().toString();
-      throw new RandoopGenerationError(opName, operation, e);
+      if (GenInputsAbstract.fail_on_generation_error) {
+        String opName = operation.getOperation().getReflectionObject().toString();
+        throw new RandoopGenerationError(opName, operation, e);
+      } else {
+        if (Log.isLoggingOn()) {
+          Log.logLine("Error selecting inputs for operation: " + operation);
+          Log.logLine("error message: " + e.getMessage());
+        }
+        System.out.println("Error selecting inputs for operation: " + operation);
+        sequences = null;
+      }
     }
     if (sequences == null) {
       return null;

@@ -139,6 +139,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean silently_ignore_bad_class_names = false;
 
   /**
+   * (For debugging.)
+   * If an error or exception is thrown during type instantiation or input selection, this option
+   * allows the error to be passed through to {@link GenTests#handle(String[])} where a comprehensive
+   * error message is printed.
+   */
+  @Unpublicized
+  @Option("Allow Randoop to fail on any error during test generation")
+  public static boolean fail_on_generation_error = false;
+
+  /**
    * Classes, one of which every test must use. Randoop will only output tests
    * whose source code has at least one use of a member of a class whose name matches the
    * regular expression.
