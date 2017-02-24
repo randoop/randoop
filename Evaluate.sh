@@ -348,6 +348,7 @@ doCoverage() {
     fi
 
     for project in ${projects[@]}; do
+	curr_dir=$work_dir$project
         line_file="${exp_dir}/${project}_${2}_${1}_Line.txt"
         log "Line file is: ${line_file}"
         branch_file="${exp_dir}/${project}_${2}_${1}_Branch.txt"
