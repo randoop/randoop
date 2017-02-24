@@ -2,8 +2,9 @@ package randoop.main;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import randoop.util.Log;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -814,14 +815,42 @@ public class RandoopSystemTest {
     options.setFlag("orienteering");
     options.setFlag("grt-debug-checks");
 
+    //options.setOption("inputlimit", "1000");
+    //options.addTestClass("digdog.constantmining.Trivial");
+    //options.setPackageName("jdktests");
+    //options.setRegressionBasename("JDK_Tests_regression");
+    //options.setErrorBasename("JDK_Tests_error");
+
     options.setOption("inputlimit", "1000");
-    options.addTestClass("digdog.orienteering.Trivial");
+    options.setOption("null-ratio", "0.3");
+    options.setOption("alias-ratio", "0.3");
+    options.setFlag("small-tests");
+    options.setFlag("clear=100");
+    options.addClassList("resources/systemTest/jdk_classlist.txt");
+
+    // omit methods that use Random
+    options.setOption(
+        "omitmethods", "java2\\.util2\\.Collections\\.shuffle\\(java2\\.util2\\.List\\)");
+
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
+
+    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
     /*
-      ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
-      ExpectedTests expectedErrorTests = ExpectedTests.NONE;
-      generateAndTestWithCoverage(
-              testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+
+    generateAndTestWithCoverage(
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
     */
+
+    File tempDir = new File("test.txt");
+    File result = new File("orienteering.txt");
+    boolean success = tempDir.renameTo(result);
+    if (!success) {
+      fail("couldn't rename file");
+    }
+
     assertTrue(true);
   }
 
@@ -837,14 +866,42 @@ public class RandoopSystemTest {
     options.setFlag("constant-mining");
     options.setFlag("grt-debug-checks");
 
+    //options.setOption("inputlimit", "1000");
+    //options.addTestClass("digdog.constantmining.Trivial");
+    //options.setPackageName("jdktests");
+    //options.setRegressionBasename("JDK_Tests_regression");
+    //options.setErrorBasename("JDK_Tests_error");
+
     options.setOption("inputlimit", "1000");
-    options.addTestClass("digdog.constantmining.Trivial");
+    options.setOption("null-ratio", "0.3");
+    options.setOption("alias-ratio", "0.3");
+    options.setFlag("small-tests");
+    options.setFlag("clear=100");
+    options.addClassList("resources/systemTest/jdk_classlist.txt");
+
+    // omit methods that use Random
+    options.setOption(
+        "omitmethods", "java2\\.util2\\.Collections\\.shuffle\\(java2\\.util2\\.List\\)");
+
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
+
+    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
     /*
-      ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
-      ExpectedTests expectedErrorTests = ExpectedTests.NONE;
-      generateAndTestWithCoverage(
-              testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+
+    generateAndTestWithCoverage(
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
     */
+
+    File tempDir = new File("test.txt");
+    File result = new File("constantmining.txt");
+    boolean success = tempDir.renameTo(result);
+    if (!success) {
+      fail("couldn't rename file");
+    }
+
     assertTrue(true);
   }
 
@@ -861,14 +918,41 @@ public class RandoopSystemTest {
     options.setFlag("orienteering");
     options.setFlag("grt-debug-checks");
 
+    //options.setOption("inputlimit", "1000");
+    //options.addTestClass("digdog.constantmining.Trivial");
+    //options.setPackageName("jdktests");
+    //options.setRegressionBasename("JDK_Tests_regression");
+    //options.setErrorBasename("JDK_Tests_error");
+
     options.setOption("inputlimit", "1000");
-    options.addTestClass("digdog.orienteering.Trivial");
+    options.setOption("null-ratio", "0.3");
+    options.setOption("alias-ratio", "0.3");
+    options.setFlag("small-tests");
+    options.setFlag("clear=100");
+    options.addClassList("resources/systemTest/jdk_classlist.txt");
+
+    // omit methods that use Random
+    options.setOption(
+        "omitmethods", "java2\\.util2\\.Collections\\.shuffle\\(java2\\.util2\\.List\\)");
+
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
+
+    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
     /*
-      ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
-      ExpectedTests expectedErrorTests = ExpectedTests.NONE;
-      generateAndTestWithCoverage(
-              testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+
+    generateAndTestWithCoverage(
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
     */
+
+    File tempDir = new File("test.txt");
+    File result = new File("harder-orienteering.txt");
+    boolean success = tempDir.renameTo(result);
+    if (!success) {
+      fail("couldn't rename file");
+    }
     assertTrue(true);
   }
 
@@ -885,14 +969,42 @@ public class RandoopSystemTest {
     options.setFlag("constant-mining");
     options.setFlag("grt-debug-checks");
 
+    //options.setOption("inputlimit", "1000");
+    //options.addTestClass("digdog.constantmining.Trivial");
+    //options.setPackageName("jdktests");
+    //options.setRegressionBasename("JDK_Tests_regression");
+    //options.setErrorBasename("JDK_Tests_error");
+
     options.setOption("inputlimit", "1000");
-    options.addTestClass("digdog.constantmining.Trivial");
+    options.setOption("null-ratio", "0.3");
+    options.setOption("alias-ratio", "0.3");
+    options.setFlag("small-tests");
+    options.setFlag("clear=100");
+    options.addClassList("resources/systemTest/jdk_classlist.txt");
+
+    // omit methods that use Random
+    options.setOption(
+        "omitmethods", "java2\\.util2\\.Collections\\.shuffle\\(java2\\.util2\\.List\\)");
+
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
+
+    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
     /*
-      ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
-      ExpectedTests expectedErrorTests = ExpectedTests.NONE;
-      generateAndTestWithCoverage(
-              testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+
+    generateAndTestWithCoverage(
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
     */
+
+    File tempDir = new File("test.txt");
+    File result = new File("harder-constantmining.txt");
+    boolean success = tempDir.renameTo(result);
+    if (!success) {
+      fail("couldn't rename file");
+    }
+
     assertTrue(true);
   }
 
@@ -1111,5 +1223,16 @@ public class RandoopSystemTest {
    */
   private RandoopRunStatus generateAndCompile(TestEnvironment environment, RandoopOptions options) {
     return generateAndCompile(environment, options, false);
+  }
+
+  private static PrintStream createTextOutputStream(String fileName) {
+    try {
+      return new PrintStream(new File(fileName));
+    } catch (FileNotFoundException e) {
+      Log.out.println("Exception thrown while creating text print stream:" + fileName);
+      e.printStackTrace();
+      System.exit(1);
+      throw new Error("This can't happen");
+    }
   }
 }
