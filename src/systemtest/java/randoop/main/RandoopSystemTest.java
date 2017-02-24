@@ -810,36 +810,36 @@ public class RandoopSystemTest {
         afterEachCount,
         is(equalTo(runStatus.regressionTestCount)));
   }
-  /*
-    @Test
-    public void runToradocuInputTest() {
-      TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("toradocu-input");
-      RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-      options.addTestClass("net.Connection");
-      options.setOption("toradocu-conditions", "resources/systemTest/ConnectionConditions.json");
-      options.setErrorBasename("ConditionError");
-      options.setRegressionBasename("ConditionRegression");
-      options.setOption("timelimit", "30");
-      options.setOption("outputlimit", "200");
 
-      generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.SOME);
-    }
+  @Test
+  public void runToradocuInputTest() {
+    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("toradocu-input");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("net.Connection");
+    options.setOption("toradocu-conditions", "resources/systemTest/ConnectionConditions.json");
+    options.setErrorBasename("ConditionError");
+    options.setRegressionBasename("ConditionRegression");
+    options.setOption("timelimit", "30");
+    options.setOption("outputlimit", "200");
 
-    @Test
-    public void runInheritedToradocuTest() {
-      TestEnvironment testEnvironment =
-          systemTestEnvironment.createTestEnvironment("toradocu-inherited");
-      RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-      options.addTestClass("pkg.SubClass");
-      options.setOption("toradocu-conditions", "resources/systemTest/SubClassConditions.json");
-      options.setErrorBasename("ConditionError");
-      options.setRegressionBasename("ConditionRegression");
-      options.setOption("timelimit", "30");
-      options.setOption("outputlimit", "200");
+    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+  }
 
-      generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
-    }
-  */
+  @Test
+  public void runInheritedToradocuTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("toradocu-inherited");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("pkg.SubClass");
+    options.setOption("toradocu-conditions", "resources/systemTest/SubClassConditions.json");
+    options.setErrorBasename("ConditionError");
+    options.setRegressionBasename("ConditionRegression");
+    options.setOption("timelimit", "30");
+    options.setOption("outputlimit", "200");
+
+    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+  }
+
   /* ------------------------------ utility methods ---------------------------------- */
 
   /**

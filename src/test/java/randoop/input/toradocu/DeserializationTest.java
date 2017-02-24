@@ -14,6 +14,7 @@ import java.util.Map;
 import plume.Pair;
 import randoop.condition.Condition;
 import randoop.condition.ConditionCollection;
+import randoop.test.ExpectedExceptionGenerator;
 import randoop.test.TestCheckGenerator;
 import randoop.types.ClassOrInterfaceType;
 
@@ -79,12 +80,15 @@ public class DeserializationTest {
               "throws condition should confirm object is not open", throwsCondition.check(args));
           connection.open();
           assertTrue("throws condition should confirm object is open", throwsCondition.check(args));
-          /*
+
+          assertTrue(
+              "should be ExpectedExceptionGenerator",
+              entry.getValue().a instanceof ExpectedExceptionGenerator);
           assertThat(
               "thrown exception incorrect",
-              entry.getValue(),
+              ((ExpectedExceptionGenerator) entry.getValue().a).getExpected(),
               is(equalTo(ClassOrInterfaceType.forClass(IllegalStateException.class))));
-              */
+          assertTrue("should be null", entry.getValue().b == null);
         }
       }
       if (method.getName().equals("send")) {
@@ -104,12 +108,14 @@ public class DeserializationTest {
           args = new Object[] {connection, "blah"};
           assertFalse(
               "throws-condition should confirm argument is not null", throwsCondition.check(args));
-          /*
+          assertTrue(
+              "should be ExpectedExceptionGenerator",
+              entry.getValue().a instanceof ExpectedExceptionGenerator);
           assertThat(
               "thrown exception",
-              entry.getValue(),
+              ((ExpectedExceptionGenerator) entry.getValue().a).getExpected(),
               is(equalTo(ClassOrInterfaceType.forClass(NullPointerException.class))));
-              */
+
           assert iterator.hasNext();
           entry = iterator.next();
           throwsCondition = entry.getKey();
@@ -117,12 +123,13 @@ public class DeserializationTest {
           assertTrue("not open, so should be true", throwsCondition.check(args));
           connection.open();
           assertFalse("open, so should be false", throwsCondition.check(args));
-          /*
+          assertTrue(
+              "should be ExpectedExceptionGenerator",
+              entry.getValue().a instanceof ExpectedExceptionGenerator);
           assertThat(
               "thrown exception",
-              entry.getValue(),
+              ((ExpectedExceptionGenerator) entry.getValue().a).getExpected(),
               is(equalTo(ClassOrInterfaceType.forClass(IllegalStateException.class))));
-              */
         }
         if (method.getParameterTypes()[0].equals(int.class)) {
           assertThat("send(int) has one throws", throwsConditions.size(), is(equalTo(1)));
@@ -138,12 +145,13 @@ public class DeserializationTest {
           connection.open();
           assert connection.isOpen();
           assertFalse("open, so should be false", throwsCondition.check(args));
-          /*
+          assertTrue(
+              "should be ExpectedExceptionGenerator",
+              entry.getValue().a instanceof ExpectedExceptionGenerator);
           assertThat(
               "thrown exception",
-              entry.getValue(),
+              ((ExpectedExceptionGenerator) entry.getValue().a).getExpected(),
               is(equalTo(ClassOrInterfaceType.forClass(IllegalStateException.class))));
-              */
         }
       }
     }
@@ -164,9 +172,9 @@ public class DeserializationTest {
       if (method.getName().equals("$jacocoInit") || !method.getName().contains("methodWith")) {
         continue;
       }
-      System.out.println(method.getName());
+      System.out.println("method: " + method.getName());
       List<Condition> preconditions = conditions.getPreconditions(method);
-      for (Condition condition : preconditions) System.out.println(condition);
+      for (Condition condition : preconditions) System.out.println("precondition: " + condition);
       assertThat("should be one precondition", preconditions.size(), is(equalTo(1)));
       Condition precondition = preconditions.get(0);
       Object[] args = new Object[] {null, 1};

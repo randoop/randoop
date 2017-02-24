@@ -3,7 +3,7 @@ package randoop.generation;
 import randoop.operation.TypedOperation;
 
 /**
- * Created by bjkeller on 2/22/17.
+ * Error class to signal generation errors that should stop Randoop execution.
  */
 public class RandoopGenerationError extends Error {
 
@@ -13,6 +13,13 @@ public class RandoopGenerationError extends Error {
   private final TypedOperation operation;
   private final Throwable exception;
 
+  /**
+   * Create a {@link RandoopGenerationError}
+   *
+   * @param operationName
+   * @param operation
+   * @param exception
+   */
   public RandoopGenerationError(
       String operationName, TypedOperation operation, Throwable exception) {
     this.operationName = operationName;
