@@ -20,6 +20,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.test.Check;
 import randoop.test.ExtendGenerator;
+import randoop.test.FalseAlarmTestChecks;
 import randoop.test.InvalidChecks;
 import randoop.test.InvalidValueCheck;
 import randoop.test.TestCheckGenerator;
@@ -276,7 +277,8 @@ public class ExecutableSequence {
     for (int i = 0; i < sequence.size(); i++) {
       executionResults.theList.add(NotExecuted.create());
     }
-
+    boolean preConditionFailed = false;
+    int statementIndex = -1;
     for (int i = 0; i < this.sequence.size(); i++) {
 
       // Find and collect the input values to i-th statement.
@@ -285,14 +287,20 @@ public class ExecutableSequence {
 
       inputValues = getRuntimeInputs(executionResults.theList, inputs);
 
+
       if (i == this.sequence.size() - 1) {
         TypedOperation operation = this.sequence.getStatement(i).getOperation();
         if (operation.isConstructorCall() || operation.isMethodCall()) {
           if (!operation.checkPreconditions(inputValues)) {
+            //Not intended for release -- a hack to count false-alarms that become invalid due to precondition failures
+            preConditionFailed = true;
+            statementIndex = i;
+            /*
             //set checks invalid and return
             checks = new InvalidChecks();
             checks.add(new InvalidValueCheck(this, i));
             return;
+            */
           }
           // if the operation is expected to throw an exception for these inputs
           TestCheckGenerator expected = operation.getPostCheckGenerator(inputValues);
@@ -333,6 +341,10 @@ public class ExecutableSequence {
     visitor.visitAfterSequence(this);
 
     checks = gen.visit(this);
+    if (preConditionFailed && checks.hasErrorBehavior()) {
+      checks = new FalseAlarmTestChecks();
+      checks.add(new InvalidValueCheck(this, statementIndex));
+    }
   }
 
   public Object[] getRuntimeInputs(List<Variable> inputs) {
@@ -637,6 +649,9 @@ public class ExecutableSequence {
     return checks != null && checks.hasInvalidBehavior();
   }
 
+  public boolean hasFalseAlarmBehavior() {
+    return checks != null && (checks instanceof FalseAlarmTestChecks) && checks.hasChecks();
+  }
   /**
    * Adds a covered class to the most recent execution results of this sequence.
    *

@@ -50,6 +50,8 @@ public abstract class AbstractGenerator {
   @RandoopStat("Number of invalid sequences generated.")
   public int invalidSequenceCount = 0;
 
+  public int falseAlarmSequenceCount = 0;
+
   /**
    * The timer used to determine how much time has elapsed since the start of
    * generator and whether generation should stop.
@@ -359,7 +361,11 @@ public abstract class AbstractGenerator {
             outRegressionSeqs.add(eSeq);
           }
         } else {
-          invalidSequenceCount++;
+          if (eSeq.hasFalseAlarmBehavior()) {
+            falseAlarmSequenceCount++;
+          } else {
+            invalidSequenceCount++;
+          }
         }
       }
 
