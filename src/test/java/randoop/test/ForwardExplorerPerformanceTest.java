@@ -110,7 +110,7 @@ public class ForwardExplorerPerformanceTest {
             + " sequences.");
     GenInputsAbstract.dontexecute = false;
     GenInputsAbstract.debug_checks = true;
-    if (explorer.numGeneratedSequences() < EXPECTED_MIN) {
+    if (explorer.numGeneratedSequences().intValue() < EXPECTED_MIN) {
       String b =
           "Randoop's explorer created fewer than "
               + EXPECTED_MIN

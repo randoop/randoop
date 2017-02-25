@@ -9,6 +9,7 @@ import randoop.ExecutionVisitor;
 import randoop.JunitFileWriter;
 import randoop.MultiVisitor;
 import randoop.generation.*;
+import randoop.generation.exhaustive.SequenceGenerator;
 import randoop.instrument.ExercisedClassVisitor;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
@@ -213,12 +214,13 @@ public class GenAllTests extends GenInputsAbstract {
       System.exit(1);
     }
     if (!GenInputsAbstract.noprogressdisplay) {
+      long methodsCount = model.stream().filter(to -> to.getOperation().isMethodCall()).count();
       System.out.println("PUBLIC MEMBERS=" + model.size());
+      System.out.println("\tCONSTRUCTORS=" + (model.size() - methodsCount));
+      System.out.println("\tMETHODS=" + methodsCount);
       System.out.println(
-          "\tCONSTRUCTORS="
-              + model.stream().filter(to -> to.getOperation().isConstructorCall()).count());
-      System.out.println(
-          "\tMETHODS=" + model.stream().filter(to -> to.getOperation().isMethodCall()).count());
+          "Expected number of sequences: "
+              + SequenceGenerator.getExpectedNumberOfSequences(methodsCount, maxsize));
     }
 
     /*

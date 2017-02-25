@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 public class ForwardExhaustiveGenerator extends AbstractGenerator {
 
   private final Set<TypedOperation> observers;
-  private BigInteger numGeneratedSequences;
 
   private final TypeInstantiator instantiator;
 
@@ -109,7 +108,6 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
     this.constructors =
         operations.stream().filter(o -> o.isConstructorCall()).collect(Collectors.toSet());
     this.constructorPrefix = selectConstructorPrefixSequence();
-    numGeneratedSequences = BigInteger.ZERO;
     if (constructorPrefix == null) {
       throw new RuntimeException(
           "Not possible to generate tests due to the impossibility of selecting constructors.");
@@ -145,10 +143,6 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
   public ExecutableSequence step() {
 
     long startTime = System.nanoTime();
-
-    if (componentManager.numGeneratedSequences() % GenInputsAbstract.clear == 0) {
-      componentManager.clearGeneratedSequences();
-    }
 
     ExecutableSequence eSeq = createNewUniqueSequence();
 
@@ -323,11 +317,12 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
 
     List<TypedOperation> nextPermutation = sequenceGenerator.next();
 
+    List<String> operations =
+        nextPermutation.stream().map(to -> to.getName()).collect(Collectors.toList());
+    String sequence = String.join(",", operations);
     if (Log.isLoggingOn()) {
-      List<String> operations =
-          nextPermutation.stream().map(to -> to.getName()).collect(Collectors.toList());
-      Log.logLine(
-          "Sequence generator selected the following operations: " + String.join(",", operations));
+
+      Log.logLine("Sequence generator selected the following operations: " + sequence);
     }
 
     List<TypedOperation> nextSequence = Lists.newArrayList();
@@ -336,6 +331,11 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
       if (op.isGeneric() || op.hasWildcardTypes()) {
         op = instantiator.instantiate((TypedClassOperation) op);
         if (op == null) { //failed to instantiate generic
+          Log.logLineIfOn(
+              "Sequence generator discarded the sequence "
+                  + sequence
+                  + " because it could not instantiate operation "
+                  + op.getName());
           return null;
         }
       }
@@ -645,12 +645,8 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
   }
 
   @Override
-  public int numGeneratedSequences() {
-    return this.numGeneratedSequences.intValue();
-  }
-
-  public BigInteger getNumberGeneratedSequences() {
-    return this.numGeneratedSequences;
+  public BigInteger numGeneratedSequences() {
+    return sequenceGenerator.getTotalSequencesIterated();
   }
 
   @Override

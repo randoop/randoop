@@ -1,5 +1,6 @@
 package randoop.generation;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -778,7 +779,7 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   @Override
-  public int numGeneratedSequences() {
-    return allSequences.size();
+  public BigInteger numGeneratedSequences() {
+    return BigInteger.valueOf(allSequences.size());
   }
 }

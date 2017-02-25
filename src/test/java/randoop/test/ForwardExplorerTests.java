@@ -84,7 +84,7 @@ public class ForwardExplorerTests {
     explorer.addTestPredicate(createOutputTest());
     explorer.explore();
     GenInputsAbstract.dontexecute = false;
-    assertTrue(explorer.numGeneratedSequences() != 0);
+    assertTrue(explorer.numGeneratedSequences().intValue() != 0);
   }
 
   private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {

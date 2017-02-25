@@ -1,18 +1,30 @@
 package randoop.generation.exhaustive;
 
 import com.google.common.collect.Lists;
+import com.google.common.math.BigIntegerMath;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.*;
 
 public class SequenceGenerator<T> implements Iterator<List<T>> {
-  long totalSequences;
+  BigInteger numberOfSequences = BigInteger.ZERO;
   int sequenceLength;
   int maximumLength;
   Collection<T> elements;
   List<T> elementsToPermute;
   PermutationIterator<T> permutationGenerator;
   CombinationIterator<T> combinationsGenerator;
+
+  public static BigInteger getExpectedNumberOfSequences(long numberOfElements, int maximumLength) {
+    BigInteger sum = BigInteger.ZERO;
+
+    int n = (int) numberOfElements;
+    for (int i = 1; i <= maximumLength; i++) {
+      sum = sum.add(BigIntegerMath.factorial(n).divide(BigIntegerMath.factorial(n - i)));
+    }
+    return sum;
+  }
 
   public SequenceGenerator(Collection<T> elements) {
     this(elements, elements == null ? 0 : elements.size());
@@ -37,7 +49,6 @@ public class SequenceGenerator<T> implements Iterator<List<T>> {
       throw new IllegalArgumentException("Cannot generate sequences for empty sets.");
     }
 
-    this.totalSequences = 0;
     this.sequenceLength = 1;
     this.maximumLength = maximumSequenceLength;
     this.elements = elements;
@@ -60,8 +71,8 @@ public class SequenceGenerator<T> implements Iterator<List<T>> {
     }
   }
 
-  public long getTotalSequencesIterated() {
-    return totalSequences;
+  public BigInteger getTotalSequencesIterated() {
+    return numberOfSequences;
   }
 
   @Override
@@ -88,7 +99,7 @@ public class SequenceGenerator<T> implements Iterator<List<T>> {
       permutationGenerator = new PermutationIterator<>(elementsToPermute);
     }
 
-    totalSequences++;
+    numberOfSequences = numberOfSequences.add(BigInteger.ONE);
 
     List<T> next = permutationGenerator.next();
 

@@ -149,7 +149,7 @@ public class SequenceGeneratorTest {
   public void getTotalSequencesIterated() throws Exception {
     SequenceGenerator<String> sgenLarger = new SequenceGenerator<>(largerSet);
 
-    long beforeIterateLarger = sgenLarger.getTotalSequencesIterated();
+    long beforeIterateLarger = sgenLarger.getTotalSequencesIterated().longValue();
     int numberOfSequencesToGenerate = 13;
 
     for (int i = 0; i < numberOfSequencesToGenerate; i++) {

@@ -61,6 +61,10 @@ public class ProgressDisplay extends Thread {
         + generator.num_sequences_generated
         + ", failing inputs="
         + generator.num_failing_sequences
+        + " steps = "
+        + generator.num_steps
+        + " generator sequences = "
+        + generator.numGeneratedSequences()
         + "      ("
         + new Date()
         + ")";

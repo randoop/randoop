@@ -16,6 +16,7 @@ import randoop.util.Timer;
 import randoop.util.predicate.AlwaysFalse;
 import randoop.util.predicate.Predicate;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -254,8 +255,6 @@ public abstract class AbstractGenerator {
   protected boolean stop() {
     return (listenerMgr != null && listenerMgr.stopGeneration())
         || (timer.getTimeElapsedMillis() >= maxTimeMillis)
-        // || (numOutputSequences() >= maxOutputSequences)
-        // || (numGeneratedSequences() >= maxGeneratedSequences)
         || (currSeq != null
             && currSeq.getNumberOfStatementsForCutFirstVariable() > GenInputsAbstract.maxsize)
         || (lastGeneratedSequence != null
@@ -286,7 +285,7 @@ public abstract class AbstractGenerator {
    *
    * @return the number of sequences generated
    */
-  public abstract int numGeneratedSequences();
+  public abstract BigInteger numGeneratedSequences();
 
   /**
    * Creates and executes new sequences until stopping criteria is met.
@@ -352,10 +351,16 @@ public abstract class AbstractGenerator {
       if (outputTest.test(eSeq)) {
         if (!eSeq.hasInvalidBehavior()) {
           if (eSeq.hasFailure()) {
+            Log.logLineIfOn("Sequence has failure, discarded from regression sequences.");
             outErrorSeqs.add(eSeq);
           } else {
+            Log.logLineIfOn(
+                "Adding sequence with valid behavior to the list of output regression sequences.");
             outRegressionSeqs.add(eSeq);
           }
+        } else {
+          Log.logLineIfOn(
+              "Sequence with invalid behavior, discarded from regression and error sequences.");
         }
       }
 
