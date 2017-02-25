@@ -243,26 +243,27 @@ public class ForwardGenerator extends AbstractGenerator {
 
     // Orienteering stuff
     if (GenInputsAbstract.orienteering) {
-      Sequence temp = eSeq.sequence;
 
       // track # times a sequence has been executed
-      if (sequenceExecutionNumber.containsKey(temp)) {
-        sequenceExecutionNumber.put(temp, sequenceExecutionNumber.get(temp) + 1);
+      if (sequenceExecutionNumber.containsKey(eSeq.sequence)) {
+        sequenceExecutionNumber.put(eSeq.sequence, sequenceExecutionNumber.get(eSeq.sequence) + 1);
       } else {
-        sequenceExecutionNumber.put(temp, 1);
+        sequenceExecutionNumber.put(eSeq.sequence, 1);
       }
 
       // Orienteering's weight formula
       orienteeringWeight =
-          1.0 / (eSeq.exectime * sequenceExecutionNumber.get(temp) * Math.sqrt(temp.size()));
+          1.0
+              / (eSeq.exectime
+                  * sequenceExecutionNumber.get(eSeq.sequence)
+                  * Math.sqrt(eSeq.sequence.size()));
       weight *= orienteeringWeight;
     }
 
     // Incorporate Constant mining weights on top
     if (GenInputsAbstract.constant_mining) {
-      Sequence temp = eSeq.sequence;
-      if (initialConstantWeights.containsKey(temp)) {
-        constantMiningWeight = initialConstantWeights.get(temp);
+      if (initialConstantWeights.containsKey(eSeq.sequence)) {
+        constantMiningWeight = initialConstantWeights.get(eSeq.sequence);
         weight *= constantMiningWeight;
       }
     }
@@ -273,29 +274,37 @@ public class ForwardGenerator extends AbstractGenerator {
     weightMap.put(eSeq.sequence, weight); // add a weight no matter what
 
     if (GenInputsAbstract.grt_debug_checks) {
-      Sequence temp = eSeq.sequence;
-      String result = ""; // csv string of this sequence's important info
-      result = result + initialWeight + ',';
-      result = result + GenInputsAbstract.orienteering + ',';
-      result = result + sequenceExecutionNumber.get(temp) + ',';
-      result = result + temp.size() + ',';
-      result = result + eSeq.exectime + ',';
-      result = result + orienteeringWeight + ',';
+      // csv string of this sequence's important info
+      String result =
+          ""
+              + initialWeight
+              + ','
+              + GenInputsAbstract.orienteering
+              + ','
+              + sequenceExecutionNumber.get(eSeq.sequence)
+              + ','
+              + eSeq.sequence.size()
+              + ','
+              + eSeq.exectime
+              + ','
+              + orienteeringWeight
+              + ','
+              + GenInputsAbstract.constant_mining
+              + ','
+              + initialConstantWeights.containsKey(eSeq.sequence)
+              + ','
+              + constantMiningWeight
+              + ','
+              + weight;
 
-      result = result + GenInputsAbstract.constant_mining + ',';
-
-      result = result + initialConstantWeights.containsKey(temp) + ',';
-      result = result + constantMiningWeight + ',';
-      result = result + weight;
-
-      List<String> debugList = new ArrayList<String>();
-      if (debugMap.containsKey(temp)) {
-        List<String> addedToList = debugMap.get(temp);
+      if (debugMap.containsKey(eSeq.sequence)) {
+        List<String> addedToList = debugMap.get(eSeq.sequence);
         addedToList.add(result);
-        debugMap.put(temp, addedToList);
+        debugMap.put(eSeq.sequence, addedToList);
       } else {
+        List<String> debugList = new ArrayList<String>();
         debugList.add(result);
-        debugMap.put(temp, debugList);
+        debugMap.put(eSeq.sequence, debugList);
       }
     }
 

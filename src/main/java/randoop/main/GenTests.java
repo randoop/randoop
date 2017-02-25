@@ -405,8 +405,8 @@ public class GenTests extends GenInputsAbstract {
         }
       }
     }
-    // TODO: output test results here I think instead of ForwardGenerator
 
+    // TODO: output test results here I think instead of ForwardGenerator
     if (GenInputsAbstract.grt_debug_checks) {
       ForwardGenerator fExplorer = (ForwardGenerator) explorer; // hope this works
       Map<Sequence, List<String>> debugMap = fExplorer.getDebugMap();
@@ -416,15 +416,20 @@ public class GenTests extends GenInputsAbstract {
     return true;
   }
 
+  /**
+   * Write each sequence's info out to "test.csv" in .csv format
+   * Its info is essentially snapshots of its weight formulas and how they change
+   * @param debugMap
+   */
   private void writeTestInfo(Map<Sequence, List<String>> debugMap) {
-    File tempDir = new File("test.txt");
+    File tempDir = new File("test.csv");
     PrintStream out;
     try {
       if (!tempDir.exists()) {
         tempDir.createNewFile();
-        out = createTextOutputStream("test.txt"); // TODO: maybe just new FileOutputStream(..)
+        out = createTextOutputStream("test.csv"); // TODO: maybe just new FileOutputStream(..)
       } else {
-        out = new PrintStream(new FileOutputStream("test.txt", true)); // shouldn't really happen
+        out = new PrintStream(new FileOutputStream("test.csv", true)); // shouldn't really happen
       }
       StringBuilder header = new StringBuilder();
       header.append("Sequence hash");
@@ -448,6 +453,7 @@ public class GenTests extends GenInputsAbstract {
       header.append("constantMiningWeight");
       header.append(',');
       header.append("weight actually used");
+      // TODO: header.append(',')?
       StringBuilder body = new StringBuilder();
 
       for (Sequence seq : debugMap.keySet()) {
