@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.NotExecuted;
 import randoop.condition.Condition;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Variable;
@@ -40,8 +41,10 @@ public class PostConditionCheckGenerator implements TestCheckGenerator {
   public TestChecks visit(ExecutableSequence s) {
     int finalIndex = s.sequence.size() - 1;
     ExecutionOutcome result = s.getResult(finalIndex);
-    TestChecks checks = new PostConditionFailureChecks();
-    if (result instanceof NormalExecution) {
+    TestChecks checks;
+    if (result instanceof NotExecuted) {
+      throw new Error("Abnormal execution in sequence: " + s);
+    } else if (result instanceof NormalExecution) {
       ArrayList<Variable> inputs = new ArrayList<>(s.sequence.getInputs(finalIndex));
       inputs.add(s.sequence.getVariable(finalIndex));
       Object[] inputValues = s.getRuntimeInputs(inputs);
@@ -49,8 +52,13 @@ public class PostConditionCheckGenerator implements TestCheckGenerator {
         inputValues = addNullReceiver(inputValues);
       }
       if (!postcondition.check(inputValues)) {
-        checks.add(new PostConditionCheck(postcondition, inputs));
+        checks = new ErrorRevealingChecks();
+      } else {
+        checks = new RegressionChecks();
       }
+      checks.add(new PostConditionCheck(postcondition, inputs));
+    } else { // if execution was exceptional, return empty checks
+      checks = new ErrorRevealingChecks();
     }
     return checks;
   }
