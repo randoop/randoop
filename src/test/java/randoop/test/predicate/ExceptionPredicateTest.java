@@ -134,8 +134,6 @@ public class ExceptionPredicateTest {
     assertFalse("no exception satisfies this predicate", alwaysFalse.test(exec, s));
   }
 
-  // TODO: test StackOverflowError
-
   @Test
   public void testFailures() {
     ExceptionalExecution assertionExec = new ExceptionalExecution(new AssertionError(), 0);
@@ -147,8 +145,8 @@ public class ExceptionPredicateTest {
     assertFalse("AE is not expected", isExpected.test(assertionExec, s));
     assertFalse("no exception satisfies this predicate", alwaysFalse.test(assertionExec, s));
 
-    assertTrue("SOE is error", isError.test(overflowExec, s));
-    assertFalse("SOE is not invalid", isInvalid.test(overflowExec, s));
+    assertFalse("SOE is not error", isError.test(overflowExec, s));
+    assertTrue("SOE is invalid", isInvalid.test(overflowExec, s));
     assertFalse("SOE is not expected", isExpected.test(overflowExec, s));
     assertFalse("no exception satisfies this predicate", alwaysFalse.test(overflowExec, s));
   }
