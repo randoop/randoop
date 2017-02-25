@@ -214,6 +214,11 @@ public class GenAllTests extends GenInputsAbstract {
     }
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.println("PUBLIC MEMBERS=" + model.size());
+      System.out.println(
+          "\tCONSTRUCTORS="
+              + model.stream().filter(to -> to.getOperation().isConstructorCall()).count());
+      System.out.println(
+          "\tMETHODS=" + model.stream().filter(to -> to.getOperation().isMethodCall()).count());
     }
 
     /*
@@ -388,9 +393,7 @@ public class GenAllTests extends GenInputsAbstract {
     try {
       explorer.explore();
     } catch (SequenceExceptionError e) {
-
-      handleFlakySequenceException(explorer, e);
-
+      System.out.print(e);
       System.exit(1);
     }
 
@@ -465,73 +468,6 @@ public class GenAllTests extends GenInputsAbstract {
         if (!GenInputsAbstract.noprogressdisplay) {
           System.out.printf("No regression tests to output%n");
         }
-      }
-    }
-  }
-
-  /**
-   * Handles the occurrence of a {@code SequenceExceptionError} that indicates a
-   * flaky test has been found. Prints information to help user identify source
-   * of flakiness, including exception, statement that threw the exception, the
-   * full sequence where exception was thrown, and the input subsequence.
-   *
-   * @param explorer
-   *          the test generator
-   * @param e
-   *          the sequence exception
-   */
-  private void handleFlakySequenceException(AbstractGenerator explorer, SequenceExceptionError e) {
-
-    String msg =
-        String.format(
-            "%n%nERROR: Randoop stopped because of a flaky test.%n%n"
-                + "This can happen when Randoop is run on methods that side-effect global "
-                + "state.%n"
-                + "See the \"Randoop stopped because of a flaky test\" "
-                + "section of the user manual.%n"
-                + "For more details, rerun with logging turned on with --log=FILENAME.%n");
-    System.out.printf(msg);
-
-    Sequence subsequence = e.getSubsequence();
-
-    if (Log.isLoggingOn()) {
-      Log.log(msg);
-      Log.log(String.format("%nException:%n  %s%n", e.getError()));
-      Log.log(String.format("Statement:%n  %s%n", e.getStatement()));
-      Log.log(String.format("Full sequence:%n%s%n", e.getSequence()));
-      Log.log(String.format("Input subsequence:%n%s%n", subsequence.toCodeString()));
-
-      Set<String> callSet = new TreeSet<>();
-
-      Iterator<Sequence> s_i = explorer.getAllSequences().iterator();
-      if (s_i.hasNext()) {
-        Sequence s = s_i.next();
-        while (!subsequence.equals(s) && s_i.hasNext()) {
-          s = s_i.next();
-        }
-        while (s_i.hasNext()) {
-          s = s_i.next();
-          for (int i = 0; i < s.statements.size(); i++) {
-            Operation operation = s.statements.get(i).getOperation();
-            if (!operation.isNonreceivingValue()) {
-              callSet.add(operation.toString());
-            }
-          }
-        }
-      }
-
-      if (!callSet.isEmpty()) {
-        Log.logLine("Operations performed since subsequence first executed:");
-        for (String opName : callSet) {
-          Log.logLine(opName);
-        }
-      } else {
-        System.err.printf(
-            "Unable to find a previous occurrence of subsequence%n"
-                + "%s%n"
-                + "where exception was thrown%n"
-                + "Please submit an issue%n",
-            subsequence);
       }
     }
   }
