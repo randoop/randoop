@@ -806,7 +806,8 @@ public class RandoopSystemTest {
   // TODO: finish
   @Test
   public void runOrienteeringTest() {
-    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("orienteering");
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("digdog-orienteering");
 
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName("");
@@ -821,8 +822,26 @@ public class RandoopSystemTest {
 
   // TODO: finish
   @Test
+  public void runRandoopOrienteeringComparisonTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("randoop-orienteering");
+
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("");
+    options.setRegressionBasename("orienteeringCompareReg");
+    options.setErrorBasename("orienteeringCompareErr");
+    //options.setFlag("orienteering");
+    options.setFlag("grt-debug-checks");
+
+    setUpAndRunDigDogTests(testEnvironment, options);
+    renameOutputTo("randoop-orienteering.csv");
+  }
+
+  // TODO: finish
+  @Test
   public void runConstantMiningTest() {
-    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("constantmining");
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("digdog-constant-mining");
 
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName("");
@@ -832,14 +851,33 @@ public class RandoopSystemTest {
     options.setFlag("grt-debug-checks");
 
     setUpAndRunDigDogTests(testEnvironment, options);
-    renameOutputTo("constantmining.csv");
+    renameOutputTo("constant-mining.csv");
+  }
+
+  // TODO: finish
+  @Test
+  public void runRandoopConstantMiningComparisonTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("randoop-constant-mining");
+
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("");
+    options.setRegressionBasename("constantminingCompareReg");
+    options.setErrorBasename("constantminingCompareErr");
+    options.setOption("literals-level", "CLASS");
+    options.setOption("literals-file", "CLASSES");
+    //options.setFlag("orienteering");
+    options.setFlag("grt-debug-checks");
+
+    setUpAndRunDigDogTests(testEnvironment, options);
+    renameOutputTo("randoop-constant-mining.csv");
   }
 
   // TODO: make diff than simple orient
   @Test
   public void runHarderOrienteeringTest() {
     TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("harder-orienteering");
+        systemTestEnvironment.createTestEnvironment("digdog-harder-orienteering");
 
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName("");
@@ -856,7 +894,7 @@ public class RandoopSystemTest {
   @Test
   public void runHarderConstantMiningTest() {
     TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("harder-constantmining");
+        systemTestEnvironment.createTestEnvironment("digdog-harder-constant-mining");
 
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName("");
@@ -866,7 +904,7 @@ public class RandoopSystemTest {
     options.setFlag("grt-debug-checks");
 
     setUpAndRunDigDogTests(testEnvironment, options);
-    renameOutputTo("harder-constantmining.csv");
+    renameOutputTo("harder-constant-mining.csv");
   }
 
   /**
@@ -888,10 +926,11 @@ public class RandoopSystemTest {
     options.addTestClass("digdog.constantmining.Trivial");
     */
 
-    options.setOption("inputlimit", "1000");
+    //options.setOption("inputlimit", "1000");
+    options.setOption("timelimit", "30");
     options.setOption("null-ratio", "0.3");
     options.setOption("alias-ratio", "0.3");
-    options.setFlag("small-tests");
+    //options.setFlag("small-tests");
     options.setFlag("clear=100");
     options.addClassList("resources/systemTest/jdk_classlist.txt");
 

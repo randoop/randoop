@@ -419,6 +419,7 @@ public class GenTests extends GenInputsAbstract {
   /**
    * Write each sequence's info out to "test.csv" in .csv format
    * Its info is essentially snapshots of its weight formulas and how they change
+   * TODO: maybe order the sequences for comparison purposes
    * @param debugMap
    */
   private void writeTestInfo(Map<Sequence, List<String>> debugMap) {
