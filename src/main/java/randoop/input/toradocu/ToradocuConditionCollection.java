@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -25,6 +26,7 @@ import randoop.test.ExpectedExceptionGenerator;
 import randoop.test.PostConditionCheckGenerator;
 import randoop.test.TestCheckGenerator;
 import randoop.types.ClassOrInterfaceType;
+import randoop.util.Log;
 
 /**
  * A {@link ConditionCollection} for Toradocu generated conditions.
@@ -78,7 +80,9 @@ public class ToradocuConditionCollection implements ConditionCollection {
           parameters = createConditionMethodParameters(declaringClass, parameterTypes);
         }
         AccessibleObject subject = getCallableObject(declaringClass, method, parameterTypes);
-
+        if (subject == null) {
+          continue; //Toradocu has a nasty habit of creating conditions on inaccessible methods
+        }
         assert conditionMap.get(subject) == null : "do not visit a method more than once";
         Class<?> conditionClass = getConditionClass(method);
 
@@ -230,17 +234,33 @@ public class ToradocuConditionCollection implements ConditionCollection {
       Class<?> declaringClass, DocumentedMethod documentedMethod, Class<?>[] parameterTypes) {
     AccessibleObject subject;
 
-    try {
-      if (documentedMethod.isConstructor()) {
+    if (documentedMethod.isConstructor()) {
+      try {
         subject = declaringClass.getConstructor(parameterTypes);
-      } else {
-        String methodName = documentedMethod.getName();
-        subject = declaringClass.getMethod(methodName, parameterTypes);
+      } catch (NoSuchMethodException e) {
+        throw new IllegalArgumentException(
+            "Unable to find subject constructor for Torudocu input (" + documentedMethod + ")");
       }
-    } catch (NoSuchMethodException e) {
-      throw new IllegalArgumentException(
-          "Unable to find subject method for Torudocu method (" + documentedMethod + ")");
+    } else {
+      String methodName = documentedMethod.getName();
+      try {
+        subject = declaringClass.getMethod(methodName, parameterTypes);
+      } catch (NoSuchMethodException e) {
+        try {
+          subject = declaringClass.getDeclaredMethod(methodName, parameterTypes);
+        } catch (NoSuchMethodException e2) {
+          throw new IllegalArgumentException(
+              "Unable to find subject method for Torudocu input (" + documentedMethod + ")");
+        }
+        if (Modifier.isPrivate(((Method) subject).getModifiers() & Modifier.classModifiers())) {
+          if (Log.isLoggingOn()) {
+            Log.logLine("Subject method is private for Toradocu Input (" + documentedMethod + ")");
+          }
+          return null;
+        }
+      }
     }
+
     return subject;
   }
 
