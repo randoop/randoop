@@ -599,4 +599,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
       this.postconditions.putAll(conditions);
     }
   }
+
+  public boolean hasPreconditions() {
+    return !preconditions.isEmpty();
+  }
 }

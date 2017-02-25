@@ -17,8 +17,11 @@ import randoop.util.predicate.AlwaysFalse;
 import randoop.util.predicate.Predicate;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Set;
+
+import static randoop.sequence.ExecutableSequence.*;
 
 /**
  * Algorithm template for implementing a test generator.
@@ -50,8 +53,50 @@ public abstract class AbstractGenerator {
   @RandoopStat("Number of invalid sequences generated.")
   public int invalidSequenceCount = 0;
 
-  public int falseAlarmSequenceCount = 0;
-  public int postConditionFailureCount = 0;
+  private EnumMap<ExecutableSequence.ConditionType, EnumMap<ExecutableSequence.Transition, Integer>>
+      conditionTransitionCounts = new EnumMap<>(ConditionType.class);
+
+  private void addConditionTransition(ConditionType type, Transition transition) {
+    EnumMap<ExecutableSequence.Transition, Integer> transitionMap =
+        conditionTransitionCounts.get(type);
+    if (transitionMap == null) {
+      transitionMap = new EnumMap<>(Transition.class);
+    }
+    Integer count = transitionMap.get(transition);
+    if (count == null) {
+      transitionMap.put(transition, 1);
+    } else {
+      transitionMap.put(transition, count + 1);
+    }
+    conditionTransitionCounts.put(type, transitionMap);
+  }
+
+  public void printConditionTransition() {
+    System.out.printf("Condition Type");
+    for (Transition transition : Transition.values()) {
+      System.out.printf(",%s", transition.name());
+    }
+    System.out.printf("%n");
+    for (ConditionType type : ConditionType.values()) {
+      System.out.printf("%s", type.name());
+      EnumMap<Transition, Integer> transitionMap = conditionTransitionCounts.get(type);
+      if (transitionMap == null) {
+        for (Transition transition : Transition.values()) {
+          System.out.printf(",%d", 0);
+        }
+      } else {
+        for (Transition transition : Transition.values()) {
+          Integer count = transitionMap.get(transition);
+          if (count != null) {
+            System.out.printf(",%d", (int) count);
+          } else {
+            System.out.printf(",%d", 0);
+          }
+        }
+      }
+      System.out.printf("%n");
+    }
+  }
 
   /**
    * The timer used to determine how much time has elapsed since the start of
@@ -356,28 +401,15 @@ public abstract class AbstractGenerator {
         num_failing_sequences++;
       }
 
-      if (outputTest.test(eSeq)) {
-        //        if (eSeq.returnTagApplied) {
-        if (eSeq.hasPostConditionFailure()) {
-          returnPostConditionFailureCount++;
-        } else {
-          returnPostConditionCount++;
-        }
-        //      }
-        //        if (eSeq.throwsTagApplied) {
+      // count transitions
+      addConditionTransition(eSeq.conditionType, eSeq.conditionTransition);
 
-        //        }
+      if (outputTest.test(eSeq)) {
         if (!eSeq.hasInvalidBehavior()) {
           if (eSeq.hasFailure()) {
             outErrorSeqs.add(eSeq);
           } else {
             outRegressionSeqs.add(eSeq);
-          }
-        } else {
-          if (eSeq.hasFalseAlarmBehavior()) {
-            falseAlarmSequenceCount++;
-          } else {
-            invalidSequenceCount++;
           }
         }
       }

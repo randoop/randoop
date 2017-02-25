@@ -452,7 +452,8 @@ public class GenTests extends GenInputsAbstract {
 
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.printf("%nInvalid tests generated: %d", explorer.invalidSequenceCount);
-      System.out.printf("%nFalse-Alarm tests generated: %d", explorer.falseAlarmSequenceCount);
+      System.out.printf("%nCondition Transitions:%n");
+      explorer.printConditionTransition();
     }
     return true;
   }

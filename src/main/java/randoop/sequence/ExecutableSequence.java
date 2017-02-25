@@ -26,6 +26,7 @@ import randoop.test.InvalidChecks;
 import randoop.test.InvalidValueCheck;
 import randoop.test.PostConditionCheckGenerator;
 import randoop.test.PostConditionFailureChecks;
+import randoop.test.RegressionChecks;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
 import randoop.types.ReferenceType;
@@ -281,7 +282,7 @@ public class ExecutableSequence {
       executionResults.theList.add(NotExecuted.create());
     }
 
-    boolean preConditionFailed = false;
+    TestChecks conditionChecks = new RegressionChecks();
     TestCheckGenerator expected = null;
 
     int statementIndex = -1;
@@ -296,19 +297,24 @@ public class ExecutableSequence {
       if (i == this.sequence.size() - 1) {
         TypedOperation operation = this.sequence.getStatement(i).getOperation();
         if (operation.isConstructorCall() || operation.isMethodCall()) {
+          if (operation.hasPreconditions()) {
+            conditionType = ConditionType.PARAM;
+          }
           if (!operation.checkPreconditions(inputValues)) {
             //Not intended for release -- a hack to count false-alarms that become invalid due to precondition failures
-            preConditionFailed = true;
-            statementIndex = i;
-            /*
             //set checks invalid and return
-            checks = new InvalidChecks();
-            checks.add(new InvalidValueCheck(this, i));
-            return;
-            */
+            conditionChecks = new InvalidChecks();
+            conditionChecks.add(new InvalidValueCheck(this, i));
+            //return;
+
           }
           // if the operation is expected to throw an exception for these inputs
           expected = operation.getPostCheckGenerator(inputValues);
+          if (expected instanceof PostConditionCheckGenerator) {
+            conditionType = ConditionType.RETURN;
+          } else if (expected instanceof ExpectedExceptionGenerator) {
+            conditionType = ConditionType.THROWS;
+          }
           //if (expected != null) {
           // returnTagApplied = expected instanceof PostConditionCheckGenerator;
           // throwsTagApplied = expected instanceof ExpectedExceptionGenerator;
@@ -348,24 +354,67 @@ public class ExecutableSequence {
     visitor.visitAfterSequence(this);
 
     checks = gen.visit(this);
-    if (preConditionFailed && checks.hasErrorBehavior()) {
-      checks = new FalseAlarmTestChecks();
-      checks.add(new InvalidValueCheck(this, statementIndex));
+
+    if (conditionType == ConditionType.NONE) {
       return;
     }
-    if (expected != null) {
-      TestChecks testChecks = expected.visit(this);
-      if (expected instanceof PostConditionCheckGenerator) {
-        if (testChecks.hasChecks()) {
-          //postcondition failed
-        } else {
-          //postcondition passed
-        }
-      } else if (expected instanceof ExpectedExceptionGenerator) {
 
+    // did having conditions change the behavior?
+    //if post condition
+    if (conditionType != ConditionType.PARAM) {
+      assert expected != null : "should have post-condition";
+      conditionChecks = expected.visit(this);
+    }
+
+    if (conditionChecks.hasInvalidBehavior()) {
+      if (!checks.hasInvalidBehavior()) {
+        if (checks.hasErrorBehavior()) {
+          conditionTransition = Transition.ERROR_TO_INVALID;
+        } else {
+          conditionTransition = Transition.REGRESSION_TO_INVALID;
+        }
+      }
+    } else if (conditionChecks.hasErrorBehavior()) { //postcondition failed
+      if (!checks.hasInvalidBehavior()) {
+        if (!checks.hasErrorBehavior()) { //would have been regression
+          conditionTransition = Transition.REGRESSION_TO_ERROR;
+        }
+      } else { // would have been invalid
+        conditionTransition = Transition.INVALID_TO_ERROR;
+      }
+    } else { //postcondition passed
+      if (!checks.hasInvalidBehavior()) {
+        if (checks.hasErrorBehavior()) { // would have been error
+          conditionTransition = Transition.ERROR_TO_REGRESSION;
+        }
+      } else { // would have been invalid
+        conditionTransition = Transition.INVALID_TO_REGRESSION;
       }
     }
+
+    checks = conditionChecks;
   }
+
+  public enum Transition {
+    REGRESSION_TO_ERROR,
+    REGRESSION_TO_INVALID,
+    INVALID_TO_ERROR,
+    INVALID_TO_REGRESSION,
+    ERROR_TO_INVALID,
+    ERROR_TO_REGRESSION,
+    NONE;
+  }
+
+  public Transition conditionTransition = Transition.NONE;
+
+  public enum ConditionType {
+    RETURN,
+    THROWS,
+    PARAM,
+    NONE;
+  }
+
+  public ConditionType conditionType = ConditionType.NONE;
 
   public Object[] getRuntimeInputs(List<Variable> inputs) {
     return getRuntimeInputs(executionResults.theList, inputs);
