@@ -1,9 +1,14 @@
 package randoop;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.zip.GZIPOutputStream;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.CharSink;
+import randoop.main.GenAllTests;
+import randoop.main.GenInputsAbstract;
 import randoop.sequence.ExecutableSequence;
 import randoop.util.Log;
 
@@ -123,6 +128,17 @@ public class JunitFileWriter {
     }
   }
 
+  private static FileOutputStream createTextOutputStream(File file, boolean append) {
+    try {
+      return new FileOutputStream(file, append);
+    } catch (IOException e) {
+      Log.out.println("Exception thrown while creating text print stream:" + file.getName());
+      e.printStackTrace();
+      System.exit(1);
+      throw new Error("This can't happen");
+    }
+  }
+
   /**
    * Add text for BeforeClass-annotated method in each generated test class.
    *
@@ -192,7 +208,16 @@ public class JunitFileWriter {
   private File writeTestClass(List<ExecutableSequence> sequences, String testClassName) {
 
     File file = new File(getDir(), testClassName + ".java");
+    String mainCUT = GenAllTests.testclass.get(0);
+    if (mainCUT.indexOf(".") >= 0) {
+      mainCUT = mainCUT.substring(mainCUT.lastIndexOf("."));
+    }
+    File allSequencesFile =
+        new File(
+            getDir(), mainCUT + "_" + mainCUT + "_max_size_" + GenInputsAbstract.maxsize + ".txt");
+
     PrintStream out = createTextOutputStream(file);
+    FileOutputStream outSequences;
 
     NameGenerator methodNameGen = new NameGenerator("test", 1, numDigits(sequences.size()));
 
@@ -236,6 +261,14 @@ public class JunitFileWriter {
 
       for (ExecutableSequence s : sequences) {
         writeTest(out, testClassName, methodNameGen.next(), s);
+        String cutSequence = getSequenceOfCallsOnCut(s, false);
+        if (allSequencesFile.exists()) {
+          outSequences = createTextOutputStream(allSequencesFile, true);
+        } else {
+          outSequences = createTextOutputStream(allSequencesFile, false);
+        }
+        PrintStream psSeq = new PrintStream(outSequences);
+        psSeq.println(cutSequence);
         out.println();
       }
 
@@ -315,14 +348,18 @@ public class JunitFileWriter {
     out.println(indent(s.toCodeString()));
 
     String cutSequence = getSequenceOfCallsOnCut(s);
-    ;
-    out.println((indent("// CUT PARSABLE SEQUENCE: " + cutSequence)));
-    // out.println((indent("// FULL PARSABLE SEQUENCE: " + s.sequence.toParsableString().replaceAll("\r\n",""))));
+    String cutShort = getSequenceOfCallsOnCut(s, false);
+    out.println((indent("// CUT WITH FULLY QUALIFIED OPS: " + cutSequence)));
+    out.println((indent("// CUT WITH SINGLE NAMES: " + cutShort)));
 
     out.println("  }");
   }
 
   private String getSequenceOfCallsOnCut(ExecutableSequence s) {
+    return getSequenceOfCallsOnCut(s, true);
+  }
+
+  private String getSequenceOfCallsOnCut(ExecutableSequence s, boolean fullOperationName) {
     int cutConstructionIndex;
     String tracedVariable = "";
 
@@ -342,8 +379,15 @@ public class JunitFileWriter {
 
     for (int i = cutConstructionIndex; i < s.sequence.size(); i++) {
       if (s.statementToCodeString(i).indexOf(tracedVariable + ".") >= 0) {
-        cutSequence += s.sequence.getStatement(i).getOperation().toParsableString() + ";";
+        if (fullOperationName) {
+          cutSequence += s.sequence.getStatement(i).getOperation().toParsableString() + ";";
+        } else {
+          cutSequence += s.sequence.getStatement(i).getOperation().getName() + ";";
+        }
       }
+    }
+    if (cutSequence.length() > 1 && cutSequence.lastIndexOf(";") >= 0) {
+      cutSequence = cutSequence.substring(0, cutSequence.lastIndexOf(";"));
     }
     return cutSequence;
   }
