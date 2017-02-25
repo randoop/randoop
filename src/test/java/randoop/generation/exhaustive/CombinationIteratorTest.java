@@ -3,14 +3,19 @@ package randoop.generation.exhaustive;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.math.BigIntegerMath;
+import org.hamcrest.collection.IsArrayContainingInOrder;
+import org.hamcrest.core.IsCollectionContaining;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
 public class CombinationIteratorTest {
@@ -43,7 +48,7 @@ public class CombinationIteratorTest {
     int[] finalIndices = it.getCurrentIndices();
 
     Assert.assertArrayEquals(new int[] {0}, initialIndices);
-    Assert.assertArrayEquals(new int[] {2}, finalIndices);
+    Assert.assertArrayEquals(new int[] {1}, finalIndices);
   }
 
   @Test
@@ -52,15 +57,22 @@ public class CombinationIteratorTest {
         new CombinationIterator<>(Lists.newArrayList("A", "B", "C", "D"), 3);
 
     int[] initialIndices = it.getCurrentIndices();
+    Set<int[]> firstThreeIndices = new HashSet<>(3);
 
     it.next();
+    firstThreeIndices.add(it.getCurrentIndices());
     it.next();
+    firstThreeIndices.add(it.getCurrentIndices());
     it.next();
 
     int[] finalIndices = it.getCurrentIndices();
+    firstThreeIndices.add(finalIndices);
 
     Assert.assertArrayEquals(new int[] {0, 1, 2}, initialIndices);
-    Assert.assertArrayEquals(new int[] {1, 2, 3}, finalIndices);
+    Assert.assertArrayEquals(new int[] {0, 2, 3}, finalIndices);
+    assertThat(firstThreeIndices, IsCollectionContaining.hasItem(initialIndices));
+    assertThat(firstThreeIndices, IsCollectionContaining.hasItem(new int[] {0, 1, 3}));
+    assertThat(firstThreeIndices, IsCollectionContaining.hasItem(finalIndices));
   }
 
   @Test
@@ -195,7 +207,9 @@ public class CombinationIteratorTest {
 
     int totalNumberOfCombinations = getNumberOfCombinations(largerList.size(), 3);
 
+    Set<int[]> usedIndices = new HashSet<>();
     for (int i = 0; i < totalNumberOfCombinations - 1; i++) {
+      usedIndices.add(firstIterator.getCurrentIndices());
       firstCombinations.add(firstIterator.next());
     }
 
@@ -211,6 +225,51 @@ public class CombinationIteratorTest {
     Set<Set<String>> allCombinations = Sets.union(firstCombinations, remainingCombinations);
     assertEquals(totalNumberOfCombinations - 1, firstCombinations.size());
     assertEquals(1, remainingCombinations.size());
+    assertEquals(totalNumberOfCombinations, allCombinations.size());
+    assertEquals(expectedCombinations, allCombinations);
+  }
+
+  @Test
+  public void testResumeCombinationGenerationViaConstructorWithCurrentIndicesWhenThereAreNoneLeft()
+      throws Exception {
+    Set<String> largerList = Sets.newHashSet("A", "B", "C", "D", "E");
+
+    Set<Set<String>> expectedCombinations = Sets.newHashSet();
+    expectedCombinations.add(Sets.newHashSet("B", "C", "A")); // AB
+    expectedCombinations.add(Sets.newHashSet("B", "A", "D")); // AB
+    expectedCombinations.add(Sets.newHashSet("A", "B", "E")); // AB
+    expectedCombinations.add(Sets.newHashSet("C", "A", "D")); // AC
+    expectedCombinations.add(Sets.newHashSet("A", "C", "E")); //AC
+    expectedCombinations.add(Sets.newHashSet("A", "D", "E")); //AD
+    expectedCombinations.add(Sets.newHashSet("B", "C", "D")); // BC
+    expectedCombinations.add(Sets.newHashSet("B", "E", "C")); // BC
+    expectedCombinations.add(Sets.newHashSet("B", "E", "D")); // BD
+    expectedCombinations.add(Sets.newHashSet("C", "E", "D")); // CD
+
+    Set<Set<String>> firstCombinations = Sets.newHashSet();
+
+    CombinationIterator<String> firstIterator = new CombinationIterator<>(largerList, 3);
+
+    int totalNumberOfCombinations = getNumberOfCombinations(largerList.size(), 3);
+
+    Set<int[]> usedIndices = new HashSet<>();
+    while (firstIterator.hasNext()) {
+      usedIndices.add(firstIterator.getCurrentIndices());
+      firstCombinations.add(firstIterator.next());
+    }
+
+    int[] indices = firstIterator.getCurrentIndices();
+
+    CombinationIterator<String> secondIterator = new CombinationIterator<>(largerList, 3, indices);
+    Set<Set<String>> remainingCombinations = Sets.newHashSet();
+
+    while (secondIterator.hasNext()) {
+      remainingCombinations.add(secondIterator.next());
+    }
+
+    Set<Set<String>> allCombinations = Sets.union(firstCombinations, remainingCombinations);
+    assertEquals(totalNumberOfCombinations, firstCombinations.size());
+    assertEquals(0, remainingCombinations.size());
     assertEquals(totalNumberOfCombinations, allCombinations.size());
     assertEquals(expectedCombinations, allCombinations);
   }

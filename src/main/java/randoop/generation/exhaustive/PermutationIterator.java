@@ -12,10 +12,6 @@ public class PermutationIterator<T> implements Iterator<List<T>> {
 
   PermutationIterator(Collection<T> allElements, int[] currentPermutationIndices) {
 
-    if (allElements.isEmpty()) {
-      return;
-    }
-
     this.allElements.addAll(allElements);
 
     if (currentPermutationIndices == null) {
@@ -38,14 +34,14 @@ public class PermutationIterator<T> implements Iterator<List<T>> {
     return indices;
   }
 
-  PermutationIterator(List<T> allElements) {
+  PermutationIterator(Collection<T> allElements) {
     this(allElements, null);
   }
 
   @Override
   public boolean hasNext() {
     if (shouldUseInitialIndicesAsAPermutation) {
-      return totalSteps == 0 || getNextIndexToPermute() >= 0;
+      return (totalSteps == 0 && this.indices.length > 0) || getNextIndexToPermute() >= 0;
     } else {
       return getNextIndexToPermute() >= 0;
     }
@@ -66,6 +62,12 @@ public class PermutationIterator<T> implements Iterator<List<T>> {
     return nextPermutation;
   }
 
+  /**
+   * Return the indices used to generate the last permutation returned via next() method.
+   * @apiNote If used to resume generation, it is assumed the permutation corresponding to the returned indices
+   * has already been stored.
+   * @return indices used to generate the last element returned.
+   */
   public int[] getCurrentIndices() {
     return Arrays.copyOf(indices, indices.length);
   }
@@ -138,13 +140,11 @@ public class PermutationIterator<T> implements Iterator<List<T>> {
   }
 
   private void loadPermutation() {
-    List<T> newPermutation = new ArrayList<>(indices.length);
+    this.nextPermutation = new ArrayList<>(indices.length);
 
     for (int i : indices) {
-      newPermutation.add(allElements.get(i));
+      nextPermutation.add(allElements.get(i));
     }
-
-    this.nextPermutation = newPermutation;
   }
 
   private static void swap(int[] array, int a, int b) {

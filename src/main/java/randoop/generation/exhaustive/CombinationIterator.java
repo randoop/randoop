@@ -7,8 +7,10 @@ import java.util.*;
 public class CombinationIterator<T> implements Iterator<Set<T>> {
   private List<T> items;
   private int choose;
-  private boolean finished;
   private int[] current;
+  private boolean shouldUseInitialIndicesAsACombination;
+  private int totalSteps = 0;
+  private Set<T> nextCombination;
 
   public CombinationIterator(Collection<T> items, int choose) {
     this(items, choose, null);
@@ -23,16 +25,18 @@ public class CombinationIterator<T> implements Iterator<Set<T>> {
     }
     this.items = Lists.newArrayList(items);
     this.choose = choose;
-    this.finished = false;
 
     if (currentCombinationIndices == null) {
       current = getInitialCombinationIndices(choose);
+      this.shouldUseInitialIndicesAsACombination = true;
 
     } else {
       if (currentCombinationIndices.length != choose) {
         throw new IllegalArgumentException(
             "Current combination must have the same length of choose variable.");
       }
+
+      this.shouldUseInitialIndicesAsACombination = false;
 
       for (int i = 0; i < choose; i++) {
         if (currentCombinationIndices[i] < 0 || currentCombinationIndices[i] >= this.items.size()) {
@@ -52,30 +56,60 @@ public class CombinationIterator<T> implements Iterator<Set<T>> {
     return indices;
   }
 
+  /**
+   * Return the indices used to generate the last combination returned via next() method.
+   * @apiNote If used to resume generation, it is assumed the combination corresponding to the returned indices
+   * has already been stored.
+   * @return indices used to generate the last element returned.
+   */
   public int[] getCurrentIndices() {
     return Arrays.copyOf(current, current.length);
   }
 
+  public int[] getNextCombination() {
+    return getNextCombinationIndices(this.items.size(), choose, current);
+  }
+
   public boolean hasNext() {
-    return !finished;
+    if (shouldUseInitialIndicesAsACombination) {
+      return totalSteps == 0 || getNextCombination() != null;
+    } else {
+      return getNextCombination() != null;
+    }
+  }
+
+  private void loadCombination() {
+    nextCombination = new HashSet<>(choose);
+
+    for (int i = 0; i < choose; i++) {
+      nextCombination.add(items.get(current[i]));
+    }
+  }
+
+  private void generateNextCombination() {
+    this.current = getNextCombination();
+
+    if (this.current == null) {
+      nextCombination = null;
+    } else {
+      loadCombination();
+    }
   }
 
   public Set<T> next() {
     if (!hasNext()) {
       throw new NoSuchElementException();
     }
-    Set<T> result = new HashSet<T>(choose);
 
-    for (int i = 0; i < choose; i++) {
-      result.add(items.get(current[i]));
+    if (totalSteps == 0 && shouldUseInitialIndicesAsACombination) {
+      loadCombination();
+    } else {
+      generateNextCombination();
     }
 
-    current = getNextCombinationIndices(items.size(), choose, current);
+    totalSteps++;
 
-    if (current == null) {
-      finished = true;
-    }
-    return result;
+    return nextCombination;
   }
 
   public static int[] getNextCombinationIndices(

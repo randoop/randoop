@@ -44,8 +44,6 @@ public class SequenceGenerator<T> implements Iterator<List<T>> {
 
     if (currentIndex != null) {
       this.setCurrentIndex(currentIndex);
-      // Assuming that the element produced by current index has already been stored, skip it:
-      this.next();
     }
   }
 
@@ -97,7 +95,7 @@ public class SequenceGenerator<T> implements Iterator<List<T>> {
     return next;
   }
 
-  public static SequenceIndex getNextIndex(
+  private static SequenceIndex getNextIndex(
       SequenceIndex current, int maximumSequenceLength, int numberOfItems) {
     if (current == null) {
       throw new IllegalArgumentException("'current' cannot be null.");
@@ -175,9 +173,33 @@ public class SequenceGenerator<T> implements Iterator<List<T>> {
       throw new IllegalArgumentException("Index and its members cannot be null.");
     }
 
+    this.sequenceLength = index.getSequenceLength();
+
     combinationsGenerator =
-        new CombinationIterator<>(elements, sequenceLength, index.getCurrentCombinationIndices());
+        new CombinationIterator<>(
+            elements, index.getSequenceLength(), index.getCurrentCombinationIndices());
     permutationGenerator =
         new PermutationIterator<>(elements, index.getCurrentPermutationIndices());
+
+    boolean isThereMoreSequencesForCurrentLength =
+        permutationGenerator.hasNext() || combinationsGenerator.hasNext();
+
+    if (isThereMoreSequencesForCurrentLength) {
+      // Assuming that the element produced by current index has already been collected, skip it:
+      if (permutationGenerator.hasNext()) {
+        this.next();
+      }
+    } else {
+      SequenceIndex newIndex = getNextIndex(index, maximumLength, elements.size());
+      if (newIndex != null) {
+        this.sequenceLength = newIndex.getSequenceLength();
+        combinationsGenerator =
+            new CombinationIterator<>(
+                elements, newIndex.getSequenceLength(), newIndex.getCurrentCombinationIndices());
+
+        // Does not inform current index, so it starts from the initial index.
+        permutationGenerator = new PermutationIterator<>(elements);
+      }
+    }
   }
 }

@@ -8,10 +8,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class SequenceGeneratorTest {
   @Rule public ExpectedException expectedForEmptySets = ExpectedException.none();
@@ -159,12 +161,15 @@ public class SequenceGeneratorTest {
   }
 
   @Test
-  public void generationResumptionViaConstructor() throws Exception {
+  public void generationResumptionOfSameSize() throws Exception {
     SequenceGenerator<String> first = new SequenceGenerator<>(largerSet);
     Set<List<String>> firstSequences = Sets.newHashSet();
 
-    for (int i = 0; i < 4; i++) {
+    int initialSize = largerSet.size() - 1;
+    List<int[]> indices = new LinkedList<>();
+    for (int i = 0; i < initialSize; i++) {
       firstSequences.add(first.next());
+      indices.add(first.getCurrentIndex().getCurrentPermutationIndices());
     }
 
     SequenceGenerator<String> last = new SequenceGenerator<>(largerSet, first.getCurrentIndex());
@@ -179,14 +184,14 @@ public class SequenceGeneratorTest {
     Set<List<String>> actualSequences = Sets.union(firstSequences, remainingSequences);
     Set<List<String>> expectedSequences = getAllExpectedSequencesForLargerSet();
 
-    assertEquals(4, firstSequences.size());
-    assertEquals(expectedNumberOfSequences - 4, remainingSequences.size());
+    assertEquals(initialSize, firstSequences.size());
+    assertEquals(expectedNumberOfSequences - initialSize, remainingSequences.size());
     assertEquals(expectedNumberOfSequences, actualSequences.size());
     assertEquals(expectedSequences, actualSequences);
   }
 
   @Test
-  public void generationResumptionViaConstructorChangingSize() throws Exception {
+  public void generationResumptionChangingSizeWhenThereAreMoreToGenerate() throws Exception {
     SequenceGenerator<String> first = new SequenceGenerator<>(largerSet, 3);
     Set<List<String>> firstSequences = Sets.newHashSet();
 
@@ -195,10 +200,8 @@ public class SequenceGeneratorTest {
     }
 
     SequenceGenerator.SequenceIndex currIndex = first.getCurrentIndex();
-    SequenceGenerator.SequenceIndex nextIndex =
-        SequenceGenerator.getNextIndex(currIndex, 4, largerSet.size());
 
-    SequenceGenerator<String> last = new SequenceGenerator<>(largerSet, 4, nextIndex);
+    SequenceGenerator<String> last = new SequenceGenerator<>(largerSet, 4, currIndex);
     Set<List<String>> remainingSequences = Sets.newHashSet();
 
     while (last.hasNext()) {
@@ -214,5 +217,27 @@ public class SequenceGeneratorTest {
     assertEquals(BigIntegerMath.factorial(4).intValue(), remainingSequences.size());
     assertEquals(expectedNumberOfSequences, actualSequences.size());
     assertEquals(expectedSequences, actualSequences);
+  }
+
+  @Test
+  public void generationResumptionChangingSizeWhenThereAreNotAnymoreLeftToGenerate()
+      throws Exception {
+    SequenceGenerator<String> first = new SequenceGenerator<>(largerSet, 3);
+    Set<List<String>> firstSequences = Sets.newHashSet();
+
+    while (first.hasNext()) {
+      firstSequences.add(first.next());
+    }
+
+    SequenceGenerator.SequenceIndex currIndex = first.getCurrentIndex();
+
+    SequenceGenerator<String> last = new SequenceGenerator<>(largerSet, 3, currIndex);
+    Set<List<String>> remainingSequences = Sets.newHashSet();
+
+    while (last.hasNext()) {
+      remainingSequences.add(last.next());
+    }
+
+    assertTrue(remainingSequences.isEmpty());
   }
 }

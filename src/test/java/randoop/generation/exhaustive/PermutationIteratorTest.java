@@ -12,13 +12,12 @@ import java.util.List;
 import java.util.Set;
 
 public class PermutationIteratorTest {
-  @Rule public ExpectedException expectedForInvalidLists = ExpectedException.none();
-
   @Test
-  public void constructorEmptyList() throws Exception {
+  public void hasNextForEmptyList() throws Exception {
     List<String> emptyList = Lists.newArrayList();
-    expectedForInvalidLists.expect(IllegalArgumentException.class);
     PermutationIterator<String> sgen = new PermutationIterator<>(emptyList);
+
+    Assert.assertFalse(sgen.hasNext());
   }
 
   @Test
