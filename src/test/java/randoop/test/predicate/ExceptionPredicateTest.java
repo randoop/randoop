@@ -57,6 +57,7 @@ public class ExceptionPredicateTest {
     GenInputsAbstract.npe_on_null_input = BehaviorType.EXPECTED;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
+    GenInputsAbstract.sof_exception = BehaviorType.INVALID;
   }
 
   /*
@@ -132,6 +133,8 @@ public class ExceptionPredicateTest {
     assertFalse("OOM is not expected", isExpected.test(exec, s));
     assertFalse("no exception satisfies this predicate", alwaysFalse.test(exec, s));
   }
+
+  // TODO: test StackOverflowError
 
   @Test
   public void testFailures() {

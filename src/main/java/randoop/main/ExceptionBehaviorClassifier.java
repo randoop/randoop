@@ -19,8 +19,9 @@ public class ExceptionBehaviorClassifier {
    * using the command-line arguments
    * {@link GenInputsAbstract#checked_exception},
    * {@link GenInputsAbstract#unchecked_exception},
-   * {@link GenInputsAbstract#npe_on_null_input}, and
-   * {@link GenInputsAbstract#oom_exception}.
+   * {@link GenInputsAbstract#npe_on_null_input},
+   * {@link GenInputsAbstract#oom_exception}, and
+   * {@link GenInputsAbstract#sof_exception}.
    *
    * @param t
    *          the {@code Throwable} to classify
@@ -43,6 +44,10 @@ public class ExceptionBehaviorClassifier {
 
       if (t instanceof OutOfMemoryError) {
         return GenInputsAbstract.oom_exception;
+      }
+
+      if (t instanceof StackOverflowError) {
+        return GenInputsAbstract.sof_exception;
       }
 
       // default failure exceptions
