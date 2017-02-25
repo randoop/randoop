@@ -19,10 +19,13 @@ import randoop.NotExecuted;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.test.Check;
+import randoop.test.ExpectedExceptionGenerator;
 import randoop.test.ExtendGenerator;
 import randoop.test.FalseAlarmTestChecks;
 import randoop.test.InvalidChecks;
 import randoop.test.InvalidValueCheck;
+import randoop.test.PostConditionCheckGenerator;
+import randoop.test.PostConditionFailureChecks;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
 import randoop.types.ReferenceType;
@@ -277,7 +280,10 @@ public class ExecutableSequence {
     for (int i = 0; i < sequence.size(); i++) {
       executionResults.theList.add(NotExecuted.create());
     }
+
     boolean preConditionFailed = false;
+    TestCheckGenerator expected = null;
+
     int statementIndex = -1;
     for (int i = 0; i < this.sequence.size(); i++) {
 
@@ -302,11 +308,13 @@ public class ExecutableSequence {
             */
           }
           // if the operation is expected to throw an exception for these inputs
-          TestCheckGenerator expected = operation.getPostCheckGenerator(inputValues);
-          if (expected != null) {
-            //then extend TestCheckGenerator gen with check for postcondition/exception
-            gen = new ExtendGenerator(expected, gen);
-          }
+          expected = operation.getPostCheckGenerator(inputValues);
+          //if (expected != null) {
+          // returnTagApplied = expected instanceof PostConditionCheckGenerator;
+          // throwsTagApplied = expected instanceof ExpectedExceptionGenerator;
+          //then extend TestCheckGenerator gen with check for postcondition/exception
+          // gen = new ExtendGenerator(expected, gen);
+          //}
         }
       }
 
@@ -343,6 +351,19 @@ public class ExecutableSequence {
     if (preConditionFailed && checks.hasErrorBehavior()) {
       checks = new FalseAlarmTestChecks();
       checks.add(new InvalidValueCheck(this, statementIndex));
+      return;
+    }
+    if (expected != null) {
+      TestChecks testChecks = expected.visit(this);
+      if (expected instanceof PostConditionCheckGenerator) {
+        if (testChecks.hasChecks()) {
+          //postcondition failed
+        } else {
+          //postcondition passed
+        }
+      } else if (expected instanceof ExpectedExceptionGenerator) {
+
+      }
     }
   }
 
@@ -651,6 +672,11 @@ public class ExecutableSequence {
   public boolean hasFalseAlarmBehavior() {
     return checks != null && (checks instanceof FalseAlarmTestChecks) && checks.hasChecks();
   }
+
+  public boolean hasPostConditionFailure() {
+    return checks != null && (checks instanceof PostConditionFailureChecks) && checks.hasChecks();
+  }
+
   /**
    * Adds a covered class to the most recent execution results of this sequence.
    *

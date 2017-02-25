@@ -40,12 +40,11 @@ public class PostConditionCheckGenerator implements TestCheckGenerator {
   public TestChecks visit(ExecutableSequence s) {
     int finalIndex = s.sequence.size() - 1;
     ExecutionOutcome result = s.getResult(finalIndex);
-    TestChecks checks = new ErrorRevealingChecks();
+    TestChecks checks = new PostConditionFailureChecks();
     if (result instanceof NormalExecution) {
       ArrayList<Variable> inputs = new ArrayList<>(s.sequence.getInputs(finalIndex));
       inputs.add(s.sequence.getVariable(finalIndex));
       Object[] inputValues = s.getRuntimeInputs(inputs);
-      //inputValues[inputValues.length - 1] = ((NormalExecution) result).getRuntimeValue();
       if (s.sequence.getStatement(finalIndex).getOperation().isStatic()) {
         inputValues = addNullReceiver(inputValues);
       }

@@ -51,6 +51,7 @@ public abstract class AbstractGenerator {
   public int invalidSequenceCount = 0;
 
   public int falseAlarmSequenceCount = 0;
+  public int postConditionFailureCount = 0;
 
   /**
    * The timer used to determine how much time has elapsed since the start of
@@ -140,6 +141,8 @@ public abstract class AbstractGenerator {
    * Visitor to generate checks for a sequence.
    */
   protected TestCheckGenerator checkGenerator;
+  private int returnPostConditionCount = 0;
+  private int returnPostConditionFailureCount = 0;
 
   /**
    * Constructs a generator with the given parameters.
@@ -354,6 +357,16 @@ public abstract class AbstractGenerator {
       }
 
       if (outputTest.test(eSeq)) {
+        //        if (eSeq.returnTagApplied) {
+        if (eSeq.hasPostConditionFailure()) {
+          returnPostConditionFailureCount++;
+        } else {
+          returnPostConditionCount++;
+        }
+        //      }
+        //        if (eSeq.throwsTagApplied) {
+
+        //        }
         if (!eSeq.hasInvalidBehavior()) {
           if (eSeq.hasFailure()) {
             outErrorSeqs.add(eSeq);
