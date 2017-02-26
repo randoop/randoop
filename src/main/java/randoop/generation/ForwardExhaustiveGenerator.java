@@ -107,7 +107,20 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
 
     this.observers = observers;
     this.instantiator = componentManager.getTypeInstantiator();
-    this.sequenceGenerator = new SequenceGenerator<>(this.operations, GenInputsAbstract.maxsize);
+
+    SequenceGenerator.SequenceIndex startingIndex = null;
+    if (GenInputsAbstract.generation_index_file != null) {
+      try {
+        startingIndex =
+            SequenceGenerator.SequenceIndex.deserializeFromFile(
+                GenInputsAbstract.generation_index_file);
+      } catch (IOException e) {
+        System.out.printf("Error trying to deserializing sequence index file: %s", e);
+      }
+    }
+
+    this.sequenceGenerator =
+        new SequenceGenerator<>(this.operations, GenInputsAbstract.maxsize, startingIndex);
     initializeRuntimePrimitivesSeen();
     this.constructors =
         operations.stream().filter(o -> o.isConstructorCall()).collect(Collectors.toSet());

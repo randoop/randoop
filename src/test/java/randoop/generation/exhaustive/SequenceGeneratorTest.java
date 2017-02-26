@@ -157,7 +157,7 @@ public class SequenceGeneratorTest {
     }
 
     assertEquals(0, beforeIterateLarger);
-    assertEquals(numberOfSequencesToGenerate, sgenLarger.getTotalSequencesIterated());
+    assertEquals(numberOfSequencesToGenerate, sgenLarger.getTotalSequencesIterated().intValue());
   }
 
   @Test
@@ -192,7 +192,7 @@ public class SequenceGeneratorTest {
 
   @Test
   public void generationResumptionChangingSizeWhenThereAreMoreToGenerate() throws Exception {
-    SequenceGenerator<String> first = new SequenceGenerator<>(largerSet, 3);
+    SequenceGenerator<String> first = new SequenceGenerator<>(largerSet, 2);
     Set<List<String>> firstSequences = Sets.newHashSet();
 
     while (first.hasNext()) {
@@ -201,20 +201,22 @@ public class SequenceGeneratorTest {
 
     SequenceGenerator.SequenceIndex currIndex = first.getCurrentIndex();
 
-    SequenceGenerator<String> last = new SequenceGenerator<>(largerSet, 4, currIndex);
+    SequenceGenerator<String> last = new SequenceGenerator<>(largerSet, 3, currIndex);
     Set<List<String>> remainingSequences = Sets.newHashSet();
 
     while (last.hasNext()) {
       remainingSequences.add(last.next());
     }
 
-    int expectedNumberOfSequences = getNumberOfSequences(largerSet.size(), largerSet.size());
+    int expectedNumberOfSequences = getNumberOfSequences(3, largerSet.size());
 
     Set<List<String>> actualSequences = Sets.union(firstSequences, remainingSequences);
     Set<List<String>> expectedSequences = getAllExpectedSequencesForLargerSet();
 
-    assertEquals(getNumberOfSequences(3, largerSet.size()), firstSequences.size());
-    assertEquals(BigIntegerMath.factorial(4).intValue(), remainingSequences.size());
+    expectedSequences.removeIf(seq -> seq.size() > 3);
+
+    assertEquals(getNumberOfSequences(2, largerSet.size()), firstSequences.size());
+    assertEquals(getNumberOfArrangements(largerSet.size(), 3), remainingSequences.size());
     assertEquals(expectedNumberOfSequences, actualSequences.size());
     assertEquals(expectedSequences, actualSequences);
   }

@@ -559,6 +559,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Name of the directory to which JUnit files should be written")
   public static String junit_output_dir = null;
 
+  /** Name of the file containing the current index from which generation must proceed. */
+  @Option("Name of the file containing the current index from which generation must proceed")
+  public static File generation_index_file = null;
+
   /**
    * Run test generation without output. May be desirable when running with a
    * visitor.
@@ -689,6 +693,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
     if (!literals_file.isEmpty() && literals_level == ClassLiteralsMode.NONE) {
       throw new RuntimeException(
           "Invalid parameter combination: specified a class literal file but --use-class-literals=NONE");
+    }
+
+    if (generation_index_file != null && !generation_index_file.exists()) {
+      throw new RuntimeException(
+          "Invalid parameter generation-index-file, which must point to an existing file.");
     }
   }
 

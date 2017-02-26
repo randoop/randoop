@@ -2,7 +2,11 @@ package randoop.generation.exhaustive;
 
 import com.google.common.collect.Lists;
 import com.google.common.math.BigIntegerMath;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.SerializationUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.*;
@@ -75,6 +79,8 @@ public class SequenceGenerator<T> implements Iterator<List<T>> {
     return numberOfSequences;
   }
 
+  private Set<List<T>> previousElementsToPermute = new HashSet<>();
+
   @Override
   public List<T> next() {
     if (!hasNext()) {
@@ -101,6 +107,9 @@ public class SequenceGenerator<T> implements Iterator<List<T>> {
 
     numberOfSequences = numberOfSequences.add(BigInteger.ONE);
 
+    if (elementsToPermute != null) {
+      previousElementsToPermute.add(elementsToPermute);
+    }
     List<T> next = permutationGenerator.next();
 
     return next;
@@ -168,6 +177,18 @@ public class SequenceGenerator<T> implements Iterator<List<T>> {
     public int getSequenceLength() {
       return sequenceLength;
     }
+
+    public static SequenceIndex deserializeFromFile(File file) throws IOException {
+      if (file == null || !file.exists()) {
+        throw new RuntimeException(
+            "File must exist to proceed with sequence index deserialization");
+      }
+
+      byte[] data = FileUtils.readFileToByteArray(file);
+      SequenceIndex index = SerializationUtils.deserialize(data);
+
+      return index;
+    }
   }
 
   public SequenceIndex getCurrentIndex() {
@@ -204,12 +225,10 @@ public class SequenceGenerator<T> implements Iterator<List<T>> {
       SequenceIndex newIndex = getNextIndex(index, maximumLength, elements.size());
       if (newIndex != null) {
         this.sequenceLength = newIndex.getSequenceLength();
-        combinationsGenerator =
-            new CombinationIterator<>(
-                elements, newIndex.getSequenceLength(), newIndex.getCurrentCombinationIndices());
 
-        // Does not inform current index, so it starts from the initial index.
-        permutationGenerator = new PermutationIterator<>(elements);
+        // Let the instantiation of combinations iterator and permutations iterator to the hasNext method.
+        combinationsGenerator = null;
+        permutationGenerator = null;
       }
     }
   }

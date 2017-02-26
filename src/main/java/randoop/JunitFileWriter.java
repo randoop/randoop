@@ -210,11 +210,11 @@ public class JunitFileWriter {
     File file = new File(getDir(), testClassName + ".java");
     String mainCUT = GenAllTests.testclass.get(0);
     if (mainCUT.indexOf(".") >= 0) {
-      mainCUT = mainCUT.substring(mainCUT.lastIndexOf("."));
+      mainCUT = mainCUT.substring(mainCUT.lastIndexOf(".") + 1);
     }
     File allSequencesFile =
         new File(
-            getDir(), mainCUT + "_" + mainCUT + "_max_size_" + GenInputsAbstract.maxsize + ".txt");
+            getDir(), mainCUT + "_" + "sequences_max_size_" + GenInputsAbstract.maxsize + ".txt");
 
     PrintStream out = createTextOutputStream(file);
     FileOutputStream outSequences;
