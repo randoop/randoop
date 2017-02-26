@@ -218,6 +218,7 @@ public class JunitFileWriter {
 
     PrintStream out = createTextOutputStream(file);
     FileOutputStream outSequences;
+    PrintStream psSeq = null;
 
     NameGenerator methodNameGen = new NameGenerator("test", 1, numDigits(sequences.size()));
 
@@ -261,13 +262,10 @@ public class JunitFileWriter {
 
       for (ExecutableSequence s : sequences) {
         writeTest(out, testClassName, methodNameGen.next(), s);
+
         String cutSequence = getSequenceOfCallsOnCut(s, false);
-        if (allSequencesFile.exists()) {
-          outSequences = createTextOutputStream(allSequencesFile, true);
-        } else {
-          outSequences = createTextOutputStream(allSequencesFile, false);
-        }
-        PrintStream psSeq = new PrintStream(outSequences);
+        outSequences = createTextOutputStream(allSequencesFile, allSequencesFile.exists());
+        psSeq = new PrintStream(outSequences);
         psSeq.println(cutSequence);
         out.println();
       }
@@ -275,21 +273,14 @@ public class JunitFileWriter {
       out.println("}");
       classMethodCounts.put(testClassName, methodNameGen.nameCount());
 
-      // Serialize sequences
-      //      try (FileOutputStream fileos =
-      //              new FileOutputStream(new File(getDir(), testClassName + "_serialized.gz"))) {
-      //        ObjectOutputStream objectos = new ObjectOutputStream(new GZIPOutputStream(fileos));
-      //        objectos.writeObject(new ArrayList<>(sequences));
-      //        objectos.close();
-      //        fileos.close();
-      //      } catch (FileNotFoundException e) {
-      //        e.printStackTrace();
-      //      } catch (IOException e) {
-      //        e.printStackTrace();
-      //      }
-
     } finally {
-      if (out != null) out.close();
+      if (out != null) {
+        out.close();
+      }
+
+      if (psSeq != null) {
+        psSeq.close();
+      }
     }
 
     return file;

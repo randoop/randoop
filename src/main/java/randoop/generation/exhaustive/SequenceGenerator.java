@@ -144,7 +144,7 @@ public class SequenceGenerator<T> implements Iterator<List<T>> {
     return new SequenceIndex(sequenceSize, nextCombIndices, nextPermutationIndices);
   }
 
-  static class SequenceIndex implements Serializable {
+  public static class SequenceIndex implements Serializable {
     private static final long serialVersionUID = 2496849987065726718L;
 
     private int[] currentCombinationIndices;

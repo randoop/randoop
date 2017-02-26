@@ -16,6 +16,7 @@ import randoop.util.Timer;
 import randoop.util.predicate.AlwaysFalse;
 import randoop.util.predicate.Predicate;
 
+import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -462,5 +463,10 @@ public abstract class AbstractGenerator {
    */
   protected void setCurrentSequence(Sequence s) {
     currSeq = s;
+  }
+
+  // In order to support sequence resumption
+  public void saveCurrentGenerationStep(File targetFile) {
+    throw new UnsupportedOperationException();
   }
 }

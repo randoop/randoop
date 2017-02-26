@@ -1,7 +1,9 @@
 package randoop.generation;
 
 import com.google.common.collect.Lists;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.SerializationUtils;
 import randoop.*;
 import randoop.generation.exhaustive.SequenceGenerator;
 import randoop.main.GenAllTests;
@@ -17,6 +19,8 @@ import randoop.test.DummyCheckGenerator;
 import randoop.types.*;
 import randoop.util.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -652,5 +656,21 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
   @Override
   protected boolean stop() {
     return !this.sequenceGenerator.hasNext() || super.stop();
+  }
+
+  @Override
+  public void saveCurrentGenerationStep(File targetFile) {
+    if (targetFile == null) {
+      throw new IllegalArgumentException("targetFile cannot be null");
+    }
+
+    byte[] indexBytes = SerializationUtils.serialize(sequenceGenerator.getCurrentIndex());
+
+    try {
+      FileUtils.writeByteArrayToFile(targetFile, indexBytes);
+    } catch (IOException e) {
+      Log.logLineIfOn("Error saving current index to file: " + targetFile + " Error: " + e);
+      e.printStackTrace();
+    }
   }
 }

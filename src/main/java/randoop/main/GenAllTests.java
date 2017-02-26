@@ -260,7 +260,11 @@ public class GenAllTests extends GenInputsAbstract {
           }
 
           @Override
-          public void generationStepPost(ExecutableSequence s) {}
+          public void generationStepPost(ExecutableSequence s) {
+            File testsFolder = new File(junit_output_dir);
+            File file = new File(testsFolder, "current_seq_index.tar.gz");
+            explorer.saveCurrentGenerationStep(file);
+          }
 
           @Override
           public void progressThreadUpdate() {}
@@ -414,7 +418,6 @@ public class GenAllTests extends GenInputsAbstract {
   }
 
   private void outputResult(AbstractGenerator explorer, boolean isOutputDuringExecution) {
-
     if (!GenInputsAbstract.no_error_revealing_tests) {
       List<ExecutableSequence> errorSequences = explorer.getErrorTestSequences();
       if (!errorSequences.isEmpty()) {
