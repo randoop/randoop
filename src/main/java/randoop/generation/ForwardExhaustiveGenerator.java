@@ -349,13 +349,14 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
 
     for (TypedOperation op : nextPermutation) {
       if (op.isGeneric() || op.hasWildcardTypes()) {
+        String opName = op.getName();
         op = instantiator.instantiate((TypedClassOperation) op);
         if (op == null) { //failed to instantiate generic
           Log.logLineIfOn(
               "Sequence generator discarded the sequence "
                   + sequence
                   + " because it could not instantiate operation "
-                  + op.getName());
+                  + opName);
           return null;
         }
       }

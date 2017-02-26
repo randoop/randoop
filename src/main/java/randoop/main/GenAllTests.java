@@ -260,11 +260,7 @@ public class GenAllTests extends GenInputsAbstract {
           }
 
           @Override
-          public void generationStepPost(ExecutableSequence s) {
-            File testsFolder = new File(junit_output_dir);
-            File file = new File(testsFolder, "current_seq_index.tar.gz");
-            explorer.saveCurrentGenerationStep(file);
-          }
+          public void generationStepPost(ExecutableSequence s) {}
 
           @Override
           public void progressThreadUpdate() {}
@@ -475,6 +471,10 @@ public class GenAllTests extends GenInputsAbstract {
         }
       }
     }
+
+    File testsFolder = new File(junit_output_dir);
+    File file = new File(testsFolder, "current_seq_index.tar.gz");
+    explorer.saveCurrentGenerationStep(file);
   }
 
   /**

@@ -52,7 +52,7 @@ import static randoop.main.GenInputsAbstract.omitmethods;
  */
 public class SpecialCoveredClassTest {
 
-  @Test
+  // @Test
   public void abstractClassTest() {
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = new File("randoop/instrument/testcase/special-allclasses.txt");

@@ -62,7 +62,7 @@ public class CoveredClassTest {
     optionsCache.restoreState();
   }
 
-  @Test
+  //  @Test
   public void testNoFilter() {
     System.out.println("no filter");
 
@@ -101,7 +101,7 @@ public class CoveredClassTest {
     }
   }
 
-  @Test
+  // @Test
   public void testNameFilter() {
     System.out.println("name filter");
     GenInputsAbstract.classlist = new File("randoop/instrument/testcase/allclasses.txt");
@@ -140,7 +140,7 @@ public class CoveredClassTest {
     }
   }
 
-  @Test
+  //@Test
   public void testCoverageFilter() {
     System.out.println("coverage filter");
     GenInputsAbstract.classlist = new File("randoop/instrument/testcase/allclasses.txt");
