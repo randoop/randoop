@@ -187,7 +187,10 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
 
     processSequence(eSeq);
 
-    if (eSeq.sequence.hasActiveFlags()) {
+    // it's been noted that during long executions, adding the generated sequence to component manager
+    // causes the program to consume a large amount of the system's memory.
+    boolean saveMemory = true;
+    if (eSeq.sequence.hasActiveFlags() && !saveMemory) {
       componentManager.addGeneratedSequence(eSeq.sequence);
     }
 
