@@ -7,11 +7,11 @@ import matplotlib.patches as mpatches
 
 projects = ['Chart', 'Math', 'Time', 'Lang']
 times = []
-colors = ['pink', 'lightblue', 'thistle', 'paletuquoise', 'lightcoral', 'lightgreen']
+colors = ['pink', 'lightblue', 'thistle', 'lightgreen', 'paleturquoise', 'lightcoral']
 # Marker codes for pyplot
 markers = ['o', 's', 'D', '^', 'p', '*']
 # Linestyles for pyplot
-linestyles = ['-', '--', ':', '_.']
+linestyles = ['-', '--', ':', '-.']
 
 def readData(fileName):
 	f = open(fileName, 'r')
@@ -20,11 +20,9 @@ def readData(fileName):
 	fileName = re.split('/', fileName)[-1]
 	project, exp, condition, metric, ext = re.split('[_.]', fileName)
 
-	if exp == 'Complete':
-		pass	
-	elif exp == 'Individual':
-		# Store the data in the format timeLimit: [covered[], total]
-		data = []
+	
+	# Store the data in the format timeLimit: [covered[], total]
+	data = []
 
 	lines = f.readlines()
 
@@ -58,7 +56,7 @@ def readData(fileName):
 
 		i += 2
 
-	title = '%s %s Coverage Percentage' % (project, metric,)
+	title = '%s %s %s Coverage Percentage' % (project, exp, metric,)
 	return (title, condition, data)
 
 
@@ -164,7 +162,7 @@ def plot(isLinePlot, title, seriesLabels, data):
 	else:
 		boxplot(title, seriesLabels, data)
 
-	plt.title(title)
+	#plt.title(title)
 	plt.xlabel('Global Time Limit (s)')
 	plt.ylabel('Coverage (%)')
 	plt.ylim(0, getMaxPoint(data) * 1.1)
