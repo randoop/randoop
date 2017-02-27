@@ -295,6 +295,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static List<File> toradocu_conditions = null;
 
   /**
+   * Throw exception when cannot find expected condition methods in Toradocu output.
+   * Otherwise a warning message is printed and the condition is ignored.
+   */
+  @Unpublicized
+  @Option("Allow failure when cannot find Toradocu condition methods")
+  public static boolean fail_on_condition_input_error = false;
+
+  /**
    * File containing side-effect-free observer methods.
    * Specifying observers has 2 benefits:  it makes regression tests stronger,
    * and it helps Randoop create smaller tests.

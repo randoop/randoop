@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
@@ -21,6 +22,7 @@ import plume.Pair;
 import plume.UtilMDE;
 import randoop.condition.Condition;
 import randoop.condition.ConditionCollection;
+import randoop.main.GenInputsAbstract;
 import randoop.reflection.TypeNames;
 import randoop.test.ExpectedExceptionGenerator;
 import randoop.test.PostConditionCheckGenerator;
@@ -83,7 +85,7 @@ public class ToradocuConditionCollection implements ConditionCollection {
         if (subject == null) {
           continue; //Toradocu has a nasty habit of creating conditions on inaccessible methods
         }
-        assert conditionMap.get(subject) == null : "do not visit a method more than once";
+        //assert conditionMap.get(subject) == null : "do not visit a method more than once (" + subject + ")";
         Class<?> conditionClass = getConditionClass(method);
 
         List<Tag> paramTagList = new ArrayList<Tag>(method.paramTags());
@@ -238,8 +240,20 @@ public class ToradocuConditionCollection implements ConditionCollection {
       try {
         subject = declaringClass.getConstructor(parameterTypes);
       } catch (NoSuchMethodException e) {
-        throw new IllegalArgumentException(
-            "Unable to find subject constructor for Torudocu input (" + documentedMethod + ")");
+        try {
+          subject = declaringClass.getDeclaredConstructor(parameterTypes);
+        } catch (NoSuchMethodException e2) {
+          throw new IllegalArgumentException(
+              "Unable to find subject constructor for Torudocu input (" + documentedMethod + ")");
+        }
+        int mods = ((Constructor) subject).getModifiers() & Modifier.constructorModifiers();
+        if (Modifier.isPrivate(mods) || Modifier.isProtected(mods)) {
+          if (Log.isLoggingOn()) {
+            Log.logLine(
+                "Subject constructor is private for Toradocu input (" + documentedMethod + ")");
+          }
+          return null;
+        }
       }
     } else {
       String methodName = documentedMethod.getName();
@@ -252,7 +266,8 @@ public class ToradocuConditionCollection implements ConditionCollection {
           throw new IllegalArgumentException(
               "Unable to find subject method for Torudocu input (" + documentedMethod + ")");
         }
-        if (Modifier.isPrivate(((Method) subject).getModifiers() & Modifier.classModifiers())) {
+        int mods = ((Method) subject).getModifiers() & Modifier.classModifiers();
+        if (Modifier.isPrivate(mods) || Modifier.isProtected(mods)) {
           if (Log.isLoggingOn()) {
             Log.logLine("Subject method is private for Toradocu Input (" + documentedMethod + ")");
           }
@@ -305,7 +320,7 @@ public class ToradocuConditionCollection implements ConditionCollection {
    */
   private static Method getConditionMethod(
       Class<?> conditionClass, String methodName, Class<?>[] parameters) {
-    Method conditionMethod;
+    Method conditionMethod = null;
     try {
       conditionMethod = conditionClass.getMethod(methodName, parameters);
     } catch (NoSuchMethodException e) {
@@ -313,13 +328,21 @@ public class ToradocuConditionCollection implements ConditionCollection {
       for (Class<?> parameter : parameters) {
         paramTypes.add(parameter.getName());
       }
-      throw new IllegalArgumentException(
+      String message =
           "Unable to find Toradocu condition method "
               + methodName
               + "("
               + UtilMDE.join(paramTypes, ",")
               + " in class "
-              + conditionClass.getName());
+              + conditionClass.getName();
+      if (GenInputsAbstract.fail_on_condition_input_error) {
+        throw new IllegalArgumentException(message);
+      } else {
+        System.out.printf("Ignoring error: %s%n", message);
+        if (Log.isLoggingOn()) {
+          Log.logLine(message);
+        }
+      }
     }
     return conditionMethod;
   }
