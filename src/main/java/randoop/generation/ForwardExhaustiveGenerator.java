@@ -454,7 +454,7 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
             .filter(
                 c
                     -> c.getInputTypes().isEmpty()
-                        && c.getOutputType() != Type.forClass(Object.class))
+                        && !c.getOutputType().getRuntimeClass().equals(Object.class))
             .findFirst();
 
     if (parameterlessCtr.isPresent()) {
@@ -587,6 +587,11 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
             l = componentManager.getSequencesForType(operation, i);
             break;
         }
+      }
+
+      if (l.isEmpty()) {
+        result = new InputsAndSuccessFlag(false, sequences, variableIndices);
+        return result;
       }
       // Choose a sequence favoring small tests
       Sequence chosenSeq = Randomness.randomMemberWeighted(l);

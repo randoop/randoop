@@ -141,6 +141,9 @@ public class OperationModel {
     model.addOperations(methodSignatures);
     model.addObjectConstructor();
 
+    // Remove static methods
+    model.operations.removeIf(op -> op.isStatic());
+
     return model;
   }
 
