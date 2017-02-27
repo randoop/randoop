@@ -176,11 +176,11 @@ def plot(isLinePlot, title, seriesLabels, data):
 # Output the medians of the datasets to a csv
 def outputCsv(numFiles, labels, title, data):
 	try:
-		os.remove('csv/%s' % (title,))
+		os.remove('csv/%s.csv' % (title,))
 	except OSError:
 		pass
 
-	f = open('csv/%s' % (title,), 'w+')
+	f = open('csv/%s.csv' % (title,), 'w+')
 
 	print data[0]
 	avgs = [[avg(y) for y in x] for x in data]
