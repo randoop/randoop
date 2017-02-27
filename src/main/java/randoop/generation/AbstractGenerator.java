@@ -41,7 +41,7 @@ public abstract class AbstractGenerator {
 
   @RandoopStat(
       "Number of generation steps (one step consists of an attempt to generate and execute a new, distinct sequence)")
-  public int num_steps = 0;
+  public long num_steps = 0;
 
   @RandoopStat("Number of sequences generated.")
   public int num_sequences_generated = 0;

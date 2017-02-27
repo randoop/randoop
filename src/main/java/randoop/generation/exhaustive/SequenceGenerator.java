@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.math.BigIntegerMath;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SerializationUtils;
+import randoop.sequence.Sequence;
 
 import java.io.File;
 import java.io.IOException;
@@ -156,6 +157,27 @@ public class SequenceGenerator<T> implements Iterator<List<T>> {
   public static class SequenceIndex implements Serializable {
     private static final long serialVersionUID = 2496849987065726718L;
 
+    @Override
+    public boolean equals(Object obj) {
+      if (obj == null) {
+        return false;
+      }
+
+      if (!(obj instanceof SequenceIndex)) {
+        return false;
+      }
+
+      SequenceIndex other = (SequenceIndex) obj;
+
+      boolean sameLength = this.sequenceLength == other.getSequenceLength();
+      boolean sameCombinationIndices =
+          this.currentCombinationIndices.equals(other.getCurrentCombinationIndices());
+      boolean samePermutationIndices =
+          this.getCurrentPermutationIndices().equals(other.getCurrentPermutationIndices());
+
+      return sameLength && sameCombinationIndices && samePermutationIndices;
+    }
+
     private int[] currentCombinationIndices;
     private int[] currentPermutationIndices;
     private int sequenceLength;
@@ -188,6 +210,39 @@ public class SequenceGenerator<T> implements Iterator<List<T>> {
       SequenceIndex index = SerializationUtils.deserialize(data);
 
       return index;
+    }
+
+    public BigInteger getNumberOfStepsSinceInitialIndex(
+        int numberOfItems, int initialSequenceLength) {
+
+      BigInteger steps = BigInteger.ZERO;
+
+      for (int i = initialSequenceLength; i < this.getSequenceLength(); i++) {
+        BigInteger numberOfPermutationsChoosingI =
+            BigIntegerMath.factorial(numberOfItems)
+                .divide(BigIntegerMath.factorial(numberOfItems - i));
+        steps = steps.add(numberOfPermutationsChoosingI);
+      }
+
+      int[] combinationSteps =
+          CombinationIterator.getInitialCombinationIndices(this.getSequenceLength());
+      while (!Arrays.equals(combinationSteps, this.getCurrentCombinationIndices())) {
+        BigInteger numberOfPermutations = BigIntegerMath.factorial(this.getSequenceLength());
+        steps = steps.add(numberOfPermutations);
+        combinationSteps =
+            CombinationIterator.getNextCombinationIndices(
+                numberOfItems, this.getSequenceLength(), combinationSteps);
+      }
+
+      int[] permSteps = PermutationIterator.getInitialPermutationIndices(combinationSteps.length);
+      while (!Arrays.equals(permSteps, this.getCurrentPermutationIndices())) {
+        steps = steps.add(BigInteger.ONE);
+        permSteps = PermutationIterator.getNextPermutationIndices(permSteps);
+      }
+
+      // When indices are equal, the last sum above is not made, so correct it now:
+      steps = steps.add(BigInteger.ONE);
+      return steps;
     }
   }
 

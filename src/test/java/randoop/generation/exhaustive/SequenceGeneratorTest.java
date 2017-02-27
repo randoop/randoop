@@ -8,6 +8,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.math.BigInteger;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -241,5 +243,22 @@ public class SequenceGeneratorTest {
     }
 
     assertTrue(remainingSequences.isEmpty());
+  }
+
+  @Test
+  public void testCountOfStepsSinceInitialIndex() {
+    SequenceGenerator<String> sg = new SequenceGenerator<>(largerSet, 4);
+    SequenceGenerator.SequenceIndex si;
+    Set<List<String>> seqs = new HashSet<>();
+
+    for (int i = 0; i < 20; i++) {
+      seqs.add(sg.next());
+    }
+
+    si = sg.getCurrentIndex();
+
+    BigInteger count = si.getNumberOfStepsSinceInitialIndex(largerSet.size(), 1);
+
+    assertEquals(seqs.size(), count.intValue());
   }
 }

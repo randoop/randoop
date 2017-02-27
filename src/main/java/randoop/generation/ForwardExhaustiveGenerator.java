@@ -114,6 +114,9 @@ public class ForwardExhaustiveGenerator extends AbstractGenerator {
         startingIndex =
             SequenceGenerator.SequenceIndex.deserializeFromFile(
                 GenInputsAbstract.generation_index_file);
+        // Update count
+        num_steps =
+            startingIndex.getNumberOfStepsSinceInitialIndex(this.operations.size(), 1).intValue();
       } catch (IOException e) {
         System.out.printf("Error trying to deserializing sequence index file: %s", e);
       }

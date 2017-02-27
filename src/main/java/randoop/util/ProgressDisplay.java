@@ -57,19 +57,14 @@ public class ProgressDisplay extends Thread {
   }
 
   public String message() {
-    return "Progress update: test inputs generated="
-        + generator.num_sequences_generated
-        + ", failing inputs="
-        + generator.num_failing_sequences
+    return "Progress update: "
         + " steps = "
         + generator.num_steps
-        + " generator sequences = "
-        + generator.numGeneratedSequences()
         + " sequences to examine = "
         + GenInputsAbstract.getNumSequencesToBeExamined()
         + "      ("
         + new Date()
-        + ")"
+        + ") \n"
         + " started at "
         + "("
         + GenInputsAbstract.getExecutionStart()
