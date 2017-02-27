@@ -843,6 +843,24 @@ public class RandoopSystemTest {
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
   }
 
+  /**
+   * recreate problem with tests over Google Guava where value from private enum returned by
+   * public method and value used in {@link randoop.test.ObjectCheck} surfaces in test code,
+   * creating uncompilable code.
+   */
+  @Test
+  public void runPrivateEnumTest() {
+    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("private-enum");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("generror.Ints");
+    options.setErrorBasename("LexError");
+    options.setRegressionBasename("LexRegression");
+    options.setOption("timelimit", "30");
+
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
+  }
+
   /* ------------------------------ utility methods ---------------------------------- */
 
   /**

@@ -623,7 +623,7 @@ public class GenTests extends GenInputsAbstract {
       RegressionCaptureVisitor regressionVisitor;
       regressionVisitor =
           new RegressionCaptureVisitor(
-              expectation, observerMap, excludeAsObservers, includeAssertions);
+              expectation, observerMap, excludeAsObservers, visibility, includeAssertions);
 
       testGen = new ExtendGenerator(testGen, regressionVisitor);
     }
