@@ -306,8 +306,15 @@ public class ToradocuConditionCollection implements ConditionCollection {
         try {
           subject = declaringClass.getDeclaredConstructor(parameterTypes);
         } catch (NoSuchMethodException e2) {
-          throw new IllegalArgumentException(
-              "Unable to find subject constructor for Torudocu input (" + documentedMethod + ")");
+          String message =
+              "Unable to find subject constructor for Torudocu input (" + documentedMethod + ")";
+          if (GenInputsAbstract.fail_on_condition_input_error) {
+            throw new IllegalArgumentException(message);
+          }
+          if (Log.isLoggingOn()) {
+            Log.logLine(message);
+          }
+          return null;
         }
         int mods = ((Constructor) subject).getModifiers() & Modifier.constructorModifiers();
         if (Modifier.isPrivate(mods) || Modifier.isProtected(mods)) {
@@ -326,8 +333,15 @@ public class ToradocuConditionCollection implements ConditionCollection {
         try {
           subject = declaringClass.getDeclaredMethod(methodName, parameterTypes);
         } catch (NoSuchMethodException e2) {
-          throw new IllegalArgumentException(
-              "Unable to find subject method for Torudocu input (" + documentedMethod + ")");
+          String message =
+              "Unable to find subject method for Torudocu input (" + documentedMethod + ")";
+          if (GenInputsAbstract.fail_on_condition_input_error) {
+            throw new IllegalArgumentException(message);
+          }
+          if (Log.isLoggingOn()) {
+            Log.logLine(message);
+          }
+          return null;
         }
         int mods = ((Method) subject).getModifiers() & Modifier.classModifiers();
         if (Modifier.isPrivate(mods) || Modifier.isProtected(mods)) {
