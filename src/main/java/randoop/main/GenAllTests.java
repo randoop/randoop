@@ -27,6 +27,7 @@ import randoop.util.predicate.Predicate;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -419,22 +420,28 @@ public class GenAllTests extends GenInputsAbstract {
     if (!GenInputsAbstract.no_error_revealing_tests) {
       List<ExecutableSequence> errorSequences = explorer.getErrorTestSequences();
       if (!errorSequences.isEmpty()) {
-        if (!GenInputsAbstract.noprogressdisplay) {
-          System.out.printf("%nError-revealing test output:%n");
-          System.out.printf("Error-revealing test count: %d%n", errorSequences.size());
-        }
         if (isOutputDuringExecution) {
           if (errorSequences.size() >= errorSubsequenceEndIndex) {
-            outputTests(
-                errorSequences.subList(errorSubsequenceStartIndex, errorSubsequenceEndIndex),
-                GenInputsAbstract.error_test_basename);
-            errorSubsequenceStartIndex = errorSubsequenceEndIndex;
-            errorSubsequenceEndIndex += testsperfile;
+            List<ExecutableSequence> toPrint =
+                errorSequences.subList(errorSubsequenceStartIndex, errorSubsequenceEndIndex);
+            error_seqs_count = error_seqs_count.add(BigInteger.valueOf(toPrint.size()));
+
+            if (!GenInputsAbstract.noprogressdisplay) {
+              System.out.printf("%nError-revealing test output:%n");
+              System.out.printf("Error-revealing test count: %d%n", error_seqs_count);
+            }
+            outputTests(toPrint, GenInputsAbstract.error_test_basename);
+
+            explorer.removeErrorSequences(toPrint);
+            // errorSubsequenceStartIndex = errorSubsequenceEndIndex;
+            // errorSubsequenceEndIndex += testsperfile;
           }
         } else {
-          outputTests(
-              errorSequences.subList(errorSubsequenceStartIndex, errorSequences.size()),
-              GenInputsAbstract.error_test_basename);
+          List<ExecutableSequence> toPrint =
+              errorSequences.subList(errorSubsequenceStartIndex, errorSequences.size());
+          error_seqs_count = error_seqs_count.add(BigInteger.valueOf(toPrint.size()));
+          outputTests(toPrint, GenInputsAbstract.error_test_basename);
+          explorer.removeErrorSequences(toPrint);
         }
       } else {
         if (!GenInputsAbstract.noprogressdisplay) {
@@ -446,25 +453,35 @@ public class GenAllTests extends GenInputsAbstract {
     if (!GenInputsAbstract.no_regression_tests) {
       List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
       if (!regressionSequences.isEmpty()) {
-        if (!GenInputsAbstract.noprogressdisplay) {
-          System.out.printf("%nRegression test output:%n");
-          System.out.printf("Regression test count: %d%n", regressionSequences.size());
-        }
         if (isOutputDuringExecution) {
           if (regressionSequences.size() >= regressionSubsequenceEndIndex) {
-            outputTests(
+            List<ExecutableSequence> dumpedSequences =
                 regressionSequences.subList(
-                    regressionSubsequenceStartIndex, regressionSubsequenceEndIndex),
-                GenInputsAbstract.regression_test_basename);
-            regressionSubsequenceStartIndex = regressionSubsequenceEndIndex;
-            regressionSubsequenceEndIndex += testsperfile;
+                    regressionSubsequenceStartIndex, regressionSubsequenceEndIndex);
+            regression_seqs_count =
+                regression_seqs_count.add(BigInteger.valueOf(dumpedSequences.size()));
+            outputTests(dumpedSequences, GenInputsAbstract.regression_test_basename);
+            // regressionSubsequenceStartIndex = regressionSubsequenceEndIndex;
+            // regressionSubsequenceEndIndex += testsperfile;
+            explorer.removeRegressionSequences(dumpedSequences);
+            if (!GenInputsAbstract.noprogressdisplay) {
+              System.out.printf("%nRegression test output:%n");
+              System.out.printf("Regression test count: %d%n", regression_seqs_count);
+            }
           }
         } else {
           if (regressionSequences.size() >= regressionSubsequenceStartIndex) {
-            outputTests(
+            List<ExecutableSequence> dumpedSequences =
                 regressionSequences.subList(
-                    regressionSubsequenceStartIndex, regressionSequences.size()),
-                GenInputsAbstract.regression_test_basename);
+                    regressionSubsequenceStartIndex, regressionSequences.size());
+            regression_seqs_count =
+                regression_seqs_count.add(BigInteger.valueOf(dumpedSequences.size()));
+            outputTests(dumpedSequences, GenInputsAbstract.regression_test_basename);
+            explorer.removeRegressionSequences(dumpedSequences);
+            if (!GenInputsAbstract.noprogressdisplay) {
+              System.out.printf("%nRegression test output:%n");
+              System.out.printf("Regression test count: %d%n", regression_seqs_count);
+            }
           }
         }
       } else {
@@ -607,9 +624,8 @@ public class GenAllTests extends GenInputsAbstract {
     if (seqList != null && !seqList.isEmpty()) {
       if (sfw == null) {
         sfw = new SequencesFileWriter(output_dir);
-
-        sfw.writeSequences(seqList);
       }
+      sfw.writeSequences(seqList);
     } else {
       System.out.println("No sequences to be written.");
     }

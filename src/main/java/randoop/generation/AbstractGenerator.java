@@ -133,6 +133,18 @@ public abstract class AbstractGenerator {
    */
   public List<ExecutableSequence> outRegressionSeqs = new ArrayList<>();
 
+  public void removeRegressionSequences(List<ExecutableSequence> seqs) {
+    if (seqs != null) {
+      outRegressionSeqs.removeAll(seqs);
+    }
+  }
+
+  public void removeErrorSequences(List<ExecutableSequence> seqs) {
+    if (seqs != null) {
+      outErrorSeqs.removeAll(seqs);
+    }
+  }
+
   /**
    * A filter to determine whether a sequence should be added to the output
    * sequence lists.

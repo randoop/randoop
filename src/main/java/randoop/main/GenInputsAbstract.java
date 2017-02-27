@@ -680,6 +680,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   protected static BigInteger num_sequences_to_be_examined;
 
+  protected static BigInteger regression_seqs_count = BigInteger.ZERO;
+
+  protected static BigInteger error_seqs_count = BigInteger.ZERO;
+
   public static long getMethodsCount() {
     return methods_count;
   }
