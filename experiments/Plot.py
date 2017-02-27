@@ -90,7 +90,7 @@ def boxplot(title, seriesLabels, lst):
 	axes.set_xticklabels(times)
 	axes.set_xticks(getLabelPositions(positions, len(lst)))
 
-	plt.legend(handles=patches)
+	plt.legend(borderaxespad=1, handles=patches, fontsize=10)
 
 
 	# Color the boxplots in colors corresponding to their dataset
@@ -127,7 +127,7 @@ def lineplot(title, seriesLabels, lst):
 		color = color = colors[i % len(lst)]
 		patches.append(mpatches.Patch(color=color, label=seriesLabels[i]))
 	
-	plt.legend(loc=4, borderaxespad=1, handles=patches, fontsize=12)
+	plt.legend(borderaxespad=1, handles=patches, fontsize=10)
 
 	for i in range(len(lst)):
 		series = lst[i]
@@ -152,12 +152,15 @@ def flatten(lst):
 def getMaxPoint(lst):
 	return sorted(flatten(lst), reverse=True)[0]
 
+def avg(lst):
+	return float(sum(lst)) / len(lst)
+
 def plot(isLinePlot, title, seriesLabels, data):
 	plt.figure()
 	
 
 	if isLinePlot:
-		data = [getMedians(x) for x in data]
+		data = [[avg(y) for y in x] for x in data]
 		lineplot(title, seriesLabels, data)
 	else:
 		boxplot(title, seriesLabels, data)
