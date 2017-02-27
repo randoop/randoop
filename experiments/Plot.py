@@ -182,7 +182,9 @@ def outputCsv(numFiles, labels, title, data):
 
 	f = open('csv/%s' % (title,), 'w+')
 
-	medians = [getMedians(x) for x in data]
+	print data[0]
+	avgs = [[avg(y) for y in x] for x in data]
+	#medians = [getMedians(x) for x in data]
 
 	print >> f, 'Time,',
 	for i in range(numFiles):
@@ -194,7 +196,7 @@ def outputCsv(numFiles, labels, title, data):
 		print >> f, '%s,' % times[i],
 
 		for j in range(numFiles):
-			print >> f, '%s,' % medians[j][i],
+			print >> f, '%s,' % avgs[j][i],
 
 		print >> f
 
