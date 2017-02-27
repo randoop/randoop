@@ -417,6 +417,17 @@ public class GenAllTests extends GenInputsAbstract {
   }
 
   private void outputResult(AbstractGenerator explorer, boolean isOutputDuringExecution) {
+
+    System.out.println(
+        " steps = "
+            + explorer.num_steps
+            + " sequences to examine = "
+            + getNumSequencesToBeExamined()
+            + " started at "
+            + "("
+            + GenInputsAbstract.getExecutionStart()
+            + ")");
+
     if (!GenInputsAbstract.no_error_revealing_tests) {
       List<ExecutableSequence> errorSequences = explorer.getErrorTestSequences();
       if (!errorSequences.isEmpty()) {
