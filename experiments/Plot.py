@@ -90,7 +90,7 @@ def boxplot(title, seriesLabels, lst):
 	axes.set_xticklabels(times)
 	axes.set_xticks(getLabelPositions(positions, len(lst)))
 
-	plt.legend(handles=patches)
+	plt.legend(borderaxespad=1, handles=patches, fontsize=10)
 
 
 	# Color the boxplots in colors corresponding to their dataset
@@ -127,7 +127,7 @@ def lineplot(title, seriesLabels, lst):
 		color = color = colors[i % len(lst)]
 		patches.append(mpatches.Patch(color=color, label=seriesLabels[i]))
 	
-	plt.legend(loc=4, borderaxespad=1, handles=patches, fontsize=12)
+	plt.legend(borderaxespad=1, handles=patches, fontsize=10)
 
 	for i in range(len(lst)):
 		series = lst[i]
