@@ -75,8 +75,40 @@ public class ToradocuConditionCollection implements ConditionCollection {
             && method.returnTag() == null) {
           continue;
         }
-        Class<?> declaringClass = getClass(method.getContainingClass());
-        Class<?>[] parameterTypes = getSubjectMethodParameters(method);
+        Class<?> declaringClass = null;
+        try {
+          declaringClass = getClass(method.getContainingClass());
+        } catch (ClassNotFoundException e) {
+          String message =
+              "Unable to load declaring class for Toradocu input "
+                  + method.getContainingClass()
+                  + " "
+                  + e.getMessage();
+          if (GenInputsAbstract.fail_on_condition_input_error) {
+            throw new IllegalArgumentException(message);
+          }
+          if (Log.isLoggingOn()) {
+            Log.logLine(message);
+          }
+          continue;
+        }
+        Class<?>[] parameterTypes = new Class<?>[0];
+        try {
+          parameterTypes = getSubjectMethodParameters(method);
+        } catch (ClassNotFoundException e) {
+          String message =
+              "Unable to load parameter type for Toradocu input "
+                  + method.toString()
+                  + " "
+                  + e.getMessage();
+          if (GenInputsAbstract.fail_on_condition_input_error) {
+            throw new IllegalArgumentException(message);
+          }
+          if (Log.isLoggingOn()) {
+            Log.logLine(message);
+          }
+          continue;
+        }
         Class<?>[] parameters = parameterTypes;
         if (!method.isConstructor()) {
           parameters = createConditionMethodParameters(declaringClass, parameterTypes);
@@ -113,7 +145,23 @@ public class ToradocuConditionCollection implements ConditionCollection {
             String methodName = buildConditionMethodName(throwsTag, tagIndex, methodIndex);
             Method conditionMethod = getConditionMethod(conditionClass, methodName, parameters);
             if (conditionMethod != null) {
-              ClassOrInterfaceType exceptionType = getType(((ThrowsTag) throwsTag).exception());
+              ClassOrInterfaceType exceptionType = null;
+              try {
+                exceptionType = getType(((ThrowsTag) throwsTag).exception());
+              } catch (ClassNotFoundException e) {
+                String message =
+                    "Unable to load exception type for Toradocu input "
+                        + methodName
+                        + " "
+                        + e.getMessage();
+                if (GenInputsAbstract.fail_on_condition_input_error) {
+                  throw new IllegalArgumentException(message);
+                }
+                if (Log.isLoggingOn()) {
+                  Log.logLine(message);
+                }
+                continue;
+              }
               ToradocuCondition condition = new ToradocuCondition(throwsTag, conditionMethod);
               throwsMap.put(
                   condition,
@@ -133,7 +181,22 @@ public class ToradocuConditionCollection implements ConditionCollection {
             String preMethodName = buildReturnConditionMethodName(returnTag, methodIndex, "pre");
             Method preconditionMethod =
                 getConditionMethod(conditionClass, preMethodName, parameters);
-            parameters = addReturnType(parameters, method);
+            try {
+              parameters = addReturnType(parameters, method);
+            } catch (ClassNotFoundException e) {
+              String message =
+                  "Unable to load return type for Toradocu input "
+                      + method.toString()
+                      + " "
+                      + e.getMessage();
+              if (GenInputsAbstract.fail_on_condition_input_error) {
+                throw new IllegalArgumentException(message);
+              }
+              if (Log.isLoggingOn()) {
+                Log.logLine(message);
+              }
+              continue;
+            }
             if (preconditionMethod != null) {
               ToradocuReturnCondition precondition =
                   new ToradocuReturnCondition(returnTag, preconditionString, preconditionMethod);
@@ -286,7 +349,8 @@ public class ToradocuConditionCollection implements ConditionCollection {
    * @param documentedMethod  the method with Toradocu tags
    * @return the {@code Class<?>[]} array for the method parameters
    */
-  private static Class<?>[] getSubjectMethodParameters(DocumentedMethod documentedMethod) {
+  private static Class<?>[] getSubjectMethodParameters(DocumentedMethod documentedMethod)
+      throws ClassNotFoundException {
     Class<?>[] parameters = new Class<?>[documentedMethod.getParameters().size()];
     for (int i = 0; i < documentedMethod.getParameters().size(); i++) {
       Parameter parameter = documentedMethod.getParameters().get(i);
@@ -302,7 +366,8 @@ public class ToradocuConditionCollection implements ConditionCollection {
    * @param method  the subject method to which parameters belong
    * @return {@code parameters} extended by the {@code Class<>} for the subject method return type
    */
-  private static Class<?>[] addReturnType(Class<?>[] parameters, DocumentedMethod method) {
+  private static Class<?>[] addReturnType(Class<?>[] parameters, DocumentedMethod method)
+      throws ClassNotFoundException {
     Class<?>[] conditionMethodParameters = new Class<?>[parameters.length + 1];
     System.arraycopy(parameters, 0, conditionMethodParameters, 0, parameters.length);
     conditionMethodParameters[parameters.length] = getClass(method.getReturnType());
@@ -354,12 +419,8 @@ public class ToradocuConditionCollection implements ConditionCollection {
    * @return the {@code Class<?>} if type represents a valid type name
    * @throws IllegalArgumentException if the type cannot be loaded
    */
-  private static Class<?> getClass(randoop.input.toradocu.Type type) {
-    try {
-      return TypeNames.getTypeForName(type.getQualifiedName());
-    } catch (ClassNotFoundException e) {
-      throw new IllegalArgumentException("Unable to load type for Toradocu input (" + type + ")");
-    }
+  private static Class<?> getClass(randoop.input.toradocu.Type type) throws ClassNotFoundException {
+    return TypeNames.getTypeForName(type.getQualifiedName());
   }
 
   /**
@@ -368,7 +429,8 @@ public class ToradocuConditionCollection implements ConditionCollection {
    * @param type  the type from the Toradocu input
    * @return the {@link ClassOrInterfaceType} for type
    */
-  private static ClassOrInterfaceType getType(randoop.input.toradocu.Type type) {
+  private static ClassOrInterfaceType getType(randoop.input.toradocu.Type type)
+      throws ClassNotFoundException {
     return ClassOrInterfaceType.forClass(getClass(type));
   }
 
