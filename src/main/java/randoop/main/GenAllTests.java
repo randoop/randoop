@@ -433,8 +433,6 @@ public class GenAllTests extends GenInputsAbstract {
             outputTests(toPrint, GenInputsAbstract.error_test_basename);
 
             explorer.removeErrorSequences(toPrint);
-            // errorSubsequenceStartIndex = errorSubsequenceEndIndex;
-            // errorSubsequenceEndIndex += testsperfile;
           }
         } else {
           List<ExecutableSequence> toPrint =
@@ -461,8 +459,6 @@ public class GenAllTests extends GenInputsAbstract {
             regression_seqs_count =
                 regression_seqs_count.add(BigInteger.valueOf(dumpedSequences.size()));
             outputTests(dumpedSequences, GenInputsAbstract.regression_test_basename);
-            // regressionSubsequenceStartIndex = regressionSubsequenceEndIndex;
-            // regressionSubsequenceEndIndex += testsperfile;
             explorer.removeRegressionSequences(dumpedSequences);
             if (!GenInputsAbstract.noprogressdisplay) {
               System.out.printf("%nRegression test output:%n");
