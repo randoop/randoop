@@ -4,10 +4,7 @@ import plume.EntryReader;
 import plume.Options;
 import plume.Options.ArgException;
 import plume.SimpleLog;
-import randoop.DummyVisitor;
-import randoop.ExecutionVisitor;
-import randoop.JunitFileWriter;
-import randoop.MultiVisitor;
+import randoop.*;
 import randoop.generation.*;
 import randoop.generation.exhaustive.SequenceGenerator;
 import randoop.instrument.ExercisedClassVisitor;
@@ -84,6 +81,7 @@ public class GenAllTests extends GenInputsAbstract {
           AbstractGenerator.class);
 
   private static JunitFileWriter jfw;
+  private static SequencesFileWriter sfw;
   private AbstractGenerator explorer;
   private int errorSubsequenceStartIndex = 0;
   private int errorSubsequenceEndIndex = testsperfile;
@@ -213,14 +211,18 @@ public class GenAllTests extends GenInputsAbstract {
       Log.out.println("There are no methods to test. Exiting.");
       System.exit(1);
     }
+
+    methods_count = model.stream().filter(to -> to.getOperation().isMethodCall()).count();
+    execution_start = new Date();
+    num_sequences_to_be_examined =
+        SequenceGenerator.getExpectedNumberOfSequences(methods_count, maxsize);
+
     if (!GenInputsAbstract.noprogressdisplay) {
-      long methodsCount = model.stream().filter(to -> to.getOperation().isMethodCall()).count();
+
       System.out.println("PUBLIC MEMBERS=" + model.size());
-      System.out.println("\tCONSTRUCTORS=" + (model.size() - methodsCount));
-      System.out.println("\tMETHODS=" + methodsCount);
-      System.out.println(
-          "Expected number of sequences: "
-              + SequenceGenerator.getExpectedNumberOfSequences(methodsCount, maxsize));
+      System.out.println("\tCONSTRUCTORS=" + (model.size() - methods_count));
+      System.out.println("\tMETHODS=" + methods_count);
+      System.out.println("Number of sequences to be examined: " + num_sequences_to_be_examined);
     }
 
     /*
@@ -536,7 +538,11 @@ public class GenAllTests extends GenInputsAbstract {
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.printf("Writing JUnit tests...%n");
     }
-    writeJUnitTests(junit_output_dir, sequences, junitPrefix);
+    writeSequencesToFile(junit_output_dir, sequences);
+
+    if (!output_only_sequences) {
+      writeJUnitTests(junit_output_dir, sequences, junitPrefix);
+    }
   }
 
   /**
@@ -597,6 +603,17 @@ public class GenAllTests extends GenInputsAbstract {
     return testGen;
   }
 
+  private static void writeSequencesToFile(String output_dir, List<ExecutableSequence> seqList) {
+    if (seqList != null && !seqList.isEmpty()) {
+      if (sfw == null) {
+        sfw = new SequencesFileWriter(output_dir);
+
+        sfw.writeSequences(seqList);
+      }
+    } else {
+      System.out.println("No sequences to be written.");
+    }
+  }
   /**
    * Writes the sequences as JUnit files to the specified directory.
    *

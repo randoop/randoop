@@ -3,10 +3,8 @@ package randoop.main;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.math.BigInteger;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import plume.EntryReader;
@@ -670,6 +668,29 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Unpublicized
   @Option("Use heuristic that may randomly repeat a method call several times")
   public static boolean repeat_heuristic = false;
+
+  @Option(
+    value = "Do not write junit test classes, instead, only output sequences to sequences file."
+  )
+  public static boolean output_only_sequences;
+
+  protected static long methods_count;
+
+  protected static Date execution_start;
+
+  protected static BigInteger num_sequences_to_be_examined;
+
+  public static long getMethodsCount() {
+    return methods_count;
+  }
+
+  public static Date getExecutionStart() {
+    return execution_start;
+  }
+
+  public static BigInteger getNumSequencesToBeExamined() {
+    return num_sequences_to_be_examined;
+  }
 
   /**
    * Check that the options given satisfy any specified constraints, and fail if

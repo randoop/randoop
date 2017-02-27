@@ -3,6 +3,8 @@ package randoop;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
 
 import com.google.common.base.Charsets;
@@ -208,17 +210,8 @@ public class JunitFileWriter {
   private File writeTestClass(List<ExecutableSequence> sequences, String testClassName) {
 
     File file = new File(getDir(), testClassName + ".java");
-    String mainCUT = GenAllTests.testclass.get(0);
-    if (mainCUT.indexOf(".") >= 0) {
-      mainCUT = mainCUT.substring(mainCUT.lastIndexOf(".") + 1);
-    }
-    File allSequencesFile =
-        new File(
-            getDir(), mainCUT + "_" + "sequences_max_size_" + GenInputsAbstract.maxsize + ".txt");
 
     PrintStream out = createTextOutputStream(file);
-    FileOutputStream outSequences;
-    PrintStream psSeq = null;
 
     NameGenerator methodNameGen = new NameGenerator("test", 1, numDigits(sequences.size()));
 
@@ -264,9 +257,7 @@ public class JunitFileWriter {
         writeTest(out, testClassName, methodNameGen.next(), s);
 
         String cutSequence = getSequenceOfCallsOnCut(s, false);
-        outSequences = createTextOutputStream(allSequencesFile, allSequencesFile.exists());
-        psSeq = new PrintStream(outSequences);
-        psSeq.println(cutSequence);
+
         out.println();
       }
 
@@ -276,10 +267,6 @@ public class JunitFileWriter {
     } finally {
       if (out != null) {
         out.close();
-      }
-
-      if (psSeq != null) {
-        psSeq.close();
       }
     }
 

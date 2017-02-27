@@ -65,8 +65,14 @@ public class ProgressDisplay extends Thread {
         + generator.num_steps
         + " generator sequences = "
         + generator.numGeneratedSequences()
+        + " sequences to examine = "
+        + GenInputsAbstract.getNumSequencesToBeExamined()
         + "      ("
         + new Date()
+        + ")"
+        + " started at "
+        + "("
+        + GenInputsAbstract.getExecutionStart()
         + ")";
   }
 
