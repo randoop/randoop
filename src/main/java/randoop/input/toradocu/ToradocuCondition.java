@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 
 import randoop.condition.Condition;
+import randoop.util.Log;
 
 /**
  * Represents a Toradocu harvested condition.
@@ -47,12 +48,24 @@ public class ToradocuCondition implements Condition {
     } catch (IllegalAccessException e) {
       throw new Error("Failure executing Toradocu condition method: " + e);
     } catch (InvocationTargetException e) {
+      String message =
+          "Failure executing Toradocu condition method: "
+              + conditionMethod
+              + "(invoke threw "
+              + e.getCause()
+              + ")";
+      if (Log.isLoggingOn()) {
+        Log.logLine(message);
+      }
+      return false;
+      /*
       throw new Error(
           "Failure executing Toradocu condition method: "
               + conditionMethod
               + "(invoke threw "
               + e.getCause()
               + ")");
+              */
     }
   }
 
