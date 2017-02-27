@@ -153,7 +153,7 @@ def getMaxPoint(lst):
 	return sorted(flatten(lst), reverse=True)[0]
 
 def avg(lst):
-	return float(sum(lst)) / len(lst)
+	return int(100 * sum(lst) / len(lst)) / 100.0
 
 def plot(isLinePlot, title, seriesLabels, data):
 	plt.figure()
