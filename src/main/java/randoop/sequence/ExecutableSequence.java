@@ -356,6 +356,13 @@ public class ExecutableSequence {
     checks = gen.visit(this);
 
     if (conditionType == ConditionType.NONE) {
+      if (checks.hasInvalidBehavior()) {
+        conditionTransition = Transition.INVALID_TO_INVALID;
+      } else if (checks.hasErrorBehavior()) {
+        conditionTransition = Transition.ERROR_TO_ERROR;
+      } else {
+        conditionTransition = Transition.REGRESSION_TO_REGRESSION;
+      }
       return;
     }
 
@@ -367,28 +374,28 @@ public class ExecutableSequence {
     }
 
     if (conditionChecks.hasInvalidBehavior()) {
-      if (!checks.hasInvalidBehavior()) {
-        if (checks.hasErrorBehavior()) {
-          conditionTransition = Transition.ERROR_TO_INVALID;
-        } else {
-          conditionTransition = Transition.REGRESSION_TO_INVALID;
-        }
+      if (checks.hasInvalidBehavior()) {
+        conditionTransition = Transition.INVALID_TO_INVALID;
+      } else if (checks.hasErrorBehavior()) {
+        conditionTransition = Transition.ERROR_TO_INVALID;
+      } else {
+        conditionTransition = Transition.REGRESSION_TO_INVALID;
       }
-    } else if (conditionChecks.hasErrorBehavior()) { //postcondition failed
-      if (!checks.hasInvalidBehavior()) {
-        if (!checks.hasErrorBehavior()) { //would have been regression
-          conditionTransition = Transition.REGRESSION_TO_ERROR;
-        }
-      } else { // would have been invalid
+    } else if (conditionChecks.hasErrorBehavior()) {
+      if (checks.hasInvalidBehavior()) {
         conditionTransition = Transition.INVALID_TO_ERROR;
+      } else if (checks.hasErrorBehavior()) { //would have been regression
+        conditionTransition = Transition.ERROR_TO_ERROR;
+      } else {
+        conditionTransition = Transition.REGRESSION_TO_ERROR;
       }
-    } else { //postcondition passed
-      if (!checks.hasInvalidBehavior()) {
-        if (checks.hasErrorBehavior()) { // would have been error
-          conditionTransition = Transition.ERROR_TO_REGRESSION;
-        }
-      } else { // would have been invalid
+    } else {
+      if (checks.hasInvalidBehavior()) {
         conditionTransition = Transition.INVALID_TO_REGRESSION;
+      } else if (checks.hasErrorBehavior()) {
+        conditionTransition = Transition.ERROR_TO_REGRESSION;
+      } else {
+        conditionTransition = Transition.REGRESSION_TO_REGRESSION;
       }
     }
 
@@ -398,10 +405,13 @@ public class ExecutableSequence {
   public enum Transition {
     REGRESSION_TO_ERROR,
     REGRESSION_TO_INVALID,
+    REGRESSION_TO_REGRESSION,
     INVALID_TO_ERROR,
+    INVALID_TO_INVALID,
     INVALID_TO_REGRESSION,
     ERROR_TO_INVALID,
     ERROR_TO_REGRESSION,
+    ERROR_TO_ERROR,
     NONE;
   }
 
