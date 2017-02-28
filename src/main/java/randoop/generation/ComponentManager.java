@@ -229,9 +229,6 @@ public class ComponentManager {
 
   //TODO: commenting
   SimpleList<Sequence> getSequencesForTypeGRT(TypedOperation operation, int i) {
-    if (GenInputsAbstract.grt_debug_checks) {
-      //TODO: output stuff for tests
-    }
     Type neededType = operation.getInputTypes().get(i);
     if (Randomness.weightedCoinFlip(GenInputsAbstract.p_const)) {
       ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
