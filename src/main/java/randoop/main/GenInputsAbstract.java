@@ -197,10 +197,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Whether to use GRT constant mining in regression tests")
   public static boolean constant_mining = false;
 
-  @Option("Whether to do GRT specific debugging")
-  public static boolean grt_debug_checks = false;
+  @Option("Whether to do output the .csv of # sequences and avg sequence size")
+  public static boolean output_sequence_info = false;
 
-  @Option("What probability to select the constants mined through GRT constant mining")
+  @Option("What probability to select the constants mined through DigDog constant mining")
   public static double p_const = .01;
   /**
    * The possible values for exception behavior types. The order INVALID, ERROR,

@@ -224,7 +224,7 @@ public class ComponentManager {
         }
       }
     }
-    System.out.println("size of ret: " + ret.size());
+    //System.out.println("size of ret: " + ret.size());
     // TODO: sanity check that Randoop's sequences under their C.M. aren't bad
     return ret;
   }
