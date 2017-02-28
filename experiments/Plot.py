@@ -155,9 +155,11 @@ def getMaxPoint(lst):
 def avg(lst):
 	return int(100 * sum(lst) / len(lst)) / 100.0
 
-def plot(isLinePlot, title, seriesLabels, data):
+def plot(isLinePlot, title, seriesLabels, data, isSmallTest):
 	plt.figure()
 	
+	if isSmallTest:
+		seriesLabels[0] = seriesLabels[0] + '+small-tests'
 
 	if isLinePlot:
 		data = [[avg(y) for y in x] for x in data]
@@ -171,16 +173,19 @@ def plot(isLinePlot, title, seriesLabels, data):
 	plt.ylim(0, getMaxPoint(data) * 1.1)
 
 	# Save plot
-	plt.savefig('plots/%s' % title, format='png')
+	if isSmallTest:
+		plt.savefig('smalltestData/plots/%s' % title, format='png')
+	else:
+		plt.savefig('plots/%s' % title, format='png')
 
 # Output the medians of the datasets to a csv
-def outputCsv(numFiles, labels, title, data):
+def outputCsv(numFiles, labels, title, data, isSmallTest):
 	try:
-		os.remove('csv/%s.csv' % (title,))
+		os.remove('smalltestData/csv/%s.csv' % (title,))
 	except OSError:
 		pass
 
-	f = open('csv/%s.csv' % (title,), 'w+')
+	f = open('smalltestData/csv/%s.csv' % (title,), 'w+')
 
 	avgs = [[avg(y) for y in x] for x in data]
 	#medians = [getMedians(x) for x in data]
@@ -202,12 +207,17 @@ def outputCsv(numFiles, labels, title, data):
 def main():
 	# Set line plot option
 	isLinePlot = False
-	if '-l' in sys.argv:
-		isLinePlot = True
-		sys.argv.remove('-l')
-	elif '--line' in sys.argv:
-		isLinePlot = True
-		sys.argv.remove('--line')
+	isSmallTest = False
+	for i in range(2):
+		if '-l' in sys.argv:
+			isLinePlot = True
+			sys.argv.remove('-l')
+		elif '--line' in sys.argv:
+			isLinePlot = True
+			sys.argv.remove('--line')
+		elif '-s' in sys.argv:
+			isSmallTest = True
+			sys.argv.remove('-s')
 	
 	numFiles = len(sys.argv) - 1
 
@@ -229,9 +239,9 @@ def main():
 		data[i] = data[i][:minLength]
 
 
-	plot(isLinePlot, titles[0], seriesLabels, data)
+	plot(isLinePlot, titles[0], seriesLabels, data, isSmallTest)
 
-	outputCsv(numFiles, seriesLabels, titles[0], data)
+	outputCsv(numFiles, seriesLabels, titles[0], data, isSmallTest)
 
 	data = [[avg(y) for y in x] for x in data]
 	print avg(numpy.array(data[-1]) - numpy.array(data[0]))
