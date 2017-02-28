@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>RandoopClassNameError (randoop 3.0.8-prerelease API)</title>
+<title>RandoopClassNameError (randoop 3.0.9 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="RandoopClassNameError (randoop 3.0.8-prerelease API)";
+            parent.document.title="RandoopClassNameError (randoop 3.0.9 API)";
         }
     }
     catch(err) {
@@ -142,6 +142,10 @@ extends java.lang.Error</pre>
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/RandoopClassNameError.html#className">className</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>private static long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/RandoopClassNameError.html#serialVersionUID">serialVersionUID</a></span></code>&nbsp;</td>
 </tr>
@@ -160,10 +164,12 @@ extends java.lang.Error</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/main/RandoopClassNameError.html#RandoopClassNameError-java.lang.String-">RandoopClassNameError</a></span>(java.lang.String&nbsp;message)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/main/RandoopClassNameError.html#RandoopClassNameError-java.lang.String-java.lang.String-">RandoopClassNameError</a></span>(java.lang.String&nbsp;className,
+                     java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/main/RandoopClassNameError.html#RandoopClassNameError-java.lang.String-java.lang.Throwable-">RandoopClassNameError</a></span>(java.lang.String&nbsp;message,
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/main/RandoopClassNameError.html#RandoopClassNameError-java.lang.String-java.lang.String-java.lang.Throwable-">RandoopClassNameError</a></span>(java.lang.String&nbsp;className,
+                     java.lang.String&nbsp;message,
                      java.lang.Throwable&nbsp;cause)</code>&nbsp;</td>
 </tr>
 </table>
@@ -206,7 +212,7 @@ extends java.lang.Error</pre>
 <a name="serialVersionUID">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>serialVersionUID</h4>
 <pre>private static final&nbsp;long serialVersionUID</pre>
@@ -214,6 +220,15 @@ extends java.lang.Error</pre>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../constant-values.html#randoop.main.RandoopClassNameError.serialVersionUID">Constant Field Values</a></dd>
 </dl>
+</li>
+</ul>
+<a name="className">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>className</h4>
+<pre>public&nbsp;java.lang.String className</pre>
 </li>
 </ul>
 </li>
@@ -224,22 +239,24 @@ extends java.lang.Error</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="RandoopClassNameError-java.lang.String-">
+<a name="RandoopClassNameError-java.lang.String-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>RandoopClassNameError</h4>
-<pre>public&nbsp;RandoopClassNameError(java.lang.String&nbsp;message)</pre>
+<pre>public&nbsp;RandoopClassNameError(java.lang.String&nbsp;className,
+                             java.lang.String&nbsp;message)</pre>
 </li>
 </ul>
-<a name="RandoopClassNameError-java.lang.String-java.lang.Throwable-">
+<a name="RandoopClassNameError-java.lang.String-java.lang.String-java.lang.Throwable-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>RandoopClassNameError</h4>
-<pre>public&nbsp;RandoopClassNameError(java.lang.String&nbsp;message,
+<pre>public&nbsp;RandoopClassNameError(java.lang.String&nbsp;className,
+                             java.lang.String&nbsp;message,
                              java.lang.Throwable&nbsp;cause)</pre>
 </li>
 </ul>

@@ -1,11 +1,14 @@
 [
   {
+    "signature": "isOpen()",
+    "name": "isOpen",
     "containingClass": {
       "qualifiedName": "net.Connection",
       "name": "Connection",
       "isArray": false
     },
-    "name": "isOpen",
+    "targetClass": "net.Connection",
+    "isVarArgs": false,
     "returnType": {
       "qualifiedName": "boolean",
       "name": "boolean",
@@ -13,18 +16,18 @@
     },
     "parameters": [],
     "paramTags": [],
-    "isVarArgs": false,
-    "throwsTags": [],
-    "signature": "isOpen()",
-    "targetClass": "net.Connection"
+    "throwsTags": []
   },
   {
+    "signature": "open()",
+    "name": "open",
     "containingClass": {
       "qualifiedName": "net.Connection",
       "name": "Connection",
       "isArray": false
     },
-    "name": "open",
+    "targetClass": "net.Connection",
+    "isVarArgs": false,
     "returnType": {
       "qualifiedName": "void",
       "name": "void",
@@ -32,7 +35,6 @@
     },
     "parameters": [],
     "paramTags": [],
-    "isVarArgs": false,
     "throwsTags": [
       {
         "exception": {
@@ -45,17 +47,18 @@
         "kind": "THROWS",
         "condition": "target.isOpen()"
       }
-    ],
-    "signature": "open()",
-    "targetClass": "net.Connection"
+    ]
   },
   {
+    "signature": "send(java.lang.String message)",
+    "name": "send",
     "containingClass": {
       "qualifiedName": "net.Connection",
       "name": "Connection",
       "isArray": false
     },
-    "name": "send",
+    "targetClass": "net.Connection",
+    "isVarArgs": false,
     "returnType": {
       "qualifiedName": "void",
       "name": "void",
@@ -72,7 +75,6 @@
       }
     ],
     "paramTags": [],
-    "isVarArgs": false,
     "throwsTags": [
       {
         "exception": {
@@ -96,17 +98,18 @@
         "kind": "THROWS",
         "condition": "(target.isOpen()) == false"
       }
-    ],
-    "signature": "send(java.lang.String message)",
-    "targetClass": "net.Connection"
+    ]
   },
   {
+    "signature": "send(int code)",
+    "name": "send",
     "containingClass": {
       "qualifiedName": "net.Connection",
       "name": "Connection",
       "isArray": false
     },
-    "name": "send",
+    "targetClass": "net.Connection",
+    "isVarArgs": false,
     "returnType": {
       "qualifiedName": "void",
       "name": "void",
@@ -137,7 +140,6 @@
         "condition": "args[0]>0"
       }
     ],
-    "isVarArgs": false,
     "throwsTags": [
       {
         "exception": {
@@ -150,8 +152,6 @@
         "kind": "THROWS",
         "condition": "(target.isOpen()) == false"
       }
-    ],
-    "signature": "send(int code)",
-    "targetClass": "net.Connection"
+    ]
   }
 ]

@@ -571,22 +571,46 @@ public class ClassFileConstants {
         throw new Error("Class " + cs.classname + " not found on the classpath.");
       }
       for (Integer x : cs.ints) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.INT_TYPE, x));
+        try {
+          map.add(clazz, new NonreceiverTerm(JavaTypes.INT_TYPE, x));
+        } catch (IllegalArgumentException e) {
+          System.out.println("Ignoring int constant value: " + e.getMessage());
+        }
       }
       for (Long x : cs.longs) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.LONG_TYPE, x));
+        try {
+          map.add(clazz, new NonreceiverTerm(JavaTypes.LONG_TYPE, x));
+        } catch (IllegalArgumentException e) {
+          System.out.println("Ignoring long constant value: " + e.getMessage());
+        }
       }
       for (Float x : cs.floats) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x));
+        try {
+          map.add(clazz, new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x));
+        } catch (IllegalArgumentException e) {
+          System.out.println("Ignoring float constant value: " + e.getMessage());
+        }
       }
       for (Double x : cs.doubles) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
+        try {
+          map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
+        } catch (IllegalArgumentException e) {
+          System.out.println("Ignoring double constant value: " + e.getMessage());
+        }
       }
       for (String x : cs.strings) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
+        try {
+          map.add(clazz, new NonreceiverTerm(JavaTypes.STRING_TYPE, x));
+        } catch (IllegalArgumentException e) {
+          System.out.println("Ignoring String constant value: " + e.getMessage());
+        }
       }
       for (Class<?> x : cs.classes) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
+        try {
+          map.add(clazz, new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
+        } catch (IllegalArgumentException e) {
+          System.out.println("Ignoring Class<?> constant value: " + e.getMessage());
+        }
       }
     }
     return map;

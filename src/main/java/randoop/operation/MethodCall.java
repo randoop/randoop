@@ -1,6 +1,7 @@
 package randoop.operation;
 
 import java.io.PrintStream;
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
@@ -293,6 +294,11 @@ public final class MethodCall extends CallableOperation {
 
   public String getName() {
     return method.getName();
+  }
+
+  @Override
+  public Method getReflectionObject() {
+    return method;
   }
 
   /**

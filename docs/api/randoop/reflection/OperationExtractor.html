@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>OperationExtractor (randoop 3.0.8-prerelease API)</title>
+<title>OperationExtractor (randoop 3.0.9 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="OperationExtractor (randoop 3.0.8-prerelease API)";
+            parent.document.title="OperationExtractor (randoop 3.0.9 API)";
         }
     }
     catch(err) {
@@ -154,18 +154,24 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>private <a href="../../randoop/condition/ConditionCollection.html" title="interface in randoop.condition">ConditionCollection</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationExtractor.html#operationConditions">operationConditions</a></span></code>
+<div class="block">The collection of pre/post/throws-conditions to add to operations</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>private java.util.Collection&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationExtractor.html#operations">operations</a></span></code>
 <div class="block">The collection of operations</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationExtractor.html#predicate">predicate</a></span></code>
 <div class="block">The predicate that implements reflection policy for collecting operations</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationExtractor.html#visibilityPredicate">visibilityPredicate</a></span></code>
 <div class="block">The predicate to test visibility</div>
@@ -189,7 +195,14 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationExtractor.html#OperationExtractor-randoop.types.ClassOrInterfaceType-java.util.Collection-randoop.reflection.ReflectionPredicate-randoop.reflection.VisibilityPredicate-">OperationExtractor</a></span>(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;classType,
                   java.util.Collection&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;operations,
                   <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;predicate,
-                  <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a>&nbsp;visibilityPredicate)</code>
+                  <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a>&nbsp;visibilityPredicate)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationExtractor.html#OperationExtractor-randoop.types.ClassOrInterfaceType-java.util.Collection-randoop.reflection.ReflectionPredicate-randoop.reflection.VisibilityPredicate-randoop.condition.ConditionCollection-">OperationExtractor</a></span>(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;classType,
+                  java.util.Collection&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;operations,
+                  <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;predicate,
+                  <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a>&nbsp;visibilityPredicate,
+                  <a href="../../randoop/condition/ConditionCollection.html" title="interface in randoop.condition">ConditionCollection</a>&nbsp;operationConditions)</code>
 <div class="block">Creates a visitor object that collects the <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation"><code>TypedOperation</code></a> objects corresponding to
  members of the class type and satisfying the given predicate.</div>
 </td>
@@ -217,7 +230,7 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationExtractor.html#visit-java.lang.reflect.Constructor-">visit</a></span>(java.lang.reflect.Constructor&lt;?&gt;&nbsp;c)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationExtractor.html#visit-java.lang.reflect.Constructor-">visit</a></span>(java.lang.reflect.Constructor&lt;?&gt;&nbsp;constructor)</code>
 <div class="block">Creates a <a href="../../randoop/operation/ConstructorCall.html" title="class in randoop.operation"><code>ConstructorCall</code></a> object for the <code>Constructor</code>.</div>
 </td>
 </tr>
@@ -299,6 +312,16 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <div class="block">The collection of operations</div>
 </li>
 </ul>
+<a name="operationConditions">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>operationConditions</h4>
+<pre>private final&nbsp;<a href="../../randoop/condition/ConditionCollection.html" title="interface in randoop.condition">ConditionCollection</a> operationConditions</pre>
+<div class="block">The collection of pre/post/throws-conditions to add to operations</div>
+</li>
+</ul>
 <a name="classType">
 <!--   -->
 </a>
@@ -317,6 +340,29 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
+<a name="OperationExtractor-randoop.types.ClassOrInterfaceType-java.util.Collection-randoop.reflection.ReflectionPredicate-randoop.reflection.VisibilityPredicate-randoop.condition.ConditionCollection-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>OperationExtractor</h4>
+<pre>public&nbsp;OperationExtractor(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;classType,
+                          java.util.Collection&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;operations,
+                          <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;predicate,
+                          <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a>&nbsp;visibilityPredicate,
+                          <a href="../../randoop/condition/ConditionCollection.html" title="interface in randoop.condition">ConditionCollection</a>&nbsp;operationConditions)</pre>
+<div class="block">Creates a visitor object that collects the <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation"><code>TypedOperation</code></a> objects corresponding to
+ members of the class type and satisfying the given predicate.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>classType</code> - the declaring classtype for collected operations</dd>
+<dd><code>operations</code> - the collection of operations</dd>
+<dd><code>predicate</code> - the reflection predicate</dd>
+<dd><code>visibilityPredicate</code> - the predicate for test visibility</dd>
+<dd><code>operationConditions</code> - the collection of conditions to add to operations</dd>
+</dl>
+</li>
+</ul>
 <a name="OperationExtractor-randoop.types.ClassOrInterfaceType-java.util.Collection-randoop.reflection.ReflectionPredicate-randoop.reflection.VisibilityPredicate-">
 <!--   -->
 </a>
@@ -327,15 +373,6 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
                           java.util.Collection&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;operations,
                           <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;predicate,
                           <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a>&nbsp;visibilityPredicate)</pre>
-<div class="block">Creates a visitor object that collects the <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation"><code>TypedOperation</code></a> objects corresponding to
- members of the class type and satisfying the given predicate.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>classType</code> - the declaring classtype for collected operations</dd>
-<dd><code>operations</code> - the collection of operations</dd>
-<dd><code>predicate</code> - the reflection predicate</dd>
-<dd><code>visibilityPredicate</code> - the predicate for test visibility</dd>
-</dl>
 </li>
 </ul>
 </li>
@@ -368,7 +405,7 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <ul class="blockList">
 <li class="blockList">
 <h4>visit</h4>
-<pre>public&nbsp;void&nbsp;visit(java.lang.reflect.Constructor&lt;?&gt;&nbsp;c)</pre>
+<pre>public&nbsp;void&nbsp;visit(java.lang.reflect.Constructor&lt;?&gt;&nbsp;constructor)</pre>
 <div class="block">Creates a <a href="../../randoop/operation/ConstructorCall.html" title="class in randoop.operation"><code>ConstructorCall</code></a> object for the <code>Constructor</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
@@ -376,7 +413,7 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/reflection/DefaultClassVisitor.html#visit-java.lang.reflect.Constructor-">visit</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/reflection/DefaultClassVisitor.html" title="class in randoop.reflection">DefaultClassVisitor</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>c</code> - a <code>Constructor</code> object to be represented as an
+<dd><code>constructor</code> - a <code>Constructor</code> object to be represented as an
            <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a>.</dd>
 </dl>
 </li>
