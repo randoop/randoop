@@ -191,13 +191,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Whether to include assertions in regression tests")
   public static boolean no_regression_assertions = false;
 
-  @Option("Whether to use orieteering in regression tests")
+  @Option("Whether to use DigDog orienteering in regression tests")
   public static boolean orienteering = false;
 
-  @Option("Whether to use GRT constant mining in regression tests")
+  @Option("Whether to use DigDog constant mining in regression tests")
   public static boolean constant_mining = false;
 
-  @Option("Whether to do output the .csv of # sequences and avg sequence size")
+  @Option("Whether to do output the sequenceInfo.csv of # sequences and avg sequence size")
   public static boolean output_sequence_info = false;
 
   @Option("What probability to select the constants mined through DigDog constant mining")
