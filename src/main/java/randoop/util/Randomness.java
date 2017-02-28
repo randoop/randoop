@@ -93,10 +93,6 @@ public final class Randomness {
   public static <T extends WeightedElement> T randomMemberWeighted(
       SimpleList<T> list, Map<WeightedElement, Double> weights) {
 
-    if (GenInputsAbstract.grt_debug_checks) {
-      //TODO: output stuff for tests
-    }
-
     // Find interval length.
     double max = 0;
     List<Double> cumulativeWeights = new ArrayList<>();
@@ -121,6 +117,7 @@ public final class Randomness {
     double randomPoint = Randomness.random.nextDouble() * max;
 
     return list.get(binarySearchForIndex(list, cumulativeWeights, randomPoint));
+    // TODO:    throw new BugInRandoopException();
   }
 
   private static int binarySearchForIndex(

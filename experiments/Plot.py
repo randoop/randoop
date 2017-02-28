@@ -7,11 +7,11 @@ import matplotlib.patches as mpatches
 
 projects = ['Chart', 'Math', 'Time', 'Lang']
 times = []
-colors = ['pink', 'lightblue', 'thistle', 'paletuquoise', 'lightcoral', 'lightgreen']
+colors = ['pink', 'lightblue', 'thistle', 'lightgreen', 'paleturquoise', 'lightcoral']
 # Marker codes for pyplot
 markers = ['o', 's', 'D', '^', 'p', '*']
 # Linestyles for pyplot
-linestyles = ['-', '--', ':', '_.']
+linestyles = ['-', '--', ':', '-.']
 
 def readData(fileName):
 	f = open(fileName, 'r')
@@ -20,11 +20,9 @@ def readData(fileName):
 	fileName = re.split('/', fileName)[-1]
 	project, exp, condition, metric, ext = re.split('[_.]', fileName)
 
-	if exp == 'Complete':
-		pass	
-	elif exp == 'Individual':
-		# Store the data in the format timeLimit: [covered[], total]
-		data = []
+	
+	# Store the data in the format timeLimit: [covered[], total]
+	data = []
 
 	lines = f.readlines()
 
@@ -58,7 +56,7 @@ def readData(fileName):
 
 		i += 2
 
-	title = '%s %s Coverage Percentage' % (project, metric,)
+	title = '%s %s %s Coverage Percentage' % (project, exp, metric,)
 	return (title, condition, data)
 
 
@@ -92,7 +90,7 @@ def boxplot(title, seriesLabels, lst):
 	axes.set_xticklabels(times)
 	axes.set_xticks(getLabelPositions(positions, len(lst)))
 
-	plt.legend(handles=patches)
+	plt.legend(borderaxespad=1, handles=patches, fontsize=10)
 
 
 	# Color the boxplots in colors corresponding to their dataset
@@ -129,7 +127,7 @@ def lineplot(title, seriesLabels, lst):
 		color = color = colors[i % len(lst)]
 		patches.append(mpatches.Patch(color=color, label=seriesLabels[i]))
 	
-	plt.legend(loc=4, borderaxespad=1, handles=patches, fontsize=12)
+	plt.legend(borderaxespad=1, handles=patches, fontsize=10)
 
 	for i in range(len(lst)):
 		series = lst[i]
@@ -154,17 +152,20 @@ def flatten(lst):
 def getMaxPoint(lst):
 	return sorted(flatten(lst), reverse=True)[0]
 
+def avg(lst):
+	return int(100 * sum(lst) / len(lst)) / 100.0
+
 def plot(isLinePlot, title, seriesLabels, data):
 	plt.figure()
 	
 
 	if isLinePlot:
-		data = [getMedians(x) for x in data]
+		data = [[avg(y) for y in x] for x in data]
 		lineplot(title, seriesLabels, data)
 	else:
 		boxplot(title, seriesLabels, data)
 
-	plt.title(title)
+	#plt.title(title)
 	plt.xlabel('Global Time Limit (s)')
 	plt.ylabel('Coverage (%)')
 	plt.ylim(0, getMaxPoint(data) * 1.1)
@@ -175,13 +176,15 @@ def plot(isLinePlot, title, seriesLabels, data):
 # Output the medians of the datasets to a csv
 def outputCsv(numFiles, labels, title, data):
 	try:
-		os.remove('csv/%s' % (title,))
+		os.remove('csv/%s.csv' % (title,))
 	except OSError:
 		pass
 
-	f = open('csv/%s' % (title,), 'w+')
+	f = open('csv/%s.csv' % (title,), 'w+')
 
-	medians = [getMedians(x) for x in data]
+	print data[0]
+	avgs = [[avg(y) for y in x] for x in data]
+	#medians = [getMedians(x) for x in data]
 
 	print >> f, 'Time,',
 	for i in range(numFiles):
@@ -193,7 +196,7 @@ def outputCsv(numFiles, labels, title, data):
 		print >> f, '%s,' % times[i],
 
 		for j in range(numFiles):
-			print >> f, '%s,' % medians[j][i],
+			print >> f, '%s,' % avgs[j][i],
 
 		print >> f
 
