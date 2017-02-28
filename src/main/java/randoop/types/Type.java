@@ -382,7 +382,7 @@ public abstract class Type implements Comparable<Type> {
     if (value == null) {
       return !this.isPrimitive();
     }
-    Type type = Type.forClass(value.getClass());
+    Type type = Type.forValue(value);
     return this.isAssignableFrom(type);
   }
 

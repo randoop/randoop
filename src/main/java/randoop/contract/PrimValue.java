@@ -66,7 +66,7 @@ public final class PrimValue implements ObjectContract {
     if (value == null) {
       throw new IllegalArgumentException("value cannot be null");
     }
-    Type type = Type.forClass(value.getClass());
+    Type type = Type.forValue(value);
     if (!type.isBoxedPrimitive() && !type.isString()) {
       throw new IllegalArgumentException(
           "value is not a primitive or string : " + value.getClass());

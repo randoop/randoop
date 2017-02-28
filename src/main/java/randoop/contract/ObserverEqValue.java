@@ -61,7 +61,7 @@ public final class ObserverEqValue implements ObjectContract {
     assert observer.isMethodCall() : "Observer must be MethodCall, got " + observer;
     this.observer = observer;
     this.value = value;
-    Type type = Type.forClass(this.value.getClass());
+    Type type = Type.forValue(this.value);
     assert (this.value == null) || type.isBoxedPrimitive() || type.isString()
         : "obs value/class = "
             + this.value

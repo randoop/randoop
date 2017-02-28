@@ -18,7 +18,7 @@ public final class EnumValue implements ObjectContract {
 
   public EnumValue(Enum<?> value) {
     this.value = value;
-    this.type = Type.forClass(value.getClass());
+    this.type = Type.forValue(value);
   }
 
   @Override

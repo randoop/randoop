@@ -31,7 +31,7 @@ public class Value {
       return "null";
     }
 
-    Type valueType = Type.forClass(value.getClass());
+    Type valueType = Type.forValue(value);
     assert TypedOperation.isNonreceiverType(valueType)
         : "expecting nonreceiver type, have " + valueType;
 
