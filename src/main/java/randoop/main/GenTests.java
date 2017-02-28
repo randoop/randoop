@@ -406,7 +406,7 @@ public class GenTests extends GenInputsAbstract {
       }
     }
 
-    // TODO: output test results here I think instead of ForwardGenerator
+    // TODO: output to file for sequence comparison between DigDog/Randoop
     if (GenInputsAbstract.grt_debug_checks) {
       ForwardGenerator fExplorer = (ForwardGenerator) explorer; // hope this works
       Map<Sequence, List<String>> debugMap = fExplorer.getDebugMap();
