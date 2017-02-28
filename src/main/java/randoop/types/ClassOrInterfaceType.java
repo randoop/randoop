@@ -2,7 +2,6 @@ package randoop.types;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
@@ -454,5 +453,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
   public boolean isClassType() {
     return true;
+  }
+
+  public ParameterTable getParameterTable() {
+    return ParameterTable.emptyTable();
   }
 }

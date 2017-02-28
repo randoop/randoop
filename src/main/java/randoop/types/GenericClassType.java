@@ -15,8 +15,7 @@ public class GenericClassType extends ParameterizedType {
   /** The rawtype of the generic class. */
   private Class<?> rawType;
 
-  /** The type parameters of the generic class. */
-  private List<TypeVariable> parameters;
+  private ParameterTable parameterTable;
 
   /**
    * Creates a {@link GenericClassType} for the given raw type.
@@ -25,12 +24,7 @@ public class GenericClassType extends ParameterizedType {
    */
   GenericClassType(Class<?> rawType) {
     this.rawType = rawType;
-    this.parameters = new ArrayList<>();
-
-    for (java.lang.reflect.TypeVariable<?> v : rawType.getTypeParameters()) {
-      TypeVariable variable = TypeVariable.forType(v);
-      this.parameters.add(variable);
-    }
+    this.parameterTable = ParameterTable.createTable(rawType.getTypeParameters());
   }
 
   /**
@@ -71,7 +65,7 @@ public class GenericClassType extends ParameterizedType {
   @Override
   public InstantiatedType apply(Substitution<ReferenceType> substitution) {
     List<TypeArgument> argumentList = new ArrayList<>();
-    for (TypeVariable variable : parameters) {
+    for (TypeVariable variable : parameterTable.getParameters()) {
       ReferenceType referenceType = substitution.get(variable);
       if (referenceType == null) {
         referenceType = variable;
@@ -177,7 +171,7 @@ public class GenericClassType extends ParameterizedType {
   @Override
   public List<TypeArgument> getTypeArguments() {
     List<TypeArgument> argumentList = new ArrayList<>();
-    for (TypeVariable v : parameters) {
+    for (TypeVariable v : parameterTable.getParameters()) {
       argumentList.add(TypeArgument.forType(v));
     }
     return argumentList;
@@ -191,8 +185,13 @@ public class GenericClassType extends ParameterizedType {
   @Override
   public List<TypeVariable> getTypeParameters() {
     List<TypeVariable> params = super.getTypeParameters();
-    params.addAll(parameters);
+    params.addAll(parameterTable.getParameters());
     return params;
+  }
+
+  @Override
+  public ParameterTable getParameterTable() {
+    return parameterTable;
   }
 
   /**
@@ -207,6 +206,7 @@ public class GenericClassType extends ParameterizedType {
       throw new IllegalArgumentException("number of arguments and parameters must match");
     }
 
+    List<TypeVariable> parameters = parameterTable.getParameters();
     Substitution<ReferenceType> substitution =
         Substitution.forArgs(this.getTypeParameters(), typeArguments);
     for (int i = 0; i < parameters.size(); i++) {
@@ -232,7 +232,7 @@ public class GenericClassType extends ParameterizedType {
     if (typeArguments.size() != this.getTypeParameters().size()) {
       throw new IllegalArgumentException("number of arguments and parameters must match");
     }
-
+    List<TypeVariable> parameters = parameterTable.getParameters();
     Substitution<ReferenceType> substitution =
         Substitution.forArgs(this.getTypeParameters(), typeArguments);
     for (int i = 0; i < parameters.size(); i++) {
