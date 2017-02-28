@@ -20,12 +20,11 @@ public class ParameterizedTypeTest {
 
   @Test
   public void testAssignability() {
-    Type strALType =
-        GenericClassType.forClass(ArrayList.class)
-            .instantiate(new NonParameterizedType(String.class));
+
+    Type strALType = JDKTypes.ARRAY_LIST_TYPE.instantiate(JavaTypes.STRING_TYPE);
     Type intALType =
         GenericClassType.forClass(ArrayList.class)
-            .instantiate(new NonParameterizedType(Integer.class));
+            .instantiate(JavaTypes.INT_TYPE.toBoxedPrimitive());
     Type objALType =
         GenericClassType.forClass(ArrayList.class)
             .instantiate(new NonParameterizedType(Object.class));
@@ -42,17 +41,16 @@ public class ParameterizedTypeTest {
         "ArrayList<Integer> cannot be assigned to ArrayList<Number>",
         objALType.isAssignableFrom(intALType));
 
-    Type intType = new NonParameterizedType(Integer.class);
+    Type intType = JavaTypes.INT_TYPE.toBoxedPrimitive();
     Type intCompType =
         GenericClassType.forClass(Comparable.class)
-            .instantiate(new NonParameterizedType(Integer.class));
+            .instantiate(JavaTypes.INT_TYPE.toBoxedPrimitive());
     assertTrue("Integer assignable to Comparable<Integer>", intCompType.isAssignableFrom(intType));
     assertFalse(
         "Comparable<Integer> not assignable to Integer", intType.isAssignableFrom(intCompType));
 
     Type strCompType =
-        GenericClassType.forClass(Comparable.class)
-            .instantiate(new NonParameterizedType(String.class));
+        GenericClassType.forClass(Comparable.class).instantiate(JavaTypes.STRING_TYPE);
     assertTrue(
         "Comparable<Integer> assignable to Comparable<Integer>",
         intCompType.isAssignableFrom(intCompType));
@@ -60,20 +58,19 @@ public class ParameterizedTypeTest {
         "Comparable<Integer> is not assignable from Comparable<String>",
         intCompType.isAssignableFrom(strCompType));
 
-    Type intArrayType = ArrayType.ofComponentType(new NonParameterizedType(Integer.class));
+    Type intArrayType = ArrayType.ofComponentType(JavaTypes.INT_TYPE.toBoxedPrimitive());
     assertFalse(
         "Comparable<Integer> not assignable from Integer[]",
         intCompType.isAssignableFrom(intArrayType));
 
     // class A<T> implements Comparable<T> {}
     Type intAType =
-        GenericClassType.forClass(A.class).instantiate(new NonParameterizedType(Integer.class));
+        GenericClassType.forClass(A.class).instantiate(JavaTypes.INT_TYPE.toBoxedPrimitive());
     assertTrue(
         "A<Integer> assignable to Comparable<Integer>", intCompType.isAssignableFrom(intAType));
 
     // class B extends A<String> {}
-    Type strAType =
-        GenericClassType.forClass(A.class).instantiate(new NonParameterizedType(String.class));
+    Type strAType = GenericClassType.forClass(A.class).instantiate(JavaTypes.STRING_TYPE);
     Type bType = new NonParameterizedType(B.class);
     assertTrue("B assignable to A<String>", strAType.isAssignableFrom(bType));
     assertTrue("B assignable to Comparable<String>", strCompType.isAssignableFrom(bType));
@@ -84,10 +81,8 @@ public class ParameterizedTypeTest {
     assertFalse("C not assignable to Comparable<String>", strCompType.isAssignableFrom(cType));
 
     // class H<T> extends G<T> implements Comparable<T> {}
-    Type strHType =
-        GenericClassType.forClass(H.class).instantiate(new NonParameterizedType(String.class));
-    Type strGType =
-        GenericClassType.forClass(G.class).instantiate(new NonParameterizedType(String.class));
+    Type strHType = GenericClassType.forClass(H.class).instantiate(JavaTypes.STRING_TYPE);
+    Type strGType = GenericClassType.forClass(G.class).instantiate(JavaTypes.STRING_TYPE);
     assertTrue("H<String> assignable to G<String>", strGType.isAssignableFrom(strHType));
     assertTrue(
         "H<String> assignable to Comparable<String>", strCompType.isAssignableFrom(strHType));
@@ -95,8 +90,7 @@ public class ParameterizedTypeTest {
     // class D<S,T> extends A<T> {}
     Type strIntDType =
         GenericClassType.forClass(D.class)
-            .instantiate(
-                new NonParameterizedType(String.class), new NonParameterizedType(Integer.class));
+            .instantiate(JavaTypes.STRING_TYPE, JavaTypes.INT_TYPE.toBoxedPrimitive());
     assertTrue(
         "D<String,Integer> assignable to A<Integer>", intAType.isAssignableFrom(strIntDType));
     assertFalse(
@@ -105,20 +99,17 @@ public class ParameterizedTypeTest {
     // class E<S,T> {}
     Type strIntEType =
         GenericClassType.forClass(E.class)
-            .instantiate(
-                new NonParameterizedType(String.class), new NonParameterizedType(Integer.class));
+            .instantiate(JavaTypes.STRING_TYPE, JavaTypes.INT_TYPE.toBoxedPrimitive());
     // class F<T,S> extends E<S,T> {}
     Type intStrFType =
         GenericClassType.forClass(F.class)
-            .instantiate(
-                new NonParameterizedType(Integer.class), new NonParameterizedType(String.class));
+            .instantiate(JavaTypes.INT_TYPE.toBoxedPrimitive(), JavaTypes.STRING_TYPE);
     assertTrue(
         "F<Integer,String> assignable to E<String,Integer>",
         strIntEType.isAssignableFrom(intStrFType));
     Type strIntFType =
         GenericClassType.forClass(F.class)
-            .instantiate(
-                new NonParameterizedType(String.class), new NonParameterizedType(Integer.class));
+            .instantiate(JavaTypes.STRING_TYPE, JavaTypes.INT_TYPE.toBoxedPrimitive());
     assertFalse(
         "F<String,Integer> not assignable to E<String,Integer>",
         strIntEType.isAssignableFrom(strIntFType));
@@ -126,9 +117,7 @@ public class ParameterizedTypeTest {
 
   @Test
   public void testNames() {
-    Type strALType =
-        GenericClassType.forClass(ArrayList.class)
-            .instantiate(new NonParameterizedType(String.class));
+    Type strALType = GenericClassType.forClass(ArrayList.class).instantiate(JavaTypes.STRING_TYPE);
     assertEquals(
         "parameterized type name ", "java.util.ArrayList<java.lang.String>", strALType.getName());
   }
