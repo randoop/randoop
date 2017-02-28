@@ -182,7 +182,6 @@ def outputCsv(numFiles, labels, title, data):
 
 	f = open('csv/%s.csv' % (title,), 'w+')
 
-	print data[0]
 	avgs = [[avg(y) for y in x] for x in data]
 	#medians = [getMedians(x) for x in data]
 
@@ -233,6 +232,9 @@ def main():
 	plot(isLinePlot, titles[0], seriesLabels, data)
 
 	outputCsv(numFiles, seriesLabels, titles[0], data)
+
+	data = [[avg(y) for y in x] for x in data]
+	print avg(numpy.array(data[-1]) - numpy.array(data[0]))
 
 if __name__ == '__main__':
     main()
