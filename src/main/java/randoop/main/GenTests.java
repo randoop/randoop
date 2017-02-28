@@ -423,14 +423,17 @@ public class GenTests extends GenInputsAbstract {
    * @param debugMap
    */
   private void writeTestInfo(Map<Sequence, List<String>> debugMap) {
-    File tempDir = new File("test.csv");
+    File tempDir = new File("sequenceInfo.csv");
     PrintStream out;
     try {
       if (!tempDir.exists()) {
         tempDir.createNewFile();
-        out = createTextOutputStream("test.csv"); // TODO: maybe just new FileOutputStream(..)
+        out =
+            createTextOutputStream("sequenceInfo.csv"); // TODO: maybe just new FileOutputStream(..)
       } else {
-        out = new PrintStream(new FileOutputStream("test.csv", true)); // shouldn't really happen
+        out =
+            new PrintStream(
+                new FileOutputStream("sequenceInfo.csv", true)); // shouldn't really happen
       }
       StringBuilder header = new StringBuilder();
       header.append("Sequence hash");

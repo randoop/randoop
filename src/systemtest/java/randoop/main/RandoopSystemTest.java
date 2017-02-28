@@ -912,7 +912,7 @@ public class RandoopSystemTest {
    * @param newFileName
    */
   private void renameOutputTo(String newFileName) {
-    File tempDir = new File("test.csv");
+    File tempDir = new File("sequenceInfo.csv");
     File result = new File(newFileName);
     boolean renamed = tempDir.renameTo(result);
     if (!renamed) {
