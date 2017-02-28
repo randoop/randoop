@@ -428,13 +428,14 @@ public class GenTests extends GenInputsAbstract {
     try {
       if (!tempDir.exists()) {
         tempDir.createNewFile();
-        out =
-            createTextOutputStream("sequenceInfo.csv"); // TODO: maybe just new FileOutputStream(..)
-      } else {
+      }
+      // always overwrite
+      out = createTextOutputStream("sequenceInfo.csv"); // TODO: maybe just new FileOutputStream(..)
+      /*} else {
         out =
             new PrintStream(
                 new FileOutputStream("sequenceInfo.csv", true)); // shouldn't really happen
-      }
+      }*/
       StringBuilder header = new StringBuilder();
       header.append("Sequence hash");
       header.append(',');
@@ -459,12 +460,12 @@ public class GenTests extends GenInputsAbstract {
       header.append("weight actually used");
       // TODO: header.append(',')?
       StringBuilder body = new StringBuilder();
-
-      for (Sequence seq : debugMap.keySet()) {
+      TreeSet<Sequence> orderedKeySet = new TreeSet<>(debugMap.keySet());
+      for (Sequence seq : orderedKeySet) {
         body.append(seq.hashCode());
         int i = 0;
         for (String str : debugMap.get(seq)) {
-          if (i != 0) {
+          if (i != 0) { // filler, b/c this entry is the same sequence as before
             body.append("-------");
           }
           body.append(',');
