@@ -859,9 +859,11 @@ public class ForwardGenerator extends AbstractGenerator {
       // randomly-chosen sequence from the list.
       Sequence chosenSeq;
 
-      // Orienteering and Constant mining Stuff
       if (GenInputsAbstract.orienteering || GenInputsAbstract.constant_mining) {
+        // Orienteering and Constant mining Stuff
         chosenSeq = Randomness.randomMemberWeighted(l, weightMap);
+      } else if (GenInputsAbstract.small_tests) {
+        chosenSeq = Randomness.randomMemberWeighted(l);
       } else {
         chosenSeq = Randomness.randomMember(l);
       }
