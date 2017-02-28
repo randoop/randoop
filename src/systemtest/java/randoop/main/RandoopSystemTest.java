@@ -806,7 +806,8 @@ public class RandoopSystemTest {
   // TODO: finish
   @Test
   public void runOrienteeringTest() {
-    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("orienteering");
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("digdog-orienteering");
 
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName("");
@@ -815,49 +816,32 @@ public class RandoopSystemTest {
     options.setFlag("orienteering");
     options.setFlag("grt-debug-checks");
 
-    //options.setOption("inputlimit", "1000");
-    //options.addTestClass("digdog.constantmining.Trivial");
-    //options.setPackageName("jdktests");
-    //options.setRegressionBasename("JDK_Tests_regression");
-    //options.setErrorBasename("JDK_Tests_error");
+    setUpAndRunDigDogTests(testEnvironment, options);
+    renameOutputTo("orienteering.csv");
+  }
 
-    options.setOption("inputlimit", "1000");
-    options.setOption("null-ratio", "0.3");
-    options.setOption("alias-ratio", "0.3");
-    options.setFlag("small-tests");
-    options.setFlag("clear=100");
-    options.addClassList("resources/systemTest/jdk_classlist.txt");
+  // TODO: finish
+  @Test
+  public void runRandoopOrienteeringComparisonTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("randoop-orienteering");
 
-    // omit methods that use Random
-    options.setOption(
-        "omitmethods", "java2\\.util2\\.Collections\\.shuffle\\(java2\\.util2\\.List\\)");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("");
+    options.setRegressionBasename("orienteeringCompareReg");
+    options.setErrorBasename("orienteeringCompareErr");
+    //options.setFlag("orienteering");
+    options.setFlag("grt-debug-checks");
 
-    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
-    ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
-
-    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
-    /*
-    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
-    ExpectedTests expectedErrorTests = ExpectedTests.NONE;
-
-    generateAndTestWithCoverage(
-        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
-    */
-
-    File tempDir = new File("test.txt");
-    File result = new File("orienteering.txt");
-    boolean success = tempDir.renameTo(result);
-    if (!success) {
-      fail("couldn't rename file");
-    }
-
-    assertTrue(true);
+    setUpAndRunDigDogTests(testEnvironment, options);
+    renameOutputTo("randoop-orienteering.csv");
   }
 
   // TODO: finish
   @Test
   public void runConstantMiningTest() {
-    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("constantmining");
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("digdog-constant-mining");
 
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName("");
@@ -866,50 +850,34 @@ public class RandoopSystemTest {
     options.setFlag("constant-mining");
     options.setFlag("grt-debug-checks");
 
-    //options.setOption("inputlimit", "1000");
-    //options.addTestClass("digdog.constantmining.Trivial");
-    //options.setPackageName("jdktests");
-    //options.setRegressionBasename("JDK_Tests_regression");
-    //options.setErrorBasename("JDK_Tests_error");
-
-    options.setOption("inputlimit", "1000");
-    options.setOption("null-ratio", "0.3");
-    options.setOption("alias-ratio", "0.3");
-    options.setFlag("small-tests");
-    options.setFlag("clear=100");
-    options.addClassList("resources/systemTest/jdk_classlist.txt");
-
-    // omit methods that use Random
-    options.setOption(
-        "omitmethods", "java2\\.util2\\.Collections\\.shuffle\\(java2\\.util2\\.List\\)");
-
-    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
-    ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
-
-    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
-    /*
-    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
-    ExpectedTests expectedErrorTests = ExpectedTests.NONE;
-
-    generateAndTestWithCoverage(
-        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
-    */
-
-    File tempDir = new File("test.txt");
-    File result = new File("constantmining.txt");
-    boolean success = tempDir.renameTo(result);
-    if (!success) {
-      fail("couldn't rename file");
-    }
-
-    assertTrue(true);
+    setUpAndRunDigDogTests(testEnvironment, options);
+    renameOutputTo("constant-mining.csv");
   }
 
   // TODO: finish
   @Test
+  public void runRandoopConstantMiningComparisonTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("randoop-constant-mining");
+
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("");
+    options.setRegressionBasename("constantminingCompareReg");
+    options.setErrorBasename("constantminingCompareErr");
+    options.setOption("literals-level", "CLASS");
+    options.setOption("literals-file", "CLASSES");
+    //options.setFlag("orienteering");
+    options.setFlag("grt-debug-checks");
+
+    setUpAndRunDigDogTests(testEnvironment, options);
+    renameOutputTo("randoop-constant-mining.csv");
+  }
+
+  // TODO: make diff than simple orient
+  @Test
   public void runHarderOrienteeringTest() {
     TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("harder-orienteering");
+        systemTestEnvironment.createTestEnvironment("digdog-harder-orienteering");
 
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName("");
@@ -918,49 +886,15 @@ public class RandoopSystemTest {
     options.setFlag("orienteering");
     options.setFlag("grt-debug-checks");
 
-    //options.setOption("inputlimit", "1000");
-    //options.addTestClass("digdog.constantmining.Trivial");
-    //options.setPackageName("jdktests");
-    //options.setRegressionBasename("JDK_Tests_regression");
-    //options.setErrorBasename("JDK_Tests_error");
-
-    options.setOption("inputlimit", "1000");
-    options.setOption("null-ratio", "0.3");
-    options.setOption("alias-ratio", "0.3");
-    options.setFlag("small-tests");
-    options.setFlag("clear=100");
-    options.addClassList("resources/systemTest/jdk_classlist.txt");
-
-    // omit methods that use Random
-    options.setOption(
-        "omitmethods", "java2\\.util2\\.Collections\\.shuffle\\(java2\\.util2\\.List\\)");
-
-    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
-    ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
-
-    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
-    /*
-    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
-    ExpectedTests expectedErrorTests = ExpectedTests.NONE;
-
-    generateAndTestWithCoverage(
-        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
-    */
-
-    File tempDir = new File("test.txt");
-    File result = new File("harder-orienteering.txt");
-    boolean success = tempDir.renameTo(result);
-    if (!success) {
-      fail("couldn't rename file");
-    }
-    assertTrue(true);
+    setUpAndRunDigDogTests(testEnvironment, options);
+    renameOutputTo("harder-orienteering.csv");
   }
 
-  // TODO: finish
+  // TODO: make diff than simple const
   @Test
   public void runHarderConstantMiningTest() {
     TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("harder-constantmining");
+        systemTestEnvironment.createTestEnvironment("digdog-harder-constant-mining");
 
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName("");
@@ -969,16 +903,34 @@ public class RandoopSystemTest {
     options.setFlag("constant-mining");
     options.setFlag("grt-debug-checks");
 
-    //options.setOption("inputlimit", "1000");
-    //options.addTestClass("digdog.constantmining.Trivial");
-    //options.setPackageName("jdktests");
-    //options.setRegressionBasename("JDK_Tests_regression");
-    //options.setErrorBasename("JDK_Tests_error");
+    setUpAndRunDigDogTests(testEnvironment, options);
+    renameOutputTo("harder-constant-mining.csv");
+  }
 
+  /**
+   * Only really use this to rename DigDog formatted csv output, in "test.txt"
+   * @param newFileName
+   */
+  private void renameOutputTo(String newFileName) {
+    File tempDir = new File("test.csv");
+    File result = new File(newFileName);
+    boolean renamed = tempDir.renameTo(result);
+    if (!renamed) {
+      fail("couldn't rename file");
+    }
+  }
+
+  private void setUpAndRunDigDogTests(TestEnvironment testEnvironment, RandoopOptions options) {
+    /*
     options.setOption("inputlimit", "1000");
+    options.addTestClass("digdog.constantmining.Trivial");
+    */
+
+    //options.setOption("inputlimit", "1000");
+    options.setOption("timelimit", "30");
     options.setOption("null-ratio", "0.3");
     options.setOption("alias-ratio", "0.3");
-    options.setFlag("small-tests");
+    //options.setFlag("small-tests");
     options.setFlag("clear=100");
     options.addClassList("resources/systemTest/jdk_classlist.txt");
 
@@ -997,15 +949,6 @@ public class RandoopSystemTest {
     generateAndTestWithCoverage(
         testEnvironment, options, expectedRegressionTests, expectedErrorTests);
     */
-
-    File tempDir = new File("test.txt");
-    File result = new File("harder-constantmining.txt");
-    boolean success = tempDir.renameTo(result);
-    if (!success) {
-      fail("couldn't rename file");
-    }
-
-    assertTrue(true);
   }
 
   /* ------------------------------ utility methods ---------------------------------- */
