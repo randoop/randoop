@@ -51,6 +51,10 @@ import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
  */
 public class OperationModel {
 
+  private final VisibilityPredicate visibility;
+  private final ReflectionPredicate reflectionPredicate;
+  private final ConditionCollection operationConditions;
+
   /** The set of class declaration types for this model */
   private Set<ClassOrInterfaceType> classTypes;
 
@@ -77,8 +81,17 @@ public class OperationModel {
 
   /**
    * Create an empty model of test context.
+   * @param visibility  the {@link VisibilityPredicate} for this model
+   * @param reflectionPredicate  the {@link ReflectionPredicate} for this model
+   * @param operationConditions  the conditions to add to operations in this model
    */
-  private OperationModel() {
+  private OperationModel(
+      VisibilityPredicate visibility,
+      ReflectionPredicate reflectionPredicate,
+      ConditionCollection operationConditions) {
+    this.visibility = visibility;
+    this.reflectionPredicate = reflectionPredicate;
+    this.operationConditions = operationConditions;
     classTypes = new LinkedHashSet<>();
     inputTypes = new LinkedHashSet<>();
     classLiteralMap = new MultiMap<>();
@@ -114,7 +127,7 @@ public class OperationModel {
    * @param methodSignatures  the signatures of methods to be added to the model
    * @param errorHandler  the handler for bad file name errors
    * @param literalsFileList  the list of literals file names
-   * @param operationCollection  the conditions to be added to operations
+   * @param conditionCollection  the conditions to be added to operations
    * @return the operation model for the parameters
    * @throws OperationParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
@@ -127,20 +140,14 @@ public class OperationModel {
       Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList,
-      ConditionCollection operationCollection)
+      ConditionCollection conditionCollection)
       throws OperationParseException, NoSuchMethodException {
 
-    OperationModel model = new OperationModel();
+    OperationModel model = new OperationModel(visibility, reflectionPredicate, conditionCollection);
 
-    model.addClassTypes(
-        visibility,
-        reflectionPredicate,
-        classnames,
-        exercisedClassnames,
-        errorHandler,
-        literalsFileList);
+    model.addClassTypes(classnames, exercisedClassnames, errorHandler, literalsFileList);
 
-    model.addOperations(model.classTypes, visibility, reflectionPredicate, operationCollection);
+    model.addOperations();
     model.addOperations(methodSignatures);
     model.addObjectConstructor();
 
@@ -295,16 +302,12 @@ public class OperationModel {
    * concrete input types, annotated test values, and literal values.
    * Also collects annotated test values, and class literal values used in test generation.
    *
-   * @param visibility  the visibility predicate
-   * @param reflectionPredicate  the predicate to determine which reflection objects are used
    * @param classnames  the names of classes-under-test
    * @param exercisedClassnames  the names of classes used in exercised-class heuristic
    * @param errorHandler  the handler for bad class names
    * @param literalsFileList  the list of literals file names
    */
   private void addClassTypes(
-      VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate,
       Set<String> classnames,
       Set<String> exercisedClassnames,
       ClassNameErrorHandler errorHandler,
@@ -381,22 +384,13 @@ public class OperationModel {
   }
 
   /**
-   * Iterates through a set of simple and instantiated class types and uses reflection to extract
-   * the operations that satisfy both the visibility and reflection predicates, and then adds them
-   * to the operation set of this model.
-   *
-   * @param concreteClassTypes  the declaring class types for the operations
-   * @param visibility  the visibility predicate
-   * @param reflectionPredicate  the reflection predicate
-   * @param operationConditions  the conditions to add to operations
+   * Iterates through the set of class types and uses reflection to extract the operations that
+   * satisfy both the visibility and reflection predicates, and then adds them to the operation
+   * set of this model.
    */
-  private void addOperations(
-      Set<ClassOrInterfaceType> concreteClassTypes,
-      VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate,
-      ConditionCollection operationConditions) {
+  private void addOperations() {
     ReflectionManager mgr = new ReflectionManager(visibility);
-    for (ClassOrInterfaceType classType : concreteClassTypes) {
+    for (ClassOrInterfaceType classType : classTypes) {
       mgr.apply(
           new OperationExtractor(
               classType, operations, reflectionPredicate, visibility, operationConditions),
