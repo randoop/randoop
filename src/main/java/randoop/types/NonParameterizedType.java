@@ -80,6 +80,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   private List<ClassOrInterfaceType> getGenericInterfaces() {
     List<ClassOrInterfaceType> interfaces = new ArrayList<>();
     for (java.lang.reflect.Type type : runtimeType.getGenericInterfaces()) {
+      assert false : "need to figure out how to convert generic interfaces " + type;
       interfaces.add(ClassOrInterfaceType.forType(type));
     }
     return interfaces;
@@ -121,7 +122,8 @@ public class NonParameterizedType extends ClassOrInterfaceType {
     } else {
       java.lang.reflect.Type supertype = this.runtimeType.getGenericSuperclass();
       if (supertype != null) {
-        return ClassOrInterfaceType.forType(supertype);
+        assert false : "need to figure out how to convert generic superclass like " + supertype;
+        //return ClassOrInterfaceType.forType(supertype);
       }
     }
     return null;

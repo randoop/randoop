@@ -21,6 +21,8 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
 
   /**
    * Creates a {@link GenericClassType} for the given reflective {@link Class} object.
+   * A {@code Class<>} object that represents a parameterized type, is treated as a "declaration"
+   * from which the type parameters are extracted and available as a {@link ParameterTable}.
    *
    * @param typeClass  the class type
    * @return  a generic class type for the given type
@@ -33,14 +35,22 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
     return new GenericClassType(typeClass);
   }
 
+  public static ParameterizedType forType(java.lang.reflect.ParameterizedType type) {
+    ClassOrInterfaceType classType = ClassOrInterfaceType.forClass((Class<?>) type.getRawType());
+
+    return null;
+  }
+
   /**
    * Performs the conversion of {@code java.lang.reflect.ParameterizedType} to
    * a {@code ParameterizedType} .
    *
+   * @param parameterTable  the table of type parameters for the declaration context of this type
    * @param type  the reflective type object
    * @return an object of type {@code ParameterizedType}
    */
-  public static ParameterizedType forType(java.lang.reflect.Type type) {
+  public static ParameterizedType forType(
+      ParameterTable parameterTable, java.lang.reflect.Type type) {
     if (!(type instanceof java.lang.reflect.ParameterizedType)) {
       throw new IllegalArgumentException("type must be java.lang.reflect.ParameterizedType");
     }
@@ -52,7 +62,7 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
     // Categorize the type arguments as either a type variable or other kind of argument
     List<TypeArgument> typeArguments = new ArrayList<>();
     for (Type argType : t.getActualTypeArguments()) {
-      TypeArgument argument = TypeArgument.forType(argType);
+      TypeArgument argument = TypeArgument.forType(parameterTable, argType);
       typeArguments.add(argument);
     }
 

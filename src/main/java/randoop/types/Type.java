@@ -29,7 +29,7 @@ import java.lang.reflect.WildcardType;
  * <p>
  * {@link Type} objects
  * are constructed using the methods
- * {@link #forType(java.lang.reflect.Type)},
+ * {@link #forType(ParameterTable,java.lang.reflect.Type)},
  * {@link #forClass(Class)}, or
  * {@link #forName(String)}.
  * These methods translate the reflection types into objects of subclasses of this type.
@@ -101,7 +101,7 @@ public abstract class Type implements Comparable<Type> {
    * @return a {@link Type} object corresponding to the given type
    * @throws IllegalArgumentException if the type is a {@code java.lang.reflect.WildcardType}
    */
-  public static Type forType(java.lang.reflect.Type type) {
+  public static Type forType(ParameterTable parameterTable, java.lang.reflect.Type type) {
 
     if (type instanceof WildcardType) {
       throw new IllegalArgumentException("Cannot construct type for wildcard " + type);
@@ -111,7 +111,7 @@ public abstract class Type implements Comparable<Type> {
       return Type.forClass((Class<?>) type);
     }
 
-    return ReferenceType.forType(type);
+    return ReferenceType.forType(parameterTable, type);
   }
 
   /**

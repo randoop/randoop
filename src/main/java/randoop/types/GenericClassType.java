@@ -15,16 +15,19 @@ public class GenericClassType extends ParameterizedType {
   /** The rawtype of the generic class. */
   private Class<?> rawType;
 
+  /** The table of {@link TypeVariable} parameter objects */
   private ParameterTable parameterTable;
 
   /**
    * Creates a {@link GenericClassType} for the given raw type.
+   * This type represents the declaration of the class type, and so the {@link ParameterTable} is
+   * constructed for the type.
    *
    * @param rawType  the {@code Class} raw type
    */
   GenericClassType(Class<?> rawType) {
     this.rawType = rawType;
-    this.parameterTable = ParameterTable.createTable(rawType.getTypeParameters());
+    this.parameterTable = ParameterTable.createTable(rawType);
   }
 
   /**
@@ -114,7 +117,8 @@ public class GenericClassType extends ParameterizedType {
   List<ClassOrInterfaceType> getInterfaces(Substitution<ReferenceType> substitution) {
     List<ClassOrInterfaceType> interfaces = new ArrayList<>();
     for (java.lang.reflect.Type type : rawType.getGenericInterfaces()) {
-      interfaces.add(ClassOrInterfaceType.forType(type).apply(substitution));
+      assert false : "need to figure out how to convert generic interfaces properly " + this;
+      //      interfaces.add(ClassOrInterfaceType.forType(type).apply(substitution));
     }
     return interfaces;
   }
@@ -165,7 +169,9 @@ public class GenericClassType extends ParameterizedType {
     if (superclass == null) {
       return null;
     }
-    return ClassOrInterfaceType.forType(superclass).apply(substitution);
+    assert false : "need to figure out how to convert generic superclass properly " + superclass;
+    //return ClassOrInterfaceType.forType(superclass).apply(substitution);
+    return null;
   }
 
   @Override

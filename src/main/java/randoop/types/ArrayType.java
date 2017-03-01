@@ -60,15 +60,15 @@ public class ArrayType extends ReferenceType {
    * @param type  the {@link java.lang.reflect.Type} reference
    * @return the {@code Type} for the array type
    */
-  public static ArrayType forType(java.lang.reflect.Type type) {
+  public static ArrayType forType(ParameterTable parameterTable, java.lang.reflect.Type type) {
     if (type instanceof java.lang.reflect.GenericArrayType) {
       java.lang.reflect.GenericArrayType arrayType = (java.lang.reflect.GenericArrayType) type;
-      Type componentType = Type.forType(arrayType.getGenericComponentType());
+      Type componentType = Type.forType(parameterTable, arrayType.getGenericComponentType());
       return ArrayType.ofComponentType(componentType);
     }
 
     if ((type instanceof Class<?>) && ((Class<?>) type).isArray()) {
-      Type componentType = Type.forType(((Class<?>) type).getComponentType());
+      Type componentType = Type.forType(parameterTable, ((Class<?>) type).getComponentType());
       return ArrayType.ofComponentType(componentType);
     }
 

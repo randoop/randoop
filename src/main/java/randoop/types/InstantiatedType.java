@@ -15,7 +15,7 @@ import java.util.Set;
  * generic class.
  * Conversion to this type from this and other {@link java.lang.reflect.Type}
  * interfaces is handled by
- * {@link Type#forType(java.lang.reflect.Type)}.
+ * {@link Type#forType(ParameterTable,java.lang.reflect.Type)}.
  */
 public class InstantiatedType extends ParameterizedType {
 

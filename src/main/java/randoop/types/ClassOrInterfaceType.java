@@ -50,16 +50,35 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
+   * Creates a {@link ClassOrInterfaceType} object for a given {@code java.lang.reflect.Type}
+   * reference when there is no generic declaration.
+   * This occurs when supertypes are found for a type.
+   *
+   * @param type  the type reference
+   * @return the {@link ClassOrInterfaceType} for the given {@code type}
+   */
+  public static ClassOrInterfaceType forType(java.lang.reflect.Type type) {
+    if (type instanceof java.lang.reflect.ParameterizedType) {
+      java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType) type;
+      if (((Class<?>) t.getRawType()).getTypeParameters().length > 0) {
+        return ParameterizedType.forType(t);
+      }
+    }
+    return forType(ParameterTable.emptyTable(), type);
+  }
+
+  /**
    * Creates a {@code ClassOrInterfaceType} object for a given
    * {@code java.lang.reflect.Type} reference.
    * If type is a {@code java.lang.reflect.ParameterizedType}, then calls
-   * {@link ParameterizedType#forType(java.lang.reflect.Type)}.
+   * {@link ParameterizedType#forType(ParameterTable,java.lang.reflect.Type)}.
    * Otherwise, if type is a {@code Class} object, calls {@link #forClass(Class)}.
    *
    * @param type  the type reference
    * @return the {@code ClassOrInterfaceType} object for the given type
    */
-  public static ClassOrInterfaceType forType(java.lang.reflect.Type type) {
+  public static ClassOrInterfaceType forType(
+      ParameterTable parameterTable, java.lang.reflect.Type type) {
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType) type;
@@ -69,7 +88,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
       if (rawType.getTypeParameters().length == 0) {
         return ClassOrInterfaceType.forClass(rawType);
       }
-      return ParameterizedType.forType(t);
+      return ParameterizedType.forType(parameterTable, t);
     }
 
     if (type instanceof Class<?>) {

@@ -50,20 +50,21 @@ public abstract class ReferenceType extends Type {
    * @param type  the type reference
    * @return the {@code ReferenceType} for the given {@code Type}
    */
-  public static ReferenceType forType(java.lang.reflect.Type type) {
+  public static ReferenceType forType(ParameterTable parameterTable, java.lang.reflect.Type type) {
     if (type instanceof java.lang.reflect.GenericArrayType) {
-      return ArrayType.forType(type);
+      return ArrayType.forType(parameterTable, type);
     }
 
     if (type instanceof java.lang.reflect.TypeVariable) {
-      return TypeVariable.forType(type);
+      return parameterTable.get(
+          (java.lang.reflect.TypeVariable<?>) type); //TypeVariable.forType(type);
     }
 
     if ((type instanceof Class<?>) && ((Class<?>) type).isArray()) {
-      return ArrayType.forType(type);
+      return ArrayType.forType(parameterTable, type);
     }
 
-    return ClassOrInterfaceType.forType(type);
+    return ClassOrInterfaceType.forType(parameterTable, type);
   }
 
   /**
