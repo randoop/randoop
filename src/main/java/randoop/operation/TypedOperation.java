@@ -22,6 +22,7 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
 import randoop.types.JavaTypes;
+import randoop.types.ParameterTable;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
@@ -265,9 +266,12 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     ConstructorCall op = new ConstructorCall(constructor);
     ClassOrInterfaceType declaringType =
         ClassOrInterfaceType.forClass(constructor.getDeclaringClass());
+    ParameterTable parameterTable =
+        ParameterTable.createTable(declaringType.getParameterTable(), constructor);
+
     List<Type> paramTypes = new ArrayList<>();
     for (java.lang.reflect.Type t : constructor.getGenericParameterTypes()) {
-      paramTypes.add(Type.forType(t));
+      paramTypes.add(Type.forType(parameterTable, t));
     }
     TypeTuple inputTypes = new TypeTuple(paramTypes);
     return new TypedClassOperation(op, declaringType, inputTypes, declaringType);
@@ -281,9 +285,13 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    */
   public static TypedClassOperation forMethod(Method method) {
 
+    ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(method.getDeclaringClass());
+    ParameterTable parameterTable =
+        ParameterTable.createTable(declaringType.getParameterTable(), method);
+
     List<Type> methodParamTypes = new ArrayList<>();
     for (java.lang.reflect.Type t : method.getGenericParameterTypes()) {
-      methodParamTypes.add(Type.forType(t));
+      methodParamTypes.add(Type.forType(parameterTable, t));
     }
 
     Class<?> declaringClass = method.getDeclaringClass();
@@ -296,13 +304,13 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
 
     List<Type> paramTypes = new ArrayList<>();
     MethodCall op = new MethodCall(method);
-    ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(method.getDeclaringClass());
+
     if (!op.isStatic()) {
       paramTypes.add(declaringType);
     }
     paramTypes.addAll(methodParamTypes);
     TypeTuple inputTypes = new TypeTuple(paramTypes);
-    Type outputType = Type.forType(method.getGenericReturnType());
+    Type outputType = Type.forType(parameterTable, method.getGenericReturnType());
     return new TypedClassOperation(op, declaringType, inputTypes, outputType);
   }
 
@@ -329,19 +337,20 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     for (Method m : enumClass.getMethods()) {
       if (m.getName().equals(method.getName())
           && m.getGenericParameterTypes().length == method.getGenericParameterTypes().length) {
+        ClassOrInterfaceType methodDeclaringType =
+            ClassOrInterfaceType.forClass(m.getDeclaringClass());
+        ParameterTable parameterTable =
+            ParameterTable.createTable(methodDeclaringType.getParameterTable(), method);
         List<Type> paramTypes = new ArrayList<>();
         MethodCall op = new MethodCall(m);
         if (!op.isStatic()) {
           paramTypes.add(enumType);
         }
         for (java.lang.reflect.Type t : m.getGenericParameterTypes()) {
-          paramTypes.add(Type.forType(t));
+          paramTypes.add(Type.forType(parameterTable, t));
         }
         TypeTuple inputTypes = new TypeTuple(paramTypes);
-        Type outputType = Type.forType(m.getGenericReturnType());
-
-        ClassOrInterfaceType methodDeclaringType =
-            ClassOrInterfaceType.forClass(m.getDeclaringClass());
+        Type outputType = Type.forType(parameterTable, m.getGenericReturnType());
         if (methodDeclaringType.isGeneric()) {
           GenericClassType genDeclaringType = (GenericClassType) methodDeclaringType;
           InstantiatedType superType = enumType.getMatchingSupertype(genDeclaringType);
@@ -387,7 +396,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    */
   public static TypedClassOperation createGetterForField(
       Field field, ClassOrInterfaceType declaringType) {
-    Type fieldType = Type.forType(field.getGenericType());
+    Type fieldType = Type.forType(declaringType.getParameterTable(), field.getGenericType());
     AccessibleField accessibleField = new AccessibleField(field, declaringType);
     List<Type> inputTypes = new ArrayList<>();
     if (!accessibleField.isStatic()) {
@@ -406,7 +415,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    */
   public static TypedClassOperation createSetterForField(
       Field field, ClassOrInterfaceType declaringType) {
-    Type fieldType = Type.forType(field.getGenericType());
+    Type fieldType = Type.forType(declaringType.getParameterTable(), field.getGenericType());
     AccessibleField accessibleField = new AccessibleField(field, declaringType);
     List<Type> inputTypes = new ArrayList<>();
     if (!accessibleField.isStatic()) {

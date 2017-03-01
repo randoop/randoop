@@ -175,7 +175,8 @@ public class FieldSet extends CallableOperation {
     AccessibleField accessibleField = FieldParser.parse(descr, classname, fieldname);
     ClassOrInterfaceType classType = accessibleField.getDeclaringType();
     Type fieldType;
-    fieldType = Type.forType(accessibleField.getRawField().getGenericType());
+    fieldType =
+        Type.forType(classType.getParameterTable(), accessibleField.getRawField().getGenericType());
 
     if (accessibleField.isFinal()) {
       throw new OperationParseException(
