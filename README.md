@@ -32,19 +32,19 @@ The data can then be used to generate graphs comparing the various tools:
 
 The graph will be saved in the `experiments/plots` directory, named `'Project' 'CoverageType' Coverage Percentage.png`.
 
-As an example, performing the following set of commands (waiting a number of hours for the evaluation script to finish before invoking the next command) will replicate results for the Chart project's individual experiment:
-`./Evaluate.sh -i -b -o -p Chart`
+As an example, performing the following set of commands (waiting a number of hours for the evaluation script to finish before invoking the next command) will replicate results for the Time project's individual experiment:
+`./Evaluate.sh -i -b -o -p Time`
 
-`python experiments/Plot.py experiments/Chart_Individual_Randoop_Line.txt experiments/Chart_Orienteering_Line.txt  experiments/Chart_Individual_ConstantMining_Line.txt  experiments/Chart_Individual_DigDog_Line.txt`
+`python experiments/Plot.py experiments/Time_Individual_Randoop_Line.txt experiments/Time_Orienteering_Line.txt  experiments/Time_Individual_ConstantMining_Line.txt  experiments/Time_Individual_DigDog_Line.txt`
 
 
-`python experiments/Plot.py experiments/Chart_Individual_Randoop_Branch.txt experiments/Chart_Orienteering_Branch.txt  experiments/Chart_Individual_ConstantMining_Branch.txt  experiments/Chart_Individual_DigDog_Branch.txt`
+`python experiments/Plot.py experiments/Time_Individual_Randoop_Branch.txt experiments/Time_Orienteering_Branch.txt  experiments/Time_Individual_ConstantMining_Branch.txt  experiments/Time_Individual_DigDog_Branch.txt`
 
 This yields the following data files:
-`experiments/plots/Chart Individual Branch Coverage Percentage.png`
-`experiments/plots/Chart Individual Line Coverage Percentage.png` 
-`experiments/Chart Individual Branch Coverage Percentage.csv`
-`experiments/Chart Individual Line Coverage Percentage.csv`
+`experiments/plots/Time Individual Branch Coverage Percentage.png`
+`experiments/plots/Time Individual Line Coverage Percentage.png` 
+`experiments/Time Individual Branch Coverage Percentage.csv`
+`experiments/Time Individual Line Coverage Percentage.csv`
 
 ### Further documentation of Evaluate.sh
 To run the script and gather data on the performance of DigDog: `./Evaluate.sh`. You may need to change the permissions with `chmod u+x ./Evaluate.sh` first.
