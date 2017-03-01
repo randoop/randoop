@@ -1,6 +1,7 @@
 package randoop.operation;
 
 import java.io.PrintStream;
+import java.lang.reflect.AccessibleObject;
 import java.util.List;
 
 import randoop.ExecutionOutcome;
@@ -113,4 +114,8 @@ public abstract class CallableOperation implements Operation {
    */
   public abstract String toParsableString(
       Type declaringType, TypeTuple inputTypes, Type outputType);
+
+  public AccessibleObject getReflectionObject() {
+    return null;
+  }
 }

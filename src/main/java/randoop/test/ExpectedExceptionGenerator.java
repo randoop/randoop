@@ -54,4 +54,13 @@ public class ExpectedExceptionGenerator implements TestCheckGenerator {
 
     return checks;
   }
+
+  /**
+   * Returns the type of the expected exception.
+   *
+   * @return the type of the expected exception
+   */
+  public ClassOrInterfaceType getExpected() {
+    return expected;
+  }
 }

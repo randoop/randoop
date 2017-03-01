@@ -5,7 +5,8 @@ public interface Tag {
 
   enum Kind {
     THROWS,
-    PARAM;
+    PARAM,
+    RETURN;
 
     @Override
     public String toString() {
@@ -14,6 +15,8 @@ public interface Tag {
           return "@throws";
         case "PARAM":
           return "@param";
+        case "RETURN":
+          return "@return";
         default:
           throw new IllegalStateException("The value " + name() + " has no string representation.");
       }

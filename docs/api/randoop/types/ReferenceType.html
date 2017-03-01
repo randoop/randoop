@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ReferenceType (randoop 3.0.8-prerelease API)</title>
+<title>ReferenceType (randoop 3.0.9 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ReferenceType (randoop 3.0.8-prerelease API)";
+            parent.document.title="ReferenceType (randoop 3.0.9 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":10,"i2":9,"i3":9,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10};
+var methods = {"i0":6,"i1":10,"i2":9,"i3":9,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -203,30 +203,36 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ReferenceType.html#hasWildcard--">hasWildcard</a></span>()</code>
+<div class="block">Indicates whether this <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> has a wildcard.</div>
+</td>
+</tr>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ReferenceType.html#isAssignableFrom-randoop.types.Type-">isAssignableFrom</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;sourceType)</code>
 <div class="block">Indicates whether there is an assignment conversion from a source <code>Type</code> to this type.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ReferenceType.html#isCaptureVariable--">isCaptureVariable</a></span>()</code>
 <div class="block">Indicates whether this type is a capture type variable as constructed by
  <a href="../../randoop/types/InstantiatedType.html#applyCaptureConversion--"><code>InstantiatedType.applyCaptureConversion()</code></a>.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ReferenceType.html#isInstantiationOf-randoop.types.ReferenceType-">isInstantiationOf</a></span>(<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&nbsp;otherType)</code>
 <div class="block">Indicates whether this type is an instantiation of a more general type.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ReferenceType.html#isReferenceType--">isReferenceType</a></span>()</code>
 <div class="block">Indicates whether this is a reference type.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ReferenceType.html#isSubtypeOf-randoop.types.Type-">isSubtypeOf</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;otherType)</code>
 <div class="block">Test whether this type is a subtype of the given type according to
@@ -376,6 +382,20 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the type parameters for this type</dd>
+</dl>
+</li>
+</ul>
+<a name="hasWildcard--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>hasWildcard</h4>
+<pre>public&nbsp;boolean&nbsp;hasWildcard()</pre>
+<div class="block">Indicates whether this <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> has a wildcard.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if this type has a wildcard, false otherwise</dd>
 </dl>
 </li>
 </ul>

@@ -5,7 +5,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,15 +12,16 @@ import java.util.Objects;
 
 import plume.Pair;
 import randoop.ExecutionOutcome;
+import randoop.condition.Condition;
 import randoop.field.AccessibleField;
 import randoop.reflection.ReflectionPredicate;
-import randoop.condition.Condition;
 import randoop.sequence.Variable;
+import randoop.test.TestCheckGenerator;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.JavaTypes;
 import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
+import randoop.types.JavaTypes;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
@@ -53,7 +53,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   private List<Condition> preconditions;
 
   /** The throws-conditions for this operation */
-  private Map<Condition, ClassOrInterfaceType> throwsConditions;
+  private Map<Condition, Pair<TestCheckGenerator, TestCheckGenerator>> postconditions;
 
   /**
    * Create typed operation for the given {@link Operation}.
@@ -67,7 +67,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     this.inputTypes = inputTypes;
     this.outputType = outputType;
     this.preconditions = new ArrayList<>();
-    this.throwsConditions = new HashMap<>();
+    this.postconditions = new HashMap<>();
   }
 
   @Override
@@ -539,7 +539,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @return true if the values satisfy the preconditions or there are no preconditions; false otherwise
    */
   public boolean checkPreconditions(Object[] values) {
-    Object[] args = fixArguments(values);
+    Object[] args = addNullReceiver(values);
 
     for (Condition condition : preconditions) {
       if (!condition.check(args)) {
@@ -550,18 +550,21 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Checks whether this operation has any {@code throws} clause that is satisfied by the argument
-   * values, and if so returns the corresponding {@code Throwable}.
+   * Checks whether this operation has a postcondition clause that is satisfied by the argument
+   * values, and if so returns the corresponding {@link TestCheckGenerator}.
    *
    * @param values  the argument values
-   * @return the type of the exception whose condition is satisfied by the values
+   * @return the {@link TestCheckGenerator} to test postcondition, based on precondition satisfied by the values
    */
-  public Pair<Condition, ClassOrInterfaceType> getExpectedThrows(Object[] values) {
-    Object[] args = fixArguments(values);
-    for (Map.Entry<Condition, ClassOrInterfaceType> entry : throwsConditions.entrySet()) {
+  public TestCheckGenerator getPostCheckGenerator(Object[] values) {
+    Object[] args = addNullReceiver(values);
+    for (Map.Entry<Condition, Pair<TestCheckGenerator, TestCheckGenerator>> entry :
+        postconditions.entrySet()) {
       Condition throwsCondition = entry.getKey();
       if (throwsCondition.check(args)) {
-        return new Pair<>(entry.getKey(), entry.getValue());
+        return entry.getValue().a;
+      } else {
+        return entry.getValue().b;
       }
     }
     return null;
@@ -574,7 +577,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * @param values  the argument array for this operation
    * @return the corresponding operation array for checking a {@link Condition}
    */
-  private Object[] fixArguments(Object[] values) {
+  private Object[] addNullReceiver(Object[] values) {
     Object[] args = values;
     if (this.isStatic()) {
       args = new Object[values.length + 1];
@@ -590,9 +593,10 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     }
   }
 
-  public void addConditions(Map<Condition, ClassOrInterfaceType> throwsConditions) {
-    if (throwsConditions != null) {
-      this.throwsConditions.putAll(throwsConditions);
+  public void addConditions(
+      Map<Condition, Pair<TestCheckGenerator, TestCheckGenerator>> conditions) {
+    if (conditions != null) {
+      this.postconditions.putAll(conditions);
     }
   }
 }

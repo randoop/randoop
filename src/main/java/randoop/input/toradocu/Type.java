@@ -11,7 +11,7 @@ public class Type {
    * Separator used in Java to separate identifiers (e.g., Foo.toString() where "." separates class
    * and method identifiers)
    */
-  static final String SEPARATOR = ".";
+  public static final String SEPARATOR = ".";
   /** Void type that can be used to represent the void return type */
   public static final Type VOID = new Type("void");
 
@@ -20,7 +20,6 @@ public class Type {
   // The following fields are derived from qualifiedName
   /** Simple name of this {@code Type}. */
   private final String name;
-
   /** Flag {@code true} when this {@code Type} is an array type (e.g., java.lang.String[]). */
   private final boolean isArray;
   /** If this type is an array, componentType is the type of the contained elements. */
@@ -65,10 +64,6 @@ public class Type {
    */
   public String getSimpleName() {
     return name;
-  }
-
-  public String getPackageName() {
-    return qualifiedName.substring(0, qualifiedName.lastIndexOf(SEPARATOR));
   }
 
   /**
@@ -133,9 +128,13 @@ public class Type {
    */
   public boolean equalsTo(Class<?> type) {
     if (!isArray() && !type.isArray()) {
+      // Compare simple names instead of qualified names if no qualified name is extracted from the
+      // source code. This happens when the source code of a given type is not available (e.g.,
+      // it comes from a dependency of the target class.)
+      String typeName = qualifiedName.equals(name) ? type.getSimpleName() : type.getName();
       /* Replacement of '$' with '.' needed for nested classes. Toradocu Type uses '.' while
        * Java reflection uses '$' as specified by the Java Language Specification. */
-      return getQualifiedName().equals(type.getName().replace("$", "."));
+      return getQualifiedName().equals(typeName.replace("$", "."));
     }
     return isArray() == type.isArray()
         && dimension() == getDimension(type.getName())
@@ -167,5 +166,18 @@ public class Type {
       }
     }
     return typeDimension;
+  }
+
+  /**
+   * Returns the package of the given {@code type}. For example, if type is "java.lang.String" the
+   * output is "java.lang", while if type is "String" this method returns null.
+   *
+   * @param type a fully qualified type name (e.g. "java.lang.String")
+   * @return the fully qualified name of the type's package (or null if {@code type}'s package is
+   *     the default package).
+   */
+  public static String getPackage(String type) {
+    final int lastSeparatorIndex = type.lastIndexOf(SEPARATOR);
+    return lastSeparatorIndex == -1 ? null : type.substring(0, lastSeparatorIndex);
   }
 }
