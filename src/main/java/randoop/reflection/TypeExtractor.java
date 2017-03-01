@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 import java.util.Set;
 
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.ParameterizedType;
+import randoop.types.ParameterTable;
 import randoop.types.PrimitiveType;
 import randoop.types.Type;
 import randoop.util.Log;
@@ -42,7 +42,7 @@ class TypeExtractor extends DefaultClassVisitor {
   @Override
   public void visit(Constructor<?> c) {
     for (java.lang.reflect.Type paramType : c.getGenericParameterTypes()) {
-      addIfConcrete(Type.forType(paramType));
+      add(paramType);
     }
   }
 
@@ -57,10 +57,10 @@ class TypeExtractor extends DefaultClassVisitor {
       return;
     }
     for (java.lang.reflect.Type paramType : m.getGenericParameterTypes()) {
-      addIfConcrete(Type.forType(paramType));
+      add(paramType);
     }
     java.lang.reflect.Type returnType = m.getGenericReturnType();
-    addIfConcrete(Type.forType(returnType));
+    add(returnType);
   }
 
   /**
@@ -70,29 +70,30 @@ class TypeExtractor extends DefaultClassVisitor {
   @Override
   public void visit(Field f) {
     java.lang.reflect.Type fieldType = f.getGenericType();
-    addIfConcrete(Type.forType(fieldType));
+    add(fieldType);
   }
 
   /**
-   * Determines whether the given general type is not generic, and, if so, adds the concrete type
+   * Determines whether the given type is not generic, and, if so, adds the concrete type
    * to the input types of this object.
    *
-   * @param type  the general type
+   * @param reflectionType  the reflection type
    */
-  private void addIfConcrete(Type type) {
-    if (!type.isVoid()
-        && !type.isGeneric()
-        && !(type.isParameterized() && ((ParameterizedType) type).hasWildcard())) {
-      if (!predicate.isVisible(type.getRuntimeClass())) {
-        return;
+  private void add(java.lang.reflect.Type reflectionType) {
+    if (isConcrete(reflectionType)) {
+      Type type = Type.forType(ParameterTable.emptyTable(), reflectionType);
+      if (!type.isVoid()) {
+        if (!predicate.isVisible(type.getRuntimeClass())) {
+          return;
+        }
+        if (type.isPrimitive()) {
+          type = ((PrimitiveType) type).toBoxedPrimitive();
+        }
+        if (Log.isLoggingOn()) {
+          Log.logLine("Adding " + type + " as candidate parameter type");
+        }
+        inputTypes.add(type);
       }
-      if (type.isPrimitive()) {
-        type = ((PrimitiveType) type).toBoxedPrimitive();
-      }
-      if (Log.isLoggingOn()) {
-        Log.logLine("Adding " + type + " as candidate parameter type");
-      }
-      inputTypes.add(type);
     }
   }
 
@@ -105,5 +106,26 @@ class TypeExtractor extends DefaultClassVisitor {
     if (c.getTypeParameters().length == 0) {
       inputTypes.add(ClassOrInterfaceType.forClass(c));
     }
+  }
+
+  private boolean isConcrete(java.lang.reflect.Type type) {
+    if (type instanceof java.lang.reflect.TypeVariable) {
+      return false;
+    }
+    if (type instanceof java.lang.reflect.WildcardType) {
+      return false;
+    }
+    if (type instanceof java.lang.reflect.GenericArrayType) {
+      return isConcrete(((java.lang.reflect.GenericArrayType) type).getGenericComponentType());
+    }
+    if (type instanceof java.lang.reflect.ParameterizedType) {
+      java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
+      for (java.lang.reflect.Type parameter : pt.getActualTypeArguments()) {
+        if (!isConcrete(parameter)) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 }
