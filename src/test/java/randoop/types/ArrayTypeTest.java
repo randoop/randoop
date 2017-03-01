@@ -64,6 +64,7 @@ public class ArrayTypeTest {
   @Test
   public void testConstructionFromHarvest() {
     Class<?> c = ArrayHarvest.class;
+    ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
 
     Method m = null;
     java.lang.reflect.Type t;
@@ -75,7 +76,7 @@ public class ArrayTypeTest {
       fail("could not get method");
     }
     t = m.getGenericReturnType();
-    rt = Type.forType(t);
+    rt = Type.forType(classType.getParameterTable(), t);
     assertTrue("should be generic: " + rt, rt.isGeneric());
     assertFalse("should not be an object", rt.isObject());
 
@@ -85,7 +86,7 @@ public class ArrayTypeTest {
       fail("could not get method");
     }
     t = m.getGenericReturnType();
-    rt = Type.forType(t);
+    rt = Type.forType(classType.getParameterTable(), t);
     assertTrue("should be generic: " + rt, rt.isGeneric());
     assertFalse("should not be an object", rt.isObject());
 
@@ -95,7 +96,7 @@ public class ArrayTypeTest {
       fail("could not get method");
     }
     t = m.getGenericReturnType();
-    rt = Type.forType(t);
+    rt = Type.forType(classType.getParameterTable(), t);
     assertTrue("should not be generic: " + rt, !rt.isGeneric());
     assertFalse("should not be an object", rt.isObject());
 
@@ -105,7 +106,7 @@ public class ArrayTypeTest {
       fail("could not get method");
     }
     t = m.getGenericReturnType();
-    rt = Type.forType(t);
+    rt = Type.forType(classType.getParameterTable(), t);
     assertTrue("should be generic: " + rt, !rt.isGeneric());
     assertFalse("should not be an object", rt.isObject());
   }

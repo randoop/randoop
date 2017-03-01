@@ -535,7 +535,7 @@ public class VisibilityTest {
   private List<TypedOperation> getOperations(Field f, ClassOrInterfaceType declaringType) {
     List<TypedOperation> statements = new ArrayList<>();
     Type fieldType;
-    fieldType = Type.forType(f.getGenericType());
+    fieldType = Type.forType(declaringType.getParameterTable(), f.getGenericType());
     AccessibleField field = new AccessibleField(f, declaringType);
     List<Type> getInputTypeList = new ArrayList<>();
     List<Type> setInputTypeList = new ArrayList<>();

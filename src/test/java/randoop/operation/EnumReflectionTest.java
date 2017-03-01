@@ -344,7 +344,7 @@ public class EnumReflectionTest {
     ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(con.getDeclaringClass());
     List<Type> paramTypes = new ArrayList<>();
     for (java.lang.reflect.Type pc : con.getGenericParameterTypes()) {
-      paramTypes.add(Type.forType(pc));
+      paramTypes.add(Type.forType(declaringType.getParameterTable(), pc));
     }
     return new TypedClassOperation(op, declaringType, new TypeTuple(paramTypes), declaringType);
   }
@@ -354,9 +354,9 @@ public class EnumReflectionTest {
     List<Type> paramTypes = new ArrayList<>();
     paramTypes.add(declaringType);
     for (java.lang.reflect.Type t : m.getGenericParameterTypes()) {
-      paramTypes.add(Type.forType(t));
+      paramTypes.add(Type.forType(declaringType.getParameterTable(), t));
     }
-    Type outputType = Type.forType(m.getGenericReturnType());
+    Type outputType = Type.forType(declaringType.getParameterTable(), m.getGenericReturnType());
     return new TypedClassOperation(op, declaringType, new TypeTuple(paramTypes), outputType);
   }
 }

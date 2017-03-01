@@ -194,7 +194,7 @@ public class FieldReflectionTest {
   private List<TypedOperation> getOperations(Field f) throws RandoopTypeException {
     ClassOrInterfaceType declaringType = ClassOrInterfaceType.forClass(f.getDeclaringClass());
     List<TypedOperation> statements = new ArrayList<>();
-    Type fieldType = Type.forType(f.getGenericType());
+    Type fieldType = Type.forType(declaringType.getParameterTable(), f.getGenericType());
     AccessibleField field = new AccessibleField(f, declaringType);
     List<Type> getInputTypeList = new ArrayList<>();
     List<Type> setInputTypeList = new ArrayList<>();

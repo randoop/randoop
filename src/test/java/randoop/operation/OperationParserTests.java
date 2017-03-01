@@ -118,11 +118,11 @@ public class OperationParserTests {
       declaringType = ClassOrInterfaceType.forClass(m.getDeclaringClass());
       List<Type> paramTypes = new ArrayList<>();
       for (java.lang.reflect.Type t : m.getGenericParameterTypes()) {
-        paramTypes.add(Type.forType(t));
+        paramTypes.add(Type.forType(declaringType.getParameterTable(), t));
       }
       TypeTuple inputTypes = new TypeTuple(paramTypes);
       Type outputType;
-      outputType = Type.forType(m.getGenericReturnType());
+      outputType = Type.forType(declaringType.getParameterTable(), m.getGenericReturnType());
       checkParse(new MethodCall(m), declaringType, inputTypes, outputType);
     }
   }
@@ -135,7 +135,7 @@ public class OperationParserTests {
       declaringType = ClassOrInterfaceType.forClass(c.getDeclaringClass());
       List<Type> paramTypes = new ArrayList<>();
       for (java.lang.reflect.Type t : c.getGenericParameterTypes()) {
-        paramTypes.add(Type.forType(t));
+        paramTypes.add(Type.forType(declaringType.getParameterTable(), t));
       }
       TypeTuple inputTypes = new TypeTuple(paramTypes);
       checkParse(new ConstructorCall(c), declaringType, inputTypes, declaringType);

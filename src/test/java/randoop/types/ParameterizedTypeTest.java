@@ -336,8 +336,12 @@ public class ParameterizedTypeTest {
       fail("failed to load method ParameterInput.m()");
     }
     assert m != null;
+    ClassOrInterfaceType classOrInterfaceType = ClassOrInterfaceType.forClass(c);
+    ParameterTable parameterTable =
+        ParameterTable.createTable(classOrInterfaceType.getParameterTable(), m);
+
     for (java.lang.reflect.Type type : m.getGenericParameterTypes()) {
-      ParameterizedType itType = InstantiatedType.forType(type);
+      ParameterizedType itType = InstantiatedType.forType(parameterTable, type);
       if (!itType.isGeneric()) {
         assertTrue(
             "non-generic should not have type parameters: " + itType,

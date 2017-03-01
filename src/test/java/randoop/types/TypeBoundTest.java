@@ -214,6 +214,7 @@ public class TypeBoundTest {
   private class ArgumentVisitor implements ClassVisitor {
     private Map<String, TypeVariable> argTypes;
     private Set<Method> declaredMethods;
+    private ClassOrInterfaceType classType;
 
     ArgumentVisitor(Map<String, TypeVariable> argTypes) {
       this.argTypes = argTypes;
@@ -222,19 +223,23 @@ public class TypeBoundTest {
 
     @Override
     public void visit(Constructor<?> c) {
-      addParameters(c.getName(), c.getTypeParameters());
+      ParameterTable parameterTable = ParameterTable.createTable(classType.getParameterTable(), c);
+      addParameters(c.getName(), parameterTable.getParameters());
     }
 
-    private void addParameters(String name, java.lang.reflect.TypeVariable<?>[] typeParameters) {
-      for (java.lang.reflect.TypeVariable variable : typeParameters) {
-        argTypes.put(name, TypeVariable.forType(variable));
+    private void addParameters(String name, List<TypeVariable> typeParameters) {
+      assert typeParameters.size() == 1;
+      for (TypeVariable variable : typeParameters) {
+        argTypes.put(name, variable);
       }
     }
 
     @Override
     public void visit(Method m) {
       if (declaredMethods.contains(m)) {
-        addParameters(m.getName(), m.getTypeParameters());
+        ParameterTable parameterTable =
+            ParameterTable.createTable(classType.getParameterTable(), m);
+        addParameters(m.getName(), parameterTable.getParameters());
       }
     }
 
@@ -246,6 +251,7 @@ public class TypeBoundTest {
 
     @Override
     public void visitBefore(Class<?> c) {
+      classType = ClassOrInterfaceType.forClass(c);
       Collections.addAll(declaredMethods, c.getDeclaredMethods());
     }
 
