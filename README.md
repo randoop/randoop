@@ -35,8 +35,6 @@ The graph will be saved in the `experiments/plots` directory, named `'Project' '
 As an example, performing the following set of commands (waiting a number of hours for the evaluation script to finish before invoking the next command) will replicate results for the Chart project's individual experiment:
 `./Evaluate.sh -i -b -o -p Chart`
 
-`cd experiments`
-
 `python experiments/Plot.py experiments/Chart_Individual_Randoop_Line.txt experiments/Chart_Orienteering_Line.txt  experiments/Chart_Individual_ConstantMining_Line.txt  experiments/Chart_Individual_DigDog_Line.txt`
 
 
