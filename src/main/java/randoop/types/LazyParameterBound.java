@@ -103,6 +103,7 @@ class LazyParameterBound extends ParameterBound {
    */
   private static TypeArgument apply(
       java.lang.reflect.Type type, Substitution<ReferenceType> substitution) {
+    assert false : "apply disabled on lazy bound " + type + " subst: " + substitution;
     if (type instanceof java.lang.reflect.TypeVariable) {
       ReferenceType referenceType = substitution.get(type);
       if (referenceType != null) {
@@ -122,18 +123,18 @@ class LazyParameterBound extends ParameterBound {
       InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);
       return TypeArgument.forType(instantiatedType);
     }
-
-    if (type instanceof Class) {
-      return TypeArgument.forType(ClassOrInterfaceType.forType(type));
-    }
-
+    /* commented out so will compile
+        if (type instanceof Class) {
+          return TypeArgument.forType(ClassOrInterfaceType.forType(type));
+        }
+    */
     if (type instanceof java.lang.reflect.WildcardType) {
       final java.lang.reflect.WildcardType wildcardType = (java.lang.reflect.WildcardType) type;
       if (wildcardType.getLowerBounds().length > 0) {
         assert wildcardType.getLowerBounds().length == 1
             : "a wildcard is defined by the JLS to only have one bound";
         java.lang.reflect.Type lowerBound = wildcardType.getLowerBounds()[0];
-        ParameterBound bound;
+        ParameterBound bound = null;
         if (lowerBound instanceof java.lang.reflect.TypeVariable) {
           ReferenceType boundType = substitution.get(lowerBound);
           if (boundType != null) {
@@ -142,9 +143,11 @@ class LazyParameterBound extends ParameterBound {
             bound = new LazyParameterBound(lowerBound);
           }
         } else {
+          /* commented out so will compile
           bound =
               ParameterBound.forType(new HashSet<java.lang.reflect.TypeVariable<?>>(), lowerBound)
                   .apply(substitution);
+                  */
         }
 
         return new WildcardArgument(new WildcardType(bound, false));
@@ -152,11 +155,13 @@ class LazyParameterBound extends ParameterBound {
       // a wildcard always has an upper bound
       assert wildcardType.getUpperBounds().length == 1
           : "a wildcard is defined by the JLS to only have one bound";
+      /* commented out so will compile
       ParameterBound bound =
           ParameterBound.forTypes(
               new HashSet<java.lang.reflect.TypeVariable<?>>(), wildcardType.getUpperBounds());
       bound = bound.apply(substitution);
       return new WildcardArgument(new WildcardType(bound, true));
+      */
     }
 
     return null;
@@ -170,6 +175,7 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public List<TypeVariable> getTypeParameters() {
+    assert false : "can't get the type parameters of lazy bound " + this;
     return getTypeParameters(boundType);
   }
 
@@ -180,9 +186,12 @@ class LazyParameterBound extends ParameterBound {
    * @return the list of type variables in the given type
    */
   private static List<TypeVariable> getTypeParameters(java.lang.reflect.Type type) {
+    assert false : "unable to get type parameters for lazy bound " + type;
     List<TypeVariable> variableList = new ArrayList<>();
     if (type instanceof java.lang.reflect.TypeVariable) {
+      /* commented out so will compile
       variableList.add(TypeVariable.forType(type));
+      */
     } else if (type instanceof java.lang.reflect.ParameterizedType) {
       java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
       for (java.lang.reflect.Type argType : pt.getActualTypeArguments()) {

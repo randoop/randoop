@@ -28,8 +28,9 @@ public class ReferenceArgument extends TypeArgument {
    * @param type  the type
    * @return a {@code ReferenceArgument} for the given type
    */
-  public static ReferenceArgument forType(java.lang.reflect.Type type) {
-    return forType(ReferenceType.forType(type));
+  public static ReferenceArgument forType(
+      ParameterTable parameterTable, java.lang.reflect.Type type) {
+    return forType(ReferenceType.forType(parameterTable, type));
   }
 
   public static ReferenceArgument forType(ReferenceType referenceType) {
@@ -95,7 +96,7 @@ public class ReferenceArgument extends TypeArgument {
 
   @Override
   public boolean hasWildcard() {
-    return referenceType.isParameterized() && ((ClassOrInterfaceType) referenceType).hasWildcard();
+    return referenceType.isParameterized() && referenceType.hasWildcard();
   }
 
   /**

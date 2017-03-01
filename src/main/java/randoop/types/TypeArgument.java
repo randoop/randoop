@@ -25,11 +25,11 @@ public abstract class TypeArgument {
    * @param type  the type of a type argument
    * @return the {@code TypeArgument} for the given type
    */
-  public static TypeArgument forType(java.lang.reflect.Type type) {
+  public static TypeArgument forType(ParameterTable parameterTable, java.lang.reflect.Type type) {
     if (type instanceof WildcardType) {
-      return WildcardArgument.forType(type);
+      return WildcardArgument.forType(parameterTable, type);
     } else {
-      return ReferenceArgument.forType(type);
+      return ReferenceArgument.forType(parameterTable, type);
     }
   }
 

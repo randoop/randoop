@@ -29,23 +29,6 @@ public abstract class TypeVariable extends ParameterType {
     super(lowerBound, upperBound);
   }
 
-  /**
-   * Creates a {@code TypeVariable} object for a given {@code java.lang.reflect.Type}
-   * reference, which must be a {@code java.lang.reflect.TypeVariable}.
-   *
-   * @param type  the type reference
-   * @return the {@code TypeVariable} for the given type
-   */
-  public static TypeVariable forType(java.lang.reflect.Type type) {
-    if (!(type instanceof java.lang.reflect.TypeVariable<?>)) {
-      throw new IllegalArgumentException("type must be a type variable, got " + type);
-    }
-    java.lang.reflect.TypeVariable<?> v = (java.lang.reflect.TypeVariable) type;
-    Set<java.lang.reflect.TypeVariable<?>> variableSet = new HashSet<>();
-    variableSet.add(v);
-    return new ExplicitTypeVariable(v, ParameterBound.forTypes(variableSet, v.getBounds()));
-  }
-
   @Override
   public ReferenceType apply(Substitution<ReferenceType> substitution) {
     ReferenceType type = substitution.get(this);

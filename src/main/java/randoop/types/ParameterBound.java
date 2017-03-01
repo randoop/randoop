@@ -58,17 +58,19 @@ public abstract class ParameterBound {
    * @return the {@code ParameterBound} for the given types
    */
   static ParameterBound forTypes(
-      Set<java.lang.reflect.TypeVariable<?>> variableSet, java.lang.reflect.Type[] bounds) {
+      ParameterTable parameterTable,
+      Set<java.lang.reflect.TypeVariable<?>> variableSet,
+      java.lang.reflect.Type[] bounds) {
     if (bounds == null) {
       throw new IllegalArgumentException("bounds must be non null");
     }
 
     if (bounds.length == 1) {
-      return ParameterBound.forType(variableSet, bounds[0]);
+      return ParameterBound.forType(parameterTable, variableSet, bounds[0]);
     } else {
       List<ParameterBound> boundList = new ArrayList<>();
       for (java.lang.reflect.Type type : bounds) {
-        boundList.add(ParameterBound.forType(variableSet, type));
+        boundList.add(ParameterBound.forType(parameterTable, variableSet, type));
       }
       return new IntersectionTypeBound(boundList);
     }
@@ -86,19 +88,25 @@ public abstract class ParameterBound {
    *         bound
    */
   static ParameterBound forType(
-      Set<java.lang.reflect.TypeVariable<?>> variableSet, java.lang.reflect.Type type) {
+      ParameterTable parameterTable,
+      Set<java.lang.reflect.TypeVariable<?>> variableSet,
+      java.lang.reflect.Type type) {
     if (type instanceof java.lang.reflect.ParameterizedType) {
       if (!hasTypeVariable(type, variableSet)) {
-        return new EagerReferenceBound(ParameterizedType.forType(type));
+        return new EagerReferenceBound(ParameterizedType.forType(parameterTable, type));
       }
       return new LazyParameterBound(type);
     }
     if (type instanceof Class<?>) {
-      return new EagerReferenceBound(ClassOrInterfaceType.forType(type));
+      return new EagerReferenceBound(ClassOrInterfaceType.forType(parameterTable, type));
     }
     if (isTypeVariable(type)) {
-      TypeVariable eagerBound = TypeVariable.forType(type);
-      return new EagerReferenceBound(eagerBound);
+      TypeVariable bound = parameterTable.get((java.lang.reflect.TypeVariable<?>) type);
+      if (bound != null) {
+        return new EagerReferenceBound(bound);
+      }
+      // shouldn't drop through
+      assert false : "should't get here";
     }
     return new LazyParameterBound(type);
   }

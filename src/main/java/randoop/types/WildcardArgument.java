@@ -30,13 +30,14 @@ class WildcardArgument extends TypeArgument {
    * @param type  the {@code Type} object
    * @return the {@code WildcardArgument} created from the given {@code Type}
    */
-  public static WildcardArgument forType(java.lang.reflect.Type type) {
+  public static WildcardArgument forType(
+      ParameterTable parameterTable, java.lang.reflect.Type type) {
     if (!(type instanceof java.lang.reflect.WildcardType)) {
       throw new IllegalArgumentException("Must be a wildcard type " + type);
     }
     java.lang.reflect.WildcardType wildcardType = (java.lang.reflect.WildcardType) type;
 
-    return new WildcardArgument(WildcardType.forType(wildcardType));
+    return new WildcardArgument(WildcardType.forType(parameterTable, wildcardType));
   }
 
   public static WildcardArgument forType(ReferenceType argumentType) {
