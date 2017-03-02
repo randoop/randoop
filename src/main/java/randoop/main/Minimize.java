@@ -99,8 +99,8 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Main entry point, minimize a failing JUnit test suite.
-   * TODO: define minimize
+   * Check that the required parameters have been specified by the command-line
+   * options and then call the mainMinimize method.
    *
    * @param args first parameter is the absolute path to the Java file to be
    *             minimized. The second parameter is the complete classpath
@@ -134,7 +134,8 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Main starting point to minimize the input test file.
+   * Minimize the input test file.
+   * TODO: define minimize
    *
    * @param filePath     the absolute file path to the Java program that is being
    *                     processed
@@ -209,9 +210,10 @@ public class Minimize extends CommandHandler {
   /**
    * Visit and minimize every method within a Java file.
    *
-   * @param cu             the compilation unit through which we visit each method, the compilation unit will be modified if a correct minimization of a method is found
-   * @param filePath       the complete file path to the Java program that is being
-   *                       processed
+   * @param cu             the compilation unit through which we visit each method,
+   *                       the compilation unit will be modified if a correct minimization
+   *                       of a method is found
+   * @param filePath       the absolute file path to the Java file that is being minimized
    * @param classpath      classpath used to compile and run the Java file
    * @param expectedOutput expected JUnit output when the Java file is compiled and run
    * @param packageName    the name of the package that the Java file is in
@@ -253,7 +255,7 @@ public class Minimize extends CommandHandler {
    *                       minimization of the method is found
    * @param compUnit       compilation unit that contains the AST for the Java file that
    *                       we are minimizing, the compilation unit will be modified if a correct minimization of a method is found
-   * @param filePath       complete path to the Java file that we are minimizing
+   * @param filePath       absolute path to the Java file that we are minimizing
    * @param classpath      classpath needed to compile and run the Java file
    * @param expectedOutput expected standard output from running the JUnit test suite
    * @param packageName    the name of the package that the Java file is in
@@ -472,7 +474,7 @@ public class Minimize extends CommandHandler {
    *
    * @param method         a method within the Java file, the given method will be modified if a correct minimization of the method is found
    * @param compUnit       compilation unit containing an AST for a Java file, the compilation unit will be modified if a correct minimization of the method is found
-   * @param filePath       complete file path to the input Java file
+   * @param filePath       absolute file path to the input Java file
    * @param classpath      classpath needed to compile and run the Java file
    * @param expectedOutput expected standard output from running the JUnit test suite
    * @param packageName    the name of the package that the Java file is in
@@ -602,7 +604,7 @@ public class Minimize extends CommandHandler {
   /**
    * Check if a Java file has been correctly minimized.
    *
-   * @param filePath       the complete path to the Java file
+   * @param filePath       the absolute path to the Java file
    * @param classpath      classpath needed to compile/run Java file
    * @param expectedOutput expected output of running JUnit test suite
    * @param packageName    the name of the package that the Java file is in
@@ -629,7 +631,7 @@ public class Minimize extends CommandHandler {
    * Compile and run a given Java file and return the compilation and run
    * output.
    *
-   * @param filePath     the complete path to the Java file to be compiled and executed
+   * @param filePath     the absolute path to the Java file to be compiled and executed
    * @param classpath    dependencies and complete classpath to compile and run the
    *                     Java program
    * @param packageName  the name of the package that the Java file is in
@@ -713,7 +715,7 @@ public class Minimize extends CommandHandler {
   /**
    * Get directory to execute command in given file path and package name
    *
-   * @param filePath    the complete file path to the input Java file
+   * @param filePath    the absolute file path to the input Java file
    * @param packageName package name of input Java file
    * @return String of the directory to execute the commands in
    */
@@ -833,7 +835,7 @@ public class Minimize extends CommandHandler {
    * @param compUnit the compilation unit to write to file
    * @param filePath the origin of the Java file that was processed
    * @param suffix   the suffix to append to the name of the new Java file
-   * @return {@code String} representing the complete path to the newly written Java
+   * @return {@code String} representing the absolute path to the newly written Java
    * file. Returns {@code null} if error occurred in writing to the new file
    */
   private static String writeToFile(CompilationUnit compUnit, String filePath, String suffix) {
@@ -857,10 +859,10 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Given a complete file path to a Java file, return a String representing
+   * Given the absolute file path to a Java file, return a String representing
    * the class name of the file.
    *
-   * @param filePath complete path to a Java program
+   * @param filePath absolute path to a Java file
    * @return {@code String} representing the class name
    */
   public static String getClassName(String filePath) {
