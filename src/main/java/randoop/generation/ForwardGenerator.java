@@ -353,8 +353,7 @@ public class ForwardGenerator extends AbstractGenerator {
       sequences = selectInputs(operation);
     } catch (Throwable e) {
       if (GenInputsAbstract.fail_on_generation_error) {
-        String opName = operation.getOperation().getReflectionObject().toString();
-        throw new RandoopGenerationError(opName, operation, e);
+        throw new RandoopGenerationError(operation, e);
       } else {
         if (Log.isLoggingOn()) {
           Log.logLine("Error selecting inputs for operation: " + operation);
