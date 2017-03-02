@@ -1,6 +1,7 @@
 package randoop.operation;
 
 import java.io.PrintStream;
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.List;
@@ -312,6 +313,11 @@ public final class ConstructorCall extends CallableOperation {
   @Override
   public boolean isConstructorCall() {
     return true;
+  }
+
+  @Override
+  public Constructor<?> getReflectionObject() {
+    return constructor;
   }
 
   /**

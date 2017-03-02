@@ -16,6 +16,7 @@ import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
+import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.TypeInstantiator;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
@@ -324,14 +325,48 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     if (operation.isGeneric() || operation.hasWildcardTypes()) {
-      operation = instantiator.instantiate((TypedClassOperation) operation);
+      try {
+        operation = instantiator.instantiate((TypedClassOperation) operation);
+      } catch (Throwable e) {
+        if (GenInputsAbstract.fail_on_generation_error) {
+          if (operation.isMethodCall() || operation.isConstructorCall()) {
+            String opName = operation.getOperation().getReflectionObject().toString();
+            throw new RandoopInstantiationError(opName, e);
+          }
+        } else {
+          if (Log.isLoggingOn()) {
+            Log.logLine("Instantiation error for operation " + operation);
+            Log.logLine("error message: " + e.getMessage());
+          }
+          System.out.println("Instantiation error for operation " + operation);
+          operation = null;
+        }
+      }
       if (operation == null) { //failed to instantiate generic
         return null;
       }
     }
 
     // add flags here
-    InputsAndSuccessFlag sequences = selectInputs(operation);
+    InputsAndSuccessFlag sequences;
+    try {
+      sequences = selectInputs(operation);
+    } catch (Throwable e) {
+      if (GenInputsAbstract.fail_on_generation_error) {
+        String opName = operation.getOperation().getReflectionObject().toString();
+        throw new RandoopGenerationError(opName, operation, e);
+      } else {
+        if (Log.isLoggingOn()) {
+          Log.logLine("Error selecting inputs for operation: " + operation);
+          Log.logLine("error message: " + e.getMessage());
+        }
+        System.out.println("Error selecting inputs for operation: " + operation);
+        sequences = null;
+      }
+    }
+    if (sequences == null) {
+      return null;
+    }
 
     if (!sequences.success) {
       if (Log.isLoggingOn()) Log.logLine("Failed to find inputs for statement.");

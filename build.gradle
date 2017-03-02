@@ -397,7 +397,7 @@ task singleJar (type: Jar) {
 
 assemble.dependsOn singleJar
 
-task distributionZip (type: Zip , dependsOn: ['singleJar', 'copyJars', 'manual']) {
+task distributionZip (type: Zip , dependsOn: ['clean', 'singleJar', 'copyJars', 'manual']) {
   description "Assemble a zip file with jar files and user documentation"
   def dirName = "$baseName-$version"
   from 'build/libs/'
@@ -431,7 +431,7 @@ task distributionZip (type: Zip , dependsOn: ['singleJar', 'copyJars', 'manual']
  /*
   * Get the plume-lib repo using gradle-git, and save into utils/plume-lib
   */
-task clone {
+task clonePlumeLib {
   doLast {
     def plumeFolder = file("$buildDir/utils/plume-lib")
     if ( ! plumeFolder.exists() ) {
@@ -455,7 +455,7 @@ javadoc {
 }
 
 // needed for javadoc.doLast
-javadoc.dependsOn clone
+javadoc.dependsOn clonePlumeLib
 
 javadoc.doLast {
   // Work around Javadoc bug
@@ -480,7 +480,7 @@ task copyManual(type: Copy) {
  * Configuration of updateUserTOC task to update the table-of-contents for the
  * user documentation.
  */
-task updateUserTOC( type:Exec, dependsOn: [ 'copyManual', 'clone' ]) {
+task updateUserTOC( type:Exec, dependsOn: [ 'copyManual', 'clonePlumeLib' ]) {
   executable "$buildDir/utils/plume-lib/bin/html-update-toc"
   args  "${buildDir}/docs/manual/index.html"
   environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
@@ -489,7 +489,7 @@ task updateUserTOC( type:Exec, dependsOn: [ 'copyManual', 'clone' ]) {
 /* Configuration of task updateDevTOC to update table of contents in developer
  * documentation.
  */
-task updateDevTOC( type:Exec, dependsOn: [ 'copyManual', 'clone' ]) {
+task updateDevTOC( type:Exec, dependsOn: [ 'copyManual', 'clonePlumeLib' ]) {
   executable "$buildDir/utils/plume-lib/bin/html-update-toc"
   args "${buildDir}/docs/manual/dev.html"
   environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
@@ -593,21 +593,21 @@ task wrapper(type: Wrapper) {
 
 /*************** Other tool configs *************/
 /* Make Emacs TAGS table */
-task tags(type: Exec, dependsOn: 'clone') {
+task tags(type: Exec, dependsOn: 'clonePlumeLib') {
   description "Run etags to create an Emacs TAGS table"
   environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
   commandLine "bash", "-c", "find src/ -name *.java | sort-directory-order | xargs etags"
 }
 
 /* Make Emacs TAGS table, with only Randoop code (not test code) */
-task tagsNoTests(type: Exec, dependsOn: 'clone') {
+task tagsNoTests(type: Exec, dependsOn: 'clonePlumeLib') {
   description "Run etags to create an Emacs TAGS table"
   environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
   commandLine "bash", "-c", "find src/ -name *.java | sort-directory-order | grep -v /testinput/ | xargs etags"
 }
 
 /* Run checklink */
-task checklink(type: Exec, dependsOn: 'clone') {
+task checklink(type: Exec, dependsOn: 'clonePlumeLib') {
   description "Run checklink on randoop.github.io/randoop/ and write output to checklink-log.txt"
   environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
   commandLine 'bash', '-c', """

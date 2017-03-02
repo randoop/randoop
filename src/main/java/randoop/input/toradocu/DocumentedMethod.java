@@ -1,8 +1,5 @@
 package randoop.input.toradocu;
 
-/**
- * Modified class from Toradocu used to deserialize the JSON output of Toradocu.
- */
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,13 +12,24 @@ import java.util.Set;
  * DocumentedMethod represents the Javadoc documentation for a method in a class. It identifies the
  * method itself and key Javadoc information associated with it, such as throws tags, parameters,
  * and return type.
+ * <p>
+ * * Modified class from Toradocu used to deserialize the JSON output of Toradocu.
  */
 public final class DocumentedMethod {
 
-  /** Class in which the method is contained. */
-  private final Type containingClass;
+  /** Method signature in the format method_name(type1 arg1, type2 arg2, ...). */
+  private final String signature;
   /** Simple name of the method. */
   private final String name;
+  /** Class in which the method is contained. */
+  private final Type containingClass;
+  /**
+   * Target class passed to Toradocu with the option --target-class. (Information needed for Randoop
+   * integration.)
+   */
+  private final String targetClass;
+  /** Flag indicating whether this method takes a variable number of arguments. */
+  private final boolean isVarArgs;
   /**
    * Return type of the method. {@code null} if this DocumentedMethod represents a constructor.
    * {@code Type.VOID} if the return type is void.
@@ -31,18 +39,16 @@ public final class DocumentedMethod {
   private final List<Parameter> parameters;
   /** Param tags specified in the method's Javadoc introduced in order. */
   private final Set<ParamTag> paramTags;
-  /** Flag indicating whether this method takes a variable number of arguments. */
-  private final boolean isVarArgs;
+  /**
+   * return tags specified in the method's Javadoc introduced in order. (If more than one, but
+   * that's weird)
+   */
+  private final ReturnTag returnTag;
   /**
    * Throws tags specified in the method's Javadoc. Also, each throws tag can contain the
    * translation of the comment as Java boolean condition.
    */
   private final Set<ThrowsTag> throwsTags;
-  /** Method signature in the format method_name(type1 arg1, type2 arg2, ...). */
-  private final String signature;
-
-  /** Target class passed to Toradocu with the option --target-class. */
-  private final String targetClass;
 
   /**
    * Constructs a {@code DocumentedMethod} contained in a given {@code containingClass} with the
@@ -53,10 +59,11 @@ public final class DocumentedMethod {
    * @param returnType the fully qualified return type of the method or {@code null} if the {@code
    *     DocumentedMethod} is a constructor
    * @param parameters the parameters of the {@code DocumentedMethod}
-   * @param paramTags the {@code @param tags} of the {@code DocumentedMethod}
+   * @param paramTags the {@code @param} tags of the {@code DocumentedMethod}
    * @param isVarArgs true if the {@code DocumentedMethod} takes a variable number of arguments,
    *     false otherwise
-   * @param throwsTags the {@code @throws tags} of the {@code DocumentedMethod}
+   * @param throwsTags the {@code @throws} tags of the {@code DocumentedMethod}
+   * @param returnTag the {@code @return} tag of the {@code DocumentedMethod}
    * @param signature  the signature of the method
    * @param targetClass  the class on which Toradocu was run
    * @throws NullPointerException if {@code containingClass} or {@code name} is null
@@ -69,6 +76,7 @@ public final class DocumentedMethod {
       Collection<ParamTag> paramTags,
       boolean isVarArgs,
       Collection<ThrowsTag> throwsTags,
+      ReturnTag returnTag,
       String signature,
       String targetClass) {
 
@@ -81,6 +89,7 @@ public final class DocumentedMethod {
     this.isVarArgs = isVarArgs;
     this.throwsTags =
         throwsTags == null ? new LinkedHashSet<ThrowsTag>() : new LinkedHashSet<>(throwsTags);
+    this.returnTag = returnTag;
     this.signature = signature;
     this.targetClass = targetClass;
   }
@@ -101,6 +110,15 @@ public final class DocumentedMethod {
    */
   public Set<ParamTag> paramTags() {
     return Collections.unmodifiableSet(paramTags);
+  }
+
+  /**
+   * Returns the return tag in this method.
+   *
+   * @return the return tag in this method. Null if there is no @return comment
+   */
+  public ReturnTag returnTag() {
+    return returnTag;
   }
 
   /**

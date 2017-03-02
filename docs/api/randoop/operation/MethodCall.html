@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>MethodCall (randoop 3.0.8-prerelease API)</title>
+<title>MethodCall (randoop 3.0.9 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="MethodCall (randoop 3.0.8-prerelease API)";
+            parent.document.title="MethodCall (randoop 3.0.9 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":9,"i10":10,"i11":10,"i12":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":9,"i11":10,"i12":10,"i13":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -236,44 +236,48 @@ extends <a href="../../randoop/operation/CallableOperation.html" title="class in
 </td>
 </tr>
 <tr id="i5" class="rowColor">
+<td class="colFirst"><code>java.lang.reflect.Method</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/MethodCall.html#getReflectionObject--">getReflectionObject</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/MethodCall.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/MethodCall.html#isMessage--">isMessage</a></span>()</code>
 <div class="block">Predicate to indicate whether object represents a method-call-like
  operation (either static or instance).</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/MethodCall.html#isMethodCall--">isMethodCall</a></span>()</code>
 <div class="block">Indicates whether this object represents a method-call operation (either static or instance).</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/MethodCall.html#isStatic--">isStatic</a></span>()</code>
 <div class="block">Predicate to indicate whether object represents a static operation on the
  declaring class.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>static <a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation">TypedClassOperation</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/MethodCall.html#parse-java.lang.String-">parse</a></span>(java.lang.String&nbsp;signature)</code>
 <div class="block">Parses a method call in a string descriptor and returns a
  <a href="../../randoop/operation/MethodCall.html" title="class in randoop.operation"><code>MethodCall</code></a> object.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/MethodCall.html#satisfies-randoop.reflection.ReflectionPredicate-">satisfies</a></span>(<a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;predicate)</code>
 <div class="block">Checks whether reflective object contained in an <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a>
  satisfies the predicate.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/MethodCall.html#toParsableString-randoop.types.Type-randoop.types.TypeTuple-randoop.types.Type-">toParsableString</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;declaringType,
                 <a href="../../randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a>&nbsp;inputTypes,
@@ -282,7 +286,7 @@ extends <a href="../../randoop/operation/CallableOperation.html" title="class in
  static parse method for class.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/MethodCall.html#toString--">toString</a></span>()</code>
 <div class="block">toString outputs a text representation of the method call.</div>
@@ -612,6 +616,19 @@ extends <a href="../../randoop/operation/CallableOperation.html" title="class in
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the name for this operation</dd>
+</dl>
+</li>
+</ul>
+<a name="getReflectionObject--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getReflectionObject</h4>
+<pre>public&nbsp;java.lang.reflect.Method&nbsp;getReflectionObject()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="../../randoop/operation/CallableOperation.html#getReflectionObject--">getReflectionObject</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/operation/CallableOperation.html" title="class in randoop.operation">CallableOperation</a></code></dd>
 </dl>
 </li>
 </ul>

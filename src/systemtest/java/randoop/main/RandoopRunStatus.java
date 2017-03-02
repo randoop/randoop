@@ -103,7 +103,13 @@ class RandoopRunStatus {
     CompilationStatus compileStatus =
         CompilationStatus.compileTests(testClassSourceFiles, classDir.toString());
     if (!compileStatus.succeeded) {
+      if (randoopExitStatus.exitStatus == 0) {
+        for (String line : randoopExitStatus.outputLines) {
+          System.err.println(line);
+        }
+      }
       compileStatus.printDiagnostics(System.err);
+
       fail("Compilation failed");
     }
 

@@ -139,6 +139,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean silently_ignore_bad_class_names = false;
 
   /**
+   * (For debugging.)
+   * If an error or exception is thrown during type instantiation or input selection, this option
+   * allows the error to be passed through to {@link GenTests#handle(String[])} where a comprehensive
+   * error message is printed.
+   */
+  @Unpublicized
+  @Option("Allow Randoop to fail on any error during test generation")
+  public static boolean fail_on_generation_error = false;
+
+  /**
    * Classes, one of which every test must use. Randoop will only output tests
    * whose source code has at least one use of a member of a class whose name matches the
    * regular expression.
@@ -285,6 +295,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static List<File> toradocu_conditions = null;
 
   /**
+   * Throw exception when cannot find expected condition methods in Toradocu output.
+   * Otherwise a warning message is printed and the condition is ignored.
+   */
+  @Unpublicized
+  @Option("Allow failure when cannot find Toradocu condition methods")
+  public static boolean fail_on_condition_input_error = false;
+
+  /**
    * File containing side-effect-free observer methods.
    * Specifying observers has 2 benefits:  it makes regression tests stronger,
    * and it helps Randoop create smaller tests.
@@ -346,17 +364,17 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * number of test candidates generated, because redundant and illegal tests
    * will be discarded.
    */
-  @Option("Maximum number of tests generated")
+  @Option("Maximum number of candidate tests generated")
   public static int inputlimit = 100000000;
 
-  /** Do not generate tests with more than this many statements */
-  @Option("Do not generate tests with more than <int> statements")
+  /** Do not generate tests with more than this many statements. */
+  @Option("Do not generate tests with more than this many statements")
   public static int maxsize = 100;
 
   /**
    * Stop generation once an error-revealing test has been generated.
    */
-  @Option("Stop test generation once an error-revealing test has been generated")
+  @Option("Stop after generating any error-revealing test")
   public static boolean stop_on_error_test = false;
 
   /**
