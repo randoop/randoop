@@ -53,8 +53,8 @@ import org.apache.commons.io.IOUtils;
 /**
  * This program minimizes failing unit tests and can take three command-line arguments:
  * <ol>
- * <li>the complete path to the Java file whose failing tests will be minimized (required)
- * <li>the classpath containing dependencies needed to compile and run the Java (optional)
+ * <li>the absolute path to the Java file whose failing tests will be minimized (required)
+ * <li>the complete classpath containing dependencies needed to compile and run the Java file (optional)
  * <li>the timeout limit, in seconds, allowed for any unit test case to be executed (optional, default = 10)
  * file.
  * </ol>
@@ -62,7 +62,7 @@ import org.apache.commons.io.IOUtils;
 public class Minimize extends CommandHandler {
   @OptionGroup(value = "Test case minimization options")
   /**
-   * The complete file path to the Java file whose failing tests will be minimized.
+   * The absolute file path to the Java file whose failing tests will be minimized.
    */
   @Option("absolute input file path")
   public static String filepath;
@@ -94,7 +94,7 @@ public class Minimize extends CommandHandler {
         null,
         "Absolute path to Java file to be minimized, complete classpath to compile and run the Java file, maximum time (in seconds) allowed for a single unit test case to run before it times out.",
         "A minimized JUnit test suite (as one Java file) named \"InputFileMinimized.java\" if \"InputFile.java\" were the name of the input file.",
-        "java randoop.main.Main minimize \"~/RandoopTests/src/ErrorTestLang.java\" \"~/RandoopTestscommons-lang3-3.5.jar:~/RandoopTests/junit-4.12.jar:~/RandoopTests/hamcrest-core-1.3.jar\" \"30\"",
+        "java -ea -cp bin:randoop-all-3.0.9.jar randoop.main.Main minimize --filepath=~/RandoopTests/src/ErrorTestLang.java --fileclasspath=~/RandoopTests/commons-lang3-3.5.jar --testcasetimeout=30",
         new Options(Minimize.class));
   }
 
