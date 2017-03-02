@@ -51,8 +51,7 @@ import java.util.concurrent.Future;
 import org.apache.commons.io.IOUtils;
 
 /**
- * This program minimizes failing unit tests and can take three command-line
- * arguments:
+ * This program minimizes failing unit tests and can take three command-line arguments:
  * <ol>
  * <li>the complete path to the Java file whose failing tests will be minimized (required)
  * <li>the classpath containing dependencies needed to compile and run the Java (optional)
@@ -69,7 +68,7 @@ public class Minimize extends CommandHandler {
   public static String filepath;
 
   /**
-   * The classpath that includes dependencies needed to compile
+   * The complete classpath that includes dependencies needed to compile
    * and run the input Java file specified by the filepath parameter.
    */
   @Option("complete class path to compile and run input file")
@@ -79,10 +78,10 @@ public class Minimize extends CommandHandler {
    * Maximum number of seconds allowed for a unit test within the test
    * suite to run. The default value is 10 seconds.
    * This is used for unit test cases that potentially will not terminate
-   * when run. This timeout limit should be large enough so that unit test
-   * cases that do terminate, have enough time to run until completion.
+   * when run. This timeout limit should be large enough such that unit tests
+   * which do terminate have enough time to run until completion.
    */
-  @Option("timeout, in seconds, for eaach unit test")
+  @Option("timeout, in seconds, for each unit test")
   public static int testcasetimeout = 10;
 
   public Minimize() {
@@ -93,19 +92,20 @@ public class Minimize extends CommandHandler {
         "",
         "Minimize a failing JUnit test suite.",
         null,
-        "Complete path to Java file to be minimized, complete classpath to compile and run the Java file, maximum time (in seconds) allowed for a single unit test case to run before it times out.",
+        "Absolute path to Java file to be minimized, complete classpath to compile and run the Java file, maximum time (in seconds) allowed for a single unit test case to run before it times out.",
         "A minimized JUnit test suite (as one Java file) named \"InputFileMinimized.java\" if \"InputFile.java\" were the name of the input file.",
         "java randoop.main.Main minimize \"~/RandoopTests/src/ErrorTestLang.java\" \"~/RandoopTestscommons-lang3-3.5.jar:~/RandoopTests/junit-4.12.jar:~/RandoopTests/hamcrest-core-1.3.jar\" \"30\"",
         new Options(Minimize.class));
   }
 
   /**
-   * Main entry point, minimize a Java unit test.
+   * Main entry point, minimize a failing JUnit test suite.
    * TODO: define minimize
    *
    * @param args first parameter is the absolute path to the Java file to be
-   *             minimized and the second parameter is the complete classpath
-   *             needed to compile and run the Java file
+   *             minimized. The second parameter is the complete classpath
+   *             needed to compile and run the Java file. The third parameter
+   *             is the timeout time, in seconds, for a unit test.
    * @return boolean flag to indicate success or failure of handling the command
    * @throws RandoopTextuiException thrown if unrecognized arguments are passed
    */
@@ -141,7 +141,7 @@ public class Minimize extends CommandHandler {
    * @param classPath    classpath used to compile and run the Java file
    * @param timeoutLimit maximum number of seconds allowed for any one unit test case
    *                     to run
-   * @return {@code Boolean} indicating minimization status. True indicates success,
+   * @return {@code boolean} indicating minimization status. True indicates success,
    * false indicates that there was an error.
    */
   public static boolean mainMinimize(String filePath, String classPath, int timeoutLimit) {
@@ -170,7 +170,7 @@ public class Minimize extends CommandHandler {
       // No package declaration
     }
 
-    // Run the test suite once to obtain expected output.
+    // Run the test suite once to obtain the expected output.
     String newFilePath = writeToFile(compUnit, filePath, "Minimized");
     Results res = compileAndRun(newFilePath, classPath, packageName, timeoutLimit);
 
@@ -197,8 +197,9 @@ public class Minimize extends CommandHandler {
     minimizeTestSuite(compUnit, filePath, classPath, expectedOutput, packageName, timeoutLimit);
     writeToFile(compUnit, filePath, "Minimized");
 
-    System.out.println("Minimizing complete.");
+    System.out.println("Minimizing complete.\n");
 
+    // Output original and minimized file lengths.
     System.out.println("Original file length: " + getFileLength(filePath) + " lines");
     System.out.println("Minimized file length: " + getFileLength(newFilePath) + " lines");
 
