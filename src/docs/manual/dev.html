@@ -654,7 +654,7 @@ task described below.
 <pre>
   git commit . -m "Update version to $NEWVERSION"
   git push
-</pre>    
+</pre>
   </li>
   <li>Make a
     repository tag:
@@ -680,37 +680,6 @@ task described below.
     https://github.com/randoop/randoop/releases/.  The changelog appears below.
   </li>
 </ol>
-
-
-<h1 id="file-organization">Project directory organization</h1>
-
-<p>
-Randoop has the following directory organization:
-</p>
-<ul>
-  <li> <i>agent</i> - subprojects for Java agents (load-time bytecode rewriting)</li>
-  <li> <i>doc</i> - documentation, such as this manual</li>
-  <li> <i>lib</i> - jar files for local copies of libraries not available via Maven</li>
-  <li> <i>src</i> - source directories for Randoop, including
-    <ul>
-      <li><i>main</i> - Randoop source code</li>
-      <li><i>test</i> - source for JUnit tests of Randoop</li>
-      <li><i>agenttest</i> - source for JUnit tests of the exercised-class Java agent</li>
-      <li><i>testinput</i> - source for libraries used in Randoop testing</li>
-      <li><i>systemtest</i> - source for Randoop system tests
-    </ul>
-  </li>
-</ul>
-<p>
-The source directories follow the conventions of the Gradle Java plugin, where
-each directory has a <i>java</i> subdirectory containing Java source, and,
-in some cases, a <i>resources</i> subdirectory containing other files.
-</p>
-
-<p>
-  There is also a <i>gradle</i> directory with the Gradle Wrapper, but you
-  shouldn't need to do anything with it.
-</p>
 
 
 <h1 id="randoop_internals">Randoop internals</h1>
