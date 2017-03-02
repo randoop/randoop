@@ -29,11 +29,7 @@ import plume.OptionGroup;
 import plume.Options;
 import plume.TimeLimitProcess;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -55,21 +51,21 @@ import java.util.concurrent.Future;
 import org.apache.commons.io.IOUtils;
 
 /**
- * Minimizer minimizes failing unit tests. The program can take three command-line
+ * This program minimizes failing unit tests and can take three command-line
  * arguments:
  * <ol>
- * <li>the complete path to the Java file that will be minimized, and
- * <li>the classpath containing dependencies needed to compile and run the Java
- * <li>the timeout limit, in seconds, allowed for any unit test case to be executed
+ * <li>the complete path to the Java file whose failing tests will be minimized (required)
+ * <li>the classpath containing dependencies needed to compile and run the Java (optional)
+ * <li>the timeout limit, in seconds, allowed for any unit test case to be executed (optional, default = 10)
  * file.
  * </ol>
  */
 public class Minimize extends CommandHandler {
-  @OptionGroup(value = "Minimize options")
+  @OptionGroup(value = "Test case minimization options")
   /**
-   * The complete file path to the Java file that will be minimized.
+   * The complete file path to the Java file whose failing tests will be minimized.
    */
-  @Option("complete input file path")
+  @Option("absolute input file path")
   public static String filepath;
 
   /**
@@ -86,7 +82,7 @@ public class Minimize extends CommandHandler {
    * when run. This timeout limit should be large enough so that unit test
    * cases that do terminate, have enough time to run until completion.
    */
-  @Option("timeout value for a unit test case")
+  @Option("timeout, in seconds, for eaach unit test")
   public static int testcasetimeout = 10;
 
   public Minimize() {
@@ -105,12 +101,13 @@ public class Minimize extends CommandHandler {
 
   /**
    * Main entry point, minimize a Java unit test.
+   * TODO: define minimize
    *
-   * @param args first parameter is the complete path to the Java file to be
+   * @param args first parameter is the absolute path to the Java file to be
    *             minimized and the second parameter is the complete classpath
    *             needed to compile and run the Java file
-   * @return boolean flag to indicate success of handling the command if true, false otherwise
-   * @throws RandoopTextuiException thrown if unrecognized arguments passed
+   * @return boolean flag to indicate success or failure of handling the command
+   * @throws RandoopTextuiException thrown if unrecognized arguments are passed
    */
   @Override
   public boolean handle(String[] args) throws RandoopTextuiException {
@@ -128,8 +125,7 @@ public class Minimize extends CommandHandler {
       System.out.println("Use the --filepath option.");
       System.exit(1);
     } else if (Minimize.testcasetimeout <= 0) {
-      System.out.println("You must specify a positive timeout value.");
-      System.out.println("Use the --testcasetimeout option.");
+      System.out.println("You must specify a positive, nonzero timeout value.");
       System.exit(1);
     }
 
@@ -140,7 +136,7 @@ public class Minimize extends CommandHandler {
   /**
    * Main starting point to minimize the input test file.
    *
-   * @param filePath     the complete file path to the Java program that is being
+   * @param filePath     the absolute file path to the Java program that is being
    *                     processed
    * @param classPath    classpath used to compile and run the Java file
    * @param timeoutLimit maximum number of seconds allowed for any one unit test case
@@ -196,15 +192,15 @@ public class Minimize extends CommandHandler {
     String expectedOutput = normalizeJUnitOutput(res.runOut.stdout);
 
     System.out.println("Minimizing: " + filePath);
-    long start = System.currentTimeMillis();
 
     // Minimize the Java test suite and output to a new Java file.
     minimizeTestSuite(compUnit, filePath, classPath, expectedOutput, packageName, timeoutLimit);
     writeToFile(compUnit, filePath, "Minimized");
 
-    long end = System.currentTimeMillis();
     System.out.println("Minimizing complete.");
-    System.out.println("Total time: " + (end - start) / 1000 + " seconds.\n");
+
+    System.out.println("Original file length: " + getFileLength(filePath) + " lines");
+    System.out.println("Minimized file length: " + getFileLength(newFilePath) + " lines");
 
     return true;
   }
@@ -919,8 +915,8 @@ public class Minimize extends CommandHandler {
     /**
      * Create an Outputs object
      *
-     * @param stdout standard output
-     * @param errout error output
+     * @param stdout    standard output
+     * @param errout    error output
      * @param exitValue exit value of process
      */
     public Outputs(String stdout, String errout, int exitValue) {
@@ -953,6 +949,31 @@ public class Minimize extends CommandHandler {
       this.compOut = compOut;
       this.runOut = runOut;
     }
+  }
+
+  /**
+   * Calculate the length of a file, by number of lines
+   *
+   * @param filepath absolute file path to the input file
+   * @return the number of lines in the file. Negative one
+   * is returned if an exception occurs from finding or reading the file
+   */
+  private static int getFileLength(String filepath) {
+    int lines = 0;
+    try {
+      BufferedReader reader = new BufferedReader(new FileReader(filepath));
+      while (reader.readLine() != null) {
+        lines++;
+      }
+      reader.close();
+    } catch (FileNotFoundException e) {
+      System.err.println("File length not calculated, file not found exception.");
+      return -1;
+    } catch (IOException e) {
+      System.err.println("File length not calculated, file read exception.");
+      return -1;
+    }
+    return lines;
   }
 
   /**
