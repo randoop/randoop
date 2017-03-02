@@ -398,10 +398,9 @@ task distributionZip (type: Zip , dependsOn: ['clean', 'singleJar', 'copyJars', 
   from ('build/docs/manual/stylesheets') {
     into 'doc/manual/stylesheets'
   }
-  from 'doc/READMEDIST.txt'
+  from 'src/distribution/resources/README.txt'
   into (dirName)
   exclude { details -> details.file.name.contains('randoop') && ! details.file.name.contains('-all-') }
-  rename ('READMEDIST.txt', 'README.txt')
 }
 
 /********************* Building manual *******************/
