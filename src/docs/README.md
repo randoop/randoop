@@ -1,9 +1,8 @@
 This directory src/docs contains the subdirectories
 
 - diagrams:  design diagrams for Randoop
-- manual:    the source files for Randoop user and developer manuals
-- site:      the non-manual contents of https://randoop.github.io/randoop/
-- resources: assorted files that do not appear on the website
+- site:      the contents of https://randoop.github.io/randoop/, including the manual
+- resources: files used in building the website
 
 along with the files
 - CHANGES.txt -- the change log

@@ -226,6 +226,21 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#fail_on_condition_input_error">fail_on_condition_input_error</a></span></code>
+<div class="block">Throw exception when cannot find expected condition methods in Toradocu output.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#fail_on_generation_error">fail_on_generation_error</a></span></code>
+<div class="block">(For debugging.)
+ If an error or exception is thrown during type instantiation or input selection, this option
+ allows the error to be passed through to <a href="../../randoop/main/GenTests.html#handle-java.lang.String:A-"><code>GenTests.handle(String[])</code></a> where a comprehensive
+ error message is printed.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#forbid_null">forbid_null</a></span></code>
 <div class="block">Do not use <code>null</code> as input to methods or constructors, even when no
  other argument value can be generated.</div>
@@ -741,6 +756,19 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <pre>public static&nbsp;boolean silently_ignore_bad_class_names</pre>
 </li>
 </ul>
+<a name="fail_on_generation_error">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>fail_on_generation_error</h4>
+<pre>public static&nbsp;boolean fail_on_generation_error</pre>
+<div class="block">(For debugging.)
+ If an error or exception is thrown during type instantiation or input selection, this option
+ allows the error to be passed through to <a href="../../randoop/main/GenTests.html#handle-java.lang.String:A-"><code>GenTests.handle(String[])</code></a> where a comprehensive
+ error message is printed.</div>
+</li>
+</ul>
 <a name="include_if_classname_appears">
 <!--   -->
 </a>
@@ -916,6 +944,17 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
  when the exception is thrown the sequence is <a href="../../randoop/main/GenInputsAbstract.BehaviorType.html#EXPECTED"><code>GenInputsAbstract.BehaviorType.EXPECTED</code></a>, but, if it is not,
  the sequence is classified as <a href="../../randoop/main/GenInputsAbstract.BehaviorType.html#ERROR"><code>GenInputsAbstract.BehaviorType.ERROR</code></a>.
  If the throws-condition is not satisfied by the input, then ordinary classification is applied.</div>
+</li>
+</ul>
+<a name="fail_on_condition_input_error">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>fail_on_condition_input_error</h4>
+<pre>public static&nbsp;boolean fail_on_condition_input_error</pre>
+<div class="block">Throw exception when cannot find expected condition methods in Toradocu output.
+ Otherwise a warning message is printed and the condition is ignored.</div>
 </li>
 </ul>
 <a name="observers">
