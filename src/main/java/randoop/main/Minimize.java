@@ -75,9 +75,8 @@ public class Minimize extends CommandHandler {
   public static String fileclasspath;
 
   /**
-   * Maximum number of seconds allowed for a unit test within the test
-   * suite to run. The default value is 10 seconds.
-   * This is used for unit test cases that potentially will not terminate
+   * The maximum number of seconds allowed for a unit test within the test
+   * suite to run. This is useful for test cases that do not terminate
    * when run. This timeout limit should be large enough such that unit tests
    * which do terminate have enough time to run until completion.
    */
@@ -129,13 +128,27 @@ public class Minimize extends CommandHandler {
       System.exit(1);
     }
 
-    // Main minimize method
+    // Call the main minimize method
     return mainMinimize(filepath, fileclasspath, testcasetimeout);
   }
 
   /**
    * Minimize the input test file.
-   * TODO: define minimize
+   * <p>
+   * Minimization is defined as processing an input file and producing an output file
+   * that satisfies the following requirements:
+   * The minimized test suite fails in the same way as the original test suite.
+   * - Same failing assertions as in the original input test suite.
+   * - Same stack trace produced by failing assertions.
+   * The output file is as small possible, containing as few lines of code as possible,
+   * while satisfying the above requirements.
+   * </p>
+   * <p>
+   * The original input Java file will be compiled and run once. Using the resulting output
+   * from standard output and standard error, the "expected output" is defined as the collection
+   * of standard output and standard error outputs produced from compiling and running
+   * the original input Java file.
+   * </p>
    *
    * @param filePath     the absolute file path to the Java program that is being
    *                     processed
@@ -797,6 +810,10 @@ public class Minimize extends CommandHandler {
 
   /**
    * Normalize the standard output obtained from running a JUnit test suite.
+   * By normalizing the {@code String} representation of the output, we remove
+   * any extraneous information such as line numbers. The relevant information
+   * that is retained include the indices of each failing test and the
+   * respective method names.
    *
    * @param input the {@code String} produced from running a JUnit test suite
    * @return a {@code String} which contains several {@code String} pairs of output from the
@@ -829,11 +846,12 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Write a compilation unit to a Java file, renaming according to the
-   * suffix.
+   * Write a compilation unit to a Java file. The file that is written to is the
+   * file path obtained by appending the suffix to the end of the file's name, before
+   * the file type suffix.
    *
    * @param compUnit the compilation unit to write to file
-   * @param filePath the origin of the Java file that was processed
+   * @param filePath the absolute path to the input Java file
    * @param suffix   the suffix to append to the name of the new Java file
    * @return {@code String} representing the absolute path to the newly written Java
    * file. Returns {@code null} if error occurred in writing to the new file
@@ -877,7 +895,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Renames the overall class. Visits every class/interface declaration, of
+   * Rename the overall class. Visit every class and interface declaration, of
    * which we expect there to be one in the input test suite. The overall
    * class will be renamed to class name + suffix.
    */
