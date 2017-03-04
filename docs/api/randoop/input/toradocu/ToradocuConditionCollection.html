@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9,"i9":10,"i10":9,"i11":10,"i12":9,"i13":9,"i14":9};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9,"i9":9,"i10":9,"i11":10,"i12":9,"i13":10,"i14":9,"i15":9,"i16":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -184,12 +184,19 @@ implements <a href="../../../randoop/condition/ConditionCollection.html" title="
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>private static java.lang.Class&lt;?&gt;[]</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/ToradocuConditionCollection.html#addReturnType-java.lang.Class:A-randoop.input.toradocu.DocumentedMethod-">addReturnType</a></span>(java.lang.Class&lt;?&gt;[]&nbsp;parameters,
+             <a href="../../../randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a>&nbsp;method)</code>
+<div class="block">Fixes the condition method parameters for <a href="../../../randoop/input/toradocu/ReturnTag.html" title="class in randoop.input.toradocu"><code>ReturnTag</code></a> condition.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>private static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/ToradocuConditionCollection.html#buildConditionClassName-randoop.input.toradocu.DocumentedMethod-">buildConditionClassName</a></span>(<a href="../../../randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a>&nbsp;method)</code>
 <div class="block">Constructs the condition class name using the convention with Toradocu.</div>
 </td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>private static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/ToradocuConditionCollection.html#buildConditionMethodName-randoop.input.toradocu.Tag-int-int-">buildConditionMethodName</a></span>(<a href="../../../randoop/input/toradocu/Tag.html" title="interface in randoop.input.toradocu">Tag</a>&nbsp;tag,
                         int&nbsp;tagIndex,
@@ -197,14 +204,24 @@ implements <a href="../../../randoop/condition/ConditionCollection.html" title="
 <div class="block">Constructs the condition method name using the convention with Toradocu.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
-<td class="colFirst"><code>private static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/ToradocuConditionCollection.html#buildConditionMethodName-randoop.input.toradocu.Tag-int-int-java.lang.String-">buildConditionMethodName</a></span>(<a href="../../../randoop/input/toradocu/Tag.html" title="interface in randoop.input.toradocu">Tag</a>&nbsp;tag,
-                        int&nbsp;tagIndex,
-                        int&nbsp;methodIndex,
-                        java.lang.String&nbsp;methodQualifier)</code>&nbsp;</td>
-</tr>
 <tr id="i3" class="rowColor">
+<td class="colFirst"><code>private static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/ToradocuConditionCollection.html#buildReturnConditionMethodName-randoop.input.toradocu.Tag-int-java.lang.String-">buildReturnConditionMethodName</a></span>(<a href="../../../randoop/input/toradocu/Tag.html" title="interface in randoop.input.toradocu">Tag</a>&nbsp;tag,
+                              int&nbsp;methodIndex,
+                              java.lang.String&nbsp;methodQualifier)</code>
+<div class="block">Constructs the condition method name for a <a href="../../../randoop/input/toradocu/ReturnTag.html" title="class in randoop.input.toradocu"><code>ReturnTag</code></a>.</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>private static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/ToradocuConditionCollection.html#convertParameters-java.lang.String-int-">convertParameters</a></span>(java.lang.String&nbsp;conditionString,
+                 int&nbsp;numMethodParameters)</code>
+<div class="block">Replaces the Toradocu generated parameters in a return-condition string with variable names
+ following the <a href="../../../randoop/contract/ObjectContract.html" title="interface in randoop.contract"><code>ObjectContract</code></a> convention using <code>"x0"</code> to
+ <code>"xn"</code>, for <code>n</code> being the number of condition method parameters.</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>private static java.lang.Class&lt;?&gt;[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/ToradocuConditionCollection.html#createConditionMethodParameters-java.lang.Class-java.lang.Class:A-">createConditionMethodParameters</a></span>(java.lang.Class&lt;?&gt;&nbsp;declaringClass,
                                java.lang.Class&lt;?&gt;[]&nbsp;subjectParameters)</code>
@@ -212,13 +229,13 @@ implements <a href="../../../randoop/condition/ConditionCollection.html" title="
  method.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>static <a href="../../../randoop/input/toradocu/ToradocuConditionCollection.html" title="class in randoop.input.toradocu">ToradocuConditionCollection</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/ToradocuConditionCollection.html#createToradocuConditions-java.util.List-">createToradocuConditions</a></span>(java.util.List&lt;java.io.File&gt;&nbsp;filenames)</code>
 <div class="block">Creates a <a href="../../../randoop/condition/ConditionCollection.html" title="interface in randoop.condition"><code>ConditionCollection</code></a> from Toradocu generated JSON files and condition classes.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>private static java.lang.reflect.AccessibleObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/ToradocuConditionCollection.html#getCallableObject-java.lang.Class-randoop.input.toradocu.DocumentedMethod-java.lang.Class:A-">getCallableObject</a></span>(java.lang.Class&lt;?&gt;&nbsp;declaringClass,
                  <a href="../../../randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a>&nbsp;documentedMethod,
@@ -227,19 +244,19 @@ implements <a href="../../../randoop/condition/ConditionCollection.html" title="
  <code>java.lang.reflect.Constructor</code> for the given <a href="../../../randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu"><code>DocumentedMethod</code></a>.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>private static java.lang.Class&lt;?&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/ToradocuConditionCollection.html#getClass-randoop.input.toradocu.Type-">getClass</a></span>(<a href="../../../randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a>&nbsp;type)</code>
 <div class="block">Returns the <code>Class&lt;?&gt;</code> for the given <a href="../../../randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu"><code>Type</code></a>.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>private static java.lang.Class&lt;?&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/ToradocuConditionCollection.html#getConditionClass-randoop.input.toradocu.DocumentedMethod-">getConditionClass</a></span>(<a href="../../../randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a>&nbsp;method)</code>
 <div class="block">Returns the <code>Class&lt;?&gt;</code> for the condition class of the given method.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>private static java.lang.reflect.Method</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/ToradocuConditionCollection.html#getConditionMethod-java.lang.Class-java.lang.String-java.lang.Class:A-">getConditionMethod</a></span>(java.lang.Class&lt;?&gt;&nbsp;conditionClass,
                   java.lang.String&nbsp;methodName,
@@ -247,39 +264,39 @@ implements <a href="../../../randoop/condition/ConditionCollection.html" title="
 <div class="block">Gets the <code>java.lang.reflect.Method</code> for the condition method with the given name.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../randoop/condition/Condition.html" title="interface in randoop.condition">Condition</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/ToradocuConditionCollection.html#getPreconditions-java.lang.reflect.AccessibleObject-">getPreconditions</a></span>(java.lang.reflect.AccessibleObject&nbsp;member)</code>
 <div class="block">Returns the list of preconditions for the given constructor/method.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>private static java.lang.Class&lt;?&gt;[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/ToradocuConditionCollection.html#getSubjectMethodParameters-randoop.input.toradocu.DocumentedMethod-">getSubjectMethodParameters</a></span>(<a href="../../../randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a>&nbsp;documentedMethod)</code>
 <div class="block">Get the parameters for the subject method of the <a href="../../../randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu"><code>DocumentedMethod</code></a> in the form
  required to retrieve the reflection method object.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>java.util.Map&lt;<a href="../../../randoop/condition/Condition.html" title="interface in randoop.condition">Condition</a>,plume.Pair&lt;<a href="../../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test">TestCheckGenerator</a>,<a href="../../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test">TestCheckGenerator</a>&gt;&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/ToradocuConditionCollection.html#getThrowsConditions-java.lang.reflect.AccessibleObject-">getThrowsConditions</a></span>(java.lang.reflect.AccessibleObject&nbsp;member)</code>
 <div class="block">Returns the map from conditions to exceptions for the given constructor/method.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>private static <a href="../../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/ToradocuConditionCollection.html#getType-randoop.input.toradocu.Type-">getType</a></span>(<a href="../../../randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a>&nbsp;type)</code>
 <div class="block">Returns the <a href="../../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types"><code>ClassOrInterfaceType</code></a> for the given <a href="../../../randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu"><code>Type</code></a>.</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>private static java.util.List&lt;<a href="../../../randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/ToradocuConditionCollection.html#read-java.io.File-">read</a></span>(java.io.File&nbsp;filename)</code>
 <div class="block">Reads the <a href="../../../randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu"><code>DocumentedMethod</code></a> objects from the given JSON file into a list, preserving
  the order of the objects in the JSON file.</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>private static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/ToradocuConditionCollection.html#tagKindString-randoop.input.toradocu.Tag-">tagKindString</a></span>(<a href="../../../randoop/input/toradocu/Tag.html" title="interface in randoop.input.toradocu">Tag</a>&nbsp;tag)</code>
 <div class="block">Returns a string representing the type of the given tag.</div>
@@ -375,6 +392,27 @@ implements <a href="../../../randoop/condition/ConditionCollection.html" title="
 </dl>
 </li>
 </ul>
+<a name="convertParameters-java.lang.String-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>convertParameters</h4>
+<pre>private static&nbsp;java.lang.String&nbsp;convertParameters(java.lang.String&nbsp;conditionString,
+                                                  int&nbsp;numMethodParameters)</pre>
+<div class="block">Replaces the Toradocu generated parameters in a return-condition string with variable names
+ following the <a href="../../../randoop/contract/ObjectContract.html" title="interface in randoop.contract"><code>ObjectContract</code></a> convention using <code>"x0"</code> to
+ <code>"xn"</code>, for <code>n</code> being the number of condition method parameters.
+ Replaces <code>"target"</code> with <code>x0</code> and <code>"result"</code> with <code>xn</code>.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>conditionString</code> - the <code>String</code> representation of the return-condition</dd>
+<dd><code>numMethodParameters</code> - the number of subject method parameters</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the <code>conditionString</code> with Toradocu generated parameter names replaced by <code>"xi"</code></dd>
+</dl>
+</li>
+</ul>
 <a name="getPreconditions-java.lang.reflect.AccessibleObject-">
 <!--   -->
 </a>
@@ -438,7 +476,8 @@ implements <a href="../../../randoop/condition/ConditionCollection.html" title="
 <ul class="blockList">
 <li class="blockList">
 <h4>getSubjectMethodParameters</h4>
-<pre>private static&nbsp;java.lang.Class&lt;?&gt;[]&nbsp;getSubjectMethodParameters(<a href="../../../randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a>&nbsp;documentedMethod)</pre>
+<pre>private static&nbsp;java.lang.Class&lt;?&gt;[]&nbsp;getSubjectMethodParameters(<a href="../../../randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a>&nbsp;documentedMethod)
+                                                        throws java.lang.ClassNotFoundException</pre>
 <div class="block">Get the parameters for the subject method of the <a href="../../../randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu"><code>DocumentedMethod</code></a> in the form
  required to retrieve the reflection method object.</div>
 <dl>
@@ -446,6 +485,29 @@ implements <a href="../../../randoop/condition/ConditionCollection.html" title="
 <dd><code>documentedMethod</code> - the method with Toradocu tags</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the <code>Class&lt;?&gt;[]</code> array for the method parameters</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.lang.ClassNotFoundException</code> - if the class type for a parameter cannot be loaded</dd>
+</dl>
+</li>
+</ul>
+<a name="addReturnType-java.lang.Class:A-randoop.input.toradocu.DocumentedMethod-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addReturnType</h4>
+<pre>private static&nbsp;java.lang.Class&lt;?&gt;[]&nbsp;addReturnType(java.lang.Class&lt;?&gt;[]&nbsp;parameters,
+                                                  <a href="../../../randoop/input/toradocu/DocumentedMethod.html" title="class in randoop.input.toradocu">DocumentedMethod</a>&nbsp;method)
+                                           throws java.lang.ClassNotFoundException</pre>
+<div class="block">Fixes the condition method parameters for <a href="../../../randoop/input/toradocu/ReturnTag.html" title="class in randoop.input.toradocu"><code>ReturnTag</code></a> condition.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>parameters</code> - the <code>Class&lt;&gt;</code> array of parameter types</dd>
+<dd><code>method</code> - the subject method to which parameters belong</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd><code>parameters</code> extended by the <code>Class&lt;&gt;</code> for the subject method return type</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.lang.ClassNotFoundException</code> - if the <code>Class&lt;&gt;</code> for the type cannot be loaded</dd>
 </dl>
 </li>
 </ul>
@@ -476,7 +538,8 @@ implements <a href="../../../randoop/condition/ConditionCollection.html" title="
 <ul class="blockList">
 <li class="blockList">
 <h4>getClass</h4>
-<pre>private static&nbsp;java.lang.Class&lt;?&gt;&nbsp;getClass(<a href="../../../randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a>&nbsp;type)</pre>
+<pre>private static&nbsp;java.lang.Class&lt;?&gt;&nbsp;getClass(<a href="../../../randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a>&nbsp;type)
+                                    throws java.lang.ClassNotFoundException</pre>
 <div class="block">Returns the <code>Class&lt;?&gt;</code> for the given <a href="../../../randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu"><code>Type</code></a>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -484,7 +547,7 @@ implements <a href="../../../randoop/condition/ConditionCollection.html" title="
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the <code>Class&lt;?&gt;</code> if type represents a valid type name</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.IllegalArgumentException</code> - if the type cannot be loaded</dd>
+<dd><code>java.lang.ClassNotFoundException</code> - if the type cannot be loaded</dd>
 </dl>
 </li>
 </ul>
@@ -494,13 +557,16 @@ implements <a href="../../../randoop/condition/ConditionCollection.html" title="
 <ul class="blockList">
 <li class="blockList">
 <h4>getType</h4>
-<pre>private static&nbsp;<a href="../../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;getType(<a href="../../../randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a>&nbsp;type)</pre>
+<pre>private static&nbsp;<a href="../../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;getType(<a href="../../../randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a>&nbsp;type)
+                                     throws java.lang.ClassNotFoundException</pre>
 <div class="block">Returns the <a href="../../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types"><code>ClassOrInterfaceType</code></a> for the given <a href="../../../randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu"><code>Type</code></a>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>type</code> - the type from the Toradocu input</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the <a href="../../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types"><code>ClassOrInterfaceType</code></a> for type</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.lang.ClassNotFoundException</code> - if the type cannot be loaded</dd>
 </dl>
 </li>
 </ul>
@@ -603,16 +669,27 @@ implements <a href="../../../randoop/condition/ConditionCollection.html" title="
 </dl>
 </li>
 </ul>
-<a name="buildConditionMethodName-randoop.input.toradocu.Tag-int-int-java.lang.String-">
+<a name="buildReturnConditionMethodName-randoop.input.toradocu.Tag-int-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>buildConditionMethodName</h4>
-<pre>private static&nbsp;java.lang.String&nbsp;buildConditionMethodName(<a href="../../../randoop/input/toradocu/Tag.html" title="interface in randoop.input.toradocu">Tag</a>&nbsp;tag,
-                                                         int&nbsp;tagIndex,
-                                                         int&nbsp;methodIndex,
-                                                         java.lang.String&nbsp;methodQualifier)</pre>
+<h4>buildReturnConditionMethodName</h4>
+<pre>private static&nbsp;java.lang.String&nbsp;buildReturnConditionMethodName(<a href="../../../randoop/input/toradocu/Tag.html" title="interface in randoop.input.toradocu">Tag</a>&nbsp;tag,
+                                                               int&nbsp;methodIndex,
+                                                               java.lang.String&nbsp;methodQualifier)</pre>
+<div class="block">Constructs the condition method name for a <a href="../../../randoop/input/toradocu/ReturnTag.html" title="class in randoop.input.toradocu"><code>ReturnTag</code></a>.
+ Similar to  <a href="../../../randoop/input/toradocu/ToradocuConditionCollection.html#buildConditionMethodName-randoop.input.toradocu.Tag-int-int-"><code>buildConditionMethodName(Tag, int, int)</code></a> except this method inserts a
+ qualifier into the method name, allowing <i>pre</i>- and <i>post</i>-conditions to be identified.
+ (Also, there is only one return tag so the tag index is always 0.)</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>tag</code> - the return tag</dd>
+<dd><code>methodIndex</code> - the position of the method in the JSON list.</dd>
+<dd><code>methodQualifier</code> - the qualifier for the method name</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the constructed method name</dd>
+</dl>
 </li>
 </ul>
 <a name="tagKindString-randoop.input.toradocu.Tag-">

@@ -18,7 +18,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10};
+var methods = {"i0":10,"i1":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -182,6 +182,12 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code><a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ExpectedExceptionGenerator.html#getExpected--">getExpected</a></span>()</code>
+<div class="block">Returns the type of the expected exception.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ExpectedExceptionGenerator.html#visit-randoop.sequence.ExecutableSequence-">visit</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</code>
 <div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code>
@@ -257,7 +263,7 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <a name="visit-randoop.sequence.ExecutableSequence-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>visit</h4>
 <pre>public&nbsp;<a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&nbsp;visit(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</pre>
@@ -270,6 +276,20 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <dd><code>s</code> - the sequence for which checks are generated</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the generated check set for the sequence</dd>
+</dl>
+</li>
+</ul>
+<a name="getExpected--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getExpected</h4>
+<pre>public&nbsp;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;getExpected()</pre>
+<div class="block">Returns the type of the expected exception.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the type of the expected exception</dd>
 </dl>
 </li>
 </ul>

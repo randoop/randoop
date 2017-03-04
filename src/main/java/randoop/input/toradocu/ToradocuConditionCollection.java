@@ -362,6 +362,7 @@ public class ToradocuConditionCollection implements ConditionCollection {
    *
    * @param documentedMethod  the method with Toradocu tags
    * @return the {@code Class<?>[]} array for the method parameters
+   * @throws ClassNotFoundException if the class type for a parameter cannot be loaded
    */
   private static Class<?>[] getSubjectMethodParameters(DocumentedMethod documentedMethod)
       throws ClassNotFoundException {
@@ -379,6 +380,7 @@ public class ToradocuConditionCollection implements ConditionCollection {
    * @param parameters  the {@code Class<>} array of parameter types
    * @param method  the subject method to which parameters belong
    * @return {@code parameters} extended by the {@code Class<>} for the subject method return type
+   * @throws ClassNotFoundException if the {@code Class<>} for the type cannot be loaded
    */
   private static Class<?>[] addReturnType(Class<?>[] parameters, DocumentedMethod method)
       throws ClassNotFoundException {
@@ -431,7 +433,7 @@ public class ToradocuConditionCollection implements ConditionCollection {
    *
    * @param type  the type from the Toradocu input
    * @return the {@code Class<?>} if type represents a valid type name
-   * @throws IllegalArgumentException if the type cannot be loaded
+   * @throws ClassNotFoundException if the type cannot be loaded
    */
   private static Class<?> getClass(randoop.input.toradocu.Type type) throws ClassNotFoundException {
     return TypeNames.getTypeForName(type.getQualifiedName());
@@ -442,6 +444,7 @@ public class ToradocuConditionCollection implements ConditionCollection {
    *
    * @param type  the type from the Toradocu input
    * @return the {@link ClassOrInterfaceType} for type
+   * @throws ClassNotFoundException if the type cannot be loaded
    */
   private static ClassOrInterfaceType getType(randoop.input.toradocu.Type type)
       throws ClassNotFoundException {
