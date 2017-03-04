@@ -3,7 +3,12 @@ package randoop;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import randoop.sequence.ExecutableSequence;
 import randoop.util.Log;
@@ -362,34 +367,21 @@ public class JunitFileWriter {
       out.println();
       out.println("public class " + masterTestClassName + "Driver {");
       out.println();
-      NameGenerator instanceNameGen = new NameGenerator("t");
-      Map<String, String> testClassToTestVariable = new HashMap<>();
-      for (String testClass : testClassNames) {
-        if (beforeAllText != null) {
-          out.println();
-          out.println("  " + testClass + "." + BEFORE_ALL_METHOD + "();");
-          out.println();
-        }
-        String testVariable = instanceNameGen.next();
-        testClassToTestVariable.put(testClass, testVariable);
-        out.println("  static " + testClass + " " + testVariable + "= new " + testClass + "();");
-      }
-      out.println("  static boolean wasSuccessful = true;");
       out.println("  public static void main(String[] args) {");
 
-      int totalCallCount = 0;
-      NameGenerator inClassMethodGen =
-          new NameGenerator("method", 1, numDigits(10)); // TODO make this work
+      out.println("    boolean wasSuccessful = true;");
+
+      NameGenerator instanceNameGen = new NameGenerator("t");
       for (String testClass : testClassNames) {
 
-        //        if (beforeAllText != null) {
-        //          out.println();
-        //          out.println("    " + testClass + "." + BEFORE_ALL_METHOD + "();");
-        //          out.println();
-        //        }
-        //
-        //        String testVariable = instanceNameGen.next();
-        //        out.println("    " + testClass + " " + testVariable + "= new " + testClass + "();");
+        if (beforeAllText != null) {
+          out.println();
+          out.println("    " + testClass + "." + BEFORE_ALL_METHOD + "();");
+          out.println();
+        }
+
+        String testVariable = instanceNameGen.next();
+        out.println("    " + testClass + " " + testVariable + "= new " + testClass + "();");
 
         int classMethodCount = classMethodCounts.get(testClass);
         NameGenerator methodGen = new NameGenerator("test", 1, numDigits(classMethodCount));
@@ -397,35 +389,24 @@ public class JunitFileWriter {
         while (methodGen.nameCount() < classMethodCount) {
           out.println();
           if (beforeEachText != null) {
-            out.println(
-                "    " + testClassToTestVariable.get(testClass) + "." + BEFORE_EACH_METHOD + "();");
+            out.println("    " + testVariable + "." + BEFORE_EACH_METHOD + "();");
           }
           String methodName = methodGen.next();
           out.println("    try {");
-          out.println("      " + testClassToTestVariable.get(testClass) + "." + methodName + "();");
+          out.println("      " + testVariable + "." + methodName + "();");
           out.println("    } catch (Throwable e) {");
           out.println("      wasSuccessful = false;");
           out.println("      e.printStackTrace();");
           out.println("    }");
           if (afterEachText != null) {
-            out.println(
-                "    " + testClassToTestVariable.get(testClass) + "." + AFTER_EACH_METHOD + "();");
-          }
-          totalCallCount += 1;
-          if (totalCallCount == 500) {
-            // means we need to create a new method and call that
-            String classMethodName = inClassMethodGen.next();
-            out.println("    " + classMethodName + "();");
-            out.println("  }");
-            out.println();
-            out.println("  public static void " + classMethodName + "() {");
-            totalCallCount = 0;
+            out.println("    " + testVariable + "." + AFTER_EACH_METHOD + "();");
           }
         }
 
         if (afterAllText != null) {
           out.println("    " + testClass + "." + AFTER_ALL_METHOD + "();");
         }
+
         out.println();
       }
 

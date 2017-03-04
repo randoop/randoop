@@ -6,9 +6,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import randoop.test.Check;
-import randoop.test.ExceptionCheck;
-
 /**
  * ErrorRevealingChecks represent failing checks for a particular test sequence.
  * Each check may refer to different variables defined in the sequence, so can
@@ -23,7 +20,7 @@ public class ErrorRevealingChecks implements TestChecks {
   /**
    * Create an empty set of error checks.
    */
-  public ErrorRevealingChecks() {
+  ErrorRevealingChecks() {
     this.checks = new LinkedHashSet<>();
   }
 

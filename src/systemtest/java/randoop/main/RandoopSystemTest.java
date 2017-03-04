@@ -1,7 +1,9 @@
 package randoop.main;
 
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import randoop.util.Log;
 
 import java.io.*;
@@ -41,6 +43,7 @@ import static org.junit.Assert.fail;
  * The Makefile also checked diffs of generated tests for some of the tests.
  * These methods do not do this check.
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RandoopSystemTest {
 
   private static SystemTestEnvironment systemTestEnvironment;
@@ -112,6 +115,10 @@ public class RandoopSystemTest {
    *      options.setOption(optionName, optionValue);
    *    This object will also set options for output directories and logging, so only options
    *    affecting generation are needed.
+   *
+   *    Input files should be placed in src/systemtest/resources (or src/inputtest/resources if they
+   *    relate to classes in the inputTest source set), and can be used in option using the path
+   *    prefix resources/systemTest/.
    *
    *
    *  3. Run Randoop and compile generated tests.
@@ -273,7 +280,9 @@ public class RandoopSystemTest {
     coverageChecker.exclude("java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream)");
 
     //these are consistently not being covered on Travis for JDK 8;
-    // annoying but not Randoop's fault
+    // annoying but not clear how Randoop's fault
+    coverageChecker.ignore("java2.util2.ArrayList.add(int, java.lang.Object)");
+    coverageChecker.ignore("java2.util2.LinkedList.addLast(java.lang.Object)");
     coverageChecker.ignore("java2.util2.Collections.unmodifiableList(java2.util2.List)");
     coverageChecker.ignore("java2.util2.LinkedList.get(int)");
 
@@ -803,6 +812,56 @@ public class RandoopSystemTest {
         is(equalTo(runStatus.regressionTestCount)));
   }
 
+  @Test
+  public void runToradocuInputTest() {
+    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("toradocu-input");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("net.Connection");
+    options.setOption("toradocu-conditions", "resources/systemTest/ConnectionConditions.json");
+    options.setErrorBasename("ConditionError");
+    options.setRegressionBasename("ConditionRegression");
+    options.setOption("timelimit", "30");
+    options.setOption("outputlimit", "200");
+
+    //TODO should check for invalid test count
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
+  }
+
+  @Test
+  public void runInheritedToradocuTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("toradocu-inherited");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("pkg.SubClass");
+    options.setOption("toradocu-conditions", "resources/systemTest/SubClassConditions.json");
+    options.setErrorBasename("ConditionError");
+    options.setRegressionBasename("ConditionRegression");
+    options.setOption("timelimit", "30");
+    options.setOption("outputlimit", "200");
+
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
+  }
+
+  /**
+   * recreate problem with tests over Google Guava where value from private enum returned by
+   * public method and value used in {@link randoop.test.ObjectCheck} surfaces in test code,
+   * creating uncompilable code.
+   */
+  @Test
+  public void runPrivateEnumTest() {
+    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("private-enum");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("generror.Ints");
+    options.setErrorBasename("LexError");
+    options.setRegressionBasename("LexRegression");
+    options.setOption("timelimit", "30");
+
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
+  }
+
   // TODO: finish
   @Test
   public void runOrienteeringTest() {
@@ -1055,7 +1114,7 @@ public class RandoopSystemTest {
     TestRunStatus errorRunDesc = null;
     switch (expectedError) {
       case SOME:
-        //assertThat("...has error tests", runStatus.errorTestCount, is(greaterThan(0)));
+        assertThat("...has error tests", runStatus.errorTestCount, is(greaterThan(0)));
         String errorBasename = options.getErrorBasename();
         try {
           errorRunDesc = TestRunStatus.runTests(environment, packageName, errorBasename);
@@ -1099,7 +1158,7 @@ public class RandoopSystemTest {
     TestRunStatus regressionRunDesc = null;
     switch (expectedRegression) {
       case SOME:
-        //assertThat("...has regression tests", runStatus.regressionTestCount, is(greaterThan(0)));
+        assertThat("...has regression tests", runStatus.regressionTestCount, is(greaterThan(0)));
         String regressionBasename = options.getRegressionBasename();
         try {
           regressionRunDesc = TestRunStatus.runTests(environment, packageName, regressionBasename);

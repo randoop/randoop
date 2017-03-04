@@ -66,7 +66,7 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
 
   /**
    * {@inheritDoc} Checks that an exception of the expected type is thrown by
-   * the statement in this object in the given {@code Execution}.
+   * the statement in this object in the given {@link Execution}.
    *
    * @return true if statement throws the expected exception, and false
    *         otherwise

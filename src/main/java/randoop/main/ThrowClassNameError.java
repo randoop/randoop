@@ -1,24 +1,23 @@
 package randoop.main;
 
 /**
- * ThrowClassNameError is used to handle a class name error by throwing an
- * {@code Error} with the message.
+ * ThrowClassNameError is used to handle a class name error by throwing an {@code Error} with the
+ * message.
  */
 public class ThrowClassNameError implements ClassNameErrorHandler {
 
   @Override
   public void handle(String className) {
-    throw new RandoopClassNameError(
-        "No class with name \"" + className + "\" found on the classpath");
+    handle(className, null);
   }
 
   @Override
-  public void handle(String classname, Throwable e) {
+  public void handle(String className, Throwable e) {
     if (e != null) {
       throw new RandoopClassNameError(
-          "Unable to load class \"" + classname + "\" due to exception: " + e);
+          className, "Unable to load class \"" + className + "\" due to exception: " + e);
     }
     throw new RandoopClassNameError(
-        "No class with name \"" + classname + "\" found on the classpath");
+        className, "No class with name \"" + className + "\" found on the classpath");
   }
 }

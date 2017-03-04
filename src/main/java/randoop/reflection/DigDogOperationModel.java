@@ -85,5 +85,5 @@ public abstract class DigDogOperationModel {
 
   public abstract Set<Sequence> getAnnotatedTestValues();
 
-  public abstract Map<Sequence, Integer> getTfFrequency();
+  //public abstract Map<Sequence, Integer> getTfFrequency();
 }

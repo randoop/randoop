@@ -1,6 +1,7 @@
 package randoop.reflection;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -74,6 +75,9 @@ public class TypeInstantiator {
 
     // if necessary, do capture conversion first
     if (operation != null && operation.hasWildcardTypes()) {
+      if (Log.isLoggingOn()) {
+        Log.logLine("Applying capture conversion to " + operation);
+      }
       operation = operation.applyCaptureConversion();
     }
     if (operation != null) {
@@ -81,7 +85,6 @@ public class TypeInstantiator {
     }
 
     // if operation == null failed to build instantiation
-
     return operation;
   }
 
@@ -179,19 +182,25 @@ public class TypeInstantiator {
   }
 
   /**
-   * Selects an existing type that instantiates the given generic declaring type
-   * and returns the instantiating substitution.
+   * Selects an existing type that instantiates the given pattern type which is an instantiation
+   * of a generic declaring type and returns the instantiating substitution for the more general
+   * type.
+   * The pattern type makes it possible to select matches for partial instantiations of a generic
+   * type.
    * <p>
    * Note: for all uses to work properly, the input types need to be closed on supertypes:
    * if a type is in the input types, then so are all of its supertypes.
    *
    * @param declaringType  the generic type for which instantiation is to be found
+   * @param patternType   the generic type from which match is to be determined, must be instantiation
+   *                      of {@code declaringType}.
    * @return a substitution instantiating given type as an existing type; null if no such type
    */
-  private Substitution<ReferenceType> selectMatch(ClassOrInterfaceType declaringType) {
+  private Substitution<ReferenceType> selectMatch(
+      ClassOrInterfaceType declaringType, ClassOrInterfaceType patternType) {
     List<InstantiatedType> matches = new ArrayList<>();
     for (Type type : inputTypes) {
-      if (type.isParameterized() && ((InstantiatedType) type).isInstantiationOf(declaringType)) {
+      if (type.isParameterized() && ((InstantiatedType) type).isInstantiationOf(patternType)) {
         matches.add((InstantiatedType) type);
       }
     }
@@ -203,6 +212,20 @@ public class TypeInstantiator {
   }
 
   /**
+   * Selects an existing type that instantiates the given generic declaring type
+   * and returns the instantiating substitution.
+   * <p>
+   * Note: for all uses to work properly, the input types need to be closed on supertypes:
+   * if a type is in the input types, then so are all of its supertypes.
+   *
+   * @param declaringType  the generic type for which instantiation is to be found
+   * @return a substitution instantiating given type as an existing type; null if no such type
+   */
+  private Substitution<ReferenceType> selectMatch(ClassOrInterfaceType declaringType) {
+    return selectMatch(declaringType, declaringType);
+  }
+
+  /**
    * Selects an instantiation of the generic types of an operation, and returns a new operation with
    * the types instantiated.
    *
@@ -211,13 +234,14 @@ public class TypeInstantiator {
    */
   private TypedClassOperation instantiateOperationTypes(TypedClassOperation operation) {
     // answer question: what type instantiation would allow a call to this operation?
-    List<TypeVariable> typeParameters = new ArrayList<>();
+    Set<TypeVariable> typeParameters = new LinkedHashSet<>();
     Substitution<ReferenceType> substitution = new Substitution<>();
     for (Type parameterType : operation.getInputTypes()) {
       Type workingType = parameterType.apply(substitution);
       if (workingType.isGeneric()) {
         if (workingType.isClassType()) {
-          Substitution<ReferenceType> subst = selectMatch((ParameterizedType) workingType);
+          Substitution<ReferenceType> subst =
+              selectMatch((ParameterizedType) parameterType, (ParameterizedType) workingType);
           if (subst == null) {
             return null;
           }
@@ -227,7 +251,6 @@ public class TypeInstantiator {
         }
       }
     }
-
     // return types don't have to exist, but do need to be selected
     if (operation.getOutputType().isReferenceType()) {
       Type workingType = operation.getOutputType().apply(substitution);
@@ -241,13 +264,17 @@ public class TypeInstantiator {
     }
 
     if (!typeParameters.isEmpty()) {
-      substitution = selectSubstitution(typeParameters, substitution);
+      substitution = selectSubstitution(new ArrayList<>(typeParameters), substitution);
       if (substitution == null) {
         return null;
       }
     }
 
-    return operation.apply(substitution);
+    operation = operation.apply(substitution);
+    if (operation.isGeneric()) {
+      return null;
+    }
+    return operation;
   }
 
   /**
@@ -325,10 +352,10 @@ public class TypeInstantiator {
     List<Substitution<ReferenceType>> substitutionList = new ArrayList<>();
     if (!genericParameters.isEmpty()) {
       // if there are type parameters with generic bounds
-      TypeCheck typeCheck = TypeCheck.forParameters(genericParameters);
       if (!nongenericParameters.isEmpty()) {
         // if there are type parameters with non-generic bounds, these may be variables in
         // generic-bounded parameters
+
         List<List<ReferenceType>> nonGenCandidates = getCandidateTypeLists(nongenericParameters);
         if (nonGenCandidates.isEmpty()) {
           return new ArrayList<>();
@@ -342,8 +369,8 @@ public class TypeInstantiator {
           List<TypeVariable> parameters = new ArrayList<>();
           for (TypeVariable variable : genericParameters) {
             ReferenceType paramType = variable.apply(initialSubstitution);
-            if (paramType instanceof TypeVariable) {
-              parameters.add((TypeVariable) paramType);
+            if (paramType.isVariable()) {
+              parameters.add(variable);
             }
           }
           // choose instantiation for parameters with generic-bounds
@@ -352,6 +379,7 @@ public class TypeInstantiator {
       } else {
         // if no parameters with non-generic bounds, choose instantiation for parameters
         // with generic bounds
+        TypeCheck typeCheck = TypeCheck.forParameters(genericParameters);
         substitutionList = getInstantiations(genericParameters, substitution, typeCheck);
       }
       if (substitutionList.isEmpty()) {

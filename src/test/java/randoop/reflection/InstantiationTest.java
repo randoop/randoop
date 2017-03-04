@@ -15,7 +15,12 @@ import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.intersectiontypes.AccessibleInterval;
 import randoop.types.ClassOrInterfaceType;
+import randoop.types.GenericClassType;
+import randoop.types.InstantiatedType;
+import randoop.types.JDKTypes;
 import randoop.types.JavaTypes;
+import randoop.types.ReferenceType;
+import randoop.types.Substitution;
 import randoop.types.Type;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -222,6 +227,71 @@ public class InstantiationTest {
     }
   }
 
+  /**
+   * Based on a case from Apache Commons Collections.
+   */
+  @Test
+  public void testCaptureConvInstantiation() {
+    Set<String> classnames = new LinkedHashSet<>();
+    classnames.add("randoop.reflection.CaptureInstantiationCase");
+    OperationModel model = createModel(classnames, "randoop.reflection");
+    Set<TypedOperation> classOperations = new LinkedHashSet<>();
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.INT_TYPE.toBoxedPrimitive(), inputTypes);
+    addTypes(ClassOrInterfaceType.forClass(AnIterable.class), inputTypes);
+    Substitution<ReferenceType> subst;
+    GenericClassType predicateType =
+        GenericClassType.forClass(CaptureInstantiationCase.LocalPredicate.class);
+    subst = Substitution.forArgs(predicateType.getTypeParameters(), JavaTypes.SERIALIZABLE_TYPE);
+    addTypes(predicateType.apply(subst), inputTypes);
+    GenericClassType onePredicateType =
+        GenericClassType.forClass(CaptureInstantiationCase.OnePredicate.class);
+    subst = Substitution.forArgs(onePredicateType.getTypeParameters(), JavaTypes.SERIALIZABLE_TYPE);
+    InstantiatedType oneSerializablePredicateType = onePredicateType.apply(subst);
+    addTypes(oneSerializablePredicateType, inputTypes);
+    subst =
+        Substitution.forArgs(
+            JDKTypes.TREE_SET_TYPE.getTypeParameters(),
+            (ReferenceType) oneSerializablePredicateType);
+    addTypes(JDKTypes.TREE_SET_TYPE.apply(subst), inputTypes);
+    subst =
+        Substitution.forArgs(
+            predicateType.getTypeParameters(), (ReferenceType) oneSerializablePredicateType);
+    addTypes(predicateType.apply(subst), inputTypes);
+
+    Set<String> nullOKNames = new HashSet<>();
+    getOperations(model, classOperations, inputTypes, nullOKNames);
+    assertTrue("should be some operations", classOperations.size() > 0);
+    for (TypedOperation operation : classOperations) {
+      if (operation.getName().equals("filter")) {
+        assertFalse("filter operation should be instantiated ", operation.isGeneric());
+      }
+      if (operation.getName().equals("oneOf")) {
+        assertFalse("oneOf operation should be instantiated", operation.isGeneric());
+      }
+    }
+  }
+
+  /* disabled until fix type parameter management
+  @Test
+  public void testLazyConversionInstantiation() {
+    Set<String> classnames = new LinkedHashSet<>();
+    classnames.add("randoop.reflection.LazyConversionInstantiationCase");
+    OperationModel model = createModel(classnames, "randoop.reflection");
+    Set<TypedOperation> classOperations = new LinkedHashSet<>();
+    Set<Type> inputTypes = new LinkedHashSet<>();
+    addTypes(JavaTypes.STRING_TYPE, inputTypes);
+    Substitution<ReferenceType> substitution;
+    substitution = Substitution.forArgs(JDKTypes.TREE_SET_TYPE.getTypeParameters(), (ReferenceType)JavaTypes.STRING_TYPE);
+    addTypes(JDKTypes.TREE_SET_TYPE.apply(substitution), inputTypes);
+
+    Set<String> nullOKNames = new HashSet<>();
+    getOperations(model, classOperations, inputTypes, nullOKNames);
+    assertTrue("should be some operations", classOperations.size() > 0);
+
+  }
+  */
+
   private OperationModel createModel(Set<String> names, String packageName) {
     VisibilityPredicate visibility =
         new PackageVisibilityPredicate(Package.getPackage(packageName));
@@ -277,7 +347,8 @@ public class InstantiationTest {
     // instantiate generic constructors
     for (TypedClassOperation operation : genericConstructors) {
       TypedClassOperation classOperation = instantiator.instantiate(operation);
-      assertNotNull("instantiation of " + operation + " should not be null", classOperation);
+      assertNotNull(
+          "instantiation of constructor " + operation + " should not be null", classOperation);
       addTypes(classOperation, inputTypes);
     }
 
@@ -287,7 +358,8 @@ public class InstantiationTest {
           TypedClassOperation classOperation =
               instantiator.instantiate((TypedClassOperation) operation);
           if (!operation.getName().equals("m09")) {
-            assertNotNull("instantiation of " + operation + " should not be null", classOperation);
+            assertNotNull(
+                "instantiation of method " + operation + " should not be null", classOperation);
             addTypes(classOperation, inputTypes);
             if (classOperation.isMethodCall()) {
               classOperations.add(classOperation);
