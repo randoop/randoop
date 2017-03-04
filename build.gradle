@@ -500,7 +500,7 @@ task updateDevTOC( type:Exec, dependsOn: [ 'copyManual', 'clonePlumeLib' ]) {
  * to docs/manual/index.html to add command-line arguments extracted from the given
  * @Option annotated classes. Applied in-place.
  */
-task generateOptionsDoc(type: Javadoc, dependsOn: ['assemble', 'javadoc', 'copyManual' ]) {
+task generateOptionsDoc(type: Javadoc, dependsOn: ['assemble', 'copyManual' ]) {
   source sourceSets.main.allJava
   classpath = sourceSets.main.runtimeClasspath + sourceSets.main.compileClasspath
   title = "" // workaround to Javadoc task wanting to spit out title
