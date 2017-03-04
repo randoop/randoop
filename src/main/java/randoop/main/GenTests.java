@@ -13,11 +13,7 @@ import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
 import randoop.JunitFileWriter;
 import randoop.MultiVisitor;
-import randoop.generation.AbstractGenerator;
-import randoop.generation.ComponentManager;
-import randoop.generation.ForwardGenerator;
-import randoop.generation.RandoopListenerManager;
-import randoop.generation.SeedSequences;
+import randoop.generation.*;
 import randoop.instrument.ExercisedClassVisitor;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
@@ -278,17 +274,32 @@ public class GenTests extends GenInputsAbstract {
      * Create the generator for this session.
      */
     AbstractGenerator explorer;
-    explorer =
-        new ForwardGenerator(
-            model,
-            observers,
-            timelimit * 1000,
-            inputlimit,
-            outputlimit,
-            componentMgr,
-            listenerMgr,
-            num_classes,
-            tfFrequencies);
+    if (GenInputsAbstract.output_sequence_info
+        || GenInputsAbstract.orienteering) { // TODO: check this conditional
+      explorer =
+          new DigDogGenerator(
+              model,
+              observers,
+              timelimit * 1000,
+              inputlimit,
+              outputlimit,
+              componentMgr,
+              listenerMgr,
+              num_classes,
+              tfFrequencies);
+    } else {
+      explorer =
+          new ForwardGenerator(
+              model,
+              observers,
+              timelimit * 1000,
+              inputlimit,
+              outputlimit,
+              componentMgr,
+              listenerMgr,
+              num_classes,
+              tfFrequencies);
+    }
 
     /*
      * setup for check generation
@@ -416,8 +427,8 @@ public class GenTests extends GenInputsAbstract {
 
     // TODO: output to file for sequence comparison between DigDog/Randoop
     if (GenInputsAbstract.output_sequence_info) {
-      ForwardGenerator fExplorer =
-          (ForwardGenerator) explorer; // should work, explorer should always be a forw.gen.
+      DigDogGenerator fExplorer =
+          (DigDogGenerator) explorer; // should work, explorer should always be a forw.gen.
       Map<Sequence, List<String>> debugMap = fExplorer.getDebugMap();
       writeTestInfo(debugMap);
     }
