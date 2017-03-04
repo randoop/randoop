@@ -1,0 +1,13 @@
+START CLASSLITERALS
+
+CLASSNAME
+java.lang.Object
+
+LITERALS
+String:"otmarjr@gmail.com"
+String:"192.168.0.1"
+String:"https://randoop.github.io"
+String:"c:\\windows\\temp\\sample_folder_for_randoop"
+String:"c:\\windows\\temp\\sample_file_for_randoop.txt"
+String:"c:\\windows\\temp\\empty_file_for_randoop.txt"
+END CLASSLITERALS
