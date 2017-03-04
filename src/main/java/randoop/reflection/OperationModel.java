@@ -259,6 +259,7 @@ public class OperationModel {
    * @return the set of input types that occur in classes under test
    */
   public Set<Type> getInputTypes() {
+    //TODO this is not used, should it be? or should it even be here?
     return inputTypes;
   }
 

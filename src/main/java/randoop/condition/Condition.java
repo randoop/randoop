@@ -27,6 +27,8 @@ public interface Condition {
    * are represented by {@code x0}, ..., {@code xn} for some number {@code n}.
    * If the operation takes a receiver it will be {@code x0}, and if the operation has a return
    * value it will be {@code xn} (the last variable).
+   *
+   * @return the Java representation of the condition as a {@code String}
    */
   String getConditionString();
 }
