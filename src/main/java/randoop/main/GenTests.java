@@ -23,12 +23,7 @@ import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
-import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.OperationModel;
-import randoop.reflection.PackageVisibilityPredicate;
-import randoop.reflection.PublicVisibilityPredicate;
-import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.VisibilityPredicate;
+import randoop.reflection.*;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
@@ -185,17 +180,30 @@ public class GenTests extends GenInputsAbstract {
     Set<String> methodSignatures =
         GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
 
-    OperationModel operationModel = null;
+    DigDogOperationModel operationModel = null;
+
     try {
-      operationModel =
-          OperationModel.createModel(
-              visibility,
-              reflectionPredicate,
-              classnames,
-              coveredClassnames,
-              methodSignatures,
-              classNameErrorHandler,
-              GenInputsAbstract.literals_file);
+      if (GenInputsAbstract.constant_mining) {
+        operationModel =
+            ConstantMiningOperationModel.createModel(
+                visibility,
+                reflectionPredicate,
+                classnames,
+                coveredClassnames,
+                methodSignatures,
+                classNameErrorHandler,
+                GenInputsAbstract.literals_file);
+      } else {
+        operationModel =
+            OperationModel.createModel(
+                visibility,
+                reflectionPredicate,
+                classnames,
+                coveredClassnames,
+                methodSignatures,
+                classNameErrorHandler,
+                GenInputsAbstract.literals_file);
+      }
     } catch (OperationParseException e) {
       System.out.printf("%nError: parse exception thrown %s%n", e);
       System.out.println("Exiting Randoop.");
@@ -431,8 +439,7 @@ public class GenTests extends GenInputsAbstract {
         tempDir.createNewFile();
       }
       // always overwrite
-      out =
-          createTextOutputStream("sequenceInfo.csv"); // TODO: maybe just new FileOutputStream(..)
+      out = createTextOutputStream("sequenceInfo.csv"); // TODO: maybe just new FileOutputStream(..)
       StringBuilder body = new StringBuilder();
       body.append(debugMap.keySet().size()); // number of sequences
       body.append(',');
