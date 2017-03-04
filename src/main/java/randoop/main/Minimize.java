@@ -62,24 +62,21 @@ import org.apache.commons.io.IOUtils;
 public class Minimize extends CommandHandler {
   @OptionGroup(value = "Test case minimization options")
   /**
-   * The absolute file path to the Java file whose failing tests will be minimized.
+   * The Java file whose failing tests will be minimized.
    */
-  @Option("absolute input file path")
+  @Option("File containing the JUnit test suite to be minimized")
   public static String filepath;
 
   /**
-   * The complete classpath that includes dependencies needed to compile
-   * and run the input Java file specified by the filepath parameter.
+   * Classpath that includes dependencies needed to compile and run the JUnit test suite being
+   * minimized.
    */
-  @Option("complete class path to compile and run input file")
+  @Option("classpath to compile and run the JUnit test suite")
   public static String fileclasspath;
 
   /**
-   * Maximum number of seconds allowed for a unit test within the test
-   * suite to run. The default value is 10 seconds.
-   * This is used for unit test cases that potentially will not terminate
-   * when run. This timeout limit should be large enough such that unit tests
-   * which do terminate have enough time to run until completion.
+   * Maximum number of seconds allowed for each unit test to run.
+   * This is used for detecting non-terminating tests.
    */
   @Option("timeout, in seconds, for each unit test")
   public static int testcasetimeout = 10;

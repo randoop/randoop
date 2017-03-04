@@ -36,11 +36,7 @@ The Randoop homepage is
               <li><a href="#regression_test_failures">Regression test failures</a></li>
             </ul></li>
         </ul></li>
-      <li><a href="#minimize_failing_test_suite">Minimizing a failing JUnit test suite</a>
-        <ul>
-          <li><a href="#minimize_example">Example: Minimizing a failing test suite</a></li>
-          <li><a href="#minimize_arguments">Command-line options for failing test suite minimization</a></li>
-        </ul></li>
+      <li><a href="#minimize_failing_test_suite">Minimizing a failing JUnit test suite</a></li>
       <li><a href="#customize">Customizing Randoop's behavior to your application</a>
         <ul>
           <li><a href="#command-line-options">Command-line options</a></li>
@@ -632,8 +628,8 @@ agent</a> to replace the new functionality by the old functionality.)
 <h2 id="minimize_failing_test_suite">Minimizing a failing JUnit test suite</h2>
 
 <p>
-Randoop creates large test cases; when they fail, they may be hard for a
-human to understand and debug.  Randoop includes a minimizer that, given a
+Randoop creates large test cases; when they fail, they may be hard for you
+to understand and debug.  Randoop includes a minimizer that, given a
 failing JUnit test suite file, produces a smaller one that fails in the
 same way:
 </p>
@@ -642,17 +638,14 @@ same way:
   <li>Same stack trace produced by failing assertions.</li>
 </ul>
 <p>
-The minimizer removes both methods (such as passing tests within the file),
-and lines of code within each method, from its input file.
+The minimizer removes lines of code within a failing method, and also
+entire methods (such as passing test methods), from its input file.
 </p>
 
 <p>
 The minimizer works on any JUnit test suite, so it is useful even to
 minimize failing tests that Randoop did not create.
 </p>
-
-
-<h3 id="minimize_example">Example: Minimizing a failing test suite </h3>
 
 <p>
 To minimize all failing tests in <code>ErrorLangTest.java</code>, run
@@ -662,26 +655,11 @@ Randoop as follows:
 java -ea -cp bin:randoop-all-3.0.9.jar randoop.main.Main minimize --filepath=~/ErrorTestLang.java --fileclasspath=~/commons-lang.jar --testcasetimeout=30
 </pre>
 
-<h3 id="minimize_arguments">Command-line options for failing test suite minimization</h3>
 <p>
-The absolute path to the input Java file is a required argument and can be
-specified with the <a href="#option:filepath"><code>--filepath</code></a>
-command-line option.
+  See the documentation for the
+  <a href="#optiongroup:Test-case-minimization-options">command-line options for failing test suite minimization</a>.
 </p>
-<p>
-The complete classpath needed to compile and run the input Java file can be
-specified with the <a href="#option:fileclasspath"><code>--fileclasspath</code></a>
-command-line option. You do not need to specify any dependencies listed in the
-classpath variable used to run Randoop. The minimizer will automatically include
-the dependencies specified on the classpath.
-</p>
-<p>
-The maximum number of seconds allowed for each test case to be run can be
-specified with the <a href="#option:testcasetimeout"><code>--testcasetimeout</code></a>
-command-line option. This is useful when a test case does not terminate. Note that
-this parameter should be large enough so that unit tests which do terminate,
-have enough time to do so.
-</p>
+
 
 <h2 id="customize">Customizing Randoop's behavior to your application</h2>
 
@@ -1147,6 +1125,18 @@ Randoop about your application, and that is how we recommend using Randoop.
       <ul>
             <li id="option:visitor"><b>--visitor=</b><i>string</i> <code>[+]</code>.
              Install the given runtime visitor. See class randoop.ExecutionVisitor.
+      </ul>
+
+  <li id="optiongroup:Test-case-minimization-options">Test case minimization options
+      <ul>
+            <li id="option:filepath"><b>--filepath=</b><i>string</i>.
+             absolute input file path
+            <li id="option:fileclasspath"><b>--fileclasspath=</b><i>string</i>.
+             Classpath that includes dependencies needed to compile and run the JUnit test suite being
+ minimized.
+            <li id="option:testcasetimeout"><b>--testcasetimeout=</b><i>int</i>.
+             Maximum number of seconds allowed for each unit test to run.
+ This is used for detecting non-terminating tests. [default 10]
       </ul>
 
   <li id="optiongroup:Threading-and-timeouts">Threading and timeouts
