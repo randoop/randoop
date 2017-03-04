@@ -242,10 +242,12 @@ public class Minimize extends CommandHandler {
   /**
    * Minimize a method.
    * The possible minimizations are:
-   * - Remove a statement entirely
-   * - Replace right hand side to a calculated value obtained from a passing assertion
-   * - Replace the right hand side expression with {@code 0/null} depending on type
-   * - Remove the left hand side of a statement, retaining only the expression on the right
+   * <ul>
+   *   <li>Remove a statement entirely
+   *   <li>Replace right hand side to a calculated value obtained from a passing assertion
+   *   <li>Replace the right hand side expression with {@code 0}, {@code false}, or {@code null}
+   *   <li>Remove the left hand side of a statement, retaining only the expression on the right
+   * </ul>
    *
    * @param method         current method that we are minimizing within the compilation
    *                       unit, the given method will be modified if a correct
