@@ -123,6 +123,7 @@ public class ComponentManager {
     if (classLiterals == null) {
       classLiterals = new ClassLiterals();
     }
+    classLiterals.addSequence(type, seq);
   }
 
   /**
@@ -199,6 +200,7 @@ public class ComponentManager {
       return getSequencesForTypeGRT(operation, i);
     }
     Type neededType = operation.getInputTypes().get(i);
+
     SimpleList<Sequence> ret = gralComponents.getSequencesForType(neededType, false);
     if (operation instanceof TypedClassOperation) {
       if (classLiterals != null || packageLiterals != null) {
@@ -224,8 +226,6 @@ public class ComponentManager {
         }
       }
     }
-    //System.out.println("size of ret: " + ret.size());
-    // TODO: sanity check that Randoop's sequences under their C.M. aren't bad
     return ret;
   }
 
