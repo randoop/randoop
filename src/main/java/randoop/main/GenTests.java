@@ -407,8 +407,9 @@ public class GenTests extends GenInputsAbstract {
     }
 
     // TODO: output to file for sequence comparison between DigDog/Randoop
-    if (GenInputsAbstract.grt_debug_checks) {
-      ForwardGenerator fExplorer = (ForwardGenerator) explorer; // hope this works
+    if (GenInputsAbstract.output_sequence_info) {
+      ForwardGenerator fExplorer =
+          (ForwardGenerator) explorer; // should work, explorer should always be a forw.gen.
       Map<Sequence, List<String>> debugMap = fExplorer.getDebugMap();
       writeTestInfo(debugMap);
     }
@@ -423,15 +424,28 @@ public class GenTests extends GenInputsAbstract {
    * @param debugMap
    */
   private void writeTestInfo(Map<Sequence, List<String>> debugMap) {
-    File tempDir = new File("test.csv");
+    File tempDir = new File("sequenceInfo.csv");
     PrintStream out;
     try {
       if (!tempDir.exists()) {
         tempDir.createNewFile();
-        out = createTextOutputStream("test.csv"); // TODO: maybe just new FileOutputStream(..)
-      } else {
-        out = new PrintStream(new FileOutputStream("test.csv", true)); // shouldn't really happen
       }
+      // always overwrite
+      out = createTextOutputStream("sequenceInfo.csv"); // TODO: maybe just new FileOutputStream(..)
+      StringBuilder body = new StringBuilder();
+      body.append(debugMap.keySet().size()); // number of sequences
+      body.append(',');
+      int accumulatedSequenceSize = 0;
+      for (Sequence seq : debugMap.keySet()) {
+        for (String s : debugMap.get(seq)) {
+          accumulatedSequenceSize +=
+              s.toCharArray()[6]; // gets the size of the sequence, not sqrt'd
+        }
+      }
+      double avgSeqSize = accumulatedSequenceSize * 1.0 / debugMap.keySet().size();
+      body.append(avgSeqSize); // avg sequence size
+      /*
+      // To write out a bunch of sequence info
       StringBuilder header = new StringBuilder();
       header.append("Sequence hash");
       header.append(',');
@@ -456,12 +470,11 @@ public class GenTests extends GenInputsAbstract {
       header.append("weight actually used");
       // TODO: header.append(',')?
       StringBuilder body = new StringBuilder();
-
       for (Sequence seq : debugMap.keySet()) {
         body.append(seq.hashCode());
         int i = 0;
         for (String str : debugMap.get(seq)) {
-          if (i != 0) {
+          if (i != 0) { // filler, b/c this entry is the same sequence as before
             body.append("-------");
           }
           body.append(',');
@@ -472,6 +485,7 @@ public class GenTests extends GenInputsAbstract {
         body.append('\n');
       }
       out.println(header.toString());
+      */
       out.println(body.toString());
     } catch (IOException e) {
       System.out.println("Couldn't create test-output file");

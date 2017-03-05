@@ -10,7 +10,7 @@ usage() {
 }
 
 #initialize some default options before parsing the command line arguments
-specified_experiments=("Randoop" "Orienteering")
+specified_experiments=("Randoop" "DigDog")
 projects=("Chart" "Lang" "Math" "Time")
 # "Chart" "Lang" "Math" "Time"
 

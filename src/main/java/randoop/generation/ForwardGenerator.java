@@ -273,7 +273,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     weightMap.put(eSeq.sequence, weight); // add a weight no matter what
 
-    if (GenInputsAbstract.grt_debug_checks) {
+    if (GenInputsAbstract.output_sequence_info) {
       // csv string of this sequence's important info
       String result =
           ""
