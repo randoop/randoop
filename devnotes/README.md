@@ -9,5 +9,6 @@ Note: if you change the Omnigraffle file type-design.graffle, please regenerate
 the file type-design.pdf.
 
 The editable files for the Randoop manuals and project website can be found in
-[src/docs](src/docs).  The published site is located in the project pages
-directory [docs](docs).
+src/docs ([src/docs/README](../src/docs/README.md).  
+The published site is located in the project pages directory docs, and should
+not be edited.
