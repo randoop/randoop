@@ -873,7 +873,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("OrienteeringReg");
     options.setErrorBasename("OrienteeringErr");
     options.setFlag("orienteering");
-    options.setFlag("grt-debug-checks");
+    options.setFlag("output-sequence-info");
 
     setUpAndRunDigDogTests(testEnvironment, options);
     renameOutputTo("orienteering.csv");
@@ -890,7 +890,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("orienteeringCompareReg");
     options.setErrorBasename("orienteeringCompareErr");
     //options.setFlag("orienteering");
-    options.setFlag("grt-debug-checks");
+    options.setFlag("output-sequence-info");
 
     setUpAndRunDigDogTests(testEnvironment, options);
     renameOutputTo("randoop-orienteering.csv");
@@ -907,7 +907,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("ConstantMiningReg");
     options.setErrorBasename("ConstantMiningErr");
     options.setFlag("constant-mining");
-    options.setFlag("grt-debug-checks");
+    options.setFlag("output-sequence-info");
 
     setUpAndRunDigDogTests(testEnvironment, options);
     renameOutputTo("constant-mining.csv");
@@ -926,44 +926,10 @@ public class RandoopSystemTest {
     options.setOption("literals-level", "CLASS");
     options.setOption("literals-file", "CLASSES");
     //options.setFlag("orienteering");
-    options.setFlag("grt-debug-checks");
+    options.setFlag("output-sequence-info");
 
     setUpAndRunDigDogTests(testEnvironment, options);
     renameOutputTo("randoop-constant-mining.csv");
-  }
-
-  // TODO: make diff than simple orient
-  @Test
-  public void runHarderOrienteeringTest() {
-    TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("digdog-harder-orienteering");
-
-    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
-    options.setRegressionBasename("HarderOrienteeringeg");
-    options.setErrorBasename("HarderOrienteeringErr");
-    options.setFlag("orienteering");
-    options.setFlag("grt-debug-checks");
-
-    setUpAndRunDigDogTests(testEnvironment, options);
-    renameOutputTo("harder-orienteering.csv");
-  }
-
-  // TODO: make diff than simple const
-  @Test
-  public void runHarderConstantMiningTest() {
-    TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("digdog-harder-constant-mining");
-
-    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
-    options.setRegressionBasename("HarderConstantMiningReg");
-    options.setErrorBasename("HarderConstantMiningErr");
-    options.setFlag("constant-mining");
-    options.setFlag("grt-debug-checks");
-
-    setUpAndRunDigDogTests(testEnvironment, options);
-    renameOutputTo("harder-constant-mining.csv");
   }
 
   /**
@@ -971,7 +937,7 @@ public class RandoopSystemTest {
    * @param newFileName
    */
   private void renameOutputTo(String newFileName) {
-    File tempDir = new File("test.csv");
+    File tempDir = new File("sequenceInfo.csv");
     File result = new File(newFileName);
     boolean renamed = tempDir.renameTo(result);
     if (!renamed) {
