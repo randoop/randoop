@@ -37,7 +37,7 @@ allprojects {
   }
 
   /* Randoop version number - added to generated jar files */
-  version = '3.0.9'
+  version = '3.0.10'
 }
 
 /******
@@ -392,7 +392,7 @@ task singleJar (type: Jar) {
 
 assemble.dependsOn singleJar
 
-task distributionZip (type: Zip , dependsOn: ['clean', 'singleJar', 'copyJars', 'manual']) {
+task distributionZip (type: Zip , dependsOn: ['singleJar', 'copyJars', 'manual']) {
   group 'Publishing'
   description "Assemble a zip file with jar files and user documentation"
   def dirName = "$baseName-$version"
@@ -446,7 +446,7 @@ javadoc {
   destinationDir = file("${buildDir}/docs/api")
   source sourceSets.main.allJava
   options.memberLevel = JavadocMemberLevel.PRIVATE
-  options.addStringOption("stylesheetfile", "src/docs/resources/stylesheets/javadocstyle.css")
+  options.addStringOption("stylesheetfile", "${projectDir}/src/javadoc/resources/stylesheets/javadocstyle.css")
 }
 
 // needed for javadoc.doLast
@@ -472,7 +472,7 @@ javadoc.doLast {
  */
 task updateUserTOC( type:Exec, dependsOn: [ 'clonePlumeLib' ]) {
   executable "$buildDir/utils/plume-lib/bin/html-update-toc"
-  args  "${projectDir}/src/docs/site/manual/index.html"
+  args  "${projectDir}/src/docs/manual/index.html"
   environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
 }
 
@@ -481,19 +481,19 @@ task updateUserTOC( type:Exec, dependsOn: [ 'clonePlumeLib' ]) {
  */
 task updateDevTOC( type:Exec, dependsOn: ['clonePlumeLib' ]) {
   executable "$buildDir/utils/plume-lib/bin/html-update-toc"
-  args "${projectDir}/src/docs/site/manual/dev.html"
+  args "${projectDir}/src/docs/manual/dev.html"
   environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
 }
 
 /*
- * Applies plume.OptionsDoclet to src/docs/site/manual/index.html to add
+ * Applies plume.OptionsDoclet to src/docs/manual/index.html to add
  * command-line arguments extracted from the given @Option annotated classes.
  * Applied in-place.
  */
-task updateUserOptions {
-  description "Runs plume.OptionsDoclet on src/docs/site/manual/index.html"
+task updateUserOptions(dependsOn: 'assemble'){
+  description "Runs plume.OptionsDoclet on src/docs/manual/index.html"
   def classpath = files(configurations.manual.files).asPath
-  def docFile = file("${projectDir}/src/docs/site/manual/index.html")
+  def docFile = file("${projectDir}/src/docs/manual/index.html")
   def options = [
     "-classpath", classpath,
     "-docletpath", classpath,
@@ -519,7 +519,7 @@ task updateUserOptions {
  */
 task manual(type: DefaultTask, dependsOn: [ 'updateUserOptions', 'updateUserTOC', 'updateDevTOC']) {
   group 'Documentation'
-  description "Adds options and TOC to documentation in src/docs/site"
+  description "Adds options and TOC to documentation in src/docs"
 }
 
 /*
@@ -545,7 +545,7 @@ task validateManual(type: Exec, dependsOn: 'manual') {
   description "Run html5validator to find HTML errors in manual documents"
   if (JavaVersion.current().isJava8Compatible()) {
     environment PATH: "$System.env.PATH"
-    commandLine "html5validator", "--root", "${projectDir}/src/docs/site/manual"
+    commandLine "html5validator", "--root", "${projectDir}/src/docs/manual"
   } else {
     commandLine "echo","WARNING: HTML validation of manuals only run in Java 8+"
   }
@@ -554,7 +554,7 @@ task validateManual(type: Exec, dependsOn: 'manual') {
 /*
  * WARNING: do not run this task unless you mean to wipe out the project pages
  * directory. It can be repopulated by publishSite, but the contents will be
- * based on changes to the files in src/docs/site and the javadoc in the source.
+ * based on changes to the files in src/docs and the javadoc in the source.
  */
 task cleanSite {
   group=null
@@ -584,7 +584,7 @@ task publishSite (dependsOn: ['cleanSite', 'javadoc', 'validateAPI', 'manual', '
   description 'Publish changes to site files and javadoc to the project pages directory'
   def siteDir = "${projectDir}/docs"
   def buildDocsDir = "${buildDir}/docs" // include any built docs (e.g., api)
-  def newSiteFiles = fileTree("${projectDir}/src/docs/site") {
+  def newSiteFiles = fileTree("${projectDir}/src/docs") {
     exclude 'README.md'
   }
   doLast {
@@ -610,7 +610,7 @@ task validateSite(type: Exec) {
   }
 }
 
-task buildRelease(type: DefaultTask, dependsOn: [ 'build', 'publishSite', 'validateSite', 'distributionZip' ]) {
+task buildRelease(type: DefaultTask, dependsOn: [ 'assemble', 'check', 'publishSite', 'validateSite', 'distributionZip' ]) {
   group 'Publishing'
   description "Builds system and documentation, validates HTML, and publishes site"
 }
