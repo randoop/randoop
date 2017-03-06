@@ -1,4 +1,4 @@
-package randoop;
+package randoop.output;
 
 import java.io.File;
 import java.io.IOException;
@@ -178,49 +178,10 @@ public class JunitFileWriter {
 
     NameGenerator methodNameGen = new NameGenerator("test", 1, numDigits(sequences.size()));
 
+    String testClassString = createTestClassString(sequences, testClassName, methodNameGen);
+
     try {
-      outputPackageName(out, packageName);
-      out.println();
-      if (afterEachText != null) {
-        out.println("import org.junit.After;");
-      }
-      if (afterAllText != null) {
-        out.println("import org.junit.AfterClass;");
-      }
-      if (beforeEachText != null) {
-        out.println("import org.junit.Before;");
-      }
-      if (beforeAllText != null) {
-        out.println("import org.junit.BeforeClass;");
-      }
-      out.println("import org.junit.FixMethodOrder;");
-      out.println("import org.junit.Test;");
-      out.println("import org.junit.runners.MethodSorters;");
-      out.println();
-      out.println("@FixMethodOrder(MethodSorters.NAME_ASCENDING)");
-      out.println("public class " + testClassName + " {");
-      out.println();
-      out.println("  public static boolean debug = false;");
-      out.println();
-
-      if (beforeAllText != null) {
-        writeFixture(out, BEFORE_ALL, "static", BEFORE_ALL_METHOD, beforeAllText);
-      }
-      if (afterAllText != null) {
-        writeFixture(out, AFTER_ALL, "static", AFTER_ALL_METHOD, afterAllText);
-      }
-      if (beforeEachText != null) {
-        writeFixture(out, BEFORE_EACH, "", BEFORE_EACH_METHOD, beforeEachText);
-      }
-      if (afterEachText != null) {
-        writeFixture(out, AFTER_EACH, "", AFTER_EACH_METHOD, afterEachText);
-      }
-
-      for (ExecutableSequence s : sequences) {
-        writeTest(out, testClassName, methodNameGen.next(), s);
-        out.println();
-      }
-      out.println("}");
+      out.println(testClassString);
       classMethodCounts.put(testClassName, methodNameGen.nameCount());
     } finally {
       if (out != null) out.close();
@@ -229,64 +190,100 @@ public class JunitFileWriter {
     return file;
   }
 
-  /**
-   * Writes a single text fixture to the output stream.
-   *
-   * @param out  the output stream for writing test class
-   * @param annotation  the fixture annotation
-   * @param modifier  text prefix for method declaration
-   * @param methodName  the method name for fixture method
-   * @param bodyText  the text of the fixture method
-   */
-  private void writeFixture(
-      PrintStream out,
-      String annotation,
-      String modifier,
-      String methodName,
-      List<String> bodyText) {
-    String indent = "  ";
-    out.println(indent + annotation);
-    out.print(indent + "public ");
-    if (!modifier.isEmpty()) {
-      out.print(modifier + " ");
+  private String createTestClassString(
+      List<ExecutableSequence> sequences, String testClassName, NameGenerator methodNameGen) {
+    ClassSourceBuilder sourceBuilder = new ClassSourceBuilder(testClassName, packageName);
+    List<String> imports = new ArrayList<>();
+    if (afterEachText != null) {
+      imports.add("org.junit.After;");
     }
-    out.println("void " + methodName + "() {");
-    for (String line : bodyText) {
-      out.println(indent + indent + line);
+    if (afterAllText != null) {
+      imports.add("org.junit.AfterClass;");
     }
-    out.println(indent + "}");
-    out.println();
+    if (beforeEachText != null) {
+      imports.add("org.junit.Before;");
+    }
+    if (beforeAllText != null) {
+      imports.add("org.junit.BeforeClass;");
+    }
+    imports.add("org.junit.FixMethodOrder;");
+    imports.add("org.junit.Test;");
+    imports.add("org.junit.runners.MethodSorters;");
+    sourceBuilder.addImports(imports);
+
+    List<String> annotations = new ArrayList<>();
+    annotations.add("@FixMethodOrder(MethodSorters.NAME_ASCENDING)");
+    sourceBuilder.addAnnotation(annotations);
+
+    sourceBuilder.addMember("public static boolean debug = false;");
+
+    if (beforeAllText != null) {
+      sourceBuilder.addMember(
+          createFixture(BEFORE_ALL, "public static", BEFORE_ALL_METHOD, beforeAllText));
+    }
+    if (afterAllText != null) {
+      sourceBuilder.addMember(
+          createFixture(AFTER_ALL, "public static", AFTER_ALL_METHOD, afterAllText));
+    }
+    if (beforeEachText != null) {
+      sourceBuilder.addMember(
+          createFixture(BEFORE_EACH, "public", BEFORE_EACH_METHOD, beforeEachText));
+    }
+    if (afterEachText != null) {
+      sourceBuilder.addMember(
+          createFixture(AFTER_EACH, "public", AFTER_EACH_METHOD, afterEachText));
+    }
+
+    for (ExecutableSequence s : sequences) {
+      sourceBuilder.addMember(createTestMethod(testClassName, methodNameGen.next(), s));
+    }
+
+    return sourceBuilder.toString();
   }
 
-  /*
-   *
-   */
   /**
-   * Writes a test method to the output stream for the sequence s.
+   * Creates the declaration of a single test fixture.
    *
-   * @param out
-   *          the output stream for test class file
-   * @param className
-   *          the name of test class
-   * @param methodName
-   *          the name of test method
-   * @param s
-   *          the {@link ExecutableSequence} for test method.
+   * @param annotation  the fixture annotation
+   * @param modifier  the method modifiers for fixture declaration
+   * @param methodName  the name of the fixture method
+   * @param bodyText  the text of the fixture method
+   * @return the fixture method as a {@code String}
    */
-  private void writeTest(
-      PrintStream out, String className, String methodName, ExecutableSequence s) {
-    out.println("  @Test");
-    out.println("  public void " + methodName + "() throws Throwable {");
-    out.println();
-    out.println(
-        indent(
-            "if (debug) { System.out.format(\"%n%s%n\",\""
-                + className
-                + "."
-                + methodName
-                + "\"); }"));
-    out.println(indent(s.toCodeString()));
-    out.println("  }");
+  private List<String> createFixture(
+      String annotation, String modifier, String methodName, List<String> bodyText) {
+    MethodSourceBuilder methodSourceBuilder =
+        new MethodSourceBuilder(
+            modifier, "void", methodName, new ArrayList<String>(), new ArrayList<String>());
+    List<String> annotationList = new ArrayList<>();
+    annotationList.add(annotation);
+    methodSourceBuilder.addAnnotation(annotationList);
+    methodSourceBuilder.addBodyText(bodyText);
+    return methodSourceBuilder.toLines();
+  }
+
+  /**
+   * Creates a test method as a {@code String} for the sequence {@code testSequence}.
+   *
+   * @param className  the name of the test class
+   * @param methodName  the name of the test method
+   * @param testSequence  the {@link ExecutableSequence} test sequence
+   * @return the {@code String} for the test method
+   */
+  private List<String> createTestMethod(
+      String className, String methodName, ExecutableSequence testSequence) {
+    List<String> throwsList = new ArrayList<>();
+    throwsList.add("Throwable");
+    MethodSourceBuilder sourceBuilder =
+        new MethodSourceBuilder("public", "void", methodName, new ArrayList<String>(), throwsList);
+    List<String> annotation = new ArrayList<>();
+    annotation.add("@Test");
+    sourceBuilder.addAnnotation(annotation);
+    String debugString =
+        "if (debug) { System.out.format(\"%n%s%n\",\"" + className + "." + methodName + "\"); }";
+    sourceBuilder.addBodyText(debugString);
+    sourceBuilder.addBodyText(testSequence.toCodeLines());
+    return sourceBuilder.toLines();
   }
 
   /**
@@ -313,39 +310,48 @@ public class JunitFileWriter {
    * @return {@link File} object for test suite file.
    */
   public File writeSuiteFile() {
-    File dir = this.getDir();
     String suiteClassName = masterTestClassName;
+    String suiteFileString = getSuiteClassString(suiteClassName);
+
+    File dir = this.getDir();
     File file = new File(dir, suiteClassName + ".java");
-
-    List<String> testClassNames = getTestClassNames();
-
     try (PrintStream out = createTextOutputStream(file)) {
-      outputPackageName(out, packageName);
-
-      out.println();
-      out.println("import org.junit.runner.RunWith;");
-      out.println("import org.junit.runners.Suite;");
-      out.println();
-      out.println("@RunWith(Suite.class)");
-      out.println("@Suite.SuiteClasses({");
-
-      /*
-       * should be done with a joiner - waiting until we can graduate to Java 8
-       */
-      Iterator<String> testIterator = testClassNames.iterator();
-      if (testIterator.hasNext()) {
-        out.print(testIterator.next() + ".class");
-        while (testIterator.hasNext()) {
-          out.println(", ");
-          out.print(testIterator.next() + ".class");
-        }
-        out.println();
-      }
-
-      out.println("})");
-      out.println("public class " + suiteClassName + "{ }");
+      out.println(suiteFileString);
     }
     return file;
+  }
+
+  /**
+   * Creates the suite class for the tests in this object as a {@code String}.
+   *
+   * @param suiteClassName  the name of the suite class created
+   * @return the {@code String} with the declaration for the suite class
+   */
+  private String getSuiteClassString(String suiteClassName) {
+    ClassSourceBuilder sourceBuilder = new ClassSourceBuilder(suiteClassName, packageName);
+
+    List<String> imports = new ArrayList<>();
+    imports.add("org.junit.runner.RunWith;");
+    imports.add("org.junit.runners.Suite;");
+    sourceBuilder.addImports(imports);
+
+    List<String> annotations = new ArrayList<>();
+    annotations.add("@RunWith(Suite.class)");
+    annotations.add("@Suite.SuiteClasses({");
+
+    List<String> testClassNames = getTestClassNames();
+    Iterator<String> testIterator = testClassNames.iterator();
+    if (testIterator.hasNext()) {
+      String classString = testIterator.next() + ".class";
+      while (testIterator.hasNext()) {
+        annotations.add(classString + ", ");
+        classString = testIterator.next() + ".class";
+      }
+      annotations.add(classString);
+    }
+    annotations.add("})");
+    sourceBuilder.addAnnotation(annotations);
+    return sourceBuilder.toString();
   }
 
   /**
@@ -357,67 +363,74 @@ public class JunitFileWriter {
    */
   public File writeDriverFile() {
     File dir = this.getDir();
-    File file = new File(dir, masterTestClassName + "Driver.java");
+    String driverName = masterTestClassName + "Driver";
+    File file = new File(dir, driverName + ".java");
 
     List<String> testClassNames = getTestClassNames();
 
+    String driverClassString = createTestDriverString(driverName, testClassNames);
+
     try (PrintStream out = createTextOutputStream(file)) {
-      outputPackageName(out, packageName);
-
-      out.println();
-      out.println("public class " + masterTestClassName + "Driver {");
-      out.println();
-      out.println("  public static void main(String[] args) {");
-
-      out.println("    boolean wasSuccessful = true;");
-
-      NameGenerator instanceNameGen = new NameGenerator("t");
-      for (String testClass : testClassNames) {
-
-        if (beforeAllText != null) {
-          out.println();
-          out.println("    " + testClass + "." + BEFORE_ALL_METHOD + "();");
-          out.println();
-        }
-
-        String testVariable = instanceNameGen.next();
-        out.println("    " + testClass + " " + testVariable + "= new " + testClass + "();");
-
-        int classMethodCount = classMethodCounts.get(testClass);
-        NameGenerator methodGen = new NameGenerator("test", 1, numDigits(classMethodCount));
-
-        while (methodGen.nameCount() < classMethodCount) {
-          out.println();
-          if (beforeEachText != null) {
-            out.println("    " + testVariable + "." + BEFORE_EACH_METHOD + "();");
-          }
-          String methodName = methodGen.next();
-          out.println("    try {");
-          out.println("      " + testVariable + "." + methodName + "();");
-          out.println("    } catch (Throwable e) {");
-          out.println("      wasSuccessful = false;");
-          out.println("      e.printStackTrace();");
-          out.println("    }");
-          if (afterEachText != null) {
-            out.println("    " + testVariable + "." + AFTER_EACH_METHOD + "();");
-          }
-        }
-
-        if (afterAllText != null) {
-          out.println("    " + testClass + "." + AFTER_ALL_METHOD + "();");
-        }
-
-        out.println();
-      }
-
-      out.println("    if ( !wasSuccessful ) {");
-      out.println("      System.exit(1);");
-      out.println("    }");
-      out.println("  }");
-      out.println();
-      out.println("}");
+      out.println(driverClassString);
     }
     return file;
+  }
+
+  /**
+   * Create non-reflective test driver as a main class.
+   *
+   * @param driverName  the name for the driver class
+   * @param testClassNames  the names for the test classes
+   * @return the test driver class as a {@code String}
+   */
+  private String createTestDriverString(String driverName, List<String> testClassNames) {
+    ClassSourceBuilder sourceBuilder = new ClassSourceBuilder(driverName, packageName);
+    List<String> arguments = new ArrayList<>();
+    arguments.add("String[] args");
+    MethodSourceBuilder methodSourceBuilder =
+        new MethodSourceBuilder(
+            "public static", "void", "main", arguments, new ArrayList<String>());
+    methodSourceBuilder.addBodyText("boolean wasSuccessful = true;");
+
+    NameGenerator instanceNameGen = new NameGenerator("t");
+    for (String testClass : testClassNames) {
+      if (beforeAllText != null) {
+        methodSourceBuilder.addBodyText(testClass + "." + BEFORE_ALL_METHOD + "();");
+      }
+
+      String testVariable = instanceNameGen.next();
+      methodSourceBuilder.addBodyText(
+          testClass + " " + testVariable + "= new " + testClass + "();");
+
+      int classMethodCount = classMethodCounts.get(testClass);
+      NameGenerator methodGen = new NameGenerator("test", 1, numDigits(classMethodCount));
+
+      while (methodGen.nameCount() < classMethodCount) {
+        if (beforeEachText != null) {
+          methodSourceBuilder.addBodyText(testVariable + "." + BEFORE_EACH_METHOD + "();");
+        }
+        String methodName = methodGen.next();
+        methodSourceBuilder.addBodyText("try {");
+        methodSourceBuilder.addBodyText("  " + testVariable + "." + methodName + "();");
+        methodSourceBuilder.addBodyText("} catch (Throwable e) {");
+        methodSourceBuilder.addBodyText("  wasSuccessful = false;");
+        methodSourceBuilder.addBodyText("  e.printStackTrace();");
+        methodSourceBuilder.addBodyText("}");
+        if (afterEachText != null) {
+          methodSourceBuilder.addBodyText(testVariable + "." + AFTER_EACH_METHOD + "();");
+        }
+      }
+
+      if (afterAllText != null) {
+        methodSourceBuilder.addBodyText(testClass + "." + AFTER_ALL_METHOD + "();");
+      }
+    }
+    methodSourceBuilder.addBodyText("if ( !wasSuccessful ) {");
+    methodSourceBuilder.addBodyText("  System.exit(1);");
+    methodSourceBuilder.addBodyText("}");
+    String methodBody = methodSourceBuilder.toString();
+    sourceBuilder.addMember(methodBody);
+    return sourceBuilder.toString();
   }
 
   /**
@@ -507,21 +520,6 @@ public class JunitFileWriter {
       dir = new File(dir, s);
     }
     return dir;
-  }
-
-  // TODO document and move to util directory.
-  private static String indent(String codeString) {
-    StringBuilder indented = new StringBuilder();
-    String[] lines = codeString.split(Globals.lineSep);
-    for (String line : lines) {
-      indented.append("    ").append(line).append(Globals.lineSep);
-    }
-    return indented.toString();
-  }
-
-  private static void outputPackageName(PrintStream out, String packageName) {
-    boolean isDefaultPackage = packageName.length() == 0;
-    if (!isDefaultPackage) out.println("package " + packageName + ";");
   }
 
   private static PrintStream createTextOutputStream(File file) {

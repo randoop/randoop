@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import plume.UtilMDE;
-import randoop.Globals;
-
 /**
  * Builds the source code for a (non-generic) class in a string.
  */
@@ -27,53 +24,87 @@ public class ClassSourceBuilder extends SourceBuilder {
   /** The members of the class */
   private List<String> memberDeclarations;
 
+  /**
+   * Creates a {@link ClassSourceBuilder} for a class with the given name and package.
+   *
+   * @param classname  the name of the class declaration to be built
+   * @param packageName  the name of the package for the class declaration
+   */
   public ClassSourceBuilder(String classname, String packageName) {
     super();
     this.classname = classname;
-    this.packageName = packageName;
+    if (packageName == null) {
+      packageName = "";
+    } else {
+      this.packageName = packageName;
+    }
+    this.importNames = new ArrayList<>();
     this.classAnnotation = new ArrayList<>();
     this.memberDeclarations = new ArrayList<>();
   }
 
+  /**
+   * Add import declarations to this class declaration.
+   * Takes the name of the import (e.g., {@code java.util.List} or {@code java.util.*}.
+   *
+   * @param importNames  the list of import declarations to add to this class declaration
+   */
   public void addImports(Collection<String> importNames) {
     if (importNames != null) {
       this.importNames.addAll(importNames);
     }
   }
 
-  public void addClassAnnotation(Collection<String> classAnnotation) {
-    if (classAnnotation != null) {
-      this.classAnnotation.addAll(classAnnotation);
+  /**
+   * Add annotations to this class declaration.
+   *
+   * @param annotations  the collection of annotations to be added to this declaration
+   */
+  public void addAnnotation(Collection<String> annotations) {
+    if (annotations != null) {
+      this.classAnnotation.addAll(annotations);
     }
   }
 
-  public void addMember(String memberDeclaration) {
-    if (memberDeclaration != null && !memberDeclaration.isEmpty()) {
-      memberDeclarations.add(memberDeclaration);
+  public void addMember(String declarationString) {
+    if (declarationString != null && !declarationString.isEmpty()) {
+      memberDeclarations.add(declarationString);
+    }
+  }
+
+  public void addMember(List<String> declarationLines) {
+    if (declarationLines != null && !declarationLines.isEmpty()) {
+      memberDeclarations.addAll(declarationLines);
     }
   }
 
   @Override
-  public String toString() {
+  public List<String> toLines() {
+    List<String> lines = new ArrayList<>();
     if (packageName != null && !packageName.isEmpty()) {
-      appendLine("package", packageName, ";");
+      lines.add(createLine("package", packageName, ";"));
+      lines.add(createLine());
+    }
+    if (!importNames.isEmpty()) {
+      for (String importName : importNames) {
+        lines.add(createLine("import", importName, ";"));
+      }
+      lines.add(createLine());
+    }
+    if (!classAnnotation.isEmpty()) {
+      for (String annotation : classAnnotation) {
+        lines.add(createLine(annotation));
+      }
     }
 
-    for (String importName : importNames) {
-      appendLine("import", importName, ";");
-    }
-
-    for (String annotation : classAnnotation) {
-      appendLine(annotation);
-    }
-
-    appendLine("public", "class", classname, "{");
-
+    lines.add(createLine("public", "class", classname, "{"));
+    indent();
     for (String memberDeclaration : memberDeclarations) {
-      appendLine(memberDeclaration);
+      lines.add(createLine(memberDeclaration));
+      lines.add(createLine());
     }
-
-    appendLine("}");
-    return super.toString();
+    reverseIndent();
+    lines.add(createLine("}"));
+    return lines;
   }
 }

@@ -17,7 +17,7 @@ import plume.Options.ArgException;
 import plume.SimpleLog;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
-import randoop.JunitFileWriter;
+import randoop.output.JunitFileWriter;
 import randoop.MultiVisitor;
 import randoop.condition.ConditionCollection;
 import randoop.generation.AbstractGenerator;

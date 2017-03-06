@@ -5,13 +5,13 @@ import java.util.Collection;
 import java.util.List;
 
 import plume.UtilMDE;
-import randoop.generation.RandoopGenerationError;
 
 /**
- * Created by bjkeller on 3/2/17.
+ * Constructs a {@code String} containing a method declaration.
  */
 public class MethodSourceBuilder extends SourceBuilder {
 
+  private final String modifiers;
   private final String methodName;
   private final String returnTypeName;
   private final List<String> throwsList;
@@ -20,8 +20,13 @@ public class MethodSourceBuilder extends SourceBuilder {
   private final List<String> parameters;
 
   public MethodSourceBuilder(
-      String methodName, String returnTypeName, List<String> parameters, List<String> throwsList) {
+      String modifiers,
+      String returnTypeName,
+      String methodName,
+      List<String> parameters,
+      List<String> throwsList) {
     super();
+    this.modifiers = modifiers;
     this.methodName = methodName;
     this.returnTypeName = returnTypeName;
     this.parameters = parameters;
@@ -42,10 +47,16 @@ public class MethodSourceBuilder extends SourceBuilder {
     }
   }
 
-  @Override
-  public String toString() {
+  public void addBodyText(List<String> bodyText) {
+    if (bodyText != null) {
+      this.bodyText.addAll(bodyText);
+    }
+  }
+
+  List<String> toLines() {
+    List<String> lines = new ArrayList<>();
     for (String annotation : annotations) {
-      appendLine(annotation);
+      lines.add(createLine(annotation));
     }
     String paramText = "(" + UtilMDE.join(parameters, ",") + ")";
     String suffix = "";
@@ -53,9 +64,13 @@ public class MethodSourceBuilder extends SourceBuilder {
       suffix = "throws" + " " + UtilMDE.join(throwsList, " ") + " ";
     }
     suffix = suffix + "{";
-
-    appendLine("public", returnTypeName, methodName, paramText, suffix);
-
-    return super.toString();
+    lines.add(createLine(modifiers, returnTypeName, methodName, paramText, suffix));
+    indent();
+    for (String line : bodyText) {
+      lines.add(createLine(line));
+    }
+    reverseIndent();
+    lines.add(createLine("}"));
+    return lines;
   }
 }
