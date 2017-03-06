@@ -1,5 +1,4 @@
-ALSO SEE project ideas page in Randoop wiki:
-https://github.com/randoop/randoop/wiki/ProjectIdeas
+Randoop project ideas
 
 ***
 
@@ -143,9 +142,3 @@ Extensions to Randoop
 
     Could spend virtually any amount of time on this, but I figure that
     some progress would get made in 4 man weeks.
-
-
-
-
-
- 
