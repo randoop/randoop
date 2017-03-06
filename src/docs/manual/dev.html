@@ -679,7 +679,9 @@ NEWVERSION=<em>3.0.11</em></pre>
     Check that there are no broken links on the published website:
     <pre>./gradlew checklink</pre>
     Any output is written to a file <pre>checklink-log.txt</pre>
-    If there are any errors, fix them, rerun <pre>./gradlew buildRelease</pre>
+    If there are any errors,
+    verify that each link on the site is actually broken,
+    and if so, fix the link, and rerun <pre>./gradlew buildRelease</pre>
     and commit and push those changes.
     If the check succeeds, run: <pre>rm -f checklink-log.txt</pre>
   </li>
