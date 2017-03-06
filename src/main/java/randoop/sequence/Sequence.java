@@ -183,6 +183,7 @@ public final class Sequence implements WeightedElement {
         continue;
       }
       appendCode(b, i);
+      b.append(Globals.lineSep);
     }
     return b.toString();
   }

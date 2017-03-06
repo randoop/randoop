@@ -165,19 +165,8 @@ public class ExecutableSequence {
     return b.toString();
   }
 
-  /**
-   * Return this sequence as code. Similar to {@link Sequence#toCodeString()}
-   * except includes the checks.
-   *
-   * If for a given statement there is a check of type
-   * {@link randoop.test.ExceptionCheck}, that check's pre-statement code is printed
-   * immediately before the statement, and its post-statement code is printed
-   * immediately after the statement.
-   *
-   * @return the sequence as a string
-   */
-  public String toCodeString() {
-    StringBuilder b = new StringBuilder();
+  public List<String> toCodeLines() {
+    List<String> lines = new ArrayList<>();
     for (int i = 0; i < sequence.size(); i++) {
 
       // Only print primitive declarations if the last/only statement
@@ -196,17 +185,34 @@ public class ExecutableSequence {
         if (exObs != null) {
           oneStatement.insert(0, exObs.toCodeStringPreStatement());
           oneStatement.append(exObs.toCodeStringPostStatement());
-          oneStatement.append(Globals.lineSep);
         }
 
         // Print the rest of the checks.
         for (Check d : checks.get().keySet()) {
           oneStatement.insert(0, d.toCodeStringPreStatement());
           oneStatement.append(d.toCodeStringPostStatement());
-          oneStatement.append(Globals.lineSep);
         }
       }
-      b.append(oneStatement);
+      lines.add(oneStatement.toString());
+    }
+    return lines;
+  }
+
+  /**
+   * Return this sequence as code. Similar to {@link Sequence#toCodeString()}
+   * except includes the checks.
+   *
+   * If for a given statement there is a check of type
+   * {@link randoop.test.ExceptionCheck}, that check's pre-statement code is printed
+   * immediately before the statement, and its post-statement code is printed
+   * immediately after the statement.
+   *
+   * @return the sequence as a string
+   */
+  public String toCodeString() {
+    StringBuilder b = new StringBuilder();
+    for (String line : toCodeLines()) {
+      b.append(line);
     }
     return b.toString();
   }

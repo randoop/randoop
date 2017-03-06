@@ -122,7 +122,7 @@ public final class Statement {
       b.append(" ").append(Variable.classToVariableName(type)).append(variable.index).append(" = ");
     }
     operation.appendCode(inputs, b);
-    b.append(";").append(Globals.lineSep);
+    b.append(";");
   }
 
   public String toParsableString(String variableName, List<Variable> inputs) {
