@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>RegressionCaptureVisitor (randoop 3.0.9 API)</title>
+<title>RegressionCaptureVisitor (randoop 3.0.10 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="RegressionCaptureVisitor (randoop 3.0.9 API)";
+            parent.document.title="RegressionCaptureVisitor (randoop 3.0.10 API)";
         }
     }
     catch(err) {
@@ -160,6 +160,10 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/RegressionCaptureVisitor.html#includeAssertions">includeAssertions</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>private <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/RegressionCaptureVisitor.html#isVisible">isVisible</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/RegressionCaptureVisitor.html#observerMap">observerMap</a></span></code>&nbsp;</td>
 </tr>
@@ -178,9 +182,10 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/RegressionCaptureVisitor.html#RegressionCaptureVisitor-randoop.test.ExpectedExceptionCheckGen-randoop.util.MultiMap-java.util.Set-boolean-">RegressionCaptureVisitor</a></span>(<a href="../../randoop/test/ExpectedExceptionCheckGen.html" title="class in randoop.test">ExpectedExceptionCheckGen</a>&nbsp;exceptionExpectation,
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/RegressionCaptureVisitor.html#RegressionCaptureVisitor-randoop.test.ExpectedExceptionCheckGen-randoop.util.MultiMap-java.util.Set-randoop.reflection.VisibilityPredicate-boolean-">RegressionCaptureVisitor</a></span>(<a href="../../randoop/test/ExpectedExceptionCheckGen.html" title="class in randoop.test">ExpectedExceptionCheckGen</a>&nbsp;exceptionExpectation,
                         <a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;observerMap,
                         java.util.Set&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;excludeSet,
+                        <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a>&nbsp;isVisible,
                         boolean&nbsp;includeAssertions)</code>&nbsp;</td>
 </tr>
 </table>
@@ -254,6 +259,15 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <pre>private final&nbsp;java.util.Set&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt; excludeSet</pre>
 </li>
 </ul>
+<a name="isVisible">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isVisible</h4>
+<pre>private final&nbsp;<a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a> isVisible</pre>
+</li>
+</ul>
 <a name="includeAssertions">
 <!--   -->
 </a>
@@ -271,7 +285,7 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="RegressionCaptureVisitor-randoop.test.ExpectedExceptionCheckGen-randoop.util.MultiMap-java.util.Set-boolean-">
+<a name="RegressionCaptureVisitor-randoop.test.ExpectedExceptionCheckGen-randoop.util.MultiMap-java.util.Set-randoop.reflection.VisibilityPredicate-boolean-">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -280,6 +294,7 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <pre>public&nbsp;RegressionCaptureVisitor(<a href="../../randoop/test/ExpectedExceptionCheckGen.html" title="class in randoop.test">ExpectedExceptionCheckGen</a>&nbsp;exceptionExpectation,
                                 <a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;observerMap,
                                 java.util.Set&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;excludeSet,
+                                <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a>&nbsp;isVisible,
                                 boolean&nbsp;includeAssertions)</pre>
 </li>
 </ul>
