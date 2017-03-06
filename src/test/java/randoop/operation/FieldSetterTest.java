@@ -11,7 +11,6 @@ import java.util.List;
 
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
-import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.field.AccessibleField;
 import randoop.field.ClassWithFields;
@@ -22,8 +21,8 @@ import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
-import randoop.types.Type;
 import randoop.types.PrimitiveType;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 import static org.junit.Assert.assertEquals;
@@ -72,7 +71,7 @@ public class FieldSetterTest {
       assertEquals("Output type should be void", JavaTypes.VOID_TYPE, op.getOutputType());
 
       //code generation
-      String expected = "randoop.field.ClassWithFields.fourField = 24;" + Globals.lineSep;
+      String expected = "randoop.field.ClassWithFields.fourField = 24;";
       StringBuilder b = new StringBuilder();
       TypedOperation initOp =
           new TypedTermOperation(
@@ -128,7 +127,7 @@ public class FieldSetterTest {
       assertEquals("Output type should be void", JavaTypes.VOID_TYPE, op.getOutputType());
 
       //code generation
-      String expected = "classWithFields0.oneField = 24;" + Globals.lineSep;
+      String expected = "classWithFields0.oneField = 24;";
       StringBuilder b = new StringBuilder();
       Constructor<?> constructor = null;
       try {
