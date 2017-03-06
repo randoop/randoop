@@ -22,7 +22,6 @@ public class Main {
 
   // The main method simply calls nonStaticMain.
   public static void main(String[] args) {
-
     Main main = new Main();
     main.nonStaticMain(args);
     System.exit(0);

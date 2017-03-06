@@ -487,7 +487,7 @@ public class GenTests extends GenInputsAbstract {
     if (GenInputsAbstract.output_sequence_info) {
       DigDogGenerator fExplorer =
           (DigDogGenerator) explorer; // should work, explorer should always be a forw.gen.
-      Map<Sequence, List<String>> debugMap = fExplorer.getDebugMap();
+      Map<Sequence, List<String>> debugMap = fExplorer.getSequenceDebugMap();
       writeTestInfo(debugMap);
     }
 
@@ -508,7 +508,8 @@ public class GenTests extends GenInputsAbstract {
         tempDir.createNewFile();
       }
       // always overwrite
-      out = createTextOutputStream("sequenceInfo.csv"); // TODO: maybe just new FileOutputStream(..)
+      out =
+          createTextOutputStream("sequenceInfo.csv"); // TODO: maybe just new FileOutputStream(..)
       StringBuilder body = new StringBuilder();
       body.append(debugMap.keySet().size()); // number of sequences
       body.append(',');

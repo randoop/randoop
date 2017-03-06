@@ -2,13 +2,8 @@ package randoop.generation;
 
 import randoop.*;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.NonreceiverTerm;
-import randoop.operation.Operation;
-import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
-import randoop.reflection.TypeInstantiator;
 import randoop.sequence.*;
-import randoop.test.DummyCheckGenerator;
 import randoop.types.*;
 import randoop.util.*;
 
@@ -17,84 +12,19 @@ import java.util.*;
 /**
  * Created by Michael on 3/3/2017.
  */
-public class DigDogGenerator extends AbstractGenerator {
+public class DigDogGenerator extends ForwardGenerator {
 
   /**
    * The set of ALL sequences ever generated, including sequences that were
    * executed and then discarded.
    */
-  private Set<Sequence> allSequences;
-  private Set<TypedOperation> observers;
-
   private final Map<WeightedElement, Double> weightMap = new HashMap<WeightedElement, Double>();
   private final Map<WeightedElement, Integer> sequenceExecutionNumber =
       new HashMap<WeightedElement, Integer>();
 
   private final Map<Sequence, Double> initialConstantWeights = new HashMap<>();
 
-  private final Map<Sequence, List<String>> debugMap = new HashMap<>();
-
-  /** Sequences that are used in other sequences (and are thus redundant) */
-  private Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
-
-  // For testing purposes only. If Globals.randooptestrun==false then the array
-  // is never populated or queried. This set contains the same set of
-  // components as the set "allsequences" above, but stores them as
-  // strings obtained via the toCodeString() method.
-  private final List<String> allsequencesAsCode = new ArrayList<>();
-
-  // For testing purposes only.
-  private final List<Sequence> allsequencesAsList = new ArrayList<>();
-
-  private TypeInstantiator instantiator;
-
-  // The set of all primitive values seen during generation and execution
-  // of sequences. This set is used to tell if a new primitive value has
-  // been generated, to add the value to the components.
-  private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
-
-  public DigDogGenerator(
-      List<TypedOperation> operations,
-      Set<TypedOperation> observers,
-      long timeMillis,
-      int maxGenSequences,
-      int maxOutSequences,
-      ComponentManager componentManager,
-      RandoopListenerManager listenerManager) {
-    this(
-        operations,
-        observers,
-        timeMillis,
-        maxGenSequences,
-        maxOutSequences,
-        componentManager,
-        null,
-        listenerManager,
-        0,
-        null);
-  }
-
-  public DigDogGenerator(
-      List<TypedOperation> operations,
-      Set<TypedOperation> observers,
-      long timeMillis,
-      int maxGenSequences,
-      int maxOutSequences,
-      ComponentManager componentManager,
-      IStopper stopper,
-      RandoopListenerManager listenerManager) {
-    this(
-        operations,
-        observers,
-        timeMillis,
-        maxGenSequences,
-        maxOutSequences,
-        componentManager,
-        stopper,
-        listenerManager,
-        0,
-        null);
-  }
+  private final Map<Sequence, List<String>> sequenceDebugMap = new HashMap<>();
 
   public DigDogGenerator(
       List<TypedOperation> operations,
@@ -133,18 +63,13 @@ public class DigDogGenerator extends AbstractGenerator {
 
     super(
         operations,
+        observers,
         timeMillis,
         maxGenSequences,
         maxOutSequences,
         componentManager,
         stopper,
         listenerManager);
-
-    this.observers = observers;
-    this.allSequences = new LinkedHashSet<>();
-    this.instantiator = componentManager.getTypeInstantiator();
-
-    initializeRuntimePrimitivesSeen();
 
     if (GenInputsAbstract.constant_mining) {
 
@@ -165,10 +90,10 @@ public class DigDogGenerator extends AbstractGenerator {
 
   /**
    * Should only be called once we're done with generating tests, so internal exposure shouldn't matter
-   * @return
+   * @return a sequence map to be used for testing purposes
    */
-  public Map<Sequence, List<String>> getDebugMap() {
-    return debugMap;
+  public Map<Sequence, List<String>> getSequenceDebugMap() {
+    return sequenceDebugMap;
   }
 
   /**
@@ -178,16 +103,6 @@ public class DigDogGenerator extends AbstractGenerator {
    * primitive sequences; this method puts those primitives in this set.
    */
   // XXX this is goofy - these values are available in other ways
-  private void initializeRuntimePrimitivesSeen() {
-    for (Sequence s : componentManager.getAllPrimitiveSequences()) {
-      ExecutableSequence es = new ExecutableSequence(s);
-      es.execute(new DummyVisitor(), new DummyCheckGenerator());
-      NormalExecution e = (NormalExecution) es.getResult(0);
-      Object runtimeValue = e.getRuntimeValue();
-      runtimePrimitivesSeen.add(runtimeValue);
-    }
-  }
-
   @Override
   public ExecutableSequence step() {
 
@@ -281,14 +196,14 @@ public class DigDogGenerator extends AbstractGenerator {
               + ','
               + weight;
 
-      if (debugMap.containsKey(eSeq.sequence)) {
-        List<String> addedToList = debugMap.get(eSeq.sequence);
+      if (sequenceDebugMap.containsKey(eSeq.sequence)) {
+        List<String> addedToList = sequenceDebugMap.get(eSeq.sequence);
         addedToList.add(result);
-        debugMap.put(eSeq.sequence, addedToList);
+        sequenceDebugMap.put(eSeq.sequence, addedToList);
       } else {
         List<String> debugList = new ArrayList<String>();
         debugList.add(result);
-        debugMap.put(eSeq.sequence, debugList);
+        sequenceDebugMap.put(eSeq.sequence, debugList);
       }
     }
 
@@ -306,330 +221,6 @@ public class DigDogGenerator extends AbstractGenerator {
     return eSeq;
   }
 
-  @Override
-  public Set<Sequence> getAllSequences() {
-    return Collections.unmodifiableSet(this.allSequences);
-  }
-
-  /**
-   * Determines what indices in the given sequence are active. An active index i
-   * means that the i-th method call creates an interesting/useful value that
-   * can be used as an input to a larger sequence; inactive indices are never
-   * used as inputs. The effect of setting active/inactive indices is that the
-   * SequenceCollection to which the given sequences is added only considers the
-   * active indices when deciding whether the sequence creates values of a given
-   * type.
-   * <p>
-   * In addition to determining active indices, this method determines if any
-   * primitive values created during execution of the sequence are new values
-   * not encountered before. Such values are added to the component manager so
-   * they can be used during subsequent generation attempts.
-   *
-   * @param seq  the sequence
-   */
-  private void processSequence(ExecutableSequence seq) {
-
-    if (seq.hasNonExecutedStatements()) {
-      if (Log.isLoggingOn()) {
-        Log.logLine(
-            "Making all indices inactive (sequence has non-executed statements, so judging it inadequate for further extension).");
-        Log.logLine(
-            "Non-executed statement: " + seq.statementToCodeString(seq.getNonExecutedIndex()));
-      }
-      seq.sequence.clearAllActiveFlags();
-      return;
-    }
-
-    if (seq.hasFailure()) {
-      if (Log.isLoggingOn()) {
-        Log.logLine(
-            "Making all indices inactive (sequence reveals a failure, so judging it inadequate for further extension)");
-        Log.logLine("Failing sequence: " + seq.toCodeString());
-      }
-      seq.sequence.clearAllActiveFlags();
-      return;
-    }
-
-    if (seq.hasInvalidBehavior()) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Making all indices inactive (sequence has invalid behavior)");
-        Log.logLine("Invalid sequence: " + seq.toCodeString());
-      }
-      seq.sequence.clearAllActiveFlags();
-      return;
-    }
-
-    if (!seq.isNormalExecution()) {
-      if (Log.isLoggingOn()) {
-        Log.logLine(
-            "Making all indices inactive (exception thrown, or failure revealed during execution).");
-        Log.logLine(
-            "Statement with non-normal execution: "
-                + seq.statementToCodeString(seq.getNonNormalExecutionIndex()));
-      }
-      seq.sequence.clearAllActiveFlags();
-      return;
-    }
-
-    // Clear the active flags of some statements
-    for (int i = 0; i < seq.sequence.size(); i++) {
-
-      // If there is no return value, clear its active flag
-      // Cast succeeds because of isNormalExecution clause earlier in this
-      // method.
-      NormalExecution e = (NormalExecution) seq.getResult(i);
-      Object runtimeValue = e.getRuntimeValue();
-      if (runtimeValue == null) {
-        if (Log.isLoggingOn()) {
-          Log.logLine("Making index " + i + " inactive (value is null)");
-        }
-        seq.sequence.clearActiveFlag(i);
-        continue;
-      }
-
-      // If it is a call to an observer method, clear the active flag of
-      // its receiver. (This method doesn't side effect the receiver, so
-      // Randoop should use the other shorter sequence that produces the
-      // receiver.)
-      Sequence stmts = seq.sequence;
-      Statement stmt = stmts.statements.get(i);
-      if (stmt.isMethodCall() && observers.contains(stmt.getOperation())) {
-        List<Integer> inputVars = stmts.getInputsAsAbsoluteIndices(i);
-        int receiver = inputVars.get(0);
-        seq.sequence.clearActiveFlag(receiver);
-      }
-
-      // If its runtime value is a primitive value, clear its active flag,
-      // and if the value is new, add a sequence corresponding to that value.
-      Class<?> objectClass = runtimeValue.getClass();
-      if (NonreceiverTerm.isNonreceiverType(objectClass) && !objectClass.equals(Class.class)) {
-        if (Log.isLoggingOn()) {
-          Log.logLine("Making index " + i + " inactive (value is a primitive)");
-        }
-        seq.sequence.clearActiveFlag(i);
-
-        boolean looksLikeObjToString =
-            (runtimeValue instanceof String)
-                && Value.looksLikeObjectToString((String) runtimeValue);
-        boolean tooLongString =
-            (runtimeValue instanceof String) && !Value.stringLengthOK((String) runtimeValue);
-        if (runtimeValue instanceof Double && Double.isNaN((double) runtimeValue)) {
-          runtimeValue = Double.NaN; // canonicalize NaN value
-        }
-        if (runtimeValue instanceof Float && Float.isNaN((float) runtimeValue)) {
-          runtimeValue = Float.NaN; // canonicalize NaN value
-        }
-        if (!looksLikeObjToString && !tooLongString && runtimePrimitivesSeen.add(runtimeValue)) {
-          // Have not seen this value before; add it to the component set.
-          componentManager.addGeneratedSequence(Sequence.createSequenceForPrimitive(runtimeValue));
-        }
-      } else {
-        if (Log.isLoggingOn()) {
-          Log.logLine("Making index " + i + " active.");
-        }
-      }
-    }
-  }
-
-  /**
-   * Tries to create and execute a new sequence. If the sequence is new (not
-   * already in the specified component manager), then it is executed and added
-   * to the manager's sequences. If the sequence created is already in the
-   * manager's sequences, this method has no effect, and returns null.
-   *
-   * @return a new sequence, or null
-   */
-  private ExecutableSequence createNewUniqueSequence() {
-
-    if (Log.isLoggingOn()) {
-      Log.logLine("-------------------------------------------");
-    }
-
-    if (this.operations.isEmpty()) {
-      return null;
-    }
-
-    // Select a StatementInfo
-    TypedOperation operation = Randomness.randomMember(this.operations);
-    if (Log.isLoggingOn()) {
-      Log.logLine("Selected operation: " + operation.toString());
-    }
-
-    if (operation.isGeneric() || operation.hasWildcardTypes()) {
-      operation = instantiator.instantiate((TypedClassOperation) operation);
-      if (operation == null) { //failed to instantiate generic
-        return null;
-      }
-    }
-
-    // add flags here
-    InputsAndSuccessFlag sequences = selectInputs(operation);
-
-    if (!sequences.success) {
-      if (Log.isLoggingOn()) Log.logLine("Failed to find inputs for statement.");
-      return null;
-    }
-
-    Sequence concatSeq = Sequence.concatenate(sequences.sequences);
-
-    // Figure out input variables.
-    List<Variable> inputs = new ArrayList<>();
-    for (Integer oneinput : sequences.indices) {
-      Variable v = concatSeq.getVariable(oneinput);
-      inputs.add(v);
-    }
-
-    Sequence newSequence = concatSeq.extend(operation, inputs);
-
-    // With .5 probability, do a primitive value heuristic.
-    if (GenInputsAbstract.repeat_heuristic && Randomness.nextRandomInt(10) == 0) {
-      int times = Randomness.nextRandomInt(100);
-      newSequence = repeat(newSequence, operation, times);
-      if (Log.isLoggingOn()) Log.log("repeat-heuristic>>>" + times + newSequence.toCodeString());
-    }
-
-    // If parameterless statement, subsequence inputs
-    // will all be redundant, so just remove it from list of statements.
-    // XXX does this make sense? especially in presence of side-effects
-    if (operation.getInputTypes().isEmpty()) {
-      operations.remove(operation);
-    }
-
-    // Discard if sequence is larger than size limit
-    if (newSequence.size() > GenInputsAbstract.maxsize) {
-      if (Log.isLoggingOn()) {
-        Log.logLine(
-            "Sequence discarded because size "
-                + newSequence.size()
-                + " exceeds maximum allowed size "
-                + GenInputsAbstract.maxsize);
-      }
-      return null;
-    }
-
-    randoopConsistencyTests(newSequence);
-
-    if (this.allSequences.contains(newSequence)) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Sequence discarded because the same sequence was previously created.");
-      }
-      return null;
-    }
-
-    this.allSequences.add(newSequence);
-
-    for (Sequence s : sequences.sequences) {
-      s.lastTimeUsed = java.lang.System.currentTimeMillis();
-    }
-
-    randoopConsistencyTest2(newSequence);
-
-    if (Log.isLoggingOn()) {
-      Log.logLine(
-          String.format("Successfully created new unique sequence:%n%s%n", newSequence.toString()));
-    }
-    // System.out.println("###" + statement.toStringVerbose() + "###" +
-    // statement.getClass());
-
-    // Keep track of any input sequences that are used in this sequence.
-    // Tests that contain only these sequences are probably redundant.
-    for (Sequence is : sequences.sequences) {
-      subsumed_sequences.add(is);
-    }
-
-    return new ExecutableSequence(newSequence);
-  }
-
-  /**
-   * Adds the given operation to a new {@code Sequence} with the statements of
-   * this object as a prefix, repeating the operation the given number of times.
-   * Used during generation.
-   *
-   * @param seq  the sequence to extend
-   * @param operation
-   *          the {@link TypedOperation} to repeat.
-   * @param times
-   *          the number of times to repeat the {@link Operation}.
-   * @return a new {@code Sequence}
-   */
-  private Sequence repeat(Sequence seq, TypedOperation operation, int times) {
-    Sequence retval = new Sequence(seq.statements);
-    for (int i = 0; i < times; i++) {
-      List<Integer> vil = new ArrayList<>();
-      for (Variable v : retval.getInputs(retval.size() - 1)) {
-        if (v.getType().equals(JavaTypes.INT_TYPE)) {
-          int randint = Randomness.nextRandomInt(100);
-          retval =
-              retval.extend(
-                  TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, randint));
-          vil.add(retval.size() - 1);
-        } else {
-          vil.add(v.getDeclIndex());
-        }
-      }
-      List<Variable> vl = new ArrayList<>();
-      for (Integer vi : vil) {
-        vl.add(retval.getVariable(vi));
-      }
-      retval = retval.extend(operation, vl);
-    }
-    return retval;
-  }
-
-  // Adds the string corresponding to the given newSequences to the
-  // set allSequencesAsCode. The latter set is intended to mirror
-  // the set allSequences, but stores strings instead of Sequences.
-  private void randoopConsistencyTest2(Sequence newSequence) {
-    // Testing code.
-    if (GenInputsAbstract.debug_checks) {
-      this.allsequencesAsCode.add(newSequence.toCodeString());
-      this.allsequencesAsList.add(newSequence);
-    }
-  }
-
-  // Checks that the set allSequencesAsCode contains a set of strings
-  // equivalent to the sequences in allSequences.
-  private void randoopConsistencyTests(Sequence newSequence) {
-    // Testing code.
-    if (GenInputsAbstract.debug_checks) {
-      String code = newSequence.toCodeString();
-      if (this.allSequences.contains(newSequence)) {
-        if (!this.allsequencesAsCode.contains(code)) {
-          throw new IllegalStateException(code);
-        }
-      } else {
-        if (this.allsequencesAsCode.contains(code)) {
-          int index = this.allsequencesAsCode.indexOf(code);
-          StringBuilder b = new StringBuilder();
-          Sequence co = this.allsequencesAsList.get(index);
-          assert co.equals(newSequence); // XXX this was a floating call to equals
-          b.append("new component:")
-              .append(Globals.lineSep)
-              .append("")
-              .append(newSequence.toString())
-              .append("")
-              .append(Globals.lineSep)
-              .append("as code:")
-              .append(Globals.lineSep)
-              .append("")
-              .append(code)
-              .append(Globals.lineSep);
-          b.append("existing component:")
-              .append(Globals.lineSep)
-              .append("")
-              .append(this.allsequencesAsList.get(index).toString())
-              .append("")
-              .append(Globals.lineSep)
-              .append("as code:")
-              .append(Globals.lineSep)
-              .append("")
-              .append(this.allsequencesAsList.get(index).toCodeString());
-          throw new IllegalStateException(b.toString());
-        }
-      }
-    }
-  }
-
   // This method is responsible for doing two things:
   //
   // 1. Selecting at random a collection of sequences that can be used to
@@ -645,7 +236,7 @@ public class DigDogGenerator extends AbstractGenerator {
   // flag
   // of the returned object is false.
   @SuppressWarnings("unchecked")
-  private InputsAndSuccessFlag selectInputs(TypedOperation operation) {
+  protected InputsAndSuccessFlag selectInputs(TypedOperation operation) {
 
     // Variable inputTypes contains the values required as input to the
     // statement given as a parameter to the selectInputs method.
@@ -898,19 +489,5 @@ public class DigDogGenerator extends AbstractGenerator {
     }
 
     return new InputsAndSuccessFlag(true, sequences, variables);
-  }
-
-  /**
-   * Returns the set of sequences that are included in other sequences to
-   * generate inputs (and, so, are subsumed by another sequence).
-   */
-  @Override
-  public Set<Sequence> getSubsumedSequences() {
-    return subsumed_sequences;
-  }
-
-  @Override
-  public int numGeneratedSequences() {
-    return allSequences.size();
   }
 }
