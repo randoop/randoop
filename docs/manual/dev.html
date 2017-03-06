@@ -657,13 +657,6 @@ NEWVERSION=<em>3.0.11</em></pre>
   git push
 </pre>
   </li>
-  <li>
-    Check that there are no broken links on the published website:
-    <pre>./gradlew checklink</pre>
-    Any output is written to a file <pre>checklink-log.txt</pre>
-    If there are any errors, fix them, and rerun <pre>./gradlew buildRelease</pre>
-    If the check succeeds, run: <pre>rm -f checklink-log.txt</pre>
-  </li>
   <li>Make a
     repository tag:
     <pre>
@@ -681,6 +674,14 @@ NEWVERSION=<em>3.0.11</em></pre>
     jar files from <code>build/libs</code>,
     upload the zip file from <code>build/distributions</code>
     and, finally, click "publish release".
+  </li>
+  <li>
+    Check that there are no broken links on the published website:
+    <pre>./gradlew checklink</pre>
+    Any output is written to a file <pre>checklink-log.txt</pre>
+    If there are any errors, fix them, rerun <pre>./gradlew buildRelease</pre>
+    and commit and push those changes.
+    If the check succeeds, run: <pre>rm -f checklink-log.txt</pre>
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com.
     <br/>
