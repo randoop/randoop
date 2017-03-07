@@ -21,6 +21,10 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
 
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
+  /**
+   * The term frequency mapping is used for the weighted constants option.
+   * This will keep track of how often a constant appears across all constants.
+   */
   private Map<Sequence, Integer> tfFrequency;
 
   ClassLiteralExtractor(
@@ -29,9 +33,6 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
     this.tfFrequency = tfFrequency;
   }
 
-  // So I have no idea if we will have sequence equality here, leading to capturing
-  // TODO This may guarantee that constants are not repeated through class file constants,
-  // fix if needed
   @Override
   public void visitBefore(Class<?> c) {
     Collection<ClassFileConstants.ConstantSet> constList = new ArrayList<>();

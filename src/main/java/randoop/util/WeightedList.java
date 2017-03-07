@@ -39,8 +39,6 @@ public class WeightedList {
     return binarySearchForIndex(randomPoint);
   }
 
-  // Assumes that point is between 0 and totalWeight.
-  // TODO ?
   private int binarySearchForIndex(double point) {
     int low = 0;
     int high = theList.size();

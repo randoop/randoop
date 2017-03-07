@@ -28,7 +28,8 @@ import randoop.util.MultiMap;
 import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
 
 /**
- * {@code ConstantMiningOperationModel} represents the information context from which tests are generated.
+ * {@code ConstantMiningOperationModel} represents the information context from which tests are generated. It is also
+ * used to store information needed for constant mining.
  * The model includes:
  * <ul>
  *   <li>classes under test,</li>
@@ -57,7 +58,7 @@ public class ConstantMiningOperationModel extends AbstractOperationModel {
   /** Map for singleton sequences of literals extracted from classes. */
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
-  /** For Constant Mining */
+  /** The term frequency mapping for each sequence in the set of all classes */
   private Map<Sequence, Integer> tfFrequency;
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
@@ -114,6 +115,8 @@ public class ConstantMiningOperationModel extends AbstractOperationModel {
    * @throws OperationParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
+  // TODO discuss with Randoop developers how to appropriately handle static model creation
+  // with extensions
   public static AbstractOperationModel createModel(
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
@@ -150,7 +153,6 @@ public class ConstantMiningOperationModel extends AbstractOperationModel {
    * @param literalsFile  the list of literals file names
    * @param literalsLevel  the level of literals to add
    */
-  // TODO commenting
   public void addClassLiterals(
       ComponentManager compMgr, List<String> literalsFile, ClassLiteralsMode literalsLevel) {
 
