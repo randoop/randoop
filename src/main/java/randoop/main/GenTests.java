@@ -15,7 +15,15 @@ import randoop.instrument.ExercisedClassVisitor;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
-import randoop.reflection.*;
+import randoop.reflection.AbstractOperationModel;
+import randoop.reflection.ConstantMiningOperationModel;
+import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OperationModel;
+import randoop.reflection.PackageVisibilityPredicate;
+import randoop.reflection.PublicVisibilityPredicate;
+import randoop.reflection.RandoopInstantiationError;
+import randoop.reflection.ReflectionPredicate;
+import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
@@ -47,7 +55,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 public class GenTests extends GenInputsAbstract {
@@ -512,8 +528,7 @@ public class GenTests extends GenInputsAbstract {
       }
 
       // always overwrite, should only exist from prior runs
-      out =
-          createTextOutputStream("sequenceInfo.csv"); // TODO: maybe just new FileOutputStream(..)
+      out = createTextOutputStream("sequenceInfo.csv"); // TODO: maybe just new FileOutputStream(..)
       StringBuilder body = new StringBuilder();
 
       body.append(debugMap.keySet().size()); // number of sequences
