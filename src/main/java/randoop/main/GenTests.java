@@ -512,7 +512,8 @@ public class GenTests extends GenInputsAbstract {
       }
 
       // always overwrite, should only exist from prior runs
-      out = createTextOutputStream("sequenceInfo.csv"); // TODO: maybe just new FileOutputStream(..)
+      out =
+          createTextOutputStream("sequenceInfo.csv"); // TODO: maybe just new FileOutputStream(..)
       StringBuilder body = new StringBuilder();
 
       body.append(debugMap.keySet().size()); // number of sequences
