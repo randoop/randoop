@@ -49,7 +49,7 @@ import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
  * This class manages all information about generic classes internally, and instantiates any
  * type variables in operations before returning them.
  */
-public class OperationModel extends DigDogOperationModel {
+public class OperationModel extends AbstractOperationModel {
 
   /** The set of class declaration types for this model */
   private Set<ClassOrInterfaceType> classTypes;
@@ -119,7 +119,7 @@ public class OperationModel extends DigDogOperationModel {
    * @throws OperationParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
-  public static DigDogOperationModel createModel(
+  public static AbstractOperationModel createModel(
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
       Set<String> classnames,
@@ -147,7 +147,7 @@ public class OperationModel extends DigDogOperationModel {
     return model;
   }
 
-  public static DigDogOperationModel createModel(
+  public static AbstractOperationModel createModel(
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
       Set<String> classnames,

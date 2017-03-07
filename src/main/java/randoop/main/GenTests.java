@@ -199,7 +199,7 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     }
 
-    DigDogOperationModel operationModel = null;
+    AbstractOperationModel operationModel = null;
 
     try {
       if (GenInputsAbstract.constant_mining) {
@@ -508,8 +508,7 @@ public class GenTests extends GenInputsAbstract {
         tempDir.createNewFile();
       }
       // always overwrite
-      out =
-          createTextOutputStream("sequenceInfo.csv"); // TODO: maybe just new FileOutputStream(..)
+      out = createTextOutputStream("sequenceInfo.csv"); // TODO: maybe just new FileOutputStream(..)
       StringBuilder body = new StringBuilder();
       body.append(debugMap.keySet().size()); // number of sequences
       body.append(',');
