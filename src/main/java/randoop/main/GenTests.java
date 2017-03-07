@@ -136,7 +136,7 @@ public class GenTests extends GenInputsAbstract {
     //   System.out.printf("Using security policy %s%n", policy);
     // }
 
-`    if (GenInputsAbstract.weighted_sequences) {
+    if (GenInputsAbstract.weighted_sequences) {
       System.out.println("Orienteering is enabled");
     }
 
