@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ParameterBound (randoop 3.0.8-prerelease API)</title>
+<title>ParameterBound (randoop 3.0.10 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ParameterBound (randoop 3.0.8-prerelease API)";
+            parent.document.title="ParameterBound (randoop 3.0.10 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":9,"i3":9,"i4":9,"i5":6,"i6":9,"i7":6,"i8":6,"i9":10,"i10":6,"i11":6,"i12":6,"i13":9,"i14":6,"i15":6};
+var methods = {"i0":6,"i1":6,"i2":9,"i3":9,"i4":9,"i5":6,"i6":9,"i7":6,"i8":6,"i9":10,"i10":6,"i11":6,"i12":6,"i13":9,"i14":6,"i15":6,"i16":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -198,14 +198,16 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>(package private) static <a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ParameterBound.html#forType-java.lang.reflect.Type-">forType</a></span>(java.lang.reflect.Type&nbsp;type)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ParameterBound.html#forType-java.util.Set-java.lang.reflect.Type-">forType</a></span>(java.util.Set&lt;java.lang.reflect.TypeVariable&lt;?&gt;&gt;&nbsp;variableSet,
+       java.lang.reflect.Type&nbsp;type)</code>
 <div class="block">Creates a <code>ParameterBound</code> object from a single
  <code>java.lang.reflect.Type</code>.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>(package private) static <a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ParameterBound.html#forTypes-java.lang.reflect.Type:A-">forTypes</a></span>(java.lang.reflect.Type[]&nbsp;bounds)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ParameterBound.html#forTypes-java.util.Set-java.lang.reflect.Type:A-">forTypes</a></span>(java.util.Set&lt;java.lang.reflect.TypeVariable&lt;?&gt;&gt;&nbsp;variableSet,
+        java.lang.reflect.Type[]&nbsp;bounds)</code>
 <div class="block">Creates a bound from the array of bounds of a <code>java.lang.reflect.TypeVariable</code>.</div>
 </td>
 </tr>
@@ -217,7 +219,8 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>private static boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ParameterBound.html#hasTypeVariable-java.lang.reflect.Type-">hasTypeVariable</a></span>(java.lang.reflect.Type&nbsp;type)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ParameterBound.html#hasTypeVariable-java.lang.reflect.Type-java.util.Set-">hasTypeVariable</a></span>(java.lang.reflect.Type&nbsp;type,
+               java.util.Set&lt;java.lang.reflect.TypeVariable&lt;?&gt;&gt;&nbsp;variableSet)</code>
 <div class="block">Indicates whether the given (reflection) type reference represents a type in which a type
  variable occurs.</div>
 </td>
@@ -281,6 +284,12 @@ extends java.lang.Object</pre>
 <div class="block">Determines if this bound is an upper bound for the argument type.</div>
 </td>
 </tr>
+<tr id="i16" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ParameterBound.html#isVariable--">isVariable</a></span>()</code>
+<div class="block">Indicates whether this bound is a type variable.</div>
+</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -336,13 +345,14 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="forTypes-java.lang.reflect.Type:A-">
+<a name="forTypes-java.util.Set-java.lang.reflect.Type:A-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>forTypes</h4>
-<pre>static&nbsp;<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;forTypes(java.lang.reflect.Type[]&nbsp;bounds)</pre>
+<pre>static&nbsp;<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;forTypes(java.util.Set&lt;java.lang.reflect.TypeVariable&lt;?&gt;&gt;&nbsp;variableSet,
+                               java.lang.reflect.Type[]&nbsp;bounds)</pre>
 <div class="block">Creates a bound from the array of bounds of a <code>java.lang.reflect.TypeVariable</code>.
  <p>
  The bounds of a type parameter are restricted, but those of a wildcard may be any reference type.
@@ -350,25 +360,28 @@ extends java.lang.Object</pre>
  <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.1.2">JLS section 8.1.2</a>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>variableSet</code> - the set of variables affected by this bound</dd>
 <dd><code>bounds</code> - the type bounds</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the <code>ParameterBound</code> for the given types</dd>
 </dl>
 </li>
 </ul>
-<a name="forType-java.lang.reflect.Type-">
+<a name="forType-java.util.Set-java.lang.reflect.Type-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>forType</h4>
-<pre>static&nbsp;<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;forType(java.lang.reflect.Type&nbsp;type)</pre>
+<pre>static&nbsp;<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;forType(java.util.Set&lt;java.lang.reflect.TypeVariable&lt;?&gt;&gt;&nbsp;variableSet,
+                              java.lang.reflect.Type&nbsp;type)</pre>
 <div class="block">Creates a <code>ParameterBound</code> object from a single
  <code>java.lang.reflect.Type</code>.
  Tests for types that are represented by <code>Class</code> objects, or
  <code>java.lang.reflect.ParameterizedType</code> objects.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>variableSet</code> - the set of type variables bound by this type</dd>
 <dd><code>type</code> - the type for type bound</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a type bound that ensures the given type is satisfied as an upper
@@ -422,18 +435,20 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="hasTypeVariable-java.lang.reflect.Type-">
+<a name="hasTypeVariable-java.lang.reflect.Type-java.util.Set-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>hasTypeVariable</h4>
-<pre>private static&nbsp;boolean&nbsp;hasTypeVariable(java.lang.reflect.Type&nbsp;type)</pre>
+<pre>private static&nbsp;boolean&nbsp;hasTypeVariable(java.lang.reflect.Type&nbsp;type,
+                                       java.util.Set&lt;java.lang.reflect.TypeVariable&lt;?&gt;&gt;&nbsp;variableSet)</pre>
 <div class="block">Indicates whether the given (reflection) type reference represents a type in which a type
  variable occurs.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>type</code> - the reflection type</dd>
+<dd><code>variableSet</code> - the set of variables</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if the type has a type variable, and false otherwise</dd>
 </dl>
@@ -571,7 +586,7 @@ extends java.lang.Object</pre>
 <a name="isUpperBound-randoop.types.ParameterBound-randoop.types.Substitution-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>isUpperBound</h4>
 <pre>abstract&nbsp;boolean&nbsp;isUpperBound(<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;bound,
@@ -584,6 +599,20 @@ extends java.lang.Object</pre>
 <dd><code>substitution</code> - the type substitution</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if this bound is an upper bound on the type of the given bound, false otherwise</dd>
+</dl>
+</li>
+</ul>
+<a name="isVariable--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>isVariable</h4>
+<pre>public&nbsp;boolean&nbsp;isVariable()</pre>
+<div class="block">Indicates whether this bound is a type variable.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if this bound is a type variable, false otherwise</dd>
 </dl>
 </li>
 </ul>

@@ -23,19 +23,22 @@ class VariableRenamer {
 
   /**
    * Heuristically transforms variables to better names based on its type name.
-   * Here are some examples: int var0 = 1 will be transformed to int i0 = 1
-   * ClassName var0 = new ClassName() will be transformed to ClassName className
-   * = new ClassName() Class var0 = null will be transformed to Class clazz =
-   * null
+   * Here are some examples:
+   * <pre>
+   *   int var0 = 1     becomes  int i0 = 1
+   *   ClassName var0 = new ClassName()      becomes ClassName className = new ClassName()
+   *   Class var0 = null      becomes Class clazz = null
+   * </pre>
    * @param type  the type to use as base of variable name
-   * @return a variable name based on its type
+   * @return a variable name based on its type, without a trailing number
    */
   static String getVariableName(Type type) {
 
     if (type.isVoid()) {
       return "void";
     }
-    // renaming for array type
+
+    // arrays
     if (type.isArray()) {
       String arraySuffix = "";
       while (type.isArray()) {
@@ -44,14 +47,9 @@ class VariableRenamer {
       }
       return getVariableName(type) + arraySuffix;
     }
-    // for object, string, class types
-    if (type.isObject()) {
-      return "obj";
-    } else if (type.isString()) {
-      return "str";
-    } else if (type.equals(JavaTypes.CLASS_TYPE)) {
-      return "cls";
-    } else if (type.isPrimitive() || type.isBoxedPrimitive()) {
+
+    // primitives
+    if (type.isPrimitive() || type.isBoxedPrimitive()) {
       if (type.isBoxedPrimitive()) {
         type = ((NonParameterizedType) type).toPrimitive();
       }
@@ -67,6 +65,20 @@ class VariableRenamer {
       // otherwise, use the first character of the type name
       return type.getName().substring(0, 1);
     }
+
+    // special cases:  Object, String, Class
+    if (type.isObject()) {
+      return "obj";
+    } else if (type.isString()) {
+      return "str";
+    } else if (type.equals(JavaTypes.CLASS_TYPE)) {
+      return "cls";
+    }
+    // TODO: add more special cases:
+    //  * if it implements List, use "list"
+    //  * if it implements Iterator, use "itor"
+    // ... more?
+
     if (type.isParameterized()) {
       ClassOrInterfaceType classType = (ClassOrInterfaceType) type;
       String varName = classType.getSimpleName().toLowerCase();
@@ -82,22 +94,20 @@ class VariableRenamer {
         }
       }
       return varName;
-    } else {
-      // for other object types
-      String classname = type.getSimpleName();
+    }
 
-      if (classname.length() > 0) {
-        if (Character.isDigit(classname.charAt(classname.length() - 1))) {
-          classname += "_";
-        }
-        if (Character.isUpperCase(classname.charAt(0))) { // preserve camel case
-          return classname.substring(0, 1).toLowerCase() + classname.substring(1);
-        } else {
-          return classname + "_instance";
-        }
-      } else {
-        return "anonymous";
-      }
+    // All other object types
+    String classname = type.getSimpleName();
+    if (classname.length() == 0) {
+      return "anonymous";
+    }
+    if (Character.isDigit(classname.charAt(classname.length() - 1))) {
+      classname += "_";
+    }
+    if (Character.isUpperCase(classname.charAt(0))) { // preserve camel case
+      return classname.substring(0, 1).toLowerCase() + classname.substring(1);
+    } else {
+      return classname + "_instance";
     }
   }
 }

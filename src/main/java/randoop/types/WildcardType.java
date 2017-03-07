@@ -1,5 +1,7 @@
 package randoop.types;
 
+import java.lang.reflect.TypeVariable;
+import java.util.HashSet;
 import java.util.Objects;
 
 /**
@@ -46,12 +48,14 @@ class WildcardType extends ParameterType {
     if (type.getLowerBounds().length > 0) {
       assert type.getLowerBounds().length == 1
           : "a wildcard is defined by the JLS to only have one bound";
-      return new WildcardType(ParameterBound.forTypes(type.getLowerBounds()), false);
+      return new WildcardType(
+          ParameterBound.forTypes(new HashSet<TypeVariable<?>>(), type.getLowerBounds()), false);
     }
     if (type.getUpperBounds().length > 0) {
       assert type.getUpperBounds().length == 1
           : "a wildcard is defined by the JLS to only have one bound";
-      return new WildcardType(ParameterBound.forTypes(type.getUpperBounds()), true);
+      return new WildcardType(
+          ParameterBound.forTypes(new HashSet<TypeVariable<?>>(), type.getUpperBounds()), true);
     }
     throw new IllegalArgumentException("A wildcard must have either upper or lower bounds");
   }
@@ -132,6 +136,9 @@ class WildcardType extends ParameterType {
    *   <li>{@code ? super T} contains {@code ? extends Object}</li>
    * </ul>
    * The last two being equivalent from the perspective of reflection.
+   *
+   * @param otherType  the type to check for
+   * @return true if this type contains the other type, false otherwise
    */
   public boolean contains(WildcardType otherType) {
     if (this.hasUpperBound) {

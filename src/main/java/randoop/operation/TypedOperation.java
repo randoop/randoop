@@ -5,18 +5,23 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
+import plume.Pair;
 import randoop.ExecutionOutcome;
+import randoop.condition.Condition;
 import randoop.field.AccessibleField;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
+import randoop.test.TestCheckGenerator;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.JavaTypes;
 import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
+import randoop.types.JavaTypes;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
@@ -44,6 +49,12 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    */
   private final Type outputType;
 
+  /** The preconditions for this operation */
+  private List<Condition> preconditions;
+
+  /** The throws-conditions for this operation */
+  private Map<Condition, Pair<TestCheckGenerator, TestCheckGenerator>> postconditions;
+
   /**
    * Create typed operation for the given {@link Operation}.
    *
@@ -55,6 +66,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     this.operation = operation;
     this.inputTypes = inputTypes;
     this.outputType = outputType;
+    this.preconditions = new ArrayList<>();
+    this.postconditions = new HashMap<>();
   }
 
   @Override
@@ -517,5 +530,73 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
 
   public boolean isUncheckedCast() {
     return operation.isUncheckedCast();
+  }
+
+  /**
+   * Checks that the preconditions for this operation are met by the given values.
+   *
+   * @param values  the input values
+   * @return true if the values satisfy the preconditions or there are no preconditions; false otherwise
+   */
+  public boolean checkPreconditions(Object[] values) {
+    Object[] args = addNullReceiver(values);
+
+    for (Condition condition : preconditions) {
+      if (!condition.check(args)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Checks whether this operation has a postcondition clause that is satisfied by the argument
+   * values, and if so returns the corresponding {@link TestCheckGenerator}.
+   *
+   * @param values  the argument values
+   * @return the {@link TestCheckGenerator} to test postcondition, based on precondition satisfied by the values
+   */
+  public TestCheckGenerator getPostCheckGenerator(Object[] values) {
+    Object[] args = addNullReceiver(values);
+    for (Map.Entry<Condition, Pair<TestCheckGenerator, TestCheckGenerator>> entry :
+        postconditions.entrySet()) {
+      Condition throwsCondition = entry.getKey();
+      if (throwsCondition.check(args)) {
+        return entry.getValue().a;
+      } else {
+        return entry.getValue().b;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Fixes the argument array for checking an {@link Operation} -- inserting {@code null} as first argument
+   * when this operation is static.
+   *
+   * @param values  the argument array for this operation
+   * @return the corresponding operation array for checking a {@link Condition}
+   */
+  private Object[] addNullReceiver(Object[] values) {
+    Object[] args = values;
+    if (this.isStatic()) {
+      args = new Object[values.length + 1];
+      args[0] = null;
+      System.arraycopy(values, 0, args, 1, values.length);
+    }
+    return args;
+  }
+
+  public void addConditions(List<Condition> preconditions) {
+    if (preconditions != null) {
+      this.preconditions.addAll(preconditions);
+    }
+  }
+
+  public void addConditions(
+      Map<Condition, Pair<TestCheckGenerator, TestCheckGenerator>> conditions) {
+    if (conditions != null) {
+      this.postconditions.putAll(conditions);
+    }
   }
 }

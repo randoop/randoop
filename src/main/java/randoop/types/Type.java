@@ -299,7 +299,7 @@ public abstract class Type implements Comparable<Type> {
    *
    * @return true if this type is a type variable, false otherwise
    */
-  boolean isVariable() {
+  public boolean isVariable() {
     return false;
   }
 

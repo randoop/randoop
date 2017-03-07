@@ -14,6 +14,7 @@ import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
+import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Value;
@@ -44,16 +45,19 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
   private ExpectedExceptionCheckGen exceptionExpectation;
   private MultiMap<Type, TypedOperation> observerMap;
   private final Set<TypedOperation> excludeSet;
+  private final VisibilityPredicate isVisible;
   private boolean includeAssertions;
 
   public RegressionCaptureVisitor(
       ExpectedExceptionCheckGen exceptionExpectation,
       MultiMap<Type, TypedOperation> observerMap,
       Set<TypedOperation> excludeSet,
+      VisibilityPredicate isVisible,
       boolean includeAssertions) {
     this.exceptionExpectation = exceptionExpectation;
     this.observerMap = observerMap;
     this.excludeSet = excludeSet;
+    this.isVisible = isVisible;
     this.includeAssertions = includeAssertions;
   }
 
@@ -167,7 +171,7 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
             // System.out.printf ("Adding objectcheck %s to seq %08X\n",
             // oc, s.seq_id());
 
-          } else if (o.getClass().isEnum()) {
+          } else if (o.getClass().isEnum() && isVisible.isVisible(o.getClass())) {
             ObjectCheck oc = new ObjectCheck(new EnumValue((Enum<?>) o), var);
             checks.add(oc);
           } else { // its a more complex type with a non-null value

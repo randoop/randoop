@@ -126,6 +126,7 @@ public class SequenceTests {
                 expectation,
                 new MultiMap<Type, TypedOperation>(),
                 new LinkedHashSet<TypedOperation>(),
+                visibility,
                 true));
   }
 

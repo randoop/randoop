@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>WildcardType (randoop 3.0.8-prerelease API)</title>
+<title>WildcardType (randoop 3.0.10 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="WildcardType (randoop 3.0.8-prerelease API)";
+            parent.document.title="WildcardType (randoop 3.0.10 API)";
         }
     }
     catch(err) {
@@ -217,8 +217,7 @@ extends <a href="../../randoop/types/ParameterType.html" title="class in randoop
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardType.html#contains-randoop.types.WildcardType-">contains</a></span>(<a href="../../randoop/types/WildcardType.html" title="class in randoop.types">WildcardType</a>&nbsp;otherType)</code>
-<div class="block">
- If this type has an upper bound, checks for containment cases:
+<div class="block">If this type has an upper bound, checks for containment cases:
  
    <code>? extends T</code> contains <code>? extends S</code> if <code>T.isSubtypeOf(S)</code>
    <code>? extends T</code> contains <code>?</code>
@@ -278,14 +277,14 @@ extends <a href="../../randoop/types/ParameterType.html" title="class in randoop
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;randoop.types.<a href="../../randoop/types/ParameterType.html" title="class in randoop.types">ParameterType</a></h3>
-<code><a href="../../randoop/types/ParameterType.html#getCanonicalName--">getCanonicalName</a>, <a href="../../randoop/types/ParameterType.html#getLowerTypeBound--">getLowerTypeBound</a>, <a href="../../randoop/types/ParameterType.html#getRuntimeClass--">getRuntimeClass</a>, <a href="../../randoop/types/ParameterType.html#getUpperTypeBound--">getUpperTypeBound</a>, <a href="../../randoop/types/ParameterType.html#hasGenericBound--">hasGenericBound</a>, <a href="../../randoop/types/ParameterType.html#setLowerBound-randoop.types.ParameterBound-">setLowerBound</a>, <a href="../../randoop/types/ParameterType.html#setUpperBound-randoop.types.ParameterBound-">setUpperBound</a></code></li>
+<code><a href="../../randoop/types/ParameterType.html#getCanonicalName--">getCanonicalName</a>, <a href="../../randoop/types/ParameterType.html#getLowerTypeBound--">getLowerTypeBound</a>, <a href="../../randoop/types/ParameterType.html#getRuntimeClass--">getRuntimeClass</a>, <a href="../../randoop/types/ParameterType.html#getTypeParameters--">getTypeParameters</a>, <a href="../../randoop/types/ParameterType.html#getUpperTypeBound--">getUpperTypeBound</a>, <a href="../../randoop/types/ParameterType.html#hasGenericBound--">hasGenericBound</a>, <a href="../../randoop/types/ParameterType.html#hasWildcard--">hasWildcard</a>, <a href="../../randoop/types/ParameterType.html#setLowerBound-randoop.types.ParameterBound-">setLowerBound</a>, <a href="../../randoop/types/ParameterType.html#setUpperBound-randoop.types.ParameterBound-">setUpperBound</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.randoop.types.ReferenceType">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;randoop.types.<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a></h3>
-<code><a href="../../randoop/types/ReferenceType.html#forClass-java.lang.Class-">forClass</a>, <a href="../../randoop/types/ReferenceType.html#forType-java.lang.reflect.Type-">forType</a>, <a href="../../randoop/types/ReferenceType.html#getInstantiatingSubstitution-randoop.types.ReferenceType-">getInstantiatingSubstitution</a>, <a href="../../randoop/types/ReferenceType.html#getTypeParameters--">getTypeParameters</a>, <a href="../../randoop/types/ReferenceType.html#isAssignableFrom-randoop.types.Type-">isAssignableFrom</a>, <a href="../../randoop/types/ReferenceType.html#isCaptureVariable--">isCaptureVariable</a>, <a href="../../randoop/types/ReferenceType.html#isInstantiationOf-randoop.types.ReferenceType-">isInstantiationOf</a>, <a href="../../randoop/types/ReferenceType.html#isReferenceType--">isReferenceType</a>, <a href="../../randoop/types/ReferenceType.html#isSubtypeOf-randoop.types.Type-">isSubtypeOf</a></code></li>
+<code><a href="../../randoop/types/ReferenceType.html#forClass-java.lang.Class-">forClass</a>, <a href="../../randoop/types/ReferenceType.html#forType-java.lang.reflect.Type-">forType</a>, <a href="../../randoop/types/ReferenceType.html#getInstantiatingSubstitution-randoop.types.ReferenceType-">getInstantiatingSubstitution</a>, <a href="../../randoop/types/ReferenceType.html#isAssignableFrom-randoop.types.Type-">isAssignableFrom</a>, <a href="../../randoop/types/ReferenceType.html#isCaptureVariable--">isCaptureVariable</a>, <a href="../../randoop/types/ReferenceType.html#isInstantiationOf-randoop.types.ReferenceType-">isInstantiationOf</a>, <a href="../../randoop/types/ReferenceType.html#isReferenceType--">isReferenceType</a>, <a href="../../randoop/types/ReferenceType.html#isSubtypeOf-randoop.types.Type-">isSubtypeOf</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.randoop.types.Type">
@@ -386,7 +385,7 @@ extends <a href="../../randoop/types/ParameterType.html" title="class in randoop
 <pre>public&nbsp;boolean&nbsp;equals(java.lang.Object&nbsp;obj)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>equals</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+<dd><code><a href="../../randoop/types/ParameterType.html#equals-java.lang.Object-">equals</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ParameterType.html" title="class in randoop.types">ParameterType</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -399,7 +398,7 @@ extends <a href="../../randoop/types/ParameterType.html" title="class in randoop
 <pre>public&nbsp;int&nbsp;hashCode()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>hashCode</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+<dd><code><a href="../../randoop/types/ParameterType.html#hashCode--">hashCode</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ParameterType.html" title="class in randoop.types">ParameterType</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -412,7 +411,7 @@ extends <a href="../../randoop/types/ParameterType.html" title="class in randoop
 <pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+<dd><code><a href="../../randoop/types/ParameterType.html#toString--">toString</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ParameterType.html" title="class in randoop.types">ParameterType</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -510,8 +509,7 @@ extends <a href="../../randoop/types/ParameterType.html" title="class in randoop
 <li class="blockList">
 <h4>contains</h4>
 <pre>public&nbsp;boolean&nbsp;contains(<a href="../../randoop/types/WildcardType.html" title="class in randoop.types">WildcardType</a>&nbsp;otherType)</pre>
-<div class="block">
- If this type has an upper bound, checks for containment cases:
+<div class="block">If this type has an upper bound, checks for containment cases:
  <ul>
    <li><code>? extends T</code> contains <code>? extends S</code> if <code>T.isSubtypeOf(S)</code></li>
    <li><code>? extends T</code> contains <code>?</code></li>
@@ -525,6 +523,12 @@ extends <a href="../../randoop/types/ParameterType.html" title="class in randoop
    <li><code>? super T</code> contains <code>? extends Object</code></li>
  </ul>
  The last two being equivalent from the perspective of reflection.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>otherType</code> - the type to check for</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if this type contains the other type, false otherwise</dd>
+</dl>
 </li>
 </ul>
 <a name="isGeneric--">

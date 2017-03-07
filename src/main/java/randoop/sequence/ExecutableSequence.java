@@ -17,11 +17,15 @@ import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.TypedOperation;
 import randoop.test.Check;
+import randoop.test.ExtendGenerator;
+import randoop.test.InvalidChecks;
+import randoop.test.InvalidValueCheck;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
-import randoop.types.Type;
 import randoop.types.ReferenceType;
+import randoop.types.Type;
 import randoop.util.IdentityMultiMap;
 import randoop.util.ProgressDisplay;
 
@@ -277,12 +281,30 @@ public class ExecutableSequence {
 
       // Find and collect the input values to i-th statement.
       List<Variable> inputs = sequence.getInputs(i);
-      Object[] inputVariables;
+      Object[] inputValues;
 
-      inputVariables = getRuntimeInputs(executionResults.theList, inputs);
+      inputValues = getRuntimeInputs(executionResults.theList, inputs);
+
+      if (i == this.sequence.size() - 1) {
+        TypedOperation operation = this.sequence.getStatement(i).getOperation();
+        if (operation.isConstructorCall() || operation.isMethodCall()) {
+          if (!operation.checkPreconditions(inputValues)) {
+            //set checks invalid and return
+            checks = new InvalidChecks();
+            checks.add(new InvalidValueCheck(this, i));
+            return;
+          }
+          // if the operation is expected to throw an exception for these inputs
+          TestCheckGenerator expected = operation.getPostCheckGenerator(inputValues);
+          if (expected != null) {
+            //then extend TestCheckGenerator gen with check for postcondition/exception
+            gen = new ExtendGenerator(expected, gen);
+          }
+        }
+      }
 
       visitor.visitBeforeStatement(this, i);
-      executeStatement(sequence, executionResults.theList, i, inputVariables);
+      executeStatement(sequence, executionResults.theList, i, inputValues);
 
       // make sure statement executed
       ExecutionOutcome statementResult = getResult(i);
@@ -311,6 +333,10 @@ public class ExecutableSequence {
     visitor.visitAfterSequence(this);
 
     checks = gen.visit(this);
+  }
+
+  public Object[] getRuntimeInputs(List<Variable> inputs) {
+    return getRuntimeInputs(executionResults.theList, inputs);
   }
 
   private Object[] getRuntimeInputs(List<ExecutionOutcome> outcome, List<Variable> inputs) {

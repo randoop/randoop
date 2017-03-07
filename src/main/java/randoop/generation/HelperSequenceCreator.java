@@ -333,7 +333,7 @@ class HelperSequenceCreator {
       List<ReferenceType> typeArgumentList = new ArrayList<>();
       for (TypeArgument argument : elementType.getTypeArguments()) {
         assert (argument instanceof ReferenceArgument)
-            : "all arguments should be ReferenceArgument";
+            : "all arguments should be ReferenceArgument, have " + argument.toString();
         typeArgumentList.add(((ReferenceArgument) argument).getReferenceType());
       }
       creationType = implementingType.instantiate(typeArgumentList);

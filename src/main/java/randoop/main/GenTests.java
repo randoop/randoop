@@ -1,10 +1,5 @@
 package randoop.main;
 
-import java.io.*;
-import java.util.*;
-import java.util.regex.Pattern;
-
-import org.checkerframework.checker.igj.qual.I;
 import plume.EntryReader;
 import plume.Options;
 import plume.Options.ArgException;
@@ -13,22 +8,14 @@ import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
 import randoop.JunitFileWriter;
 import randoop.MultiVisitor;
-import randoop.generation.AbstractGenerator;
-import randoop.generation.ComponentManager;
-import randoop.generation.ForwardGenerator;
-import randoop.generation.RandoopListenerManager;
-import randoop.generation.SeedSequences;
+import randoop.condition.ConditionCollection;
+import randoop.generation.*;
+import randoop.input.toradocu.ToradocuConditionCollection;
 import randoop.instrument.ExercisedClassVisitor;
-import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
-import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.OperationModel;
-import randoop.reflection.PackageVisibilityPredicate;
-import randoop.reflection.PublicVisibilityPredicate;
-import randoop.reflection.ReflectionPredicate;
-import randoop.reflection.VisibilityPredicate;
+import randoop.reflection.*;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
@@ -55,6 +42,13 @@ import randoop.util.Randomness;
 import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.AlwaysFalse;
 import randoop.util.predicate.Predicate;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.*;
+import java.util.regex.Pattern;
 
 public class GenTests extends GenInputsAbstract {
 
@@ -125,14 +119,24 @@ public class GenTests extends GenInputsAbstract {
 
     checkOptionsValid();
 
+    // Check that there are classes to test
+    if (classlist == null && methodlist == null && testclass.isEmpty()) {
+      System.out.println("You must specify some classes or methods to test.");
+      System.out.println("Use the --classlist, --testclass, or --methodlist options.");
+      System.exit(1);
+    }
+
     Randomness.reset(randomseed);
 
     java.security.Policy policy = java.security.Policy.getPolicy();
 
-    if (!GenInputsAbstract.noprogressdisplay) {
-      System.out.printf("policy = %s%n", policy);
-    }
-    if (GenInputsAbstract.orienteering) {
+    // This is distracting to the user as the first thing shown, and is not very informative.
+    // Reinstate it with a --verbose option.
+    // if (!GenInputsAbstract.noprogressdisplay) {
+    //   System.out.printf("Using security policy %s%n", policy);
+    // }
+
+    if (GenInputsAbstract.weighted_sequences) {
       System.out.println("Orienteering is enabled");
     }
 
@@ -141,13 +145,6 @@ public class GenTests extends GenInputsAbstract {
       String[] pa = prop.split("=", 2);
       if (pa.length != 2) usage("invalid property definition: %s%n", prop);
       System.setProperty(pa[0], pa[1]);
-    }
-
-    // Check that there are classes to test
-    if (classlist == null && methodlist == null && testclass.isEmpty()) {
-      System.out.println("You must specify some classes or methods to test.");
-      System.out.println("Use the --classlist, --testclass, or --methodlist options.");
-      System.exit(1);
     }
 
     /*
@@ -185,17 +182,48 @@ public class GenTests extends GenInputsAbstract {
     Set<String> methodSignatures =
         GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
 
-    OperationModel operationModel = null;
+    /*
+     * Setup pre/post/throws-conditions for operations.
+     * Currently only uses Toradocu generated conditions.
+     */
+    ConditionCollection operationConditions = null;
     try {
-      operationModel =
-          OperationModel.createModel(
-              visibility,
-              reflectionPredicate,
-              classnames,
-              coveredClassnames,
-              methodSignatures,
-              classNameErrorHandler,
-              GenInputsAbstract.literals_file);
+      if (GenInputsAbstract.toradocu_conditions != null) {
+        operationConditions =
+            ToradocuConditionCollection.createToradocuConditions(
+                GenInputsAbstract.toradocu_conditions);
+      }
+    } catch (IllegalArgumentException e) {
+      System.out.printf("%nError on condition input: %s%n", e.getMessage());
+      System.out.println("Exiting Randoop.");
+      System.exit(1);
+    }
+
+    AbstractOperationModel operationModel = null;
+
+    try {
+      if (GenInputsAbstract.weighted_constants) {
+        operationModel =
+            ConstantMiningOperationModel.createModel(
+                visibility,
+                reflectionPredicate,
+                classnames,
+                coveredClassnames,
+                methodSignatures,
+                classNameErrorHandler,
+                GenInputsAbstract.literals_file);
+      } else {
+        operationModel =
+            OperationModel.createModel(
+                visibility,
+                reflectionPredicate,
+                classnames,
+                coveredClassnames,
+                methodSignatures,
+                classNameErrorHandler,
+                GenInputsAbstract.literals_file,
+                operationConditions);
+      }
     } catch (OperationParseException e) {
       System.out.printf("%nError: parse exception thrown %s%n", e);
       System.out.println("Exiting Randoop.");
@@ -206,10 +234,27 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     } catch (RandoopClassNameError e) {
       System.out.printf("Error: %s%n", e.getMessage());
-      System.out.println(
-          "   Most likely the claspath is wrong or was formatted incorrectly on the");
-      System.out.println("   command line; or, maybe you gave the class name incorrectly.");
-      System.out.println("Exiting Randoop.");
+      if (e.getMessage().startsWith("No class with name \"")) {
+        String classpath = System.getProperty("java.class.path");
+        // System.out.println("Your classpath is " + classpath);
+        System.out.println("More specifically, none of the following files could be found:");
+        StringTokenizer tokenizer = new StringTokenizer(classpath, File.pathSeparator);
+        while (tokenizer.hasMoreTokens()) {
+          String classPathElt = tokenizer.nextToken();
+          if (classPathElt.endsWith(".jar")) {
+            String classFileName = e.className.replace(".", "/") + ".class";
+            System.out.println("  " + classFileName + " in " + classPathElt);
+          } else {
+            String classFileName = e.className.replace(".", File.separator) + ".class";
+            if (!classPathElt.endsWith(File.separator)) {
+              classPathElt += File.separator;
+            }
+            System.out.println("  " + classPathElt + classFileName);
+          }
+        }
+        System.out.println("Correct your classpath or the class name and re-run Randoop.");
+      }
+      // System.out.println("Exiting Randoop.");
       System.exit(1);
     }
     assert operationModel != null;
@@ -263,24 +308,44 @@ public class GenTests extends GenInputsAbstract {
       observers.addAll(observerMap.getValues(keyType));
     }
 
-    int num_classes = operationModel.getClassTypes().size();
-
-    Map<Sequence, Integer> tfFrequencies = operationModel.getTfFrequency();
     /*
      * Create the generator for this session.
      */
     AbstractGenerator explorer;
-    explorer =
-        new ForwardGenerator(
-            model,
-            observers,
-            timelimit * 1000,
-            inputlimit,
-            outputlimit,
-            componentMgr,
-            listenerMgr,
-            num_classes,
-            tfFrequencies);
+    if (GenInputsAbstract.output_sequence_info
+        || GenInputsAbstract.weighted_sequences
+        || GenInputsAbstract.weighted_constants) { // TODO: check this conditional
+
+      // assert operationModel instanceof ConstantMiningOperationModel; TODO: yolo
+      Map<Sequence, Integer> tfFrequencies = null;
+      if (operationModel instanceof ConstantMiningOperationModel) {
+        tfFrequencies = ((ConstantMiningOperationModel) operationModel).getTfFrequency();
+      } // b/c we don't need constant mining stuff if we're not using that model
+      int num_classes = operationModel.getClassTypes().size();
+
+      explorer =
+          new DigDogGenerator(
+              model,
+              observers,
+              timelimit * 1000,
+              inputlimit,
+              outputlimit,
+              componentMgr,
+              listenerMgr,
+              num_classes,
+              tfFrequencies);
+
+    } else {
+      explorer =
+          new ForwardGenerator(
+              model,
+              observers,
+              timelimit * 1000,
+              inputlimit,
+              outputlimit,
+              componentMgr,
+              listenerMgr);
+    }
 
     /*
      * setup for check generation
@@ -369,6 +434,18 @@ public class GenTests extends GenInputsAbstract {
       handleFlakySequenceException(explorer, e);
 
       System.exit(1);
+    } catch (RandoopInstantiationError e) {
+      System.out.printf("%nError instantiating operation: %n%s%n", e.getOpName());
+      System.out.printf("%s%n", e.getException());
+      e.printStackTrace();
+      System.exit(1);
+    } catch (RandoopGenerationError e) {
+      System.out.printf(
+          "%nError in generation with operation: %n%s%n", e.getInstantiatedOperation());
+      System.out.printf("Operation reflection name: %s%n", e.getOperationName());
+      System.out.printf("%s%n", e.getException());
+      e.printStackTrace();
+      System.exit(1);
     }
 
     /* post generation */
@@ -406,11 +483,14 @@ public class GenTests extends GenInputsAbstract {
       }
     }
 
+    if (!GenInputsAbstract.noprogressdisplay) {
+      System.out.printf("%nInvalid tests generated: %d", explorer.invalidSequenceCount);
+    }
     // TODO: output to file for sequence comparison between DigDog/Randoop
     if (GenInputsAbstract.output_sequence_info) {
-      ForwardGenerator fExplorer =
-          (ForwardGenerator) explorer; // should work, explorer should always be a forw.gen.
-      Map<Sequence, List<String>> debugMap = fExplorer.getDebugMap();
+      DigDogGenerator fExplorer =
+          (DigDogGenerator) explorer; // should work, explorer should always be a forw.gen.
+      Map<Sequence, List<String>> debugMap = fExplorer.getSequenceDebugMap();
       writeTestInfo(debugMap);
     }
 
@@ -430,11 +510,14 @@ public class GenTests extends GenInputsAbstract {
       if (!tempDir.exists()) {
         tempDir.createNewFile();
       }
-      // always overwrite
+
+      // always overwrite, should only exist from prior runs
       out = createTextOutputStream("sequenceInfo.csv"); // TODO: maybe just new FileOutputStream(..)
       StringBuilder body = new StringBuilder();
+
       body.append(debugMap.keySet().size()); // number of sequences
       body.append(',');
+
       int accumulatedSequenceSize = 0;
       for (Sequence seq : debugMap.keySet()) {
         for (String s : debugMap.get(seq)) {
@@ -444,48 +527,7 @@ public class GenTests extends GenInputsAbstract {
       }
       double avgSeqSize = accumulatedSequenceSize * 1.0 / debugMap.keySet().size();
       body.append(avgSeqSize); // avg sequence size
-      /*
-      // To write out a bunch of sequence info
-      StringBuilder header = new StringBuilder();
-      header.append("Sequence hash");
-      header.append(',');
-      header.append("Initial Sequence weight");
-      header.append(',');
-      header.append("Orienteering?");
-      header.append(',');
-      header.append("ExecutionNumber");
-      header.append(',');
-      header.append("SequenceSize (not sqrt)");
-      header.append(',');
-      header.append("execTime");
-      header.append(',');
-      header.append("orienteeringWeight");
-      header.append(',');
-      header.append("constantMining?");
-      header.append(',');
-      header.append("sequence has a weight from constantMining?");
-      header.append(',');
-      header.append("constantMiningWeight");
-      header.append(',');
-      header.append("weight actually used");
-      // TODO: header.append(',')?
-      StringBuilder body = new StringBuilder();
-      for (Sequence seq : debugMap.keySet()) {
-        body.append(seq.hashCode());
-        int i = 0;
-        for (String str : debugMap.get(seq)) {
-          if (i != 0) { // filler, b/c this entry is the same sequence as before
-            body.append("-------");
-          }
-          body.append(',');
-          body.append(str);
-          body.append('\n');
-          i++;
-        }
-        body.append('\n');
-      }
-      out.println(header.toString());
-      */
+
       out.println(body.toString());
     } catch (IOException e) {
       System.out.println("Couldn't create test-output file");
@@ -660,7 +702,7 @@ public class GenTests extends GenInputsAbstract {
       RegressionCaptureVisitor regressionVisitor;
       regressionVisitor =
           new RegressionCaptureVisitor(
-              expectation, observerMap, excludeAsObservers, includeAssertions);
+              expectation, observerMap, excludeAsObservers, visibility, includeAssertions);
 
       testGen = new ExtendGenerator(testGen, regressionVisitor);
     }

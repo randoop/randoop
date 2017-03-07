@@ -3,7 +3,6 @@ package randoop.util;
 import java.util.*;
 
 import randoop.BugInRandoopException;
-import randoop.main.GenInputsAbstract;
 
 public final class Randomness {
 

@@ -7,33 +7,32 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.bcel6.Const;
-import org.apache.commons.bcel6.classfile.ClassParser;
-import org.apache.commons.bcel6.classfile.Constant;
-import org.apache.commons.bcel6.classfile.ConstantClass;
-import org.apache.commons.bcel6.classfile.ConstantDouble;
-import org.apache.commons.bcel6.classfile.ConstantFieldref;
-import org.apache.commons.bcel6.classfile.ConstantFloat;
-import org.apache.commons.bcel6.classfile.ConstantInteger;
-import org.apache.commons.bcel6.classfile.ConstantInterfaceMethodref;
-import org.apache.commons.bcel6.classfile.ConstantLong;
-import org.apache.commons.bcel6.classfile.ConstantMethodref;
-import org.apache.commons.bcel6.classfile.ConstantNameAndType;
-import org.apache.commons.bcel6.classfile.ConstantPool;
-import org.apache.commons.bcel6.classfile.ConstantString;
-import org.apache.commons.bcel6.classfile.ConstantUtf8;
-import org.apache.commons.bcel6.classfile.JavaClass;
-import org.apache.commons.bcel6.classfile.Method;
-import org.apache.commons.bcel6.generic.ClassGen;
-import org.apache.commons.bcel6.generic.ConstantPoolGen;
-import org.apache.commons.bcel6.generic.ConstantPushInstruction;
-import org.apache.commons.bcel6.generic.Instruction;
-import org.apache.commons.bcel6.generic.InstructionList;
-import org.apache.commons.bcel6.generic.MethodGen;
-import org.apache.commons.bcel6.util.ClassPath;
+import org.apache.bcel.Const;
+import org.apache.bcel.classfile.ClassParser;
+import org.apache.bcel.classfile.Constant;
+import org.apache.bcel.classfile.ConstantClass;
+import org.apache.bcel.classfile.ConstantDouble;
+import org.apache.bcel.classfile.ConstantFieldref;
+import org.apache.bcel.classfile.ConstantFloat;
+import org.apache.bcel.classfile.ConstantInteger;
+import org.apache.bcel.classfile.ConstantInterfaceMethodref;
+import org.apache.bcel.classfile.ConstantLong;
+import org.apache.bcel.classfile.ConstantMethodref;
+import org.apache.bcel.classfile.ConstantNameAndType;
+import org.apache.bcel.classfile.ConstantPool;
+import org.apache.bcel.classfile.ConstantString;
+import org.apache.bcel.classfile.ConstantUtf8;
+import org.apache.bcel.classfile.JavaClass;
+import org.apache.bcel.classfile.Method;
+import org.apache.bcel.generic.ClassGen;
+import org.apache.bcel.generic.ConstantPoolGen;
+import org.apache.bcel.generic.ConstantPushInstruction;
+import org.apache.bcel.generic.Instruction;
+import org.apache.bcel.generic.InstructionList;
+import org.apache.bcel.generic.MethodGen;
+import org.apache.bcel.util.ClassPath;
 
 import randoop.operation.NonreceiverTerm;
-import randoop.sequence.Value;
 import randoop.types.JavaTypes;
 import randoop.reflection.TypeNames;
 
@@ -572,16 +571,32 @@ public class ClassFileConstants {
         throw new Error("Class " + cs.classname + " not found on the classpath.");
       }
       for (Integer x : cs.ints) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.INT_TYPE, x));
+        try {
+          map.add(clazz, new NonreceiverTerm(JavaTypes.INT_TYPE, x));
+        } catch (IllegalArgumentException e) {
+          System.out.println("Ignoring int constant value: " + e.getMessage());
+        }
       }
       for (Long x : cs.longs) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.LONG_TYPE, x));
+        try {
+          map.add(clazz, new NonreceiverTerm(JavaTypes.LONG_TYPE, x));
+        } catch (IllegalArgumentException e) {
+          System.out.println("Ignoring long constant value: " + e.getMessage());
+        }
       }
       for (Float x : cs.floats) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x));
+        try {
+          map.add(clazz, new NonreceiverTerm(JavaTypes.FLOAT_TYPE, x));
+        } catch (IllegalArgumentException e) {
+          System.out.println("Ignoring float constant value: " + e.getMessage());
+        }
       }
       for (Double x : cs.doubles) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
+        try {
+          map.add(clazz, new NonreceiverTerm(JavaTypes.DOUBLE_TYPE, x));
+        } catch (IllegalArgumentException e) {
+          System.out.println("Ignoring double constant value: " + e.getMessage());
+        }
       }
       for (String x : cs.strings) {
         try {
@@ -591,7 +606,11 @@ public class ClassFileConstants {
         }
       }
       for (Class<?> x : cs.classes) {
-        map.add(clazz, new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
+        try {
+          map.add(clazz, new NonreceiverTerm(JavaTypes.CLASS_TYPE, x));
+        } catch (IllegalArgumentException e) {
+          System.out.println("Ignoring Class<?> constant value: " + e.getMessage());
+        }
       }
     }
     return map;

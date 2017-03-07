@@ -1,0 +1,779 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- NewPage -->
+<html lang="en">
+<head>
+
+<title>DocumentedMethod (randoop 3.0.10 API)</title>
+
+<link rel="stylesheet" type="text/css" href="../../../javadocstyle.css" title="Style">
+<script type="text/javascript" src="../../../script.js"></script>
+</head>
+<body>
+<script type="text/javascript"><!--
+    try {
+        if (location.href.indexOf('is-external=true') == -1) {
+            parent.document.title="DocumentedMethod (randoop 3.0.10 API)";
+        }
+    }
+    catch(err) {
+    }
+//-->
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var altColor = "altColor";
+var rowColor = "rowColor";
+var tableTab = "tableTab";
+var activeTableTab = "activeTableTab";
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+<!-- ========= START OF TOP NAVBAR ======= -->
+<div class="topNav"><a name="navbar.top">
+<!--   -->
+</a>
+<div class="skipNav"><a href="#skip.navbar.top" title="Skip navigation links">Skip navigation links</a></div>
+<a name="navbar.top.firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../index-all.html">Index</a></li>
+<li><a href="../../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../../randoop/input/toradocu/AbstractTag.html" title="class in randoop.input.toradocu"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../randoop/input/toradocu/Parameter.html" title="class in randoop.input.toradocu"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../../index.html?randoop/input/toradocu/DocumentedMethod.html" target="_top">Frames</a></li>
+<li><a href="DocumentedMethod.html" target="_top">No&nbsp;Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_top">
+<li><a href="../../../allclasses-noframe.html">All&nbsp;Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_top");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method.summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method.detail">Method</a></li>
+</ul>
+</div>
+<a name="skip.navbar.top">
+<!--   -->
+</a></div>
+<!-- ========= END OF TOP NAVBAR ========= -->
+<!-- ======== START OF CLASS DATA ======== -->
+<div class="header">
+<div class="subTitle">randoop.input.toradocu</div>
+<h2 title="Class DocumentedMethod" class="title">Class DocumentedMethod</h2>
+</div>
+<div class="contentContainer">
+<ul class="inheritance">
+<li>java.lang.Object</li>
+<li>
+<ul class="inheritance">
+<li>randoop.input.toradocu.DocumentedMethod</li>
+</ul>
+</li>
+</ul>
+<div class="description">
+<ul class="blockList">
+<li class="blockList">
+<hr>
+<br>
+<pre>public final class <span class="typeNameLabel">DocumentedMethod</span>
+extends java.lang.Object</pre>
+<div class="block">DocumentedMethod represents the Javadoc documentation for a method in a class. It identifies the
+ method itself and key Javadoc information associated with it, such as throws tags, parameters,
+ and return type.
+ <p>
+ * Modified class from Toradocu used to deserialize the JSON output of Toradocu.</div>
+</li>
+</ul>
+</div>
+<div class="summary">
+<ul class="blockList">
+<li class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private <a href="../../../randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#containingClass">containingClass</a></span></code>
+<div class="block">Class in which the method is contained.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#isVarArgs">isVarArgs</a></span></code>
+<div class="block">Flag indicating whether this method takes a variable number of arguments.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#name">name</a></span></code>
+<div class="block">Simple name of the method.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private java.util.List&lt;<a href="../../../randoop/input/toradocu/Parameter.html" title="class in randoop.input.toradocu">Parameter</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#parameters">parameters</a></span></code>
+<div class="block">Method's parameters.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private java.util.Set&lt;<a href="../../../randoop/input/toradocu/ParamTag.html" title="class in randoop.input.toradocu">ParamTag</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#paramTags">paramTags</a></span></code>
+<div class="block">Param tags specified in the method's Javadoc introduced in order.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private <a href="../../../randoop/input/toradocu/ReturnTag.html" title="class in randoop.input.toradocu">ReturnTag</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#returnTag">returnTag</a></span></code>
+<div class="block">return tags specified in the method's Javadoc introduced in order.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private <a href="../../../randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#returnType">returnType</a></span></code>
+<div class="block">Return type of the method.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#signature">signature</a></span></code>
+<div class="block">Method signature in the format method_name(type1 arg1, type2 arg2, ...).</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>private java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#targetClass">targetClass</a></span></code>
+<div class="block">Target class passed to Toradocu with the option --target-class.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>private java.util.Set&lt;<a href="../../../randoop/input/toradocu/ThrowsTag.html" title="class in randoop.input.toradocu">ThrowsTag</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#throwsTags">throwsTags</a></span></code>
+<div class="block">Throws tags specified in the method's Javadoc.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor.summary">
+<!--   -->
+</a>
+<h3>Constructor Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
+<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Constructor and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#DocumentedMethod-randoop.input.toradocu.Type-java.lang.String-randoop.input.toradocu.Type-java.util.List-java.util.Collection-boolean-java.util.Collection-randoop.input.toradocu.ReturnTag-java.lang.String-java.lang.String-">DocumentedMethod</a></span>(<a href="../../../randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a>&nbsp;containingClass,
+                java.lang.String&nbsp;name,
+                <a href="../../../randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a>&nbsp;returnType,
+                java.util.List&lt;<a href="../../../randoop/input/toradocu/Parameter.html" title="class in randoop.input.toradocu">Parameter</a>&gt;&nbsp;parameters,
+                java.util.Collection&lt;<a href="../../../randoop/input/toradocu/ParamTag.html" title="class in randoop.input.toradocu">ParamTag</a>&gt;&nbsp;paramTags,
+                boolean&nbsp;isVarArgs,
+                java.util.Collection&lt;<a href="../../../randoop/input/toradocu/ThrowsTag.html" title="class in randoop.input.toradocu">ThrowsTag</a>&gt;&nbsp;throwsTags,
+                <a href="../../../randoop/input/toradocu/ReturnTag.html" title="class in randoop.input.toradocu">ReturnTag</a>&nbsp;returnTag,
+                java.lang.String&nbsp;signature,
+                java.lang.String&nbsp;targetClass)</code>
+<div class="block">Constructs a <code>DocumentedMethod</code> contained in a given <code>containingClass</code> with the
+ given <code>name</code>, <code>returnType</code>, <code>parameters</code>, and <code>throwsTags</code>.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ========== METHOD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method.summary">
+<!--   -->
+</a>
+<h3>Method Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tr id="i0" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#equals-java.lang.Object-">equals</a></span>(java.lang.Object&nbsp;obj)</code>
+<div class="block">Returns true if this <code>DocumentedMethod</code> and the specified object are equal.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code><a href="../../../randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#getContainingClass--">getContainingClass</a></span>()</code>
+<div class="block">Returns the class in which this method is contained.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#getName--">getName</a></span>()</code>
+<div class="block">Returns the simple name of this method.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../randoop/input/toradocu/Parameter.html" title="class in randoop.input.toradocu">Parameter</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#getParameters--">getParameters</a></span>()</code>
+<div class="block">Returns an unmodifiable list view of the parameters in this method.</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code><a href="../../../randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#getReturnType--">getReturnType</a></span>()</code>
+<div class="block">Returns the return type of this method or null if this is a constructor.</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#getSignature--">getSignature</a></span>()</code>
+<div class="block">Returns the signature of this method.</div>
+</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#getTargetClass--">getTargetClass</a></span>()</code>
+<div class="block">Returns the target class as specified with the command line option --target-class.</div>
+</td>
+</tr>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#hashCode--">hashCode</a></span>()</code>
+<div class="block">Returns the hash code of this object.</div>
+</td>
+</tr>
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#isConstructor--">isConstructor</a></span>()</code>
+<div class="block">Returns true if this method is a constructor, false otherwise.</div>
+</td>
+</tr>
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#isVarArgs--">isVarArgs</a></span>()</code>
+<div class="block">Returns true if this method takes a variable number of arguments, false otherwise.</div>
+</td>
+</tr>
+<tr id="i10" class="altColor">
+<td class="colFirst"><code>java.util.Set&lt;<a href="../../../randoop/input/toradocu/ParamTag.html" title="class in randoop.input.toradocu">ParamTag</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#paramTags--">paramTags</a></span>()</code>
+<div class="block">Returns an unmodifiable view of the param tags in this method.</div>
+</td>
+</tr>
+<tr id="i11" class="rowColor">
+<td class="colFirst"><code><a href="../../../randoop/input/toradocu/ReturnTag.html" title="class in randoop.input.toradocu">ReturnTag</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#returnTag--">returnTag</a></span>()</code>
+<div class="block">Returns the return tag in this method.</div>
+</td>
+</tr>
+<tr id="i12" class="altColor">
+<td class="colFirst"><code>java.util.Set&lt;<a href="../../../randoop/input/toradocu/ThrowsTag.html" title="class in randoop.input.toradocu">ThrowsTag</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#throwsTags--">throwsTags</a></span>()</code>
+<div class="block">Returns an unmodifiable view of the throws tags in this method.</div>
+</td>
+</tr>
+<tr id="i13" class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/input/toradocu/DocumentedMethod.html#toString--">toString</a></span>()</code>
+<div class="block">Returns return type (when present), fully qualified class, and signature of this method in the
+ format "&lt;RETURN TYPE&gt; &lt;CLASS TYPE.METHOD SIGNATURE&gt;"</div>
+</td>
+</tr>
+</table>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
+<code>clone, finalize, getClass, notify, notifyAll, wait, wait, wait</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="details">
+<ul class="blockList">
+<li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="signature">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>signature</h4>
+<pre>private final&nbsp;java.lang.String signature</pre>
+<div class="block">Method signature in the format method_name(type1 arg1, type2 arg2, ...).</div>
+</li>
+</ul>
+<a name="name">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>name</h4>
+<pre>private final&nbsp;java.lang.String name</pre>
+<div class="block">Simple name of the method.</div>
+</li>
+</ul>
+<a name="containingClass">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>containingClass</h4>
+<pre>private final&nbsp;<a href="../../../randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a> containingClass</pre>
+<div class="block">Class in which the method is contained.</div>
+</li>
+</ul>
+<a name="targetClass">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>targetClass</h4>
+<pre>private final&nbsp;java.lang.String targetClass</pre>
+<div class="block">Target class passed to Toradocu with the option --target-class. (Information needed for Randoop
+ integration.)</div>
+</li>
+</ul>
+<a name="isVarArgs">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isVarArgs</h4>
+<pre>private final&nbsp;boolean isVarArgs</pre>
+<div class="block">Flag indicating whether this method takes a variable number of arguments.</div>
+</li>
+</ul>
+<a name="returnType">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>returnType</h4>
+<pre>private final&nbsp;<a href="../../../randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a> returnType</pre>
+<div class="block">Return type of the method. <code>null</code> if this DocumentedMethod represents a constructor.
+ <code>Type.VOID</code> if the return type is void.</div>
+</li>
+</ul>
+<a name="parameters">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>parameters</h4>
+<pre>private final&nbsp;java.util.List&lt;<a href="../../../randoop/input/toradocu/Parameter.html" title="class in randoop.input.toradocu">Parameter</a>&gt; parameters</pre>
+<div class="block">Method's parameters.</div>
+</li>
+</ul>
+<a name="paramTags">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>paramTags</h4>
+<pre>private final&nbsp;java.util.Set&lt;<a href="../../../randoop/input/toradocu/ParamTag.html" title="class in randoop.input.toradocu">ParamTag</a>&gt; paramTags</pre>
+<div class="block">Param tags specified in the method's Javadoc introduced in order.</div>
+</li>
+</ul>
+<a name="returnTag">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>returnTag</h4>
+<pre>private final&nbsp;<a href="../../../randoop/input/toradocu/ReturnTag.html" title="class in randoop.input.toradocu">ReturnTag</a> returnTag</pre>
+<div class="block">return tags specified in the method's Javadoc introduced in order. (If more than one, but
+ that's weird)</div>
+</li>
+</ul>
+<a name="throwsTags">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>throwsTags</h4>
+<pre>private final&nbsp;java.util.Set&lt;<a href="../../../randoop/input/toradocu/ThrowsTag.html" title="class in randoop.input.toradocu">ThrowsTag</a>&gt; throwsTags</pre>
+<div class="block">Throws tags specified in the method's Javadoc. Also, each throws tag can contain the
+ translation of the comment as Java boolean condition.</div>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor.detail">
+<!--   -->
+</a>
+<h3>Constructor Detail</h3>
+<a name="DocumentedMethod-randoop.input.toradocu.Type-java.lang.String-randoop.input.toradocu.Type-java.util.List-java.util.Collection-boolean-java.util.Collection-randoop.input.toradocu.ReturnTag-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>DocumentedMethod</h4>
+<pre>public&nbsp;DocumentedMethod(<a href="../../../randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a>&nbsp;containingClass,
+                        java.lang.String&nbsp;name,
+                        <a href="../../../randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a>&nbsp;returnType,
+                        java.util.List&lt;<a href="../../../randoop/input/toradocu/Parameter.html" title="class in randoop.input.toradocu">Parameter</a>&gt;&nbsp;parameters,
+                        java.util.Collection&lt;<a href="../../../randoop/input/toradocu/ParamTag.html" title="class in randoop.input.toradocu">ParamTag</a>&gt;&nbsp;paramTags,
+                        boolean&nbsp;isVarArgs,
+                        java.util.Collection&lt;<a href="../../../randoop/input/toradocu/ThrowsTag.html" title="class in randoop.input.toradocu">ThrowsTag</a>&gt;&nbsp;throwsTags,
+                        <a href="../../../randoop/input/toradocu/ReturnTag.html" title="class in randoop.input.toradocu">ReturnTag</a>&nbsp;returnTag,
+                        java.lang.String&nbsp;signature,
+                        java.lang.String&nbsp;targetClass)</pre>
+<div class="block">Constructs a <code>DocumentedMethod</code> contained in a given <code>containingClass</code> with the
+ given <code>name</code>, <code>returnType</code>, <code>parameters</code>, and <code>throwsTags</code>.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>containingClass</code> - class containing the <code>DocumentedMethod</code></dd>
+<dd><code>name</code> - the simple name of the <code>DocumentedMethod</code></dd>
+<dd><code>returnType</code> - the fully qualified return type of the method or <code>null</code> if the <code>DocumentedMethod</code> is a constructor</dd>
+<dd><code>parameters</code> - the parameters of the <code>DocumentedMethod</code></dd>
+<dd><code>paramTags</code> - the <code>@param</code> tags of the <code>DocumentedMethod</code></dd>
+<dd><code>isVarArgs</code> - true if the <code>DocumentedMethod</code> takes a variable number of arguments,
+     false otherwise</dd>
+<dd><code>throwsTags</code> - the <code>@throws</code> tags of the <code>DocumentedMethod</code></dd>
+<dd><code>returnTag</code> - the <code>@return</code> tag of the <code>DocumentedMethod</code></dd>
+<dd><code>signature</code> - the signature of the method</dd>
+<dd><code>targetClass</code> - the class on which Toradocu was run</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.lang.NullPointerException</code> - if <code>containingClass</code> or <code>name</code> is null</dd>
+</dl>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ============ METHOD DETAIL ========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method.detail">
+<!--   -->
+</a>
+<h3>Method Detail</h3>
+<a name="throwsTags--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>throwsTags</h4>
+<pre>public&nbsp;java.util.Set&lt;<a href="../../../randoop/input/toradocu/ThrowsTag.html" title="class in randoop.input.toradocu">ThrowsTag</a>&gt;&nbsp;throwsTags()</pre>
+<div class="block">Returns an unmodifiable view of the throws tags in this method.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>an unmodifiable view of the throws tags in this method</dd>
+</dl>
+</li>
+</ul>
+<a name="paramTags--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>paramTags</h4>
+<pre>public&nbsp;java.util.Set&lt;<a href="../../../randoop/input/toradocu/ParamTag.html" title="class in randoop.input.toradocu">ParamTag</a>&gt;&nbsp;paramTags()</pre>
+<div class="block">Returns an unmodifiable view of the param tags in this method.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>an unmodifiable view of the param tags in this method.</dd>
+</dl>
+</li>
+</ul>
+<a name="returnTag--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>returnTag</h4>
+<pre>public&nbsp;<a href="../../../randoop/input/toradocu/ReturnTag.html" title="class in randoop.input.toradocu">ReturnTag</a>&nbsp;returnTag()</pre>
+<div class="block">Returns the return tag in this method.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the return tag in this method. Null if there is no @return comment</dd>
+</dl>
+</li>
+</ul>
+<a name="isVarArgs--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isVarArgs</h4>
+<pre>public&nbsp;boolean&nbsp;isVarArgs()</pre>
+<div class="block">Returns true if this method takes a variable number of arguments, false otherwise.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd><code>true</code> if this method takes a variable number of arguments, <code>false</code>
+     otherwise</dd>
+</dl>
+</li>
+</ul>
+<a name="getName--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getName</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getName()</pre>
+<div class="block">Returns the simple name of this method.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the simple name of this method</dd>
+</dl>
+</li>
+</ul>
+<a name="isConstructor--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isConstructor</h4>
+<pre>public&nbsp;boolean&nbsp;isConstructor()</pre>
+<div class="block">Returns true if this method is a constructor, false otherwise.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd><code>true</code> if this method is a constructor, <code>false</code> otherwise</dd>
+</dl>
+</li>
+</ul>
+<a name="getParameters--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getParameters</h4>
+<pre>public&nbsp;java.util.List&lt;<a href="../../../randoop/input/toradocu/Parameter.html" title="class in randoop.input.toradocu">Parameter</a>&gt;&nbsp;getParameters()</pre>
+<div class="block">Returns an unmodifiable list view of the parameters in this method.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>an unmodifiable list view of the parameters in this method</dd>
+</dl>
+</li>
+</ul>
+<a name="getSignature--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSignature</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getSignature()</pre>
+<div class="block">Returns the signature of this method.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the signature of this method</dd>
+</dl>
+</li>
+</ul>
+<a name="getReturnType--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getReturnType</h4>
+<pre>public&nbsp;<a href="../../../randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a>&nbsp;getReturnType()</pre>
+<div class="block">Returns the return type of this method or null if this is a constructor.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the return type of this method or <code>null</code> if this is a constructor</dd>
+</dl>
+</li>
+</ul>
+<a name="getContainingClass--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getContainingClass</h4>
+<pre>public&nbsp;<a href="../../../randoop/input/toradocu/Type.html" title="class in randoop.input.toradocu">Type</a>&nbsp;getContainingClass()</pre>
+<div class="block">Returns the class in which this method is contained.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the class in which this method is contained</dd>
+</dl>
+</li>
+</ul>
+<a name="equals-java.lang.Object-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>equals</h4>
+<pre>public&nbsp;boolean&nbsp;equals(java.lang.Object&nbsp;obj)</pre>
+<div class="block">Returns true if this <code>DocumentedMethod</code> and the specified object are equal.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code>equals</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>obj</code> - the object to test for equality</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if this object and <code>obj</code> are equal</dd>
+</dl>
+</li>
+</ul>
+<a name="getTargetClass--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTargetClass</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getTargetClass()</pre>
+<div class="block">Returns the target class as specified with the command line option --target-class.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the target class as specified with the command line option --target-class. Null if the
+     command line options have not been parsed.</dd>
+</dl>
+</li>
+</ul>
+<a name="hashCode--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>hashCode</h4>
+<pre>public&nbsp;int&nbsp;hashCode()</pre>
+<div class="block">Returns the hash code of this object.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code>hashCode</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the hash code of this object</dd>
+</dl>
+</li>
+</ul>
+<a name="toString--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>toString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
+<div class="block">Returns return type (when present), fully qualified class, and signature of this method in the
+ format "&lt;RETURN TYPE&gt; &lt;CLASS TYPE.METHOD SIGNATURE&gt;"</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>return the string representation of this method</dd>
+</dl>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<!-- ========= END OF CLASS DATA ========= -->
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<div class="bottomNav"><a name="navbar.bottom">
+<!--   -->
+</a>
+<div class="skipNav"><a href="#skip.navbar.bottom" title="Skip navigation links">Skip navigation links</a></div>
+<a name="navbar.bottom.firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../index-all.html">Index</a></li>
+<li><a href="../../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../../randoop/input/toradocu/AbstractTag.html" title="class in randoop.input.toradocu"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../randoop/input/toradocu/Parameter.html" title="class in randoop.input.toradocu"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../../index.html?randoop/input/toradocu/DocumentedMethod.html" target="_top">Frames</a></li>
+<li><a href="DocumentedMethod.html" target="_top">No&nbsp;Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_bottom">
+<li><a href="../../../allclasses-noframe.html">All&nbsp;Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_bottom");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method.summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method.detail">Method</a></li>
+</ul>
+</div>
+<a name="skip.navbar.bottom">
+<!--   -->
+</a></div>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+</body>
+</html>

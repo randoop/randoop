@@ -16,7 +16,12 @@ import randoop.operation.TypedOperation;
 import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
 import randoop.types.Type;
-import randoop.util.*;
+import randoop.util.ArrayListSimpleList;
+import randoop.util.ListOfLists;
+import randoop.util.OneMoreElementList;
+import randoop.util.Randomness;
+import randoop.util.SimpleList;
+import randoop.util.WeightedElement;
 
 /**
  * Immutable.
@@ -63,6 +68,7 @@ public final class Sequence implements WeightedElement {
    * Weight is used by heuristic that favors smaller sequences so it makes sense
    * to define weight as the inverse of size.
    */
+  @Override
   public double getWeight() {
     return 1 / (double) size();
   }

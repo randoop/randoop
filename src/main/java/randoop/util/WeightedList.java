@@ -1,13 +1,13 @@
 package randoop.util;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import randoop.util.WeightedElement;
+
 import randoop.BugInRandoopException;
 
-public class WeightedList<T1 extends WeightedElement> {
-  private List<T1> theList;
+public class WeightedList {
+
+  private List<WeightedElement> theList;
   private List<Double> cumulativeWeights;
   private double totalWeight;
 
@@ -18,46 +18,18 @@ public class WeightedList<T1 extends WeightedElement> {
     cumulativeWeights.add(0.0);
   }
 
-  public WeightedList(Collection<T1> values) {
-    this();
-    for (T1 w : values) {
-      add(w);
-    }
-  }
-
-  // For now assuming that this is a new element, will decide later if that is a good design decision
-  public void add(T1 elt) {
+  public void add(WeightedElement elt) {
     if (elt == null) throw new IllegalArgumentException("element to be added cannot be null.");
-    if (elt.getWeight() < 0) throw new BugInRandoopException("weight is less than 0");
     theList.add(elt);
     totalWeight += elt.getWeight();
     cumulativeWeights.add(cumulativeWeights.get(cumulativeWeights.size() - 1) + elt.getWeight());
   }
 
-  public void add(T1 elt, double weight) {
-    add(elt, weight);
-  }
-
-  public void update(T1 weightedElement) {
-    // this will be O(n), but it is what it is.
-    int index = theList.indexOf(weightedElement);
-    if (index >= 0) {
-      double weight = cumulativeWeights.get(index + 1) - cumulativeWeights.get(index);
-      weight -= weightedElement.getWeight();
-      for (int i = index + 1; i < cumulativeWeights.size(); i++) {
-        cumulativeWeights.set(i, cumulativeWeights.get(i) - weight);
-      }
-    }
-  }
-
-  public T1 getRandomElement() {
-    if (theList.size() == 0) {
-      return null;
-    }
+  public WeightedElement getRandomElement() {
     return theList.get(getRandomIndex());
   }
 
-  private int getRandomIndex() {
+  public int getRandomIndex() {
 
     // Find interval length. TODO cache max value.
     assert totalWeight > 0;

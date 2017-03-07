@@ -1,4 +1,4 @@
-Local dependencies: (last updated on:  3/2/2016)
+Local dependencies: (last updated on:  2/8/2017)
 
 This is a list of jar files for dependencies that cannot be retrieved via
 Gradle, and how they were obtained.  If you update a library, you should
@@ -8,7 +8,4 @@ dependencies, and the Gradle wrapper task.  Those appear in these files:
   randoop/agent/exercised-class/exercised-class.gradle
 
 
-plume.jar: https://github.com/mernst/plume-lib/releases; version 1.0.9
-Currently installed copy was locally generated to include changes to Options
-doclet that includes a -d option to support the Gradle build. Also does not
-include junit in jar file.
+plume.jar: https://github.com/mernst/plume-lib/releases; version 1.1.1

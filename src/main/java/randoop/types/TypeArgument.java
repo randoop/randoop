@@ -33,6 +33,13 @@ public abstract class TypeArgument {
     }
   }
 
+  public static TypeArgument forType(ReferenceType referenceType) {
+    if (referenceType instanceof randoop.types.WildcardType) {
+      return WildcardArgument.forType(referenceType);
+    }
+    return ReferenceArgument.forType(referenceType);
+  }
+
   /**
    * Applies the type substitution to this type argument.
    *
@@ -98,4 +105,11 @@ public abstract class TypeArgument {
   public Substitution<ReferenceType> getInstantiatingSubstitution(TypeArgument otherArgument) {
     return null;
   }
+
+  /**
+   * Indicate whether this type argument is a type variable.
+   *
+   * @return true if this argument is a type variable, false otherwise
+   */
+  public abstract boolean isVariable();
 }
