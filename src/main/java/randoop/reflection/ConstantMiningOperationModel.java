@@ -28,7 +28,7 @@ import randoop.util.MultiMap;
 import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
 
 /**
- * {@code OperationModel} represents the information context from which tests are generated.
+ * {@code ConstantMiningOperationModel} represents the information context from which tests are generated.
  * The model includes:
  * <ul>
  *   <li>classes under test,</li>
@@ -40,8 +40,7 @@ import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
  * This class manages all information about generic classes internally, and instantiates any
  * type variables in operations before returning them.
  */
-// TODO: I don't think this is going to work as a subclass
-public class ConstantMiningOperationModel extends DigDogOperationModel {
+public class ConstantMiningOperationModel extends AbstractOperationModel {
 
   /** The set of class declaration types for this model */
   private Set<ClassOrInterfaceType> classTypes;
@@ -115,7 +114,7 @@ public class ConstantMiningOperationModel extends DigDogOperationModel {
    * @throws OperationParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
-  public static DigDogOperationModel createModel(
+  public static AbstractOperationModel createModel(
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
       Set<String> classnames,
@@ -171,37 +170,6 @@ public class ConstantMiningOperationModel extends DigDogOperationModel {
         }
       }
     }
-    /*
-    for (String filename : literalsFile) {
-        MultiMap<ClassOrInterfaceType, Sequence> literalmap;
-        if (filename.equals("CLASSES")) {
-            literalmap = classLiteralMap;
-        } else {
-            literalmap = LiteralFileReader.parse(filename);
-        }
-
-        for (ClassOrInterfaceType type : literalmap.keySet()) {
-            Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
-            for (Sequence seq : literalmap.getValues(type)) {
-                switch (literalsLevel) {
-                    case CLASS:
-                        compMgr.addClassLevelLiteral(type, seq);
-                        break;
-                    case PACKAGE:
-                        assert pkg != null;
-                        compMgr.addPackageLevelLiteral(pkg, seq);
-                        break;
-                    case ALL:
-                        compMgr.addGeneratedSequence(seq);
-                        break;
-                    default:
-                        throw new Error(
-                                "Unexpected error in GenTests -- please report at https://github.com/randoop/randoop/issues");
-                }
-            }
-        }
-    }
-    */
   }
 
   /**

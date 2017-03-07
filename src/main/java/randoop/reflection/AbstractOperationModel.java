@@ -18,7 +18,7 @@ import java.util.*;
 /**
  * Created by Michael on 3/3/2017.
  */
-public abstract class DigDogOperationModel {
+public abstract class AbstractOperationModel {
 
   /**
    * Adds literals to the component manager, by parsing any literals files

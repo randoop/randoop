@@ -199,7 +199,7 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     }
 
-    DigDogOperationModel operationModel = null;
+    AbstractOperationModel operationModel = null;
 
     try {
       if (GenInputsAbstract.weighted_constants) {
@@ -510,6 +510,7 @@ public class GenTests extends GenInputsAbstract {
       if (!tempDir.exists()) {
         tempDir.createNewFile();
       }
+
       // always overwrite, should only exist from prior runs
       out = createTextOutputStream("sequenceInfo.csv"); // TODO: maybe just new FileOutputStream(..)
       StringBuilder body = new StringBuilder();
