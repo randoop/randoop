@@ -1,12 +1,20 @@
 package randoop.generation;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.Map;
+import java.util.LinkedHashMap;
 
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.TypeInstantiator;
-import randoop.sequence.*;
+import randoop.sequence.ClassLiterals;
+import randoop.sequence.PackageLiterals;
+import randoop.sequence.Sequence;
+import randoop.sequence.SequenceCollection;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.PrimitiveType;
