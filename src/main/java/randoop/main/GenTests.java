@@ -1,5 +1,19 @@
 package randoop.main;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.TreeSet;
+import java.util.regex.Pattern;
 import plume.EntryReader;
 import plume.Options;
 import plume.Options.ArgException;
@@ -9,13 +23,28 @@ import randoop.ExecutionVisitor;
 import randoop.JunitFileWriter;
 import randoop.MultiVisitor;
 import randoop.condition.ConditionCollection;
-import randoop.generation.*;
+import randoop.generation.AbstractGenerator;
+import randoop.generation.ComponentManager;
+import randoop.generation.DigDogGenerator;
+import randoop.generation.ForwardGenerator;
+import randoop.generation.RandoopGenerationError;
+import randoop.generation.RandoopListenerManager;
+import randoop.generation.SeedSequences;
+import randoop.generation.WeightedComponentManager;
 import randoop.input.toradocu.ToradocuConditionCollection;
 import randoop.instrument.ExercisedClassVisitor;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
-import randoop.reflection.*;
+import randoop.reflection.AbstractOperationModel;
+import randoop.reflection.WeightedConstantsOperationModel;
+import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OperationModel;
+import randoop.reflection.PackageVisibilityPredicate;
+import randoop.reflection.PublicVisibilityPredicate;
+import randoop.reflection.RandoopInstantiationError;
+import randoop.reflection.ReflectionPredicate;
+import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
@@ -42,13 +71,6 @@ import randoop.util.Randomness;
 import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.AlwaysFalse;
 import randoop.util.predicate.Predicate;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.*;
-import java.util.regex.Pattern;
 
 public class GenTests extends GenInputsAbstract {
 
@@ -204,7 +226,7 @@ public class GenTests extends GenInputsAbstract {
     try {
       if (GenInputsAbstract.weighted_constants) {
         operationModel =
-            ConstantMiningOperationModel.createModel(
+            WeightedConstantsOperationModel.createModel(
                 visibility,
                 reflectionPredicate,
                 classnames,
@@ -285,7 +307,15 @@ public class GenTests extends GenInputsAbstract {
     components.addAll(SeedSequences.defaultSeeds());
     components.addAll(operationModel.getAnnotatedTestValues());
 
-    ComponentManager componentMgr = new ComponentManager(components);
+    ComponentManager componentMgr;
+    if (GenInputsAbstract.weighted_sequences
+        || GenInputsAbstract.weighted_constants
+        || GenInputsAbstract.output_sequence_info) {
+      componentMgr = new WeightedComponentManager(components);
+    } else {
+      componentMgr = new ComponentManager(components);
+    }
+
     operationModel.addClassLiterals(
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
@@ -314,13 +344,12 @@ public class GenTests extends GenInputsAbstract {
     AbstractGenerator explorer;
     if (GenInputsAbstract.output_sequence_info
         || GenInputsAbstract.weighted_sequences
-        || GenInputsAbstract.weighted_constants) { // TODO: check this conditional
+        || GenInputsAbstract.weighted_constants) {
 
-      // assert operationModel instanceof ConstantMiningOperationModel; TODO: yolo
       Map<Sequence, Integer> tfFrequencies = null;
-      if (operationModel instanceof ConstantMiningOperationModel) {
-        tfFrequencies = ((ConstantMiningOperationModel) operationModel).getTfFrequency();
-      } // b/c we don't need constant mining stuff if we're not using that model
+      if (operationModel instanceof WeightedConstantsOperationModel) {
+        tfFrequencies = ((WeightedConstantsOperationModel) operationModel).getTfFrequency();
+      }
       int num_classes = operationModel.getClassTypes().size();
 
       explorer =
@@ -330,7 +359,7 @@ public class GenTests extends GenInputsAbstract {
               timelimit * 1000,
               inputlimit,
               outputlimit,
-              componentMgr,
+              (WeightedComponentManager) componentMgr,
               listenerMgr,
               num_classes,
               tfFrequencies);

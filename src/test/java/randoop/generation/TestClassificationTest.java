@@ -382,15 +382,14 @@ public class TestClassificationTest {
     OperationModel operationModel = null;
     try {
       operationModel =
-          (OperationModel)
-              OperationModel.createModel(
-                  visibility,
-                  predicate,
-                  classnames,
-                  new HashSet<String>(),
-                  new HashSet<String>(),
-                  new ThrowClassNameError(),
-                  new ArrayList<String>());
+          OperationModel.createModel(
+              visibility,
+              predicate,
+              classnames,
+              new HashSet<String>(),
+              new HashSet<String>(),
+              new ThrowClassNameError(),
+              new ArrayList<String>());
     } catch (Exception e) {
       fail("couldn't build model " + e.getMessage());
     }

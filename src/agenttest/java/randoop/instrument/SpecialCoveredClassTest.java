@@ -75,15 +75,14 @@ public class SpecialCoveredClassTest {
     OperationModel operationModel = null;
     try {
       operationModel =
-          (OperationModel)
-              OperationModel.createModel(
-                  visibility,
-                  reflectionPredicate,
-                  classnames,
-                  coveredClassnames,
-                  methodSignatures,
-                  classNameErrorHandler,
-                  GenInputsAbstract.literals_file);
+          OperationModel.createModel(
+              visibility,
+              reflectionPredicate,
+              classnames,
+              coveredClassnames,
+              methodSignatures,
+              classNameErrorHandler,
+              GenInputsAbstract.literals_file);
     } catch (Throwable e) {
       fail("Error: " + e);
     }

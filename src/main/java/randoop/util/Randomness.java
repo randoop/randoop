@@ -1,6 +1,10 @@
 package randoop.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import randoop.BugInRandoopException;
 
@@ -116,10 +120,9 @@ public final class Randomness {
     double randomPoint = Randomness.random.nextDouble() * max;
 
     return list.get(binarySearchForIndex(list, cumulativeWeights, randomPoint));
-    // TODO:    throw new BugInRandoopException();
   }
 
-  private static int binarySearchForIndex(
+  public static int binarySearchForIndex(
       SimpleList<?> list, List<Double> cumulativeWeights, double point) {
     int low = 0;
     int high = list.size();

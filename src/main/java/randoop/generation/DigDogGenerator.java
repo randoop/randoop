@@ -10,7 +10,9 @@ import randoop.util.*;
 import java.util.*;
 
 /**
- * Created by Michael on 3/3/2017.
+ * DigDog generator is an extension off of forward generator which store information
+ * necessary for weighted random selection. This includes weighted constant selection
+ * and weighted sequence selection.
  */
 public class DigDogGenerator extends ForwardGenerator {
 
@@ -32,7 +34,7 @@ public class DigDogGenerator extends ForwardGenerator {
       long timeMillis,
       int maxGenSequences,
       int maxOutSequences,
-      ComponentManager componentManager,
+      WeightedComponentManager componentManager,
       RandoopListenerManager listenerManager,
       int numClasses,
       Map<Sequence, Integer> tfFrequency) {
@@ -55,7 +57,7 @@ public class DigDogGenerator extends ForwardGenerator {
       long timeMillis,
       int maxGenSequences,
       int maxOutSequences,
-      ComponentManager componentManager,
+      WeightedComponentManager componentManager,
       IStopper stopper,
       RandoopListenerManager listenerManager,
       int numClasses,
@@ -77,7 +79,7 @@ public class DigDogGenerator extends ForwardGenerator {
       for (Sequence s : tfFrequency.keySet()) {
         num_constants += tfFrequency.get(s);
       }
-      for (Map.Entry<Sequence, Integer> m : componentManager.getFrequencyMap().entrySet()) {
+      for (Map.Entry<Sequence, Integer> m : componentManager.getSequenceFrequency().entrySet()) {
 
         double weight =
             ((double) tfFrequency.get(m.getKey()) / num_constants)
@@ -101,8 +103,9 @@ public class DigDogGenerator extends ForwardGenerator {
    * generation/execution and is used to determine new values that should be
    * added to the component set. The component set initially contains a set of
    * primitive sequences; this method puts those primitives in this set.
+   * Also introduces weighted selection based on the runtime of the sequence if
+   * the weighted flags are enabled.
    */
-  // XXX this is goofy - these values are available in other ways
   @Override
   public ExecutableSequence step() {
 
@@ -430,8 +433,10 @@ public class DigDogGenerator extends ForwardGenerator {
       }
 
       // At this point, we have a list of candidate sequences and need to select
-      // a
-      // randomly-chosen sequence from the list.
+      // a random element from it. Based on the enabled flags, we will use one of three
+      // options for this. weighted_sequences and constants use weights generated from
+      // previous operations done in the generator (DigDog), small_tests use the default weight of
+      // sequences, and selecting a random member.
       Sequence chosenSeq;
 
       if (GenInputsAbstract.weighted_sequences || GenInputsAbstract.weighted_constants) {

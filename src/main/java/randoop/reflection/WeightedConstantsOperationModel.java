@@ -2,13 +2,8 @@ package randoop.reflection;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
-import randoop.condition.ConditionCollection;
 import randoop.contract.CompareToAntiSymmetric;
 import randoop.contract.CompareToEquals;
 import randoop.contract.CompareToReflexive;
@@ -23,11 +18,7 @@ import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
 import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
-import randoop.operation.MethodCall;
-import randoop.operation.OperationParseException;
-import randoop.operation.OperationParser;
-import randoop.operation.TypedClassOperation;
-import randoop.operation.TypedOperation;
+import randoop.operation.*;
 import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
 import randoop.types.ClassOrInterfaceType;
@@ -37,7 +28,8 @@ import randoop.util.MultiMap;
 import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
 
 /**
- * {@code OperationModel} represents the information context from which tests are generated.
+ * {@code WeightedConstantsOperationModel} represents the information context from which tests are generated. It is also
+ * used to store information needed for constant mining.
  * The model includes:
  * <ul>
  *   <li>classes under test,</li>
@@ -49,7 +41,7 @@ import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
  * This class manages all information about generic classes internally, and instantiates any
  * type variables in operations before returning them.
  */
-public class OperationModel extends AbstractOperationModel {
+public class WeightedConstantsOperationModel extends AbstractOperationModel {
 
   /** The set of class declaration types for this model */
   private Set<ClassOrInterfaceType> classTypes;
@@ -66,6 +58,9 @@ public class OperationModel extends AbstractOperationModel {
   /** Map for singleton sequences of literals extracted from classes. */
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
+  /** The term frequency mapping for each sequence in the set of all classes */
+  private Map<Sequence, Integer> tfFrequency;
+
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
 
@@ -78,10 +73,11 @@ public class OperationModel extends AbstractOperationModel {
   /**
    * Create an empty model of test context.
    */
-  private OperationModel() {
+  private WeightedConstantsOperationModel() {
     classTypes = new LinkedHashSet<>();
     inputTypes = new LinkedHashSet<>();
     classLiteralMap = new MultiMap<>();
+
     annotatedTestValues = new LinkedHashSet<>();
     contracts = new ContractSet();
     contracts.add(EqualsReflexive.getInstance());
@@ -99,6 +95,7 @@ public class OperationModel extends AbstractOperationModel {
     exercisedClasses = new LinkedHashSet<>();
     operations = new TreeSet<>();
     classCount = 0;
+    tfFrequency = new HashMap<>();
   }
 
   /**
@@ -114,23 +111,23 @@ public class OperationModel extends AbstractOperationModel {
    * @param methodSignatures  the signatures of methods to be added to the model
    * @param errorHandler  the handler for bad file name errors
    * @param literalsFileList  the list of literals file names
-   * @param operationCollection  the conditions to be added to operations
    * @return the operation model for the parameters
    * @throws OperationParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
-  public static OperationModel createModel(
+  // TODO discuss with Randoop developers how to appropriately handle static model creation
+  // with extensions
+  public static WeightedConstantsOperationModel createModel(
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
       Set<String> classnames,
       Set<String> exercisedClassnames,
       Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
-      List<String> literalsFileList,
-      ConditionCollection operationCollection)
+      List<String> literalsFileList)
       throws OperationParseException, NoSuchMethodException {
 
-    OperationModel model = new OperationModel();
+    WeightedConstantsOperationModel model = new WeightedConstantsOperationModel();
 
     model.addClassTypes(
         visibility,
@@ -140,31 +137,11 @@ public class OperationModel extends AbstractOperationModel {
         errorHandler,
         literalsFileList);
 
-    model.addOperations(model.classTypes, visibility, reflectionPredicate, operationCollection);
+    model.addOperations(model.classTypes, visibility, reflectionPredicate);
     model.addOperations(methodSignatures);
     model.addObjectConstructor();
 
     return model;
-  }
-
-  public static OperationModel createModel(
-      VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate,
-      Set<String> classnames,
-      Set<String> exercisedClassnames,
-      Set<String> methodSignatures,
-      ClassNameErrorHandler errorHandler,
-      List<String> literalsFileList)
-      throws NoSuchMethodException, OperationParseException {
-    return createModel(
-        visibility,
-        reflectionPredicate,
-        classnames,
-        exercisedClassnames,
-        methodSignatures,
-        errorHandler,
-        literalsFileList,
-        null);
   }
 
   /**
@@ -181,7 +158,6 @@ public class OperationModel extends AbstractOperationModel {
 
     // Add a (1-element) sequence corresponding to each literal to the component
     // manager.
-
     for (String filename : literalsFile) {
       MultiMap<ClassOrInterfaceType, Sequence> literalmap;
       if (filename.equals("CLASSES")) {
@@ -189,25 +165,10 @@ public class OperationModel extends AbstractOperationModel {
       } else {
         literalmap = LiteralFileReader.parse(filename);
       }
-
       for (ClassOrInterfaceType type : literalmap.keySet()) {
-        Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
         for (Sequence seq : literalmap.getValues(type)) {
-          switch (literalsLevel) {
-            case CLASS:
-              compMgr.addClassLevelLiteral(type, seq);
-              break;
-            case PACKAGE:
-              assert pkg != null;
-              compMgr.addPackageLevelLiteral(pkg, seq);
-              break;
-            case ALL:
-              compMgr.addGeneratedSequence(seq);
-              break;
-            default:
-              throw new Error(
-                  "Unexpected error in GenTests -- please report at https://github.com/randoop/randoop/issues");
-          }
+          compMgr.addClassLevelLiteral(type, seq);
+          compMgr.addGeneratedSequence(seq);
         }
       }
     }
@@ -259,7 +220,6 @@ public class OperationModel extends AbstractOperationModel {
    * @return the set of input types that occur in classes under test
    */
   public Set<Type> getInputTypes() {
-    //TODO this is not used, should it be? or should it even be here?
     return inputTypes;
   }
 
@@ -290,6 +250,10 @@ public class OperationModel extends AbstractOperationModel {
     return annotatedTestValues;
   }
 
+  public Map<Sequence, Integer> getTfFrequency() {
+    return tfFrequency;
+  }
+
   /**
    * Gathers class types to be used in a run of Randoop and adds them to this {@code OperationModel}.
    * Specifically, collects types for classes-under-test, objects for exercised-class heuristic,
@@ -316,9 +280,7 @@ public class OperationModel extends AbstractOperationModel {
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
     if (literalsFileList.contains("CLASSES")) {
-      mgr.add(new ClassLiteralExtractor(this.classLiteralMap, null));
-      // tfFrequency is null, since it's only applicable when called by WeightedConstantsOperationModel
-      // OperationModel doesn't use a tfFrequency
+      mgr.add(new ClassLiteralExtractor(this.classLiteralMap, this.tfFrequency));
     }
 
     // Collect classes under test
@@ -391,18 +353,15 @@ public class OperationModel extends AbstractOperationModel {
    * @param concreteClassTypes  the declaring class types for the operations
    * @param visibility  the visibility predicate
    * @param reflectionPredicate  the reflection predicate
-   * @param operationConditions  the conditions to add to operations
    */
   private void addOperations(
       Set<ClassOrInterfaceType> concreteClassTypes,
       VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate,
-      ConditionCollection operationConditions) {
+      ReflectionPredicate reflectionPredicate) {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (ClassOrInterfaceType classType : concreteClassTypes) {
       mgr.apply(
-          new OperationExtractor(
-              classType, operations, reflectionPredicate, visibility, operationConditions),
+          new OperationExtractor(classType, operations, reflectionPredicate, visibility),
           classType.getRuntimeClass());
     }
   }
@@ -414,7 +373,6 @@ public class OperationModel extends AbstractOperationModel {
    * @throws OperationParseException if any signature is invalid
    */
   // TODO collect input types from added methods
-  // TODO add operation conditions
   private void addOperations(Set<String> methodSignatures) throws OperationParseException {
     for (String sig : methodSignatures) {
       TypedOperation operation = OperationParser.parse(sig);

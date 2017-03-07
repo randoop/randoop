@@ -737,6 +737,14 @@ Randoop about your application, and that is how we recommend using Randoop.
  exception, it should continue to throw an exception of the same type).
  Tests without assertions can be used to exercise the code, but they do not
  enforce any particular behavior, such as values returned. [default false]
+            <li id="option:weighted-sequences"><b>--weighted-sequences=</b><i>boolean</i>.
+             Whether to use DigDog weighted_sequences in regression tests [default false]
+            <li id="option:weighted-constants"><b>--weighted-constants=</b><i>boolean</i>.
+             Whether to use DigDog constant mining in regression tests [default false]
+            <li id="option:output-sequence-info"><b>--output-sequence-info=</b><i>boolean</i>.
+             Whether to output the sequenceInfo.csv, which lists the total # sequences and avg sequence size [default false]
+            <li id="option:p-const"><b>--p-const=</b><i>double</i>.
+             What probability to select the constants mined through DigDog constant mining [default 0.01]
       </ul>
 
   <li id="optiongroup:Test-classification">Test classification

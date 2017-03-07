@@ -1,6 +1,0 @@
-JAVA_VERSION="1.7.0"
-OS_NAME="Linux"
-OS_VERSION="2.6"
-OS_ARCH="amd64"
-SOURCE=" .:f19659de2034 corba:353be4a0a6ec deploy:395e14323635 hotspot:426e09df7eda hotspot/make/closed:de7a50bbd29a hotspot/src/closed:d4e9ca0a721f hotspot/test/closed:66a3b6ec7e26 install:eff2478cba10 jaxp:acfe75cb9d7a jaxws:f6417ecaede6 jdk:daa5092b07a7 jdk/make/closed:b7fa0c57c970 jdk/src/closed:9b930f093b52 jdk/test/closed:0351bbdb4915 langtools:f2b4d5e42318 pubs:dcfb9621fcbe sponsors:9eb1d4df2def"
-BUILD_TYPE=commercial
