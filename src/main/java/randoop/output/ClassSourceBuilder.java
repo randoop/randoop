@@ -1,5 +1,8 @@
 package randoop.output;
 
+import com.google.googlejavaformat.java.Formatter;
+import com.google.googlejavaformat.java.FormatterException;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,11 +33,10 @@ public class ClassSourceBuilder extends SourceBuilder {
    * @param classname  the name of the class declaration to be built
    * @param packageName  the name of the package for the class declaration
    */
-  public ClassSourceBuilder(String classname, String packageName) {
-    super();
+  ClassSourceBuilder(String classname, String packageName) {
     this.classname = classname;
     if (packageName == null) {
-      packageName = "";
+      this.packageName = "";
     } else {
       this.packageName = packageName;
     }
@@ -49,7 +51,7 @@ public class ClassSourceBuilder extends SourceBuilder {
    *
    * @param importNames  the list of import declarations to add to this class declaration
    */
-  public void addImports(Collection<String> importNames) {
+  void addImports(Collection<String> importNames) {
     if (importNames != null) {
       this.importNames.addAll(importNames);
     }
@@ -60,13 +62,13 @@ public class ClassSourceBuilder extends SourceBuilder {
    *
    * @param annotations  the collection of annotations to be added to this declaration
    */
-  public void addAnnotation(Collection<String> annotations) {
+  void addAnnotation(Collection<String> annotations) {
     if (annotations != null) {
       this.classAnnotation.addAll(annotations);
     }
   }
 
-  public void addMember(String declarationString) {
+  void addMember(String declarationString) {
     if (declarationString != null && !declarationString.isEmpty()) {
       List<String> declarationLines = new ArrayList<>();
       declarationLines.add(declarationString);
@@ -74,7 +76,7 @@ public class ClassSourceBuilder extends SourceBuilder {
     }
   }
 
-  public void addMember(List<String> declarationLines) {
+  void addMember(List<String> declarationLines) {
     if (declarationLines != null && !declarationLines.isEmpty()) {
       memberDeclarations.add(declarationLines);
     }
@@ -100,15 +102,27 @@ public class ClassSourceBuilder extends SourceBuilder {
     }
 
     lines.add(createLine("public", "class", classname, "{"));
-    increaseIndent();
     for (List<String> memberDeclaration : memberDeclarations) {
       for (String line : memberDeclaration) {
         lines.add(createLine(line));
       }
       lines.add(createLine());
     }
-    reverseIndent();
     lines.add(createLine("}"));
     return lines;
+  }
+
+  @Override
+  public String toString() {
+    String source = super.toString();
+    try {
+      return new Formatter().formatSource(source);
+    } catch (FormatterException e) {
+      System.out.println("Generated source has an error:");
+      System.out.println(source);
+      e.printStackTrace();
+      //code generation bad -- internal error
+      return null;
+    }
   }
 }

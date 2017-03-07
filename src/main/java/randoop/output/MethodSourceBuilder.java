@@ -9,7 +9,7 @@ import plume.UtilMDE;
 /**
  * Constructs a {@code String} containing a method declaration.
  */
-public class MethodSourceBuilder extends SourceBuilder {
+class MethodSourceBuilder extends SourceBuilder {
 
   private final String modifiers;
   private final String methodName;
@@ -19,13 +19,12 @@ public class MethodSourceBuilder extends SourceBuilder {
   private final List<String> bodyText;
   private final List<String> parameters;
 
-  public MethodSourceBuilder(
+  MethodSourceBuilder(
       String modifiers,
       String returnTypeName,
       String methodName,
       List<String> parameters,
       List<String> throwsList) {
-    super();
     this.modifiers = modifiers;
     this.methodName = methodName;
     this.returnTypeName = returnTypeName;
@@ -35,19 +34,19 @@ public class MethodSourceBuilder extends SourceBuilder {
     this.bodyText = new ArrayList<>();
   }
 
-  public void addAnnotation(Collection<String> annotations) {
+  void addAnnotation(Collection<String> annotations) {
     if (annotations != null) {
       this.annotations.addAll(annotations);
     }
   }
 
-  public void addBodyText(String bodyText) {
+  void addBodyText(String bodyText) {
     if (bodyText != null) {
       this.bodyText.add(bodyText);
     }
   }
 
-  public void addBodyText(List<String> bodyText) {
+  void addBodyText(List<String> bodyText) {
     if (bodyText != null) {
       this.bodyText.addAll(bodyText);
     }
@@ -66,11 +65,9 @@ public class MethodSourceBuilder extends SourceBuilder {
     }
     suffix = suffix + "{";
     lines.add(createLine(modifiers, returnTypeName, methodName, paramText, suffix));
-    increaseIndent();
     for (String line : bodyText) {
       lines.add(createLine(line));
     }
-    reverseIndent();
     lines.add(createLine("}"));
     return lines;
   }

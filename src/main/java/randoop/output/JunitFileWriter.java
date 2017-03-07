@@ -177,7 +177,6 @@ public class JunitFileWriter {
     PrintStream out = createTextOutputStream(file);
 
     NameGenerator methodNameGen = new NameGenerator("test", 1, numDigits(sequences.size()));
-
     String testClassString = createTestClassString(sequences, testClassName, methodNameGen);
 
     try {
@@ -367,7 +366,6 @@ public class JunitFileWriter {
     File file = new File(dir, driverName + ".java");
 
     List<String> testClassNames = getTestClassNames();
-
     String driverClassString = createTestDriverString(driverName, testClassNames);
 
     try (PrintStream out = createTextOutputStream(file)) {
@@ -411,10 +409,10 @@ public class JunitFileWriter {
         }
         String methodName = methodGen.next();
         methodSourceBuilder.addBodyText("try {");
-        methodSourceBuilder.addBodyText("  " + testVariable + "." + methodName + "();");
+        methodSourceBuilder.addBodyText(testVariable + "." + methodName + "();");
         methodSourceBuilder.addBodyText("} catch (Throwable e) {");
-        methodSourceBuilder.addBodyText("  wasSuccessful = false;");
-        methodSourceBuilder.addBodyText("  e.printStackTrace();");
+        methodSourceBuilder.addBodyText("wasSuccessful = false;");
+        methodSourceBuilder.addBodyText("e.printStackTrace();");
         methodSourceBuilder.addBodyText("}");
         if (afterEachText != null) {
           methodSourceBuilder.addBodyText(testVariable + "." + AFTER_EACH_METHOD + "();");
@@ -426,7 +424,7 @@ public class JunitFileWriter {
       }
     }
     methodSourceBuilder.addBodyText("if ( !wasSuccessful ) {");
-    methodSourceBuilder.addBodyText("  System.exit(1);");
+    methodSourceBuilder.addBodyText("System.exit(1);");
     methodSourceBuilder.addBodyText("}");
     String methodBody = methodSourceBuilder.toString();
     sourceBuilder.addMember(methodBody);

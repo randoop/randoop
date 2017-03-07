@@ -10,19 +10,6 @@ import randoop.Globals;
  */
 abstract class SourceBuilder {
 
-  /** The current indent for this {@link randoop.output.SourceBuilder} */
-  private int indentCount;
-  private String indentText;
-
-  /**
-   * Creates a {@link randoop.output.SourceBuilder} with no indentation.
-   *
-   */
-  SourceBuilder() {
-    this.indentCount = 0;
-    this.indentText = "";
-  }
-
   /**
    * Creates a line from the given tokens with the current indentation and separated by spaces.
    *
@@ -30,31 +17,7 @@ abstract class SourceBuilder {
    * @return the {@code String} constructed from the tokens
    */
   String createLine(String... toks) {
-    return indentText + UtilMDE.join(toks, " ");
-  }
-
-  /**
-   * Increase the indentation.
-   */
-  void increaseIndent() {
-    indentCount += 2;
-    indentText = indentText();
-  }
-
-  /**
-   * Decrease the indentation.
-   */
-  void reverseIndent() {
-    indentCount = indentCount - 2 > 0 ? indentCount - 2 : 0;
-    indentText = indentText();
-  }
-
-  private String indentText() {
-    String indentText = "";
-    for (int i = 0; i < indentCount; i++) {
-      indentText += "  ";
-    }
-    return indentText;
+    return UtilMDE.join(toks, " ");
   }
 
   /**
