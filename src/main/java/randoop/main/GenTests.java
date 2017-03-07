@@ -17,7 +17,9 @@ import plume.Options.ArgException;
 import plume.SimpleLog;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
-import randoop.output.JunitFileWriter;
+import randoop.compile.SequenceCompiler;
+import randoop.output.JUnitCreator;
+import randoop.output.JavaFileWriter;
 import randoop.MultiVisitor;
 import randoop.condition.ConditionCollection;
 import randoop.generation.AbstractGenerator;
@@ -31,6 +33,7 @@ import randoop.instrument.ExercisedClassVisitor;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
+import randoop.output.NameGenerator;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PackageVisibilityPredicate;
@@ -647,35 +650,37 @@ public class GenTests extends GenInputsAbstract {
       List<List<ExecutableSequence>> seqPartition =
           CollectionsExt.formSublists(new ArrayList<>(seqList), testsperfile);
 
-      JunitFileWriter jfw = new JunitFileWriter(output_dir, junit_package_name, junitClassname);
+      String methodNamePrefix = "test";
+      JUnitCreator junitCreator =
+          JUnitCreator.getTestCreator(
+              junit_package_name,
+              methodNamePrefix,
+              getFileText(GenInputsAbstract.junit_before_all),
+              getFileText(GenInputsAbstract.junit_after_all),
+              getFileText(GenInputsAbstract.junit_before_each),
+              getFileText(GenInputsAbstract.junit_after_each));
+      JavaFileWriter jfw = new JavaFileWriter(output_dir);
 
-      List<String> beforeAllText = getFileText(GenInputsAbstract.junit_before_all);
-      if (beforeAllText != null) {
-        jfw.addBeforeAll(beforeAllText);
+      String classNameFormat =
+          junitClassname + NameGenerator.formatString(NameGenerator.numDigits(seqPartition.size()));
+      for (int i = 0; i < seqPartition.size(); i++) {
+        List<ExecutableSequence> partition = seqPartition.get(i);
+        String testClassName = String.format(classNameFormat, i);
+        String classSource = compileFilter(junitCreator, testClassName, partition);
+        if (classSource != null) {
+          files.add(jfw.writeClass(junit_package_name, testClassName, classSource));
+        }
       }
 
-      List<String> afterAllText = getFileText(GenInputsAbstract.junit_after_all);
-      if (afterAllText != null) {
-        jfw.addAfterAll(afterAllText);
-      }
-
-      List<String> beforeEachText = getFileText(GenInputsAbstract.junit_before_each);
-      if (beforeEachText != null) {
-        jfw.addBeforeEach(beforeEachText);
-      }
-
-      List<String> afterEachText = getFileText(GenInputsAbstract.junit_after_each);
-      if (afterEachText != null) {
-        jfw.addAfterEach(afterEachText);
-      }
-
-      files.addAll(jfw.writeJUnitTestFiles(seqPartition));
-
+      String classSource;
+      String driverName = junitClassname;
       if (GenInputsAbstract.junit_reflection_allowed) {
-        files.add(jfw.writeSuiteFile());
+        classSource = junitCreator.createSuiteClass(driverName);
       } else {
-        files.add(jfw.writeDriverFile());
+        driverName = junitClassname + "Driver";
+        classSource = junitCreator.createTestDriver(driverName);
       }
+      files.add(jfw.writeClass(junit_package_name, driverName, classSource));
     } else { // preserves behavior from previous version
       System.out.println("No tests were created. No JUnit class created.");
     }
@@ -690,6 +695,12 @@ public class GenTests extends GenInputsAbstract {
       }
     }
     return files;
+  }
+
+  private static String compileFilter(
+      JUnitCreator junitCreator, String testClassName, List<ExecutableSequence> partition) {
+    String sourceText = junitCreator.createTestClass(testClassName, partition);
+    return sourceText;
   }
 
   /**
