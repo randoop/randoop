@@ -120,10 +120,9 @@ public final class Randomness {
     double randomPoint = Randomness.random.nextDouble() * max;
 
     return list.get(binarySearchForIndex(list, cumulativeWeights, randomPoint));
-    // TODO:    throw new BugInRandoopException();
   }
 
-  private static int binarySearchForIndex(
+  public static int binarySearchForIndex(
       SimpleList<?> list, List<Double> cumulativeWeights, double point) {
     int low = 0;
     int high = list.size();
