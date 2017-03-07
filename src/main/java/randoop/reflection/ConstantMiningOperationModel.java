@@ -95,6 +95,7 @@ public class ConstantMiningOperationModel extends DigDogOperationModel {
     exercisedClasses = new LinkedHashSet<>();
     operations = new TreeSet<>();
     classCount = 0;
+    tfFrequency = new HashMap<>();
   }
 
   /**

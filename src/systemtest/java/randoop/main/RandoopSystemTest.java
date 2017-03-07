@@ -1,5 +1,6 @@
 package randoop.main;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -866,70 +867,70 @@ public class RandoopSystemTest {
   @Test
   public void runOrienteeringTest() {
     TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("digdog-orienteering");
+        systemTestEnvironment.createTestEnvironment("digdog-weighted-sequences");
 
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName("");
-    options.setRegressionBasename("OrienteeringReg");
-    options.setErrorBasename("OrienteeringErr");
-    options.setFlag("orienteering");
+    options.setRegressionBasename("WeightedSequencesReg");
+    options.setErrorBasename("WeightedSequencesErr");
+    options.setFlag("weighted-sequences");
     options.setFlag("output-sequence-info");
 
     setUpAndRunDigDogTests(testEnvironment, options);
-    renameOutputTo("orienteering.csv");
+    renameOutputTo("weighted-sequences.csv");
   }
 
   // TODO: finish
   @Test
   public void runRandoopOrienteeringComparisonTest() {
     TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("randoop-orienteering");
+        systemTestEnvironment.createTestEnvironment("randoop-weighted-sequences");
 
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName("");
-    options.setRegressionBasename("orienteeringCompareReg");
-    options.setErrorBasename("orienteeringCompareErr");
-    //options.setFlag("orienteering");
+    options.setRegressionBasename("WeightedSequencesCompareReg");
+    options.setErrorBasename("WeightedSequencesCompareErr");
+    //options.setFlag("weighted-sequences");
     options.setFlag("output-sequence-info");
 
     setUpAndRunDigDogTests(testEnvironment, options);
-    renameOutputTo("randoop-orienteering.csv");
+    renameOutputTo("randoop-weighted-sequences.csv");
   }
 
   // TODO: finish
   @Test
   public void runConstantMiningTest() {
     TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("digdog-constant-mining");
+        systemTestEnvironment.createTestEnvironment("digdog-weighted-constants");
 
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName("");
-    options.setRegressionBasename("ConstantMiningReg");
-    options.setErrorBasename("ConstantMiningErr");
-    options.setFlag("constant-mining");
+    options.setRegressionBasename("WeightedConstantsReg");
+    options.setErrorBasename("WeightedConstantsErr");
+    options.setFlag("weighted-constants");
     options.setFlag("output-sequence-info");
 
     setUpAndRunDigDogTests(testEnvironment, options);
-    renameOutputTo("constant-mining.csv");
+    renameOutputTo("weighted-constants.csv");
   }
 
   // TODO: finish
   @Test
   public void runRandoopConstantMiningComparisonTest() {
     TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("randoop-constant-mining");
+        systemTestEnvironment.createTestEnvironment("randoop-weighted-constants");
 
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName("");
-    options.setRegressionBasename("constantminingCompareReg");
-    options.setErrorBasename("constantminingCompareErr");
+    options.setRegressionBasename("WeightedConstantsCompareReg");
+    options.setErrorBasename("WeightedConstantsCompareErr");
     options.setOption("literals-level", "CLASS");
     options.setOption("literals-file", "CLASSES");
-    //options.setFlag("orienteering");
+    //options.setFlag("weighted-sequences");
     options.setFlag("output-sequence-info");
 
     setUpAndRunDigDogTests(testEnvironment, options);
-    renameOutputTo("randoop-constant-mining.csv");
+    renameOutputTo("randoop-weighted-constants.csv");
   }
 
   /**
@@ -937,6 +938,7 @@ public class RandoopSystemTest {
    * @param newFileName
    */
   private void renameOutputTo(String newFileName) {
+
     File tempDir = new File("sequenceInfo.csv");
     File result = new File(newFileName);
     boolean renamed = tempDir.renameTo(result);
@@ -965,6 +967,10 @@ public class RandoopSystemTest {
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
+
+    // TODO: maybe just generate and compile
+    //generateAndCompile(testEnvironment, options, true);
+    //assertTrue(true);
 
     generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
     /*

@@ -136,7 +136,7 @@ public class GenTests extends GenInputsAbstract {
     //   System.out.printf("Using security policy %s%n", policy);
     // }
 
-    if (GenInputsAbstract.orienteering) {
+`    if (GenInputsAbstract.weighted_sequences) {
       System.out.println("Orienteering is enabled");
     }
 
@@ -202,7 +202,7 @@ public class GenTests extends GenInputsAbstract {
     DigDogOperationModel operationModel = null;
 
     try {
-      if (GenInputsAbstract.constant_mining) {
+      if (GenInputsAbstract.weighted_constants) {
         operationModel =
             ConstantMiningOperationModel.createModel(
                 visibility,
@@ -313,11 +313,14 @@ public class GenTests extends GenInputsAbstract {
      */
     AbstractGenerator explorer;
     if (GenInputsAbstract.output_sequence_info
-        || GenInputsAbstract.orienteering) { // TODO: check this conditional
+        || GenInputsAbstract.weighted_sequences
+        || GenInputsAbstract.weighted_constants) { // TODO: check this conditional
 
-      assert operationModel instanceof ConstantMiningOperationModel;
-      Map<Sequence, Integer> tfFrequencies =
-          ((ConstantMiningOperationModel) operationModel).getTfFrequency();
+      // assert operationModel instanceof ConstantMiningOperationModel; TODO: yolo
+      Map<Sequence, Integer> tfFrequencies = null;
+      if (operationModel instanceof ConstantMiningOperationModel) {
+        tfFrequencies = ((ConstantMiningOperationModel) operationModel).getTfFrequency();
+      } // b/c we don't need constant mining stuff if we're not using that model
       int num_classes = operationModel.getClassTypes().size();
 
       explorer =
@@ -507,12 +510,13 @@ public class GenTests extends GenInputsAbstract {
       if (!tempDir.exists()) {
         tempDir.createNewFile();
       }
-      // always overwrite
-      out =
-          createTextOutputStream("sequenceInfo.csv"); // TODO: maybe just new FileOutputStream(..)
+      // always overwrite, should only exist from prior runs
+      out = createTextOutputStream("sequenceInfo.csv"); // TODO: maybe just new FileOutputStream(..)
       StringBuilder body = new StringBuilder();
+
       body.append(debugMap.keySet().size()); // number of sequences
       body.append(',');
+
       int accumulatedSequenceSize = 0;
       for (Sequence seq : debugMap.keySet()) {
         for (String s : debugMap.get(seq)) {
@@ -522,48 +526,7 @@ public class GenTests extends GenInputsAbstract {
       }
       double avgSeqSize = accumulatedSequenceSize * 1.0 / debugMap.keySet().size();
       body.append(avgSeqSize); // avg sequence size
-      /*
-      // To write out a bunch of sequence info
-      StringBuilder header = new StringBuilder();
-      header.append("Sequence hash");
-      header.append(',');
-      header.append("Initial Sequence weight");
-      header.append(',');
-      header.append("Orienteering?");
-      header.append(',');
-      header.append("ExecutionNumber");
-      header.append(',');
-      header.append("SequenceSize (not sqrt)");
-      header.append(',');
-      header.append("execTime");
-      header.append(',');
-      header.append("orienteeringWeight");
-      header.append(',');
-      header.append("constantMining?");
-      header.append(',');
-      header.append("sequence has a weight from constantMining?");
-      header.append(',');
-      header.append("constantMiningWeight");
-      header.append(',');
-      header.append("weight actually used");
-      // TODO: header.append(',')?
-      StringBuilder body = new StringBuilder();
-      for (Sequence seq : debugMap.keySet()) {
-        body.append(seq.hashCode());
-        int i = 0;
-        for (String str : debugMap.get(seq)) {
-          if (i != 0) { // filler, b/c this entry is the same sequence as before
-            body.append("-------");
-          }
-          body.append(',');
-          body.append(str);
-          body.append('\n');
-          i++;
-        }
-        body.append('\n');
-      }
-      out.println(header.toString());
-      */
+
       out.println(body.toString());
     } catch (IOException e) {
       System.out.println("Couldn't create test-output file");

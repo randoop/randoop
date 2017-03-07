@@ -77,7 +77,7 @@ public class ComponentManager {
    * Create an empty component manager, with an empty seed sequence set.
    */
   public ComponentManager() {
-    if (GenInputsAbstract.constant_mining) {
+    if (GenInputsAbstract.weighted_constants) {
       frequencyMap = new LinkedHashMap<>();
     }
     gralComponents = new SequenceCollection();
@@ -93,7 +93,7 @@ public class ComponentManager {
    *          is considered empty.
    */
   public ComponentManager(Collection<Sequence> generalSeeds) {
-    if (GenInputsAbstract.constant_mining) {
+    if (GenInputsAbstract.weighted_constants) {
       frequencyMap = new LinkedHashMap<>();
     }
     Set<Sequence> seedSet = new LinkedHashSet<>(generalSeeds.size());
@@ -147,7 +147,7 @@ public class ComponentManager {
    */
   public void addGeneratedSequence(Sequence seq) {
     gralComponents.add(seq);
-    if (GenInputsAbstract.constant_mining) {
+    if (GenInputsAbstract.weighted_constants) {
       if (frequencyMap.containsKey(seq)) {
         frequencyMap.put(seq, frequencyMap.get(seq) + 1);
       } else {
@@ -196,7 +196,7 @@ public class ComponentManager {
    */
   @SuppressWarnings("unchecked")
   SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i) {
-    if (GenInputsAbstract.constant_mining) {
+    if (GenInputsAbstract.weighted_constants) {
       return getSequencesForTypeGRT(operation, i);
     }
     Type neededType = operation.getInputTypes().get(i);

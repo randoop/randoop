@@ -2,7 +2,6 @@ package randoop.reflection;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import randoop.main.GenInputsAbstract;
@@ -47,7 +46,7 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
                     TypedOperation.createNonreceiverInitialization(term),
                     new ArrayList<Variable>());
         literalMap.add(constantType, seq);
-        if (GenInputsAbstract.constant_mining) {
+        if (GenInputsAbstract.weighted_constants) {
           if (tfFrequency.containsKey(seq)) {
             tfFrequency.put(seq, tfFrequency.get(seq) + 1);
           } else {

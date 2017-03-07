@@ -71,7 +71,7 @@ public class DigDogGenerator extends ForwardGenerator {
         stopper,
         listenerManager);
 
-    if (GenInputsAbstract.constant_mining) {
+    if (GenInputsAbstract.weighted_constants) {
 
       int num_constants = 0;
       for (Sequence s : tfFrequency.keySet()) {
@@ -141,7 +141,7 @@ public class DigDogGenerator extends ForwardGenerator {
     double weight = initialWeight; // weight to use
 
     // Orienteering stuff
-    if (GenInputsAbstract.orienteering) {
+    if (GenInputsAbstract.weighted_sequences) {
 
       // track # times a sequence has been executed
       if (sequenceExecutionNumber.containsKey(eSeq.sequence)) {
@@ -160,7 +160,7 @@ public class DigDogGenerator extends ForwardGenerator {
     }
 
     // Incorporate Constant mining weights on top
-    if (GenInputsAbstract.constant_mining) {
+    if (GenInputsAbstract.weighted_constants) {
       if (initialConstantWeights.containsKey(eSeq.sequence)) {
         constantMiningWeight = initialConstantWeights.get(eSeq.sequence);
         weight *= constantMiningWeight;
@@ -178,7 +178,7 @@ public class DigDogGenerator extends ForwardGenerator {
           ""
               + initialWeight
               + ','
-              + GenInputsAbstract.orienteering
+              + GenInputsAbstract.weighted_sequences
               + ','
               + sequenceExecutionNumber.get(eSeq.sequence)
               + ','
@@ -188,7 +188,7 @@ public class DigDogGenerator extends ForwardGenerator {
               + ','
               + orienteeringWeight
               + ','
-              + GenInputsAbstract.constant_mining
+              + GenInputsAbstract.weighted_constants
               + ','
               + initialConstantWeights.containsKey(eSeq.sequence)
               + ','
@@ -434,7 +434,7 @@ public class DigDogGenerator extends ForwardGenerator {
       // randomly-chosen sequence from the list.
       Sequence chosenSeq;
 
-      if (GenInputsAbstract.orienteering || GenInputsAbstract.constant_mining) {
+      if (GenInputsAbstract.weighted_sequences || GenInputsAbstract.weighted_constants) {
         // Orienteering and Constant mining Stuff
         chosenSeq = Randomness.randomMemberWeighted(l, weightMap);
       } else if (GenInputsAbstract.small_tests) {
