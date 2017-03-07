@@ -1,13 +1,11 @@
 package randoop.main;
 
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import randoop.util.Log;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -863,125 +861,6 @@ public class RandoopSystemTest {
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
   }
 
-  // TODO: finish
-  @Test
-  public void runOrienteeringTest() {
-    TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("digdog-weighted-sequences");
-
-    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
-    options.setRegressionBasename("WeightedSequencesReg");
-    options.setErrorBasename("WeightedSequencesErr");
-    options.setFlag("weighted-sequences");
-    options.setFlag("output-sequence-info");
-
-    setUpAndRunDigDogTests(testEnvironment, options);
-    renameOutputTo("weighted-sequences.csv");
-  }
-
-  // TODO: finish
-  @Test
-  public void runRandoopOrienteeringComparisonTest() {
-    TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("randoop-weighted-sequences");
-
-    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
-    options.setRegressionBasename("WeightedSequencesCompareReg");
-    options.setErrorBasename("WeightedSequencesCompareErr");
-    //options.setFlag("weighted-sequences");
-    options.setFlag("output-sequence-info");
-
-    setUpAndRunDigDogTests(testEnvironment, options);
-    renameOutputTo("randoop-weighted-sequences.csv");
-  }
-
-  // TODO: finish
-  @Test
-  public void runConstantMiningTest() {
-    TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("digdog-weighted-constants");
-
-    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
-    options.setRegressionBasename("WeightedConstantsReg");
-    options.setErrorBasename("WeightedConstantsErr");
-    options.setFlag("weighted-constants");
-    options.setFlag("output-sequence-info");
-
-    setUpAndRunDigDogTests(testEnvironment, options);
-    renameOutputTo("weighted-constants.csv");
-  }
-
-  // TODO: finish
-  @Test
-  public void runRandoopConstantMiningComparisonTest() {
-    TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("randoop-weighted-constants");
-
-    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
-    options.setRegressionBasename("WeightedConstantsCompareReg");
-    options.setErrorBasename("WeightedConstantsCompareErr");
-    options.setOption("literals-level", "CLASS");
-    options.setOption("literals-file", "CLASSES");
-    //options.setFlag("weighted-sequences");
-    options.setFlag("output-sequence-info");
-
-    setUpAndRunDigDogTests(testEnvironment, options);
-    renameOutputTo("randoop-weighted-constants.csv");
-  }
-
-  /**
-   * Only really use this to rename DigDog formatted csv output, in "test.txt"
-   * @param newFileName
-   */
-  private void renameOutputTo(String newFileName) {
-
-    File tempDir = new File("sequenceInfo.csv");
-    File result = new File(newFileName);
-    boolean renamed = tempDir.renameTo(result);
-    if (!renamed) {
-      fail("couldn't rename file");
-    }
-  }
-
-  private void setUpAndRunDigDogTests(TestEnvironment testEnvironment, RandoopOptions options) {
-    /*
-    options.setOption("inputlimit", "1000");
-    options.addTestClass("digdog.constantmining.Trivial");
-    */
-
-    //options.setOption("inputlimit", "1000");
-    options.setOption("timelimit", "30");
-    options.setOption("null-ratio", "0.3");
-    options.setOption("alias-ratio", "0.3");
-    //options.setFlag("small-tests");
-    options.setFlag("clear=100");
-    options.addClassList("resources/systemTest/jdk_classlist.txt");
-
-    // omit methods that use Random
-    options.setOption(
-        "omitmethods", "java2\\.util2\\.Collections\\.shuffle\\(java2\\.util2\\.List\\)");
-
-    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
-    ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
-
-    // TODO: maybe just generate and compile
-    //generateAndCompile(testEnvironment, options, true);
-    //assertTrue(true);
-
-    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
-    /*
-    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
-    ExpectedTests expectedErrorTests = ExpectedTests.NONE;
-
-    generateAndTestWithCoverage(
-        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
-    */
-  }
-
   /* ------------------------------ utility methods ---------------------------------- */
 
   /**
@@ -1197,16 +1076,5 @@ public class RandoopSystemTest {
    */
   private RandoopRunStatus generateAndCompile(TestEnvironment environment, RandoopOptions options) {
     return generateAndCompile(environment, options, false);
-  }
-
-  private static PrintStream createTextOutputStream(String fileName) {
-    try {
-      return new PrintStream(new File(fileName));
-    } catch (FileNotFoundException e) {
-      Log.out.println("Exception thrown while creating text print stream:" + fileName);
-      e.printStackTrace();
-      System.exit(1);
-      throw new Error("This can't happen");
-    }
   }
 }
