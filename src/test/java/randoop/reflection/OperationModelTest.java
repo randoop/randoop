@@ -49,15 +49,14 @@ public class OperationModelTest {
     OperationModel model = null;
     try {
       model =
-          (OperationModel)
-              OperationModel.createModel(
-                  visibility,
-                  reflectionPredicate,
-                  classnames,
-                  exercisedClassnames,
-                  methodSignatures,
-                  errorHandler,
-                  literalsFileList);
+          OperationModel.createModel(
+              visibility,
+              reflectionPredicate,
+              classnames,
+              exercisedClassnames,
+              methodSignatures,
+              errorHandler,
+              literalsFileList);
     } catch (OperationParseException e) {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
@@ -104,15 +103,14 @@ public class OperationModelTest {
     OperationModel model = null;
     try {
       model =
-          (OperationModel)
-              OperationModel.createModel(
-                  visibilityPredicate,
-                  reflectionPredicate,
-                  classnames,
-                  exercisedClassname,
-                  methodSignatures,
-                  errorHandler,
-                  literalsFileList);
+          OperationModel.createModel(
+              visibilityPredicate,
+              reflectionPredicate,
+              classnames,
+              exercisedClassname,
+              methodSignatures,
+              errorHandler,
+              literalsFileList);
     } catch (OperationParseException e) {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
@@ -178,15 +176,14 @@ public class OperationModelTest {
     OperationModel model = null;
     try {
       model =
-          (OperationModel)
-              OperationModel.createModel(
-                  visibilityPredicate,
-                  reflectionPredicate,
-                  classnames,
-                  exercisedClassnames,
-                  methodSignatures,
-                  errorHandler,
-                  literalsFileList);
+          OperationModel.createModel(
+              visibilityPredicate,
+              reflectionPredicate,
+              classnames,
+              exercisedClassnames,
+              methodSignatures,
+              errorHandler,
+              literalsFileList);
     } catch (NoSuchMethodException e) {
       fail("did not find method: " + e.getMessage());
     } catch (OperationParseException e) {
@@ -361,15 +358,14 @@ public class OperationModelTest {
     OperationModel model = null;
     try {
       model =
-          (OperationModel)
-              OperationModel.createModel(
-                  visibilityPredicate,
-                  reflectionPredicate,
-                  classnames,
-                  exercisedClassname,
-                  methodSignatures,
-                  errorHandler,
-                  literalsFileList);
+          OperationModel.createModel(
+              visibilityPredicate,
+              reflectionPredicate,
+              classnames,
+              exercisedClassname,
+              methodSignatures,
+              errorHandler,
+              literalsFileList);
     } catch (OperationParseException e) {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
