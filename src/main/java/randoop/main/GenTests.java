@@ -1,5 +1,19 @@
 package randoop.main;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.TreeSet;
+import java.util.regex.Pattern;
 import plume.EntryReader;
 import plume.Options;
 import plume.Options.ArgException;
@@ -9,7 +23,13 @@ import randoop.ExecutionVisitor;
 import randoop.JunitFileWriter;
 import randoop.MultiVisitor;
 import randoop.condition.ConditionCollection;
-import randoop.generation.*;
+import randoop.generation.AbstractGenerator;
+import randoop.generation.ComponentManager;
+import randoop.generation.DigDogGenerator;
+import randoop.generation.ForwardGenerator;
+import randoop.generation.RandoopGenerationError;
+import randoop.generation.RandoopListenerManager;
+import randoop.generation.SeedSequences;
 import randoop.input.toradocu.ToradocuConditionCollection;
 import randoop.instrument.ExercisedClassVisitor;
 import randoop.operation.Operation;
@@ -50,21 +70,6 @@ import randoop.util.Randomness;
 import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.AlwaysFalse;
 import randoop.util.predicate.Predicate;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.TreeSet;
-import java.util.regex.Pattern;
 
 public class GenTests extends GenInputsAbstract {
 
