@@ -46,7 +46,7 @@ class CompilationStatus {
    * the status as a {@link CompilationStatus} object.
    *
    * @param testSourceFiles  the Java source for the tests
-   * @param destinationDir  the path to the desination directory
+   * @param destinationDir  the path to the destination directory
    * @return true if compile succeeded, false otherwise
    */
   static CompilationStatus compileTests(List<File> testSourceFiles, String destinationDir) {
