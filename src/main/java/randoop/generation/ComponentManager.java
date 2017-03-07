@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -78,7 +79,6 @@ public class ComponentManager {
    * Create an empty component manager, with an empty seed sequence set.
    */
   public ComponentManager() {
-
     gralComponents = new SequenceCollection();
     gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
   }
@@ -139,10 +139,10 @@ public class ComponentManager {
   /**
    * Add a component sequence.
    *
-   * @param seq the sequence
+   * @param sequence the sequence
    */
-  public void addGeneratedSequence(Sequence seq) {
-    gralComponents.add(seq);
+  public void addGeneratedSequence(Sequence sequence) {
+    gralComponents.add(sequence);
   }
 
   /**
@@ -185,9 +185,6 @@ public class ComponentManager {
    */
   @SuppressWarnings("unchecked")
   SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i) {
-    if (GenInputsAbstract.weighted_constants) {
-      return getSequencesForWeightedConstants(operation, i);
-    }
     Type neededType = operation.getInputTypes().get(i);
 
     SimpleList<Sequence> ret = gralComponents.getSequencesForType(neededType, false);
@@ -216,29 +213,6 @@ public class ComponentManager {
       }
     }
     return ret;
-  }
-
-  /**
-   *
-   * @param operation  the statement
-   * @param i  the input value index of statement
-   * @return the sequences that create values of the given type for weighted constants
-   */
-  @SuppressWarnings("unchecked")
-  private SimpleList<Sequence> getSequencesForWeightedConstants(TypedOperation operation, int i) {
-    Type neededType = operation.getInputTypes().get(i);
-    if (Randomness.weightedCoinFlip(GenInputsAbstract.p_const)) {
-      ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
-      if (declaringCls != null) {
-        if (classLiterals != null) {
-          SimpleList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
-          return sl;
-        }
-      }
-    } else {
-      return gralComponents.getSequencesForType(neededType, false);
-    }
-    return null;
   }
 
   /**

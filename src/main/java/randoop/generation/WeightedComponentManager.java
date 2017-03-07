@@ -21,13 +21,13 @@ public class WeightedComponentManager extends ComponentManager {
   }
 
   @Override
-  public void addGeneratedSequence(Sequence seq) {
-    gralComponents.add(seq);
+  public void addGeneratedSequence(Sequence sequence) {
+    gralComponents.add(sequence);
     if (GenInputsAbstract.weighted_constants) {
-      if (sequenceFrequency.containsKey(seq)) {
-        sequenceFrequency.put(seq, sequenceFrequency.get(seq) + 1);
+      if (sequenceFrequency.containsKey(sequence)) {
+        sequenceFrequency.put(sequence, sequenceFrequency.get(sequence) + 1);
       } else {
-        sequenceFrequency.put(seq, 1);
+        sequenceFrequency.put(sequence, 1);
       }
     }
   }
