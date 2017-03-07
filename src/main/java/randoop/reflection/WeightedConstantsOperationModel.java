@@ -28,7 +28,7 @@ import randoop.util.MultiMap;
 import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
 
 /**
- * {@code ConstantMiningOperationModel} represents the information context from which tests are generated. It is also
+ * {@code WeightedConstantsOperationModel} represents the information context from which tests are generated. It is also
  * used to store information needed for constant mining.
  * The model includes:
  * <ul>
@@ -41,7 +41,7 @@ import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
  * This class manages all information about generic classes internally, and instantiates any
  * type variables in operations before returning them.
  */
-public class ConstantMiningOperationModel extends AbstractOperationModel {
+public class WeightedConstantsOperationModel extends AbstractOperationModel {
 
   /** The set of class declaration types for this model */
   private Set<ClassOrInterfaceType> classTypes;
@@ -73,7 +73,7 @@ public class ConstantMiningOperationModel extends AbstractOperationModel {
   /**
    * Create an empty model of test context.
    */
-  private ConstantMiningOperationModel() {
+  private WeightedConstantsOperationModel() {
     classTypes = new LinkedHashSet<>();
     inputTypes = new LinkedHashSet<>();
     classLiteralMap = new MultiMap<>();
@@ -117,7 +117,7 @@ public class ConstantMiningOperationModel extends AbstractOperationModel {
    */
   // TODO discuss with Randoop developers how to appropriately handle static model creation
   // with extensions
-  public static AbstractOperationModel createModel(
+  public static WeightedConstantsOperationModel createModel(
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
       Set<String> classnames,
@@ -127,7 +127,7 @@ public class ConstantMiningOperationModel extends AbstractOperationModel {
       List<String> literalsFileList)
       throws OperationParseException, NoSuchMethodException {
 
-    ConstantMiningOperationModel model = new ConstantMiningOperationModel();
+    WeightedConstantsOperationModel model = new WeightedConstantsOperationModel();
 
     model.addClassTypes(
         visibility,

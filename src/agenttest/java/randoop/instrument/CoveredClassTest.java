@@ -197,15 +197,14 @@ public class CoveredClassTest {
     OperationModel operationModel = null;
     try {
       operationModel =
-          (OperationModel)
-              OperationModel.createModel(
-                  visibility,
-                  reflectionPredicate,
-                  classnames,
-                  coveredClassnames,
-                  methodSignatures,
-                  classNameErrorHandler,
-                  GenInputsAbstract.literals_file);
+          OperationModel.createModel(
+              visibility,
+              reflectionPredicate,
+              classnames,
+              coveredClassnames,
+              methodSignatures,
+              classNameErrorHandler,
+              GenInputsAbstract.literals_file);
     } catch (OperationParseException e) {
       fail("operation parse exception thrown: " + e);
     } catch (NoSuchMethodException e) {

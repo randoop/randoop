@@ -119,7 +119,7 @@ public class OperationModel extends AbstractOperationModel {
    * @throws OperationParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
-  public static AbstractOperationModel createModel(
+  public static OperationModel createModel(
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
       Set<String> classnames,
@@ -147,7 +147,7 @@ public class OperationModel extends AbstractOperationModel {
     return model;
   }
 
-  public static AbstractOperationModel createModel(
+  public static OperationModel createModel(
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
       Set<String> classnames,
@@ -317,7 +317,7 @@ public class OperationModel extends AbstractOperationModel {
     mgr.add(new CheckRepExtractor(this.contracts));
     if (literalsFileList.contains("CLASSES")) {
       mgr.add(new ClassLiteralExtractor(this.classLiteralMap, null));
-      // tfFrequency is null, since it's only applicable when called by ConstantMiningOperationModel
+      // tfFrequency is null, since it's only applicable when called by WeightedConstantsOperationModel
       // OperationModel doesn't use a tfFrequency
     }
 

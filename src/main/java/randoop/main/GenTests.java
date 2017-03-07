@@ -37,7 +37,7 @@ import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
 import randoop.reflection.AbstractOperationModel;
-import randoop.reflection.ConstantMiningOperationModel;
+import randoop.reflection.WeightedConstantsOperationModel;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PackageVisibilityPredicate;
@@ -226,7 +226,7 @@ public class GenTests extends GenInputsAbstract {
     try {
       if (GenInputsAbstract.weighted_constants) {
         operationModel =
-            ConstantMiningOperationModel.createModel(
+            WeightedConstantsOperationModel.createModel(
                 visibility,
                 reflectionPredicate,
                 classnames,
@@ -347,8 +347,8 @@ public class GenTests extends GenInputsAbstract {
         || GenInputsAbstract.weighted_constants) {
 
       Map<Sequence, Integer> tfFrequencies = null;
-      if (operationModel instanceof ConstantMiningOperationModel) {
-        tfFrequencies = ((ConstantMiningOperationModel) operationModel).getTfFrequency();
+      if (operationModel instanceof WeightedConstantsOperationModel) {
+        tfFrequencies = ((WeightedConstantsOperationModel) operationModel).getTfFrequency();
       }
       int num_classes = operationModel.getClassTypes().size();
 

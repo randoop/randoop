@@ -303,15 +303,14 @@ public class InstantiationTest {
     OperationModel model = null;
     try {
       model =
-          (OperationModel)
-              OperationModel.createModel(
-                  visibility,
-                  reflectionPredicate,
-                  names,
-                  exercisedClassnames,
-                  methodSignatures,
-                  errorHandler,
-                  literalsFileList);
+          OperationModel.createModel(
+              visibility,
+              reflectionPredicate,
+              names,
+              exercisedClassnames,
+              methodSignatures,
+              errorHandler,
+              literalsFileList);
     } catch (OperationParseException e) {
       fail("failed to parse operation: " + e.getMessage());
     } catch (NoSuchMethodException e) {
