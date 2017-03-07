@@ -344,12 +344,12 @@ public class GenTests extends GenInputsAbstract {
     AbstractGenerator explorer;
     if (GenInputsAbstract.output_sequence_info
         || GenInputsAbstract.weighted_sequences
-        || GenInputsAbstract.weighted_constants) { // TODO: check this conditional
+        || GenInputsAbstract.weighted_constants) {
 
       Map<Sequence, Integer> tfFrequencies = null;
       if (operationModel instanceof ConstantMiningOperationModel) {
         tfFrequencies = ((ConstantMiningOperationModel) operationModel).getTfFrequency();
-      } // b/c we don't need constant mining stuff if we're not using that model
+      }
       int num_classes = operationModel.getClassTypes().size();
 
       explorer =
