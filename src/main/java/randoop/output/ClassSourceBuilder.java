@@ -22,7 +22,7 @@ public class ClassSourceBuilder extends SourceBuilder {
   private List<String> classAnnotation;
 
   /** The members of the class */
-  private List<String> memberDeclarations;
+  private List<List<String>> memberDeclarations;
 
   /**
    * Creates a {@link ClassSourceBuilder} for a class with the given name and package.
@@ -68,13 +68,15 @@ public class ClassSourceBuilder extends SourceBuilder {
 
   public void addMember(String declarationString) {
     if (declarationString != null && !declarationString.isEmpty()) {
-      memberDeclarations.add(declarationString);
+      List<String> declarationLines = new ArrayList<>();
+      declarationLines.add(declarationString);
+      memberDeclarations.add(declarationLines);
     }
   }
 
   public void addMember(List<String> declarationLines) {
     if (declarationLines != null && !declarationLines.isEmpty()) {
-      memberDeclarations.addAll(declarationLines);
+      memberDeclarations.add(declarationLines);
     }
   }
 
@@ -98,9 +100,11 @@ public class ClassSourceBuilder extends SourceBuilder {
     }
 
     lines.add(createLine("public", "class", classname, "{"));
-    indent();
-    for (String memberDeclaration : memberDeclarations) {
-      lines.add(createLine(memberDeclaration));
+    increaseIndent();
+    for (List<String> memberDeclaration : memberDeclarations) {
+      for (String line : memberDeclaration) {
+        lines.add(createLine(line));
+      }
       lines.add(createLine());
     }
     reverseIndent();

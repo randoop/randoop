@@ -53,6 +53,7 @@ public class MethodSourceBuilder extends SourceBuilder {
     }
   }
 
+  @Override
   List<String> toLines() {
     List<String> lines = new ArrayList<>();
     for (String annotation : annotations) {
@@ -65,7 +66,7 @@ public class MethodSourceBuilder extends SourceBuilder {
     }
     suffix = suffix + "{";
     lines.add(createLine(modifiers, returnTypeName, methodName, paramText, suffix));
-    indent();
+    increaseIndent();
     for (String line : bodyText) {
       lines.add(createLine(line));
     }
