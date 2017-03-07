@@ -1,3 +1,8 @@
+Version 3.0.10, released March 6, 2017
+
+Avoids Randoop failures due to issues that arise during test generation.
+
+
 Version 3.0.9, released February 22, 2017
 
 New option --stop-on-error-test stops test generation once an
