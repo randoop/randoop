@@ -30,6 +30,7 @@ import randoop.generation.ForwardGenerator;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
+import randoop.generation.WeightedComponentManager;
 import randoop.input.toradocu.ToradocuConditionCollection;
 import randoop.instrument.ExercisedClassVisitor;
 import randoop.operation.Operation;
@@ -306,7 +307,15 @@ public class GenTests extends GenInputsAbstract {
     components.addAll(SeedSequences.defaultSeeds());
     components.addAll(operationModel.getAnnotatedTestValues());
 
-    ComponentManager componentMgr = new ComponentManager(components);
+    ComponentManager componentMgr;
+    if (GenInputsAbstract.weighted_sequences
+        || GenInputsAbstract.weighted_constants
+        || GenInputsAbstract.output_sequence_info) {
+      componentMgr = new WeightedComponentManager(components);
+    } else {
+      componentMgr = new ComponentManager(components);
+    }
+
     operationModel.addClassLiterals(
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
@@ -337,7 +346,6 @@ public class GenTests extends GenInputsAbstract {
         || GenInputsAbstract.weighted_sequences
         || GenInputsAbstract.weighted_constants) { // TODO: check this conditional
 
-      // assert operationModel instanceof ConstantMiningOperationModel; TODO: yolo
       Map<Sequence, Integer> tfFrequencies = null;
       if (operationModel instanceof ConstantMiningOperationModel) {
         tfFrequencies = ((ConstantMiningOperationModel) operationModel).getTfFrequency();
@@ -351,7 +359,7 @@ public class GenTests extends GenInputsAbstract {
               timelimit * 1000,
               inputlimit,
               outputlimit,
-              componentMgr,
+              (WeightedComponentManager) componentMgr,
               listenerMgr,
               num_classes,
               tfFrequencies);
@@ -533,8 +541,7 @@ public class GenTests extends GenInputsAbstract {
       }
 
       // always overwrite, should only exist from prior runs
-      out =
-          createTextOutputStream("sequenceInfo.csv"); // TODO: maybe just new FileOutputStream(..)
+      out = createTextOutputStream("sequenceInfo.csv"); // TODO: maybe just new FileOutputStream(..)
       StringBuilder body = new StringBuilder();
 
       body.append(debugMap.keySet().size()); // number of sequences

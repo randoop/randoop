@@ -32,7 +32,7 @@ public class DigDogGenerator extends ForwardGenerator {
       long timeMillis,
       int maxGenSequences,
       int maxOutSequences,
-      ComponentManager componentManager,
+      WeightedComponentManager componentManager,
       RandoopListenerManager listenerManager,
       int numClasses,
       Map<Sequence, Integer> tfFrequency) {
@@ -55,7 +55,7 @@ public class DigDogGenerator extends ForwardGenerator {
       long timeMillis,
       int maxGenSequences,
       int maxOutSequences,
-      ComponentManager componentManager,
+      WeightedComponentManager componentManager,
       IStopper stopper,
       RandoopListenerManager listenerManager,
       int numClasses,

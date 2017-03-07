@@ -2,9 +2,7 @@ package randoop.generation;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedClassOperation;
@@ -51,9 +49,7 @@ public class ComponentManager {
    */
   // Is never null. Contains both general components
   // and seed sequences.
-  private SequenceCollection gralComponents;
-
-  private Map<Sequence, Integer> frequencyMap;
+  protected SequenceCollection gralComponents;
 
   /**
    * The subset of the sequences that were given pre-generation to the component
@@ -62,31 +58,29 @@ public class ComponentManager {
   // Seeds are all contained in gralComponents. This list
   // is kept to restore seeds if the user calls
   // clearGeneratedSequences().
-  private final Collection<Sequence> gralSeeds;
+  protected final Collection<Sequence> gralSeeds;
 
   /**
    * A set of additional components representing literals that should only be
    * used as input to specific classes.
    */
   // May be null, which represents no class literals present.
-  private ClassLiterals classLiterals = null;
+  protected ClassLiterals classLiterals = null;
 
   /**
    * A set of additional components representing literals that should only be
    * used as input to specific packages.
    */
   // May be null, which represents no package literals present.
-  private PackageLiterals packageLiterals = null;
+  protected PackageLiterals packageLiterals = null;
 
-  private Set<Type> sequenceTypes;
+  protected Set<Type> sequenceTypes;
 
   /**
    * Create an empty component manager, with an empty seed sequence set.
    */
   public ComponentManager() {
-    if (GenInputsAbstract.weighted_constants) {
-      frequencyMap = new LinkedHashMap<>();
-    }
+
     gralComponents = new SequenceCollection();
     gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
   }
@@ -100,9 +94,6 @@ public class ComponentManager {
    *          is considered empty.
    */
   public ComponentManager(Collection<Sequence> generalSeeds) {
-    if (GenInputsAbstract.weighted_constants) {
-      frequencyMap = new LinkedHashMap<>();
-    }
     Set<Sequence> seedSet = new LinkedHashSet<>(generalSeeds.size());
     seedSet.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSet);
@@ -154,13 +145,6 @@ public class ComponentManager {
    */
   public void addGeneratedSequence(Sequence seq) {
     gralComponents.add(seq);
-    if (GenInputsAbstract.weighted_constants) {
-      if (frequencyMap.containsKey(seq)) {
-        frequencyMap.put(seq, frequencyMap.get(seq) + 1);
-      } else {
-        frequencyMap.put(seq, 1);
-      }
-    }
   }
 
   /**
@@ -204,7 +188,7 @@ public class ComponentManager {
   @SuppressWarnings("unchecked")
   SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i) {
     if (GenInputsAbstract.weighted_constants) {
-      return getSequencesForTypeGRT(operation, i);
+      return getSequencesForWeightedConstants(operation, i);
     }
     Type neededType = operation.getInputTypes().get(i);
 
@@ -236,8 +220,14 @@ public class ComponentManager {
     return ret;
   }
 
-  //TODO: commenting
-  SimpleList<Sequence> getSequencesForTypeGRT(TypedOperation operation, int i) {
+  /**
+   *
+   * @param operation  the statement
+   * @param i  the input value index of statement
+   * @return the sequences that create values of the given type for weighted constants
+   */
+  @SuppressWarnings("unchecked")
+  private SimpleList<Sequence> getSequencesForWeightedConstants(TypedOperation operation, int i) {
     Type neededType = operation.getInputTypes().get(i);
     if (Randomness.weightedCoinFlip(GenInputsAbstract.p_const)) {
       ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
@@ -251,10 +241,6 @@ public class ComponentManager {
       return gralComponents.getSequencesForType(neededType, false);
     }
     return null;
-  }
-
-  public Map<Sequence, Integer> getFrequencyMap() {
-    return frequencyMap;
   }
 
   /**
