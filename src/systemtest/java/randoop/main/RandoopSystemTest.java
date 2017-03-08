@@ -1184,9 +1184,9 @@ public class RandoopSystemTest {
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
 
     // TODO: maybe just generate and compile
-    //generateAndCompile(testEnvironment, options);
+    generateAndCompile(testEnvironment, options);
 
-    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+    //generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
 
     /*
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;

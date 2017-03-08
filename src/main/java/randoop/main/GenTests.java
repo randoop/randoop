@@ -159,7 +159,14 @@ public class GenTests extends GenInputsAbstract {
     // }
 
     if (GenInputsAbstract.weighted_sequences) {
-      System.out.println("Orienteering is enabled");
+      System.out.println("Weighted Sequences is enabled");
+    }
+    if (GenInputsAbstract.weighted_constants) {
+      System.out.println(
+          "Weighted constants is enabled.  With p_const = " + GenInputsAbstract.p_const);
+    }
+    if (GenInputsAbstract.output_sequence_info) {
+      System.out.println("Sequence information output is enabled.");
     }
 
     // If some properties were specified, set them
@@ -519,7 +526,7 @@ public class GenTests extends GenInputsAbstract {
     if (GenInputsAbstract.output_sequence_info) {
       DigDogGenerator fExplorer =
           (DigDogGenerator) explorer; // should work, explorer should always be a forw.gen.
-      Map<Sequence, List<String>> debugMap = fExplorer.getSequenceDebugMap();
+      Map<Sequence, List<Integer>> debugMap = fExplorer.getSequenceSizeMap();
       writeTestInfo(debugMap);
     }
 
@@ -527,39 +534,37 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Write each sequence's info out to "test.csv" in .csv format
+   * Write each sequence's info out to GenInputsAbstract.output_sequence_info_filename in .csv format
    * Its info is essentially snapshots of its weight formulas and how they change
-   * TODO: maybe order the sequences for comparison purposes
-   * @param debugMap
+   * @param sequenceSizeMap the map of all executed sequences to their sizes
    */
-  private void writeTestInfo(Map<Sequence, List<String>> debugMap) {
-    File tempDir = new File("sequenceInfo.csv");
+  private void writeTestInfo(Map<Sequence, List<Integer>> sequenceSizeMap) {
+    File tempDir = new File(GenInputsAbstract.output_sequence_info_filename);
     PrintStream out;
     try {
       if (!tempDir.exists()) {
         tempDir.createNewFile();
       }
-
       // always overwrite, should only exist from prior runs
-      out = createTextOutputStream("sequenceInfo.csv"); // TODO: maybe just new FileOutputStream(..)
+      out = createTextOutputStream(GenInputsAbstract.output_sequence_info_filename);
       StringBuilder body = new StringBuilder();
 
-      body.append(debugMap.keySet().size()); // number of sequences
+      body.append(sequenceSizeMap.keySet().size()); // number of sequences
       body.append(',');
 
       int accumulatedSequenceSize = 0;
-      for (Sequence seq : debugMap.keySet()) {
-        for (String s : debugMap.get(seq)) {
-          accumulatedSequenceSize +=
-              s.toCharArray()[6]; // gets the size of the sequence, not sqrt'd
+      for (Sequence seq : sequenceSizeMap.keySet()) {
+        for (Integer i : sequenceSizeMap.get(seq)) {
+          accumulatedSequenceSize += i; // gets the size of the sequence, not sqrt'd
         }
       }
-      double avgSeqSize = accumulatedSequenceSize * 1.0 / debugMap.keySet().size();
-      body.append(avgSeqSize); // avg sequence size
+      double avgSeqSize = accumulatedSequenceSize * 1.0 / sequenceSizeMap.keySet().size();
+      body.append(avgSeqSize);
 
       out.println(body.toString());
     } catch (IOException e) {
-      System.out.println("Couldn't create test-output file");
+      System.out.println(
+          "Couldn't create output file: " + GenInputsAbstract.output_sequence_info_filename);
       e.printStackTrace();
     }
   }

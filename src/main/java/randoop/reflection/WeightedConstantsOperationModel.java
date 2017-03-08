@@ -115,8 +115,7 @@ public class WeightedConstantsOperationModel extends AbstractOperationModel {
    * @throws OperationParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
-  // TODO discuss with Randoop developers how to appropriately handle static model creation
-  // with extensions
+  // TODO discuss with Randoop developers how to appropriately handle static model creation with extensions
   public static WeightedConstantsOperationModel createModel(
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
