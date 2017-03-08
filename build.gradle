@@ -471,6 +471,8 @@ javadoc.doLast {
   }
 }
 
+build.dependsOn javadoc
+
 /*
  * Configuration of updateUserTOC task to update the table-of-contents for the
  * user documentation.
