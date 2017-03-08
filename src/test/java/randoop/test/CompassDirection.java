@@ -1,9 +1,8 @@
 package randoop.test;
 
 /**
- * CompassDirection enum based on examples from Java Language Specification
- * intended to be used with tests in Randoop.
- *
+ * CompassDirection enum based on examples from Java Language Specification intended to be used with
+ * tests in Randoop.
  */
 public enum CompassDirection {
   NORTH {

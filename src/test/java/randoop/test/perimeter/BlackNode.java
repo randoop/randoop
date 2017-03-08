@@ -1,12 +1,13 @@
 package randoop.test.perimeter;
 /**
- * A class to represent a black quad tree node in the image.
- * A black node represents a block of an image that contains only 1's.
+ * A class to represent a black quad tree node in the image. A black node represents a block of an
+ * image that contains only 1's.
  */
 public class BlackNode extends QuadTreeNode {
 
   /**
    * Construct a <tt>black</tt> quad tree node.
+   *
    * @param quadrant the quadrant that this node represents
    * @param parent quad tree node
    */
@@ -16,6 +17,7 @@ public class BlackNode extends QuadTreeNode {
 
   /**
    * Compute the perimeter for a black node.
+   *
    * @param size
    */
   @Override
@@ -53,8 +55,8 @@ public class BlackNode extends QuadTreeNode {
   }
 
   /**
-   * Sum the perimeter of all white leaves in the two specified
-   * quadrants of the sub quad tree rooted at this node.
+   * Sum the perimeter of all white leaves in the two specified quadrants of the sub quad tree
+   * rooted at this node.
    *
    * @param quad1 the first specified quadrant
    * @param quad2 the second specified quadrant

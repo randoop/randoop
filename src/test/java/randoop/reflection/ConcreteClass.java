@@ -2,9 +2,7 @@ package randoop.reflection;
 
 import randoop.TestValue;
 
-/**
- * An example class to test harvesting of types and operations.
- */
+/** An example class to test harvesting of types and operations. */
 public class ConcreteClass {
 
   public String thePublicField;

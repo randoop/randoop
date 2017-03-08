@@ -1,11 +1,12 @@
 package randoop.test;
 
-import org.junit.Test;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
-
+import org.junit.Test;
 import randoop.DummyVisitor;
 import randoop.operation.ConstructorCall;
 import randoop.operation.TypedClassOperation;
@@ -14,14 +15,11 @@ import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.Type;
 import randoop.types.RandoopTypeException;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.ReflectionExecutor;
 import randoop.util.TimeoutExceededException;
-
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class NonterminatingInputTest {
 

@@ -2,9 +2,7 @@ package randoop.main;
 
 import java.nio.file.Path;
 
-/**
- * Manages the environment for an individual system test method.
- */
+/** Manages the environment for an individual system test method. */
 class TestEnvironment {
 
   /** The current working directory. */
@@ -28,11 +26,11 @@ class TestEnvironment {
   /**
    * Creates a test environment for a specific system test method.
    *
-   * @param systemTestEnvironment  the working environment for the system test
-   * @param workingDir  the working directory for the test method
-   * @param sourceDir  the source directory for Randoop generated tests
-   * @param classDir  the directory for compiled Randoop generated tests
-   * @param jacocoDir  the directory for output of JaCoCo when running Randoop generated tests
+   * @param systemTestEnvironment the working environment for the system test
+   * @param workingDir the working directory for the test method
+   * @param sourceDir the source directory for Randoop generated tests
+   * @param classDir the directory for compiled Randoop generated tests
+   * @param jacocoDir the directory for output of JaCoCo when running Randoop generated tests
    */
   TestEnvironment(
       SystemTestEnvironment systemTestEnvironment,

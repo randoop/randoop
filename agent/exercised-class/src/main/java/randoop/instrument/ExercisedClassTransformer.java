@@ -6,28 +6,26 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.reflect.Modifier;
 import java.security.ProtectionDomain;
-
-import randoop.BugInRandoopException;
-
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.CtMethod;
+import randoop.BugInRandoopException;
 
 /**
- * A {@code java.lang.instrument.ClassTransformer} that instruments loaded
- * classes to determine if exercised.
- * Does the following instrumentation of each class:
+ * A {@code java.lang.instrument.ClassTransformer} that instruments loaded classes to determine if
+ * exercised. Does the following instrumentation of each class:
+ *
  * <ol>
- * <li> Adds a static boolean flag to the class. Initially set to false.
- * <li> Adds a statement at the beginning of each method and constructor that
- *      sets the flag.
- * <li> Adds a static method that polls and resets the value of the flag.
+ *   <li>Adds a static boolean flag to the class. Initially set to false.
+ *   <li>Adds a statement at the beginning of each method and constructor that sets the flag.
+ *   <li>Adds a static method that polls and resets the value of the flag.
  * </ol>
- * Avoids instrumenting JDK and JUnit classes and skips interfaces.
- * Otherwise, all other classes are instrumented.
+ *
+ * Avoids instrumenting JDK and JUnit classes and skips interfaces. Otherwise, all other classes are
+ * instrumented.
  *
  * @see ExercisedAgent
  * @see #modifyClass(CtClass)
@@ -37,19 +35,15 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
   /** the class pool used to load class files */
   private ClassPool pool;
 
-  /**
-   * Create {@code ExercisedClassTransformer}.
-   */
+  /** Create {@code ExercisedClassTransformer}. */
   public ExercisedClassTransformer() {
     super();
     pool = ClassPool.getDefault();
   }
 
   /**
-   * {@inheritDoc}
-   * Transforms bytecode for a class by adding "exercised" instrumentation.
-   * Avoids JDK and JUnit classes, interfaces and any "frozen" classes that
-   * have already been loaded.
+   * {@inheritDoc} Transforms bytecode for a class by adding "exercised" instrumentation. Avoids JDK
+   * and JUnit classes, interfaces and any "frozen" classes that have already been loaded.
    */
   @Override
   public byte[] transform(
@@ -112,15 +106,13 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
   }
 
   /**
-   * Instruments the bytecode of the given class object to track constructor and
-   * method calls for the class. Modifies each method and constructor to set an
-   * inserted private field that keeps track.
-   * Adds a public method {@code boolean randoop_checkAndReset()}
-   * @see #transform(ClassLoader, String, Class, ProtectionDomain, byte[])
+   * Instruments the bytecode of the given class object to track constructor and method calls for
+   * the class. Modifies each method and constructor to set an inserted private field that keeps
+   * track. Adds a public method {@code boolean randoop_checkAndReset()}
    *
-   * @param cc  the {@code javassist.CtClass} object
-   * @throws CannotCompileException
-   *           if inserted code doesn't compile
+   * @see #transform(ClassLoader, String, Class, ProtectionDomain, byte[])
+   * @param cc the {@code javassist.CtClass} object
+   * @throws CannotCompileException if inserted code doesn't compile
    */
   private void modifyClass(CtClass cc) {
     // add static field

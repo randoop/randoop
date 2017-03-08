@@ -1,11 +1,9 @@
 package randoop.sequence;
 
-import randoop.sequence.Sequence;
-
 /**
- * For a given package P, PackageLiterals maps P (if present) to a collection of
- * literals (represented as single-element sequences) that can be used as inputs
- * to classes in the given package.
+ * For a given package P, PackageLiterals maps P (if present) to a collection of literals
+ * (represented as single-element sequences) that can be used as inputs to classes in the given
+ * package.
  */
 public class PackageLiterals extends MappedSequences<Package> {
 

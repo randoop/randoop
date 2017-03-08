@@ -1,9 +1,8 @@
 package randoop.field;
 
 /**
- * ClassWithFields is a class used for tests of handling of
- * public fields in setting up for test generation.
- *
+ * ClassWithFields is a class used for tests of handling of public fields in setting up for test
+ * generation.
  */
 public class ClassWithFields {
   public ClassWithFields() {}

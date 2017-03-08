@@ -1,8 +1,6 @@
 package randoop.reflection;
 
-/**
- * For randoop.reflection.InstantiationTest.
- */
+/** For randoop.reflection.InstantiationTest. */
 enum Word {
   WORD,
   MOT;

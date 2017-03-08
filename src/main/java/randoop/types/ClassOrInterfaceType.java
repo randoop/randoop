@@ -2,22 +2,23 @@ package randoop.types;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
 /**
  * Represents a class or interface type as defined in JLS Section 4.3.
- * <p>
- * This abstract class corresponds to the grammar in the JLS:
+ *
+ * <p>This abstract class corresponds to the grammar in the JLS:
+ *
  * <pre>
  *   ClassOrInterfaceType:
  *     ClassType
  *     InterfaceType
  * </pre>
+ *
  * Since InterfaceType is syntactically the same as ClassType, the subclasses of this type
- * distinguish between types with parameters ({@link ParameterizedType}), and types without
- * ({@link NonParameterizedType}).
+ * distinguish between types with parameters ({@link ParameterizedType}), and types without ({@link
+ * NonParameterizedType}).
  */
 public abstract class ClassOrInterfaceType extends ReferenceType {
 
@@ -25,12 +26,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   private ClassOrInterfaceType enclosingType = null;
 
   /**
-   * Translates a {@code Class} object that represents a class or interface into a
-   * {@code ClassOrInterfaceType} object.
-   * If the object has parameters, then delegates to {@link ParameterizedType#forClass(Class)}.
-   * Otherwise, creates a {@link NonParameterizedType} object from the given object.
+   * Translates a {@code Class} object that represents a class or interface into a {@code
+   * ClassOrInterfaceType} object. If the object has parameters, then delegates to {@link
+   * ParameterizedType#forClass(Class)}. Otherwise, creates a {@link NonParameterizedType} object
+   * from the given object.
    *
-   * @param classType  the class type to translate
+   * @param classType the class type to translate
    * @return the {@code ClassOrInterfaceType} object created from the given class type
    */
   public static ClassOrInterfaceType forClass(Class<?> classType) {
@@ -51,13 +52,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Creates a {@code ClassOrInterfaceType} object for a given
-   * {@code java.lang.reflect.Type} reference.
-   * If type is a {@code java.lang.reflect.ParameterizedType}, then calls
-   * {@link ParameterizedType#forType(java.lang.reflect.Type)}.
-   * Otherwise, if type is a {@code Class} object, calls {@link #forClass(Class)}.
+   * Creates a {@code ClassOrInterfaceType} object for a given {@code java.lang.reflect.Type}
+   * reference. If type is a {@code java.lang.reflect.ParameterizedType}, then calls {@link
+   * ParameterizedType#forType(java.lang.reflect.Type)}. Otherwise, if type is a {@code Class}
+   * object, calls {@link #forClass(Class)}.
    *
-   * @param type  the type reference
+   * @param type the type reference
    * @return the {@code ClassOrInterfaceType} object for the given type
    */
   public static ClassOrInterfaceType forType(java.lang.reflect.Type type) {
@@ -97,9 +97,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * {@inheritDoc}
-   * This abstract method allows substitutions to be applied to {@link ClassOrInterfaceType} objects
-   * without casting.
+   * {@inheritDoc} This abstract method allows substitutions to be applied to {@link
+   * ClassOrInterfaceType} objects without casting.
    */
   @Override
   public abstract ClassOrInterfaceType apply(Substitution<ReferenceType> substitution);
@@ -108,8 +107,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * Applies the substitution to the enclosing type of this type and adds the result as the
    * enclosing class of the given type.
    *
-   * @param substitution  the substitution to apply to the enclosing type
-   * @param type  the type to which resulting enclosing type is to be added
+   * @param substitution the substitution to apply to the enclosing type
+   * @param type the type to which resulting enclosing type is to be added
    * @return the type with enclosing type added if needed
    */
   final ClassOrInterfaceType apply(
@@ -127,8 +126,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    * Applies capture conversion to the enclosing type of this type and adds the result as the
    * enclosing class of the given type.
    *
-   * @param type  this type with capture conversion applied
-   * @return  the type with converted enclosing type
+   * @param type this type with capture conversion applied
+   * @return the type with converted enclosing type
    */
   final ClassOrInterfaceType applyCaptureConversion(ClassOrInterfaceType type) {
     if (this.isMemberClass() && !this.isStatic()) {
@@ -138,8 +137,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Returns the name of this class type.
-   * Does not include package, enclosing classes, or type arguments.
+   * Returns the name of this class type. Does not include package, enclosing classes, or type
+   * arguments.
    *
    * @return the name of this class
    */
@@ -174,8 +173,8 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
   /**
    * Returns the interface types directly implemented or extended by this class or interface type.
-   * Preserves the order in the reflection method {@link Class#getGenericInterfaces()}.
-   * If no interfaces are implemented/extended, then returns the empty list.
+   * Preserves the order in the reflection method {@link Class#getGenericInterfaces()}. If no
+   * interfaces are implemented/extended, then returns the empty list.
    *
    * @return the list of interfaces implemented or extended by this type
    */
@@ -197,23 +196,21 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   /**
    * Returns the non-parameterized form of this class type.
    *
-   * @return  the non-parameterized form of this class type
+   * @return the non-parameterized form of this class type
    */
   public abstract NonParameterizedType getRawtype();
 
   /**
    * Finds the parameterized type that is a supertype of this class that also matches the given
-   * generic class.
-   * For example, if {@code class C<T> implements Comparator<T>} and
-   * {@code class A extends C<String>}, then when applied to {@code A}, this method would return
-   * {@code C<String>} when given {@code C<T>}, and {@code Comparator<String>} when given
-   * {@code Comparator<E>}.
+   * generic class. For example, if {@code class C<T> implements Comparator<T>} and {@code class A
+   * extends C<String>}, then when applied to {@code A}, this method would return {@code C<String>}
+   * when given {@code C<T>}, and {@code Comparator<String>} when given {@code Comparator<E>}.
    * Returns null if there is no such type.
-   * <p>
-   * Performs a depth-first search of the supertype relation for this type.
-   * If the goal type is an interface, then searches the interfaces of this type first.
    *
-   * @param goalType  the generic class type
+   * <p>Performs a depth-first search of the supertype relation for this type. If the goal type is
+   * an interface, then searches the interfaces of this type first.
+   *
+   * @param goalType the generic class type
    * @return the instantiated type matching the goal type, or null
    */
   public InstantiatedType getMatchingSupertype(GenericClassType goalType) {
@@ -254,12 +251,12 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
   /**
    * Computes a substitution that can be applied to the type variables of the generic goal type to
-   * instantiate operations of this type, possibly inherited from from the goal type.
-   * The substitution will unify this type or a supertype of this type with the given goal type.
+   * instantiate operations of this type, possibly inherited from from the goal type. The
+   * substitution will unify this type or a supertype of this type with the given goal type.
    *
-   * If there is no unifying substitution, returns {@code null}.
+   * <p>If there is no unifying substitution, returns {@code null}.
    *
-   * @param goalType  the generic type for which a substitution is needed
+   * @param goalType the generic type for which a substitution is needed
    * @return a substitution unifying this type or a supertype of this type with the goal type
    */
   public Substitution<ReferenceType> getInstantiatingSubstitution(ClassOrInterfaceType goalType) {
@@ -329,10 +326,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * {@inheritDoc}
-   * For a {@link ClassOrInterfaceType} that is a member class, if
-   * {@code otherType} is also a member class, then the enclosing type of
-   * this type must instantiate the enclosing type of {@code otherType}.
+   * {@inheritDoc} For a {@link ClassOrInterfaceType} that is a member class, if {@code otherType}
+   * is also a member class, then the enclosing type of this type must instantiate the enclosing
+   * type of {@code otherType}.
    */
   @Override
   public boolean isInstantiationOf(ReferenceType otherType) {
@@ -348,8 +344,9 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Indicate whether this class is a member of another class.
-   * (see <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.5">JLS section 8.5</a>)
+   * Indicate whether this class is a member of another class. (see <a
+   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.5">JLS section
+   * 8.5</a>)
    *
    * @return true if this class is a member class, false otherwise
    */
@@ -370,14 +367,14 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   public abstract boolean isStatic();
 
   /**
-   * Test whether this type is a subtype of the given type according to
-   * transitive closure of definition of the <i>direct supertype</i> relation in
-   * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.2">
-   * section 4.10.2 of JLS for JavaSE 8</a>.
+   * Test whether this type is a subtype of the given type according to transitive closure of
+   * definition of the <i>direct supertype</i> relation in <a
+   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.2">section 4.10.2
+   * of JLS for JavaSE 8</a>.
+   *
    * @see #isAssignableFrom(Type)
    * @see ParameterizedType#isSubtypeOf(Type)
-   *
-   * @param otherType  the possible supertype
+   * @param otherType the possible supertype
    * @return true if this type is a subtype of the given type, false otherwise
    */
   @Override
@@ -429,7 +426,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   /**
    * Sets the enclosing type for this class type.
    *
-   * @param enclosingType  the type for the class enclosing the declaration of this type
+   * @param enclosingType the type for the class enclosing the declaration of this type
    */
   private void setEnclosingType(ClassOrInterfaceType enclosingType) {
     this.enclosingType = enclosingType;

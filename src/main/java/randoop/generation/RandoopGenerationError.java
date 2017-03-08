@@ -2,9 +2,7 @@ package randoop.generation;
 
 import randoop.operation.TypedOperation;
 
-/**
- * Error class to signal generation errors that should stop Randoop execution.
- */
+/** Error class to signal generation errors that should stop Randoop execution. */
 public class RandoopGenerationError extends Error {
 
   private static final long serialVersionUID = -2655768762421700468L;
@@ -16,8 +14,8 @@ public class RandoopGenerationError extends Error {
    * Create a {@link RandoopGenerationError} representing an error that occurs during the generation
    * of a sequence for the given operation.
    *
-   * @param operation  the actual operation
-   * @param exception  the exception thrown during generation
+   * @param operation the actual operation
+   * @param exception the exception thrown during generation
    */
   RandoopGenerationError(TypedOperation operation, Throwable exception) {
     this.operation = operation;
@@ -25,7 +23,8 @@ public class RandoopGenerationError extends Error {
   }
 
   /**
-   * Returns the name of the {@code java.lang.reflect.AccessibleObject} underlying the operation in this object.
+   * Returns the name of the {@code java.lang.reflect.AccessibleObject} underlying the operation in
+   * this object.
    *
    * @return the name of the reflection object for the operation
    */

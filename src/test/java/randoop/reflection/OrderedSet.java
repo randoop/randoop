@@ -6,10 +6,8 @@ import java.util.Iterator;
 import java.util.SortedSet;
 
 /**
- * Input class for testing type instantiation.  SortedSet classes have the property that
- * the order on the element type may be defined as the "natural order" or by a {@code Comparator}
- * object.
- *
+ * Input class for testing type instantiation. SortedSet classes have the property that the order on
+ * the element type may be defined as the "natural order" or by a {@code Comparator} object.
  */
 public class OrderedSet<E> implements SortedSet<E> {
 

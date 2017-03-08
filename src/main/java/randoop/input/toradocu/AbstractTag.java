@@ -2,9 +2,7 @@ package randoop.input.toradocu;
 
 import java.util.Objects;
 
-/**
- * This is a Toradocu class borrowed to allow deserialization of JSON.
- */
+/** This is a Toradocu class borrowed to allow deserialization of JSON. */
 class AbstractTag implements Tag {
 
   /** The comment associated with the exception. */
@@ -22,7 +20,7 @@ class AbstractTag implements Tag {
   /**
    * Constructs a {@code Tag} with the given comment.
    *
-   * @param kind  the kind of the created tag
+   * @param kind the kind of the created tag
    * @param comment the comment associated with the exception
    * @throws NullPointerException if comment is null
    */

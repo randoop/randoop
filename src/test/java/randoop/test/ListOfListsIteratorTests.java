@@ -3,7 +3,6 @@ package randoop.test;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import junit.framework.TestCase;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;

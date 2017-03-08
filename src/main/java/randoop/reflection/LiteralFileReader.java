@@ -2,7 +2,6 @@ package randoop.reflection;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
@@ -14,8 +13,8 @@ import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;
 
 /**
- * Method {@link #parse} reads a file specifying literal values to use during
- * generation. The text file should contain one or more records of the form:
+ * Method {@link #parse} reads a file specifying literal values to use during generation. The text
+ * file should contain one or more records of the form:
  *
  * <pre>
  * START CLASSLITERALS
@@ -29,30 +28,24 @@ import randoop.util.RecordProcessor;
  * </pre>
  *
  * Capitalized text must appear literally. Lowercase text is as follows:
+ *
  * <ul>
- * <li>classname is the fully-qualified name of a valid class. More
- * specifically, TypeNames.getTypeForName(classname) must return a valid Class
- * object.
- * <li>Each type:value pair describes the type and value of a literal (for
- * example, <code>int:3</code>).
+ *   <li>classname is the fully-qualified name of a valid class. More specifically,
+ *       TypeNames.getTypeForName(classname) must return a valid Class object.
+ *   <li>Each type:value pair describes the type and value of a literal (for example, <code>int:3
+ *       </code>).
  * </ul>
- * Blank lines and comment lines (lines starting with "#") are ignored, both
- * between records and inside records.
- * <p>
  *
- * An example literals file appears in file
- * randoop/systemtests/resources/literalsfile.txt.
- * <p>
+ * Blank lines and comment lines (lines starting with "#") are ignored, both between records and
+ * inside records.
  *
- * LIMITATIONS:
- * <p>
+ * <p>An example literals file appears in file randoop/systemtests/resources/literalsfile.txt.
  *
- * Error messages do not include line numbers pointing to location of the error.
- * </p>
+ * <p>LIMITATIONS:
  *
- * There is no way to specify literals that are not related to any class in
- * particular, or literals that are related to only specific methods within a
- * class.
+ * <p>Error messages do not include line numbers pointing to location of the error. There is no way
+ * to specify literals that are not related to any class in particular, or literals that are related
+ * to only specific methods within a class.
  */
 public class LiteralFileReader {
 
@@ -67,7 +60,7 @@ public class LiteralFileReader {
   /**
    * Returns a map from class to list of constants.
    *
-   * @param inFile  the input file
+   * @param inFile the input file
    * @return the map from types to literal values
    */
   public static MultiMap<ClassOrInterfaceType, Sequence> parse(String inFile) {

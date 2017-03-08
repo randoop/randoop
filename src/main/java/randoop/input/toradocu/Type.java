@@ -2,9 +2,7 @@ package randoop.input.toradocu;
 
 import java.util.Objects;
 
-/**
- * This is a Toradocu class borrowed to allow deserialization of JSON.
- */
+/** This is a Toradocu class borrowed to allow deserialization of JSON. */
 public class Type {
 
   /**
