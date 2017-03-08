@@ -80,6 +80,7 @@ public class TestClassificationTest {
     GenInputsAbstract.npe_on_null_input = BehaviorType.INVALID;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.INVALID;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
+    GenInputsAbstract.sof_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
 
@@ -120,6 +121,7 @@ public class TestClassificationTest {
     GenInputsAbstract.npe_on_null_input = BehaviorType.ERROR;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.ERROR;
+    GenInputsAbstract.sof_exception = BehaviorType.ERROR;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
 
@@ -174,6 +176,7 @@ public class TestClassificationTest {
     GenInputsAbstract.npe_on_null_input = BehaviorType.EXPECTED;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.EXPECTED;
     GenInputsAbstract.oom_exception = BehaviorType.EXPECTED;
+    GenInputsAbstract.sof_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
 
@@ -216,6 +219,7 @@ public class TestClassificationTest {
     GenInputsAbstract.npe_on_null_input = BehaviorType.EXPECTED;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
+    GenInputsAbstract.sof_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
 
@@ -273,6 +277,7 @@ public class TestClassificationTest {
     GenInputsAbstract.npe_on_null_input = BehaviorType.EXPECTED;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
+    GenInputsAbstract.sof_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
 

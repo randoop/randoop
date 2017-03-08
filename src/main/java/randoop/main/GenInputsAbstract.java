@@ -191,13 +191,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static BehaviorType checked_exception = BehaviorType.EXPECTED;
 
   /**
-   * If a test throws an unchecked exception other than <code>OutOfMemoryError</code> and <code>
-   * NullPointerException</code>, should the test be included in the error-revealing test suite
-   * (value: ERROR), regression test suite (value: EXPECTED), or should it be discarded (value:
-   * INVALID)?
+   * If a test throws an unchecked exception other than <code>OutOfMemoryError</code>, <code>
+   * StackOverflowError</code>, and <code>NullPointerException</code>, should the test be included
+   * in the error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or
+   * should it be discarded (value: INVALID)?
    *
-   * <p>The arguments <code>--npe-on-null-input</code>, <code>--npe-on-non-null-input</code>, and
-   * <code>--oom-exception</code> handle special cases of unchecked exceptions.
+   * <p>The arguments <code>--npe-on-null-input</code>, <code>--npe-on-non-null-input</code>, <code>
+   * --oom-exception</code>, and <code>--sof-exception</code> handle special cases of unchecked
+   * exceptions.
    */
   @Option("Whether unchecked exception is an ERROR, EXPECTED or INVALID")
   public static BehaviorType unchecked_exception = BehaviorType.EXPECTED;
@@ -226,6 +227,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Whether OutOfMemoryException is an ERROR, EXPECTED or INVALID")
   public static BehaviorType oom_exception = BehaviorType.INVALID;
+
+  /**
+   * If a test throws a <code>StackOverflowError</code> exception, should it be included in the
+   * error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
+   * it be discarded (value: INVALID)?
+   */
+  @Option("Whether StackOverflowError is an ERROR, EXPECTED or INVALID")
+  public static BehaviorType sof_exception = BehaviorType.INVALID;
 
   /**
    * Ignore the situation where a code sequence that previously executed normally throws an

@@ -354,6 +354,8 @@ public class RandoopSystemTest {
     coverageChecker.ignore("examples.Buggy.BuggyCompareToSubs.hashCode()");
     coverageChecker.ignore("examples.Buggy.BuggyEqualsTransitive.hashCode()");
 
+    coverageChecker.ignore("examples.Buggy.StackOverflowError()");
+
     /* these should be covered, but are in failing assertions and wont show up in JaCoCo results */
     coverageChecker.exclude(
         "examples.Buggy.BuggyCompareToAntiSymmetric.compareTo(java.lang.Object)");

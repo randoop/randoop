@@ -51,6 +51,7 @@ public class ExceptionPredicateTest {
     GenInputsAbstract.npe_on_null_input = BehaviorType.EXPECTED;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
+    GenInputsAbstract.sof_exception = BehaviorType.INVALID;
   }
 
   /*
@@ -138,8 +139,8 @@ public class ExceptionPredicateTest {
     assertFalse("AE is not expected", isExpected.test(assertionExec, s));
     assertFalse("no exception satisfies this predicate", alwaysFalse.test(assertionExec, s));
 
-    assertTrue("SOE is error", isError.test(overflowExec, s));
-    assertFalse("SOE is not invalid", isInvalid.test(overflowExec, s));
+    assertFalse("SOE is not error", isError.test(overflowExec, s));
+    assertTrue("SOE is invalid", isInvalid.test(overflowExec, s));
     assertFalse("SOE is not expected", isExpected.test(overflowExec, s));
     assertFalse("no exception satisfies this predicate", alwaysFalse.test(overflowExec, s));
   }

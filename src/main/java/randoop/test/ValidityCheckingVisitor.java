@@ -54,7 +54,8 @@ public class ValidityCheckingVisitor implements TestCheckGenerator {
         Throwable e = exec.getException();
 
         if (i != finalIndex) {
-          if (throwExceptionOnFlakyTest && !(e instanceof OutOfMemoryError)) {
+          if (throwExceptionOnFlakyTest
+              && !((e instanceof OutOfMemoryError) || (e instanceof StackOverflowError))) {
             throw new SequenceExceptionError(s, i, e);
           }
           checks.add(new InvalidExceptionCheck(e, i, e.getClass().getName()));
