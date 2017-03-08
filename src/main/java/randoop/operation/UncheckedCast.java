@@ -2,7 +2,6 @@ package randoop.operation;
 
 import java.io.PrintStream;
 import java.util.List;
-
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Statement;
@@ -11,32 +10,29 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * An {@link Operation} to perform an explicit cast.
- * NOTE: there is no actual checking of the types being done.
- * This operation is only used in contexts where the cast is known to be unchecked.
+ * An {@link Operation} to perform an explicit cast. NOTE: there is no actual checking of the types
+ * being done. This operation is only used in contexts where the cast is known to be unchecked.
  */
 class UncheckedCast extends CallableOperation {
 
-  /** The result type of the cast.  */
+  /** The result type of the cast. */
   private final Type type;
 
   /**
-   * Creates an operation that performs a cast.
-   * Intended for use in generated sequences where an unchecked cast is needed.
+   * Creates an operation that performs a cast. Intended for use in generated sequences where an
+   * unchecked cast is needed.
    *
-   * @param type  the cast type
+   * @param type the cast type
    */
   UncheckedCast(Type type) {
     this.type = type;
   }
 
   /**
-   * {@inheritDoc}
-   * Performs this cast on the first value of the input array.
+   * {@inheritDoc} Performs this cast on the first value of the input array.
    *
    * @param input array containing appropriate inputs to operation
-   * @param out stream to output results of execution;
-   *            can be null if you don't want to print
+   * @param out stream to output results of execution; can be null if you don't want to print
    * @return the value cast to the type of this cast
    */
   @Override
@@ -46,14 +42,14 @@ class UncheckedCast extends CallableOperation {
   }
 
   /**
-   * {@inheritDoc}
-   * Appends the code for this cast applied to the given input to the given {@code StringBuilder}.
+   * {@inheritDoc} Appends the code for this cast applied to the given input to the given {@code
+   * StringBuilder}.
    *
-   * @param declaringType  the declaring type for this operation
-   * @param inputTypes  the input types for this operation
-   * @param outputType  the output type for this operation
-   * @param inputVars  the list of variables that are inputs to operation
-   * @param b  the {@link StringBuilder} to which code is added
+   * @param declaringType the declaring type for this operation
+   * @param inputTypes the input types for this operation
+   * @param outputType the output type for this operation
+   * @param inputVars the list of variables that are inputs to operation
+   * @param b the {@link StringBuilder} to which code is added
    */
   @Override
   public void appendCode(

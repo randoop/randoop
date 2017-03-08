@@ -3,10 +3,7 @@ package randoop.test;
 import java.util.List;
 import java.util.TreeMap;
 
-/**
- * CoinPurse class using {@link Coin} enum for use in Randoop tests.
- *
- */
+/** CoinPurse class using {@link Coin} enum for use in Randoop tests. */
 public class CoinPurse {
   private TreeMap<Coin, Integer> purse;
 

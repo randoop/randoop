@@ -3,7 +3,6 @@ package randoop.util;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
-
 import randoop.BugInRandoopException;
 
 public final class Randomness {
@@ -15,8 +14,8 @@ public final class Randomness {
   public static final long SEED = 0;
 
   /**
-   * The random number used any testtime a random choice is made. (Developer
-   * note: do not declare new Random objects; use this one instead).
+   * The random number used any testtime a random choice is made. (Developer note: do not declare
+   * new Random objects; use this one instead).
    */
   static Random random = new Random(SEED);
 
@@ -37,7 +36,7 @@ public final class Randomness {
   /**
    * Uniformly random int from [0, i)
    *
-   * @param i  upper bound on range for generated values
+   * @param i upper bound on range for generated values
    * @return a value selected from range [0, i)
    */
   public static int nextRandomInt(int i) {

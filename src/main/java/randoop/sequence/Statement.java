@@ -3,7 +3,6 @@ package randoop.sequence;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-
 import randoop.ExecutionOutcome;
 import randoop.Globals;
 import randoop.operation.CallableOperation;
@@ -16,16 +15,12 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * Statement represents a statement involving an operation (or term), and the
- * list of inputs for the statement. The inputs are variables, but are
- * represented by indexing into the enclosing sequence.
+ * Statement represents a statement involving an operation (or term), and the list of inputs for the
+ * statement. The inputs are variables, but are represented by indexing into the enclosing sequence.
  */
 public final class Statement {
 
-  /**
-   * The operation (method call, constructor call, primitive values declaration,
-   * etc.).
-   */
+  /** The operation (method call, constructor call, primitive values declaration, etc.). */
   private final TypedOperation operation;
 
   // The list of values used as input to the statement.
@@ -36,11 +31,10 @@ public final class Statement {
   final List<RelativeNegativeIndex> inputs;
 
   /**
-   * Create a new statement of type statement that takes as input the given
-   * values.
+   * Create a new statement of type statement that takes as input the given values.
    *
-   * @param operation  the operation of this statement
-   * @param inputVariables  the variable that are used in this statement
+   * @param operation the operation of this statement
+   * @param inputVariables the variable that are used in this statement
    */
   public Statement(TypedOperation operation, List<RelativeNegativeIndex> inputVariables) {
     this.operation = operation;
@@ -50,8 +44,7 @@ public final class Statement {
   /**
    * Creates a statement based on the given operation
    *
-   * @param operation
-   *          the operation for action of this statement
+   * @param operation the operation for action of this statement
    */
   public Statement(TypedOperation operation) {
     this(operation, new ArrayList<RelativeNegativeIndex>());
@@ -60,8 +53,7 @@ public final class Statement {
   /**
    * equals tests whether two Statement objects are equal:
    *
-   * @return true if operation is the same, the number of inputs is the same,
-   *         and inputs are equal
+   * @return true if operation is the same, the number of inputs is the same, and inputs are equal
    */
   @Override
   public boolean equals(Object obj) {
@@ -103,13 +95,9 @@ public final class Statement {
    * Adds code for the statement to the given {@code StringBuilder}.
    *
    * @see Sequence#appendCode(StringBuilder, int)
-   *
-   * @param variable
-   *          the {@link Variable} to be used if an initialization.
-   * @param inputs
-   *          the input list for the operation of the statement
-   * @param b
-   *          the {@code StringBuilder} to which code text is appended.
+   * @param variable the {@link Variable} to be used if an initialization.
+   * @param inputs the input list for the operation of the statement
+   * @param b the {@code StringBuilder} to which code text is appended.
    */
   public void appendCode(Variable variable, List<Variable> inputs, StringBuilder b) {
     Type type = operation.getOutputType();
@@ -145,8 +133,7 @@ public final class Statement {
   }
 
   /**
-   * isStatic indicates whether the corresponding operation is declared as
-   * static.
+   * isStatic indicates whether the corresponding operation is declared as static.
    *
    * @return result of isStatic on operation corresponding to statement
    */
@@ -155,10 +142,9 @@ public final class Statement {
   }
 
   /**
-   * isMethodCall indicates whether a statement corresponds to a
-   * method-call-like operation. This could be either a method call, an
-   * assignment/initialization involving a method call, or the use of a public
-   * field in an assignment on either lhs (as "setter") or rhs (as "getter").
+   * isMethodCall indicates whether a statement corresponds to a method-call-like operation. This
+   * could be either a method call, an assignment/initialization involving a method call, or the use
+   * of a public field in an assignment on either lhs (as "setter") or rhs (as "getter").
    *
    * @return true if operation is method-call-like, and false otherwise
    */
@@ -167,13 +153,10 @@ public final class Statement {
   }
 
   /**
-   * execute performs the operation of the statement for the input variables and
-   * returns outcome.
+   * execute performs the operation of the statement for the input variables and returns outcome.
    *
-   * @param inputs
-   *          list of objects to use as inputs to execution
-   * @param out
-   *          stream for any output
+   * @param inputs list of objects to use as inputs to execution
+   * @param out stream for any output
    * @return object representing outcome of computation
    */
   public ExecutionOutcome execute(Object[] inputs, PrintStream out) {
@@ -181,8 +164,8 @@ public final class Statement {
   }
 
   /**
-   * getDeclaringClass returns the declaring class as defined by the
-   * {@link Operation} of the statement.
+   * getDeclaringClass returns the declaring class as defined by the {@link Operation} of the
+   * statement.
    *
    * @return result of getDeclaringClass for corresponding statement
    */
@@ -194,8 +177,7 @@ public final class Statement {
   }
 
   /**
-   * isConstructorCall determines if operation for statement is a call to a
-   * constructor.
+   * isConstructorCall determines if operation for statement is a call to a constructor.
    *
    * @return true if operation is a constructor call, and false otherwise
    */
@@ -213,19 +195,17 @@ public final class Statement {
   }
 
   /**
-   * isNullInitialization determines if statement represents an initialization by
-   * null value.
+   * isNullInitialization determines if statement represents an initialization by null value.
    *
-   * @return true if statement represents null initialization, and false
-   *         otherwise
+   * @return true if statement represents null initialization, and false otherwise
    */
   public boolean isNullInitialization() {
     return isPrimitiveInitialization() && operation.getValue() == null;
   }
 
   /**
-   * getShortForm constructs code expression of the operation for substitution
-   * into argument lists as opposed to using variable.
+   * getShortForm constructs code expression of the operation for substitution into argument lists
+   * as opposed to using variable.
    *
    * @return string containing code to access the value of the operation/term
    */
@@ -242,24 +222,21 @@ public final class Statement {
   }
 
   /**
-   * getValue returns the "value" for a statement. Is only meaningful if
-   * statement is an assignment of a constant value. Appeals to
-   * {@link CallableOperation} to throw appropriate exception when unable to
-   * provide a value.
+   * getValue returns the "value" for a statement. Is only meaningful if statement is an assignment
+   * of a constant value. Appeals to {@link CallableOperation} to throw appropriate exception when
+   * unable to provide a value.
    *
-   * This is a hack to allow randoop.main.GenBranchDir to do mutation.
+   * <p>This is a hack to allow randoop.main.GenBranchDir to do mutation.
    *
-   * @return value of term in statement (rhs of assignment/initialization) if
-   *         any
+   * @return value of term in statement (rhs of assignment/initialization) if any
    */
   public Object getValue() {
     return operation.getValue();
   }
 
   /**
-   * getTypedOperation is meant to be a temporary solution to type confusion in
-   * generators. This should go away. Only intended to be called by
-   * {@link Sequence#extend(TypedOperation, List)}.
+   * getTypedOperation is meant to be a temporary solution to type confusion in generators. This
+   * should go away. Only intended to be called by {@link Sequence#extend(TypedOperation, List)}.
    *
    * @return operation object in the statement
    */

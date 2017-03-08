@@ -1,7 +1,6 @@
 package randoop.test;
 
 import java.util.List;
-
 import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -22,9 +21,7 @@ import randoop.util.Log;
 import randoop.util.Randomness;
 import randoop.util.TupleVisitor;
 
-/**
- * Perform checks over a {@link randoop.util.TupleSet}.
- */
+/** Perform checks over a {@link randoop.util.TupleSet}. */
 class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
   /** the executable sequence that is the source of values for checking contracts */
   private final ExecutableSequence s;
@@ -33,11 +30,10 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
   private final List<ObjectContract> contracts;
 
   /**
-   * Creates a contract checker for value tuples.
-   * All contracts must have the same arity.
+   * Creates a contract checker for value tuples. All contracts must have the same arity.
    *
-   * @param s  the executable sequence that produced values in tuples
-   * @param contracts  the set of contracts
+   * @param s the executable sequence that produced values in tuples
+   * @param contracts the set of contracts
    */
   ContractChecker(ExecutableSequence s, List<ObjectContract> contracts) {
     this.s = s;
@@ -47,7 +43,7 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
   /**
    * Applies the contracts of this checker to the given tuple.
    *
-   * @param tuple  the value tuple to use as input to the contracts
+   * @param tuple the value tuple to use as input to the contracts
    * @return a {@link Check} of a contract that failed on the tuple
    */
   @Override
@@ -75,8 +71,8 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
   /**
    * Checks a contract on a particular array of values.
    *
-   * @param contract  the contract
-   * @param values  the input values
+   * @param contract the contract
+   * @param values the input values
    * @return a {@link ObjectCheck} if the contract fails, null otherwise
    */
   private Check checkContract(ObjectContract contract, Object[] values) {
@@ -112,12 +108,12 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
   }
 
   /**
-   * Indicates whether the given list of values matches the types in the type tuple.
-   * Contracts may have generic input types, so this method checks for consistent substitutions
-   * across value types.
+   * Indicates whether the given list of values matches the types in the type tuple. Contracts may
+   * have generic input types, so this method checks for consistent substitutions across value
+   * types.
    *
-   * @param inputTypes  the expected types for contract input
-   * @param valueTuple  the values to match against input types
+   * @param inputTypes the expected types for contract input
+   * @param valueTuple the values to match against input types
    * @return true if the types of the values are assignable to the expected types, false otherwise
    */
   private boolean typesMatch(TypeTuple inputTypes, List<ReferenceValue> valueTuple) {
@@ -157,7 +153,7 @@ class ContractChecker implements TupleVisitor<ReferenceValue, Check> {
   /**
    * Creates an {@code Object} array for the given value list.
    *
-   * @param tuple  the list of values
+   * @param tuple the list of values
    * @return the Object array for the values
    */
   private Object[] getValues(List<ReferenceValue> tuple) {

@@ -1,14 +1,12 @@
 package randoop.operation;
 
-import org.junit.Test;
-
-import java.lang.reflect.Method;
-
-import randoop.types.TypeVariable;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import java.lang.reflect.Method;
+import org.junit.Test;
+import randoop.types.TypeVariable;
 
 public class TypedOperationTest {
   @Test

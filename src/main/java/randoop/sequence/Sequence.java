@@ -7,7 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.OperationParseException;
@@ -25,15 +24,14 @@ import randoop.util.WeightedElement;
 
 /**
  * Immutable.
- * <p>
- * A sequence of {@link Statement}s. Each element in the sequence represents a
- * particular {@link Statement}, like a method call
- * <code>Foo f = m(i1...iN)</code> or a declaration <code>int x = 0</code>.
- * <p>
- * This class represents only the structure of a well-formed sequence of
- * statements, and does not contain any information about the runtime behavior
- * of the sequence. The class randoop.ExecutableSequence adds functionality that
- * executes the sequence.
+ *
+ * <p>A sequence of {@link Statement}s. Each element in the sequence represents a particular {@link
+ * Statement}, like a method call <code>Foo f = m(i1...iN)</code> or a declaration <code>int x = 0
+ * </code>.
+ *
+ * <p>This class represents only the structure of a well-formed sequence of statements, and does not
+ * contain any information about the runtime behavior of the sequence. The class
+ * randoop.ExecutableSequence adds functionality that executes the sequence.
  */
 public final class Sequence implements WeightedElement {
 
@@ -43,18 +41,16 @@ public final class Sequence implements WeightedElement {
   public final SimpleList<Statement> statements;
 
   /**
-   * The variables that are inputs or output for the last statement of this sequence.
-   * These hold the values "produced" by some statement of the sequence.
-   * Should be final but cannot because of serialization.
-   * This info is used by some generators.
+   * The variables that are inputs or output for the last statement of this sequence. These hold the
+   * values "produced" by some statement of the sequence. Should be final but cannot because of
+   * serialization. This info is used by some generators.
    */
   private transient /* final */ List<Variable> lastStatementVariables;
 
   /**
-   * The types of the inputs and output for the last statement of this sequence.
-   * Excludes void in the case the output type of the operation of the last statement is void.
-   * Should be final but cannot because of serialization.
-   * This info is used by some generators.
+   * The types of the inputs and output for the last statement of this sequence. Excludes void in
+   * the case the output type of the operation of the last statement is void. Should be final but
+   * cannot because of serialization. This info is used by some generators.
    */
   private transient /* final */ List<Type> lastStatementTypes;
 
@@ -94,7 +90,8 @@ public final class Sequence implements WeightedElement {
 
   /**
    * The value created by the ith statement.
-   * @param i  the statement index
+   *
+   * @param i the statement index
    * @return the variable created by the statement at the given index
    */
   public Variable getVariable(int i) {
@@ -103,8 +100,7 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * The variables involved in the last statement. This includes the output
-   * variable.
+   * The variables involved in the last statement. This includes the output variable.
    *
    * @return the variables used in the last statement of this sequence
    */
@@ -113,9 +109,9 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * The types of all the variables involved in the last statement. This
-   * includes the output variable. The types returned are not the types in the
-   * signature of the Operation, but the types of the variables.
+   * The types of all the variables involved in the last statement. This includes the output
+   * variable. The types returned are not the types in the signature of the Operation, but the types
+   * of the variables.
    *
    * @return the types of the variables in the last statement of this sequence
    */
@@ -135,7 +131,7 @@ public final class Sequence implements WeightedElement {
   /**
    * The statement that created this value.
    *
-   * @param value  the variable
+   * @param value the variable
    * @return the statement that assigned to this variable
    */
   public Statement getCreatingStatement(Variable value) {
@@ -144,9 +140,9 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Returns the list of output indices for use when sequences are dealt with compositionally.
-   * What is an output index is determined by how the sequence is created, but generally is the
-   * index of the last statement.
+   * Returns the list of output indices for use when sequences are dealt with compositionally. What
+   * is an output index is determined by how the sequence is created, but generally is the index of
+   * the last statement.
    *
    * @return the list of output indices for this sequence
    */
@@ -157,7 +153,7 @@ public final class Sequence implements WeightedElement {
   /**
    * The inputs for the ith statement. Includes the receiver.
    *
-   * @param statementIndex  the index for the statement
+   * @param statementIndex the index for the statement
    * @return the list of variables for the statement at the given index
    */
   public List<Variable> getInputs(int statementIndex) {
@@ -169,9 +165,9 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Returns the Java source code representation of this sequence with values substituted for
-   * simple initializations.
-   * Similar to  * {@link ExecutableSequence#toCodeString()} except does not include checks.
+   * Returns the Java source code representation of this sequence with values substituted for simple
+   * initializations. Similar to * {@link ExecutableSequence#toCodeString()} except does not include
+   * checks.
    *
    * @return a string containing Java code for this sequence
    */
@@ -188,9 +184,9 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Returns the Java source representation of this sequence showing all statements.
-   * Simplifications performed in {@link #toCodeString()} are preserved but initializations used
-   * will also be printed.
+   * Returns the Java source representation of this sequence showing all statements. Simplifications
+   * performed in {@link #toCodeString()} are preserved but initializations used will also be
+   * printed.
    *
    * @return a string containing Java code for this sequence
    */
@@ -209,10 +205,9 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * A set of bits, where there is one bit associated with each index. Active
-   * flags are used during generation, to determine what values in an existing
-   * sequence are useful to be used as inputs when creating a new sequence out
-   * of the existing one.
+   * A set of bits, where there is one bit associated with each index. Active flags are used during
+   * generation, to determine what values in an existing sequence are useful to be used as inputs
+   * when creating a new sequence out of the existing one.
    */
   private BitSet activeFlags;
 
@@ -370,10 +365,11 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Returns the relative negative index that would result if we use the given
-   * value as an input to the statement at position statementPosition.
-   * @param statementPosition  the position of the statement
-   * @param v  the variable
+   * Returns the relative negative index that would result if we use the given value as an input to
+   * the statement at position statementPosition.
+   *
+   * @param statementPosition the position of the statement
+   * @param v the variable
    * @return the relative negative index computed from the position and variable
    */
   private static RelativeNegativeIndex getRelativeIndexForVariable(
@@ -383,10 +379,11 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Returns the Variable corresponding to the given input, which is an input to
-   * the statement at position statementPosition.
-   * @param statementPosition  the statement position
-   * @param input  relative index of the input variable
+   * Returns the Variable corresponding to the given input, which is an input to the statement at
+   * position statementPosition.
+   *
+   * @param statementPosition the statement position
+   * @param input relative index of the input variable
    * @return the variable at the relative index from the given statement position
    */
   private Variable getVariableForInput(int statementPosition, RelativeNegativeIndex input) {
@@ -398,17 +395,15 @@ public final class Sequence implements WeightedElement {
     return new Variable(this, absoluteIndex);
   }
 
-  /**
-   * Create a new, empty sequence.
-   */
+  /** Create a new, empty sequence. */
   public Sequence() {
     this(new ArrayListSimpleList<Statement>(), 0, 0);
   }
 
   /**
-   * Returns a sequence that is of the form "Foo f = null;" where Foo is the
-   * given class.
-   * @param c  the type for initialized variable
+   * Returns a sequence that is of the form "Foo f = null;" where Foo is the given class.
+   *
+   * @param c the type for initialized variable
    * @return the sequence consisting of the initialization
    */
   public static Sequence zero(Type c) {
@@ -419,7 +414,7 @@ public final class Sequence implements WeightedElement {
   /**
    * Create a sequence with the given statements.
    *
-   * @param statements  the statements
+   * @param statements the statements
    */
   public Sequence(SimpleList<Statement> statements) {
     this(statements, computeHashcode(statements), computeNetSize(statements));
@@ -428,9 +423,9 @@ public final class Sequence implements WeightedElement {
   /**
    * Creates a sequence consisting of the given operation given the input.
    *
-   * @param operation  the operation for the sequence
-   * @param inputSequences  the sequences computing inputs to the operation
-   * @param indexes  the indices of the inputs to the operation
+   * @param operation the operation for the sequence
+   * @param inputSequences the sequences computing inputs to the operation
+   * @param indexes the indices of the inputs to the operation
    * @return the sequence that applies the operation to the given inputs
    */
   public static Sequence createSequence(
@@ -480,11 +475,10 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Counts the number of statements in a list that are not initializations with
-   * a primitive type. For instance <code>int var7 = 0</code>.
+   * Counts the number of statements in a list that are not initializations with a primitive type.
+   * For instance <code>int var7 = 0</code>.
    *
-   * @param statements
-   *          the list of {@link Statement} objects
+   * @param statements the list of {@link Statement} objects
    * @return count of statements other than primitive initializations
    */
   private static int computeNetSize(SimpleList<Statement> statements) {
@@ -556,9 +550,7 @@ public final class Sequence implements WeightedElement {
     }
   }
 
-  /**
-   * Representation invariant check.
-   */
+  /** Representation invariant check. */
   private void checkRep() {
 
     if (!GenInputsAbstract.debug_checks) {
@@ -619,10 +611,7 @@ public final class Sequence implements WeightedElement {
     }
   }
 
-  /**
-   * Two sequences are equal if their statements(+inputs) are element-wise
-   * equal.
-   */
+  /** Two sequences are equal if their statements(+inputs) are element-wise equal. */
   @Override
   public final boolean equals(Object o) {
     if (!(o instanceof Sequence)) return false;
@@ -668,7 +657,7 @@ public final class Sequence implements WeightedElement {
   /**
    * True iff this sequence contains a statement at the given index.
    *
-   * @param index  the index to check for a statement
+   * @param index the index to check for a statement
    * @return true if the index is the position of a statement in this sequence, false otherwise
    */
   private boolean isValidIndex(int index) {
@@ -677,7 +666,8 @@ public final class Sequence implements WeightedElement {
 
   /**
    * An list of all the statements in this sequence.
-   * @return  the list of all statements in this sequence
+   *
+   * @return the list of all statements in this sequence
    */
   private SimpleList<Statement> getStatementsWithInputs() {
     // The list is constructed unmodifiable so we can just return it.
@@ -687,7 +677,7 @@ public final class Sequence implements WeightedElement {
   /**
    * The statement(+inputs) at the given index.
    *
-   * @param index  the statement position
+   * @param index the statement position
    * @return the {@link Statement} at the given index
    */
   private Statement getStatementWithInputs(int index) {
@@ -715,11 +705,11 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Returns a new sequence that is equivalent to this sequence plus the given
-   * operation appended to the end.
+   * Returns a new sequence that is equivalent to this sequence plus the given operation appended to
+   * the end.
    *
-   * @param operation  the operation to add
-   * @param inputVariables  the input variables
+   * @param operation the operation to add
+   * @param inputVariables the input variables
    * @return the sequence formed by appending the given operation to this sequence
    */
   public final Sequence extend(TypedOperation operation, List<Variable> inputVariables) {
@@ -737,10 +727,11 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Returns a new sequence that is equivalent to this sequence plus the given
-   * statement appended at the end.
-   * @param operation  the operation to add
-   * @param inputs  the input variables for the operation
+   * Returns a new sequence that is equivalent to this sequence plus the given statement appended at
+   * the end.
+   *
+   * @param operation the operation to add
+   * @param inputs the input variables for the operation
    * @return the sequence formed by appending the given operation to this sequence
    */
   public final Sequence extend(TypedOperation operation, Variable... inputs) {
@@ -748,14 +739,11 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * extend adds a new statement to this sequence using the operation of the
-   * given statement. Intended as the only place that we reach inside a
-   * {@link Statement} for its operation.
+   * extend adds a new statement to this sequence using the operation of the given statement.
+   * Intended as the only place that we reach inside a {@link Statement} for its operation.
    *
-   * @param statement
-   *          is a {@link Statement} object from which the operation is copied.
-   * @param inputs
-   *          is the list of variables for input
+   * @param statement is a {@link Statement} object from which the operation is copied.
+   * @param inputs is the list of variables for input
    * @return sequence constructed from this one plus the operation
    * @see Sequence#extend(TypedOperation, List)
    */
@@ -837,8 +825,7 @@ public final class Sequence implements WeightedElement {
   /**
    * Create a new sequence that is the concatenation of the given sequences.
    *
-   * @param sequences
-   *          the list of sequences to concatenate
+   * @param sequences the list of sequences to concatenate
    * @return the concatenation of the sequences in the list
    */
   public static Sequence concatenate(List<Sequence> sequences) {
@@ -854,9 +841,10 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * The inputs for the ith statement, as indices. An index equal to x means
-   * that the input is the value created by the x-th statement in the sequence.
-   * @param i  the statement index
+   * The inputs for the ith statement, as indices. An index equal to x means that the input is the
+   * value created by the x-th statement in the sequence.
+   *
+   * @param i the statement index
    * @return the absolute indices for the input variables in the given statement
    */
   public List<Integer> getInputsAsAbsoluteIndices(int i) {
@@ -870,10 +858,8 @@ public final class Sequence implements WeightedElement {
   /**
    * Appends the statement at the given index to the {@code StringBuilder}.
    *
-   * @param b
-   *          the {@link StringBuilder} to which the code is appended.
-   * @param index
-   *          the position of the statement to print in this {@code Sequence}.
+   * @param b the {@link StringBuilder} to which the code is appended.
+   * @param index the position of the statement to print in this {@code Sequence}.
    */
   public void appendCode(StringBuilder b, int index) {
     // Get strings representing the inputs to this statement.
@@ -882,16 +868,14 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Returns a string representing this sequence. The string can be parsed back
-   * into a sequence using the method Sequence.parse(String). In particular, the
-   * following invariant holds:
+   * Returns a string representing this sequence. The string can be parsed back into a sequence
+   * using the method Sequence.parse(String). In particular, the following invariant holds:
    *
    * <pre>
    * st.equals(parse(st.toParsableCode()))
    * </pre>
    *
-   * See the parse(List) for the required format of a String
-   * representing a Sequence.
+   * See the parse(List) for the required format of a String representing a Sequence.
    *
    * @return parsable string description of sequence
    */
@@ -900,11 +884,10 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Like toParsableString, but the client can specify a string that will be
-   * used a separator between statements.
+   * Like toParsableString, but the client can specify a string that will be used a separator
+   * between statements.
    *
-   * @param statementSep
-   *          the statement separator
+   * @param statementSep the statement separator
    * @return the string representation of this sequence
    */
   private String toParsableString(String statementSep) {
@@ -922,26 +905,24 @@ public final class Sequence implements WeightedElement {
   /**
    * NOTE: the ONLY place this is used is in a test.
    *
-   * Parse a sequence encoded as a list of strings, each string corresponding to
-   * one statement. This method is similar to parse(String), but expects the
-   * individual statements already as separate strings. Each statement is
-   * expected to be of the form:
+   * <p>Parse a sequence encoded as a list of strings, each string corresponding to one statement.
+   * This method is similar to parse(String), but expects the individual statements already as
+   * separate strings. Each statement is expected to be of the form:
    *
    * <pre>
    *   VAR = OPERATION : VAR ... VAR
    * </pre>
    *
-   * where the VAR are strings representing a variable name, and OPERATION is a
-   * string representing an Operation. For more on OPERATION, see the
-   * documentation for {@link OperationParser#parse(String)}.
+   * where the VAR are strings representing a variable name, and OPERATION is a string representing
+   * an Operation. For more on OPERATION, see the documentation for {@link
+   * OperationParser#parse(String)}.
    *
-   * The first VAR token represents the "output variable" that is the result of
-   * the statement call. The VAR tokens appearing after OPERATION represent the
-   * "input variables" to the statement call. At the i-th line, the input
-   * variable tokens should appear as an output variable for some previous j-th
-   * line, j &lt; i.
+   * <p>The first VAR token represents the "output variable" that is the result of the statement
+   * call. The VAR tokens appearing after OPERATION represent the "input variables" to the statement
+   * call. At the i-th line, the input variable tokens should appear as an output variable for some
+   * previous j-th line, j &lt; i.
    *
-   * Here is an example of a list of lines representing a sequence.
+   * <p>Here is an example of a list of lines representing a sequence.
    *
    * <pre>
    * var0 = cons : java.util.HashMap.&lt;init&gt;() :
@@ -950,8 +931,8 @@ public final class Sequence implements WeightedElement {
    * var3 = method : java.util.HashMap.put(java.lang.Object,java.lang.Object) : var0 var1 var2
    * </pre>
    *
-   * The above sequence corresponds to the following java code (with package
-   * names omitted for brevity):
+   * The above sequence corresponds to the following java code (with package names omitted for
+   * brevity):
    *
    * <pre>
    * HashMap var0 = new HashMap();
@@ -960,11 +941,11 @@ public final class Sequence implements WeightedElement {
    * Object var3 = var0.put(var1, var2);
    * </pre>
    *
-   * When writing/reading sequences out to file: you have two options: serialize
-   * the sequences using java's serialization mechanism, or write them out as
-   * parsable text. Serialization is faster, and text is human-readable.
+   * When writing/reading sequences out to file: you have two options: serialize the sequences using
+   * java's serialization mechanism, or write them out as parsable text. Serialization is faster,
+   * and text is human-readable.
    *
-   * @param statements  the list of statement strings
+   * @param statements the list of statement strings
    * @return the sequence constructed from the list of strings
    * @throws SequenceParseException if any statement cannot be parsed
    */
@@ -1092,36 +1073,33 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Parse a sequence encoded as a strings. Convenience method for
-   * parse(List), which parses a sequence of strings, each representing
-   * a Statement. See that method for more documentation on the string
-   * representation of a sequence.
-   * <p>
-   * This method breaks up the given string into statements assuming that each
-   * statement is separated by a line separator character.
-   * <p>
-   * The following invariant holds:
+   * Parse a sequence encoded as a strings. Convenience method for parse(List), which parses a
+   * sequence of strings, each representing a Statement. See that method for more documentation on
+   * the string representation of a sequence.
+   *
+   * <p>This method breaks up the given string into statements assuming that each statement is
+   * separated by a line separator character.
+   *
+   * <p>The following invariant holds:
    *
    * <pre>
    * st.equals(parse(st.toParsableCode()))
    * </pre>
    *
-   * When writing/reading sequences out to file: you have two options: serialize
-   * the sequences using java's serialization mechanism, or write them out as
-   * parsable text. Serialization is faster, and text is human-readable.
+   * When writing/reading sequences out to file: you have two options: serialize the sequences using
+   * java's serialization mechanism, or write them out as parsable text. Serialization is faster,
+   * and text is human-readable.
    *
-   * @param string  the string descriptor
+   * @param string the string descriptor
    * @return the sequence constructed by parsing the input string
-   * @throws SequenceParseException
-   *           if string is not valid sequence
+   * @throws SequenceParseException if string is not valid sequence
    */
   public static Sequence parse(String string) throws SequenceParseException {
     return parse(Arrays.asList(string.split(Globals.lineSep)));
   }
 
   /**
-   * A sequence representing a single primitive values, like "Foo var0 = null"
-   * or "int var0 = 1".
+   * A sequence representing a single primitive values, like "Foo var0 = null" or "int var0 = 1".
    *
    * @return true if this sequence is a single primitive initialization statement, false otherwise
    */
@@ -1130,13 +1108,11 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Test whether any statement of this sequence has an operation whose
-   * declaring class matches the given regular expression.
+   * Test whether any statement of this sequence has an operation whose declaring class matches the
+   * given regular expression.
    *
-   * @param classNames
-   *          the regular expression to test class names
-   * @return true if any statement has operation with matching declaring class,
-   *         false otherwise
+   * @param classNames the regular expression to test class names
+   * @return true if any statement has operation with matching declaring class, false otherwise
    */
   public boolean hasUseOfMatchingClass(Pattern classNames) {
     for (int i = 0; i < statements.size(); i++) {
@@ -1149,10 +1125,10 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Using compositional structure of this sequence, return the subsequence of
-   * this sequence that contains the statement at the given index.
+   * Using compositional structure of this sequence, return the subsequence of this sequence that
+   * contains the statement at the given index.
    *
-   * @param index  the statement position in this sequence
+   * @param index the statement position in this sequence
    * @return the sequence containing the index position
    */
   Sequence getSubsequence(int index) {
@@ -1162,7 +1138,7 @@ public final class Sequence implements WeightedElement {
   /**
    * Creates a sequence corresponding to the given non-null primitive value.
    *
-   * @param value  non-null reference to a primitive or String value
+   * @param value non-null reference to a primitive or String value
    * @return a {@link Sequence} consisting of a statement created with the object.
    */
   public static Sequence createSequenceForPrimitive(Object value) {

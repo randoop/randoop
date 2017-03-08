@@ -1,12 +1,13 @@
 package randoop.test;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
+import org.junit.Test;
 import randoop.TestValue;
 import randoop.generation.SeedSequences;
 import randoop.operation.TypedOperation;
@@ -16,9 +17,6 @@ import randoop.reflection.TestValueExtractor;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 import randoop.types.JavaTypes;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class SeedSequencesTests {
 
@@ -124,7 +122,7 @@ class MissingStaticMod {
 @SuppressWarnings("unused")
 class BadType0 {
   // not static
-  @TestValue static public Integer x1 = 0;
+  @TestValue public static Integer x1 = 0;
 }
 
 @SuppressWarnings("unused")

@@ -3,20 +3,20 @@ package randoop.types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 import plume.UtilMDE;
 
 /**
- * Represents an intersection type bound on a type parameter in a class,
- * interface, method or constructor (see
- * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.4">JLS section 4.4</a>).
- * Alternatively, in capture conversion, it may also represent the greatest lower bound of two upper bounds (
- * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">JLS section 5.1.10</a>).
- * <p>
- * Java requires that an intersection type bound consist of class and
- * interface types, with at most one class, and if there is a class it appears
- * in the conjunction term first. This class preserves the order of the types.
- * In a capture conversion, if both types are classes, one must be a subclass of the other.
+ * Represents an intersection type bound on a type parameter in a class, interface, method or
+ * constructor (see <a
+ * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.4">JLS section 4.4</a>).
+ * Alternatively, in capture conversion, it may also represent the greatest lower bound of two upper
+ * bounds ( <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">JLS
+ * section 5.1.10</a>).
+ *
+ * <p>Java requires that an intersection type bound consist of class and interface types, with at
+ * most one class, and if there is a class it appears in the conjunction term first. This class
+ * preserves the order of the types. In a capture conversion, if both types are classes, one must be
+ * a subclass of the other.
  */
 class IntersectionTypeBound extends ParameterBound {
 
@@ -26,7 +26,7 @@ class IntersectionTypeBound extends ParameterBound {
   /**
    * Create an intersection type bound from the list of type bounds.
    *
-   * @param boundList  the list of type bounds
+   * @param boundList the list of type bounds
    */
   IntersectionTypeBound(List<ParameterBound> boundList) {
     if (boundList == null) {
@@ -58,6 +58,7 @@ class IntersectionTypeBound extends ParameterBound {
 
   /**
    * {@inheritDoc}
+   *
    * @return this bound with the substitution applied to all member bounds
    */
   @Override
@@ -71,6 +72,7 @@ class IntersectionTypeBound extends ParameterBound {
 
   /**
    * {@inheritDoc}
+   *
    * @return an intersection bound with capture conversion applied to all member bounds
    */
   @Override
@@ -84,7 +86,9 @@ class IntersectionTypeBound extends ParameterBound {
 
   /**
    * {@inheritDoc}
-   * @return the list of type variables occurring in all of the type bounds of this intersection bound
+   *
+   * @return the list of type variables occurring in all of the type bounds of this intersection
+   *     bound
    */
   @Override
   public List<TypeVariable> getTypeParameters() {
@@ -97,7 +101,9 @@ class IntersectionTypeBound extends ParameterBound {
 
   /**
    * {@inheritDoc}
-   * @return true if any type in the intersection type bound has a wildcard argument, false otherwise
+   *
+   * @return true if any type in the intersection type bound has a wildcard argument, false
+   *     otherwise
    */
   @Override
   boolean hasWildcard() {
@@ -120,9 +126,8 @@ class IntersectionTypeBound extends ParameterBound {
   }
 
   /**
-   * {@inheritDoc}
-   * Specifically, this method checks that the argument type is a subtype of all of the member bounds
-   * of this object.
+   * {@inheritDoc} Specifically, this method checks that the argument type is a subtype of all of
+   * the member bounds of this object.
    */
   @Override
   public boolean isLowerBound(Type otherType, Substitution<ReferenceType> subst) {
@@ -134,10 +139,7 @@ class IntersectionTypeBound extends ParameterBound {
     return true;
   }
 
-  /**
-   * {@inheritDoc}
-   * Determines whether all types in this bound are {@code Object}.
-   */
+  /** {@inheritDoc} Determines whether all types in this bound are {@code Object}. */
   @Override
   public boolean isObject() {
     for (ParameterBound b : boundList) {
@@ -149,9 +151,9 @@ class IntersectionTypeBound extends ParameterBound {
   }
 
   /**
-   * {@inheritDoc}
-   * This method should never be tested for {@link IntersectionTypeBound}.
-   * Will fail if assertions are enabled.
+   * {@inheritDoc} This method should never be tested for {@link IntersectionTypeBound}. Will fail
+   * if assertions are enabled.
+   *
    * @return false, always
    */
   @Override
@@ -162,8 +164,8 @@ class IntersectionTypeBound extends ParameterBound {
 
   /**
    * {@inheritDoc}
-   * @return true if the argument type satisfies all of the bounds in this
-   * intersection type bound
+   *
+   * @return true if the argument type satisfies all of the bounds in this intersection type bound
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution<ReferenceType> subst) {
@@ -178,7 +180,8 @@ class IntersectionTypeBound extends ParameterBound {
   /**
    * {@inheritDoc}
    *
-   * @return true if the argument bound has all of the member bounds of this object as an upper bound
+   * @return true if the argument bound has all of the member bounds of this object as an upper
+   *     bound
    */
   @Override
   boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution) {

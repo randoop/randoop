@@ -8,8 +8,7 @@ import java.util.Set;
 
 /**
  * An abstract class representing kinds of type parameters, which are either type variables or
- * wildcard types.
- * Manages both upper and lower type bounds.
+ * wildcard types. Manages both upper and lower type bounds.
  */
 public abstract class ParameterType extends ReferenceType {
 

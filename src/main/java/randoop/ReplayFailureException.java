@@ -3,8 +3,8 @@ package randoop;
 import randoop.test.Check;
 
 /**
- * Thrown by a ContractFailureReplayVisitor or a RegressionReplayVisitor when a
- * regression decoration fails to replay.
+ * Thrown by a ContractFailureReplayVisitor or a RegressionReplayVisitor when a regression
+ * decoration fails to replay.
  */
 public class ReplayFailureException extends RuntimeException {
 

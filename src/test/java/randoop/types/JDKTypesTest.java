@@ -1,20 +1,19 @@
 package randoop.types;
 
-import org.junit.Test;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.Test;
 
 /**
  * The JDKTypes class has constants for JDK Collections classes (classes implementing the Collection
- * and Map interfaces, and maps each interface into an implementing class.
- * This test mainly checks this mapping to ensure that a concrete subtype is selected for each type.
+ * and Map interfaces, and maps each interface into an implementing class. This test mainly checks
+ * this mapping to ensure that a concrete subtype is selected for each type.
  */
 public class JDKTypesTest {
 

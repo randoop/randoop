@@ -1,8 +1,6 @@
 package randoop.reflection.intersectiontypes;
 
-/**
- * Created by bjkeller on 12/6/16.
- */
+/** Created by bjkeller on 12/6/16. */
 public class AccessibleInterval implements Interval, RandomAccessible<Integer> {
   @Override
   public int n() {

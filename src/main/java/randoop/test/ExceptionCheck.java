@@ -1,21 +1,17 @@
 package randoop.test;
 
 import java.util.Objects;
-
 import randoop.Globals;
 
 /**
- * An {@code ExceptionCheck} is used to indicate that an exception is expected
- * at a particular statement in a sequence. Depending on command-line arguments
- * to Randoop, an instance may be either a {@link ExpectedExceptionCheck} or
- * {@link EmptyExceptionCheck}. When test code is generated in
- * {@link randoop.sequence.ExecutableSequence#toCodeString()}, the methods
- * {@link #toCodeStringPreStatement()} and {@link #toCodeStringPostStatement()}
- * wrap the statement in a try-catch block for the exception, while the
- * implementing classes define {@link #appendTryBehavior(StringBuilder)}
- * and {@link #appendCatchBehavior(StringBuilder)} which handle
- * differences in whether assertions are generated to enforce the expectation of
- * the exception.
+ * An {@code ExceptionCheck} is used to indicate that an exception is expected at a particular
+ * statement in a sequence. Depending on command-line arguments to Randoop, an instance may be
+ * either a {@link ExpectedExceptionCheck} or {@link EmptyExceptionCheck}. When test code is
+ * generated in {@link randoop.sequence.ExecutableSequence#toCodeString()}, the methods {@link
+ * #toCodeStringPreStatement()} and {@link #toCodeStringPostStatement()} wrap the statement in a
+ * try-catch block for the exception, while the implementing classes define {@link
+ * #appendTryBehavior(StringBuilder)} and {@link #appendCatchBehavior(StringBuilder)} which handle
+ * differences in whether assertions are generated to enforce the expectation of the exception.
  */
 public abstract class ExceptionCheck implements Check {
 
@@ -27,16 +23,13 @@ public abstract class ExceptionCheck implements Check {
   private String catchClassName;
 
   /**
-   * Creates an exception check for the statement at the statement index. The
-   * generated code for this check will include a try-catch block with behaviors
-   * determined by implementing sub-classes.
+   * Creates an exception check for the statement at the statement index. The generated code for
+   * this check will include a try-catch block with behaviors determined by implementing
+   * sub-classes.
    *
-   * @param exception
-   *          the exception expected at the statement index
-   * @param statementIndex
-   *          the position of the statement in a sequence
-   * @param catchClassName
-   *          the name of exception to be caught
+   * @param exception the exception expected at the statement index
+   * @param statementIndex the position of the statement in a sequence
+   * @param catchClassName the name of exception to be caught
    */
   public ExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
     this.exception = exception;
@@ -45,8 +38,8 @@ public abstract class ExceptionCheck implements Check {
   }
 
   /**
-   * Determines if two {@code ExceptionCheck} objects are equal. Assumes that
-   * implementing classes have no state.
+   * Determines if two {@code ExceptionCheck} objects are equal. Assumes that implementing classes
+   * have no state.
    */
   @Override
   public boolean equals(Object o) {
@@ -86,9 +79,7 @@ public abstract class ExceptionCheck implements Check {
     return "Throws exception @" + statementIndex;
   }
 
-  /**
-   * {@inheritDoc} The pre-statement prefix of the try-catch wrapper.
-   */
+  /** {@inheritDoc} The pre-statement prefix of the try-catch wrapper. */
   @Override
   public final String toCodeStringPreStatement() {
     return "// The following exception was thrown during execution in test generation"
@@ -98,11 +89,10 @@ public abstract class ExceptionCheck implements Check {
   }
 
   /**
-   * {@inheritDoc} Returns the post-statement portion of the try-catch wrapper.
-   * Starts with post-statement try-behavior as determined by a subclass
-   * implementation of {@link #appendTryBehavior}, and then closes with the
-   * catch clause with the body determined by the sub-class implementation of
-   * {@link #appendCatchBehavior(StringBuilder)}. Catches this exception
+   * {@inheritDoc} Returns the post-statement portion of the try-catch wrapper. Starts with
+   * post-statement try-behavior as determined by a subclass implementation of {@link
+   * #appendTryBehavior}, and then closes with the catch clause with the body determined by the
+   * sub-class implementation of {@link #appendCatchBehavior(StringBuilder)}. Catches this exception
    * or the closest public superclass of the exception.
    *
    * @return the post-statement code text for the expected exception
@@ -124,17 +114,14 @@ public abstract class ExceptionCheck implements Check {
   /**
    * Appends code for catch block behavior corresponding to expected exception.
    *
-   * @param b
-   *          the string builder to which code text is to be added
+   * @param b the string builder to which code text is to be added
    */
   protected abstract void appendCatchBehavior(StringBuilder b);
 
   /**
-   * Appends code to follow the statement throwing expected exception in try
-   * block.
+   * Appends code to follow the statement throwing expected exception in try block.
    *
-   * @param b
-   *          the string builder to which code text is added
+   * @param b the string builder to which code text is added
    */
   protected abstract void appendTryBehavior(StringBuilder b);
 

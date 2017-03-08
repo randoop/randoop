@@ -2,9 +2,7 @@ package randoop.input.toradocu;
 
 import java.util.Objects;
 
-/**
- * This is a Toradocu class borrowed to allow deserialization of JSON.
- */
+/** This is a Toradocu class borrowed to allow deserialization of JSON. */
 public final class Parameter {
 
   /** The type of the parameter. */
@@ -15,7 +13,6 @@ public final class Parameter {
   private final Boolean nullable;
 
   /**
-   *
    * Constructs a parameter with the given type and name.
    *
    * @param type the type of the parameter including its dimension

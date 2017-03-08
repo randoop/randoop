@@ -5,12 +5,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import plume.EntryReader;
 
 /**
- * Manages the options for a run of Randoop within a system test method so that the information
- * can be used to setup test conditions.
+ * Manages the options for a run of Randoop within a system test method so that the information can
+ * be used to setup test conditions.
  */
 class RandoopOptions {
 
@@ -29,9 +28,7 @@ class RandoopOptions {
   /** The basename for generated error test classes */
   private String errorBasename;
 
-  /**
-   * Creates an empty set of options.
-   */
+  /** Creates an empty set of options. */
   private RandoopOptions() {
     this.options = new ArrayList<>();
     this.classnames = new HashSet<>();
@@ -41,10 +38,10 @@ class RandoopOptions {
   }
 
   /**
-   * Creates an initial set of options based on the test environment consisting of the
-   * output directory for generated tests, and log file location.
+   * Creates an initial set of options based on the test environment consisting of the output
+   * directory for generated tests, and log file location.
    *
-   * @param testEnvironment  the test environment
+   * @param testEnvironment the test environment
    * @return a base set of Randoop options
    */
   static RandoopOptions createOptions(TestEnvironment testEnvironment) {
@@ -57,8 +54,8 @@ class RandoopOptions {
   /**
    * Adds an option-value pair to this option set.
    *
-   * @param option  the option name
-   * @param value  the option value
+   * @param option the option name
+   * @param value the option value
    */
   void setOption(String option, String value) {
     options.add("--" + option + "=" + value);
@@ -67,7 +64,7 @@ class RandoopOptions {
   /**
    * Adds a option-flag to this option set.
    *
-   * @param option  the name of the option flag to be set
+   * @param option the name of the option flag to be set
    */
   void setFlag(String option) {
     options.add("--" + option);
@@ -76,7 +73,7 @@ class RandoopOptions {
   /**
    * Adds an option-flag set to false.
    *
-   * @param option  the name of the option flag to be set to false
+   * @param option the name of the option flag to be set to false
    */
   void unsetFlag(String option) {
     setOption(option, "false");
@@ -85,7 +82,7 @@ class RandoopOptions {
   /**
    * Sets the package name for generated tests, and adds the option to this set.
    *
-   * @param packageName  the package name
+   * @param packageName the package name
    */
   void setPackageName(String packageName) {
     if (packageName.length() > 0) {
@@ -97,7 +94,7 @@ class RandoopOptions {
   /**
    * Sets the regression base name for generated tests, and adds the option to this set.
    *
-   * @param regressionBasename  the regression basename
+   * @param regressionBasename the regression basename
    */
   void setRegressionBasename(String regressionBasename) {
     if (regressionBasename.length() > 0) {
@@ -109,7 +106,7 @@ class RandoopOptions {
   /**
    * Sets the error base name for generated tests, and adds the option to this set.
    *
-   * @param errorBasename  the errorBasename
+   * @param errorBasename the errorBasename
    */
   void setErrorBasename(String errorBasename) {
     if (errorBasename.length() > 0) {
@@ -121,7 +118,7 @@ class RandoopOptions {
   /**
    * Adds a test class name to this option set.
    *
-   * @param classname  the test class name
+   * @param classname the test class name
    */
   void addTestClass(String classname) {
     if (classname.length() > 0) {
@@ -185,7 +182,7 @@ class RandoopOptions {
   /**
    * Reads the named class list file and adds the elements to the classnames in this options set.
    *
-   * @param classListFilename  the class list filename
+   * @param classListFilename the class list filename
    */
   private void loadClassNames(String classListFilename) {
     try (EntryReader er = new EntryReader(classListFilename, "^#.*", null)) {

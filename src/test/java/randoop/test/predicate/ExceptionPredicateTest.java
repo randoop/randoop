@@ -1,15 +1,16 @@
 package randoop.test.predicate;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.AfterClass;
-
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import randoop.DummyVisitor;
 import randoop.ExceptionalExecution;
 import randoop.main.GenInputsAbstract;
@@ -28,14 +29,7 @@ import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-/**
- * Tests to check whether exception predicates are acting as expected.
- *
- */
+/** Tests to check whether exception predicates are acting as expected. */
 public class ExceptionPredicateTest {
 
   private static OptionsCache optionsCache;

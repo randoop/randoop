@@ -1,24 +1,20 @@
 package randoop.types;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import org.junit.BeforeClass;
+import org.junit.Test;
 import randoop.operation.TypedOperation;
 import randoop.types.test.CaptureTestClass;
 import randoop.types.test.Container;
 import randoop.types.test.Gibberish;
 import randoop.types.test.Nonsense;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-/**
- * Tests capture conversion over the input types in the operations of {@link CaptureTestClass}.
- */
+/** Tests capture conversion over the input types in the operations of {@link CaptureTestClass}. */
 public class CaptureConversionTest {
 
   private static GenericClassType sourceType;
@@ -101,13 +97,13 @@ public class CaptureConversionTest {
   }
 
   /**
-   * Checks the capture conversion by calling {@link #checkCapture(GenericClassType, ReferenceType, ReferenceType, List)}
-   * where the bound type is substituted into the final type.
-   * The wildcard types are carried as input types to the generic operation.
+   * Checks the capture conversion by calling {@link #checkCapture(GenericClassType, ReferenceType,
+   * ReferenceType, List)} where the bound type is substituted into the final type. The wildcard
+   * types are carried as input types to the generic operation.
    *
-   * @param genericClassType  the generic class being instantiated
-   * @param paramType  the wildcard bound
-   * @param genericOperations  the set of operations with the wildcard types
+   * @param genericClassType the generic class being instantiated
+   * @param paramType the wildcard bound
+   * @param genericOperations the set of operations with the wildcard types
    */
   private void checkCapture(
       GenericClassType genericClassType,
@@ -118,14 +114,13 @@ public class CaptureConversionTest {
 
   /**
    * Checks the capture conversion over a set of types with wildcard (given as the input types to
-   * operations).
-   * Checks that the conversion followed by the substitution for the capture variable result in the
-   * class type instantiated by the actual argument type.
+   * operations). Checks that the conversion followed by the substitution for the capture variable
+   * result in the class type instantiated by the actual argument type.
    *
-   * @param genericClassType  the generic class being instantiated
-   * @param paramType  the wildcard bound
-   * @param actualArgType  the actual argument type
-   * @param genericOperations  the set of operations with the wildcard types
+   * @param genericClassType the generic class being instantiated
+   * @param paramType the wildcard bound
+   * @param actualArgType the actual argument type
+   * @param genericOperations the set of operations with the wildcard types
    */
   private void checkCapture(
       GenericClassType genericClassType,

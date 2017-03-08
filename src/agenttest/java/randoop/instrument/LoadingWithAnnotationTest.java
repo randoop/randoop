@@ -1,24 +1,21 @@
 package randoop.instrument;
 
-import org.junit.Test;
-
-import java.io.File;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-
-import randoop.CheckRep;
-import randoop.main.GenInputsAbstract;
-import randoop.reflection.TypeNames;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import org.junit.Test;
+import randoop.CheckRep;
+import randoop.main.GenInputsAbstract;
+import randoop.reflection.TypeNames;
+
 /**
- * This test was originally written when the exercised-class instrumentation
- * was being handled by a classloader, and the CheckRep annotation was lost.
- * This is here mainly to make sure that annotations are still arriving when
- * the transforming java agent is used.
+ * This test was originally written when the exercised-class instrumentation was being handled by a
+ * classloader, and the CheckRep annotation was lost. This is here mainly to make sure that
+ * annotations are still arriving when the transforming java agent is used.
  */
 public class LoadingWithAnnotationTest {
 

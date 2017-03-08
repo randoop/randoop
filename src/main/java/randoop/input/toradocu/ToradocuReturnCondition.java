@@ -3,8 +3,8 @@ package randoop.input.toradocu;
 import java.lang.reflect.Method;
 
 /**
- * Represents a component of a Toradocu harvested return condition.
- * May be a pre-condition or post-condition.
+ * Represents a component of a Toradocu harvested return condition. May be a pre-condition or
+ * post-condition.
  */
 public class ToradocuReturnCondition extends ToradocuCondition {
 

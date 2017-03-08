@@ -5,10 +5,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import randoop.condition.Condition;
 import randoop.condition.ConditionCollection;
 import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
@@ -24,15 +20,13 @@ import randoop.types.Substitution;
 import randoop.types.TypeTuple;
 
 /**
- * OperationExtractor is a {@link ClassVisitor} that creates a collection of
- * {@link Operation} objects for a particular {@link ClassOrInterfaceType} through its visit
- * methods as called by {@link ReflectionManager#apply(Class)}.
- * Allows types of operations of an {@link InstantiatedType} to be instantiated using the substitution
- * of the type.
+ * OperationExtractor is a {@link ClassVisitor} that creates a collection of {@link Operation}
+ * objects for a particular {@link ClassOrInterfaceType} through its visit methods as called by
+ * {@link ReflectionManager#apply(Class)}. Allows types of operations of an {@link InstantiatedType}
+ * to be instantiated using the substitution of the type.
  *
  * @see ReflectionManager
  * @see ClassVisitor
- *
  */
 public class OperationExtractor extends DefaultClassVisitor {
 
@@ -55,11 +49,11 @@ public class OperationExtractor extends DefaultClassVisitor {
    * Creates a visitor object that collects the {@link TypedOperation} objects corresponding to
    * members of the class type and satisfying the given predicate.
    *
-   * @param classType  the declaring classtype for collected operations
-   * @param operations  the collection of operations
-   * @param predicate  the reflection predicate
-   * @param visibilityPredicate  the predicate for test visibility
-   * @param operationConditions  the collection of conditions to add to operations
+   * @param classType the declaring classtype for collected operations
+   * @param operations the collection of operations
+   * @param predicate the reflection predicate
+   * @param visibilityPredicate the predicate for test visibility
+   * @param operationConditions the collection of conditions to add to operations
    */
   public OperationExtractor(
       ClassOrInterfaceType classType,
@@ -83,11 +77,11 @@ public class OperationExtractor extends DefaultClassVisitor {
   }
 
   /**
-   * Adds an operation to the collection of this extractor.
-   * If the declaring class type is an {@link InstantiatedType}, then the substitution for that
-   * class is applied to the types of the operation, and this instantiated operation is returned.
+   * Adds an operation to the collection of this extractor. If the declaring class type is an {@link
+   * InstantiatedType}, then the substitution for that class is applied to the types of the
+   * operation, and this instantiated operation is returned.
    *
-   * @param operation  the {@link TypedClassOperation}
+   * @param operation the {@link TypedClassOperation}
    */
   private void addOperation(TypedClassOperation operation) {
     if (operation != null) {
@@ -110,8 +104,7 @@ public class OperationExtractor extends DefaultClassVisitor {
   /**
    * Creates a {@link ConstructorCall} object for the {@link Constructor}.
    *
-   * @param constructor  a {@link Constructor} object to be represented as an
-   *           {@link Operation}.
+   * @param constructor a {@link Constructor} object to be represented as an {@link Operation}.
    */
   @Override
   public void visit(Constructor<?> constructor) {
@@ -135,8 +128,7 @@ public class OperationExtractor extends DefaultClassVisitor {
   /**
    * Creates a {@link MethodCall} object for the {@link Method}.
    *
-   * @param method
-   *          a {@link Method} object to be represented as an {@link Operation}.
+   * @param method a {@link Method} object to be represented as an {@link Operation}.
    */
   @Override
   public void visit(Method method) {
@@ -164,11 +156,10 @@ public class OperationExtractor extends DefaultClassVisitor {
   }
 
   /**
-   * Adds the {@link Operation} objects corresponding to getters and setters
-   * appropriate to the kind of field.
+   * Adds the {@link Operation} objects corresponding to getters and setters appropriate to the kind
+   * of field.
    *
-   * @param field
-   *          a {@link Field} object to be represented as an {@link Operation}.
+   * @param field a {@link Field} object to be represented as an {@link Operation}.
    */
   @Override
   public void visit(Field field) {
@@ -208,8 +199,7 @@ public class OperationExtractor extends DefaultClassVisitor {
   /**
    * Creates a {@link EnumConstant} object for the {@link Enum}.
    *
-   * @param e
-   *          an {@link Enum} object to be represented as an {@link Operation}.
+   * @param e an {@link Enum} object to be represented as an {@link Operation}.
    */
   @Override
   public void visit(Enum<?> e) {

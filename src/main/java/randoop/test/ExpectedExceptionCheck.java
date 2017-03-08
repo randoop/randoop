@@ -7,34 +7,29 @@ import randoop.NotExecuted;
 import randoop.sequence.Execution;
 
 /**
- * An {@code ExceptionCheck} that enforces the expectation of an exception being
- * thrown. In particular,
+ * An {@code ExceptionCheck} that enforces the expectation of an exception being thrown. In
+ * particular,
+ *
  * <ul>
- * <li>fails if exception is not thrown, and
- * <li>succeeds only when expected exception is thrown.
+ *   <li>fails if exception is not thrown, and
+ *   <li>succeeds only when expected exception is thrown.
  * </ul>
  */
 public class ExpectedExceptionCheck extends ExceptionCheck {
 
   /**
-   * Creates check that enforces expectation that an exception is thrown by the
-   * statement at the statement index.
+   * Creates check that enforces expectation that an exception is thrown by the statement at the
+   * statement index.
    *
-   * @param exception
-   *          the expected exception
-   * @param statementIndex
-   *          the index of the statement in the sequence where exception is
-   *          thrown
-   * @param catchClassName
-   *          the name of exception to be caught
+   * @param exception the expected exception
+   * @param statementIndex the index of the statement in the sequence where exception is thrown
+   * @param catchClassName the name of exception to be caught
    */
   ExpectedExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
     super(exception, statementIndex, catchClassName);
   }
 
-  /**
-   * {@inheritDoc} Appends a fail assertion after statement in try block.
-   */
+  /** {@inheritDoc} Appends a fail assertion after statement in try block. */
   @Override
   protected void appendTryBehavior(StringBuilder b) {
     String message;
@@ -47,9 +42,7 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
     b.append("  ").append(assertion).append(";").append(Globals.lineSep);
   }
 
-  /**
-   * {@inheritDoc} Appends assertion to confirm expected exception caught.
-   */
+  /** {@inheritDoc} Appends assertion to confirm expected exception caught. */
   @Override
   protected void appendCatchBehavior(StringBuilder b) {
     String condition;
@@ -65,11 +58,10 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
   }
 
   /**
-   * {@inheritDoc} Checks that an exception of the expected type is thrown by
-   * the statement in this object in the given {@link Execution}.
+   * {@inheritDoc} Checks that an exception of the expected type is thrown by the statement in this
+   * object in the given {@link Execution}.
    *
-   * @return true if statement throws the expected exception, and false
-   *         otherwise
+   * @return true if statement throws the expected exception, and false otherwise
    */
   @Override
   public boolean evaluate(Execution execution) {

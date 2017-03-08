@@ -8,16 +8,14 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
-
 import randoop.CheckRep;
 import randoop.util.Log;
 
 /**
- * Returns true for public members, with some exceptions (see
- * doNotUseSpecialCase method).
- * <p>
- * If a method has the @CheckRep annotation, returns false (the method will be
- * used as a contract checker, not as a method under test).
+ * Returns true for public members, with some exceptions (see doNotUseSpecialCase method).
+ *
+ * <p>If a method has the @CheckRep annotation, returns false (the method will be used as a contract
+ * checker, not as a method under test).
  */
 public class DefaultReflectionPredicate implements ReflectionPredicate {
 
@@ -25,10 +23,9 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   private Set<String> omitFields;
 
   /**
-   * Create a reflection predicate.
-   * If omitMethods is null, then no methods are omitted.
+   * Create a reflection predicate. If omitMethods is null, then no methods are omitted.
    *
-   * @param omitMethods  the pattern for names of methods to omit
+   * @param omitMethods the pattern for names of methods to omit
    */
   public DefaultReflectionPredicate(Pattern omitMethods) {
     this(omitMethods, new HashSet<String>());
@@ -39,13 +36,11 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   }
 
   /**
-   * DefaultReflectionFilter creates a filter object that uses default criteria
-   * for inclusion of reflection objects.
+   * DefaultReflectionFilter creates a filter object that uses default criteria for inclusion of
+   * reflection objects.
    *
-   * @param omitMethods
-   *          pattern for methods to omit, if null then no methods omitted
-   * @param omitFields
-   *          set of field names to omit
+   * @param omitMethods pattern for methods to omit, if null then no methods omitted
+   * @param omitFields set of field names to omit
    */
   public DefaultReflectionPredicate(Pattern omitMethods, Set<String> omitFields) {
     super();
@@ -60,13 +55,14 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
 
   /**
    * {@inheritDoc} Does checks for the following cases:
+   *
    * <ul>
-   * <li>Main methods
-   * <li>Methods matching omission pattern
-   * <li>Bridge methods related to type
-   * <li>Non-bridge, synthetic methods
-   * <li>Methods that are not visible, or do not have visible return type
-   * <li>[Special cases that need to be listed TODO]
+   *   <li>Main methods
+   *   <li>Methods matching omission pattern
+   *   <li>Bridge methods related to type
+   *   <li>Non-bridge, synthetic methods
+   *   <li>Methods that are not visible, or do not have visible return type
+   *   <li>[Special cases that need to be listed TODO]
    * </ul>
    */
   @Override
@@ -147,27 +143,24 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
 
   /**
    * Determines whether a bridge method should be discarded.
-   * <p>
-   * Bridge methods are synthetic overriding methods that are used by the
-   * compiler to make certain things possible that seem reasonable but need
-   * tweaks to make them work. Two of the three known cases involve forcing
-   * unchecked casts to allow type narrowing of return types (covariant return
-   * types) and instantiation of generic type parameters in methods. Both of
-   * these are situations that we think of as overriding, but really aren't.
-   * These bridge methods do unchecked type conversions from the general type to
-   * the more specific type expected by the local method. As a result, if
-   * included for testing, Randoop would generate many tests that would confirm
-   * that there is an unchecked type conversion. So, we do not want to include
-   * these methods.
-   * <p>
-   * The third known case involves a public class inheriting a public method
-   * defined in a private class of the same package. The bridge method in the public
-   * class exposes the method outside of the package, and we *do* want to be
-   * able to call this method. (This sort of trick is useful in providing a
-   * facade to an API where implementation details are only accessible within the
+   *
+   * <p>Bridge methods are synthetic overriding methods that are used by the compiler to make
+   * certain things possible that seem reasonable but need tweaks to make them work. Two of the
+   * three known cases involve forcing unchecked casts to allow type narrowing of return types
+   * (covariant return types) and instantiation of generic type parameters in methods. Both of these
+   * are situations that we think of as overriding, but really aren't. These bridge methods do
+   * unchecked type conversions from the general type to the more specific type expected by the
+   * local method. As a result, if included for testing, Randoop would generate many tests that
+   * would confirm that there is an unchecked type conversion. So, we do not want to include these
+   * methods.
+   *
+   * <p>The third known case involves a public class inheriting a public method defined in a private
+   * class of the same package. The bridge method in the public class exposes the method outside of
+   * the package, and we *do* want to be able to call this method. (This sort of trick is useful in
+   * providing a facade to an API where implementation details are only accessible within the
    * package.)
-   * <p>
-   * The only case in which a bridge method should be kept is when it is a visibility bridge.
+   *
+   * <p>The only case in which a bridge method should be kept is when it is a visibility bridge.
    *
    * @param m the bridge method to test
    * @return true if the bridge method should be discarded, false otherwise
@@ -188,19 +181,16 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   }
 
   /**
-   * Determines whether a bridge method is not a <i>visibility</i> bridge, which
-   * allows access to a definition of the method in a non-visible superclass.
-   * <p>
-   * To recognize a visibility bridge, it is sufficient to run up the superclass
-   * chain and confirm that the visibility of the class changes to non-public.
-   * If it does not, then the bridge method is not a visibility bridge.
+   * Determines whether a bridge method is not a <i>visibility</i> bridge, which allows access to a
+   * definition of the method in a non-visible superclass.
    *
-   * @param m
-   *          the bridge method to test
+   * <p>To recognize a visibility bridge, it is sufficient to run up the superclass chain and
+   * confirm that the visibility of the class changes to non-public. If it does not, then the bridge
+   * method is not a visibility bridge.
+   *
+   * @param m the bridge method to test
    * @return true if {@code m} is not a visibility bridge, and false otherwise
-   * @throws Error
-   *           if a {@link SecurityException} is thrown when accessing
-   *           superclass methods
+   * @throws Error if a {@link SecurityException} is thrown when accessing superclass methods
    */
   private boolean isNotVisibilityBridge(Method m) throws Error {
     Method method = m;
@@ -323,13 +313,10 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   }
 
   /**
-   * Determines whether the name of a field is included among the omitted field
-   * names.
+   * Determines whether the name of a field is included among the omitted field names.
    *
-   * @param f
-   *          field to test
-   * @return true if field name does not occur in omitFields pattern, and false
-   *         if it does
+   * @param f field to test
+   * @return true if field name does not occur in omitFields pattern, and false if it does
    */
   @Override
   public boolean test(Field f) {

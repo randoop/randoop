@@ -205,7 +205,7 @@ public class GenTests extends GenInputsAbstract {
                 GenInputsAbstract.toradocu_conditions);
       }
     } catch (IllegalArgumentException e) {
-      System.out.printf("%nError: %s%n", e.getMessage());
+      System.out.printf("%nError on condition input: %s%n", e.getMessage());
       System.out.println("Exiting Randoop.");
       System.exit(1);
     }
@@ -623,7 +623,7 @@ public class GenTests extends GenInputsAbstract {
       RegressionCaptureVisitor regressionVisitor;
       regressionVisitor =
           new RegressionCaptureVisitor(
-              expectation, observerMap, excludeAsObservers, includeAssertions);
+              expectation, observerMap, excludeAsObservers, visibility, includeAssertions);
 
       testGen = new ExtendGenerator(testGen, regressionVisitor);
     }

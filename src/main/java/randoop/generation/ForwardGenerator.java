@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
 import randoop.BugInRandoopException;
 import randoop.DummyVisitor;
 import randoop.Globals;
@@ -24,9 +23,9 @@ import randoop.sequence.Statement;
 import randoop.sequence.Value;
 import randoop.sequence.Variable;
 import randoop.test.DummyCheckGenerator;
-import randoop.types.JavaTypes;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
+import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.ArrayListSimpleList;
@@ -36,16 +35,15 @@ import randoop.util.MultiMap;
 import randoop.util.Randomness;
 import randoop.util.SimpleList;
 
-/**
- * Randoop's forward, component-based generator.
- */
+/** Randoop's forward, component-based generator. */
 public class ForwardGenerator extends AbstractGenerator {
 
   /**
-   * The set of ALL sequences ever generated, including sequences that were
-   * executed and then discarded.
+   * The set of ALL sequences ever generated, including sequences that were executed and then
+   * discarded.
    */
   private final Set<Sequence> allSequences;
+
   private final Set<TypedOperation> observers;
 
   /** Sequences that are used in other sequences (and are thus redundant) */
@@ -113,10 +111,9 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * The runtimePrimitivesSeen set contains primitive values seen during
-   * generation/execution and is used to determine new values that should be
-   * added to the component set. The component set initially contains a set of
-   * primitive sequences; this method puts those primitives in this set.
+   * The runtimePrimitivesSeen set contains primitive values seen during generation/execution and is
+   * used to determine new values that should be added to the component set. The component set
+   * initially contains a set of primitive sequences; this method puts those primitives in this set.
    */
   // XXX this is goofy - these values are available in other ways
   private void initializeRuntimePrimitivesSeen() {
@@ -181,20 +178,17 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * Determines what indices in the given sequence are active. An active index i
-   * means that the i-th method call creates an interesting/useful value that
-   * can be used as an input to a larger sequence; inactive indices are never
-   * used as inputs. The effect of setting active/inactive indices is that the
-   * SequenceCollection to which the given sequences is added only considers the
-   * active indices when deciding whether the sequence creates values of a given
-   * type.
-   * <p>
-   * In addition to determining active indices, this method determines if any
-   * primitive values created during execution of the sequence are new values
-   * not encountered before. Such values are added to the component manager so
-   * they can be used during subsequent generation attempts.
+   * Determines what indices in the given sequence are active. An active index i means that the i-th
+   * method call creates an interesting/useful value that can be used as an input to a larger
+   * sequence; inactive indices are never used as inputs. The effect of setting active/inactive
+   * indices is that the SequenceCollection to which the given sequences is added only considers the
+   * active indices when deciding whether the sequence creates values of a given type.
    *
-   * @param seq  the sequence
+   * <p>In addition to determining active indices, this method determines if any primitive values
+   * created during execution of the sequence are new values not encountered before. Such values are
+   * added to the component manager so they can be used during subsequent generation attempts.
+   *
+   * @param seq the sequence
    */
   private void processSequence(ExecutableSequence seq) {
 
@@ -301,10 +295,10 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * Tries to create and execute a new sequence. If the sequence is new (not
-   * already in the specified component manager), then it is executed and added
-   * to the manager's sequences. If the sequence created is already in the
-   * manager's sequences, this method has no effect, and returns null.
+   * Tries to create and execute a new sequence. If the sequence is new (not already in the
+   * specified component manager), then it is executed and added to the manager's sequences. If the
+   * sequence created is already in the manager's sequences, this method has no effect, and returns
+   * null.
    *
    * @return a new sequence, or null
    */
@@ -353,8 +347,7 @@ public class ForwardGenerator extends AbstractGenerator {
       sequences = selectInputs(operation);
     } catch (Throwable e) {
       if (GenInputsAbstract.fail_on_generation_error) {
-        String opName = operation.getOperation().getReflectionObject().toString();
-        throw new RandoopGenerationError(opName, operation, e);
+        throw new RandoopGenerationError(operation, e);
       } else {
         if (Log.isLoggingOn()) {
           Log.logLine("Error selecting inputs for operation: " + operation);
@@ -444,15 +437,12 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * Adds the given operation to a new {@code Sequence} with the statements of
-   * this object as a prefix, repeating the operation the given number of times.
-   * Used during generation.
+   * Adds the given operation to a new {@code Sequence} with the statements of this object as a
+   * prefix, repeating the operation the given number of times. Used during generation.
    *
-   * @param seq  the sequence to extend
-   * @param operation
-   *          the {@link TypedOperation} to repeat.
-   * @param times
-   *          the number of times to repeat the {@link Operation}.
+   * @param seq the sequence to extend
+   * @param operation the {@link TypedOperation} to repeat.
+   * @param times the number of times to repeat the {@link Operation}.
    * @return a new {@code Sequence}
    */
   private Sequence repeat(Sequence seq, TypedOperation operation, int times) {
@@ -800,8 +790,8 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * Returns the set of sequences that are included in other sequences to
-   * generate inputs (and, so, are subsumed by another sequence).
+   * Returns the set of sequences that are included in other sequences to generate inputs (and, so,
+   * are subsumed by another sequence).
    */
   @Override
   public Set<Sequence> getSubsumedSequences() {

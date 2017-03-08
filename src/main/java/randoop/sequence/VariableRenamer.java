@@ -2,7 +2,6 @@ package randoop.sequence;
 
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.InstantiatedType;
 import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
 import randoop.types.ReferenceArgument;
@@ -11,9 +10,7 @@ import randoop.types.TypeArgument;
 
 class VariableRenamer {
 
-  /**
-   * The sequence in which every variable will be renamed
-   */
+  /** The sequence in which every variable will be renamed */
   public final Sequence sequence;
 
   public VariableRenamer(Sequence sequence) {
@@ -22,14 +19,16 @@ class VariableRenamer {
   }
 
   /**
-   * Heuristically transforms variables to better names based on its type name.
-   * Here are some examples:
+   * Heuristically transforms variables to better names based on its type name. Here are some
+   * examples:
+   *
    * <pre>
    *   int var0 = 1     becomes  int i0 = 1
    *   ClassName var0 = new ClassName()      becomes ClassName className = new ClassName()
    *   Class var0 = null      becomes Class clazz = null
    * </pre>
-   * @param type  the type to use as base of variable name
+   *
+   * @param type the type to use as base of variable name
    * @return a variable name based on its type, without a trailing number
    */
   static String getVariableName(Type type) {

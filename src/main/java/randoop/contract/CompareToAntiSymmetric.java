@@ -2,15 +2,15 @@ package randoop.contract;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * The contract: Checks that an object is antisymmetric over compareTo
- * <code>Math.signum(x0.compareTo(x1)) == -Math.signum(x1.compareTo(x0))</code>.
+ * The contract: Checks that an object is antisymmetric over compareTo.
+ *
+ * <pre>Math.signum(x0.compareTo(x1)) == -Math.signum(x1.compareTo(x0))</pre>
  */
 public class CompareToAntiSymmetric implements ObjectContract {
   private static final CompareToAntiSymmetric instance = new CompareToAntiSymmetric();

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Condition (randoop 3.0.9 API)</title>
+<title>Condition (randoop 3.0.10 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Condition (randoop 3.0.9 API)";
+            parent.document.title="Condition (randoop 3.0.10 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6};
+var methods = {"i0":6,"i1":6,"i2":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -137,6 +137,12 @@ var activeTableTab = "activeTableTab";
 <div class="block">Return text that describes this condition.</div>
 </td>
 </tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/condition/Condition.html#getConditionString--">getConditionString</a></span>()</code>
+<div class="block">Return this condition as a string.</div>
+</td>
+</tr>
 </table>
 </li>
 </ul>
@@ -171,7 +177,7 @@ var activeTableTab = "activeTableTab";
 <a name="getComment--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getComment</h4>
 <pre>java.lang.String&nbsp;getComment()</pre>
@@ -179,6 +185,24 @@ var activeTableTab = "activeTableTab";
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>text that describes this condition</dd>
+</dl>
+</li>
+</ul>
+<a name="getConditionString--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getConditionString</h4>
+<pre>java.lang.String&nbsp;getConditionString()</pre>
+<div class="block">Return this condition as a string.
+ Arguments to the condition <a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract"><code>ObjectContract</code></a> convention where variables
+ are represented by <code>x0</code>, ..., <code>xn</code> for some number <code>n</code>.
+ If the operation takes a receiver it will be <code>x0</code>, and if the operation has a return
+ value it will be <code>xn</code> (the last variable).</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the Java representation of the condition as a <code>String</code></dd>
 </dl>
 </li>
 </ul>

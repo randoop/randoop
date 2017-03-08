@@ -1,7 +1,6 @@
 package randoop.test;
 
 import java.util.Objects;
-
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NotExecuted;
@@ -9,9 +8,9 @@ import randoop.sequence.Execution;
 import randoop.types.ClassOrInterfaceType;
 
 /**
- * Represents the fact that a statement should throw an exception, but did not.
- * It is used in an error-revealing test to indicate that normal execution of the statement
- * violates the stated throws-condition of the method/constructor.
+ * Represents the fact that a statement should throw an exception, but did not. It is used in an
+ * error-revealing test to indicate that normal execution of the statement violates the stated
+ * throws-condition of the method/constructor.
  */
 public class MissingExceptionCheck implements Check {
 
@@ -25,12 +24,12 @@ public class MissingExceptionCheck implements Check {
   private final int index;
 
   /**
-   * Creates a {@link MissingExceptionCheck} object for the expected exception type
-   * at the given statement.
+   * Creates a {@link MissingExceptionCheck} object for the expected exception type at the given
+   * statement.
    *
-   * @param expected  the type of the expected exception
-   * @param conditionComment  the comment text describing when exception should be thrown
-   * @param index  the statement index
+   * @param expected the type of the expected exception
+   * @param conditionComment the comment text describing when exception should be thrown
+   * @param index the statement index
    */
   MissingExceptionCheck(ClassOrInterfaceType expected, String conditionComment, int index) {
     this.expected = expected;
@@ -77,8 +76,8 @@ public class MissingExceptionCheck implements Check {
   }
 
   /**
-   * {@inheritDoc} Checks that an exception of the expected type is thrown by
-   * the statement in this object in the given {@link Execution}.
+   * {@inheritDoc} Checks that an exception of the expected type is thrown by the statement in this
+   * object in the given {@link Execution}.
    *
    * @return true if the statement throws the expected exception, false otherwise
    */

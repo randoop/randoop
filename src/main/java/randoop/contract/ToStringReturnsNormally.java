@@ -2,15 +2,12 @@ package randoop.contract;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
-/**
- * Checks that calling toString() on an object does not throw an exception.
- */
+/** Checks that calling toString() on an object does not throw an exception. */
 public final class ToStringReturnsNormally implements ObjectContract {
 
   @Override

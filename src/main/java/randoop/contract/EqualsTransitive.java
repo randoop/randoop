@@ -2,15 +2,14 @@ package randoop.contract;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * The contract: Checks the transitivity of equals for an object
- * <code>(x0.equals(x1) &amp;&amp; x1.equals(x2)) &rarr; x0.equals(x2)</code>.
+ * The contract: Checks the transitivity of equals for an object <code>
+ * (x0.equals(x1) &amp;&amp; x1.equals(x2)) &rarr; x0.equals(x2)</code>.
  */
 public class EqualsTransitive implements ObjectContract {
   private static final EqualsTransitive instance = new EqualsTransitive();

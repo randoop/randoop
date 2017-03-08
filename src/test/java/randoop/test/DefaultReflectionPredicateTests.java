@@ -5,10 +5,8 @@ import java.math.RoundingMode;
 import java.text.BreakIterator;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-
-import randoop.reflection.DefaultReflectionPredicate;
-
 import junit.framework.TestCase;
+import randoop.reflection.DefaultReflectionPredicate;
 
 public class DefaultReflectionPredicateTests extends TestCase {
   private DefaultReflectionPredicate filter;

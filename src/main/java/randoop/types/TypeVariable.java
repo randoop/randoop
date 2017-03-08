@@ -5,35 +5,33 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * An abstract class representing type variables.
- */
+/** An abstract class representing type variables. */
 public abstract class TypeVariable extends ParameterType {
 
   /**
-   * Creates a type variable with {@link NullReferenceType} as the lower bound, and
-   * the {@code Object} type as upper bound.
+   * Creates a type variable with {@link NullReferenceType} as the lower bound, and the {@code
+   * Object} type as upper bound.
    */
   TypeVariable() {
     super();
   }
 
   /**
-   * Creates a type variable with the given type bounds.
-   * Assumes the bounds are consistent and does not check for the subtype relationship.
+   * Creates a type variable with the given type bounds. Assumes the bounds are consistent and does
+   * not check for the subtype relationship.
    *
-   * @param lowerBound  the lower type bound on this variable
-   * @param upperBound  the upper type bound on this variable
+   * @param lowerBound the lower type bound on this variable
+   * @param upperBound the upper type bound on this variable
    */
   TypeVariable(ParameterBound lowerBound, ParameterBound upperBound) {
     super(lowerBound, upperBound);
   }
 
   /**
-   * Creates a {@code TypeVariable} object for a given {@code java.lang.reflect.Type}
-   * reference, which must be a {@code java.lang.reflect.TypeVariable}.
+   * Creates a {@code TypeVariable} object for a given {@code java.lang.reflect.Type} reference,
+   * which must be a {@code java.lang.reflect.TypeVariable}.
    *
-   * @param type  the type reference
+   * @param type the type reference
    * @return the {@code TypeVariable} for the given type
    */
   public static TypeVariable forType(java.lang.reflect.Type type) {
@@ -55,10 +53,7 @@ public abstract class TypeVariable extends ParameterType {
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   * Returns false, since an uninstantiated type variable may not be assigned to.
-   */
+  /** {@inheritDoc} Returns false, since an uninstantiated type variable may not be assigned to. */
   @Override
   public boolean isAssignableFrom(Type sourceType) {
     return false;
@@ -97,8 +92,8 @@ public abstract class TypeVariable extends ParameterType {
   /**
    * Creates a substitution of the given {@link ReferenceType} for the {@link TypeVariable}.
    *
-   * @param variable  the variable
-   * @param otherType  the replacement type
+   * @param variable the variable
+   * @param otherType the replacement type
    * @return a substitution that replaces {@code variable} with {@code otherType}
    */
   private static Substitution<ReferenceType> getSubstitution(
@@ -117,7 +112,7 @@ public abstract class TypeVariable extends ParameterType {
    * Indicates whether this {@link TypeVariable} can be instantiated by the {@link ReferenceType}.
    * Does not require that all bounds of this variable be instantiated.
    *
-   * @param otherType  the possibly instantiating type, not a variable
+   * @param otherType the possibly instantiating type, not a variable
    * @return true if the given type can instantiate this variable, false otherwise
    */
   boolean canBeInstantiatedBy(ReferenceType otherType) {

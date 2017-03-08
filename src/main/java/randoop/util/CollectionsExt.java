@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
 import plume.UtilMDE;
 import randoop.Globals;
 
@@ -38,11 +37,10 @@ public final class CollectionsExt {
   }
 
   /**
-   * Prints out the String.valueOf() of all elements of the collection,
-   * inserting a new line after each element. The order is specified by the
-   * collection's iterator.
+   * Prints out the String.valueOf() of all elements of the collection, inserting a new line after
+   * each element. The order is specified by the collection's iterator.
    *
-   * @param c  the collection of objects to include in string
+   * @param c the collection of objects to include in string
    * @return the concatenated string of object strings as lines
    */
   static String toStringInLines(Collection<?> c) {
@@ -51,10 +49,10 @@ public final class CollectionsExt {
   }
 
   /**
-   * List of String.valueOf() of all elements of the collection. The order is
-   * specified by the collection's iterator.
+   * List of String.valueOf() of all elements of the collection. The order is specified by the
+   * collection's iterator.
    *
-   * @param c  the collection of objects to include in string
+   * @param c the collection of objects to include in string
    * @return the concatenated string of object strings
    */
   private static List<String> toStringLines(Collection<?> c) {
@@ -66,16 +64,14 @@ public final class CollectionsExt {
   }
 
   /**
-   * Divides the argument into sublists of at most the given length.
-   * All sublists except at most one will have length exactly {@code maxLength}.
-   * No sublist will be empty.
+   * Divides the argument into sublists of at most the given length. All sublists except at most one
+   * will have length exactly {@code maxLength}. No sublist will be empty.
    *
-   * The result list is unmodifiable.
-   * It does <em>not</em> copy the list and simply shares it.
+   * <p>The result list is unmodifiable. It does <em>not</em> copy the list and simply shares it.
    *
    * @param <T> the element type
-   * @param list  the list to be partitioned
-   * @param maxLength  the maximum length of a list partition
+   * @param list the list to be partitioned
+   * @param maxLength the maximum length of a list partition
    * @return the partitioned list
    */
   public static <T> List<List<T>> formSublists(List<T> list, int maxLength) {

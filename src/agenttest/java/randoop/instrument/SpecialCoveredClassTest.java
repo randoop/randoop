@@ -1,13 +1,23 @@
 package randoop.instrument;
 
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static randoop.main.GenInputsAbstract.include_if_class_exercised;
+import static randoop.main.GenInputsAbstract.include_if_classname_appears;
+import static randoop.main.GenInputsAbstract.methodlist;
+import static randoop.main.GenInputsAbstract.omitmethods;
 
 import java.io.File;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
+import org.junit.Test;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.RandoopListenerManager;
@@ -22,6 +32,7 @@ import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionPredicate;
+import randoop.reflection.TypeNames;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
@@ -29,26 +40,13 @@ import randoop.test.ContractSet;
 import randoop.test.TestCheckGenerator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
-import randoop.reflection.TypeNames;
 import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.Predicate;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static randoop.main.GenInputsAbstract.include_if_class_exercised;
-import static randoop.main.GenInputsAbstract.include_if_classname_appears;
-import static randoop.main.GenInputsAbstract.methodlist;
-import static randoop.main.GenInputsAbstract.omitmethods;
-
 /**
- * Test special cases of "covered" (or exercised) class filtering.
- * Want to ensure behaves well when given abstract class and interface.
+ * Test special cases of "covered" (or exercised) class filtering. Want to ensure behaves well when
+ * given abstract class and interface.
  */
 public class SpecialCoveredClassTest {
 

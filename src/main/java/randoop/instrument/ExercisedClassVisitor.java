@@ -3,14 +3,12 @@ package randoop.instrument;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Set;
-
 import randoop.ExecutionVisitor;
 import randoop.sequence.ExecutableSequence;
 
 /**
- * A {@link ExecutionVisitor} that polls a set of coverage instrumented classes
- * and adds each covered class to an {@link ExecutableSequence} after it is
- * executed.
+ * A {@link ExecutionVisitor} that polls a set of coverage instrumented classes and adds each
+ * covered class to an {@link ExecutableSequence} after it is executed.
  */
 public class ExercisedClassVisitor implements ExecutionVisitor {
 
@@ -18,20 +16,15 @@ public class ExercisedClassVisitor implements ExecutionVisitor {
   private Set<Class<?>> classes;
 
   /**
-   * Creates a visitor to poll the given classes for coverage by sequence
-   * executions.
+   * Creates a visitor to poll the given classes for coverage by sequence executions.
    *
-   * @param classes
-   *          the set of classes to poll for coverage by a sequence
+   * @param classes the set of classes to poll for coverage by a sequence
    */
   public ExercisedClassVisitor(Set<Class<?>> classes) {
     this.classes = classes;
   }
 
-  /**
-   * {@inheritDoc} Registers each class covered with the sequence execution
-   * results.
-   */
+  /** {@inheritDoc} Registers each class covered with the sequence execution results. */
   @Override
   public void visitAfterSequence(ExecutableSequence executableSequence) {
     for (Class<?> c : classes) {
@@ -44,8 +37,7 @@ public class ExercisedClassVisitor implements ExecutionVisitor {
   /**
    * Calls the coverage instrumentation method.
    *
-   * @param c
-   *          the class for which method is to be called
+   * @param c the class for which method is to be called
    * @return true if the instrumentation method is true, false otherwise
    */
   private boolean checkAndReset(Class<?> c) {
