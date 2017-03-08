@@ -158,9 +158,10 @@ dependencies {
 /*
  * Configuration for formatting
  */
-googleJavaFormat {
-  toolVersion '1.3'
-}
+// TODO:
+// googleJavaFormat {
+//   toolVersion '1.3'
+// }
 
 tasks.googleJavaFormat {
   group 'Formatting'
