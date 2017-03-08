@@ -13,7 +13,7 @@
 // these method call substitutions.
 
 com.mypackage.*|com.myotherpackage.*
-  javax.swing.JOptionPane.showMessageDialog (java.awt.Component, java.lang.Object, java.lang.String, int) com.mypackage.RandoopMappedCalls
-  javax.swing.JOptionPane.showConfirmDialog (java.awt.Component, java.lang.Object, java.lang.String, int) com.mypackage.RandoopMappedCalls
-  javax.swing.JOptionPane.showConfirmDialog (java.awt.Component, java.lang.Object, java.lang.String, int, int) com.mypackage.RandoopMappedCalls
-  java.lang.System.exit (int) com.mypackage.RandoopMappedCalls
+  javax.swing.JOptionPane.showMessageDialog(java.awt.Component, java.lang.Object, java.lang.String, int) com.mypackage.RandoopMappedCalls
+  javax.swing.JOptionPane.showConfirmDialog(java.awt.Component, java.lang.Object, java.lang.String, int) com.mypackage.RandoopMappedCalls
+  javax.swing.JOptionPane.showConfirmDialog(java.awt.Component, java.lang.Object, java.lang.String, int, int) com.mypackage.RandoopMappedCalls
+  java.lang.System.exit(int) com.mypackage.RandoopMappedCalls

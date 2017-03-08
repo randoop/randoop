@@ -69,9 +69,11 @@ public class Instrument implements ClassFileTransformer {
   /** Debug information on method maping */
   public static SimpleLog debug_map = new SimpleLog("method_mapping.txt", true);
 
-  /** Class that defines a method (by its name and argument types) */
+  /** Class that defines a method (by its fully-qualified name and argument types) */
   static class MethodDef {
+    /** Fully-qualified method name, such as "javax.swing.JOptionPane.showMessageDialog" */
     String name;
+    /** The argument types */
     Type[] arg_types;
 
     MethodDef(String name, Type[] arg_types) {
@@ -107,39 +109,56 @@ public class Instrument implements ClassFileTransformer {
     }
   }
 
-  /** Class that defines the replacement call for a particular method map */
-  private static class MethodInfo {
+  /**
+   * Wrapper class that gives the fully-qualified class name of the class that contains a
+   * replacement call, and counts the number of replacements performed.
+   */
+  private static class ReplacementClass {
+    /** Fully-qualified class name. */
     String method_class;
+    /** The number of times that the replacement has been performed so far. */
     int cnt;
 
-    MethodInfo(String method_class) {
+    ReplacementClass(String method_class) {
       this.method_class = method_class;
       this.cnt = 0;
     }
   }
 
-  /** Class that keeps track of all of the method maps for a particular class regular expression */
+  /**
+   * Represents one block in a map_calls file:
+   *
+   * <ul>
+   *   <li>the classes in which to do the replacement
+   *   <li>a method map, indicating for each old method the class containing its replacement
+   * </ul>
+   */
   private static class MethodMapInfo {
+    /** Classes in which to do the replacement */
     Pattern class_regex;
-    Map<MethodDef, MethodInfo> map;
+    /** The method map: for each method, what class contains the replacement method? */
+    Map<MethodDef, ReplacementClass> map;
 
-    MethodMapInfo(Pattern class_regex, Map<MethodDef, MethodInfo> map) {
+    MethodMapInfo(Pattern class_regex, Map<MethodDef, ReplacementClass> map) {
       this.class_regex = class_regex;
       this.map = map;
     }
   }
 
-  /** List of all classname regexs and their corresponding method maps */
-  public static List<MethodMapInfo> map_list = new ArrayList<>();
-
-  /** Map from original method call to replacement method for current class */
-  Map<MethodDef, MethodInfo> method_map = null;
+  /**
+   * Represents all method replacements the user has requested. Another way of viewing this is that
+   * it represents a complete map_calls file. Such a file contains a set of MethodMapInfos, each of
+   * which specifies some replacements.
+   */
+  public static List<MethodMapInfo> map_calls_file = new ArrayList<>();
 
   public Instrument() {}
 
   /**
-   * {@inheritDoc} Transforms class by replacing calls to methods with corresponding calls defined
-   * in this class.
+   * {@inheritDoc}
+   *
+   * <p>Transforms class by replacing calls to methods with corresponding calls defined in this
+   * class.
    */
   @Override
   public byte[] transform(
@@ -184,18 +203,21 @@ public class Instrument implements ClassFileTransformer {
     }
 
     // Look for match with specified regular expressions for class
-    method_map = null;
+    Map<MethodDef, ReplacementClass> current_method_map = null;
     debug_class = false;
-    for (MethodMapInfo mmi : map_list) {
+    for (MethodMapInfo mmi : map_calls_file) {
       if (mmi.class_regex.matcher(className).matches()) {
         if (false && className.startsWith("RandoopTest")) debug_class = true;
         if (debug_class)
           System.out.printf("Classname %s matches re %s%n", className, mmi.class_regex);
-        method_map = mmi.map;
+        current_method_map = mmi.map;
         break;
       }
     }
-    if (method_map == null) return null;
+    if (current_method_map == null) {
+      // no replacements to be done in this class
+      return null;
+    }
 
     debug_transform.log(
         "transforming class %s, loader %s - %s%n", className, loader, loader.getParent());
@@ -214,7 +236,7 @@ public class Instrument implements ClassFileTransformer {
       ClassGen cg = new ClassGen(c);
       ifact = new InstructionFactory(cg);
 
-      map_calls(cg, className, loader);
+      map_calls(cg, className, loader, current_method_map);
 
       JavaClass njc = cg.getJavaClass();
       if (debug) njc.dump("/tmp/ret/" + njc.getClassName() + ".class");
@@ -238,7 +260,11 @@ public class Instrument implements ClassFileTransformer {
    *
    * @param fullClassName must be packageName.className
    */
-  private boolean map_calls(ClassGen cg, String fullClassName, ClassLoader loader) {
+  private boolean map_calls(
+      ClassGen cg,
+      String fullClassName,
+      ClassLoader loader,
+      Map<MethodDef, ReplacementClass> current_method_map) {
 
     boolean transformed = false;
 
@@ -256,7 +282,7 @@ public class Instrument implements ClassFileTransformer {
 
         if (debug) out.format("Original code: %s%n", mg.getMethod().getCode());
 
-        instrument_method(methods[i], mg);
+        instrument_method(methods[i], mg, current_method_map);
 
         // Remove the Local variable type table attribute (if any).
         // Evidently, some changes we make require this to be updated, but
@@ -309,7 +335,8 @@ public class Instrument implements ClassFileTransformer {
    * @param m the method to transform
    * @param mg the method generator
    */
-  public void instrument_method(Method m, MethodGen mg) {
+  public void instrument_method(
+      Method m, MethodGen mg, Map<MethodDef, ReplacementClass> current_method_map) {
 
     // Loop through each instruction, making substitutions
     InstructionList il = mg.getInstructionList();
@@ -323,13 +350,13 @@ public class Instrument implements ClassFileTransformer {
       InstructionHandle next_ih = ih.getNext();
 
       // Get the translation for this instruction (if any)
-      InstructionList new_il = xform_inst(mg, ih.getInstruction());
+      InstructionList new_il = xform_inst(mg, ih.getInstruction(), current_method_map);
       if (debug_instrument_inst.enabled()) debug_instrument_inst.log("  new inst: %s%n", new_il);
 
       // If this instruction was modified, replace it with the new
       // instruction list. If this instruction was the target of any
-      // jumps or line numbers , replace them with the first
-      // instruction in the new list
+      // jumps or line numbers, replace them with the first
+      // instruction in the new list.
       replace_instructions(il, ih, new_il);
 
       ih = next_ih;
@@ -340,7 +367,8 @@ public class Instrument implements ClassFileTransformer {
    * Transforms invoke instructions that match the specified list for this class to call the
    * specified static call instead.
    */
-  private InstructionList xform_inst(MethodGen mg, Instruction inst) {
+  private InstructionList xform_inst(
+      MethodGen mg, Instruction inst, Map<MethodDef, ReplacementClass> current_method_map) {
 
     switch (inst.getOpcode()) {
       case Const.INVOKESTATIC:
@@ -351,7 +379,7 @@ public class Instrument implements ClassFileTransformer {
           String mname = is.getMethodName(pgen);
           Type[] args = is.getArgumentTypes(pgen);
           MethodDef orig = new MethodDef(cname + "." + mname, args);
-          MethodInfo call = method_map.get(orig);
+          ReplacementClass call = current_method_map.get(orig);
           if (call != null) {
             call.cnt++;
             String classname = call.method_class;
@@ -382,8 +410,9 @@ public class Instrument implements ClassFileTransformer {
           Type instance_type = iv.getReferenceType(pgen);
           Type[] new_args = BCELUtil.insert_type(instance_type, args);
           MethodDef orig = new MethodDef(cname + "." + mname, args);
-          if (debug_class) System.out.printf("looking for %s in map %s%n", orig, method_map);
-          MethodInfo call = method_map.get(orig);
+          if (debug_class)
+            System.out.printf("looking for %s in map %s%n", orig, current_method_map);
+          ReplacementClass call = current_method_map.get(orig);
           if (call != null) {
             call.cnt++;
             String classname = call.method_class;
@@ -414,7 +443,9 @@ public class Instrument implements ClassFileTransformer {
   protected static void replace_instructions(
       InstructionList il, InstructionHandle ih, InstructionList new_il) {
 
-    if ((new_il == null) || new_il.isEmpty()) return;
+    if ((new_il == null) || new_il.isEmpty()) {
+      return;
+    }
 
     // If there is only one new instruction, just replace it in the handle
     if (new_il.getLength() == 1) {
@@ -487,7 +518,7 @@ public class Instrument implements ClassFileTransformer {
     return (att_name);
   }
 
-  /** Class the reports tokenizing errors from the map file. All errors are throw IOExceptions */
+  /** Class that reports tokenizing errors from the map file. */
   static class MapFileErrorHandler extends StrTok.ErrorHandler {
     LineNumberReader lr;
     File map_file;
@@ -568,7 +599,7 @@ public class Instrument implements ClassFileTransformer {
     LineNumberReader lr = new LineNumberReader(new FileReader(map_file));
     MapFileErrorHandler mfeh = new MapFileErrorHandler(lr, map_file);
     Pattern current_regex = null;
-    Map<MethodDef, MethodInfo> map = new LinkedHashMap<>();
+    Map<MethodDef, ReplacementClass> map = new LinkedHashMap<>();
     for (String line = lr.readLine(); line != null; line = lr.readLine()) {
       line = line.replaceFirst("//.*$", "");
       if (line.trim().length() == 0) continue;
@@ -576,14 +607,14 @@ public class Instrument implements ClassFileTransformer {
         if (current_regex == null)
           throw new IOException("No current class regex on line " + lr.getLineNumber());
         StrTok st = new StrTok(line, mfeh);
-        st.stok.wordChars('.', '.');
+        st.stok.wordChars('.', '.'); // make '.' a word constituent
         MethodDef md = parse_method(st);
-        String new_method = st.need_word();
-        map.put(md, new MethodInfo(new_method));
+        String replacement_method_class = st.need_word(); // words including '.'
+        map.put(md, new ReplacementClass(replacement_method_class));
       } else {
         if (current_regex != null) {
           MethodMapInfo mmi = new MethodMapInfo(current_regex, map);
-          map_list.add(mmi);
+          map_calls_file.add(mmi);
           map = new LinkedHashMap<>();
         }
         current_regex = Pattern.compile(line);
@@ -591,19 +622,19 @@ public class Instrument implements ClassFileTransformer {
     }
     if (current_regex != null) {
       MethodMapInfo mmi = new MethodMapInfo(current_regex, map);
-      map_list.add(mmi);
+      map_calls_file.add(mmi);
     }
 
-    dump_map_list();
+    dump_map_calls_file();
   }
 
   /** Dumps out the map list to the debug_map logger */
-  public static void dump_map_list() {
+  public static void dump_map_calls_file() {
     if (debug_map.enabled()) {
-      for (MethodMapInfo mmi : map_list) {
+      for (MethodMapInfo mmi : map_calls_file) {
         debug_map.log("Class re '%s': %n", mmi.class_regex);
         for (MethodDef md : mmi.map.keySet()) {
-          MethodInfo mi = mmi.map.get(md);
+          ReplacementClass mi = mmi.map.get(md);
           debug_map.log("  %s - %s [%d replacements]%n", md, mi.method_class, mi.cnt);
         }
       }
@@ -619,8 +650,8 @@ public class Instrument implements ClassFileTransformer {
             new Thread() {
               @Override
               public void run() {
-                for (MethodMapInfo mmi : map_list) {
-                  dump_map_list();
+                for (MethodMapInfo mmi : map_calls_file) {
+                  dump_map_calls_file();
                 }
               }
             });
