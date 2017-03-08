@@ -33,7 +33,7 @@ public class ClassSourceBuilder extends SourceBuilder {
    * @param classname  the name of the class declaration to be built
    * @param packageName  the name of the package for the class declaration
    */
-  ClassSourceBuilder(String classname, String packageName) {
+  public ClassSourceBuilder(String classname, String packageName) {
     this.classname = classname;
     if (packageName == null) {
       this.packageName = "";
@@ -51,7 +51,7 @@ public class ClassSourceBuilder extends SourceBuilder {
    *
    * @param importNames  the list of import declarations to add to this class declaration
    */
-  void addImports(Collection<String> importNames) {
+  public void addImports(Collection<String> importNames) {
     if (importNames != null) {
       this.importNames.addAll(importNames);
     }
@@ -62,13 +62,13 @@ public class ClassSourceBuilder extends SourceBuilder {
    *
    * @param annotations  the collection of annotations to be added to this declaration
    */
-  void addAnnotation(Collection<String> annotations) {
+  public void addAnnotation(Collection<String> annotations) {
     if (annotations != null) {
       this.classAnnotation.addAll(annotations);
     }
   }
 
-  void addMember(String declarationString) {
+  public void addMember(String declarationString) {
     if (declarationString != null && !declarationString.isEmpty()) {
       List<String> declarationLines = new ArrayList<>();
       declarationLines.add(declarationString);
@@ -76,7 +76,7 @@ public class ClassSourceBuilder extends SourceBuilder {
     }
   }
 
-  void addMember(List<String> declarationLines) {
+  public void addMember(List<String> declarationLines) {
     if (declarationLines != null && !declarationLines.isEmpty()) {
       memberDeclarations.add(declarationLines);
     }

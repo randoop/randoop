@@ -9,7 +9,7 @@ import plume.UtilMDE;
 /**
  * Constructs a {@code String} containing a method declaration.
  */
-class MethodSourceBuilder extends SourceBuilder {
+public class MethodSourceBuilder extends SourceBuilder {
 
   private final String modifiers;
   private final String methodName;
@@ -19,7 +19,7 @@ class MethodSourceBuilder extends SourceBuilder {
   private final List<String> bodyText;
   private final List<String> parameters;
 
-  MethodSourceBuilder(
+  public MethodSourceBuilder(
       String modifiers,
       String returnTypeName,
       String methodName,
@@ -34,19 +34,19 @@ class MethodSourceBuilder extends SourceBuilder {
     this.bodyText = new ArrayList<>();
   }
 
-  void addAnnotation(Collection<String> annotations) {
+  public void addAnnotation(Collection<String> annotations) {
     if (annotations != null) {
       this.annotations.addAll(annotations);
     }
   }
 
-  void addBodyText(String bodyText) {
+  public void addBodyText(String bodyText) {
     if (bodyText != null) {
       this.bodyText.add(bodyText);
     }
   }
 
-  void addBodyText(List<String> bodyText) {
+  public void addBodyText(List<String> bodyText) {
     if (bodyText != null) {
       this.bodyText.addAll(bodyText);
     }

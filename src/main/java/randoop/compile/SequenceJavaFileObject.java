@@ -1,21 +1,53 @@
 package randoop.compile;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.tools.SimpleJavaFileObject;
 
+import static randoop.compile.CompileUtil.toURI;
+
 /**
- * Created by bjkeller on 3/2/17.
+ * based on {@code javaxtools.compiler.JavaFileObjectImple}  from <a href="http://www.ibm.com/developerworks/library/j-jcomp/index.html">Create dynamic applications with javax.tools</a>.
  */
-public class SequenceJavaFileObject extends SimpleJavaFileObject {
-  /**
-   * Construct a SimpleJavaFileObject of the given kind and with the
-   * given URI.
-   *
-   * @param uri  the URI for this file object
-   * @param kind the kind of this file object
-   */
-  protected SequenceJavaFileObject(URI uri, Kind kind) {
-    super(uri, kind);
+class SequenceJavaFileObject extends SimpleJavaFileObject {
+
+  private final String source;
+  private ByteArrayOutputStream byteCode;
+
+  SequenceJavaFileObject(final String classFileName, final Kind kind) {
+    super(toURI(classFileName), kind);
+    this.source = null;
+  }
+
+  SequenceJavaFileObject(String classFileName, String sequenceClass) {
+    super(toURI(classFileName), Kind.SOURCE);
+    this.source = sequenceClass;
+  }
+
+  @Override
+  public CharSequence getCharContent(final boolean ignoreEncodingErrors)
+      throws UnsupportedOperationException {
+    if (source == null) throw new UnsupportedOperationException("getCharContent()");
+    return source;
+  }
+
+  @Override
+  public InputStream openInputStream() {
+    return new ByteArrayInputStream(getByteCode());
+  }
+
+  @Override
+  public OutputStream openOutputStream() {
+    byteCode = new ByteArrayOutputStream();
+    return byteCode;
+  }
+
+  byte[] getByteCode() {
+    return byteCode.toByteArray();
   }
 }
