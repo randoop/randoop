@@ -14,8 +14,8 @@ import randoop.types.TypeTuple;
 /**
  * Represents the contract that an object must conform to its representation invariant, as expressed
  * in a user-supplied representation check method. A rep check method for a class must be declared
- * as a public instance method with no parameters in the given class, annotated with a <code>
- * @CheckRep</code> annotation, and have return type <code>boolean</code> or <code>void</code> . In
+ * as a public instance method with no parameters in the given class, annotated with a
+ * {@code @CheckRep} annotation, and have return type <code>boolean</code> or <code>void</code>. In
  * the first case, a return value <code>true</code> means the check passed, and <code>false
  * </code>, or an exception, means it failed. In the second case, normal return means the check
  * passed, and an exception means it failed.

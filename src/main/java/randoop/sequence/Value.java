@@ -116,8 +116,8 @@ public class Value {
    * useful in generation because they contain non-reproducible hash strings.
    *
    * <p>This method is actually more restrictive in what it determines to look like it came from
-   * Object.toString(): it deems anything that has a substring matching the pattern <code>
-   * @[0-9a-h]{1,8}</code>. Meaning, if it looks like the string contains the {@code
+   * Object.toString(): it deems anything that has a substring matching the pattern
+   * {@code @[0-9a-h]{1,8}}. Meaning, if it looks like the string contains the {@code
    * "@<em>hex</em>"} pattern, the method returns true. This almost always works and is a faster
    * check.
    *
