@@ -2,9 +2,7 @@ package randoop.types;
 
 import java.util.Objects;
 
-/**
- * Represents a bound on a type variable where the bound is a {@link ReferenceType}.
- */
+/** Represents a bound on a type variable where the bound is a {@link ReferenceType}. */
 public abstract class ReferenceBound extends ParameterBound {
 
   /** The type for this bound */
@@ -13,7 +11,7 @@ public abstract class ReferenceBound extends ParameterBound {
   /**
    * Creates a {@link ReferenceBound} with the given bound type.
    *
-   * @param boundType  the {@link ReferenceType} of this bound
+   * @param boundType the {@link ReferenceType} of this bound
    */
   ReferenceBound(ReferenceType boundType) {
     this.boundType = boundType;
@@ -55,7 +53,7 @@ public abstract class ReferenceBound extends ParameterBound {
 
   @Override
   boolean hasWildcard() {
-    return boundType.isParameterized() && ((ParameterizedType) boundType).hasWildcard();
+    return boundType.hasWildcard();
   }
 
   @Override
@@ -66,5 +64,10 @@ public abstract class ReferenceBound extends ParameterBound {
   @Override
   public boolean isObject() {
     return boundType.isObject();
+  }
+
+  @Override
+  public boolean isVariable() {
+    return boundType.isVariable();
   }
 }

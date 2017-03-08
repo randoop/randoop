@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>AbstractGenerator (randoop 3.0.7 API)</title>
+<title>AbstractGenerator (randoop 3.0.10 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="AbstractGenerator (randoop 3.0.7 API)";
+            parent.document.title="AbstractGenerator (randoop 3.0.10 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":6,"i5":10,"i6":10,"i7":10,"i8":6,"i9":10,"i10":10,"i11":10,"i12":6,"i13":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":6,"i5":10,"i6":10,"i7":10,"i8":10,"i9":6,"i10":10,"i11":10,"i12":10,"i13":6,"i14":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -172,80 +172,84 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#invalidSequenceCount">invalidSequenceCount</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../randoop/generation/RandoopListenerManager.html" title="class in randoop.generation">RandoopListenerManager</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#listenerMgr">listenerMgr</a></span></code>
 <div class="block">Manages notifications for listeners.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#maxGeneratedSequences">maxGeneratedSequences</a></span></code>
 <div class="block">Sequence limit for generation.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#maxOutputSequences">maxOutputSequences</a></span></code>
 <div class="block">Limit for output.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#maxTimeMillis">maxTimeMillis</a></span></code>
 <div class="block">Time limit for generation.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#num_failing_sequences">num_failing_sequences</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#num_sequences_generated">num_sequences_generated</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#num_steps">num_steps</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#operations">operations</a></span></code>
 <div class="block">The list of statement kinds (methods, constructors, primitive value
  declarations, etc.) used to generate sequences.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#outErrorSeqs">outErrorSeqs</a></span></code>
 <div class="block">The list of error test sequences to be output as JUnit tests.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#outputTest">outputTest</a></span></code>
 <div class="block">A filter to determine whether a sequence should be added to the output
  sequence lists.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#outRegressionSeqs">outRegressionSeqs</a></span></code>
 <div class="block">The list of regression sequences to be output as JUnit tests.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/util/ProgressDisplay.html" title="class in randoop.util">ProgressDisplay</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#progressDisplay">progressDisplay</a></span></code>
 <div class="block">Updates the progress display message printed to the console.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/generation/IStopper.html" title="interface in randoop.generation">IStopper</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#stopper">stopper</a></span></code>
 <div class="block">Customizable stopping criterion in addition to time and sequence limits.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/util/Timer.html" title="class in randoop.util">Timer</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#timer">timer</a></span></code>
 <div class="block">The timer used to determine how much time has elapsed since the start of
@@ -345,37 +349,43 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i8" class="altColor">
+<td class="colFirst"><code>private int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#numErrorSequences--">numErrorSequences</a></span>()</code>
+<div class="block">Returns the count of generated error-revealing sequences.</div>
+</td>
+</tr>
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>abstract int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#numGeneratedSequences--">numGeneratedSequences</a></span>()</code>
 <div class="block">Returns the count of sequences generated so far by the generator.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#numOutputSequences--">numOutputSequences</a></span>()</code>
 <div class="block">Returns the count of generated sequence currently for output.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#outputSequenceCount--">outputSequenceCount</a></span>()</code>
 <div class="block">Returns the total number of test sequences generated to output, including
  both regression tests and error-revealing tests.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#setCurrentSequence-randoop.sequence.Sequence-">setCurrentSequence</a></span>(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;s)</code>
 <div class="block">Sets the current sequence during exploration</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>abstract <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#step--">step</a></span>()</code>
 <div class="block">Generate an individual test sequence</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#stop--">stop</a></span>()</code>
 <div class="block">Tests stopping criteria and determines whether generation should stop.</div>
@@ -437,6 +447,15 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>num_failing_sequences</h4>
 <pre>public&nbsp;int num_failing_sequences</pre>
+</li>
+</ul>
+<a name="invalidSequenceCount">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>invalidSequenceCount</h4>
+<pre>public&nbsp;int invalidSequenceCount</pre>
 </li>
 </ul>
 <a name="timer">
@@ -749,6 +768,20 @@ extends java.lang.Object</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the sum of the number of error and regression test sequences for
          output</dd>
+</dl>
+</li>
+</ul>
+<a name="numErrorSequences--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>numErrorSequences</h4>
+<pre>private&nbsp;int&nbsp;numErrorSequences()</pre>
+<div class="block">Returns the count of generated error-revealing sequences.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the number of error test sequences</dd>
 </dl>
 </li>
 </ul>

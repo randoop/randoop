@@ -1,21 +1,17 @@
 package randoop.operation;
 
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-
-import randoop.types.JavaTypes;
-import randoop.types.Type;
-
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Test for Term operations.
- */
+import java.util.ArrayList;
+import java.util.Comparator;
+import org.junit.Test;
+import randoop.types.JavaTypes;
+import randoop.types.Type;
+
+/** Test for Term operations. */
 public class TermTests {
 
   @Test

@@ -1,13 +1,21 @@
 package randoop.reflection;
 
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.isOneOf;
+import static org.hamcrest.core.AnyOf.anyOf;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
+import org.junit.Test;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.main.ClassNameErrorHandler;
@@ -20,20 +28,7 @@ import randoop.reflection.supertypetest.InheritedEnum;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.isOneOf;
-import static org.hamcrest.core.AnyOf.anyOf;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-/**
- * Tests of {@link randoop.reflection.OperationModel}.
- *
- */
+/** Tests of {@link randoop.reflection.OperationModel}. */
 public class OperationModelTest {
 
   @Test
@@ -160,8 +155,8 @@ public class OperationModelTest {
   }
 
   /**
-   * Tests the case where an enum inherits a method from a class that has an overloaded
-   * method with an incompatible type.
+   * Tests the case where an enum inherits a method from a class that has an overloaded method with
+   * an incompatible type.
    */
   @Test
   public void testEnumOverloads() {
@@ -238,9 +233,7 @@ public class OperationModelTest {
     }
   }
 
-  /**
-   * Test whether member classes are harvested.
-   */
+  /** Test whether member classes are harvested. */
   @Test
   public void memberTypeTest() {
     String classname = "randoop.reflection.ClassWithMemberTypes";

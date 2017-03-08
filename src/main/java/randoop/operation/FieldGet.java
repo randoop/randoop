@@ -3,7 +3,6 @@ package randoop.operation;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-
 import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -17,11 +16,10 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * FieldGetter is an adapter that creates a {@link Operation} from a
- * {@link AccessibleField} and behaves like a getter for the field.
+ * FieldGetter is an adapter that creates a {@link Operation} from a {@link AccessibleField} and
+ * behaves like a getter for the field.
  *
  * @see AccessibleField
- *
  */
 public class FieldGet extends CallableOperation {
 
@@ -32,24 +30,22 @@ public class FieldGet extends CallableOperation {
   /**
    * FieldGetter sets the public field for the getter statement.
    *
-   * @param field
-   *          the {@link AccessibleField} object from which to get values.
+   * @param field the {@link AccessibleField} object from which to get values.
    */
   public FieldGet(AccessibleField field) {
     this.field = field;
   }
 
   /**
-   * Performs computation of getting value of field or capturing thrown exceptions.
-   * Exceptions should only be NullPointerException, which happens when input is null but
-   * field is an instance field. {@link AccessibleField#getValue(Object)} suppresses exceptions
-   * that occur because field is not valid or accessible.
+   * Performs computation of getting value of field or capturing thrown exceptions. Exceptions
+   * should only be NullPointerException, which happens when input is null but field is an instance
+   * field. {@link AccessibleField#getValue(Object)} suppresses exceptions that occur because field
+   * is not valid or accessible.
    *
-   * @param statementInput  the inputs for statement
-   * @param out  the stream for printing output (unused)
+   * @param statementInput the inputs for statement
+   * @param out the stream for printing output (unused)
    * @return outcome of access
-   * @throws BugInRandoopException
-   *           if field access throws bug exception
+   * @throws BugInRandoopException if field access throws bug exception
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
@@ -70,13 +66,10 @@ public class FieldGet extends CallableOperation {
   }
 
   /**
-   * Adds the text for an initialization of a variable from a field to the
-   * StringBuilder.
+   * Adds the text for an initialization of a variable from a field to the StringBuilder.
    *
-   * @param inputVars
-   *          the list of variables to be used (ignored)
-   * @param b
-   *          the StringBuilder that strings are appended to
+   * @param inputVars the list of variables to be used (ignored)
+   * @param b the StringBuilder that strings are appended to
    */
   @Override
   public void appendCode(
@@ -88,10 +81,7 @@ public class FieldGet extends CallableOperation {
     b.append(field.toCode(declaringType, inputVars));
   }
 
-  /**
-   * Returns string descriptor for field that can be parsed by
-   * PublicFieldParser.
-   */
+  /** Returns string descriptor for field that can be parsed by PublicFieldParser. */
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
     return declaringType.getName() + ".<get>(" + field.getName() + ")";
@@ -121,15 +111,13 @@ public class FieldGet extends CallableOperation {
   }
 
   /**
-   * Parses a getter for a field from a string. A getter description has the
-   * form "&lt;get&gt;( field-descriptor )" where &lt;get&gt;" is literal ("&lt;
-   * " and "&gt;" included), and field-descriptor is as recognized by
+   * Parses a getter for a field from a string. A getter description has the form "&lt;get&gt;(
+   * field-descriptor )" where &lt;get&gt;" is literal ("&lt; " and "&gt;" included), and
+   * field-descriptor is as recognized by
    *
-   * @param descr
-   *          the string containing descriptor of getter for a field
+   * @param descr the string containing descriptor of getter for a field
    * @return the getter operation for the given string descriptor
-   * @throws OperationParseException
-   *           if any error in descriptor string
+   * @throws OperationParseException if any error in descriptor string
    */
   public static TypedOperation parse(String descr) throws OperationParseException {
     String errorPrefix = "Error parsing " + descr + " as description for field getter statement: ";
@@ -189,13 +177,10 @@ public class FieldGet extends CallableOperation {
   }
 
   /**
-   * Determines whether enclosed {@link java.lang.reflect.Field} satisfies the
-   * given predicate.
+   * Determines whether enclosed {@link java.lang.reflect.Field} satisfies the given predicate.
    *
-   * @param predicate
-   *          the {@link ReflectionPredicate} to be checked.
-   * @return true only if the field used in this getter satisfies
-   *         predicate.canUse.
+   * @param predicate the {@link ReflectionPredicate} to be checked.
+   * @return true only if the field used in this getter satisfies predicate.canUse.
    */
   @Override
   public boolean satisfies(ReflectionPredicate predicate) {

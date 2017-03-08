@@ -3,36 +3,25 @@ package randoop.test.bh;
 import java.util.Enumeration;
 
 /**
- * A Java implementation of the <tt>bh</tt> Olden benchmark.
- * The Olden benchmark implements the Barnes-Hut benchmark
- * that is decribed in :
- * <p><cite>
- * J. Barnes and P. Hut, "A hierarchical o(NlogN) force-calculation algorithm",
- * Nature, 324:446-449, Dec. 1986
- * </cite>
- * <p>
- * The original code in the Olden benchmark suite is derived from the
- * <a href="ftp://hubble.ifa.hawaii.edu/pub/barnes/treecode">
- * source distributed by Barnes</a>.
- **/
+ * A Java implementation of the <tt>bh</tt> Olden benchmark. The Olden benchmark implements the
+ * Barnes-Hut benchmark that is decribed in:
+ *
+ * <p><cite> J. Barnes and P. Hut, "A hierarchical o(NlogN) force-calculation algorithm", Nature,
+ * 324:446-449, Dec. 1986 </cite>
+ *
+ * <p>The original code in the Olden benchmark suite is derived from the <a
+ * href="ftp://hubble.ifa.hawaii.edu/pub/barnes/treecode">source distributed by Barnes</a>.
+ */
 public class BH {
-  /**
-   * The user specified number of bodies to create.
-   **/
+  /** The user specified number of bodies to create. */
   private static int nbody = 0;
 
-  /**
-   * The maximum number of time steps to take in the simulation
-   **/
+  /** The maximum number of time steps to take in the simulation */
   private static int nsteps = 10;
 
-  /**
-   * Should we print information messsages
-   **/
+  /** Should we print information messsages */
   private static boolean printMsgs = false;
-  /**
-   * Should we print detailed results
-   **/
+  /** Should we print detailed results */
   private static boolean printResults = false;
 
   static double DTIME = 0.0125;
@@ -80,9 +69,10 @@ public class BH {
 
   /**
    * Random number generator used by the orignal BH benchmark.
+   *
    * @param seed the seed to the generator
    * @return a random number
-   **/
+   */
   public static final double myRand(double seed) {
     double t = 16807.0 * seed + 1;
 
@@ -91,14 +81,13 @@ public class BH {
   }
 
   /**
-   * Generate a floating point random number.  Used by
-   * the original BH benchmark.
+   * Generate a floating point random number. Used by the original BH benchmark.
    *
    * @param xl lower bound
    * @param xh upper bound
    * @param r seed
    * @return a floating point randon number
-   **/
+   */
   public static final double xRand(double xl, double xh, double r) {
     double res = xl + (xh - xl) * r / 2147483647.0;
     return res;
@@ -106,8 +95,9 @@ public class BH {
 
   /**
    * Parse the command line options.
+   *
    * @param args the command line options
-   **/
+   */
   private static final void parseCmdLine(String[] args) {
     int i = 0;
     String arg;
@@ -138,9 +128,7 @@ public class BH {
     if (nbody == 0) usage();
   }
 
-  /**
-   * The usage routine which describes the program options.
-   **/
+  /** The usage routine which describes the program options. */
   private static final void usage() {
     // Commented out to avoid confusing printout during tests.
     //    System.err.println("usage: java BH -b <size> [-s <steps>] [-p] [-m] [-h]");

@@ -1,6 +1,3 @@
-/**
- *
- */
 package randoop.test;
 
 public class B {

@@ -3,7 +3,6 @@ package randoop.sequence;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
-
 import randoop.BugInRandoopException;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
@@ -12,17 +11,15 @@ import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.util.StringEscapeUtils;
 
-/**
- * Utility methods to work with values in test sequences.
- */
+/** Utility methods to work with values in test sequences. */
 public class Value {
 
   /**
-   * Given a primitive, boxed primitive, or String, returns a String that can
-   * be used in Java source to represent it.
+   * Given a primitive, boxed primitive, or String, returns a String that can be used in Java source
+   * to represent it.
    *
-   * @param value the value to create a String representation for.
-   * The value's type must be a primitive type, a String, or null.
+   * @param value the value to create a String representation for. The value's type must be a
+   *     primitive type, a String, or null.
    * @return a string representing code for the given value
    */
   public static String toCodeString(Object value) {
@@ -114,21 +111,17 @@ public class Value {
   private static final Pattern OBJECT_TOSTRING_PATTERN = Pattern.compile("@[0-9a-h]{1,8}");
 
   /**
-   * Returns true if the given string looks like it came from a call of
-   * Object.toString(); in other words, looks something like
-   * {@code "<em>classname</em>@<em>hex</em>"}. Such strings are rarely useful in generation because
-   * they contain non-reproducible hash strings.
+   * Returns true if the given string looks like it came from a call of Object.toString(); in other
+   * words, looks something like {@code "<em>classname</em>@<em>hex</em>"}. Such strings are rarely
+   * useful in generation because they contain non-reproducible hash strings.
    *
-   * This method is actually more restrictive in what it determines to look like
-   * it came from Object.toString(): it deems anything that has a substring matching the pattern
+   * <p>This method is actually more restrictive in what it determines to look like it came from
+   * Object.toString(): it deems anything that has a substring matching the pattern <code>
+   * @[0-9a-h]{1,8}</code>. Meaning, if it looks like the string contains the {@code
+   * "@<em>hex</em>"} pattern, the method returns true. This almost always works and is a faster
+   * check.
    *
-   * <code>@[0-9a-h]{1,8}</code>
-   *
-   * Meaning, if it looks like the string contains the {@code "@<em>hex</em>"}
-   * pattern, the method returns true. This almost always works and is a
-   * faster check.
-   *
-   * @param s  the string
+   * @param s the string
    * @return true if string appears to be default toString output, false otherwise
    */
   public static boolean looksLikeObjectToString(String s) {
@@ -142,22 +135,20 @@ public class Value {
   private static Map<String, Boolean> stringLengthOKCached = new LinkedHashMap<>();
 
   /**
-   * Returns true if the given string is deemed to be reasonable (i.e. not too long)
-   * based on the --string-maxlen=N parameter.
-   * <p>
-   * If Randoop generates tests using strings that are too long, this can
-   * result in non-compilable tests due to the JVM's limit on the length of a string.
-   * <p>
-   * A string S is too long if, when printed as code in a generated unit test,
-   * it may result in a non-compilable test. In order to determine this, we have
-   * to consider not the length of s, but the length of the string that would be
-   * printed to obtain s, which may be different due to escaped and unicode characters.
-   * This method takes this into account.
+   * Returns true if the given string is deemed to be reasonable (i.e. not too long) based on the
+   * --string-maxlen=N parameter.
    *
-   * @param s  the string
+   * <p>If Randoop generates tests using strings that are too long, this can result in
+   * non-compilable tests due to the JVM's limit on the length of a string.
+   *
+   * <p>A string S is too long if, when printed as code in a generated unit test, it may result in a
+   * non-compilable test. In order to determine this, we have to consider not the length of s, but
+   * the length of the string that would be printed to obtain s, which may be different due to
+   * escaped and unicode characters. This method takes this into account.
+   *
+   * @param s the string
    * @return true if the string length is reasonable for generated tests, false otherwise
-   *
-   *  @see GenInputsAbstract
+   * @see GenInputsAbstract
    */
   public static boolean stringLengthOK(String s) {
     if (s == null) {
@@ -179,7 +170,7 @@ public class Value {
    * Checks whether the length of the {@code String} argument meets the criterion determined by
    * {@link GenInputsAbstract#string_maxlen}.
    *
-   * @param s  the {@code String} to test
+   * @param s the {@code String} to test
    * @return true if the string length meets criterion for generated tests, false otherwise
    */
   private static boolean isOKLength(String s) {

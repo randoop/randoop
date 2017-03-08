@@ -2,9 +2,7 @@ package randoop.reflection;
 
 import java.util.Comparator;
 
-/**
- * Created by bjkeller on 10/27/16.
- */
+/** Created by bjkeller on 10/27/16. */
 public class StringComparator implements Comparator<String> {
 
   @Override

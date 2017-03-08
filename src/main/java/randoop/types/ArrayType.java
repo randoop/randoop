@@ -7,15 +7,16 @@ import java.util.Objects;
 
 /**
  * Represents an array type as defined in JLS, Section 4.3.
+ *
  * <pre>
  *   ArrayType:
  *     PrimitiveType [ ] { [ ] }
  *     ClassOrInterfaceType [ ] { [ ] }
  *     TypeVariable [ ] { [ ] }
  * </pre>
- * The type preceding the rightmost set of brackets is the <i>component</i> type, while the
- * type preceding the brackets is the <i>element</i> type.
- * An array may have components of any type.
+ *
+ * The type preceding the rightmost set of brackets is the <i>component</i> type, while the type
+ * preceding the brackets is the <i>element</i> type. An array may have components of any type.
  */
 public class ArrayType extends ReferenceType {
 
@@ -28,8 +29,8 @@ public class ArrayType extends ReferenceType {
   /**
    * Creates an {@code ArrayType} with the given component type and runtime class.
    *
-   * @param componentType  the component type
-   * @param runtimeClass  the runtime class
+   * @param componentType the component type
+   * @param runtimeClass the runtime class
    */
   private ArrayType(Type componentType, Class<?> runtimeClass) {
     this.componentType = componentType;
@@ -39,7 +40,7 @@ public class ArrayType extends ReferenceType {
   /**
    * Creates an array type for the given {@code java.lang.reflect.Class} object.
    *
-   * @param arrayClass  the {@code Class} object for array type
+   * @param arrayClass the {@code Class} object for array type
    * @return the {@code ArrayType} for the given class object
    */
   public static ArrayType forClass(Class<?> arrayClass) {
@@ -52,12 +53,12 @@ public class ArrayType extends ReferenceType {
   }
 
   /**
-   * Creates an {@code ArrayType} from a {@code java.lang.reflect.Type} reference.
-   * First checks whether reference has type {@code java.lang.reflectGenericArrayType},
-   * and if so performs the conversion.
-   * If the reference is to a {@code Class} object, then delegates to {@link #forClass(Class)}.
+   * Creates an {@code ArrayType} from a {@code java.lang.reflect.Type} reference. First checks
+   * whether reference has type {@code java.lang.reflectGenericArrayType}, and if so performs the
+   * conversion. If the reference is to a {@code Class} object, then delegates to {@link
+   * #forClass(Class)}.
    *
-   * @param type  the {@link java.lang.reflect.Type} reference
+   * @param type the {@link java.lang.reflect.Type} reference
    * @return the {@code Type} for the array type
    */
   public static ArrayType forType(java.lang.reflect.Type type) {
@@ -76,11 +77,10 @@ public class ArrayType extends ReferenceType {
   }
 
   /**
-   * Creates an {@code ArrayType} for the given component type.
-   * If the component type is a type variable then creates a type with an {@link Object} array as the
-   * rawtype.
+   * Creates an {@code ArrayType} for the given component type. If the component type is a type
+   * variable then creates a type with an {@link Object} array as the rawtype.
    *
-   * @param componentType  the component type
+   * @param componentType the component type
    * @return an {@code ArrayType} with the given component type
    */
   public static ArrayType ofComponentType(Type componentType) {
@@ -130,9 +130,9 @@ public class ArrayType extends ReferenceType {
   }
 
   /**
-   * Returns the element type of this array type.
-   * If the component type of this array type is not an array type, the element type is the
-   * component type. Otherwise, the element type is the element type of the component type.
+   * Returns the element type of this array type. If the component type of this array type is not an
+   * array type, the element type is the component type. Otherwise, the element type is the element
+   * type of the component type.
    *
    * @return the element type of this array type
    */
@@ -173,13 +173,10 @@ public class ArrayType extends ReferenceType {
   }
 
   /**
-   * {@inheritDoc}
-   * For an array type, check for assignability by reference widening.
-   * If not otherwise assignable, check for unchecked conversion, which
-   * occurs when this type is
-   * <code>C&lt;T<sub>1</sub>,&hellip;,T<sub>k</sub>&gt;[]</code>
-   * and other type is
-   * <code>C[]</code> (e.g., the component type is the rawtype <code>C</code>).
+   * {@inheritDoc} For an array type, check for assignability by reference widening. If not
+   * otherwise assignable, check for unchecked conversion, which occurs when this type is <code>
+   * C&lt;T<sub>1</sub>,&hellip;,T<sub>k</sub>&gt;[]</code> and other type is <code>C[]</code>
+   * (e.g., the component type is the rawtype <code>C</code>).
    */
   @Override
   public boolean isAssignableFrom(Type otherType) {
@@ -202,9 +199,9 @@ public class ArrayType extends ReferenceType {
   }
 
   /**
-   * {@inheritDoc}
-   * This method specifically uses the definition in
-   * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.3">section 4.10.2 of JLS for JavaSE 8</a>.
+   * {@inheritDoc} This method specifically uses the definition in <a
+   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.3">section 4.10.2
+   * of JLS for JavaSE 8</a>.
    */
   @Override
   public boolean isSubtypeOf(Type otherType) {
@@ -248,13 +245,11 @@ public class ArrayType extends ReferenceType {
   }
 
   /**
-   * Returns the non-parameterized form for this array type.
-   * For instance, converts
-   * {@code List<String>[]} to {@code List[]},
-   * {@code List<String>[][]} to {@code List[][]}, and
-   * {@code int[]} to {@code int[]}.
+   * Returns the non-parameterized form for this array type. For instance, converts {@code
+   * List<String>[]} to {@code List[]}, {@code List<String>[][]} to {@code List[][]}, and {@code
+   * int[]} to {@code int[]}.
    *
-   * @return  the non-parameterized form of this array type
+   * @return the non-parameterized form of this array type
    */
   public ArrayType getRawTypeArray() {
     Type rawElementType;

@@ -3,16 +3,15 @@ package randoop.types;
 import java.util.List;
 
 /**
- * Represents a bound on a type variable where the bound is a {@link ReferenceType}
- * that can be used directly.
- * Contrast with {@link LazyReferenceBound}.
+ * Represents a bound on a type variable where the bound is a {@link ReferenceType} that can be used
+ * directly. Contrast with {@link LazyReferenceBound}.
  */
 class EagerReferenceBound extends ReferenceBound {
 
   /**
    * Creates a bound for the given reference type.
    *
-   * @param boundType  the reference boundType
+   * @param boundType the reference boundType
    */
   EagerReferenceBound(ReferenceType boundType) {
     super(boundType);
@@ -43,10 +42,12 @@ class EagerReferenceBound extends ReferenceBound {
 
   @Override
   public boolean isLowerBound(Type argType, Substitution<ReferenceType> subst) {
-    // XXX in practice, substitution not necessary because doesn't have variables by construction
     ReferenceType boundType = this.getBoundType().apply(subst);
     if (boundType.equals(JavaTypes.NULL_TYPE)) {
       return true;
+    }
+    if (boundType.isVariable()) {
+      return ((TypeVariable) boundType).getLowerTypeBound().isLowerBound(argType, subst);
     }
     if (argType.isParameterized()) {
       if (!(boundType instanceof ClassOrInterfaceType)) {
@@ -82,10 +83,12 @@ class EagerReferenceBound extends ReferenceBound {
 
   @Override
   public boolean isUpperBound(Type argType, Substitution<ReferenceType> subst) {
-    // XXX in practice, substitution not necessary because doesn't have variables by construction
     ReferenceType boundType = this.getBoundType().apply(subst);
     if (boundType.equals(JavaTypes.OBJECT_TYPE)) {
       return true;
+    }
+    if (boundType.isVariable()) {
+      return ((TypeVariable) boundType).getUpperTypeBound().isUpperBound(argType, subst);
     }
     if (boundType.isParameterized()) {
       if (!(argType instanceof ClassOrInterfaceType)) {

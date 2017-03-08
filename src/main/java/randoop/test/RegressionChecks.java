@@ -26,13 +26,12 @@ public class RegressionChecks implements TestChecks {
   }
 
   /**
-   * Adds the given check to the sequence. Only one {@code ExceptionCheck} is
-   * allowed, and attempting to add a second check of this type will result in
-   * an {@code IllegalArgumentException}
+   * Adds the given check to the sequence. Only one {@code ExceptionCheck} is allowed, and
+   * attempting to add a second check of this type will result in an {@code
+   * IllegalArgumentException}
    *
-   * @throws IllegalArgumentException
-   *           If the given check's class is {@code ExceptionCheck} and there is
-   *           already an check of this class at the give index.
+   * @throws IllegalArgumentException If the given check's class is {@code ExceptionCheck} and there
+   *     is already an check of this class at the give index.
    */
   @Override
   public void add(Check check) {
@@ -52,8 +51,7 @@ public class RegressionChecks implements TestChecks {
   /**
    * {@inheritDoc}
    *
-   * @return map of non-exception checks in this object, all of which are
-   *         passing
+   * @return map of non-exception checks in this object, all of which are passing
    */
   @Override
   public Map<Check, Boolean> get() {
@@ -67,8 +65,7 @@ public class RegressionChecks implements TestChecks {
   /**
    * {@inheritDoc}
    *
-   * @return true if there are regression checks or an expected exception, false
-   *         otherwise
+   * @return true if there are regression checks or an expected exception, false otherwise
    */
   @Override
   public boolean hasChecks() {

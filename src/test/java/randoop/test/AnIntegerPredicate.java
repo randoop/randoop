@@ -2,9 +2,7 @@ package randoop.test;
 
 import randoop.util.predicate.Predicate;
 
-/**
- * Input test for parameterized types.
- */
+/** Input test for parameterized types. */
 public class AnIntegerPredicate implements Predicate<Integer> {
 
   @Override

@@ -1,8 +1,6 @@
 package randoop.reflection;
 
-/**
- * Created by bjkeller on 10/20/16.
- */
+/** Created by bjkeller on 10/20/16. */
 public abstract class PBInterface<T> {
   public boolean m0(T t) {
     return false;

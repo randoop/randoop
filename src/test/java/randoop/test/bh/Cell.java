@@ -1,16 +1,12 @@
 package randoop.test.bh;
-/**
- * A class used to represent internal nodes in the tree
- **/
+/** A class used to represent internal nodes in the tree */
 public final class Cell extends Node {
   // subcells per cell
-  public final static int NSUB = 8; // 1 << NDIM
+  public static final int NSUB = 8; // 1 << NDIM
 
-  /**
-   * The children of this cell node.  Each entry may contain either
-   * another cell or a body.
-   */
+  /** The children of this cell node. Each entry may contain either another cell or a body. */
   Node[] subp;
+
   Cell next;
 
   public Cell() {
@@ -19,14 +15,14 @@ public final class Cell extends Node {
   }
 
   /**
-   * Descend Tree and insert particle.  We're at a cell so
-   * we need to move down the tree.
+   * Descend Tree and insert particle. We're at a cell so we need to move down the tree.
+   *
    * @param p the body to insert into the tree
    * @param xpic
    * @param l
    * @param tree the root of the tree
    * @return the subtree with the new body inserted
-   **/
+   */
   @Override
   public final Node loadTree(Body p, MathVector xpic, int l, Tree tree) {
     // move down one level
@@ -39,8 +35,9 @@ public final class Cell extends Node {
 
   /**
    * Descend tree finding center of mass coordinates
+   *
    * @return the mass of this node
-   **/
+   */
   @Override
   public final double hackcofm() {
     double mq = 0.0;
@@ -62,9 +59,7 @@ public final class Cell extends Node {
     return mq;
   }
 
-  /**
-   * Recursively walk the tree to do hackwalk calculation
-   **/
+  /** Recursively walk the tree to do hackwalk calculation */
   @Override
   public final HG walkSubTree(double dsq, HG hg) {
     if (subdivp(dsq, hg)) {
@@ -80,8 +75,9 @@ public final class Cell extends Node {
 
   /**
    * Decide if the cell is too close to accept as a single term.
+   *
    * @return true if the cell is too close
-   **/
+   */
   public final boolean subdivp(double dsq, HG hg) {
     MathVector dr = new MathVector();
     dr.subtraction(pos, hg.pos0);
@@ -93,8 +89,9 @@ public final class Cell extends Node {
 
   /**
    * Return a string represenation of a cell.
+   *
    * @return a string represenation of a cell
-   **/
+   */
   @Override
   public String toString() {
     return "Cell " + super.toString();

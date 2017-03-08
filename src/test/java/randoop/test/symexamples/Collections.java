@@ -377,9 +377,6 @@ public class Collections {
   }
 
   static class UnmodifiableSet extends UnmodifiableCollection implements Set, Serializable {
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
 
     UnmodifiableSet(Set s) {
@@ -474,10 +471,8 @@ public class Collections {
   }
 
   static class UnmodifiableSortedSet extends UnmodifiableSet implements SortedSet, Serializable {
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
+
     private SortedSet ss;
 
     UnmodifiableSortedSet(SortedSet s) {
@@ -945,9 +940,6 @@ public class Collections {
     }
 
     static class UnmodifiableEntrySet extends UnmodifiableSet {
-      /**
-       *
-       */
       private static final long serialVersionUID = 1L;
 
       UnmodifiableEntrySet(Set s) {
@@ -1446,10 +1438,8 @@ public class Collections {
   }
 
   static class UnmodifiableSortedMap extends UnmodifiableMap implements SortedMap, Serializable {
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
+
     private SortedMap sm;
 
     UnmodifiableSortedMap(SortedMap m) {
@@ -1853,9 +1843,6 @@ public class Collections {
   }
 
   static class SynchronizedSet extends SynchronizedCollection implements Set {
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
 
     SynchronizedSet(Set s) {
@@ -2014,10 +2001,8 @@ public class Collections {
   }
 
   static class SynchronizedSortedSet extends SynchronizedSet implements SortedSet {
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
+
     private SortedSet ss;
 
     SynchronizedSortedSet(SortedSet s) {
@@ -2846,10 +2831,8 @@ public class Collections {
   }
 
   static class SynchronizedSortedMap extends SynchronizedMap implements SortedMap {
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
+
     private SortedMap sm;
 
     SynchronizedSortedMap(SortedMap m) {
@@ -3908,9 +3891,6 @@ public class Collections {
   }
 
   private static class SingletonMap extends AbstractMap implements Serializable {
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
 
     private final Object k, v;

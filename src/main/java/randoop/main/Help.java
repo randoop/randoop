@@ -4,10 +4,8 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import plume.Options;
 import plume.Options.ArgException;
-
 import randoop.Globals;
 import randoop.util.Util;
 
@@ -99,6 +97,6 @@ public class Help extends CommandHandler {
     out.println();
     out.println("Randoop  is a command-line tool that creates unit tests for Java.");
     out.println("It accepts one of the commands listed below. For the user manual,");
-    out.println("please visit https://rawgit.com/randoop/randoop/master/doc/index.html");
+    out.println("please visit https://randoop.github.io/randoop/manual/index.html");
   }
 }

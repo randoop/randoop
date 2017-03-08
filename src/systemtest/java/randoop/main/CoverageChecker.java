@@ -1,8 +1,6 @@
 package randoop.main;
 
-import org.jacoco.core.analysis.IClassCoverage;
-import org.jacoco.core.analysis.IMethodCoverage;
-import org.jacoco.report.JavaNames;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -12,14 +10,12 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import org.jacoco.core.analysis.IClassCoverage;
+import org.jacoco.core.analysis.IMethodCoverage;
+import org.jacoco.report.JavaNames;
 import plume.UtilMDE;
 
-import static org.junit.Assert.fail;
-
-/**
- * Checks coverage for a test, managing information needed to perform the coverage checks.
- */
+/** Checks coverage for a test, managing information needed to perform the coverage checks. */
 class CoverageChecker {
 
   /** The classes to check for coverage */
@@ -34,7 +30,7 @@ class CoverageChecker {
   /**
    * Create a coverage checker for the set of class names.
    *
-   * @param classnames  the class name set
+   * @param classnames the class name set
    */
   private CoverageChecker(Set<String> classnames) {
     this.classnames = classnames;
@@ -45,7 +41,7 @@ class CoverageChecker {
   /**
    * Create a coverage checker using the classnames from the option set.
    *
-   * @param options  the options
+   * @param options the options
    */
   CoverageChecker(RandoopOptions options) {
     this(options.getClassnames());
@@ -54,7 +50,7 @@ class CoverageChecker {
   /**
    * Add a method name to the excluded method names in this checker.
    *
-   * @param methodName  the name to add
+   * @param methodName the name to add
    */
   void exclude(String methodName) {
     excludedMethods.add(methodName);
@@ -63,21 +59,20 @@ class CoverageChecker {
   /**
    * Add a method name to the ignored methods names in this checker.
    *
-   * @param methodName  the name to add
+   * @param methodName the name to add
    */
   void ignore(String methodName) {
     dontCareMethods.add(methodName);
   }
 
   /**
-   * Performs a coverage check for the given set of classes relative to the full set of tests.
-   * Each declared method of a class that does not satisfy {@link #isIgnoredMethod(String)} is
-   * checked for coverage.
-   * If the method occurs in the excluded methods, then it must not be covered by any test.
-   * Otherwise, the method must be covered by some test.
+   * Performs a coverage check for the given set of classes relative to the full set of tests. Each
+   * declared method of a class that does not satisfy {@link #isIgnoredMethod(String)} is checked
+   * for coverage. If the method occurs in the excluded methods, then it must not be covered by any
+   * test. Otherwise, the method must be covered by some test.
    *
-   * @param regressionStatus  the {@link TestRunStatus} from the regression tests
-   * @param errorStatus  the {@link TestRunStatus} from the error tests
+   * @param regressionStatus the {@link TestRunStatus} from the regression tests
+   * @param errorStatus the {@link TestRunStatus} from the error tests
    */
   void checkCoverage(TestRunStatus regressionStatus, TestRunStatus errorStatus) {
 
@@ -138,12 +133,12 @@ class CoverageChecker {
   }
 
   /**
-   * Adds methods from the given class to the set if they are covered in the {@link MethodCoverageMap}
-   * of the given {@link TestRunStatus}.
+   * Adds methods from the given class to the set if they are covered in the {@link
+   * MethodCoverageMap} of the given {@link TestRunStatus}.
    *
-   * @param testRunStatus  the {@link TestRunStatus}
+   * @param testRunStatus the {@link TestRunStatus}
    * @param classname the name of the class
-   * @param methods  the set to which method names are added
+   * @param methods the set to which method names are added
    */
   private void getCoveredMethodsForClass(
       TestRunStatus testRunStatus, String classname, Set<String> methods) {
@@ -157,10 +152,10 @@ class CoverageChecker {
 
   /**
    * Constructs a method signature for a {@code java.lang.reflect.Method} object in a format that
-   * matches the name construction in
-   * {@link MethodCoverageMap#getMethodName(JavaNames, IClassCoverage, String, IMethodCoverage)}.
+   * matches the name construction in {@link MethodCoverageMap#getMethodName(JavaNames,
+   * IClassCoverage, String, IMethodCoverage)}.
    *
-   * @param m  the {@code java.lang.reflect.Method} object
+   * @param m the {@code java.lang.reflect.Method} object
    * @return the method signature for the method object
    */
   private String methodName(Method m) {
@@ -177,15 +172,15 @@ class CoverageChecker {
   }
 
   /**
-   * Pattern for excluding method names from coverage checks.
-   * Excludes JaCoCo, and Java private access inner class methods.
+   * Pattern for excluding method names from coverage checks. Excludes JaCoCo, and Java private
+   * access inner class methods.
    */
   private static final Pattern IGNORE_PATTERN = Pattern.compile("\\$jacocoInit|access\\$\\d{3}+");
 
   /**
    * Indicates whether the given method name should be ignored during the coverage check.
    *
-   * @param methodname  the method name
+   * @param methodname the method name
    * @return true if the method should be ignored, false otherwise
    */
   private boolean isIgnoredMethod(String methodname) {

@@ -1,9 +1,14 @@
 package randoop.types;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
 /**
  * An abstract class representing kinds of type parameters, which are either type variables or
- * wildcard types.
- * Manages both upper and lower type bounds.
+ * wildcard types. Manages both upper and lower type bounds.
  */
 public abstract class ParameterType extends ReferenceType {
 
@@ -24,6 +29,25 @@ public abstract class ParameterType extends ReferenceType {
   }
 
   @Override
+  public boolean equals(Object object) {
+    if (!(object instanceof ParameterType)) {
+      return false;
+    }
+    ParameterType other = (ParameterType) object;
+    return this.lowerBound.equals(other.lowerBound) && this.upperBound.equals(other.upperBound);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(lowerBound, upperBound);
+  }
+
+  @Override
+  public String toString() {
+    return "ParameterType [ " + lowerBound + ", " + upperBound + " ]";
+  }
+
+  @Override
   public String getCanonicalName() {
     return this.getName();
   }
@@ -34,6 +58,14 @@ public abstract class ParameterType extends ReferenceType {
 
   public ParameterBound getUpperTypeBound() {
     return upperBound;
+  }
+
+  @Override
+  public List<TypeVariable> getTypeParameters() {
+    Set<TypeVariable> parameters = new HashSet<>();
+    parameters.addAll(lowerBound.getTypeParameters());
+    parameters.addAll(upperBound.getTypeParameters());
+    return new ArrayList<>(parameters);
   }
 
   /**
@@ -52,6 +84,11 @@ public abstract class ParameterType extends ReferenceType {
 
   void setLowerBound(ParameterBound lowerBound) {
     this.lowerBound = lowerBound;
+  }
+
+  @Override
+  public boolean hasWildcard() {
+    return getLowerTypeBound().hasWildcard() || getUpperTypeBound().hasWildcard();
   }
 
   public boolean hasGenericBound() {

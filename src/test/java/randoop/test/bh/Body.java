@@ -2,9 +2,7 @@ package randoop.test.bh;
 
 import java.util.Enumeration;
 
-/**
- * A class used to representing particles in the N-body simulation.
- **/
+/** A class used to representing particles in the N-body simulation. */
 public final class Body extends Node {
   MathVector vel;
   MathVector acc;
@@ -14,9 +12,7 @@ public final class Body extends Node {
   private Body next;
   private Body procNext;
 
-  /**
-   * Create an empty body.
-   **/
+  /** Create an empty body. */
   public Body() {
     vel = new MathVector();
     acc = new MathVector();
@@ -28,41 +24,46 @@ public final class Body extends Node {
 
   /**
    * Set the next body in the list.
+   *
    * @param n the body
-   **/
+   */
   public final void setNext(Body n) {
     next = n;
   }
 
   /**
    * Get the next body in the list.
+   *
    * @return the next body
-   **/
+   */
   public final Body getNext() {
     return next;
   }
 
   /**
    * Set the next body in the list.
+   *
    * @param n the body
-   **/
+   */
   public final void setProcNext(Body n) {
     procNext = n;
   }
 
   /**
    * Get the next body in the list.
+   *
    * @return the next body
-   **/
+   */
   public final Body getProcNext() {
     return procNext;
   }
 
   /**
    * Enlarge cubical "box", salvaging existing tree structure.
+   *
    * @param tree the root of the tree
    * @param nsteps the current time step
-   **/
+   */
   public final void expandBox(Tree tree, int nsteps) {
     MathVector rmid = new MathVector();
 
@@ -90,10 +91,7 @@ public final class Body extends Node {
     }
   }
 
-  /**
-   * Check the bounds of the body and return true if it isn't in the
-   * correct bounds.
-   **/
+  /** Check the bounds of the body and return true if it isn't in the correct bounds. */
   public final boolean icTest(Tree tree) {
     double pos0 = pos.value(0);
     double pos1 = pos.value(1);
@@ -121,14 +119,15 @@ public final class Body extends Node {
   }
 
   /**
-   * Des end Tree and insert particle.  We're at a body so we need to
-   * create a cell and attach this body to the cell.
+   * Des end Tree and insert particle. We're at a body so we need to create a cell and attach this
+   * body to the cell.
+   *
    * @param p the body to insert
    * @param xpic
    * @param l
    * @param tree the root of the data structure
    * @return the subtree with the new body inserted
-   **/
+   */
   @Override
   public final Node loadTree(Body p, MathVector xpic, int l, Tree tree) {
     // create a Cell
@@ -147,8 +146,9 @@ public final class Body extends Node {
 
   /**
    * Descend tree finding center of mass coordinates
+   *
    * @return the mass of this node
-   **/
+   */
   @Override
   public final double hackcofm() {
     return mass;
@@ -156,8 +156,9 @@ public final class Body extends Node {
 
   /**
    * Return an enumeration of the bodies
+   *
    * @return an enumeration of the bodies
-   **/
+   */
   public final Enumeration elements() {
     // a local class that implements the enumerator
     class Enumerate implements Enumeration {
@@ -204,10 +205,10 @@ public final class Body extends Node {
   }
 
   /**
-   * Determine which subcell to select.
-   * Combination of intcoord and oldSubindex.
+   * Determine which subcell to select. Combination of intcoord and oldSubindex.
+   *
    * @param tree the root of the tree
-   **/
+   */
   public final int subindex(Tree tree, int l) {
     MathVector xp = new MathVector();
 
@@ -230,10 +231,9 @@ public final class Body extends Node {
   }
 
   /**
-   * Evaluate gravitational field on the body.
-   * The original olden version calls a routine named "walkscan",
-   * but we use the same name that is in the Barnes code.
-   **/
+   * Evaluate gravitational field on the body. The original olden version calls a routine named
+   * "walkscan", but we use the same name that is in the Barnes code.
+   */
   public final void hackGravity(double rsize, Node root) {
     MathVector pos0 = (MathVector) pos.clone();
 
@@ -243,9 +243,7 @@ public final class Body extends Node {
     newAcc = hg.acc0;
   }
 
-  /**
-   * Recursively walk the tree to do hackwalk calculation
-   **/
+  /** Recursively walk the tree to do hackwalk calculation */
   @Override
   public final HG walkSubTree(double dsq, HG hg) {
     if (this != hg.pskip) hg = gravSub(hg);
@@ -254,8 +252,9 @@ public final class Body extends Node {
 
   /**
    * Return a string represenation of a body.
+   *
    * @return a string represenation of a body
-   **/
+   */
   @Override
   public String toString() {
     return "Body " + super.toString();

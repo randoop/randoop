@@ -1,10 +1,11 @@
 package randoop.operation;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-
+import org.junit.Test;
 import randoop.Globals;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
@@ -18,12 +19,7 @@ import randoop.test.AnIntegerPredicate;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-/**
- * Tests of reflection.
- */
+/** Tests of reflection. */
 public class ClassReflectionTest {
 
   @Test
@@ -44,7 +40,8 @@ public class ClassReflectionTest {
       Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     final Set<TypedOperation> operations = new LinkedHashSet<>();
-    OperationExtractor extractor = new OperationExtractor(classType, operations, predicate);
+    OperationExtractor extractor =
+        new OperationExtractor(classType, operations, predicate, visibilityPredicate);
     ReflectionManager manager = new ReflectionManager(visibilityPredicate);
     manager.apply(extractor, c);
     return operations;

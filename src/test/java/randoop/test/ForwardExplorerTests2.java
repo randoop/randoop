@@ -1,13 +1,15 @@
 package randoop.test;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.SeedSequences;
@@ -19,6 +21,7 @@ import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
+import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
 import randoop.test.treeadd.TreeAdd;
@@ -27,10 +30,6 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /*
  * This test is disabled in build.gradle.
@@ -57,12 +56,11 @@ public class ForwardExplorerTests2 {
   }
 
   /**
-   * The input scenario for this test results in the generation of a sequence
-   * with repeated calls to a non-terminating method. If <code>--usethreads</code>
-   * is set, the generator is not able to interrupt the executor, and will
-   * never terminate.
-   * Otherwise, a timeout exception will be thrown and the executor will throw an
-   * exception, which since it is not the last statement is considered "flaky".
+   * The input scenario for this test results in the generation of a sequence with repeated calls to
+   * a non-terminating method. If <code>--usethreads</code> is set, the generator is not able to
+   * interrupt the executor, and will never terminate. Otherwise, a timeout exception will be thrown
+   * and the executor will throw an exception, which since it is not the last statement is
+   * considered "flaky".
    */
   @Test
   public void test5() throws Exception {
@@ -102,10 +100,13 @@ public class ForwardExplorerTests2 {
 
   private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
     final List<TypedOperation> model = new ArrayList<>();
-    ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
+    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    ReflectionManager mgr = new ReflectionManager(visibility);
     for (Class<?> c : classes) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-      mgr.apply(new OperationExtractor(classType, model, new DefaultReflectionPredicate()), c);
+      mgr.apply(
+          new OperationExtractor(classType, model, new DefaultReflectionPredicate(), visibility),
+          c);
     }
     return model;
   }

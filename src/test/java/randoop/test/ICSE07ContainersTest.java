@@ -1,8 +1,7 @@
 package randoop.test;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -12,7 +11,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
-
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.IStopper;
@@ -24,31 +25,27 @@ import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
+import randoop.reflection.VisibilityPredicate;
 import randoop.test.issta2006.BinTree;
 import randoop.test.issta2006.BinomialHeap;
 import randoop.test.issta2006.FibHeap;
 import randoop.test.issta2006.TreeMap;
 import randoop.types.ClassOrInterfaceType;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 /**
- * This test ensures that Randoop achieves a certain level of coverage
- * across 4 data structures. The coverage level that we check of is the
- * one published in the ICSE 2007 paper "Feedback-directed Random Test
- * Generation" (Section 3.1).
+ * This test ensures that Randoop achieves a certain level of coverage across 4 data structures. The
+ * coverage level that we check of is the one published in the ICSE 2007 paper "Feedback-directed
+ * Random Test Generation" (Section 3.1).
  *
- * For each data structure, we expect Randoop to achieve the published
- * coverage in no longer than 2 minutes.
+ * <p>For each data structure, we expect Randoop to achieve the published coverage in no longer than
+ * 2 minutes.
  *
- * Note that this test does not constitute the experiment published in
- * the paper; it only checks that the achievable coverage number can be in
- * fact achieved by Randoop.
+ * <p>Note that this test does not constitute the experiment published in the paper; it only checks
+ * that the achievable coverage number can be in fact achieved by Randoop.
  *
- * IMPORTANT: this test DOES NOT work if GenInputsAbstract.repeat_heuristic is
- * disabled. If the heuristic in {@link randoop.generation.ForwardGenerator ForwardGenerator}
- * is not used, the branch count targets are not met.
+ * <p>IMPORTANT: this test DOES NOT work if GenInputsAbstract.repeat_heuristic is disabled. If the
+ * heuristic in {@link randoop.generation.ForwardGenerator ForwardGenerator} is not used, the branch
+ * count targets are not met.
  */
 public class ICSE07ContainersTest {
 
@@ -85,12 +82,16 @@ public class ICSE07ContainersTest {
     System.out.println("GenInputsAbstract.small_tests=" + GenInputsAbstract.small_tests);
 
     final List<TypedOperation> model = new ArrayList<>();
-    ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
+    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    ReflectionManager mgr = new ReflectionManager(visibility);
     for (Class<?> c : classList) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
       mgr.apply(
           new OperationExtractor(
-              classType, model, new DefaultReflectionPredicate(omitMethodPattern, excludeNames)),
+              classType,
+              model,
+              new DefaultReflectionPredicate(omitMethodPattern, excludeNames),
+              visibility),
           c);
     }
     assertTrue("model should not be empty", !model.isEmpty());

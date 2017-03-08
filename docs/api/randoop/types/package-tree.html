@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>randoop.types Class Hierarchy (randoop 3.0.7 API)</title>
+<title>randoop.types Class Hierarchy (randoop 3.0.10 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="randoop.types Class Hierarchy (randoop 3.0.7 API)";
+            parent.document.title="randoop.types Class Hierarchy (randoop 3.0.10 API)";
         }
     }
     catch(err) {
@@ -101,7 +101,7 @@
 <li type="circle">randoop.types.<a href="../../randoop/types/RandoopTypeException.html" title="class in randoop.types"><span class="typeNameLink">RandoopTypeException</span></a></li>
 </ul>
 </li>
-<li type="circle">randoop.types.<a href="../../randoop/types/Type.html" title="class in randoop.types"><span class="typeNameLink">Type</span></a>
+<li type="circle">randoop.types.<a href="../../randoop/types/Type.html" title="class in randoop.types"><span class="typeNameLink">Type</span></a> (implements java.lang.Comparable&lt;T&gt;)
 <ul>
 <li type="circle">randoop.types.<a href="../../randoop/types/PrimitiveType.html" title="class in randoop.types"><span class="typeNameLink">PrimitiveType</span></a></li>
 <li type="circle">randoop.types.<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><span class="typeNameLink">ReferenceType</span></a>
@@ -119,10 +119,15 @@
 </ul>
 </li>
 <li type="circle">randoop.types.<a href="../../randoop/types/NullReferenceType.html" title="class in randoop.types"><span class="typeNameLink">NullReferenceType</span></a></li>
+<li type="circle">randoop.types.<a href="../../randoop/types/ParameterType.html" title="class in randoop.types"><span class="typeNameLink">ParameterType</span></a>
+<ul>
 <li type="circle">randoop.types.<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types"><span class="typeNameLink">TypeVariable</span></a>
 <ul>
 <li type="circle">randoop.types.<a href="../../randoop/types/CaptureTypeVariable.html" title="class in randoop.types"><span class="typeNameLink">CaptureTypeVariable</span></a></li>
 <li type="circle">randoop.types.<a href="../../randoop/types/ExplicitTypeVariable.html" title="class in randoop.types"><span class="typeNameLink">ExplicitTypeVariable</span></a></li>
+</ul>
+</li>
+<li type="circle">randoop.types.<a href="../../randoop/types/WildcardType.html" title="class in randoop.types"><span class="typeNameLink">WildcardType</span></a></li>
 </ul>
 </li>
 </ul>
@@ -133,16 +138,11 @@
 <li type="circle">randoop.types.<a href="../../randoop/types/TypeArgument.html" title="class in randoop.types"><span class="typeNameLink">TypeArgument</span></a>
 <ul>
 <li type="circle">randoop.types.<a href="../../randoop/types/ReferenceArgument.html" title="class in randoop.types"><span class="typeNameLink">ReferenceArgument</span></a></li>
-<li type="circle">randoop.types.<a href="../../randoop/types/WildcardArgument.html" title="class in randoop.types"><span class="typeNameLink">WildcardArgument</span></a>
-<ul>
-<li type="circle">randoop.types.<a href="../../randoop/types/WildcardArgumentWithLowerBound.html" title="class in randoop.types"><span class="typeNameLink">WildcardArgumentWithLowerBound</span></a></li>
-<li type="circle">randoop.types.<a href="../../randoop/types/WildcardArgumentWithUpperBound.html" title="class in randoop.types"><span class="typeNameLink">WildcardArgumentWithUpperBound</span></a></li>
-</ul>
-</li>
+<li type="circle">randoop.types.<a href="../../randoop/types/WildcardArgument.html" title="class in randoop.types"><span class="typeNameLink">WildcardArgument</span></a></li>
 </ul>
 </li>
 <li type="circle">randoop.types.<a href="../../randoop/types/TypeCheck.html" title="class in randoop.types"><span class="typeNameLink">TypeCheck</span></a></li>
-<li type="circle">randoop.types.<a href="../../randoop/types/TypeTuple.html" title="class in randoop.types"><span class="typeNameLink">TypeTuple</span></a> (implements java.lang.Iterable&lt;T&gt;)</li>
+<li type="circle">randoop.types.<a href="../../randoop/types/TypeTuple.html" title="class in randoop.types"><span class="typeNameLink">TypeTuple</span></a> (implements java.lang.Comparable&lt;T&gt;, java.lang.Iterable&lt;T&gt;)</li>
 <li type="circle">randoop.types.<a href="../../randoop/types/TypeTuple.TypeIterator.html" title="class in randoop.types"><span class="typeNameLink">TypeTuple.TypeIterator</span></a> (implements java.util.Iterator&lt;E&gt;)</li>
 </ul>
 </li>

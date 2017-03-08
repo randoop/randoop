@@ -1,5 +1,7 @@
 package randoop.reflection;
 
+import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -7,7 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
+import randoop.condition.ConditionCollection;
 import randoop.contract.CompareToAntiSymmetric;
 import randoop.contract.CompareToEquals;
 import randoop.contract.CompareToReflexive;
@@ -33,20 +35,19 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.util.MultiMap;
 
-import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
-
 /**
- * {@code OperationModel} represents the information context from which tests are generated.
- * The model includes:
+ * {@code OperationModel} represents the information context from which tests are generated. The
+ * model includes:
+ *
  * <ul>
- *   <li>classes under test,</li>
- *   <li>operations of all classes,</li>
- *   <li>any atomic code sequences derived from command-line arguments, and </li>
- *   <li>the contracts or oracles used to generate tests.</li>
+ *   <li>classes under test,
+ *   <li>operations of all classes,
+ *   <li>any atomic code sequences derived from command-line arguments, and
+ *   <li>the contracts or oracles used to generate tests.
  * </ul>
- * <p>
- * This class manages all information about generic classes internally, and instantiates any
- * type variables in operations before returning them.
+ *
+ * <p>This class manages all information about generic classes internally, and instantiates any type
+ * variables in operations before returning them.
  */
 public class OperationModel {
 
@@ -74,9 +75,7 @@ public class OperationModel {
   /** Set of concrete operations extracted from classes */
   private Set<TypedOperation> operations;
 
-  /**
-   * Create an empty model of test context.
-   */
+  /** Create an empty model of test context. */
   private OperationModel() {
     classTypes = new LinkedHashSet<>();
     inputTypes = new LinkedHashSet<>();
@@ -103,16 +102,16 @@ public class OperationModel {
   /**
    * Factory method to construct an operation model for a particular set of classes
    *
-   * @param visibility
-   *          the {@link randoop.reflection.VisibilityPredicate} to test
-   *          accessibility of classes and class members.
-   * @param reflectionPredicate  the reflection predicate to determine which classes and
-   *                             class members are used
-   * @param classnames  the names of classes under test
-   * @param exercisedClassnames  the names of classes to be tested by exercised heuristic
-   * @param methodSignatures  the signatures of methods to be added to the model
-   * @param errorHandler  the handler for bad file name errors
-   * @param literalsFileList  the list of literals file names
+   * @param visibility the {@link randoop.reflection.VisibilityPredicate} to test accessibility of
+   *     classes and class members.
+   * @param reflectionPredicate the reflection predicate to determine which classes and class
+   *     members are used
+   * @param classnames the names of classes under test
+   * @param exercisedClassnames the names of classes to be tested by exercised heuristic
+   * @param methodSignatures the signatures of methods to be added to the model
+   * @param errorHandler the handler for bad file name errors
+   * @param literalsFileList the list of literals file names
+   * @param operationCollection the conditions to be added to operations
    * @return the operation model for the parameters
    * @throws OperationParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
@@ -124,7 +123,8 @@ public class OperationModel {
       Set<String> exercisedClassnames,
       Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
-      List<String> literalsFileList)
+      List<String> literalsFileList,
+      ConditionCollection operationCollection)
       throws OperationParseException, NoSuchMethodException {
 
     OperationModel model = new OperationModel();
@@ -137,21 +137,40 @@ public class OperationModel {
         errorHandler,
         literalsFileList);
 
-    model.addOperations(model.classTypes, visibility, reflectionPredicate);
+    model.addOperations(model.classTypes, visibility, reflectionPredicate, operationCollection);
     model.addOperations(methodSignatures);
     model.addObjectConstructor();
 
     return model;
   }
 
+  public static OperationModel createModel(
+      VisibilityPredicate visibility,
+      ReflectionPredicate reflectionPredicate,
+      Set<String> classnames,
+      Set<String> exercisedClassnames,
+      Set<String> methodSignatures,
+      ClassNameErrorHandler errorHandler,
+      List<String> literalsFileList)
+      throws NoSuchMethodException, OperationParseException {
+    return createModel(
+        visibility,
+        reflectionPredicate,
+        classnames,
+        exercisedClassnames,
+        methodSignatures,
+        errorHandler,
+        literalsFileList,
+        null);
+  }
+
   /**
-   * Adds literals to the component manager, by parsing any literals files
-   * specified by the user.
+   * Adds literals to the component manager, by parsing any literals files specified by the user.
    * Includes literals at different levels indicated by {@link ClassLiteralsMode}.
    *
-   * @param compMgr  the component manager
-   * @param literalsFile  the list of literals file names
-   * @param literalsLevel  the level of literals to add
+   * @param compMgr the component manager
+   * @param literalsFile the list of literals file names
+   * @param literalsLevel the level of literals to add
    */
   public void addClassLiterals(
       ComponentManager compMgr, List<String> literalsFile, ClassLiteralsMode literalsLevel) {
@@ -193,7 +212,7 @@ public class OperationModel {
   /**
    * Gets observer methods from the set of signatures.
    *
-   * @param observerSignatures  the set of method signatures
+   * @param observerSignatures the set of method signatures
    * @return the map to observer methods from their declaring class type
    * @throws OperationParseException if a method signature cannot be parsed
    */
@@ -231,11 +250,12 @@ public class OperationModel {
 
   /**
    * Returns the set of input types that occur as parameters in classes under test.
-   * @see TypeExtractor
    *
+   * @see TypeExtractor
    * @return the set of input types that occur in classes under test
    */
   public Set<Type> getInputTypes() {
+    //TODO this is not used, should it be? or should it even be here?
     return inputTypes;
   }
 
@@ -253,8 +273,8 @@ public class OperationModel {
   }
 
   /**
-   * Returns all {@link ObjectContract} objects for this run of Randoop.
-   * Includes Randoop defaults and {@link randoop.CheckRep} annotated methods.
+   * Returns all {@link ObjectContract} objects for this run of Randoop. Includes Randoop defaults
+   * and {@link randoop.CheckRep} annotated methods.
    *
    * @return the list of contracts
    */
@@ -267,17 +287,17 @@ public class OperationModel {
   }
 
   /**
-   * Gathers class types to be used in a run of Randoop and adds them to this {@code OperationModel}.
-   * Specifically, collects types for classes-under-test, objects for exercised-class heuristic,
-   * concrete input types, annotated test values, and literal values.
+   * Gathers class types to be used in a run of Randoop and adds them to this {@code
+   * OperationModel}. Specifically, collects types for classes-under-test, objects for
+   * exercised-class heuristic, concrete input types, annotated test values, and literal values.
    * Also collects annotated test values, and class literal values used in test generation.
    *
-   * @param visibility  the visibility predicate
-   * @param reflectionPredicate  the predicate to determine which reflection objects are used
-   * @param classnames  the names of classes-under-test
-   * @param exercisedClassnames  the names of classes used in exercised-class heuristic
-   * @param errorHandler  the handler for bad class names
-   * @param literalsFileList  the list of literals file names
+   * @param visibility the visibility predicate
+   * @param reflectionPredicate the predicate to determine which reflection objects are used
+   * @param classnames the names of classes-under-test
+   * @param exercisedClassnames the names of classes used in exercised-class heuristic
+   * @param errorHandler the handler for bad class names
+   * @param literalsFileList the list of literals file names
    */
   private void addClassTypes(
       VisibilityPredicate visibility,
@@ -362,18 +382,21 @@ public class OperationModel {
    * the operations that satisfy both the visibility and reflection predicates, and then adds them
    * to the operation set of this model.
    *
-   * @param concreteClassTypes  the declaring class types for the operations
-   * @param visibility  the visibility predicate
-   * @param reflectionPredicate  the reflection predicate
+   * @param concreteClassTypes the declaring class types for the operations
+   * @param visibility the visibility predicate
+   * @param reflectionPredicate the reflection predicate
+   * @param operationConditions the conditions to add to operations
    */
   private void addOperations(
       Set<ClassOrInterfaceType> concreteClassTypes,
       VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate) {
+      ReflectionPredicate reflectionPredicate,
+      ConditionCollection operationConditions) {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (ClassOrInterfaceType classType : concreteClassTypes) {
       mgr.apply(
-          new OperationExtractor(classType, operations, reflectionPredicate),
+          new OperationExtractor(
+              classType, operations, reflectionPredicate, visibility, operationConditions),
           classType.getRuntimeClass());
     }
   }
@@ -381,10 +404,11 @@ public class OperationModel {
   /**
    * Create operations obtained by parsing method signatures and add each to this model.
    *
-   * @param methodSignatures  the set of method signatures
+   * @param methodSignatures the set of method signatures
    * @throws OperationParseException if any signature is invalid
    */
   // TODO collect input types from added methods
+  // TODO add operation conditions
   private void addOperations(Set<String> methodSignatures) throws OperationParseException {
     for (String sig : methodSignatures) {
       TypedOperation operation = OperationParser.parse(sig);
@@ -392,9 +416,7 @@ public class OperationModel {
     }
   }
 
-  /**
-   * Creates and adds the Object class default constructor call to the concrete operations.
-   */
+  /** Creates and adds the Object class default constructor call to the concrete operations. */
   private void addObjectConstructor() {
     Constructor<?> objectConstructor = null;
     try {

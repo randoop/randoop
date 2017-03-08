@@ -3,8 +3,8 @@ package randoop.test;
 import randoop.sequence.Execution;
 
 /**
- * An {@code InvalidExceptionCheck} represents the occurrence of an exception
- * tagged as an invalid behavior during {@code Check} generation.
+ * An {@code InvalidExceptionCheck} represents the occurrence of an exception tagged as an invalid
+ * behavior during {@code Check} generation.
  */
 class InvalidExceptionCheck extends ExceptionCheck {
 
@@ -35,11 +35,9 @@ class InvalidExceptionCheck extends ExceptionCheck {
   }
 
   /**
-   * {@inheritDoc} An invalid check cannot be evaluated, so this throws an
-   * exception.
+   * {@inheritDoc} An invalid check cannot be evaluated, so this throws an exception.
    *
-   * @throws IllegalArgumentException
-   *           whenever called
+   * @throws IllegalArgumentException whenever called
    */
   @Override
   public boolean evaluate(Execution execution) {

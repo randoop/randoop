@@ -1,27 +1,22 @@
 package randoop.test.mst;
 
 /**
- * A class that represents a vertex in a graph.  We maintain a linked list
- * representation of the vertices.
+ * A class that represents a vertex in a graph. We maintain a linked list representation of the
+ * vertices.
  */
 public class Vertex {
-  /**
-   * The minimum distance value for the node
-   **/
+  /** The minimum distance value for the node */
   int mindist;
-  /**
-   * The next vertex in the graph.
-   **/
+  /** The next vertex in the graph. */
   Vertex next;
-  /**
-   * A hashtable containing all the connected vertices.
-   **/
+  /** A hashtable containing all the connected vertices. */
   Hashtable neighbors;
 
   /**
    * Create a vertex and initialize the fields.
+   *
    * @param n the next element
-   **/
+   */
   public Vertex(Vertex n, int numvert) {
     mindist = 9999999;
     next = n;

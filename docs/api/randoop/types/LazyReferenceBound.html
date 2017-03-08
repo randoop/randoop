@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>LazyReferenceBound (randoop 3.0.7 API)</title>
+<title>LazyReferenceBound (randoop 3.0.10 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="LazyReferenceBound (randoop 3.0.7 API)";
+            parent.document.title="LazyReferenceBound (randoop 3.0.10 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -182,19 +182,27 @@ extends <a href="../../randoop/types/ReferenceBound.html" title="class in randoo
 </td>
 </tr>
 <tr id="i3" class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/LazyReferenceBound.html#hashCode--">hashCode</a></span>()</code>
+<div class="block">
+ <a href="../../randoop/types/LazyReferenceBound.html" title="class in randoop.types"><code>LazyReferenceBound</code></a> can be part of a recursive type, and so the hash code is based on
+ the string representation of the bound to avoid recursive calls on <code>hashCode()</code>.</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/LazyReferenceBound.html#isLowerBound-randoop.types.Type-randoop.types.Substitution-">isLowerBound</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;argType,
             <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
 <div class="block">Indicates whether this bound is a lower bound of the given argument type.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/LazyReferenceBound.html#isSubtypeOf-randoop.types.ParameterBound-">isSubtypeOf</a></span>(<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;boundType)</code>
 <div class="block">Indicates whether the type of this bound is a subtype of the type of the given bound.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>(package private) boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/LazyReferenceBound.html#isUpperBound-randoop.types.ParameterBound-randoop.types.Substitution-">isUpperBound</a></span>(<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;bound,
             <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
@@ -202,7 +210,7 @@ extends <a href="../../randoop/types/ReferenceBound.html" title="class in randoo
  the type substitution.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/LazyReferenceBound.html#isUpperBound-randoop.types.Type-randoop.types.Substitution-">isUpperBound</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;argType,
             <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
@@ -215,14 +223,14 @@ extends <a href="../../randoop/types/ReferenceBound.html" title="class in randoo
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;randoop.types.<a href="../../randoop/types/ReferenceBound.html" title="class in randoop.types">ReferenceBound</a></h3>
-<code><a href="../../randoop/types/ReferenceBound.html#equals-java.lang.Object-">equals</a>, <a href="../../randoop/types/ReferenceBound.html#getBoundType--">getBoundType</a>, <a href="../../randoop/types/ReferenceBound.html#hashCode--">hashCode</a>, <a href="../../randoop/types/ReferenceBound.html#hasWildcard--">hasWildcard</a>, <a href="../../randoop/types/ReferenceBound.html#isGeneric--">isGeneric</a>, <a href="../../randoop/types/ReferenceBound.html#isObject--">isObject</a>, <a href="../../randoop/types/ReferenceBound.html#toString--">toString</a></code></li>
+<code><a href="../../randoop/types/ReferenceBound.html#equals-java.lang.Object-">equals</a>, <a href="../../randoop/types/ReferenceBound.html#getBoundType--">getBoundType</a>, <a href="../../randoop/types/ReferenceBound.html#hasWildcard--">hasWildcard</a>, <a href="../../randoop/types/ReferenceBound.html#isGeneric--">isGeneric</a>, <a href="../../randoop/types/ReferenceBound.html#isObject--">isObject</a>, <a href="../../randoop/types/ReferenceBound.html#isVariable--">isVariable</a>, <a href="../../randoop/types/ReferenceBound.html#toString--">toString</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.randoop.types.ParameterBound">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;randoop.types.<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></h3>
-<code><a href="../../randoop/types/ParameterBound.html#forType-randoop.types.ReferenceType-">forType</a>, <a href="../../randoop/types/ParameterBound.html#forType-java.lang.reflect.Type-">forType</a>, <a href="../../randoop/types/ParameterBound.html#forTypes-java.lang.reflect.Type:A-">forTypes</a>, <a href="../../randoop/types/ParameterBound.html#isLowerBound-randoop.types.ParameterBound-randoop.types.Substitution-">isLowerBound</a>, <a href="../../randoop/types/ParameterBound.html#isTypeVariable-java.lang.reflect.Type-">isTypeVariable</a></code></li>
+<code><a href="../../randoop/types/ParameterBound.html#forType-randoop.types.ReferenceType-">forType</a>, <a href="../../randoop/types/ParameterBound.html#forType-java.util.Set-java.lang.reflect.Type-">forType</a>, <a href="../../randoop/types/ParameterBound.html#forTypes-java.util.Set-java.lang.reflect.Type:A-">forTypes</a>, <a href="../../randoop/types/ParameterBound.html#isLowerBound-randoop.types.ParameterBound-randoop.types.Substitution-">isLowerBound</a>, <a href="../../randoop/types/ParameterBound.html#isTypeVariable-java.lang.reflect.Type-">isTypeVariable</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -262,6 +270,24 @@ extends <a href="../../randoop/types/ReferenceBound.html" title="class in randoo
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="hashCode--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>hashCode</h4>
+<pre>public&nbsp;int&nbsp;hashCode()</pre>
+<div class="block">
+ <a href="../../randoop/types/LazyReferenceBound.html" title="class in randoop.types"><code>LazyReferenceBound</code></a> can be part of a recursive type, and so the hash code is based on
+ the string representation of the bound to avoid recursive calls on <code>hashCode()</code>.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="../../randoop/types/ReferenceBound.html#hashCode--">hashCode</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ReferenceBound.html" title="class in randoop.types">ReferenceBound</a></code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the hashCode for the string representation of this bound</dd>
+</dl>
+</li>
+</ul>
 <a name="apply-randoop.types.Substitution-">
 <!--   -->
 </a>

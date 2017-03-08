@@ -1,4 +1,28 @@
-Version 3.0.8, released December X, 2016
+Version 3.0.10, released March 6, 2017
+
+Avoids Randoop failures due to issues that arise during test generation.
+
+
+Version 3.0.9, released February 22, 2017
+
+New option --stop-on-error-test stops test generation once an
+error-revealing test is generated.  This is useful during cycles of
+fixing errors discovered by Randoop.
+
+Classpath error message explains why a class is not found.
+
+Fixes
+- Many fixes, mostly related to Java generics, including the following.
+- Fixed issues: 123, 128, 132, 139, 141, 143, 144, 145.
+- Fixed assignability for parameterized types with wildcard arguments.
+- Fixed failure when a generic method or constructor has an
+  argument type that has a wildcard with a bound that includes the type
+  parameter of the generic (e.g., Iterable<? extends T>).
+
+Thanks to Marko Dimjasevic for issue reports.
+
+
+Version 3.0.8, released December 8, 2016
 
 Fixes
 - a failure when instantiating the generic containing type of a non-generic
@@ -11,6 +35,13 @@ Fixes
   on type variables.
 - generation of uncompilable code when static final fields with same name are
   inherited by a class under test from more than one class or interface.
+- a failure due to an assertion enforcing a property on type bounds that is
+  valid for type parameters, but not for wildcard bounds.
+- generation of uncompilable code due to improper instantiation when a type
+  parameter has a bound that is an intersection type that includes a generic
+  type.
+
+Thanks to Mark Roberts and Marko Dimjasevic for issue reports.
 
 
 Version 3.0.7, released November 28, 2016

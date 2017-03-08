@@ -2,7 +2,6 @@ package randoop.test;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-
 import junit.framework.TestCase;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.Randomness;
@@ -13,13 +12,11 @@ public class RandomnessTest extends TestCase {
   private static final double epsilon = 0.01;
 
   /**
-   * Checks that randomMemberWeighted returns a random element that
-   * is properly selected based on the weights of all the elements in
-   * the given list. Creates a list of 10 elements with weights 1..10,
-   * Selects an element from the list 100K times using randomMemberWeighted.
-   * Finally, checks that each element was selected approximately as
-   * many times as expected (the ith element should be selected
-   * approximately i/sum(1..10) times.
+   * Checks that randomMemberWeighted returns a random element that is properly selected based on
+   * the weights of all the elements in the given list. Creates a list of 10 elements with weights
+   * 1..10, Selects an element from the list 100K times using randomMemberWeighted. Finally, checks
+   * that each element was selected approximately as many times as expected (the ith element should
+   * be selected approximately i/sum(1..10) times.
    */
   public void testRandomMemberWeighted() {
 

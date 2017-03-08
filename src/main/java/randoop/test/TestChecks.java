@@ -3,9 +3,8 @@ package randoop.test;
 import java.util.Map;
 
 /**
- * TestChecks represents the checks for a particular test sequence. Can either
- * be all passing tests for a regression test, or all failing tests for an
- * error-revealing test.
+ * TestChecks represents the checks for a particular test sequence. Can either be all passing tests
+ * for a regression test, or all failing tests for an error-revealing test.
  *
  * @see RegressionChecks
  * @see ErrorRevealingChecks
@@ -41,8 +40,8 @@ public interface TestChecks {
   boolean hasChecks();
 
   /**
-   * Indicate whether this object has any failing checks. (This is essentially
-   * asking whether this is an error revealing test.)
+   * Indicate whether this object has any failing checks. (This is essentially asking whether this
+   * is an error revealing test.)
    *
    * @return true if this object has failing checks, false otherwise
    */
@@ -58,17 +57,15 @@ public interface TestChecks {
   /**
    * Add a check to this sequence.
    *
-   * @param ck
-   *          the check object to add to this set of checks
+   * @param ck the check object to add to this set of checks
    */
   void add(Check ck);
 
   /**
-   * Returns the consensus checks for two sets of checks. Refuses to compare
-   * passing with failing checks.
+   * Returns the consensus checks for two sets of checks. Refuses to compare passing with failing
+   * checks.
    *
-   * @param checks
-   *          the {@code TestChecks} to compare with.
+   * @param checks the {@code TestChecks} to compare with.
    * @return the checks common to this set of checks and those in {@code checks}
    */
   TestChecks commonChecks(TestChecks checks);

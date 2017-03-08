@@ -1,10 +1,12 @@
 package randoop.test;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-
 import plume.EntryReader;
 import randoop.generation.ForwardGenerator;
 import randoop.main.GenInputsAbstract;
@@ -13,10 +15,8 @@ import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
+import randoop.reflection.VisibilityPredicate;
 import randoop.types.ClassOrInterfaceType;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
 
 public class RandoopPerformanceTest extends AbstractPerformanceTest {
 
@@ -26,8 +26,7 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
 
     List<Class<?>> classes = new ArrayList<>();
     try (EntryReader er =
-            new EntryReader(
-                ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
+        new EntryReader(ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
       for (String entry : er) {
         classes.add(Class.forName(entry));
       }
@@ -62,10 +61,13 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
 
   private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
     final List<TypedOperation> model = new ArrayList<>();
-    ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
+    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    ReflectionManager mgr = new ReflectionManager(visibility);
     for (Class<?> c : classes) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-      mgr.apply(new OperationExtractor(classType, model, new DefaultReflectionPredicate()), c);
+      mgr.apply(
+          new OperationExtractor(classType, model, new DefaultReflectionPredicate(), visibility),
+          c);
     }
     return model;
   }

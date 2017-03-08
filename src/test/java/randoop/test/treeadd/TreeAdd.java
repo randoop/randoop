@@ -2,24 +2,17 @@ package randoop.test.treeadd;
 
 /**
  * A Java implementation of the <tt>treeadd</tt> Olden benchmark.
- * <p>
- * Treeadd is a very simple program that performs a recursive depth
- * first traversal of a binary tree and sums the value of each element
- * in the tree.  We initialize the elements in the tree to contain
- * '1'.
- **/
+ *
+ * <p>Treeadd is a very simple program that performs a recursive depth first traversal of a binary
+ * tree and sums the value of each element in the tree. We initialize the elements in the tree to
+ * contain '1'.
+ */
 public class TreeAdd {
-  /**
-   * The number of levels in the tree.
-   **/
+  /** The number of levels in the tree. */
   private static int levels = 0;
-  /**
-   * Set to true to print the final result.
-   **/
+  /** Set to true to print the final result. */
   private static boolean printResult = false;
-  /**
-   * Set to true to print informative messages
-   **/
+  /** Set to true to print informative messages */
   private static boolean printMsgs = false;
 
   public static void infiniteLoop() {
@@ -30,8 +23,9 @@ public class TreeAdd {
 
   /**
    * The main routine which creates a tree and traverses it.
+   *
    * @param args the arguments to the program
-   **/
+   */
   public static void main(String[] args) {
     parseCmdLine(args);
 
@@ -57,8 +51,9 @@ public class TreeAdd {
 
   /**
    * Parse the command line options.
+   *
    * @param args the command line options
-   **/
+   */
   private static final void parseCmdLine(String[] args) {
     int i = 0;
     String arg;
@@ -81,9 +76,7 @@ public class TreeAdd {
     if (levels == 0) usage();
   }
 
-  /**
-   * The usage routine which describes the program options.
-   **/
+  /** The usage routine which describes the program options. */
   private static final void usage() {
     System.err.println("usage: java TreeAdd -l <levels> [-p] [-m] [-h]");
     System.err.println("    -l the number of levels in the tree");

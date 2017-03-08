@@ -2,16 +2,15 @@ package randoop.reflection;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-
 import randoop.CheckRep;
 import randoop.contract.CheckRepContract;
 import randoop.main.GenInputsAbstract;
 import randoop.test.ContractSet;
 
 /**
- * {@code CheckRepExtractor} is a {@link ClassVisitor} that inspects the methods passed to it to
- * see if they are annotated with {@link randoop.CheckRep}, are non-static, and have either a
- * {@code boolean} or {@code void} return type.
+ * {@code CheckRepExtractor} is a {@link ClassVisitor} that inspects the methods passed to it to see
+ * if they are annotated with {@link randoop.CheckRep}, are non-static, and have either a {@code
+ * boolean} or {@code void} return type.
  */
 class CheckRepExtractor extends DefaultClassVisitor {
 
@@ -21,19 +20,18 @@ class CheckRepExtractor extends DefaultClassVisitor {
   /**
    * Creates a visitor with an empty contracts set.
    *
-   * @param contracts  the set of contracts
+   * @param contracts the set of contracts
    */
   CheckRepExtractor(ContractSet contracts) {
     this.contracts = contracts;
   }
 
   /**
-   * {@inheritDoc}
-   * If the method is annotated with {@link randoop.CheckRep}, non-static, and with boolean or void
-   * return type, then a {@link randoop.contract.CheckRepContract} for the method is added to the
-   * contracts set.
+   * {@inheritDoc} If the method is annotated with {@link randoop.CheckRep}, non-static, and with
+   * boolean or void return type, then a {@link randoop.contract.CheckRepContract} for the method is
+   * added to the contracts set.
    *
-   * @param m  the method
+   * @param m the method
    */
   @Override
   public void visit(Method m) {
@@ -83,7 +81,7 @@ class CheckRepExtractor extends DefaultClassVisitor {
   /**
    * Prints the log message indicating that a CheckRep method has been found.
    *
-   * @param m  the method
+   * @param m the method
    */
   private static void printDetectedAnnotatedCheckRepMethod(Method m) {
     String msg =

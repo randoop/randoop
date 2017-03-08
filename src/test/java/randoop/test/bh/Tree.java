@@ -3,28 +3,20 @@ package randoop.test.bh;
 import java.util.Enumeration;
 
 /**
- * A class that represents the root of the data structure used
- * to represent the N-bodies in the Barnes-Hut algorithm.
- **/
+ * A class that represents the root of the data structure used to represent the N-bodies in the
+ * Barnes-Hut algorithm.
+ */
 public class Tree {
   MathVector rmin;
   double rsize;
-  /**
-   * A reference to the root node.
-   **/
+  /** A reference to the root node. */
   Node root;
-  /**
-   * The complete list of bodies that have been created.
-   **/
+  /** The complete list of bodies that have been created. */
   private Body bodyTab;
-  /**
-   * The complete list of bodies that have been created - in reverse.
-   **/
+  /** The complete list of bodies that have been created - in reverse. */
   private Body bodyTabRev;
 
-  /**
-   * Construct the root of the data structure that represents the N-bodies.
-   **/
+  /** Construct the root of the data structure that represents the N-bodies. */
   public Tree() {
     rmin = new MathVector();
     rsize = -2.0 * -2.0;
@@ -39,24 +31,27 @@ public class Tree {
 
   /**
    * Return an enumeration of the bodies.
+   *
    * @return an enumeration of the bodies
-   **/
+   */
   public final Enumeration<Body> bodies() {
     return bodyTab.elements();
   }
 
   /**
    * Return an enumeration of the bodies, in reverse.
+   *
    * @return an enumeration of the bodies, in reverse
-   **/
+   */
   public final Enumeration<Body> bodiesRev() {
     return bodyTabRev.elementsRev();
   }
 
   /**
    * Create the testdata used in the benchmark.
+   *
    * @param nbody the number of bodies to create
-   **/
+   */
   public final void createTestData(int nbody) {
     MathVector cmr = new MathVector();
     MathVector cmv = new MathVector();
@@ -137,8 +132,9 @@ public class Tree {
 
   /**
    * Advance the N-body system one time-step.
+   *
    * @param nstep the current time step
-   **/
+   */
   public void stepSystem(int nstep) {
     // free the tree
     root = null;
@@ -156,8 +152,9 @@ public class Tree {
 
   /**
    * Initialize the tree structure for hack force calculation.
+   *
    * @param nstep the current time step
-   **/
+   */
   private void makeTree(int nstep) {
     for (Enumeration<Body> e = bodiesRev(); e.hasMoreElements(); ) {
       Body q = e.nextElement();
@@ -176,8 +173,9 @@ public class Tree {
 
   /**
    * Compute integerized coordinates.
+   *
    * @return the coordinates or null if rp is out of bounds
-   **/
+   */
   public final MathVector intcoord(MathVector vp) {
     MathVector xp = new MathVector();
 
@@ -204,7 +202,7 @@ public class Tree {
     return xp;
   }
 
-  static final private void vp(Body p, int nstep) {
+  private static final void vp(Body p, int nstep) {
     MathVector dacc = new MathVector();
     MathVector dvel = new MathVector();
     double dthf = 0.5 * BH.DTIME;

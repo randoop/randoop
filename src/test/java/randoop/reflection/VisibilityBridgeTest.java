@@ -1,6 +1,8 @@
 package randoop.reflection;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -8,7 +10,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
+import org.junit.Test;
 import randoop.operation.TypedOperation;
 import randoop.reflection.visibilitytest.PackageSubclass;
 import randoop.types.ClassOrInterfaceType;
@@ -16,14 +18,9 @@ import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 /**
- * A test to ensure that reflective collection of methods includes the
- * visibility bridge, which is a bridge method that fakes the "inheritance" of
- * a public method from a package private class.
+ * A test to ensure that reflective collection of methods includes the visibility bridge, which is a
+ * bridge method that fakes the "inheritance" of a public method from a package private class.
  */
 public class VisibilityBridgeTest {
 
@@ -77,9 +74,8 @@ public class VisibilityBridgeTest {
   }
 
   /**
-   * This test is simply to ensure that reflective collection of methods
-   * includes the visibility bridge, which looks like an "inherited" public
-   * method of package private class.
+   * This test is simply to ensure that reflective collection of methods includes the visibility
+   * bridge, which looks like an "inherited" public method of package private class.
    */
   @Test
   public void testVisibilityBridge() {
@@ -126,7 +122,8 @@ public class VisibilityBridgeTest {
       Class<?> c, ReflectionPredicate predicate, VisibilityPredicate visibilityPredicate) {
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     final Set<TypedOperation> operations = new LinkedHashSet<>();
-    OperationExtractor extractor = new OperationExtractor(classType, operations, predicate);
+    OperationExtractor extractor =
+        new OperationExtractor(classType, operations, predicate, visibilityPredicate);
     ReflectionManager manager = new ReflectionManager(visibilityPredicate);
     manager.add(extractor);
     manager.apply(c);

@@ -1,16 +1,18 @@
 package randoop.types;
 
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.Test;
+import randoop.types.test.ParameterInput;
 
 public class ParameterizedTypeTest {
 
@@ -313,5 +315,59 @@ public class ParameterizedTypeTest {
     assertTrue(
         "identical member classes instantiate",
         nonparamInnerClass.isInstantiationOf(nonparamInnerClass));
+  }
+
+  /**
+   * Test what happens when get type parameters for cases {@code Iterable<String>} {@code
+   * Iterable<T>} {@code Iterable<? extends T>} {@code Iterable<? super T>} {@code Iterable<Cap of ?
+   * extends T>} {@code Iterable<Cap of ? super T>} {@code Iterable<? extends Comparable<T>}
+   */
+  @Test
+  public void testTypeParameters() {
+    Class<?> c = ParameterInput.class;
+    Method m = null;
+    try {
+      m =
+          c.getMethod(
+              "m",
+              Iterable.class,
+              Iterable.class,
+              Iterable.class,
+              Iterable.class,
+              Iterable.class,
+              Iterable.class);
+    } catch (NoSuchMethodException e) {
+      fail("failed to load method ParameterInput.m()");
+    }
+    assert m != null;
+    for (java.lang.reflect.Type type : m.getGenericParameterTypes()) {
+      ParameterizedType itType = InstantiatedType.forType(type);
+      if (!itType.isGeneric()) {
+        assertTrue(
+            "non-generic should not have type parameters: " + itType,
+            itType.getTypeParameters().isEmpty());
+      } else {
+        assertFalse(
+            "generic should have type parameters: " + itType, itType.getTypeParameters().isEmpty());
+        if (itType.hasWildcard()) {
+          // the capture variable should have same type parameter as the original type
+          ClassOrInterfaceType capType = itType.applyCaptureConversion();
+          for (TypeVariable variable : capType.getTypeParameters()) {
+            if (variable instanceof CaptureTypeVariable) {
+              assertEquals(
+                  "capture variable should have same parameter as capture type",
+                  capType.getTypeParameters(),
+                  variable.getTypeParameters());
+            } else if (variable instanceof ExplicitTypeVariable) {
+              assertTrue(
+                  "explicit variable should occur in wildcard type",
+                  itType.getTypeParameters().contains(variable));
+            } else {
+              fail("capture type should only have either capture or explicit variable");
+            }
+          }
+        }
+      }
+    }
   }
 }

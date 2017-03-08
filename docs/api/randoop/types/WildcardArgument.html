@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>WildcardArgument (randoop 3.0.7 API)</title>
+<title>WildcardArgument (randoop 3.0.10 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,14 +12,14 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="WildcardArgument (randoop 3.0.7 API)";
+            parent.document.title="WildcardArgument (randoop 3.0.10 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":9,"i3":10,"i4":10,"i5":10,"i6":6,"i7":10,"i8":10,"i9":10};
-var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":9,"i5":9,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10};
+var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -49,7 +49,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/types/VoidType.html" title="class in randoop.types"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/types/WildcardArgumentWithLowerBound.html" title="class in randoop.types"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/types/WildcardType.html" title="class in randoop.types"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/types/WildcardArgument.html" target="_top">Frames</a></li>
@@ -111,28 +111,14 @@ var activeTableTab = "activeTableTab";
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
-<dl>
-<dt>Direct Known Subclasses:</dt>
-<dd><a href="../../randoop/types/WildcardArgumentWithLowerBound.html" title="class in randoop.types">WildcardArgumentWithLowerBound</a>, <a href="../../randoop/types/WildcardArgumentWithUpperBound.html" title="class in randoop.types">WildcardArgumentWithUpperBound</a></dd>
-</dl>
 <hr>
 <br>
-<pre>abstract class <span class="typeNameLabel">WildcardArgument</span>
+<pre>class <span class="typeNameLabel">WildcardArgument</span>
 extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a></pre>
 <div class="block">Represents a wildcard type argument to a parameterized type.
- A wildcard may have either an upper or lower bound as defined in
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.
- <pre>
-   ? [ extends ReferenceType ]
-   ? [ super ReferenceType ]
- </pre>
+
  <p>
  The subclasses represent the type bound as given for the wildcard.</div>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../randoop/types/WildcardArgumentWithLowerBound.html" title="class in randoop.types"><code>WildcardArgumentWithLowerBound</code></a>, 
-<a href="../../randoop/types/WildcardArgumentWithUpperBound.html" title="class in randoop.types"><code>WildcardArgumentWithUpperBound</code></a></dd>
-</dl>
 </li>
 </ul>
 </div>
@@ -152,9 +138,9 @@ extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private <a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardArgument.html#typeBound">typeBound</a></span></code>
-<div class="block">the bound type</div>
+<td class="colFirst"><code>private <a href="../../randoop/types/WildcardType.html" title="class in randoop.types">WildcardType</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardArgument.html#argumentType">argumentType</a></span></code>
+<div class="block">the wildcard type</div>
 </td>
 </tr>
 </table>
@@ -172,7 +158,7 @@ extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardArgument.html#WildcardArgument-randoop.types.ParameterBound-">WildcardArgument</a></span>(<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;boundType)</code>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardArgument.html#WildcardArgument-randoop.types.WildcardType-">WildcardArgument</a></span>(<a href="../../randoop/types/WildcardType.html" title="class in randoop.types">WildcardType</a>&nbsp;argumentType)</code>
 <div class="block">Initializes the bound type.</div>
 </td>
 </tr>
@@ -186,66 +172,103 @@ extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/types/WildcardArgument.html" title="class in randoop.types">WildcardArgument</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardArgument.html#apply-randoop.types.Substitution-">apply</a></span>(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
+<div class="block">Applies the type substitution to this type argument.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code><a href="../../randoop/types/WildcardArgument.html" title="class in randoop.types">WildcardArgument</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardArgument.html#applyCaptureConversion--">applyCaptureConversion</a></span>()</code>
 <div class="block">Applies a capture conversion to the bound of this <a href="../../randoop/types/WildcardArgument.html" title="class in randoop.types"><code>WildcardArgument</code></a>.</div>
 </td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardArgument.html#contains-randoop.types.TypeArgument-">contains</a></span>(<a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a>&nbsp;argument)</code>
+<div class="block">Checks whether this type argument contains another argument, using relationship defined in
+ <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardArgument.html#equals-java.lang.Object-">equals</a></span>(java.lang.Object&nbsp;obj)</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>static <a href="../../randoop/types/WildcardArgument.html" title="class in randoop.types">WildcardArgument</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardArgument.html#forType-randoop.types.ReferenceType-">forType</a></span>(<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&nbsp;argumentType)</code>&nbsp;</td>
+</tr>
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>static <a href="../../randoop/types/WildcardArgument.html" title="class in randoop.types">WildcardArgument</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardArgument.html#forType-java.lang.reflect.Type-">forType</a></span>(java.lang.reflect.Type&nbsp;type)</code>
 <div class="block">Creates a <code>WildcardArgument</code> from a <code>java.lang.reflect.Type</code>.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>(package private) <a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardArgument.html#getTypeBound--">getTypeBound</a></span>()</code>
 <div class="block">Return the type of the upper/lower bound of this wildcard argument.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardArgument.html#getTypeParameters--">getTypeParameters</a></span>()</code>
 <div class="block">The type parameters for this type argument.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>(package private) <a href="../../randoop/types/WildcardType.html" title="class in randoop.types">WildcardType</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardArgument.html#getWildcardType--">getWildcardType</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardArgument.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code>abstract boolean</code></td>
+<tr id="i10" class="altColor">
+<td class="colFirst"><code>(package private) boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardArgument.html#hasUpperBound--">hasUpperBound</a></span>()</code>
 <div class="block">Indicates whether this wildcard argument has an upper bound.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardArgument.html#hasWildcard--">hasWildcard</a></span>()</code>
 <div class="block">Indicate whether this type argument has a wildcard.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardArgument.html#isGeneric--">isGeneric</a></span>()</code>
 <div class="block">Indicates whether this type argument is generic.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i13" class="rowColor">
+<td class="colFirst"><code>(package private) boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardArgument.html#isInstantiationOf-randoop.types.TypeArgument-">isInstantiationOf</a></span>(<a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a>&nbsp;otherArgument)</code>
+<div class="block">Determines whether this type argument is an instantiation of the other argument.</div>
+</td>
+</tr>
+<tr id="i14" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardArgument.html#isVariable--">isVariable</a></span>()</code>
+<div class="block">Indicate whether this type argument is a type variable.</div>
+</td>
+</tr>
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardArgument.html#isWildcard--">isWildcard</a></span>()</code>
 <div class="block">Indicate whether this type argument is a wildcard argument.</div>
 </td>
+</tr>
+<tr id="i16" class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardArgument.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -253,14 +276,14 @@ extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;randoop.types.<a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a></h3>
-<code><a href="../../randoop/types/TypeArgument.html#apply-randoop.types.Substitution-">apply</a>, <a href="../../randoop/types/TypeArgument.html#contains-randoop.types.TypeArgument-">contains</a>, <a href="../../randoop/types/TypeArgument.html#getInstantiatingSubstitution-randoop.types.TypeArgument-">getInstantiatingSubstitution</a>, <a href="../../randoop/types/TypeArgument.html#isInstantiationOf-randoop.types.TypeArgument-">isInstantiationOf</a></code></li>
+<code><a href="../../randoop/types/TypeArgument.html#getInstantiatingSubstitution-randoop.types.TypeArgument-">getInstantiatingSubstitution</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, finalize, getClass, notify, notifyAll, toString, wait, wait, wait</code></li>
+<code>clone, finalize, getClass, notify, notifyAll, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -276,14 +299,14 @@ extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="typeBound">
+<a name="argumentType">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>typeBound</h4>
-<pre>private final&nbsp;<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a> typeBound</pre>
-<div class="block">the bound type</div>
+<h4>argumentType</h4>
+<pre>private final&nbsp;<a href="../../randoop/types/WildcardType.html" title="class in randoop.types">WildcardType</a> argumentType</pre>
+<div class="block">the wildcard type</div>
 </li>
 </ul>
 </li>
@@ -294,17 +317,17 @@ extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="WildcardArgument-randoop.types.ParameterBound-">
+<a name="WildcardArgument-randoop.types.WildcardType-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>WildcardArgument</h4>
-<pre>WildcardArgument(<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;boundType)</pre>
+<pre>WildcardArgument(<a href="../../randoop/types/WildcardType.html" title="class in randoop.types">WildcardType</a>&nbsp;argumentType)</pre>
 <div class="block">Initializes the bound type.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>boundType</code> - the bound type</dd>
+<dd><code>argumentType</code> - the wildcard type</dd>
 </dl>
 </li>
 </ul>
@@ -333,6 +356,15 @@ extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.
 </dl>
 </li>
 </ul>
+<a name="forType-randoop.types.ReferenceType-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>forType</h4>
+<pre>public static&nbsp;<a href="../../randoop/types/WildcardArgument.html" title="class in randoop.types">WildcardArgument</a>&nbsp;forType(<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&nbsp;argumentType)</pre>
+</li>
+</ul>
 <a name="equals-java.lang.Object-">
 <!--   -->
 </a>
@@ -359,6 +391,38 @@ extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.
 </dl>
 </li>
 </ul>
+<a name="toString--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+</dl>
+</li>
+</ul>
+<a name="apply-randoop.types.Substitution-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>apply</h4>
+<pre>public&nbsp;<a href="../../randoop/types/WildcardArgument.html" title="class in randoop.types">WildcardArgument</a>&nbsp;apply(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/TypeArgument.html#apply-randoop.types.Substitution-">TypeArgument</a></code></span></div>
+<div class="block">Applies the type substitution to this type argument.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../randoop/types/TypeArgument.html#apply-randoop.types.Substitution-">apply</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a></code></dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>substitution</code> - the substitution</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a version of this type argument with type variables replaced by the substitution</dd>
+</dl>
+</li>
+</ul>
 <a name="applyCaptureConversion--">
 <!--   -->
 </a>
@@ -372,6 +436,26 @@ extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.
 <dd>this wildcard argument with capture conversion applied to the type bound</dd>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../randoop/types/ReferenceType.html#applyCaptureConversion--"><code>ReferenceType.applyCaptureConversion()</code></a></dd>
+</dl>
+</li>
+</ul>
+<a name="contains-randoop.types.TypeArgument-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>contains</h4>
+<pre>public&nbsp;boolean&nbsp;contains(<a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a>&nbsp;argument)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/TypeArgument.html#contains-randoop.types.TypeArgument-">TypeArgument</a></code></span></div>
+<div class="block">Checks whether this type argument contains another argument, using relationship defined in
+ <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../randoop/types/TypeArgument.html#contains-randoop.types.TypeArgument-">contains</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a></code></dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>argument</code> - the other <code>TypeArgument</code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if this argument contains the other argument</dd>
 </dl>
 </li>
 </ul>
@@ -412,7 +496,7 @@ extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.
 <ul class="blockList">
 <li class="blockList">
 <h4>hasUpperBound</h4>
-<pre>public abstract&nbsp;boolean&nbsp;hasUpperBound()</pre>
+<pre>boolean&nbsp;hasUpperBound()</pre>
 <div class="block">Indicates whether this wildcard argument has an upper bound.
  (If not, then it has a lower bound.)</div>
 <dl>
@@ -455,10 +539,31 @@ extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.
 </dl>
 </li>
 </ul>
+<a name="isInstantiationOf-randoop.types.TypeArgument-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isInstantiationOf</h4>
+<pre>boolean&nbsp;isInstantiationOf(<a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a>&nbsp;otherArgument)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/TypeArgument.html#isInstantiationOf-randoop.types.TypeArgument-">TypeArgument</a></code></span></div>
+<div class="block">Determines whether this type argument is an instantiation of the other argument.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="../../randoop/types/TypeArgument.html#isInstantiationOf-randoop.types.TypeArgument-">isInstantiationOf</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a></code></dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>otherArgument</code> - the other argument</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if this type is an instantiation of the other argument, false otherwise</dd>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../randoop/types/InstantiatedType.html#isInstantiationOf-randoop.types.ReferenceType-"><code>InstantiatedType.isInstantiationOf(ReferenceType)</code></a></dd>
+</dl>
+</li>
+</ul>
 <a name="isWildcard--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>isWildcard</h4>
 <pre>public&nbsp;boolean&nbsp;isWildcard()</pre>
@@ -470,6 +575,32 @@ extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if this is a wildcard argument, false otherwise</dd>
 </dl>
+</li>
+</ul>
+<a name="isVariable--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isVariable</h4>
+<pre>public&nbsp;boolean&nbsp;isVariable()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/TypeArgument.html#isVariable--">TypeArgument</a></code></span></div>
+<div class="block">Indicate whether this type argument is a type variable.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../randoop/types/TypeArgument.html#isVariable--">isVariable</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a></code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if this argument is a type variable, false otherwise</dd>
+</dl>
+</li>
+</ul>
+<a name="getWildcardType--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getWildcardType</h4>
+<pre><a href="../../randoop/types/WildcardType.html" title="class in randoop.types">WildcardType</a>&nbsp;getWildcardType()</pre>
 </li>
 </ul>
 </li>
@@ -500,7 +631,7 @@ extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/types/VoidType.html" title="class in randoop.types"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../randoop/types/WildcardArgumentWithLowerBound.html" title="class in randoop.types"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/types/WildcardType.html" title="class in randoop.types"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/types/WildcardArgument.html" target="_top">Frames</a></li>

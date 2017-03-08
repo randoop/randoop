@@ -1,23 +1,20 @@
 package randoop.test.mst;
 
-/**
- * A class that represents a graph data structure.
- **/
+/** A class that represents a graph data structure. */
 public class Graph {
-  /**
-   * List of vertices in the graph.
-   **/
+  /** List of vertices in the graph. */
   private Vertex[] nodes;
 
   // parameters for the random number generater
-  private final static int CONST_m1 = 10000;
-  private final static int CONST_b = 31415821;
-  private final static int RANGE = 2048;
+  private static final int CONST_m1 = 10000;
+  private static final int CONST_b = 31415821;
+  private static final int RANGE = 2048;
 
   /**
    * Create a graph.
+   *
    * @param numvert the number of vertices in the graph
-   **/
+   */
   public Graph(int numvert) {
     nodes = new Vertex[numvert];
     Vertex v = null;
@@ -30,10 +27,10 @@ public class Graph {
   }
 
   /**
-   * Create a graph.  This is just another method for
-   * creating the graph data structure.
+   * Create a graph. This is just another method for creating the graph data structure.
+   *
    * @param numvert the size of the graph
-   **/
+   */
   public void createGraph(int numvert) {
     nodes = new Vertex[numvert];
     Vertex v = null;
@@ -48,17 +45,19 @@ public class Graph {
 
   /**
    * Return the first node in the graph.
+   *
    * @return the first node in the graph
-   **/
+   */
   public Vertex firstNode() {
     return nodes[0];
   }
 
   /**
-   * Add edges to the graph.  Edges are added to/from every node
-   * in the graph and a distance is computed for each of them.
+   * Add edges to the graph. Edges are added to/from every node in the graph and a distance is
+   * computed for each of them.
+   *
    * @param numvert the number of nodes in the graph
-   **/
+   */
   private void addEdges(int numvert) {
     int count1 = 0;
 
@@ -75,8 +74,8 @@ public class Graph {
   }
 
   /**
-   * Compute the distance between two edges.  A random number generator
-   * is used to compute the distance.
+   * Compute the distance between two edges. A random number generator is used to compute the
+   * distance.
    */
   private int computeDist(int i, int j, int numvert) {
     int less, gt;

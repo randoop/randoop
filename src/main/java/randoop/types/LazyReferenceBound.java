@@ -2,21 +2,33 @@ package randoop.types;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
- * A lazy representation of a type bound in which a type variable occurs.
- * Similar in purpose to {@link LazyParameterBound}, but this class uses
- * {@link ReferenceType} as the bound instead of {@code java.lang.reflect.Type}.
- * Also, prevents access to recursive type bounds, that would otherwise result in
- * nonterminating calls to {@link #getTypeParameters()}.
- * <p>
- * Objects of this class are created by {@link LazyParameterBound#apply(Substitution)}
- * when the substitution would replace a type variable with another type variable.
+ * A lazy representation of a type bound in which a type variable occurs. Similar in purpose to
+ * {@link LazyParameterBound}, but this class uses {@link ReferenceType} as the bound instead of
+ * {@code java.lang.reflect.Type}. Also, prevents access to recursive type bounds, that would
+ * otherwise result in nonterminating calls to {@link #getTypeParameters()}.
+ *
+ * <p>Objects of this class are created by {@link LazyParameterBound#apply(Substitution)} when the
+ * substitution would replace a type variable with another type variable.
  */
 class LazyReferenceBound extends ReferenceBound {
 
   LazyReferenceBound(ReferenceType boundType) {
     super(boundType);
+  }
+
+  /**
+   * {@inheritDoc} {@link LazyReferenceBound} can be part of a recursive type, and so the hash code
+   * is based on the string representation of the bound to avoid recursive calls on {@code
+   * hashCode()}.
+   *
+   * @return the hashCode for the string representation of this bound
+   */
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.toString());
   }
 
   @Override
@@ -26,7 +38,7 @@ class LazyReferenceBound extends ReferenceBound {
       return this;
     }
     for (TypeVariable parameter : getTypeParameters()) {
-      if (!substitution.getVariables().contains(parameter)) {
+      if (substitution.get(parameter) == null) {
         return this;
       }
     }

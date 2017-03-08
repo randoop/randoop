@@ -26,6 +26,7 @@
       <li><a href="#flakiness">Flakiness</a></li>
       <li><a href="#robustness">Robustness</a></li>
       <li><a href="#parallelizing-randoop">Parallelizing Randoop</a></li>
+      <li><a href="#side-effect-analysis">Side effect analysis</a></li>
     </ul></li>
   <li><a href="#user-interface-and-user-experience-projects">User interface and user experience projects</a>
     <ul>
@@ -317,6 +318,83 @@ problem for Randoop; effort would probably be better invested elsewhere.
 <p><strong>Additional required skills:</strong>  Knowledge of Java APIs for spawning processes, creating streams, reading/writing files, would also be helpful.</p>
 
 
+<h2 id="side-effect-analysis">Side effect analysis</h2>
+
+<p>
+  Enhance Randoop to utilize a side effect analysis that indicates which
+  methods are pure (perform no side effects).
+  Here are two distinct benefits:
+</p>
+
+<ol>
+<li>
+  <p>
+  Benefit 1: avoiding useless calls in tests.
+  </p>
+
+  Ordinarily, Randoop assumes that a method call may change any object that
+  is passed to it.  For example, Randoop considers <code>x</code> to be
+  different after 
+<pre>
+  x = foo();
+</pre>
+than after
+<pre>
+  x = foo();
+  y = bar(x);
+</pre>
+and Randoop will try to test the <code>x</code> values produced by both
+sequences.  By ignoring the <code>x</code> value produced by the second
+sequence, Randoop could spend half as long to produce equally good tests.
+Also, Randoop's tests would be easier to understand because they would be
+shorter and would not contain mysterious, useless calls to pure methods.
+</li>
+
+<li>
+  <p>
+  Benefit 2: more test assertions.
+  </p>
+
+  When Randoop creates regression tests, the tests contain assertions about
+  the objects that the test creates.  For instance, Randoop might output
+  <pre>  assertTrue(someObject.itsField == 22);</pre>
+
+  In addition to reading fields of an object, Randoop could invoke observer
+  methods.  For instance, it could output
+  <pre>  assertTrue(someObject.observerMethod() == 22);</pre>
+
+  This is only possible for pure methods &mdash methods that have no side
+  effect and return the same value every time they are called on the same
+  arguments.  If Randoop is told which methods are pure, it can use them as
+  observers and can generate much richer and more sensitive assertions in
+  its regression tests.
+</li>
+</ol>
+
+<p>
+The goal of this project is to enable Randoop to utilize pure methods for
+both of the purposes outlined above.
+</p>
+
+<p>
+There are some other enhancements that would make this project even more
+compelling.
+</p>
+<ul>
+  <li>
+    Randoop takes optional inputs such as a list of pure methods.  Create a
+    wrapper around Randoop that automatically invokes a purity analysis and
+    does other pre-processing, so that a user doesn't have to do those
+    steps and Randoop is more automated.
+  </li>
+  <li>
+    Although side effect and purity analysis is an old research topic, the
+    available tools aren't great.  Enhance an existing purity analysis, or
+    create a new one.
+  </li>
+</ul>
+
+
 <h1 id="user-interface-and-user-experience-projects">User interface and user experience projects</h1>
 
 <h2 id="test-cases-with-debugging-clues">Test cases with debugging clues</h2>
@@ -435,31 +513,16 @@ started with Randoop development and make a contribution.
     reflection, making them accessible for execution.
   </li>
   <li>
-    New contracts:
-    Add more kinds of regression assertions that are built into
-    Randoop. For example, a feature the tool used to have (but was removed
-    at some point) was to heuristically determine observer methods and use
-    them to create regression assertions.
-  </li>
-  <li>
-    Create or adapt a side effect analysis to make Randoop perform better,
-    as noted above.
-  </li>
-  <li>
     Rewrite bytecode as Randoop loads it, to get rid of System.exit(int) calls. and other issues.
   </li>
   <li>
-    GRT (Guided Random Testing) is a variant of Randoop that adds some
-    features to Randoop.  The source code isn't available, and some of the
+    <a href="https://people.kth.se/~artho/papers/lei-ase2015.pdf">GRT (Guided Random Testing)</a> is a variant of Randoop that adds some
+    features to Randoop.  In a recent competition among testing tools, GRT
+    won.
+    GRT's source code isn't available, and some of the
     features that GRT claims are already part of Randoop anyway.
     Incorporate the rest into Randoop in order to create a tool with all
     the positive features of each.
-  </li>
-  <li>
-    Randoop takes optional inputs such as a list of pure methods.  Create a
-    wrapper around Randoop that automatically invokes a purity analysis and
-    does other pre-processing, so that a user doesn't have to do those
-    steps and Randoop is more automated.
   </li>
   <li>
     Make Randoop able to rerun and remove non-deterministic tests.
@@ -502,3 +565,6 @@ started with Randoop development and make a contribution.
 
 </body>
 </html>
+
+<!--  LocalWords:  assertTrue someObject itsField observerMethod
+ -->

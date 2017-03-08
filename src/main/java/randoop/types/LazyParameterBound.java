@@ -2,16 +2,15 @@ package randoop.types;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-
 import randoop.BugInRandoopException;
 
 /**
- * A lazy representation of a type bound in which a type variable occurs.
- * Prevents type recognition from having to deal with recursive type bounds.
- * All methods that need to evaluate the bound are provided with a substitution for the variable
- * for which this object is a bound.
+ * A lazy representation of a type bound in which a type variable occurs. Prevents type recognition
+ * from having to deal with recursive type bounds. All methods that need to evaluate the bound are
+ * provided with a substitution for the variable for which this object is a bound.
  */
 class LazyParameterBound extends ParameterBound {
 
@@ -21,7 +20,7 @@ class LazyParameterBound extends ParameterBound {
   /**
    * Creates a {@code LazyParameterBound} from the given rawtype and type parameters.
    *
-   * @param boundType  the reflection type for this bound
+   * @param boundType the reflection type for this bound
    */
   LazyParameterBound(java.lang.reflect.Type boundType) {
     this.boundType = boundType;
@@ -29,8 +28,9 @@ class LazyParameterBound extends ParameterBound {
 
   /**
    * {@inheritDoc}
-   * @return true if argument is a {@code LazyParameterBound}, and the rawtype
-   *         and parameters are identical, false otherwise
+   *
+   * @return true if argument is a {@code LazyParameterBound}, and the rawtype and parameters are
+   *     identical, false otherwise
    */
   @Override
   public boolean equals(Object obj) {
@@ -73,9 +73,10 @@ class LazyParameterBound extends ParameterBound {
       for (java.lang.reflect.Type parameter :
           ((ParameterizedType) boundType).getActualTypeArguments()) {
         TypeArgument typeArgument = apply(parameter, substitution);
-        isLazy =
-            (isTypeVariable(parameter))
-                && ((ReferenceArgument) typeArgument).getReferenceType().isVariable();
+        if (typeArgument == null) {
+          return this;
+        }
+        isLazy = isTypeVariable(parameter) && typeArgument.isVariable();
         argumentList.add(typeArgument);
       }
       GenericClassType classType =
@@ -93,10 +94,11 @@ class LazyParameterBound extends ParameterBound {
 
   /**
    * Applies a substitution to a reflection type that occurs as an actual argument of a
-   * parameterized type bound, to create a type argument to a {@link randoop.types.ParameterizedType}.
+   * parameterized type bound, to create a type argument to a {@link
+   * randoop.types.ParameterizedType}.
    *
-   * @param type  the reflection type
-   * @param substitution  the type substitution
+   * @param type the reflection type
+   * @param substitution the type substitution
    * @return the type argument
    */
   private static TypeArgument apply(
@@ -104,10 +106,9 @@ class LazyParameterBound extends ParameterBound {
     if (type instanceof java.lang.reflect.TypeVariable) {
       ReferenceType referenceType = substitution.get(type);
       if (referenceType != null) {
-        return new ReferenceArgument(referenceType);
+        return TypeArgument.forType(referenceType);
       }
-      // should trigger construction of a LazyReferenceBound
-      return new ReferenceArgument(TypeVariable.forType(type));
+      return null;
     }
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
@@ -119,11 +120,11 @@ class LazyParameterBound extends ParameterBound {
       GenericClassType classType =
           GenericClassType.forClass((Class<?>) ((ParameterizedType) type).getRawType());
       InstantiatedType instantiatedType = new InstantiatedType(classType, argumentList);
-      return new ReferenceArgument(instantiatedType);
+      return TypeArgument.forType(instantiatedType);
     }
 
     if (type instanceof Class) {
-      return new ReferenceArgument(ClassOrInterfaceType.forType(type));
+      return TypeArgument.forType(ClassOrInterfaceType.forType(type));
     }
 
     if (type instanceof java.lang.reflect.WildcardType) {
@@ -141,7 +142,9 @@ class LazyParameterBound extends ParameterBound {
             bound = new LazyParameterBound(lowerBound);
           }
         } else {
-          bound = ParameterBound.forType(lowerBound).apply(substitution);
+          bound =
+              ParameterBound.forType(new HashSet<java.lang.reflect.TypeVariable<?>>(), lowerBound)
+                  .apply(substitution);
         }
 
         return new WildcardArgument(new WildcardType(bound, false));
@@ -149,7 +152,9 @@ class LazyParameterBound extends ParameterBound {
       // a wildcard always has an upper bound
       assert wildcardType.getUpperBounds().length == 1
           : "a wildcard is defined by the JLS to only have one bound";
-      ParameterBound bound = ParameterBound.forTypes(wildcardType.getUpperBounds());
+      ParameterBound bound =
+          ParameterBound.forTypes(
+              new HashSet<java.lang.reflect.TypeVariable<?>>(), wildcardType.getUpperBounds());
       bound = bound.apply(substitution);
       return new WildcardArgument(new WildcardType(bound, true));
     }
@@ -159,7 +164,7 @@ class LazyParameterBound extends ParameterBound {
 
   @Override
   public ParameterBound applyCaptureConversion() {
-    assert false : "unable to do capture conversion on lazy bound";
+    assert false : "unable to do capture conversion on lazy bound " + this;
     return this;
   }
 
@@ -171,7 +176,7 @@ class LazyParameterBound extends ParameterBound {
   /**
    * Collects the type parameters from the given reflection {@code Type} object.
    *
-   * @param type  the {@code Type} reference
+   * @param type the {@code Type} reference
    * @return the list of type variables in the given type
    */
   private static List<TypeVariable> getTypeParameters(java.lang.reflect.Type type) {
@@ -205,6 +210,11 @@ class LazyParameterBound extends ParameterBound {
       return true;
     }
     if (type instanceof java.lang.reflect.TypeVariable) {
+      for (java.lang.reflect.Type bound : ((java.lang.reflect.TypeVariable) type).getBounds()) {
+        if (hasWildcard(bound)) {
+          return true;
+        }
+      }
       return false;
     }
     if (type instanceof java.lang.reflect.ParameterizedType) {
@@ -245,10 +255,8 @@ class LazyParameterBound extends ParameterBound {
   }
 
   /**
-   * {@inheritDoc}
-   * This generic type bound is satisfied by a concrete type if the concrete type
-   * formed by applying the substitution to this generic bound is satisfied by
-   * the concrete type.
+   * {@inheritDoc} This generic type bound is satisfied by a concrete type if the concrete type
+   * formed by applying the substitution to this generic bound is satisfied by the concrete type.
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution<ReferenceType> substitution) {
@@ -264,5 +272,10 @@ class LazyParameterBound extends ParameterBound {
   boolean isUpperBound(ParameterBound bound, Substitution<ReferenceType> substitution) {
     assert false : " not quite sure what to do with lazy type bound";
     return false;
+  }
+
+  @Override
+  public boolean isVariable() {
+    return boundType instanceof java.lang.reflect.TypeVariable;
   }
 }

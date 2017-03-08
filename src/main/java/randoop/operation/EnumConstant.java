@@ -2,7 +2,6 @@ package randoop.operation;
 
 import java.io.PrintStream;
 import java.util.List;
-
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
@@ -11,13 +10,12 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * EnumConstant is an {@link Operation} representing a constant value from an
- * enum.
- * <p>
- * Using the formal notation in {@link Operation}, a constant named BLUE from
- * the enum Colors is an operation BLUE : [] &rarr; Colors.
- * <p>
- * Execution simply returns the constant value.
+ * EnumConstant is an {@link Operation} representing a constant value from an enum.
+ *
+ * <p>Using the formal notation in {@link Operation}, a constant named BLUE from the enum Colors is
+ * an operation BLUE : [] &rarr; Colors.
+ *
+ * <p>Execution simply returns the constant value.
  */
 public class EnumConstant extends CallableOperation {
 
@@ -63,6 +61,7 @@ public class EnumConstant extends CallableOperation {
 
   /**
    * {@inheritDoc}
+   *
    * @return a {@link NormalExecution} object holding the value of the enum constant.
    */
   @Override
@@ -71,9 +70,7 @@ public class EnumConstant extends CallableOperation {
     return new NormalExecution(this.value, 0);
   }
 
-  /**
-   * {@inheritDoc} Adds qualified name of enum constant.
-   */
+  /** {@inheritDoc} Adds qualified name of enum constant. */
   @Override
   public void appendCode(
       Type declaringType,
@@ -85,8 +82,8 @@ public class EnumConstant extends CallableOperation {
   }
 
   /**
-   * {@inheritDoc} Issues a string representation of an enum constant as a
-   * type-value pair. The parse function should return an equivalent object.
+   * {@inheritDoc} Issues a string representation of an enum constant as a type-value pair. The
+   * parse function should return an equivalent object.
    *
    * @see EnumConstant#parse(String)
    */
@@ -96,16 +93,15 @@ public class EnumConstant extends CallableOperation {
   }
 
   /**
-   * Parses the description of an enum constant value in a string as returned by
-   * {@link EnumConstant#toParsableString(Type, TypeTuple, Type)}.
+   * Parses the description of an enum constant value in a string as returned by {@link
+   * EnumConstant#toParsableString(Type, TypeTuple, Type)}.
    *
-   * Valid strings may be of the form EnumType:EnumValue, or
-   * OuterClass$InnerEnum:EnumValue for an enum that is an inner type of a class.
+   * <p>Valid strings may be of the form EnumType:EnumValue, or OuterClass$InnerEnum:EnumValue for
+   * an enum that is an inner type of a class.
    *
    * @param desc string representing type-value pair for an enum constant
    * @return the enum constant operation for the string descriptor
-   * @throws OperationParseException
-   *           if desc does not match expected form
+   * @throws OperationParseException if desc does not match expected form
    */
   public static TypedClassOperation parse(String desc) throws OperationParseException {
     if (desc == null) {
@@ -183,6 +179,7 @@ public class EnumConstant extends CallableOperation {
 
   /**
    * value
+   *
    * @return object for value of enum constant
    */
   public Enum<?> value() {
@@ -200,8 +197,8 @@ public class EnumConstant extends CallableOperation {
   }
 
   /**
-   * valueOf searches the enum constant list of a class for a constant with the given name.
-   * Note: cannot make this work using valueOf method of Enum due to typing.
+   * valueOf searches the enum constant list of a class for a constant with the given name. Note:
+   * cannot make this work using valueOf method of Enum due to typing.
    *
    * @param type class that is already known to be an enum
    * @param valueName name for value that may be a constant of the enum

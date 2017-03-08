@@ -1,14 +1,16 @@
 package randoop.test;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static randoop.main.GenInputsAbstract.include_if_classname_appears;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import randoop.BugInRandoopException;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
@@ -23,6 +25,7 @@ import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
+import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
@@ -39,10 +42,6 @@ import randoop.types.TypeTuple;
 import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.Predicate;
-
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static randoop.main.GenInputsAbstract.include_if_classname_appears;
 
 public class ForwardExplorerTests {
 
@@ -88,11 +87,13 @@ public class ForwardExplorerTests {
 
   private static List<TypedOperation> getConcreteOperations(List<Class<?>> classes) {
     final List<TypedOperation> model = new ArrayList<>();
-
-    ReflectionManager mgr = new ReflectionManager(new PublicVisibilityPredicate());
+    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    ReflectionManager mgr = new ReflectionManager(visibility);
     for (Class<?> c : classes) {
       ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
-      mgr.apply(new OperationExtractor(classType, model, new DefaultReflectionPredicate()), c);
+      mgr.apply(
+          new OperationExtractor(classType, model, new DefaultReflectionPredicate(), visibility),
+          c);
     }
     return model;
   }
