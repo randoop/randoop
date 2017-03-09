@@ -1,11 +1,10 @@
 package randoop.test;
 
 /**
- * Operator enum based on examples from Java Language Specification
- * intended to be used with tests in Randoop.
+ * Operator enum based on examples from Java Language Specification intended to be used with tests
+ * in Randoop.
  *
  * @see Expression
- *
  */
 public enum OperatorEnum {
   PLUS {

@@ -1,13 +1,12 @@
 package randoop.generation;
 
+import java.util.*;
 import randoop.*;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.sequence.*;
 import randoop.types.*;
 import randoop.util.*;
-
-import java.util.*;
 
 /**
  * DigDog generator extends the functionality of forward generator by storing additional information
@@ -19,10 +18,12 @@ import java.util.*;
 public class DigDogGenerator extends ForwardGenerator {
 
   /**
-   * The set of ALL sequences ever generated, including sequences that were
-   * executed and then discarded.
+   * The set of ALL sequences ever generated, including sequences that were executed and then
+   * discarded.
    */
   private final Map<WeightedElement, Double> weightMap = new HashMap<WeightedElement, Double>();
+
+  /** DigDog's map of sequences to the number of times they've been executed. */
   private final Map<WeightedElement, Integer> sequenceExecutionNumber = new HashMap<>();
 
   /** DigDog's map of sequence/constants to their constant weights. */
@@ -104,12 +105,11 @@ public class DigDogGenerator extends ForwardGenerator {
   }
 
   /**
-   * The runtimePrimitivesSeen set contains primitive values seen during
-   * generation/execution and is used to determine new values that should be
-   * added to the component set. The component set initially contains a set of
-   * primitive sequences; this method puts those primitives in this set.
-   * Also introduces weighted selection based on the runtime of the sequence if
-   * the weighted flags are enabled.
+   * The runtimePrimitivesSeen set contains primitive values seen during generation/execution and is
+   * used to determine new values that should be added to the component set. The component set
+   * initially contains a set of primitive sequences; this method puts those primitives in this set.
+   * Also introduces weighted selection based on the runtime of the sequence if the weighted flags
+   * are enabled.
    */
   @Override
   public ExecutableSequence step() {

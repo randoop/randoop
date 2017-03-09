@@ -1,3 +1,9 @@
+Version 3.1.0, released March ??, 2017
+
+New command-line option --sof-exception controls how Randoop classifies a test that
+throws a StackOverflowError exception
+
+
 Version 3.0.10, released March 6, 2017
 
 Avoids Randoop failures due to issues that arise during test generation.
@@ -5,8 +11,8 @@ Avoids Randoop failures due to issues that arise during test generation.
 
 Version 3.0.9, released February 22, 2017
 
-New option --stop-on-error-test stops test generation once an
-error-revealing test is generated.  This is useful during cycles of
+New command-line option --stop-on-error-test stops test generation once
+an error-revealing test is generated.  This is useful during cycles of
 fixing errors discovered by Randoop.
 
 Classpath error message explains why a class is not found.

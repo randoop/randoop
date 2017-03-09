@@ -2,15 +2,16 @@ package randoop.contract;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * The contract: Checks the transitivity of the compare to method
- * <code>((x0.compareTo(x1) &gt; 0) &amp;&amp; (x1.compareTo(x2) &gt; 0)) &rarr; (x0.compareTo(x2) &gt; 0)</code>.
+ * The contract: Checks the transitivity of the compare to method.
+ *
+ * <pre>((x0.compareTo(x1) &gt; 0) &amp;&amp; (x1.compareTo(x2) &gt; 0))
+ * &rarr; (x0.compareTo(x2) &gt; 0)</pre>
  */
 public class CompareToTransitive implements ObjectContract {
   private static final CompareToTransitive instance = new CompareToTransitive();

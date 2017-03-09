@@ -7,7 +7,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import randoop.Globals;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
@@ -20,36 +19,29 @@ import randoop.util.Log;
 import randoop.util.SimpleList;
 
 /**
- * A collection of sequences that makes its efficient to ask for all the
- * sequences that create a value of a given type.
+ * A collection of sequences that makes its efficient to ask for all the sequences that create a
+ * value of a given type.
  *
- * <p>
- * RANDOOP IMPLEMENTATION NOTE.
- * <p>
+ * <p>RANDOOP IMPLEMENTATION NOTE.
  *
- * When creating new sequences, Randoop often needs to search for all the
- * previously-generated sequences that create one or more values of a given
- * type. Since this set can contain thousands of sequences, finding these
- * sequences can can be time-consuming and a bottleneck in generation (as we
- * discovered during profiling).
+ * <p>When creating new sequences, Randoop often needs to search for all the previously-generated
+ * sequences that create one or more values of a given type. Since this set can contain thousands of
+ * sequences, finding these sequences can can be time-consuming and a bottleneck in generation (as
+ * we discovered during profiling).
  *
- * <p>
- *
- * This class makes the above search faster by maintaining two data structures:
+ * <p>This class makes the above search faster by maintaining two data structures:
  *
  * <ul>
- * <li>A map from types to the sets of all sequences that create one or more
- * values of exactly the given type.
- *
- * <li>A set of all the types that can be created with the existing set of
- * sequences. The set is maintained as a {@link SubTypeSet} that allows for
- * quick queries about can-be-used-as relationships among the types in the set.
+ *   <li>A map from types to the sets of all sequences that create one or more values of exactly the
+ *       given type.
+ *   <li>A set of all the types that can be created with the existing set of sequences. The set is
+ *       maintained as a {@link SubTypeSet} that allows for quick queries about can-be-used-as
+ *       relationships among the types in the set.
  * </ul>
  *
- * To find all the sequences that create values of a given type, Randoop first
- * uses the <code>SubTypeSet</code> to find the set <code>S</code> of feasible
- * subtypes in set of sequences, and returns the range of <code>S</code> in the
- * sequence map.
+ * To find all the sequences that create values of a given type, Randoop first uses the <code>
+ * SubTypeSet</code> to find the set <code>S</code> of feasible subtypes in set of sequences, and
+ * returns the range of <code>S</code> in the sequence map.
  */
 public class SequenceCollection {
 
@@ -80,9 +72,7 @@ public class SequenceCollection {
     return sequenceCount;
   }
 
-  /**
-   * Removes all sequences from this collection.
-   */
+  /** Removes all sequences from this collection. */
   public void clear() {
     if (Log.isLoggingOn()) Log.logLine("Clearing sequence collection.");
     this.sequenceMap = new LinkedHashMap<>();
@@ -91,9 +81,7 @@ public class SequenceCollection {
     checkRep();
   }
 
-  /**
-   * Create a new, empty collection.
-   */
+  /** Create a new, empty collection. */
   public SequenceCollection() {
     this(new ArrayList<Sequence>());
   }
@@ -101,7 +89,7 @@ public class SequenceCollection {
   /**
    * Create a new collection and adds the given initial sequences.
    *
-   * @param initialSequences  the initial collection of sequences
+   * @param initialSequences the initial collection of sequences
    */
   public SequenceCollection(Collection<Sequence> initialSequences) {
     if (initialSequences == null) throw new IllegalArgumentException("initialSequences is null.");
@@ -115,7 +103,7 @@ public class SequenceCollection {
   /**
    * All all sequences to this collection.
    *
-   * @param col  the sequences to add
+   * @param col the sequences to add
    */
   public void addAll(Collection<Sequence> col) {
     if (col == null) {
@@ -129,7 +117,7 @@ public class SequenceCollection {
   /**
    * Add all sequences to this collection.
    *
-   * @param components  the sequences to add
+   * @param components the sequences to add
    */
   public void addAll(SequenceCollection components) {
     for (ArrayListSimpleList<Sequence> s : components.sequenceMap.values()) {
@@ -140,16 +128,14 @@ public class SequenceCollection {
   }
 
   /**
-   * Add a sequence to this collection. This method takes into account the
-   * active indices in the sequence. If sequence[i] creates a values of type T,
-   * and sequence[i].isActive==true, then the sequence is seen as creating a
-   * useful value at index i. More precisely, the method/constructor at that
-   * index is said to produce a useful value (and if the user later queries for
-   * all sequences that create a T, the sequence will be in the collection
-   * returned by the query). How a value is deemed useful or not is left up to
-   * the client.
+   * Add a sequence to this collection. This method takes into account the active indices in the
+   * sequence. If sequence[i] creates a values of type T, and sequence[i].isActive==true, then the
+   * sequence is seen as creating a useful value at index i. More precisely, the method/constructor
+   * at that index is said to produce a useful value (and if the user later queries for all
+   * sequences that create a T, the sequence will be in the collection returned by the query). How a
+   * value is deemed useful or not is left up to the client.
    *
-   * @param sequence  the sequence to add to this collection
+   * @param sequence the sequence to add to this collection
    */
   public void add(Sequence sequence) {
     List<Type> formalTypes = sequence.getTypesForLastStatement();
@@ -177,8 +163,8 @@ public class SequenceCollection {
   /**
    * Add an entry from the given type to the sequence to the map.
    *
-   * @param sequence  the sequence
-   * @param type  the {@link Type}
+   * @param sequence the sequence
+   * @param type the {@link Type}
    */
   private void updateCompatibleMap(Sequence sequence, Type type) {
     ArrayListSimpleList<Sequence> set = this.sequenceMap.get(type);
@@ -193,13 +179,13 @@ public class SequenceCollection {
   }
 
   /**
-   * Searches through the set of active sequences to find all sequences whose
-   * types match with the parameter type.
+   * Searches through the set of active sequences to find all sequences whose types match with the
+   * parameter type.
    *
-   * @param type  the type desired for the sequences being sought
-   * @param exactMatch  the flag to indicate whether an exact type match is required
-   * @return list of sequence objects that are of type 'type' and abide by the
-   *         constraints defined by nullOk
+   * @param type the type desired for the sequences being sought
+   * @param exactMatch the flag to indicate whether an exact type match is required
+   * @return list of sequence objects that are of type 'type' and abide by the constraints defined
+   *     by nullOk
    */
   public SimpleList<Sequence> getSequencesForType(Type type, boolean exactMatch) {
 
@@ -239,7 +225,7 @@ public class SequenceCollection {
   /**
    * Returns the set of all sequences in this collection.
    *
-   * @return  the set of all sequences in this collection
+   * @return the set of all sequences in this collection
    */
   public Set<Sequence> getAllSequences() {
     Set<Sequence> result = new LinkedHashSet<>();

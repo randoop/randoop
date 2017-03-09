@@ -3,17 +3,15 @@ package randoop.util;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 import randoop.BugInRandoopException;
 
 /**
- * Given a list of lists, defines methods that can access all the elements as if
- * they were part of a single list, without actually merging the lists.
+ * Given a list of lists, defines methods that can access all the elements as if they were part of a
+ * single list, without actually merging the lists.
  *
- * This class is used for performance reasons. We want the ability to select
- * elements collected across several lists, but we observed that creating a
- * brand new list (i.e. via a sequence of List.addAll(..) operations can be very
- * expensive, because it happened in a hot spot (method
+ * <p>This class is used for performance reasons. We want the ability to select elements collected
+ * across several lists, but we observed that creating a brand new list (i.e. via a sequence of
+ * List.addAll(..) operations can be very expensive, because it happened in a hot spot (method
  * SequenceCollection.getSequencesThatYield).
  */
 public class ListOfLists<T> extends SimpleList<T> implements Serializable {

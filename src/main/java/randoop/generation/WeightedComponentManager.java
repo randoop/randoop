@@ -1,11 +1,10 @@
 package randoop.generation;
 
-import randoop.main.GenInputsAbstract;
-import randoop.sequence.Sequence;
-
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import randoop.main.GenInputsAbstract;
+import randoop.sequence.Sequence;
 
 /**
  * WeightedComponentManager extends the functionality of ComponentManager by adding needed functionality for

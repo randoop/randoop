@@ -1,8 +1,6 @@
 package randoop.reflection;
 
-/**
- * Inspired by org.apache.commons.math3.geometry.partitioning.utilities.AVLTree
- */
+/** Inspired by org.apache.commons.math3.geometry.partitioning.utilities.AVLTree */
 public class GenericTreeWithInnerNode<T extends Comparable<T>> {
 
   private Node root;

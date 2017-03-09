@@ -2,15 +2,14 @@ package randoop.contract;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * The contract: Checks that an object is reflexive over compareTo
- * <code>x0.compareTo(x0) == 0</code>.
+ * The contract: Checks that an object is reflexive over compareTo. <code>x0.compareTo(x0) == 0
+ * </code>.
  */
 public class CompareToReflexive implements ObjectContract {
   private static final CompareToReflexive instance = new CompareToReflexive();

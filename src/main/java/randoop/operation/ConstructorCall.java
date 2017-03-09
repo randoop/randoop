@@ -1,11 +1,9 @@
 package randoop.operation;
 
 import java.io.PrintStream;
-import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.List;
-
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -20,13 +18,12 @@ import randoop.util.ReflectionExecutor;
 import randoop.util.Util;
 
 /**
- * ConstructorCall is an {@link Operation} that represents a call to a
- * constructor, and holds a reference to a reflective
- * {@link java.lang.reflect.Constructor} object.
+ * ConstructorCall is an {@link Operation} that represents a call to a constructor, and holds a
+ * reference to a reflective {@link java.lang.reflect.Constructor} object.
  *
- * As an {@link Operation}, a call to constructor <i>c</i> with <i>n</i>
- * arguments is represented as <i>c</i> : [<i>t1,...,tn</i>] &rarr; <i>c</i>,
- * where the output type <i>c</i> is also the name of the class.
+ * <p>As an {@link Operation}, a call to constructor <i>c</i> with <i>n</i> arguments is represented
+ * as <i>c</i> : [<i>t1,...,tn</i>] &rarr; <i>c</i>, where the output type <i>c</i> is also the name
+ * of the class.
  */
 public final class ConstructorCall extends CallableOperation {
 
@@ -48,8 +45,7 @@ public final class ConstructorCall extends CallableOperation {
   /**
    * Creates object corresponding to the given reflection constructor.
    *
-   * @param constructor
-   *          reflective object for a constructor
+   * @param constructor reflective object for a constructor
    */
   public ConstructorCall(Constructor<?> constructor) {
     if (constructor == null) throw new IllegalArgumentException("constructor should not be null.");
@@ -66,9 +62,7 @@ public final class ConstructorCall extends CallableOperation {
     return this.constructor;
   }
 
-  /**
-   * Returns concise string representation of this ConstructorCall.
-   */
+  /** Returns concise string representation of this ConstructorCall. */
   @Override
   public String toString() {
     StringBuilder b = new StringBuilder();
@@ -93,11 +87,8 @@ public final class ConstructorCall extends CallableOperation {
   /**
    * Adds code for a constructor call to the given {@link StringBuilder}.
    *
-   * @param inputVars
-   *          a list of variables representing the actual arguments for the
-   *          constructor call
-   * @param b
-   *          the StringBuilder to which the output is appended
+   * @param inputVars a list of variables representing the actual arguments for the constructor call
+   * @param b the StringBuilder to which the output is appended
    * @see TypedClassOperation#appendCode(List, StringBuilder)
    */
   @Override
@@ -159,10 +150,8 @@ public final class ConstructorCall extends CallableOperation {
   /**
    * Tests whether the parameter is a call to the same constructor.
    *
-   * @param o
-   *          an object
-   * @return true if o is a ConstructorCall referring to same constructor
-   *         object; false otherwise
+   * @param o an object
+   * @return true if o is a ConstructorCall referring to same constructor object; false otherwise
    */
   @Override
   public boolean equals(Object o) {
@@ -177,9 +166,7 @@ public final class ConstructorCall extends CallableOperation {
     return false;
   }
 
-  /**
-   * hashCode returns the hashCode for the constructor called by this object.
-   */
+  /** hashCode returns the hashCode for the constructor called by this object. */
   @Override
   public int hashCode() {
     if (!hashCodeComputed) {
@@ -190,14 +177,13 @@ public final class ConstructorCall extends CallableOperation {
   }
 
   /**
-   * {@inheritDoc} Performs call to the constructor given the objects as actual
-   * parameters, and the output stream for any output.
+   * {@inheritDoc}
    *
-   * @param statementInput
-   *          is an array of values corresponding to signature of the
-   *          constructor
-   * @param out
-   *          is a stream for any output
+   * <p>Performs call to the constructor given the objects as actual parameters, and the output
+   * stream for any output.
+   *
+   * @param statementInput is an array of values corresponding to signature of the constructor
+   * @param out is a stream for any output
    * @see TypedOperation#execute(Object[], PrintStream)
    */
   @Override
@@ -229,9 +215,10 @@ public final class ConstructorCall extends CallableOperation {
 
   /**
    * {@inheritDoc}
-   * Generates a string representation of the constructor signature.
    *
-   * Examples:
+   * <p>Generates a string representation of the constructor signature.
+   *
+   * <p>Examples:
    *
    * <pre>
    * <code>
@@ -241,7 +228,6 @@ public final class ConstructorCall extends CallableOperation {
    * </pre>
    *
    * @see #parse(String)
-   *
    * @return signature string for constructor
    */
   @Override
@@ -255,17 +241,14 @@ public final class ConstructorCall extends CallableOperation {
   }
 
   /**
-   * Parse a constructor call in a string with the format generated by
-   * {@link ConstructorCall#toParsableString(Type, TypeTuple, Type)} and
-   * returns the corresponding {@link ConstructorCall} object.
+   * Parse a constructor call in a string with the format generated by {@link
+   * ConstructorCall#toParsableString(Type, TypeTuple, Type)} and returns the corresponding {@link
+   * ConstructorCall} object.
    *
    * @see OperationParser#parse(String)
-   *
-   * @param signature
-   *          a string descriptor of a constructor call
+   * @param signature a string descriptor of a constructor call
    * @return the constructor call for the given string descriptor
-   * @throws OperationParseException
-   *           if no constructor found for signature
+   * @throws OperationParseException if no constructor found for signature
    */
   public static TypedClassOperation parse(String signature) throws OperationParseException {
     if (signature == null) {
@@ -321,12 +304,12 @@ public final class ConstructorCall extends CallableOperation {
   }
 
   /**
-   * {@inheritDoc} Determines whether enclosed {@link Constructor} satisfies the
-   * given predicate.
+   * {@inheritDoc}
    *
-   * @return true only if the constructor in this object satisfies the
-   *         {@link ReflectionPredicate#test(Constructor)} implemented by
-   *         predicate.
+   * <p>Determines whether enclosed {@link Constructor} satisfies the given predicate.
+   *
+   * @return true only if the constructor in this object satisfies the {@link
+   *     ReflectionPredicate#test(Constructor)} implemented by predicate.
    */
   @Override
   public boolean satisfies(ReflectionPredicate predicate) {

@@ -6,9 +6,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Constants for non-JDK Java types.
- * Include primitive types, {@code Class<>}, {@code Object}, {@code Cloneable}, {@code Comparable},
- * {@code Serializable}, {@code String}, the null type, and {@code void}.
+ * Constants for non-JDK Java types. Include primitive types, {@code Class<>}, {@code Object},
+ * {@code Cloneable}, {@code Comparable}, {@code Serializable}, {@code String}, the null type, and
+ * {@code void}.
  */
 public class JavaTypes {
   /** The boolean {@link PrimitiveType} */
@@ -54,7 +54,10 @@ public class JavaTypes {
   public static final ReferenceType SERIALIZABLE_TYPE =
       new NonParameterizedType(Serializable.class);
 
-  /** The Null type is the lower bound of reference types and is only used in {@link randoop.types.CaptureTypeVariable} */
+  /**
+   * The Null type is the lower bound of reference types and is only used in {@link
+   * randoop.types.CaptureTypeVariable}
+   */
   public static final ReferenceType NULL_TYPE = NullReferenceType.getNullType();
 
   /** The void {@link VoidType} */
@@ -79,7 +82,7 @@ public class JavaTypes {
   /**
    * Returns the list of (non-void) primitive types.
    *
-   * @return  the list of (non-void) primitive types
+   * @return the list of (non-void) primitive types
    */
   public static List<PrimitiveType> getPrimitiveTypes() {
     return PRIMITIVE_TYPES;

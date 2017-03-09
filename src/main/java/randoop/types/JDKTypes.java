@@ -50,14 +50,12 @@ import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TransferQueue;
-
 import randoop.BugInRandoopException;
 
 /**
  * Defines type constants for classes in the JDK Collections.
  *
- * These types should be maintained as new JDK versions are released.
- * Updated for JDK 8.
+ * <p>These types should be maintained as new JDK versions are released. Updated for JDK 8.
  */
 public class JDKTypes {
   /** The {@link GenericClassType} for {@code Collection} */
@@ -274,11 +272,11 @@ public class JDKTypes {
     implementingTypeMap.put(ABSTRACT_MAP_TYPE, HASH_MAP_TYPE);
   }
   /**
-   * Returns an arbitrary (but fixed) concrete collection type for each Collections type
-   * (e.g., returns {@code ArrayList} for {@code List}).
-   * If a type is already concrete, then returns that type.
+   * Returns an arbitrary (but fixed) concrete collection type for each Collections type (e.g.,
+   * returns {@code ArrayList} for {@code List}). If a type is already concrete, then returns that
+   * type.
    *
-   * @param type  the (abstract) Collections type
+   * @param type the (abstract) Collections type
    * @return a concrete Collection type implementing the given type
    */
   public static GenericClassType getImplementingType(ParameterizedType type) {

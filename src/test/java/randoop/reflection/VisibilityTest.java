@@ -1,6 +1,9 @@
 package randoop.reflection;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -11,7 +14,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
+import org.junit.Test;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.field.AccessibleField;
@@ -27,14 +30,9 @@ import randoop.reflection.visibilitytest.PublicClass;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
-import randoop.types.Type;
 import randoop.types.RandoopTypeException;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class VisibilityTest {
 
@@ -525,9 +523,8 @@ public class VisibilityTest {
   }
 
   /**
-   * getOperations maps a field into possible operations.
-   * Looks at modifiers to decide which kind of field wrapper
-   * to create and then builds list with getter and setter.
+   * getOperations maps a field into possible operations. Looks at modifiers to decide which kind of
+   * field wrapper to create and then builds list with getter and setter.
    *
    * @param f reflective Field object
    * @return a list of getter/setter statements for the field

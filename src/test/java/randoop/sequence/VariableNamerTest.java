@@ -1,7 +1,8 @@
 package randoop.sequence;
 
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
 
+import org.junit.Test;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GenericClassType;
 import randoop.types.InstantiatedType;
@@ -10,10 +11,6 @@ import randoop.types.JavaTypes;
 import randoop.types.ParameterizedType;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
-import randoop.types.Type;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class VariableNamerTest {
 

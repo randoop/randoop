@@ -1,7 +1,6 @@
 package randoop.test;
 
 import java.util.Set;
-
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.util.predicate.DefaultPredicate;
