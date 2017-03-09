@@ -141,7 +141,7 @@ public class WeightedConstantsOperationModel extends AbstractOperationModel {
 
   /**
    * Adds literals to the component manager, by parsing any literals files specified by the user.
-   * Includes literals at different levels indicated by {@link ClassLiteralsMode}.
+   * Includes literals at different levels indicated by {@link ClassLiteralsMode}. TODO: comment
    *
    * @param compMgr the component manager
    * @param literalsFile the list of literals file names

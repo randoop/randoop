@@ -17,11 +17,8 @@ import randoop.util.*;
  */
 public class DigDogGenerator extends ForwardGenerator {
 
-  /**
-   * The set of ALL sequences ever generated, including sequences that were executed and then
-   * discarded.
-   */
-  private final Map<WeightedElement, Double> weightMap = new HashMap<WeightedElement, Double>();
+  /** DigDog's map of sequences to their weights. */
+  private final Map<WeightedElement, Double> weightMap = new HashMap<>();
 
   /** DigDog's map of sequences to the number of times they've been executed. */
   private final Map<WeightedElement, Integer> sequenceExecutionNumber = new HashMap<>();
@@ -77,8 +74,7 @@ public class DigDogGenerator extends ForwardGenerator {
         stopper,
         listenerManager);
 
-    // --weighted-constants weighting scheme
-    // TODO: comment more
+    // --weighted-constants weighting scheme for initial mined sequences, based on the TF-IDF formula
     if (GenInputsAbstract.weighted_constants) {
 
       int num_constants = 0;
