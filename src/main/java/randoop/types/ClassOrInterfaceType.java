@@ -97,8 +97,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * {@inheritDoc} This abstract method allows substitutions to be applied to {@link
-   * ClassOrInterfaceType} objects without casting.
+   * {@inheritDoc}
+   *
+   * <p>This abstract method allows substitutions to be applied to {@link ClassOrInterfaceType}
+   * objects without casting.
    */
   @Override
   public abstract ClassOrInterfaceType apply(Substitution<ReferenceType> substitution);
@@ -326,9 +328,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * {@inheritDoc} For a {@link ClassOrInterfaceType} that is a member class, if {@code otherType}
-   * is also a member class, then the enclosing type of this type must instantiate the enclosing
-   * type of {@code otherType}.
+   * {@inheritDoc}
+   *
+   * <p>For a {@link ClassOrInterfaceType} that is a member class, if {@code otherType} is also a
+   * member class, then the enclosing type of this type must instantiate the enclosing type of
+   * {@code otherType}.
    */
   @Override
   public boolean isInstantiationOf(ReferenceType otherType) {

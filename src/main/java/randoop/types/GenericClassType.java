@@ -33,9 +33,11 @@ public class GenericClassType extends ParameterizedType {
   }
 
   /**
-   * {@inheritDoc} Checks that the rawtypes are the same. This is sufficient since the type
-   * parameters and their bounds can be reconstructed from the Class object. Also, parameters can be
-   * distinct depending on how this object is constructed.
+   * {@inheritDoc}
+   *
+   * <p>Checks that the rawtypes are the same. This is sufficient since the type parameters and
+   * their bounds can be reconstructed from the Class object. Also, parameters can be distinct
+   * depending on how this object is constructed.
    *
    * @return true if two generic classes have the same rawtype, false otherwise
    */
@@ -262,7 +264,9 @@ public class GenericClassType extends ParameterizedType {
   }
 
   /**
-   * {@inheritDoc} Handles the specific cases of supertypes of a generic class <code>
+   * {@inheritDoc}
+   *
+   * <p>Handles the specific cases of supertypes of a generic class <code>
    * C&lt;F<sub>1</sub>,...,F<sub>n</sub>&gt;</code> for which the direct supertypes are:
    *
    * <ol>

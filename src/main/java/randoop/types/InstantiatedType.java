@@ -38,8 +38,10 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   /**
-   * {@inheritDoc} Test if the given object is equal to this parameterized type. Two parameterized
-   * types are equal if they have the same raw type and the same type arguments.
+   * {@inheritDoc}
+   *
+   * <p>Test if the given object is equal to this parameterized type. Two parameterized types are
+   * equal if they have the same raw type and the same type arguments.
    */
   @Override
   public boolean equals(Object obj) {
@@ -147,8 +149,10 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   /**
-   * {@inheritDoc} An instantiated type may have a wildcard, and so must perform capture conversion
-   * before doing supertype search.
+   * {@inheritDoc}
+   *
+   * <p>An instantiated type may have a wildcard, and so must perform capture conversion before
+   * doing supertype search.
    */
   @Override
   public InstantiatedType getMatchingSupertype(GenericClassType goalType) {
@@ -383,7 +387,9 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   /**
-   * {@inheritDoc} Handles specific cases of supertypes of a parameterized type <code>
+   * {@inheritDoc}
+   *
+   * <p>Handles specific cases of supertypes of a parameterized type <code>
    * C&lt;T<sub>1</sub>,&hellip;,T<sub>n</sub>&gt;</code> instantiating the generic type <code>
    * C&lt;F<sub>1</sub>,&hellip;,F<sub>n</sub>&gt;</code> by substitution <code>
    * &#952; =[F<sub>1</sub>:=T<sub>1</sub>,&hellip;,F<sub>n</sub>:=T<sub>n</sub>]</code> for which

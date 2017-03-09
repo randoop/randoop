@@ -70,7 +70,11 @@ public class EnumConstant extends CallableOperation {
     return new NormalExecution(this.value, 0);
   }
 
-  /** {@inheritDoc} Adds qualified name of enum constant. */
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Adds qualified name of enum constant.
+   */
   @Override
   public void appendCode(
       Type declaringType,
@@ -82,8 +86,10 @@ public class EnumConstant extends CallableOperation {
   }
 
   /**
-   * {@inheritDoc} Issues a string representation of an enum constant as a type-value pair. The
-   * parse function should return an equivalent object.
+   * {@inheritDoc}
+   *
+   * <p>Issues a string representation of an enum constant as a type-value pair. The parse function
+   * should return an equivalent object.
    *
    * @see EnumConstant#parse(String)
    */

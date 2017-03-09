@@ -54,7 +54,9 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   }
 
   /**
-   * {@inheritDoc} Does checks for the following cases:
+   * {@inheritDoc}
+   *
+   * <p>Does checks for the following cases:
    *
    * <ul>
    *   <li>Main methods

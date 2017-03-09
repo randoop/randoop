@@ -20,9 +20,10 @@ class ExplicitTypeVariable extends TypeVariable {
   }
 
   /**
-   * {@inheritDoc} Checks that the type parameter is equal. This may be more restrictive than
-   * desired because equivalent TypeVariable objects from different instances of the same type may
-   * be distinct.
+   * {@inheritDoc}
+   *
+   * <p>Checks that the type parameter is equal. This may be more restrictive than desired because
+   * equivalent TypeVariable objects from different instances of the same type may be distinct.
    *
    * @return true if the type parameters are equal, false otherwise
    */

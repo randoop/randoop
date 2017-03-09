@@ -24,7 +24,11 @@ public class ExpectedExceptionGenerator implements TestCheckGenerator {
     this.conditionComment = conditionComment;
   }
 
-  /** {@inheritDoc} Adds checks for an expected exception at the final statement of the sequence. */
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Adds checks for an expected exception at the final statement of the sequence.
+   */
   @Override
   public TestChecks visit(ExecutableSequence s) {
     int finalIndex = s.sequence.size() - 1;

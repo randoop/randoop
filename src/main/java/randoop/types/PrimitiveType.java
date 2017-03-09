@@ -53,7 +53,9 @@ public class PrimitiveType extends Type {
   }
 
   /**
-   * {@inheritDoc} For primitive types returns the type name: {@code "int"}, {@code "char"}, etc.
+   * {@inheritDoc}
+   *
+   * <p>For primitive types returns the type name: {@code "int"}, {@code "char"}, etc.
    */
   @Override
   public String getName() {

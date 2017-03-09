@@ -100,7 +100,11 @@ class WildcardArgument extends TypeArgument {
     return argumentType.getTypeBound();
   }
 
-  /** {@inheritDoc} Returns the type parameters of the bound of this wildcard argument */
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns the type parameters of the bound of this wildcard argument
+   */
   @Override
   public List<TypeVariable> getTypeParameters() {
     return argumentType.getTypeParameters();

@@ -23,7 +23,9 @@ public class OrPredicate<T> extends DefaultPredicate<T> {
   }
 
   /**
-   * {@inheritDoc} Return the short-circuited or of the two predicates for the value t
+   * {@inheritDoc}
+   *
+   * <p>Return the short-circuited or of the two predicates for the value t
    *
    * @return true if either the first or second predicate is true on t, and false otherwise
    */

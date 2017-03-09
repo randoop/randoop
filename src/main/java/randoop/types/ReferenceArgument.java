@@ -61,7 +61,9 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   /**
-   * {@inheritDoc} Considers cases:
+   * {@inheritDoc}
+   *
+   * <p>Considers cases:
    *
    * <ul>
    *   <li>{@code T} contains {@code T}

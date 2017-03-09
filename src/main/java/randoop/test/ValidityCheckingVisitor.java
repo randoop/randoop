@@ -34,11 +34,13 @@ public class ValidityCheckingVisitor implements TestCheckGenerator {
   }
 
   /**
-   * {@inheritDoc} Checks validity of a test sequence and creates a {@code InvalidChecks} object
-   * containing checks for any invalid exceptions encountered. Exceptions are classified by the
-   * {@code ExceptionPredicate}, but a sequence where an {@code OutOfMemoryError} is seen before the
-   * last statement is classified as invalid regardless of how {@code OutOfMemoryError} is
-   * classified by the predicate.
+   * {@inheritDoc}
+   *
+   * <p>Checks validity of a test sequence and creates a {@code InvalidChecks} object containing
+   * checks for any invalid exceptions encountered. Exceptions are classified by the {@code
+   * ExceptionPredicate}, but a sequence where an {@code OutOfMemoryError} is seen before the last
+   * statement is classified as invalid regardless of how {@code OutOfMemoryError} is classified by
+   * the predicate.
    *
    * @return a possibly empty {@link InvalidChecks} object for sequence
    * @throws Error if any exception encountered before last statement of sequence

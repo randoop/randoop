@@ -35,8 +35,10 @@ class NullReferenceType extends ReferenceType {
   }
 
   /**
-   * {@inheritDoc} This method returns null since the {@link NullReferenceType} does not have a
-   * runtime representation
+   * {@inheritDoc}
+   *
+   * <p>This method returns null since the {@link NullReferenceType} does not have a runtime
+   * representation
    */
   @Override
   public Class<?> getRuntimeClass() {

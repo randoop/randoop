@@ -255,8 +255,10 @@ class LazyParameterBound extends ParameterBound {
   }
 
   /**
-   * {@inheritDoc} This generic type bound is satisfied by a concrete type if the concrete type
-   * formed by applying the substitution to this generic bound is satisfied by the concrete type.
+   * {@inheritDoc}
+   *
+   * <p>This generic type bound is satisfied by a concrete type if the concrete type formed by
+   * applying the substitution to this generic bound is satisfied by the concrete type.
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution<ReferenceType> substitution) {

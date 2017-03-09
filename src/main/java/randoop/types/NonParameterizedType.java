@@ -133,7 +133,9 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   }
 
   /**
-   * {@inheritDoc} Specifically checks for <a
+   * {@inheritDoc}
+   *
+   * <p>Specifically checks for <a
    * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.7">boxing conversion
    * (section 5.1.7)</a>
    */
@@ -161,8 +163,10 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   }
 
   /**
-   * {@inheritDoc} For a {@link NonParameterizedType}, if this type instantiates the {@code
-   * otherType}, which is a {@link NonParameterizedType} by {@link
+   * {@inheritDoc}
+   *
+   * <p>For a {@link NonParameterizedType}, if this type instantiates the {@code otherType}, which
+   * is a {@link NonParameterizedType} by {@link
    * ClassOrInterfaceType#isInstantiationOf(ReferenceType)} also checks that runtime classes are
    * equal. This allows for proper matching of member classes that are of {@link
    * NonParameterizedType}.

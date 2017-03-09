@@ -178,7 +178,9 @@ public abstract class ReferenceType extends Type {
   }
 
   /**
-   * {@inheritDoc} For {@link ReferenceType}, returns true if {@code otherType} is {@code Object}.
+   * {@inheritDoc}
+   *
+   * <p>For {@link ReferenceType}, returns true if {@code otherType} is {@code Object}.
    */
   @Override
   public boolean isSubtypeOf(Type otherType) {

@@ -123,7 +123,9 @@ public class ErrorRevealingChecks implements TestChecks {
   }
 
   /**
-   * {@inheritDoc} Returns false because error checks are not considered invalid.
+   * {@inheritDoc}
+   *
+   * <p>Returns false because error checks are not considered invalid.
    *
    * @return false, always
    */

@@ -79,7 +79,11 @@ public abstract class ExceptionCheck implements Check {
     return "Throws exception @" + statementIndex;
   }
 
-  /** {@inheritDoc} The pre-statement prefix of the try-catch wrapper. */
+  /**
+   * {@inheritDoc}
+   *
+   * <p>The pre-statement prefix of the try-catch wrapper.
+   */
   @Override
   public final String toCodeStringPreStatement() {
     return "// The following exception was thrown during execution in test generation"
@@ -89,11 +93,13 @@ public abstract class ExceptionCheck implements Check {
   }
 
   /**
-   * {@inheritDoc} Returns the post-statement portion of the try-catch wrapper. Starts with
-   * post-statement try-behavior as determined by a subclass implementation of {@link
-   * #appendTryBehavior}, and then closes with the catch clause with the body determined by the
-   * sub-class implementation of {@link #appendCatchBehavior(StringBuilder)}. Catches this exception
-   * or the closest public superclass of the exception.
+   * {@inheritDoc}
+   *
+   * <p>Returns the post-statement portion of the try-catch wrapper. Starts with post-statement
+   * try-behavior as determined by a subclass implementation of {@link #appendTryBehavior}, and then
+   * closes with the catch clause with the body determined by the sub-class implementation of {@link
+   * #appendCatchBehavior(StringBuilder)}. Catches this exception or the closest public superclass
+   * of the exception.
    *
    * @return the post-statement code text for the expected exception
    */

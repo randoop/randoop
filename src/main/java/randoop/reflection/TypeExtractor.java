@@ -35,8 +35,10 @@ class TypeExtractor extends DefaultClassVisitor {
   }
 
   /**
-   * {@inheritDoc} Adds all concrete parameter types from the constructor to the input types set of
-   * this object.
+   * {@inheritDoc}
+   *
+   * <p>Adds all concrete parameter types from the constructor to the input types set of this
+   * object.
    */
   @Override
   public void visit(Constructor<?> c) {
@@ -46,8 +48,10 @@ class TypeExtractor extends DefaultClassVisitor {
   }
 
   /**
-   * {@inheritDoc} Adds any concrete type among parameter and return types to the input types set of
-   * this object. Avoids bridge methods, because may have rawtypes not useful in building tests.
+   * {@inheritDoc}
+   *
+   * <p>Adds any concrete type among parameter and return types to the input types set of this
+   * object. Avoids bridge methods, because may have rawtypes not useful in building tests.
    */
   @Override
   public void visit(Method m) {
@@ -61,7 +65,11 @@ class TypeExtractor extends DefaultClassVisitor {
     addIfConcrete(Type.forType(returnType));
   }
 
-  /** {@inheritDoc} Adds a concrete field type to the input types set of this object. */
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Adds a concrete field type to the input types set of this object.
+   */
   @Override
   public void visit(Field f) {
     java.lang.reflect.Type fieldType = f.getGenericType();
@@ -91,7 +99,11 @@ class TypeExtractor extends DefaultClassVisitor {
     }
   }
 
-  /** {@inheritDoc} Adds the class if it is concrete. */
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Adds the class if it is concrete.
+   */
   @Override
   public void visitBefore(Class<?> c) {
     if (c.getTypeParameters().length == 0) {

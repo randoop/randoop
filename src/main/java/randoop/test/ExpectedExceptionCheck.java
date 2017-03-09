@@ -29,7 +29,11 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
     super(exception, statementIndex, catchClassName);
   }
 
-  /** {@inheritDoc} Appends a fail assertion after statement in try block. */
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Appends a fail assertion after statement in try block.
+   */
   @Override
   protected void appendTryBehavior(StringBuilder b) {
     String message;
@@ -42,7 +46,11 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
     b.append("  ").append(assertion).append(";").append(Globals.lineSep);
   }
 
-  /** {@inheritDoc} Appends assertion to confirm expected exception caught. */
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Appends assertion to confirm expected exception caught.
+   */
   @Override
   protected void appendCatchBehavior(StringBuilder b) {
     String condition;
@@ -58,8 +66,10 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
   }
 
   /**
-   * {@inheritDoc} Checks that an exception of the expected type is thrown by the statement in this
-   * object in the given {@link Execution}.
+   * {@inheritDoc}
+   *
+   * <p>Checks that an exception of the expected type is thrown by the statement in this object in
+   * the given {@link Execution}.
    *
    * @return true if statement throws the expected exception, and false otherwise
    */

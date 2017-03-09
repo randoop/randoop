@@ -143,8 +143,10 @@ public final class NonreceiverTerm extends CallableOperation {
   }
 
   /**
-   * {@inheritDoc} For NonreceiverTerm, simply adds a code representation of the value to the string
-   * builder. Note: this does not explicitly box primitive values.
+   * {@inheritDoc}
+   *
+   * <p>For NonreceiverTerm, simply adds a code representation of the value to the string builder.
+   * Note: this does not explicitly box primitive values.
    *
    * @param inputVars ignored
    * @param b {@link StringBuilder} to which string representation is appended.
@@ -201,8 +203,9 @@ public final class NonreceiverTerm extends CallableOperation {
   }
 
   /**
-   * {@inheritDoc} Returns a string representing this primitive declaration. The string is of the
-   * form:<br>
+   * {@inheritDoc}
+   *
+   * <p>Returns a string representing this primitive declaration. The string is of the form:<br>
    * <code>TYPE:VALUE</code><br>
    * Where TYPE is the type of the primitive declaration, and VALUE is its value. If VALUE is "null"
    * then the value is null (not the String "null"). If TYPE is "char" then

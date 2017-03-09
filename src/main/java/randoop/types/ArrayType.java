@@ -173,8 +173,10 @@ public class ArrayType extends ReferenceType {
   }
 
   /**
-   * {@inheritDoc} For an array type, check for assignability by reference widening. If not
-   * otherwise assignable, check for unchecked conversion, which occurs when this type is <code>
+   * {@inheritDoc}
+   *
+   * <p>For an array type, check for assignability by reference widening. If not otherwise
+   * assignable, check for unchecked conversion, which occurs when this type is <code>
    * C&lt;T<sub>1</sub>,&hellip;,T<sub>k</sub>&gt;[]</code> and other type is <code>C[]</code>
    * (e.g., the component type is the rawtype <code>C</code>).
    */
@@ -199,7 +201,9 @@ public class ArrayType extends ReferenceType {
   }
 
   /**
-   * {@inheritDoc} This method specifically uses the definition in <a
+   * {@inheritDoc}
+   *
+   * <p>This method specifically uses the definition in <a
    * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.3">section 4.10.2
    * of JLS for JavaSE 8</a>.
    */

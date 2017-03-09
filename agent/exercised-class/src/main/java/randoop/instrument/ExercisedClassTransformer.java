@@ -42,8 +42,10 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
   }
 
   /**
-   * {@inheritDoc} Transforms bytecode for a class by adding "exercised" instrumentation. Avoids JDK
-   * and JUnit classes, interfaces and any "frozen" classes that have already been loaded.
+   * {@inheritDoc}
+   *
+   * <p>Transforms bytecode for a class by adding "exercised" instrumentation. Avoids JDK and JUnit
+   * classes, interfaces and any "frozen" classes that have already been loaded.
    */
   @Override
   public byte[] transform(

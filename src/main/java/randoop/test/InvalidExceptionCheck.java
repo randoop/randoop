@@ -35,7 +35,9 @@ class InvalidExceptionCheck extends ExceptionCheck {
   }
 
   /**
-   * {@inheritDoc} An invalid check cannot be evaluated, so this throws an exception.
+   * {@inheritDoc}
+   *
+   * <p>An invalid check cannot be evaluated, so this throws an exception.
    *
    * @throws IllegalArgumentException whenever called
    */

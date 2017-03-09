@@ -177,8 +177,10 @@ public final class ConstructorCall extends CallableOperation {
   }
 
   /**
-   * {@inheritDoc} Performs call to the constructor given the objects as actual parameters, and the
-   * output stream for any output.
+   * {@inheritDoc}
+   *
+   * <p>Performs call to the constructor given the objects as actual parameters, and the output
+   * stream for any output.
    *
    * @param statementInput is an array of values corresponding to signature of the constructor
    * @param out is a stream for any output
@@ -212,7 +214,9 @@ public final class ConstructorCall extends CallableOperation {
   }
 
   /**
-   * {@inheritDoc} Generates a string representation of the constructor signature.
+   * {@inheritDoc}
+   *
+   * <p>Generates a string representation of the constructor signature.
    *
    * <p>Examples:
    *
@@ -300,7 +304,9 @@ public final class ConstructorCall extends CallableOperation {
   }
 
   /**
-   * {@inheritDoc} Determines whether enclosed {@link Constructor} satisfies the given predicate.
+   * {@inheritDoc}
+   *
+   * <p>Determines whether enclosed {@link Constructor} satisfies the given predicate.
    *
    * @return true only if the constructor in this object satisfies the {@link
    *     ReflectionPredicate#test(Constructor)} implemented by predicate.

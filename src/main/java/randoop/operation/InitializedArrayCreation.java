@@ -140,8 +140,10 @@ public final class InitializedArrayCreation extends CallableOperation {
   }
 
   /**
-   * {@inheritDoc} Creates string of the form TYPE[NUMELEMS] where TYPE is the type of the array,
-   * and NUMELEMS is the number of elements.
+   * {@inheritDoc}
+   *
+   * <p>Creates string of the form TYPE[NUMELEMS] where TYPE is the type of the array, and NUMELEMS
+   * is the number of elements.
    *
    * <p>Example: int[3]
    *

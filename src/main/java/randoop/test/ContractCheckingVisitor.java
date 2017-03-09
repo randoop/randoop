@@ -38,8 +38,10 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
   }
 
   /**
-   * {@inheritDoc} Adds checks to final statement of sequence. Looks for failure exceptions, and
-   * violations of contracts in {@code contracts}.
+   * {@inheritDoc}
+   *
+   * <p>Adds checks to final statement of sequence. Looks for failure exceptions, and violations of
+   * contracts in {@code contracts}.
    */
   @Override
   public TestChecks visit(ExecutableSequence s) {

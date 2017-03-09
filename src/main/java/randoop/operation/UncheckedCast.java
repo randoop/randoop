@@ -29,7 +29,9 @@ class UncheckedCast extends CallableOperation {
   }
 
   /**
-   * {@inheritDoc} Performs this cast on the first value of the input array.
+   * {@inheritDoc}
+   *
+   * <p>Performs this cast on the first value of the input array.
    *
    * @param input array containing appropriate inputs to operation
    * @param out stream to output results of execution; can be null if you don't want to print
@@ -42,7 +44,9 @@ class UncheckedCast extends CallableOperation {
   }
 
   /**
-   * {@inheritDoc} Appends the code for this cast applied to the given input to the given {@code
+   * {@inheritDoc}
+   *
+   * <p>Appends the code for this cast applied to the given input to the given {@code
    * StringBuilder}.
    *
    * @param declaringType the declaring type for this operation

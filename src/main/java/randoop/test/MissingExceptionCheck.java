@@ -76,8 +76,10 @@ public class MissingExceptionCheck implements Check {
   }
 
   /**
-   * {@inheritDoc} Checks that an exception of the expected type is thrown by the statement in this
-   * object in the given {@link Execution}.
+   * {@inheritDoc}
+   *
+   * <p>Checks that an exception of the expected type is thrown by the statement in this object in
+   * the given {@link Execution}.
    *
    * @return true if the statement throws the expected exception, false otherwise
    */

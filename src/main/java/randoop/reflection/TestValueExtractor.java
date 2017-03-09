@@ -25,9 +25,11 @@ public class TestValueExtractor extends DefaultClassVisitor {
   }
 
   /**
-   * {@inheritDoc} If the field is static and is annotated with {@code randoop.TestValue}, adds the
-   * value of the field to the sequence set constructed by this visitor. Requires that the field
-   * type be primitive, String, or an array of primitive or String type.
+   * {@inheritDoc}
+   *
+   * <p>If the field is static and is annotated with {@code randoop.TestValue}, adds the value of
+   * the field to the sequence set constructed by this visitor. Requires that the field type be
+   * primitive, String, or an array of primitive or String type.
    */
   @Override
   public void visit(Field f) {

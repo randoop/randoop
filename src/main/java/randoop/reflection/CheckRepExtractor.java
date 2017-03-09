@@ -27,9 +27,11 @@ class CheckRepExtractor extends DefaultClassVisitor {
   }
 
   /**
-   * {@inheritDoc} If the method is annotated with {@link randoop.CheckRep}, non-static, and with
-   * boolean or void return type, then a {@link randoop.contract.CheckRepContract} for the method is
-   * added to the contracts set.
+   * {@inheritDoc}
+   *
+   * <p>If the method is annotated with {@link randoop.CheckRep}, non-static, and with boolean or
+   * void return type, then a {@link randoop.contract.CheckRepContract} for the method is added to
+   * the contracts set.
    *
    * @param m the method
    */

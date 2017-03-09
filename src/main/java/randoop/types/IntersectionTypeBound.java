@@ -126,8 +126,10 @@ class IntersectionTypeBound extends ParameterBound {
   }
 
   /**
-   * {@inheritDoc} Specifically, this method checks that the argument type is a subtype of all of
-   * the member bounds of this object.
+   * {@inheritDoc}
+   *
+   * <p>Specifically, this method checks that the argument type is a subtype of all of the member
+   * bounds of this object.
    */
   @Override
   public boolean isLowerBound(Type otherType, Substitution<ReferenceType> subst) {
@@ -139,7 +141,11 @@ class IntersectionTypeBound extends ParameterBound {
     return true;
   }
 
-  /** {@inheritDoc} Determines whether all types in this bound are {@code Object}. */
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Determines whether all types in this bound are {@code Object}.
+   */
   @Override
   public boolean isObject() {
     for (ParameterBound b : boundList) {
@@ -151,8 +157,10 @@ class IntersectionTypeBound extends ParameterBound {
   }
 
   /**
-   * {@inheritDoc} This method should never be tested for {@link IntersectionTypeBound}. Will fail
-   * if assertions are enabled.
+   * {@inheritDoc}
+   *
+   * <p>This method should never be tested for {@link IntersectionTypeBound}. Will fail if
+   * assertions are enabled.
    *
    * @return false, always
    */

@@ -80,8 +80,10 @@ public final class MethodCall extends CallableOperation {
   }
 
   /**
-   * {@inheritDoc} Issues the code that corresponds to calling the method with the provided {@link
-   * Variable} objects as arguments.
+   * {@inheritDoc}
+   *
+   * <p>Issues the code that corresponds to calling the method with the provided {@link Variable}
+   * objects as arguments.
    *
    * @param inputVars is the list of actual arguments to be printed
    */
@@ -199,7 +201,9 @@ public final class MethodCall extends CallableOperation {
   }
 
   /**
-   * {@inheritDoc} The descriptor for a method is a string representing the method signature.
+   * {@inheritDoc}
+   *
+   * <p>The descriptor for a method is a string representing the method signature.
    *
    * <p>Examples: java.util.ArrayList.get(int) java.util.ArrayList.add(int,java.lang.Object)
    */
@@ -297,7 +301,9 @@ public final class MethodCall extends CallableOperation {
   }
 
   /**
-   * {@inheritDoc} Determines whether enclosed {@link Method} satisfies the given predicate.
+   * {@inheritDoc}
+   *
+   * <p>Determines whether enclosed {@link Method} satisfies the given predicate.
    *
    * @param predicate the {@link ReflectionPredicate} to be checked.
    * @return true only if the method in this object satisfies the canUse(Method) of predicate

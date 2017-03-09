@@ -20,9 +20,10 @@ class LazyReferenceBound extends ReferenceBound {
   }
 
   /**
-   * {@inheritDoc} {@link LazyReferenceBound} can be part of a recursive type, and so the hash code
-   * is based on the string representation of the bound to avoid recursive calls on {@code
-   * hashCode()}.
+   * {@inheritDoc}
+   *
+   * <p>{@link LazyReferenceBound} can be part of a recursive type, and so the hash code is based on
+   * the string representation of the bound to avoid recursive calls on {@code hashCode()}.
    *
    * @return the hashCode for the string representation of this bound
    */

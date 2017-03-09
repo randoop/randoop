@@ -24,7 +24,11 @@ public class ExercisedClassVisitor implements ExecutionVisitor {
     this.classes = classes;
   }
 
-  /** {@inheritDoc} Registers each class covered with the sequence execution results. */
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Registers each class covered with the sequence execution results.
+   */
   @Override
   public void visitAfterSequence(ExecutableSequence executableSequence) {
     for (Class<?> c : classes) {

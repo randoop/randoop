@@ -126,7 +126,9 @@ public class RegressionChecks implements TestChecks {
   }
 
   /**
-   * {@inheritDoc} Returns false because regression checks are not invalid.
+   * {@inheritDoc}
+   *
+   * <p>Returns false because regression checks are not invalid.
    *
    * @return false, always
    */

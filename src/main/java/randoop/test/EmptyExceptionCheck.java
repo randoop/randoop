@@ -23,7 +23,11 @@ public class EmptyExceptionCheck extends ExceptionCheck {
     super(exception, statementIndex, catchClassName);
   }
 
-  /** {@inheritDoc} Appends comment indicating that catch is being ignored. */
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Appends comment indicating that catch is being ignored.
+   */
   @Override
   protected void appendCatchBehavior(StringBuilder b) {
     String message = "expected exception caught " + getExceptionName();
@@ -33,7 +37,11 @@ public class EmptyExceptionCheck extends ExceptionCheck {
     b.append("  // ").append(message).append(Globals.lineSep);
   }
 
-  /** {@inheritDoc} Appends comment indicating that failure to throw exception being ignored. */
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Appends comment indicating that failure to throw exception being ignored.
+   */
   @Override
   protected void appendTryBehavior(StringBuilder b) {
     String message = "expected exception " + getExceptionName();
@@ -44,7 +52,9 @@ public class EmptyExceptionCheck extends ExceptionCheck {
   }
 
   /**
-   * {@inheritDoc} This check passes if execution is either normal or an exception is thrown.
+   * {@inheritDoc}
+   *
+   * <p>This check passes if execution is either normal or an exception is thrown.
    *
    * @return true if execution outcome is normal or an exception, false otherwise
    * @throws IllegalArgumentException if execution indicates statement not executed

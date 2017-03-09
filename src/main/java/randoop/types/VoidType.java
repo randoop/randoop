@@ -53,13 +53,21 @@ public class VoidType extends Type {
     return true;
   }
 
-  /** {@inheritDoc} Returns false, since {@code void} is not a subtype of any type */
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns false, since {@code void} is not a subtype of any type
+   */
   @Override
   public boolean isSubtypeOf(Type otherType) {
     return false;
   }
 
-  /** {@inheritDoc} Return false because cannot assign to void. */
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Return false because cannot assign to void.
+   */
   @Override
   public boolean isAssignableFrom(Type sourceType) {
     return false;

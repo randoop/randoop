@@ -53,7 +53,11 @@ public abstract class TypeVariable extends ParameterType {
     return this;
   }
 
-  /** {@inheritDoc} Returns false, since an uninstantiated type variable may not be assigned to. */
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Returns false, since an uninstantiated type variable may not be assigned to.
+   */
   @Override
   public boolean isAssignableFrom(Type sourceType) {
     return false;
