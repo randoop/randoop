@@ -1,17 +1,15 @@
 package randoop.test;
 
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import randoop.Globals;
 import randoop.main.OptionsCache;
 import randoop.util.Timer;
-
-import static org.junit.Assert.fail;
 
 public abstract class AbstractPerformanceTest {
 

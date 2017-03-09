@@ -1,13 +1,15 @@
 package randoop.test;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.SeedSequences;
@@ -28,10 +30,6 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /*
  * This test is disabled in build.gradle.
@@ -58,12 +56,11 @@ public class ForwardExplorerTests2 {
   }
 
   /**
-   * The input scenario for this test results in the generation of a sequence
-   * with repeated calls to a non-terminating method. If <code>--usethreads</code>
-   * is set, the generator is not able to interrupt the executor, and will
-   * never terminate.
-   * Otherwise, a timeout exception will be thrown and the executor will throw an
-   * exception, which since it is not the last statement is considered "flaky".
+   * The input scenario for this test results in the generation of a sequence with repeated calls to
+   * a non-terminating method. If <code>--usethreads</code> is set, the generator is not able to
+   * interrupt the executor, and will never terminate. Otherwise, a timeout exception will be thrown
+   * and the executor will throw an exception, which since it is not the last statement is
+   * considered "flaky".
    */
   @Test
   public void test5() throws Exception {

@@ -4,7 +4,6 @@ import java.io.PrintStream;
 import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Objects;
-
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Statement;
@@ -15,8 +14,7 @@ import randoop.types.TypeTuple;
 
 /**
  * {@code ArrayCreation} is a {@link Operation} representing the construction of a one-dimensional
- * array of a given type.
- * The operation takes a length argument and creates an array of that size.
+ * array of a given type. The operation takes a length argument and creates an array of that size.
  */
 public class ArrayCreation extends CallableOperation {
 
@@ -32,7 +30,7 @@ public class ArrayCreation extends CallableOperation {
   /**
    * Creates an object representing the construction of an array of the given type.
    *
-   * @param arrayType  the type of the created array
+   * @param arrayType the type of the created array
    */
   ArrayCreation(ArrayType arrayType) {
     this.elementType = arrayType.getElementType();

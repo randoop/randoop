@@ -2,9 +2,7 @@ package randoop.types.test;
 
 import java.util.List;
 
-/**
- * Input class for capture conversion used in {@link randoop.types.CaptureConversionTest}.
- */
+/** Input class for capture conversion used in {@link randoop.types.CaptureConversionTest}. */
 public class CaptureTestClass<T> {
   public void a(List<? extends T> l) {}
 

@@ -3,7 +3,6 @@ package randoop;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
 import randoop.types.Type;
 import randoop.util.IMultiMap;
 import randoop.util.ISimpleSet;
@@ -13,8 +12,8 @@ import randoop.util.ReversibleSet;
 import randoop.util.SimpleSet;
 
 /**
- * A set of classes. This data structure additionally allows for efficient
- * answers to queries about can-be-used-as relationships.
+ * A set of classes. This data structure additionally allows for efficient answers to queries about
+ * can-be-used-as relationships.
  */
 public class SubTypeSet {
 
@@ -90,10 +89,9 @@ public class SubTypeSet {
   }
 
   /**
-   * Returns all the classes in the set that can-be-used-as the given
-   * <code>c</code>.
+   * Returns all the classes in the set that can-be-used-as the given <code>c</code>.
    *
-   * @param type  the query type
+   * @param type the query type
    * @return the set of types that can be used in place of the query type
    */
   public Set<Type> getMatches(Type type) {

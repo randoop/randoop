@@ -7,28 +7,25 @@ public interface ISimpleSet<T> {
   /**
    * Adds the given elt to the set.
    *
-   * Precondition: the given elt is not already in the set.
+   * <p>Precondition: the given elt is not already in the set.
    *
-   * @param elt
-   *          cannot be null
+   * @param elt cannot be null
    */
   void add(T elt);
 
   /**
    * Removes the given elt from the set.
    *
-   * Precondition: the given elt is in the set.
+   * <p>Precondition: the given elt is in the set.
    *
-   * @param elt
-   *          cannot be null
+   * @param elt cannot be null
    */
   void remove(T elt);
 
   /**
    * Returns true if elt is in this set.
    *
-   * @param elt
-   *          cannot be null
+   * @param elt cannot be null
    * @return true if this set contains the element, false otherwise
    */
   boolean contains(T elt);

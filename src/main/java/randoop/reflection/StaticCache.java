@@ -4,12 +4,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
 import randoop.BugInRandoopException;
 
-/**
- * Stores the mutable state of a class, allowing it to be saved, printed and restored.
- */
+/** Stores the mutable state of a class, allowing it to be saved, printed and restored. */
 public class StaticCache {
 
   /** The class for which static state is to be saved. */
@@ -19,19 +16,17 @@ public class StaticCache {
   private final Map<Field, Object> valueMap;
 
   /**
-   * Creates the cache object for a particular class.
-   * State is not saved until {@link #saveState()} is called.
+   * Creates the cache object for a particular class. State is not saved until {@link #saveState()}
+   * is called.
    *
-   * @param declaringClass  the class
+   * @param declaringClass the class
    */
   public StaticCache(Class<?> declaringClass) {
     this.declaringClass = declaringClass;
     this.valueMap = new LinkedHashMap<>();
   }
 
-  /**
-   * Prints the fields and their values to standard output.
-   */
+  /** Prints the fields and their values to standard output. */
   public void printCache() {
     for (Map.Entry<Field, Object> entry : valueMap.entrySet()) {
       System.out.println(
@@ -39,10 +34,7 @@ public class StaticCache {
     }
   }
 
-  /**
-   * Saves the state for the class in this object.
-   * Only saves non-final static fields.
-   */
+  /** Saves the state for the class in this object. Only saves non-final static fields. */
   public void saveState() {
     for (Field field : declaringClass.getDeclaredFields()) {
       field.setAccessible(true);
@@ -59,9 +51,7 @@ public class StaticCache {
     }
   }
 
-  /**
-   * Restores the saved state of the class in this object to previously saved values.
-   */
+  /** Restores the saved state of the class in this object to previously saved values. */
   public void restoreState() {
     for (Map.Entry<Field, Object> entry : valueMap.entrySet()) {
       try {

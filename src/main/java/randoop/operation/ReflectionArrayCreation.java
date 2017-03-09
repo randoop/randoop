@@ -3,7 +3,6 @@ package randoop.operation;
 import java.io.PrintStream;
 import java.lang.reflect.Array;
 import java.util.List;
-
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
@@ -12,8 +11,7 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * Represents an array creation using reflection, and corresponds to the code
- * <code>
+ * Represents an array creation using reflection, and corresponds to the code <code>
  *   (List&lt;String&gt;[])(Array.newInstance(componentType, length));
  * </code>
  */

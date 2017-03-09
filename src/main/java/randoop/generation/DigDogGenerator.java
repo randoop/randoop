@@ -1,5 +1,6 @@
 package randoop.generation;
 
+import java.util.*;
 import randoop.*;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
@@ -7,20 +8,19 @@ import randoop.sequence.*;
 import randoop.types.*;
 import randoop.util.*;
 
-import java.util.*;
-
 /**
- * DigDog generator is an extension off of forward generator which store information
- * necessary for weighted random selection. This includes weighted constant selection
- * and weighted sequence selection.
+ * DigDog generator is an extension off of forward generator which store information necessary for
+ * weighted random selection. This includes weighted constant selection and weighted sequence
+ * selection.
  */
 public class DigDogGenerator extends ForwardGenerator {
 
   /**
-   * The set of ALL sequences ever generated, including sequences that were
-   * executed and then discarded.
+   * The set of ALL sequences ever generated, including sequences that were executed and then
+   * discarded.
    */
   private final Map<WeightedElement, Double> weightMap = new HashMap<WeightedElement, Double>();
+
   private final Map<WeightedElement, Integer> sequenceExecutionNumber =
       new HashMap<WeightedElement, Integer>();
 
@@ -91,7 +91,9 @@ public class DigDogGenerator extends ForwardGenerator {
   }
 
   /**
-   * Should only be called once we're done with generating tests, so internal exposure shouldn't matter
+   * Should only be called once we're done with generating tests, so internal exposure shouldn't
+   * matter
+   *
    * @return a sequence map to be used for testing purposes
    */
   public Map<Sequence, List<String>> getSequenceDebugMap() {
@@ -99,12 +101,11 @@ public class DigDogGenerator extends ForwardGenerator {
   }
 
   /**
-   * The runtimePrimitivesSeen set contains primitive values seen during
-   * generation/execution and is used to determine new values that should be
-   * added to the component set. The component set initially contains a set of
-   * primitive sequences; this method puts those primitives in this set.
-   * Also introduces weighted selection based on the runtime of the sequence if
-   * the weighted flags are enabled.
+   * The runtimePrimitivesSeen set contains primitive values seen during generation/execution and is
+   * used to determine new values that should be added to the component set. The component set
+   * initially contains a set of primitive sequences; this method puts those primitives in this set.
+   * Also introduces weighted selection based on the runtime of the sequence if the weighted flags
+   * are enabled.
    */
   @Override
   public ExecutableSequence step() {

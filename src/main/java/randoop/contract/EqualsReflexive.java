@@ -2,15 +2,12 @@ package randoop.contract;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
-/**
- * The contract: <code>x0.equals(x0)==true</code>.
- */
+/** The contract: <code>x0.equals(x0)==true</code>. */
 public final class EqualsReflexive implements ObjectContract {
   private static final EqualsReflexive instance = new EqualsReflexive();
 

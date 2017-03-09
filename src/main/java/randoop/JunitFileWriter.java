@@ -3,17 +3,21 @@ package randoop;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import randoop.sequence.ExecutableSequence;
 import randoop.util.Log;
 
 /**
- * JunitFileWriter is a class that for a collection of sequences, outputs Java
- * files containing one JUnit4 test method per sequence. An object manages the
- * information for a suite of tests (name, package, and directory) and is used
- * by first running writeJUnitTestFiles and then writeSuiteFile or
- * writeDriverFile.
+ * JunitFileWriter is a class that for a collection of sequences, outputs Java files containing one
+ * JUnit4 test method per sequence. An object manages the information for a suite of tests (name,
+ * package, and directory) and is used by first running writeJUnitTestFiles and then writeSuiteFile
+ * or writeDriverFile.
  */
 public class JunitFileWriter {
 
@@ -27,17 +31,15 @@ public class JunitFileWriter {
   private final String dirName;
 
   /**
-   * testClassCount indicates the number of test classes written for the code
-   * partitions received by writeJUnitTestFiles. It is used to generate the list
-   * of test class names.
+   * testClassCount indicates the number of test classes written for the code partitions received by
+   * writeJUnitTestFiles. It is used to generate the list of test class names.
    */
   private int testClassCount = 0;
 
   /**
-   * classMethodCounts maps test class names to the number of methods in each
-   * class. This is used to generate lists of method names for a class, since
-   * current convention is that a test method is named "test"+i for some integer
-   * i.
+   * classMethodCounts maps test class names to the number of methods in each class. This is used to
+   * generate lists of method names for a class, since current convention is that a test method is
+   * named "test"+i for some integer i.
    */
   private Map<String, Integer> classMethodCounts = new LinkedHashMap<>();
 
@@ -78,15 +80,11 @@ public class JunitFileWriter {
   private static final String AFTER_EACH_METHOD = "teardown";
 
   /**
-   * JunitFileWriter creates an instance of class holding information needed to
-   * write a test suite.
+   * JunitFileWriter creates an instance of class holding information needed to write a test suite.
    *
-   * @param junitDirName
-   *          directory where files are to be written
-   * @param packageName
-   *          package name to be used in JUnit test classes
-   * @param masterTestClassName
-   *          name of test class suite/driver
+   * @param junitDirName directory where files are to be written
+   * @param packageName package name to be used in JUnit test classes
+   * @param masterTestClassName name of test class suite/driver
    */
   public JunitFileWriter(String junitDirName, String packageName, String masterTestClassName) {
     this.dirName = junitDirName;
@@ -96,7 +94,8 @@ public class JunitFileWriter {
 
   /**
    * Add text for BeforeClass-annotated method in each generated test class.
-   * @param text  the (Java) text for method
+   *
+   * @param text the (Java) text for method
    */
   public void addBeforeAll(List<String> text) {
     this.beforeAllText = text;
@@ -104,7 +103,8 @@ public class JunitFileWriter {
 
   /**
    * Add text for AfterClass-annotated method in each generated text class.
-   * @param text  the (Java) text for method
+   *
+   * @param text the (Java) text for method
    */
   public void addAfterAll(List<String> text) {
     this.afterAllText = text;
@@ -112,7 +112,8 @@ public class JunitFileWriter {
 
   /**
    * Add text for Before-annotated method in each generated test class.
-   * @param text  the (Java) text for method
+   *
+   * @param text the (Java) text for method
    */
   public void addBeforeEach(List<String> text) {
     this.beforeEachText = text;
@@ -120,22 +121,20 @@ public class JunitFileWriter {
 
   /**
    * Add text for After-annotated method in each generated test class.
-   * @param text  the (Java) text for method
+   *
+   * @param text the (Java) text for method
    */
   public void addAfterEach(List<String> text) {
     this.afterEachText = text;
   }
 
   /**
-   * writeJUnitTestFiles writes a suite of test class files from a list of lists
-   * of executable sequences. Each executable sequence corresponds to a test
-   * method, a list of executable sequences corresponds to a test class, and the
-   * list of lists to a test suite.
+   * writeJUnitTestFiles writes a suite of test class files from a list of lists of executable
+   * sequences. Each executable sequence corresponds to a test method, a list of executable
+   * sequences corresponds to a test class, and the list of lists to a test suite.
    *
-   * @param seqPartition
-   *          suite of test classes as a list of lists of executable sequences
+   * @param seqPartition suite of test classes as a list of lists of executable sequences
    * @return list of File objects corresponding to test class files generated
-   *
    * @see #writeSuiteFile
    * @see #writeDriverFile
    */
@@ -156,14 +155,11 @@ public class JunitFileWriter {
   }
 
   /**
-   * writeTestClass writes a code sequence as a JUnit4 test class to a .java
-   * file. Tests are executed in ascending alphabetical order by test method
-   * name.
+   * writeTestClass writes a code sequence as a JUnit4 test class to a .java file. Tests are
+   * executed in ascending alphabetical order by test method name.
    *
-   * @param sequences
-   *          list of executable sequences for method bodies
-   * @param testClassName
-   *          name of test class
+   * @param sequences list of executable sequences for method bodies
+   * @param testClassName name of test class
    * @return the File object for generated java file
    */
   private File writeTestClass(List<ExecutableSequence> sequences, String testClassName) {
@@ -227,11 +223,11 @@ public class JunitFileWriter {
   /**
    * Writes a single text fixture to the output stream.
    *
-   * @param out  the output stream for writing test class
-   * @param annotation  the fixture annotation
-   * @param modifier  text prefix for method declaration
-   * @param methodName  the method name for fixture method
-   * @param bodyText  the text of the fixture method
+   * @param out the output stream for writing test class
+   * @param annotation the fixture annotation
+   * @param modifier text prefix for method declaration
+   * @param methodName the method name for fixture method
+   * @param bodyText the text of the fixture method
    */
   private void writeFixture(
       PrintStream out,
@@ -259,14 +255,10 @@ public class JunitFileWriter {
   /**
    * Writes a test method to the output stream for the sequence s.
    *
-   * @param out
-   *          the output stream for test class file
-   * @param className
-   *          the name of test class
-   * @param methodName
-   *          the name of test method
-   * @param s
-   *          the {@link ExecutableSequence} for test method.
+   * @param out the output stream for test class file
+   * @param className the name of test class
+   * @param methodName the name of test method
+   * @param s the {@link ExecutableSequence} for test method.
    */
   private void writeTest(
       PrintStream out, String className, String methodName, ExecutableSequence s) {
@@ -285,8 +277,7 @@ public class JunitFileWriter {
   }
 
   /**
-   * Generates the list of test class names for previously generated test
-   * suites.
+   * Generates the list of test class names for previously generated test suites.
    *
    * @return list of class names
    */
@@ -300,10 +291,9 @@ public class JunitFileWriter {
   }
 
   /**
-   * Writes a JUnit4 suite consisting of test classes from
-   * {@link #writeJUnitTestFiles(List)} and additional classes provided as a
-   * parameter. The file is written to the directory pointed to by writer object
-   * in a class whose name is the {@link #masterTestClassName}.
+   * Writes a JUnit4 suite consisting of test classes from {@link #writeJUnitTestFiles(List)} and
+   * additional classes provided as a parameter. The file is written to the directory pointed to by
+   * writer object in a class whose name is the {@link #masterTestClassName}.
    *
    * @return {@link File} object for test suite file.
    */
@@ -344,9 +334,9 @@ public class JunitFileWriter {
   }
 
   /**
-   * writeDriverFile writes non-reflective driver for tests as a main class. The
-   * file is written to the directory pointed to by writer object in a class
-   * whose name is the {@link #masterTestClassName}.
+   * writeDriverFile writes non-reflective driver for tests as a main class. The file is written to
+   * the directory pointed to by writer object in a class whose name is the {@link
+   * #masterTestClassName}.
    *
    * @return {@link File} object for generated Java file.
    */
@@ -433,7 +423,7 @@ public class JunitFileWriter {
   /**
    * Returns the number of digits in the printed representation of the argument.
    *
-   * @param n  the number
+   * @param n the number
    * @return the number of digits in string form of given number
    */
   private int numDigits(int n) {

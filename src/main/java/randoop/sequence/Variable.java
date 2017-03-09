@@ -92,8 +92,8 @@ public class Variable implements Comparable<Variable> {
   /**
    * Returns the name of this variable assuming the given type.
    *
-   * @param type  the type of this variable
-   * @return  the name of this variable as a string
+   * @param type the type of this variable
+   * @return the name of this variable as a string
    */
   public String getName(Type type) {
     return getName(type, index);
@@ -102,19 +102,18 @@ public class Variable implements Comparable<Variable> {
   /**
    * Returns the name of this variable with the given index.
    *
-   * @param i  the index for the variable name
-   * @return  a string using the index to form the name
+   * @param i the index for the variable name
+   * @return a string using the index to form the name
    */
   public String getName(int i) {
     return getName(getType(), i);
   }
 
   /**
-   * For use by clients when the statement has not yet been appended, so
-   * getType() would fail.
+   * For use by clients when the statement has not yet been appended, so getType() would fail.
    *
-   * @param type  the type to use when building variable name
-   * @param i  the index for the variable
+   * @param type the type to use when building variable name
+   * @param i the index for the variable
    * @return gets variable names based on the type of the variable
    */
   public String getName(Type type, int i) {
@@ -122,10 +121,9 @@ public class Variable implements Comparable<Variable> {
   }
 
   /**
-   * For use by clients when the statement has not yet been appended, so
-   * getType() would fail.
+   * For use by clients when the statement has not yet been appended, so getType() would fail.
    *
-   * @param className  the class name to us to construct the variable name
+   * @param className the class name to us to construct the variable name
    * @return the name of this variable
    */
   public String getName(String className) {
@@ -135,9 +133,9 @@ public class Variable implements Comparable<Variable> {
   /**
    * The name of this variable using the given type name and index.
    *
-   * @param className  the classname to use
-   * @param i  the index to use in the name
-   * @return  the variable name that appends the index to the classname
+   * @param className the classname to use
+   * @param i the index to use in the name
+   * @return the variable name that appends the index to the classname
    */
   public String getName(String className, int i) {
     String basename = classNameToVariableName(className);
@@ -154,7 +152,7 @@ public class Variable implements Comparable<Variable> {
   /**
    * Build a variable name from the name of the given type.
    *
-   * @param type  the type
+   * @param type the type
    * @return the variable name as a string
    */
   public static String classToVariableName(Type type) {
@@ -164,7 +162,7 @@ public class Variable implements Comparable<Variable> {
   /**
    * Convert the classname to a variable name, preserving camel case if used.
    *
-   * @param className  the class name
+   * @param className the class name
    * @return the variable form of the classname
    */
   public static String classNameToVariableName(String className) {

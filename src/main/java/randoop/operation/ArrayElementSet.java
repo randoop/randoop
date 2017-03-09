@@ -3,7 +3,6 @@ package randoop.operation;
 import java.io.PrintStream;
 import java.lang.reflect.Array;
 import java.util.List;
-
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -12,9 +11,7 @@ import randoop.sequence.Variable;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
-/**
- * Created by bjkeller on 8/19/16.
- */
+/** Created by bjkeller on 8/19/16. */
 class ArrayElementSet extends CallableOperation {
 
   private final int ARRAY = 0;
