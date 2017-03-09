@@ -206,10 +206,17 @@ public class JunitFileWriter {
         writeFixture(out, AFTER_EACH, "", AFTER_EACH_METHOD, afterEachText);
       }
 
+      final List<String> methodNames = new ArrayList<>();
+
       for (ExecutableSequence s : sequences) {
-        writeTest(out, testClassName, methodNameGen.next(), s);
+        final String methodName = methodNameGen.next();
+        writeTest(out, testClassName, methodName, s);
+        methodNames.add(methodName);
         out.println();
       }
+
+      writeTestAllMethod(testClassName, out, methodNames);
+
       out.println("}");
       classMethodCounts.put(testClassName, methodNameGen.nameCount());
     } finally {
@@ -217,6 +224,49 @@ public class JunitFileWriter {
     }
 
     return file;
+  }
+
+  private void writeTestAllMethod(String testClassName, PrintStream out, List<String> methodNames) {
+    out.println("  public static boolean testAll() {");
+
+    out.println("    boolean wasSuccessful = true;");
+
+    if (beforeAllText != null) {
+      out.println();
+      out.println("    " + BEFORE_ALL_METHOD + "();");
+      out.println();
+    }
+
+    String testVariable = "t";
+    out.println("    " + testClassName + " " + testVariable + " = new " + testClassName + "();");
+
+    for (String testMethodName : methodNames) {
+
+      out.println();
+      if (beforeEachText != null) {
+        out.println("    " + testVariable + "." + BEFORE_EACH_METHOD + "();");
+      }
+
+      out.println("    try {");
+      out.println("      " + testVariable + "." + testMethodName + "();");
+      out.println("    } catch (Throwable e) {");
+      out.println("      wasSuccessful = false;");
+      out.println("      e.printStackTrace();");
+      out.println("    }");
+      if (afterEachText != null) {
+        out.println("    " + testVariable + "." + AFTER_EACH_METHOD + "();");
+      }
+    }
+
+    if (afterAllText != null) {
+      out.println("    " + AFTER_ALL_METHOD + "();");
+    }
+
+    out.println();
+
+    out.println("    return wasSuccessful;");
+
+    out.println("  }");
   }
 
   /**
@@ -354,51 +404,19 @@ public class JunitFileWriter {
       out.println("  public static void main(String[] args) {");
 
       out.println("    boolean wasSuccessful = true;");
+      out.println();
 
-      NameGenerator instanceNameGen = new NameGenerator("t");
       for (String testClass : testClassNames) {
-
-        if (beforeAllText != null) {
-          out.println();
-          out.println("    " + testClass + "." + BEFORE_ALL_METHOD + "();");
-          out.println();
-        }
-
-        String testVariable = instanceNameGen.next();
-        out.println("    " + testClass + " " + testVariable + "= new " + testClass + "();");
-
-        int classMethodCount = classMethodCounts.get(testClass);
-        NameGenerator methodGen = new NameGenerator("test", 1, numDigits(classMethodCount));
-
-        while (methodGen.nameCount() < classMethodCount) {
-          out.println();
-          if (beforeEachText != null) {
-            out.println("    " + testVariable + "." + BEFORE_EACH_METHOD + "();");
-          }
-          String methodName = methodGen.next();
-          out.println("    try {");
-          out.println("      " + testVariable + "." + methodName + "();");
-          out.println("    } catch (Throwable e) {");
-          out.println("      wasSuccessful = false;");
-          out.println("      e.printStackTrace();");
-          out.println("    }");
-          if (afterEachText != null) {
-            out.println("    " + testVariable + "." + AFTER_EACH_METHOD + "();");
-          }
-        }
-
-        if (afterAllText != null) {
-          out.println("    " + testClass + "." + AFTER_ALL_METHOD + "();");
-        }
-
-        out.println();
+        out.println("    wasSuccessful = " + testClass + ".testAll() && wasSuccessful;");
       }
 
+      out.println();
       out.println("    if ( !wasSuccessful ) {");
       out.println("      System.exit(1);");
       out.println("    }");
       out.println("  }");
       out.println();
+
       out.println("}");
     }
     return file;
