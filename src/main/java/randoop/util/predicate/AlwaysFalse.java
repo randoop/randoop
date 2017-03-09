@@ -3,8 +3,7 @@ package randoop.util.predicate;
 /**
  * Predicate that always return false.
  *
- * @param <T>
- *          the type of the object to test
+ * @param <T> the type of the object to test
  */
 public class AlwaysFalse<T> extends DefaultPredicate<T> {
 
@@ -21,8 +20,7 @@ public class AlwaysFalse<T> extends DefaultPredicate<T> {
   /**
    * {@inheritDoc}
    *
-   * @return the second predicate, since whether or-else is true determined by
-   *         second predicate
+   * @return the second predicate, since whether or-else is true determined by second predicate
    */
   @Override
   public Predicate<T> or(Predicate<T> p) {

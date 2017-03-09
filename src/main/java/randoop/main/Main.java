@@ -2,12 +2,11 @@ package randoop.main;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import randoop.generation.AbstractGenerator;
 
 /**
- * Main entry point for Randoop. Asks the command handlers who can handle the
- * command given by the user, and passes control to whoever does.
+ * Main entry point for Randoop. Asks the command handlers who can handle the command given by the
+ * user, and passes control to whoever does.
  */
 public class Main {
 

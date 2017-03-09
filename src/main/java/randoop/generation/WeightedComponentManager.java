@@ -1,15 +1,14 @@
 package randoop.generation;
 
-import randoop.main.GenInputsAbstract;
-import randoop.sequence.Sequence;
-
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import randoop.main.GenInputsAbstract;
+import randoop.sequence.Sequence;
 
 /**
- * Weighted component manager implements the needed functionality for weighted sequences
- * and constants.
+ * Weighted component manager implements the needed functionality for weighted sequences and
+ * constants.
  */
 public class WeightedComponentManager extends ComponentManager {
 

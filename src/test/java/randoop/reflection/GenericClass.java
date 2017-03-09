@@ -3,9 +3,7 @@ package randoop.reflection;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A generic class for testing type and operation harvesting.
- */
+/** A generic class for testing type and operation harvesting. */
 public class GenericClass<T> {
   public T theField;
   public List<T> theGenericList;

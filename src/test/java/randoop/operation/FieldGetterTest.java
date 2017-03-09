@@ -1,13 +1,15 @@
 package randoop.operation;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
-
+import org.junit.Test;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.Globals;
@@ -18,20 +20,14 @@ import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
-import randoop.types.Type;
-import randoop.types.PrimitiveType;
 import randoop.types.NonParameterizedType;
+import randoop.types.PrimitiveType;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 /**
- * FieldGetterTest defines unit tests for FieldGetter class.
- * There is a test method for each kind of PublicField, and each
- * checks types returned, code generation, and execution behavior.
- *
+ * FieldGetterTest defines unit tests for FieldGetter class. There is a test method for each kind of
+ * PublicField, and each checks types returned, code generation, and execution behavior.
  */
 public class FieldGetterTest {
 

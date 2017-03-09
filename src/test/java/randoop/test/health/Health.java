@@ -1,40 +1,28 @@
 package randoop.test.health;
 
 /**
- * A Java implementation of the <tt>health</tt> Olden benchmark.  The Olden
- * benchmark simulates the Columbian health-care system:
- * <p>
- * <cite>
- * G. Lomow , J. Cleary, B. Unger, and D. West. "A Performance Study of
- * Time Warp," In SCS Multiconference on Distributed Simulation, pages 50-55,
- * Feb. 1988.
- * </cite>
+ * A Java implementation of the <tt>health</tt> Olden benchmark. The Olden benchmark simulates the
+ * Columbian health-care system:
+ *
+ * <p><cite> G. Lomow , J. Cleary, B. Unger, and D. West. "A Performance Study of Time Warp," In SCS
+ * Multiconference on Distributed Simulation, pages 50-55, Feb. 1988. </cite>
  */
 public class Health {
-  /**
-   * The size of the health-care system.
-   */
+  /** The size of the health-care system. */
   private static int maxLevel = 0;
-  /**
-   * The maximum amount of time to use in the simulation.
-   */
+  /** The maximum amount of time to use in the simulation. */
   private static int maxTime = 0;
-  /**
-   * A seed value for the random no. generator.
-   */
+  /** A seed value for the random no. generator. */
   private static int seed = 0;
-  /**
-   * Set to true to print the results.
-   */
+  /** Set to true to print the results. */
   private static boolean printResult = false;
-  /**
-   * Set to true to print information messages.
-   */
+  /** Set to true to print information messages. */
   private static boolean printMsgs = false;
 
   /**
-   * The main routnie which creates the data structures for the Columbian
-   * health-care system and executes the simulation for a specified time.
+   * The main routnie which creates the data structures for the Columbian health-care system and
+   * executes the simulation for a specified time.
+   *
    * @param args the command line arguments
    */
   public static final void main(String[] args) {
@@ -109,9 +97,7 @@ public class Health {
     if (maxTime == 0 || maxLevel == 0 || seed == 0) usage();
   }
 
-  /**
-   * The usage routine which describes the program options.
-   */
+  /** The usage routine which describes the program options. */
   private static final void usage() {
     System.err.println("usage: java Health -l <levels> -t <time> -s <seed> [-p] [-m] [-h]");
     System.err.println("    -l the size of the health care system");

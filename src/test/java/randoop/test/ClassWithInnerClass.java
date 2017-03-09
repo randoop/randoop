@@ -1,8 +1,6 @@
 package randoop.test;
 
-/**
- * Inspired by a bug report from Martin Schaef
- */
+/** Inspired by a bug report from Martin Schaef */
 public class ClassWithInnerClass {
   private int anInt;
 

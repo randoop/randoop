@@ -1,7 +1,6 @@
 package randoop.sequence;
 
 import java.util.Objects;
-
 import randoop.types.ReferenceType;
 
 /**
@@ -19,8 +18,8 @@ public final class ReferenceValue {
   /**
    * Create the value object given its type and {@link Object} reference.
    *
-   * @param type  the type of this value
-   * @param value  the {@link Object} reference to this value
+   * @param type the type of this value
+   * @param value the {@link Object} reference to this value
    */
   ReferenceValue(ReferenceType type, Object value) {
     this.type = type;
@@ -28,10 +27,10 @@ public final class ReferenceValue {
   }
 
   /**
-   * Indicates whether two {@link ReferenceValue} objects are equal.
-   * Note: tests the {@code Object} value of each object by identity.
+   * Indicates whether two {@link ReferenceValue} objects are equal. Note: tests the {@code Object}
+   * value of each object by identity.
    *
-   * @param obj  the object to test for equality
+   * @param obj the object to test for equality
    * @return true if parameter has the same type and identical value to this object, false otherwise
    */
   @Override
@@ -56,7 +55,7 @@ public final class ReferenceValue {
   /**
    * Returns the {@link Object} reference of this value.
    *
-   * @return  the reference to the value
+   * @return the reference to the value
    */
   public Object getObjectValue() {
     return value;

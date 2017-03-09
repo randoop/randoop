@@ -5,8 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 /**
- * This is used to wrap a constructor together with its parameters, ready for
- * execution. Can be run only once.
+ * This is used to wrap a constructor together with its parameters, ready for execution. Can be run
+ * only once.
  */
 public final class ConstructorReflectionCode extends ReflectionCode {
   private final Constructor<?> constructor;

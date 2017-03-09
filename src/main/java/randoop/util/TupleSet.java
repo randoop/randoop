@@ -3,9 +3,7 @@ package randoop.util;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Represents an extensible tuple of objects of the parameter type.
- */
+/** Represents an extensible tuple of objects of the parameter type. */
 public class TupleSet<E> {
 
   /** The list of element lists (tuples) */
@@ -14,9 +12,7 @@ public class TupleSet<E> {
   /** The length of tuples in the set */
   private int tupleLength;
 
-  /**
-   * Creates a tuple set with a single empty tuple.
-   */
+  /** Creates a tuple set with a single empty tuple. */
   public TupleSet() {
     this.tuples = new ArrayList<>();
     this.tuples.add(new ArrayList<E>());
@@ -29,12 +25,11 @@ public class TupleSet<E> {
   }
 
   /**
-   * Extends all of the elements of the current tuple set with all of the elements of
-   * the given list.
-   * In other words, if there are <i>k</i> elements given then each tuple will be replaced by <i>k</i>
-   * new tuples extended by one of the input elements.
+   * Extends all of the elements of the current tuple set with all of the elements of the given
+   * list. In other words, if there are <i>k</i> elements given then each tuple will be replaced by
+   * <i>k</i> new tuples extended by one of the input elements.
    *
-   * @param elements  the list of elements
+   * @param elements the list of elements
    * @return a tuple set formed by extending the tuples with the elements of the given list
    */
   public TupleSet<E> extend(List<E> elements) {
@@ -52,10 +47,10 @@ public class TupleSet<E> {
   }
 
   /**
-   * Creates a new tuple set from this set by inserting elements of the given list
-   * at all positions in the tuple.
+   * Creates a new tuple set from this set by inserting elements of the given list at all positions
+   * in the tuple.
    *
-   * @param elements  the list of elements
+   * @param elements the list of elements
    * @return a tuple set formed by inserting elements of the given list into the tuples of this set
    */
   public TupleSet<E> exhaustivelyExtend(List<E> elements) {
@@ -71,12 +66,11 @@ public class TupleSet<E> {
   }
 
   /**
-   * Returns a new list that is formed by inserting the element at the given position
-   * in the tuple.
+   * Returns a new list that is formed by inserting the element at the given position in the tuple.
    *
-   * @param e  the element to insert
-   * @param tuple  the original list
-   * @param i  the position where element is to be inserted
+   * @param e the element to insert
+   * @param tuple the original list
+   * @param i the position where element is to be inserted
    * @return a new list with the element inserted at the given position
    */
   private List<E> insert(E e, List<E> tuple, int i) {
@@ -90,11 +84,11 @@ public class TupleSet<E> {
   }
 
   /**
-   * Finds the first tuple that the visitor is able to transform,
-   * and returns the result of the transformation.
+   * Finds the first tuple that the visitor is able to transform, and returns the result of the
+   * transformation.
    *
-   * @param visitor  the visitor that transforms a tuple
-   * @param <T>  the return type of the visitor
+   * @param visitor the visitor that transforms a tuple
+   * @param <T> the return type of the visitor
    * @return a transformed tuple, or null
    */
   public <T> T findAndTransform(TupleVisitor<E, T> visitor) {

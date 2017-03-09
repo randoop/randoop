@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
 import randoop.operation.TypedClassOperation;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GenericClassType;
@@ -24,9 +23,7 @@ import randoop.types.TypeVariable;
 import randoop.util.Log;
 import randoop.util.Randomness;
 
-/**
- * Function object to instantiate type parameters from a set of input types.
- */
+/** Function object to instantiate type parameters from a set of input types. */
 public class TypeInstantiator {
 
   /** The set of input types for this model */
@@ -36,7 +33,7 @@ public class TypeInstantiator {
    * Creates a {@link TypeInstantiator} object using the given types to construct instantiating
    * substitutions.
    *
-   * @param inputTypes  the ground types for instantiations
+   * @param inputTypes the ground types for instantiations
    */
   public TypeInstantiator(Set<Type> inputTypes) {
     this.inputTypes = inputTypes;
@@ -89,14 +86,13 @@ public class TypeInstantiator {
   }
 
   /**
-   * Returns a substitution that instantiates the {@code SortedSet} type of the given constructor.
-   * A {@code SortedSet} may be built so that the element type {@code E} is ordered either
-   * explicitly with a {@code Comparator<E>}, or the element type satisfies
-   * {@code E implements Comparable<E>}.
-   * The {@code SortedSet} documentation indicates that there should be four constructors, each
-   * of which indicates the order to be used and so constrains the element type.
+   * Returns a substitution that instantiates the {@code SortedSet} type of the given constructor. A
+   * {@code SortedSet} may be built so that the element type {@code E} is ordered either explicitly
+   * with a {@code Comparator<E>}, or the element type satisfies {@code E implements Comparable<E>}.
+   * The {@code SortedSet} documentation indicates that there should be four constructors, each of
+   * which indicates the order to be used and so constrains the element type.
    *
-   * @param operation  the constructor for the {@code SortedSet} subtype to be instantiated
+   * @param operation the constructor for the {@code SortedSet} subtype to be instantiated
    * @return the substitution to instantiate the element type of the {@code SortedSet} type
    */
   private Substitution<ReferenceType> instantiateSortedSetType(TypedClassOperation operation) {
@@ -146,15 +142,13 @@ public class TypeInstantiator {
   }
 
   /**
-   * Chooses an instantiating substitution for the given declaring class.
-   * Performs a coin flip to determine whether to use a previous instantiation,
-   * or to create a new one.
-   * Either way, if a new instantiating substitution is required, uses
-   * {@link #selectSubstitution(List, Substitution)} to construct and choose one.
-   * Verifies that all of the type parameters of the declaring type are instantiated,
-   * and logs failure if not.
+   * Chooses an instantiating substitution for the given declaring class. Performs a coin flip to
+   * determine whether to use a previous instantiation, or to create a new one. Either way, if a new
+   * instantiating substitution is required, uses {@link #selectSubstitution(List, Substitution)} to
+   * construct and choose one. Verifies that all of the type parameters of the declaring type are
+   * instantiated, and logs failure if not.
    *
-   * @param declaringType  the type to be instantiated
+   * @param declaringType the type to be instantiated
    * @return a substitution instantiating the given type; null if none is found
    */
   private Substitution<ReferenceType> instantiateDeclaringClass(
@@ -182,18 +176,17 @@ public class TypeInstantiator {
   }
 
   /**
-   * Selects an existing type that instantiates the given pattern type which is an instantiation
-   * of a generic declaring type and returns the instantiating substitution for the more general
-   * type.
+   * Selects an existing type that instantiates the given pattern type which is an instantiation of
+   * a generic declaring type and returns the instantiating substitution for the more general type.
    * The pattern type makes it possible to select matches for partial instantiations of a generic
    * type.
-   * <p>
-   * Note: for all uses to work properly, the input types need to be closed on supertypes:
-   * if a type is in the input types, then so are all of its supertypes.
    *
-   * @param declaringType  the generic type for which instantiation is to be found
-   * @param patternType   the generic type from which match is to be determined, must be instantiation
-   *                      of {@code declaringType}.
+   * <p>Note: for all uses to work properly, the input types need to be closed on supertypes: if a
+   * type is in the input types, then so are all of its supertypes.
+   *
+   * @param declaringType the generic type for which instantiation is to be found
+   * @param patternType the generic type from which match is to be determined, must be instantiation
+   *     of {@code declaringType}.
    * @return a substitution instantiating given type as an existing type; null if no such type
    */
   private Substitution<ReferenceType> selectMatch(
@@ -212,13 +205,13 @@ public class TypeInstantiator {
   }
 
   /**
-   * Selects an existing type that instantiates the given generic declaring type
-   * and returns the instantiating substitution.
-   * <p>
-   * Note: for all uses to work properly, the input types need to be closed on supertypes:
-   * if a type is in the input types, then so are all of its supertypes.
+   * Selects an existing type that instantiates the given generic declaring type and returns the
+   * instantiating substitution.
    *
-   * @param declaringType  the generic type for which instantiation is to be found
+   * <p>Note: for all uses to work properly, the input types need to be closed on supertypes: if a
+   * type is in the input types, then so are all of its supertypes.
+   *
+   * @param declaringType the generic type for which instantiation is to be found
    * @return a substitution instantiating given type as an existing type; null if no such type
    */
   private Substitution<ReferenceType> selectMatch(ClassOrInterfaceType declaringType) {
@@ -229,7 +222,7 @@ public class TypeInstantiator {
    * Selects an instantiation of the generic types of an operation, and returns a new operation with
    * the types instantiated.
    *
-   * @param operation  the operation
+   * @param operation the operation
    * @return the operation with generic types instantiated
    */
   private TypedClassOperation instantiateOperationTypes(TypedClassOperation operation) {
@@ -279,11 +272,11 @@ public class TypeInstantiator {
 
   /**
    * Selects an instantiating substitution for the given list of type variables.
-   * @see #selectSubstitution(List, Substitution)
    *
-   * @param typeParameters  the type variables to be instantiated
+   * @see #selectSubstitution(List, Substitution)
+   * @param typeParameters the type variables to be instantiated
    * @return a substitution instantiating the type variables; null if a variable has no
-   *         instantiating types
+   *     instantiating types
    */
   private Substitution<ReferenceType> selectSubstitution(List<TypeVariable> typeParameters) {
     Substitution<ReferenceType> substitution = new Substitution<>();
@@ -291,15 +284,15 @@ public class TypeInstantiator {
   }
 
   /**
-   * Extends the given substitution by instantiations for the given list of type variables.
-   * If any of the type variables has a generic bound, assumes there are dependencies and
-   * enumerates all possible substitutions and tests them.
-   * Otherwise, independently selects an instantiating type for each variable.
+   * Extends the given substitution by instantiations for the given list of type variables. If any
+   * of the type variables has a generic bound, assumes there are dependencies and enumerates all
+   * possible substitutions and tests them. Otherwise, independently selects an instantiating type
+   * for each variable.
    *
-   * @param typeParameters  the type variables to be instantiated
-   * @param substitution  the substitution to extend
+   * @param typeParameters the type variables to be instantiated
+   * @param substitution the substitution to extend
    * @return the substitution extended by instantiating type variables; null if a variable has no
-   *         instantiating types
+   *     instantiating types
    */
   private Substitution<ReferenceType> selectSubstitution(
       List<TypeVariable> typeParameters, Substitution<ReferenceType> substitution) {
@@ -312,10 +305,10 @@ public class TypeInstantiator {
   }
 
   /**
-   * Recursive function to collect the list of substitutions that extend a substitution
-   * for the given type parameters.
+   * Recursive function to collect the list of substitutions that extend a substitution for the
+   * given type parameters.
    *
-   * @param typeParameters  the type parameters to be instantiated
+   * @param typeParameters the type parameters to be instantiated
    * @param substitution the substitution to be extended
    * @return the list of substitutions, empty if none are found
    */
@@ -411,15 +404,15 @@ public class TypeInstantiator {
   }
 
   /**
-   * Selects types independently for a list of type parameters, and extends the given
-   * substitution by the substitution of the selected types for the parameters.
+   * Selects types independently for a list of type parameters, and extends the given substitution
+   * by the substitution of the selected types for the parameters.
    *
-   * IMPORTANT: Should only be used for parameters that have non-generic bounds.
+   * <p>IMPORTANT: Should only be used for parameters that have non-generic bounds.
    *
-   * @param parameters  a list of independent type parameters
-   * @param substitution  the substitution to extend
-   * @return the substitution extended by mapping given parameters to selected types;
-   *         null, if there are no candidate types for any parameter
+   * @param parameters a list of independent type parameters
+   * @param substitution the substitution to extend
+   * @return the substitution extended by mapping given parameters to selected types; null, if there
+   *     are no candidate types for any parameter
    */
   private Substitution<ReferenceType> selectAndExtend(
       List<TypeVariable> parameters, Substitution<ReferenceType> substitution) {
@@ -439,10 +432,9 @@ public class TypeInstantiator {
 
   /**
    * Adds instantiating substitutions for the given parameters to the list if satisfies the given
-   * type check predicate.
-   * Each constructed substitution extends the given initial substitution.
-   * Assumes that the parameters are or are refinements of the set of parameters check by the
-   * type check predicate.
+   * type check predicate. Each constructed substitution extends the given initial substitution.
+   * Assumes that the parameters are or are refinements of the set of parameters check by the type
+   * check predicate.
    *
    * @param parameters the list of parameters to instantiate
    * @param initialSubstitution the substitution to be extended by new substitutions
@@ -471,13 +463,13 @@ public class TypeInstantiator {
   }
 
   /**
-   * Constructs the list of lists of candidate types for the given type parameters.
-   * Each list is the list of candidates for the parameter in the corresponding position of
-   * the given list as determined by {@link #selectCandidates(TypeVariable)}.
+   * Constructs the list of lists of candidate types for the given type parameters. Each list is the
+   * list of candidates for the parameter in the corresponding position of the given list as
+   * determined by {@link #selectCandidates(TypeVariable)}.
    *
-   * @param parameters  the list of type parameters
-   * @return  the list of candidate lists for the parameters; returns the empty list if any
-   *          parameter has no candidates
+   * @param parameters the list of type parameters
+   * @return the list of candidate lists for the parameters; returns the empty list if any parameter
+   *     has no candidates
    */
   private List<List<ReferenceType>> getCandidateTypeLists(List<TypeVariable> parameters) {
     List<List<ReferenceType>> candidateTypes = new ArrayList<>();
@@ -495,10 +487,10 @@ public class TypeInstantiator {
   }
 
   /**
-   * Selects all input types that potentially satisfies the bounds on the argument.
-   * If a bound has another type parameter, then the default bound is tested.
+   * Selects all input types that potentially satisfies the bounds on the argument. If a bound has
+   * another type parameter, then the default bound is tested.
    *
-   * @param argument  the type arguments
+   * @param argument the type arguments
    * @return the list of candidate types to include in tested tuples
    */
   private List<ReferenceType> selectCandidates(TypeVariable argument) {
@@ -523,13 +515,13 @@ public class TypeInstantiator {
   }
 
   /**
-   * Chooses the upper bound of the given argument to test in {@link #selectCandidates(TypeVariable)}.
-   * If the bound contains a type parameter other than the given argument, then the bound for
-   * the {@code Object} type is returned.
+   * Chooses the upper bound of the given argument to test in {@link
+   * #selectCandidates(TypeVariable)}. If the bound contains a type parameter other than the given
+   * argument, then the bound for the {@code Object} type is returned.
    *
-   * @param argument  the type argument
+   * @param argument the type argument
    * @return the upperbound of the argument if no other type parameter is needed, the {@code Object}
-   * bound otherwise
+   *     bound otherwise
    */
   private ParameterBound selectUpperBound(TypeVariable argument) {
     ParameterBound upperBound = argument.getUpperTypeBound();
@@ -541,14 +533,13 @@ public class TypeInstantiator {
   }
 
   /**
-   * Chooses the lower bound of the given argument to be tested in {@link #selectCandidates(TypeVariable)}.
-   * If the bound has a type parameter other than the given argument, then the
-   * {@link JavaTypes#NULL_TYPE}
-   * is return as the bound.
+   * Chooses the lower bound of the given argument to be tested in {@link
+   * #selectCandidates(TypeVariable)}. If the bound has a type parameter other than the given
+   * argument, then the {@link JavaTypes#NULL_TYPE} is return as the bound.
    *
-   * @param argument  the type argument
-   * @return the lower bound of the argument if no other type parameter is needed, the {@link JavaTypes#NULL_TYPE}
-   * otherwise
+   * @param argument the type argument
+   * @return the lower bound of the argument if no other type parameter is needed, the {@link
+   *     JavaTypes#NULL_TYPE} otherwise
    */
   private ParameterBound selectLowerBound(TypeVariable argument) {
     ParameterBound lowerBound = argument.getLowerTypeBound();

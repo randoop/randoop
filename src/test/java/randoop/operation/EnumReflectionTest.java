@@ -1,6 +1,9 @@
 package randoop.operation;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -14,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
+import org.junit.Test;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.reflection.DefaultReflectionPredicate;
@@ -36,24 +39,17 @@ import randoop.types.RandoopTypeException;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 /**
- * EnumReflectionTest consists of tests of reflection classes
- * to verify what is collected from enums and classes using enums. In particular,
- * want to collect enum constants, methods of enum (esp. if abstract), enums that are
- * are inner types.
+ * EnumReflectionTest consists of tests of reflection classes to verify what is collected from enums
+ * and classes using enums. In particular, want to collect enum constants, methods of enum (esp. if
+ * abstract), enums that are are inner types.
  */
 public class EnumReflectionTest {
 
   /**
-   * simpleEnum tests that for a simple enum (constants and no explicit
-   * methods) that we just get the constant valuse and no methods.
-   * Uses randoop.test.SimpleEnum, which is a basic enum
-   * with four values: ONE, TWO, THREE, and FOUR
+   * simpleEnum tests that for a simple enum (constants and no explicit methods) that we just get
+   * the constant valuse and no methods. Uses randoop.test.SimpleEnum, which is a basic enum with
+   * four values: ONE, TWO, THREE, and FOUR.
    */
   @Test
   public void simpleEnum() {
@@ -90,9 +86,9 @@ public class EnumReflectionTest {
   }
 
   /**
-   * innerEnum tests that Reflection.getStatements is collecting simple
-   * enum constants from a class. Uses randoop.test.PlayingCard, which has
-   * two public enums, one private enum, and one enum with package access.
+   * innerEnum tests that Reflection.getStatements is collecting simple enum constants from a class.
+   * Uses randoop.test.PlayingCard, which has two public enums, one private enum, and one enum with
+   * package access.
    */
   @SuppressWarnings("unchecked")
   @Test
@@ -236,10 +232,10 @@ public class EnumReflectionTest {
   }
 
   /**
-   * valueEnum tests Reflection.getStatements for an enum with a field.
-   * Uses randoop.test.Coin, which has a private int field, a private constructor,
-   * and one public accessor method. Expect that should return the constants and accessor.
-   * Note that compiler ensures constructor access is at least package level.
+   * valueEnum tests Reflection.getStatements for an enum with a field. Uses randoop.test.Coin,
+   * which has a private int field, a private constructor, and one public accessor method. Expect
+   * that should return the constants and accessor. Note that compiler ensures constructor access is
+   * at least package level.
    */
   @Test
   public void valueEnum() {
@@ -280,10 +276,9 @@ public class EnumReflectionTest {
   }
 
   /**
-   * abstractMethodEnum tests Reflection.getStatements for an enum with an abstract method
-   * and overridden Object methods.
-   * Uses randoop.test.Operator that has four constants, one abstract method eval and each
-   * constant implements eval and toString.
+   * abstractMethodEnum tests Reflection.getStatements for an enum with an abstract method and
+   * overridden Object methods. Uses randoop.test.Operator that has four constants, one abstract
+   * method eval and each constant implements eval and toString.
    */
   @Test
   public void abstractMethodEnum() {

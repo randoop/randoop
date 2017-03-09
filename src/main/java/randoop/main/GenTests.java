@@ -37,7 +37,6 @@ import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
 import randoop.reflection.AbstractOperationModel;
-import randoop.reflection.WeightedConstantsOperationModel;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PackageVisibilityPredicate;
@@ -45,6 +44,7 @@ import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
+import randoop.reflection.WeightedConstantsOperationModel;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
@@ -527,9 +527,10 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Write each sequence's info out to "test.csv" in .csv format
-   * Its info is essentially snapshots of its weight formulas and how they change
-   * TODO: maybe order the sequences for comparison purposes
+   * Write each sequence's info out to "test.csv" in .csv format Its info is essentially snapshots
+   * of its weight formulas and how they change TODO: maybe order the sequences for comparison
+   * purposes
+   *
    * @param debugMap
    */
   private void writeTestInfo(Map<Sequence, List<String>> debugMap) {

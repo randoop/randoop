@@ -7,13 +7,11 @@ import randoop.NotExecuted;
 import randoop.sequence.Execution;
 
 /**
- * This check represents the fact that a statement should not throw an
- * exception. It is used in an error-revealing test to indicate that an
- * exception that is considered to be an error (e.g., not "expected" or
- * "invalid") was thrown by the statement during test generation. Only a comment
- * is included when the test is output noting the occurrence of the exception
- * during test generation, though the statement is expected to throw the method
- * when the error-revealing test is run.
+ * This check represents the fact that a statement should not throw an exception. It is used in an
+ * error-revealing test to indicate that an exception that is considered to be an error (e.g., not
+ * "expected" or "invalid") was thrown by the statement during test generation. Only a comment is
+ * included when the test is output noting the occurrence of the exception during test generation,
+ * though the statement is expected to throw the method when the error-revealing test is run.
  */
 public class NoExceptionCheck implements Check {
 
@@ -51,8 +49,8 @@ public class NoExceptionCheck implements Check {
   }
 
   /**
-   * Returns the empty string: there is no code associated with this check (if
-   * an exception occurs, it will be reported by JUnit).
+   * Returns the empty string: there is no code associated with this check (if an exception occurs,
+   * it will be reported by JUnit).
    */
   @Override
   public String toCodeStringPostStatement() {

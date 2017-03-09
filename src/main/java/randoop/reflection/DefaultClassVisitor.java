@@ -4,9 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-/**
- * Default implementation of the {@code ClassVisitor} class.
- */
+/** Default implementation of the {@code ClassVisitor} class. */
 public class DefaultClassVisitor implements ClassVisitor {
   @Override
   public void visit(Constructor<?> c) {

@@ -1,23 +1,5 @@
 package randoop.input.toradocu;
 
-import net.Connection;
-
-import org.junit.Test;
-
-import java.io.File;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import plume.Pair;
-import randoop.condition.Condition;
-import randoop.condition.ConditionCollection;
-import randoop.test.ExpectedExceptionGenerator;
-import randoop.test.TestCheckGenerator;
-import randoop.types.ClassOrInterfaceType;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.AnyOf.anyOf;
@@ -26,9 +8,22 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-/**
- * Test whether Toradocu input is being read properly and can be used in evaluating conditions.
- */
+import java.io.File;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import net.Connection;
+import org.junit.Test;
+import plume.Pair;
+import randoop.condition.Condition;
+import randoop.condition.ConditionCollection;
+import randoop.test.ExpectedExceptionGenerator;
+import randoop.test.TestCheckGenerator;
+import randoop.types.ClassOrInterfaceType;
+
+/** Test whether Toradocu input is being read properly and can be used in evaluating conditions. */
 public class DeserializationTest {
 
   @Test

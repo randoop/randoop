@@ -6,16 +6,15 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import randoop.TestValue;
 import randoop.generation.SeedSequences;
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
 
 /**
- * {@code TestValueExtractor} is a {@link ClassVisitor} that inspects the fields passed to it to
- * see if they are annotated with {@link randoop.TestValue}, are static, and
- * have type that is primitive, String, or an array of primitive or String.
+ * {@code TestValueExtractor} is a {@link ClassVisitor} that inspects the fields passed to it to see
+ * if they are annotated with {@link randoop.TestValue}, are static, and have type that is
+ * primitive, String, or an array of primitive or String.
  */
 public class TestValueExtractor extends DefaultClassVisitor {
 
@@ -27,9 +26,10 @@ public class TestValueExtractor extends DefaultClassVisitor {
 
   /**
    * {@inheritDoc}
-   * If the field is static and is annotated with {@code randoop.TestValue}, adds the value of the
-   * field to the sequence set constructed by this visitor.
-   * Requires that the field type be primitive, String, or an array of primitive or String type.
+   *
+   * <p>If the field is static and is annotated with {@code randoop.TestValue}, adds the value of
+   * the field to the sequence set constructed by this visitor. Requires that the field type be
+   * primitive, String, or an array of primitive or String type.
    */
   @Override
   public void visit(Field f) {
@@ -52,8 +52,8 @@ public class TestValueExtractor extends DefaultClassVisitor {
    * Returns the value stored in the given (static) field with primitive, String or array of
    * primitive or String type.
    *
-   * @param f  the field
-   * @return  the value(s) in the field
+   * @param f the field
+   * @return the value(s) in the field
    */
   private List<Object> getValue(Field f) {
 
@@ -109,7 +109,7 @@ public class TestValueExtractor extends DefaultClassVisitor {
   /**
    * Prints an informational message that an annotated field has been found.
    *
-   * @param f  the field
+   * @param f the field
    */
   private static void printDetectedAnnotatedFieldMsg(Field f) {
     String msg =

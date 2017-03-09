@@ -1,19 +1,17 @@
 package randoop.main;
 
+import static org.junit.Assert.fail;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
 import plume.TimeLimitProcess;
 
-import static org.junit.Assert.fail;
-
 /**
- * Class to hold the return status from running a command assuming that it
- * is run in a process where stderr and stdout are linked.
- * Includes the exit status, and the list of output lines.
+ * Class to hold the return status from running a command assuming that it is run in a process where
+ * stderr and stdout are linked. Includes the exit status, and the list of output lines.
  */
 class ProcessStatus {
 
@@ -29,9 +27,9 @@ class ProcessStatus {
   /**
    * Creates a {@link ProcessStatus} object for the command with captured exit status, and output.
    *
-   * @param command  the command
-   * @param exitStatus  the exit status
-   * @param outputLines  the lines of process output
+   * @param command the command
+   * @param exitStatus the exit status
+   * @param outputLines the lines of process output
    */
   private ProcessStatus(List<String> command, int exitStatus, List<String> outputLines) {
     this.command = command;
@@ -41,10 +39,10 @@ class ProcessStatus {
 
   /**
    * Runs the given command in a new process using the given timeout.
-   * <p>
-   * The process is run with a timeout of 15 minutes.
    *
-   * @param command  the command to be run in the process
+   * <p>The process is run with a timeout of 15 minutes.
+   *
+   * @param command the command to be run in the process
    * @return the exit status and combined standard stream output
    */
   static ProcessStatus runCommand(List<String> command) {

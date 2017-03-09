@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
-
 import org.apache.bcel.Const;
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.Constant;
@@ -31,10 +30,9 @@ import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InstructionList;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.util.ClassPath;
-
 import randoop.operation.NonreceiverTerm;
-import randoop.types.JavaTypes;
 import randoop.reflection.TypeNames;
+import randoop.types.JavaTypes;
 
 // Implementation notes:  All string, float, and double constants are in the
 // the constant table.  Integer constants less that 64K are in the code.
@@ -45,8 +43,8 @@ import randoop.reflection.TypeNames;
 // wanted finer-grained information about where the constants were used.
 
 /**
- * Reads literals from a class file, including from the constant pool and from
- * bytecodes that take immediate arguments.
+ * Reads literals from a class file, including from the constant pool and from bytecodes that take
+ * immediate arguments.
  */
 public class ClassFileConstants {
 
@@ -103,7 +101,7 @@ public class ClassFileConstants {
    * A simple driver program that prints output literals file format.
    *
    * @see randoop.reflection.LiteralFileReader
-   * @param args  the command line arguments
+   * @param args the command line arguments
    * @throws IOException if an error occurs in writing the constants
    */
   public static void main(String[] args) throws IOException {
@@ -116,7 +114,7 @@ public class ClassFileConstants {
    * Returns all the constants found in the given class.
    *
    * @see #getConstants(String,ConstantSet)
-   * @param classname  the name of the type
+   * @param classname the name of the type
    * @return the set of constants of the given type
    */
   public static ConstantSet getConstants(String classname) {
@@ -126,12 +124,11 @@ public class ClassFileConstants {
   }
 
   /**
-   * Adds all the constants found in the given class into the given ConstantSet,
-   * and returns it.
+   * Adds all the constants found in the given class into the given ConstantSet, and returns it.
    *
    * @see #getConstants(String)
-   * @param classname  the name of the type
-   * @param result  the set of constants to which constants are added
+   * @param classname the name of the type
+   * @param result the set of constants to which constants are added
    * @return the set of constants with new constants of given type added
    */
   public static ConstantSet getConstants(String classname, ConstantSet result) {
@@ -556,9 +553,9 @@ public class ClassFileConstants {
   }
 
   /**
-   * Convert a collection of ConstantSets to the format expected by
-   * GenTest.addClassLiterals.
-   * @param constantSets  the sets of constantSets
+   * Convert a collection of ConstantSets to the format expected by GenTest.addClassLiterals.
+   *
+   * @param constantSets the sets of constantSets
    * @return a map of types to constant operations
    */
   public static MultiMap<Class<?>, NonreceiverTerm> toMap(Collection<ConstantSet> constantSets) {

@@ -1,7 +1,6 @@
 package randoop.test;
 
 import java.util.ArrayList;
-
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
@@ -9,9 +8,7 @@ import randoop.condition.Condition;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Variable;
 
-/**
- * Checks the given post-condition
- */
+/** Checks the given post-condition */
 public class PostConditionCheckGenerator implements TestCheckGenerator {
 
   /** the post-condition */
@@ -20,22 +17,22 @@ public class PostConditionCheckGenerator implements TestCheckGenerator {
   /**
    * Create a {@link TestCheckGenerator} to test the given post-condition.
    *
-   * @param postcondition  the post-condition to be tested in generated {@link TestChecks}
+   * @param postcondition the post-condition to be tested in generated {@link TestChecks}
    */
   public PostConditionCheckGenerator(Condition postcondition) {
     this.postcondition = postcondition;
   }
 
   /**
-   * Tests the post-condition against the values in the given {@link ExecutableSequence}, and
-   * if the condition is not satisfied returns a {@link ErrorRevealingChecks}.
-   * <p>
-   * Note that the operation input values passed to the post-condition are the values post-execution.
+   * Tests the post-condition against the values in the given {@link ExecutableSequence}, and if the
+   * condition is not satisfied returns a {@link ErrorRevealingChecks}.
    *
-   * @param s  the sequence for which checks are generated
+   * <p>Note that the operation input values passed to the post-condition are the values
+   * post-execution.
    *
-   * @return the {@link ErrorRevealingChecks} with a {@link PostConditionCheck} if the post-condition
-   *          fails on the sequence, an {@code null} otherwise
+   * @param s the sequence for which checks are generated
+   * @return the {@link ErrorRevealingChecks} with a {@link PostConditionCheck} if the
+   *     post-condition fails on the sequence, an {@code null} otherwise
    */
   @Override
   public TestChecks visit(ExecutableSequence s) {

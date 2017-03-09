@@ -3,8 +3,6 @@ package randoop.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import randoop.BugInRandoopException;
-
 public class WeightedList {
 
   private List<WeightedElement> theList;

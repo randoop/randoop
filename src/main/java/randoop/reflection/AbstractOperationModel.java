@@ -1,8 +1,8 @@
 package randoop.reflection;
 
+import java.util.*;
 import randoop.contract.*;
 import randoop.generation.ComponentManager;
-import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.*;
 import randoop.sequence.Sequence;
@@ -11,23 +11,16 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.util.MultiMap;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
-import java.util.*;
-
-/**
- * Created by Michael on 3/3/2017.
- */
+/** Created by Michael on 3/3/2017. */
 public abstract class AbstractOperationModel {
 
   /**
-   * Adds literals to the component manager, by parsing any literals files
-   * specified by the user.
+   * Adds literals to the component manager, by parsing any literals files specified by the user.
    * Includes literals at different levels indicated by {@link GenInputsAbstract.ClassLiteralsMode}.
    *
-   * @param compMgr  the component manager
-   * @param literalsFile  the list of literals file names
-   * @param literalsLevel  the level of literals to add
+   * @param compMgr the component manager
+   * @param literalsFile the list of literals file names
+   * @param literalsLevel the level of literals to add
    */
   public abstract void addClassLiterals(
       ComponentManager compMgr,
@@ -37,7 +30,7 @@ public abstract class AbstractOperationModel {
   /**
    * Gets observer methods from the set of signatures.
    *
-   * @param observerSignatures  the set of method signatures
+   * @param observerSignatures the set of method signatures
    * @return the map to observer methods from their declaring class type
    * @throws OperationParseException if a method signature cannot be parsed
    */
@@ -60,8 +53,8 @@ public abstract class AbstractOperationModel {
 
   /**
    * Returns the set of input types that occur as parameters in classes under test.
-   * @see TypeExtractor
    *
+   * @see TypeExtractor
    * @return the set of input types that occur in classes under test
    */
   abstract Set<Type> getInputTypes();
@@ -76,8 +69,8 @@ public abstract class AbstractOperationModel {
   public abstract List<TypedOperation> getOperations();
 
   /**
-   * Returns all {@link ObjectContract} objects for this run of Randoop.
-   * Includes Randoop defaults and {@link randoop.CheckRep} annotated methods.
+   * Returns all {@link ObjectContract} objects for this run of Randoop. Includes Randoop defaults
+   * and {@link randoop.CheckRep} annotated methods.
    *
    * @return the list of contracts
    */

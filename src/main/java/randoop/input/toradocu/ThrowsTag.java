@@ -8,7 +8,7 @@ import java.util.Objects;
 /**
  * This is a Toradocu class borrowed to allow deserialization of JSON.
  *
- * This class represents a throws tag in a method. Each @throws tag consists of an exception, a
+ * <p>This class represents a throws tag in a method. Each @throws tag consists of an exception, a
  * comment, and can have an optional condition. A condition is the translation of the comment into a
  * Java boolean condition. When the condition evaluates to {@code true}, an exception is expected.
  */

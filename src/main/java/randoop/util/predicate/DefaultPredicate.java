@@ -1,11 +1,10 @@
 package randoop.util.predicate;
 
 /**
- * Provides the default implementation of the {@code or} and {@code and} methods
- * of the Predicate interface.
+ * Provides the default implementation of the {@code or} and {@code and} methods of the Predicate
+ * interface.
  *
- * @param <T>
- *          the type of object to be tested by the predicate
+ * @param <T> the type of object to be tested by the predicate
  */
 public abstract class DefaultPredicate<T> implements Predicate<T> {
 

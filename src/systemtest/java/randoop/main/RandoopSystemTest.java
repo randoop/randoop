@@ -1,22 +1,5 @@
 package randoop.main;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
-import randoop.util.Log;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.greaterThan;
@@ -24,37 +7,45 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Iterator;
+import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
+
 /**
- * A JUnit test class that runs the Randoop system tests.
- * These are tests that were run from within the original Makefile using shell
- * commands.
- * The test methods in this class assume that the current working directory
- * has subdirectories <tt>resources/systemTest</tt> where resources files are
- * located (standard Gradle organization), and <tt>working-directories/</tt>
- * where working files can be written. The Gradle file sets the working directory
- * for the <tt>systemTest</tt> source set to which this class belongs.
- * <p>
- * Each of the test methods
+ * A JUnit test class that runs the Randoop system tests. These are tests that were run from within
+ * the original Makefile using shell commands. The test methods in this class assume that the
+ * current working directory has subdirectories <tt>resources/systemTest</tt> where resources files
+ * are located (standard Gradle organization), and <tt>working-directories/</tt> where working files
+ * can be written. The Gradle file sets the working directory for the <tt>systemTest</tt> source set
+ * to which this class belongs.
+ *
+ * <p>Each of the test methods
+ *
  * <ul>
- *  <li> creates it's own subdirectory,
- *  <li> runs Randoop and saves generated tests to the subdirectory, and
- *  <li> compiles the generated test files.
+ *   <li>creates it's own subdirectory,
+ *   <li>runs Randoop and saves generated tests to the subdirectory, and
+ *   <li>compiles the generated test files.
  * </ul>
- * Most of the methods then run the tests and check that the expected number of
- * failed tests matches the number of error-revealing tests, or that the number
- * of passed tests matches the number of regression tests.
- * <p>
- * The Makefile also checked diffs of generated tests for some of the tests.
- * These methods do not do this check.
+ *
+ * Most of the methods then run the tests and check that the expected number of failed tests matches
+ * the number of error-revealing tests, or that the number of passed tests matches the number of
+ * regression tests.
+ *
+ * <p>The Makefile also checked diffs of generated tests for some of the tests. These methods do not
+ * do this check.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RandoopSystemTest {
 
   private static SystemTestEnvironment systemTestEnvironment;
 
-  /**
-   * Sets up the environment for test execution.
-   */
+  /** Sets up the environment for test execution. */
   @BeforeClass
   public static void setupClass() {
     String classpath = System.getProperty("java.class.path");
@@ -65,10 +56,11 @@ public class RandoopSystemTest {
 
   /**
    * Enumerated type to quantify expected test generation:
+   *
    * <ul>
-   *   <li>{@code SOME} - at least one test is generated,</li>
-   *   <li>{@code NONE} - no tests are generated, or</li>
-   *   <li>{@code DONT_CARE} - the number of tests does not need to be checked.</li>
+   *   <li>{@code SOME} - at least one test is generated,
+   *   <li>{@code NONE} - no tests are generated, or
+   *   <li>{@code DONT_CARE} - the number of tests does not need to be checked.
    * </ul>
    */
   private enum ExpectedTests {
@@ -180,8 +172,8 @@ public class RandoopSystemTest {
    */
 
   /**
-   * Test formerly known as randoop1
-   * This test previously did a diff on TestClass0.java with goal file.
+   * Test formerly known as randoop1. This test previously did a diff on TestClass0.java with goal
+   * file.
    */
   @Test
   public void runCollectionsTest() {
@@ -230,10 +222,7 @@ public class RandoopSystemTest {
         testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
 
-  /**
-   * Test formerly known as randoop2
-   * Previously did a diff on generated test.
-   */
+  /** Test formerly known as randoop2. Previously did a diff on generated test. */
   @Test
   public void runNaiveCollectionsTest() {
 
@@ -298,8 +287,7 @@ public class RandoopSystemTest {
   }
 
   /**
-   * Test formerly known as randoop3
-   * Previously this test did nothing beyond generating the tests.
+   * Test formerly known as randoop3. Previously this test did nothing beyond generating the tests.
    */
   @Test
   public void runJDKTest() {
@@ -328,15 +316,16 @@ public class RandoopSystemTest {
   }
 
   /**
-   * Test formerly known as randoop-contracts
-   * Takes a long time. Evidence from running
-   * <tt>time make randoop-contracts</tt>
-   * with previous Makefile. Reports:
-   * <tt><pre>
+   * Test formerly known as randoop-contracts. Takes a long time. Evidence from running <tt>time
+   * make randoop-contracts</tt> with previous Makefile. Reports: <tt>
+   *
+   * <pre>
    *  real	0m15.976s
    *  user	0m17.902s
    *  sys	0m9.814s
-   * </pre></tt>
+   * </pre>
+   *
+   * </tt>
    */
   @Test
   public void runContractsTest() {
@@ -364,6 +353,8 @@ public class RandoopSystemTest {
     coverageChecker.ignore("examples.Buggy.BuggyCompareToSubs.hashCode()");
     coverageChecker.ignore("examples.Buggy.BuggyEqualsTransitive.hashCode()");
 
+    coverageChecker.ignore("examples.Buggy.StackOverflowError()");
+
     /* these should be covered, but are in failing assertions and wont show up in JaCoCo results */
     coverageChecker.exclude(
         "examples.Buggy.BuggyCompareToAntiSymmetric.compareTo(java.lang.Object)");
@@ -378,9 +369,7 @@ public class RandoopSystemTest {
         testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
 
-  /**
-   * Test formerly known as randoop-checkrep
-   */
+  /** Test formerly known as randoop-checkrep. */
   @Test
   public void runCheckRepTest() {
 
@@ -401,8 +390,7 @@ public class RandoopSystemTest {
   }
 
   /**
-   * Test formerly known as randoop-literals
-   * Previously did a diff on generated test file and goal.
+   * Test formerly known as randoop-literals. Previously did a diff on generated test file and goal.
    */
   @Test
   public void runLiteralsTest() {
@@ -428,8 +416,8 @@ public class RandoopSystemTest {
   }
 
   /**
-   * Test formerly known as randoop-long-string
-   * Previously performed a diff on generated test and goal file.
+   * Test formerly known as randoop-long-string. Previously performed a diff on generated test and
+   * goal file.
    */
   @Test
   public void runLongStringTest() {
@@ -449,9 +437,7 @@ public class RandoopSystemTest {
         testEnvironment, options, expectedRegressionTests, expectedErrorTests);
   }
 
-  /**
-   * Test formerly known as randoop-visibility
-   */
+  /** Test formerly known as randoop-visibility. */
   @Test
   public void runVisibilityTest() {
     TestEnvironment testEnvironment =
@@ -476,8 +462,8 @@ public class RandoopSystemTest {
   }
 
   /**
-   * Test formerly known as randoop-no-output.
-   * Runs with <tt>--noprogressdisplay</tt> and so should have no output.
+   * Test formerly known as randoop-no-output. Runs with <tt>--noprogressdisplay</tt> and so should
+   * have no output.
    */
   @Test
   public void runNoOutputTest() {
@@ -563,9 +549,7 @@ public class RandoopSystemTest {
         testEnvironment, options, expectedRegressionTests, expectedErrorTests);
   }
 
-  /**
-   * simply runs Randoop on a class in the default package to ensure nothing breaks.
-   */
+  /** Simply runs Randoop on a class in the default package to ensure nothing breaks. */
   @Test
   public void runDefaultPackageTest() {
     TestEnvironment testEnvironment =
@@ -583,9 +567,7 @@ public class RandoopSystemTest {
         testEnvironment, options, expectedRegressionTests, expectedErrorTests);
   }
 
-  /**
-   * Tests that Randoop deals properly with exceptions
-   */
+  /** Tests that Randoop deals properly with exceptions */
   @Test
   public void runExceptionTest() {
     TestEnvironment testEnvironment =
@@ -606,12 +588,11 @@ public class RandoopSystemTest {
   /**
    * Test collection generation.
    *
-   * Uses collectiongen package in testInput.
-   * Expect that generated test will cover all methods of collectiongen.InputClass
-   * as long as method input type is a test class.  This will include the enum Day and
-   * the class AnInputClass, but exclude the enum Season and the class ANonInputClass.
+   * <p>Uses collectiongen package in testInput. Expect that generated test will cover all methods
+   * of collectiongen.InputClass as long as method input type is a test class. This will include the
+   * enum Day and the class AnInputClass, but exclude the enum Season and the class ANonInputClass.
    *
-   * Note: if this test is failing coverage for a generic method (the message says a parameter is
+   * <p>Note: if this test is failing coverage for a generic method (the message says a parameter is
    * Object), make sure that there are no overloads of the generic method with more specific
    * arguments in InputClass. If there are, method resolution rules may lead to a call that Randoop
    * thinks is to the generic method turning into a call to a more specific method, leading to
@@ -643,10 +624,9 @@ public class RandoopSystemTest {
   /**
    * Test for Enum value assertion generation.
    *
-   * Uses examples.Option class in testInput.
-   * Only actually tests whether methods are called.
-   * <p>
-   * Need to scrape generated source file for Enum constant values.
+   * <p>Uses examples.Option class in testInput. Only actually tests whether methods are called.
+   *
+   * <p>Need to scrape generated source file for Enum constant values.
    */
   @Test
   public void runEnumAssertionTest() {
@@ -666,9 +646,7 @@ public class RandoopSystemTest {
         testEnvironment, options, expectedRegressionTests, expectedErrorTests);
   }
 
-  /**
-   * Test what happens when have empty input class names.
-   */
+  /** Test what happens when have empty input class names. */
   @Test
   public void runEmptyInputNamesTest() {
     TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("empty-names");
@@ -686,9 +664,9 @@ public class RandoopSystemTest {
   }
 
   /**
-   * Test for flaky NaN: the value Double.NaN and the computed NaN value are distinct.
-   * This means that the same computation over each can have different outcomes, but both are
-   * printed as Double.NaN so when run may have a different result from test during generation.
+   * Test for flaky NaN: the value Double.NaN and the computed NaN value are distinct. This means
+   * that the same computation over each can have different outcomes, but both are printed as
+   * Double.NaN so when run may have a different result from test during generation.
    */
   @Test
   public void runFlakyNaNTest() {
@@ -705,10 +683,7 @@ public class RandoopSystemTest {
         testEnvironment, options, expectedRegressionTests, expectedErrorTests);
   }
 
-  /**
-   * Test for inserted test fixtures.
-   *
-   */
+  /** Test for inserted test fixtures. */
   @Test
   public void runFixtureTest() {
     TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("fixtures");
@@ -759,8 +734,8 @@ public class RandoopSystemTest {
   }
 
   /**
-   * Runs the FixtureTest except with a driver instead of a JUnit test suite.
-   * TODO: note that this fails with DigDog's JUnitFileWriter fix for methods that are too large
+   * Runs the FixtureTest except with a driver instead of a JUnit test suite. TODO: note that this
+   * fails with DigDog's JUnitFileWriter fix for methods that are too large
    */
   /*
   @Test
@@ -852,9 +827,9 @@ public class RandoopSystemTest {
   }
 
   /**
-   * recreate problem with tests over Google Guava where value from private enum returned by
-   * public method and value used in {@link randoop.test.ObjectCheck} surfaces in test code,
-   * creating uncompilable code.
+   * recreate problem with tests over Google Guava where value from private enum returned by public
+   * method and value used in {@link randoop.test.ObjectCheck} surfaces in test code, creating
+   * uncompilable code.
    */
   @Test
   public void runPrivateEnumTest() {
@@ -942,17 +917,18 @@ public class RandoopSystemTest {
 
   /**
    * Runs a standard system test:
+   *
    * <ol>
-   *   <li>runs Randoop and compiles the generated tests,</li>
-   *   <li>checks that the number of generated tests meets the expectation (none or some),</li>
-   *   <li>runs any generated tests,</li>
-   *   <li>checks that types of tests run as expected.</li>
+   *   <li>runs Randoop and compiles the generated tests,
+   *   <li>checks that the number of generated tests meets the expectation (none or some),
+   *   <li>runs any generated tests,
+   *   <li>checks that types of tests run as expected.
    * </ol>
    *
-   * @param environment  the working environment
-   * @param options  the Randoop command-line arguments
-   * @param expectedRegression  the minimum expected number of regression tests
-   * @param expectedError  the minimum expected number of error tests
+   * @param environment the working environment
+   * @param options the Randoop command-line arguments
+   * @param expectedRegression the minimum expected number of regression tests
+   * @param expectedError the minimum expected number of error tests
    */
   private void generateAndTestWithCoverage(
       TestEnvironment environment,
@@ -978,10 +954,10 @@ public class RandoopSystemTest {
    * Performs a standard test of Randoop including a check of coverage that assumes all declared
    * methods of the classes under test should be covered.
    *
-   * @param environment  the working environment of the test
-   * @param options  the Randoop options
-   * @param expectedRegression  the minimum expected number of regression tests
-   * @param expectedError  the minimum expected error tests
+   * @param environment the working environment of the test
+   * @param options the Randoop options
+   * @param expectedRegression the minimum expected number of regression tests
+   * @param expectedError the minimum expected error tests
    */
   private void generateAndTestWithCoverage(
       TestEnvironment environment,
@@ -993,18 +969,17 @@ public class RandoopSystemTest {
   }
 
   /**
-   * Performs the standard test except does not check coverage.
-   * This method is used (presumably) temporarily by some tests where the coverage is
-   * non-deterministic, and should eventually not be needed.
+   * Performs the standard test except does not check coverage. This method is used (presumably)
+   * temporarily by some tests where the coverage is non-deterministic, and should eventually not be
+   * needed.
    *
    * @see #runJDKTest()
    * @see #runCollectionsTest()
    * @see #runNaiveCollectionsTest()
-   *
-   * @param environment  the working environment for the test
-   * @param options  the Randoop options for the test
-   * @param expectedRegression  the quantifier for generated regression tests
-   * @param expectedError  the quantifier for generated error tests
+   * @param environment the working environment for the test
+   * @param options the Randoop options for the test
+   * @param expectedRegression the quantifier for generated regression tests
+   * @param expectedError the quantifier for generated error tests
    */
   private void generateAndTest(
       TestEnvironment environment,
@@ -1026,12 +1001,12 @@ public class RandoopSystemTest {
    * Checks that the expected number of error-revealing tests have been generated, and if any are
    * expected runs them, captures and returns the result.
    *
-   * @param environment  the working environment for the test
-   * @param options  the Randoop options
-   * @param expectedError  the quantifier for the expected number of error tests
-   * @param runStatus  the status of the Randoop run
-   * @param packageName  the package name for generated tests
-   * @return  the {@link TestRunStatus} for running the error tests, may be null
+   * @param environment the working environment for the test
+   * @param options the Randoop options
+   * @param expectedError the quantifier for the expected number of error tests
+   * @param runStatus the status of the Randoop run
+   * @param packageName the package name for generated tests
+   * @return the {@link TestRunStatus} for running the error tests, may be null
    */
   private TestRunStatus runErrorTests(
       TestEnvironment environment,
@@ -1070,12 +1045,13 @@ public class RandoopSystemTest {
    * Checks that the expected number of regression tests have been generated, and if so runs them,
    * captures and returns the results.
    *
-   * @param environment  the working environment of the test
-   * @param options  the Randoop options
-   * @param expectedRegression  the quantifier for expected regression tests
-   * @param runStatus  the Randoop run status
-   * @param packageName  the package name for generated tests
-   * @return the {@link TestRunStatus} for the execution of the regression tests, null if there are none
+   * @param environment the working environment of the test
+   * @param options the Randoop options
+   * @param expectedRegression the quantifier for expected regression tests
+   * @param runStatus the Randoop run status
+   * @param packageName the package name for generated tests
+   * @return the {@link TestRunStatus} for the execution of the regression tests, null if there are
+   *     none
    */
   private TestRunStatus runRegressionTests(
       TestEnvironment environment,
@@ -1117,13 +1093,12 @@ public class RandoopSystemTest {
 
   /**
    * Runs Randoop using the given test environment and options, printing captured output to standard
-   * output.
-   * Failure of Randoop may be allowed by passing true for {@code allowRandoopFailure}, otherwise,
-   * the test will fail.
+   * output. Failure of Randoop may be allowed by passing true for {@code allowRandoopFailure},
+   * otherwise, the test will fail.
    *
-   * @param environment  the working environment for the test
-   * @param options  the Randoop options
-   * @param allowRandoopFailure  flag whether to allow Randoop failure
+   * @param environment the working environment for the test
+   * @param options the Randoop options
+   * @param allowRandoopFailure flag whether to allow Randoop failure
    * @return the captured {@link RandoopRunStatus} from running Randoop
    */
   private RandoopRunStatus generateAndCompile(
@@ -1147,8 +1122,8 @@ public class RandoopSystemTest {
    * Runs Randoop given the test environment and options, printing captured output to standard
    * output.
    *
-   * @param environment  the working environment for the test
-   * @param options  the Randoop options
+   * @param environment the working environment for the test
+   * @param options the Randoop options
    * @return the captured {@link RandoopRunStatus} from running Randoop
    */
   private RandoopRunStatus generateAndCompile(TestEnvironment environment, RandoopOptions options) {
@@ -1156,9 +1131,10 @@ public class RandoopSystemTest {
   }
 
   /**
-   * Use this to rename "sequenceInfo.csv" from the --output-sequence-info flag DigDog formatted csv output, since the
-   * related tests write to the same directory.  Would not be an issue in normal conditions, as "sequenceInfo.csv" will
-   * always be overwritten.
+   * Use this to rename "sequenceInfo.csv" from the --output-sequence-info flag DigDog formatted csv
+   * output, since the related tests write to the same directory. Would not be an issue in normal
+   * conditions, as "sequenceInfo.csv" will always be overwritten.
+   *
    * @param newFileName the name which "sequenceInfo.csv" will be renamed to
    */
   private void renameOutputTo(String newFileName) {

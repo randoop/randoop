@@ -508,9 +508,7 @@ public class TreeMap {
     setColor(x, BLACK);
   }
 
-  /**
-   * Swap the linkages of two nodes in a tree.
-   */
+  /** Swap the linkages of two nodes in a tree. */
   private void swapPosition(Entry x, Entry y) {
     // Save initial values.
     Entry px = x.parent, lx = x.left, rx = x.right;

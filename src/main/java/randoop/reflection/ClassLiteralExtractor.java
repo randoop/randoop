@@ -3,7 +3,6 @@ package randoop.reflection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-
 import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
@@ -22,8 +21,8 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
   /**
-   * The term frequency mapping is used for the weighted constants option.
-   * This will keep track of how often a constant appears across all constants.
+   * The term frequency mapping is used for the weighted constants option. This will keep track of
+   * how often a constant appears across all constants.
    */
   private Map<Sequence, Integer> tfFrequency;
 

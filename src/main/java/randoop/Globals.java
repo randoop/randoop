@@ -4,9 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
-/**
- * Various general global variables used throughout Randoop.
- */
+/** Various general global variables used throughout Randoop. */
 public class Globals {
 
   public static final String RANDOOP_VERSION = "3.0.10";

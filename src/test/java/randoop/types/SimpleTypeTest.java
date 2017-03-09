@@ -10,17 +10,12 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.Test;
 
-/**
- * Tests for the {@code SimpleType} class.
- */
+/** Tests for the {@code SimpleType} class. */
 public class SimpleTypeTest {
 
-  /**
-   * Check that the methods do the obvious for a primitive type.
-   */
+  /** Check that the methods do the obvious for a primitive type. */
   @Test
   public void testPrimitive() {
     Type intType = new PrimitiveType(int.class);
@@ -33,8 +28,8 @@ public class SimpleTypeTest {
   }
 
   /**
-   * Make sure that isAssignableFrom conforms to primitive widening relationship
-   * defined by JDK 7 JLS section 5.1.2
+   * Make sure that isAssignableFrom conforms to primitive widening relationship defined by JDK 7
+   * JLS section 5.1.2
    */
   @Test
   public void testPrimitiveWidening() {
@@ -137,9 +132,9 @@ public class SimpleTypeTest {
   }
 
   /**
-   * For some reason the names of types is a royal pain, though SimpleType names
-   * should be straightforward. These are tests to make sure that what we are
-   * getting looks like what we expect.
+   * For some reason the names of types is a royal pain, though SimpleType names should be
+   * straightforward. These are tests to make sure that what we are getting looks like what we
+   * expect.
    */
   @Test
   public void testNames() {
@@ -156,9 +151,8 @@ public class SimpleTypeTest {
   }
 
   /**
-   * void is a special case for assignment. Cannot take a value, so don't want
-   * any type to assign to it, and don't want it to assign to any type
-   * (including itself).
+   * void is a special case for assignment. Cannot take a value, so don't want any type to assign to
+   * it, and don't want it to assign to any type (including itself).
    */
   @Test
   public void testVoidDoesNotConvert() {
@@ -197,9 +191,7 @@ public class SimpleTypeTest {
     assertFalse("short is not assignable from void", shortType.isAssignableFrom(voidType));
   }
 
-  /**
-   * Object also a special case. Just want to make sure didn't mess up the obvious.
-   */
+  /** Object also a special case. Just want to make sure didn't mess up the obvious. */
   @Test
   public void testConversionsToObject() {
     Type objectType = new NonParameterizedType(Object.class);
@@ -233,9 +225,7 @@ public class SimpleTypeTest {
         "Object is assignable from all types", objectType.isAssignableFrom(intArrayListType));
   }
 
-  /**
-   * Make sure boxing/unboxing conversions work in assignment
-   */
+  /** Make sure boxing/unboxing conversions work in assignment */
   @Test
   public void testBoxingUnboxingConversions() {
     Type booleanType = new PrimitiveType(boolean.class);

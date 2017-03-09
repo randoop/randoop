@@ -1,14 +1,14 @@
 package randoop.test;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import plume.EntryReader;
 import randoop.Globals;
 import randoop.generation.ForwardGenerator;
@@ -22,8 +22,6 @@ import randoop.reflection.ReflectionManager;
 import randoop.reflection.VisibilityPredicate;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Timer;
-
-import static org.junit.Assert.fail;
 
 // DEPRECATED. Will delete after testing other performance tests
 // in different machines.
@@ -67,8 +65,7 @@ public class ForwardExplorerPerformanceTest {
 
     ReflectionManager manager = new ReflectionManager(new PublicVisibilityPredicate());
     try (EntryReader er =
-            new EntryReader(
-                ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
+        new EntryReader(ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
       for (String entry : er) {
         Class<?> c = Class.forName(entry);
         ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
