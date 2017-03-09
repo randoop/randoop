@@ -397,16 +397,17 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Whether to use DigDog weighted constants in sequence selection. Note that this weighting scheme dominates the
-   * <code>--small-tests</code> weight scheme, but can be used with <code>--weighted-sequences</code>.
+   * Whether to use DigDog weighted constants in sequence selection. Note that this weighting scheme
+   * dominates the <code>--small-tests</code> weight scheme, but can be used with <code>
+   * --weighted-sequences</code>.
    */
-  // TODO: fix wording, does this dominate --literals-level?
+  // TODO: verify, does this dominate --literals-level and --literals-file?
   @Option("Whether to use DigDog weighted constants in sequence selection")
   public static boolean weighted_constants = false;
 
   /**
-   * What probability to select the constants mined through <code>--weighted-constants</code> during sequence
-   * selection.
+   * What probability to select the constants mined through <code>--weighted-constants</code> during
+   * sequence selection.
    */
   @Option("What probability to select the constants mined through DigDog's --weighted-constants")
   public static double p_const = .01;
@@ -446,8 +447,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean small_tests = false;
 
   /**
-   * Whether to use DigDog weighted sequences in sequence selection. Note that this weighting scheme dominates the
-   * <code>--small-tests</code> weight scheme, but can be used with <code>--weighted-constants</code>.
+   * Whether to use DigDog weighted sequences in sequence selection. Note that this weighting scheme
+   * dominates the <code>--small-tests</code> weight scheme, but can be used with <code>
+   * --weighted-constants</code>.
    */
   @Option("Whether to use DigDog weighted sequences in sequence selection")
   public static boolean weighted_sequences = false;
@@ -605,22 +607,23 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static FileWriter log = null;
 
   /**
-   * Whether to output the file: <code>--output-sequence-info-filename</code>, which lists the total # sequences executed
-   * and average sequence size in csv format.
+   * Whether to output the file: <code>--output-sequence-info-filename</code>, which lists the total
+   * # sequences executed and average sequence size in csv format.
    */
   @Option("Whether to output the file that lists the total # sequences and avg sequence size")
   public static boolean output_sequence_info = false;
 
   /**
-   * The filename to output the sequence info results to.  Only valid with <code>--output-sequence-info</code>
+   * The filename to output the sequence info results to. Only valid with <code>
+   * --output-sequence-info</code>
    */
   @Option(
       "The filename to output the sequence info results to.  Only valid with --output-sequence-info")
   public static String output_sequence_info_filename = "sequenceInfo.csv";
 
   /**
-   * Create sequences but never execute them. Used to test performance of
-   * Randoop's sequence generation code.
+   * Create sequences but never execute them. Used to test performance of Randoop's sequence
+   * generation code.
    */
   @Unpublicized
   @Option("Create sequences but never execute them")

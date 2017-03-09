@@ -10,10 +10,10 @@ import randoop.util.*;
 
 /**
  * DigDog generator extends the functionality of forward generator by storing additional information
- * necessary for DigDog's weighted random selection of input sequences. DigDog has sequence and constant weighting
- * schemes, which are used through the command-line flags --weighted-sequences and --weighted-constants. Note that
- * the --small-flags uses Sequence's weighting scheme, but that any use of --weighted-sequences and/or
- * --weighted-constants nullifies --small-flags.
+ * necessary for DigDog's weighted random selection of input sequences. DigDog has sequence and
+ * constant weighting schemes, which are used through the command-line flags --weighted-sequences
+ * and --weighted-constants. Note that the --small-flags uses Sequence's weighting scheme, but that
+ * any use of --weighted-sequences and/or --weighted-constants nullifies --small-flags.
  */
 public class DigDogGenerator extends ForwardGenerator {
 
@@ -98,6 +98,7 @@ public class DigDogGenerator extends ForwardGenerator {
 
   /**
    * Should only be called once we're done with generating tests.
+   *
    * @return a map of sequences generated to a list of their sizes
    */
   public Map<Sequence, List<Integer>> getSequenceSizeMap() {

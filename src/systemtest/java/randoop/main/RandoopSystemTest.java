@@ -11,7 +11,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -223,6 +225,7 @@ public class RandoopSystemTest {
   }
 
   /** Test formerly known as randoop2. Previously did a diff on generated test. */
+  // TODO: figure out why this fails with DigDog additions
   @Test
   public void runNaiveCollectionsTest() {
 
@@ -733,10 +736,8 @@ public class RandoopSystemTest {
         is(equalTo(regressionRunDesc.testsRun)));
   }
 
-  /**
-   * Runs the FixtureTest except with a driver instead of a JUnit test suite. TODO: note that this
-   * fails with DigDog's JUnitFileWriter fix for methods that are too large
-   */
+  /** Runs the FixtureTest except with a driver instead of a JUnit test suite. */
+  // TODO: this fails with DigDog's JUnitFileWriter fix for methods that are too large
   @Test
   public void runFixtureDriverTest() {
     TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("fixture-driver");

@@ -7,8 +7,9 @@ import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
 
 /**
- * WeightedComponentManager extends the functionality of ComponentManager by adding needed functionality for
- * weighted sequences and constants, for the command-line options --weighted-sequences and --weighted-constants.
+ * WeightedComponentManager extends the functionality of ComponentManager by adding needed
+ * functionality for weighted sequences and constants, for the command-line options
+ * --weighted-sequences and --weighted-constants.
  */
 public class WeightedComponentManager extends ComponentManager {
 
@@ -16,13 +17,12 @@ public class WeightedComponentManager extends ComponentManager {
   private Map<Sequence, Integer> sequenceFrequency;
 
   /**
-   * Create a component manager, initially populated with the given sequences(
-   * which are considered seed sequences) and with a sequenceFrequency map
-   * to support the --weighted-constants command-line option.
+   * Create a component manager, initially populated with the given sequences( which are considered
+   * seed sequences) and with a sequenceFrequency map to support the --weighted-constants
+   * command-line option.
    *
-   * @param generalSeeds
-   *          seed sequences. Can be null, in which case the seed sequences set
-   *          is considered empty.
+   * @param generalSeeds seed sequences. Can be null, in which case the seed sequences set is
+   *     considered empty.
    */
   public WeightedComponentManager(Collection<Sequence> generalSeeds) {
     super(generalSeeds);
@@ -46,10 +46,7 @@ public class WeightedComponentManager extends ComponentManager {
     }
   }
 
-  /**
-   *
-   * @return the mapping of sequences to their frequency
-   */
+  /** @return the mapping of sequences to their frequency */
   public Map<Sequence, Integer> getSequenceFrequency() {
     return sequenceFrequency;
   }
