@@ -9,9 +9,11 @@ import randoop.types.*;
 import randoop.util.*;
 
 /**
- * DigDog generator is an extension off of forward generator which store information necessary for
- * weighted random selection. This includes weighted constant selection and weighted sequence
- * selection.
+ * DigDog generator extends the functionality of forward generator by storing additional information
+ * necessary for DigDog's weighted random selection of input sequences. DigDog has sequence and constant weighting
+ * schemes, which are used through the command-line flags --weighted-sequences and --weighted-constants. Note that
+ * the --small-flags uses Sequence's weighting scheme, but that any use of --weighted-sequences and/or
+ * --weighted-constants nullifies --small-flags.
  */
 public class DigDogGenerator extends ForwardGenerator {
 
@@ -21,12 +23,14 @@ public class DigDogGenerator extends ForwardGenerator {
    */
   private final Map<WeightedElement, Double> weightMap = new HashMap<WeightedElement, Double>();
 
-  private final Map<WeightedElement, Integer> sequenceExecutionNumber =
-      new HashMap<WeightedElement, Integer>();
+  /** DigDog's map of sequences to the number of times they've been executed. */
+  private final Map<WeightedElement, Integer> sequenceExecutionNumber = new HashMap<>();
 
+  /** DigDog's map of sequence/constants to their constant weights. */
   private final Map<Sequence, Double> initialConstantWeights = new HashMap<>();
 
-  private final Map<Sequence, List<String>> sequenceDebugMap = new HashMap<>();
+  /** DigDog's map of a sequence to the list of all sizes it has ever been */
+  private final Map<Sequence, List<Integer>> sequenceSizeMap = new HashMap<>();
 
   public DigDogGenerator(
       List<TypedOperation> operations,
@@ -73,6 +77,8 @@ public class DigDogGenerator extends ForwardGenerator {
         stopper,
         listenerManager);
 
+    // --weighted-constants weighting scheme
+    // TODO: comment more
     if (GenInputsAbstract.weighted_constants) {
 
       int num_constants = 0;
@@ -91,13 +97,11 @@ public class DigDogGenerator extends ForwardGenerator {
   }
 
   /**
-   * Should only be called once we're done with generating tests, so internal exposure shouldn't
-   * matter
-   *
-   * @return a sequence map to be used for testing purposes
+   * Should only be called once we're done with generating tests.
+   * @return a map of sequences generated to a list of their sizes
    */
-  public Map<Sequence, List<String>> getSequenceDebugMap() {
-    return sequenceDebugMap;
+  public Map<Sequence, List<Integer>> getSequenceSizeMap() {
+    return sequenceSizeMap;
   }
 
   /**
@@ -140,11 +144,11 @@ public class DigDogGenerator extends ForwardGenerator {
     eSeq.exectime = endTime - startTime;
 
     double initialWeight = eSeq.sequence.getWeight(); // default
-    double orienteeringWeight = -1; // dummy values
-    double constantMiningWeight = -1;
-    double weight = initialWeight; // weight to use
+    double weightedSequencesWeight; // dummy values
+    double weightedConstantsWeight;
+    double weight = initialWeight; // final weight used
 
-    // Orienteering stuff
+    // --weighted-sequences weighting scheme
     if (GenInputsAbstract.weighted_sequences) {
 
       // track # times a sequence has been executed
@@ -154,20 +158,23 @@ public class DigDogGenerator extends ForwardGenerator {
         sequenceExecutionNumber.put(eSeq.sequence, 1);
       }
 
-      // Orienteering's weight formula
-      orienteeringWeight =
+      // --weighted-sequences weight formula
+      weightedSequencesWeight =
           1.0
               / (eSeq.exectime
                   * sequenceExecutionNumber.get(eSeq.sequence)
                   * Math.sqrt(eSeq.sequence.size()));
-      weight *= orienteeringWeight;
+      // layer it on top
+      weight *= weightedSequencesWeight;
     }
 
-    // Incorporate Constant mining weights on top
+    // applying --weighted-constants weighting scheme
     if (GenInputsAbstract.weighted_constants) {
+      // apply only if it exists. since not all sequences can be initial weighted constants, we often ignore them
       if (initialConstantWeights.containsKey(eSeq.sequence)) {
-        constantMiningWeight = initialConstantWeights.get(eSeq.sequence);
-        weight *= constantMiningWeight;
+        weightedConstantsWeight = initialConstantWeights.get(eSeq.sequence);
+        // layer it on top
+        weight *= weightedConstantsWeight;
       }
     }
 
@@ -177,37 +184,18 @@ public class DigDogGenerator extends ForwardGenerator {
     weightMap.put(eSeq.sequence, weight); // add a weight no matter what
 
     if (GenInputsAbstract.output_sequence_info) {
-      // csv string of this sequence's important info
-      String result =
-          ""
-              + initialWeight
-              + ','
-              + GenInputsAbstract.weighted_sequences
-              + ','
-              + sequenceExecutionNumber.get(eSeq.sequence)
-              + ','
-              + eSeq.sequence.size()
-              + ','
-              + eSeq.exectime
-              + ','
-              + orienteeringWeight
-              + ','
-              + GenInputsAbstract.weighted_constants
-              + ','
-              + initialConstantWeights.containsKey(eSeq.sequence)
-              + ','
-              + constantMiningWeight
-              + ','
-              + weight;
+      int sequenceSize = eSeq.sequence.size();
 
-      if (sequenceDebugMap.containsKey(eSeq.sequence)) {
-        List<String> addedToList = sequenceDebugMap.get(eSeq.sequence);
-        addedToList.add(result);
-        sequenceDebugMap.put(eSeq.sequence, addedToList);
+      // add this sequence's size to the list of all sizes this sequence has taken on
+      if (sequenceSizeMap.containsKey(eSeq.sequence)) {
+        List<Integer> addedToList = sequenceSizeMap.get(eSeq.sequence);
+        addedToList.add(sequenceSize);
+        sequenceSizeMap.put(eSeq.sequence, addedToList);
+        throw new BugInRandoopException("sequence bruuuh");
       } else {
-        List<String> debugList = new ArrayList<String>();
-        debugList.add(result);
-        sequenceDebugMap.put(eSeq.sequence, debugList);
+        List<Integer> addedToList = new ArrayList<>();
+        addedToList.add(sequenceSize);
+        sequenceSizeMap.put(eSeq.sequence, addedToList);
       }
     }
 

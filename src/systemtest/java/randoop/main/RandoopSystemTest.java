@@ -737,7 +737,6 @@ public class RandoopSystemTest {
    * Runs the FixtureTest except with a driver instead of a JUnit test suite. TODO: note that this
    * fails with DigDog's JUnitFileWriter fix for methods that are too large
    */
-  /*
   @Test
   public void runFixtureDriverTest() {
     TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("fixture-driver");
@@ -792,7 +791,6 @@ public class RandoopSystemTest {
         afterEachCount,
         is(equalTo(runStatus.regressionTestCount)));
   }
-  */
 
   @Test
   public void runToradocuInputTest() {
@@ -1162,9 +1160,9 @@ public class RandoopSystemTest {
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
 
     // TODO: maybe just generate and compile
-    //generateAndCompile(testEnvironment, options);
+    generateAndCompile(testEnvironment, options);
 
-    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+    //generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
 
     /*
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
