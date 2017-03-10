@@ -3,9 +3,7 @@ package randoop.compile;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-/**
- * Utilities for compiler classes.
- */
+/** Utilities for compiler classes. */
 class CompileUtil {
   static final String JAVA_EXTENSION = ".java";
 

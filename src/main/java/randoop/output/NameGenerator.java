@@ -1,9 +1,8 @@
 package randoop.output;
 
 /**
- * A NameGenerator generates a sequence of names as strings in the form
- * "prefix"+i for integer i. Pads the counter with zeros to ensure a minimum
- * number of digits determined by field digits.
+ * A NameGenerator generates a sequence of names as strings in the form "prefix"+i for integer i.
+ * Pads the counter with zeros to ensure a minimum number of digits determined by field digits.
  */
 public class NameGenerator {
 
@@ -50,7 +49,7 @@ public class NameGenerator {
   /**
    * Returns the number of digits in the printed representation of the argument.
    *
-   * @param n  the number
+   * @param n the number
    * @return the number of digits in string form of given number
    */
   public static int numDigits(int n) {

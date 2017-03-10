@@ -6,9 +6,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 /**
- * PublicVisibilityPredicate is a {@link VisibilityPredicate} that returns true
- * in the case that the class/method/constructor/field is public.
- *
+ * PublicVisibilityPredicate is a {@link VisibilityPredicate} that returns true in the case that the
+ * class/method/constructor/field is public.
  */
 public class PublicVisibilityPredicate implements VisibilityPredicate {
 

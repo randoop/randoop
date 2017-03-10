@@ -1,29 +1,20 @@
 package randoop.test.mst;
 
 /**
- * A Java implementation of the <tt>mst</tt> Olden benchmark.  The Olden
- * benchmark computes the minimum spanning tree of a graph using
- * Bentley's algorithm.
- * <p><cite>
- * J. Bentley. "A Parallel Algorithm for Constructing Minimum Spanning Trees"
- * J. of Algorithms, 1:51-59, 1980.
- * </cite>
- * <p>
- * As with the original C version, this one uses its own implementation
- * of hashtable.
+ * A Java implementation of the <tt>mst</tt> Olden benchmark. The Olden benchmark computes the
+ * minimum spanning tree of a graph using Bentley's algorithm.
+ *
+ * <p><cite> J. Bentley. "A Parallel Algorithm for Constructing Minimum Spanning Trees" J. of
+ * Algorithms, 1:51-59, 1980. </cite>
+ *
+ * <p>As with the original C version, this one uses its own implementation of hashtable.
  */
 public class MST {
-  /**
-   * The number of vertices in the graph.
-   */
+  /** The number of vertices in the graph. */
   private static int vertices = 0;
-  /**
-   * Set to true to print the final result.
-   */
+  /** Set to true to print the final result. */
   private static boolean printResult = false;
-  /**
-   * Set to true to print information messages and timing values
-   */
+  /** Set to true to print information messages and timing values */
   private static boolean printMsgs = false;
 
   public static void main(String[] args) {
@@ -54,6 +45,7 @@ public class MST {
 
   /**
    * The method to compute the minimum spanning tree.
+   *
    * @param graph the graph data structure
    * @param numvert the number of vertices in the graph
    * @return the minimum spanning tree cost
@@ -141,6 +133,7 @@ public class MST {
 
   /**
    * Parse the command line options.
+   *
    * @param args the command line options
    */
   private static final void parseCmdLine(String[] args) {
@@ -165,9 +158,7 @@ public class MST {
     if (vertices == 0) usage();
   }
 
-  /**
-   * The usage routine which describes the program options.
-   */
+  /** The usage routine which describes the program options. */
   private static final void usage() {
     System.err.println("usage: java MST -v <levels> [-p] [-m] [-h]");
     System.err.println("    -v the number of vertices in the graph");
@@ -178,9 +169,7 @@ public class MST {
   }
 }
 
-/**
- * Not really sure what this is for?
- */
+/** Not really sure what this is for? */
 class BlueReturn {
   private Vertex vert;
   private int dist;

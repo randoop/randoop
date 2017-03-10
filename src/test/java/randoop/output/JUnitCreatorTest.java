@@ -1,10 +1,8 @@
 package randoop.output;
 
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
-
+import org.junit.Test;
 import randoop.ExecutionVisitor;
 import randoop.contract.PrimValue;
 import randoop.sequence.ExecutableSequence;
@@ -15,9 +13,7 @@ import randoop.test.RegressionChecks;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
 
-/**
- * Partial test -- disabled in build.gradle
- */
+/** Partial test -- disabled in build.gradle */
 public class JUnitCreatorTest {
 
   @Test

@@ -16,7 +16,7 @@ plugins {
    * Plugin that applies Google-Java-format to the Java files in the project.
    * https://github.com/sherter/google-java-format-gradle-plugin
    */
-  id 'com.github.sherter.google-java-format' version '0.2'
+  id 'com.github.sherter.google-java-format' version '0.6'
 }
 
 /* Common build configuration for Randoop and agents */
@@ -159,6 +159,11 @@ dependencies {
 /*
  * Configuration for formatting
  */
+// TODO:
+// googleJavaFormat {
+//   toolVersion '1.3'
+// }
+
 tasks.googleJavaFormat {
   group 'Formatting'
   description = "Reformat Java source code with Google-Java-format"
@@ -471,6 +476,8 @@ javadoc.doLast {
     commandLine "$buildDir/utils/plume-lib/bin/preplace", "^<meta name=\"date\" content=\"[-0-9]+\">\$", ""
   }
 }
+
+build.dependsOn javadoc
 
 /*
  * Configuration of updateUserTOC task to update the table-of-contents for the

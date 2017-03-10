@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-
-// import harpoon.ClassFile.HMethod;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.net.URL;
@@ -18,7 +16,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
 import plume.Option;
 import plume.Options;
 import plume.SimpleLog;
@@ -38,10 +35,10 @@ public class Premain {
   public static boolean default_bcel = true;
 
   /**
-   * Entry point of the java agent. Sets up the transformer {@link Instrument} so that when
-   * classes are loaded they are first transformed.
+   * Entry point of the java agent. Sets up the transformer {@link Instrument} so that when classes
+   * are loaded they are first transformed.
    *
-   * @param agentArgs  the arguments to the agent
+   * @param agentArgs the arguments to the agent
    * @param inst the {@code Instrumentation} object
    * @throws IOException if there is an error reading the map file
    */
@@ -87,25 +84,23 @@ public class Premain {
   }
 
   /**
-   * Reads purity file. Each line should contain exactly one method. Care must
-   * be taken to supply the correct format.
+   * Reads purity file. Each line should contain exactly one method. Care must be taken to supply
+   * the correct format.
    *
-   * From the Sun JDK API:
+   * <p>From the Sun JDK API:
    *
-   * "The string is formatted as the method access modifiers, if any, followed
-   * by the method return type, followed by a space, followed by the class
-   * declaring the method, followed by a period, followed by the method name,
-   * followed by a parenthesized, comma-separated list of the method's formal
-   * parameter types. If the method throws checked exceptions, the parameter
-   * list is followed by a space, followed by the word throws followed by a
-   * comma-separated list of the thrown exception types. For example:
+   * <p>"The string is formatted as the method access modifiers, if any, followed by the method
+   * return type, followed by a space, followed by the class declaring the method, followed by a
+   * period, followed by the method name, followed by a parenthesized, comma-separated list of the
+   * method's formal parameter types. If the method throws checked exceptions, the parameter list is
+   * followed by a space, followed by the word throws followed by a comma-separated list of the
+   * thrown exception types. For example:
    *
-   * public boolean java.lang.Object.equals(java.lang.Object)
+   * <p>public boolean java.lang.Object.equals(java.lang.Object)
    *
-   * The access modifiers are placed in canonical order as specified by
-   * "The Java Language Specification". This is public, protected or private
-   * first, and then other modifiers in the following order: abstract, static,
-   * final, synchronized native."
+   * <p>The access modifiers are placed in canonical order as specified by "The Java Language
+   * Specification". This is public, protected or private first, and then other modifiers in the
+   * following order: abstract, static, final, synchronized native."
    */
   private static HashSet<String> readPurityFile(File purityFileName, File pathLoc)
       throws IOException {
@@ -126,23 +121,21 @@ public class Premain {
   }
 
   /**
-   * Classloader for the BCEL code. Using this classloader guarantees that we
-   * get the PAG version of the BCEL code and not a possible incompatible
-   * version from elsewhere on the users classpath. We also load
-   * randoop.instrument.Instrument via this (since that class is the user of all
-   * of the BCEL classes). All references to BCEL must be within that class (so
-   * that all references to BCEL will get resolved by this classloader).
+   * Classloader for the BCEL code. Using this classloader guarantees that we get the PAG version of
+   * the BCEL code and not a possible incompatible version from elsewhere on the users classpath. We
+   * also load randoop.instrument.Instrument via this (since that class is the user of all of the
+   * BCEL classes). All references to BCEL must be within that class (so that all references to BCEL
+   * will get resolved by this classloader).
    *
-   * The PAG version of BCEL is identified by the presence of the PAG marker
-   * class (org.apache.bcel.PAGMarker). Other versions of BCEL will not contain
-   * this class. If other versions of BCEL are present, they must appear before
-   * the PAG versions in the classpath (so that the users application will see
-   * them first). If only the PAG version is in the classpath, then the normal
-   * loader is used for all of the classes.
+   * <p>The PAG version of BCEL is identified by the presence of the PAG marker class
+   * (org.apache.bcel.PAGMarker). Other versions of BCEL will not contain this class. If other
+   * versions of BCEL are present, they must appear before the PAG versions in the classpath (so
+   * that the users application will see them first). If only the PAG version is in the classpath,
+   * then the normal loader is used for all of the classes.
    */
   public static class BCELLoader extends ClassLoader {
 
-    /** Jar file that contains BCEL. If null, use the normal classpath **/
+    /** Jar file that contains BCEL. If null, use the normal classpath */
     JarFile bcel_jar = null;
 
     public static final SimpleLog debug = new SimpleLog(verbose);
@@ -189,8 +182,7 @@ public class Premain {
                 "%nPAG BCEL (%s) appears before target BCEL "
                     + "(%s).%nPlease reorder classpath to put randoop.jar at "
                     + "the end.%n",
-                first_bcel,
-                bcel);
+                first_bcel, bcel);
             System.exit(1);
           } else {
             bcel_jar = new JarFile(extract_jar_path(pag));
@@ -205,9 +197,8 @@ public class Premain {
     }
 
     /**
-     * Returns whether or not the two URL represent the same location for
-     * org.apache.bcel. Two locations match if they refer to the same jar file
-     * or the same directory in the filesystem.
+     * Returns whether or not the two URL represent the same location for org.apache.bcel. Two
+     * locations match if they refer to the same jar file or the same directory in the filesystem.
      */
     private boolean same_location(URL url1, URL url2) {
       if (!url1.getProtocol().equals(url2.getProtocol())) return false;
@@ -234,8 +225,8 @@ public class Premain {
     }
 
     /**
-     * Returns the pathname of a jar file specified in the URL. The protocol
-     * must be 'jar'. Only file jars are supported.
+     * Returns the pathname of a jar file specified in the URL. The protocol must be 'jar'. Only
+     * file jars are supported.
      */
     private String extract_jar_path(URL url) {
       assert url.getProtocol().equals("jar") : url.toString();
@@ -249,9 +240,9 @@ public class Premain {
     }
 
     /**
-     * Get all of the URLs that match the specified name in the classpath. The
-     * name should be in normal classname format (eg,
-     * org.apache.bcel.Constants). An empty list is returned if no names match.
+     * Get all of the URLs that match the specified name in the classpath. The name should be in
+     * normal classname format (eg, org.apache.bcel.Constants). An empty list is returned if no
+     * names match.
      */
     List<URL> get_resource_list(String classname) throws IOException {
 
@@ -265,8 +256,8 @@ public class Premain {
     }
 
     /**
-     * Changs a class name in the normal format (eg, org.apache.bcel.Constants)
-     * to that used to lookup resources (eg. org/apache/bcel/Constants.class)
+     * Changs a class name in the normal format (eg, org.apache.bcel.Constants) to that used to
+     * lookup resources (eg. org/apache/bcel/Constants.class)
      */
     private String classname_to_resource_name(String name) {
       return (name.replace(".", "/") + ".class");

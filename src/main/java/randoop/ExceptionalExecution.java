@@ -1,8 +1,6 @@
 package randoop;
 
-/**
- * Means that the execution of a statement threw an exception.
- */
+/** Means that the execution of a statement threw an exception. */
 public class ExceptionalExecution extends ExecutionOutcome {
 
   private final Throwable exception;
@@ -21,8 +19,8 @@ public class ExceptionalExecution extends ExecutionOutcome {
   }
 
   /**
-   * Warning: this method calls toString() of code under test, which may have
-   * arbitrary behavior. We use this method in randoop.test.SequenceTests.
+   * Warning: this method calls toString() of code under test, which may have arbitrary behavior. We
+   * use this method in randoop.test.SequenceTests.
    */
   @Override
   public String toString() {

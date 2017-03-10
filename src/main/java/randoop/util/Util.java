@@ -2,13 +2,10 @@ package randoop.util;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import randoop.Globals;
 import plume.UtilMDE;
+import randoop.Globals;
 
-/**
- * Helpers for assertions, and stuff...
- */
+/** Helpers for assertions, and stuff... */
 public final class Util {
 
   private Util() {
@@ -26,13 +23,11 @@ public final class Util {
   }
 
   /**
-   * If both parameters are null, returns true. If one parameter is null and the
-   * other isn't, returns false. Otherwise, returns o1.equals(o2).
+   * If both parameters are null, returns true. If one parameter is null and the other isn't,
+   * returns false. Otherwise, returns o1.equals(o2).
    *
-   * @param o1
-   *          first object to test
-   * @param o2
-   *          second object to test
+   * @param o1 first object to test
+   * @param o2 second object to test
    * @return true if arguments are both null or equal, and false otherwise
    */
   public static boolean equalsWithNull(Object o1, Object o2) {
@@ -80,12 +75,11 @@ public final class Util {
   }
 
   /**
-   * Splits it into words (whitespace separates words). Appends words to each
-   * other until it reaches a word that would cause the current line to exceed
-   * the given width, and then starts a new line.
+   * Splits it into words (whitespace separates words). Appends words to each other until it reaches
+   * a word that would cause the current line to exceed the given width, and then starts a new line.
    *
-   * @param s  the String
-   * @param width  the column width
+   * @param s the String
+   * @param width the column width
    * @return the list of column strings
    */
   public static List<String> toNCols(String s, int width) {

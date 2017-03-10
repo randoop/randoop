@@ -6,13 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
 import org.junit.Test;
 
-/**
- * Test (mainly) to make sure iterators over simple lists work.
- *
- */
+/** Test (mainly) to make sure iterators over simple lists work. */
 public class SimpleListTest {
 
   @Test

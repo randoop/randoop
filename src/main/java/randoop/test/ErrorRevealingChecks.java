@@ -7,19 +7,16 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * ErrorRevealingChecks represent failing checks for a particular test sequence.
- * Each check may refer to different variables defined in the sequence, so can
- * only be assumed to be valid at the end of the sequence. Note that there are
- * no expected exceptions in error revealing tests, and so there should be no
- * {@link ExceptionCheck} objects.
+ * ErrorRevealingChecks represent failing checks for a particular test sequence. Each check may
+ * refer to different variables defined in the sequence, so can only be assumed to be valid at the
+ * end of the sequence. Note that there are no expected exceptions in error revealing tests, and so
+ * there should be no {@link ExceptionCheck} objects.
  */
 public class ErrorRevealingChecks implements TestChecks {
 
   private Set<Check> checks;
 
-  /**
-   * Create an empty set of error checks.
-   */
+  /** Create an empty set of error checks. */
   ErrorRevealingChecks() {
     this.checks = new LinkedHashSet<>();
   }
@@ -83,8 +80,7 @@ public class ErrorRevealingChecks implements TestChecks {
   /**
    * {@inheritDoc}
    *
-   * @throws Error
-   *           if {@code check} is an exception check
+   * @throws Error if {@code check} is an exception check
    */
   @Override
   public void add(Check check) {
@@ -127,8 +123,9 @@ public class ErrorRevealingChecks implements TestChecks {
   }
 
   /**
-   * {@inheritDoc} Returns false because error checks are not considered
-   * invalid.
+   * {@inheritDoc}
+   *
+   * <p>Returns false because error checks are not considered invalid.
    *
    * @return false, always
    */

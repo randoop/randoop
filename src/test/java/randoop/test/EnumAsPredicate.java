@@ -5,7 +5,7 @@ import randoop.util.predicate.Predicate;
 /**
  * Class for enums with parameterized types.
  *
- * inspired by Google javascript code in Defects4J Closure 123f
+ * <p>inspired by Google javascript code in Defects4J Closure 123f
  */
 public enum EnumAsPredicate implements Predicate<Integer> {
   ONE {

@@ -1,5 +1,11 @@
 package randoop.main;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import org.jacoco.core.analysis.Analyzer;
 import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IClassCoverage;
@@ -8,21 +14,12 @@ import org.jacoco.core.analysis.IMethodCoverage;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.tools.ExecFileLoader;
 import org.jacoco.report.JavaNames;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import randoop.util.MultiMap;
 
 /**
- * Manages method coverage information for JaCoCo agent exec-file output from
- * running a set of Randoop generated tests.
- * Includes all methods of classes covered by the test suite, and counter information for each
- * method.
+ * Manages method coverage information for JaCoCo agent exec-file output from running a set of
+ * Randoop generated tests. Includes all methods of classes covered by the test suite, and counter
+ * information for each method.
  */
 class MethodCoverageMap {
 
@@ -32,21 +29,18 @@ class MethodCoverageMap {
   /** The map from method name to coverage counter information. */
   private Map<String, ICounter> counterMap;
 
-  /**
-   * Creates an empty coverage map.
-   */
+  /** Creates an empty coverage map. */
   private MethodCoverageMap() {
     this.classMap = new MultiMap<>();
     this.counterMap = new HashMap<>();
   }
 
   /**
-   * Creates a coverage map from the the given JaCoCo exec file using class information
-   * from class files in the given directory.
-   * Only includes methods with non-zero coverage.
+   * Creates a coverage map from the the given JaCoCo exec file using class information from class
+   * files in the given directory. Only includes methods with non-zero coverage.
    *
-   * @param execFile  the output of the JaCoCo javaagent
-   * @param classesDirectory  the root directory for the class files
+   * @param execFile the output of the JaCoCo javaagent
+   * @param classesDirectory the root directory for the class files
    * @return the method coverage map for
    * @throws IOException if unable to load the exec file
    */
@@ -82,7 +76,7 @@ class MethodCoverageMap {
   /**
    * Return the set of names for covered methods of the class.
    *
-   * @param classname  the class name
+   * @param classname the class name
    * @return the set of method names for covered methods
    */
   Set<String> getMethods(String classname) {
@@ -97,10 +91,10 @@ class MethodCoverageMap {
   /**
    * Constructs the string name of a method using JaCoCo classes.
    *
-   * @param names  the {@code JavaNames} object
-   * @param classCoverage  the {@code IClassCoverage} object
-   * @param className  the class name
-   * @param methodCoverage  the {@code MethodCoverage} object
+   * @param names the {@code JavaNames} object
+   * @param classCoverage the {@code IClassCoverage} object
+   * @param className the class name
+   * @param methodCoverage the {@code MethodCoverage} object
    * @return the method name
    */
   private static String getMethodName(
@@ -118,8 +112,8 @@ class MethodCoverageMap {
   /**
    * Constructs the {@code String} name of a class using JaCoCo classes.
    *
-   * @param names  the {@code JavaNames} object
-   * @param classCoverage  the {@code IClassCoverage} object
+   * @param names the {@code JavaNames} object
+   * @param classCoverage the {@code IClassCoverage} object
    * @return the class name
    */
   private static String getClassName(JavaNames names, IClassCoverage classCoverage) {

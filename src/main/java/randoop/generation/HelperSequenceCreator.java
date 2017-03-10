@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
 import randoop.BugInRandoopException;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.ConstructorCall;
@@ -39,14 +38,13 @@ class HelperSequenceCreator {
   }
 
   /**
-   * Returns a sequence that creates an object of type compatible with the given
-   * class. Wraps the object in a list, and returns the list.
+   * Returns a sequence that creates an object of type compatible with the given class. Wraps the
+   * object in a list, and returns the list.
    *
-   * CURRENTLY, will return a sequence (i.e. a non-empty list) only if cls is an
-   * array.
+   * <p>CURRENTLY, will return a sequence (i.e. a non-empty list) only if cls is an array.
    *
-   * @param components  the component manager with existing sequences
-   * @param collectionType  the query type
+   * @param components the component manager with existing sequences
+   * @param collectionType the query type
    * @return the singleton list containing the compatible sequence
    */
   static SimpleList<Sequence> createArraySequence(
@@ -107,8 +105,8 @@ class HelperSequenceCreator {
   /**
    * Generates a sequence that creates a Collection.
    *
-   * @param componentManager  the component manager for selecting values
-   * @param collectionType  the type for collection
+   * @param componentManager the component manager for selecting values
+   * @param collectionType the type for collection
    * @return a collection of the given type
    */
   static Sequence createCollection(
@@ -196,8 +194,8 @@ class HelperSequenceCreator {
   /**
    * Creates the creation sequence for a collection with the given type and element type.
    *
-   * @param implementingType  the collection type
-   * @param elementType  the type of the elements
+   * @param implementingType the collection type
+   * @param elementType the type of the elements
    * @return a {@link Sequence} that creates a collection of {@code implementingType}
    */
   private static Sequence createCollectionCreationSequence(
@@ -228,9 +226,9 @@ class HelperSequenceCreator {
    * Creates a sequence that builds an array of the given element type using sequences from the
    * given list of candidates.
    *
-   * @param elementSequence  the sequence creating element values
-   * @param elementType  the type of elements for the array
-   * @param length  the length of the array
+   * @param elementSequence the sequence creating element values
+   * @param elementType the type of elements for the array
+   * @param length the length of the array
    * @return a sequence that creates an array with the given element type
    */
   private static Sequence createAnArray(Sequence elementSequence, Type elementType, int length) {
@@ -264,13 +262,12 @@ class HelperSequenceCreator {
   }
 
   /**
-   * Creates a {@link Sequence} for creating an array with parameterized type.
-   * Resulting code looks like {@code (ElementType[])new RawElementType[dim0]}.
-   * Note that the {@code SuppressWarnings} annotation is added when the assignment with the cast
-   * is output.
+   * Creates a {@link Sequence} for creating an array with parameterized type. Resulting code looks
+   * like {@code (ElementType[])new RawElementType[dim0]}. Note that the {@code SuppressWarnings}
+   * annotation is added when the assignment with the cast is output.
    *
-   * @param arrayType  the type of the array
-   * @param length  the length of the array to be created
+   * @param arrayType the type of the array
+   * @param length the length of the array to be created
    * @return the sequence to create an array with the given element type and length
    */
   private static Sequence createGenericArrayCreationSequence(ArrayType arrayType, int length) {
@@ -299,11 +296,12 @@ class HelperSequenceCreator {
   }
 
   /**
-   * Gets the default constructor for a {@link ClassOrInterfaceType}.
-   * Returns null if the type has none.
+   * Gets the default constructor for a {@link ClassOrInterfaceType}. Returns null if the type has
+   * none.
    *
-   * @param creationType  the class type
-   * @return the reflection object for the default constructor of the given type; null, if there is none
+   * @param creationType the class type
+   * @return the reflection object for the default constructor of the given type; null, if there is
+   *     none
    */
   private static Constructor<?> getDefaultConstructor(ClassOrInterfaceType creationType) {
     Constructor<?> constructor;
@@ -317,12 +315,12 @@ class HelperSequenceCreator {
 
   /**
    * Constructs an implementing type for an abstract subtype of {@code java.util.Collection} using
-   * the {@link JDKTypes#getImplementingType(ParameterizedType)} method.
-   * Otherwise, returns the given type.
-   * <p>
-   *   Note: this should ensure that the type has some mechanism for constructing an object
+   * the {@link JDKTypes#getImplementingType(ParameterizedType)} method. Otherwise, returns the
+   * given type.
    *
-   * @param elementType  the type
+   * <p>Note: this should ensure that the type has some mechanism for constructing an object
+   *
+   * @param elementType the type
    * @return a non-abstract subtype of the given type, or the original type
    */
   private static InstantiatedType getImplementingType(InstantiatedType elementType) {
@@ -344,9 +342,9 @@ class HelperSequenceCreator {
   /**
    * Selects sequences as element values for creating a collection.
    *
-   * @param candidates  the sequences from which to select
-   * @param length  the number of values to select
-   * @param elementType  the type of elements
+   * @param candidates the sequences from which to select
+   * @param length the number of values to select
+   * @param elementType the type of elements
    * @return a sequence with subsequences that create element values for a collection
    */
   private static Sequence createElementSequence(
@@ -366,7 +364,7 @@ class HelperSequenceCreator {
   /**
    * Create the operation needed to create an empty EnumSet of the given type.
    *
-   * @param creationType  the EnumSet type
+   * @param creationType the EnumSet type
    * @return the empty EnumSet with the given type
    */
   private static TypedOperation getEnumSetCreation(ParameterizedType creationType) {
@@ -387,8 +385,8 @@ class HelperSequenceCreator {
   /**
    * Create a method call operation for the <code>add()</code> method of the given collection type.
    *
-   * @param collectionType  the collection type
-   * @param elementType  the element type of the collection
+   * @param collectionType the collection type
+   * @param elementType the element type of the collection
    * @return return an operation to add elements to the collection type
    */
   private static TypedOperation getAddOperation(
@@ -412,7 +410,7 @@ class HelperSequenceCreator {
    * Create the operation to call {@link java.util.Collections#addAll(Collection, Object[])} that
    * allows initialization of a {@link Collection} object.
    *
-   * @param elementType  the element type of the collection
+   * @param elementType the element type of the collection
    * @return the operation to initialize a collection from an array
    */
   private static TypedOperation getCollectionAddAllOperation(ReferenceType elementType) {

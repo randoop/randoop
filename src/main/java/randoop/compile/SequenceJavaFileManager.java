@@ -1,9 +1,10 @@
 package randoop.compile;
 
+import static randoop.compile.CompileUtil.toURI;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
-
 import javax.tools.FileObject;
 import javax.tools.ForwardingJavaFileManager;
 import javax.tools.JavaFileManager;
@@ -11,10 +12,10 @@ import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import javax.tools.StandardLocation;
 
-import static randoop.compile.CompileUtil.toURI;
-
 /**
- * based on {@code javaxtools.compiler.JavaFileObjectImple}  from <a href="http://www.ibm.com/developerworks/library/j-jcomp/index.html">Create dynamic applications with javax.tools</a>.
+ * based on {@code javaxtools.compiler.JavaFileObjectImple} from <a
+ * href="http://www.ibm.com/developerworks/library/j-jcomp/index.html">Create dynamic applications
+ * with javax.tools</a>.
  */
 public class SequenceJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
 

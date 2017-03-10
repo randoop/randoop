@@ -3,11 +3,12 @@ package randoop.compile;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
-
 import javax.tools.JavaFileObject;
 
 /**
- * based on {@code javaxtools.compiler.ClassLoaderImpl}  from <a href="http://www.ibm.com/developerworks/library/j-jcomp/index.html">Create dynamic applications with javax.tools</a>.
+ * based on {@code javaxtools.compiler.ClassLoaderImpl} from <a
+ * href="http://www.ibm.com/developerworks/library/j-jcomp/index.html">Create dynamic applications
+ * with javax.tools</a>.
  */
 public final class SequenceClassLoader extends ClassLoader {
 

@@ -1,8 +1,6 @@
 package randoop.types;
 
-/**
- * This file includes examples of recursive type bounds (with wildcards)
- */
+/** This file includes examples of recursive type bounds (with wildcards) */
 enum Word {
   WORD,
   MOT;

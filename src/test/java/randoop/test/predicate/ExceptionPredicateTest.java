@@ -1,15 +1,16 @@
 package randoop.test.predicate;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.AfterClass;
-
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import randoop.DummyVisitor;
 import randoop.ExceptionalExecution;
 import randoop.main.GenInputsAbstract;
@@ -28,14 +29,7 @@ import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-/**
- * Tests to check whether exception predicates are acting as expected.
- *
- */
+/** Tests to check whether exception predicates are acting as expected. */
 public class ExceptionPredicateTest {
 
   private static OptionsCache optionsCache;
@@ -57,6 +51,7 @@ public class ExceptionPredicateTest {
     GenInputsAbstract.npe_on_null_input = BehaviorType.EXPECTED;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
+    GenInputsAbstract.sof_exception = BehaviorType.INVALID;
   }
 
   /*
@@ -144,8 +139,8 @@ public class ExceptionPredicateTest {
     assertFalse("AE is not expected", isExpected.test(assertionExec, s));
     assertFalse("no exception satisfies this predicate", alwaysFalse.test(assertionExec, s));
 
-    assertTrue("SOE is error", isError.test(overflowExec, s));
-    assertFalse("SOE is not invalid", isInvalid.test(overflowExec, s));
+    assertFalse("SOE is not error", isError.test(overflowExec, s));
+    assertTrue("SOE is invalid", isInvalid.test(overflowExec, s));
     assertFalse("SOE is not expected", isExpected.test(overflowExec, s));
     assertFalse("no exception satisfies this predicate", alwaysFalse.test(overflowExec, s));
   }

@@ -3,7 +3,6 @@ package randoop.output;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-
 import randoop.util.Log;
 
 public class JavaFileWriter {
@@ -12,24 +11,21 @@ public class JavaFileWriter {
   private final String dirName;
 
   /**
-   * JavaFileWriter creates an instance of class holding information needed to
-   * write a test suite.
+   * JavaFileWriter creates an instance of class holding information needed to write a test suite.
    *
-   * @param junitDirName
-   *          directory where files are to be written
+   * @param junitDirName directory where files are to be written
    */
   public JavaFileWriter(String junitDirName) {
     this.dirName = junitDirName;
   }
 
   /**
-   * writeClass writes a code sequence as a JUnit4 test class to a .java
-   * file. Tests are executed in ascending alphabetical order by test method
-   * name.
+   * writeClass writes a code sequence as a JUnit4 test class to a .java file. Tests are executed in
+   * ascending alphabetical order by test method name.
    *
-   * @param packageName  the package name for the class
-   * @param className  the name of the class
-   * @param testClassText  the source text of the test class
+   * @param packageName the package name for the class
+   * @param className the name of the class
+   * @param testClassText the source text of the test class
    * @return the File object for generated java file
    */
   public File writeClass(String packageName, String className, String testClassText) {

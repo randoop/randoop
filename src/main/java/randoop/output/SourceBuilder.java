@@ -1,19 +1,16 @@
 package randoop.output;
 
 import java.util.List;
-
 import plume.UtilMDE;
 import randoop.Globals;
 
-/**
- * Common behavior for source builder classes.
- */
+/** Common behavior for source builder classes. */
 abstract class SourceBuilder {
 
   /**
    * Creates a line from the given tokens with the current indentation and separated by spaces.
    *
-   * @param toks  the tokens to include on the line
+   * @param toks the tokens to include on the line
    * @return the {@code String} constructed from the tokens
    */
   String createLine(String... toks) {
@@ -22,6 +19,7 @@ abstract class SourceBuilder {
 
   /**
    * Return the source for this declaration as lines of {@code Strings}
+   *
    * @return the list of lines in this declaration
    */
   abstract List<String> toLines();

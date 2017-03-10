@@ -2,15 +2,15 @@ package randoop.contract;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * The contract: Checks that compareTo is consistent with equals
- * <code>(x0.compareTo(x1) == 0) == x0.equals(x1)</code>.
+ * The contract: Checks that compareTo is consistent with equals.
+ *
+ * <pre>(x0.compareTo(x1) == 0) == x0.equals(x1)</pre>
  */
 public class CompareToEquals implements ObjectContract {
   private static final CompareToEquals instance = new CompareToEquals();

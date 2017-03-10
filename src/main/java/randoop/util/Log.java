@@ -1,14 +1,13 @@
 package randoop.util;
 
-import randoop.Globals;
-import randoop.main.GenInputsAbstract;
-import randoop.operation.TypedOperation;
-import randoop.sequence.Sequence;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
+import randoop.Globals;
+import randoop.main.GenInputsAbstract;
+import randoop.operation.TypedOperation;
+import randoop.sequence.Sequence;
 
 public final class Log {
 

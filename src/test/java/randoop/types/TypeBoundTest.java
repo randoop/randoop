@@ -1,6 +1,7 @@
 package randoop.types;
 
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -12,18 +13,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import org.junit.Test;
 import randoop.reflection.ClassVisitor;
 import randoop.reflection.PackageVisibilityPredicate;
 import randoop.reflection.ReflectionManager;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-/**
- * Uses {@link WildcardBoundExamples} to test handling of
- * type bounds involving variables
- */
+/** Uses {@link WildcardBoundExamples} to test handling of type bounds involving variables */
 public class TypeBoundTest {
 
   @Test

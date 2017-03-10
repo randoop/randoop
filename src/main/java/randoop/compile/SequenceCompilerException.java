@@ -3,9 +3,7 @@ package randoop.compile;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaFileObject;
 
-/**
- * Exception for compilation of Java classes given as {@code String}.
- */
+/** Exception for compilation of Java classes given as {@code String}. */
 public class SequenceCompilerException extends Throwable {
 
   private static final long serialVersionUID = -1901576275093767250L;
@@ -17,11 +15,12 @@ public class SequenceCompilerException extends Throwable {
   private final DiagnosticCollector<JavaFileObject> diagnostics;
 
   /**
-   * Creates a {@link SequenceCompilerException} with a message, source text and compiler diagnostics.
+   * Creates a {@link SequenceCompilerException} with a message, source text and compiler
+   * diagnostics.
    *
-   * @param message  the exception message
-   * @param sourceText  the source text for the compiled class
-   * @param diagnostics  the compiler diagnostics
+   * @param message the exception message
+   * @param sourceText the source text for the compiled class
+   * @param diagnostics the compiler diagnostics
    */
   SequenceCompilerException(
       String message, String sourceText, DiagnosticCollector<JavaFileObject> diagnostics) {
@@ -34,10 +33,10 @@ public class SequenceCompilerException extends Throwable {
    * Creates a {@link SequenceCompilerException} with a message, a compiler thrown exception, the
    * source text and compiler diagnostics.
    *
-   * @param message  the exception message
-   * @param cause  the compiler exception
-   * @param sourceText  the source text for the compiled class
-   * @param diagnostics  the compiler diagnostics
+   * @param message the exception message
+   * @param cause the compiler exception
+   * @param sourceText the source text for the compiled class
+   * @param diagnostics the compiler diagnostics
    */
   SequenceCompilerException(
       String message,
@@ -52,7 +51,7 @@ public class SequenceCompilerException extends Throwable {
   /**
    * Get the source text for the class being compiled when this exception was thrown.
    *
-   * @return  the source text for the class that was being compiled
+   * @return the source text for the class that was being compiled
    */
   public String getSourceText() {
     return sourceText;

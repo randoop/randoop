@@ -1,24 +1,21 @@
 package randoop.operation;
 
 import java.util.List;
-
 import randoop.sequence.Variable;
-import randoop.types.Type;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
 
-/**
- * Represents operations that have no declaring class.
- */
+/** Represents operations that have no declaring class. */
 class TypedTermOperation extends TypedOperation {
 
   /**
    * Creates a {@link TypedOperation} for a given operation and input and output types.
    *
    * @param operation the operation
-   * @param inputTypes  the input types
-   * @param outputType  the output type
+   * @param inputTypes the input types
+   * @param outputType the output type
    */
   TypedTermOperation(CallableOperation operation, TypeTuple inputTypes, Type outputType) {
     super(operation, inputTypes, outputType);
@@ -54,14 +51,13 @@ class TypedTermOperation extends TypedOperation {
   }
 
   /**
-   * Compares this operation to another {@link TypedOperation}.
-   * Ensures that any {@link TypedTermOperation} objects precedes a {@link TypedClassOperation}.
-   * Otherwise, orders {@link TypedTermOperation} objects with
-   * {@link TypedOperation#compareTo(TypedOperation)}.
+   * Compares this operation to another {@link TypedOperation}. Ensures that any {@link
+   * TypedTermOperation} objects precedes a {@link TypedClassOperation}. Otherwise, orders {@link
+   * TypedTermOperation} objects with {@link TypedOperation#compareTo(TypedOperation)}.
    *
-   * @param op  the {@link TypedOperation} to compare with this operation
-   * @return value &lt; 0 if this operation precedes {@code op}, 0 if the
-   *         operations are identical, and &gt; 0 if this operation succeeds op
+   * @param op the {@link TypedOperation} to compare with this operation
+   * @return value &lt; 0 if this operation precedes {@code op}, 0 if the operations are identical,
+   *     and &gt; 0 if this operation succeeds op
    */
   @Override
   public int compareTo(TypedOperation op) {

@@ -1,18 +1,17 @@
 package randoop.compile;
 
+import static randoop.compile.CompileUtil.toURI;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import javax.tools.SimpleJavaFileObject;
 
-import static randoop.compile.CompileUtil.toURI;
-
 /**
- * based on {@code javaxtools.compiler.JavaFileObjectImple}  from <a href="http://www.ibm.com/developerworks/library/j-jcomp/index.html">Create dynamic applications with javax.tools</a>.
+ * based on {@code javaxtools.compiler.JavaFileObjectImple} from <a
+ * href="http://www.ibm.com/developerworks/library/j-jcomp/index.html">Create dynamic applications
+ * with javax.tools</a>.
  */
 class SequenceJavaFileObject extends SimpleJavaFileObject {
 

@@ -6,9 +6,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Captures the status of running a suite of JUnit tests.
- */
+/** Captures the status of running a suite of JUnit tests. */
 class TestRunStatus {
 
   /** The {@link ProcessStatus} for running JUnit. */
@@ -30,11 +28,11 @@ class TestRunStatus {
    * Creates a {@link TestRunStatus} object for the given {@link ProcessStatus}, coverage map, and
    * test counts.
    *
-   * @param processStatus  the {@link ProcessStatus} of running JUnit on a test suite
-   * @param coverageMap  the {@link MethodCoverageMap} from the JUnit execution
-   * @param testsRun  the number of tests run
-   * @param testsFail  the number of tests that failed
-   * @param testsSucceed  the number of tests that succeeded
+   * @param processStatus the {@link ProcessStatus} of running JUnit on a test suite
+   * @param coverageMap the {@link MethodCoverageMap} from the JUnit execution
+   * @param testsRun the number of tests run
+   * @param testsFail the number of tests that failed
+   * @param testsSucceed the number of tests that succeeded
    */
   private TestRunStatus(
       ProcessStatus processStatus,
@@ -52,9 +50,9 @@ class TestRunStatus {
   /**
    * Runs the tests with the given basename, and captures and returns a description of the results.
    *
-   * @param testEnvironment  the environment for this test run
-   * @param packageName  the package name of the JUnit tests
-   * @param basename  the base name of the JUnit files
+   * @param testEnvironment the environment for this test run
+   * @param packageName the package name of the JUnit tests
+   * @param basename the base name of the JUnit files
    * @return the {@link TestRunStatus} for the execution of the JUnit tests
    */
   static TestRunStatus runTests(
@@ -92,10 +90,10 @@ class TestRunStatus {
   }
 
   /**
-   * Translates the output of a run of a JUnit test suite to a {@link TestRunStatus},
-   * extracting and adding information about the number of passing and failing tests.
+   * Translates the output of a run of a JUnit test suite to a {@link TestRunStatus}, extracting and
+   * adding information about the number of passing and failing tests.
    *
-   * @param ps  the {@link ProcessStatus} of the run of the JUnit test suite
+   * @param ps the {@link ProcessStatus} of the run of the JUnit test suite
    * @return the run description for the given process results
    */
   private static TestRunStatus getTestRunStatus(ProcessStatus ps, MethodCoverageMap coverageMap) {

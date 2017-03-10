@@ -3,9 +3,7 @@ package randoop.test;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * Implements a set of checks capturing invalid behavior in a sequence.
- */
+/** Implements a set of checks capturing invalid behavior in a sequence. */
 public class InvalidChecks implements TestChecks {
 
   private Check check;

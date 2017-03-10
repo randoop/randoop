@@ -2,12 +2,11 @@ package randoop.test;
 
 import java.util.Arrays;
 import java.util.Objects;
-
 import randoop.contract.EnumValue;
-import randoop.contract.ObjectContract;
-import randoop.contract.ObjectContractUtils;
 import randoop.contract.IsNotNull;
 import randoop.contract.IsNull;
+import randoop.contract.ObjectContract;
+import randoop.contract.ObjectContractUtils;
 import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
 import randoop.sequence.ExecutableSequence;
@@ -16,24 +15,25 @@ import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 
 /**
- * A check that checks for expected properties of one or more objects generated
- * during the execution of a {@link Sequence}, for example:
- * <ul>
- * <li>Checking that the objects created during execution of a sequence respect
- * reflexivity, transitivity and symmetry of equality.
- * <li>Checking that calling <code>toString()</code> on the objects created
- * during execution of a sequence does not throw an exception.
- * </ul>
- * <p>
- * An <code>ObjectCheck</code> has two parts:
- * <ul>
- * <li>A {@link randoop.contract.ObjectContract} responsible for performing the actual check on a
- * set of runtime values. For example. the class {@link randoop.contract.EqualsReflexive} is a
- * checker code class that, given an object <i>o</i>, calls <i>o.equals(o)</i>
- * and checks that it returns <code>true</code>.
+ * A check that checks for expected properties of one or more objects generated during the execution
+ * of a {@link Sequence}, for example:
  *
- * <li>A list of {@link Variable}s, which describe the specific objects in the
- * sequence that the check is over.
+ * <ul>
+ *   <li>Checking that the objects created during execution of a sequence respect reflexivity,
+ *       transitivity and symmetry of equality.
+ *   <li>Checking that calling <code>toString()</code> on the objects created during execution of a
+ *       sequence does not throw an exception.
+ * </ul>
+ *
+ * <p>An <code>ObjectCheck</code> has two parts:
+ *
+ * <ul>
+ *   <li>A {@link randoop.contract.ObjectContract} responsible for performing the actual check on a
+ *       set of runtime values. For example. the class {@link randoop.contract.EqualsReflexive} is a
+ *       checker code class that, given an object <i>o</i>, calls <i>o.equals(o)</i> and checks that
+ *       it returns <code>true</code>.
+ *   <li>A list of {@link Variable}s, which describe the specific objects in the sequence that the
+ *       check is over.
  * </ul>
  */
 public class ObjectCheck implements Check {
@@ -88,9 +88,8 @@ public class ObjectCheck implements Check {
   }
 
   /**
-   * For checks involving a primitive-like value (primitive, String, or null),
-   * returns a string representation of the value. Otherwise, returns the name
-   * of the contract class.
+   * For checks involving a primitive-like value (primitive, String, or null), returns a string
+   * representation of the value. Otherwise, returns the name of the contract class.
    */
   @Override
   public String getValue() {

@@ -1,5 +1,9 @@
 package randoop.output;
 
+import static com.github.javaparser.ast.Modifier.PUBLIC;
+import static com.github.javaparser.ast.Modifier.STATIC;
+import static randoop.output.NameGenerator.numDigits;
+
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.ast.CompilationUnit;
@@ -29,7 +33,6 @@ import com.github.javaparser.ast.stmt.TryStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.VoidType;
-
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Iterator;
@@ -38,17 +41,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
 import randoop.sequence.ExecutableSequence;
 
-import static com.github.javaparser.ast.Modifier.PUBLIC;
-import static com.github.javaparser.ast.Modifier.STATIC;
-import static randoop.output.NameGenerator.numDigits;
-
-/**
- * Creates Java source as {@code String} for a suite of JUnit4 tests.
- *
- */
+/** Creates Java source as {@code String} for a suite of JUnit4 tests. */
 public class JUnitCreator {
 
   private final String packageName;
@@ -56,10 +51,9 @@ public class JUnitCreator {
   private final Set<String> testClassNames;
 
   /**
-   * classMethodCounts maps test class names to the number of methods in each
-   * class. This is used to generate lists of method names for a class, since
-   * current convention is that a test method is named "test"+i for some integer
-   * i.
+   * classMethodCounts maps test class names to the number of methods in each class. This is used to
+   * generate lists of method names for a class, since current convention is that a test method is
+   * named "test"+i for some integer i.
    */
   private Map<String, Integer> classMethodCounts;
 
@@ -131,7 +125,8 @@ public class JUnitCreator {
 
   /**
    * Add text for BeforeClass-annotated method in each generated test class.
-   * @param text  the (Java) text for method
+   *
+   * @param text the (Java) text for method
    */
   private void addBeforeAll(List<String> text) {
     this.beforeAllText = text;
@@ -139,7 +134,8 @@ public class JUnitCreator {
 
   /**
    * Add text for AfterClass-annotated method in each generated text class.
-   * @param text  the (Java) text for method
+   *
+   * @param text the (Java) text for method
    */
   private void addAfterAll(List<String> text) {
     this.afterAllText = text;
@@ -147,7 +143,8 @@ public class JUnitCreator {
 
   /**
    * Add text for Before-annotated method in each generated test class.
-   * @param text  the (Java) text for method
+   *
+   * @param text the (Java) text for method
    */
   private void addBeforeEach(List<String> text) {
     this.beforeEachText = text;
@@ -155,7 +152,8 @@ public class JUnitCreator {
 
   /**
    * Add text for After-annotated method in each generated test class.
-   * @param text  the (Java) text for method
+   *
+   * @param text the (Java) text for method
    */
   private void addAfterEach(List<String> text) {
     this.afterEachText = text;
@@ -239,9 +237,9 @@ public class JUnitCreator {
   /**
    * Creates a test method as a {@code String} for the sequence {@code testSequence}.
    *
-   * @param className  the name of the test class
-   * @param methodName  the name of the test method
-   * @param testSequence  the {@link ExecutableSequence} test sequence
+   * @param className the name of the test class
+   * @param methodName the name of the test method
+   * @param testSequence the {@link ExecutableSequence} test sequence
    * @return the {@code String} for the test method
    */
   private MethodDeclaration createTestMethod(
@@ -279,10 +277,10 @@ public class JUnitCreator {
   /**
    * Creates the declaration of a single test fixture.
    *
-   * @param annotation  the fixture annotation
-   * @param modifiers  the method modifiers for fixture declaration
-   * @param methodName  the name of the fixture method
-   * @param bodyText  the text of the fixture method, must be non-null and non-empty
+   * @param annotation the fixture annotation
+   * @param modifiers the method modifiers for fixture declaration
+   * @param methodName the name of the fixture method
+   * @param bodyText the text of the fixture method, must be non-null and non-empty
    * @return the fixture method as a {@code String}
    */
   private MethodDeclaration createFixture(
@@ -308,7 +306,7 @@ public class JUnitCreator {
   /**
    * Creates the JUnit4 suite class for the tests in this object as a {@code String}.
    *
-   * @param suiteClassName  the name of the suite class created
+   * @param suiteClassName the name of the suite class created
    * @return the {@code String} with the declaration for the suite class
    */
   public String createSuiteClass(String suiteClassName) {
@@ -338,7 +336,7 @@ public class JUnitCreator {
   /**
    * Create non-reflective test driver as a main class.
    *
-   * @param driverName  the name for the driver class
+   * @param driverName the name for the driver class
    * @return the test driver class as a {@code String}
    */
   public String createTestDriver(String driverName) {

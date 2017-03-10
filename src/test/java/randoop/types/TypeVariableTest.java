@@ -1,21 +1,17 @@
 package randoop.types;
 
-import org.junit.Test;
-
-import java.lang.reflect.*;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import edu.emory.mathcs.backport.java.util.Collections;
+import java.lang.reflect.*;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.TreeSet;
+import org.junit.Test;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.types.test.VariablesInput;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class TypeVariableTest {
   @Test

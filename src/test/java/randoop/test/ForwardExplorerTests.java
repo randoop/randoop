@@ -1,14 +1,16 @@
 package randoop.test;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static randoop.main.GenInputsAbstract.include_if_classname_appears;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import randoop.BugInRandoopException;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
@@ -40,10 +42,6 @@ import randoop.types.TypeTuple;
 import randoop.util.MultiMap;
 import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.Predicate;
-
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static randoop.main.GenInputsAbstract.include_if_classname_appears;
 
 public class ForwardExplorerTests {
 

@@ -1,7 +1,6 @@
 package randoop.main;
 
 import com.github.javaparser.ast.CompilationUnit;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,11 +12,9 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
-
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaFileObject;
-
 import plume.EntryReader;
 import plume.Options;
 import plume.Options.ArgException;

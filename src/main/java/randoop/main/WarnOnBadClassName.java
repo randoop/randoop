@@ -1,8 +1,8 @@
 package randoop.main;
 
 /**
- * WarnOnBadClassName is used to handle a bad class name error by printing a
- * warning to standard out, and is used to suppress an exception.
+ * WarnOnBadClassName is used to handle a bad class name error by printing a warning to standard
+ * out, and is used to suppress an exception.
  */
 public class WarnOnBadClassName implements ClassNameErrorHandler {
 

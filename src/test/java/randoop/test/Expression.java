@@ -1,11 +1,9 @@
 package randoop.test;
 
 /**
- * Expression class using {@link OperatorEnum} enum
- * intended to be used with tests in Randoop.
+ * Expression class using {@link OperatorEnum} enum intended to be used with tests in Randoop.
  *
  * @see OperatorEnum
- *
  */
 public class Expression {
   private OperatorEnum operator;
