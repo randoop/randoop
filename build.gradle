@@ -477,6 +477,9 @@ javadoc.doLast {
   }
 }
 
+/*
+ * Make sure that build runs the same tasks as the script in .travis.yml
+ */
 build.dependsOn javadoc
 
 /*
