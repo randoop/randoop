@@ -206,7 +206,7 @@ public class ExecutableSequence {
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     for (String line : toCodeLines()) {
-      b.append(line);
+      b.append(line).append(Globals.lineSep);
     }
     return b.toString();
   }

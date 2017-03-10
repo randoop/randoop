@@ -1,5 +1,6 @@
 package randoop.test;
 
+import randoop.Globals;
 import randoop.sequence.Execution;
 
 /**
@@ -16,7 +17,11 @@ class InvalidExceptionCheck extends ExceptionCheck {
   protected void appendCatchBehavior(StringBuilder b) {
     String prefix = "statement threw an invalid exception ";
     String suffix = " during test generation";
-    b.append("// ").append(prefix).append(exception.getClass().getName()).append(suffix);
+    b.append("// ")
+        .append(prefix)
+        .append(exception.getClass().getName())
+        .append(suffix)
+        .append(Globals.lineSep);
   }
 
   @Override

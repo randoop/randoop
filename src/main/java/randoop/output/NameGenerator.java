@@ -32,7 +32,7 @@ public class NameGenerator {
    *
    * @param prefix is a string to be used as a prefix for all names generated
    */
-  NameGenerator(String prefix) {
+  public NameGenerator(String prefix) {
     this(prefix, 0, 0);
   }
 

@@ -52,7 +52,6 @@ import randoop.sequence.ExecutableSequence;
 public class JUnitCreator {
 
   private final String packageName;
-  private final String testMethodPrefix;
   private final Set<String> testClassNames;
 
   /**
@@ -100,12 +99,11 @@ public class JUnitCreator {
 
   public static JUnitCreator getTestCreator(
       String junit_package_name,
-      String testMethodPrefix,
       List<String> beforeAllText,
       List<String> afterAllText,
       List<String> beforeEachText,
       List<String> afterEachText) {
-    JUnitCreator junitCreator = new JUnitCreator(junit_package_name, testMethodPrefix);
+    JUnitCreator junitCreator = new JUnitCreator(junit_package_name);
     if (beforeAllText != null) {
       junitCreator.addBeforeAll(beforeAllText);
     }
@@ -121,9 +119,8 @@ public class JUnitCreator {
     return junitCreator;
   }
 
-  private JUnitCreator(String packageName, String testMethodPrefix) {
+  private JUnitCreator(String packageName) {
     this.packageName = packageName;
-    this.testMethodPrefix = testMethodPrefix;
     this.testClassNames = new TreeSet<>();
     this.classMethodCounts = new LinkedHashMap<>();
   }
@@ -164,7 +161,8 @@ public class JUnitCreator {
     this.afterEachText = text;
   }
 
-  public CompilationUnit createTestClass(String testClassName, List<ExecutableSequence> sequences) {
+  public CompilationUnit createTestClass(
+      String testClassName, String testMethodPrefix, List<ExecutableSequence> sequences) {
     this.testClassNames.add(testClassName);
     this.classMethodCounts.put(testClassName, sequences.size());
 
@@ -176,35 +174,25 @@ public class JUnitCreator {
     List<ImportDeclaration> imports = new ArrayList<>();
     if (afterEachText != null && !afterEachText.isEmpty()) {
       imports.add(new ImportDeclaration(new NameExpr("org.junit.After"), false, false));
-      //compilationUnit.addImport("org.junit.After");
     }
     if (afterAllText != null && !afterAllText.isEmpty()) {
       imports.add(new ImportDeclaration(new NameExpr("org.junit.AfterClass"), false, false));
-      //compilationUnit.addImport("org.junit.AfterClass");
     }
     if (beforeEachText != null && !beforeEachText.isEmpty()) {
       imports.add(new ImportDeclaration(new NameExpr("org.junit.Before"), false, false));
-      //compilationUnit.addImport("org.junit.Before");
     }
     if (beforeAllText != null && !beforeAllText.isEmpty()) {
       imports.add(new ImportDeclaration(new NameExpr("org.junit.BeforeClass"), false, false));
-      //compilationUnit.addImport("org.junit.BeforeClass");
     }
     imports.add(new ImportDeclaration(new NameExpr("org.junit.FixMethodOrder"), false, false));
-    //compilationUnit.addImport("org.junit.FixMethodOrder");
     imports.add(new ImportDeclaration(new NameExpr("org.junit.Test"), false, false));
-    //compilationUnit.addImport("org.junit.Test");
     imports.add(
         new ImportDeclaration(new NameExpr("org.junit.runners.MethodSorters"), false, false));
-    //compilationUnit.addImport("org.junit.runners.MethodSorters");
     compilationUnit.setImports(imports);
 
     // class declaration
-    //ClassOrInterfaceDeclaration classDeclaration = compilationUnit.addClass(testClassName);
     ClassOrInterfaceDeclaration classDeclaration =
         new ClassOrInterfaceDeclaration(Modifier.PUBLIC, false, testClassName);
-    //classDeclaration.addModifier(PUBLIC);
-    //classDeclaration.addSingleMemberAnnotation("FixMethodOrder", "MethodSorters.NAME_ASCENDING");
     List<AnnotationExpr> annotations = new ArrayList<>();
     annotations.add(
         new SingleMemberAnnotationExpr(
@@ -213,8 +201,6 @@ public class JUnitCreator {
 
     List<BodyDeclaration> bodyDeclarations = new ArrayList<>();
     // add debug field
-    //FieldDeclaration debugField = classDeclaration.addField("boolean", "debug", PUBLIC, STATIC);
-
     VariableDeclarator debugVariable = new VariableDeclarator(new VariableDeclaratorId("debug"));
     debugVariable.setInit(new BooleanLiteralExpr(false));
     FieldDeclaration debugField =
@@ -230,7 +216,6 @@ public class JUnitCreator {
               BEFORE_ALL, Modifier.PUBLIC | Modifier.STATIC, BEFORE_ALL_METHOD, beforeAllText);
       if (fixture != null) {
         bodyDeclarations.add(fixture);
-        //classDeclaration.addMember(fixture);
       }
     }
     if (afterAllText != null && !afterAllText.isEmpty()) {
@@ -239,7 +224,6 @@ public class JUnitCreator {
               AFTER_ALL, Modifier.PUBLIC | Modifier.STATIC, AFTER_ALL_METHOD, afterAllText);
       if (fixture != null) {
         bodyDeclarations.add(fixture);
-        //classDeclaration.addMember(fixture);
       }
     }
     if (beforeEachText != null && !beforeEachText.isEmpty()) {
@@ -247,7 +231,6 @@ public class JUnitCreator {
           createFixture(BEFORE_EACH, Modifier.PUBLIC, BEFORE_EACH_METHOD, beforeEachText);
       if (fixture != null) {
         bodyDeclarations.add(fixture);
-        //classDeclaration.addMember(fixture);
       }
     }
     if (afterEachText != null && !afterEachText.isEmpty()) {
@@ -255,7 +238,6 @@ public class JUnitCreator {
           createFixture(AFTER_EACH, Modifier.PUBLIC, AFTER_EACH_METHOD, afterEachText);
       if (fixture != null) {
         bodyDeclarations.add(fixture);
-        //classDeclaration.addMember(fixture);
       }
     }
 
@@ -265,7 +247,6 @@ public class JUnitCreator {
       MethodDeclaration testMethod = createTestMethod(testClassName, methodNameGen.next(), s);
       if (testMethod != null) {
         bodyDeclarations.add(testMethod);
-        //classDeclaration.addMember(testMethod);
       }
     }
     classDeclaration.setMembers(bodyDeclarations);
@@ -290,24 +271,20 @@ public class JUnitCreator {
     List<AnnotationExpr> annotations = new ArrayList<>();
     annotations.add(new MarkerAnnotationExpr(new NameExpr("Test")));
     method.setAnnotations(annotations);
-    //method.addMarkerAnnotation("Test");
+
     List<ReferenceType> throwsList = new ArrayList<>();
     throwsList.add(new ReferenceType(new ClassOrInterfaceType("Throwable")));
     method.setThrows(throwsList);
-    //    method.addThrows(Throwable.class);
 
     BlockStmt body = new BlockStmt();
     List<Statement> statements = new ArrayList<>();
     FieldAccessExpr field = new FieldAccessExpr(new NameExpr("System"), "out");
     MethodCallExpr call = new MethodCallExpr(field, "format");
 
-    //call.addArgument(new StringLiteralExpr("%n%s%n"));
-    //call.addArgument(new StringLiteralExpr(className + "." + methodName));
     List<Expression> arguments = new ArrayList<>();
     arguments.add(new StringLiteralExpr("%n%s%n"));
     arguments.add(new StringLiteralExpr(className + "." + methodName));
     call.setArgs(arguments);
-    //body.addStatement(ifDebug);
     statements.add(new IfStmt(new NameExpr("debug"), new ExpressionStmt(call), null));
 
     //TODO make sequence generate list of JavaParser statements
@@ -315,7 +292,6 @@ public class JUnitCreator {
     try {
       BlockStmt sequenceBlock = JavaParser.parseBlock(sequenceBlockString);
       for (Statement statement : sequenceBlock.getStmts()) {
-        //body.addStatement(statement);
         statements.add(statement);
       }
     } catch (ParseException e) {
@@ -340,7 +316,6 @@ public class JUnitCreator {
   private MethodDeclaration createFixture(
       String annotation, int modifiers, String methodName, List<String> bodyText) {
     MethodDeclaration method = new MethodDeclaration(modifiers, new VoidType(), methodName);
-    //method.addMarkerAnnotation(annotation);
     List<AnnotationExpr> annotations = new ArrayList<>();
     annotations.add(new MarkerAnnotationExpr(new NameExpr(annotation)));
     method.setAnnotations(annotations);
@@ -374,14 +349,10 @@ public class JUnitCreator {
     List<ImportDeclaration> imports = new ArrayList<>();
     imports.add(new ImportDeclaration(new NameExpr("org.junit.runner.RunWith"), false, false));
     imports.add(new ImportDeclaration(new NameExpr("org.junit.runners.Suite"), false, false));
-    //cu.addImport("org.junit.runner.RunWith");
-    //cu.addImport("org.junit.runners.Suite");
-
     cu.setImports(imports);
 
     ClassOrInterfaceDeclaration suiteClass =
         new ClassOrInterfaceDeclaration(Modifier.PUBLIC, false, suiteClassName);
-    //suiteClass.addSingleMemberAnnotation("RunWith", "Suite.class");
     List<AnnotationExpr> annotations = new ArrayList<>();
     annotations.add(
         new SingleMemberAnnotationExpr(new NameExpr("RunWith"), new NameExpr("Suite.class")));
@@ -395,7 +366,6 @@ public class JUnitCreator {
       }
       classList += classString;
     }
-    //    suiteClass.addSingleMemberAnnotation("Suite.SuiteClasses", "{ " + classList + " }");
     annotations.add(
         new SingleMemberAnnotationExpr(
             new NameExpr("Suite.SuiteClasses"), new NameExpr("{ " + classList + " }")));
@@ -417,7 +387,7 @@ public class JUnitCreator {
     if (packageName != null && !packageName.isEmpty()) {
       cu.setPackage(new PackageDeclaration(new NameExpr(packageName)));
     }
-    //ClassOrInterfaceDeclaration driverClass = cu.addClass(driverName);
+
     MethodDeclaration mainMethod =
         new MethodDeclaration(Modifier.PUBLIC | Modifier.STATIC, new VoidType(), "main");
     List<Parameter> parameters = new ArrayList<>();
@@ -492,7 +462,6 @@ public class JUnitCreator {
             new ExpressionStmt(new MethodCallExpr(new NameExpr("e"), "printStackTrace")));
 
         catchBlock.setStmts(catchStatements);
-        //catchClause.setBody(catchBlock);
         catchClause.setCatchBlock(catchBlock);
         List<CatchClause> catches = new ArrayList<>();
         catches.add(catchClause);
@@ -524,7 +493,6 @@ public class JUnitCreator {
     body.setStmts(bodyStatements);
     mainMethod.setBody(body);
     List<BodyDeclaration> bodyDeclarations = new ArrayList<>();
-    //driverClass.addMember(mainMethod);
     bodyDeclarations.add(mainMethod);
 
     ClassOrInterfaceDeclaration driverClass =

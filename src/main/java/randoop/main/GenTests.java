@@ -12,9 +12,6 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
-import javax.tools.Diagnostic;
-import javax.tools.DiagnosticCollector;
-import javax.tools.JavaFileObject;
 import plume.EntryReader;
 import plume.Options;
 import plume.Options.ArgException;
@@ -22,9 +19,6 @@ import plume.SimpleLog;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
 import randoop.MultiVisitor;
-import randoop.compile.SequenceClassLoader;
-import randoop.compile.SequenceCompiler;
-import randoop.compile.SequenceCompilerException;
 import randoop.condition.ConditionCollection;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
@@ -50,6 +44,7 @@ import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
+import randoop.test.CompilableTestPredicate;
 import randoop.test.ContractCheckingVisitor;
 import randoop.test.ContractSet;
 import randoop.test.ErrorTestPredicate;
@@ -152,7 +147,7 @@ public class GenTests extends GenInputsAbstract {
 
     Randomness.reset(randomseed);
 
-    java.security.Policy policy = java.security.Policy.getPolicy();
+    //java.security.Policy policy = java.security.Policy.getPolicy();
 
     // This is distracting to the user as the first thing shown, and is not very informative.
     // Reinstate it with a --verbose option.
@@ -436,7 +431,7 @@ public class GenTests extends GenInputsAbstract {
           System.out.printf("%nError-revealing test output:%n");
           System.out.printf("Error-revealing test count: %d%n", errorSequences.size());
         }
-        outputTests(errorSequences, GenInputsAbstract.error_test_basename);
+        outputTests(GenInputsAbstract.error_test_basename, errorSequences);
       } else {
         if (!GenInputsAbstract.noprogressdisplay) {
           System.out.printf("%nNo error-revealing tests to output%n");
@@ -451,7 +446,7 @@ public class GenTests extends GenInputsAbstract {
           System.out.printf("%nRegression test output:%n");
           System.out.printf("Regression test count: %d%n", regressionSequences.size());
         }
-        outputTests(regressionSequences, GenInputsAbstract.regression_test_basename);
+        outputTests(GenInputsAbstract.regression_test_basename, regressionSequences);
       } else {
         if (!GenInputsAbstract.noprogressdisplay) {
           System.out.printf("No regression tests to output%n");
@@ -569,7 +564,15 @@ public class GenTests extends GenInputsAbstract {
       if (!GenInputsAbstract.no_regression_tests) {
         checkTest = checkTest.or(new RegressionTestPredicate());
       }
-      isOutputTest = baseTest.and(checkTest);
+
+      JUnitCreator junitCreator =
+          JUnitCreator.getTestCreator(
+              junit_package_name,
+              getFileText(GenInputsAbstract.junit_before_all),
+              getFileText(GenInputsAbstract.junit_after_all),
+              getFileText(GenInputsAbstract.junit_before_each),
+              getFileText(GenInputsAbstract.junit_after_each));
+      isOutputTest = baseTest.and(checkTest.and(new CompilableTestPredicate(junitCreator)));
     }
     return isOutputTest;
   }
@@ -580,11 +583,18 @@ public class GenTests extends GenInputsAbstract {
    * @param sequences the sequences to output
    * @param junitPrefix the filename prefix for test output
    */
-  private void outputTests(List<ExecutableSequence> sequences, String junitPrefix) {
+  private void outputTests(String junitPrefix, List<ExecutableSequence> sequences) {
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.printf("Writing JUnit tests...%n");
     }
-    writeJUnitTests(junit_output_dir, sequences, junitPrefix);
+    JUnitCreator junitCreator =
+        JUnitCreator.getTestCreator(
+            junit_package_name,
+            getFileText(GenInputsAbstract.junit_before_all),
+            getFileText(GenInputsAbstract.junit_after_all),
+            getFileText(GenInputsAbstract.junit_before_each),
+            getFileText(GenInputsAbstract.junit_after_each));
+    writeJUnitTests(junitCreator, junit_output_dir, sequences, junitPrefix);
   }
 
   /**
@@ -648,7 +658,10 @@ public class GenTests extends GenInputsAbstract {
    * @return list of files written
    */
   private static List<File> writeJUnitTests(
-      String output_dir, List<ExecutableSequence> seqList, String junitClassname) {
+      JUnitCreator junitCreator,
+      String output_dir,
+      List<ExecutableSequence> seqList,
+      String junitClassname) {
 
     List<File> files = new ArrayList<>();
 
@@ -657,14 +670,7 @@ public class GenTests extends GenInputsAbstract {
           CollectionsExt.formSublists(new ArrayList<>(seqList), testsperfile);
 
       String methodNamePrefix = "test";
-      JUnitCreator junitCreator =
-          JUnitCreator.getTestCreator(
-              junit_package_name,
-              methodNamePrefix,
-              getFileText(GenInputsAbstract.junit_before_all),
-              getFileText(GenInputsAbstract.junit_after_all),
-              getFileText(GenInputsAbstract.junit_before_each),
-              getFileText(GenInputsAbstract.junit_after_each));
+
       JavaFileWriter jfw = new JavaFileWriter(output_dir);
 
       String classNameFormat =
@@ -672,9 +678,10 @@ public class GenTests extends GenInputsAbstract {
       for (int i = 0; i < seqPartition.size(); i++) {
         List<ExecutableSequence> partition = seqPartition.get(i);
         String testClassName = String.format(classNameFormat, i);
-        String classSource = compileFilter(junitCreator, testClassName, partition);
+        CompilationUnit classSource =
+            junitCreator.createTestClass(testClassName, methodNamePrefix, partition);
         if (classSource != null) {
-          files.add(jfw.writeClass(junit_package_name, testClassName, classSource));
+          files.add(jfw.writeClass(junit_package_name, testClassName, classSource.toString()));
         }
       }
 
@@ -701,28 +708,6 @@ public class GenTests extends GenInputsAbstract {
       }
     }
     return files;
-  }
-
-  private static String compileFilter(
-      JUnitCreator junitCreator, String testClassName, List<ExecutableSequence> partition) {
-    CompilationUnit source = junitCreator.createTestClass(testClassName, partition);
-    DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
-    SequenceClassLoader classLoader =
-        new SequenceClassLoader(diagnostics.getClass().getClassLoader());
-    List<String> options = new ArrayList<>();
-    options.add("-Xmaxerrs");
-    options.add("1000");
-    SequenceCompiler compiler = new SequenceCompiler(classLoader, options, diagnostics);
-    try {
-      compiler.compile(junit_package_name, testClassName, source.toString());
-    } catch (SequenceCompilerException e) {
-      for (Diagnostic<? extends JavaFileObject> diagnostic : e.getDiagnostics().getDiagnostics()) {
-        if (diagnostic != null) {
-          if (diagnostic.getKind() == Diagnostic.Kind.ERROR) {}
-        }
-      }
-    }
-    return source.toString();
   }
 
   /**
