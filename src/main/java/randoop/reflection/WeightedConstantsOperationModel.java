@@ -111,7 +111,6 @@ public class WeightedConstantsOperationModel extends AbstractOperationModel {
    * @throws OperationParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
-  // TODO discuss with Randoop developers how to appropriately handle static model creation with extensions
   public static WeightedConstantsOperationModel createModel(
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
@@ -154,6 +153,7 @@ public class WeightedConstantsOperationModel extends AbstractOperationModel {
     // manager.
     for (String filename : literalsFile) {
       MultiMap<ClassOrInterfaceType, Sequence> literalmap;
+      // For the DigDog experiment, there are only two levels: class and global
       if (filename.equals("CLASSES")) {
         literalmap = classLiteralMap;
       } else {
@@ -273,6 +273,8 @@ public class WeightedConstantsOperationModel extends AbstractOperationModel {
     mgr.add(new TypeExtractor(this.inputTypes, visibility));
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
+
+    // We supply the term frequency map to obtain the tf-idf weight for constant that are mined
     if (literalsFileList.contains("CLASSES")) {
       mgr.add(new ClassLiteralExtractor(this.classLiteralMap, this.tfFrequency));
     }

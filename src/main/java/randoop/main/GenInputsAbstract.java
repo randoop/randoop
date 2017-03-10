@@ -373,7 +373,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * How to use literal values that are specified via the <code>--literals-file</code> command-line
-   * option.
+   * option. Note that the package literal level cannot be specified if using weighted-constants or
+   * weighted-sequences.
    *
    * @see ClassLiteralsMode
    */
@@ -401,7 +402,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * dominates the <code>--small-tests</code> weight scheme, but can be used with <code>
    * --weighted-sequences</code>.
    */
-  // TODO: verify, does this dominate --literals-level and --literals-file?
   @Option("Whether to use DigDog weighted constants in sequence selection")
   public static boolean weighted_constants = false;
 
