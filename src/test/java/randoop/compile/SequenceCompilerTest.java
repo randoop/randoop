@@ -1,6 +1,6 @@
 package randoop.compile;
 
-import static com.github.javaparser.ast.Modifier.PUBLIC;
+import static java.lang.reflect.Modifier.PUBLIC;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -8,8 +8,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.body.VariableDeclaratorId;
 import com.github.javaparser.ast.expr.IntegerLiteralExpr;
 import com.github.javaparser.ast.expr.StringLiteralExpr;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
@@ -22,8 +26,8 @@ import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
@@ -69,24 +73,30 @@ public class SequenceCompilerTest {
 
   private String createCompilableClass() {
     CompilationUnit cu = new CompilationUnit();
-    ClassOrInterfaceDeclaration classDeclaration = cu.addClass("Simple");
+    ClassOrInterfaceDeclaration classDeclaration =
+        new ClassOrInterfaceDeclaration(PUBLIC, false, "Simple");
     MethodDeclaration method =
-        new MethodDeclaration(
-            EnumSet.of(PUBLIC), new PrimitiveType(PrimitiveType.Primitive.Int), "zero");
+        new MethodDeclaration(PUBLIC, new PrimitiveType(PrimitiveType.Primitive.Int), "zero");
     ReturnStmt statement = new ReturnStmt(new IntegerLiteralExpr("0"));
     BlockStmt body = new BlockStmt();
-    body.addStatement(statement);
+    List<Statement> statements = new ArrayList<>();
+    statements.add(statement);
+    body.setStmts(statements);
     method.setBody(body);
-    classDeclaration.addMember(method);
+
+    List<BodyDeclaration> bodyDeclarations = new ArrayList<>();
+    bodyDeclarations.add(method);
+    classDeclaration.setMembers(bodyDeclarations);
+    List<TypeDeclaration> types = new ArrayList<>();
+    types.add(classDeclaration);
+    cu.setTypes(types);
     return cu.toString();
   }
 
   @Test
   public void uncompilableTest() {
     SequenceCompiler compiler = getSequenceCompiler();
-
     String classSource = createUncompilableClass();
-
     try {
       compiler.compile("", "SimplyBad", classSource);
       fail("should not compile");
@@ -113,38 +123,52 @@ public class SequenceCompilerTest {
   private String createUncompilableClass() {
 
     CompilationUnit cu = new CompilationUnit();
-    ClassOrInterfaceDeclaration classDeclaration = cu.addClass("SimplyBad");
+    ClassOrInterfaceDeclaration classDeclaration =
+        new ClassOrInterfaceDeclaration(PUBLIC, false, "SimplyBad");
 
     MethodDeclaration method =
         new MethodDeclaration(
-            EnumSet.of(PUBLIC), new PrimitiveType(PrimitiveType.Primitive.Int), "zero");
+            Modifier.PUBLIC, new PrimitiveType(PrimitiveType.Primitive.Int), "zero");
     Statement statement = new ReturnStmt(new IntegerLiteralExpr("0"));
     BlockStmt body = new BlockStmt();
-    body.addStatement(statement);
+    List<BodyDeclaration> bodyDeclarations = new ArrayList<>();
+    List<Statement> statements = new ArrayList<>();
+    statements.add(statement);
+    body.setStmts(statements);
     method.setBody(body);
-    classDeclaration.addMember(method);
+    bodyDeclarations.add(method);
 
     method =
         new MethodDeclaration(
-            EnumSet.of(PUBLIC), new PrimitiveType(PrimitiveType.Primitive.Int), "one");
+            Modifier.PUBLIC, new PrimitiveType(PrimitiveType.Primitive.Int), "one");
+    List<VariableDeclarator> variableList = new ArrayList<>();
+    variableList.add(
+        new VariableDeclarator(new VariableDeclaratorId("i"), new StringLiteralExpr("one")));
     VariableDeclarationExpr expression =
-        new VariableDeclarationExpr(new PrimitiveType(PrimitiveType.Primitive.Int), "i");
-    expression.getVariables().get(0).setInit(new StringLiteralExpr("one"));
+        new VariableDeclarationExpr(new PrimitiveType(PrimitiveType.Primitive.Int), variableList);
     statement = new ExpressionStmt(expression);
     body = new BlockStmt();
-    body.addStatement(statement);
+    statements = new ArrayList<>();
+    statements.add(statement);
+    body.setStmts(statements);
     method.setBody(body);
-    classDeclaration.addMember(method);
+    bodyDeclarations.add(method);
 
     method =
         new MethodDeclaration(
-            EnumSet.of(PUBLIC), new PrimitiveType(PrimitiveType.Primitive.Int), "two");
+            Modifier.PUBLIC, new PrimitiveType(PrimitiveType.Primitive.Int), "two");
     statement = new ReturnStmt(new StringLiteralExpr("one"));
     body = new BlockStmt();
-    body.addStatement(statement);
+    statements = new ArrayList<>();
+    statements.add(statement);
+    body.setStmts(statements);
     method.setBody(body);
-    classDeclaration.addMember(method);
 
+    bodyDeclarations.add(method);
+    classDeclaration.setMembers(bodyDeclarations);
+    List<TypeDeclaration> types = new ArrayList<>();
+    types.add(classDeclaration);
+    cu.setTypes(types);
     return cu.toString();
   }
 
