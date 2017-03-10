@@ -13,6 +13,7 @@ import randoop.compile.SequenceCompilerException;
 import randoop.output.JUnitCreator;
 import randoop.output.NameGenerator;
 import randoop.sequence.ExecutableSequence;
+import randoop.util.Log;
 import randoop.util.predicate.DefaultPredicate;
 
 /** {@code TestPredicate} that checks whether the given {@link ExecutableSequence} is compilable. */
@@ -67,12 +68,29 @@ public class CompilableTestPredicate extends DefaultPredicate<ExecutableSequence
       packageName = pkg.getPackageName();
     }
 
+    return testSource(testClassName, source, packageName);
+  }
+
+  /**
+   * Test the source text directly. This is here to allow the mechanics of the predicate to be
+   * tested directly. Otherwise, we have to create a broken {@link ExecutableSequence}, which may
+   * not always be possible.
+   *
+   * @param testClassName the name of the test class
+   * @param source the source text for the class
+   * @param packageName the package name for the test
+   * @return true if the code compiles (without error), false otherwise
+   */
+  boolean testSource(String testClassName, CompilationUnit source, String packageName) {
     try {
       compiler.compile(packageName, testClassName, source.toString());
     } catch (SequenceCompilerException e) {
       for (Diagnostic<? extends JavaFileObject> diagnostic : e.getDiagnostics().getDiagnostics()) {
         if (diagnostic != null) {
           if (diagnostic.getKind() == Diagnostic.Kind.ERROR) {
+            if (Log.isLoggingOn()) {
+              Log.logLine("Uncompilable sequence generated");
+            }
             return false;
           }
         }

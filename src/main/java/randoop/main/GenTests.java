@@ -565,14 +565,18 @@ public class GenTests extends GenInputsAbstract {
         checkTest = checkTest.or(new RegressionTestPredicate());
       }
 
-      JUnitCreator junitCreator =
-          JUnitCreator.getTestCreator(
-              junit_package_name,
-              getFileText(GenInputsAbstract.junit_before_all),
-              getFileText(GenInputsAbstract.junit_after_all),
-              getFileText(GenInputsAbstract.junit_before_each),
-              getFileText(GenInputsAbstract.junit_after_each));
-      isOutputTest = baseTest.and(checkTest.and(new CompilableTestPredicate(junitCreator)));
+      if (!GenInputsAbstract.allow_uncompilable_tests) {
+        JUnitCreator junitCreator =
+            JUnitCreator.getTestCreator(
+                junit_package_name,
+                getFileText(GenInputsAbstract.junit_before_all),
+                getFileText(GenInputsAbstract.junit_after_all),
+                getFileText(GenInputsAbstract.junit_before_each),
+                getFileText(GenInputsAbstract.junit_after_each));
+        isOutputTest = baseTest.and(checkTest.and(new CompilableTestPredicate(junitCreator)));
+      } else {
+        isOutputTest = baseTest.and(checkTest);
+      }
     }
     return isOutputTest;
   }

@@ -167,6 +167,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Whether to include assertions in regression tests")
   public static boolean no_regression_assertions = false;
 
+  @Unpublicized
+  @Option("Whether to allow uncompilable tests to be generated")
+  public static boolean allow_uncompilable_tests = false;
+
   /**
    * The possible values for exception behavior types. The order INVALID, ERROR, EXPECTED should be
    * maintained.
