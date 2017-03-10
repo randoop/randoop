@@ -11,7 +11,7 @@ public class RegressionChecks implements TestChecks {
   private Set<Check> checks;
   private ExceptionCheck exceptionCheck;
 
-  RegressionChecks() {
+  public RegressionChecks() {
     this.checks = new LinkedHashSet<>();
     this.exceptionCheck = null;
   }

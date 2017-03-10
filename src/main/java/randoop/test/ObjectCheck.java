@@ -36,7 +36,7 @@ import randoop.sequence.Variable;
  * sequence that the check is over.
  * </ul>
  */
-class ObjectCheck implements Check {
+public class ObjectCheck implements Check {
 
   private final ObjectContract contract;
   private final Variable[] vars;
@@ -57,7 +57,7 @@ class ObjectCheck implements Check {
     return Objects.hash(contract, vars);
   }
 
-  ObjectCheck(ObjectContract cc, Variable... vars) {
+  public ObjectCheck(ObjectContract cc, Variable... vars) {
     if (cc == null) {
       throw new IllegalArgumentException("first argument cannot be null.");
     }

@@ -1,5 +1,17 @@
 package randoop.compile;
 
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.expr.IntegerLiteralExpr;
+import com.github.javaparser.ast.expr.StringLiteralExpr;
+import com.github.javaparser.ast.expr.VariableDeclarationExpr;
+import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.ExpressionStmt;
+import com.github.javaparser.ast.stmt.ReturnStmt;
+import com.github.javaparser.ast.stmt.Statement;
+import com.github.javaparser.ast.type.PrimitiveType;
+
 import org.junit.Test;
 
 import java.io.PrintStream;
@@ -7,15 +19,14 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaFileObject;
 
-import randoop.output.ClassSourceBuilder;
-import randoop.output.MethodSourceBuilder;
-
+import static com.github.javaparser.ast.Modifier.PUBLIC;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -30,6 +41,7 @@ public class SequenceCompilerTest {
     SequenceCompiler compiler = getSequenceCompiler();
 
     String simpleClass = createCompilableClass();
+
     Class<?> compiledClass = null;
     try {
       compiledClass = compiler.compile("", "Simple", simpleClass);
@@ -59,13 +71,17 @@ public class SequenceCompilerTest {
   }
 
   private String createCompilableClass() {
-    ClassSourceBuilder classBuilder = new ClassSourceBuilder("Simple", "");
-    MethodSourceBuilder methodBuilder =
-        new MethodSourceBuilder(
-            "public", "int", "zero", new ArrayList<String>(), new ArrayList<String>());
-    methodBuilder.addBodyText("return 0;");
-    classBuilder.addMember(methodBuilder.toString());
-    return classBuilder.toString();
+    CompilationUnit cu = new CompilationUnit();
+    ClassOrInterfaceDeclaration classDeclaration = cu.addClass("Simple");
+    MethodDeclaration method =
+        new MethodDeclaration(
+            EnumSet.of(PUBLIC), new PrimitiveType(PrimitiveType.Primitive.Int), "zero");
+    ReturnStmt statement = new ReturnStmt(new IntegerLiteralExpr("0"));
+    BlockStmt body = new BlockStmt();
+    body.addStatement(statement);
+    method.setBody(body);
+    classDeclaration.addMember(method);
+    return cu.toString();
   }
 
   @Test
@@ -73,6 +89,7 @@ public class SequenceCompilerTest {
     SequenceCompiler compiler = getSequenceCompiler();
 
     String classSource = createUncompilableClass();
+
     try {
       compiler.compile("", "SimplyBad", classSource);
       fail("should not compile");
@@ -87,7 +104,7 @@ public class SequenceCompilerTest {
             assertThat(
                 "line number",
                 diagnostic.getLineNumber(),
-                anyOf(is(equalTo(7L)), is(equalTo(11L))));
+                anyOf(is(equalTo(8L)), is(equalTo(12L))));
           } else {
             fail("compilation failure was not error, got " + diagnostic.getKind());
           }
@@ -97,24 +114,41 @@ public class SequenceCompilerTest {
   }
 
   private String createUncompilableClass() {
-    ClassSourceBuilder classBuilder = new ClassSourceBuilder("SimplyBad", "");
-    MethodSourceBuilder methodBuilder;
-    methodBuilder =
-        new MethodSourceBuilder(
-            "public", "int", "zero", new ArrayList<String>(), new ArrayList<String>());
-    methodBuilder.addBodyText("return 0;");
-    classBuilder.addMember(methodBuilder.toString());
-    methodBuilder =
-        new MethodSourceBuilder(
-            "public", "int", "one", new ArrayList<String>(), new ArrayList<String>());
-    methodBuilder.addBodyText("int i = \"one\";");
-    classBuilder.addMember(methodBuilder.toString());
-    methodBuilder =
-        new MethodSourceBuilder(
-            "public", "int", "two", new ArrayList<String>(), new ArrayList<String>());
-    methodBuilder.addBodyText("return \"two\";");
-    classBuilder.addMember(methodBuilder.toString());
-    return classBuilder.toString();
+
+    CompilationUnit cu = new CompilationUnit();
+    ClassOrInterfaceDeclaration classDeclaration = cu.addClass("SimplyBad");
+
+    MethodDeclaration method =
+        new MethodDeclaration(
+            EnumSet.of(PUBLIC), new PrimitiveType(PrimitiveType.Primitive.Int), "zero");
+    Statement statement = new ReturnStmt(new IntegerLiteralExpr("0"));
+    BlockStmt body = new BlockStmt();
+    body.addStatement(statement);
+    method.setBody(body);
+    classDeclaration.addMember(method);
+
+    method =
+        new MethodDeclaration(
+            EnumSet.of(PUBLIC), new PrimitiveType(PrimitiveType.Primitive.Int), "one");
+    VariableDeclarationExpr expression =
+        new VariableDeclarationExpr(new PrimitiveType(PrimitiveType.Primitive.Int), "i");
+    expression.getVariables().get(0).setInit(new StringLiteralExpr("one"));
+    statement = new ExpressionStmt(expression);
+    body = new BlockStmt();
+    body.addStatement(statement);
+    method.setBody(body);
+    classDeclaration.addMember(method);
+
+    method =
+        new MethodDeclaration(
+            EnumSet.of(PUBLIC), new PrimitiveType(PrimitiveType.Primitive.Int), "two");
+    statement = new ReturnStmt(new StringLiteralExpr("one"));
+    body = new BlockStmt();
+    body.addStatement(statement);
+    method.setBody(body);
+    classDeclaration.addMember(method);
+
+    return cu.toString();
   }
 
   private SequenceCompiler getSequenceCompiler() {
