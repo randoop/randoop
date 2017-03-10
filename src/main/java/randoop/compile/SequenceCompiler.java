@@ -40,7 +40,7 @@ public class SequenceCompiler {
    * @param options  the compiler options
    * @param diagnostics  the diagnostics collector
    */
-  SequenceCompiler(
+  public SequenceCompiler(
       SequenceClassLoader classLoader,
       List<String> options,
       final DiagnosticCollector<JavaFileObject> diagnostics) {

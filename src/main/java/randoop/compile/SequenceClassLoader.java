@@ -9,11 +9,11 @@ import javax.tools.JavaFileObject;
 /**
  * based on {@code javaxtools.compiler.ClassLoaderImpl}  from <a href="http://www.ibm.com/developerworks/library/j-jcomp/index.html">Create dynamic applications with javax.tools</a>.
  */
-final class SequenceClassLoader extends ClassLoader {
+public final class SequenceClassLoader extends ClassLoader {
 
   private final HashMap<String, JavaFileObject> classes;
 
-  SequenceClassLoader(final ClassLoader parent) {
+  public SequenceClassLoader(final ClassLoader parent) {
     super(parent);
     this.classes = new HashMap<>();
   }

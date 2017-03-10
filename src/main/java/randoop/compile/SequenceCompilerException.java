@@ -63,7 +63,7 @@ public class SequenceCompilerException extends Throwable {
    *
    * @return the compiler diagnostics
    */
-  DiagnosticCollector<JavaFileObject> getDiagnostics() {
+  public DiagnosticCollector<JavaFileObject> getDiagnostics() {
     return diagnostics;
   }
 }

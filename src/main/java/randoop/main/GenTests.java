@@ -1,5 +1,7 @@
 package randoop.main;
 
+import com.github.javaparser.ast.CompilationUnit;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,16 +13,21 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+
+import javax.tools.Diagnostic;
+import javax.tools.DiagnosticCollector;
+import javax.tools.JavaFileObject;
+
 import plume.EntryReader;
 import plume.Options;
 import plume.Options.ArgException;
 import plume.SimpleLog;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
-import randoop.compile.SequenceCompiler;
-import randoop.output.JUnitCreator;
-import randoop.output.JavaFileWriter;
 import randoop.MultiVisitor;
+import randoop.compile.SequenceClassLoader;
+import randoop.compile.SequenceCompiler;
+import randoop.compile.SequenceCompilerException;
 import randoop.condition.ConditionCollection;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
@@ -33,6 +40,8 @@ import randoop.instrument.ExercisedClassVisitor;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
+import randoop.output.JUnitCreator;
+import randoop.output.JavaFileWriter;
 import randoop.output.NameGenerator;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
@@ -699,8 +708,24 @@ public class GenTests extends GenInputsAbstract {
 
   private static String compileFilter(
       JUnitCreator junitCreator, String testClassName, List<ExecutableSequence> partition) {
-    String sourceText = junitCreator.createTestClass(testClassName, partition);
-    return sourceText;
+    CompilationUnit source = junitCreator.createTestClass(testClassName, partition);
+    DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
+    SequenceClassLoader classLoader =
+        new SequenceClassLoader(diagnostics.getClass().getClassLoader());
+    List<String> options = new ArrayList<>();
+    options.add("-Xmaxerrs");
+    options.add("1000");
+    SequenceCompiler compiler = new SequenceCompiler(classLoader, options, diagnostics);
+    try {
+      compiler.compile(junit_package_name, testClassName, source.toString());
+    } catch (SequenceCompilerException e) {
+      for (Diagnostic<? extends JavaFileObject> diagnostic : e.getDiagnostics().getDiagnostics()) {
+        if (diagnostic != null) {
+          if (diagnostic.getKind() == Diagnostic.Kind.ERROR) {}
+        }
+      }
+    }
+    return source.toString();
   }
 
   /**
