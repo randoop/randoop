@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
 import org.junit.Test;
 import randoop.main.Minimize;
 
@@ -23,9 +22,9 @@ public class MinimizerTests {
    * Test the minimizer with an input file
    *
    * @param inputFilePath input file to minimize
-   * @param dependencies   dependencies needed to compile and run the input file
-   * @param timeoutLimit  maximum number of seconds allowed for any test case within the
-   *                      input file to run
+   * @param dependencies dependencies needed to compile and run the input file
+   * @param timeoutLimit maximum number of seconds allowed for any test case within the input file
+   *     to run
    * @throws IOException thrown if output or expected output files can't be read
    */
   private void testWithInput(String inputFilePath, String[] dependencies, String timeoutLimit)

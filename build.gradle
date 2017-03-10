@@ -118,7 +118,7 @@ dependencies {
   compile group: 'junit', name: 'junit', version: '4.+'
 
   /* JavaParser used by Minimize */
-  compile group: 'com.github.javaparser', name: 'javaparser-core', version: '3.0.0-alpha.4'
+  compile group: 'com.github.javaparser', name: 'javaparser-core', version: '2.4.0'
 
   /* sourceSet test uses JUnit and some use testInput source set */
   testCompile group: 'junit', name: 'junit', version: '4.+'
@@ -158,7 +158,7 @@ dependencies {
   manual sourceSets.main.output
 
   /* JavaParser used by Minimize for the manual */
-  manual group: 'com.github.javaparser', name: 'javaparser-core', version: '3.0.0-alpha.4'
+  manual group: 'com.github.javaparser', name: 'javaparser-core', version: '2.4.0'
 }
 
 /*

@@ -1,17 +1,17 @@
 package randoop.main.minimizer;
 
 import static org.junit.Assert.*;
-import org.junit.Test;
-import randoop.main.Minimize;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.junit.Test;
+import randoop.main.Minimize;
 
 public class MinimizerComponentsTests {
 
   /**
-   * Tests the getClassName method and checks that the minimizer properly
-   * obtains a class name from a complete class path
+   * Tests the getClassName method and checks that the minimizer properly obtains a class name from
+   * a complete class path
    */
   @Test
   public void getClassNameTest() {
@@ -33,8 +33,8 @@ public class MinimizerComponentsTests {
   }
 
   /**
-   * Tests the getSimpleTypeName method and checks that the minimizer properly
-   * obtains a simple type name from a fully qualified type name
+   * Tests the getSimpleTypeName method and checks that the minimizer properly obtains a simple type
+   * name from a fully qualified type name
    */
   @Test
   public void getSimpleNameTest() {
@@ -63,9 +63,8 @@ public class MinimizerComponentsTests {
   }
 
   /**
-   * Tests the getFullyQualifiedTypeNames method and checks that the minimizer
-   * properly obtains all the proper fully qualified name components from a
-   * given fully qualified name
+   * Tests the getFullyQualifiedTypeNames method and checks that the minimizer properly obtains all
+   * the proper fully qualified name components from a given fully qualified name
    */
   @Test
   public void getFullyQualifiedTypeNames() {
