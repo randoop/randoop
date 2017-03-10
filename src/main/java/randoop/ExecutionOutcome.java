@@ -1,8 +1,8 @@
 package randoop;
 
 /**
- * Represents the outcome of executing one statement in a sequence, including
- * the value returned by the statement, or the exception thrown.
+ * Represents the outcome of executing one statement in a sequence, including the value returned by
+ * the statement, or the exception thrown.
  */
 public abstract class ExecutionOutcome {
 
@@ -20,7 +20,7 @@ public abstract class ExecutionOutcome {
   /**
    * Set the output of the statement
    *
-   * @param output  the statement output
+   * @param output the statement output
    */
   public void set_output(String output) {
     this.output = output;

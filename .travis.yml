@@ -25,6 +25,7 @@ jdk:
 
 # want more info when running tests and building manual
 script:
+  - set -o errexit
   - ./gradlew assemble
   - ./gradlew --info check
   - ./gradlew javadoc

@@ -12,8 +12,8 @@ import java.util.Set;
  * DocumentedMethod represents the Javadoc documentation for a method in a class. It identifies the
  * method itself and key Javadoc information associated with it, such as throws tags, parameters,
  * and return type.
- * <p>
- * * Modified class from Toradocu used to deserialize the JSON output of Toradocu.
+ *
+ * <p>* Modified class from Toradocu used to deserialize the JSON output of Toradocu.
  */
 public final class DocumentedMethod {
 
@@ -64,8 +64,8 @@ public final class DocumentedMethod {
    *     false otherwise
    * @param throwsTags the {@code @throws} tags of the {@code DocumentedMethod}
    * @param returnTag the {@code @return} tag of the {@code DocumentedMethod}
-   * @param signature  the signature of the method
-   * @param targetClass  the class on which Toradocu was run
+   * @param signature the signature of the method
+   * @param targetClass the class on which Toradocu was run
    * @throws NullPointerException if {@code containingClass} or {@code name} is null
    */
   public DocumentedMethod(

@@ -2,7 +2,6 @@ package randoop.generation;
 
 import java.util.LinkedList;
 import java.util.List;
-
 import randoop.sequence.ExecutableSequence;
 
 public class RandoopListenerManager {

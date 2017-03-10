@@ -1,13 +1,19 @@
 package randoop.reflection;
 
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
+import org.junit.Test;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.OperationParseException;
@@ -23,17 +29,7 @@ import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-/**
- * Tests instantiation of type parameters by OperationModel
- */
+/** Tests instantiation of type parameters by OperationModel */
 public class InstantiationTest {
 
   @Test
@@ -98,10 +94,10 @@ public class InstantiationTest {
 
   /**
    * This test fails if {@code D_BST} is removed since model always chooses {@code String} for
-   * parameter to {@code BST} and without {@code D_BST} there is no class that implements
-   * {@code C_BST<String>}.
+   * parameter to {@code BST} and without {@code D_BST} there is no class that implements {@code
+   * C_BST<String>}.
    *
-   * it should be possible for it to pass with {@code B_BST}.
+   * <p>it should be possible for it to pass with {@code B_BST}.
    */
   /*
   @Test
@@ -202,9 +198,7 @@ public class InstantiationTest {
   }
   */
 
-  /**
-   * Based on a case from imglib2.
-   */
+  /** Based on a case from imglib2. */
   @Test
   public void testIntersectionType() {
     Set<String> classnames = new LinkedHashSet<>();
@@ -227,9 +221,7 @@ public class InstantiationTest {
     }
   }
 
-  /**
-   * Based on a case from Apache Commons Collections.
-   */
+  /** Based on a case from Apache Commons Collections. */
   @Test
   public void testCaptureConvInstantiation() {
     Set<String> classnames = new LinkedHashSet<>();

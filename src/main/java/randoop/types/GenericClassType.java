@@ -6,9 +6,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Represents the type of a generic class.
- * Related to concrete {@link InstantiatedType} by instantiating with a
- * {@link Substitution}.
+ * Represents the type of a generic class. Related to concrete {@link InstantiatedType} by
+ * instantiating with a {@link Substitution}.
  */
 public class GenericClassType extends ParameterizedType {
 
@@ -21,7 +20,7 @@ public class GenericClassType extends ParameterizedType {
   /**
    * Creates a {@link GenericClassType} for the given raw type.
    *
-   * @param rawType  the {@code Class} raw type
+   * @param rawType the {@code Class} raw type
    */
   GenericClassType(Class<?> rawType) {
     this.rawType = rawType;
@@ -35,9 +34,10 @@ public class GenericClassType extends ParameterizedType {
 
   /**
    * {@inheritDoc}
-   * Checks that the rawtypes are the same. This is sufficient since the
-   * type parameters and their bounds can be reconstructed from the Class object.
-   * Also, parameters can be distinct depending on how this object is constructed.
+   *
+   * <p>Checks that the rawtypes are the same. This is sufficient since the type parameters and
+   * their bounds can be reconstructed from the Class object. Also, parameters can be distinct
+   * depending on how this object is constructed.
    *
    * @return true if two generic classes have the same rawtype, false otherwise
    */
@@ -61,12 +61,10 @@ public class GenericClassType extends ParameterizedType {
   }
 
   /**
-   * Instantiates this generic class using the substitution to replace the type
-   * parameters.
+   * Instantiates this generic class using the substitution to replace the type parameters.
    *
-   * @param substitution  the type substitution
-   * @return a {@link ParameterizedType} instantiating this generic class by the
-   * given substitution
+   * @param substitution the type substitution
+   * @return a {@link ParameterizedType} instantiating this generic class by the given substitution
    */
   @Override
   public InstantiatedType apply(Substitution<ReferenceType> substitution) {
@@ -89,8 +87,8 @@ public class GenericClassType extends ParameterizedType {
 
   /**
    * {@inheritDoc}
-   * <p>
-   * Note that this method uses the {@code Class.getInterfaces()} and does not preserve the
+   *
+   * <p>Note that this method uses the {@code Class.getInterfaces()} and does not preserve the
    * relationship between the type parameters of a class and it's interfaces, and should not be used
    * when finding supertypes of types represented as {@link InstantiatedType} objects.
    */
@@ -104,17 +102,16 @@ public class GenericClassType extends ParameterizedType {
   }
 
   /**
-   * Return the interface types for this generic class type instantiated by the
-   * given type {@link Substitution}.
-   * <p>
-   * <i>This method is not public.</i> It is used when finding the interfaces of an
-   * {@link InstantiatedType} using {@link InstantiatedType#getInterfaces()},
-   * where it is important that the relationship between type variables is preserved.
-   * The reflection method {@code Class.getGenericInterfaces()} ensures the type variable objects
-   * are the same from a class to its interfaces, which allows the use of the same substitution
-   * for both types.
+   * Return the interface types for this generic class type instantiated by the given type {@link
+   * Substitution}.
    *
-   * @param substitution  the type substitution
+   * <p><i>This method is not public.</i> It is used when finding the interfaces of an {@link
+   * InstantiatedType} using {@link InstantiatedType#getInterfaces()}, where it is important that
+   * the relationship between type variables is preserved. The reflection method {@code
+   * Class.getGenericInterfaces()} ensures the type variable objects are the same from a class to
+   * its interfaces, which allows the use of the same substitution for both types.
+   *
+   * @param substitution the type substitution
    * @return the list of instantiated interface types of this type
    */
   List<ClassOrInterfaceType> getInterfaces(Substitution<ReferenceType> substitution) {
@@ -137,10 +134,10 @@ public class GenericClassType extends ParameterizedType {
 
   /**
    * {@inheritDoc}
-   * <p>
-   * Note that this method uses {@code Class.getSuperclass()} and does not preserve the
-   * relationship between the type parameters of a class and it's superclass, and should not be
-   * used when finding supertypes of types represented as {@link InstantiatedType} objects.
+   *
+   * <p>Note that this method uses {@code Class.getSuperclass()} and does not preserve the
+   * relationship between the type parameters of a class and it's superclass, and should not be used
+   * when finding supertypes of types represented as {@link InstantiatedType} objects.
    */
   @Override
   public ClassOrInterfaceType getSuperclass() {
@@ -153,17 +150,16 @@ public class GenericClassType extends ParameterizedType {
   }
 
   /**
-   * Returns the superclass type for this generic class type instantiated by
-   * the given type {@link Substitution}.
-   * <p>
-   * <i>This method is not public.</i> It is used when finding the superclass of an
-   * {@link InstantiatedType} using {@link InstantiatedType#getSuperclass()},
-   * where it is important that the relationship between type variables is preserved.
-   * The reflection method {@code Class.getGenericSuperclass()} ensures the type variable objects
-   * are the same from subclass to superclass, which allows the use of the same substitution
-   * for both types.
+   * Returns the superclass type for this generic class type instantiated by the given type {@link
+   * Substitution}.
    *
-   * @param substitution  the type substitution
+   * <p><i>This method is not public.</i> It is used when finding the superclass of an {@link
+   * InstantiatedType} using {@link InstantiatedType#getSuperclass()}, where it is important that
+   * the relationship between type variables is preserved. The reflection method {@code
+   * Class.getGenericSuperclass()} ensures the type variable objects are the same from subclass to
+   * superclass, which allows the use of the same substitution for both types.
+   *
+   * @param substitution the type substitution
    * @return the instantiated type
    */
   ClassOrInterfaceType getSuperclass(Substitution<ReferenceType> substitution) {
@@ -197,9 +193,9 @@ public class GenericClassType extends ParameterizedType {
 
   /**
    * Creates a type substitution using the given type arguments and applies it to this type.
-   * @see #apply(Substitution)
    *
-   * @param typeArguments  the type arguments
+   * @see #apply(Substitution)
+   * @param typeArguments the type arguments
    * @return a type which is this type parameterized by the given type arguments
    */
   public InstantiatedType instantiate(ReferenceType... typeArguments) {
@@ -223,9 +219,9 @@ public class GenericClassType extends ParameterizedType {
 
   /**
    * Creates a type substitution using the given type arguments and applies it to this type.
-   * @see #apply(Substitution)
    *
-   * @param typeArguments  the type arguments
+   * @see #apply(Substitution)
+   * @param typeArguments the type arguments
    * @return the type that is this type instantiated by the given type arguments
    */
   public InstantiatedType instantiate(List<ReferenceType> typeArguments) {
@@ -269,14 +265,15 @@ public class GenericClassType extends ParameterizedType {
 
   /**
    * {@inheritDoc}
-   * Handles the specific cases of supertypes of a generic class
-   * <code>C&lt;F<sub>1</sub>,...,F<sub>n</sub>&gt;</code>
-   * for which the direct supertypes are:
+   *
+   * <p>Handles the specific cases of supertypes of a generic class <code>
+   * C&lt;F<sub>1</sub>,...,F<sub>n</sub>&gt;</code> for which the direct supertypes are:
+   *
    * <ol>
-   *   <li>the direct superclass,</li>
-   *   <li>the direct superinterfaces,</li>
-   *   <li>the type <code>Object</code>, and</li>
-   *   <li>the raw type <code>C</code></li>
+   *   <li>the direct superclass,
+   *   <li>the direct superinterfaces,
+   *   <li>the type <code>Object</code>, and
+   *   <li>the raw type <code>C</code>
    * </ol>
    */
   @Override

@@ -1,10 +1,12 @@
 package randoop.test;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-
 import plume.EntryReader;
 import randoop.generation.ForwardGenerator;
 import randoop.main.GenInputsAbstract;
@@ -16,9 +18,6 @@ import randoop.reflection.ReflectionManager;
 import randoop.reflection.VisibilityPredicate;
 import randoop.types.ClassOrInterfaceType;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
-
 public class RandoopPerformanceTest extends AbstractPerformanceTest {
 
   @Override
@@ -27,8 +26,7 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
 
     List<Class<?>> classes = new ArrayList<>();
     try (EntryReader er =
-            new EntryReader(
-                ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
+        new EntryReader(ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename))) {
       for (String entry : er) {
         classes.add(Class.forName(entry));
       }

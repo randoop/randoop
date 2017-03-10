@@ -4,7 +4,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -18,34 +17,33 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
 import randoop.util.Log;
 
 /**
- * ReflectionManager reflectively visits a {@link Class} instance to apply a set
- * of {@link ClassVisitor} objects to the class members. Uses a
- * {@link VisibilityPredicate} and heuristics to determine which classes and
- * class members to visit.
- * <p>
- * For a non-enum class, visits:
+ * ReflectionManager reflectively visits a {@link Class} instance to apply a set of {@link
+ * ClassVisitor} objects to the class members. Uses a {@link VisibilityPredicate} and heuristics to
+ * determine which classes and class members to visit.
+ *
+ * <p>For a non-enum class, visits:
+ *
  * <ul>
- * <li>all methods satisfying predicate.
- * <li>all constructors satisfying predicate.
- * <li>all fields that satisfy predicate and are not hidden. (A hidden field is
- * a member of superclass with field of same name in current class. These are
- * accessible via reflection.).
- * <li>inner enums satisfying predicate.
+ *   <li>all methods satisfying predicate.
+ *   <li>all constructors satisfying predicate.
+ *   <li>all fields that satisfy predicate and are not hidden. (A hidden field is a member of
+ *       superclass with field of same name in current class. These are accessible via reflection.).
+ *   <li>inner enums satisfying predicate.
  * </ul>
- * <p>
- * For an enum, visits:
+ *
+ * <p>For an enum, visits:
+ *
  * <ul>
- * <li>all enum constants.
- * <li>methods of the enum satisfying predicate other than <code>values</code>
- * and <code>valueOf</code>.
- * <li>methods defined for enum constants that satisfy predicate.
+ *   <li>all enum constants.
+ *   <li>methods of the enum satisfying predicate other than <code>values</code> and <code>valueOf
+ *       </code>.
+ *   <li>methods defined for enum constants that satisfy predicate.
  * </ul>
- * <p>
- * Note that visitors may have their own predicates, but need not check visibility.
+ *
+ * <p>Note that visitors may have their own predicates, but need not check visibility.
  */
 public class ReflectionManager {
 
@@ -53,13 +51,10 @@ public class ReflectionManager {
   private ArrayList<ClassVisitor> visitors;
 
   /**
-   * Creates a manager object that uses the given predicate to determine which
-   * classes, methods and constructors should be visited. The list of visitors
-   * is initially empty.
+   * Creates a manager object that uses the given predicate to determine which classes, methods and
+   * constructors should be visited. The list of visitors is initially empty.
    *
-   * @param predicate
-   *          the predicate to indicate whether classes and class members should
-   *          be visited
+   * @param predicate the predicate to indicate whether classes and class members should be visited
    */
   public ReflectionManager(VisibilityPredicate predicate) {
     this.predicate = predicate;
@@ -67,23 +62,21 @@ public class ReflectionManager {
   }
 
   /**
-   * Registers a {@link ClassVisitor} for use by the
-   * {@link ReflectionManager#apply(Class)} method.
+   * Registers a {@link ClassVisitor} for use by the {@link ReflectionManager#apply(Class)} method.
    *
-   * @param visitor  the {@link ClassVisitor} object to add
+   * @param visitor the {@link ClassVisitor} object to add
    */
   public void add(ClassVisitor visitor) {
     visitors.add(visitor);
   }
 
   /**
-   * Applies the registered {@link ClassVisitor} objects of this object to the
-   * given class and its members that satisfy the given predicate.
-   * Excludes fields that are hidden by inheritance that are otherwise still accessible by
-   * reflection.
-   * Each visitor is applied to each member at most once.
+   * Applies the registered {@link ClassVisitor} objects of this object to the given class and its
+   * members that satisfy the given predicate. Excludes fields that are hidden by inheritance that
+   * are otherwise still accessible by reflection. Each visitor is applied to each member at most
+   * once.
    *
-   * @param c  the {@link Class} object to be visited.
+   * @param c the {@link Class} object to be visited.
    */
   public void apply(Class<?> c) {
     for (ClassVisitor visitor : visitors) {
@@ -92,13 +85,13 @@ public class ReflectionManager {
   }
 
   /**
-   * Applies the given {@link ClassVisitor} visitor to the class object and its members that
-   * satisfy the predicate of this reflection manager.
-   * <p>
-   * Sorts class members to ensure a canonical order for visits.
+   * Applies the given {@link ClassVisitor} visitor to the class object and its members that satisfy
+   * the predicate of this reflection manager.
    *
-   * @param visitor  the {@link ClassVisitor} to apply to the class
-   * @param c  the class
+   * <p>Sorts class members to ensure a canonical order for visits.
+   *
+   * @param visitor the {@link ClassVisitor} to apply to the class
+   * @param c the class
    */
   public void apply(ClassVisitor visitor, Class<?> c) {
     if (predicate.isVisible(c)) {
@@ -177,21 +170,18 @@ public class ReflectionManager {
   }
 
   /**
-   * Applies the visitors to the constants and methods of the given enum. A
-   * method is included if it satisfies the predicate, and either is declared in
-   * the enum, or in the anonymous class of some constant. Note that methods
-   * will either belong to the enum itself, or to an anonymous class attached to
-   * a constant. Ordinarily, the type of the constant is the enum, but when
-   * there is an anonymous class for constant e, e.getClass() returns the
-   * anonymous class. This is used to check for method overrides (that could
-   * include Object methods) within the constant.
-   * <p>
-   * Heuristically exclude methods <code>values</code> and <code>valueOf</code>
-   * since their definition is implicit, and we aren't testing Java enum
-   * implementation.
+   * Applies the visitors to the constants and methods of the given enum. A method is included if it
+   * satisfies the predicate, and either is declared in the enum, or in the anonymous class of some
+   * constant. Note that methods will either belong to the enum itself, or to an anonymous class
+   * attached to a constant. Ordinarily, the type of the constant is the enum, but when there is an
+   * anonymous class for constant e, e.getClass() returns the anonymous class. This is used to check
+   * for method overrides (that could include Object methods) within the constant.
    *
-   * @param visitor  the {@link ClassVisitor}
-   * @param c  the enum class object from which constants and methods are extracted
+   * <p>Heuristically exclude methods <code>values</code> and <code>valueOf</code> since their
+   * definition is implicit, and we aren't testing Java enum implementation.
+   *
+   * @param visitor the {@link ClassVisitor}
+   * @param c the enum class object from which constants and methods are extracted
    */
   private void applyToEnum(ClassVisitor visitor, Class<?> c) {
     Map<String, Set<Method>> overrideMethods = new HashMap<>();
@@ -236,9 +226,8 @@ public class ReflectionManager {
   /**
    * Apply a visitor to a field.
    *
-   * @param v  the {@link ClassVisitor}
-   * @param f
-   *          the field to be visited
+   * @param v the {@link ClassVisitor}
+   * @param f the field to be visited
    */
   private void applyTo(ClassVisitor v, Field f) {
     if (Log.isLoggingOn()) {
@@ -250,9 +239,8 @@ public class ReflectionManager {
   /**
    * Apply a visitor to a constructor.
    *
-   * @param v  the {@link ClassVisitor}
-   * @param co
-   *          the constructor to be visited
+   * @param v the {@link ClassVisitor}
+   * @param co the constructor to be visited
    */
   private void applyTo(ClassVisitor v, Constructor<?> co) {
     if (Log.isLoggingOn()) {
@@ -264,9 +252,8 @@ public class ReflectionManager {
   /**
    * Apply a visitor to a method.
    *
-   * @param v  the {@link ClassVisitor}
-   * @param m
-   *          the method to be visited
+   * @param v the {@link ClassVisitor}
+   * @param m the method to be visited
    */
   private void applyTo(ClassVisitor v, Method m) {
     if (Log.isLoggingOn()) {
@@ -278,9 +265,8 @@ public class ReflectionManager {
   /**
    * Apply a visitor to a enum value.
    *
-   * @param v  the {@link ClassVisitor}
-   * @param e
-   *          the enum value to be visited
+   * @param v the {@link ClassVisitor}
+   * @param e the enum value to be visited
    */
   private void applyTo(ClassVisitor v, Enum<?> e) {
     if (Log.isLoggingOn()) {
@@ -290,23 +276,20 @@ public class ReflectionManager {
   }
 
   /**
-   * Apply a visitor to a class. Called at the end of
-   * {@link #apply(Class)}.
+   * Apply a visitor to a class. Called at the end of {@link #apply(Class)}.
    *
-   * @param v  the {@link ClassVisitor}
-   * @param c
-   *          the class to be visited
+   * @param v the {@link ClassVisitor}
+   * @param c the class to be visited
    */
   private void visitAfter(ClassVisitor v, Class<?> c) {
     v.visitAfter(c);
   }
 
   /**
-   * Apply a visitor to a class. Called at the beginning of
-   * {@link #apply(Class)}.
+   * Apply a visitor to a class. Called at the beginning of {@link #apply(Class)}.
    *
-   * @param v  the {@link ClassVisitor}
-   * @param c  the class to be visited
+   * @param v the {@link ClassVisitor}
+   * @param c the class to be visited
    */
   private void visitBefore(ClassVisitor v, Class<?> c) {
     v.visitBefore(c);
@@ -315,8 +298,9 @@ public class ReflectionManager {
   /**
    * Determines whether a method, its parameter types, and its return type are all visible.
    *
-   * @param m  the method to check for visibility
-   * @return true if the method, each parameter type, and the return type are all visible; and false otherwise
+   * @param m the method to check for visibility
+   * @return true if the method, each parameter type, and the return type are all visible; and false
+   *     otherwise
    */
   private boolean isVisible(Method m) {
     if (!predicate.isVisible(m)) {
@@ -348,7 +332,7 @@ public class ReflectionManager {
   /**
    * Determines whether a constructor and each of its parameter types are visible.
    *
-   * @param c  the constructor
+   * @param c the constructor
    * @return true if the constructor and each parameter type are visible; false, otherwise
    */
   private boolean isVisible(Constructor<?> c) {
@@ -375,7 +359,7 @@ public class ReflectionManager {
   /**
    * Determines whether a {@code java.lang.reflect.Type} is a type visible to the generated tests.
    *
-   * @param type  the type to check
+   * @param type the type to check
    * @return true if the type is visible, false otherwise
    */
   private boolean isVisible(Type type) {
@@ -404,9 +388,9 @@ public class ReflectionManager {
   /**
    * Creates a sorted list from an array of elements using the given classComparator.
    *
-   * @param array  the array of elements to be sorted
-   * @param comparator  the classComparator over the element type
-   * @param <T>  the element type
+   * @param array the array of elements to be sorted
+   * @param comparator the classComparator over the element type
+   * @param <T> the element type
    * @return the sorted list of elements of the given array
    */
   private <T> List<T> toSortedList(T[] array, Comparator<T> comparator) {
@@ -416,10 +400,7 @@ public class ReflectionManager {
     return list;
   }
 
-  /**
-   * The classComparator for class objects.
-   * Compares by name.
-   */
+  /** The classComparator for class objects. Compares by name. */
   private class ClassComparator implements Comparator<Class<?>> {
 
     @Override
@@ -429,8 +410,8 @@ public class ReflectionManager {
   }
 
   /**
-   * The classComparator for methods of a class.
-   * Orders by signature: compares names, number of parameters, and parameter type names.
+   * The classComparator for methods of a class. Orders by signature: compares names, number of
+   * parameters, and parameter type names.
    */
   private class MethodComparator implements Comparator<Method> {
 
@@ -459,8 +440,8 @@ public class ReflectionManager {
   }
 
   /**
-   * The classComparator for constructors of a class.
-   * Orders by signature: number of parameters, and then parameter type names.
+   * The classComparator for constructors of a class. Orders by signature: number of parameters, and
+   * then parameter type names.
    */
   private class ConstructorComparator implements Comparator<Constructor<?>> {
 
@@ -484,10 +465,7 @@ public class ReflectionManager {
     }
   }
 
-  /**
-   * The classComparator for field members of a class.
-   * Compares by name.
-   */
+  /** The classComparator for field members of a class. Compares by name. */
   private class FieldComparator implements Comparator<Field> {
 
     private ClassComparator classComparator;

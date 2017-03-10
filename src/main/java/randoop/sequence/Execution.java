@@ -4,16 +4,14 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
 import randoop.ExecutionOutcome;
 import randoop.NotExecuted;
 
 /**
  * Represents the unfolding execution of a sequence.
  *
- * This is essentially a wrapper around List&lt;ExecutionOutcome&gt;. Stores
- * information in a list of ExecutionOutcome objects, one for each statement in
- * the sequence.
+ * <p>This is essentially a wrapper around List&lt;ExecutionOutcome&gt;. Stores information in a
+ * list of ExecutionOutcome objects, one for each statement in the sequence.
  */
 public final class Execution {
 
@@ -23,10 +21,10 @@ public final class Execution {
   private Set<Class<?>> coveredClasses;
 
   /**
-   * Create an Execution to store the execution results of the given sequence.
-   * The list of outcomes is initialized to NotExecuted for every statement.
+   * Create an Execution to store the execution results of the given sequence. The list of outcomes
+   * is initialized to NotExecuted for every statement.
    *
-   * @param owner  the executed sequence
+   * @param owner the executed sequence
    */
   public Execution(Sequence owner) {
     this.theList = new ArrayList<>(owner.size());
@@ -48,7 +46,7 @@ public final class Execution {
   /**
    * Get the outcome in the i-th slot.
    *
-   * @param i  the statement position
+   * @param i the statement position
    * @return the outcome of the ith statement
    */
   public ExecutionOutcome get(int i) {

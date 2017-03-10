@@ -5,14 +5,13 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
 import randoop.sequence.Sequence;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 
 /**
- * Provides functionality for creating a set of sequences that create a set of
- * primitive values. Used by sequence generators.
+ * Provides functionality for creating a set of sequences that create a set of primitive values.
+ * Used by sequence generators.
  */
 public final class SeedSequences {
   private SeedSequences() {
@@ -61,8 +60,7 @@ public final class SeedSequences {
           "hi!");
 
   /**
-   * A set of sequences that create primitive values, e.g. int i = 0; or String
-   * s = "hi";
+   * A set of sequences that create primitive values, e.g. int i = 0; or String s = "hi";
    *
    * @return the default set of seed sequences
    */
@@ -86,7 +84,7 @@ public final class SeedSequences {
   /**
    * Returns the set of seed values with the given raw type.
    *
-   * @param type  the type
+   * @param type the type
    * @return the set of seed values with the given raw type
    */
   static Set<Object> getSeeds(Type type) {

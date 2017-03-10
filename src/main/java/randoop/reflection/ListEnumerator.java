@@ -7,9 +7,9 @@ import java.util.NoSuchElementException;
 
 /**
  * Enumerates the set of lists formed by selecting values sequentially from a list of candidates,
- * such that each generlist has a value from each candidate list.
- * the length of the lists .
- * For instance, given {@code [["a1", "a2"], ["b1"], ["c1", "c2", "c3"]]} enumerates
+ * such that each generlist has a value from each candidate list. the length of the lists . For
+ * instance, given {@code [["a1", "a2"], ["b1"], ["c1", "c2", "c3"]]} enumerates
+ *
  * <pre>
  *   ["a1", "b1", "c1"]
  *   ["a1", "b1", "c2"]
@@ -18,6 +18,7 @@ import java.util.NoSuchElementException;
  *   ["a2", "b1", "c2"]
  *   ["a2", "b1", "c3"]
  * </pre>
+ *
  * by successive calls to {@link #next()}.
  */
 class ListEnumerator<T> implements Iterator<List<T>> {
@@ -32,8 +33,8 @@ class ListEnumerator<T> implements Iterator<List<T>> {
   private int nextList;
 
   /**
-   * Creates a {@link ListEnumerator} for lists constructed from the given candidates.
-   * Each generated list will be the same length as the given list.
+   * Creates a {@link ListEnumerator} for lists constructed from the given candidates. Each
+   * generated list will be the same length as the given list.
    *
    * @param candidates lists of candidate values for each position in generated lists
    */

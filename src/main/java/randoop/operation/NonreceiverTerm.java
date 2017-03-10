@@ -2,7 +2,6 @@ package randoop.operation;
 
 import java.io.PrintStream;
 import java.util.List;
-
 import plume.UtilMDE;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -11,22 +10,21 @@ import randoop.sequence.Value;
 import randoop.sequence.Variable;
 import randoop.types.JavaTypes;
 import randoop.types.NonParameterizedType;
-import randoop.types.Type;
 import randoop.types.PrimitiveTypes;
+import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.util.StringEscapeUtils;
 import randoop.util.Util;
 
 /**
- * Represents a value that either cannot (primitive or null values), or we don't
- * care to have (String, Class) be a receiver for a method call as an {@link Operation}.
+ * Represents a value that either cannot (primitive or null values), or we don't care to have
+ * (String, Class) be a receiver for a method call as an {@link Operation}.
  *
- * As an {@link Operation}, a value v of type T is formally represented by an
- * operation v : [] &rarr; T, with no input types, and the type of the value as
- * the output type. This kind of operation is a <i>ground</i> term &mdash; it
- * requires no inputs.
+ * <p>As an {@link Operation}, a value v of type T is formally represented by an operation v : []
+ * &rarr; T, with no input types, and the type of the value as the output type. This kind of
+ * operation is a <i>ground</i> term &mdash; it requires no inputs.
  *
- * The execution of this {@link Operation} simply returns the value.
+ * <p>The execution of this {@link Operation} simply returns the value.
  */
 public final class NonreceiverTerm extends CallableOperation {
 
@@ -46,10 +44,8 @@ public final class NonreceiverTerm extends CallableOperation {
   /**
    * Constructs a NonreceiverTerm with type t and value o.
    *
-   * @param type
-   *          the type of the term
-   * @param value
-   *          the value of the term
+   * @param type the type of the term
+   * @param value the value of the term
    */
   public NonreceiverTerm(Type type, Object value) {
     if (type == null) {
@@ -94,8 +90,9 @@ public final class NonreceiverTerm extends CallableOperation {
   /**
    * Determines whether the given {@code Class<?>} is the type of a non-receiver term.
    *
-   * @param c  the {@code Class<?>} object
-   * @return true if the given type is primitive, boxed primitive, or {@code String}; false otherwise
+   * @param c the {@code Class<?>} object
+   * @return true if the given type is primitive, boxed primitive, or {@code String}; false
+   *     otherwise
    */
   public static boolean isNonreceiverType(Class<?> c) {
     return c.isPrimitive()
@@ -104,9 +101,7 @@ public final class NonreceiverTerm extends CallableOperation {
         || c.equals(Class.class);
   }
 
-  /**
-   * Indicates whether this object is equal to o
-   */
+  /** Indicates whether this object is equal to o */
   @Override
   public boolean equals(Object o) {
     if (!(o instanceof NonreceiverTerm)) return false;
@@ -116,17 +111,13 @@ public final class NonreceiverTerm extends CallableOperation {
     return this.type.equals(other.type) && Util.equalsWithNull(this.value, other.value);
   }
 
-  /**
-   * Returns a hash code value for this NonreceiverTerm
-   */
+  /** Returns a hash code value for this NonreceiverTerm */
   @Override
   public int hashCode() {
     return this.type.hashCode() + (this.value == null ? 0 : this.value.hashCode());
   }
 
-  /**
-   * Returns string representation of this NonreceiverTerm
-   */
+  /** Returns string representation of this NonreceiverTerm */
   @Override
   public String toString() {
     if (type.equals(JavaTypes.CLASS_TYPE)) {
@@ -143,8 +134,7 @@ public final class NonreceiverTerm extends CallableOperation {
   /**
    * {@inheritDoc}
    *
-   * @return {@link NormalExecution} object enclosing value of this non-receiver
-   *         term.
+   * @return {@link NormalExecution} object enclosing value of this non-receiver term.
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
@@ -153,15 +143,13 @@ public final class NonreceiverTerm extends CallableOperation {
   }
 
   /**
-   * {@inheritDoc} For NonreceiverTerm, simply adds a code representation of the
-   * value to the string builder. Note: this does not explicitly box primitive
-   * values.
+   * {@inheritDoc}
    *
-   * @param inputVars
-   *          ignored
-   * @param b
-   *          {@link StringBuilder} to which string representation is appended.
+   * <p>For NonreceiverTerm, simply adds a code representation of the value to the string builder.
+   * Note: this does not explicitly box primitive values.
    *
+   * @param inputVars ignored
+   * @param b {@link StringBuilder} to which string representation is appended.
    */
   @Override
   public void appendCode(
@@ -183,23 +171,18 @@ public final class NonreceiverTerm extends CallableOperation {
     return value;
   }
 
-  /**
-   * @return the type
-   */
+  /** @return the type */
   public Type getType() {
     return this.type;
   }
 
   /**
-   * Returns a NonreceiverTerm holding the zero value for the specified class c.
-   * In the case of characters there is no natural zero, so the value 'a' is
-   * used.
-   * Also, returns null for {@link JavaTypes#CLASS_TYPE}.
+   * Returns a NonreceiverTerm holding the zero value for the specified class c. In the case of
+   * characters there is no natural zero, so the value 'a' is used. Also, returns null for {@link
+   * JavaTypes#CLASS_TYPE}.
    *
-   * @param type
-   *          the type of value desired
-   * @return a {@link NonreceiverTerm} with a canonical representative of the
-   *         given type.
+   * @param type the type of value desired
+   * @return a {@link NonreceiverTerm} with a canonical representative of the given type.
    */
   static NonreceiverTerm createNullOrZeroTerm(Type type) {
     if (type.isBoxedPrimitive()) {
@@ -220,17 +203,15 @@ public final class NonreceiverTerm extends CallableOperation {
   }
 
   /**
-   * {@inheritDoc} Returns a string representing this primitive declaration. The
-   * string is of the form:<br>
+   * {@inheritDoc}
    *
+   * <p>Returns a string representing this primitive declaration. The string is of the form:<br>
    * <code>TYPE:VALUE</code><br>
+   * Where TYPE is the type of the primitive declaration, and VALUE is its value. If VALUE is "null"
+   * then the value is null (not the String "null"). If TYPE is "char" then
+   * (char)Integer.parseInt(VALUE, 16) yields the character value.
    *
-   * Where TYPE is the type of the primitive declaration, and VALUE is its
-   * value. If VALUE is "null" then the value is null (not the String "null").
-   * If TYPE is "char" then (char)Integer.parseInt(VALUE, 16) yields the
-   * character value.
-   * <p>
-   * Examples:
+   * <p>Examples:
    *
    * <pre>
    * String:null                  represents: String x = null
@@ -247,8 +228,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * char:20                      represents: char x = ' ';
    * </pre>
    *
-   * Note that a string type can be given as both "String" or
-   * "java.lang.String".
+   * Note that a string type can be given as both "String" or "java.lang.String".
    *
    * @return string representation of primitive, String or null value
    */
@@ -274,14 +254,12 @@ public final class NonreceiverTerm extends CallableOperation {
   }
 
   /**
-   * Parse a non-receiver value in a string in the form generated by
-   * {@link NonreceiverTerm#toParsableString(Type, TypeTuple, Type)}
+   * Parse a non-receiver value in a string in the form generated by {@link
+   * NonreceiverTerm#toParsableString(Type, TypeTuple, Type)}
    *
-   * @param s
-   *          a string representing a value of a non-receiver type
+   * @param s a string representing a value of a non-receiver type
    * @return the non-receiver term for the given string descriptor
-   * @throws OperationParseException
-   *           if string does not represent valid object
+   * @throws OperationParseException if string does not represent valid object
    */
   public static TypedOperation parse(String s) throws OperationParseException {
     if (s == null) throw new IllegalArgumentException("s cannot be null.");

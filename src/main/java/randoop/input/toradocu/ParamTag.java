@@ -5,7 +5,7 @@ import java.util.Objects;
 /**
  * This is a Toradocu class borrowed to allow deserialization of JSON.
  *
- * This class represents a param tag in a method. Each param tag consist of the name of the param
+ * <p>This class represents a param tag in a method. Each param tag consist of the name of the param
  * and a brief description, which may contain a condition. A condition is the translation of the
  * comment into a Java boolean condition.
  */

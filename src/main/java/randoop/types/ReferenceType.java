@@ -4,25 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a reference type defined in
- * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.3">JLS Section 4.3</a>
+ * Represents a reference type defined in <a
+ * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.3">JLS Section 4.3</a>
+ *
  * <pre>
  *   ReferenceType:
  *     ClassOrInterfaceType
  *     TypeVariable
  *     ArrayType
  * </pre>
+ *
  * This abstract type is used to mirror the grammar in the JLS.
  */
 public abstract class ReferenceType extends Type {
 
   /**
-   * Returns a {@code ReferenceType} object for the given {@code Class} object.
-   * Creates arrays, classes, and interfaces.
-   * For arrays, calls {@link ArrayType#forClass(Class)}.
-   * For other (class/interface) types, calls {@link ClassOrInterfaceType#forClass(Class)}.
+   * Returns a {@code ReferenceType} object for the given {@code Class} object. Creates arrays,
+   * classes, and interfaces. For arrays, calls {@link ArrayType#forClass(Class)}. For other
+   * (class/interface) types, calls {@link ClassOrInterfaceType#forClass(Class)}.
    *
-   * @param classType  the {@code Class} object representing the type
+   * @param classType the {@code Class} object representing the type
    * @return the {@code ReferenceType} object for the given type
    */
   public static ReferenceType forClass(Class<?> classType) {
@@ -38,16 +39,17 @@ public abstract class ReferenceType extends Type {
   }
 
   /**
-   * Creates a {@code ReferenceType} for the given {@code java.lang.reflect.Type}.
-   * Specifically, creates
-   * <ul>
-   *   <li>an {@link ArrayType} if the reference is {@code GenericArrayType} or is a
-   *       {@code Class} object representing an array. </li>
-   *   <li>a {@link TypeVariable}) if the reference is {@code java.lang.reflect.TypeVariable}.</li>
-   *   <li>a {@link ClassOrInterfaceType} if the reference is none of those.</li>
-   *</ul>
+   * Creates a {@code ReferenceType} for the given {@code java.lang.reflect.Type}. Specifically,
+   * creates
    *
-   * @param type  the type reference
+   * <ul>
+   *   <li>an {@link ArrayType} if the reference is {@code GenericArrayType} or is a {@code Class}
+   *       object representing an array.
+   *   <li>a {@link TypeVariable}) if the reference is {@code java.lang.reflect.TypeVariable}.
+   *   <li>a {@link ClassOrInterfaceType} if the reference is none of those.
+   * </ul>
+   *
+   * @param type the type reference
    * @return the {@code ReferenceType} for the given {@code Type}
    */
   public static ReferenceType forType(java.lang.reflect.Type type) {
@@ -67,14 +69,13 @@ public abstract class ReferenceType extends Type {
   }
 
   /**
-   * Applies a substitution to a {@link ReferenceType}.
-   * If the type is parameterized then replaces type variables that occur, otherwise returns this
-   * type.
-   * <p>
-   * This abstract method forces typing of substitutions applied to {@link ReferenceType} objects
+   * Applies a substitution to a {@link ReferenceType}. If the type is parameterized then replaces
+   * type variables that occur, otherwise returns this type.
+   *
+   * <p>This abstract method forces typing of substitutions applied to {@link ReferenceType} objects
    * without an explicit cast.
    *
-   * @param substitution  the type substitution
+   * @param substitution the type substitution
    * @return the type created by applying the substitution to this type
    */
   @Override
@@ -86,9 +87,9 @@ public abstract class ReferenceType extends Type {
   }
 
   /**
-   * Returns the list of type parameters for this type.
-   * Reference types that may have type parameters include {@link ArrayType} (such as {@code E[]}),
-   * and subclasses of {@link ParameterizedType}.
+   * Returns the list of type parameters for this type. Reference types that may have type
+   * parameters include {@link ArrayType} (such as {@code E[]}), and subclasses of {@link
+   * ParameterizedType}.
    *
    * @return the type parameters for this type
    */
@@ -107,13 +108,11 @@ public abstract class ReferenceType extends Type {
 
   /**
    * {@inheritDoc}
-   * <p>
-   * For assignment to {@link ReferenceType}, checks for widening reference conversion when the
-   * source type is also a reference type.
-   * See <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.5">section
-   * JLS 5.1.5</a>
-   * for details.
-   * </p>
+   *
+   * <p>For assignment to {@link ReferenceType}, checks for widening reference conversion when the
+   * source type is also a reference type. See <a
+   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.5">section JLS
+   * 5.1.5</a> for details.
    */
   public boolean isAssignableFrom(Type sourceType) {
     return super.isAssignableFrom(sourceType)
@@ -121,10 +120,10 @@ public abstract class ReferenceType extends Type {
   }
 
   /**
-   * Indicates whether this type is a capture type variable as constructed by
-   * {@link InstantiatedType#applyCaptureConversion()}.
-   * A capture type variable can only occur as a type argument in an {@link InstantiatedType}
-   * constructed by {@link InstantiatedType#applyCaptureConversion()}.
+   * Indicates whether this type is a capture type variable as constructed by {@link
+   * InstantiatedType#applyCaptureConversion()}. A capture type variable can only occur as a type
+   * argument in an {@link InstantiatedType} constructed by {@link
+   * InstantiatedType#applyCaptureConversion()}.
    *
    * @return true if this type is a capture type variable, false otherwise
    */
@@ -135,17 +134,15 @@ public abstract class ReferenceType extends Type {
   /**
    * Indicates whether this type is an instantiation of a more general type.
    *
-   * For a general {@link ReferenceType}, this is only true if the other
-   * type is the same, or the other type is a type variable for which
-   * this type satisfies the bounds.
-   * Other cases are handled by the overriding implementations
-   * {@link ClassOrInterfaceType#isInstantiationOf(ReferenceType)},
-   * {@link InstantiatedType#isInstantiationOf(ReferenceType)}, and
-   * {@link TypeVariable#isInstantiationOf(ReferenceType)}.
+   * <p>For a general {@link ReferenceType}, this is only true if the other type is the same, or the
+   * other type is a type variable for which this type satisfies the bounds. Other cases are handled
+   * by the overriding implementations {@link
+   * ClassOrInterfaceType#isInstantiationOf(ReferenceType)}, {@link
+   * InstantiatedType#isInstantiationOf(ReferenceType)}, and {@link
+   * TypeVariable#isInstantiationOf(ReferenceType)}.
    *
-   * @param otherType  the general reference type
-   * @return true if this type instantiates the other reference type,
-   * false otherwise
+   * @param otherType the general reference type
+   * @return true if this type instantiates the other reference type, false otherwise
    */
   public boolean isInstantiationOf(ReferenceType otherType) {
     if (this.equals(otherType)) {
@@ -182,7 +179,8 @@ public abstract class ReferenceType extends Type {
 
   /**
    * {@inheritDoc}
-   * For {@link ReferenceType}, returns true if {@code otherType} is {@code Object}.
+   *
+   * <p>For {@link ReferenceType}, returns true if {@code otherType} is {@code Object}.
    */
   @Override
   public boolean isSubtypeOf(Type otherType) {

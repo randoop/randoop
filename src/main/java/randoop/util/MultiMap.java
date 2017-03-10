@@ -7,9 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Implements an IMultiMap with a java.util.LinkedHashMap.
- */
+/** Implements an IMultiMap with a java.util.LinkedHashMap. */
 public class MultiMap<T1, T2> implements IMultiMap<T1, T2> {
 
   private final Map<T1, Set<T2>> map;
