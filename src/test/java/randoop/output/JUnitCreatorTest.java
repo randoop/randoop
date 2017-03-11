@@ -27,8 +27,7 @@ public class JUnitCreatorTest {
     List<String> beforeEach = new ArrayList<>();
     beforeEach.add("System.out.println(\"before each\");");
     JUnitCreator creator =
-        JUnitCreator.getTestCreator(
-            "pkg", "testMethod", beforeAll, afterAll, beforeEach, afterEach);
+        JUnitCreator.getTestCreator("pkg", beforeAll, afterAll, beforeEach, afterEach);
 
     List<ExecutableSequence> sequences = new ArrayList<>();
 
@@ -54,7 +53,7 @@ public class JUnitCreatorTest {
       sequence.execute(visitor, checkGen);
       sequences.add(sequence);
     }
-    System.out.println(creator.createTestClass("TestClass", sequences));
+    System.out.println(creator.createTestClass("TestClass", "testMethod", sequences));
   }
 
   private TestCheckGenerator getTestCheckGenerator(final int i, final Variable variable) {
