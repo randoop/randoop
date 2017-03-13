@@ -17,7 +17,7 @@ public class WeightedComponentManager extends ComponentManager {
   private Map<Sequence, Integer> sequenceFrequency;
 
   /**
-   * Create a component manager, initially populated with the given sequences( which are considered
+   * Create a component manager, initially populated with the given sequences (which are considered
    * seed sequences) and with a sequenceFrequency map to support the --weighted-constants
    * command-line option.
    *

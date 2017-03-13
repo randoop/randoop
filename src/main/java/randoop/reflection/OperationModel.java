@@ -313,8 +313,8 @@ public class OperationModel extends AbstractOperationModel {
     mgr.add(new CheckRepExtractor(this.contracts));
     if (literalsFileList.contains("CLASSES")) {
       mgr.add(new ClassLiteralExtractor(this.classLiteralMap, null));
-      // tfFrequency is null, since it's only applicable when called by WeightedConstantsOperationModel
-      // OperationModel doesn't use a tfFrequency
+      // tfFrequency is null, since it's only applicable when called by WeightedConstantsOperationModel.
+      // OperationModel doesn't use a tfFrequency.
     }
 
     // Collect classes under test

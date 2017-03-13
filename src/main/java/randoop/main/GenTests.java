@@ -535,7 +535,7 @@ public class GenTests extends GenInputsAbstract {
 
   /**
    * Write each sequence's info out to GenInputsAbstract.output_sequence_info_filename in .csv
-   * format Its info is essentially snapshots of its weight formulas and how they change
+   * format. Its info is essentially snapshots of its weight formulas and how they change.
    *
    * @param sequenceSizeMap the map of all executed sequences to their sizes
    */
