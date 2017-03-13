@@ -211,49 +211,31 @@ public class JUnitCreator {
     bodyDeclarations.add(debugField);
 
     if (beforeAllBody != null) {
-      MethodDeclaration fixture = null;
-      try {
-        fixture =
-            createFixture(
-                BEFORE_ALL, Modifier.PUBLIC | Modifier.STATIC, BEFORE_ALL_METHOD, beforeAllBody);
-      } catch (ParseException e) {
-        System.out.println("Parse error in before-all fixture text");
-      }
+      MethodDeclaration fixture =
+          createFixture(
+              BEFORE_ALL, Modifier.PUBLIC | Modifier.STATIC, BEFORE_ALL_METHOD, beforeAllBody);
       if (fixture != null) {
         bodyDeclarations.add(fixture);
       }
     }
     if (afterAllBody != null) {
-      MethodDeclaration fixture = null;
-      try {
-        fixture =
-            createFixture(
-                AFTER_ALL, Modifier.PUBLIC | Modifier.STATIC, AFTER_ALL_METHOD, afterAllBody);
-      } catch (ParseException e) {
-        System.out.println("Parse error in after-all fixture text");
-      }
+      MethodDeclaration fixture =
+          createFixture(
+              AFTER_ALL, Modifier.PUBLIC | Modifier.STATIC, AFTER_ALL_METHOD, afterAllBody);
       if (fixture != null) {
         bodyDeclarations.add(fixture);
       }
     }
     if (beforeEachBody != null) {
-      MethodDeclaration fixture = null;
-      try {
-        fixture = createFixture(BEFORE_EACH, Modifier.PUBLIC, BEFORE_EACH_METHOD, beforeEachBody);
-      } catch (ParseException e) {
-        System.out.println("Parse error in before-each text");
-      }
+      MethodDeclaration fixture =
+          createFixture(BEFORE_EACH, Modifier.PUBLIC, BEFORE_EACH_METHOD, beforeEachBody);
       if (fixture != null) {
         bodyDeclarations.add(fixture);
       }
     }
     if (afterEachBody != null) {
-      MethodDeclaration fixture = null;
-      try {
-        fixture = createFixture(AFTER_EACH, Modifier.PUBLIC, AFTER_EACH_METHOD, afterEachBody);
-      } catch (ParseException e) {
-        System.out.println("Parse error in after-each text");
-      }
+      MethodDeclaration fixture =
+          createFixture(AFTER_EACH, Modifier.PUBLIC, AFTER_EACH_METHOD, afterEachBody);
       if (fixture != null) {
         bodyDeclarations.add(fixture);
       }
@@ -313,7 +295,7 @@ public class JUnitCreator {
         statements.add(statement);
       }
     } catch (ParseException e) {
-      System.out.println("Error creating test method: " + e.getMessage());
+      System.out.println("Parse error while creating test method " + className + "." + methodName);
       return null;
     }
 
@@ -330,15 +312,13 @@ public class JUnitCreator {
    * @param methodName the name of the fixture method
    * @param body the {@code BlockStmt} for the fixture
    * @return the fixture method as a {@code String}
-   * @throws ParseException if there is a paser error for {@code bodyText}
    */
   private MethodDeclaration createFixture(
-      String annotation, int modifiers, String methodName, BlockStmt body) throws ParseException {
+      String annotation, int modifiers, String methodName, BlockStmt body) {
     MethodDeclaration method = new MethodDeclaration(modifiers, new VoidType(), methodName);
     List<AnnotationExpr> annotations = new ArrayList<>();
     annotations.add(new MarkerAnnotationExpr(new NameExpr(annotation)));
     method.setAnnotations(annotations);
-
     method.setBody(body);
     return method;
   }
@@ -514,6 +494,9 @@ public class JUnitCreator {
   }
 
   public static BlockStmt parseFixture(List<String> bodyText) throws ParseException {
+    if (bodyText == null) {
+      return null;
+    }
     String blockText = "{\n";
     for (String line : bodyText) {
       blockText += line + "\n";

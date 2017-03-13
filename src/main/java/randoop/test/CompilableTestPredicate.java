@@ -93,8 +93,6 @@ public class CompilableTestPredicate extends DefaultPredicate<ExecutableSequence
               Log.logLine("Uncompilable sequence generated");
               Log.log(sourceText);
             }
-            System.out.println("Generated sequence did not compile:");
-            System.out.println(sourceText);
             return false;
           }
         }
