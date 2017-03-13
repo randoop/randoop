@@ -84,7 +84,7 @@ public class CompilableTestPredicate extends DefaultPredicate<ExecutableSequence
   boolean testSource(String testClassName, CompilationUnit source, String packageName) {
     String sourceText = source.toString();
     try {
-      compiler.compile(packageName, testClassName, sourceText);
+      compiler.compileCheck(packageName, testClassName, sourceText);
     } catch (SequenceCompilerException e) {
       for (Diagnostic<? extends JavaFileObject> diagnostic : e.getDiagnostics().getDiagnostics()) {
         if (diagnostic != null) {
