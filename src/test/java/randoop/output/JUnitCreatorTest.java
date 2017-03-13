@@ -2,7 +2,6 @@ package randoop.output;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
 import randoop.ExecutionVisitor;
 import randoop.contract.PrimValue;
 import randoop.sequence.ExecutableSequence;
@@ -15,41 +14,41 @@ import randoop.test.TestChecks;
 
 /** Partial test -- disabled in build.gradle */
 public class JUnitCreatorTest {
-/*
-  @Test
-  public void testClassCreation() {
-    List<String> afterAll = new ArrayList<>();
-    afterAll.add("System.out.println(\"after all\");");
-    List<String> afterEach = new ArrayList<>();
-    afterEach.add("System.out.println(\"after each\");");
-    List<String> beforeAll = new ArrayList<>();
-    beforeAll.add("System.out.println(\"before all\");");
-    List<String> beforeEach = new ArrayList<>();
-    beforeEach.add("System.out.println(\"before each\");");
-    JUnitCreator creator =
-        JUnitCreator.getTestCreator("pkg", beforeAll, afterAll, beforeEach, afterEach);
+  /*
+    @Test
+    public void testClassCreation() {
+      List<String> afterAll = new ArrayList<>();
+      afterAll.add("System.out.println(\"after all\");");
+      List<String> afterEach = new ArrayList<>();
+      afterEach.add("System.out.println(\"after each\");");
+      List<String> beforeAll = new ArrayList<>();
+      beforeAll.add("System.out.println(\"before all\");");
+      List<String> beforeEach = new ArrayList<>();
+      beforeEach.add("System.out.println(\"before each\");");
+      JUnitCreator creator =
+          JUnitCreator.getTestCreator("pkg", beforeAll, afterAll, beforeEach, afterEach);
 
-    List<ExecutableSequence> sequences = getExecutableSequences();
-    System.out.println(creator.createTestClass("TestClass", "testMethod", sequences));
-  }
+      List<ExecutableSequence> sequences = getExecutableSequences();
+      System.out.println(creator.createTestClass("TestClass", "testMethod", sequences));
+    }
 
-  @Test
-  public void testBadFixtureInput() {
-    List<String> afterAll = new ArrayList<>();
-    afterAll.add(")");
-    List<String> afterEach = new ArrayList<>();
-    afterEach.add("System.out.println(\"after each\");");
-    List<String> beforeAll = new ArrayList<>();
-    beforeAll.add("System.out.println(\"before all\");");
-    List<String> beforeEach = new ArrayList<>();
-    beforeEach.add("System.out.println(\"before each\");");
-    JUnitCreator creator =
-        JUnitCreator.getTestCreator("pkg", beforeAll, afterAll, beforeEach, afterEach);
+    @Test
+    public void testBadFixtureInput() {
+      List<String> afterAll = new ArrayList<>();
+      afterAll.add(")");
+      List<String> afterEach = new ArrayList<>();
+      afterEach.add("System.out.println(\"after each\");");
+      List<String> beforeAll = new ArrayList<>();
+      beforeAll.add("System.out.println(\"before all\");");
+      List<String> beforeEach = new ArrayList<>();
+      beforeEach.add("System.out.println(\"before each\");");
+      JUnitCreator creator =
+          JUnitCreator.getTestCreator("pkg", beforeAll, afterAll, beforeEach, afterEach);
 
-    List<ExecutableSequence> sequences = getExecutableSequences();
-    System.out.println(creator.createTestClass("TestClass", "testMethod", sequences));
-  }
-*/
+      List<ExecutableSequence> sequences = getExecutableSequences();
+      System.out.println(creator.createTestClass("TestClass", "testMethod", sequences));
+    }
+  */
   private List<ExecutableSequence> getExecutableSequences() {
     List<ExecutableSequence> sequences = new ArrayList<>();
     ExecutionVisitor visitor = getExecutionVisitor();
