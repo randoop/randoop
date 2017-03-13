@@ -439,7 +439,7 @@ public class RandoopSystemTest {
     //XXX after adding compile check this method did not appear in JDK7 runs
     coverageChecker.ignore("randoop.test.LongString.tooLongString()");
     generateAndTestWithCoverage(
-        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
 
   /** Test formerly known as randoop-visibility. */
