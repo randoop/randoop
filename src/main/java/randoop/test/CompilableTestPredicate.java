@@ -82,15 +82,19 @@ public class CompilableTestPredicate extends DefaultPredicate<ExecutableSequence
    * @return true if the code compiles (without error), false otherwise
    */
   boolean testSource(String testClassName, CompilationUnit source, String packageName) {
+    String sourceText = source.toString();
     try {
-      compiler.compile(packageName, testClassName, source.toString());
+      compiler.compile(packageName, testClassName, sourceText);
     } catch (SequenceCompilerException e) {
       for (Diagnostic<? extends JavaFileObject> diagnostic : e.getDiagnostics().getDiagnostics()) {
         if (diagnostic != null) {
           if (diagnostic.getKind() == Diagnostic.Kind.ERROR) {
             if (Log.isLoggingOn()) {
               Log.logLine("Uncompilable sequence generated");
+              Log.log(sourceText);
             }
+            System.out.println("Generated sequence did not compile:");
+            System.out.println(sourceText);
             return false;
           }
         }
