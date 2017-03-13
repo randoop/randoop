@@ -42,7 +42,7 @@ public class ComponentManager {
   /** The principal set of sequences used to create other, larger sequences by the generator. */
   // Is never null. Contains both general components
   // and seed sequences.
-  private SequenceCollection gralComponents;
+  protected SequenceCollection gralComponents;
 
   /**
    * The subset of the sequences that were given pre-generation to the component manager (via its
@@ -51,23 +51,21 @@ public class ComponentManager {
   // Seeds are all contained in gralComponents. This list
   // is kept to restore seeds if the user calls
   // clearGeneratedSequences().
-  private final Collection<Sequence> gralSeeds;
+  protected final Collection<Sequence> gralSeeds;
 
   /**
    * A set of additional components representing literals that should only be used as input to
    * specific classes.
    */
   // May be null, which represents no class literals present.
-  private ClassLiterals classLiterals = null;
+  protected ClassLiterals classLiterals = null;
 
   /**
    * A set of additional components representing literals that should only be used as input to
    * specific packages.
    */
   // May be null, which represents no package literals present.
-  private PackageLiterals packageLiterals = null;
-
-  private Set<Type> sequenceTypes;
+  protected PackageLiterals packageLiterals = null;
 
   /** Create an empty component manager, with an empty seed sequence set. */
   public ComponentManager() {

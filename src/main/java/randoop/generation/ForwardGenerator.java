@@ -190,7 +190,7 @@ public class ForwardGenerator extends AbstractGenerator {
    *
    * @param seq the sequence
    */
-  private void processSequence(ExecutableSequence seq) {
+  protected void processSequence(ExecutableSequence seq) {
 
     if (seq.hasNonExecutedStatements()) {
       if (Log.isLoggingOn()) {
@@ -302,7 +302,7 @@ public class ForwardGenerator extends AbstractGenerator {
    *
    * @return a new sequence, or null
    */
-  private ExecutableSequence createNewUniqueSequence() {
+  protected ExecutableSequence createNewUniqueSequence() {
 
     if (Log.isLoggingOn()) {
       Log.logLine("-------------------------------------------");
@@ -445,7 +445,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * @param times the number of times to repeat the {@link Operation}.
    * @return a new {@code Sequence}
    */
-  private Sequence repeat(Sequence seq, TypedOperation operation, int times) {
+  protected Sequence repeat(Sequence seq, TypedOperation operation, int times) {
     Sequence retval = new Sequence(seq.statements);
     for (int i = 0; i < times; i++) {
       List<Integer> vil = new ArrayList<>();
@@ -472,7 +472,7 @@ public class ForwardGenerator extends AbstractGenerator {
   // Adds the string corresponding to the given newSequences to the
   // set allSequencesAsCode. The latter set is intended to mirror
   // the set allSequences, but stores strings instead of Sequences.
-  private void randoopConsistencyTest2(Sequence newSequence) {
+  protected void randoopConsistencyTest2(Sequence newSequence) {
     // Testing code.
     if (GenInputsAbstract.debug_checks) {
       this.allsequencesAsCode.add(newSequence.toCodeString());
@@ -482,7 +482,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
   // Checks that the set allSequencesAsCode contains a set of strings
   // equivalent to the sequences in allSequences.
-  private void randoopConsistencyTests(Sequence newSequence) {
+  protected void randoopConsistencyTests(Sequence newSequence) {
     // Testing code.
     if (GenInputsAbstract.debug_checks) {
       String code = newSequence.toCodeString();
@@ -538,7 +538,7 @@ public class ForwardGenerator extends AbstractGenerator {
   // flag
   // of the returned object is false.
   @SuppressWarnings("unchecked")
-  private InputsAndSuccessFlag selectInputs(TypedOperation operation) {
+  protected InputsAndSuccessFlag selectInputs(TypedOperation operation) {
 
     // Variable inputTypes contains the values required as input to the
     // statement given as a parameter to the selectInputs method.

@@ -1,7 +1,9 @@
 package randoop.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import randoop.BugInRandoopException;
 
@@ -88,6 +90,51 @@ public final class Randomness {
       }
     }
     throw new BugInRandoopException();
+  }
+
+  public static <T extends WeightedElement> T randomMemberWeighted(
+      SimpleList<T> list, Map<WeightedElement, Double> weights) {
+
+    // Find interval length.
+    double max = 0;
+    List<Double> cumulativeWeights = new ArrayList<>();
+    cumulativeWeights.add(0.0);
+    for (int i = 0; i < list.size(); i++) {
+      Double weight = weights.get(list.get(i));
+      if (weight == null) {
+        Log.logLine("randoop.util.Randomness: weight was null");
+        weight = list.get(i).getWeight();
+      }
+      if (weight <= 0) throw new BugInRandoopException("weight was " + weight);
+      cumulativeWeights.add(cumulativeWeights.get(cumulativeWeights.size() - 1) + weight);
+      max += weight;
+    }
+    assert max > 0;
+
+    // Select a random point in interval and find its corresponding element.
+    totalCallsToRandom++;
+    if (Log.isLoggingOn()) {
+      Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
+    }
+    double randomPoint = Randomness.random.nextDouble() * max;
+
+    return list.get(binarySearchForIndex(list, cumulativeWeights, randomPoint));
+  }
+
+  public static int binarySearchForIndex(
+      SimpleList<?> list, List<Double> cumulativeWeights, double point) {
+    int low = 0;
+    int high = list.size();
+    int mid = (low + high) / 2;
+    while (!(cumulativeWeights.get(mid) < point && cumulativeWeights.get(mid + 1) >= point)) {
+      if (cumulativeWeights.get(mid) < point) {
+        low = mid;
+      } else {
+        high = mid;
+      }
+      mid = (low + high) / 2;
+    }
+    return mid;
   }
 
   public static <T> T randomSetMember(Collection<T> set) {

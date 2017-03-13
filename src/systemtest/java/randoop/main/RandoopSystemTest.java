@@ -7,6 +7,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -224,6 +225,7 @@ public class RandoopSystemTest {
   }
 
   /** Test formerly known as randoop2. Previously did a diff on generated test. */
+  // TODO: figure out why this fails with DigDog additions
   @Test
   public void runNaiveCollectionsTest() {
 
@@ -735,6 +737,7 @@ public class RandoopSystemTest {
   }
 
   /** Runs the FixtureTest except with a driver instead of a JUnit test suite. */
+  // TODO: this fails with DigDog's JUnitFileWriter fix for methods that are too large
   @Test
   public void runFixtureDriverTest() {
     TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("fixture-driver");
@@ -838,6 +841,75 @@ public class RandoopSystemTest {
 
     generateAndTestWithCoverage(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
+  }
+
+  // TODO: finish
+  @Test
+  public void runWeightedSequencesTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("digdog-weighted-sequences");
+
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("");
+    options.setRegressionBasename("WeightedSequencesReg");
+    options.setErrorBasename("WeightedSequencesErr");
+    options.setFlag("weighted-sequences");
+
+    setUpAndRunDigDogTests(testEnvironment, options);
+  }
+
+  // TODO: finish
+  @Test
+  public void runWeightedConstantsTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("digdog-weighted-constants");
+
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("");
+    options.setRegressionBasename("WeightedConstantsReg");
+    options.setErrorBasename("WeightedConstantsErr");
+    options.setFlag("weighted-constants");
+
+    setUpAndRunDigDogTests(testEnvironment, options);
+  }
+
+  // TODO: finish
+  @Test
+  public void runRandoopOutputSequenceInfo() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("randoop-sequenceInfo");
+
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("");
+    options.setRegressionBasename("RandoopSequenceInfoCompareReg");
+    options.setErrorBasename("RandoopSequenceInfoCompareErr");
+    // TODO: what options do we want here
+    //options.setOption("literals-level", "CLASS");
+    //options.setOption("literals-file", "CLASSES");
+    options.setFlag("output-sequence-info");
+
+    setUpAndRunDigDogTests(testEnvironment, options);
+    renameOutputTo("randoop-sequenceInfo.csv");
+  }
+
+  // TODO: finish
+  @Test
+  public void runDigDogOutputSequenceInfo() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("digdog-sequenceInfo");
+
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("");
+    options.setRegressionBasename("DigDogSequenceInfoCompareReg");
+    options.setErrorBasename("DigDogSequenceInfoCompareErr");
+    options.setOption("literals-level", "CLASS");
+    options.setOption("literals-file", "CLASSES");
+    options.setFlag("weighted-sequences");
+    options.setFlag("weighted-constants");
+    options.setFlag("output-sequence-info");
+
+    setUpAndRunDigDogTests(testEnvironment, options);
+    renameOutputTo("digdog-sequenceInfo.csv");
   }
 
   /* ------------------------------ utility methods ---------------------------------- */
@@ -1055,5 +1127,50 @@ public class RandoopSystemTest {
    */
   private RandoopRunStatus generateAndCompile(TestEnvironment environment, RandoopOptions options) {
     return generateAndCompile(environment, options, false);
+  }
+
+  /**
+   * Use this to rename "sequenceInfo.csv" from the --output-sequence-info flag DigDog formatted csv
+   * output, since the related tests write to the same directory. Would not be an issue in normal
+   * conditions, as "sequenceInfo.csv" will always be overwritten.
+   *
+   * @param newFileName the name which "sequenceInfo.csv" will be renamed to
+   */
+  private void renameOutputTo(String newFileName) {
+
+    File tempDir = new File("sequenceInfo.csv");
+    File result = new File(newFileName);
+    boolean renamed = tempDir.renameTo(result);
+    if (!renamed) {
+      fail("couldn't rename file");
+    }
+  }
+
+  private void setUpAndRunDigDogTests(TestEnvironment testEnvironment, RandoopOptions options) {
+    options.setOption("timelimit", "30");
+    options.setOption("null-ratio", "0.3");
+    options.setOption("alias-ratio", "0.3");
+    options.setFlag("clear=100");
+    options.addClassList("resources/systemTest/jdk_classlist.txt");
+
+    // omit methods that use Random
+    options.setOption(
+        "omitmethods", "java2\\.util2\\.Collections\\.shuffle\\(java2\\.util2\\.List\\)");
+
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
+
+    // TODO: maybe just generate and compile
+    generateAndCompile(testEnvironment, options);
+
+    //generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+
+    /*
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+
+    generateAndTestWithCoverage(
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+    */
   }
 }

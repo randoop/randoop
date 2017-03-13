@@ -1,12 +1,15 @@
 package randoop.main;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
@@ -22,15 +25,18 @@ import randoop.MultiVisitor;
 import randoop.condition.ConditionCollection;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
+import randoop.generation.DigDogGenerator;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
+import randoop.generation.WeightedComponentManager;
 import randoop.input.toradocu.ToradocuConditionCollection;
 import randoop.instrument.ExercisedClassVisitor;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
+import randoop.reflection.AbstractOperationModel;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PackageVisibilityPredicate;
@@ -38,6 +44,7 @@ import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
+import randoop.reflection.WeightedConstantsOperationModel;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
@@ -151,6 +158,17 @@ public class GenTests extends GenInputsAbstract {
     //   System.out.printf("Using security policy %s%n", policy);
     // }
 
+    if (GenInputsAbstract.weighted_sequences) {
+      System.out.println("Weighted Sequences is enabled");
+    }
+    if (GenInputsAbstract.weighted_constants) {
+      System.out.println(
+          "Weighted constants is enabled.  With p_const = " + GenInputsAbstract.p_const);
+    }
+    if (GenInputsAbstract.output_sequence_info) {
+      System.out.println("Sequence information output is enabled.");
+    }
+
     // If some properties were specified, set them
     for (String prop : GenInputsAbstract.system_props) {
       String[] pa = prop.split("=", 2);
@@ -210,18 +228,31 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     }
 
-    OperationModel operationModel = null;
+    AbstractOperationModel operationModel = null;
+
     try {
-      operationModel =
-          OperationModel.createModel(
-              visibility,
-              reflectionPredicate,
-              classnames,
-              coveredClassnames,
-              methodSignatures,
-              classNameErrorHandler,
-              GenInputsAbstract.literals_file,
-              operationConditions);
+      if (GenInputsAbstract.weighted_constants) {
+        operationModel =
+            WeightedConstantsOperationModel.createModel(
+                visibility,
+                reflectionPredicate,
+                classnames,
+                coveredClassnames,
+                methodSignatures,
+                classNameErrorHandler,
+                GenInputsAbstract.literals_file);
+      } else {
+        operationModel =
+            OperationModel.createModel(
+                visibility,
+                reflectionPredicate,
+                classnames,
+                coveredClassnames,
+                methodSignatures,
+                classNameErrorHandler,
+                GenInputsAbstract.literals_file,
+                operationConditions);
+      }
     } catch (OperationParseException e) {
       System.out.printf("%nError: parse exception thrown %s%n", e);
       System.out.println("Exiting Randoop.");
@@ -283,7 +314,15 @@ public class GenTests extends GenInputsAbstract {
     components.addAll(SeedSequences.defaultSeeds());
     components.addAll(operationModel.getAnnotatedTestValues());
 
-    ComponentManager componentMgr = new ComponentManager(components);
+    ComponentManager componentMgr;
+    if (GenInputsAbstract.weighted_sequences
+        || GenInputsAbstract.weighted_constants
+        || GenInputsAbstract.output_sequence_info) {
+      componentMgr = new WeightedComponentManager(components);
+    } else {
+      componentMgr = new ComponentManager(components);
+    }
+
     operationModel.addClassLiterals(
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
@@ -310,9 +349,39 @@ public class GenTests extends GenInputsAbstract {
      * Create the generator for this session.
      */
     AbstractGenerator explorer;
-    explorer =
-        new ForwardGenerator(
-            model, observers, timelimit * 1000, inputlimit, outputlimit, componentMgr, listenerMgr);
+    if (GenInputsAbstract.output_sequence_info
+        || GenInputsAbstract.weighted_sequences
+        || GenInputsAbstract.weighted_constants) {
+
+      Map<Sequence, Integer> tfFrequencies = null;
+      if (operationModel instanceof WeightedConstantsOperationModel) {
+        tfFrequencies = ((WeightedConstantsOperationModel) operationModel).getTfFrequency();
+      }
+      int num_classes = operationModel.getClassTypes().size();
+
+      explorer =
+          new DigDogGenerator(
+              model,
+              observers,
+              timelimit * 1000,
+              inputlimit,
+              outputlimit,
+              (WeightedComponentManager) componentMgr,
+              listenerMgr,
+              num_classes,
+              tfFrequencies);
+
+    } else {
+      explorer =
+          new ForwardGenerator(
+              model,
+              observers,
+              timelimit * 1000,
+              inputlimit,
+              outputlimit,
+              componentMgr,
+              listenerMgr);
+    }
 
     /*
      * setup for check generation
@@ -453,7 +522,52 @@ public class GenTests extends GenInputsAbstract {
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.printf("%nInvalid tests generated: %d", explorer.invalidSequenceCount);
     }
+    // TODO: output to file for sequence comparison between DigDog/Randoop
+    if (GenInputsAbstract.output_sequence_info) {
+      DigDogGenerator fExplorer =
+          (DigDogGenerator) explorer; // should work, explorer should always be a forw.gen.
+      Map<Sequence, List<Integer>> debugMap = fExplorer.getSequenceSizeMap();
+      writeTestInfo(debugMap);
+    }
+
     return true;
+  }
+
+  /**
+   * Write each sequence's info out to GenInputsAbstract.output_sequence_info_filename in .csv
+   * format Its info is essentially snapshots of its weight formulas and how they change
+   *
+   * @param sequenceSizeMap the map of all executed sequences to their sizes
+   */
+  private void writeTestInfo(Map<Sequence, List<Integer>> sequenceSizeMap) {
+    File tempDir = new File(GenInputsAbstract.output_sequence_info_filename);
+    PrintStream out;
+    try {
+      if (!tempDir.exists()) {
+        tempDir.createNewFile();
+      }
+      // always overwrite, should only exist from prior runs
+      out = createTextOutputStream(GenInputsAbstract.output_sequence_info_filename);
+      StringBuilder body = new StringBuilder();
+
+      body.append(sequenceSizeMap.keySet().size()); // number of sequences
+      body.append(',');
+
+      int accumulatedSequenceSize = 0;
+      for (Sequence seq : sequenceSizeMap.keySet()) {
+        for (Integer i : sequenceSizeMap.get(seq)) {
+          accumulatedSequenceSize += i; // gets the size of the sequence, not sqrt'd
+        }
+      }
+      double avgSeqSize = accumulatedSequenceSize * 1.0 / sequenceSizeMap.keySet().size();
+      body.append(avgSeqSize);
+
+      out.println(body.toString());
+    } catch (IOException e) {
+      System.out.println(
+          "Couldn't create output file: " + GenInputsAbstract.output_sequence_info_filename);
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -722,5 +836,16 @@ public class GenTests extends GenInputsAbstract {
       return textList;
     }
     return null;
+  }
+
+  private static PrintStream createTextOutputStream(String fileName) {
+    try {
+      return new PrintStream(new File(fileName));
+    } catch (FileNotFoundException e) {
+      Log.out.println("Exception thrown while creating text print stream:" + fileName);
+      e.printStackTrace();
+      System.exit(1);
+      throw new Error("This can't happen");
+    }
   }
 }
