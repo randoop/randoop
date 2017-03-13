@@ -62,16 +62,16 @@ public class JUnitCreator {
   private Map<String, Integer> classMethodCounts;
 
   /** The Java text for BeforeAll method of generated test class. */
-  private List<String> beforeAllText = null;
+  private BlockStmt beforeAllBody = null;
 
   /** The Java text for AfterAll method of generated test class. */
-  private List<String> afterAllText = null;
+  private BlockStmt afterAllBody = null;
 
   /** The Java text for BeforeEach method of generated test class. */
-  private List<String> beforeEachText = null;
+  private BlockStmt beforeEachBody = null;
 
   /** The Java text for AfterEach method of generated test class. */
-  private List<String> afterEachText = null;
+  private BlockStmt afterEachBody = null;
 
   /** The JUnit annotation for the BeforeAll option */
   private static final String BEFORE_ALL = "BeforeClass";
@@ -99,22 +99,22 @@ public class JUnitCreator {
 
   public static JUnitCreator getTestCreator(
       String junit_package_name,
-      List<String> beforeAllText,
-      List<String> afterAllText,
-      List<String> beforeEachText,
-      List<String> afterEachText) {
+      BlockStmt beforeAllBody,
+      BlockStmt afterAllBody,
+      BlockStmt beforeEachBody,
+      BlockStmt afterEachBody) {
     JUnitCreator junitCreator = new JUnitCreator(junit_package_name);
-    if (beforeAllText != null) {
-      junitCreator.addBeforeAll(beforeAllText);
+    if (beforeAllBody != null) {
+      junitCreator.addBeforeAll(beforeAllBody);
     }
-    if (afterAllText != null) {
-      junitCreator.addAfterAll(afterAllText);
+    if (afterAllBody != null) {
+      junitCreator.addAfterAll(afterAllBody);
     }
-    if (beforeEachText != null) {
-      junitCreator.addBeforeEach(beforeEachText);
+    if (beforeEachBody != null) {
+      junitCreator.addBeforeEach(beforeEachBody);
     }
-    if (afterEachText != null) {
-      junitCreator.addAfterEach(afterEachText);
+    if (afterEachBody != null) {
+      junitCreator.addAfterEach(afterEachBody);
     }
     return junitCreator;
   }
@@ -128,28 +128,28 @@ public class JUnitCreator {
   /**
    * Add text for BeforeClass-annotated method in each generated test class.
    *
-   * @param text the (Java) text for method
+   * @param body the (Java) text for method
    */
-  private void addBeforeAll(List<String> text) {
-    this.beforeAllText = text;
+  private void addBeforeAll(BlockStmt body) {
+    this.beforeAllBody = body;
   }
 
   /**
    * Add text for AfterClass-annotated method in each generated text class.
    *
-   * @param text the (Java) text for method
+   * @param body the (Java) text for method
    */
-  private void addAfterAll(List<String> text) {
-    this.afterAllText = text;
+  private void addAfterAll(BlockStmt body) {
+    this.afterAllBody = body;
   }
 
   /**
    * Add text for Before-annotated method in each generated test class.
    *
-   * @param text the (Java) text for method
+   * @param body the (Java) text for method
    */
-  private void addBeforeEach(List<String> text) {
-    this.beforeEachText = text;
+  private void addBeforeEach(BlockStmt body) {
+    this.beforeEachBody = body;
   }
 
   /**
@@ -157,8 +157,8 @@ public class JUnitCreator {
    *
    * @param text the (Java) text for method
    */
-  private void addAfterEach(List<String> text) {
-    this.afterEachText = text;
+  private void addAfterEach(BlockStmt text) {
+    this.afterEachBody = text;
   }
 
   public CompilationUnit createTestClass(
@@ -172,16 +172,16 @@ public class JUnitCreator {
     }
 
     List<ImportDeclaration> imports = new ArrayList<>();
-    if (afterEachText != null && !afterEachText.isEmpty()) {
+    if (afterEachBody != null) {
       imports.add(new ImportDeclaration(new NameExpr("org.junit.After"), false, false));
     }
-    if (afterAllText != null && !afterAllText.isEmpty()) {
+    if (afterAllBody != null) {
       imports.add(new ImportDeclaration(new NameExpr("org.junit.AfterClass"), false, false));
     }
-    if (beforeEachText != null && !beforeEachText.isEmpty()) {
+    if (beforeEachBody != null) {
       imports.add(new ImportDeclaration(new NameExpr("org.junit.Before"), false, false));
     }
-    if (beforeAllText != null && !beforeAllText.isEmpty()) {
+    if (beforeAllBody != null) {
       imports.add(new ImportDeclaration(new NameExpr("org.junit.BeforeClass"), false, false));
     }
     imports.add(new ImportDeclaration(new NameExpr("org.junit.FixMethodOrder"), false, false));
@@ -210,32 +210,50 @@ public class JUnitCreator {
             debugVariable);
     bodyDeclarations.add(debugField);
 
-    if (beforeAllText != null && !beforeAllText.isEmpty()) {
-      MethodDeclaration fixture =
-          createFixture(
-              BEFORE_ALL, Modifier.PUBLIC | Modifier.STATIC, BEFORE_ALL_METHOD, beforeAllText);
+    if (beforeAllBody != null) {
+      MethodDeclaration fixture = null;
+      try {
+        fixture =
+            createFixture(
+                BEFORE_ALL, Modifier.PUBLIC | Modifier.STATIC, BEFORE_ALL_METHOD, beforeAllBody);
+      } catch (ParseException e) {
+        System.out.println("Parse error in before-all fixture text");
+      }
       if (fixture != null) {
         bodyDeclarations.add(fixture);
       }
     }
-    if (afterAllText != null && !afterAllText.isEmpty()) {
-      MethodDeclaration fixture =
-          createFixture(
-              AFTER_ALL, Modifier.PUBLIC | Modifier.STATIC, AFTER_ALL_METHOD, afterAllText);
+    if (afterAllBody != null) {
+      MethodDeclaration fixture = null;
+      try {
+        fixture =
+            createFixture(
+                AFTER_ALL, Modifier.PUBLIC | Modifier.STATIC, AFTER_ALL_METHOD, afterAllBody);
+      } catch (ParseException e) {
+        System.out.println("Parse error in after-all fixture text");
+      }
       if (fixture != null) {
         bodyDeclarations.add(fixture);
       }
     }
-    if (beforeEachText != null && !beforeEachText.isEmpty()) {
-      MethodDeclaration fixture =
-          createFixture(BEFORE_EACH, Modifier.PUBLIC, BEFORE_EACH_METHOD, beforeEachText);
+    if (beforeEachBody != null) {
+      MethodDeclaration fixture = null;
+      try {
+        fixture = createFixture(BEFORE_EACH, Modifier.PUBLIC, BEFORE_EACH_METHOD, beforeEachBody);
+      } catch (ParseException e) {
+        System.out.println("Parse error in before-each text");
+      }
       if (fixture != null) {
         bodyDeclarations.add(fixture);
       }
     }
-    if (afterEachText != null && !afterEachText.isEmpty()) {
-      MethodDeclaration fixture =
-          createFixture(AFTER_EACH, Modifier.PUBLIC, AFTER_EACH_METHOD, afterEachText);
+    if (afterEachBody != null) {
+      MethodDeclaration fixture = null;
+      try {
+        fixture = createFixture(AFTER_EACH, Modifier.PUBLIC, AFTER_EACH_METHOD, afterEachBody);
+      } catch (ParseException e) {
+        System.out.println("Parse error in after-each text");
+      }
       if (fixture != null) {
         bodyDeclarations.add(fixture);
       }
@@ -310,28 +328,18 @@ public class JUnitCreator {
    * @param annotation the fixture annotation
    * @param modifiers the method modifiers for fixture declaration
    * @param methodName the name of the fixture method
-   * @param bodyText the text of the fixture method, must be non-null and non-empty
+   * @param body the {@code BlockStmt} for the fixture
    * @return the fixture method as a {@code String}
+   * @throws ParseException if there is a paser error for {@code bodyText}
    */
   private MethodDeclaration createFixture(
-      String annotation, int modifiers, String methodName, List<String> bodyText) {
+      String annotation, int modifiers, String methodName, BlockStmt body) throws ParseException {
     MethodDeclaration method = new MethodDeclaration(modifiers, new VoidType(), methodName);
     List<AnnotationExpr> annotations = new ArrayList<>();
     annotations.add(new MarkerAnnotationExpr(new NameExpr(annotation)));
     method.setAnnotations(annotations);
-    String blockText = "{\n";
-    for (String line : bodyText) {
-      blockText += line + "\n";
-    }
-    blockText += "\n}";
-    try {
-      BlockStmt body = JavaParser.parseBlock(blockText);
-      method.setBody(body);
-    } catch (ParseException e) {
-      System.out.println("Error creating test method: " + e.getMessage());
-      return null;
-    }
 
+    method.setBody(body);
     return method;
   }
 
@@ -413,7 +421,7 @@ public class JUnitCreator {
 
     NameGenerator instanceNameGen = new NameGenerator("t");
     for (String testClass : testClassNames) {
-      if (beforeAllText != null) {
+      if (beforeAllBody != null) {
         bodyStatements.add(
             new ExpressionStmt(new MethodCallExpr(new NameExpr(testClass), BEFORE_ALL_METHOD)));
       }
@@ -432,7 +440,7 @@ public class JUnitCreator {
       NameGenerator methodGen = new NameGenerator("test", 1, numDigits(classMethodCount));
 
       while (methodGen.nameCount() < classMethodCount) {
-        if (beforeEachText != null) {
+        if (beforeEachBody != null) {
           bodyStatements.add(
               new ExpressionStmt(
                   new MethodCallExpr(new NameExpr(testVariable), BEFORE_EACH_METHOD)));
@@ -468,14 +476,14 @@ public class JUnitCreator {
         tryStmt.setCatchs(catches);
         bodyStatements.add(tryStmt);
 
-        if (afterEachText != null) {
+        if (afterEachBody != null) {
           bodyStatements.add(
               new ExpressionStmt(
                   new MethodCallExpr(new NameExpr(testVariable), AFTER_EACH_METHOD)));
         }
       }
 
-      if (afterAllText != null) {
+      if (afterAllBody != null) {
         bodyStatements.add(
             new ExpressionStmt(new MethodCallExpr(new NameExpr(testClass), AFTER_ALL_METHOD)));
       }
@@ -503,5 +511,14 @@ public class JUnitCreator {
     types.add(driverClass);
     cu.setTypes(types);
     return cu.toString();
+  }
+
+  public static BlockStmt parseFixture(List<String> bodyText) throws ParseException {
+    String blockText = "{\n";
+    for (String line : bodyText) {
+      blockText += line + "\n";
+    }
+    blockText += "\n}";
+    return JavaParser.parseBlock(blockText);
   }
 }

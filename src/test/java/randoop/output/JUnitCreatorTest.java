@@ -15,7 +15,7 @@ import randoop.test.TestChecks;
 
 /** Partial test -- disabled in build.gradle */
 public class JUnitCreatorTest {
-
+/*
   @Test
   public void testClassCreation() {
     List<String> afterAll = new ArrayList<>();
@@ -29,23 +29,30 @@ public class JUnitCreatorTest {
     JUnitCreator creator =
         JUnitCreator.getTestCreator("pkg", beforeAll, afterAll, beforeEach, afterEach);
 
+    List<ExecutableSequence> sequences = getExecutableSequences();
+    System.out.println(creator.createTestClass("TestClass", "testMethod", sequences));
+  }
+
+  @Test
+  public void testBadFixtureInput() {
+    List<String> afterAll = new ArrayList<>();
+    afterAll.add(")");
+    List<String> afterEach = new ArrayList<>();
+    afterEach.add("System.out.println(\"after each\");");
+    List<String> beforeAll = new ArrayList<>();
+    beforeAll.add("System.out.println(\"before all\");");
+    List<String> beforeEach = new ArrayList<>();
+    beforeEach.add("System.out.println(\"before each\");");
+    JUnitCreator creator =
+        JUnitCreator.getTestCreator("pkg", beforeAll, afterAll, beforeEach, afterEach);
+
+    List<ExecutableSequence> sequences = getExecutableSequences();
+    System.out.println(creator.createTestClass("TestClass", "testMethod", sequences));
+  }
+*/
+  private List<ExecutableSequence> getExecutableSequences() {
     List<ExecutableSequence> sequences = new ArrayList<>();
-
-    ExecutionVisitor visitor =
-        new ExecutionVisitor() {
-          @Override
-          public void visitBeforeStatement(ExecutableSequence sequence, int i) {}
-
-          @Override
-          public void visitAfterStatement(ExecutableSequence sequence, int i) {}
-
-          @Override
-          public void initialize(ExecutableSequence executableSequence) {}
-
-          @Override
-          public void visitAfterSequence(ExecutableSequence executableSequence) {}
-        };
-
+    ExecutionVisitor visitor = getExecutionVisitor();
     for (int i = 0; i < 5; i++) {
       ExecutableSequence sequence = new ExecutableSequence(Sequence.createSequenceForPrimitive(i));
       TestCheckGenerator checkGen = getTestCheckGenerator(i, sequence.sequence.getVariable(0));
@@ -53,7 +60,23 @@ public class JUnitCreatorTest {
       sequence.execute(visitor, checkGen);
       sequences.add(sequence);
     }
-    System.out.println(creator.createTestClass("TestClass", "testMethod", sequences));
+    return sequences;
+  }
+
+  private ExecutionVisitor getExecutionVisitor() {
+    return new ExecutionVisitor() {
+      @Override
+      public void visitBeforeStatement(ExecutableSequence sequence, int i) {}
+
+      @Override
+      public void visitAfterStatement(ExecutableSequence sequence, int i) {}
+
+      @Override
+      public void initialize(ExecutableSequence executableSequence) {}
+
+      @Override
+      public void visitAfterSequence(ExecutableSequence executableSequence) {}
+    };
   }
 
   private TestCheckGenerator getTestCheckGenerator(final int i, final Variable variable) {

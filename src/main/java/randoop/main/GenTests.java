@@ -1,6 +1,8 @@
 package randoop.main;
 
+import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.stmt.BlockStmt;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -99,6 +101,11 @@ public class GenTests extends GenInputsAbstract {
 
   private static final List<String> notes;
 
+  private BlockStmt afterAllFixtureBody;
+  private BlockStmt afterEachFixtureBody;
+  private BlockStmt beforeAllFixtureBody;
+  private BlockStmt beforeEachFixtureBody;
+
   static {
     notes = new ArrayList<>();
     notes.add(
@@ -163,9 +170,45 @@ public class GenTests extends GenInputsAbstract {
     }
 
     /*
+     * If there is fixture code check that it can be parsed first
+     */
+    boolean badFixtureText = false;
+
+    try {
+      afterAllFixtureBody =
+          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_after_all));
+    } catch (ParseException e) {
+      System.out.println("Error in after-all fixture text at token " + e.currentToken);
+      badFixtureText = true;
+    }
+    try {
+      afterEachFixtureBody =
+          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_after_each));
+    } catch (ParseException e) {
+      System.out.println("Error in after-each fixture text at token " + e.currentToken);
+      badFixtureText = true;
+    }
+    try {
+      beforeAllFixtureBody =
+          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_before_all));
+    } catch (ParseException e) {
+      System.out.println("Error in before-all fixture text at token " + e.currentToken);
+      badFixtureText = true;
+    }
+    try {
+      beforeEachFixtureBody =
+          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_before_each));
+    } catch (ParseException e) {
+      System.out.println("Error in before-each fixture text at token " + e.currentToken);
+      badFixtureText = true;
+    }
+    if (badFixtureText) {
+      System.exit(1);
+    }
+
+    /*
      * Setup model of classes under test
      */
-
     // get names of classes under test
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
 
@@ -569,10 +612,10 @@ public class GenTests extends GenInputsAbstract {
         JUnitCreator junitCreator =
             JUnitCreator.getTestCreator(
                 junit_package_name,
-                getFileText(GenInputsAbstract.junit_before_all),
-                getFileText(GenInputsAbstract.junit_after_all),
-                getFileText(GenInputsAbstract.junit_before_each),
-                getFileText(GenInputsAbstract.junit_after_each));
+                beforeAllFixtureBody,
+                afterAllFixtureBody,
+                beforeEachFixtureBody,
+                afterEachFixtureBody);
         isOutputTest = baseTest.and(checkTest.and(new CompilableTestPredicate(junitCreator)));
       } else {
         isOutputTest = baseTest.and(checkTest);
@@ -594,10 +637,10 @@ public class GenTests extends GenInputsAbstract {
     JUnitCreator junitCreator =
         JUnitCreator.getTestCreator(
             junit_package_name,
-            getFileText(GenInputsAbstract.junit_before_all),
-            getFileText(GenInputsAbstract.junit_after_all),
-            getFileText(GenInputsAbstract.junit_before_each),
-            getFileText(GenInputsAbstract.junit_after_each));
+            beforeAllFixtureBody,
+            afterAllFixtureBody,
+            beforeEachFixtureBody,
+            afterEachFixtureBody);
     writeJUnitTests(junitCreator, junit_output_dir, sequences, junitPrefix);
   }
 
