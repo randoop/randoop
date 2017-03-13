@@ -4,16 +4,13 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
 import java.util.ArrayList;
 import java.util.List;
-import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaFileObject;
 import randoop.compile.SequenceClassLoader;
 import randoop.compile.SequenceCompiler;
-import randoop.compile.SequenceCompilerException;
 import randoop.output.JUnitCreator;
 import randoop.output.NameGenerator;
 import randoop.sequence.ExecutableSequence;
-import randoop.util.Log;
 import randoop.util.predicate.DefaultPredicate;
 
 /** {@code TestPredicate} that checks whether the given {@link ExecutableSequence} is compilable. */
@@ -42,6 +39,10 @@ public class CompilableTestPredicate extends DefaultPredicate<ExecutableSequence
     List<String> options = new ArrayList<>();
     options.add("-Xmaxerrs");
     options.add("1000");
+    options.add("-implicit:none"); //no class generation
+    options.add("-proc:none"); // no annotation processing
+    options.add("-g:none"); // no debugging information
+    options.add("-nowarn"); //
     this.compiler = new SequenceCompiler(sequenceClassLoader, options, diagnostics);
     this.junitCreator = junitCreator;
     this.nameGenerator = new NameGenerator("RandoopTemporarySeqTest");
@@ -83,21 +84,6 @@ public class CompilableTestPredicate extends DefaultPredicate<ExecutableSequence
    */
   boolean testSource(String testClassName, CompilationUnit source, String packageName) {
     String sourceText = source.toString();
-    try {
-      compiler.compileCheck(packageName, testClassName, sourceText);
-    } catch (SequenceCompilerException e) {
-      for (Diagnostic<? extends JavaFileObject> diagnostic : e.getDiagnostics().getDiagnostics()) {
-        if (diagnostic != null) {
-          if (diagnostic.getKind() == Diagnostic.Kind.ERROR) {
-            if (Log.isLoggingOn()) {
-              Log.logLine("Uncompilable sequence generated");
-              Log.log(sourceText);
-            }
-            return false;
-          }
-        }
-      }
-    }
-    return true;
+    return compiler.compileCheck(packageName, testClassName, sourceText);
   }
 }
