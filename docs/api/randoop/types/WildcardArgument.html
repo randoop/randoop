@@ -117,8 +117,7 @@ var activeTableTab = "activeTableTab";
 extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a></pre>
 <div class="block">Represents a wildcard type argument to a parameterized type.
 
- <p>
- The subclasses represent the type bound as given for the wildcard.</div>
+ <p>The subclasses represent the type bound as given for the wildcard.</div>
 </li>
 </ul>
 </div>
@@ -192,8 +191,9 @@ extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardArgument.html#contains-randoop.types.TypeArgument-">contains</a></span>(<a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a>&nbsp;argument)</code>
-<div class="block">Checks whether this type argument contains another argument, using relationship defined in
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.</div>
+<div class="block">Checks whether this type argument contains another argument, using relationship defined in <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section
+ 4.5.1</a>.</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
@@ -346,8 +346,8 @@ extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.
 <li class="blockList">
 <h4>forType</h4>
 <pre>public static&nbsp;<a href="../../randoop/types/WildcardArgument.html" title="class in randoop.types">WildcardArgument</a>&nbsp;forType(java.lang.reflect.Type&nbsp;type)</pre>
-<div class="block">Creates a <code>WildcardArgument</code> from a <code>java.lang.reflect.Type</code>.
- A wildcard may have either an upper or lower bound.</div>
+<div class="block">Creates a <code>WildcardArgument</code> from a <code>java.lang.reflect.Type</code>. A wildcard may have
+ either an upper or lower bound.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>type</code> - the <code>Type</code> object</dd>
@@ -447,8 +447,9 @@ extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.
 <h4>contains</h4>
 <pre>public&nbsp;boolean&nbsp;contains(<a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a>&nbsp;argument)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/TypeArgument.html#contains-randoop.types.TypeArgument-">TypeArgument</a></code></span></div>
-<div class="block">Checks whether this type argument contains another argument, using relationship defined in
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.</div>
+<div class="block">Checks whether this type argument contains another argument, using relationship defined in <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section
+ 4.5.1</a>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/types/TypeArgument.html#contains-randoop.types.TypeArgument-">contains</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a></code></dd>
@@ -481,7 +482,8 @@ extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.
 <h4>getTypeParameters</h4>
 <pre>public&nbsp;java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;getTypeParameters()</pre>
 <div class="block">The type parameters for this type argument.
- Returns the type parameters of the bound of this wildcard argument</div>
+
+ <p>Returns the type parameters of the bound of this wildcard argument</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/types/TypeArgument.html#getTypeParameters--">getTypeParameters</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a></code></dd>
@@ -497,8 +499,8 @@ extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.
 <li class="blockList">
 <h4>hasUpperBound</h4>
 <pre>boolean&nbsp;hasUpperBound()</pre>
-<div class="block">Indicates whether this wildcard argument has an upper bound.
- (If not, then it has a lower bound.)</div>
+<div class="block">Indicates whether this wildcard argument has an upper bound. (If not, then it has a lower
+ bound.)</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if this wildcard argument has an upper bound, false if it has a lower bound</dd>

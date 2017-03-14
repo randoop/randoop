@@ -110,9 +110,8 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public final class <span class="typeNameLabel">Statement</span>
 extends java.lang.Object</pre>
-<div class="block">Statement represents a statement involving an operation (or term), and the
- list of inputs for the statement. The inputs are variables, but are
- represented by indexing into the enclosing sequence.</div>
+<div class="block">Statement represents a statement involving an operation (or term), and the list of inputs for the
+ statement. The inputs are variables, but are represented by indexing into the enclosing sequence.</div>
 </li>
 </ul>
 </div>
@@ -138,8 +137,7 @@ extends java.lang.Object</pre>
 <tr class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Statement.html#operation">operation</a></span></code>
-<div class="block">The operation (method call, constructor call, primitive values declaration,
- etc.).</div>
+<div class="block">The operation (method call, constructor call, primitive values declaration, etc.).</div>
 </td>
 </tr>
 </table>
@@ -164,8 +162,7 @@ extends java.lang.Object</pre>
 <tr class="rowColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/sequence/Statement.html#Statement-randoop.operation.TypedOperation-java.util.List-">Statement</a></span>(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
          java.util.List&lt;<a href="../../randoop/sequence/Sequence.RelativeNegativeIndex.html" title="class in randoop.sequence">Sequence.RelativeNegativeIndex</a>&gt;&nbsp;inputVariables)</code>
-<div class="block">Create a new statement of type statement that takes as input the given
- values.</div>
+<div class="block">Create a new statement of type statement that takes as input the given values.</div>
 </td>
 </tr>
 </table>
@@ -201,15 +198,14 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code><a href="../../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Statement.html#execute-java.lang.Object:A-java.io.PrintStream-">execute</a></span>(java.lang.Object[]&nbsp;inputs,
        java.io.PrintStream&nbsp;out)</code>
-<div class="block">execute performs the operation of the statement for the input variables and
- returns outcome.</div>
+<div class="block">execute performs the operation of the statement for the input variables and returns outcome.</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Statement.html#getDeclaringClass--">getDeclaringClass</a></span>()</code>
-<div class="block">getDeclaringClass returns the declaring class as defined by the
- <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> of the statement.</div>
+<div class="block">getDeclaringClass returns the declaring class as defined by the <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> of the
+ statement.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
@@ -219,8 +215,7 @@ extends java.lang.Object</pre>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Statement.html#getOperation--">getOperation</a></span>()</code>
-<div class="block">getTypedOperation is meant to be a temporary solution to type confusion in
- generators.</div>
+<div class="block">getTypedOperation is meant to be a temporary solution to type confusion in generators.</div>
 </td>
 </tr>
 <tr id="i6" class="altColor">
@@ -230,8 +225,8 @@ extends java.lang.Object</pre>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Statement.html#getShortForm--">getShortForm</a></span>()</code>
-<div class="block">getShortForm constructs code expression of the operation for substitution
- into argument lists as opposed to using variable.</div>
+<div class="block">getShortForm constructs code expression of the operation for substitution into argument lists
+ as opposed to using variable.</div>
 </td>
 </tr>
 <tr id="i8" class="altColor">
@@ -247,22 +242,19 @@ extends java.lang.Object</pre>
 <tr id="i10" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Statement.html#isConstructorCall--">isConstructorCall</a></span>()</code>
-<div class="block">isConstructorCall determines if operation for statement is a call to a
- constructor.</div>
+<div class="block">isConstructorCall determines if operation for statement is a call to a constructor.</div>
 </td>
 </tr>
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Statement.html#isMethodCall--">isMethodCall</a></span>()</code>
-<div class="block">isMethodCall indicates whether a statement corresponds to a
- method-call-like operation.</div>
+<div class="block">isMethodCall indicates whether a statement corresponds to a method-call-like operation.</div>
 </td>
 </tr>
 <tr id="i12" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Statement.html#isNullInitialization--">isNullInitialization</a></span>()</code>
-<div class="block">isNullInitialization determines if statement represents an initialization by
- null value.</div>
+<div class="block">isNullInitialization determines if statement represents an initialization by null value.</div>
 </td>
 </tr>
 <tr id="i13" class="rowColor">
@@ -274,8 +266,7 @@ extends java.lang.Object</pre>
 <tr id="i14" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Statement.html#isStatic--">isStatic</a></span>()</code>
-<div class="block">isStatic indicates whether the corresponding operation is declared as
- static.</div>
+<div class="block">isStatic indicates whether the corresponding operation is declared as static.</div>
 </td>
 </tr>
 <tr id="i15" class="rowColor">
@@ -316,8 +307,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>operation</h4>
 <pre>private final&nbsp;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a> operation</pre>
-<div class="block">The operation (method call, constructor call, primitive values declaration,
- etc.).</div>
+<div class="block">The operation (method call, constructor call, primitive values declaration, etc.).</div>
 </li>
 </ul>
 <a name="inputs">
@@ -345,8 +335,7 @@ extends java.lang.Object</pre>
 <h4>Statement</h4>
 <pre>public&nbsp;Statement(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
                  java.util.List&lt;<a href="../../randoop/sequence/Sequence.RelativeNegativeIndex.html" title="class in randoop.sequence">Sequence.RelativeNegativeIndex</a>&gt;&nbsp;inputVariables)</pre>
-<div class="block">Create a new statement of type statement that takes as input the given
- values.</div>
+<div class="block">Create a new statement of type statement that takes as input the given values.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>operation</code> - the operation of this statement</dd>
@@ -388,8 +377,7 @@ extends java.lang.Object</pre>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code>equals</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if operation is the same, the number of inputs is the same,
-         and inputs are equal</dd>
+<dd>true if operation is the same, the number of inputs is the same, and inputs are equal</dd>
 </dl>
 </li>
 </ul>
@@ -474,8 +462,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>isStatic</h4>
 <pre>public&nbsp;boolean&nbsp;isStatic()</pre>
-<div class="block">isStatic indicates whether the corresponding operation is declared as
- static.</div>
+<div class="block">isStatic indicates whether the corresponding operation is declared as static.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>result of isStatic on operation corresponding to statement</dd>
@@ -489,10 +476,9 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>isMethodCall</h4>
 <pre>public&nbsp;boolean&nbsp;isMethodCall()</pre>
-<div class="block">isMethodCall indicates whether a statement corresponds to a
- method-call-like operation. This could be either a method call, an
- assignment/initialization involving a method call, or the use of a public
- field in an assignment on either lhs (as "setter") or rhs (as "getter").</div>
+<div class="block">isMethodCall indicates whether a statement corresponds to a method-call-like operation. This
+ could be either a method call, an assignment/initialization involving a method call, or the use
+ of a public field in an assignment on either lhs (as "setter") or rhs (as "getter").</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if operation is method-call-like, and false otherwise</dd>
@@ -507,8 +493,7 @@ extends java.lang.Object</pre>
 <h4>execute</h4>
 <pre>public&nbsp;<a href="../../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</a>&nbsp;execute(java.lang.Object[]&nbsp;inputs,
                                 java.io.PrintStream&nbsp;out)</pre>
-<div class="block">execute performs the operation of the statement for the input variables and
- returns outcome.</div>
+<div class="block">execute performs the operation of the statement for the input variables and returns outcome.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>inputs</code> - list of objects to use as inputs to execution</dd>
@@ -525,8 +510,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getDeclaringClass</h4>
 <pre>public&nbsp;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;getDeclaringClass()</pre>
-<div class="block">getDeclaringClass returns the declaring class as defined by the
- <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> of the statement.</div>
+<div class="block">getDeclaringClass returns the declaring class as defined by the <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> of the
+ statement.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>result of getDeclaringClass for corresponding statement</dd>
@@ -540,8 +525,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>isConstructorCall</h4>
 <pre>public&nbsp;boolean&nbsp;isConstructorCall()</pre>
-<div class="block">isConstructorCall determines if operation for statement is a call to a
- constructor.</div>
+<div class="block">isConstructorCall determines if operation for statement is a call to a constructor.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if operation is a constructor call, and false otherwise</dd>
@@ -569,12 +553,10 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>isNullInitialization</h4>
 <pre>public&nbsp;boolean&nbsp;isNullInitialization()</pre>
-<div class="block">isNullInitialization determines if statement represents an initialization by
- null value.</div>
+<div class="block">isNullInitialization determines if statement represents an initialization by null value.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if statement represents null initialization, and false
-         otherwise</dd>
+<dd>true if statement represents null initialization, and false otherwise</dd>
 </dl>
 </li>
 </ul>
@@ -585,8 +567,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getShortForm</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getShortForm()</pre>
-<div class="block">getShortForm constructs code expression of the operation for substitution
- into argument lists as opposed to using variable.</div>
+<div class="block">getShortForm constructs code expression of the operation for substitution into argument lists
+ as opposed to using variable.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>string containing code to access the value of the operation/term</dd>
@@ -600,16 +582,14 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getValue</h4>
 <pre>public&nbsp;java.lang.Object&nbsp;getValue()</pre>
-<div class="block">getValue returns the "value" for a statement. Is only meaningful if
- statement is an assignment of a constant value. Appeals to
- <a href="../../randoop/operation/CallableOperation.html" title="class in randoop.operation"><code>CallableOperation</code></a> to throw appropriate exception when unable to
- provide a value.
+<div class="block">getValue returns the "value" for a statement. Is only meaningful if statement is an assignment
+ of a constant value. Appeals to <a href="../../randoop/operation/CallableOperation.html" title="class in randoop.operation"><code>CallableOperation</code></a> to throw appropriate exception when
+ unable to provide a value.
 
- This is a hack to allow randoop.main.GenBranchDir to do mutation.</div>
+ <p>This is a hack to allow randoop.main.GenBranchDir to do mutation.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>value of term in statement (rhs of assignment/initialization) if
-         any</dd>
+<dd>value of term in statement (rhs of assignment/initialization) if any</dd>
 </dl>
 </li>
 </ul>
@@ -620,9 +600,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getOperation</h4>
 <pre>public final&nbsp;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;getOperation()</pre>
-<div class="block">getTypedOperation is meant to be a temporary solution to type confusion in
- generators. This should go away. Only intended to be called by
- <a href="../../randoop/sequence/Sequence.html#extend-randoop.operation.TypedOperation-java.util.List-"><code>Sequence.extend(TypedOperation, List)</code></a>.</div>
+<div class="block">getTypedOperation is meant to be a temporary solution to type confusion in generators. This
+ should go away. Only intended to be called by <a href="../../randoop/sequence/Sequence.html#extend-randoop.operation.TypedOperation-java.util.List-"><code>Sequence.extend(TypedOperation, List)</code></a>.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>operation object in the statement</dd>

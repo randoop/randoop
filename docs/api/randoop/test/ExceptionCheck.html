@@ -119,17 +119,12 @@ var activeTableTab = "activeTableTab";
 <pre>public abstract class <span class="typeNameLabel">ExceptionCheck</span>
 extends java.lang.Object
 implements <a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></pre>
-<div class="block">An <code>ExceptionCheck</code> is used to indicate that an exception is expected
- at a particular statement in a sequence. Depending on command-line arguments
- to Randoop, an instance may be either a <a href="../../randoop/test/ExpectedExceptionCheck.html" title="class in randoop.test"><code>ExpectedExceptionCheck</code></a> or
- <a href="../../randoop/test/EmptyExceptionCheck.html" title="class in randoop.test"><code>EmptyExceptionCheck</code></a>. When test code is generated in
- <a href="../../randoop/sequence/ExecutableSequence.html#toCodeString--"><code>ExecutableSequence.toCodeString()</code></a>, the methods
- <a href="../../randoop/test/ExceptionCheck.html#toCodeStringPreStatement--"><code>toCodeStringPreStatement()</code></a> and <a href="../../randoop/test/ExceptionCheck.html#toCodeStringPostStatement--"><code>toCodeStringPostStatement()</code></a>
- wrap the statement in a try-catch block for the exception, while the
- implementing classes define <a href="../../randoop/test/ExceptionCheck.html#appendTryBehavior-java.lang.StringBuilder-"><code>appendTryBehavior(StringBuilder)</code></a>
- and <a href="../../randoop/test/ExceptionCheck.html#appendCatchBehavior-java.lang.StringBuilder-"><code>appendCatchBehavior(StringBuilder)</code></a> which handle
- differences in whether assertions are generated to enforce the expectation of
- the exception.</div>
+<div class="block">An <code>ExceptionCheck</code> is used to indicate that an exception is expected at a particular
+ statement in a sequence. Depending on command-line arguments to Randoop, an instance may be
+ either a <a href="../../randoop/test/ExpectedExceptionCheck.html" title="class in randoop.test"><code>ExpectedExceptionCheck</code></a> or <a href="../../randoop/test/EmptyExceptionCheck.html" title="class in randoop.test"><code>EmptyExceptionCheck</code></a>. When test code is
+ generated in <a href="../../randoop/sequence/ExecutableSequence.html#toCodeString--"><code>ExecutableSequence.toCodeString()</code></a>, the methods <a href="../../randoop/test/ExceptionCheck.html#toCodeStringPreStatement--"><code>toCodeStringPreStatement()</code></a> and <a href="../../randoop/test/ExceptionCheck.html#toCodeStringPostStatement--"><code>toCodeStringPostStatement()</code></a> wrap the statement in a
+ try-catch block for the exception, while the implementing classes define <a href="../../randoop/test/ExceptionCheck.html#appendTryBehavior-java.lang.StringBuilder-"><code>appendTryBehavior(StringBuilder)</code></a> and <a href="../../randoop/test/ExceptionCheck.html#appendCatchBehavior-java.lang.StringBuilder-"><code>appendCatchBehavior(StringBuilder)</code></a> which handle
+ differences in whether assertions are generated to enforce the expectation of the exception.</div>
 </li>
 </ul>
 </div>
@@ -205,8 +200,7 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>protected abstract void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ExceptionCheck.html#appendTryBehavior-java.lang.StringBuilder-">appendTryBehavior</a></span>(java.lang.StringBuilder&nbsp;b)</code>
-<div class="block">Appends code to follow the statement throwing expected exception in try
- block.</div>
+<div class="block">Appends code to follow the statement throwing expected exception in try block.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -246,15 +240,13 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ExceptionCheck.html#toCodeStringPostStatement--">toCodeStringPostStatement</a></span>()</code>
-<div class="block">Returns a string of Java source code to be emitted after a statement
- containing this check.</div>
+<div class="block">Returns a string of Java source code to be emitted after a statement containing this check.</div>
 </td>
 </tr>
 <tr id="i9" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ExceptionCheck.html#toCodeStringPreStatement--">toCodeStringPreStatement</a></span>()</code>
-<div class="block">Returns a string of Java source code to be emitted before a statement
- containing this check.</div>
+<div class="block">Returns a string of Java source code to be emitted before a statement containing this check.</div>
 </td>
 </tr>
 <tr id="i10" class="altColor">
@@ -334,9 +326,9 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <pre>public&nbsp;ExceptionCheck(java.lang.Throwable&nbsp;exception,
                       int&nbsp;statementIndex,
                       java.lang.String&nbsp;catchClassName)</pre>
-<div class="block">Creates an exception check for the statement at the statement index. The
- generated code for this check will include a try-catch block with behaviors
- determined by implementing sub-classes.</div>
+<div class="block">Creates an exception check for the statement at the statement index. The generated code for
+ this check will include a try-catch block with behaviors determined by implementing
+ sub-classes.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>exception</code> - the exception expected at the statement index</dd>
@@ -360,8 +352,8 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <li class="blockList">
 <h4>equals</h4>
 <pre>public&nbsp;boolean&nbsp;equals(java.lang.Object&nbsp;o)</pre>
-<div class="block">Determines if two <code>ExceptionCheck</code> objects are equal. Assumes that
- implementing classes have no state.</div>
+<div class="block">Determines if two <code>ExceptionCheck</code> objects are equal. Assumes that implementing classes
+ have no state.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code>equals</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
@@ -418,12 +410,11 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <h4>getID</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getID()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/test/Check.html#getID--">Check</a></code></span></div>
-<div class="block">Returns a unique string identifier for the check. Two checks are the same
- if these identifiers match. The value is NOT included. Used to match
- up checks between the same sequence run at different times. Note that
- because of changes in the environment (e.g., static variables), two
- executions of the same sequence may have different checks (because the
- existence of some checks depends on the value of variables)</div>
+<div class="block">Returns a unique string identifier for the check. Two checks are the same if these identifiers
+ match. The value is NOT included. Used to match up checks between the same sequence run at
+ different times. Note that because of changes in the environment (e.g., static variables), two
+ executions of the same sequence may have different checks (because the existence of some checks
+ depends on the value of variables)</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/Check.html#getID--">getID</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></code></dd>
@@ -439,8 +430,9 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <li class="blockList">
 <h4>toCodeStringPreStatement</h4>
 <pre>public final&nbsp;java.lang.String&nbsp;toCodeStringPreStatement()</pre>
-<div class="block">Returns a string of Java source code to be emitted before a statement
- containing this check. The pre-statement prefix of the try-catch wrapper.</div>
+<div class="block">Returns a string of Java source code to be emitted before a statement containing this check.
+
+ <p>The pre-statement prefix of the try-catch wrapper.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/Check.html#toCodeStringPreStatement--">toCodeStringPreStatement</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></code></dd>
@@ -456,13 +448,12 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <li class="blockList">
 <h4>toCodeStringPostStatement</h4>
 <pre>public final&nbsp;java.lang.String&nbsp;toCodeStringPostStatement()</pre>
-<div class="block">Returns a string of Java source code to be emitted after a statement
- containing this check. Returns the post-statement portion of the try-catch wrapper.
- Starts with post-statement try-behavior as determined by a subclass
- implementation of <a href="../../randoop/test/ExceptionCheck.html#appendTryBehavior-java.lang.StringBuilder-"><code>appendTryBehavior(java.lang.StringBuilder)</code></a>, and then closes with the
- catch clause with the body determined by the sub-class implementation of
- <a href="../../randoop/test/ExceptionCheck.html#appendCatchBehavior-java.lang.StringBuilder-"><code>appendCatchBehavior(StringBuilder)</code></a>. Catches this exception
- or the closest public superclass of the exception.</div>
+<div class="block">Returns a string of Java source code to be emitted after a statement containing this check.
+
+ <p>Returns the post-statement portion of the try-catch wrapper. Starts with post-statement
+ try-behavior as determined by a subclass implementation of <a href="../../randoop/test/ExceptionCheck.html#appendTryBehavior-java.lang.StringBuilder-"><code>appendTryBehavior(java.lang.StringBuilder)</code></a>, and then
+ closes with the catch clause with the body determined by the sub-class implementation of <a href="../../randoop/test/ExceptionCheck.html#appendCatchBehavior-java.lang.StringBuilder-"><code>appendCatchBehavior(StringBuilder)</code></a>. Catches this exception or the closest public superclass
+ of the exception.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/Check.html#toCodeStringPostStatement--">toCodeStringPostStatement</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></code></dd>
@@ -492,8 +483,7 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <li class="blockList">
 <h4>appendTryBehavior</h4>
 <pre>protected abstract&nbsp;void&nbsp;appendTryBehavior(java.lang.StringBuilder&nbsp;b)</pre>
-<div class="block">Appends code to follow the statement throwing expected exception in try
- block.</div>
+<div class="block">Appends code to follow the statement throwing expected exception in try block.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>b</code> - the string builder to which code text is added</dd>

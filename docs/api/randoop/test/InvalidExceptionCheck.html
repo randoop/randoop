@@ -119,8 +119,8 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>class <span class="typeNameLabel">InvalidExceptionCheck</span>
 extends <a href="../../randoop/test/ExceptionCheck.html" title="class in randoop.test">ExceptionCheck</a></pre>
-<div class="block">An <code>InvalidExceptionCheck</code> represents the occurrence of an exception
- tagged as an invalid behavior during <code>Check</code> generation.</div>
+<div class="block">An <code>InvalidExceptionCheck</code> represents the occurrence of an exception tagged as an invalid
+ behavior during <code>Check</code> generation.</div>
 </li>
 </ul>
 </div>
@@ -182,8 +182,7 @@ extends <a href="../../randoop/test/ExceptionCheck.html" title="class in randoop
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/InvalidExceptionCheck.html#appendTryBehavior-java.lang.StringBuilder-">appendTryBehavior</a></span>(java.lang.StringBuilder&nbsp;b)</code>
-<div class="block">Appends code to follow the statement throwing expected exception in try
- block.</div>
+<div class="block">Appends code to follow the statement throwing expected exception in try block.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -277,8 +276,7 @@ extends <a href="../../randoop/test/ExceptionCheck.html" title="class in randoop
 <h4>appendTryBehavior</h4>
 <pre>protected&nbsp;void&nbsp;appendTryBehavior(java.lang.StringBuilder&nbsp;b)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/test/ExceptionCheck.html#appendTryBehavior-java.lang.StringBuilder-">ExceptionCheck</a></code></span></div>
-<div class="block">Appends code to follow the statement throwing expected exception in try
- block.</div>
+<div class="block">Appends code to follow the statement throwing expected exception in try block.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/ExceptionCheck.html#appendTryBehavior-java.lang.StringBuilder-">appendTryBehavior</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/test/ExceptionCheck.html" title="class in randoop.test">ExceptionCheck</a></code></dd>
@@ -314,12 +312,11 @@ extends <a href="../../randoop/test/ExceptionCheck.html" title="class in randoop
 <h4>getID</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getID()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/test/Check.html#getID--">Check</a></code></span></div>
-<div class="block">Returns a unique string identifier for the check. Two checks are the same
- if these identifiers match. The value is NOT included. Used to match
- up checks between the same sequence run at different times. Note that
- because of changes in the environment (e.g., static variables), two
- executions of the same sequence may have different checks (because the
- existence of some checks depends on the value of variables)</div>
+<div class="block">Returns a unique string identifier for the check. Two checks are the same if these identifiers
+ match. The value is NOT included. Used to match up checks between the same sequence run at
+ different times. Note that because of changes in the environment (e.g., static variables), two
+ executions of the same sequence may have different checks (because the existence of some checks
+ depends on the value of variables)</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/Check.html#getID--">getID</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></code></dd>
@@ -337,8 +334,9 @@ extends <a href="../../randoop/test/ExceptionCheck.html" title="class in randoop
 <li class="blockList">
 <h4>evaluate</h4>
 <pre>public&nbsp;boolean&nbsp;evaluate(<a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence">Execution</a>&nbsp;execution)</pre>
-<div class="block">Evaluates this check on the given execution of a sequence. An invalid check cannot be evaluated, so this throws an
- exception.</div>
+<div class="block">Evaluates this check on the given execution of a sequence.
+
+ <p>An invalid check cannot be evaluated, so this throws an exception.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>execution</code> - the execution of sequence on which to test this check</dd>

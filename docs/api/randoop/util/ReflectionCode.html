@@ -114,8 +114,7 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public abstract class <span class="typeNameLabel">ReflectionCode</span>
 extends java.lang.Object</pre>
-<div class="block">Implemented by parts of randoop that want to execute reflection code via
- ReflectionExecutor.</div>
+<div class="block">Implemented by parts of randoop that want to execute reflection code via ReflectionExecutor.</div>
 </li>
 </ul>
 </div>
@@ -206,9 +205,8 @@ extends java.lang.Object</pre>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ReflectionCode.html#runReflectionCode--">runReflectionCode</a></span>()</code>
-<div class="block">Runs the reflection code that this object represents, but first, if
- System.getSecurityManager() returns a RandoopSecurityManager, this method
- sets the security manager's status to ON.</div>
+<div class="block">Runs the reflection code that this object represents, but first, if System.getSecurityManager()
+ returns a RandoopSecurityManager, this method sets the security manager's status to ON.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
@@ -289,10 +287,9 @@ extends java.lang.Object</pre>
                                     java.lang.IllegalAccessException,
                                     java.lang.reflect.InvocationTargetException,
                                     <a href="../../randoop/util/ReflectionCode.NotCaughtIllegalStateException.html" title="class in randoop.util">ReflectionCode.NotCaughtIllegalStateException</a></pre>
-<div class="block">Runs the reflection code that this object represents, but first, if
- System.getSecurityManager() returns a RandoopSecurityManager, this method
- sets the security manager's status to ON. Before exiting, this method sets
- the security manager's status to its status before this call.</div>
+<div class="block">Runs the reflection code that this object represents, but first, if System.getSecurityManager()
+ returns a RandoopSecurityManager, this method sets the security manager's status to ON. Before
+ exiting, this method sets the security manager's status to its status before this call.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.reflect.InvocationTargetException</code> - if executed code throws an exception</dd>
@@ -320,7 +317,8 @@ extends java.lang.Object</pre>
 <dd><code>java.lang.InstantiationException</code> - if unable to create a new instance</dd>
 <dd><code>java.lang.IllegalAccessException</code> - if executed code involves inaccessible method</dd>
 <dd><code>java.lang.reflect.InvocationTargetException</code> - if executed code throws an exception</dd>
-<dd><code><a href="../../randoop/util/ReflectionCode.NotCaughtIllegalStateException.html" title="class in randoop.util">ReflectionCode.NotCaughtIllegalStateException</a></code> - if execution results in conflicting error and success states</dd>
+<dd><code><a href="../../randoop/util/ReflectionCode.NotCaughtIllegalStateException.html" title="class in randoop.util">ReflectionCode.NotCaughtIllegalStateException</a></code> - if execution results in conflicting error and success
+     states</dd>
 </dl>
 </li>
 </ul>

@@ -207,29 +207,27 @@ extends java.lang.Object</pre>
 <h4>parse</h4>
 <pre>public static&nbsp;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;parse(java.lang.String&nbsp;str)
                             throws <a href="../../randoop/operation/OperationParseException.html" title="class in randoop.operation">OperationParseException</a></pre>
-<div class="block">Parses a string representing an {code Operation}.
- The string is expected to be of the form:
+<div class="block">Parses a string representing an {code Operation}. The string is expected to be of the form:
 
  <pre>
    ID : DESCRIPTION
  </pre>
 
- Where ID is a string identifying the type of Operation, and DESCRIPTION
- represents more specifics of the Operation. For example, the following
- String represents the constructor for HashMap:
+ Where ID is a string identifying the type of Operation, and DESCRIPTION represents more
+ specifics of the Operation. For example, the following String represents the constructor for
+ HashMap:
 
  <pre>
    cons : java.util.HashMap.&lt;init&gt;()
  </pre>
 
- A class implementing Operation should define a static field named ID
- that corresponds to the ID string used when parsing. The way this parse
- method works is by using the ID string to determine the specific
- Operation class C, and the calling C.parse(String) on the DESCRIPTION
+ A class implementing Operation should define a static field named ID that corresponds to the ID
+ string used when parsing. The way this parse method works is by using the ID string to
+ determine the specific Operation class C, and the calling C.parse(String) on the DESCRIPTION
  String.
- <p>
- For more details on the exact form of DESCRIPTION, see the different
- classes implementing Operation.</div>
+
+ <p>For more details on the exact form of DESCRIPTION, see the different classes implementing
+ Operation.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>str</code> - the string to be parsed</dd>
@@ -247,8 +245,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getId</h4>
 <pre>public static&nbsp;java.lang.String&nbsp;getId(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;op)</pre>
-<div class="block">Returns the "id" for the Operation. The ID is really the kind or a tag,
- such as "prim". It is not a unique identifier for individual Operations.</div>
+<div class="block">Returns the "id" for the Operation. The ID is really the kind or a tag, such as "prim". It is
+ not a unique identifier for individual Operations.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>op</code> - the operation</dd>

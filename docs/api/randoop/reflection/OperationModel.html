@@ -110,17 +110,18 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">OperationModel</span>
 extends java.lang.Object</pre>
-<div class="block"><code>OperationModel</code> represents the information context from which tests are generated.
- The model includes:
+<div class="block"><code>OperationModel</code> represents the information context from which tests are generated. The
+ model includes:
+
  <ul>
-   <li>classes under test,</li>
-   <li>operations of all classes,</li>
-   <li>any atomic code sequences derived from command-line arguments, and </li>
-   <li>the contracts or oracles used to generate tests.</li>
+   <li>classes under test,
+   <li>operations of all classes,
+   <li>any atomic code sequences derived from command-line arguments, and
+   <li>the contracts or oracles used to generate tests.
  </ul>
- <p>
- This class manages all information about generic classes internally, and instantiates any
- type variables in operations before returning them.</div>
+
+ <p>This class manages all information about generic classes internally, and instantiates any type
+ variables in operations before returning them.</div>
 </li>
 </ul>
 </div>
@@ -228,8 +229,7 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#addClassLiterals-randoop.generation.ComponentManager-java.util.List-randoop.main.GenInputsAbstract.ClassLiteralsMode-">addClassLiterals</a></span>(<a href="../../randoop/generation/ComponentManager.html" title="class in randoop.generation">ComponentManager</a>&nbsp;compMgr,
                 java.util.List&lt;java.lang.String&gt;&nbsp;literalsFile,
                 <a href="../../randoop/main/GenInputsAbstract.ClassLiteralsMode.html" title="enum in randoop.main">GenInputsAbstract.ClassLiteralsMode</a>&nbsp;literalsLevel)</code>
-<div class="block">Adds literals to the component manager, by parsing any literals files
- specified by the user.</div>
+<div class="block">Adds literals to the component manager, by parsing any literals files specified by the user.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
@@ -480,10 +480,10 @@ extends java.lang.Object</pre>
 <div class="block">Factory method to construct an operation model for a particular set of classes</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>visibility</code> - the <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection"><code>VisibilityPredicate</code></a> to test
-          accessibility of classes and class members.</dd>
-<dd><code>reflectionPredicate</code> - the reflection predicate to determine which classes and
-                             class members are used</dd>
+<dd><code>visibility</code> - the <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection"><code>VisibilityPredicate</code></a> to test accessibility of
+     classes and class members.</dd>
+<dd><code>reflectionPredicate</code> - the reflection predicate to determine which classes and class
+     members are used</dd>
 <dd><code>classnames</code> - the names of classes under test</dd>
 <dd><code>exercisedClassnames</code> - the names of classes to be tested by exercised heuristic</dd>
 <dd><code>methodSignatures</code> - the signatures of methods to be added to the model</dd>
@@ -529,8 +529,7 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;void&nbsp;addClassLiterals(<a href="../../randoop/generation/ComponentManager.html" title="class in randoop.generation">ComponentManager</a>&nbsp;compMgr,
                              java.util.List&lt;java.lang.String&gt;&nbsp;literalsFile,
                              <a href="../../randoop/main/GenInputsAbstract.ClassLiteralsMode.html" title="enum in randoop.main">GenInputsAbstract.ClassLiteralsMode</a>&nbsp;literalsLevel)</pre>
-<div class="block">Adds literals to the component manager, by parsing any literals files
- specified by the user.
+<div class="block">Adds literals to the component manager, by parsing any literals files specified by the user.
  Includes literals at different levels indicated by <a href="../../randoop/main/GenInputsAbstract.ClassLiteralsMode.html" title="enum in randoop.main"><code>GenInputsAbstract.ClassLiteralsMode</code></a>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -633,8 +632,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getContracts</h4>
 <pre>public&nbsp;<a href="../../randoop/test/ContractSet.html" title="class in randoop.test">ContractSet</a>&nbsp;getContracts()</pre>
-<div class="block">Returns all <a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract"><code>ObjectContract</code></a> objects for this run of Randoop.
- Includes Randoop defaults and <a href="../../randoop/CheckRep.html" title="annotation in randoop"><code>CheckRep</code></a> annotated methods.</div>
+<div class="block">Returns all <a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract"><code>ObjectContract</code></a> objects for this run of Randoop. Includes Randoop defaults
+ and <a href="../../randoop/CheckRep.html" title="annotation in randoop"><code>CheckRep</code></a> annotated methods.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the list of contracts</dd>
@@ -662,9 +661,8 @@ extends java.lang.Object</pre>
                            java.util.Set&lt;java.lang.String&gt;&nbsp;exercisedClassnames,
                            <a href="../../randoop/main/ClassNameErrorHandler.html" title="interface in randoop.main">ClassNameErrorHandler</a>&nbsp;errorHandler,
                            java.util.List&lt;java.lang.String&gt;&nbsp;literalsFileList)</pre>
-<div class="block">Gathers class types to be used in a run of Randoop and adds them to this <code>OperationModel</code>.
- Specifically, collects types for classes-under-test, objects for exercised-class heuristic,
- concrete input types, annotated test values, and literal values.
+<div class="block">Gathers class types to be used in a run of Randoop and adds them to this <code>OperationModel</code>. Specifically, collects types for classes-under-test, objects for
+ exercised-class heuristic, concrete input types, annotated test values, and literal values.
  Also collects annotated test values, and class literal values used in test generation.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>

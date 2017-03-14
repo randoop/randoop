@@ -202,15 +202,13 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/PostConditionCheck.html#toCodeStringPostStatement--">toCodeStringPostStatement</a></span>()</code>
-<div class="block">Returns a string of Java source code to be emitted after a statement
- containing this check.</div>
+<div class="block">Returns a string of Java source code to be emitted after a statement containing this check.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/PostConditionCheck.html#toCodeStringPreStatement--">toCodeStringPreStatement</a></span>()</code>
-<div class="block">Returns a string of Java source code to be emitted before a statement
- containing this check.</div>
+<div class="block">Returns a string of Java source code to be emitted before a statement containing this check.</div>
 </td>
 </tr>
 </table>
@@ -295,8 +293,7 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <h4>toCodeStringPreStatement</h4>
 <pre>public&nbsp;java.lang.String&nbsp;toCodeStringPreStatement()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/test/Check.html#toCodeStringPreStatement--">Check</a></code></span></div>
-<div class="block">Returns a string of Java source code to be emitted before a statement
- containing this check.</div>
+<div class="block">Returns a string of Java source code to be emitted before a statement containing this check.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/Check.html#toCodeStringPreStatement--">toCodeStringPreStatement</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></code></dd>
@@ -313,8 +310,7 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <h4>toCodeStringPostStatement</h4>
 <pre>public&nbsp;java.lang.String&nbsp;toCodeStringPostStatement()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/test/Check.html#toCodeStringPostStatement--">Check</a></code></span></div>
-<div class="block">Returns a string of Java source code to be emitted after a statement
- containing this check.</div>
+<div class="block">Returns a string of Java source code to be emitted after a statement containing this check.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/Check.html#toCodeStringPostStatement--">toCodeStringPostStatement</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></code></dd>
@@ -348,12 +344,11 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <h4>getID</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getID()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/test/Check.html#getID--">Check</a></code></span></div>
-<div class="block">Returns a unique string identifier for the check. Two checks are the same
- if these identifiers match. The value is NOT included. Used to match
- up checks between the same sequence run at different times. Note that
- because of changes in the environment (e.g., static variables), two
- executions of the same sequence may have different checks (because the
- existence of some checks depends on the value of variables)</div>
+<div class="block">Returns a unique string identifier for the check. Two checks are the same if these identifiers
+ match. The value is NOT included. Used to match up checks between the same sequence run at
+ different times. Note that because of changes in the environment (e.g., static variables), two
+ executions of the same sequence may have different checks (because the existence of some checks
+ depends on the value of variables)</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/Check.html#getID--">getID</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></code></dd>
@@ -369,8 +364,8 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <li class="blockList">
 <h4>evaluate</h4>
 <pre>public&nbsp;boolean&nbsp;evaluate(<a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence">Execution</a>&nbsp;execution)</pre>
-<div class="block">Doesn't actually evaluate <a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence"><code>Execution</code></a> object.
- This check exists because the post-condition failed, so returns false.</div>
+<div class="block">Doesn't actually evaluate <a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence"><code>Execution</code></a> object. This check exists because the
+ post-condition failed, so returns false.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/Check.html#evaluate-randoop.sequence.Execution-">evaluate</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></code></dd>
