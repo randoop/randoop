@@ -699,6 +699,7 @@ public class GenTests extends GenInputsAbstract {
   /**
    * Writes the sequences as JUnit files to the specified directory.
    *
+   * @param junitCreator the JUnit test code generator
    * @param output_dir string name of output directory
    * @param seqList a list of sequences to write
    * @param junitClassname the base name for the class
