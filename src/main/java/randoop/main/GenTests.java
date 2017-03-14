@@ -608,7 +608,7 @@ public class GenTests extends GenInputsAbstract {
         checkTest = checkTest.or(new RegressionTestPredicate());
       }
 
-      if (!GenInputsAbstract.allow_uncompilable_tests) {
+      if (GenInputsAbstract.check_compilable) {
         JUnitCreator junitCreator =
             JUnitCreator.getTestCreator(
                 junit_package_name,

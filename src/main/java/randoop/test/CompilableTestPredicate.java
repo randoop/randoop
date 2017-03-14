@@ -38,11 +38,11 @@ public class CompilableTestPredicate extends DefaultPredicate<ExecutableSequence
     SequenceClassLoader sequenceClassLoader = new SequenceClassLoader(getClass().getClassLoader());
     List<String> options = new ArrayList<>();
     options.add("-Xmaxerrs");
-    options.add("1000");
+    options.add("1");
     options.add("-implicit:none"); //no class generation
     options.add("-proc:none"); // no annotation processing
     options.add("-g:none"); // no debugging information
-    options.add("-nowarn"); //
+    options.add("-Xlint:none"); // no warnings
     this.compiler = new SequenceCompiler(sequenceClassLoader, options, diagnostics);
     this.junitCreator = junitCreator;
     this.nameGenerator = new NameGenerator("RandoopTemporarySeqTest");
