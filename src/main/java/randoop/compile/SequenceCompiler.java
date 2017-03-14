@@ -97,6 +97,20 @@ public class SequenceCompiler {
     return compiledClass;
   }
 
+  public boolean compileCheck(
+      final String packageName, final String classname, final String classSource) {
+    String classFileName = classname + CompileUtil.JAVA_EXTENSION;
+    List<JavaFileObject> sources = new ArrayList<>();
+    JavaFileObject source = new SequenceJavaFileObject(classFileName, classSource);
+    sources.add(source);
+    fileManager.putFileForInput(StandardLocation.SOURCE_PATH, packageName, classFileName, source);
+
+    JavaCompiler.CompilationTask task =
+        compiler.getTask(null, fileManager, diagnostics, options, null, sources);
+    Boolean succeeded = task.call();
+    return !(succeeded == null || !succeeded);
+  }
+
   /**
    * Loads the {@code Class<T>} object for the named class.
    *
