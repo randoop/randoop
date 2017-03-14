@@ -37,12 +37,17 @@ public class CompilableTestPredicate extends DefaultPredicate<ExecutableSequence
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
     SequenceClassLoader sequenceClassLoader = new SequenceClassLoader(getClass().getClassLoader());
     List<String> options = new ArrayList<>();
+    // only need to know an error exists:
     options.add("-Xmaxerrs");
     options.add("1");
-    options.add("-implicit:none"); //no class generation
-    options.add("-proc:none"); // no annotation processing
-    options.add("-g:none"); // no debugging information
-    options.add("-Xlint:none"); // no warnings
+    //no class generation:
+    options.add("-implicit:none");
+    // no annotation processing: (note that -proc:only does not produce correct results)
+    options.add("-proc:none");
+    // no debugging information:
+    options.add("-g:none");
+    // no warnings:
+    options.add("-Xlint:none");
     this.compiler = new SequenceCompiler(sequenceClassLoader, options, diagnostics);
     this.junitCreator = junitCreator;
     this.nameGenerator = new NameGenerator("RandoopTemporarySeqTest");
