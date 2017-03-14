@@ -3,8 +3,8 @@ package randoop.condition.specification;
 import java.util.Objects;
 
 /**
- * The specification for a condition over the values of variables in a call to a method or
- * constructor.
+ * The specification for a condition over the values of parameters and return value of an operation
+ * (e.g., a method or constructor).
  *
  * @see OperationSpecification
  */

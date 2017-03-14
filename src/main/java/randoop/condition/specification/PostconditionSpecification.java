@@ -8,11 +8,15 @@ import java.util.Objects;
  * SimpleSpecification}.
  */
 public class PostconditionSpecification extends Specification {
-  private final BooleanSpecification precondition;
+
+  /** the precondition */
+  private final ConditionSpecification precondition;
+
+  /** the post-condition */
   private final SimpleSpecification postcondition;
 
   public PostconditionSpecification(
-      String description, BooleanSpecification precondition, SimpleSpecification postcondition) {
+      String description, ConditionSpecification precondition, SimpleSpecification postcondition) {
     super(description);
     this.precondition = precondition;
     this.postcondition = postcondition;
