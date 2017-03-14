@@ -4,22 +4,22 @@ import java.util.Objects;
 
 /**
  * Conditions that can be attached to methods and constructors are given in the form of {@link
- * ConditionSpecification} objects.
+ * Specification} objects.
  */
-public abstract class ConditionSpecification {
+public abstract class Specification {
 
   private final String description;
 
-  public ConditionSpecification(String description) {
+  public Specification(String description) {
     this.description = description;
   }
 
   @Override
   public boolean equals(Object object) {
-    if (!(object instanceof ConditionSpecification)) {
+    if (!(object instanceof Specification)) {
       return false;
     }
-    ConditionSpecification other = (ConditionSpecification) object;
+    Specification other = (Specification) object;
     return this.description.equals(other.description);
   }
 

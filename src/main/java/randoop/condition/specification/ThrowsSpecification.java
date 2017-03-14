@@ -3,32 +3,31 @@ package randoop.condition.specification;
 import java.util.Objects;
 
 /**
- * The specification for a {@link ThrowsConditionSpecification} that specifies that an exception
- * should be thrown. For use as a post-condition in a {@link PostconditionSpecification}.
+ * The specification for a {@link ThrowsSpecification} that specifies that an exception should be
+ * thrown. For use as a post-condition in a {@link PostconditionSpecification}.
  */
-public class ThrowsConditionSpecification extends SimpleConditionSpecification {
+public class ThrowsSpecification extends SimpleSpecification {
 
   /** The type of the expected exception */
   private final Class<? extends Throwable> exceptionType;
 
   /**
-   * Creates a {@link ThrowsConditionSpecification} representing an excepted exception.
+   * Creates a {@link ThrowsSpecification} representing an excepted exception.
    *
    * @param description the description of the condition
    * @param exceptionType the expected exception type
    */
-  public ThrowsConditionSpecification(
-      String description, Class<? extends Throwable> exceptionType) {
+  public ThrowsSpecification(String description, Class<? extends Throwable> exceptionType) {
     super(description);
     this.exceptionType = exceptionType;
   }
 
   @Override
   public boolean equals(Object object) {
-    if (!(object instanceof ThrowsConditionSpecification)) {
+    if (!(object instanceof ThrowsSpecification)) {
       return false;
     }
-    ThrowsConditionSpecification other = (ThrowsConditionSpecification) object;
+    ThrowsSpecification other = (ThrowsSpecification) object;
     return super.equals(other) && this.exceptionType.equals(other.exceptionType);
   }
 

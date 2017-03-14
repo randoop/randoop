@@ -5,16 +5,14 @@ import java.util.Objects;
 /**
  * A {@link PostconditionSpecification} describes a pre-post-condition pair where the post-condition
  * is expected to hold if the pre-condition holds. The post-condition is a {@link
- * SimpleConditionSpecification}.
+ * SimpleSpecification}.
  */
-public class PostconditionSpecification extends ConditionSpecification {
-  private final BooleanConditionSpecification precondition;
-  private final SimpleConditionSpecification postcondition;
+public class PostconditionSpecification extends Specification {
+  private final BooleanSpecification precondition;
+  private final SimpleSpecification postcondition;
 
   public PostconditionSpecification(
-      String description,
-      BooleanConditionSpecification precondition,
-      SimpleConditionSpecification postcondition) {
+      String description, BooleanSpecification precondition, SimpleSpecification postcondition) {
     super(description);
     this.precondition = precondition;
     this.postcondition = postcondition;

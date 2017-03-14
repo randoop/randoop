@@ -8,28 +8,28 @@ import java.util.Objects;
  *
  * @see OperationSpecification
  */
-public class BooleanConditionSpecification extends SimpleConditionSpecification {
+public class BooleanSpecification extends SimpleSpecification {
 
   /** The text of the Java code for this condition */
   private final String conditionText;
 
   /**
-   * Creates a {@link BooleanConditionSpecification} with the given description and condition code.
+   * Creates a {@link BooleanSpecification} with the given description and condition code.
    *
    * @param description the description of this boolean condition
    * @param conditionText the text of the Java code for the created condition
    */
-  public BooleanConditionSpecification(String description, String conditionText) {
+  public BooleanSpecification(String description, String conditionText) {
     super(description);
     this.conditionText = conditionText;
   }
 
   @Override
   public boolean equals(Object object) {
-    if (!(object instanceof BooleanConditionSpecification)) {
+    if (!(object instanceof BooleanSpecification)) {
       return false;
     }
-    BooleanConditionSpecification other = (BooleanConditionSpecification) object;
+    BooleanSpecification other = (BooleanSpecification) object;
     return super.equals(object) && this.conditionText.equals(other.conditionText);
   }
 
@@ -44,7 +44,7 @@ public class BooleanConditionSpecification extends SimpleConditionSpecification 
   }
 
   /**
-   * Return the condition text for this {@link BooleanConditionSpecification}.
+   * Return the condition text for this {@link BooleanSpecification}.
    *
    * @return the Java text for this condition
    */

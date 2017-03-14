@@ -8,15 +8,14 @@ import java.util.Objects;
 /** Created by bjkeller on 3/13/17. */
 public class OperationSpecification {
   private final AccessibleObject operation;
-  private final List<ConditionSpecification> specifications;
+  private final List<Specification> specifications;
 
   public OperationSpecification(AccessibleObject operation) {
     this.operation = operation;
     this.specifications = new ArrayList<>();
   }
 
-  public OperationSpecification(
-      AccessibleObject operation, List<ConditionSpecification> specifications) {
+  public OperationSpecification(AccessibleObject operation, List<Specification> specifications) {
     this.operation = operation;
     this.specifications = specifications;
   }
@@ -40,7 +39,7 @@ public class OperationSpecification {
     return specifications.toString();
   }
 
-  public void addSpecification(ConditionSpecification specification) {
+  public void addSpecification(Specification specification) {
     specifications.add(specification);
   }
 
@@ -48,7 +47,7 @@ public class OperationSpecification {
     return operation;
   }
 
-  public List<ConditionSpecification> getSpecifications() {
+  public List<Specification> getSpecifications() {
     return specifications;
   }
 }
