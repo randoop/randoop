@@ -3,6 +3,7 @@ package randoop.condition.specification;
 import static junit.framework.TestCase.fail;
 
 import com.google.gson.GsonBuilder;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,14 @@ public class ConnectionSpecTest {
   @Test
   public void testSerialization() {
     Class<?> c = net.Connection.class;
+
+    Constructor<?> constructor = null;
+    try {
+      constructor = c.getConstructor();
+    } catch (NoSuchMethodException e) {
+      e.printStackTrace();
+    }
+
     Method m = null;
     try {
       m = c.getMethod("open");
@@ -24,11 +33,11 @@ public class ConnectionSpecTest {
 
     List<OperationSpecification> opList = new ArrayList<>();
 
-    Guard guard = new Guard("if the connection is already open", "receiver.isOpen()");
+    Guard throwsGuard = new Guard("if the connection is already open", "receiver.isOpen()");
     ThrowsSpecification opThrows =
         new ThrowsSpecification(
             "throws IllegalStateException if the connection is already open",
-            guard,
+            throwsGuard,
             IllegalStateException.class.getCanonicalName());
     List<ThrowsSpecification> throwsList = new ArrayList<>();
     throwsList.add(opThrows);
@@ -45,9 +54,16 @@ public class ConnectionSpecTest {
     }
     assert m != null;
 
-    guard = new Guard("must be positive", "code > 0");
-    ParamSpecification opParam = new ParamSpecification("the code must be positive", guard);
+    Guard paramGuard = new Guard("the code must be positive", "code > 0");
+    ParamSpecification opParam = new ParamSpecification("the code must be positive", paramGuard);
     List<ParamSpecification> paramList = new ArrayList<>();
+    throwsGuard = new Guard("the connection is not open", "!receiver.isOpen()");
+    opThrows =
+        new ThrowsSpecification(
+            "throws IllegalStateException if the connection is not open",
+            throwsGuard,
+            IllegalStateException.class.getCanonicalName());
+
     paramList.add(opParam);
     List<String> paramNames = new ArrayList<>();
     paramNames.add("code");
