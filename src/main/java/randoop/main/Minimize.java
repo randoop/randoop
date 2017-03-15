@@ -45,10 +45,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 import org.apache.commons.io.IOUtils;
 import plume.Option;
 import plume.OptionGroup;
@@ -94,7 +91,7 @@ public class Minimize extends CommandHandler {
         "",
         "Minimize a failing JUnit test suite.",
         null,
-        "Absolute path to Java file to be minimized, complete classpath to compile and run the Java file, maximum time (in seconds) allowed for a single unit test case to run before it times out.",
+        "Path to Java file whose failing tests will be minimized, classpath to compile and run the Java file, maximum time (in seconds) allowed for a single unit test case to run before it times out.",
         "A minimized JUnit test suite (as one Java file) named \"InputFileMinimized.java\" if \"InputFile.java\" were the name of the input file.",
         "java -ea -cp bin:randoop-all-3.0.9.jar randoop.main.Main minimize --suitepath=~/RandoopTests/src/ErrorTestLang.java --suiteclasspath=~/RandoopTests/commons-lang3-3.5.jar --testcasetimeout=30",
         new Options(Minimize.class));
@@ -190,6 +187,8 @@ public class Minimize extends CommandHandler {
     if (res == null) {
       // There was an error when compiling or running.
       System.err.println("Error when compiling or running file " + filePath + ". Aborting");
+      System.err.println(
+          "Possible errors: a testcase timed out, error reading from standard or error output");
       return false;
     } else if (res.compOut.exitValue != 0) {
       System.err.println("Error when compiling file " + filePath + ". Aborting");
@@ -630,8 +629,8 @@ public class Minimize extends CommandHandler {
       int timeoutLimit) {
     Results res = compileAndRun(filePath, classpath, packageName, timeoutLimit);
 
-    return res != null
-        && res.compOut.exitValue == 0
+    return res.compOut.exitValue == 0
+        && res.runOut != null
         && res.runOut.errout.isEmpty()
         && expectedOutput.equals(normalizeJUnitOutput(res.runOut.stdout));
   }
@@ -647,75 +646,63 @@ public class Minimize extends CommandHandler {
    */
   private static Results compileAndRun(
       String filePath, String classpath, String packageName, int timeoutLimit) {
-    try {
-      String pathSeparator = System.getProperty("path.separator");
-      String systemClassPath = System.getProperty("java.class.path");
+    String pathSeparator = System.getProperty("path.separator");
+    String systemClassPath = System.getProperty("java.class.path");
 
-      // Obtain directory to carry out compilation and execution step
-      String executionDir = getExecutionDirectory(filePath, packageName);
+    // Obtain directory to carry out compilation and execution step
+    String executionDir = getExecutionDirectory(filePath, packageName);
 
-      // Obtain directory path from file path.
-      Path fPath = Paths.get(filePath).getParent();
-      // Directory path for the classpath
-      String dirPath = null;
-      if (fPath != null) {
-        dirPath = fPath.toString();
-      }
-
-      // Command to compile the input Java file
-      String command = "javac -classpath " + systemClassPath;
-      // Add current directory to class path
-      command += pathSeparator + ".";
-      if (classpath != null) {
-        // Add specified classpath to command
-        command += pathSeparator + classpath;
-      }
-      command += " " + filePath;
-
-      // Compile specified Java file.
-      Outputs cRes = runProcess(command, executionDir, timeoutLimit);
-
-      // Check compilation results for compilation error.
-      if (cRes == null || cRes.exitValue != 0) {
-        return null;
-      }
-
-      // Add the package name to the class name if it exists
-      String className = getClassName(filePath);
-      if (packageName != null) {
-        className = packageName + "." + className;
-      }
-
-      // Command to run the Java file
-      command = "java -classpath " + systemClassPath;
-      // Add current directory to class path
-      command += pathSeparator + ".";
-      if (dirPath != null) {
-        // Use directory as defined by the file path
-        command += pathSeparator + dirPath;
-      }
-      if (classpath != null) {
-        // Add specified classpath to command
-        command += pathSeparator + classpath;
-      }
-      // Add JUnitCore command
-      command += " org.junit.runner.JUnitCore " + className;
-
-      // Run the specified Java file.
-      Outputs rRes = runProcess(command, executionDir, timeoutLimit);
-
-      // Check execution results for runtime error.
-      if (rRes == null) {
-        return null;
-      }
-
-      return new Results(cRes, rRes);
-    } catch (Exception e) {
-      // Error running process.
-      System.err.println("Error running process:");
-      e.printStackTrace();
-      return null;
+    // Obtain directory path from file path.
+    Path fPath = Paths.get(filePath).getParent();
+    // Directory path for the classpath
+    String dirPath = null;
+    if (fPath != null) {
+      dirPath = fPath.toString();
     }
+
+    // Command to compile the input Java file
+    String command = "javac -classpath " + systemClassPath;
+    // Add current directory to class path
+    command += pathSeparator + ".";
+    if (classpath != null) {
+      // Add specified classpath to command
+      command += pathSeparator + classpath;
+    }
+    command += " " + filePath;
+
+    // Compile specified Java file.
+    Outputs cRes = runProcess(command, executionDir, timeoutLimit);
+
+    // Check compilation results for compilation error.
+    if (cRes.exitValue != 0) {
+      return new Results(cRes, null);
+    }
+
+    // Add the package name to the class name if it exists.
+    String className = getClassName(filePath);
+    if (packageName != null) {
+      className = packageName + "." + className;
+    }
+
+    // Command to run the Java file.
+    command = "java -classpath " + systemClassPath;
+    // Add current directory to class path.
+    command += pathSeparator + ".";
+    if (dirPath != null) {
+      // Use directory as defined by the file path.
+      command += pathSeparator + dirPath;
+    }
+    if (classpath != null) {
+      // Add specified classpath to command.
+      command += pathSeparator + classpath;
+    }
+    // Add JUnitCore command.
+    command += " org.junit.runner.JUnitCore " + className;
+
+    // Run the specified Java file.
+    Outputs rRes = runProcess(command, executionDir, timeoutLimit);
+
+    return new Results(cRes, rRes);
   }
 
   /**
@@ -744,30 +731,37 @@ public class Minimize extends CommandHandler {
    * @param executionDir the directory where the process commands should be executed
    * @param timeoutLimit the maximum number of seconds allowed for the process to run
    * @return an {@code Outputs} object containing the standard and error output
-   * @throws Exception if the input command is unable to be run
    */
-  private static Outputs runProcess(String command, String executionDir, int timeoutLimit)
-      throws Exception {
+  private static Outputs runProcess(String command, String executionDir, int timeoutLimit) {
     Process process;
 
     if (executionDir == null || executionDir.isEmpty()) {
-      // Execution directory is null, execute command in default directory
-      process = Runtime.getRuntime().exec(command);
+      // Execution directory is null, execute command in default directory.
+      try {
+        process = Runtime.getRuntime().exec(command);
+      } catch (IOException e) {
+        return new Outputs("", "I/O error occurred when running process.", 1);
+      }
     } else {
-      // input Java file is in a package, execute in the root directory
-      process = Runtime.getRuntime().exec(command, null, new File(executionDir));
+      // Input Java file is in a package, execute in the root directory.
+      try {
+        process = Runtime.getRuntime().exec(command, null, new File(executionDir));
+      } catch (IOException e) {
+        return new Outputs("", "I/O error occurred when running process.", 1);
+      }
     }
-    final TimeLimitProcess tp = new TimeLimitProcess(process, timeoutLimit * 1000);
+
+    final TimeLimitProcess timeLimitProcess = new TimeLimitProcess(process, timeoutLimit * 1000);
 
     Callable<String> stdCallable =
         new Callable<String>() {
           @Override
           public String call() throws Exception {
             try {
-              return IOUtils.toString(tp.getInputStream(), Charset.defaultCharset());
+              return IOUtils.toString(timeLimitProcess.getInputStream(), Charset.defaultCharset());
             } catch (IOException e) {
-              // Error
-              return null;
+              // Error reading from process' input stream.
+              return "Error reading from process' input stream.";
             }
           }
         };
@@ -777,10 +771,10 @@ public class Minimize extends CommandHandler {
           @Override
           public String call() throws Exception {
             try {
-              return IOUtils.toString(tp.getErrorStream(), Charset.defaultCharset());
+              return IOUtils.toString(timeLimitProcess.getErrorStream(), Charset.defaultCharset());
             } catch (IOException e) {
-              // Error
-              return null;
+              // Error reading from process' error stream.
+              return "Error reading from process' error stream.";
             }
           }
         };
@@ -790,14 +784,30 @@ public class Minimize extends CommandHandler {
     Future<String> errOutput = fixedThreadPool.submit(errCallable);
     fixedThreadPool.shutdown();
 
-    tp.waitFor();
-    if (tp.timed_out()) {
-      tp.destroy();
-      return null;
+    // Wait for the TimeLimitProcess to finish.
+    try {
+      timeLimitProcess.waitFor();
+    } catch (InterruptedException e) {
+      return new Outputs("", "Process was interrupted while waiting.", 1);
+    }
+    if (timeLimitProcess.timed_out()) {
+      timeLimitProcess.destroy();
+      return new Outputs("", "Process timed out after " + timeoutLimit * 1000 + " seconds.", 1);
     }
 
-    // Run and collect the results from the standard output and error output
-    return new Outputs(stdOutput.get(), errOutput.get(), tp.exitValue());
+    String stdOutputString;
+    String errOutputString;
+    try {
+      stdOutputString = stdOutput.get();
+      errOutputString = errOutput.get();
+    } catch (InterruptedException e) {
+      return new Outputs("", "Process was interrupted while waiting.", 1);
+    } catch (ExecutionException e) {
+      return new Outputs("", "A computation in the process threw an exception.", 1);
+    }
+
+    // Collect and return the results from the standard output and error output.
+    return new Outputs(stdOutputString, errOutputString, timeLimitProcess.exitValue());
   }
 
   /**
