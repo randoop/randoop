@@ -81,6 +81,7 @@ public class OperationSpecification {
     }
     OperationSpecification other = (OperationSpecification) object;
     return this.operation.equals(other.operation)
+        && this.identifiers.equals(other.identifiers)
         && this.throwsSpecifications.equals(other.throwsSpecifications)
         && this.returnSpecifications.equals(other.returnSpecifications)
         && this.paramSpecifications.equals(other.paramSpecifications);

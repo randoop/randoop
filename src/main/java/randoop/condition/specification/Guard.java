@@ -1,8 +1,8 @@
 package randoop.condition.specification;
 
 /**
- * The specification for a condition over the values of parameters and return value of an operation
- * (e.g., a method or constructor).
+ * The representation of a boolean expression over the values of parameters and return value of an
+ * operation (e.g., a method or constructor).
  *
  * @see Specification
  */

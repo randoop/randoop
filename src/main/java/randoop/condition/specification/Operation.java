@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/** Created by bjkeller on 3/14/17. */
+/** Represents the reflection type of an operation for an {@link OperationSpecification}. */
 public class Operation {
 
   /** the fully-qualified name of the declaring class of this operation */

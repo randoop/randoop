@@ -8,7 +8,7 @@ import java.util.Objects;
  */
 public class ThrowsSpecification extends Specification {
 
-  /** The type of the expected exception */
+  /** The fully-qualified name of the type of the expected exception */
   private final String exceptionType;
 
   /**

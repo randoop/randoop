@@ -2,6 +2,7 @@ package randoop.condition.specification;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Contains the identifiers used in the guards and properties of the specifications in a {@link
@@ -47,8 +48,28 @@ public class Identifiers {
     this(parameters, DEFAULT_RECEIVER_NAME, DEFAULT_RETURN_NAME);
   }
 
+  /**
+   * Create a {@link Identifiers} object with no parameters and the default identifiers for the
+   * receiver and return value.
+   */
   public Identifiers() {
     this(new ArrayList<String>());
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (!(object instanceof Identifiers)) {
+      return false;
+    }
+    Identifiers other = (Identifiers) object;
+    return this.parameters.equals(other.parameters)
+        && this.receiverName.equals(other.receiverName)
+        && this.returnName.equals(other.returnName);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.parameters, this.receiverName, this.returnName);
   }
 
   /**
