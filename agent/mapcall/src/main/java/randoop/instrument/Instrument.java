@@ -334,6 +334,7 @@ public class Instrument implements ClassFileTransformer {
    *
    * @param m the method to transform
    * @param mg the method generator
+   * @param current_method_map the current map of method definitions
    */
   public void instrument_method(
       Method m, MethodGen mg, Map<MethodDef, ReplacementClass> current_method_map) {

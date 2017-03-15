@@ -434,8 +434,12 @@ public class RandoopSystemTest {
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
+
+    CoverageChecker coverageChecker = new CoverageChecker(options);
+    //XXX after adding compile check this method did not appear in JDK7 runs
+    coverageChecker.ignore("randoop.test.LongString.tooLongString()");
     generateAndTestWithCoverage(
-        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+        testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
 
   /** Test formerly known as randoop-visibility. */
@@ -838,6 +842,23 @@ public class RandoopSystemTest {
 
     generateAndTestWithCoverage(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
+  }
+
+  @Test
+  public void runInstantiationErrorTest() {
+    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("compile-error");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("compileerr.WildcardCollection");
+    options.setErrorBasename("CompError");
+    options.setRegressionBasename("CompRegression");
+    options.setOption("timelimit", "30");
+
+    CoverageChecker coverageChecker = new CoverageChecker(options);
+    coverageChecker.ignore("compileerr.WildcardCollection.getAStringList()");
+    coverageChecker.ignore("compileerr.WildcardCollection.getAnIntegerList()");
+    coverageChecker.ignore("compileerr.WildcardCollection.munge(java.util.List, java.util.List)");
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
   /* ------------------------------ utility methods ---------------------------------- */

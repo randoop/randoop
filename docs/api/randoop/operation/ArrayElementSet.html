@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ArrayElementSet (randoop 3.0.10 API)</title>
+<title>ArrayElementSet (randoop 3.1.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ArrayElementSet (randoop 3.0.10 API)";
+            parent.document.title="ArrayElementSet (randoop 3.1.1 API)";
         }
     }
     catch(err) {
@@ -193,8 +193,8 @@ extends <a href="../../randoop/operation/CallableOperation.html" title="class in
           <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;outputType,
           java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputVars,
           java.lang.StringBuilder&nbsp;b)</code>
-<div class="block">Produces a Java source code representation of this statement and appends it
- to the given StringBuilder.</div>
+<div class="block">Produces a Java source code representation of this statement and appends it to the given
+ StringBuilder.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
@@ -215,8 +215,8 @@ extends <a href="../../randoop/operation/CallableOperation.html" title="class in
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/ArrayElementSet.html#toParsableString-randoop.types.Type-randoop.types.TypeTuple-randoop.types.Type-">toParsableString</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;declaringType,
                 <a href="../../randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a>&nbsp;inputTypes,
                 <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;outputType)</code>
-<div class="block">Returns a string representation of this Operation, which can be read by
- static parse method for class.</div>
+<div class="block">Returns a string representation of this Operation, which can be read by static parse method for
+ class.</div>
 </td>
 </tr>
 </table>
@@ -330,16 +330,14 @@ extends <a href="../../randoop/operation/CallableOperation.html" title="class in
 <pre>public&nbsp;<a href="../../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</a>&nbsp;execute(java.lang.Object[]&nbsp;input,
                                 java.io.PrintStream&nbsp;out)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/operation/CallableOperation.html#execute-java.lang.Object:A-java.io.PrintStream-">CallableOperation</a></code></span></div>
-<div class="block">Performs this operation using the array of input values. Returns
- the results of execution as an ResultOrException object and can
- output results to specified PrintStream.</div>
+<div class="block">Performs this operation using the array of input values. Returns the results of execution as an
+ ResultOrException object and can output results to specified PrintStream.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/operation/CallableOperation.html#execute-java.lang.Object:A-java.io.PrintStream-">execute</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/operation/CallableOperation.html" title="class in randoop.operation">CallableOperation</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>input</code> - array containing appropriate inputs to operation</dd>
-<dd><code>out</code> - stream to output results of execution;
-            can be null if you don't want to print</dd>
+<dd><code>out</code> - stream to output results of execution; can be null if you don't want to print</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>results of executing this statement</dd>
 </dl>
@@ -357,8 +355,8 @@ extends <a href="../../randoop/operation/CallableOperation.html" title="class in
                        java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputVars,
                        java.lang.StringBuilder&nbsp;b)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/operation/CallableOperation.html#appendCode-randoop.types.Type-randoop.types.TypeTuple-randoop.types.Type-java.util.List-java.lang.StringBuilder-">CallableOperation</a></code></span></div>
-<div class="block">Produces a Java source code representation of this statement and appends it
- to the given StringBuilder.</div>
+<div class="block">Produces a Java source code representation of this statement and appends it to the given
+ StringBuilder.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/operation/CallableOperation.html#appendCode-randoop.types.Type-randoop.types.TypeTuple-randoop.types.Type-java.util.List-java.lang.StringBuilder-">appendCode</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/operation/CallableOperation.html" title="class in randoop.operation">CallableOperation</a></code></dd>
@@ -381,11 +379,10 @@ extends <a href="../../randoop/operation/CallableOperation.html" title="class in
                                          <a href="../../randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a>&nbsp;inputTypes,
                                          <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;outputType)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/operation/CallableOperation.html#toParsableString-randoop.types.Type-randoop.types.TypeTuple-randoop.types.Type-">CallableOperation</a></code></span></div>
-<div class="block">Returns a string representation of this Operation, which can be read by
- static parse method for class.
- For a class C implementing the Operation interface, this method should
- return a String s such that parsing the string
- returns an object equivalent to this object, i.e. C.parse(this.s).equals(this).</div>
+<div class="block">Returns a string representation of this Operation, which can be read by static parse method for
+ class. For a class C implementing the Operation interface, this method should return a String s
+ such that parsing the string returns an object equivalent to this object, i.e.
+ C.parse(this.s).equals(this).</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/operation/CallableOperation.html#toParsableString-randoop.types.Type-randoop.types.TypeTuple-randoop.types.Type-">toParsableString</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/operation/CallableOperation.html" title="class in randoop.operation">CallableOperation</a></code></dd>

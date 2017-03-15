@@ -1,5 +1,8 @@
 package randoop.main;
 
+import com.github.javaparser.ParseException;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.stmt.BlockStmt;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,7 +20,6 @@ import plume.Options.ArgException;
 import plume.SimpleLog;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
-import randoop.JunitFileWriter;
 import randoop.MultiVisitor;
 import randoop.condition.ConditionCollection;
 import randoop.generation.AbstractGenerator;
@@ -31,6 +33,8 @@ import randoop.instrument.ExercisedClassVisitor;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
+import randoop.output.JUnitCreator;
+import randoop.output.JavaFileWriter;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PackageVisibilityPredicate;
@@ -41,6 +45,7 @@ import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
+import randoop.test.CompilableTestPredicate;
 import randoop.test.ContractCheckingVisitor;
 import randoop.test.ContractSet;
 import randoop.test.ErrorTestPredicate;
@@ -95,6 +100,11 @@ public class GenTests extends GenInputsAbstract {
 
   private static final List<String> notes;
 
+  private BlockStmt afterAllFixtureBody;
+  private BlockStmt afterEachFixtureBody;
+  private BlockStmt beforeAllFixtureBody;
+  private BlockStmt beforeEachFixtureBody;
+
   static {
     notes = new ArrayList<>();
     notes.add(
@@ -143,7 +153,7 @@ public class GenTests extends GenInputsAbstract {
 
     Randomness.reset(randomseed);
 
-    java.security.Policy policy = java.security.Policy.getPolicy();
+    //java.security.Policy policy = java.security.Policy.getPolicy();
 
     // This is distracting to the user as the first thing shown, and is not very informative.
     // Reinstate it with a --verbose option.
@@ -159,9 +169,45 @@ public class GenTests extends GenInputsAbstract {
     }
 
     /*
+     * If there is fixture code check that it can be parsed first
+     */
+    boolean badFixtureText = false;
+
+    try {
+      afterAllFixtureBody =
+          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_after_all));
+    } catch (ParseException e) {
+      System.out.println("Error in after-all fixture text at token " + e.currentToken);
+      badFixtureText = true;
+    }
+    try {
+      afterEachFixtureBody =
+          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_after_each));
+    } catch (ParseException e) {
+      System.out.println("Error in after-each fixture text at token " + e.currentToken);
+      badFixtureText = true;
+    }
+    try {
+      beforeAllFixtureBody =
+          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_before_all));
+    } catch (ParseException e) {
+      System.out.println("Error in before-all fixture text at token " + e.currentToken);
+      badFixtureText = true;
+    }
+    try {
+      beforeEachFixtureBody =
+          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_before_each));
+    } catch (ParseException e) {
+      System.out.println("Error in before-each fixture text at token " + e.currentToken);
+      badFixtureText = true;
+    }
+    if (badFixtureText) {
+      System.exit(1);
+    }
+
+    /*
      * Setup model of classes under test
      */
-
     // get names of classes under test
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
 
@@ -427,7 +473,7 @@ public class GenTests extends GenInputsAbstract {
           System.out.printf("%nError-revealing test output:%n");
           System.out.printf("Error-revealing test count: %d%n", errorSequences.size());
         }
-        outputTests(errorSequences, GenInputsAbstract.error_test_basename);
+        outputTests(GenInputsAbstract.error_test_basename, errorSequences);
       } else {
         if (!GenInputsAbstract.noprogressdisplay) {
           System.out.printf("%nNo error-revealing tests to output%n");
@@ -442,7 +488,7 @@ public class GenTests extends GenInputsAbstract {
           System.out.printf("%nRegression test output:%n");
           System.out.printf("Regression test count: %d%n", regressionSequences.size());
         }
-        outputTests(regressionSequences, GenInputsAbstract.regression_test_basename);
+        outputTests(GenInputsAbstract.regression_test_basename, regressionSequences);
       } else {
         if (!GenInputsAbstract.noprogressdisplay) {
           System.out.printf("No regression tests to output%n");
@@ -560,7 +606,19 @@ public class GenTests extends GenInputsAbstract {
       if (!GenInputsAbstract.no_regression_tests) {
         checkTest = checkTest.or(new RegressionTestPredicate());
       }
-      isOutputTest = baseTest.and(checkTest);
+
+      if (GenInputsAbstract.check_compilable) {
+        JUnitCreator junitCreator =
+            JUnitCreator.getTestCreator(
+                junit_package_name,
+                beforeAllFixtureBody,
+                afterAllFixtureBody,
+                beforeEachFixtureBody,
+                afterEachFixtureBody);
+        isOutputTest = baseTest.and(checkTest.and(new CompilableTestPredicate(junitCreator)));
+      } else {
+        isOutputTest = baseTest.and(checkTest);
+      }
     }
     return isOutputTest;
   }
@@ -571,11 +629,18 @@ public class GenTests extends GenInputsAbstract {
    * @param sequences the sequences to output
    * @param junitPrefix the filename prefix for test output
    */
-  private void outputTests(List<ExecutableSequence> sequences, String junitPrefix) {
+  private void outputTests(String junitPrefix, List<ExecutableSequence> sequences) {
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.printf("Writing JUnit tests...%n");
     }
-    writeJUnitTests(junit_output_dir, sequences, junitPrefix);
+    JUnitCreator junitCreator =
+        JUnitCreator.getTestCreator(
+            junit_package_name,
+            beforeAllFixtureBody,
+            afterAllFixtureBody,
+            beforeEachFixtureBody,
+            afterEachFixtureBody);
+    writeJUnitTests(junitCreator, junit_output_dir, sequences, junitPrefix);
   }
 
   /**
@@ -633,13 +698,17 @@ public class GenTests extends GenInputsAbstract {
   /**
    * Writes the sequences as JUnit files to the specified directory.
    *
+   * @param junitCreator the JUnit test code generator
    * @param output_dir string name of output directory
    * @param seqList a list of sequences to write
    * @param junitClassname the base name for the class
    * @return list of files written
    */
   private static List<File> writeJUnitTests(
-      String output_dir, List<ExecutableSequence> seqList, String junitClassname) {
+      JUnitCreator junitCreator,
+      String output_dir,
+      List<ExecutableSequence> seqList,
+      String junitClassname) {
 
     List<File> files = new ArrayList<>();
 
@@ -647,35 +716,30 @@ public class GenTests extends GenInputsAbstract {
       List<List<ExecutableSequence>> seqPartition =
           CollectionsExt.formSublists(new ArrayList<>(seqList), testsperfile);
 
-      JunitFileWriter jfw = new JunitFileWriter(output_dir, junit_package_name, junitClassname);
+      String methodNamePrefix = "test";
 
-      List<String> beforeAllText = getFileText(GenInputsAbstract.junit_before_all);
-      if (beforeAllText != null) {
-        jfw.addBeforeAll(beforeAllText);
+      JavaFileWriter jfw = new JavaFileWriter(output_dir);
+
+      String classNameFormat = junitClassname + "%d";
+      for (int i = 0; i < seqPartition.size(); i++) {
+        List<ExecutableSequence> partition = seqPartition.get(i);
+        String testClassName = String.format(classNameFormat, i);
+        CompilationUnit classSource =
+            junitCreator.createTestClass(testClassName, methodNamePrefix, partition);
+        if (classSource != null) {
+          files.add(jfw.writeClass(junit_package_name, testClassName, classSource.toString()));
+        }
       }
 
-      List<String> afterAllText = getFileText(GenInputsAbstract.junit_after_all);
-      if (afterAllText != null) {
-        jfw.addAfterAll(afterAllText);
-      }
-
-      List<String> beforeEachText = getFileText(GenInputsAbstract.junit_before_each);
-      if (beforeEachText != null) {
-        jfw.addBeforeEach(beforeEachText);
-      }
-
-      List<String> afterEachText = getFileText(GenInputsAbstract.junit_after_each);
-      if (afterEachText != null) {
-        jfw.addAfterEach(afterEachText);
-      }
-
-      files.addAll(jfw.writeJUnitTestFiles(seqPartition));
-
+      String classSource;
+      String driverName = junitClassname;
       if (GenInputsAbstract.junit_reflection_allowed) {
-        files.add(jfw.writeSuiteFile());
+        classSource = junitCreator.createSuiteClass(driverName);
       } else {
-        files.add(jfw.writeDriverFile());
+        driverName = junitClassname + "Driver";
+        classSource = junitCreator.createTestDriver(driverName);
       }
+      files.add(jfw.writeClass(junit_package_name, driverName, classSource));
     } else { // preserves behavior from previous version
       System.out.println("No tests were created. No JUnit class created.");
     }

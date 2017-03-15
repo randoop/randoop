@@ -7,7 +7,6 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import org.junit.Test;
-import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
@@ -174,8 +173,7 @@ public class EnumConstantTest {
     //code generation
     //need a sequence where variable lives
     String expected =
-        "randoop.operation.SimpleEnumForTests simpleEnumForTests0 = randoop.operation.SimpleEnumForTests.TWO;"
-            + Globals.lineSep;
+        "randoop.operation.SimpleEnumForTests simpleEnumForTests0 = randoop.operation.SimpleEnumForTests.TWO;";
     Statement st = new Statement(ec2);
     Sequence seq = new Sequence().extend(ec2, new ArrayList<Variable>());
     Variable var = new Variable(seq, 0);

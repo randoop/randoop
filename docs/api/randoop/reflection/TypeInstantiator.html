@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>TypeInstantiator (randoop 3.0.10 API)</title>
+<title>TypeInstantiator (randoop 3.1.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="TypeInstantiator (randoop 3.0.10 API)";
+            parent.document.title="TypeInstantiator (randoop 3.1.1 API)";
         }
     }
     catch(err) {
@@ -174,8 +174,8 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code>private java.util.List&lt;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#collectSubstitutions-java.util.List-randoop.types.Substitution-">collectSubstitutions</a></span>(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters,
                     <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
-<div class="block">Recursive function to collect the list of substitutions that extend a substitution
- for the given type parameters.</div>
+<div class="block">Recursive function to collect the list of substitutions that extend a substitution for the
+ given type parameters.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
@@ -225,8 +225,8 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code>private <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#selectAndExtend-java.util.List-randoop.types.Substitution-">selectAndExtend</a></span>(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters,
                <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
-<div class="block">Selects types independently for a list of type parameters, and extends the given
- substitution by the substitution of the selected types for the parameters.</div>
+<div class="block">Selects types independently for a list of type parameters, and extends the given substitution
+ by the substitution of the selected types for the parameters.</div>
 </td>
 </tr>
 <tr id="i9" class="rowColor">
@@ -244,17 +244,16 @@ extends java.lang.Object</pre>
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#selectMatch-randoop.types.ClassOrInterfaceType-">selectMatch</a></span>(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;declaringType)</code>
-<div class="block">Selects an existing type that instantiates the given generic declaring type
- and returns the instantiating substitution.</div>
+<div class="block">Selects an existing type that instantiates the given generic declaring type and returns the
+ instantiating substitution.</div>
 </td>
 </tr>
 <tr id="i12" class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeInstantiator.html#selectMatch-randoop.types.ClassOrInterfaceType-randoop.types.ClassOrInterfaceType-">selectMatch</a></span>(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;declaringType,
            <a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;patternType)</code>
-<div class="block">Selects an existing type that instantiates the given pattern type which is an instantiation
- of a generic declaring type and returns the instantiating substitution for the more general
- type.</div>
+<div class="block">Selects an existing type that instantiates the given pattern type which is an instantiation of
+ a generic declaring type and returns the instantiating substitution for the more general type.</div>
 </td>
 </tr>
 <tr id="i13" class="rowColor">
@@ -355,12 +354,11 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>instantiateSortedSetType</h4>
 <pre>private&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;instantiateSortedSetType(<a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation">TypedClassOperation</a>&nbsp;operation)</pre>
-<div class="block">Returns a substitution that instantiates the <code>SortedSet</code> type of the given constructor.
- A <code>SortedSet</code> may be built so that the element type <code>E</code> is ordered either
- explicitly with a <code>Comparator&lt;E&gt;</code>, or the element type satisfies
- <code>E implements Comparable&lt;E&gt;</code>.
- The <code>SortedSet</code> documentation indicates that there should be four constructors, each
- of which indicates the order to be used and so constrains the element type.</div>
+<div class="block">Returns a substitution that instantiates the <code>SortedSet</code> type of the given constructor. A
+ <code>SortedSet</code> may be built so that the element type <code>E</code> is ordered either explicitly
+ with a <code>Comparator&lt;E&gt;</code>, or the element type satisfies <code>E implements Comparable&lt;E&gt;</code>.
+ The <code>SortedSet</code> documentation indicates that there should be four constructors, each of
+ which indicates the order to be used and so constrains the element type.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>operation</code> - the constructor for the <code>SortedSet</code> subtype to be instantiated</dd>
@@ -386,13 +384,11 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>instantiateDeclaringClass</h4>
 <pre>private&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;instantiateDeclaringClass(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;declaringType)</pre>
-<div class="block">Chooses an instantiating substitution for the given declaring class.
- Performs a coin flip to determine whether to use a previous instantiation,
- or to create a new one.
- Either way, if a new instantiating substitution is required, uses
- <a href="../../randoop/reflection/TypeInstantiator.html#selectSubstitution-java.util.List-randoop.types.Substitution-"><code>selectSubstitution(List, Substitution)</code></a> to construct and choose one.
- Verifies that all of the type parameters of the declaring type are instantiated,
- and logs failure if not.</div>
+<div class="block">Chooses an instantiating substitution for the given declaring class. Performs a coin flip to
+ determine whether to use a previous instantiation, or to create a new one. Either way, if a new
+ instantiating substitution is required, uses <a href="../../randoop/reflection/TypeInstantiator.html#selectSubstitution-java.util.List-randoop.types.Substitution-"><code>selectSubstitution(List, Substitution)</code></a> to
+ construct and choose one. Verifies that all of the type parameters of the declaring type are
+ instantiated, and logs failure if not.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>declaringType</code> - the type to be instantiated</dd>
@@ -409,19 +405,18 @@ extends java.lang.Object</pre>
 <h4>selectMatch</h4>
 <pre>private&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;selectMatch(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;declaringType,
                                                 <a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;patternType)</pre>
-<div class="block">Selects an existing type that instantiates the given pattern type which is an instantiation
- of a generic declaring type and returns the instantiating substitution for the more general
- type.
+<div class="block">Selects an existing type that instantiates the given pattern type which is an instantiation of
+ a generic declaring type and returns the instantiating substitution for the more general type.
  The pattern type makes it possible to select matches for partial instantiations of a generic
  type.
- <p>
- Note: for all uses to work properly, the input types need to be closed on supertypes:
- if a type is in the input types, then so are all of its supertypes.</div>
+
+ <p>Note: for all uses to work properly, the input types need to be closed on supertypes: if a
+ type is in the input types, then so are all of its supertypes.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>declaringType</code> - the generic type for which instantiation is to be found</dd>
 <dd><code>patternType</code> - the generic type from which match is to be determined, must be instantiation
-                      of <code>declaringType</code>.</dd>
+     of <code>declaringType</code>.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a substitution instantiating given type as an existing type; null if no such type</dd>
 </dl>
@@ -434,11 +429,11 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>selectMatch</h4>
 <pre>private&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;selectMatch(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;declaringType)</pre>
-<div class="block">Selects an existing type that instantiates the given generic declaring type
- and returns the instantiating substitution.
- <p>
- Note: for all uses to work properly, the input types need to be closed on supertypes:
- if a type is in the input types, then so are all of its supertypes.</div>
+<div class="block">Selects an existing type that instantiates the given generic declaring type and returns the
+ instantiating substitution.
+
+ <p>Note: for all uses to work properly, the input types need to be closed on supertypes: if a
+ type is in the input types, then so are all of its supertypes.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>declaringType</code> - the generic type for which instantiation is to be found</dd>
@@ -477,7 +472,7 @@ extends java.lang.Object</pre>
 <dd><code>typeParameters</code> - the type variables to be instantiated</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a substitution instantiating the type variables; null if a variable has no
-         instantiating types</dd>
+     instantiating types</dd>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../randoop/reflection/TypeInstantiator.html#selectSubstitution-java.util.List-randoop.types.Substitution-"><code>selectSubstitution(List, Substitution)</code></a></dd>
 </dl>
@@ -491,17 +486,17 @@ extends java.lang.Object</pre>
 <h4>selectSubstitution</h4>
 <pre>private&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;selectSubstitution(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters,
                                                        <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
-<div class="block">Extends the given substitution by instantiations for the given list of type variables.
- If any of the type variables has a generic bound, assumes there are dependencies and
- enumerates all possible substitutions and tests them.
- Otherwise, independently selects an instantiating type for each variable.</div>
+<div class="block">Extends the given substitution by instantiations for the given list of type variables. If any
+ of the type variables has a generic bound, assumes there are dependencies and enumerates all
+ possible substitutions and tests them. Otherwise, independently selects an instantiating type
+ for each variable.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>typeParameters</code> - the type variables to be instantiated</dd>
 <dd><code>substitution</code> - the substitution to extend</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the substitution extended by instantiating type variables; null if a variable has no
-         instantiating types</dd>
+     instantiating types</dd>
 </dl>
 </li>
 </ul>
@@ -513,8 +508,8 @@ extends java.lang.Object</pre>
 <h4>collectSubstitutions</h4>
 <pre>private&nbsp;java.util.List&lt;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;&nbsp;collectSubstitutions(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters,
                                                                          <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
-<div class="block">Recursive function to collect the list of substitutions that extend a substitution
- for the given type parameters.</div>
+<div class="block">Recursive function to collect the list of substitutions that extend a substitution for the
+ given type parameters.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>typeParameters</code> - the type parameters to be instantiated</dd>
@@ -532,17 +527,17 @@ extends java.lang.Object</pre>
 <h4>selectAndExtend</h4>
 <pre>private&nbsp;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;selectAndExtend(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters,
                                                     <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
-<div class="block">Selects types independently for a list of type parameters, and extends the given
- substitution by the substitution of the selected types for the parameters.
+<div class="block">Selects types independently for a list of type parameters, and extends the given substitution
+ by the substitution of the selected types for the parameters.
 
- IMPORTANT: Should only be used for parameters that have non-generic bounds.</div>
+ <p>IMPORTANT: Should only be used for parameters that have non-generic bounds.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>parameters</code> - a list of independent type parameters</dd>
 <dd><code>substitution</code> - the substitution to extend</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the substitution extended by mapping given parameters to selected types;
-         null, if there are no candidate types for any parameter</dd>
+<dd>the substitution extended by mapping given parameters to selected types; null, if there
+     are no candidate types for any parameter</dd>
 </dl>
 </li>
 </ul>
@@ -556,10 +551,9 @@ extends java.lang.Object</pre>
                                                                       <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;initialSubstitution,
                                                                       <a href="../../randoop/types/TypeCheck.html" title="class in randoop.types">TypeCheck</a>&nbsp;typeCheck)</pre>
 <div class="block">Adds instantiating substitutions for the given parameters to the list if satisfies the given
- type check predicate.
- Each constructed substitution extends the given initial substitution.
- Assumes that the parameters are or are refinements of the set of parameters check by the
- type check predicate.</div>
+ type check predicate. Each constructed substitution extends the given initial substitution.
+ Assumes that the parameters are or are refinements of the set of parameters check by the type
+ check predicate.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>parameters</code> - the list of parameters to instantiate</dd>
@@ -577,15 +571,15 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getCandidateTypeLists</h4>
 <pre>private&nbsp;java.util.List&lt;java.util.List&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;&nbsp;getCandidateTypeLists(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;parameters)</pre>
-<div class="block">Constructs the list of lists of candidate types for the given type parameters.
- Each list is the list of candidates for the parameter in the corresponding position of
- the given list as determined by <a href="../../randoop/reflection/TypeInstantiator.html#selectCandidates-randoop.types.TypeVariable-"><code>selectCandidates(TypeVariable)</code></a>.</div>
+<div class="block">Constructs the list of lists of candidate types for the given type parameters. Each list is the
+ list of candidates for the parameter in the corresponding position of the given list as
+ determined by <a href="../../randoop/reflection/TypeInstantiator.html#selectCandidates-randoop.types.TypeVariable-"><code>selectCandidates(TypeVariable)</code></a>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>parameters</code> - the list of type parameters</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the list of candidate lists for the parameters; returns the empty list if any
-          parameter has no candidates</dd>
+<dd>the list of candidate lists for the parameters; returns the empty list if any parameter
+     has no candidates</dd>
 </dl>
 </li>
 </ul>
@@ -596,8 +590,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>selectCandidates</h4>
 <pre>private&nbsp;java.util.List&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;selectCandidates(<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&nbsp;argument)</pre>
-<div class="block">Selects all input types that potentially satisfies the bounds on the argument.
- If a bound has another type parameter, then the default bound is tested.</div>
+<div class="block">Selects all input types that potentially satisfies the bounds on the argument. If a bound has
+ another type parameter, then the default bound is tested.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>argument</code> - the type arguments</dd>
@@ -613,15 +607,14 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>selectUpperBound</h4>
 <pre>private&nbsp;<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;selectUpperBound(<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&nbsp;argument)</pre>
-<div class="block">Chooses the upper bound of the given argument to test in <a href="../../randoop/reflection/TypeInstantiator.html#selectCandidates-randoop.types.TypeVariable-"><code>selectCandidates(TypeVariable)</code></a>.
- If the bound contains a type parameter other than the given argument, then the bound for
- the <code>Object</code> type is returned.</div>
+<div class="block">Chooses the upper bound of the given argument to test in <a href="../../randoop/reflection/TypeInstantiator.html#selectCandidates-randoop.types.TypeVariable-"><code>selectCandidates(TypeVariable)</code></a>. If the bound contains a type parameter other than the given
+ argument, then the bound for the <code>Object</code> type is returned.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>argument</code> - the type argument</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the upperbound of the argument if no other type parameter is needed, the <code>Object</code>
- bound otherwise</dd>
+     bound otherwise</dd>
 </dl>
 </li>
 </ul>
@@ -632,16 +625,13 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>selectLowerBound</h4>
 <pre>private&nbsp;<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;selectLowerBound(<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&nbsp;argument)</pre>
-<div class="block">Chooses the lower bound of the given argument to be tested in <a href="../../randoop/reflection/TypeInstantiator.html#selectCandidates-randoop.types.TypeVariable-"><code>selectCandidates(TypeVariable)</code></a>.
- If the bound has a type parameter other than the given argument, then the
- <a href="../../randoop/types/JavaTypes.html#NULL_TYPE"><code>JavaTypes.NULL_TYPE</code></a>
- is return as the bound.</div>
+<div class="block">Chooses the lower bound of the given argument to be tested in <a href="../../randoop/reflection/TypeInstantiator.html#selectCandidates-randoop.types.TypeVariable-"><code>selectCandidates(TypeVariable)</code></a>. If the bound has a type parameter other than the given
+ argument, then the <a href="../../randoop/types/JavaTypes.html#NULL_TYPE"><code>JavaTypes.NULL_TYPE</code></a> is return as the bound.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>argument</code> - the type argument</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the lower bound of the argument if no other type parameter is needed, the <a href="../../randoop/types/JavaTypes.html#NULL_TYPE"><code>JavaTypes.NULL_TYPE</code></a>
- otherwise</dd>
+<dd>the lower bound of the argument if no other type parameter is needed, the <a href="../../randoop/types/JavaTypes.html#NULL_TYPE"><code>JavaTypes.NULL_TYPE</code></a> otherwise</dd>
 </dl>
 </li>
 </ul>

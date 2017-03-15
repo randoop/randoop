@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>AndPredicate (randoop 3.0.10 API)</title>
+<title>AndPredicate (randoop 3.1.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="AndPredicate (randoop 3.0.10 API)";
+            parent.document.title="AndPredicate (randoop 3.1.1 API)";
         }
     }
     catch(err) {
@@ -123,9 +123,9 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">AndPredicate&lt;T&gt;</span>
 extends <a href="../../../randoop/util/predicate/DefaultPredicate.html" title="class in randoop.util.predicate">DefaultPredicate</a>&lt;T&gt;</pre>
-<div class="block">Predicate that implements the and-also operator on a pair of predicates. The
- and-also operator is a short-circuited and operator, which only tests the
- second predicate if the first predicate is true.</div>
+<div class="block">Predicate that implements the and-also operator on a pair of predicates. The and-also operator is
+ a short-circuited and operator, which only tests the second predicate if the first predicate is
+ true.</div>
 </li>
 </ul>
 </div>
@@ -169,8 +169,8 @@ extends <a href="../../../randoop/util/predicate/DefaultPredicate.html" title="c
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../randoop/util/predicate/AndPredicate.html#AndPredicate-randoop.util.predicate.Predicate-randoop.util.predicate.Predicate-">AndPredicate</a></span>(<a href="../../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;<a href="../../../randoop/util/predicate/AndPredicate.html" title="type parameter in AndPredicate">T</a>&gt;&nbsp;first,
             <a href="../../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;<a href="../../../randoop/util/predicate/AndPredicate.html" title="type parameter in AndPredicate">T</a>&gt;&nbsp;second)</code>
-<div class="block">Creates a Predicate that performs the and-also operator: testing the first
- predicate, and then the second.</div>
+<div class="block">Creates a Predicate that performs the and-also operator: testing the first predicate, and then
+ the second.</div>
 </td>
 </tr>
 </table>
@@ -261,8 +261,8 @@ extends <a href="../../../randoop/util/predicate/DefaultPredicate.html" title="c
 <h4>AndPredicate</h4>
 <pre>public&nbsp;AndPredicate(<a href="../../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;<a href="../../../randoop/util/predicate/AndPredicate.html" title="type parameter in AndPredicate">T</a>&gt;&nbsp;first,
                     <a href="../../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;<a href="../../../randoop/util/predicate/AndPredicate.html" title="type parameter in AndPredicate">T</a>&gt;&nbsp;second)</pre>
-<div class="block">Creates a Predicate that performs the and-also operator: testing the first
- predicate, and then the second.</div>
+<div class="block">Creates a Predicate that performs the and-also operator: testing the first predicate, and then
+ the second.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>first</code> - the predicate to test first</dd>
@@ -287,14 +287,14 @@ extends <a href="../../../randoop/util/predicate/DefaultPredicate.html" title="c
 <li class="blockList">
 <h4>test</h4>
 <pre>public&nbsp;boolean&nbsp;test(<a href="../../../randoop/util/predicate/AndPredicate.html" title="type parameter in AndPredicate">T</a>&nbsp;t)</pre>
-<div class="block">Determine whether object satisfies this predicate. Return the short-circuited and of the two predicates for the
- value t</div>
+<div class="block">Determine whether object satisfies this predicate.
+
+ <p>Return the short-circuited and of the two predicates for the value t</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>t</code> - the object to test</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if both the first and second predicate is true on t, and false
-         otherwise</dd>
+<dd>true if both the first and second predicate is true on t, and false otherwise</dd>
 </dl>
 </li>
 </ul>

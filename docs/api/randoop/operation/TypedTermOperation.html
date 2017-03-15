@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>TypedTermOperation (randoop 3.0.10 API)</title>
+<title>TypedTermOperation (randoop 3.1.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="TypedTermOperation (randoop 3.0.10 API)";
+            parent.document.title="TypedTermOperation (randoop 3.1.1 API)";
         }
     }
     catch(err) {
@@ -326,7 +326,8 @@ extends <a href="../../randoop/operation/TypedOperation.html" title="class in ra
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/operation/TypedOperation.html#applyCaptureConversion--">applyCaptureConversion</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the operation result from applying a capture conversion to wildcard types of this operation</dd>
+<dd>the operation result from applying a capture conversion to wildcard types of this
+     operation</dd>
 </dl>
 </li>
 </ul>
@@ -355,10 +356,7 @@ extends <a href="../../randoop/operation/TypedOperation.html" title="class in ra
 <li class="blockList">
 <h4>compareTo</h4>
 <pre>public&nbsp;int&nbsp;compareTo(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;op)</pre>
-<div class="block">Compares this operation to another <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation"><code>TypedOperation</code></a>.
- Ensures that any <a href="../../randoop/operation/TypedTermOperation.html" title="class in randoop.operation"><code>TypedTermOperation</code></a> objects precedes a <a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation"><code>TypedClassOperation</code></a>.
- Otherwise, orders <a href="../../randoop/operation/TypedTermOperation.html" title="class in randoop.operation"><code>TypedTermOperation</code></a> objects with
- <a href="../../randoop/operation/TypedOperation.html#compareTo-randoop.operation.TypedOperation-"><code>TypedOperation.compareTo(TypedOperation)</code></a>.</div>
+<div class="block">Compares this operation to another <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation"><code>TypedOperation</code></a>. Ensures that any <a href="../../randoop/operation/TypedTermOperation.html" title="class in randoop.operation"><code>TypedTermOperation</code></a> objects precedes a <a href="../../randoop/operation/TypedClassOperation.html" title="class in randoop.operation"><code>TypedClassOperation</code></a>. Otherwise, orders <a href="../../randoop/operation/TypedTermOperation.html" title="class in randoop.operation"><code>TypedTermOperation</code></a> objects with <a href="../../randoop/operation/TypedOperation.html#compareTo-randoop.operation.TypedOperation-"><code>TypedOperation.compareTo(TypedOperation)</code></a>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>compareTo</code>&nbsp;in interface&nbsp;<code>java.lang.Comparable&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;</code></dd>
@@ -367,8 +365,8 @@ extends <a href="../../randoop/operation/TypedOperation.html" title="class in ra
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>op</code> - the <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation"><code>TypedOperation</code></a> to compare with this operation</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>value &lt; 0 if this operation precedes <code>op</code>, 0 if the
-         operations are identical, and &gt; 0 if this operation succeeds op</dd>
+<dd>value &lt; 0 if this operation precedes <code>op</code>, 0 if the operations are identical,
+     and &gt; 0 if this operation succeeds op</dd>
 </dl>
 </li>
 </ul>

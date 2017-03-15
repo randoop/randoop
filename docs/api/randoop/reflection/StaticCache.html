@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>StaticCache (randoop 3.0.10 API)</title>
+<title>StaticCache (randoop 3.1.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="StaticCache (randoop 3.0.10 API)";
+            parent.document.title="StaticCache (randoop 3.1.1 API)";
         }
     }
     catch(err) {
@@ -250,8 +250,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>StaticCache</h4>
 <pre>public&nbsp;StaticCache(java.lang.Class&lt;?&gt;&nbsp;declaringClass)</pre>
-<div class="block">Creates the cache object for a particular class.
- State is not saved until <a href="../../randoop/reflection/StaticCache.html#saveState--"><code>saveState()</code></a> is called.</div>
+<div class="block">Creates the cache object for a particular class. State is not saved until <a href="../../randoop/reflection/StaticCache.html#saveState--"><code>saveState()</code></a>
+ is called.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>declaringClass</code> - the class</dd>
@@ -283,8 +283,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>saveState</h4>
 <pre>public&nbsp;void&nbsp;saveState()</pre>
-<div class="block">Saves the state for the class in this object.
- Only saves non-final static fields.</div>
+<div class="block">Saves the state for the class in this object. Only saves non-final static fields.</div>
 </li>
 </ul>
 <a name="restoreState--">

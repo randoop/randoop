@@ -904,7 +904,7 @@ public class Minimize extends CommandHandler {
 
   /**
    * Add an import to the list of {@code ImportDeclaration}s of the compilation unit. This method
-   * adds an import statement if it has not been yet included in the list of current imports of the
+   * adds the import statement if it has not been yet included in the list of current imports of the
    * compilation unit.
    *
    * @param compilationUnit compilation unit to add import to
@@ -917,6 +917,7 @@ public class Minimize extends CommandHandler {
     try {
       importDeclaration = JavaParser.parseImport(i);
     } catch (ParseException e) {
+      // Unexpected error from parsing import.
       System.err.println("Error parsing import");
       return;
     }

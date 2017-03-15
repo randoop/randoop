@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>SequenceExceptionError (randoop 3.0.10 API)</title>
+<title>SequenceExceptionError (randoop 3.1.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="SequenceExceptionError (randoop 3.0.10 API)";
+            parent.document.title="SequenceExceptionError (randoop 3.1.1 API)";
         }
     }
     catch(err) {
@@ -124,10 +124,9 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">SequenceExceptionError</span>
 extends java.lang.Error</pre>
-<div class="block">Exception representing occurrence of a "flaky" test sequence where an
- exception was thrown by a statement other than the last of the sequence.
- Occurs when a statement in an input sequence, that previously terminated
- normally, throws an exception. Includes information needed to report the
+<div class="block">Exception representing occurrence of a "flaky" test sequence where an exception was thrown by a
+ statement other than the last of the sequence. Occurs when a statement in an input sequence, that
+ previously terminated normally, throws an exception. Includes information needed to report the
  error.</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
@@ -193,8 +192,8 @@ extends java.lang.Error</pre>
 <td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceExceptionError.html#SequenceExceptionError-randoop.sequence.ExecutableSequence-int-java.lang.Throwable-">SequenceExceptionError</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;testSequence,
                       int&nbsp;position,
                       java.lang.Throwable&nbsp;exception)</code>
-<div class="block">Create an exception for the exception thrown by the statement at the given
- position in the test sequence.</div>
+<div class="block">Create an exception for the exception thrown by the statement at the given position in the test
+ sequence.</div>
 </td>
 </tr>
 </table>
@@ -227,15 +226,13 @@ extends java.lang.Error</pre>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceExceptionError.html#getStatement--">getStatement</a></span>()</code>
-<div class="block">Returns the string representation of the statement that threw the
- exception.</div>
+<div class="block">Returns the string representation of the statement that threw the exception.</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceExceptionError.html#getSubsequence--">getSubsequence</a></span>()</code>
-<div class="block">Returns the input sequence containing the statement that threw the
- exception.</div>
+<div class="block">Returns the input sequence containing the statement that threw the exception.</div>
 </td>
 </tr>
 </table>
@@ -328,8 +325,8 @@ extends java.lang.Error</pre>
 <pre>public&nbsp;SequenceExceptionError(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;testSequence,
                               int&nbsp;position,
                               java.lang.Throwable&nbsp;exception)</pre>
-<div class="block">Create an exception for the exception thrown by the statement at the given
- position in the test sequence.</div>
+<div class="block">Create an exception for the exception thrown by the statement at the given position in the test
+ sequence.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>testSequence</code> - the test sequence</dd>
@@ -367,8 +364,7 @@ extends java.lang.Error</pre>
 <li class="blockList">
 <h4>getStatement</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getStatement()</pre>
-<div class="block">Returns the string representation of the statement that threw the
- exception.</div>
+<div class="block">Returns the string representation of the statement that threw the exception.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the string representation of the statement</dd>
@@ -396,8 +392,7 @@ extends java.lang.Error</pre>
 <li class="blockList">
 <h4>getSubsequence</h4>
 <pre>public&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;getSubsequence()</pre>
-<div class="block">Returns the input sequence containing the statement that threw the
- exception.</div>
+<div class="block">Returns the input sequence containing the statement that threw the exception.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the input sequence from which exception was thrown</dd>
