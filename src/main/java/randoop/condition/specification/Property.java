@@ -1,20 +1,14 @@
 package randoop.condition.specification;
 
-/**
- * The specification for a condition over the values of parameters and return value of an operation
- * (e.g., a method or constructor).
- *
- * @see Specification
- */
-public class Guard extends AbstractBooleanExpression {
-
+/** Created by bjkeller on 3/14/17. */
+public class Property extends AbstractBooleanExpression {
   /**
    * Creates a {@link AbstractBooleanExpression} with the given description and condition code.
    *
    * @param description the description of this boolean condition
    * @param conditionText the text of the Java code for the created condition
    */
-  public Guard(String description, String conditionText) {
+  public Property(String description, String conditionText) {
     super(description, conditionText);
   }
 }

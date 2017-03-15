@@ -9,9 +9,11 @@ import java.util.Objects;
 public abstract class Specification {
 
   private final String description;
+  private final Guard guard;
 
-  public Specification(String description) {
+  public Specification(String description, Guard guard) {
     this.description = description;
+    this.guard = guard;
   }
 
   @Override
@@ -35,5 +37,9 @@ public abstract class Specification {
 
   public String getDescription() {
     return description;
+  }
+
+  public Guard getGuard() {
+    return guard;
   }
 }

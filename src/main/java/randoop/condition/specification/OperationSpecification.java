@@ -1,6 +1,5 @@
 package randoop.condition.specification;
 
-import java.lang.reflect.AccessibleObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -13,19 +12,24 @@ import java.util.Objects;
 public class OperationSpecification {
 
   /** the reflection object for the operation */
-  private final AccessibleObject operation;
+  private final Operation operation;
 
   /** the specifications for the operation */
-  private final List<Specification> specifications;
+  private final List<ThrowsSpecification> throwsSpecifications;
+
+  private final List<ReturnSpecification> returnSpecifications;
+  private final List<ParamSpecification> paramSpecifications;
 
   /**
    * Creates an {@link OperationSpecification} for the given operation with no specifications.
    *
    * @param operation the reflection object for the operation, must be non-null
    */
-  public OperationSpecification(AccessibleObject operation) {
+  public OperationSpecification(Operation operation) {
     this.operation = operation;
-    this.specifications = new ArrayList<>();
+    this.throwsSpecifications = new ArrayList<>();
+    this.returnSpecifications = new ArrayList<>();
+    this.paramSpecifications = new ArrayList<>();
   }
 
   /**
@@ -33,11 +37,19 @@ public class OperationSpecification {
    * specifications.
    *
    * @param operation the reflection object for the operation, must be non-null
-   * @param specifications the list of specifications for the object
+   * @param throwsSpecifications the list of specifications for the operation
+   * @param returnSpecifications the list of return specifications for the operation
+   * @param paramSpecifications the list of param specifications for the operation
    */
-  public OperationSpecification(AccessibleObject operation, List<Specification> specifications) {
+  public OperationSpecification(
+      Operation operation,
+      List<ThrowsSpecification> throwsSpecifications,
+      List<ReturnSpecification> returnSpecifications,
+      List<ParamSpecification> paramSpecifications) {
     this.operation = operation;
-    this.specifications = specifications;
+    this.throwsSpecifications = throwsSpecifications;
+    this.returnSpecifications = returnSpecifications;
+    this.paramSpecifications = paramSpecifications;
   }
 
   @Override
@@ -46,26 +58,36 @@ public class OperationSpecification {
       return false;
     }
     OperationSpecification other = (OperationSpecification) object;
-    return this.specifications.equals(other.specifications);
+    return this.operation.equals(other.operation)
+        && this.throwsSpecifications.equals(other.throwsSpecifications)
+        && this.returnSpecifications.equals(other.returnSpecifications)
+        && this.paramSpecifications.equals(other.paramSpecifications);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(this.specifications);
+    return Objects.hash(
+        this.operation,
+        this.throwsSpecifications,
+        this.returnSpecifications,
+        this.paramSpecifications);
   }
 
   @Override
   public String toString() {
-    return specifications.toString();
+    return this.operation.toString();
   }
 
-  /**
-   * Adds a {@link Specification} to this {@link OperationSpecification}.
-   *
-   * @param specification the specification to add to this operation specification
-   */
-  public void addSpecification(Specification specification) {
-    specifications.add(specification);
+  public void addThrowsSpecifications(List<ThrowsSpecification> specifications) {
+    throwsSpecifications.addAll(specifications);
+  }
+
+  public void addReturnSpecifications(List<ReturnSpecification> specifications) {
+    returnSpecifications.addAll(specifications);
+  }
+
+  public void addParamSpecifications(List<ParamSpecification> specifications) {
+    paramSpecifications.addAll(specifications);
   }
 
   /**
@@ -73,7 +95,7 @@ public class OperationSpecification {
    *
    * @return the reflection object for the operation
    */
-  public AccessibleObject getOperation() {
+  public Operation getOperation() {
     return operation;
   }
 
@@ -82,7 +104,15 @@ public class OperationSpecification {
    *
    * @return the list of specifications for this operation specification, is non-null
    */
-  public List<Specification> getSpecifications() {
-    return specifications;
+  public List<ThrowsSpecification> getThrowsSpecifications() {
+    return throwsSpecifications;
+  }
+
+  public List<ReturnSpecification> getReturnSpecifications() {
+    return returnSpecifications;
+  }
+
+  public List<ParamSpecification> getParamSpecifications() {
+    return paramSpecifications;
   }
 }
