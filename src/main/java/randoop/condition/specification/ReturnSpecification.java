@@ -10,13 +10,13 @@ import java.util.Objects;
 public class PostconditionSpecification extends Specification {
 
   /** the precondition */
-  private final ConditionSpecification precondition;
+  private final Guard precondition;
 
   /** the post-condition */
   private final SimpleSpecification postcondition;
 
   public PostconditionSpecification(
-      String description, ConditionSpecification precondition, SimpleSpecification postcondition) {
+          String description, Guard precondition, SimpleSpecification postcondition) {
     super(description);
     this.precondition = precondition;
     this.postcondition = postcondition;
