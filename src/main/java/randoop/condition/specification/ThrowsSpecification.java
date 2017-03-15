@@ -9,17 +9,17 @@ import java.util.Objects;
 public class ThrowsSpecification extends Specification {
 
   /** The type of the expected exception */
-  private final String exceptionTypeName;
+  private final String exceptionType;
 
   /**
    * Creates a {@link ThrowsSpecification} representing an excepted exception.
    *
    * @param description the description of the condition
-   * @param exceptionTypeName the expected exception type
+   * @param exceptionType the expected exception type
    */
-  public ThrowsSpecification(String description, Guard guard, String exceptionTypeName) {
+  public ThrowsSpecification(String description, Guard guard, String exceptionType) {
     super(description, guard);
-    this.exceptionTypeName = exceptionTypeName;
+    this.exceptionType = exceptionType;
   }
 
   @Override
@@ -28,16 +28,16 @@ public class ThrowsSpecification extends Specification {
       return false;
     }
     ThrowsSpecification other = (ThrowsSpecification) object;
-    return super.equals(other) && this.exceptionTypeName.equals(other.exceptionTypeName);
+    return super.equals(other) && this.exceptionType.equals(other.exceptionType);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), exceptionTypeName);
+    return Objects.hash(super.hashCode(), exceptionType);
   }
 
   @Override
   public String toString() {
-    return getGuard() + " => throws " + exceptionTypeName;
+    return getGuard() + " => throws " + exceptionType;
   }
 }
