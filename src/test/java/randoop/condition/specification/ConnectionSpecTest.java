@@ -41,8 +41,8 @@ public class ConnectionSpecTest {
             IllegalStateException.class.getCanonicalName());
     List<ThrowsSpecification> throwsList = new ArrayList<>();
     throwsList.add(opThrows);
-    Operation op = Operation.getOperation(m, new ArrayList<String>());
-    OperationSpecification opSpec = new OperationSpecification(op);
+    Operation op = Operation.getOperation(m);
+    OperationSpecification opSpec = new OperationSpecification(op, new Identifiers());
     opSpec.addThrowsSpecifications(throwsList);
     opList.add(opSpec);
 
@@ -67,8 +67,8 @@ public class ConnectionSpecTest {
     paramList.add(opParam);
     List<String> paramNames = new ArrayList<>();
     paramNames.add("code");
-    op = Operation.getOperation(m, paramNames);
-    opSpec = new OperationSpecification(op);
+    op = Operation.getOperation(m);
+    opSpec = new OperationSpecification(op, new Identifiers(paramNames));
     opSpec.addParamSpecifications(paramList);
     opList.add(opSpec);
 
