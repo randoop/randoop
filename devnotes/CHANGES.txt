@@ -7,7 +7,7 @@ generating uncompilable tests is not a concern this check can be disabled by
 setting --check-compilable=false.
 
 Adds new command-line option --sof-exception that controls how Randoop
-classifies a test that throws a StackOverflowError exception
+classifies a test that throws a StackOverflowError exception.
 
 
 Version 3.0.10, released March 6, 2017
