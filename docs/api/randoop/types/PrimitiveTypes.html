@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>PrimitiveTypes (randoop 3.0.10 API)</title>
+<title>PrimitiveTypes (randoop 3.1.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="PrimitiveTypes (randoop 3.0.10 API)";
+            parent.document.title="PrimitiveTypes (randoop 3.1.1 API)";
         }
     }
     catch(err) {
@@ -111,9 +111,9 @@ var activeTableTab = "activeTableTab";
 <pre>public final class <span class="typeNameLabel">PrimitiveTypes</span>
 extends java.lang.Object</pre>
 <div class="block">Utilities for working with <code>Class&lt;?&gt; objects</code> that Java reflection treats as primitive,
- which includes primitive types and <code>void</code>.
- Provides conversion from primitive type names (and "void") to <code>Class</code> objects,
- boxing and unboxing, as well as primitive subtype and assignment tests.</div>
+ which includes primitive types and <code>void</code>. Provides conversion from primitive type names
+ (and "void") to <code>Class</code> objects, boxing and unboxing, as well as primitive subtype and
+ assignment tests.</div>
 </li>
 </ul>
 </div>
@@ -200,8 +200,8 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code>(package private) static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/PrimitiveTypes.html#isAssignable-java.lang.Class-java.lang.Class-">isAssignable</a></span>(java.lang.Class&lt;?&gt;&nbsp;target,
             java.lang.Class&lt;?&gt;&nbsp;source)</code>
-<div class="block">Tests assignability from source to target type via identity conversion
- and widening primitive conversion.</div>
+<div class="block">Tests assignability from source to target type via identity conversion and widening primitive
+ conversion.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -214,8 +214,8 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code>(package private) static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/PrimitiveTypes.html#isSubtype-java.lang.Class-java.lang.Class-">isSubtype</a></span>(java.lang.Class&lt;?&gt;&nbsp;first,
          java.lang.Class&lt;?&gt;&nbsp;second)</code>
-<div class="block">Indicates whether the first primitive type is a (transitive) subtype of the second primitive
- as determined by primitive widening.</div>
+<div class="block">Indicates whether the first primitive type is a (transitive) subtype of the second primitive as
+ determined by primitive widening.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
@@ -289,10 +289,10 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>wideningTable</h4>
 <pre>private static final&nbsp;java.util.Map&lt;java.lang.Class&lt;?&gt;,java.util.Set&lt;java.lang.Class&lt;?&gt;&gt;&gt; wideningTable</pre>
-<div class="block">Primitive widening map.
- Maps a primitive type to the set of primitive types to which it may be converted by widening
- as defined in
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.2">JLS section 5.1.2</a>.</div>
+<div class="block">Primitive widening map. Maps a primitive type to the set of primitive types to which it may be
+ converted by widening as defined in <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.2">JLS section
+ 5.1.2</a>.</div>
 </li>
 </ul>
 </li>
@@ -327,8 +327,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>classForName</h4>
 <pre>public static&nbsp;java.lang.Class&lt;?&gt;&nbsp;classForName(java.lang.String&nbsp;typeName)</pre>
-<div class="block">Return the <code>Class&lt;?&gt;</code> object for the given primitive type name or "void".
- These are names that <code>Class.forName()</code> will not convert.</div>
+<div class="block">Return the <code>Class&lt;?&gt;</code> object for the given primitive type name or "void". These are names
+ that <code>Class.forName()</code> will not convert.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>typeName</code> - the name of the type</dd>
@@ -345,14 +345,14 @@ extends java.lang.Object</pre>
 <h4>isAssignable</h4>
 <pre>static&nbsp;boolean&nbsp;isAssignable(java.lang.Class&lt;?&gt;&nbsp;target,
                             java.lang.Class&lt;?&gt;&nbsp;source)</pre>
-<div class="block">Tests assignability from source to target type via identity conversion
- and widening primitive conversion.</div>
+<div class="block">Tests assignability from source to target type via identity conversion and widening primitive
+ conversion.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>target</code> - the target type for assignment; that is, the lvalue or left-hand side.
-    Must be primitive.</dd>
-<dd><code>source</code> - the source type for assignment; that is, the rvalue or right-hand side.
-    Must be primitive.</dd>
+<dd><code>target</code> - the target type for assignment; that is, the lvalue or left-hand side. Must be
+     primitive.</dd>
+<dd><code>source</code> - the source type for assignment; that is, the rvalue or right-hand side. Must be
+     primitive.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if the source type can be assigned to the target type, false otherwise</dd>
 </dl>
@@ -382,9 +382,8 @@ extends java.lang.Object</pre>
 <h4>isSubtype</h4>
 <pre>static&nbsp;boolean&nbsp;isSubtype(java.lang.Class&lt;?&gt;&nbsp;first,
                          java.lang.Class&lt;?&gt;&nbsp;second)</pre>
-<div class="block">Indicates whether the first primitive type is a (transitive) subtype of the second primitive
- as determined by primitive widening.
- Note: returns false when both types are the same.</div>
+<div class="block">Indicates whether the first primitive type is a (transitive) subtype of the second primitive as
+ determined by primitive widening. Note: returns false when both types are the same.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>first</code> - the first primitive type</dd>

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>TypeCheck (randoop 3.0.10 API)</title>
+<title>TypeCheck (randoop 3.1.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="TypeCheck (randoop 3.0.10 API)";
+            parent.document.title="TypeCheck (randoop 3.1.1 API)";
         }
     }
     catch(err) {
@@ -181,8 +181,7 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeCheck.html#test-java.util.List-randoop.types.Substitution-">test</a></span>(java.util.List&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;tuple,
     <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
-<div class="block">Checks if the list of types satisfies the bounds of the type parameters given the
- substitution.</div>
+<div class="block">Checks if the list of types satisfies the bounds of the type parameters given the substitution.</div>
 </td>
 </tr>
 </table>
@@ -271,12 +270,10 @@ extends java.lang.Object</pre>
 <h4>test</h4>
 <pre>public&nbsp;boolean&nbsp;test(java.util.List&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;tuple,
                     <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
-<div class="block">Checks if the list of types satisfies the bounds of the type parameters given the
- substitution.
- Requires that the list of types be the same length as the parameters.
- (Generally, the substitution is constructed from the tuple instantiating the
- type parameters of this object, but all that is require is that it instantiate
- any generic bounds of the the type parameters.)</div>
+<div class="block">Checks if the list of types satisfies the bounds of the type parameters given the substitution.
+ Requires that the list of types be the same length as the parameters. (Generally, the
+ substitution is constructed from the tuple instantiating the type parameters of this object,
+ but all that is require is that it instantiate any generic bounds of the the type parameters.)</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>tuple</code> - the list of instantiating types</dd>

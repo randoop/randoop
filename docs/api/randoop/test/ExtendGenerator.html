@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ExtendGenerator (randoop 3.0.10 API)</title>
+<title>ExtendGenerator (randoop 3.1.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ExtendGenerator (randoop 3.0.10 API)";
+            parent.document.title="ExtendGenerator (randoop 3.1.1 API)";
         }
     }
     catch(err) {
@@ -115,9 +115,8 @@ var activeTableTab = "activeTableTab";
 <pre>public class <span class="typeNameLabel">ExtendGenerator</span>
 extends java.lang.Object
 implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test">TestCheckGenerator</a></pre>
-<div class="block">This <code>TestCheckGenerator</code> combines two generators, using the invalid
- and failure checks from the first, and, if none of those, then returning the
- output of the second.</div>
+<div class="block">This <code>TestCheckGenerator</code> combines two generators, using the invalid and failure checks
+ from the first, and, if none of those, then returning the output of the second.</div>
 </li>
 </ul>
 </div>
@@ -161,9 +160,8 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/ExtendGenerator.html#ExtendGenerator-randoop.test.TestCheckGenerator-randoop.test.TestCheckGenerator-">ExtendGenerator</a></span>(<a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test">TestCheckGenerator</a>&nbsp;firstGenerator,
                <a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test">TestCheckGenerator</a>&nbsp;secondGenerator)</code>
-<div class="block">Creates a check generator that generates <code>TestChecks</code> for
- <code>ExecutableSequence</code> objects using the two <code>TestCheckGenerator</code>
- objects.</div>
+<div class="block">Creates a check generator that generates <code>TestChecks</code> for <code>ExecutableSequence</code>
+ objects using the two <code>TestCheckGenerator</code> objects.</div>
 </td>
 </tr>
 </table>
@@ -184,8 +182,8 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <tr id="i0" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ExtendGenerator.html#visit-randoop.sequence.ExecutableSequence-">visit</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</code>
-<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code>
- based on the criteria of this generator.</div>
+<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code> based on the criteria
+ of this generator.</div>
 </td>
 </tr>
 </table>
@@ -244,14 +242,12 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <h4>ExtendGenerator</h4>
 <pre>public&nbsp;ExtendGenerator(<a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test">TestCheckGenerator</a>&nbsp;firstGenerator,
                        <a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test">TestCheckGenerator</a>&nbsp;secondGenerator)</pre>
-<div class="block">Creates a check generator that generates <code>TestChecks</code> for
- <code>ExecutableSequence</code> objects using the two <code>TestCheckGenerator</code>
- objects. Returns checks produced by the second, unless the first produces
- checks that either have error or invalid behavior.</div>
+<div class="block">Creates a check generator that generates <code>TestChecks</code> for <code>ExecutableSequence</code>
+ objects using the two <code>TestCheckGenerator</code> objects. Returns checks produced by the
+ second, unless the first produces checks that either have error or invalid behavior.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>firstGenerator</code> - the visitor to identify error and invalid behaviors in the
-          sequence</dd>
+<dd><code>firstGenerator</code> - the visitor to identify error and invalid behaviors in the sequence</dd>
 <dd><code>secondGenerator</code> - the visitor to identify other checks for the sequence</dd>
 </dl>
 </li>
@@ -271,18 +267,19 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <li class="blockList">
 <h4>visit</h4>
 <pre>public&nbsp;<a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&nbsp;visit(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</pre>
-<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code>
- based on the criteria of this generator. Returns checks generated by the two
- <code>TestCheckGenerator</code> objects.</div>
+<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code> based on the criteria
+ of this generator.
+
+ <p>Returns checks generated by the two <code>TestCheckGenerator</code> objects.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/TestCheckGenerator.html#visit-randoop.sequence.ExecutableSequence-">visit</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test">TestCheckGenerator</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>s</code> - the sequence for which checks are generated</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>checks object produced by the second generator if the first
-         generator did not generate invalid or error checks for the
-         sequence, and otherwise returns those invalid or error checks</dd>
+<dd>checks object produced by the second generator if the first generator did not generate
+     invalid or error checks for the sequence, and otherwise returns those invalid or error
+     checks</dd>
 </dl>
 </li>
 </ul>

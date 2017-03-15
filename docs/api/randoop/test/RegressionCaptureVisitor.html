@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>RegressionCaptureVisitor (randoop 3.0.10 API)</title>
+<title>RegressionCaptureVisitor (randoop 3.1.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="RegressionCaptureVisitor (randoop 3.0.10 API)";
+            parent.document.title="RegressionCaptureVisitor (randoop 3.1.1 API)";
         }
     }
     catch(err) {
@@ -115,19 +115,18 @@ var activeTableTab = "activeTableTab";
 <pre>public final class <span class="typeNameLabel">RegressionCaptureVisitor</span>
 extends java.lang.Object
 implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test">TestCheckGenerator</a></pre>
-<div class="block">An <code>ExecutionVisitor</code> that records regression checks on the values
- created by the sequence.
+<div class="block">An <code>ExecutionVisitor</code> that records regression checks on the values created by the sequence.
 
- NOTES:
+ <p>NOTES:
 
  <ul>
- <li>Only creates checks over variables whose type is primitive or String.
- <li>Does not create checks for the return values of Object.toString() and
- Object.hashCode() as their values can vary from run to run.
- <li>Does not create checks for Strings that contain the string ";@" as this
- is a good indication that at least part of the String came from a call of
- Object.toString() (e.g. "[[Ljava.lang.Object;@5780d9]" is the string
- representation of a list containing one Object).
+   <li>Only creates checks over variables whose type is primitive or String.
+   <li>Does not create checks for the return values of Object.toString() and Object.hashCode() as
+       their values can vary from run to run.
+   <li>Does not create checks for Strings that contain the string ";@" as this is a good
+       indication that at least part of the String came from a call of Object.toString() (e.g.
+       "[[Ljava.lang.Object;@5780d9]" is the string representation of a list containing one
+       Object).
  </ul></div>
 </li>
 </ul>
@@ -206,8 +205,8 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <tr id="i0" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/RegressionCaptureVisitor.html#visit-randoop.sequence.ExecutableSequence-">visit</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</code>
-<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code>
- based on the criteria of this generator.</div>
+<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code> based on the criteria
+ of this generator.</div>
 </td>
 </tr>
 </table>
@@ -313,13 +312,14 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <li class="blockList">
 <h4>visit</h4>
 <pre>public&nbsp;<a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&nbsp;visit(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</pre>
-<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code>
- based on the criteria of this generator. Iterates over all statements of the sequence to create
- regression assertions. If visitor is set to include assertions, then
- assertions are generated for both normal execution and exceptions. A
- try-catch block is always generated for exceptions, but whether assertions
- are included is determined by the <a href="../../randoop/test/ExpectedExceptionCheckGen.html" title="class in randoop.test"><code>ExpectedExceptionCheckGen</code></a> given
- when creating this visitor.</div>
+<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code> based on the criteria
+ of this generator.
+
+ <p>Iterates over all statements of the sequence to create regression assertions. If visitor is
+ set to include assertions, then assertions are generated for both normal execution and
+ exceptions. A try-catch block is always generated for exceptions, but whether assertions are
+ included is determined by the <a href="../../randoop/test/ExpectedExceptionCheckGen.html" title="class in randoop.test"><code>ExpectedExceptionCheckGen</code></a> given when creating this
+ visitor.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/TestCheckGenerator.html#visit-randoop.sequence.ExecutableSequence-">visit</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test">TestCheckGenerator</a></code></dd>
@@ -328,8 +328,7 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the generated check set for the sequence</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.Error</code> - if any statement is not executed, or exception occurs before last
-           statement</dd>
+<dd><code>java.lang.Error</code> - if any statement is not executed, or exception occurs before last statement</dd>
 </dl>
 </li>
 </ul>

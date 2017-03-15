@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Operation (randoop 3.0.10 API)</title>
+<title>Operation (randoop 3.1.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Operation (randoop 3.0.10 API)";
+            parent.document.title="Operation (randoop 3.1.1 API)";
         }
     }
     catch(err) {
@@ -105,52 +105,45 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public interface <span class="typeNameLabel">Operation</span></pre>
-<div class="block">Operation represents the constructs that can occur in a statement as part of
- a test sequence.
- These include method calls, constructor calls, field accesses, enum constant
- values, or primitive values.
- They are used both as symbols in constructing statements as part of tests,
- and as a computational action in reflective execution of test sequences.
- <p>
- The concept of an operation comes from logic and universal algebra, where
- operations are used to build terms, which represent values.
- (To dive into the formality, see, e.g., the
- <a href="https://en.wikipedia.org/wiki/Term_algebra">Term Algebra</a> Wikipedia entry.)
- <p>
- An operation op has a type-signature
- op: [T1, T2, ..., Tn] &rarr; T, where [T1, T2, ..., Tn] is the list of input
- types, and T is the output type.
- The input types are represented by an ordered list of
- <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> objects, and the output type is a single
- <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> object.
- <p>
- For a non-static method call or instance field access, the first input type
- is always the declaring class of the method or field. If we have a method
- <code>int A.m(double d)</code>, it is represented as an operation
- m : [A, double] &rarr; int.
- A value, such as an int or enum constant, can be represented as an operation
- with no input types, and its own type as the output type. So, the number 5 is
- represented by the operation 5 : [] &rarr; int. Non-class values are represented
+<div class="block">Operation represents the constructs that can occur in a statement as part of a test sequence.
+ These include method calls, constructor calls, field accesses, enum constant values, or primitive
+ values. They are used both as symbols in constructing statements as part of tests, and as a
+ computational action in reflective execution of test sequences.
+
+ <p>The concept of an operation comes from logic and universal algebra, where operations are used
+ to build terms, which represent values. (To dive into the formality, see, e.g., the <a
+ href="https://en.wikipedia.org/wiki/Term_algebra">Term Algebra</a> Wikipedia entry.)
+
+ <p>An operation op has a type-signature op: [T1, T2, ..., Tn] &rarr; T, where [T1, T2, ..., Tn]
+ is the list of input types, and T is the output type. The input types are represented by an
+ ordered list of <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> objects, and the output type is a single <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> object.
+
+ <p>For a non-static method call or instance field access, the first input type is always the
+ declaring class of the method or field. If we have a method <code>int A.m(double d)</code>, it is
+ represented as an operation m : [A, double] &rarr; int. A value, such as an int or enum constant,
+ can be represented as an operation with no input types, and its own type as the output type. So,
+ the number 5 is represented by the operation 5 : [] &rarr; int. Non-class values are represented
  by <a href="../../randoop/operation/NonreceiverTerm.html" title="class in randoop.operation"><code>NonreceiverTerm</code></a> objects.
- <p>
- When an Operation is used in a statement the actual inputs have to be
- identified.
- Execution of the statement will call
- <a href="../../randoop/operation/CallableOperation.html#execute-java.lang.Object:A-java.io.PrintStream-"><code>CallableOperation.execute(Object[], PrintStream)</code></a> with concrete values for each
- of the inputs.</div>
+
+ <p>When an Operation is used in a statement the actual inputs have to be identified. Execution of
+ the statement will call <a href="../../randoop/operation/CallableOperation.html#execute-java.lang.Object:A-java.io.PrintStream-"><code>CallableOperation.execute(Object[], PrintStream)</code></a> with concrete
+ values for each of the inputs.
+
+ <p>To support text-based serialization, an implementing class C should also provide:
+
+ <ul>
+   <li>A public static String field that contains a unique ID for the operation.
+   <li>A public static parse(String) method that returns a new Operation given a string
+       description. The following property should hold: <code>
+           C.parse(x.toParsableString()).equals(x)</code>
+   <li>Update method OperationParser.parse(String) to parse operations of type C.
+   <li>Update method OperationParser.getId(Operation) to handle operations of type C.
+ </ul></div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence"><code>Statement</code></a>, 
-<a href="../../randoop/sequence/ExecutableSequence.html#execute-randoop.ExecutionVisitor-randoop.test.TestCheckGenerator-"><code><p>
- To support text-based serialization, an implementing class C should also provide:
-  <ul>
-  <li> A public static String field that contains a unique ID for the operation.
-  <li> A public static parse(String) method that returns a new Operation given
-       a string description. The following property should hold:
-         <code>C.parse(x.toParsableString()).equals(x)</code>
-  <li> Update method OperationParser.parse(String) to parse operations of type C.
-  <li> Update method OperationParser.getId(Operation) to handle operations of type C.
-  </ul></code></a></dd>
+<a href="../../randoop/sequence/ExecutableSequence.html#execute-randoop.ExecutionVisitor-randoop.test.TestCheckGenerator-"><code>ExecutableSequence.execute(randoop.ExecutionVisitor,
+     randoop.test.TestCheckGenerator)</code></a></dd>
 </dl>
 </li>
 </ul>
@@ -179,8 +172,8 @@ var activeTableTab = "activeTableTab";
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/Operation.html#getValue--">getValue</a></span>()</code>
-<div class="block">Returns the "value" of an operation that is actually a ground term, meaning
- a constant of some form.</div>
+<div class="block">Returns the "value" of an operation that is actually a ground term, meaning a constant of some
+ form.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -198,8 +191,8 @@ var activeTableTab = "activeTableTab";
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/Operation.html#isMessage--">isMessage</a></span>()</code>
-<div class="block">Predicate to indicate whether object represents a method-call-like
- operation (either static or instance).</div>
+<div class="block">Predicate to indicate whether object represents a method-call-like operation (either static or
+ instance).</div>
 </td>
 </tr>
 <tr id="i5" class="rowColor">
@@ -211,15 +204,14 @@ var activeTableTab = "activeTableTab";
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/Operation.html#isNonreceivingValue--">isNonreceivingValue</a></span>()</code>
-<div class="block">Predicate to indicate whether this object represents a value of a
- non-receiving type (includes numbers, strings, and null).</div>
+<div class="block">Predicate to indicate whether this object represents a value of a non-receiving type (includes
+ numbers, strings, and null).</div>
 </td>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/Operation.html#isStatic--">isStatic</a></span>()</code>
-<div class="block">Predicate to indicate whether object represents a static operation on the
- declaring class.</div>
+<div class="block">Predicate to indicate whether object represents a static operation on the declaring class.</div>
 </td>
 </tr>
 <tr id="i8" class="altColor">
@@ -231,8 +223,8 @@ var activeTableTab = "activeTableTab";
 <tr id="i9" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/Operation.html#satisfies-randoop.reflection.ReflectionPredicate-">satisfies</a></span>(<a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;reflectionPredicate)</code>
-<div class="block">Determines whether the reflective object in this <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> satisfies
- the <code>canUse</code> criteria of the given <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection"><code>ReflectionPredicate</code></a>.</div>
+<div class="block">Determines whether the reflective object in this <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> satisfies the <code>canUse
+ </code> criteria of the given <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection"><code>ReflectionPredicate</code></a>.</div>
 </td>
 </tr>
 </table>
@@ -257,12 +249,10 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>isStatic</h4>
 <pre>boolean&nbsp;isStatic()</pre>
-<div class="block">Predicate to indicate whether object represents a static operation on the
- declaring class.</div>
+<div class="block">Predicate to indicate whether object represents a static operation on the declaring class.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if operation corresponds to static method or field of a class,
-         and false otherwise</dd>
+<dd>true if operation corresponds to static method or field of a class, and false otherwise</dd>
 </dl>
 </li>
 </ul>
@@ -273,10 +263,8 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>isMessage</h4>
 <pre>boolean&nbsp;isMessage()</pre>
-<div class="block">Predicate to indicate whether object represents a method-call-like
- operation (either static or instance).
- This includes field getters and setters, which are operations that access
- fields.</div>
+<div class="block">Predicate to indicate whether object represents a method-call-like operation (either static or
+ instance). This includes field getters and setters, which are operations that access fields.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if operation is method-like, and false otherwise</dd>
@@ -333,8 +321,8 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>isNonreceivingValue</h4>
 <pre>boolean&nbsp;isNonreceivingValue()</pre>
-<div class="block">Predicate to indicate whether this object represents a value of a
- non-receiving type (includes numbers, strings, and null).</div>
+<div class="block">Predicate to indicate whether this object represents a value of a non-receiving type (includes
+ numbers, strings, and null).</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if object is a non-receiving value, and false otherwise</dd>
@@ -362,11 +350,11 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>getValue</h4>
 <pre>java.lang.Object&nbsp;getValue()</pre>
-<div class="block">Returns the "value" of an operation that is actually a ground term, meaning
- a constant of some form.  Only null if value is null, otherwise throws an
- exception if there is not a reasonable meaning of value for type of operation.
- <p>
- This is a hack to allow randoop.main.GenBranchDir to do mutation.</div>
+<div class="block">Returns the "value" of an operation that is actually a ground term, meaning a constant of some
+ form. Only null if value is null, otherwise throws an exception if there is not a reasonable
+ meaning of value for type of operation.
+
+ <p>This is a hack to allow randoop.main.GenBranchDir to do mutation.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>object reference to value</dd>
@@ -382,8 +370,8 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>satisfies</h4>
 <pre>boolean&nbsp;satisfies(<a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;reflectionPredicate)</pre>
-<div class="block">Determines whether the reflective object in this <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> satisfies
- the <code>canUse</code> criteria of the given <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection"><code>ReflectionPredicate</code></a>.</div>
+<div class="block">Determines whether the reflective object in this <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> satisfies the <code>canUse
+ </code> criteria of the given <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection"><code>ReflectionPredicate</code></a>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>reflectionPredicate</code> - a <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection"><code>ReflectionPredicate</code></a> to be checked.</dd>

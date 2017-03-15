@@ -171,10 +171,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Whether to check that generated sequences can be compiled. If true, the code for each generated
    * sequence is compiled, and the sequence is only kept if the compilation succeeds without error.
    * This check is useful because the assumptions in Randoop generation heuristics are sometimes
-   * violated by input methods, and as a result a generated test may not compile. This check does
+   * violated by input methods, and, as a result, a generated test may not compile. This check does
    * increases the runtime by approximately 50%.
    */
-  @Unpublicized
   @Option("Whether to check if test sequences are compilable")
   public static boolean check_compilable = true;
 

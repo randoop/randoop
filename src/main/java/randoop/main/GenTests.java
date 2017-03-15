@@ -35,7 +35,6 @@ import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
 import randoop.output.JUnitCreator;
 import randoop.output.JavaFileWriter;
-import randoop.output.NameGenerator;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PackageVisibilityPredicate;
@@ -699,6 +698,7 @@ public class GenTests extends GenInputsAbstract {
   /**
    * Writes the sequences as JUnit files to the specified directory.
    *
+   * @param junitCreator the JUnit test code generator
    * @param output_dir string name of output directory
    * @param seqList a list of sequences to write
    * @param junitClassname the base name for the class
@@ -720,8 +720,7 @@ public class GenTests extends GenInputsAbstract {
 
       JavaFileWriter jfw = new JavaFileWriter(output_dir);
 
-      String classNameFormat =
-          junitClassname + NameGenerator.formatString(NameGenerator.numDigits(seqPartition.size()));
+      String classNameFormat = junitClassname + "%d";
       for (int i = 0; i < seqPartition.size(); i++) {
         List<ExecutableSequence> partition = seqPartition.get(i);
         String testClassName = String.format(classNameFormat, i);

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ContractCheckingVisitor (randoop 3.0.10 API)</title>
+<title>ContractCheckingVisitor (randoop 3.1.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ContractCheckingVisitor (randoop 3.0.10 API)";
+            parent.document.title="ContractCheckingVisitor (randoop 3.1.1 API)";
         }
     }
     catch(err) {
@@ -115,14 +115,13 @@ var activeTableTab = "activeTableTab";
 <pre>public final class <span class="typeNameLabel">ContractCheckingVisitor</span>
 extends java.lang.Object
 implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test">TestCheckGenerator</a></pre>
-<div class="block">An execution visitor that generates checks for error-revealing tests. If
- execution of the visited sequence is normal, it will generate checks for
- unary and binary object contracts over the values from the execution.
- Contracts will be checked on all values except for boxed primitives or
- Strings. If the execution throws an exception considered to be an error, the
- visitor generates a <code>NoExceptionCheck</code> indicating that the statement
- threw an exception in error. For each contract violation, the visitor adds a
- <code>Check</code> to the <code>TestChecks</code> object that is returned.</div>
+<div class="block">An execution visitor that generates checks for error-revealing tests. If execution of the visited
+ sequence is normal, it will generate checks for unary and binary object contracts over the values
+ from the execution. Contracts will be checked on all values except for boxed primitives or
+ Strings. If the execution throws an exception considered to be an error, the visitor generates a
+ <code>NoExceptionCheck</code> indicating that the statement threw an exception in error. For each
+ contract violation, the visitor adds a <code>Check</code> to the <code>TestChecks</code> object that is
+ returned.</div>
 </li>
 </ul>
 </div>
@@ -166,8 +165,8 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/ContractCheckingVisitor.html#ContractCheckingVisitor-randoop.test.ContractSet-randoop.test.predicate.ExceptionPredicate-">ContractCheckingVisitor</a></span>(<a href="../../randoop/test/ContractSet.html" title="class in randoop.test">ContractSet</a>&nbsp;contracts,
                        <a href="../../randoop/test/predicate/ExceptionPredicate.html" title="interface in randoop.test.predicate">ExceptionPredicate</a>&nbsp;exceptionPredicate)</code>
-<div class="block">Create a new visitor that checks the given contracts after the last
- statement in a sequence is executed.</div>
+<div class="block">Create a new visitor that checks the given contracts after the last statement in a sequence is
+ executed.</div>
 </td>
 </tr>
 </table>
@@ -188,8 +187,8 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <tr id="i0" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ContractCheckingVisitor.html#visit-randoop.sequence.ExecutableSequence-">visit</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</code>
-<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code>
- based on the criteria of this generator.</div>
+<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code> based on the criteria
+ of this generator.</div>
 </td>
 </tr>
 </table>
@@ -248,12 +247,12 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <h4>ContractCheckingVisitor</h4>
 <pre>public&nbsp;ContractCheckingVisitor(<a href="../../randoop/test/ContractSet.html" title="class in randoop.test">ContractSet</a>&nbsp;contracts,
                                <a href="../../randoop/test/predicate/ExceptionPredicate.html" title="interface in randoop.test.predicate">ExceptionPredicate</a>&nbsp;exceptionPredicate)</pre>
-<div class="block">Create a new visitor that checks the given contracts after the last
- statement in a sequence is executed.</div>
+<div class="block">Create a new visitor that checks the given contracts after the last statement in a sequence is
+ executed.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>contracts</code> - Expected to be unary contracts, i.e. for each contract
-          <code>c</code>, <code>c.getArity() == 1</code>.</dd>
+<dd><code>contracts</code> - Expected to be unary contracts, i.e. for each contract <code>c</code>, <code>
+     c.getArity() == 1</code>.</dd>
 <dd><code>exceptionPredicate</code> - the predicate to test for exceptions that are errors</dd>
 </dl>
 </li>
@@ -273,9 +272,11 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <li class="blockList">
 <h4>visit</h4>
 <pre>public&nbsp;<a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&nbsp;visit(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</pre>
-<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code>
- based on the criteria of this generator. Adds checks to final statement of sequence. Looks for failure
- exceptions, and violations of contracts in <code>contracts</code>.</div>
+<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code> based on the criteria
+ of this generator.
+
+ <p>Adds checks to final statement of sequence. Looks for failure exceptions, and violations of
+ contracts in <code>contracts</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/TestCheckGenerator.html#visit-randoop.sequence.ExecutableSequence-">visit</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test">TestCheckGenerator</a></code></dd>
