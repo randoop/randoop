@@ -639,8 +639,18 @@ same way:
 </ul>
 <p>
 The minimizer removes lines of code within a failing method, and also
-entire methods (such as passing test methods), from its input file.
+entire methods (such as passing test methods), from its input file. If removing
+a line of code causes the test suite to fail in a different way than the original,
+the minimizer will instead, choose from a list of replacement statements. The
+minimizer will try different replacement statements, from most minimized to least
+minimized:
 </p>
+<ul>
+  <li>Remove a statement.</li>
+  <li>Replace right hand side to a calculated value obtained from a passing assertion.</li>
+  <li>Replace the right hand side expression with <code>0</code>, <code>false</code>, or <code>null, whichever is type correct.</code></li>
+  <li>Remove the left hand side of a statement, retaining only the expression on the right.</li>
+</ul>
 
 <p>
 The minimizer works on any JUnit test suite, so it is useful even to

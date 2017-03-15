@@ -46,6 +46,7 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.*;
+
 import org.apache.commons.io.IOUtils;
 import plume.Option;
 import plume.OptionGroup;
@@ -206,7 +207,7 @@ public class Minimize extends CommandHandler {
     System.out.println("Minimizing: " + filePath);
 
     // Minimize the Java test suite and output to a new Java file.
-    minimizeTestSuite(compUnit, filePath, classPath, expectedOutput, packageName, timeoutLimit);
+    minimizeTestSuite(compUnit, packageName, filePath, classPath, expectedOutput, timeoutLimit);
     writeToFile(compUnit, filePath, "Minimized");
 
     System.out.println("Minimizing complete.\n");
@@ -223,18 +224,18 @@ public class Minimize extends CommandHandler {
    *
    * @param cu the compilation unit to minimize, the compilation unit will be modified if a method
    *     is minimized
+   * @param packageName the name of the package that the Java file is in
    * @param filePath the path to the Java file that is being minimized
    * @param classpath classpath used to compile and run the Java file
    * @param expectedOutput expected JUnit output when the Java file is compiled and run
-   * @param packageName the name of the package that the Java file is in
    * @param timeoutLimit maximum number of seconds allowed for any one unit test case to run
    */
   private static void minimizeTestSuite(
       CompilationUnit cu,
+      String packageName,
       String filePath,
       String classpath,
       String expectedOutput,
-      String packageName,
       int timeoutLimit) {
     for (TypeDeclaration type : cu.getTypes()) {
       for (BodyDeclaration member : type.getMembers()) {
@@ -242,9 +243,9 @@ public class Minimize extends CommandHandler {
           MethodDeclaration method = (MethodDeclaration) member;
           // Minimize method and then simplify variable type names
           minimizeMethod(
-              method, cu, filePath, classpath, expectedOutput, packageName, timeoutLimit);
+              method, cu, packageName, filePath, classpath, expectedOutput, timeoutLimit);
           simplifyVariableTypeNames(
-              method, cu, filePath, classpath, expectedOutput, packageName, timeoutLimit);
+              method, cu, packageName, filePath, classpath, expectedOutput, timeoutLimit);
           System.out.println("Minimized method " + method.getName());
         }
       }
@@ -259,24 +260,23 @@ public class Minimize extends CommandHandler {
    * @param compUnit compilation unit that contains the AST for the Java file that we are
    *     minimizing, the compilation unit will be modified if a correct minimization of a method is
    *     found
+   * @param packageName the name of the package that the Java file is in
    * @param filePath path to the Java file that we are minimizing
    * @param classpath classpath needed to compile and run the Java file
-   * @param packageName the name of the package that the Java file is in
    * @param expectedOutput expected standard output from running the JUnit test suite
    * @param timeoutLimit the maximum number of seconds allowed for any one unit test case to run
    */
   private static void minimizeMethod(
       MethodDeclaration method,
       CompilationUnit compUnit,
+      String packageName,
       String filePath,
       String classpath,
       String expectedOutput,
-      String packageName,
       int timeoutLimit) {
     List<Statement> statements = method.getBody().getStmts();
 
-    // Map from variable name to an expression that the variable is equal
-    // to. These expressions are found in assertions.
+    // Map from variable name to the variable's value which is found in a passing assertion.
     Map<String, String> primitiveValues = new HashMap<String, String>();
 
     // Iterate through the list of statements, from last to first
@@ -299,40 +299,17 @@ public class Minimize extends CommandHandler {
         // Write, compile, and run the new Java file with the new suffix "Minimized".
         String newFilePath = writeToFile(compUnit, filePath, "Minimized");
         if (checkCorrectlyMinimized(
-            newFilePath, classpath, expectedOutput, packageName, timeoutLimit)) {
-          // No compilation or runtime issues and the obtained
-          // output is the same as the expected; safe to
-          // use simplified statement and continue.
+            newFilePath, classpath, packageName, expectedOutput, timeoutLimit)) {
+          // No compilation or runtime issues, obtained output is the same as the expected output.
+          // Use simplified statement and continue.
           replacementFound = true;
-
-          // Check if the statement is an assertion regarding a value that can be used
-          // in a simplification later on.
-          if (currStmt instanceof ExpressionStmt) {
-            Expression exp = ((ExpressionStmt) currStmt).getExpression();
-            if (exp instanceof MethodCallExpr) {
-              MethodCallExpr mCall = (MethodCallExpr) exp;
-              // Check if the method call is an assertTrue statement
-              if (mCall.getName().equals("assertTrue")) {
-                // Is an assertTrue statement.
-                List<Expression> mArgs = mCall.getArgs();
-                if (mArgs.size() == 1) {
-                  // Retrieve and store the expression
-                  // associated with the variable in the
-                  // assertion.
-                  Expression mExp = mArgs.get(0);
-                  List<Node> children = mExp.getChildrenNodes();
-                  String var = children.get(0).toString();
-                  String val = children.get(1).toString();
-                  primitiveValues.put(var, val);
-                }
-              }
-            }
-          }
+          storeValueFromAssertion(currStmt, primitiveValues);
           break;
-        }
-        // Issue encountered, remove the faulty statement.
-        if (stmt != null) {
-          statements.remove(i);
+        } else {
+          // Issue encountered, remove the faulty statement.
+          if (stmt != null) {
+            statements.remove(i);
+          }
         }
       }
       if (!replacementFound) {
@@ -377,6 +354,39 @@ public class Minimize extends CommandHandler {
       }
     }
     return replacements;
+  }
+
+  /**
+   * If {@code currStmt} is a statement that is a passing assertion, store the value associated with
+   * the variable in the {@code primitiveValues} map.
+   *
+   * @param currStmt a statement
+   * @param primitiveValues a map of variable names to variable values, modified if {@code currStmt}
+   *     is a passing assertion, asserting a variable's value.
+   */
+  private static void storeValueFromAssertion(
+      Statement currStmt, Map<String, String> primitiveValues) {
+    // Check if the statement is an assertion regarding a value that can be used
+    // in a simplification later on.
+    if (currStmt instanceof ExpressionStmt) {
+      Expression exp = ((ExpressionStmt) currStmt).getExpression();
+      if (exp instanceof MethodCallExpr) {
+        MethodCallExpr mCall = (MethodCallExpr) exp;
+        // Check if the method call is an assertTrue statement
+        if (mCall.getName().equals("assertTrue")) {
+          // Is an assertTrue statement.
+          List<Expression> mArgs = mCall.getArgs();
+          if (mArgs.size() == 1) {
+            // Retrieve and store the value associated with the variable in the assertion.
+            Expression mExp = mArgs.get(0);
+            List<Node> children = mExp.getChildrenNodes();
+            String var = children.get(0).toString();
+            String val = children.get(1).toString();
+            primitiveValues.put(var, val);
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -478,19 +488,19 @@ public class Minimize extends CommandHandler {
    *     minimization of the method is found
    * @param compUnit compilation unit containing an AST for a Java file, the compilation unit will
    *     be modified if a correct minimization of the method is found
+   * @param packageName the name of the package that the Java file is in
    * @param filePath absolute file path to the input Java file
    * @param classpath classpath needed to compile and run the Java file
    * @param expectedOutput expected standard output from running the JUnit test suite
-   * @param packageName the name of the package that the Java file is in
    * @param timeoutLimit the maximum number of seconds allowed for any one unit test case to run
    */
   private static void simplifyVariableTypeNames(
       MethodDeclaration method,
       CompilationUnit compUnit,
+      String packageName,
       String filePath,
       String classpath,
       String expectedOutput,
-      String packageName,
       int timeoutLimit) {
     List<Statement> statements = method.getBody().getStmts();
 
@@ -548,7 +558,7 @@ public class Minimize extends CommandHandler {
 
       String newFilePath = writeToFile(compUnit, filePath, "Minimized");
       if (!checkCorrectlyMinimized(
-          newFilePath, classpath, expectedOutput, packageName, timeoutLimit)) {
+          newFilePath, classpath, packageName, expectedOutput, timeoutLimit)) {
         // If an issue occurs, remove the new statement and add back the original.
         statements.remove(i);
         statements.add(i, currStmt);
@@ -615,8 +625,8 @@ public class Minimize extends CommandHandler {
    *
    * @param filePath the absolute path to the Java file
    * @param classpath classpath needed to compile/run Java file
-   * @param expectedOutput expected output of running JUnit test suite
    * @param packageName the name of the package that the Java file is in
+   * @param expectedOutput expected output of running JUnit test suite
    * @param timeoutLimit the maximum number of seconds allowed for any one unit test case to run
    * @return true if there are no compilation and no runtime errors and the output is equal to the
    *     expected output
@@ -624,8 +634,8 @@ public class Minimize extends CommandHandler {
   private static boolean checkCorrectlyMinimized(
       String filePath,
       String classpath,
-      String expectedOutput,
       String packageName,
+      String expectedOutput,
       int timeoutLimit) {
     Results res = compileAndRun(filePath, classpath, packageName, timeoutLimit);
 
