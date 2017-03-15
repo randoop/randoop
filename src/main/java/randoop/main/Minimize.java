@@ -45,8 +45,11 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.concurrent.*;
-
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import org.apache.commons.io.IOUtils;
 import plume.Option;
 import plume.OptionGroup;
@@ -62,6 +65,16 @@ import plume.TimeLimitProcess;
  *   <li>optional timeout limit, in seconds, allowed for any unit test case to be executed file. The
  *       default is 10 seconds.
  * </ol>
+ *
+ * In a method that contains a failing assertion, the program will iterate through the method's list
+ * of statements, from last to first. For each statement, possible replacement statements are
+ * considered, from most minimized to least minimized. Removing the statement is the most a
+ * statement can be minimized. Leaving the statement unchanged is the least that the statement can
+ * be minimized. The algorithm first tries to remove the statement. If this causes the output
+ * testsuite to fail differently than the original testsuite, we will clone the current statement
+ * and then modify it to represent the different possible replacements. If none of these
+ * minimizations allow the output testsuite to fail in the same way as the original testsuite, we
+ * add back the original version of the current statement and continue.
  */
 public class Minimize extends CommandHandler {
   @OptionGroup(value = "Test case minimization options")
@@ -135,11 +148,13 @@ public class Minimize extends CommandHandler {
   /**
    * Minimize the input test file.
    *
-   * <p>Minimization is defined as processing an input file and producing an output file that
-   * satisfies the following requirements: The minimized test suite fails in the same way as the
-   * original test suite. - Same failing assertions as in the original input test suite. - Same
-   * stack trace produced by failing assertions. The output file is as small possible, containing as
-   * few lines of code as possible, while satisfying the above requirements.
+   * <p>Minimization is defined as processing an input file and producing an output file that is as
+   * small as possible (as few lines of code as possible) which fails the same way:
+   *
+   * <ol>
+   *   <li>Same failing assertions as in the original input test suite.
+   *   <li>Same stacktrace produced by failing assertions.
+   * </ol>
    *
    * <p>The original input Java file will be compiled and run once. Using the resulting output from
    * standard output and standard error, the "expected output" is defined as the collection of
@@ -400,10 +415,7 @@ public class Minimize extends CommandHandler {
    */
   private static Statement rightHandSideSimplificationStatement(
       VariableDeclarationExpr vdExpr, Map<String, String> primitiveValues) {
-    // Clone vdExpr so that the original statement is not modified. If all
-    // partial removals/substitutions fail, the original statement will be
-    // reinserted into the method body. exprCopy is used to create a new
-    // Statement object where the right hand side has been simplified.
+    // Copy the variable declaration expression
     VariableDeclarationExpr exprCopy = (VariableDeclarationExpr) vdExpr.clone();
 
     // Obtain a reference to the variable declaration.
@@ -467,9 +479,7 @@ public class Minimize extends CommandHandler {
    *     the declared variable
    */
   private static Statement removeLeftHandSideSimplifiation(VariableDeclarationExpr vdExpr) {
-    // Clone vdExpr so that the original statement is not modified. If all
-    // partial removals/substitutions fail, the original statement will be
-    // reinserted into the method body.
+    // Copy the variable declaration expression
     VariableDeclarationExpr exprCopy = (VariableDeclarationExpr) vdExpr.clone();
     List<VariableDeclarator> vars = exprCopy.getVars();
     VariableDeclarator vd = vars.get(0);
@@ -510,8 +520,7 @@ public class Minimize extends CommandHandler {
     // declarations
     Set<String> fullyQualifiedNames = new HashSet<String>();
 
-    for (int i = 0; i < statements.size(); i++) {
-      Statement currStmt = statements.get(i);
+    for (Statement currStmt : statements) {
       if (currStmt instanceof ExpressionStmt) {
         Expression exp = ((ExpressionStmt) currStmt).getExpression();
         if (exp instanceof VariableDeclarationExpr) {
@@ -621,7 +630,8 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Check if a Java file has been correctly minimized.
+   * Check if a Java file has been correctly minimized. The file should not have compilation errors
+   * or runtime errors. The file should fail in the same way as the original file.
    *
    * @param filePath the absolute path to the Java file
    * @param classpath classpath needed to compile/run Java file
@@ -944,18 +954,21 @@ public class Minimize extends CommandHandler {
 
     List<ImportDeclaration> importDeclarations = compilationUnit.getImports();
     for (ImportDeclaration im : importDeclarations) {
-      // Check if the compilation unit already includes the import
+      // Check if the compilation unit already includes the import.
       if (importDeclaration.toString().equals(im.toString())) {
         return;
       }
     }
 
-    // Add the import to the compilation unit's list of imports
+    // Add the import to the compilation unit's list of imports.
     importDeclarations.add(importDeclaration);
     compilationUnit.setImports(importDeclarations);
   }
 
-  /** Contains two {@code String} objects which represent standard output and error output. */
+  /**
+   * Contains two {@code String} objects and an exit status which represent the standard output and
+   * error output and the resulting status from running a process.
+   */
   private static class Outputs {
     /** String representing the standard output */
     private String stdout;
@@ -966,13 +979,13 @@ public class Minimize extends CommandHandler {
     private int exitValue;
 
     /**
-     * Create an Outputs object
+     * Create an Outputs object.
      *
      * @param stdout standard output
      * @param errout error output
      * @param exitValue exit value of process
      */
-    public Outputs(String stdout, String errout, int exitValue) {
+    private Outputs(String stdout, String errout, int exitValue) {
       this.stdout = stdout;
       this.errout = errout;
       this.exitValue = exitValue;
@@ -987,12 +1000,12 @@ public class Minimize extends CommandHandler {
     private Outputs runOut;
 
     /**
-     * Create a Results object
+     * Create a Results object.
      *
      * @param compOut compilation results
      * @param runOut runtime results
      */
-    public Results(Outputs compOut, Outputs runOut) {
+    private Results(Outputs compOut, Outputs runOut) {
       this.compOut = compOut;
       this.runOut = runOut;
     }
@@ -1015,10 +1028,10 @@ public class Minimize extends CommandHandler {
       reader.close();
     } catch (FileNotFoundException e) {
       System.err.println("File length not calculated, file not found exception.");
-      return -1;
+      System.exit(1);
     } catch (IOException e) {
       System.err.println("File length not calculated, file read exception.");
-      return -1;
+      System.exit(1);
     }
     return lines;
   }
