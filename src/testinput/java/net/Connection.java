@@ -68,4 +68,16 @@ public class Connection {
       throw new IllegalArgumentException();
     }
   }
+
+  /**
+  * @return the received non-negative code value
+  * @throws IllegalStateException if the connection is not open
+  */
+  public int receive() {
+    if (!this.isOpen()) {
+      throw new IllegalStateException();
+    }
+    return 1; //dummy value
+  }
+
 }

@@ -72,6 +72,23 @@ public class ConnectionSpecTest {
     opSpec.addParamSpecifications(paramList);
     opList.add(opSpec);
 
+    m = null;
+    try {
+      m = c.getMethod("receive");
+    } catch (NoSuchMethodException e) {
+      fail("didn't find method: receive");
+    }
+    Guard returnGuard = new Guard("", "true");
+    Property property = new Property("received value is non-negative", "result >= 0");
+    ReturnSpecification opReturn =
+        new ReturnSpecification("returns non-negative received value", returnGuard, property);
+    List<ReturnSpecification> retList = new ArrayList<>();
+    retList.add(opReturn);
+    op = Operation.getOperation(m);
+    opSpec = new OperationSpecification(op);
+    opSpec.addReturnSpecifications(retList);
+    opList.add(opSpec);
+
     System.out.println(
         new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(opList));
   }
