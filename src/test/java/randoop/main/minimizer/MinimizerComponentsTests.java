@@ -2,8 +2,6 @@ package randoop.main.minimizer;
 
 import static org.junit.Assert.*;
 
-import java.util.HashSet;
-import java.util.Set;
 import org.junit.Test;
 import randoop.main.Minimize;
 
@@ -60,42 +58,5 @@ public class MinimizerComponentsTests {
     fullyQualifiedName = "java.util.HashMap";
     simpleName = "HashMap";
     assertEquals(simpleName, Minimize.getSimpleTypeName(fullyQualifiedName));
-  }
-
-  /**
-   * Tests the getFullyQualifiedTypeNames method and checks that the minimizer properly obtains all
-   * the proper fully qualified name components from a given fully qualified name
-   */
-  @Test
-  public void getFullyQualifiedTypeNames() {
-    String fullyQualifiedName;
-    Set<String> fullyQualifiedNames = new HashSet<String>();
-    Set<String> result = new HashSet<String>();
-
-    fullyQualifiedName =
-        "org.apache.commons.lang3.tuple.MutablePair<org.apache.commons.lang3.concurrent.CircuitBreakingException, org.apache.commons.lang3.text.translate.NumericEntityUnescaper.OPTION>";
-    fullyQualifiedNames.add("org.apache.commons.lang3.tuple.MutablePair");
-    fullyQualifiedNames.add("org.apache.commons.lang3.concurrent.CircuitBreakingException");
-    fullyQualifiedNames.add(
-        "org.apache.commons.lang3.text.translate.NumericEntityUnescaper.OPTION");
-
-    result = Minimize.getFullyQualifiedTypeNames(fullyQualifiedName);
-
-    for (String typeName : fullyQualifiedNames) {
-      assertTrue(result.contains(typeName));
-    }
-
-    fullyQualifiedNames.clear();
-
-    fullyQualifiedName = "java.util.HashMap<java.lang.String, java.lang.Double>";
-    fullyQualifiedNames.add("java.util.HashMap");
-    fullyQualifiedNames.add("java.lang.String");
-    fullyQualifiedNames.add("java.lang.Double");
-
-    result = Minimize.getFullyQualifiedTypeNames(fullyQualifiedName);
-
-    for (String typeName : fullyQualifiedNames) {
-      assertTrue(result.contains(typeName));
-    }
   }
 }

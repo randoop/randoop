@@ -22,7 +22,9 @@ import com.github.javaparser.ast.expr.NullLiteralExpr;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.Statement;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.PrimitiveType;
+
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import java.io.BufferedReader;
@@ -57,24 +59,24 @@ import plume.Options;
 import plume.TimeLimitProcess;
 
 /**
- * This program minimizes a failing JUnit testsuite. Its three command-line arguments are:
+ * This program minimizes a failing JUnit test suite. Its three command-line arguments are:
  *
  * <ol>
  *   <li>the Java file whose failing tests will be minimized
  *   <li>optional classpath containing dependencies needed to compile and run the Java file
- *   <li>optional timeout limit, in seconds, allowed for any unit test case to be executed file. The
- *       default is 10 seconds.
+ *   <li>optional timeout limit, in seconds, allowed for the whole test suite to be run. The default
+ *       is 30 seconds.
  * </ol>
  *
  * In a method that contains a failing assertion, the program will iterate through the method's list
  * of statements, from last to first. For each statement, possible replacement statements are
  * considered, from most minimized to least minimized. Removing the statement is the most a
  * statement can be minimized. Leaving the statement unchanged is the least that the statement can
- * be minimized. The algorithm first tries to remove the statement. If this causes the output
- * testsuite to fail differently than the original testsuite, we will clone the current statement
- * and then modify it to represent the different possible replacements. If none of these
- * minimizations allow the output testsuite to fail in the same way as the original testsuite, we
- * add back the original version of the current statement and continue.
+ * be minimized. The algorithm first tries to remove the statement. If this causes the output test
+ * suite to fail differently than the original test suite, we will clone the current statement and
+ * then modify it to represent the different possible replacements. If none of these minimizations
+ * allow the output test suite to fail in the same way as the original test suite, we add back the
+ * original version of the current statement and continue.
  */
 public class Minimize extends CommandHandler {
   @OptionGroup(value = "Test case minimization options")
@@ -90,12 +92,12 @@ public class Minimize extends CommandHandler {
   public static String suiteclasspath;
 
   /**
-   * The maximum number of seconds allowed for a unit test within the test suite to run. This is
-   * useful for test cases that do not terminate when run. This timeout limit should be large enough
-   * such that unit tests which do terminate have enough time to run until completion.
+   * The maximum number of seconds allowed for the entire test suite to be run. This is useful for
+   * test cases that do not terminate when run. This timeout limit should be large enough such that
+   * unit tests which do terminate have enough time to run until completion.
    */
-  @Option("timeout, in seconds, for each unit test")
-  public static int testcasetimeout = 10;
+  @Option("timeout, in seconds, for the whole test suite")
+  public static int testsuitetimeout = 30;
 
   public Minimize() {
     super(
@@ -107,7 +109,7 @@ public class Minimize extends CommandHandler {
         null,
         "Path to Java file whose failing tests will be minimized, classpath to compile and run the Java file, maximum time (in seconds) allowed for a single unit test case to run before it times out.",
         "A minimized JUnit test suite (as one Java file) named \"InputFileMinimized.java\" if \"InputFile.java\" were the name of the input file.",
-        "java -ea -cp bin:randoop-all-3.0.9.jar randoop.main.Main minimize --suitepath=~/RandoopTests/src/ErrorTestLang.java --suiteclasspath=~/RandoopTests/commons-lang3-3.5.jar --testcasetimeout=30",
+        "java -ea -cp bin:randoop-all-3.0.9.jar randoop.main.Main minimize --suitepath=~/RandoopTests/src/ErrorTestLang.java --suiteclasspath=~/RandoopTests/commons-lang3-3.5.jar --testsuitetimeout=30",
         new Options(Minimize.class));
   }
 
@@ -117,7 +119,7 @@ public class Minimize extends CommandHandler {
    *
    * @param args first parameter is the path to the Java file to be minimized. The second parameter
    *     is the classpath needed to compile and run the Java file. The third parameter is the
-   *     timeout time, in seconds, for a unit test.
+   *     timeout time, in seconds, for the whole test suite.
    * @return true if the command was handled successfully
    * @throws RandoopTextuiException thrown if unrecognized arguments are passed
    */
@@ -136,13 +138,13 @@ public class Minimize extends CommandHandler {
       System.out.println("You must specify an input file path.");
       System.out.println("Use the --suitepath option.");
       System.exit(1);
-    } else if (Minimize.testcasetimeout <= 0) {
+    } else if (Minimize.testsuitetimeout <= 0) {
       System.out.println("You must specify a positive, nonzero timeout value.");
       System.exit(1);
     }
 
     // Call the main minimize method
-    return mainMinimize(suitepath, suiteclasspath, testcasetimeout);
+    return mainMinimize(suitepath, suiteclasspath, testsuitetimeout);
   }
 
   /**
@@ -163,7 +165,7 @@ public class Minimize extends CommandHandler {
    *
    * @param filePath the path to the Java file that is being minimized
    * @param classPath classpath used to compile and run the Java file
-   * @param timeoutLimit maximum number of seconds allowed for any one unit test case to run
+   * @param timeoutLimit number of seconds allowed for the whole test suite to be run
    * @return true if minimization succeeded
    */
   public static boolean mainMinimize(String filePath, String classPath, int timeoutLimit) {
@@ -200,17 +202,11 @@ public class Minimize extends CommandHandler {
     String newFilePath = writeToFile(compUnit, filePath, "Minimized");
     Results res = compileAndRun(newFilePath, classPath, packageName, timeoutLimit);
 
-    if (res == null) {
-      // There was an error when compiling or running.
-      System.err.println("Error when compiling or running file " + filePath + ". Aborting");
-      System.err.println(
-          "Possible errors: a testcase timed out, error reading from standard or error output");
-      return false;
-    } else if (res.compOut.exitValue != 0) {
+    if (res.compOut.exitValue != 0) {
       System.err.println("Error when compiling file " + filePath + ". Aborting");
       System.err.println(res.compOut.errout);
       return false;
-    } else if (!res.runOut.errout.isEmpty()) {
+    } else if (res.runOut == null || !res.runOut.errout.isEmpty()) {
       System.err.println("Error when running file " + filePath + ". Aborting");
       System.err.println(res.runOut.errout);
       return false;
@@ -243,7 +239,7 @@ public class Minimize extends CommandHandler {
    * @param filePath the path to the Java file that is being minimized
    * @param classpath classpath used to compile and run the Java file
    * @param expectedOutput expected JUnit output when the Java file is compiled and run
-   * @param timeoutLimit maximum number of seconds allowed for any one unit test case to run
+   * @param timeoutLimit number of seconds allowed for the whole test suite to be run
    */
   private static void minimizeTestSuite(
       CompilationUnit cu,
@@ -279,7 +275,7 @@ public class Minimize extends CommandHandler {
    * @param filePath path to the Java file that we are minimizing
    * @param classpath classpath needed to compile and run the Java file
    * @param expectedOutput expected standard output from running the JUnit test suite
-   * @param timeoutLimit the maximum number of seconds allowed for any one unit test case to run
+   * @param timeoutLimit number of seconds allowed for the whole test suite to be run
    */
   private static void minimizeMethod(
       MethodDeclaration method,
@@ -584,7 +580,7 @@ public class Minimize extends CommandHandler {
    * @param filePath absolute file path to the input Java file
    * @param classpath classpath needed to compile and run the Java file
    * @param expectedOutput expected standard output from running the JUnit test suite
-   * @param timeoutLimit the maximum number of seconds allowed for any one unit test case to run
+   * @param timeoutLimit number of seconds allowed for the whole test suite to be run
    */
   private static void simplifyVariableTypeNames(
       MethodDeclaration method,
@@ -600,27 +596,16 @@ public class Minimize extends CommandHandler {
     Map<String, String> typeNameMap = new HashMap<String, String>();
     // Set of fully qualified type names that are used in variable
     // declarations
-    Set<String> fullyQualifiedNames = new HashSet<String>();
-
-    for (Statement currStmt : statements) {
-      if (currStmt instanceof ExpressionStmt) {
-        Expression exp = ((ExpressionStmt) currStmt).getExpression();
-        if (exp instanceof VariableDeclarationExpr) {
-          VariableDeclarationExpr vdExpr = (VariableDeclarationExpr) exp;
-          String fullyQualifiedTypeName = vdExpr.getType().toString();
-          fullyQualifiedNames.addAll(getFullyQualifiedTypeNames(fullyQualifiedTypeName));
-        }
-      }
-    }
+    Set<Type> fullyQualifiedNames = new HashSet<Type>();
+    new TypeVisitor().visit(compUnit, fullyQualifiedNames);
 
     // Iterate through the set of fully qualified names and fill the map
     // with mappings from fully qualified names to simple type names. Also
     // add in necessary import statements.
-    for (String typeName : fullyQualifiedNames) {
-      if (!typeName.contains("?") && typeName.contains(".")) {
-        addImport(compUnit, typeName);
-        typeNameMap.put(typeName, getSimpleTypeName(typeName));
-      }
+    for (Type type : fullyQualifiedNames) {
+      String typeName = type.toString();
+      addImport(compUnit, typeName);
+      typeNameMap.put(typeName, getSimpleTypeName(typeName));
     }
 
     // Iterate through all the statements and replace any String occurrences
@@ -643,7 +628,7 @@ public class Minimize extends CommandHandler {
       } catch (ParseException e) {
         // Issue occurred parsing the statement, add back the original.
         statements.add(i, currStmt);
-        return;
+        continue;
       }
       statements.add(i, newStatement);
 
@@ -662,40 +647,14 @@ public class Minimize extends CommandHandler {
    * For example the fully qualified type name: {@code Map<String, Pair<Integer, Double>>} should
    * return the set: {@code {Map, String, Pair, Integer, Double}}.
    *
-   * @param typeName fully qualified type name
+   * @param type {@code Type} variable to parse, should not be null
    * @return set of the different type names
+   *     <p>public static Set<String> getFullyQualifiedTypeNames(Type type) { Set<Type> types = new
+   *     HashSet<Type>();
+   *     <p>if (type instanceof ClassOrInterfaceType) {
+   *     <p>} else if (type instanceof )
+   *     <p>return null; }
    */
-  public static Set<String> getFullyQualifiedTypeNames(String typeName) {
-    if (typeName == null) {
-      return null;
-    }
-
-    // Remove all whitespace.
-    typeName = typeName.replaceAll("\\s+", "");
-
-    Set<String> typeNameSet = new HashSet<String>();
-    StringBuilder sb = new StringBuilder();
-
-    // Iterate through the entire String.
-    for (int i = 0; i < typeName.length(); i++) {
-      char c = typeName.charAt(i);
-      // If the current character is a comma or angle bracket, add the
-      // String generated from the String Builder to the type name set and
-      // reset the String Builder.
-      if (c == ',' || c == '<' || c == '>') {
-        typeNameSet.add(sb.toString());
-        sb.setLength(0);
-      } else {
-        sb.append(c);
-      }
-    }
-    // Add the final String from the String Builder.
-    typeNameSet.add(sb.toString());
-    // Remove the empty String that gets generated.
-    typeNameSet.remove("");
-
-    return typeNameSet;
-  }
 
   /**
    * Get the simple type name of a fully qualified type name. For example, {@code java.lang.String}
@@ -719,7 +678,7 @@ public class Minimize extends CommandHandler {
    * @param classpath classpath needed to compile/run Java file
    * @param packageName the name of the package that the Java file is in
    * @param expectedOutput expected output of running JUnit test suite
-   * @param timeoutLimit the maximum number of seconds allowed for any one unit test case to run
+   * @param timeoutLimit number of seconds allowed for the whole test suite to be run
    * @return true if there are no compilation and no runtime errors and the output is equal to the
    *     expected output
    */
@@ -743,7 +702,7 @@ public class Minimize extends CommandHandler {
    * @param filePath the absolute path to the Java file to be compiled and executed
    * @param classpath dependencies and complete classpath to compile and run the Java program
    * @param packageName the name of the package that the Java file is in
-   * @param timeoutLimit the maximum number of seconds allowed for any one unit test case to run
+   * @param timeoutLimit number of seconds allowed for the whole test suite to be run
    * @return a Results object containing the compilation output and run output
    */
   private static Results compileAndRun(
@@ -831,7 +790,7 @@ public class Minimize extends CommandHandler {
    *
    * @param command the input command to be run
    * @param executionDir the directory where the process commands should be executed
-   * @param timeoutLimit the maximum number of seconds allowed for the process to run
+   * @param timeoutLimit number of seconds allowed for the whole test suite to be run
    * @return an {@code Outputs} object containing the standard and error output
    */
   private static Outputs runProcess(String command, String executionDir, int timeoutLimit) {
@@ -1010,6 +969,18 @@ public class Minimize extends CommandHandler {
       String suffix = params[1];
       if (className.equals(n.getName())) {
         n.setName(className + suffix);
+      }
+    }
+  }
+
+  private static class TypeVisitor extends VoidVisitorAdapter<Object> {
+    /** @param arg a set of {@code Type} objects */
+    @SuppressWarnings("unchecked")
+    @Override
+    public void visit(ClassOrInterfaceType n, Object arg) {
+      Set<Type> params = (Set<Type>) arg;
+      if (n.toString().contains(".")) {
+        params.add(n);
       }
     }
   }
