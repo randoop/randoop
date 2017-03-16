@@ -897,13 +897,6 @@ Randoop about your application, and that is how we recommend using Randoop.
 </ul>
 
 
-            <li id="option:weighted-constants"><b>--weighted-constants=</b><i>boolean</i>.
-             Whether to use DigDog weighted constants in sequence selection. Note that this weighting scheme
- dominates the <code>--small-tests</code> weight scheme, but can be used with <code>
- --weighted-sequences</code>. [default false]
-            <li id="option:p-const"><b>--p-const=</b><i>double</i>.
-             What probability to select the constants mined through <code>--weighted-constants</code> during
- sequence selection. [default 0.01]
             <li id="option:string-maxlen"><b>--string-maxlen=</b><i>int</i>.
              Maximum length of strings in generated tests, including in assertions. Strings longer than 65KB
  (or about 10,000 characters) may be rejected by the Java compiler, according to the Java
@@ -925,13 +918,6 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>Randoop generates new tests by combining old previously-generated tests. If this option is
  given, tests with fewer calls are given greater weight during its random selection. This has
  the overall effect of producing smaller JUnit tests. [default false]
- <p>Randoop generates new tests by combining old previously-generated tests. If this option is
- given, tests with fewer calls are given greater weight during its random selection. This has
- the overall effect of producing smaller JUnit tests. [default false]
-            <li id="option:weighted-sequences"><b>--weighted-sequences=</b><i>boolean</i>.
-             Whether to use DigDog weighted sequences in sequence selection. Note that this weighting scheme
- dominates the <code>--small-tests</code> weight scheme, but can be used with <code>
- --weighted-constants</code>. [default false]
             <li id="option:clear"><b>--clear=</b><i>int</i>.
              Clear the component set each time it contains the given number of inputs.
 
@@ -1033,13 +1019,6 @@ Randoop about your application, and that is how we recommend using Randoop.
              Perform expensive internal checks (for Randoop debugging) [default false]
             <li id="option:log"><b>--log=</b><i>filename</i>.
              Name of a file to which to log lots of information. If not specified, no logging is done.
-             Name of a file to which to log lots of information. If not specified, no logging is done.
-            <li id="option:output-sequence-info"><b>--output-sequence-info=</b><i>boolean</i>.
-             Whether to output the file: <code>--output-sequence-info-filename</code>, which lists the total
- # sequences executed and average sequence size in csv format. [default false]
-            <li id="option:output-sequence-info-filename"><b>--output-sequence-info-filename=</b><i>string</i>.
-             The filename to output the sequence info results to. Only valid with <code>
- --output-sequence-info</code> [default sequenceInfo.csv]
       </ul>
 
   <li id="optiongroup:Advanced-extension-points">Advanced extension points
