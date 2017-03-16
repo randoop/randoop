@@ -341,8 +341,8 @@ public class Minimize extends CommandHandler {
    *
    * <ul>
    *   <li>Remove a statement, represented by null
-   *   <li>Replace right hand side to a calculated value obtained from a passing assertion
    *   <li>Replace the right hand side expression with {@code 0}, {@code false}, or {@code null}
+   *   <li>Replace right hand side to a calculated value obtained from a passing assertion
    *   <li>Remove the left hand side of a statement, retaining only the expression on the right
    * </ul>
    *
@@ -364,7 +364,16 @@ public class Minimize extends CommandHandler {
         // Create and return a list of possible replacement statements.
         VariableDeclarationExpr vdExpr = (VariableDeclarationExpr) exp;
 
-        replacements.add(rightHandSideSimplificationStatement(vdExpr, primitiveValues));
+        // Simplify right hand side to zero equivalent value, 0, false, or null.
+        replacements.add(rhsAssignZeroValue(vdExpr));
+
+        // Simplify right hand side to a value that was previously found in a passing assertion.
+        Statement rs = rhsAssignValueFromPassingAssertion(vdExpr, primitiveValues);
+        if (rs != null) {
+          replacements.add(rs);
+        }
+
+        // Simplify statement by removing the left hand side.
         replacements.add(removeLeftHandSideSimplifiation(vdExpr));
       }
     }
@@ -405,60 +414,56 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Return a variable declaration statement that simplifies the right hand side to a calculated
-   * constant for primitive types and 0/false/null for all other types.
+   * Return a variable declaration statement that simplifies the right hand side to 0, false, or
+   * null, whichever is type correct. The variable declaration statement is assumed to declare only
+   * one variable, for instance, {@code int i;}. Multiple variable declarations in a single
+   * statement in the form {@code int i, j, k;} are not valid.
    *
    * @param vdExpr variable declaration expression representing the current statement to simplify
-   * @param primitiveValues a map of primitive variable names to expressions representing their
-   *     values
-   * @return a {@code Statement} object representing the simplified variable declaration expression
+   * @return a {@code Statement} object representing the simplified variable declaration expression.
+   *     Returns {@code null} if more than one variable is declared in the {@code
+   *     VariableDeclarationExpr}.
    */
-  private static Statement rightHandSideSimplificationStatement(
-      VariableDeclarationExpr vdExpr, Map<String, String> primitiveValues) {
-    // Copy the variable declaration expression
+  private static Statement rhsAssignZeroValue(VariableDeclarationExpr vdExpr) {
+    // Copy the variable declaration expression.
     VariableDeclarationExpr exprCopy = (VariableDeclarationExpr) vdExpr.clone();
 
     // Obtain a reference to the variable declaration.
     List<VariableDeclarator> vars = exprCopy.getVars();
+    if (vars.size() > 1) {
+      // More than one variable declared in this expression.
+      return null;
+    }
     VariableDeclarator vd = vars.get(0);
 
-    // Based on the declared variable type, set the right hand
-    // side to either a previously calculated value or zero or null.
+    // Based on the declared variable type, assign the variable 0, false, or null.
     Type type = exprCopy.getType();
-    String varName = vd.getId().getName();
     if (type instanceof PrimitiveType) {
-      if (primitiveValues.containsKey(varName)) {
-        // Set right hand side to a calculated value.
-        String val = primitiveValues.get(varName);
-        switch (type.toString()) {
-          case "boolean":
-            vd.setInit(new BooleanLiteralExpr(Boolean.parseBoolean(val)));
-            break;
-          case "byte":
-            vd.setInit(new IntegerLiteralExpr(val));
-            break;
-          case "char":
-            vd.setInit(new CharLiteralExpr(val));
-            break;
-          case "short":
-            vd.setInit(new IntegerLiteralExpr(val));
-            break;
-          case "int":
-            vd.setInit(new IntegerLiteralExpr(val));
-            break;
-          case "long":
-            vd.setInit(new LongLiteralExpr(val));
-            break;
-          case "float":
-            vd.setInit(new DoubleLiteralExpr(val));
-            break;
-          case "double":
-            vd.setInit(new DoubleLiteralExpr(val));
-            break;
-        }
-      } else {
-        // Set right hand side to a zero value.
-        vd.setInit(new IntegerLiteralExpr("0"));
+      switch (((PrimitiveType) type).getType()) {
+        case Boolean:
+          vd.setInit(new BooleanLiteralExpr(false));
+          break;
+        case Byte:
+          vd.setInit(new IntegerLiteralExpr("0"));
+          break;
+        case Char:
+          vd.setInit(new CharLiteralExpr(""));
+          break;
+        case Short:
+          vd.setInit(new IntegerLiteralExpr("0"));
+          break;
+        case Int:
+          vd.setInit(new IntegerLiteralExpr("0"));
+          break;
+        case Long:
+          vd.setInit(new LongLiteralExpr("0"));
+          break;
+        case Float:
+          vd.setInit(new DoubleLiteralExpr("0"));
+          break;
+        case Double:
+          vd.setInit(new DoubleLiteralExpr("0"));
+          break;
       }
     } else {
       // Set right hand side to null.
@@ -472,16 +477,93 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Return a statement that contains only the right hand side of a given statement.
+   * Return a variable declaration statement that simplifies the right hand side to a calculated
+   * value for primitive types. The variable declaration statement is assumed to declare only one
+   * variable, for instance, {@code int i;}. Multiple variable declarations in a single statement in
+   * the form {@code int i, j, k;} are not valid.
+   *
+   * @param vdExpr variable declaration expression representing the current statement to simplify
+   * @param primitiveValues a map of primitive variable names to expressions representing their
+   *     values
+   * @return a {@code Statement} object representing the simplified variable declaration expression
+   *     if the type of the variable is a primitive and a value has been previously calculated.
+   *     Otherwise, {@code null} is returned. Also returns {@code null} if more than one variable is
+   *     declared in the {@code VariableDeclarationExpr}.
+   */
+  private static Statement rhsAssignValueFromPassingAssertion(
+      VariableDeclarationExpr vdExpr, Map<String, String> primitiveValues) {
+    // Copy the variable declaration expression.
+    VariableDeclarationExpr exprCopy = (VariableDeclarationExpr) vdExpr.clone();
+
+    // Obtain a reference to the variable declaration.
+    List<VariableDeclarator> vars = exprCopy.getVars();
+    if (vars.size() > 1) {
+      // More than one variable declared in this expression.
+      return null;
+    }
+    VariableDeclarator vd = vars.get(0);
+
+    // Based on the declared variable type, set the right hand a previously calculated value
+    Type type = exprCopy.getType();
+    String varName = vd.getId().getName();
+    if (type instanceof PrimitiveType && primitiveValues.containsKey(varName)) {
+      // Set right hand side to a calculated value.
+      String val = primitiveValues.get(varName);
+      switch (((PrimitiveType) type).getType()) {
+        case Boolean:
+          vd.setInit(new BooleanLiteralExpr(Boolean.parseBoolean(val)));
+          break;
+        case Byte:
+          vd.setInit(new IntegerLiteralExpr(val));
+          break;
+        case Char:
+          vd.setInit(new CharLiteralExpr(val));
+          break;
+        case Short:
+          vd.setInit(new IntegerLiteralExpr(val));
+          break;
+        case Int:
+          vd.setInit(new IntegerLiteralExpr(val));
+          break;
+        case Long:
+          vd.setInit(new LongLiteralExpr(val));
+          break;
+        case Float:
+          vd.setInit(new DoubleLiteralExpr(val));
+          break;
+        case Double:
+          vd.setInit(new DoubleLiteralExpr(val));
+          break;
+      }
+
+      // Create a new statement with the simplified expression.
+      ExpressionStmt newStmt = new ExpressionStmt(exprCopy);
+      exprCopy.setParentNode(newStmt);
+      return newStmt;
+    }
+    // Variable is not a primitive type or no value has yet been found in a passing assertion.
+    return null;
+  }
+
+  /**
+   * Return a statement that contains only the right hand side of a given statement. The variable
+   * declaration statement is assumed to declare only one variable, for instance, {@code int i;}.
+   * Multiple variable declarations in a single statement in the form {@code int i, j, k;} are not
+   * valid.
    *
    * @param vdExpr variable declaration expression that represents the statement to simplify
    * @return a {@code Statement} object that is equal to {@code vdExpr} without the assignment to
-   *     the declared variable
+   *     the declared variable. Returns {@code null} if more than one variable is declared in the
+   *     {@code VariableDeclarationExpr}.
    */
   private static Statement removeLeftHandSideSimplifiation(VariableDeclarationExpr vdExpr) {
-    // Copy the variable declaration expression
+    // Copy the variable declaration expression.
     VariableDeclarationExpr exprCopy = (VariableDeclarationExpr) vdExpr.clone();
     List<VariableDeclarator> vars = exprCopy.getVars();
+    if (vars.size() > 1) {
+      // More than one variable declared in this expression.
+      return null;
+    }
     VariableDeclarator vd = vars.get(0);
 
     // Create a new statement with only the right hand side.

@@ -8,7 +8,7 @@ public class TestInput3Minimized {
     // Test simplification of right hand side values
     @Test
     public void test1() throws Throwable {
-        int d = 6;
+        int d = 0;
         org.junit.Assert.assertTrue(d == 7);
     }
 }
