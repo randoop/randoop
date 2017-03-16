@@ -24,7 +24,6 @@ import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.PrimitiveType;
-
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import java.io.BufferedReader;
@@ -592,9 +591,9 @@ public class Minimize extends CommandHandler {
       int timeoutLimit) {
     List<Statement> statements = method.getBody().getStmts();
 
-    // Map from fully-qualified type name to simple type name
+    // Map from fully-qualified type name to simple type name.
     Map<String, String> typeNameMap = new HashMap<String, String>();
-    // Set of fully qualified type names that are used in variable
+    // Set of fully qualified type names that are used in variable.
     // declarations
     Set<Type> fullyQualifiedNames = new HashSet<Type>();
     new TypeVisitor().visit(compUnit, fullyQualifiedNames);
