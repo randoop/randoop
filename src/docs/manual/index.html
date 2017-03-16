@@ -36,7 +36,7 @@ The Randoop homepage is
               <li><a href="#regression_test_failures">Regression test failures</a></li>
             </ul></li>
         </ul></li>
-      <li><a href="#minimize_failing_test_suite">Minimizing a failing JUnit test suite</a></li>
+      <li><a href="#minimize">Minimizing a failing JUnit test suite</a></li>
       <li><a href="#customize">Customizing Randoop's behavior to your application</a>
         <ul>
           <li><a href="#command-line-options">Command-line options</a></li>
@@ -625,7 +625,7 @@ the <a href="#map_calls"><code>map_calls</code> feature of the Randoop
 agent</a> to replace the new functionality by the old functionality.)
 </p>
 
-<h2 id="minimize_failing_test_suite">Minimizing a failing JUnit test suite</h2>
+<h2 id="minimize">Minimizing a failing JUnit test suite</h2>
 
 <p>
 Randoop creates large test cases; when they fail, they may be hard for you
@@ -637,23 +637,14 @@ same way:
   <li>Same failing assertions as in the original input test suite.</li>
   <li>Same stack trace produced by failing assertions.</li>
 </ul>
-<p>
-The minimizer removes lines of code within a failing method, and also
-entire methods (such as passing test methods), from its input file. If removing
-a line of code causes the test suite to fail in a different way than the original,
-the minimizer will instead, choose from a list of replacement statements. The
-minimizer will try different replacement statements, from most minimized to least
-minimized:
-</p>
-<ul>
-  <li>Remove a statement.</li>
-  <li>Replace right hand side to a calculated value obtained from a passing assertion.</li>
-  <li>Replace the right hand side expression with <code>0</code>, <code>false</code>, or <code>null</code>, whichever is type correct.</li>
-  <li>Remove the left hand side of a statement, retaining only the expression on the right.</li>
-</ul>
 
 <p>
-The minimizer works on any JUnit test suite, so it is useful even to
+The minimizer works by removing and simplifying methods and statements in its
+input file, without changing the test suite's failure behavior.
+</p>
+
+<p>
+The minimizer works on any JUnit test suite, so it is also useful to
 minimize failing tests that Randoop did not create.
 </p>
 
