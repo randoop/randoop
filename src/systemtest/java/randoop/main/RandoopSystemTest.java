@@ -225,7 +225,7 @@ public class RandoopSystemTest {
   }
 
   /** Test formerly known as randoop2. Previously did a diff on generated test. */
-  // TODO: figure out why this fails with DigDog additions
+  // TODO: figure out why this fails with the --weighted-constants and --weighted-sequences additions
   @Test
   public void runNaiveCollectionsTest() {
 
@@ -741,7 +741,7 @@ public class RandoopSystemTest {
   }
 
   /** Runs the FixtureTest except with a driver instead of a JUnit test suite. */
-  // TODO: this fails with DigDog's JUnitFileWriter fix for methods that are too large
+  // TODO: this fails with the JUnitFileWriter fix for methods that are too large
   @Test
   public void runFixtureDriverTest() {
     TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("fixture-driver");
@@ -868,7 +868,7 @@ public class RandoopSystemTest {
   @Test
   public void runWeightedSequencesTest() {
     TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("digdog-weighted-sequences");
+        systemTestEnvironment.createTestEnvironment("weighted-sequences");
 
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName("");
@@ -876,14 +876,14 @@ public class RandoopSystemTest {
     options.setErrorBasename("WeightedSequencesErr");
     options.setFlag("weighted-sequences");
 
-    setUpAndRunDigDogTests(testEnvironment, options);
+    setUpAndRunWeightedTests(testEnvironment, options);
   }
 
   // TODO: finish
   @Test
   public void runWeightedConstantsTest() {
     TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("digdog-weighted-constants");
+        systemTestEnvironment.createTestEnvironment("weighted-constants");
 
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName("");
@@ -891,7 +891,7 @@ public class RandoopSystemTest {
     options.setErrorBasename("WeightedConstantsErr");
     options.setFlag("weighted-constants");
 
-    setUpAndRunDigDogTests(testEnvironment, options);
+    setUpAndRunWeightedTests(testEnvironment, options);
   }
 
   // TODO: finish
@@ -909,28 +909,28 @@ public class RandoopSystemTest {
     //options.setOption("literals-file", "CLASSES");
     options.setFlag("output-sequence-info");
 
-    setUpAndRunDigDogTests(testEnvironment, options);
+    setUpAndRunWeightedTests(testEnvironment, options);
     renameOutputTo("randoop-sequenceInfo.csv");
   }
 
   // TODO: finish
   @Test
-  public void runDigDogOutputSequenceInfo() {
+  public void runWeightedOutputSequenceInfo() {
     TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("digdog-sequenceInfo");
+        systemTestEnvironment.createTestEnvironment("weighted-sequenceInfo");
 
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName("");
-    options.setRegressionBasename("DigDogSequenceInfoCompareReg");
-    options.setErrorBasename("DigDogSequenceInfoCompareErr");
+    options.setRegressionBasename("WeightedSequenceInfoCompareReg");
+    options.setErrorBasename("WeightedSequenceInfoCompareErr");
     options.setOption("literals-level", "CLASS");
     options.setOption("literals-file", "CLASSES");
     options.setFlag("weighted-sequences");
     options.setFlag("weighted-constants");
     options.setFlag("output-sequence-info");
 
-    setUpAndRunDigDogTests(testEnvironment, options);
-    renameOutputTo("digdog-sequenceInfo.csv");
+    setUpAndRunWeightedTests(testEnvironment, options);
+    renameOutputTo("weighted-sequenceInfo.csv");
   }
 
   /* ------------------------------ utility methods ---------------------------------- */
@@ -1151,23 +1151,24 @@ public class RandoopSystemTest {
   }
 
   /**
-   * Use this to rename "sequenceInfo.csv" from the --output-sequence-info flag DigDog formatted csv
-   * output, since the related tests write to the same directory. Would not be an issue in normal
-   * conditions, as "sequenceInfo.csv" will always be overwritten.
+   * Use this to rename the .csv file named by <code>--output-sequence-info-filename</code> since
+   * the weightedTests write to the same directory. Would not be an issue in normal conditions, as
+   * the .csv file will always be overwritten.
    *
-   * @param newFileName the name which "sequenceInfo.csv" will be renamed to
+   * @param newFileName the name which <code>--output-sequence-info-filename</code> will be renamed
+   *     to
    */
   private void renameOutputTo(String newFileName) {
 
-    File tempDir = new File("sequenceInfo.csv");
+    File tempDir = new File(GenInputsAbstract.output_sequence_info_filename);
     File result = new File(newFileName);
     boolean renamed = tempDir.renameTo(result);
     if (!renamed) {
-      fail("couldn't rename file");
+      fail("Couldn't rename file");
     }
   }
 
-  private void setUpAndRunDigDogTests(TestEnvironment testEnvironment, RandoopOptions options) {
+  private void setUpAndRunWeightedTests(TestEnvironment testEnvironment, RandoopOptions options) {
     options.setOption("timelimit", "30");
     options.setOption("null-ratio", "0.3");
     options.setOption("alias-ratio", "0.3");

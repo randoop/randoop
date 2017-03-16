@@ -27,12 +27,12 @@ import randoop.MultiVisitor;
 import randoop.condition.ConditionCollection;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
-import randoop.generation.DigDogGenerator;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
 import randoop.generation.WeightedComponentManager;
+import randoop.generation.WeightedGenerator;
 import randoop.input.toradocu.ToradocuConditionCollection;
 import randoop.instrument.ExercisedClassVisitor;
 import randoop.operation.Operation;
@@ -361,9 +361,7 @@ public class GenTests extends GenInputsAbstract {
     components.addAll(operationModel.getAnnotatedTestValues());
 
     ComponentManager componentMgr;
-    if (GenInputsAbstract.weighted_sequences
-        || GenInputsAbstract.weighted_constants
-        || GenInputsAbstract.output_sequence_info) {
+    if (GenInputsAbstract.weighted_constants) {
       componentMgr = new WeightedComponentManager(components);
     } else {
       componentMgr = new ComponentManager(components);
@@ -406,13 +404,13 @@ public class GenTests extends GenInputsAbstract {
       int num_classes = operationModel.getClassTypes().size();
 
       explorer =
-          new DigDogGenerator(
+          new WeightedGenerator(
               model,
               observers,
               timelimit * 1000,
               inputlimit,
               outputlimit,
-              (WeightedComponentManager) componentMgr,
+              componentMgr,
               listenerMgr,
               num_classes,
               tfFrequencies);
@@ -568,10 +566,9 @@ public class GenTests extends GenInputsAbstract {
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.printf("%nInvalid tests generated: %d", explorer.invalidSequenceCount);
     }
-    // TODO: output to file for sequence comparison between DigDog/Randoop
+
     if (GenInputsAbstract.output_sequence_info) {
-      DigDogGenerator fExplorer =
-          (DigDogGenerator) explorer; // should work, explorer should always be a forw.gen.
+      WeightedGenerator fExplorer = (WeightedGenerator) explorer;
       Map<Sequence, List<Integer>> debugMap = fExplorer.getSequenceSizeMap();
       writeTestInfo(debugMap);
     }
@@ -580,8 +577,9 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Write each sequence's info out to GenInputsAbstract.output_sequence_info_filename in .csv
-   * format. Its info is essentially snapshots of its weight formulas and how they change.
+   * Writes information of all executed sequences to the file name dictated by <code>
+   * --output-sequence-info-filename</code> in .csv format. The file is composed of three elements:
+   * (1) Total number of sequences generated, (2) the comma, (3) average sequence size.
    *
    * @param sequenceSizeMap the map of all executed sequences to their sizes
    */
@@ -602,7 +600,7 @@ public class GenTests extends GenInputsAbstract {
       int accumulatedSequenceSize = 0;
       for (Sequence seq : sequenceSizeMap.keySet()) {
         for (Integer i : sequenceSizeMap.get(seq)) {
-          accumulatedSequenceSize += i; // gets the size of the sequence, not sqrt'd
+          accumulatedSequenceSize += i; // gets the size of the sequence
         }
       }
       double avgSeqSize = accumulatedSequenceSize * 1.0 / sequenceSizeMap.keySet().size();

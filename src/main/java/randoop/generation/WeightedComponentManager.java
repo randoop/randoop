@@ -13,13 +13,18 @@ import randoop.util.Randomness;
 import randoop.util.SimpleList;
 
 /**
- * WeightedComponentManager extends the functionality of ComponentManager by adding needed
- * functionality for weighted sequences and constants, for the command-line options
- * --weighted-sequences and --weighted-constants.
+ * WeightedComponentManager extends the functionality of ComponentManager by adding additional
+ * functionality for weighted constants, used by the command-line option <code>--weighted-constants
+ * </code>. These additions are tracking a sequence's frequency (number of times it occurs) and
+ * retrieving component sequences from the subset of all constant sequences with probability <code>
+ * --p-const</code> (otherwise retrieves from all sequences).
  */
 public class WeightedComponentManager extends ComponentManager {
 
-  /** Sequence frequency represents the number of times a sequence occurs in a set of classes */
+  /**
+   * Sequence frequency represents the number of times a sequence occurs in a set of classes. Used
+   * for the --weighted-constants weighting scheme.
+   */
   private Map<Sequence, Integer> sequenceFrequency;
 
   /**

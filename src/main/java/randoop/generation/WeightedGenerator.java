@@ -9,33 +9,35 @@ import randoop.types.*;
 import randoop.util.*;
 
 /**
- * DigDog generator extends the functionality of forward generator by storing additional information
- * necessary for DigDog's weighted random selection of input sequences. DigDog has sequence and
- * constant weighting schemes, which are used through the command-line flags --weighted-sequences
- * and --weighted-constants. Note that the --small-flags uses Sequence's weighting scheme, but that
- * any use of --weighted-sequences and/or --weighted-constants nullifies --small-flags.
+ * WeightedGenerator extends the functionality of forward generator by storing additional
+ * information necessary for the weighted random selection of input sequences. This has sequence and
+ * constant weighting schemes, which are used through the command-line flags <code>
+ * --weighted-sequences</code> and <code>--weighted-constants</code>. Note that the <code>
+ * --small-flags</code> uses Sequence's static weighting scheme, but that the use of <code>
+ * --weighted-sequences</code> and/or <code>--weighted-constants</code> overrides <code>
+ * --small-flags</code>.
  */
-public class DigDogGenerator extends ForwardGenerator {
+public class WeightedGenerator extends ForwardGenerator {
 
-  /** DigDog's map of sequences to their weights. */
+  /** Map of sequences to their weights. */
   private final Map<WeightedElement, Double> weightMap = new HashMap<>();
 
-  /** DigDog's map of sequences to the number of times they've been executed. */
+  /** Map of sequences to the number of times they've been executed. */
   private final Map<WeightedElement, Integer> sequenceExecutionNumber = new HashMap<>();
 
-  /** DigDog's map of sequence/constants to their constant weights. */
+  /** Map of sequence/constants to their constant weights. */
   private final Map<Sequence, Double> initialConstantWeights = new HashMap<>();
 
-  /** DigDog's map of a sequence to the list of all sizes it has ever been */
+  /** Map of a sequence to the list of all sizes it has ever been */
   private final Map<Sequence, List<Integer>> sequenceSizeMap = new HashMap<>();
 
-  public DigDogGenerator(
+  public WeightedGenerator(
       List<TypedOperation> operations,
       Set<TypedOperation> observers,
       long timeMillis,
       int maxGenSequences,
       int maxOutSequences,
-      WeightedComponentManager componentManager,
+      ComponentManager componentManager,
       RandoopListenerManager listenerManager,
       int numClasses,
       Map<Sequence, Integer> tfFrequency) {
@@ -52,13 +54,13 @@ public class DigDogGenerator extends ForwardGenerator {
         tfFrequency);
   }
 
-  public DigDogGenerator(
+  public WeightedGenerator(
       List<TypedOperation> operations,
       Set<TypedOperation> observers,
       long timeMillis,
       int maxGenSequences,
       int maxOutSequences,
-      WeightedComponentManager componentManager,
+      ComponentManager componentManager,
       IStopper stopper,
       RandoopListenerManager listenerManager,
       int numClasses,
@@ -81,7 +83,9 @@ public class DigDogGenerator extends ForwardGenerator {
       for (Sequence s : tfFrequency.keySet()) {
         num_constants += tfFrequency.get(s);
       }
-      for (Map.Entry<Sequence, Integer> m : componentManager.getSequenceFrequency().entrySet()) {
+      assert componentManager instanceof WeightedComponentManager;
+      for (Map.Entry<Sequence, Integer> m :
+          ((WeightedComponentManager) componentManager).getSequenceFrequency().entrySet()) {
 
         double weight =
             ((double) tfFrequency.get(m.getKey()) / num_constants)
@@ -183,10 +187,12 @@ public class DigDogGenerator extends ForwardGenerator {
     if (GenInputsAbstract.output_sequence_info) {
       int sequenceSize = eSeq.sequence.size();
 
-      // add this sequence's size to the list of all sizes this sequence has taken on
+      // add this sequence's size to the map if it hasn't been seen before
       if (sequenceSizeMap.containsKey(eSeq.sequence)) {
         List<Integer> addedToList = sequenceSizeMap.get(eSeq.sequence);
         addedToList.add(sequenceSize);
+        assert sequenceSize
+            == addedToList.remove(0); // TODO: this doesn't fail -> change to map of just ints
         sequenceSizeMap.put(eSeq.sequence, addedToList);
         throw new BugInRandoopException("sequence bruuuh");
       } else {
@@ -421,7 +427,7 @@ public class DigDogGenerator extends ForwardGenerator {
       // At this point, we have a list of candidate sequences and need to select
       // a random element from it. Based on the enabled flags, we will use one of three
       // options for this. weighted_sequences and constants use weights generated from
-      // previous operations done in the generator (DigDog), small_tests use the default weight of
+      // previous operations done in the generator (Weighted), small_tests use the default weight of
       // sequences, and selecting a random member.
       Sequence chosenSeq;
 

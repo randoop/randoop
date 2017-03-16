@@ -28,7 +28,8 @@ import randoop.util.MultiMap;
 
 /**
  * {@code WeightedConstantsOperationModel} represents the information context from which tests are
- * generated. It is also used to store information needed for constant mining. The model includes:
+ * generated. It is also used to store information needed for the <code>--weighted-constants</code>
+ * sequence selection weighting scheme. The model includes:
  *
  * <ul>
  *   <li>classes under test,

@@ -67,6 +67,8 @@ public class ComponentManager {
   // May be null, which represents no package literals present.
   protected PackageLiterals packageLiterals = null;
 
+  private Set<Type> sequenceTypes;
+
   /** Create an empty component manager, with an empty seed sequence set. */
   public ComponentManager() {
     gralComponents = new SequenceCollection();

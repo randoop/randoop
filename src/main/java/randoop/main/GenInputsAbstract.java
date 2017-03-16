@@ -383,8 +383,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * How to use literal values that are specified via the <code>--literals-file</code> command-line
-   * option. Note that the package literal level cannot be specified if using weighted-constants or
-   * weighted-sequences.
+   * option. Note that the package literal level cannot be specified if using <code>
+   * --weighted-constants</code> or <code>--weighted-sequences</code>.
    *
    * @see ClassLiteralsMode
    */
@@ -408,18 +408,18 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Whether to use DigDog weighted constants in sequence selection. Note that this weighting scheme
-   * dominates the <code>--small-tests</code> weight scheme, but can be used with <code>
-   * --weighted-sequences</code>.
+   * Whether to use the weighted-constants weighting scheme to bias the sequence selection. Note
+   * that this weighting scheme dominates the <code>--small-tests</code> weight scheme, but can be
+   * used with <code>--weighted-sequences</code>.
    */
-  @Option("Whether to use DigDog weighted constants in sequence selection")
+  @Option("Whether to use weighted constants in sequence selection")
   public static boolean weighted_constants = false;
 
   /**
-   * What probability to select the constants mined through <code>--weighted-constants</code> during
-   * sequence selection.
+   * What probability to select from only weighted-constant sequences during sequence selection.
+   * This is only applicable with the <code>--weighted-constants</code> option.
    */
-  @Option("What probability to select the constants mined through DigDog's --weighted-constants")
+  @Option("What probability to select the constants mined through --weighted-constants")
   public static double p_const = .01;
 
   // Implementation note: when checking whether a String S exceeds the given
@@ -457,11 +457,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean small_tests = false;
 
   /**
-   * Whether to use DigDog weighted sequences in sequence selection. Note that this weighting scheme
-   * dominates the <code>--small-tests</code> weight scheme, but can be used with <code>
-   * --weighted-constants</code>.
+   * Whether to use the weighted-sequences weighting scheme to bias the sequence selection. Note
+   * that this weighting scheme dominates the <code>--small-tests</code> weight scheme, but can be
+   * used with <code>
+   * --weighted-constants</code>. Performance may be similar to <code>--small-tests</code>.
    */
-  @Option("Whether to use DigDog weighted sequences in sequence selection")
+  @Option("Whether to use weighted sequences in sequence selection")
   public static boolean weighted_sequences = false;
 
   /**
