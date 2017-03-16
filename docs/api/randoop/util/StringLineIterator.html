@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>StringLineIterator (randoop 3.0.10 API)</title>
+<title>StringLineIterator (randoop 3.1.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="StringLineIterator (randoop 3.0.10 API)";
+            parent.document.title="StringLineIterator (randoop 3.1.1 API)";
         }
     }
     catch(err) {
@@ -110,9 +110,8 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">StringLineIterator</span>
 extends java.lang.Object</pre>
-<div class="block">Given a string consisting of words separated by white space, lets the user
- ask for the words as lines of text of a desired length, until there are no
- more words.</div>
+<div class="block">Given a string consisting of words separated by white space, lets the user ask for the words as
+ lines of text of a desired length, until there are no more words.</div>
 </li>
 </ul>
 </div>
@@ -176,8 +175,8 @@ extends java.lang.Object</pre>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/StringLineIterator.html#nextLine-int-">nextLine</a></span>(int&nbsp;length)</code>
-<div class="block">Returns a line of words, ensuring that the length of the line is no greater
- than the given length.</div>
+<div class="block">Returns a line of words, ensuring that the length of the line is no greater than the given
+ length.</div>
 </td>
 </tr>
 </table>
@@ -257,12 +256,11 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>nextLine</h4>
 <pre>public&nbsp;java.lang.String&nbsp;nextLine(int&nbsp;length)</pre>
-<div class="block">Returns a line of words, ensuring that the length of the line is no greater
- than the given length. If such a line is not possible, returns an empty
- String.
+<div class="block">Returns a line of words, ensuring that the length of the line is no greater than the given
+ length. If such a line is not possible, returns an empty String.
 
- Note that if length is always too small for the iterator to make progress
- by returning non-empty lines, the iterator will not terminate.</div>
+ <p>Note that if length is always too small for the iterator to make progress by returning
+ non-empty lines, the iterator will not terminate.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>length</code> - the maximum line length</dd>

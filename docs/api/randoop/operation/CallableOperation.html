@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>CallableOperation (randoop 3.0.10 API)</title>
+<title>CallableOperation (randoop 3.1.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="CallableOperation (randoop 3.0.10 API)";
+            parent.document.title="CallableOperation (randoop 3.1.1 API)";
         }
     }
     catch(err) {
@@ -119,9 +119,8 @@ var activeTableTab = "activeTableTab";
 <pre>public abstract class <span class="typeNameLabel">CallableOperation</span>
 extends java.lang.Object
 implements <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a></pre>
-<div class="block">CallableOperation is an abstract implementation of the Operation interface to
- provide default implementations of Operation predicates that are false except
- for a few kinds of operations.</div>
+<div class="block">CallableOperation is an abstract implementation of the Operation interface to provide default
+ implementations of Operation predicates that are false except for a few kinds of operations.</div>
 </li>
 </ul>
 </div>
@@ -164,8 +163,8 @@ implements <a href="../../randoop/operation/Operation.html" title="interface in 
           <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;outputType,
           java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputVars,
           java.lang.StringBuilder&nbsp;b)</code>
-<div class="block">Produces a Java source code representation of this statement and appends it
- to the given StringBuilder.</div>
+<div class="block">Produces a Java source code representation of this statement and appends it to the given
+ StringBuilder.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
@@ -182,8 +181,8 @@ implements <a href="../../randoop/operation/Operation.html" title="interface in 
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#getValue--">getValue</a></span>()</code>
-<div class="block">Returns the "value" of an operation that is actually a ground term, meaning
- a constant of some form.</div>
+<div class="block">Returns the "value" of an operation that is actually a ground term, meaning a constant of some
+ form.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
@@ -201,8 +200,8 @@ implements <a href="../../randoop/operation/Operation.html" title="interface in 
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#isMessage--">isMessage</a></span>()</code>
-<div class="block">Predicate to indicate whether object represents a method-call-like
- operation (either static or instance).</div>
+<div class="block">Predicate to indicate whether object represents a method-call-like operation (either static or
+ instance).</div>
 </td>
 </tr>
 <tr id="i7" class="rowColor">
@@ -214,15 +213,14 @@ implements <a href="../../randoop/operation/Operation.html" title="interface in 
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#isNonreceivingValue--">isNonreceivingValue</a></span>()</code>
-<div class="block">Predicate to indicate whether this object represents a value of a
- non-receiving type (includes numbers, strings, and null).</div>
+<div class="block">Predicate to indicate whether this object represents a value of a non-receiving type (includes
+ numbers, strings, and null).</div>
 </td>
 </tr>
 <tr id="i9" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#isStatic--">isStatic</a></span>()</code>
-<div class="block">Predicate to indicate whether object represents a static operation on the
- declaring class.</div>
+<div class="block">Predicate to indicate whether object represents a static operation on the declaring class.</div>
 </td>
 </tr>
 <tr id="i10" class="altColor">
@@ -234,8 +232,7 @@ implements <a href="../../randoop/operation/Operation.html" title="interface in 
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#satisfies-randoop.reflection.ReflectionPredicate-">satisfies</a></span>(<a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;predicate)</code>
-<div class="block">Checks whether reflective object contained in an <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a>
- satisfies the predicate.</div>
+<div class="block">Checks whether reflective object contained in an <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> satisfies the predicate.</div>
 </td>
 </tr>
 <tr id="i12" class="altColor">
@@ -243,8 +240,8 @@ implements <a href="../../randoop/operation/Operation.html" title="interface in 
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#toParsableString-randoop.types.Type-randoop.types.TypeTuple-randoop.types.Type-">toParsableString</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;declaringType,
                 <a href="../../randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a>&nbsp;inputTypes,
                 <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;outputType)</code>
-<div class="block">Returns a string representation of this Operation, which can be read by
- static parse method for class.</div>
+<div class="block">Returns a string representation of this Operation, which can be read by static parse method for
+ class.</div>
 </td>
 </tr>
 </table>
@@ -301,14 +298,12 @@ implements <a href="../../randoop/operation/Operation.html" title="interface in 
 <h4>isStatic</h4>
 <pre>public&nbsp;boolean&nbsp;isStatic()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/operation/Operation.html#isStatic--">Operation</a></code></span></div>
-<div class="block">Predicate to indicate whether object represents a static operation on the
- declaring class.</div>
+<div class="block">Predicate to indicate whether object represents a static operation on the declaring class.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/operation/Operation.html#isStatic--">isStatic</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if operation corresponds to static method or field of a class,
-         and false otherwise</dd>
+<dd>true if operation corresponds to static method or field of a class, and false otherwise</dd>
 </dl>
 </li>
 </ul>
@@ -320,10 +315,8 @@ implements <a href="../../randoop/operation/Operation.html" title="interface in 
 <h4>isMessage</h4>
 <pre>public&nbsp;boolean&nbsp;isMessage()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/operation/Operation.html#isMessage--">Operation</a></code></span></div>
-<div class="block">Predicate to indicate whether object represents a method-call-like
- operation (either static or instance).
- This includes field getters and setters, which are operations that access
- fields.</div>
+<div class="block">Predicate to indicate whether object represents a method-call-like operation (either static or
+ instance). This includes field getters and setters, which are operations that access fields.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/operation/Operation.html#isMessage--">isMessage</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a></code></dd>
@@ -392,8 +385,8 @@ implements <a href="../../randoop/operation/Operation.html" title="interface in 
 <h4>isNonreceivingValue</h4>
 <pre>public&nbsp;boolean&nbsp;isNonreceivingValue()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/operation/Operation.html#isNonreceivingValue--">Operation</a></code></span></div>
-<div class="block">Predicate to indicate whether this object represents a value of a
- non-receiving type (includes numbers, strings, and null).</div>
+<div class="block">Predicate to indicate whether this object represents a value of a non-receiving type (includes
+ numbers, strings, and null).</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/operation/Operation.html#isNonreceivingValue--">isNonreceivingValue</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a></code></dd>
@@ -427,11 +420,11 @@ implements <a href="../../randoop/operation/Operation.html" title="interface in 
 <h4>getValue</h4>
 <pre>public&nbsp;java.lang.Object&nbsp;getValue()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/operation/Operation.html#getValue--">Operation</a></code></span></div>
-<div class="block">Returns the "value" of an operation that is actually a ground term, meaning
- a constant of some form.  Only null if value is null, otherwise throws an
- exception if there is not a reasonable meaning of value for type of operation.
- <p>
- This is a hack to allow randoop.main.GenBranchDir to do mutation.</div>
+<div class="block">Returns the "value" of an operation that is actually a ground term, meaning a constant of some
+ form. Only null if value is null, otherwise throws an exception if there is not a reasonable
+ meaning of value for type of operation.
+
+ <p>This is a hack to allow randoop.main.GenBranchDir to do mutation.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/operation/Operation.html#getValue--">getValue</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a></code></dd>
@@ -447,9 +440,8 @@ implements <a href="../../randoop/operation/Operation.html" title="interface in 
 <li class="blockList">
 <h4>satisfies</h4>
 <pre>public&nbsp;boolean&nbsp;satisfies(<a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;predicate)</pre>
-<div class="block">Checks whether reflective object contained in an <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a>
- satisfies the predicate. Since there is no reflective object in an
- <code>CallableOperation</code>, returns false.</div>
+<div class="block">Checks whether reflective object contained in an <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> satisfies the predicate.
+ Since there is no reflective object in an <code>CallableOperation</code>, returns false.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/operation/Operation.html#satisfies-randoop.reflection.ReflectionPredicate-">satisfies</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a></code></dd>
@@ -468,14 +460,12 @@ implements <a href="../../randoop/operation/Operation.html" title="interface in 
 <h4>execute</h4>
 <pre>public abstract&nbsp;<a href="../../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</a>&nbsp;execute(java.lang.Object[]&nbsp;input,
                                          java.io.PrintStream&nbsp;out)</pre>
-<div class="block">Performs this operation using the array of input values. Returns
- the results of execution as an ResultOrException object and can
- output results to specified PrintStream.</div>
+<div class="block">Performs this operation using the array of input values. Returns the results of execution as an
+ ResultOrException object and can output results to specified PrintStream.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>input</code> - array containing appropriate inputs to operation</dd>
-<dd><code>out</code> - stream to output results of execution;
-            can be null if you don't want to print</dd>
+<dd><code>out</code> - stream to output results of execution; can be null if you don't want to print</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>results of executing this statement</dd>
 </dl>
@@ -492,8 +482,8 @@ implements <a href="../../randoop/operation/Operation.html" title="interface in 
                                 <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;outputType,
                                 java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputVars,
                                 java.lang.StringBuilder&nbsp;b)</pre>
-<div class="block">Produces a Java source code representation of this statement and appends it
- to the given StringBuilder.</div>
+<div class="block">Produces a Java source code representation of this statement and appends it to the given
+ StringBuilder.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>declaringType</code> - the declaring type for this operation</dd>
@@ -513,11 +503,10 @@ implements <a href="../../randoop/operation/Operation.html" title="interface in 
 <pre>public abstract&nbsp;java.lang.String&nbsp;toParsableString(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;declaringType,
                                                   <a href="../../randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a>&nbsp;inputTypes,
                                                   <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;outputType)</pre>
-<div class="block">Returns a string representation of this Operation, which can be read by
- static parse method for class.
- For a class C implementing the Operation interface, this method should
- return a String s such that parsing the string
- returns an object equivalent to this object, i.e. C.parse(this.s).equals(this).</div>
+<div class="block">Returns a string representation of this Operation, which can be read by static parse method for
+ class. For a class C implementing the Operation interface, this method should return a String s
+ such that parsing the string returns an object equivalent to this object, i.e.
+ C.parse(this.s).equals(this).</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>declaringType</code> - the declaring type for this operation</dd>

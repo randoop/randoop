@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ParameterizedType (randoop 3.0.10 API)</title>
+<title>ParameterizedType (randoop 3.1.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ParameterizedType (randoop 3.0.10 API)";
+            parent.document.title="ParameterizedType (randoop 3.1.1 API)";
         }
     }
     catch(err) {
@@ -133,12 +133,12 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public abstract class <span class="typeNameLabel">ParameterizedType</span>
 extends <a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></pre>
-<div class="block">Represents a parameterized type.
- A <i>parameterized type</i> is a type <code>C&lt;T<sub>1</sub>,&hellip;,T<sub>k</sub>&gt;</code>
- where <code>C&lt;F<sub>1</sub>,&hellip;,F<sub>k</sub>&gt;</code> is a generic class
- instantiated by a substitution <code>[F<sub>i</sub>:=T<sub>i</sub>]</code>, and
- <code>T<sub>i</sub></code> is a subtype of the upper bound <code>B<sub>i</sub></code> of
- the type parameter <code>F<sub>i</sub></code>.</div>
+<div class="block">Represents a parameterized type. A <i>parameterized type</i> is a type <code>
+ C&lt;T<sub>1</sub>,&hellip;,T<sub>k</sub>&gt;</code> where <code>
+ C&lt;F<sub>1</sub>,&hellip;,F<sub>k</sub>&gt;</code> is a generic class instantiated by a
+ substitution <code>[F<sub>i</sub>:=T<sub>i</sub>]</code>, and <code>T<sub>i</sub></code> is a
+ subtype of the upper bound <code>B<sub>i</sub></code> of the type parameter <code>F<sub>i</sub>
+ </code>.</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../randoop/types/GenericClassType.html" title="class in randoop.types"><code>GenericClassType</code></a>, 
@@ -194,8 +194,7 @@ extends <a href="../../randoop/types/ClassOrInterfaceType.html" title="class in 
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>static <a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types">ParameterizedType</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ParameterizedType.html#forType-java.lang.reflect.Type-">forType</a></span>(java.lang.reflect.Type&nbsp;type)</code>
-<div class="block">Performs the conversion of <code>java.lang.reflect.ParameterizedType</code> to
- a <code>ParameterizedType</code> .</div>
+<div class="block">Performs the conversion of <code>java.lang.reflect.ParameterizedType</code> to a <code>ParameterizedType</code> .</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
@@ -207,8 +206,8 @@ extends <a href="../../randoop/types/ClassOrInterfaceType.html" title="class in 
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ParameterizedType.html#getName--">getName</a></span>()</code>
-<div class="block">Returns the fully-qualified name of this type, including type arguments if
- this is a parameterized type.</div>
+<div class="block">Returns the fully-qualified name of this type, including type arguments if this is a
+ parameterized type.</div>
 </td>
 </tr>
 <tr id="i5" class="rowColor">
@@ -305,8 +304,7 @@ extends <a href="../../randoop/types/ClassOrInterfaceType.html" title="class in 
 <li class="blockList">
 <h4>forType</h4>
 <pre>public static&nbsp;<a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types">ParameterizedType</a>&nbsp;forType(java.lang.reflect.Type&nbsp;type)</pre>
-<div class="block">Performs the conversion of <code>java.lang.reflect.ParameterizedType</code> to
- a <code>ParameterizedType</code> .</div>
+<div class="block">Performs the conversion of <code>java.lang.reflect.ParameterizedType</code> to a <code>ParameterizedType</code> .</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>type</code> - the reflective type object</dd>
@@ -336,14 +334,14 @@ extends <a href="../../randoop/types/ClassOrInterfaceType.html" title="class in 
 <h4>apply</h4>
 <pre>public abstract&nbsp;<a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types">ParameterizedType</a>&nbsp;apply(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/ClassOrInterfaceType.html#apply-randoop.types.Substitution-">ClassOrInterfaceType</a></code></span></div>
-<div class="block">Applies a substitution to a <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>.
- If the type is parameterized then replaces type variables that occur, otherwise returns this
- type.
- <p>
- This abstract method forces typing of substitutions applied to <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> objects
+<div class="block">Applies a substitution to a <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>. If the type is parameterized then replaces
+ type variables that occur, otherwise returns this type.
+
+ <p>This abstract method forces typing of substitutions applied to <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> objects
  without an explicit cast.
- This abstract method allows substitutions to be applied to <a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types"><code>ClassOrInterfaceType</code></a> objects
- without casting.</div>
+
+ <p>This abstract method allows substitutions to be applied to <a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types"><code>ClassOrInterfaceType</code></a>
+ objects without casting.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/types/ClassOrInterfaceType.html#apply-randoop.types.Substitution-">apply</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></code></dd>
@@ -375,12 +373,11 @@ extends <a href="../../randoop/types/ClassOrInterfaceType.html" title="class in 
 <li class="blockList">
 <h4>getName</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getName()</pre>
-<div class="block">Returns the fully-qualified name of this type, including type arguments if
- this is a parameterized type.
- For <code>java.util.List&lt;T&gt;</code> return <code>"java.util.List&lt;T&gt;"</code>.
- Returns the fully qualified name of this type with fully qualified type
- arguments.
- E.g., <code>java.lang.List&lt;java.lang.String&gt;</code></div>
+<div class="block">Returns the fully-qualified name of this type, including type arguments if this is a
+ parameterized type. For <code>java.util.List&lt;T&gt;</code> return <code>"java.util.List&lt;T&gt;"</code>.
+
+ <p>Returns the fully qualified name of this type with fully qualified type arguments. E.g.,
+ <code>java.lang.List&lt;java.lang.String&gt;</code></div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/types/ClassOrInterfaceType.html#getName--">getName</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></code></dd>
@@ -398,8 +395,8 @@ extends <a href="../../randoop/types/ClassOrInterfaceType.html" title="class in 
 <pre>public&nbsp;java.lang.String&nbsp;getUnqualifiedName()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/Type.html#getUnqualifiedName--">Type</a></code></span></div>
 <div class="block">Returns the name of this type without package name, but with type arguments if parameterized,
- and enclosing class if a member class.
- For instance, for <code>java.util.List&lt;T&gt;</code> would return <code>"List&lt;T&gt;"</code>.</div>
+ and enclosing class if a member class. For instance, for <code>java.util.List&lt;T&gt;</code> would return
+ <code>"List&lt;T&gt;"</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/types/ClassOrInterfaceType.html#getUnqualifiedName--">getUnqualifiedName</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></code></dd>

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>DefaultReflectionPredicate (randoop 3.0.10 API)</title>
+<title>DefaultReflectionPredicate (randoop 3.1.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="DefaultReflectionPredicate (randoop 3.0.10 API)";
+            parent.document.title="DefaultReflectionPredicate (randoop 3.1.1 API)";
         }
     }
     catch(err) {
@@ -115,11 +115,10 @@ var activeTableTab = "activeTableTab";
 <pre>public class <span class="typeNameLabel">DefaultReflectionPredicate</span>
 extends java.lang.Object
 implements <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a></pre>
-<div class="block">Returns true for public members, with some exceptions (see
- doNotUseSpecialCase method).
- <p>
- If a method has the @CheckRep annotation, returns false (the method will be
- used as a contract checker, not as a method under test).</div>
+<div class="block">Returns true for public members, with some exceptions (see doNotUseSpecialCase method).
+
+ <p>If a method has the <code>@CheckRep</code> annotation, returns false (the method will be used as a
+ contract checker, not as a method under test).</div>
 </li>
 </ul>
 </div>
@@ -171,8 +170,8 @@ implements <a href="../../randoop/reflection/ReflectionPredicate.html" title="in
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/reflection/DefaultReflectionPredicate.html#DefaultReflectionPredicate-java.util.regex.Pattern-java.util.Set-">DefaultReflectionPredicate</a></span>(java.util.regex.Pattern&nbsp;omitMethods,
                           java.util.Set&lt;java.lang.String&gt;&nbsp;omitFields)</code>
-<div class="block">DefaultReflectionFilter creates a filter object that uses default criteria
- for inclusion of reflection objects.</div>
+<div class="block">DefaultReflectionFilter creates a filter object that uses default criteria for inclusion of
+ reflection objects.</div>
 </td>
 </tr>
 </table>
@@ -203,8 +202,8 @@ implements <a href="../../randoop/reflection/ReflectionPredicate.html" title="in
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>private boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/DefaultReflectionPredicate.html#isNotVisibilityBridge-java.lang.reflect.Method-">isNotVisibilityBridge</a></span>(java.lang.reflect.Method&nbsp;m)</code>
-<div class="block">Determines whether a bridge method is not a <i>visibility</i> bridge, which
- allows access to a definition of the method in a non-visible superclass.</div>
+<div class="block">Determines whether a bridge method is not a <i>visibility</i> bridge, which allows access to a
+ definition of the method in a non-visible superclass.</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
@@ -238,8 +237,7 @@ implements <a href="../../randoop/reflection/ReflectionPredicate.html" title="in
 <tr id="i9" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/DefaultReflectionPredicate.html#test-java.lang.reflect.Field-">test</a></span>(java.lang.reflect.Field&nbsp;f)</code>
-<div class="block">Determines whether the name of a field is included among the omitted field
- names.</div>
+<div class="block">Determines whether the name of a field is included among the omitted field names.</div>
 </td>
 </tr>
 <tr id="i10" class="altColor">
@@ -303,8 +301,7 @@ implements <a href="../../randoop/reflection/ReflectionPredicate.html" title="in
 <li class="blockList">
 <h4>DefaultReflectionPredicate</h4>
 <pre>public&nbsp;DefaultReflectionPredicate(java.util.regex.Pattern&nbsp;omitMethods)</pre>
-<div class="block">Create a reflection predicate.
- If omitMethods is null, then no methods are omitted.</div>
+<div class="block">Create a reflection predicate. If omitMethods is null, then no methods are omitted.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>omitMethods</code> - the pattern for names of methods to omit</dd>
@@ -328,8 +325,8 @@ implements <a href="../../randoop/reflection/ReflectionPredicate.html" title="in
 <h4>DefaultReflectionPredicate</h4>
 <pre>public&nbsp;DefaultReflectionPredicate(java.util.regex.Pattern&nbsp;omitMethods,
                                   java.util.Set&lt;java.lang.String&gt;&nbsp;omitFields)</pre>
-<div class="block">DefaultReflectionFilter creates a filter object that uses default criteria
- for inclusion of reflection objects.</div>
+<div class="block">DefaultReflectionFilter creates a filter object that uses default criteria for inclusion of
+ reflection objects.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>omitMethods</code> - pattern for methods to omit, if null then no methods omitted</dd>
@@ -371,14 +368,17 @@ implements <a href="../../randoop/reflection/ReflectionPredicate.html" title="in
 <li class="blockList">
 <h4>test</h4>
 <pre>public&nbsp;boolean&nbsp;test(java.lang.reflect.Method&nbsp;m)</pre>
-<div class="block">Indicate whether Randoop should use a method. Does checks for the following cases:
+<div class="block">Indicate whether Randoop should use a method.
+
+ <p>Does checks for the following cases:
+
  <ul>
- <li>Main methods
- <li>Methods matching omission pattern
- <li>Bridge methods related to type
- <li>Non-bridge, synthetic methods
- <li>Methods that are not visible, or do not have visible return type
- <li>[Special cases that need to be listed TODO]
+   <li>Main methods
+   <li>Methods matching omission pattern
+   <li>Bridge methods related to type
+   <li>Non-bridge, synthetic methods
+   <li>Methods that are not visible, or do not have visible return type
+   <li>[Special cases that need to be listed TODO]
  </ul></div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
@@ -407,27 +407,24 @@ implements <a href="../../randoop/reflection/ReflectionPredicate.html" title="in
 <h4>discardBridge</h4>
 <pre>private&nbsp;boolean&nbsp;discardBridge(java.lang.reflect.Method&nbsp;m)</pre>
 <div class="block">Determines whether a bridge method should be discarded.
- <p>
- Bridge methods are synthetic overriding methods that are used by the
- compiler to make certain things possible that seem reasonable but need
- tweaks to make them work. Two of the three known cases involve forcing
- unchecked casts to allow type narrowing of return types (covariant return
- types) and instantiation of generic type parameters in methods. Both of
- these are situations that we think of as overriding, but really aren't.
- These bridge methods do unchecked type conversions from the general type to
- the more specific type expected by the local method. As a result, if
- included for testing, Randoop would generate many tests that would confirm
- that there is an unchecked type conversion. So, we do not want to include
- these methods.
- <p>
- The third known case involves a public class inheriting a public method
- defined in a private class of the same package. The bridge method in the public
- class exposes the method outside of the package, and we *do* want to be
- able to call this method. (This sort of trick is useful in providing a
- facade to an API where implementation details are only accessible within the
+
+ <p>Bridge methods are synthetic overriding methods that are used by the compiler to make
+ certain things possible that seem reasonable but need tweaks to make them work. Two of the
+ three known cases involve forcing unchecked casts to allow type narrowing of return types
+ (covariant return types) and instantiation of generic type parameters in methods. Both of these
+ are situations that we think of as overriding, but really aren't. These bridge methods do
+ unchecked type conversions from the general type to the more specific type expected by the
+ local method. As a result, if included for testing, Randoop would generate many tests that
+ would confirm that there is an unchecked type conversion. So, we do not want to include these
+ methods.
+
+ <p>The third known case involves a public class inheriting a public method defined in a private
+ class of the same package. The bridge method in the public class exposes the method outside of
+ the package, and we *do* want to be able to call this method. (This sort of trick is useful in
+ providing a facade to an API where implementation details are only accessible within the
  package.)
- <p>
- The only case in which a bridge method should be kept is when it is a visibility bridge.</div>
+
+ <p>The only case in which a bridge method should be kept is when it is a visibility bridge.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>m</code> - the bridge method to test</dd>
@@ -444,20 +441,19 @@ implements <a href="../../randoop/reflection/ReflectionPredicate.html" title="in
 <h4>isNotVisibilityBridge</h4>
 <pre>private&nbsp;boolean&nbsp;isNotVisibilityBridge(java.lang.reflect.Method&nbsp;m)
                                throws java.lang.Error</pre>
-<div class="block">Determines whether a bridge method is not a <i>visibility</i> bridge, which
- allows access to a definition of the method in a non-visible superclass.
- <p>
- To recognize a visibility bridge, it is sufficient to run up the superclass
- chain and confirm that the visibility of the class changes to non-public.
- If it does not, then the bridge method is not a visibility bridge.</div>
+<div class="block">Determines whether a bridge method is not a <i>visibility</i> bridge, which allows access to a
+ definition of the method in a non-visible superclass.
+
+ <p>To recognize a visibility bridge, it is sufficient to run up the superclass chain and
+ confirm that the visibility of the class changes to non-public. If it does not, then the bridge
+ method is not a visibility bridge.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>m</code> - the bridge method to test</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if <code>m</code> is not a visibility bridge, and false otherwise</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.Error</code> - if a <code>SecurityException</code> is thrown when accessing
-           superclass methods</dd>
+<dd><code>java.lang.Error</code> - if a <code>SecurityException</code> is thrown when accessing superclass methods</dd>
 </dl>
 </li>
 </ul>
@@ -494,8 +490,7 @@ implements <a href="../../randoop/reflection/ReflectionPredicate.html" title="in
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>c</code> - the constructor to test</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if the constructor meets the predicate criteria, false
-         otherwise</dd>
+<dd>true if the constructor meets the predicate criteria, false otherwise</dd>
 </dl>
 </li>
 </ul>
@@ -515,16 +510,14 @@ implements <a href="../../randoop/reflection/ReflectionPredicate.html" title="in
 <li class="blockList">
 <h4>test</h4>
 <pre>public&nbsp;boolean&nbsp;test(java.lang.reflect.Field&nbsp;f)</pre>
-<div class="block">Determines whether the name of a field is included among the omitted field
- names.</div>
+<div class="block">Determines whether the name of a field is included among the omitted field names.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/reflection/ReflectionPredicate.html#test-java.lang.reflect.Field-">test</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>f</code> - field to test</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if field name does not occur in omitFields pattern, and false
-         if it does</dd>
+<dd>true if field name does not occur in omitFields pattern, and false if it does</dd>
 </dl>
 </li>
 </ul>

@@ -1,7 +1,18 @@
-Version 3.1.0, released March ??, 2017
+Version 3.1.1, released March 15, 2017
 
-New command-line option --sof-exception controls how Randoop classifies a test that
-throws a StackOverflowError exception
+Fix to make the numbering of test classes consistent with previous versions.
+
+
+Version 3.1.0, released March 14, 2017
+
+Filters generated test sequences that don't compile. There are a small number of
+known input cases for which Randoop produces uncompilable tests. This check will
+prevent these tests from being created, but has a runtime penalty. In cases where
+generating uncompilable tests is not a concern this check can be disabled by
+setting --check-compilable=false.
+
+Adds new command-line option --sof-exception that controls how Randoop
+classifies a test that throws a StackOverflowError exception
 
 
 Version 3.0.10, released March 6, 2017

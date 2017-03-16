@@ -86,7 +86,8 @@ class CompilationStatus {
           String sourceName = diag.getSource().toUri().toString();
           if (diag.getLineNumber() >= 0) {
             err.printf(
-                "Error on %d of %s%n%s%n", diag.getLineNumber(), sourceName, diag.getMessage(null));
+                "Error on line %d, col %d of %s%n%s%n",
+                diag.getLineNumber(), diag.getColumnNumber(), sourceName, diag.getMessage(null));
           } else {
             err.printf("%s%n", diag.getMessage(null));
           }

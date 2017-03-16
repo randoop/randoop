@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Execution (randoop 3.0.10 API)</title>
+<title>Execution (randoop 3.1.1 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Execution (randoop 3.0.10 API)";
+            parent.document.title="Execution (randoop 3.1.1 API)";
         }
     }
     catch(err) {
@@ -112,9 +112,8 @@ var activeTableTab = "activeTableTab";
 extends java.lang.Object</pre>
 <div class="block">Represents the unfolding execution of a sequence.
 
- This is essentially a wrapper around List&lt;ExecutionOutcome&gt;. Stores
- information in a list of ExecutionOutcome objects, one for each statement in
- the sequence.</div>
+ <p>This is essentially a wrapper around List&lt;ExecutionOutcome&gt;. Stores information in a
+ list of ExecutionOutcome objects, one for each statement in the sequence.</div>
 </li>
 </ul>
 </div>
@@ -250,8 +249,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>Execution</h4>
 <pre>public&nbsp;Execution(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;owner)</pre>
-<div class="block">Create an Execution to store the execution results of the given sequence.
- The list of outcomes is initialized to NotExecuted for every statement.</div>
+<div class="block">Create an Execution to store the execution results of the given sequence. The list of outcomes
+ is initialized to NotExecuted for every statement.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>owner</code> - the executed sequence</dd>

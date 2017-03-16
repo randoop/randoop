@@ -168,6 +168,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean no_regression_assertions = false;
 
   /**
+   * Whether to check that generated sequences can be compiled. If true, the code for each generated
+   * sequence is compiled, and the sequence is only kept if the compilation succeeds without error.
+   * This check is useful because the assumptions in Randoop generation heuristics are sometimes
+   * violated by input methods, and, as a result, a generated test may not compile. This check does
+   * increases the runtime by approximately 50%.
+   */
+  @Option("Whether to check if test sequences are compilable")
+  public static boolean check_compilable = true;
+
+  /**
    * The possible values for exception behavior types. The order INVALID, ERROR, EXPECTED should be
    * maintained.
    */
