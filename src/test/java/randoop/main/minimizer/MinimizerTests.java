@@ -21,7 +21,7 @@ public class MinimizerTests {
   /**
    * Test the minimizer with an input file
    *
-   * @param inputFilePath input file to minimize
+   * @param inputFilePath input file to minimize: a JUnit test suite
    * @param dependencies dependencies needed to compile and run the input file
    * @param timeoutLimit maximum number of seconds allowed for any test case within the input file
    *     to run
@@ -86,7 +86,7 @@ public class MinimizerTests {
     String inputFilePath = testDir + "TestInput1.java";
     String timeout = "30";
 
-    testWithInput(inputFilePath, null, timeout);
+    testWithInput(inputFilePath, /*dependences=*/ null, timeout);
   }
 
   @Test
