@@ -12,7 +12,7 @@ public class ThrowsSpecification extends Specification {
   private final String exceptionType;
 
   /**
-   * Creates a {@link ThrowsSpecification} representing an excepted exception.
+   * Creates a {@link ThrowsSpecification} representing an expected exception.
    *
    * @param description the description of the condition
    * @param exceptionType the expected exception type
