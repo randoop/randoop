@@ -92,6 +92,8 @@ public final class Randomness {
     throw new BugInRandoopException();
   }
 
+  // Used only when the --weighted-constants and/or --weighted-sequences options
+  // are used. Iterates through the entire list once, then does a binary search to select the element.
   public static <T extends WeightedElement> T randomMemberWeighted(
       SimpleList<T> list, Map<WeightedElement, Double> weights) {
 
@@ -121,6 +123,7 @@ public final class Randomness {
     return list.get(binarySearchForIndex(list, cumulativeWeights, randomPoint));
   }
 
+  /** TODO: commenting */
   public static int binarySearchForIndex(
       SimpleList<?> list, List<Double> cumulativeWeights, double point) {
     int low = 0;
