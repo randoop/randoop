@@ -577,7 +577,7 @@ public class Minimize extends CommandHandler {
    * @param classpath classpath needed to compile and run the Java file
    * @param expectedOutput expected standard output from running the JUnit test suite
    * @param timeoutLimit number of seconds allowed for the whole test suite to be run
-   * @return {@Code CompilationUnit} with fully-qualified type names simplified to simple type names
+   * @return {@code CompilationUnit} with fully-qualified type names simplified to simple type names
    */
   private static CompilationUnit simplifyVariableTypeNames(
       CompilationUnit compUnit,
