@@ -913,11 +913,10 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Given the absolute file path to a Java file, return a String representing the class name of the
-   * file.
+   * Given the absolute file path to a Java file, return the simple class name of the file.
    *
    * @param filePath absolute path to a Java file
-   * @return {@code String} representing the class name
+   * @return the simple class name
    */
   public static String getClassName(String filePath) {
     if (filePath == null) {
@@ -995,14 +994,11 @@ public class Minimize extends CommandHandler {
     compilationUnit.setImports(importDeclarations);
   }
 
-  /**
-   * Contains two {@code String} objects and an exit status which represent the standard output and
-   * error output and the resulting status from running a process.
-   */
+  /** Contains the standard output, standard error, and exit status from running a process. */
   private static class Outputs {
-    /** String representing the standard output */
+    /** The standard output */
     private String stdout;
-    /** String representing the error output */
+    /** The error output */
     private String errout;
 
     /** Exit value from running a process */
