@@ -71,10 +71,12 @@ import plume.TimeLimitProcess;
  * of statements, from last to first. For each statement, possible replacement statements are
  * considered, from most minimized to least minimized. Removing the statement is the most a
  * statement can be minimized. Leaving the statement unchanged is the least that the statement can
- * be minimized. The algorithm first tries to remove the statement. If this causes the output test
- * suite to fail differently than the original test suite, we will clone the current statement and
- * then modify it to represent the different possible replacements. If none of these minimizations
- * allow the output test suite to fail in the same way as the original test suite, we add back the
+ * be minimized.
+ *
+ * <p>The algorithm first tries to remove the statement. If this causes the output test suite to
+ * fail differently than the original test suite, we will clone the current statement and then
+ * modify it to represent the different possible replacements. If none of these minimizations allow
+ * the output test suite to fail in the same way as the original test suite, we add back the
  * original version of the current statement and continue.
  */
 public class Minimize extends CommandHandler {
@@ -87,15 +89,11 @@ public class Minimize extends CommandHandler {
    * Classpath that includes dependencies needed to compile and run the JUnit test suite being
    * minimized.
    */
-  @Option("classpath to compile and run the JUnit test suite")
+  @Option("Classpath to compile and run the JUnit test suite")
   public static String suiteclasspath;
 
-  /**
-   * The maximum number of seconds allowed for the entire test suite to be run. This is useful for
-   * test cases that do not terminate when run. This timeout limit should be large enough such that
-   * unit tests which do terminate have enough time to run until completion.
-   */
-  @Option("timeout, in seconds, for the whole test suite")
+  /** The maximum number of seconds allowed for the entire test suite to run. */
+  @Option("Timeout, in seconds, for the whole test suite")
   public static int testsuitetimeout = 30;
 
   public Minimize() {
@@ -120,7 +118,7 @@ public class Minimize extends CommandHandler {
    *     is the classpath needed to compile and run the Java file. The third parameter is the
    *     timeout time, in seconds, for the whole test suite.
    * @return true if the command was handled successfully
-   * @throws RandoopTextuiException thrown if unrecognized arguments are passed
+   * @throws RandoopTextuiException thrown if incorrect arguments are passed
    */
   @Override
   public boolean handle(String[] args) throws RandoopTextuiException {
@@ -138,7 +136,7 @@ public class Minimize extends CommandHandler {
       System.out.println("Use the --suitepath option.");
       System.exit(1);
     } else if (Minimize.testsuitetimeout <= 0) {
-      System.out.println("You must specify a positive, nonzero timeout value.");
+      System.out.println("You must specify a positive timeout value.");
       System.exit(1);
     }
 
@@ -149,23 +147,23 @@ public class Minimize extends CommandHandler {
   /**
    * Minimize the input test file.
    *
-   * <p>Minimization is defined as processing an input file and producing an output file that is as
-   * small as possible (as few lines of code as possible) which fails the same way:
+   * <p>Given an input file, minimization produces an output file that is as small as possible (as
+   * few lines of code as possible) and that fails the same way:
    *
    * <ol>
    *   <li>Same failing assertions as in the original input test suite.
    *   <li>Same stacktrace produced by failing assertions.
    * </ol>
    *
-   * <p>The original input Java file will be compiled and run once. Using the resulting output from
-   * standard output and standard error, the "expected output" is defined as the collection of
-   * standard output and standard error outputs produced from compiling and running the original
-   * input Java file.
+   * <p>The original input Java file will be compiled and run once. The "expected output" is the
+   * standard output and standard error produced by compiling and running the original input Java
+   * file.
    *
    * @param filePath the path to the Java file that is being minimized
    * @param classPath classpath used to compile and run the Java file
    * @param timeoutLimit number of seconds allowed for the whole test suite to be run
-   * @return true if minimization succeeded
+   * @return true if minimization produced a (possibly unchanged) file that fails the same way as
+   *     the original file
    */
   public static boolean mainMinimize(String filePath, String classPath, int timeoutLimit) {
     System.out.println("Reading and parsing: " + filePath);
@@ -186,7 +184,7 @@ public class Minimize extends CommandHandler {
 
     System.out.println("Obtaining expected output.");
 
-    // Find the package name if it exists
+    // Find the package name of the input file if it has one
     String packageName = null;
     try {
       PackageDeclaration classPackage = compUnit.getPackage();
@@ -232,8 +230,7 @@ public class Minimize extends CommandHandler {
   /**
    * Visit and minimize every method within a compilation unit.
    *
-   * @param cu the compilation unit to minimize, the compilation unit will be modified if a method
-   *     is minimized
+   * @param cu the compilation unit to minimize, will be modified by side effect
    * @param packageName the name of the package that the Java file is in
    * @param filePath the path to the Java file that is being minimized
    * @param classpath classpath used to compile and run the Java file
@@ -265,11 +262,10 @@ public class Minimize extends CommandHandler {
   /**
    * Minimize a method by minimizing each statement in turn.
    *
-   * @param method the method that we are minimizing, the method will be modified if a correct
-   *     minimization of the method is found
-   * @param compUnit compilation unit that contains the AST for the Java file that we are
-   *     minimizing, the compilation unit will be modified if a correct minimization of a method is
-   *     found
+   * @param method the method to minimize, will be modified by side effect minimization of the
+   *     method is found
+   * @param compUnit compilation unit for the Java file that we are minimizing; will be modified by
+   *     side effect
    * @param packageName the name of the package that the Java file is in
    * @param filePath path to the Java file that we are minimizing
    * @param classpath classpath needed to compile and run the Java file
@@ -286,21 +282,21 @@ public class Minimize extends CommandHandler {
       int timeoutLimit) {
     List<Statement> statements = method.getBody().getStmts();
 
-    // Map from variable name to the variable's value which is found in a passing assertion.
+    // Map from primitive variable name to the variable's value which is found in a passing assertion.
     Map<String, String> primitiveValues = new HashMap<String, String>();
 
     // Iterate through the list of statements, from last to first
     for (int i = statements.size() - 1; i >= 0; i--) {
       Statement currStmt = statements.get(i);
 
-      // Try removing the current statement. If the test's behavior changes, we will re-insert it.
+      // Remove the current statement. We will re-insert simplifications of it.
       statements.remove(i);
 
       // Obtain a list of possible replacements for the current statement.
       List<Statement> replacements = getStatementReplacements(currStmt, primitiveValues);
       boolean replacementFound = false;
       for (Statement stmt : replacements) {
-        // Add replacement statement to the method's body. If stmt is null, we won't add
+        // Add replacement statement to the method's body. If stmt is null, don't add
         // anything since null represents removal of the statement.
         if (stmt != null) {
           statements.add(i, stmt);
@@ -311,8 +307,9 @@ public class Minimize extends CommandHandler {
         if (checkCorrectlyMinimized(
             newFilePath, classpath, packageName, expectedOutput, timeoutLimit)) {
           // No compilation or runtime issues, obtained output is the same as the expected output.
-          // Use simplified statement and continue.
+          // Use simplification of this statement and continue with next statement.
           replacementFound = true;
+          // Assertions are never simplified; if this is an assertion, it's the original statement.
           storeValueFromAssertion(currStmt, primitiveValues);
           break;
         } else {
@@ -331,26 +328,27 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Return a list of statements that are a simplification of a given statement. In order from most
+   * Return a list of statements that are a simplification of a given statement, in order from most
    * to least minimized. The possible minimizations are:
    *
    * <ul>
    *   <li>Remove a statement, represented by null
    *   <li>Replace the right hand side expression with {@code 0}, {@code false}, or {@code null}
-   *   <li>Replace right hand side to a calculated value obtained from a passing assertion
+   *   <li>Replace right hand side by a calculated value obtained from a passing assertion
    *   <li>Remove the left hand side of a statement, retaining only the expression on the right
    * </ul>
    *
+   * Assertions are never simplified.
+   *
    * @param currStmt statement to simplify
    * @param primitiveValues map of primitive variable names to expressions representing their values
-   * @return non-null list of statements, where each is a possible simplification of {@code
-   *     currStmt}
+   * @return list of statements, where each is a possible simplification of {@code currStmt}
    */
   private static List<Statement> getStatementReplacements(
       Statement currStmt, Map<String, String> primitiveValues) {
     List<Statement> replacements = new ArrayList<Statement>();
 
-    // Null represents a removal of the statement.
+    // Null represents removal of the statement.
     replacements.add(null);
 
     if (currStmt instanceof ExpressionStmt) {
@@ -472,7 +470,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Return a variable declaration statement that simplifies the right hand side to a calculated
+   * Return a variable declaration statement that simplifies the right hand side by a calculated
    * value for primitive types. The variable declaration statement is assumed to declare only one
    * variable, for instance, {@code int i;}. Multiple variable declarations in a single statement in
    * the form {@code int i, j, k;} are not valid.
@@ -820,8 +818,8 @@ public class Minimize extends CommandHandler {
             try {
               return IOUtils.toString(timeLimitProcess.getInputStream(), Charset.defaultCharset());
             } catch (IOException e) {
-              // Error reading from process' input stream.
-              return "Error reading from process' input stream.";
+              // Error reading from process's input stream.
+              return "Error reading from process's input stream.";
             }
           }
         };
@@ -833,8 +831,8 @@ public class Minimize extends CommandHandler {
             try {
               return IOUtils.toString(timeLimitProcess.getErrorStream(), Charset.defaultCharset());
             } catch (IOException e) {
-              // Error reading from process' error stream.
-              return "Error reading from process' error stream.";
+              // Error reading from process's error stream.
+              return "Error reading from process's error stream.";
             }
           }
         };

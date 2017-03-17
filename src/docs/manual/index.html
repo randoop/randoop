@@ -1076,16 +1076,13 @@ Randoop about your application, and that is how we recommend using Randoop.
 
   <li id="optiongroup:Test-case-minimization-options">Test case minimization options
       <ul>
-            <li id="option:filepath"><b>--filepath=</b><i>string</i>.
+            <li id="option:suitepath"><b>--suitepath=</b><i>string</i>.
              File containing the JUnit test suite to be minimized
-            <li id="option:fileclasspath"><b>--fileclasspath=</b><i>string</i>.
+            <li id="option:suiteclasspath"><b>--suiteclasspath=</b><i>string</i>.
              Classpath that includes dependencies needed to compile and run the JUnit test suite being
  minimized.
-            <li id="option:testcasetimeout"><b>--testcasetimeout=</b><i>int</i>.
-             The maximum number of seconds allowed for a unit test within the test
- suite to run. This is useful for test cases that do not terminate
- when run. This timeout limit should be large enough such that unit tests
- which do terminate have enough time to run until completion. [default 10]
+            <li id="option:testsuitetimeout"><b>--testsuitetimeout=</b><i>int</i>.
+             The maximum number of seconds allowed for the entire test suite to run. [default 30]
       </ul>
 
   <li id="optiongroup:Threading-and-timeouts">Threading and timeouts
