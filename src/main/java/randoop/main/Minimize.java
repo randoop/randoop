@@ -408,10 +408,10 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Return a variable declaration statement that simplifies the right hand side to 0, false, or
-   * null, whichever is type correct. The variable declaration statement is assumed to declare only
-   * one variable, for instance, {@code int i;}. Multiple variable declarations in a single
-   * statement in the form {@code int i, j, k;} are not valid.
+   * Return a variable declaration statement that replaces the right hand side by 0, false, or null,
+   * whichever is type correct. The input variable declaration statement is assumed to declare only
+   * one variable, for instance, {@code int i = expr;}. Multiple variable declarations in a single
+   * statement in the form {@code int i = expr1, j = expr2;} are not valid.
    *
    * @param vdExpr variable declaration expression representing the current statement to simplify
    * @return a {@code Statement} object representing the simplified variable declaration expression.
@@ -851,8 +851,8 @@ public class Minimize extends CommandHandler {
   /**
    * Normalize the standard output obtained from running a JUnit test suite. By normalizing the
    * {@code String} representation of the output, we remove any extraneous information such as line
-   * numbers. The relevant information that is retained include the indices of each failing test and
-   * the respective method names.
+   * numbers. The relevant information that is retained includes the indices of each failing test
+   * and the respective method names.
    *
    * @param input the {@code String} produced from running a JUnit test suite
    * @return a {@code String} which contains several {@code String} pairs of output from the JUnit
