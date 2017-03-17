@@ -186,7 +186,7 @@ public class Minimize extends CommandHandler {
 
     System.out.println("Obtaining expected output.");
 
-    // Find the package name if it exists
+    // Find the package name if it exists.
     String packageName = null;
     try {
       PackageDeclaration classPackage = compUnit.getPackage();
@@ -194,7 +194,7 @@ public class Minimize extends CommandHandler {
         packageName = classPackage.getPackageName();
       }
     } catch (NoSuchElementException e) {
-      // No package declaration
+      // No package declaration.
     }
 
     // Run the test suite once to obtain the expected output.
@@ -609,7 +609,7 @@ public class Minimize extends CommandHandler {
     for (String type : typeNameMap.keySet()) {
       String compUnitStr = result.toString();
 
-      // Replace all instances of the fully-qualified type name with the simple type name
+      // Replace all instances of the fully-qualified type name with the simple type name.
       if (compUnitStr.contains(type)) {
         compUnitStr = compUnitStr.replace(type, typeNameMap.get(type));
       }
@@ -634,20 +634,6 @@ public class Minimize extends CommandHandler {
     }
     return result;
   }
-
-  /**
-   * Get the set of all the names of the different types that appear in a fully qualified type name.
-   * For example the fully qualified type name: {@code Map<String, Pair<Integer, Double>>} should
-   * return the set: {@code {Map, String, Pair, Integer, Double}}.
-   *
-   * @param type {@code Type} variable to parse, should not be null
-   * @return set of the different type names
-   *     <p>public static Set<String> getFullyQualifiedTypeNames(Type type) { Set<Type> types = new
-   *     HashSet<Type>();
-   *     <p>if (type instanceof ClassOrInterfaceType) {
-   *     <p>} else if (type instanceof )
-   *     <p>return null; }
-   */
 
   /**
    * Get the simple type name of a fully qualified type name. For example, {@code java.lang.String}
