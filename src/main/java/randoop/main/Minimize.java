@@ -218,6 +218,9 @@ public class Minimize extends CommandHandler {
 
     // Minimize the Java test suite and output to a new Java file.
     minimizeTestSuite(compUnit, packageName, filePath, classPath, expectedOutput, timeoutLimit);
+    compUnit =
+        simplifyVariableTypeNames(
+            compUnit, packageName, filePath, classPath, expectedOutput, timeoutLimit);
     writeToFile(compUnit, filePath, "Minimized");
 
     System.out.println("Minimizing complete.\n");
@@ -253,8 +256,6 @@ public class Minimize extends CommandHandler {
           MethodDeclaration method = (MethodDeclaration) member;
           // Minimize method and then simplify variable type names
           minimizeMethod(
-              method, cu, packageName, filePath, classpath, expectedOutput, timeoutLimit);
-          simplifyVariableTypeNames(
               method, cu, packageName, filePath, classpath, expectedOutput, timeoutLimit);
           System.out.println("Minimized method " + method.getName());
         }
@@ -568,11 +569,9 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Simplify the variable type names in a method. For example, {@code java.lang.String} should be
-   * simplified to {@code String}.
+   * Simplify the variable type names in a compilation unit. For example, {@code java.lang.String}
+   * should be simplified to {@code String}.
    *
-   * @param method a method within the Java file, the given method will be modified if a correct
-   *     minimization of the method is found
    * @param compUnit compilation unit containing an AST for a Java file, the compilation unit will
    *     be modified if a correct minimization of the method is found
    * @param packageName the name of the package that the Java file is in
@@ -580,22 +579,20 @@ public class Minimize extends CommandHandler {
    * @param classpath classpath needed to compile and run the Java file
    * @param expectedOutput expected standard output from running the JUnit test suite
    * @param timeoutLimit number of seconds allowed for the whole test suite to be run
+   * @return {@Code CompilationUnit} with fully-qualified type names simplified to simple type names
    */
-  private static void simplifyVariableTypeNames(
-      MethodDeclaration method,
+  private static CompilationUnit simplifyVariableTypeNames(
       CompilationUnit compUnit,
       String packageName,
       String filePath,
       String classpath,
       String expectedOutput,
       int timeoutLimit) {
-    List<Statement> statements = method.getBody().getStmts();
-
     // Map from fully-qualified type name to simple type name.
     Map<String, String> typeNameMap = new HashMap<String, String>();
-    // Set of fully qualified type names that are used in variable.
-    // declarations
+    // Set of fully qualified type names that are used in variable declarations
     Set<Type> fullyQualifiedNames = new HashSet<Type>();
+    // Collect all of the type names in the compilation unit.
     new TypeVisitor().visit(compUnit, fullyQualifiedNames);
 
     // Iterate through the set of fully qualified names and fill the map
@@ -607,38 +604,35 @@ public class Minimize extends CommandHandler {
       typeNameMap.put(typeName, getSimpleTypeName(typeName));
     }
 
-    // Iterate through all the statements and replace any String occurrences
-    // of any fully qualified type name within fullyQualifiedNames with the
-    // simple type name that it maps to.
-    for (int i = 0; i < statements.size(); i++) {
-      Statement currStmt = statements.get(i);
-      String newStmt = currStmt.toString();
+    CompilationUnit result = compUnit;
+    List<ImportDeclaration> imports = result.getImports();
+    for (String type : typeNameMap.keySet()) {
+      String compUnitStr = result.toString();
 
-      for (String type : typeNameMap.keySet()) {
-        if (newStmt.contains(type)) {
-          newStmt = newStmt.replace(type, typeNameMap.get(type));
-        }
+      // Replace all instances of the fully-qualified type name with the simple type name
+      if (compUnitStr.contains(type)) {
+        compUnitStr = compUnitStr.replace(type, typeNameMap.get(type));
       }
-      // Remove the existing statement at i and insert the new statement.
-      statements.remove(i);
-      Statement newStatement;
+      CompilationUnit compUnitWithSimpleTypeNames;
       try {
-        newStatement = JavaParser.parseStatement(newStmt);
+        // Parse the compilation unit and set the imports.
+        compUnitWithSimpleTypeNames = JavaParser.parse(IOUtils.toInputStream(compUnitStr, "UTF-8"));
+        compUnitWithSimpleTypeNames.setImports(imports);
       } catch (ParseException e) {
-        // Issue occurred parsing the statement, add back the original.
-        statements.add(i, currStmt);
+        System.err.println("Error parsing into a compilation unit.");
+        continue;
+      } catch (IOException e) {
+        System.err.println("IOUtils error creating input stream from string.");
         continue;
       }
-      statements.add(i, newStatement);
-
-      String newFilePath = writeToFile(compUnit, filePath, "Minimized");
-      if (!checkCorrectlyMinimized(
+      // Check that the simplification is correct.
+      String newFilePath = writeToFile(result, filePath, "Minimized");
+      if (checkCorrectlyMinimized(
           newFilePath, classpath, packageName, expectedOutput, timeoutLimit)) {
-        // If an issue occurs, remove the new statement and add back the original.
-        statements.remove(i);
-        statements.add(i, currStmt);
+        result = compUnitWithSimpleTypeNames;
       }
     }
+    return result;
   }
 
   /**
