@@ -599,6 +599,9 @@ public class GenTests extends GenInputsAbstract {
 
       int accumulatedSequenceSize = 0;
       for (Sequence seq : sequenceSizeMap.keySet()) {
+        assert sequenceSizeMap.get(seq).size()
+            == 1; // TODO: verify assumption, shouldn't fail as sequences should
+        // only have one size, should not have multiple sizes
         for (Integer i : sequenceSizeMap.get(seq)) {
           accumulatedSequenceSize += i; // gets the size of the sequence
         }
