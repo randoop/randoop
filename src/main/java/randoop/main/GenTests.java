@@ -399,7 +399,7 @@ public class GenTests extends GenInputsAbstract {
 
       Map<Sequence, Integer> tfFrequencies = null;
       if (operationModel instanceof WeightedConstantsOperationModel) {
-        tfFrequencies = ((WeightedConstantsOperationModel) operationModel).getTfFrequency();
+        tfFrequencies = ((WeightedConstantsOperationModel) operationModel).getTermFrequency();
       }
       int num_classes = operationModel.getClassTypes().size();
 

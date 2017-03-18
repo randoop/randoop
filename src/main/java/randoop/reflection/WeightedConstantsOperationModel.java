@@ -58,8 +58,11 @@ public class WeightedConstantsOperationModel extends AbstractOperationModel {
   /** Map for singleton sequences of literals extracted from classes. */
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
-  /** The term frequency mapping for each sequence in the set of all classes */
-  private Map<Sequence, Integer> tfFrequency;
+  /**
+   * The map of all sequences to their term frequency: tf(t,d), where t is a sequence and d is all
+   * classes under test
+   */
+  private Map<Sequence, Integer> termFrequency;
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
@@ -93,7 +96,7 @@ public class WeightedConstantsOperationModel extends AbstractOperationModel {
     exercisedClasses = new LinkedHashSet<>();
     operations = new TreeSet<>();
     classCount = 0;
-    tfFrequency = new HashMap<>();
+    termFrequency = new HashMap<>();
   }
 
   /**
@@ -141,7 +144,9 @@ public class WeightedConstantsOperationModel extends AbstractOperationModel {
 
   /**
    * Adds literals to the component manager, by parsing any literals files specified by the user.
-   * Includes literals at different levels indicated by {@link ClassLiteralsMode}. TODO: comment
+   * Includes literals at two different levels: a class level and a global level. Note that all
+   * sequences in class level (which are all class level literals) are a subset of those in global
+   * level (which are all sequences).
    *
    * @param compMgr the component manager
    * @param literalsFile the list of literals file names
@@ -154,7 +159,7 @@ public class WeightedConstantsOperationModel extends AbstractOperationModel {
     // manager.
     for (String filename : literalsFile) {
       MultiMap<ClassOrInterfaceType, Sequence> literalmap;
-      // For the DigDog experiment, there are only two levels: class and global
+      // For --weighted-constants, there are only two levels: class and global
       if (filename.equals("CLASSES")) {
         literalmap = classLiteralMap;
       } else {
@@ -162,8 +167,9 @@ public class WeightedConstantsOperationModel extends AbstractOperationModel {
       }
       for (ClassOrInterfaceType type : literalmap.keySet()) {
         for (Sequence seq : literalmap.getValues(type)) {
-          compMgr.addClassLevelLiteral(type, seq);
-          compMgr.addGeneratedSequence(seq);
+          compMgr.addClassLevelLiteral(
+              type, seq); // add sequence to the collection of class literals
+          compMgr.addGeneratedSequence(seq); // add sequence to the collection of all sequences
         }
       }
     }
@@ -245,8 +251,12 @@ public class WeightedConstantsOperationModel extends AbstractOperationModel {
     return annotatedTestValues;
   }
 
-  public Map<Sequence, Integer> getTfFrequency() {
-    return tfFrequency;
+  /**
+   * Return the mapping of sequences to their term frequency: tf(t,d), where t is a sequence and d
+   * is all classes under test
+   */
+  public Map<Sequence, Integer> getTermFrequency() {
+    return termFrequency;
   }
 
   /**
@@ -277,7 +287,7 @@ public class WeightedConstantsOperationModel extends AbstractOperationModel {
 
     // We supply the term frequency map to obtain the tf-idf weight for constant that are mined
     if (literalsFileList.contains("CLASSES")) {
-      mgr.add(new ClassLiteralExtractor(this.classLiteralMap, this.tfFrequency));
+      mgr.add(new ClassLiteralExtractor(this.classLiteralMap, this.termFrequency));
     }
 
     // Collect classes under test

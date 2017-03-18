@@ -14,23 +14,24 @@ import randoop.util.SimpleList;
 
 /**
  * WeightedComponentManager extends the functionality of ComponentManager by adding additional
- * functionality for weighted constants, used by the command-line option <code>--weighted-constants
- * </code>. These additions are tracking a sequence's frequency (number of times it occurs) and
- * retrieving component sequences from the subset of all constant sequences with probability <code>
+ * functionality for the weighted constants sequence selection weighting scheme, used by the
+ * command-line option <code>--weighted-constants</code>. These additions are tracking a sequence's
+ * frequency (number of times it occurs) and retrieving component sequences from the subset of all
+ * constant sequences with probability <code>
  * --p-const</code> (otherwise retrieves from all sequences).
  */
 public class WeightedComponentManager extends ComponentManager {
 
   /**
    * Sequence frequency represents the number of times a sequence occurs in a set of classes. Used
-   * for the --weighted-constants weighting scheme.
+   * for the <code>--weighted-constants</code> sequence selection weighting scheme.
    */
   private Map<Sequence, Integer> sequenceFrequency;
 
   /**
    * Create a component manager, initially populated with the given sequences (which are considered
-   * seed sequences) and with a sequenceFrequency map to support the --weighted-constants
-   * command-line option.
+   * seed sequences) and with a sequenceFrequency map to support the <code>--weighted-constants
+   * </code> command-line option.
    *
    * @param generalSeeds seed sequences. Can be null, in which case the seed sequences set is
    *     considered empty.

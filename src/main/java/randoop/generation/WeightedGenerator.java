@@ -25,10 +25,14 @@ public class WeightedGenerator extends ForwardGenerator {
   /** Map of sequences to the number of times they've been executed. */
   private final Map<WeightedElement, Integer> sequenceExecutionNumber = new HashMap<>();
 
-  /** Map of sequence/constants to their constant weights. */
-  private final Map<Sequence, Double> initialConstantWeights = new HashMap<>();
+  /**
+   * Map of sequence/constants to their constant weights. Note that these weights are never changed
+   * once initialized.
+   */
+  private final Map<Sequence, Double> constantWeights = new HashMap<>();
 
   /** Map of a sequence to the list of all sizes it has ever been */
+  // TODO: clarify
   private final Map<Sequence, List<Integer>> sequenceSizeMap = new HashMap<>();
 
   public WeightedGenerator(
@@ -91,7 +95,7 @@ public class WeightedGenerator extends ForwardGenerator {
             ((double) tfFrequency.get(m.getKey()) / num_constants)
                 * Math.log((double) (numClasses + 1) / ((numClasses + 1) - m.getValue()));
         weightMap.put(m.getKey(), weight);
-        initialConstantWeights.put(m.getKey(), weight);
+        constantWeights.put(m.getKey(), weight);
       }
     }
   }
@@ -172,8 +176,8 @@ public class WeightedGenerator extends ForwardGenerator {
     // applying --weighted-constants weighting scheme
     if (GenInputsAbstract.weighted_constants) {
       // apply only if it exists. since not all sequences can be initial weighted constants, we often ignore them
-      if (initialConstantWeights.containsKey(eSeq.sequence)) {
-        weightedConstantsWeight = initialConstantWeights.get(eSeq.sequence);
+      if (constantWeights.containsKey(eSeq.sequence)) {
+        weightedConstantsWeight = constantWeights.get(eSeq.sequence);
         // layer it on top
         weight *= weightedConstantsWeight;
       }

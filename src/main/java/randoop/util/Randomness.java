@@ -92,8 +92,17 @@ public final class Randomness {
     throw new BugInRandoopException();
   }
 
-  // Used only when the --weighted-constants and/or --weighted-sequences options
-  // are used. Iterates through the entire list once, then does a binary search to select the element.
+  /**
+   * Randomly selects an element from a weighted distribution of elements. These weights are with
+   * respect to each other, and are not normalized. Used internally when the <code>
+   * --weighted-constants</code> and/or <code>--weighted-sequences</code> options are used. Iterates
+   * through the entire list once, then does a binary search to select the element.
+   *
+   * @param list the list of elements to select from
+   * @param weights the map of elements to their weights
+   * @param <T> the type of the elements in the list
+   * @return a randomly selected element of type T
+   */
   public static <T extends WeightedElement> T randomMemberWeighted(
       SimpleList<T> list, Map<WeightedElement, Double> weights) {
 
@@ -123,9 +132,23 @@ public final class Randomness {
     return list.get(binarySearchForIndex(list, cumulativeWeights, randomPoint));
   }
 
-  /** TODO: commenting */
+  /**
+   * Performs a binary search on a cumulative weight distribution and returns the corresponding
+   * index such that cumulativeWeights.get(i) < point <= cumulativeWeights.get(i + 1), for index 0
+   * <= i < cumulativeWeights.size()
+   *
+   * @param list the list .... probably not needed
+   * @param cumulativeWeights the cumulative weight distribution to search through
+   * @param point the value used to find the index within the cumulative weight distribution
+   * @return the index corresponding to point's location in the cumulative weight distribution
+   */
   public static int binarySearchForIndex(
       SimpleList<?> list, List<Double> cumulativeWeights, double point) {
+    assert list.size()
+        == cumulativeWeights
+            .size(); // there is a 1:1 correspondence between elements in these 2 collections
+    // an element in list.get(i) has the cumulative weight cumulativeWeights.get(i) for any index 0 <= i < list.size()
+    // TODO: just simplify this given it works
     int low = 0;
     int high = list.size();
     int mid = (low + high) / 2;
