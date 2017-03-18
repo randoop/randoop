@@ -224,8 +224,10 @@ public class RandoopSystemTest {
         testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
 
-  /** Test formerly known as randoop2. Previously did a diff on generated test. */
-  // TODO: figure out why this fails with the --weighted-constants and --weighted-sequences additions
+  /**
+   * Test formerly known as randoop2. Previously did a diff on generated test. Used to fail with
+   * --weighted-constants and --weighted-sequences additions prior to the JUnitFileWriter removal
+   */
   @Test
   public void runNaiveCollectionsTest() {
 
@@ -741,7 +743,6 @@ public class RandoopSystemTest {
   }
 
   /** Runs the FixtureTest except with a driver instead of a JUnit test suite. */
-  // TODO: this fails with the JUnitFileWriter fix for methods that are too large
   @Test
   public void runFixtureDriverTest() {
     TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("fixture-driver");
@@ -864,7 +865,7 @@ public class RandoopSystemTest {
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
-  // TODO: finish
+  // TODO: can take too much heap space and timeout/fail
   @Test
   public void runWeightedSequencesTest() {
     TestEnvironment testEnvironment =
@@ -879,7 +880,7 @@ public class RandoopSystemTest {
     setUpAndRunWeightedTests(testEnvironment, options);
   }
 
-  // TODO: finish
+  // TODO: can take too much heap space and timeout/fail
   @Test
   public void runWeightedConstantsTest() {
     TestEnvironment testEnvironment =
@@ -894,7 +895,7 @@ public class RandoopSystemTest {
     setUpAndRunWeightedTests(testEnvironment, options);
   }
 
-  // TODO: finish
+  // TODO: comment
   @Test
   public void runRandoopOutputSequenceInfo() {
     TestEnvironment testEnvironment =
@@ -904,7 +905,6 @@ public class RandoopSystemTest {
     options.setPackageName("");
     options.setRegressionBasename("RandoopSequenceInfoCompareReg");
     options.setErrorBasename("RandoopSequenceInfoCompareErr");
-    // TODO: what options do we want here
     //options.setOption("literals-level", "CLASS");
     //options.setOption("literals-file", "CLASSES");
     options.setFlag("output-sequence-info");
@@ -913,7 +913,7 @@ public class RandoopSystemTest {
     renameOutputTo("randoop-sequenceInfo.csv");
   }
 
-  // TODO: finish
+  // TODO: can take too much heap space and timeout/fail
   @Test
   public void runWeightedOutputSequenceInfo() {
     TestEnvironment testEnvironment =
