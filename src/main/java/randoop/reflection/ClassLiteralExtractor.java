@@ -14,8 +14,11 @@ import randoop.util.MultiMap;
 
 /**
  * {@code ClassLiteralExtractor} is a {@link ClassVisitor} that extracts literals from the bytecode
- * of each class visited, adding a sequenceTermFrequency for each to a map associating a
- * sequenceTermFrequency with a type.
+ * of each class visited, adding a sequence for each to a map associating a sequence with a type. It
+ * also maintains a sequenceTermFrequency for each literal, for use with the <code>
+ * --weighted-constants</code> command-line option.
+ *
+ * @see WeightedConstantsOperationModel
  */
 class ClassLiteralExtractor extends DefaultClassVisitor {
 
