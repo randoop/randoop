@@ -1,23 +1,18 @@
+package test.minimizer.testrootdir.testsubdir;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class TestInput1Minimized {
+public class TestInputSubDir1Minimized {
 
-    // Test simplification of programs with multiple methods
+    // Test simplification of a program within a non-default package
     @Test
     public void test1() throws Throwable {
-        int c = 0;
-        c++;
-        org.junit.Assert.assertTrue(c == 3);
-    }
-
-    @Test
-    public void test2() throws Throwable {
-        String s = "Hello";
-        s += " World";
-        String t = s.replace('o', 'y');
-        org.junit.Assert.assertEquals(t, "Hello World");
+        String s = "String";
+        s = s.replace('i', 'o');
+        // Fails, should be 'Strong'
+        org.junit.Assert.assertTrue(s.equals("String"));
     }
 }

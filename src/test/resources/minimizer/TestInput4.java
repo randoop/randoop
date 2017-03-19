@@ -3,19 +3,20 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class TestInput3 {
-  // Test simplification of right hand side values
+public class TestInput4 {
   @Test
   public void test1() throws Throwable {
-    int a = 7;
-    int b = 2;
-    int c = a + b;
+    test.minimizer.dir_a.ClassA dirAObject = new test.minimizer.dir_a.ClassA();
+    test.minimizer.dir_b.ClassA dirBObject = new test.minimizer.dir_b.ClassA();
 
-    org.junit.Assert.assertTrue(c == 3);
+    dirAObject.setId(1);
+    dirBObject.setId(2);
 
-    int d = 2 * c;
+    org.junit.Assert.assertFalse(dirAObject.getId() == dirBObject.getId());
 
-    org.junit.Assert.assertTrue(d == 6);
-    org.junit.Assert.assertTrue(d == 7);
+    dirAObject.setId(100);
+    dirBObject.setId(100);
+    // Fails, should be true
+    org.junit.Assert.assertFalse(dirAObject.getId() == dirBObject.getId());
   }
 }

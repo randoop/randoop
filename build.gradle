@@ -252,6 +252,8 @@ test {
   exclude 'randoop/minimizer/TestInput1.*'
   exclude 'randoop/minimizer/TestInput2.*'
   exclude 'randoop/minimizer/TestInput3.*'
+  exclude 'randoop/minimizer/TestInput4.*'
+  exclude 'randoop/minimizer/testrootdir/testsubdir/TestInputSubDir1.*'
 }
 
 /*

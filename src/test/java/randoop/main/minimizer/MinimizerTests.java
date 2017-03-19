@@ -84,16 +84,16 @@ public class MinimizerTests {
 
   @Test
   public void test1() throws IOException {
-    // Paths to input file
+    // Path to input file
     String inputFilePath = testDir + "TestInput1.java";
     String timeout = "30";
 
-    testWithInput(inputFilePath, /*dependences=*/ null, timeout);
+    testWithInput(inputFilePath, null, timeout);
   }
 
   @Test
   public void test2() throws IOException {
-    // Paths to input file
+    // Path to input file
     String inputFilePath = testDir + "TestInput2.java";
     String timeout = "30";
 
@@ -102,10 +102,43 @@ public class MinimizerTests {
 
   @Test
   public void test3() throws IOException {
-    // Paths to input file
+    // Path to input file
     String inputFilePath = testDir + "TestInput3.java";
-    String timeout = "10";
+    String timeout = "30";
 
+    testWithInput(inputFilePath, null, timeout);
+  }
+
+  @Test
+  public void test4() throws IOException {
+    // Path to input file
+    String inputFilePath = testDir + "TestInput4.java";
+    String timeout = "30";
+
+    /*
+    This test input uses ClassA belonging to package dir_a and ClassA belonging to
+    package dir_b. This test checks that the minimizer doesn't remove the fully
+    qualified type name for both instances of ClassA.
+     */
+    testWithInput(inputFilePath, null, timeout);
+  }
+
+  @Test
+  public void testWithInputInSubDirectory() throws IOException {
+    // Path to input file
+    String inputFilePath =
+        testDir
+            + "testrootdir"
+            + fileSeparator
+            + "testsubdir"
+            + fileSeparator
+            + "TestInputSubDir1.java";
+    String timeout = "30";
+
+    /*
+    This test input file is located in a subdirectory and non-default package.
+    Checks that the minimizer is able to find the input file and minimize it.
+     */
     testWithInput(inputFilePath, null, timeout);
   }
 }

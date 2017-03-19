@@ -25,9 +25,6 @@ public class MinimizerComponentsTests {
 
     String className = "MinimizerTest";
     assertEquals(className, Minimize.getClassName(filePath));
-
-    String nullFilePath = null;
-    assertNull(Minimize.getClassName(nullFilePath));
   }
 
   /**

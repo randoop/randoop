@@ -37,15 +37,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -929,6 +921,11 @@ public class Minimize extends CommandHandler {
    * @return the simple class name
    */
   public static String getClassName(String filePath) {
+    if (filePath == null) {
+      System.err.println("File path should not be null.");
+      System.exit(1);
+    }
+
     // Get the name of the file without full path
     String fileName = Paths.get(filePath).getFileName().toString();
     // Remove .java extension from file name
