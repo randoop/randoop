@@ -143,7 +143,6 @@ public class Minimize extends CommandHandler {
     // Call the main minimize method
     return mainMinimize(suitepath, suiteclasspath, testsuitetimeout);
   }
-
   /**
    * Minimize the input test file.
    *
@@ -283,34 +282,41 @@ public class Minimize extends CommandHandler {
       int timeoutLimit) {
     List<Statement> statements = method.getBody().getStmts();
 
-    // Map from primitive variable name to the variable's value which is found in a passing assertion.
+    // Map from primitive variable name to the variable's value which is
+    // found in a passing assertion.
     Map<String, String> primitiveValues = new HashMap<String, String>();
 
     // Iterate through the list of statements, from last to first
     for (int i = statements.size() - 1; i >= 0; i--) {
       Statement currStmt = statements.get(i);
 
-      // Remove the current statement. We will re-insert simplifications of it.
+      // Remove the current statement. We will re-insert simplifications
+      // of it.
       statements.remove(i);
 
       // Obtain a list of possible replacements for the current statement.
       List<Statement> replacements = getStatementReplacements(currStmt, primitiveValues);
       boolean replacementFound = false;
       for (Statement stmt : replacements) {
-        // Add replacement statement to the method's body. If stmt is null, don't add
+        // Add replacement statement to the method's body. If stmt is
+        // null, don't add
         // anything since null represents removal of the statement.
         if (stmt != null) {
           statements.add(i, stmt);
         }
 
-        // Write, compile, and run the new Java file with the new suffix "Minimized".
+        // Write, compile, and run the new Java file with the new suffix
+        // "Minimized".
         String newFilePath = writeToFile(compUnit, filePath, "Minimized");
         if (checkCorrectlyMinimized(
             newFilePath, classpath, packageName, expectedOutput, timeoutLimit)) {
-          // No compilation or runtime issues, obtained output is the same as the expected output.
-          // Use simplification of this statement and continue with next statement.
+          // No compilation or runtime issues, obtained output is the
+          // same as the expected output.
+          // Use simplification of this statement and continue with
+          // next statement.
           replacementFound = true;
-          // Assertions are never simplified; if this is an assertion, it's the original statement.
+          // Assertions are never simplified; if this is an assertion,
+          // it's the original statement.
           storeValueFromAssertion(currStmt, primitiveValues);
           break;
         } else {
@@ -358,13 +364,18 @@ public class Minimize extends CommandHandler {
         // Create and return a list of possible replacement statements.
         VariableDeclarationExpr vdExpr = (VariableDeclarationExpr) exp;
 
-        // Simplify right hand side to zero equivalent value, 0, false, or null.
-        replacements.add(rhsAssignZeroValue(vdExpr));
+        // Simplify right hand side to zero equivalent value, 0, false,
+        // or null.
+        Statement rhsZeroValStmt = rhsAssignZeroValue(vdExpr);
+        if (rhsZeroValStmt != null) {
+          replacements.add(rhsZeroValStmt);
+        }
 
-        // Simplify right hand side to a value that was previously found in a passing assertion.
-        Statement rs = rhsAssignValueFromPassingAssertion(vdExpr, primitiveValues);
-        if (rs != null) {
-          replacements.add(rs);
+        // Simplify right hand side to a value that was previously found
+        // in a passing assertion.
+        Statement rhsAssertValStmt = rhsAssignValueFromPassingAssertion(vdExpr, primitiveValues);
+        if (rhsAssertValStmt != null) {
+          replacements.add(rhsAssertValStmt);
         }
 
         // Simplify statement by removing the left hand side.
@@ -375,8 +386,9 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * If {@code currStmt} is a statement that is a passing assertion, store the value associated with
-   * the variable in the {@code primitiveValues} map.
+   * If {@code currStmt} is a statement that is an assert true statement, store the value associated
+   * with the variable in the {@code primitiveValues} map. The assertion must be a passing assertion
+   * and must be using an '==' operator.
    *
    * @param currStmt a statement
    * @param primitiveValues a map of variable names to variable values, modified if {@code currStmt}
@@ -384,8 +396,8 @@ public class Minimize extends CommandHandler {
    */
   private static void storeValueFromAssertion(
       Statement currStmt, Map<String, String> primitiveValues) {
-    // Check if the statement is an assertion regarding a value that can be used
-    // in a simplification later on.
+    // Check if the statement is an assertion regarding a value that can be
+    // used in a simplification later on.
     if (currStmt instanceof ExpressionStmt) {
       Expression exp = ((ExpressionStmt) currStmt).getExpression();
       if (exp instanceof MethodCallExpr) {
@@ -395,7 +407,8 @@ public class Minimize extends CommandHandler {
           // Is an assertTrue statement.
           List<Expression> mArgs = mCall.getArgs();
           if (mArgs.size() == 1) {
-            // Retrieve and store the value associated with the variable in the assertion.
+            // Retrieve and store the value associated with the
+            // variable in the assertion.
             Expression mExp = mArgs.get(0);
             List<Node> children = mExp.getChildrenNodes();
             String var = children.get(0).toString();
@@ -410,71 +423,36 @@ public class Minimize extends CommandHandler {
   /**
    * Return a variable declaration statement that replaces the right hand side by 0, false, or null,
    * whichever is type correct. The input variable declaration statement is assumed to declare only
-   * one variable, for instance, {@code int i = expr;}. Multiple variable declarations in a single
-   * statement in the form {@code int i = expr1, j = expr2;} are not valid.
+   * one variable, for instance, {@code int i = expr;}. Returns null if there are multiple variable
+   * declarations in a single statement in the form {@code int i, j, k;}.
    *
    * @param vdExpr variable declaration expression representing the current statement to simplify
-   * @return a {@code Statement} object representing the simplified variable declaration expression.
-   *     Returns {@code null} if more than one variable is declared in the {@code
-   *     VariableDeclarationExpr}.
+   * @return a {@code Statement} object representing the simplified variable declaration expression
+   *     if the type of the variable is a primitive and a value has been previously calculated.
+   *     Otherwise, {@code null} is returned. Also returns {@code null} if more than one variable is
+   *     declared in the {@code VariableDeclarationExpr}.
    */
   private static Statement rhsAssignZeroValue(VariableDeclarationExpr vdExpr) {
-    // Copy the variable declaration expression.
-    VariableDeclarationExpr exprCopy = (VariableDeclarationExpr) vdExpr.clone();
-
-    // Obtain a reference to the variable declaration.
-    List<VariableDeclarator> vars = exprCopy.getVars();
-    if (vars.size() > 1) {
-      // More than one variable declared in this expression.
-      return null;
-    }
-    VariableDeclarator vd = vars.get(0);
-
-    // Based on the declared variable type, assign the variable 0, false, or null.
-    Type type = exprCopy.getType();
+    Type type = vdExpr.getType();
     if (type instanceof PrimitiveType) {
       switch (((PrimitiveType) type).getType()) {
         case Boolean:
-          vd.setInit(new BooleanLiteralExpr(false));
-          break;
-        case Byte:
-          vd.setInit(new IntegerLiteralExpr("0"));
-          break;
+          return rhsAssignWithValue(vdExpr, "false");
         case Char:
-          vd.setInit(new CharLiteralExpr(""));
-          break;
-        case Short:
-          vd.setInit(new IntegerLiteralExpr("0"));
-          break;
-        case Int:
-          vd.setInit(new IntegerLiteralExpr("0"));
-          break;
-        case Long:
-          vd.setInit(new LongLiteralExpr("0"));
-          break;
-        case Float:
-          vd.setInit(new DoubleLiteralExpr("0"));
-          break;
-        case Double:
-          vd.setInit(new DoubleLiteralExpr("0"));
-          break;
+          return rhsAssignWithValue(vdExpr, "");
+        default:
+          return rhsAssignWithValue(vdExpr, "0");
       }
-    } else {
-      // Set right hand side to null.
-      vd.setInit(new NullLiteralExpr());
     }
-
-    // Create a new statement with the simplified expression.
-    ExpressionStmt newStmt = new ExpressionStmt(exprCopy);
-    exprCopy.setParentNode(newStmt);
-    return newStmt;
+    // Replacement with null on the right hand side.
+    return rhsAssignWithValue(vdExpr, null);
   }
 
   /**
    * Return a variable declaration statement that simplifies the right hand side by a calculated
    * value for primitive types. The variable declaration statement is assumed to declare only one
-   * variable, for instance, {@code int i;}. Multiple variable declarations in a single statement in
-   * the form {@code int i, j, k;} are not valid.
+   * variable, for instance, {@code int i;}. Returns null if there are multiple variable
+   * declarations in a single statement in the form {@code int i, j, k;}.
    *
    * @param vdExpr variable declaration expression representing the current statement to simplify
    * @param primitiveValues a map of primitive variable names to expressions representing their
@@ -486,57 +464,85 @@ public class Minimize extends CommandHandler {
    */
   private static Statement rhsAssignValueFromPassingAssertion(
       VariableDeclarationExpr vdExpr, Map<String, String> primitiveValues) {
+    if (vdExpr.getVars().size() != 1) {
+      // Number of variables declared in this expression is not one.
+      return null;
+    }
+    // Get the name of the variable being declared.
+    String varName = vdExpr.getVars().get(0).getId().getName();
+
+    // Check if the map contains a value found from a passing assertion.
+    if (primitiveValues.containsKey(varName)) {
+      String value = primitiveValues.get(varName);
+      return rhsAssignWithValue(vdExpr, value);
+    } else {
+      // The map does not contain a value for this variable.
+      return null;
+    }
+  }
+
+  /**
+   * Return a variable declaration statement that sets the right hand side of a variable declaration
+   * to the value that is passed in.
+   *
+   * @param vdExpr variable declaration expression representing the current statement to simplify
+   * @param value value that will be assigned to the variable being declared
+   * @return a {@code Statement} object representing the simplified variable declaration expression
+   *     if the type of the variable is a primitive and a value has been previously calculated.
+   *     Returns {@code null} if more than one variable is declared in the {@code
+   *     VariableDeclarationExpr}.
+   */
+  private static Statement rhsAssignWithValue(VariableDeclarationExpr vdExpr, String value) {
+    if (vdExpr.getVars().size() != 1) {
+      // Number of variables declared in this expression is not one.
+      return null;
+    }
+
     // Copy the variable declaration expression.
     VariableDeclarationExpr exprCopy = (VariableDeclarationExpr) vdExpr.clone();
 
     // Obtain a reference to the variable declaration.
     List<VariableDeclarator> vars = exprCopy.getVars();
-    if (vars.size() > 1) {
-      // More than one variable declared in this expression.
-      return null;
-    }
     VariableDeclarator vd = vars.get(0);
 
-    // Based on the declared variable type, set the right hand a previously calculated value
+    // Based on the declared variable type, set the right hand to the value
+    // that was passed in.
     Type type = exprCopy.getType();
-    String varName = vd.getId().getName();
-    if (type instanceof PrimitiveType && primitiveValues.containsKey(varName)) {
-      // Set right hand side to a calculated value.
-      String val = primitiveValues.get(varName);
+    if (type instanceof PrimitiveType) {
       switch (((PrimitiveType) type).getType()) {
         case Boolean:
-          vd.setInit(new BooleanLiteralExpr(Boolean.parseBoolean(val)));
+          vd.setInit(new BooleanLiteralExpr(Boolean.parseBoolean(value)));
           break;
         case Byte:
-          vd.setInit(new IntegerLiteralExpr(val));
+          vd.setInit(new IntegerLiteralExpr(value));
           break;
         case Char:
-          vd.setInit(new CharLiteralExpr(val));
+          vd.setInit(new CharLiteralExpr(value));
           break;
         case Short:
-          vd.setInit(new IntegerLiteralExpr(val));
+          vd.setInit(new IntegerLiteralExpr(value));
           break;
         case Int:
-          vd.setInit(new IntegerLiteralExpr(val));
+          vd.setInit(new IntegerLiteralExpr(value));
           break;
         case Long:
-          vd.setInit(new LongLiteralExpr(val));
+          vd.setInit(new LongLiteralExpr(value));
           break;
         case Float:
-          vd.setInit(new DoubleLiteralExpr(val));
+          vd.setInit(new DoubleLiteralExpr(value));
           break;
         case Double:
-          vd.setInit(new DoubleLiteralExpr(val));
+          vd.setInit(new DoubleLiteralExpr(value));
           break;
       }
-
-      // Create a new statement with the simplified expression.
-      ExpressionStmt newStmt = new ExpressionStmt(exprCopy);
-      exprCopy.setParentNode(newStmt);
-      return newStmt;
+    } else {
+      // Set right hand side to null.
+      vd.setInit(new NullLiteralExpr());
     }
-    // Variable is not a primitive type or no value has yet been found in a passing assertion.
-    return null;
+    // Create a new statement with the simplified expression.
+    ExpressionStmt newStmt = new ExpressionStmt(exprCopy);
+    exprCopy.setParentNode(newStmt);
+    return newStmt;
   }
 
   /**
@@ -588,7 +594,8 @@ public class Minimize extends CommandHandler {
       int timeoutLimit) {
     // Map from fully-qualified type name to simple type name.
     Map<String, String> typeNameMap = new HashMap<String, String>();
-    // Set of fully qualified type names that are used in variable declarations
+    // Set of fully qualified type names that are used in variable
+    // declarations
     Set<Type> fullyQualifiedNames = new HashSet<Type>();
     // Collect all of the type names in the compilation unit.
     new TypeVisitor().visit(compUnit, fullyQualifiedNames);
@@ -607,7 +614,8 @@ public class Minimize extends CommandHandler {
     for (String type : typeNameMap.keySet()) {
       String compUnitStr = result.toString();
 
-      // Replace all instances of the fully-qualified type name with the simple type name.
+      // Replace all instances of the fully-qualified type name with the
+      // simple type name.
       if (compUnitStr.contains(type)) {
         compUnitStr = compUnitStr.replace(type, typeNameMap.get(type));
       }
@@ -774,7 +782,8 @@ public class Minimize extends CommandHandler {
     Process process;
 
     if (executionDir == null || executionDir.isEmpty()) {
-      // Execution directory is null, execute command in default directory.
+      // Execution directory is null, execute command in default
+      // directory.
       try {
         process = Runtime.getRuntime().exec(command);
       } catch (IOException e) {
@@ -844,7 +853,8 @@ public class Minimize extends CommandHandler {
       return new Outputs("", "A computation in the process threw an exception.", 1);
     }
 
-    // Collect and return the results from the standard output and error output.
+    // Collect and return the results from the standard output and error
+    // output.
     return new Outputs(stdOutputString, errOutputString, timeLimitProcess.exitValue());
   }
 
@@ -915,24 +925,17 @@ public class Minimize extends CommandHandler {
   /**
    * Given the absolute file path to a Java file, return the simple class name of the file.
    *
-   * @param filePath absolute path to a Java file
+   * @param filePath absolute path to a Java file, the file path should not be null.
    * @return the simple class name
    */
   public static String getClassName(String filePath) {
-    if (filePath == null) {
-      return null;
-    }
-
     // Get the name of the file without full path
     String fileName = Paths.get(filePath).getFileName().toString();
     // Remove .java extension from file name
     return fileName.substring(0, fileName.indexOf('.'));
   }
 
-  /**
-   * Rename the overall class. Visit every class and interface declaration, of which we expect there
-   * to be one in the input test suite. The overall class will be renamed to class name + suffix.
-   */
+  /** Rename the overall class to class name + suffix. */
   private static class ClassRenamer extends VoidVisitorAdapter<Object> {
     /**
      * @param arg a String array where the first element is the class name and the second element is
@@ -949,12 +952,20 @@ public class Minimize extends CommandHandler {
     }
   }
 
+  /** Visit every class or interface type. */
   private static class TypeVisitor extends VoidVisitorAdapter<Object> {
-    /** @param arg a set of {@code Type} objects */
+    /**
+     * If the class or interface type is in a package that's not visible by default, add the type to
+     * the set of types that is passed in as an argument.
+     *
+     * @param arg a set of {@code Type} objects, will be modified if the class or interface type is
+     *     a non-visible type by default
+     */
     @SuppressWarnings("unchecked")
     @Override
     public void visit(ClassOrInterfaceType n, Object arg) {
       Set<Type> params = (Set<Type>) arg;
+      // Add the type to the set if it's not a visible type be default.
       if (n.toString().contains(".")) {
         params.add(n);
       }
@@ -1047,21 +1058,22 @@ public class Minimize extends CommandHandler {
   private static int getFileLength(String filepath) {
     int lines = 0;
     try {
+      // Read and count the number of lines in the file.
       BufferedReader reader = new BufferedReader(new FileReader(filepath));
       while (reader.readLine() != null) {
         lines++;
       }
       reader.close();
     } catch (FileNotFoundException e) {
-      System.err.println("File length not calculated, file not found exception.");
+      System.err.println(
+          "File length not calculated, file not found exception for file " + filepath);
       System.exit(1);
     } catch (IOException e) {
-      System.err.println("File length not calculated, file read exception.");
+      System.err.println("File length not calculated, file read exception for file " + filepath);
       System.exit(1);
     }
     return lines;
   }
-
   /**
    * Print out usage error and stack trace and then exit
    *

@@ -249,9 +249,9 @@ test {
   exclude 'randoop/test/Test_SomeDuplicates.*'
   exclude 'randoop/test/Test_SomePass.*'
   exclude 'randoop/operation/OperationParserTests.*'
-  exclude 'randoop/main/TestInput1.*'
-  exclude 'randoop/main/TestInput2.*'
-  exclude 'randoop/main/TestInput3.*'
+  exclude 'randoop/minimizer/TestInput1.*'
+  exclude 'randoop/minimizer/TestInput2.*'
+  exclude 'randoop/minimizer/TestInput3.*'
 }
 
 /*
