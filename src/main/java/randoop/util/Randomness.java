@@ -129,7 +129,9 @@ public final class Randomness {
     }
     double randomPoint = Randomness.random.nextDouble() * max;
 
-    return list.get(binarySearchForIndex(list, cumulativeWeights, randomPoint));
+    assert list.size() + 1 == cumulativeWeights.size(); // because cumulative weights starts at 0
+
+    return list.get(binarySearchForIndex(cumulativeWeights, randomPoint));
   }
 
   /**
@@ -137,20 +139,13 @@ public final class Randomness {
    * index such that cumulativeWeights.get(i) < point <= cumulativeWeights.get(i + 1), for index 0
    * <= i < cumulativeWeights.size()
    *
-   * @param list the list .... probably not needed
    * @param cumulativeWeights the cumulative weight distribution to search through
    * @param point the value used to find the index within the cumulative weight distribution
    * @return the index corresponding to point's location in the cumulative weight distribution
    */
-  public static int binarySearchForIndex(
-      SimpleList<?> list, List<Double> cumulativeWeights, double point) {
-    assert list.size()
-        == cumulativeWeights
-            .size(); // there is a 1:1 correspondence between elements in these 2 collections
-    // an element in list.get(i) has the cumulative weight cumulativeWeights.get(i) for any index 0 <= i < list.size()
-    // TODO: just simplify this given it works
+  private static int binarySearchForIndex(List<Double> cumulativeWeights, double point) {
     int low = 0;
-    int high = list.size();
+    int high = cumulativeWeights.size();
     int mid = (low + high) / 2;
     while (!(cumulativeWeights.get(mid) < point && cumulativeWeights.get(mid + 1) >= point)) {
       if (cumulativeWeights.get(mid) < point) {

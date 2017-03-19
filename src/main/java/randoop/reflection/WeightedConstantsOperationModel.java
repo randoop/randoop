@@ -4,7 +4,13 @@ import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import randoop.contract.CompareToAntiSymmetric;
 import randoop.contract.CompareToEquals;
 import randoop.contract.CompareToReflexive;
@@ -19,7 +25,11 @@ import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
 import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
-import randoop.operation.*;
+import randoop.operation.MethodCall;
+import randoop.operation.OperationParseException;
+import randoop.operation.OperationParser;
+import randoop.operation.TypedClassOperation;
+import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
 import randoop.types.ClassOrInterfaceType;
@@ -59,10 +69,11 @@ public class WeightedConstantsOperationModel extends AbstractOperationModel {
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
   /**
-   * The map of all sequences to their term frequency: tf(t,d), where t is a sequence and d is all
-   * classes under test
+   * The map of sequences to their term frequency: tf(t,d), where t is a sequence and d is all
+   * classes under test. Note that this is the raw frequency, just the number of times they occur
+   * within all classes under test.
    */
-  private Map<Sequence, Integer> termFrequency;
+  private Map<Sequence, Integer> sequenceTermFrequency;
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
@@ -96,7 +107,7 @@ public class WeightedConstantsOperationModel extends AbstractOperationModel {
     exercisedClasses = new LinkedHashSet<>();
     operations = new TreeSet<>();
     classCount = 0;
-    termFrequency = new HashMap<>();
+    sequenceTermFrequency = new HashMap<>();
   }
 
   /**
@@ -252,11 +263,14 @@ public class WeightedConstantsOperationModel extends AbstractOperationModel {
   }
 
   /**
-   * Return the mapping of sequences to their term frequency: tf(t,d), where t is a sequence and d
-   * is all classes under test
+   * The map of sequences to their term frequency: tf(t,d), where t is a sequence and d is all
+   * classes under test. Note that this is the raw frequency, just the number of times they occur
+   * within all classes under test.
+   *
+   * @return map of sequences to their term frequency: tf(t,d)
    */
-  public Map<Sequence, Integer> getTermFrequency() {
-    return termFrequency;
+  public Map<Sequence, Integer> getSequenceTermFrequency() {
+    return sequenceTermFrequency;
   }
 
   /**
@@ -287,7 +301,7 @@ public class WeightedConstantsOperationModel extends AbstractOperationModel {
 
     // We supply the term frequency map to obtain the tf-idf weight for constant that are mined
     if (literalsFileList.contains("CLASSES")) {
-      mgr.add(new ClassLiteralExtractor(this.classLiteralMap, this.termFrequency));
+      mgr.add(new ClassLiteralExtractor(this.classLiteralMap, this.sequenceTermFrequency));
     }
 
     // Collect classes under test

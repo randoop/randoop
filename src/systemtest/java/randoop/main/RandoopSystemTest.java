@@ -1168,8 +1168,12 @@ public class RandoopSystemTest {
     }
   }
 
+  /** TODO: issue with heap space running out */
   private void setUpAndRunWeightedTests(TestEnvironment testEnvironment, RandoopOptions options) {
+
+    options.setOption("inputlimit", "125"); // temp fix
     options.setOption("timelimit", "30");
+    //options.setOption("outputlimit", "200");
     options.setOption("null-ratio", "0.3");
     options.setOption("alias-ratio", "0.3");
     options.setFlag("clear=100");
@@ -1182,17 +1186,9 @@ public class RandoopSystemTest {
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
 
+    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+
     // TODO: maybe just generate and compile
-    generateAndCompile(testEnvironment, options);
-
-    //generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
-
-    /*
-    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
-    ExpectedTests expectedErrorTests = ExpectedTests.NONE;
-
-    generateAndTestWithCoverage(
-        testEnvironment, options, expectedRegressionTests, expectedErrorTests);
-    */
+    //generateAndCompile(testEnvironment, options);
   }
 }

@@ -621,7 +621,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Whether to output the file: <code>--output-sequence-info-filename</code>, which lists the total
    * # sequences executed and average sequence size in csv format.
    */
-  @Option("Whether to output the file that lists the total # sequences and avg sequence size")
+  @Option(
+      "Whether to output the file that lists the total # sequences executed and avg sequence size")
   public static boolean output_sequence_info = false;
 
   /**

@@ -397,9 +397,10 @@ public class GenTests extends GenInputsAbstract {
         || GenInputsAbstract.weighted_sequences
         || GenInputsAbstract.weighted_constants) {
 
-      Map<Sequence, Integer> tfFrequencies = null;
+      Map<Sequence, Integer> sequenceTermFrequencies = null;
       if (operationModel instanceof WeightedConstantsOperationModel) {
-        tfFrequencies = ((WeightedConstantsOperationModel) operationModel).getTermFrequency();
+        sequenceTermFrequencies =
+            ((WeightedConstantsOperationModel) operationModel).getSequenceTermFrequency();
       }
       int num_classes = operationModel.getClassTypes().size();
 
@@ -413,7 +414,7 @@ public class GenTests extends GenInputsAbstract {
               componentMgr,
               listenerMgr,
               num_classes,
-              tfFrequencies);
+              sequenceTermFrequencies);
 
     } else {
       explorer =
@@ -569,8 +570,7 @@ public class GenTests extends GenInputsAbstract {
 
     if (GenInputsAbstract.output_sequence_info) {
       WeightedGenerator fExplorer = (WeightedGenerator) explorer;
-      Map<Sequence, List<Integer>> debugMap = fExplorer.getSequenceSizeMap();
-      writeTestInfo(debugMap);
+      writeTestInfo(fExplorer.getExecutedSequences());
     }
 
     return true;
@@ -579,11 +579,11 @@ public class GenTests extends GenInputsAbstract {
   /**
    * Writes information of all executed sequences to the file name dictated by <code>
    * --output-sequence-info-filename</code> in .csv format. The file is composed of three elements:
-   * (1) Total number of sequences generated, (2) the comma, (3) average sequence size.
+   * (1) Total number of sequences executed, (2) the comma, (3) average sequence size.
    *
-   * @param sequenceSizeMap the map of all executed sequences to their sizes
+   * @param executedSequences the set of all executed sequences
    */
-  private void writeTestInfo(Map<Sequence, List<Integer>> sequenceSizeMap) {
+  private void writeTestInfo(Set<Sequence> executedSequences) {
     File tempDir = new File(GenInputsAbstract.output_sequence_info_filename);
     PrintStream out;
     try {
@@ -594,20 +594,16 @@ public class GenTests extends GenInputsAbstract {
       out = createTextOutputStream(GenInputsAbstract.output_sequence_info_filename);
       StringBuilder body = new StringBuilder();
 
-      body.append(sequenceSizeMap.keySet().size()); // number of sequences
-      body.append(',');
+      body.append(executedSequences.size()); // (1) total number of sequences executed
+      body.append(','); // (2) the comma
 
+      // get avg sequence size
       int accumulatedSequenceSize = 0;
-      for (Sequence seq : sequenceSizeMap.keySet()) {
-        assert sequenceSizeMap.get(seq).size()
-            == 1; // TODO: verify assumption, shouldn't fail as sequences should
-        // only have one size, should not have multiple sizes
-        for (Integer i : sequenceSizeMap.get(seq)) {
-          accumulatedSequenceSize += i; // gets the size of the sequence
-        }
+      for (Sequence seq : executedSequences) {
+        accumulatedSequenceSize += seq.size();
       }
-      double avgSeqSize = accumulatedSequenceSize * 1.0 / sequenceSizeMap.keySet().size();
-      body.append(avgSeqSize);
+      double avgSeqSize = accumulatedSequenceSize * 1.0 / executedSequences.size();
+      body.append(avgSeqSize); // (3) average sequence size
 
       out.println(body.toString());
     } catch (IOException e) {

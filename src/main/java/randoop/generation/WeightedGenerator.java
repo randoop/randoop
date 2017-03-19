@@ -1,12 +1,30 @@
 package randoop.generation;
 
-import java.util.*;
-import randoop.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import randoop.BugInRandoopException;
+import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
-import randoop.sequence.*;
-import randoop.types.*;
-import randoop.util.*;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Sequence;
+import randoop.sequence.Statement;
+import randoop.sequence.Variable;
+import randoop.types.InstantiatedType;
+import randoop.types.JDKTypes;
+import randoop.types.Type;
+import randoop.types.TypeTuple;
+import randoop.util.ArrayListSimpleList;
+import randoop.util.ListOfLists;
+import randoop.util.Log;
+import randoop.util.MultiMap;
+import randoop.util.Randomness;
+import randoop.util.SimpleList;
+import randoop.util.WeightedElement;
 
 /**
  * WeightedGenerator extends the functionality of forward generator by storing additional
@@ -31,9 +49,8 @@ public class WeightedGenerator extends ForwardGenerator {
    */
   private final Map<Sequence, Double> constantWeights = new HashMap<>();
 
-  /** Map of a sequence to the list of all sizes it has ever been */
-  // TODO: clarify
-  private final Map<Sequence, List<Integer>> sequenceSizeMap = new HashMap<>();
+  /** Set of all executed sequences */
+  private final Set<Sequence> executedSequences = new HashSet<>();
 
   public WeightedGenerator(
       List<TypedOperation> operations,
@@ -68,7 +85,7 @@ public class WeightedGenerator extends ForwardGenerator {
       IStopper stopper,
       RandoopListenerManager listenerManager,
       int numClasses,
-      Map<Sequence, Integer> tfFrequency) {
+      Map<Sequence, Integer> sequenceTermFrequencies) {
 
     super(
         operations,
@@ -83,30 +100,31 @@ public class WeightedGenerator extends ForwardGenerator {
     // --weighted-constants weighting scheme for initial mined sequences, based on the TF-IDF formula
     if (GenInputsAbstract.weighted_constants) {
 
-      int num_constants = 0;
-      for (Sequence s : tfFrequency.keySet()) {
-        num_constants += tfFrequency.get(s);
+      int totalNumConstants = 0;
+      for (Sequence s : sequenceTermFrequencies.keySet()) {
+        totalNumConstants += sequenceTermFrequencies.get(s);
       }
       assert componentManager instanceof WeightedComponentManager;
       for (Map.Entry<Sequence, Integer> m :
           ((WeightedComponentManager) componentManager).getSequenceFrequency().entrySet()) {
 
+        // note that this is adjusting the tf(t,d) by normalizing it across the sum of all sequences' tf(t,d)
+        // TODO: explore performance with unnormalized tf(t,d), as well as inter-weight tuning
         double weight =
-            ((double) tfFrequency.get(m.getKey()) / num_constants)
+            ((double) sequenceTermFrequencies.get(m.getKey()) / totalNumConstants)
                 * Math.log((double) (numClasses + 1) / ((numClasses + 1) - m.getValue()));
-        weightMap.put(m.getKey(), weight);
         constantWeights.put(m.getKey(), weight);
       }
     }
   }
 
   /**
-   * Should only be called once we're done with generating tests.
+   * Should only be called once we're done with executing tests.
    *
-   * @return a map of sequences generated to a list of their sizes
+   * @return a set of all executed sequences
    */
-  public Map<Sequence, List<Integer>> getSequenceSizeMap() {
-    return sequenceSizeMap;
+  public Set<Sequence> getExecutedSequences() {
+    return executedSequences;
   }
 
   /**
@@ -148,10 +166,15 @@ public class WeightedGenerator extends ForwardGenerator {
 
     eSeq.exectime = endTime - startTime;
 
-    double initialWeight = eSeq.sequence.getWeight(); // default
-    double weightedSequencesWeight; // dummy values
+    double initialWeight =
+        eSeq.sequence.getWeight(); // use a sequence's default weight as the initial value
+    double weightedSequencesWeight;
     double weightedConstantsWeight;
-    double weight = initialWeight; // final weight used
+    double weight = initialWeight; // final weight used in the actual weighted random selection
+
+    // TODO: explore fine-tuning of weight interactions. Specifically, magnitudes between weightedConstant and
+    // TODO: weightedSequences are drastic.  This affects the selection in the global pool, where there can be some
+    // TODO: sequences with only weightedConstant weights, which are extremely small.
 
     // --weighted-sequences weighting scheme
     if (GenInputsAbstract.weighted_sequences) {
@@ -189,20 +212,9 @@ public class WeightedGenerator extends ForwardGenerator {
     weightMap.put(eSeq.sequence, weight); // add a weight no matter what
 
     if (GenInputsAbstract.output_sequence_info) {
-      int sequenceSize = eSeq.sequence.size();
-
-      // add this sequence's size to the map if it hasn't been seen before
-      if (sequenceSizeMap.containsKey(eSeq.sequence)) {
-        List<Integer> addedToList = sequenceSizeMap.get(eSeq.sequence);
-        addedToList.add(sequenceSize);
-        assert sequenceSize
-            == addedToList.remove(0); // TODO: this doesn't fail -> change to map of just ints
-        sequenceSizeMap.put(eSeq.sequence, addedToList);
-        throw new BugInRandoopException("sequence bruuuh");
-      } else {
-        List<Integer> addedToList = new ArrayList<>();
-        addedToList.add(sequenceSize);
-        sequenceSizeMap.put(eSeq.sequence, addedToList);
+      // add it to our growing set of executed sequences if not already added
+      if (!executedSequences.contains(eSeq.sequence)) {
+        executedSequences.add(eSeq.sequence);
       }
     }
 

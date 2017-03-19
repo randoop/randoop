@@ -23,8 +23,8 @@ import randoop.util.SimpleList;
 public class WeightedComponentManager extends ComponentManager {
 
   /**
-   * Sequence frequency represents the number of times a sequence occurs in a set of classes. Used
-   * for the <code>--weighted-constants</code> sequence selection weighting scheme.
+   * Sequence frequency represents the number of times a sequence occurs in all classes under test.
+   * Used for the <code>--weighted-constants</code> sequence selection weighting scheme.
    */
   private Map<Sequence, Integer> sequenceFrequency;
 

@@ -14,22 +14,25 @@ import randoop.util.MultiMap;
 
 /**
  * {@code ClassLiteralExtractor} is a {@link ClassVisitor} that extracts literals from the bytecode
- * of each class visited, adding a sequence for each to a map associating a sequence with a type.
+ * of each class visited, adding a sequenceTermFrequency for each to a map associating a
+ * sequenceTermFrequency with a type.
  */
 class ClassLiteralExtractor extends DefaultClassVisitor {
 
   private MultiMap<ClassOrInterfaceType, Sequence> literalMap;
 
   /**
-   * The term frequency mapping is used for the weighted constants option. This will keep track of
-   * how often a constant appears across all constants.
+   * The map of sequences to their term frequency: tf(t,d), where t is a sequence and d is all
+   * classes under test. Note that this is the raw frequency, just the number of times they occur
+   * within all classes under test.
    */
-  private Map<Sequence, Integer> tfFrequency;
+  private Map<Sequence, Integer> sequenceTermFrequency;
 
   ClassLiteralExtractor(
-      MultiMap<ClassOrInterfaceType, Sequence> literalMap, Map<Sequence, Integer> tfFrequency) {
+      MultiMap<ClassOrInterfaceType, Sequence> literalMap,
+      Map<Sequence, Integer> sequenceTermFrequency) {
     this.literalMap = literalMap;
-    this.tfFrequency = tfFrequency;
+    this.sequenceTermFrequency = sequenceTermFrequency;
   }
 
   @Override
@@ -47,10 +50,10 @@ class ClassLiteralExtractor extends DefaultClassVisitor {
                     new ArrayList<Variable>());
         literalMap.add(constantType, seq);
         if (GenInputsAbstract.weighted_constants) {
-          if (tfFrequency.containsKey(seq)) {
-            tfFrequency.put(seq, tfFrequency.get(seq) + 1);
+          if (sequenceTermFrequency.containsKey(seq)) {
+            sequenceTermFrequency.put(seq, sequenceTermFrequency.get(seq) + 1);
           } else {
-            tfFrequency.put(seq, 1);
+            sequenceTermFrequency.put(seq, 1);
           }
         }
       }
