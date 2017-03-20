@@ -13,3 +13,12 @@ jar {
       )
   }
 }
+
+test {
+  jvmArgs "-javaagent:$buildDir/libs/mapcall-$version" + ".jar=--map_calls=$buildDir/resources/test/randoop/instrument/mapcalls.txt"
+
+  testLogging {
+    showStandardStreams = true
+    exceptionFormat = 'full'
+  }
+}

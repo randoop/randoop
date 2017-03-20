@@ -44,8 +44,10 @@ public class Premain {
    */
   public static void premain(String agentArgs, Instrumentation inst) throws IOException {
 
-    System.out.format(
-        "In premain, agentargs ='%s', " + "Instrumentation = '%s'%n", agentArgs, inst);
+    if (verbose) {
+      System.out.format(
+          "In premain, agentargs ='%s', " + "Instrumentation = '%s'%n", agentArgs, inst);
+    }
 
     // Parse our arguments
     Options options = new Options(Premain.class);
