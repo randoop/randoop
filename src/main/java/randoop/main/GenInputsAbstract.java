@@ -263,15 +263,23 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Read JSON condition file to use specifications to control how tests are generated and
    * classified.
    *
-   * <p>Param-conditions are used as pre-conditions on method/constructor calls, with test sequences
-   * where the condition fails being classified as {@link BehaviorType#INVALID}.
+   * <ul>
+   *   <li>
+   *       <p>Param-conditions are pre-conditions on method/constructor calls, with test sequences
+   *       where the condition fails being classified as {@link BehaviorType#INVALID}.
+   *   <li>
+   *       <p>Return-conditions are post-conditions on method/constructor calls, consisting of a
+   *       guard and a property. If the inputs to the call satisfy the guard, then the property is
+   *       checked after the call. If the property fails, the sequence is classified as {@link
+   *       BehaviorType#ERROR}.
+   *   <li>Throws-conditions are post-conditions on expected exceptions: if the inputs to the call
+   *       satisfy the condition, when the exception is thrown the sequence is {@link
+   *       BehaviorType#EXPECTED}, but, if it is not, the sequence is classified as {@link
+   *       BehaviorType#ERROR}. If the throws-condition is not satisfied by the input, then ordinary
+   *       classification is applied.
+   * </ul>
    *
-   * <p>Return-conditions are used as post-conditions on method/constructor calls
-   *
-   * <p>Throws-conditions are used to check exceptions: if the inputs to the call satisfy the
-   * condition, when the exception is thrown the sequence is {@link BehaviorType#EXPECTED}, but, if
-   * it is not, the sequence is classified as {@link BehaviorType#ERROR}. If the throws-condition is
-   * not satisfied by the input, then ordinary classification is applied.
+   * See the User documentation for more details.
    */
   @Option("Use specifications from JSON file to classify behaviors for methods/constructors")
   public static List<File> specifications = null;
