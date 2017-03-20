@@ -1,0 +1,19 @@
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
+import test.minimizer.dir_a.ClassA;
+import test.minimizer.dir_b.ClassA;
+
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class TestInputWithPassingAssertionValue {
+
+    @Test
+    public void test1() throws Throwable {
+        test.minimizer.dir_a.ClassA dirAObject = new test.minimizer.dir_a.ClassA();
+        test.minimizer.dir_b.ClassA dirBObject = new test.minimizer.dir_b.ClassA();
+        dirAObject.setId(100);
+        dirBObject.setId(100);
+        // Fails, should be true
+        org.junit.Assert.assertFalse(dirAObject.getId() == dirBObject.getId());
+    }
+}

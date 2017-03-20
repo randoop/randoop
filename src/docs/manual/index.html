@@ -737,7 +737,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  at least one use of a member of a class whose name matches the regular expression.
             <li id="option:include-if-class-exercised"><b>--include-if-class-exercised=</b><i>filename</i>.
              File containing fully qualified names of classes that the tests must exercise. This option only
- works if Randoop is run using <code>-javaagent:$(RANDOOP_PATH)/exercised-class-3.1.1.jar</code> to instrument the
+ works if Randoop is run using <code>-javaagent:exercised_agent.jar</code> to instrument the
  classes. A test is output only if it exercises at least one of the class names in the file. A
  test exercises a class if it executes any constructor or method of the class, directly or
  indirectly (the constructor or method might not appear in the source code of the test).

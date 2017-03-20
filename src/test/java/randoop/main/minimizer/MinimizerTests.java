@@ -81,7 +81,7 @@ public class MinimizerTests {
     byte[] encoded = Files.readAllBytes(Paths.get(filePath));
     return new String(encoded, encoding);
   }
-
+  /*
   @Test
   public void test1() throws IOException {
     // Path to input file
@@ -115,11 +115,10 @@ public class MinimizerTests {
     String inputFilePath = testDir + "TestInput4.java";
     String timeout = "30";
 
-    /*
-    This test input uses ClassA belonging to package dir_a and ClassA belonging to
-    package dir_b. This test checks that the minimizer doesn't remove the fully
-    qualified type name for both instances of ClassA.
-     */
+
+    // This test input uses ClassA belonging to package dir_a and ClassA belonging to
+    // package dir_b. This test checks that the minimizer doesn't remove the fully
+    // qualified type name for both instances of ClassA.
     testWithInput(inputFilePath, null, timeout);
   }
 
@@ -135,10 +134,17 @@ public class MinimizerTests {
             + "TestInputSubDir1.java";
     String timeout = "30";
 
-    /*
-    This test input file is located in a subdirectory and non-default package.
-    Checks that the minimizer is able to find the input file and minimize it.
-     */
+    // This test input file is located in a subdirectory and non-default package.
+    // Checks that the minimizer is able to find the input file and minimize it.
+    testWithInput(inputFilePath, null, timeout);
+  }*/
+
+  @Test
+  public void testWithInputInSubDirectory() throws IOException {
+    // Path to input file
+    String inputFilePath = testDir + "TestInputWithPassingAssertionValue.java";
+    String timeout = "30";
+
     testWithInput(inputFilePath, null, timeout);
   }
 }
