@@ -408,18 +408,20 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Whether to use the weighted-constants weighting scheme to bias the sequence selection. Note
-   * that this weighting scheme dominates the <code>--small-tests</code> weight scheme, but can be
-   * used with <code>--weighted-sequences</code>.
+   * Whether to use the weighted-constants static weighting scheme to bias the sequence selection.
+   * Note that this weighting scheme dominates the <code>--small-tests</code> weight scheme, but can
+   * be used with <code>--weighted-sequences</code>.
    */
   @Option("Whether to use weighted constants in sequence selection")
   public static boolean weighted_constants = false;
 
   /**
    * What probability to select from only weighted-constant sequences during sequence selection.
-   * This is only applicable with the <code>--weighted-constants</code> option.
+   * This is only applicable with the <code>--weighted-constants</code> option. Note that the set of
+   * weighted-constant sequences selected from also incorporate dynamic weights if <code>
+   * --weighted-sequences</code> is used.
    */
-  @Option("What probability to select the constants mined through --weighted-constants")
+  @Option("What probability to select only constants mined through --weighted-constants")
   public static double p_const = .01;
 
   // Implementation note: when checking whether a String S exceeds the given
@@ -457,9 +459,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean small_tests = false;
 
   /**
-   * Whether to use the weighted-sequences weighting scheme to bias the sequence selection. Note
-   * that this weighting scheme dominates the <code>--small-tests</code> weight scheme, but can be
-   * used with <code>
+   * Whether to use the weighted-sequences dynamic weighting scheme to bias the sequence selection.
+   * Note that this weighting scheme dominates the <code>--small-tests</code> weight scheme, but can
+   * be used with <code>
    * --weighted-constants</code>. Performance may be similar to <code>--small-tests</code>.
    */
   @Option("Whether to use weighted sequences in sequence selection")
