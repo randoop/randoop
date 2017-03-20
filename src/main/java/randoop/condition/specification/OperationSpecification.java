@@ -9,6 +9,43 @@ import java.util.Objects;
  * java.lang.reflect.AccessibleObject} for the operation, and lists of {@link ThrowsSpecification},
  * {@link ReturnSpecification}, and {@link ParamSpecification} objects that describe contracts on
  * the operation.
+ *
+ * <p>The JSON serialization of this class is used to read the specifications for an operation given
+ * using the {@link randoop.main.GenInputsAbstract#specifications} command-line option. The JSON
+ * should include a JSON object labeled by the name of each field of this class, as in
+ *
+ * <pre>
+ *   {
+ *     "operation": {
+ *       "classname": "net.Connection",
+ *       "name": "send",
+ *       "parameterTypes": [
+ *         "int"
+ *       ]
+ *     },
+ *    "identifiers": {
+ *       "parameters": [
+ *         "code"
+ *        ],
+ *       "receiverName": "receiver",
+ *       "returnName": "result"
+ *     },
+ *    "throwsSpecifications": [],
+ *    "returnSpecifications": [],
+ *    "paramSpecifications": [
+ *      {
+ *        "description": "the code must be positive",
+ *        "guard": {
+ *          "conditionText": {@code "code > 0"},
+ *          "description": "the code must be positive"
+ *         }
+ *      }
+ *    ]
+ *   }
+ * </pre>
+ *
+ * See the classes {@link Operation}, {@link Identifiers}, {@link ParamSpecification}, {@link
+ * ReturnSpecification}, and {@link ThrowsSpecification} for details on specifying those objects.
  */
 public class OperationSpecification {
 
@@ -41,6 +78,7 @@ public class OperationSpecification {
    * Creates an {@link OperationSpecification} for the given operation with no specifications.
    *
    * @param operation the {@link Operation} object, must be non-null
+   * @param identifiers the {@link Identifiers} object, must be non-null
    */
   public OperationSpecification(Operation operation, Identifiers identifiers) {
     this(

@@ -8,7 +8,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/** Represents the reflection type of an operation for an {@link OperationSpecification}. */
+/**
+ * Represents the reflection type of an operation for an {@link OperationSpecification}.
+ *
+ * <p>The JSON serialization of this class is used to read the specifications for an operation given
+ * using the {@link randoop.main.GenInputsAbstract#specifications} command-line option. The JSON
+ * should include a JSON object labeled by the name of each field of this class, as in
+ *
+ * <pre>
+ *   {
+ *     "classname": "net.Connection",
+ *     "name": "send",
+ *     "parameterTypes": [
+ *       "int"
+ *     ]
+ *   }
+ * </pre>
+ *
+ * Note that the class name and parameter type names should be given as fully-qualified class names.
+ * Generic types should also be given as rawtypes.
+ */
 public class Operation {
 
   /** the fully-qualified name of the declaring class of this operation */

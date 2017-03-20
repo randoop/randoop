@@ -4,7 +4,24 @@ import java.util.Objects;
 
 /**
  * The specification for a {@link ThrowsSpecification} that specifies that an exception should be
- * thrown. For use as a post-condition in a {@link ReturnSpecification}.
+ * thrown.
+ *
+ * <p>The JSON serialization of this class is used to read the specifications for an operation given
+ * using the {@link randoop.main.GenInputsAbstract#specifications} command-line option. The JSON
+ * should include a JSON object labeled by the name of each field of this class, as in
+ *
+ * <pre>
+ *   {
+ *      "exceptionType": "java.lang.IllegalStateException",
+ *      "description": "throws IllegalStateException if the connection is already open",
+ *      "guard": {
+ *         "conditionText": "receiver.isOpen()",
+ *         "description": "if the connection is already open"
+ *       }
+ *   }
+ * </pre>
+ *
+ * See {@link Guard} for details on specifying guards.
  */
 public class ThrowsSpecification extends Specification {
 
@@ -12,9 +29,11 @@ public class ThrowsSpecification extends Specification {
   private final String exceptionType;
 
   /**
-   * Creates a {@link ThrowsSpecification} representing an expected exception.
+   * Creates a {@link ThrowsSpecification} representing an exception expected when the guard is
+   * true.
    *
    * @param description the description of the condition
+   * @param guard the guard for the specification
    * @param exceptionType the expected exception type
    */
   public ThrowsSpecification(String description, Guard guard, String exceptionType) {

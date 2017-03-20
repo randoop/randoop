@@ -6,14 +6,31 @@ import java.util.Objects;
 
 /**
  * Contains the identifiers used in the guards and properties of the specifications in a {@link
- * OperationSpecification}.
+ * OperationSpecification}. These names need not match the actual declaration of the method.
+ *
+ * <p>The JSON serialization of this class is used to read the specifications for an operation given
+ * using the {@link randoop.main.GenInputsAbstract#specifications} command-line option. The JSON
+ * should include a JSON object labeled by the name of each field of this class, as in
+ *
+ * <pre>
+ *   {
+ *     "parameters": [
+ *       "code"
+ *      ],
+ *     "receiverName": "receiver",
+ *     "returnName": "result"
+ *   }
+ * </pre>
+ *
+ * <p>When using the class, if names are not given for the receiver and return value, then the
+ * defaults will be used.
  */
 public class Identifiers {
 
-  /** the default identifier name for receiver */
+  /** the default identifier name for receiver (value: "receiver") */
   private static final String DEFAULT_RECEIVER_NAME = "receiver";
 
-  /** the default identifier name for the return value */
+  /** the default identifier name for the return value (value: "result") */
   private static final String DEFAULT_RETURN_NAME = "result";
 
   /** the parameter names for the operation */
