@@ -136,8 +136,8 @@ public final class Randomness {
 
   /**
    * Performs a binary search on a cumulative weight distribution and returns the corresponding
-   * index such that {@code cumulativeWeights.get(i) < point <= cumulativeWeights.get(i + 1) for index 0
-   * <= i <= cumulativeWeights.size()},
+   * index such that {@code cumulativeWeights.get(i) < point <= cumulativeWeights.get(i + 1) for
+   * index 0 <= i <= cumulativeWeights.size()},
    *
    * @param cumulativeWeights the cumulative weight distribution to search through
    * @param point the value used to find the index within the cumulative weight distribution
