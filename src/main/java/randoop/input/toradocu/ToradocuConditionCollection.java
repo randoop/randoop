@@ -20,7 +20,6 @@ import plume.Pair;
 import plume.UtilMDE;
 import randoop.condition.Condition;
 import randoop.condition.ConditionCollection;
-import randoop.main.GenInputsAbstract;
 import randoop.reflection.TypeNames;
 import randoop.test.ExpectedExceptionGenerator;
 import randoop.test.PostConditionCheckGenerator;
@@ -81,9 +80,11 @@ public class ToradocuConditionCollection implements ConditionCollection {
                   + method.getContainingClass()
                   + " "
                   + e.getMessage();
+          /*
           if (GenInputsAbstract.fail_on_condition_input_error) {
             throw new IllegalArgumentException(message);
           }
+          */
           if (Log.isLoggingOn()) {
             Log.logLine(message);
           }
@@ -98,9 +99,11 @@ public class ToradocuConditionCollection implements ConditionCollection {
                   + method.toString()
                   + " "
                   + e.getMessage();
+          /*
           if (GenInputsAbstract.fail_on_condition_input_error) {
             throw new IllegalArgumentException(message);
           }
+          */
           if (Log.isLoggingOn()) {
             Log.logLine(message);
           }
@@ -151,9 +154,11 @@ public class ToradocuConditionCollection implements ConditionCollection {
                         + methodName
                         + " "
                         + e.getMessage();
+                /*
                 if (GenInputsAbstract.fail_on_condition_input_error) {
                   throw new IllegalArgumentException(message);
                 }
+                */
                 if (Log.isLoggingOn()) {
                   Log.logLine(message);
                 }
@@ -186,9 +191,11 @@ public class ToradocuConditionCollection implements ConditionCollection {
                       + method.toString()
                       + " "
                       + e.getMessage();
+              /*
               if (GenInputsAbstract.fail_on_condition_input_error) {
                 throw new IllegalArgumentException(message);
               }
+              */
               if (Log.isLoggingOn()) {
                 Log.logLine(message);
               }
@@ -308,9 +315,11 @@ public class ToradocuConditionCollection implements ConditionCollection {
         } catch (NoSuchMethodException e2) {
           String message =
               "Unable to find subject constructor for Torudocu input (" + documentedMethod + ")";
+          /*
           if (GenInputsAbstract.fail_on_condition_input_error) {
             throw new IllegalArgumentException(message);
           }
+          */
           if (Log.isLoggingOn()) {
             Log.logLine(message);
           }
@@ -335,9 +344,11 @@ public class ToradocuConditionCollection implements ConditionCollection {
         } catch (NoSuchMethodException e2) {
           String message =
               "Unable to find subject method for Torudocu input (" + documentedMethod + ")";
+          /*
           if (GenInputsAbstract.fail_on_condition_input_error) {
             throw new IllegalArgumentException(message);
           }
+          */
           if (Log.isLoggingOn()) {
             Log.logLine(message);
           }
@@ -416,6 +427,7 @@ public class ToradocuConditionCollection implements ConditionCollection {
               + UtilMDE.join(paramTypes, ",")
               + " in class "
               + conditionClass.getName();
+      /*
       if (GenInputsAbstract.fail_on_condition_input_error) {
         throw new IllegalArgumentException(message);
       } else {
@@ -424,6 +436,7 @@ public class ToradocuConditionCollection implements ConditionCollection {
           Log.logLine(message);
         }
       }
+      */
     }
     return conditionMethod;
   }

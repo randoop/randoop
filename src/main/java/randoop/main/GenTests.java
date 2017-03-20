@@ -28,7 +28,6 @@ import randoop.generation.ForwardGenerator;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
-import randoop.input.toradocu.ToradocuConditionCollection;
 import randoop.instrument.ExercisedClassVisitor;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
@@ -244,17 +243,6 @@ public class GenTests extends GenInputsAbstract {
      * Currently only uses Toradocu generated conditions.
      */
     ConditionCollection operationConditions = null;
-    try {
-      if (GenInputsAbstract.toradocu_conditions != null) {
-        operationConditions =
-            ToradocuConditionCollection.createToradocuConditions(
-                GenInputsAbstract.toradocu_conditions);
-      }
-    } catch (IllegalArgumentException e) {
-      System.out.printf("%nError on condition input: %s%n", e.getMessage());
-      System.out.println("Exiting Randoop.");
-      System.exit(1);
-    }
 
     OperationModel operationModel = null;
     try {
