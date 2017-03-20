@@ -794,6 +794,7 @@ public class RandoopSystemTest {
         is(equalTo(runStatus.regressionTestCount)));
   }
 
+  /*
   @Test
   public void runToradocuInputTest() {
     TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("toradocu-input");
@@ -825,6 +826,7 @@ public class RandoopSystemTest {
     generateAndTestWithCoverage(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
   }
+  */
 
   /**
    * recreate problem with tests over Google Guava where value from private enum returned by public
