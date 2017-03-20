@@ -168,7 +168,11 @@ occasions when they fail and reveal a bug or a regression failure.
 -->
   Set an environment variable
   <code>RANDOOP_PATH</code> to
-  the path of the unzipped archive.
+  the path of the unzipped archive,
+  and set an environment variable
+  <code>RANDOOP_JAR</code> to
+  the location of <code>randoop-all-3.1.1.jar</code>
+  within the unzipped archive.
 </p>
 
 <p>
@@ -189,26 +193,26 @@ Run Randoop by invoking its main class <code>randoop.main.Main</code>:
 </p>
 
 <pre class="code">
-java -ea -classpath <em>&lt;classpath-for-classes-under-test&gt;</em>:$(RANDOOP_PATH)/randoop-all-3.1.1.jar randoop.main.Main <em>command</em> <em>args...</em>
+java -ea randoop.main.Main <em>command</em> <em>args...</em>
 </pre>
 
 <p>
-The classpath needs to contain both Randoop and the path to the classes under test.
-For instance, if the current working directory contains a directory named <code>bin</code> containing
- your compiled classes, then you would use:
+The classpath needs to contain both Randoop
+(<code>randoop-all-3.1.1.jar</code>) and the
+classes under test.
+For instance, if the current working directory contains a directory named
+<code>bin</code> containing your compiled classes, then you would use:
 </p>
 
 <pre class="code">
-  -classpath bin:$(RANDOOP_PATH)/randoop-all-3.1.1.jar
+  ... -classpath bin:$(RANDOOP_JAR) ...
 </pre>
 
  <p>
 (On Windows, adjust the classpath, such as using semicolon instead of colon
 as the separator.)
 Note that you don't need the <code>-classpath</code> argument if you add
-<code>randoop-all-3.1.1.jar</code> to your classpath.
-(Note that if you are using the recommended installation from the zip file,
-the path to the jar file is <code>/randoop-all-3.1.1.jar</code>.)
+<code>$(RANDOOP_JAR)</code> to your classpath.
 </p>
 
 <p>
@@ -221,8 +225,8 @@ For details, see <a href="#getting_help">Getting Help</a>.
 Example uses:
 
 <pre class="code">
-java -ea -classpath $(RANDOOP_PATH)/randoop-all-3.1.1.jar randoop.main.Main help
-java -ea -classpath $(RANDOOP_PATH)/randoop-all-3.1.1.jar randoop.main.Main help gentests
+java -ea -classpath $(RANDOOP_JAR) randoop.main.Main help
+java -ea -classpath $(RANDOOP_JAR) randoop.main.Main help gentests
 </pre>
 </li>
 
@@ -230,7 +234,7 @@ java -ea -classpath $(RANDOOP_PATH)/randoop-all-3.1.1.jar randoop.main.Main help
 see <a href="#generating_tests">Generating Tests</a>. Example use:
 
 <pre class="code">
-java -classpath bin:randoop-all-3.1.1.jar randoop.main.Main gentests --testclass=java.util.TreeSet --timelimit=60
+java -ea -classpath <em>myclasspath</em>:$(RANDOOP_JAR) randoop.main.Main gentests --testclass=java.util.TreeSet --timelimit=60
 </pre>
 </li>
 
@@ -284,7 +288,7 @@ java.util.TreeSet</pre>
 <p>
 and invoke Randoop as follows: </p>
 
-<pre class="code">java -classpath $(RANDOOP_PATH)/randoop-all-3.1.1.jar randoop.main.Main gentests --classlist=myclasses.txt --timelimit=60</pre>
+<pre class="code">java -classpath $(RANDOOP_JAR) randoop.main.Main gentests --classlist=myclasses.txt --timelimit=60</pre>
 
 
 <p>After 60 seconds, Randoop stops generating tests. The last thing Randoop prints out is the name of the JUnit files containing the tests it generated. You should see a message similar to the following: </p>
@@ -1058,10 +1062,13 @@ test, by using the
 </p>
 
 <p>
-Alternately, you can provide a different implementation of a method that will be used
-when running under Randoop.  Randoop transforms the code under test,
-replacing each call to a undesired method by a call to a new implementation
-that you provide.
+Alternately, you can use the <code>mapcall</code> agent to provide a different
+implementation of a method that will be used when running under Randoop.
+The mapcall Java agent transforms the code under test, replacing each call to a
+undesired method by a call to a new implementation.
+Default alternate implementations are provided for <code>System.exit()</code>
+as well as methods from AWT and Swing classes, but you can also provide your
+own implementations.
 </p>
 
 <p>
@@ -1069,55 +1076,131 @@ To transform calls to undesired methods, use the Java agent in the
 <code>mapcall-3.1.1.jar</code>
 file (either in the unzipped distribution file, or downloaded from the
 <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>).
-Then use this file pass the following command-line option to <code>java</code> when running Randoop:
+To apply the transformations to default implementations, use this file by
+passing the following command-line option to <code>java</code> when running
+Randoop:
+</p>
+<pre>
+    -javaagent:$(RANDOOP_PATH)/mapcall-3.1.1.jar
+</pre>
+<p>
+When you run the generated tests, you will also need to supply the same
+<code>-javaagent:...</code> argument.
+</p>
+
+<p>
+If you want to provide your own implementations to calls, you can also run the
+agent by providing a file name as an argument:
 </p>
 <pre>
     -javaagent:$(RANDOOP_PATH)/mapcall-3.1.1.jar=--map_calls=map_calls.txt
 </pre>
 <p>
-(<b>Note:</b> If you supply the <code>-javaagent</code> option to <code>java</code>
-when running Randoop, and there is any chance that Randoop may spawn
-another process (for example, if the <code>--compare-checks</code> command-line
-option is specified), then then you should also specify the
-<code>--agent</code> argument to Randoop.)
+In this case, you need to supply the <code>map_calls.txt</code> file, and also a
+definition of the replacement methods. As before, when you run the generated
+tests, you will need to supply the same <code>-javaagent:...</code> argument.
 </p>
 
 <p>
-You need to supply the <code>map_calls.txt</code> file, and also a definition
-of the replacement methods.  When you run the generated tests, you will
-also need to supply the same <code>-javaagent:...</code> argument.  (In the
-future, Randoop may provide a way to generate standalone tests even when
-generating tests using the <code>-javaagent:...</code> argument.)
-</p>
-
-<p>
-The <code>map_calls.txt</code> file consists of sections, where each section
-has the format
+The <code>map_calls.txt</code> file lists replacements by package, class or
+method.
+A <i>package replacement</i> is indicated by a line
 </p>
 <pre>
-class-regex
-  old-method-name (arg-type, ...) new-class-name
-  old-method-name (arg-type, ...) new-class-name
-  ...
+  old-package-name new-package-name
+</pre>
+<p>
+and indicates a call to a method of any class in the old package should be
+mapped to a method with the same name of a class with the same name but in the
+new package. For instance, the line
+</p>
+<pre>
+java.awt mock.java.awt
+</pre>
+would map a call to <code>java.awt.Button.getLabel()</code> to
+<code>mock.java.awt.Button.getLabel()</code>, and a call to
+<code>java.awt.Canvas.paint(Graphics)</code> to
+<code>mock.java.awt.Canvas.paint(Graphics)</code>.
+
+<p>
+  A <i>class replacement</i> is indicated by a line
+</p>
+<pre>
+  old-class-name new-class-name
+</pre>
+<p>
+and indicates that a call to any method of the old class should be mapped to a
+method with the same name in the new class. For instance, the line
+</p>
+<pre>
+java.awt.Button mock.java.awt.Button
+</pre>
+<p>
+would map a call to <code>java.awt.Button.getLabel()</code> to
+<code>mock.java.awt.Button.getLabel()</code>.
+In contrast to the package replacement above, a call to
+<code>java.awt.Canvas.paint(Graphics)</code> would be unaffected.
+</p>
+
+<p>
+  A <i>method replacement</i> is indicated by a line
+</p>
+<pre>
+  old-method new-method
+</pre>
+<p>
+and indicates that a call to the old method should be mapped to a call to the
+new method. (Minimally, the old-method should include the method signature.)
+For instance, the following line would replace only the
+<code>java.awt.Button.getLabel()</code> method
+</p>
+<pre>
+  java.awt.Button.getLabel() mock.java.awt.Button.getLabel()
+</pre>
+<p>
+and would not affect the other methods in the class or package.
+</p>
+
+<p>
+The replacements don't have to be specific about the class or method of the
+new name if they do not change. For instance, the method replacement above could
+be written as
+</p>
+<pre>
+  java.awt.Button mock.java.awt
+</pre>
+<p>
+and the class replacement could be written as
+</p>
+<pre>
+  java.awt.Button.getLabel() mock.java.awt
 </pre>
 
 <p>
-Each section gives a regular expression that matches class names, and one or
-more replacements that will be done in classes that match the regexp.  The
-replacement is the fully-qualified method name, fully-qualified argument
-types, and a new class name.  A call to the old method will be replaced by
-a call to a method with identical name and arguments in the new class.
+The mapcalls file format is
+</p>
+<pre>
+global-replacements
+regex
+  specific-replacements
+  ...
+regex
+  specific-replacements
+  ...
+...
+</pre>
+<p>
+beginning with replacements to be applied to all classes, and then by groups of
+replacements that are applied to classes with names that match the regular
+expression.
+(Blank lines and <code>//</code> comments are ignored in the
+<code>map_calls.txt</code> file.)
 </p>
 
 <p>
-Blank lines and <code>//</code> comments are ignored in the
-<code>map_calls.txt</code> file.
-</p>
-
-<p>
-See an <a href="map_calls_example.txt">example map_calls.txt</a> file and
+This example <a href="map_calls_example.txt">example map_calls.txt</a> file and
 an <a href="RandoopMappedCalls.java.txt">example definition of replacement
-methods</a>.
+methods</a> would override the default replacements defined in the mapcall agent.
 </p>
 
 
@@ -1342,19 +1425,19 @@ taking too long to execute and cannot be killed by Randoop.
 <li><strong>Randoop's <code>help</code> command</strong>:  For help on
   usage, use Randoop's <code>help</code> command. To print Randoop's main help message, run:
 
-<pre class="code">java -classpath $(RANDOOP_PATH)/randoop-all-3.1.1.jar randoop.main.Main help</pre>
+<pre class="code">java -classpath $(RANDOOP_JAR) randoop.main.Main help</pre>
 
 To print help for test generation (the <code>gentests</code> command), run:
 
 <pre class="code">
-java -ea -classpath $(RANDOOP_PATH)/randoop-all-3.1.1.jar randoop.main.Main help gentests
+java -ea -classpath $(RANDOOP_JAR) randoop.main.Main help gentests
 </pre>
 
 To also include unpublicized (due to being experimental or unsupported)
  options for a command, use the <code>--unpub</code> flag:
 
 <pre class="code">
-java -ea -classpath $(RANDOOP_PATH)/randoop-all-3.1.1.jar randoop.main.Main help --unpub gentests
+java -ea -classpath $(RANDOOP_JAR) randoop.main.Main help --unpub gentests
 </pre>
 
 
