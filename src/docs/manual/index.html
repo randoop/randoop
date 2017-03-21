@@ -14,7 +14,7 @@
 <h1>Randoop Manual</h1> <!-- omit from toc -->
 
 <p>
-This is the manual for Randoop version 3.1.1, released March 15, 2017.
+This is the manual for Randoop version 3.1.2, released March 21, 2017.
 The Randoop homepage is
 <a href="https://randoop.github.io/randoop/">https://randoop.github.io/randoop/</a>.
 </p>
@@ -154,16 +154,16 @@ occasions when they fail and reveal a bug or a regression failure.
 
 <p>
   Download and unzip the file
-  <a href="https://github.com/randoop/randoop/releases/download/v3.1.1/randoop-3.1.1.zip"><code>randoop-3.1.1.zip</code></a>.
+  <a href="https://github.com/randoop/randoop/releases/download/v3.1.2/randoop-3.1.2.zip"><code>randoop-3.1.2.zip</code></a>.
 <!-- from the
   <a href="https://github.com/randoop/randoop/releases/latest">latest
     release</a>.
 -->
 <!--
   This zip archive contains the Randoop jar file
-  <code>randoop-all-3.1.1.jar</code>, the Java agent jar files
-  (<code>exercised-class-3.1.1.jar</code> and
-   <code>mapcall-3.1.1.jar</code>),
+  <code>randoop-all-3.1.2.jar</code>, the Java agent jar files
+  (<code>exercised-class-3.1.2.jar</code> and
+   <code>mapcall-3.1.2.jar</code>),
   and this documentation.
 -->
   Set an environment variable
@@ -171,7 +171,7 @@ occasions when they fail and reveal a bug or a regression failure.
   the path of the unzipped archive,
   and set an environment variable
   <code>RANDOOP_JAR</code> to
-  the location of <code>randoop-all-3.1.1.jar</code>
+  the location of <code>randoop-all-3.1.2.jar</code>
   within the unzipped archive.
 </p>
 
@@ -198,7 +198,7 @@ java -ea randoop.main.Main <em>command</em> <em>args...</em>
 
 <p>
 The classpath needs to contain both Randoop
-(<code>randoop-all-3.1.1.jar</code>) and the
+(<code>randoop-all-3.1.2.jar</code>) and the
 classes under test.
 For instance, if the current working directory contains a directory named
 <code>bin</code> containing your compiled classes, then you would use:
@@ -690,11 +690,12 @@ Randoop about your application, and that is how we recommend using Randoop.
  at least one use of a member of a class whose name matches the regular expression.
             <li id="option:include-if-class-exercised"><b>--include-if-class-exercised=</b><i>filename</i>.
              File containing fully qualified names of classes that the tests must exercise. This option only
- works if Randoop is run using <code>-javaagent:exercised_agent.jar</code> to instrument the
- classes. A test is output only if it exercises at least one of the class names in the file. A
- test exercises a class if it executes any constructor or method of the class, directly or
- indirectly (the constructor or method might not appear in the source code of the test).
- Included classes may be abstract.
+ works if Randoop is run using the <a
+ href="https://randoop.github.io/randoop/manual/index.html#exercised-filter">exercised-class
+ javaagent</a> to instrument the classes. A test is output only if it exercises at least one of
+ the class names in the file. A test exercises a class if it executes any constructor or method
+ of the class, directly or indirectly (the constructor or method might not appear in the source
+ code of the test). Included classes may be abstract.
       </ul>
 
   <li id="optiongroup:Which-tests-to-output">Which tests to output
@@ -1089,13 +1090,13 @@ that you provide.
 
 <p>
 To transform calls to undesired methods, use the Java agent in the
-<code>mapcall-3.1.1.jar</code>
+<code>mapcall-3.1.2.jar</code>
 file (either in the unzipped distribution file, or downloaded from the
 <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>).
 Then use this file pass the following command-line option to <code>java</code> when running Randoop:
 </p>
 <pre>
-    -javaagent:$(RANDOOP_PATH)/mapcall-3.1.1.jar=--map_calls=map_calls.txt
+    -javaagent:$(RANDOOP_PATH)/mapcall-3.1.2.jar=--map_calls=map_calls.txt
 </pre>
 <p>
 (<b>Note:</b> If you supply the <code>-javaagent</code> option to <code>java</code>
@@ -1217,17 +1218,17 @@ exception escaping the method as the rep invariant being violated.
   <code>--include-if-class-exercised</code> option.
   However, for this option to work, the classes must be instrumented to indicate
   when they are exercised.
-  To instrument classes for this filter, also use the <code>exercised-class-3.1.1.jar</code>
+  To instrument classes for this filter, also use the <code>exercised-class-3.1.2.jar</code>
   by giving the following command-line option for java
 </p>
 <pre><code>
-  -javaagent:$(RANDOOP_PATH)/exercised-class-3.1.1.jar
+  -javaagent:$(RANDOOP_PATH)/exercised-class-3.1.2.jar
 </code></pre>
 <p>
   This will instrument any non-abstract constructor and method of loaded
   classes so that the use of a class can be detected.
   (The instrumentation is not done on any JDK or JUnit classes.)
-  (The <code>exercised-class-3.1.1.jar</code> file can be found in the
+  (The <code>exercised-class-3.1.2.jar</code> file can be found in the
     unzipped distribution archive, or can be downloaded from the
     <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.)
 </p>

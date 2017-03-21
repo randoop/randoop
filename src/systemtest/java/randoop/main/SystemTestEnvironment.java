@@ -3,6 +3,7 @@ package randoop.main;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -29,6 +30,10 @@ class SystemTestEnvironment {
   /** The path for the root directory for test input classes. */
   final Path testInputClassDir;
 
+  final Path mapcallAgentPath;
+
+  final Path excercisedClassAgentPath;
+
   /**
    * Initializes a {@link SystemTestEnvironment} with the given classpath, working directory, input
    * class directory, and JaCoCo agent path.
@@ -39,11 +44,18 @@ class SystemTestEnvironment {
    * @param jacocoAgentPath the path for the jacocoagent.jar file
    */
   private SystemTestEnvironment(
-      String classpath, Path workingDir, Path testInputClassDir, Path jacocoAgentPath) {
+      String classpath,
+      Path workingDir,
+      Path testInputClassDir,
+      Path jacocoAgentPath,
+      Path mapcallAgentPath,
+      Path excercisedClassAgentPath) {
     this.classpath = classpath;
     this.systemTestWorkingDir = workingDir;
     this.testInputClassDir = testInputClassDir;
     this.jacocoAgentPath = jacocoAgentPath;
+    this.mapcallAgentPath = mapcallAgentPath;
+    this.excercisedClassAgentPath = excercisedClassAgentPath;
   }
 
   /**
@@ -59,7 +71,28 @@ class SystemTestEnvironment {
     Path workingDir = buildDir.resolve("working-directories");
     Path testInputClassDir = buildDir.resolve("classes/testInput");
     Path jacocoAgentPath = buildDir.resolve("jacocoagent/jacocoagent.jar");
-    return new SystemTestEnvironment(classpath, workingDir, testInputClassDir, jacocoAgentPath);
+    Path libsPath = buildDir.resolve("libs");
+    Path mapcallAgentPath = null;
+    Path exercisedClassAgentPath = null;
+    try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(libsPath)) {
+      for (Path entry : dirStream) {
+        if (entry.getFileName().toString().startsWith("exercised-class")) {
+          exercisedClassAgentPath = entry;
+        }
+        if (entry.getFileName().toString().startsWith("mapcall")) {
+          mapcallAgentPath = entry;
+        }
+      }
+    } catch (IOException e) {
+      fail("unable to get build directory contents");
+    }
+    return new SystemTestEnvironment(
+        classpath,
+        workingDir,
+        testInputClassDir,
+        jacocoAgentPath,
+        mapcallAgentPath,
+        exercisedClassAgentPath);
   }
 
   /**

@@ -225,8 +225,9 @@ public class RandoopSystemTest {
   }
 
   /**
-   * Test formerly known as randoop2. Previously did a diff on generated test. Used to fail with
-   * --weighted-constants and --weighted-sequences additions prior to the JUnitFileWriter removal
+   * Test formerly known as randoop2. Previously did a diff on generated test. Used to always fail
+   * with --weighted-constants and --weighted-sequences additions prior to the JUnitFileWriter
+   * removal. Now fails inconsistently.
    */
   @Test
   public void runNaiveCollectionsTest() {
@@ -865,6 +866,31 @@ public class RandoopSystemTest {
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
+  @Test
+  public void runExercisedClassFilter() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("exercised-class");
+    testEnvironment.addJavaAgent(systemTestEnvironment.excercisedClassAgentPath);
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addClassList("resources/systemTest/randoop/instrument/testcase/allclasses.txt");
+    options.setOption(
+        "include-if-class-exercised",
+        "resources/systemTest/randoop/instrument/testcase/coveredclasses.txt");
+    options.setOption("outputlimit", "250");
+    options.setOption("inputlimit", "500");
+    options.setErrorBasename("ExError");
+    options.setRegressionBasename("ExRegression");
+
+    CoverageChecker coverageChecker = new CoverageChecker(options);
+    //TODO figure out why this method not covered
+    coverageChecker.ignore("randoop.instrument.testcase.A.toString()");
+    coverageChecker.exclude("randoop.instrument.testcase.C.getValue()");
+    coverageChecker.exclude("randoop.instrument.testcase.C.isZero()");
+    coverageChecker.exclude("randoop.instrument.testcase.C.jumpValue()");
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
+  }
+
   // TODO: can take too much heap space and timeout/fail
   @Test
   public void runWeightedSequencesTest() {
@@ -1151,9 +1177,9 @@ public class RandoopSystemTest {
   }
 
   /**
-   * Use this to rename the .csv file named by <code>--output-sequence-info-filename</code> since
-   * the weightedTests write to the same directory. Would not be an issue in normal conditions, as
-   * the .csv file will always be overwritten.
+   * Helper function for the weightedTests. Use this to rename the .csv file named by <code>
+   * --output-sequence-info-filename</code> since the weightedTests write to the same directory.
+   * Would not be an issue in normal conditions, as the .csv file will always be overwritten.
    *
    * @param newFileName the name which <code>--output-sequence-info-filename</code> will be renamed
    *     to
@@ -1168,7 +1194,7 @@ public class RandoopSystemTest {
     }
   }
 
-  /** TODO: issue with heap space running out */
+  /** TODO: occasional issues with heap space running out without inputlimit */
   private void setUpAndRunWeightedTests(TestEnvironment testEnvironment, RandoopOptions options) {
 
     options.setOption("inputlimit", "125"); // temp fix

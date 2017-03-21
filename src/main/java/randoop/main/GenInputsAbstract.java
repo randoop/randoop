@@ -131,11 +131,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * File containing fully qualified names of classes that the tests must exercise. This option only
-   * works if Randoop is run using <code>-javaagent:exercised_agent.jar</code> to instrument the
-   * classes. A test is output only if it exercises at least one of the class names in the file. A
-   * test exercises a class if it executes any constructor or method of the class, directly or
-   * indirectly (the constructor or method might not appear in the source code of the test).
-   * Included classes may be abstract.
+   * works if Randoop is run using the <a
+   * href="https://randoop.github.io/randoop/manual/index.html#exercised-filter">exercised-class
+   * javaagent</a> to instrument the classes. A test is output only if it exercises at least one of
+   * the class names in the file. A test exercises a class if it executes any constructor or method
+   * of the class, directly or indirectly (the constructor or method might not appear in the source
+   * code of the test). Included classes may be abstract.
    */
   @Option("File containing class names that tests must exercise")
   public static File include_if_class_exercised = null;
