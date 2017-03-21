@@ -91,8 +91,12 @@ sourceSets {
 }
 
 configurations {
+  plume
+  compile.extendsFrom plume
+
   manual {
     description = "Generate user and developer documentation"
+    extendsFrom plume
   }
 
   /*
@@ -113,7 +117,7 @@ configurations {
 
 dependencies {
   /* Randoop uses local copy of Plume */
-  compile files('lib/plume.jar')
+  plume files('lib/plume.jar')
   compile group: 'com.google.code.gson', name: 'gson', version: '2.8.0'
   compile group: 'junit', name: 'junit', version: '4.+'
 
@@ -154,7 +158,6 @@ dependencies {
    * building documentation uses Options doclet that is part of plume, and
    * requires compiled source.
    */
-  manual files('lib/plume.jar')
   manual sourceSets.main.output
 }
 
@@ -187,6 +190,11 @@ compileAgentTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileSystemTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
 
+/*
+ * Configuration for clean
+ */
+clean.dependsOn ':mapcall:clean'
+clean.dependsOn ':exercised-class:clean'
 
 /*
  * Configuration for testing.
@@ -320,7 +328,7 @@ task extractJacocoAgent(type: Copy) {
  * Runs JUnit over all classes in systemTest sourceSet.
  * JUnit tests assume that working directories can be found in the build directory.
  */
-task systemTest(type: Test, dependsOn: [ 'extractJacocoAgent', 'generateWorkingDirs' ]) {
+task systemTest(type: Test, dependsOn: [ 'extractJacocoAgent', 'generateWorkingDirs', 'copyJars' ]) {
 
   workingDir = file("$buildDir")
   testClassesDir = sourceSets.systemTest.output.classesDir
@@ -394,6 +402,8 @@ task copyJars(type: Copy, dependsOn: [':exercised-class:jar', ':mapcall:jar']) {
   from subprojects.collect { it.tasks.withType(Jar) }
   into "$buildDir/libs"
 }
+
+assemble.dependsOn copyJars
 
 task singleJar (type: Jar) {
   group "build"
