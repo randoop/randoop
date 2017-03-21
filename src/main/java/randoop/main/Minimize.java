@@ -11,7 +11,16 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
-import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.ast.expr.AnnotationExpr;
+import com.github.javaparser.ast.expr.BooleanLiteralExpr;
+import com.github.javaparser.ast.expr.CharLiteralExpr;
+import com.github.javaparser.ast.expr.DoubleLiteralExpr;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.IntegerLiteralExpr;
+import com.github.javaparser.ast.expr.LongLiteralExpr;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.NullLiteralExpr;
+import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
@@ -30,7 +39,14 @@ import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -95,7 +111,7 @@ public class Minimize extends CommandHandler {
         null,
         "Path to Java file whose failing tests will be minimized, classpath to compile and run the Java file, maximum time (in seconds) allowed for a single unit test case to run before it times out.",
         "A minimized JUnit test suite (as one Java file) named \"InputFileMinimized.java\" if \"InputFile.java\" were the name of the input file.",
-        "java -ea -cp bin:randoop-all-3.0.9.jar randoop.main.Main minimize --suitepath=~/RandoopTests/src/ErrorTestLang.java --suiteclasspath=~/RandoopTests/commons-lang3-3.5.jar --testsuitetimeout=30",
+        "java -ea -cp bin:randoop-all-3.1.1.jar randoop.main.Main minimize --suitepath=~/RandoopTests/src/ErrorTestLang.java --suiteclasspath=~/RandoopTests/commons-lang3-3.5.jar --testsuitetimeout=30",
         new Options(Minimize.class));
   }
 
@@ -153,9 +169,10 @@ public class Minimize extends CommandHandler {
    *
    * <p>
    *
-   * <p>The original input Java file will be compiled and run once. The "expected output" is the
-   * standard output and standard error produced by compiling and running the original input Java
-   * file.
+   * <p>The original input Java file will be compiled and run once. The "expected output" is a map
+   * from method name to failure stack trace. A method is included in the map only if the method
+   * contains a failing assertion. Thus, the expected output of a test suite with no failing tests
+   * will be empty.
    *
    * @param filePath the path to the Java file that is being minimized
    * @param classPath classpath used to compile and run the Java file
@@ -171,11 +188,11 @@ public class Minimize extends CommandHandler {
     try (FileInputStream inputStream = new FileInputStream(filePath)) {
       compUnit = JavaParser.parse(inputStream);
     } catch (ParseException e) {
-      System.err.println("Error parsing Java file " + filePath);
+      System.err.println("Error parsing Java file: " + filePath);
       System.err.println(e);
       return false;
     } catch (IOException e) {
-      System.err.println("Error reading Java file " + filePath);
+      System.err.println("Error reading Java file: " + filePath);
       System.err.println(e);
       return false;
     }
@@ -196,15 +213,15 @@ public class Minimize extends CommandHandler {
     // Write to a new file with 'Minimized' appended to the name.
     String newFilePath = writeToFile(compUnit, filePath, "Minimized");
 
-    // Compile the Java file and check that there are no errors.
+    // Compile the Java file and check that the exit value is zero.
     if (compileJavaFile(newFilePath, classPath, packageName, timeoutLimit) != 0) {
-      System.err.println("Error when compiling file " + filePath + ". Aborting");
+      System.err.println("Error when compiling file " + filePath + ". Aborting.");
       return false;
     }
     // Run the Java file.
     String runResult = runJavaFile(newFilePath, classPath, packageName, timeoutLimit);
 
-    // Keep track of the expected output.
+    // Keep track of the expected output, a map from method name to failure stack trace.
     Map<String, String> expectedOutput = normalizeJUnitOutput(runResult);
 
     System.out.println("Minimizing: " + filePath);
@@ -219,8 +236,8 @@ public class Minimize extends CommandHandler {
     System.out.println("Minimizing complete.\n");
 
     // Output original and minimized file lengths.
-    System.out.println("Original file length: " + getFileLength(filePath) + " lines");
-    System.out.println("Minimized file length: " + getFileLength(newFilePath) + " lines");
+    System.out.println("Original file length: " + getFileLength(filePath) + " lines.");
+    System.out.println("Minimized file length: " + getFileLength(newFilePath) + " lines.");
 
     return true;
   }
@@ -250,7 +267,7 @@ public class Minimize extends CommandHandler {
           // Get method's annotations.
           List<AnnotationExpr> annotationExprs = method.getAnnotations();
           if (annotationExprs.toString().contains("@Test")) {
-            // Minimize the method if it is a JUnit test method.
+            // Minimize the method only if it is a JUnit test method.
             minimizeMethod(
                 method, cu, packageName, filePath, classpath, expectedOutput, timeoutLimit);
             System.out.println("Minimized method " + method.getName());
@@ -270,7 +287,7 @@ public class Minimize extends CommandHandler {
    * @param packageName the name of the package that the Java file is in
    * @param filePath path to the Java file that we are minimizing
    * @param classpath classpath needed to compile and run the Java file
-   * @param expectedOutput expected standard output from running the JUnit test suite
+   * @param expectedOutput expected output from running the JUnit test suite
    * @param timeoutLimit number of seconds allowed for the whole test suite to be run
    */
   private static void minimizeMethod(
@@ -291,31 +308,27 @@ public class Minimize extends CommandHandler {
     for (int i = statements.size() - 1; i >= 0; i--) {
       Statement currStmt = statements.get(i);
 
-      // Remove the current statement. We will re-insert simplifications
-      // of it.
+      // Remove the current statement. We will re-insert simplifications of it.
       statements.remove(i);
 
       // Obtain a list of possible replacements for the current statement.
       List<Statement> replacements = getStatementReplacements(currStmt, primitiveValues);
       boolean replacementFound = false;
       for (Statement stmt : replacements) {
-        // Add replacement statement to the method's body. If stmt is
-        // null, don't add
-        // anything since null represents removal of the statement.
+        // Add replacement statement to the method's body. If stmt is null, don't add anything since null represents removal of the statement.
         if (stmt != null) {
           statements.add(i, stmt);
         }
 
-        // Write, compile, and run the new Java file with the new suffix
-        // "Minimized".
+        // Write, compile, and run the new Java file with the new suffix "Minimized".
         String newFilePath = writeToFile(compUnit, filePath, "Minimized");
         if (checkCorrectlyMinimized(
             newFilePath, classpath, packageName, expectedOutput, timeoutLimit)) {
           // No compilation or runtime issues, obtained output is the same as the expected output.
           // Use simplification of this statement and continue with next statement.
           replacementFound = true;
-          // Assertions are never simplified; if this is an assertion,
-          // it's the original statement.
+
+          // Assertions are never simplified; if this is an assertion, it's the original statement.
           storeValueFromAssertion(currStmt, primitiveValues);
           break;
         } else {
@@ -380,7 +393,7 @@ public class Minimize extends CommandHandler {
         }
 
         // Simplify statement by removing the left hand side.
-        replacements.add(removeLeftHandSideSimplifiation(vdExpr));
+        replacements.add(removeLeftHandSideSimplification(vdExpr));
       }
     }
     return replacements;
@@ -557,7 +570,7 @@ public class Minimize extends CommandHandler {
    *     the declared variable. Returns {@code null} if more than one variable is declared in the
    *     {@code VariableDeclarationExpr}.
    */
-  private static Statement removeLeftHandSideSimplifiation(VariableDeclarationExpr vdExpr) {
+  private static Statement removeLeftHandSideSimplification(VariableDeclarationExpr vdExpr) {
     // Copy the variable declaration expression.
     VariableDeclarationExpr exprCopy = (VariableDeclarationExpr) vdExpr.clone();
     List<VariableDeclarator> vars = exprCopy.getVars();
@@ -607,11 +620,15 @@ public class Minimize extends CommandHandler {
     for (Type type : fullyQualifiedNames) {
       String typeName = type.toString();
 
+      // If the type is a generic type, handle the main type, the other
+      // elements are included in the list and are processed separately.
       int leftAngleBracketIndex = typeName.indexOf('<');
       if (leftAngleBracketIndex >= 0) {
         typeName = typeName.substring(0, leftAngleBracketIndex);
       }
+      // Add an import statement to the compilation unit.
       addImport(compUnit, typeName);
+      // Add to the map, the fully-qualified type name to the simple type name.
       typeNameMap.put(typeName, getSimpleTypeName(typeName));
     }
 
@@ -679,11 +696,15 @@ public class Minimize extends CommandHandler {
       String packageName,
       Map<String, String> expectedOutput,
       int timeoutLimit) {
+    // Check that the exit value from compiling the Java file is zero.
     if (compileJavaFile(filePath, classpath, packageName, timeoutLimit) != 0) {
       return false;
     }
 
+    // Run the Java file and get the standard output.
     String runResult = runJavaFile(filePath, classpath, packageName, timeoutLimit);
+
+    // Compare the standard output with the expected output.
     return expectedOutput.equals(normalizeJUnitOutput(runResult));
   }
 
@@ -698,16 +719,8 @@ public class Minimize extends CommandHandler {
    */
   private static int compileJavaFile(
       String filePath, String classpath, String packageName, int timeoutLimit) {
-    // Obtain directory to carry out compilation and execution step
+    // Obtain directory to carry out compilation and execution step.
     String executionDir = getExecutionDirectory(filePath, packageName);
-
-    // Obtain directory path from file path.
-    Path fPath = Paths.get(filePath).getParent();
-    // Directory path for the classpath
-    String dirPath = null;
-    if (fPath != null) {
-      dirPath = fPath.toString();
-    }
 
     // Command to compile the input Java file
     String command = "javac -classpath " + systemClassPath;
@@ -734,12 +747,12 @@ public class Minimize extends CommandHandler {
    */
   private static String runJavaFile(
       String filePath, String classpath, String packageName, int timeoutLimit) {
-    // Obtain directory to carry out compilation and execution step
+    // Obtain directory to carry out compilation and execution step.
     String executionDir = getExecutionDirectory(filePath, packageName);
 
     // Obtain directory path from file path.
     Path fPath = Paths.get(filePath).getParent();
-    // Directory path for the classpath
+    // Directory path for the classpath.
     String dirPath = null;
     if (fPath != null) {
       dirPath = fPath.toString();
@@ -775,12 +788,13 @@ public class Minimize extends CommandHandler {
    *
    * @param filePath the absolute file path to the input Java file
    * @param packageName package name of input Java file
-   * @return String of the directory to execute the commands in
+   * @return String of the directory to execute the commands in. Null if packageName is null.
    */
   private static String getExecutionDirectory(String filePath, String packageName) {
     if (packageName == null) {
       return null;
     }
+
     String packageAsDirectory = packageName.replace(".", System.getProperty("file.separator"));
     int index = filePath.lastIndexOf(packageAsDirectory);
     if (index < 0) {
@@ -872,53 +886,56 @@ public class Minimize extends CommandHandler {
       return new Outputs("", "A computation in the process threw an exception.", 1);
     }
 
-    // Collect and return the results from the standard output and error
-    // output.
+    // Collect and return the results from the standard output and error output.
     return new Outputs(stdOutputString, errOutputString, timeLimitProcess.exitValue());
   }
 
   /**
    * Normalize the standard output obtained from running a JUnit test suite. By normalizing the
    * {@code String} representation of the output, we remove any extraneous information such as line
-   * numbers. The relevant information that is retained includes the indices of each failing test
-   * and the respective method names.
+   * numbers. The resulting output is a map from method name to the method's failure stack trace.
    *
    * @param input the {@code String} produced from running a JUnit test suite
-   * @return a {@code String} which contains several {@code String} pairs of output from the JUnit
-   *     test suite. Each pair's first element is the index of the failing test along with the name
-   *     of the method containing the failing assertion. Each pair's second element is the output
-   *     from the failing assertion. For example: {@code 1) test10(ErrorTestLangMinimized)
-   *     java.lang.AssertionError: Contract failed: compareTo-equals on fraction1 and fraction4}
+   * @return a map from method name to the method's failure stack trace. The stack trace will not
+   *     contain any line numbers.
    */
   private static Map<String, String> normalizeJUnitOutput(String input) {
     BufferedReader bufReader = new BufferedReader(new StringReader(input));
-    String line = null;
+    String line;
 
-    // JUnit output starts with index 1 for first failure
-    int index = 1;
     String methodName = null;
-
     Map<String, String> resultMap = new HashMap<String, String>();
 
     StringBuilder result = new StringBuilder();
     try {
+      // JUnit output starts with index 1 for first failure
+      int index = 1;
+
       // Read through the trace, line by line.
       while ((line = bufReader.readLine()) != null) {
         String indexStr = index + ") ";
+        // Check if the current line is the start of a failure stack trace for a method.
         if (line.startsWith(indexStr)) {
+          // If a previous failure stack trace is being read, add the existing method name
+          // and stack trace to the map.
           if (methodName != null) {
             resultMap.put(methodName, result.toString());
+
+            // Reset the string builder.
             result.setLength(0);
           }
+          // Set the method name to the current line.
           methodName = line;
           index += 1;
         } else if (line.isEmpty()) {
+          // Reached an empty line which marks the end of the JUnit output.
           resultMap.put(methodName, result.toString());
           break;
         } else if (methodName != null) {
-          // Look for a left-parentheses
+          // Look for a left-parentheses which marks the position where a line number will appear.
           int lParenIndex = line.indexOf('(');
           if (lParenIndex >= 0) {
+            // Remove the substring containing the line number.
             line = line.substring(0, lParenIndex);
           }
           result.append(line + "\n");
@@ -927,11 +944,12 @@ public class Minimize extends CommandHandler {
       bufReader.close();
     } catch (IOException e) {
       // Error with readLine() or close().
-      System.err.println("Error reading line from trace.");
+      System.err.println("I/O error reading line from trace.");
       e.printStackTrace();
       System.exit(1);
       return null;
     }
+
     return resultMap;
   }
 
@@ -946,14 +964,14 @@ public class Minimize extends CommandHandler {
    *     {@code null} if error occurred in writing to the new file
    */
   private static String writeToFile(CompilationUnit compUnit, String filePath, String suffix) {
-    // Rename the overall class to [old class name][suffix]
+    // Rename the overall class to [old class name][suffix].
     new ClassRenamer().visit(compUnit, new String[] {getClassName(filePath), suffix});
 
-    // Create a new string to represent the new file name
+    // Create a new string to represent the new file name.
     String newFileName =
         new StringBuilder(filePath).insert(filePath.lastIndexOf('.'), suffix).toString();
 
-    // Write the compilation unit to the new file
+    // Write the compilation unit to the new file.
     try (BufferedWriter bw = new BufferedWriter(new FileWriter(newFileName))) {
       bw.write(compUnit.toString());
     } catch (IOException e) {
@@ -977,15 +995,17 @@ public class Minimize extends CommandHandler {
       System.exit(1);
     }
 
-    // Get the name of the file without full path
+    // Get the name of the file without full path.
     String fileName = Paths.get(filePath).getFileName().toString();
-    // Remove .java extension from file name
+    // Remove .java extension from file name.
     return fileName.substring(0, fileName.indexOf('.'));
   }
 
-  /** Rename the overall class to class name + suffix. */
+  /** Visit every class or interface type. */
   private static class ClassRenamer extends VoidVisitorAdapter<Object> {
     /**
+     * Rename the overall class to class name + suffix.
+     *
      * @param arg a String array where the first element is the class name and the second element is
      *     the suffix that we will append
      */
@@ -1004,7 +1024,11 @@ public class Minimize extends CommandHandler {
   private static class TypeVisitor extends VoidVisitorAdapter<Object> {
     /**
      * If the class or interface type is in a package that's not visible by default, add the type to
-     * the set of types that is passed in as an argument.
+     * the set of types that is passed in as an argument. For instance, suppose that the type {@code
+     * org.apache.commons.lang3.MutablePair} appears in the program. This type will be added to the
+     * set of types. This is used for type name simplifications to simplify {@code
+     * org.apache.commons.lang3.MutablePair} into {@code MutablePair} after adding the import
+     * statement {@code import org.apache.commons.lang3.MutablePair;}.
      *
      * @param arg a set of {@code Type} objects, will be modified if the class or interface type is
      *     a non-visible type by default
@@ -1068,12 +1092,12 @@ public class Minimize extends CommandHandler {
 
   /** Contains the standard output, standard error, and exit status from running a process. */
   private static class Outputs {
-    /** The standard output */
+    /** The standard output. */
     private String stdout;
-    /** The error output */
+    /** The error output. */
     private String errout;
 
-    /** Exit value from running a process */
+    /** Exit value from running a process. */
     private int exitValue;
 
     /**
@@ -1091,7 +1115,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Calculate the length of a file, by number of lines
+   * Calculate the length of a file, by number of lines.
    *
    * @param filepath absolute file path to the input file
    * @return the number of lines in the file. Negative one is returned if an exception occurs from
@@ -1118,7 +1142,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Print out usage error and stack trace and then exit
+   * Print out usage error and stack trace and then exit.
    *
    * @param format the string format
    * @param args the arguments
