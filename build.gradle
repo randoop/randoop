@@ -249,11 +249,6 @@ test {
   exclude 'randoop/test/Test_SomeDuplicates.*'
   exclude 'randoop/test/Test_SomePass.*'
   exclude 'randoop/operation/OperationParserTests.*'
-  exclude 'randoop/minimizer/TestInput1.*'
-  exclude 'randoop/minimizer/TestInput2.*'
-  exclude 'randoop/minimizer/TestInput3.*'
-  exclude 'randoop/minimizer/TestInput4.*'
-  exclude 'randoop/minimizer/testrootdir/testsubdir/TestInputSubDir1.*'
 }
 
 /*

@@ -1,7 +1,7 @@
+import java.util.*;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import java.util.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestInputWithWildcardImportMinimized {
