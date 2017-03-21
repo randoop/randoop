@@ -653,12 +653,20 @@ minimize failing tests that Randoop did not create.
 </p>
 
 <p>
-To minimize all failing tests in <code>ErrorLangTest.java</code>, run
+To minimize all failing tests in <code>ErrorTest1.java</code>, run
 Randoop as follows:
 </p>
 <pre class="code">
-java -ea -cp bin:randoop-all-3.1.1.jar randoop.main.Main minimize --filepath=~/ErrorTestLang.java --fileclasspath=~/commons-lang.jar --testsuitetimeout=30
+java -ea -cp bin:randoop-all-3.1.1.jar randoop.main.Main minimize --filepath=~/ErrorTest1.java --fileclasspath=~/commons-lang.jar --testsuitetimeout=30
 </pre>
+
+<p>
+The minimizer will produce a Java file named <code>InputTestSuiteMinimized.java</code>
+where <code>InputTestSuite.java</code> is the name of the file being minimized. The main
+class within the Java file will be named <code>InputTestSuiteMinimized</code>. In the
+example above, the output file would be named <code>ErrorTest1Minimized.java</code>
+and the main class would be named <code>ErrorTest1Minimized</code>.
+</p>
 
 <p>
   See the documentation for the
