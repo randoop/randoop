@@ -46,7 +46,6 @@ class ProcessStatus {
    * @return the exit status and combined standard stream output
    */
   static ProcessStatus runCommand(List<String> command) {
-
     // The Plume class used here expects a time limit, but setting tight timeout limits
     // for individual tests has caused headaches when tests are run on Travis CI.
     // 15 minutes is longer than all tests currently take, even for a slow Travis run.
