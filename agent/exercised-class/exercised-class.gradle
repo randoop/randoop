@@ -2,12 +2,18 @@
 
 description = "exercised-class instrumentation agent"
 
+configurations {
+  javassist
+  compile.extendsFrom javassist
+}
+
 dependencies {
-  compile group: 'org.javassist', name: 'javassist', version: '3.+'
+  javassist group: 'org.javassist', name: 'javassist', version: '3.+'
   compile project(':')
 }
 
 jar {
+  from { configurations.javassist.collect { it.isDirectory() ? it : zipTree(it) } }
   manifest {
     attributes(
       "Premain-Class": "randoop.instrument.ExercisedAgent",
