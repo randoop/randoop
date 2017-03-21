@@ -861,6 +861,31 @@ public class RandoopSystemTest {
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
+  @Test
+  public void runExercisedClassFilter() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("exercised-class");
+    testEnvironment.addJavaAgent(systemTestEnvironment.excercisedClassAgentPath);
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addClassList("resources/systemTest/randoop/instrument/testcase/allclasses.txt");
+    options.setOption(
+        "include-if-class-exercised",
+        "resources/systemTest/randoop/instrument/testcase/coveredclasses.txt");
+    options.setOption("outputlimit", "250");
+    options.setOption("inputlimit", "500");
+    options.setErrorBasename("ExError");
+    options.setRegressionBasename("ExRegression");
+
+    CoverageChecker coverageChecker = new CoverageChecker(options);
+    //TODO figure out why this method not covered
+    coverageChecker.ignore("randoop.instrument.testcase.A.toString()");
+    coverageChecker.exclude("randoop.instrument.testcase.C.getValue()");
+    coverageChecker.exclude("randoop.instrument.testcase.C.isZero()");
+    coverageChecker.exclude("randoop.instrument.testcase.C.jumpValue()");
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
+  }
+
   /* ------------------------------ utility methods ---------------------------------- */
 
   /**

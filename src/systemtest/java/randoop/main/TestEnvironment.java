@@ -23,6 +23,9 @@ class TestEnvironment {
   /** The classpath to run the tests in this environment */
   final String testClassPath;
 
+  /** the path to the java agent. null by default. */
+  private Path javaAgentPath;
+
   /**
    * Creates a test environment for a specific system test method.
    *
@@ -44,6 +47,7 @@ class TestEnvironment {
     this.classDir = classDir;
     this.jacocoDir = jacocoDir;
     this.testClassPath = systemTestEnvironment.classpath + ":" + classDir.toString();
+    this.javaAgentPath = null;
   }
 
   /**
@@ -71,5 +75,13 @@ class TestEnvironment {
    */
   Path getTestInputClassDir() {
     return systemTestEnvironment.testInputClassDir;
+  }
+
+  void addJavaAgent(Path javaAgentPath) {
+    this.javaAgentPath = javaAgentPath;
+  }
+
+  Path getJavaAgentPath() {
+    return javaAgentPath;
   }
 }
