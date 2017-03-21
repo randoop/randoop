@@ -1,4 +1,4 @@
-Version 3.1.2, released X X, 2017
+Version 3.1.2, released March 21, 2017
 
 The exercised-class jar now includes dependencies.
 
