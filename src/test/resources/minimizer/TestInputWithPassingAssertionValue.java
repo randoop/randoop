@@ -10,23 +10,15 @@ public class TestInputWithPassingAssertionValue {
     int a_squared = a * a;
 
     // Passing assertion, a equals 400
-    org.junit.Assert.assertTrue(a == 400);
+    org.junit.Assert.assertTrue(a_squared == 400);
 
-    int correct_double_a = a * 2;
-    int incorrect_double_a = incorrectDouble(a);
-    org.junit.Assert.assertTrue(incorrect_double_a >= correct_double_a);
-    org.junit.Assert.assertTrue(incorrect_double_a <= correct_double_a);
+    int incorrect_double_a_squared = incorrectDouble(a_squared);
+    org.junit.Assert.assertTrue(a_squared * 2 >= incorrect_double_a_squared);
   }
 
-  /**
-   * Doubles an integer and returns the result. (Incorrectly returns the result if a is 400.)
-   *
-   * @param a the integer to double
-   * @return the value of a, doubled
-   */
   public static int incorrectDouble(int a) {
     if (a == 400) {
-      return a + 2;
+      return a * 4;
     } else {
       return a * 2;
     }
