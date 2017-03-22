@@ -23,8 +23,9 @@ package randoop.condition.specification;
  * OperationSpecification} containing the {@code Specification} where the property occurs.
  */
 public class Property extends AbstractBooleanExpression {
+
   /**
-   * Creates a {@link AbstractBooleanExpression} with the given description and condition code.
+   * Creates a {@link Property} with the given description and condition code.
    *
    * @param description the description of this boolean condition
    * @param conditionText the text of the Java code for the created condition

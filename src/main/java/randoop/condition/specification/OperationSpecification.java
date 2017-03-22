@@ -49,19 +49,19 @@ import java.util.Objects;
  */
 public class OperationSpecification {
 
-  /** the reflection object for the operation */
+  /** The reflection object for the operation */
   private final Operation operation;
 
-  /** the identifier names used in the specifications */
+  /** The identifier names used in the specifications */
   private final Identifiers identifiers;
 
-  /** the specification of expected exceptions for the operation */
+  /** The specification of expected exceptions for the operation */
   private final List<ThrowsSpecification> throwsSpecifications;
 
-  /** the list of post-conditions on the return value of the operation */
+  /** The list of post-conditions on the return value of the operation */
   private final List<ReturnSpecification> returnSpecifications;
 
-  /** the list of pre-conditions on the parameters of the operation */
+  /** The list of pre-conditions on the parameters of the operation */
   private final List<ParamSpecification> paramSpecifications;
 
   /**
@@ -129,6 +129,7 @@ public class OperationSpecification {
   public int hashCode() {
     return Objects.hash(
         this.operation,
+        this.identifiers,
         this.throwsSpecifications,
         this.returnSpecifications,
         this.paramSpecifications);
@@ -136,7 +137,21 @@ public class OperationSpecification {
 
   @Override
   public String toString() {
-    return this.operation.toString();
+    return "{ operation: "
+        + this.operation.toString()
+        + ", "
+        + "identifiers: "
+        + this.identifiers
+        + ", "
+        + "throwsSpecifications: "
+        + this.throwsSpecifications
+        + ", "
+        + "returnSpecifications: "
+        + this.returnSpecifications
+        + ", "
+        + "paramSpecifications: "
+        + this.paramSpecifications
+        + " }";
   }
 
   public void addThrowsSpecifications(List<ThrowsSpecification> specifications) {

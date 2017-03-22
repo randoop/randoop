@@ -8,9 +8,18 @@ import java.util.Objects;
  */
 public abstract class Specification {
 
+  /** The description of this {@link Specification} */
   private final String description;
+
+  /** The {@link Guard} for this specification */
   private final Guard guard;
 
+  /**
+   * Creates a {@link Specification} with the given guard.
+   *
+   * @param description the description of the created specification
+   * @param guard the {@link Guard} for the created specification
+   */
   public Specification(String description, Guard guard) {
     this.description = description;
     this.guard = guard;
@@ -22,7 +31,7 @@ public abstract class Specification {
       return false;
     }
     Specification other = (Specification) object;
-    return this.description.equals(other.description);
+    return this.description.equals(other.description) && this.guard.equals(other.guard);
   }
 
   @Override
@@ -30,15 +39,20 @@ public abstract class Specification {
     return Objects.hashCode(description);
   }
 
-  @Override
-  public String toString() {
-    return description;
-  }
-
+  /**
+   * Returns the description of this {@link Specification}.
+   *
+   * @return the description of this specification
+   */
   public String getDescription() {
     return description;
   }
 
+  /**
+   * Return the {@link Guard} of this {@link Specification}.
+   *
+   * @return the guard of this specification
+   */
   public Guard getGuard() {
     return guard;
   }

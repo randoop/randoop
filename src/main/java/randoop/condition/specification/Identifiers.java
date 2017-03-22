@@ -27,19 +27,19 @@ import java.util.Objects;
  */
 public class Identifiers {
 
-  /** the default identifier name for receiver (value: "receiver") */
+  /** The default identifier name for receiver (value: "receiver") */
   private static final String DEFAULT_RECEIVER_NAME = "receiver";
 
-  /** the default identifier name for the return value (value: "result") */
+  /** The default identifier name for the return value (value: "result") */
   private static final String DEFAULT_RETURN_NAME = "result";
 
-  /** the parameter names for the operation */
+  /** The parameter names for the operation */
   private final List<String> parameters;
 
-  /** the receiver name for the specifications */
+  /** The receiver name for the specifications */
   private final String receiverName;
 
-  /** the return value identifier for the specifications */
+  /** The return value identifier for the specifications */
   private final String returnName;
 
   /**
@@ -89,6 +89,16 @@ public class Identifiers {
     return Objects.hash(this.parameters, this.receiverName, this.returnName);
   }
 
+  @Override
+  public String toString() {
+    return "{ parameters: "
+        + parameters
+        + ", receiverName: "
+        + receiverName
+        + ", returnName: "
+        + returnName
+        + " }";
+  }
   /**
    * Returns the parameter names in this {@link Identifiers} object.
    *

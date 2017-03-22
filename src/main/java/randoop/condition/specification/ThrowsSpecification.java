@@ -57,6 +57,15 @@ public class ThrowsSpecification extends Specification {
 
   @Override
   public String toString() {
-    return getGuard() + " => throws " + exceptionType;
+    return "{ guard: " + getGuard() + ", exceptionType: " + exceptionType + " }";
+  }
+
+  /**
+   * Returns the exception type name for this {@link ThrowsSpecification}.
+   *
+   * @return the exception type name for this throws specification
+   */
+  public String getExceptionTypeName() {
+    return exceptionType;
   }
 }

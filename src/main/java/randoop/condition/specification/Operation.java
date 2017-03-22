@@ -25,8 +25,8 @@ import java.util.Objects;
  *   }
  * </pre>
  *
- * Note that the class name and parameter type names should be given as fully-qualified class names.
- * Generic types should also be given as rawtypes.
+ * <p>Note that the class name and parameter type names should be given as fully-qualified class
+ * names. Generic types should be given as rawtypes.
  *
  * <p>The <code>classname</code> must be the declaring class of the method. (For a constructor, the
  * <code>classname</code> and operation <code>name</code> will be identical.) If named class is not
@@ -35,13 +35,13 @@ import java.util.Objects;
  */
 public class Operation {
 
-  /** the fully-qualified name of the declaring class of this operation */
+  /** The fully-qualified name of the declaring class of this operation */
   private final String classname;
 
-  /** the name of this operation */
+  /** The name of this operation */
   private final String name;
 
-  /** the list of fully-qualified type names for the parameters of this operation */
+  /** The list of fully-qualified type names for the parameters of this operation */
   private final List<String> parameterTypes;
 
   /**
@@ -106,6 +106,17 @@ public class Operation {
     return Objects.hash(this.classname, this.name, this.parameterTypes);
   }
 
+  @Override
+  public String toString() {
+    return "{ classname: "
+        + classname
+        + ", name: "
+        + name
+        + ", parameterTypes: "
+        + parameterTypes
+        + " }";
+  }
+
   /**
    * Creates a list of fully-qualified type names from the array of {@code Class<?>} objects.
    *
@@ -120,19 +131,34 @@ public class Operation {
     return parameterTypes;
   }
 
+  /**
+   * Return the name of the declaring class of this {@link Operation}.
+   *
+   * @return the name of the declaring class of this operation
+   */
   public String getClassname() {
     return classname;
   }
 
+  /**
+   * Return the name of this {@link Operation}.
+   *
+   * @return the name of this operation
+   */
   public String getName() {
     return name;
   }
 
+  /**
+   * Return the list of parameter type names for this {@link Operation}.
+   *
+   * @return the list of parameter type names for this operation
+   */
   public List<String> getParameterTypeNames() {
     return parameterTypes;
   }
 
-  public AccessibleObject getReflectionObject() {
-    return null;
+  public boolean isConstructor() {
+    return name.equals(classname);
   }
 }

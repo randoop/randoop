@@ -2,11 +2,13 @@ package randoop.condition.specification;
 
 import java.util.Objects;
 
-/** Created by bjkeller on 3/14/17. */
+/** Abstract representation of boolean expressions that occur in {@link Specification} objects. */
 public abstract class AbstractBooleanExpression {
-  /** The text of the Java code for this condition */
+
+  /** The text of the Java code for this expression */
   private final String conditionText;
 
+  /** The description of the expression */
   private final String description;
 
   /**
@@ -15,7 +17,7 @@ public abstract class AbstractBooleanExpression {
    * @param description the description of this boolean condition
    * @param conditionText the text of the Java code for the created condition
    */
-  public AbstractBooleanExpression(String description, String conditionText) {
+  AbstractBooleanExpression(String description, String conditionText) {
     this.description = description;
     this.conditionText = conditionText;
   }
@@ -26,19 +28,25 @@ public abstract class AbstractBooleanExpression {
       return false;
     }
     AbstractBooleanExpression other = (AbstractBooleanExpression) object;
-    return super.equals(object) && this.conditionText.equals(other.conditionText);
+    return this.description.equals(other.description)
+        && this.conditionText.equals(other.conditionText);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), this.conditionText);
+    return Objects.hash(this.description, this.conditionText);
   }
 
   @Override
   public String toString() {
-    return "not implemented";
+    return "{ description: " + description + ", conditionText: " + conditionText + " }";
   }
 
+  /**
+   * Return the description of this {@link AbstractBooleanExpression}.
+   *
+   * @return the description of this condition
+   */
   public String getDescription() {
     return description;
   }

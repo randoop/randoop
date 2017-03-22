@@ -32,7 +32,7 @@ import java.util.Objects;
  */
 public class ReturnSpecification extends Specification {
 
-  /** the post-condition */
+  /** The post-condition */
   private final Property property;
 
   /**
@@ -63,7 +63,7 @@ public class ReturnSpecification extends Specification {
 
   @Override
   public String toString() {
-    return getGuard() + " => " + property;
+    return "{ guard: " + getGuard() + ", property: " + property + " }";
   }
 
   /**
