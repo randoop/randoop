@@ -27,6 +27,7 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import edu.emory.mathcs.backport.java.util.Collections;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -41,6 +42,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -226,11 +228,13 @@ public class Minimize extends CommandHandler {
 
     System.out.println("Minimizing: " + filePath);
 
-    // Minimize the Java test suite and output to a new Java file.
+    // Minimize the Java test suite, simplify variable type names, sort the import statements, and write to a new file.
     minimizeTestSuite(compUnit, packageName, filePath, classPath, expectedOutput, timeoutLimit);
     compUnit =
         simplifyVariableTypeNames(
             compUnit, packageName, filePath, classPath, expectedOutput, timeoutLimit);
+    sortImports(compUnit);
+
     writeToFile(compUnit, filePath, "Minimized");
 
     System.out.println("Minimizing complete.\n");
@@ -424,10 +428,12 @@ public class Minimize extends CommandHandler {
             // Retrieve and store the value associated with the
             // variable in the assertion.
             Expression mExp = mArgs.get(0);
-            List<Node> children = mExp.getChildrenNodes();
-            String var = children.get(0).toString();
-            String val = children.get(1).toString();
-            primitiveValues.put(var, val);
+            if (mExp.toString().contains("==")) {
+              List<Node> children = mExp.getChildrenNodes();
+              String var = children.get(0).toString();
+              String val = children.get(1).toString();
+              primitiveValues.put(var, val);
+            }
           }
         }
       }
@@ -1088,6 +1094,26 @@ public class Minimize extends CommandHandler {
     // Add the import to the compilation unit's list of imports.
     importDeclarations.add(importDeclaration);
     compilationUnit.setImports(importDeclarations);
+  }
+
+  /**
+   * Sort a compilation unit's imports by name.
+   *
+   * @param compilationUnit the compilation unit whose imports will be sorted by name
+   */
+  private static void sortImports(CompilationUnit compilationUnit) {
+    List<ImportDeclaration> imports = compilationUnit.getImports();
+
+    Collections.sort(
+        imports,
+        new Comparator<ImportDeclaration>() {
+          @Override
+          public int compare(ImportDeclaration o1, ImportDeclaration o2) {
+            return o1.getName().toString().compareTo(o2.getName().toString());
+          }
+        });
+
+    compilationUnit.setImports(imports);
   }
 
   /** Contains the standard output, standard error, and exit status from running a process. */
