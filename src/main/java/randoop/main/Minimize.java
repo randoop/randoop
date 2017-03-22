@@ -397,7 +397,10 @@ public class Minimize extends CommandHandler {
         }
 
         // Simplify statement by removing the left hand side.
-        replacements.add(removeLeftHandSideSimplification(vdExpr));
+        Statement lhsRemovalStmt = removeLeftHandSideSimplification(vdExpr);
+        if (lhsRemovalStmt != null) {
+          replacements.add(lhsRemovalStmt);
+        }
       }
     }
     return replacements;
