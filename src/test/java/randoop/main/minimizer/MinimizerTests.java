@@ -156,4 +156,46 @@ public class MinimizerTests {
 
     testWithInput(inputFilePath, null, timeout);
   }
+
+  @Test
+  public void testWithMultipleVarDeclarationsOnALine() throws IOException {
+    // Path to input file
+    String inputFilePath = testDir + "TestInputMultipleVarDeclarationsOnALine.java";
+    String timeout = "30";
+
+    testWithInput(inputFilePath, null, timeout);
+  }
+
+  @Test
+  public void testWithNoFailingTests() throws IOException {
+    // Path to input file
+    String inputFilePath = testDir + "TestInputWithNoFailingTests.java";
+    String timeout = "30";
+
+    testWithInput(inputFilePath, null, timeout);
+  }
+
+  @Test
+  public void testWithNonCompilingTest() throws IOException {
+    // Path to input file
+    String inputFilePath = testDir + "TestInputWithNonCompilingTest.java";
+    String timeout = "30";
+
+    String outputFilePath =
+        new StringBuilder(inputFilePath)
+            .insert(inputFilePath.lastIndexOf('.'), "Minimized")
+            .toString();
+
+    // Obtain File object references
+    File inputFile = new File(inputFilePath);
+
+    // Obtain the complete path to the input, output, and expected files
+    inputFilePath = inputFile.getAbsolutePath();
+
+    // Classpath obtained by adding the necessary components together
+    String classPath = null;
+
+    // Create the arguments array and invoke the minimizer
+    assertFalse(Minimize.mainMinimize(inputFilePath, classPath, Integer.parseInt(timeout)));
+  }
 }
