@@ -176,6 +176,15 @@ public class MinimizerTests {
   }
 
   @Test
+  public void testWithVariableReassignment() throws IOException {
+    // Path to input file
+    String inputFilePath = testDir + "TestInputWithVariableReassignment.java";
+    String timeout = "30";
+
+    testWithInput(inputFilePath, null, timeout);
+  }
+
+  @Test
   public void testWithNonCompilingTest() throws IOException {
     // Path to input file
     String inputFilePath = testDir + "TestInputWithNonCompilingTest.java";
