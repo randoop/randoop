@@ -145,6 +145,8 @@ public class MinimizerTests {
     String inputFilePath = testDir + "TestInputWithPassingAssertionValue.java";
     String timeout = "30";
 
+    // This test input file has a passing assertion value. The minimized test suite
+    // will use the value found in the assertion as a part of a replacement statement.
     testWithInput(inputFilePath, null, timeout);
   }
 
@@ -154,6 +156,8 @@ public class MinimizerTests {
     String inputFilePath = testDir + "TestInputWithWildcardImport.java";
     String timeout = "30";
 
+    // Test input with wildcard import already included. Redundant import statements
+    // will not be added by the minimizer.
     testWithInput(inputFilePath, null, timeout);
   }
 
@@ -163,6 +167,8 @@ public class MinimizerTests {
     String inputFilePath = testDir + "TestInputMultipleVarDeclarationsOnALine.java";
     String timeout = "30";
 
+    // Test input with multiple variable declarations on a single line. The minimizer
+    // will not attempt to simplify these statements.
     testWithInput(inputFilePath, null, timeout);
   }
 
@@ -172,6 +178,8 @@ public class MinimizerTests {
     String inputFilePath = testDir + "TestInputWithNoFailingTests.java";
     String timeout = "30";
 
+    // Test input with no failing tests. The minimizer will remove all lines in the
+    // method bodies.
     testWithInput(inputFilePath, null, timeout);
   }
 
@@ -181,6 +189,17 @@ public class MinimizerTests {
     String inputFilePath = testDir + "TestInputWithVariableReassignment.java";
     String timeout = "30";
 
+    // Test input with variable reassignment.
+    testWithInput(inputFilePath, null, timeout);
+  }
+
+  @Test
+  public void testWithRuntimeException() throws IOException {
+    // Path to input file
+    String inputFilePath = testDir + "TestInputWithRuntimeException.java";
+    String timeout = "30";
+
+    // Test input with runtime exception.
     testWithInput(inputFilePath, null, timeout);
   }
 
