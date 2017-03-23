@@ -97,6 +97,7 @@ public class MinimizerTests {
     String inputFilePath = testDir + "TestInput2.java";
     String timeout = "30";
 
+    // Test input contains while loop.
     testWithInput(inputFilePath, null, timeout);
   }
 
@@ -110,9 +111,9 @@ public class MinimizerTests {
   }
 
   @Test
-  public void test4() throws IOException {
+  public void testWithImportsWithSameClassName() throws IOException {
     // Path to input file
-    String inputFilePath = testDir + "TestInput4.java";
+    String inputFilePath = testDir + "TestInputImportsWithSameClassName.java";
     String timeout = "30";
 
     // This test input uses ClassA belonging to package dir_a and ClassA belonging to

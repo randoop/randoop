@@ -3,7 +3,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class TestInput4 {
+public class TestInputImportsWithSameClassName {
   @Test
   public void test1() throws Throwable {
     test.minimizer.dir_a.ClassA dirAObject = new test.minimizer.dir_a.ClassA();
