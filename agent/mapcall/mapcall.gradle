@@ -1,11 +1,16 @@
 description = "mapcall agent"
-
+configurations {
+  plume
+  compile.extendsFrom plume
+}
 dependencies {
   // use plume.jar from parent project
-  compile project(path: ':', configuration: 'compile' )
+  plume project(path: ':', configuration: 'plume' )
 }
 
 jar {
+  //want the following, but resulting file is much larger
+  //from { configurations.plume.collect { it.isDirectory() ? it : zipTree(it) } }
   manifest {
     attributes(
       "Premain-Class": "randoop.instrument.Premain",
