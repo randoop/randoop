@@ -14,30 +14,50 @@ import java.util.List;
 import java.util.Map;
 import randoop.condition.specification.Operation;
 import randoop.condition.specification.OperationSpecification;
-import randoop.operation.OperationConditions;
 import randoop.reflection.TypeNames;
+import randoop.util.Log;
 
 /**
  * Represents a collection of preconditions and throws-conditions. Preconditions are represented by
  * {@link Condition} objects, while throws-conditions are represented by (condition, exception-type)
  * pairs.
  */
-public class ConditionCollection {
+public class SpecificationCollection {
 
+  /** The map from reflection objects to the corresponding {@link OperationSpecification} */
   private final Map<AccessibleObject, OperationSpecification> specificationMap;
 
-  private ConditionCollection(Map<AccessibleObject, OperationSpecification> specificationMap) {
+  /**
+   * Creates a {@link SpecificationCollection} for the given specification map.
+   *
+   * @param specificationMap the map from reflection objects to {@link OperationSpecification}
+   */
+  private SpecificationCollection(Map<AccessibleObject, OperationSpecification> specificationMap) {
     this.specificationMap = specificationMap;
   }
 
-  public static ConditionCollection create(List<File> specificationFiles) {
+  /**
+   * Creates a {@link SpecificationCollection} from the list of files of serialized specifications.
+   *
+   * @param specificationFiles the files of serialized specifications
+   * @return the {@link SpecificationCollection} built from the serialized {@link
+   *     OperationSpecification} objects.
+   */
+  public static SpecificationCollection create(List<File> specificationFiles) {
     Map<AccessibleObject, OperationSpecification> specMap = new LinkedHashMap<>();
     for (File specificationFile : specificationFiles) {
-      List<OperationSpecification> specificationList = null;
+      List<OperationSpecification> specificationList;
       try {
         specificationList = readSpecifications(specificationFile);
       } catch (IOException e) {
-        e.printStackTrace(); //XXX add message
+        String msg =
+            "Unable to read specifications from file "
+                + specificationFile
+                + ". Exception: "
+                + e.getMessage();
+        if (Log.isLoggingOn()) {
+          Log.logLine(msg);
+        }
         continue;
       }
       for (OperationSpecification specification : specificationList) {
@@ -45,16 +65,31 @@ public class ConditionCollection {
         try {
           accessibleObject = getReflectionObject(specification.getOperation());
         } catch (ClassNotFoundException | NoSuchMethodException e) {
-          e.printStackTrace(); //XXX add message
+          String msg =
+              "Error loading operation for specification: "
+                  + specification.toString()
+                  + ". Exception: "
+                  + e.getMessage();
+          if (Log.isLoggingOn()) {
+            Log.logLine(msg);
+          }
           continue;
         }
-
         specMap.put(accessibleObject, specification);
       }
     }
-    return null;
+    return new SpecificationCollection(specMap);
   }
 
+  /**
+   * Get the {@code java.lang.reflect.AccessibleObject} for the {@link Operation}.
+   *
+   * @param operation the {@link Operation}
+   * @return the {@code java.lang.reflect.AccessibleObject} for the operation
+   * @throws ClassNotFoundException if a type in the operation cannot be loaded
+   * @throws NoSuchMethodException if there is method/constructor for the operation in the declaring
+   *     class
+   */
   private static AccessibleObject getReflectionObject(Operation operation)
       throws ClassNotFoundException, NoSuchMethodException {
     List<String> paramTypeNames = operation.getParameterTypeNames();
@@ -70,6 +105,13 @@ public class ConditionCollection {
     }
   }
 
+  /**
+   * Reads a list of {@link OperationSpecification} objects from the given file.
+   *
+   * @param specificationFile the file of serialized {@link OperationSpecification} objects
+   * @return the list of {@link OperationSpecification} object from the file
+   * @throws IOException if there is an error reading the specification file
+   */
   @SuppressWarnings("unchecked")
   private static List<OperationSpecification> readSpecifications(File specificationFile)
       throws IOException {
@@ -84,7 +126,20 @@ public class ConditionCollection {
     return specificationList;
   }
 
+  /**
+   * Creates an {@link OperationConditions} object for the given
+   * {java.lang.reflect.AccessibleObject}.
+   *
+   * @param accessibleObject the reflection object for a constructor or method
+   * @return the {@link OperationConditions} for the specifications of the given method or
+   *     constructor, {@code null} if there is none
+   */
   public OperationConditions getOperationConditions(AccessibleObject accessibleObject) {
-    return null;
+    OperationSpecification specification = specificationMap.get(accessibleObject);
+    if (specification == null) {
+      return null;
+    }
+    Declarations declarations = Declarations.create(accessibleObject, specification);
+    return OperationConditions.getOperationConditions(specification, declarations);
   }
 }

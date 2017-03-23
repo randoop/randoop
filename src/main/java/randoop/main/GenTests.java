@@ -21,7 +21,7 @@ import plume.SimpleLog;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
 import randoop.MultiVisitor;
-import randoop.condition.ConditionCollection;
+import randoop.condition.SpecificationCollection;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
@@ -242,7 +242,7 @@ public class GenTests extends GenInputsAbstract {
      * Setup pre/post/throws-conditions for operations.
      * Currently only uses Toradocu generated conditions.
      */
-    ConditionCollection operationConditions = null;
+    SpecificationCollection operationConditions = null;
 
     OperationModel operationModel = null;
     try {
