@@ -431,8 +431,21 @@ public class Minimize extends CommandHandler {
             // Retrieve and store the value associated with the
             // variable in the assertion.
             Expression mExp = mArgs.get(0);
-            if (mExp.toString().contains("==")) {
-              List<Node> children = mExp.getChildrenNodes();
+            List<Node> children = mExp.getChildrenNodes();
+
+            // Check that the expression only has two nodes.
+            if (children.size() != 2) {
+              return;
+            }
+            String mExpStr = mExp.toString();
+
+            // Take the substring without the first and second expression nodes.
+            String firstExp = children.get(0).toString();
+            int secondExpIndex = mExpStr.lastIndexOf(children.get(1).toString());
+            mExpStr = mExpStr.substring(firstExp.length(), secondExpIndex);
+
+            // Check that the comparison is an equality comparison.
+            if (mExpStr.trim().equals("==")) {
               String var = children.get(0).toString();
               String val = children.get(1).toString();
               primitiveValues.put(var, val);

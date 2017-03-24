@@ -151,6 +151,17 @@ public class MinimizerTests {
   }
 
   @Test
+  public void testWithMultiplePassingAssertions() throws IOException {
+    // Path to input file
+    String inputFilePath = testDir + "TestInputWithMultiplePassingAssertions.java";
+    String timeout = "30";
+
+    // This test input file has a passing assertion value. The minimized test suite
+    // will use the value found in the assertion as a part of a replacement statement.
+    testWithInput(inputFilePath, null, timeout);
+  }
+
+  @Test
   public void testWithWildcardImport() throws IOException {
     // Path to input file
     String inputFilePath = testDir + "TestInputWithWildcardImport.java";
