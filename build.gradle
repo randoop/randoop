@@ -620,6 +620,7 @@ task publishSite (dependsOn: ['cleanSite', 'javadoc', 'validateAPI', 'manual', '
   def buildDocsDir = file("${buildDir}/docs") // include any built docs (e.g., api)
   def newSiteFiles = fileTree("${projectDir}/src/docs") {
     exclude 'README.md'
+    exclude 'api'
   }
   doLast {
       copy {
