@@ -655,21 +655,21 @@ Randoop about your application, and that is how we recommend using Randoop.
  methods given by this argument augment any methods determined via the <code>--testclass</code>
  or <code>--classlist</code> option.
 
- <p>A constructor line begins with <code>"cons :"</code> followed by the classname, the string
- <code>&lt;init&gt;</code>, and the constructor's parameter types enclosed in parentheses.
- Methods are specified in a similar way. For example:
+ <p>A constructor line FOOBAR begins with <code>"cons :"</code> followed by the classname, the string
+ <code>&lt;init&gt;</code>, and the constructor's parameter types enclosed in parentheses. Methods are
+ specified in a similar way. For example:
 
- <pre class="code">
+ <pre><code>
  cons : Type0.&lt;init&gt;(Type1, Type2, ..., TypeN)
  method : Type0.method_name(Type1, Type2, ..., TypeN)
- </pre>
+ </code></pre>
 
  <p>Each <code>Type<i>i</i></code> must be fully-qualified (include package names).
 
  <p>See an <a href= "https://randoop.github.io/randoop/manual/method_list_example.txt">
  example</a>.
             <li id="option:omitmethods"><b>--omitmethods=</b><i>regex</i>.
-             Randoop will not attempt to directly call methods whose <code>java.lang.reflect.Method#toString()</code> matches the regular expression given. This does not
+             Randoop will not attempt to directly call methods whose <code>java.lang.reflect.Method.toString()</code> matches the regular expression given. This does not
  prevent indirect calls to such methods from other, allowed methods.
 
  <p>Randoop only calls methods that are specified by one of the <code>--testclass</code>, <code>
@@ -697,7 +697,6 @@ Randoop about your application, and that is how we recommend using Randoop.
  of the class, directly or indirectly (the constructor or method might not appear in the source
  code of the test). Included classes may be abstract.
       </ul>
-
   <li id="optiongroup:Which-tests-to-output">Which tests to output
       <ul>
             <li id="option:no-error-revealing-tests"><b>--no-error-revealing-tests=</b><i>boolean</i>.
@@ -720,7 +719,6 @@ Randoop about your application, and that is how we recommend using Randoop.
  violated by input methods, and, as a result, a generated test may not compile. This check does
  increases the runtime by approximately 50%. [default true]
       </ul>
-
   <li id="optiongroup:Test-classification">Test classification
       <ul>
             <li id="option:checked-exception"><b>--checked-exception=</b><i>enum</i>.
@@ -732,7 +730,6 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li><b>EXPECTED</b> Occurrence of exception is expected behavior
   <li><b>INVALID</b> Occurrence of exception indicates an invalid test
 </ul>
-
 
             <li id="option:unchecked-exception"><b>--unchecked-exception=</b><i>enum</i>.
              If a test throws an unchecked exception other than <code>OutOfMemoryError</code>, <code>
@@ -749,7 +746,6 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li><b>INVALID</b> Occurrence of exception indicates an invalid test
 </ul>
 
-
             <li id="option:npe-on-null-input"><b>--npe-on-null-input=</b><i>enum</i>.
              If a test that passes <code>null</code> as an argument throws a <code>NullPointerException
  </code>, should the test be be included in the error-revealing test suite (value: ERROR),
@@ -759,7 +755,6 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li><b>EXPECTED</b> Occurrence of exception is expected behavior
   <li><b>INVALID</b> Occurrence of exception indicates an invalid test
 </ul>
-
 
             <li id="option:npe-on-non-null-input"><b>--npe-on-non-null-input=</b><i>enum</i>.
              If a test that never passes <code>null</code> as an argument throws a <code>
@@ -772,7 +767,6 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li><b>INVALID</b> Occurrence of exception indicates an invalid test
 </ul>
 
-
             <li id="option:oom-exception"><b>--oom-exception=</b><i>enum</i>.
              If a test throws an <code>OutOfMemoryError</code> exception, should it be included in the
  error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
@@ -783,7 +777,6 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li><b>INVALID</b> Occurrence of exception indicates an invalid test
 </ul>
 
-
             <li id="option:sof-exception"><b>--sof-exception=</b><i>enum</i>.
              If a test throws a <code>StackOverflowError</code> exception, should it be included in the
  error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
@@ -793,7 +786,6 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li><b>EXPECTED</b> Occurrence of exception is expected behavior
   <li><b>INVALID</b> Occurrence of exception indicates an invalid test
 </ul>
-
 
             <li id="option:ignore-flaky-tests"><b>--ignore-flaky-tests=</b><i>boolean</i>.
              Ignore the situation where a code sequence that previously executed normally throws an
@@ -809,21 +801,19 @@ Randoop about your application, and that is how we recommend using Randoop.
  classified.
 
  <p>Param-conditions are used as pre-conditions on method/constructor calls, with test sequences
- where the condition fails being classified as <code>BehaviorType#INVALID</code>.
+ where the condition fails being classified as <code>BehaviorType.INVALID</code>.
 
  <p>Throws-conditions are used to check exceptions: if the inputs to the call satisfy the
- condition, when the exception is thrown the sequence is <code>BehaviorType#EXPECTED</code>, but, if
- it is not, the sequence is classified as <code>BehaviorType#ERROR</code>. If the throws-condition is
+ condition, when the exception is thrown the sequence is <code>BehaviorType.EXPECTED</code>, but, if
+ it is not, the sequence is classified as <code>BehaviorType.ERROR</code>. If the throws-condition is
  not satisfied by the input, then ordinary classification is applied.
       </ul>
-
   <li id="optiongroup:Observer-methods">Observer methods
       <ul>
             <li id="option:observers"><b>--observers=</b><i>filename</i>.
              File containing side-effect-free observer methods. Specifying observers has 2 benefits: it
  makes regression tests stronger, and it helps Randoop create smaller tests.
       </ul>
-
   <li id="optiongroup:Limiting-test-generation">Limiting test generation
       <ul>
             <li id="option:timelimit"><b>--timelimit=</b><i>int</i>.
@@ -861,7 +851,6 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:stop-on-error-test"><b>--stop-on-error-test=</b><i>boolean</i>.
              Stop generation once an error-revealing test has been generated. [default false]
       </ul>
-
   <li id="optiongroup:Values-used-in-tests">Values used in tests
       <ul>
             <li id="option:null-ratio"><b>--null-ratio=</b><i>double</i>.
@@ -897,13 +886,11 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li><b>ALL</b> each literal is used as input to any method under test
 </ul>
 
-
             <li id="option:string-maxlen"><b>--string-maxlen=</b><i>int</i>.
              Maximum length of strings in generated tests, including in assertions. Strings longer than 65KB
  (or about 10,000 characters) may be rejected by the Java compiler, according to the Java
  Virtual Machine specification. [default 10000]
       </ul>
-
   <li id="optiongroup:Varying-the-nature-of-generated-tests">Varying the nature of generated tests
       <ul>
             <li id="option:alias-ratio"><b>--alias-ratio=</b><i>double</i>.
@@ -926,7 +913,6 @@ Randoop about your application, and that is how we recommend using Randoop.
  new tests. Setting this variable to a small number can sometimes result in a greater variety of
  tests generated during a single run. [default 100000000]
       </ul>
-
   <li id="optiongroup:Outputting-the-JUnit-tests">Outputting the JUnit tests
       <ul>
             <li id="option:testsperfile"><b>--testsperfile=</b><i>int</i>.
@@ -983,7 +969,6 @@ Randoop about your application, and that is how we recommend using Randoop.
  instead of reflection. The tests will include a <code>main</code> method and will execute
  methods and assertions, but won't be JUnit suites. [default true]
       </ul>
-
   <li id="optiongroup:Runtime-environment">Runtime environment
       <ul>
             <li id="option:system-props"><b>-D</b> <b>--system-props=</b><i>string</i> <code>[+]</code>.
@@ -1000,7 +985,6 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:capture-output"><b>--capture-output=</b><i>boolean</i>.
              Capture all output to stdout and stderr [default false]
       </ul>
-
   <li id="optiongroup:Controlling-randomness">Controlling randomness
       <ul>
             <li id="option:randomseed"><b>--randomseed=</b><i>int</i>.
@@ -1009,7 +993,6 @@ Randoop about your application, and that is how we recommend using Randoop.
  If you want to produce multiple different test suites, run Randoop multiple times with a
  different random seed. [default 0]
       </ul>
-
   <li id="optiongroup:Logging,-notifications,-and-troubleshooting-Randoop">Logging, notifications, and troubleshooting Randoop
       <ul>
             <li id="option:noprogressdisplay"><b>--noprogressdisplay=</b><i>boolean</i>.
@@ -1021,13 +1004,11 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:log"><b>--log=</b><i>filename</i>.
              Name of a file to which to log lots of information. If not specified, no logging is done.
       </ul>
-
   <li id="optiongroup:Advanced-extension-points">Advanced extension points
       <ul>
             <li id="option:visitor"><b>--visitor=</b><i>string</i> <code>[+]</code>.
              Install the given runtime visitor. See class randoop.ExecutionVisitor.
       </ul>
-
   <li id="optiongroup:Threading-and-timeouts">Threading and timeouts
       <ul>
             <li id="option:usethreads"><b>--usethreads=</b><i>boolean</i>.
@@ -1040,7 +1021,6 @@ Randoop about your application, and that is how we recommend using Randoop.
              After this many milliseconds, a non-returning method call, and its associated test, are stopped
  forcefully. Only meaningful if --usethreads is also specified. [default 5000]
       </ul>
-
 </ul>
 
 <code>[+]</code> marked option can be specified multiple times
