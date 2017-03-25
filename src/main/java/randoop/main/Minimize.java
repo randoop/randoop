@@ -63,13 +63,11 @@ import plume.TimeLimitProcess;
 /**
  * This program minimizes a failing JUnit test suite. Its three command-line arguments are:
  *
- * <p>
- *
  * <ol>
  *   <li>the Java file whose failing tests will be minimized
  *   <li>optional classpath containing dependencies needed to compile and run the Java file
- *   <li>optional timeout limit, in seconds, allowed for the whole test suite to be run. The default
- *       is 30 seconds.
+ *   <li>optional timeout limit, in seconds, allowed for the whole test suite to run. The default is
+ *       30 seconds.
  * </ol>
  *
  * <p>In a method that contains a failing assertion, the program will iterate through the method's
@@ -78,13 +76,10 @@ import plume.TimeLimitProcess;
  * statement can be minimized. Leaving the statement unchanged is the least that the statement can
  * be minimized.
  *
- * <p>
- *
- * <p>The algorithm first tries to remove the statement. If this causes the output test suite to
- * fail differently than the original test suite, we will clone the current statement and then
- * modify it to represent the different possible replacements. If none of these minimizations allow
- * the output test suite to fail in the same way as the original test suite, we add back the
- * original version of the current statement and continue.
+ * <p>If a replacement causes the output test suite to fail differently than the original test
+ * suite, the algorithm tries a different replacement. If no replacement allows the output test
+ * suite to fail in the same way as the original test suite, the algorithm adds back the original
+ * version of the current statement and continues.
  */
 public class Minimize extends CommandHandler {
   @OptionGroup(value = "Test case minimization options")
@@ -117,6 +112,7 @@ public class Minimize extends CommandHandler {
         new Options(Minimize.class));
   }
 
+  private static final String fileSeparator = System.getProperty("file.separator");
   private static final String pathSeparator = System.getProperty("path.separator");
   private static final String systemClassPath = System.getProperty("java.class.path");
 
@@ -157,19 +153,13 @@ public class Minimize extends CommandHandler {
   /**
    * Minimize the input test file.
    *
-   * <p>
-   *
    * <p>Given an input file, minimization produces an output file that is as small as possible (as
    * few lines of code as possible) and that fails the same way:
-   *
-   * <p>
    *
    * <ol>
    *   <li>Same failing assertions as in the original input test suite.
    *   <li>Same stacktrace produced by failing assertions.
    * </ol>
-   *
-   * <p>
    *
    * <p>The original input Java file will be compiled and run once. The "expected output" is a map
    * from method name to failure stack trace. A method is included in the map only if the method
@@ -178,7 +168,7 @@ public class Minimize extends CommandHandler {
    *
    * @param filePath the path to the Java file that is being minimized
    * @param classPath classpath used to compile and run the Java file
-   * @param timeoutLimit number of seconds allowed for the whole test suite to be run
+   * @param timeoutLimit number of seconds allowed for the whole test suite to run
    * @return true if minimization produced a (possibly unchanged) file that fails the same way as
    *     the original file
    */
@@ -223,12 +213,13 @@ public class Minimize extends CommandHandler {
     // Run the Java file.
     String runResult = runJavaFile(newFilePath, classPath, packageName, timeoutLimit);
 
-    // Keep track of the expected output, a map from method name to failure stack trace.
+    // The expected output is a map from method name to failure stack trace with line numbers removed.
     Map<String, String> expectedOutput = normalizeJUnitOutput(runResult);
 
     System.out.println("Minimizing: " + filePath);
 
-    // Minimize the Java test suite, simplify variable type names, sort the import statements, and write to a new file.
+    // Minimize the Java test suite, simplify variable type names, sort the import statements,
+    // and write to a new file.
     minimizeTestSuite(compUnit, packageName, filePath, classPath, expectedOutput, timeoutLimit);
     compUnit =
         simplifyVariableTypeNames(
@@ -249,12 +240,12 @@ public class Minimize extends CommandHandler {
   /**
    * Visit and minimize every method within a compilation unit.
    *
-   * @param cu the compilation unit to minimize, will be modified by side effect
-   * @param packageName the name of the package that the Java file is in
+   * @param cu the compilation unit to minimize; will be modified by side effect
+   * @param packageName the package that the Java file is in
    * @param filePath the path to the Java file that is being minimized
    * @param classpath classpath used to compile and run the Java file
    * @param expectedOutput expected JUnit output when the Java file is compiled and run
-   * @param timeoutLimit number of seconds allowed for the whole test suite to be run
+   * @param timeoutLimit number of seconds allowed for the whole test suite to run
    */
   private static void minimizeTestSuite(
       CompilationUnit cu,
@@ -284,15 +275,14 @@ public class Minimize extends CommandHandler {
   /**
    * Minimize a method by minimizing each statement in turn.
    *
-   * @param method the method to minimize, will be modified by side effect minimization of the
-   *     method is found
+   * @param method the method to minimize; will be modified by side effect
    * @param compUnit compilation unit for the Java file that we are minimizing; will be modified by
    *     side effect
-   * @param packageName the name of the package that the Java file is in
+   * @param packageName the package that the Java file is in
    * @param filePath path to the Java file that we are minimizing
    * @param classpath classpath needed to compile and run the Java file
    * @param expectedOutput expected output from running the JUnit test suite
-   * @param timeoutLimit number of seconds allowed for the whole test suite to be run
+   * @param timeoutLimit number of seconds allowed for the whole test suite to run
    */
   private static void minimizeMethod(
       MethodDeclaration method,
@@ -319,7 +309,8 @@ public class Minimize extends CommandHandler {
       List<Statement> replacements = getStatementReplacements(currStmt, primitiveValues);
       boolean replacementFound = false;
       for (Statement stmt : replacements) {
-        // Add replacement statement to the method's body. If stmt is null, don't add anything since null represents removal of the statement.
+        // Add replacement statement to the method's body.
+        // If stmt is null, don't add anything since null represents removal of the statement.
         if (stmt != null) {
           statements.add(i, stmt);
         }
@@ -343,8 +334,8 @@ public class Minimize extends CommandHandler {
         }
       }
       if (!replacementFound) {
-        // No other correct simplifications found, add back the
-        // original statement to the list of statements.
+        // No correct simplification found.
+        // Add back the original statement to the list of statements.
         statements.add(i, currStmt);
       }
     }
@@ -354,13 +345,11 @@ public class Minimize extends CommandHandler {
    * Return a list of statements that are a simplification of a given statement, in order from most
    * to least minimized. The possible minimizations are:
    *
-   * <p>
-   *
    * <ul>
-   *   <li>Remove a statement, represented by null
-   *   <li>Replace the right hand side expression with {@code 0}, {@code false}, or {@code null}
-   *   <li>Replace right hand side by a calculated value obtained from a passing assertion
-   *   <li>Remove the left hand side of a statement, retaining only the expression on the right
+   *   <li>Remove a statement, represented by null.
+   *   <li>Replace the right hand side expression with {@code 0}, {@code false}, or {@code null}.
+   *   <li>Replace right hand side by a calculated value obtained from a passing assertion.
+   *   <li>Remove the left hand side of a statement, retaining only the expression on the right.
    * </ul>
    *
    * <p>Assertions are never simplified.
@@ -382,8 +371,7 @@ public class Minimize extends CommandHandler {
         // Create and return a list of possible replacement statements.
         VariableDeclarationExpr vdExpr = (VariableDeclarationExpr) exp;
 
-        // Simplify right hand side to zero equivalent value, 0, false,
-        // or null.
+        // Simplify right hand side to zero-equivalent value:  0, false, or null.
         Statement rhsZeroValStmt = rhsAssignZeroValue(vdExpr);
         if (rhsZeroValStmt != null) {
           replacements.add(rhsZeroValStmt);
@@ -407,12 +395,11 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * If {@code currStmt} is a statement that is an assert true statement, store the value associated
-   * with the variable in the {@code primitiveValues} map. The assertion must be a passing assertion
-   * and must be using an '==' operator.
+   * If {@code currStmt} is a statement that is an assertTrue statement using an '==' operator,
+   * store the value associated with the variable in the {@code primitiveValues} map.
    *
    * @param currStmt a statement
-   * @param primitiveValues a map of variable names to variable values, modified if {@code currStmt}
+   * @param primitiveValues a map of variable names to variable values; modified if {@code currStmt}
    *     is a passing assertion, asserting a variable's value.
    */
   private static void storeValueFromAssertion(
@@ -458,9 +445,8 @@ public class Minimize extends CommandHandler {
 
   /**
    * Return a variable declaration statement that replaces the right hand side by 0, false, or null,
-   * whichever is type correct. The input variable declaration statement is assumed to declare only
-   * one variable, for instance, {@code int i = expr;}. Returns null if there are multiple variable
-   * declarations in a single statement in the form {@code int i, j, k;}.
+   * whichever is type correct. Returns null if there are multiple variable declarations in a single
+   * statement, such as {@code int i, j, k;}.
    *
    * @param vdExpr variable declaration expression representing the current statement to simplify
    * @return a {@code Statement} object representing the simplified variable declaration expression
@@ -469,6 +455,10 @@ public class Minimize extends CommandHandler {
    *     declared in the {@code VariableDeclarationExpr}.
    */
   private static Statement rhsAssignZeroValue(VariableDeclarationExpr vdExpr) {
+    if (vdExpr.getVars().size() != 1) {
+      // Number of variables declared in this expression is not one.
+      return null;
+    }
     Type type = vdExpr.getType();
     if (type instanceof PrimitiveType) {
       switch (((PrimitiveType) type).getType()) {
@@ -486,9 +476,8 @@ public class Minimize extends CommandHandler {
 
   /**
    * Return a variable declaration statement that simplifies the right hand side by a calculated
-   * value for primitive types. The variable declaration statement is assumed to declare only one
-   * variable, for instance, {@code int i;}. Returns null if there are multiple variable
-   * declarations in a single statement in the form {@code int i, j, k;}.
+   * value for primitive types. Returns null if there are multiple variable declarations in a single
+   * statement, such as {@code int i, j, k;}.
    *
    * @param vdExpr variable declaration expression representing the current statement to simplify
    * @param primitiveValues a map of primitive variable names to expressions representing their
@@ -582,10 +571,8 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Return a statement that contains only the right hand side of a given statement. The variable
-   * declaration statement is assumed to declare only one variable, for instance, {@code int i;}.
-   * Multiple variable declarations in a single statement in the form {@code int i, j, k;} are not
-   * valid.
+   * Return a statement that contains only the right hand side of a given statement. Returns null if
+   * there are multiple variable declarations in a single statement, such as {@code int i, j, k;}.
    *
    * @param vdExpr variable declaration expression that represents the statement to simplify
    * @return a {@code Statement} object that is equal to {@code vdExpr} without the assignment to
@@ -593,13 +580,14 @@ public class Minimize extends CommandHandler {
    *     {@code VariableDeclarationExpr}.
    */
   private static Statement removeLeftHandSideSimplification(VariableDeclarationExpr vdExpr) {
-    // Copy the variable declaration expression.
-    VariableDeclarationExpr exprCopy = (VariableDeclarationExpr) vdExpr.clone();
-    List<VariableDeclarator> vars = exprCopy.getVars();
-    if (vars.size() > 1) {
+    if (vdExpr.getVars().size() > 1) {
       // More than one variable declared in this expression.
       return null;
     }
+
+    // Copy the variable declaration expression.
+    VariableDeclarationExpr exprCopy = (VariableDeclarationExpr) vdExpr.clone();
+    List<VariableDeclarator> vars = exprCopy.getVars();
     VariableDeclarator vd = vars.get(0);
 
     // Create a new statement with only the right hand side.
@@ -614,11 +602,11 @@ public class Minimize extends CommandHandler {
    *
    * @param compUnit compilation unit containing an AST for a Java file, the compilation unit will
    *     be modified if a correct minimization of the method is found
-   * @param packageName the name of the package that the Java file is in
+   * @param packageName the package that the Java file is in
    * @param filePath absolute file path to the input Java file
    * @param classpath classpath needed to compile and run the Java file
    * @param expectedOutput expected standard output from running the JUnit test suite
-   * @param timeoutLimit number of seconds allowed for the whole test suite to be run
+   * @param timeoutLimit number of seconds allowed for the whole test suite to run
    * @return {@code CompilationUnit} with fully-qualified type names simplified to simple type names
    */
   private static CompilationUnit simplifyVariableTypeNames(
@@ -630,19 +618,18 @@ public class Minimize extends CommandHandler {
       int timeoutLimit) {
     // Map from fully-qualified type name to simple type name.
     Map<String, String> typeNameMap = new HashMap<String, String>();
-    // Set of fully qualified type names that are used in variable
-    // declarations
+    // Set of fully-qualified type names that are used in variable declarations.
     Set<Type> fullyQualifiedNames = new HashSet<Type>();
     // Collect all of the type names in the compilation unit.
     new TypeVisitor().visit(compUnit, fullyQualifiedNames);
 
-    // Iterate through the set of fully qualified names and fill the map
-    // with mappings from fully qualified names to simple type names. Also
-    // add in necessary import statements.
+    // Iterate through the set of fully-qualified names and fill the map
+    // with mappings from fully-qualified names to simple type names. Also
+    // add necessary import statements.
     for (Type type : fullyQualifiedNames) {
       String typeName = type.toString();
 
-      // If the type is a generic type, handle the main type, the other
+      // If the type is a generic type, handle the main type.  The other
       // elements are included in the list and are processed separately.
       int leftAngleBracketIndex = typeName.indexOf('<');
       if (leftAngleBracketIndex >= 0) {
@@ -687,10 +674,10 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Get the simple type name of a fully qualified type name. For example, {@code java.lang.String}
+   * Get the simple type name of a fully-qualified type name. For example, {@code java.lang.String}
    * should be simplified to {@code String}.
    *
-   * @param typeName fully qualified type name
+   * @param typeName fully-qualified type name
    * @return simple type name of {@code typeName}
    */
   public static String getSimpleTypeName(String typeName) {
@@ -702,14 +689,14 @@ public class Minimize extends CommandHandler {
 
   /**
    * Check if a Java file has been correctly minimized. The file should not have compilation errors
-   * or runtime errors. The file should fail in the same way as the original file.
+   * or run-time errors. The file should fail in the same way as the original file.
    *
    * @param filePath the absolute path to the Java file
    * @param classpath classpath needed to compile/run Java file
-   * @param packageName the name of the package that the Java file is in
+   * @param packageName the package that the Java file is in
    * @param expectedOutput expected output of running JUnit test suite
-   * @param timeoutLimit number of seconds allowed for the whole test suite to be run
-   * @return true if there are no compilation and no runtime errors and the output is equal to the
+   * @param timeoutLimit number of seconds allowed for the whole test suite to run
+   * @return true if there are no compilation and no run-time errors and the output is equal to the
    *     expected output
    */
   private static boolean checkCorrectlyMinimized(
@@ -735,8 +722,8 @@ public class Minimize extends CommandHandler {
    *
    * @param filePath the absolute path to the Java file to be compiled and executed
    * @param classpath dependencies and complete classpath to compile and run the Java program
-   * @param packageName the name of the package that the Java file is in
-   * @param timeoutLimit number of seconds allowed for the whole test suite to be run
+   * @param packageName the package that the Java file is in
+   * @param timeoutLimit number of seconds allowed for the whole test suite to run
    * @return exit value of compiling the Java file
    */
   private static int compileJavaFile(
@@ -763,8 +750,8 @@ public class Minimize extends CommandHandler {
    *
    * @param filePath the absolute path to the Java file to be compiled and executed
    * @param classpath dependencies and complete classpath to compile and run the Java program
-   * @param packageName the name of the package that the Java file is in
-   * @param timeoutLimit number of seconds allowed for the whole test suite to be run
+   * @param packageName the package that the Java file is in
+   * @param timeoutLimit number of seconds allowed for the whole test suite to run
    * @return the standard output from running the Java file
    */
   private static String runJavaFile(
@@ -780,10 +767,10 @@ public class Minimize extends CommandHandler {
       dirPath = fPath.toString();
     }
 
-    // Add the package name to the class name if it exists.
-    String className = getClassName(filePath);
+    // Fully-qualified classname
+    String fqClassName = getClassName(filePath);
     if (packageName != null) {
-      className = packageName + "." + className;
+      fqClassName = packageName + "." + fqClassName;
     }
 
     // Command to run the Java file.
@@ -799,7 +786,7 @@ public class Minimize extends CommandHandler {
       command += pathSeparator + classpath;
     }
     // Add JUnitCore command.
-    command += " org.junit.runner.JUnitCore " + className;
+    command += " org.junit.runner.JUnitCore " + fqClassName;
 
     // Run the specified Java file.
     return runProcess(command, executionDir, timeoutLimit).stdout;
@@ -817,7 +804,7 @@ public class Minimize extends CommandHandler {
       return null;
     }
 
-    String packageAsDirectory = packageName.replace(".", System.getProperty("file.separator"));
+    String packageAsDirectory = packageName.replace(".", fileSeparator);
     int index = filePath.lastIndexOf(packageAsDirectory);
     if (index < 0) {
       return null;
@@ -830,15 +817,14 @@ public class Minimize extends CommandHandler {
    *
    * @param command the input command to be run
    * @param executionDir the directory where the process commands should be executed
-   * @param timeoutLimit number of seconds allowed for the whole test suite to be run
+   * @param timeoutLimit number of seconds allowed for the whole test suite to run
    * @return an {@code Outputs} object containing the standard and error output
    */
   private static Outputs runProcess(String command, String executionDir, int timeoutLimit) {
     Process process;
 
     if (executionDir == null || executionDir.isEmpty()) {
-      // Execution directory is null, execute command in default
-      // directory.
+      // Execution directory is null, execute command in default directory.
       try {
         process = Runtime.getRuntime().exec(command);
       } catch (IOException e) {
@@ -1052,7 +1038,7 @@ public class Minimize extends CommandHandler {
      * org.apache.commons.lang3.MutablePair} into {@code MutablePair} after adding the import
      * statement {@code import org.apache.commons.lang3.MutablePair;}.
      *
-     * @param arg a set of {@code Type} objects, will be modified if the class or interface type is
+     * @param arg a set of {@code Type} objects; will be modified if the class or interface type is
      *     a non-visible type by default
      */
     @SuppressWarnings("unchecked")

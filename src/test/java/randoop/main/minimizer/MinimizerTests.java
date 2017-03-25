@@ -21,7 +21,7 @@ public class MinimizerTests {
    * Test the minimizer with an input file. Uses no extra classpath dependencies and a timeout of 30
    * seconds.
    *
-   * @param filename the name of the file containing the test suite, in directory {@link #testDir}.
+   * @param filename the name of the file containing the test suite, in directory {@link #testDir}
    * @throws IOException thrown if output or expected output files can't be read
    */
   private void testWithInput(String filename) throws IOException {
