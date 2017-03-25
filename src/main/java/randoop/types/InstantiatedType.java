@@ -387,12 +387,12 @@ public class InstantiatedType extends ParameterizedType {
    * {@inheritDoc}
    *
    * <p>Handles specific cases of supertypes of a parameterized type {@code C<T1,...,Tn>}
-   * instantiating the generic type {@code C<F1,...,Fn>} by substitution <code>
-   * &theta;{@code =[F1:=T1,...,Fn:=Tn]} for which direct supertypes are:
+   * instantiating the generic type {@code C<F1,...,Fn>} by substitution &theta;{@code
+   * =[F1:=T1,...,Fn:=Tn]} for which direct supertypes are:
    *
    * <ol>
-   *   <li>{@code D<U1}&theta;{@code ,...,Uk}&theta;{@code >} where {@code D<U1,...,Uk>} is a supertype of {@code
-   *       C<F1,...,Fn>}.
+   *   <li>{@code D<U1}&theta;{@code ,...,Uk}&theta;{@code >} where {@code D<U1,...,Uk>} is a
+   *       supertype of {@code C<F1,...,Fn>}.
    *   <li>{@code C<S1,...,Sn>} where Si <i>contains</i> Ti (JLS section 4.5.1).
    *   <li>The rawtype <code>C</code>.
    *   <li><code>Object</code> if generic form is interface with no interfaces as supertypes.
