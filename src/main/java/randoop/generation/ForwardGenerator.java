@@ -190,7 +190,7 @@ public class ForwardGenerator extends AbstractGenerator {
    *
    * @param seq the sequence
    */
-  private void processSequence(ExecutableSequence seq) {
+  protected void processSequence(ExecutableSequence seq) {
 
     if (seq.hasNonExecutedStatements()) {
       if (Log.isLoggingOn()) {
@@ -302,7 +302,7 @@ public class ForwardGenerator extends AbstractGenerator {
    *
    * @return a new sequence, or null
    */
-  private ExecutableSequence createNewUniqueSequence() {
+  protected ExecutableSequence createNewUniqueSequence() {
 
     if (Log.isLoggingOn()) {
       Log.logLine("-------------------------------------------");
@@ -538,7 +538,7 @@ public class ForwardGenerator extends AbstractGenerator {
   // flag
   // of the returned object is false.
   @SuppressWarnings("unchecked")
-  private InputsAndSuccessFlag selectInputs(TypedOperation operation) {
+  protected InputsAndSuccessFlag selectInputs(TypedOperation operation) {
 
     // Variable inputTypes contains the values required as input to the
     // statement given as a parameter to the selectInputs method.

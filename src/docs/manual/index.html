@@ -889,7 +889,8 @@ Randoop about your application, and that is how we recommend using Randoop.
  test.
             <li id="option:literals-level"><b>--literals-level=</b><i>enum</i>.
              How to use literal values that are specified via the <code>--literals-file</code> command-line
- option. See: <code>ClassLiteralsMode</code>. [default CLASS]
+ option. Note that the package literal level cannot be specified if using <code>
+ --weighted-constants</code> or <code>--weighted-sequences</code>. See: <code>ClassLiteralsMode</code>. [default CLASS]
 <ul>
   <li><b>NONE</b> do not use literals specified in a literals file
   <li><b>CLASS</b> a literal for a given class is used as input only to methods of that class
@@ -898,6 +899,15 @@ Randoop about your application, and that is how we recommend using Randoop.
 </ul>
 
 
+            <li id="option:weighted-constants"><b>--weighted-constants=</b><i>boolean</i>.
+             Whether to use the weighted-constants static weighting scheme to bias the sequence selection.
+ Note that this weighting scheme dominates the <code>--small-tests</code> weight scheme, but can
+ be used with <code>--weighted-sequences</code>. [default false]
+            <li id="option:p-const"><b>--p-const=</b><i>double</i>.
+             What probability to select from only weighted-constant sequences during sequence selection.
+ This is only applicable with the <code>--weighted-constants</code> option. Note that the set of
+ weighted-constant sequences selected from also incorporate dynamic weights if <code>
+ --weighted-sequences</code> is used. [default 0.01]
             <li id="option:string-maxlen"><b>--string-maxlen=</b><i>int</i>.
              Maximum length of strings in generated tests, including in assertions. Strings longer than 65KB
  (or about 10,000 characters) may be rejected by the Java compiler, according to the Java
@@ -919,6 +929,11 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>Randoop generates new tests by combining old previously-generated tests. If this option is
  given, tests with fewer calls are given greater weight during its random selection. This has
  the overall effect of producing smaller JUnit tests. [default false]
+            <li id="option:weighted-sequences"><b>--weighted-sequences=</b><i>boolean</i>.
+             Whether to use the weighted-sequences dynamic weighting scheme to bias the sequence selection.
+ Note that this weighting scheme dominates the <code>--small-tests</code> weight scheme, but can
+ be used with <code>
+ --weighted-constants</code>. Performance may be similar to <code>--small-tests</code>. [default false]
             <li id="option:clear"><b>--clear=</b><i>int</i>.
              Clear the component set each time it contains the given number of inputs.
 
@@ -1020,6 +1035,12 @@ Randoop about your application, and that is how we recommend using Randoop.
              Perform expensive internal checks (for Randoop debugging) [default false]
             <li id="option:log"><b>--log=</b><i>filename</i>.
              Name of a file to which to log lots of information. If not specified, no logging is done.
+            <li id="option:output-sequence-info"><b>--output-sequence-info=</b><i>boolean</i>.
+             Whether to output the file: <code>--output-sequence-info-filename</code>, which lists the total
+ # sequences executed and average sequence size in csv format. [default false]
+            <li id="option:output-sequence-info-filename"><b>--output-sequence-info-filename=</b><i>string</i>.
+             The filename to output the sequence info results to. Only valid with <code>
+ --output-sequence-info</code> [default sequenceInfo.csv]
       </ul>
 
   <li id="optiongroup:Advanced-extension-points">Advanced extension points

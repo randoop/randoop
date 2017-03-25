@@ -7,6 +7,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -223,7 +224,11 @@ public class RandoopSystemTest {
         testEnvironment, options, expectedRegressionTests, expectedErrorTests, coverageChecker);
   }
 
-  /** Test formerly known as randoop2. Previously did a diff on generated test. */
+  /**
+   * Test formerly known as randoop2. Previously did a diff on generated test. Used to always fail
+   * with --weighted-constants and --weighted-sequences additions prior to the JUnitFileWriter
+   * removal. Now fails inconsistently.
+   */
   @Test
   public void runNaiveCollectionsTest() {
 
@@ -886,6 +891,74 @@ public class RandoopSystemTest {
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
+  // TODO: can take too much heap space and timeout/fail
+  @Test
+  public void runWeightedSequencesTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("weighted-sequences");
+
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("");
+    options.setRegressionBasename("WeightedSequencesReg");
+    options.setErrorBasename("WeightedSequencesErr");
+    options.setFlag("weighted-sequences");
+
+    setUpAndRunWeightedTests(testEnvironment, options);
+  }
+
+  // TODO: can take too much heap space and timeout/fail
+  @Test
+  public void runWeightedConstantsTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("weighted-constants");
+
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("");
+    options.setRegressionBasename("WeightedConstantsReg");
+    options.setErrorBasename("WeightedConstantsErr");
+    options.setFlag("weighted-constants");
+
+    setUpAndRunWeightedTests(testEnvironment, options);
+  }
+
+  // TODO: comment
+  @Test
+  public void runRandoopOutputSequenceInfo() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("randoop-sequenceInfo");
+
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("");
+    options.setRegressionBasename("RandoopSequenceInfoCompareReg");
+    options.setErrorBasename("RandoopSequenceInfoCompareErr");
+    //options.setOption("literals-level", "CLASS");
+    //options.setOption("literals-file", "CLASSES");
+    options.setFlag("output-sequence-info");
+
+    setUpAndRunWeightedTests(testEnvironment, options);
+    renameOutputTo("randoop-sequenceInfo.csv");
+  }
+
+  // TODO: can take too much heap space and timeout/fail
+  @Test
+  public void runWeightedOutputSequenceInfo() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("weighted-sequenceInfo");
+
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("");
+    options.setRegressionBasename("WeightedSequenceInfoCompareReg");
+    options.setErrorBasename("WeightedSequenceInfoCompareErr");
+    options.setOption("literals-level", "CLASS");
+    options.setOption("literals-file", "CLASSES");
+    options.setFlag("weighted-sequences");
+    options.setFlag("weighted-constants");
+    options.setFlag("output-sequence-info");
+
+    setUpAndRunWeightedTests(testEnvironment, options);
+    renameOutputTo("weighted-sequenceInfo.csv");
+  }
+
   /* ------------------------------ utility methods ---------------------------------- */
 
   /**
@@ -1101,5 +1174,47 @@ public class RandoopSystemTest {
    */
   private RandoopRunStatus generateAndCompile(TestEnvironment environment, RandoopOptions options) {
     return generateAndCompile(environment, options, false);
+  }
+
+  /**
+   * Helper function for the weightedTests. Use this to rename the .csv file named by <code>
+   * --output-sequence-info-filename</code> since the weightedTests write to the same directory.
+   * Would not be an issue in normal conditions, as the .csv file will always be overwritten.
+   *
+   * @param newFileName the name which <code>--output-sequence-info-filename</code> will be renamed
+   *     to
+   */
+  private void renameOutputTo(String newFileName) {
+
+    File tempDir = new File(GenInputsAbstract.output_sequence_info_filename);
+    File result = new File(newFileName);
+    boolean renamed = tempDir.renameTo(result);
+    if (!renamed) {
+      fail("Couldn't rename file");
+    }
+  }
+
+  /** TODO: occasional issues with heap space running out without inputlimit */
+  private void setUpAndRunWeightedTests(TestEnvironment testEnvironment, RandoopOptions options) {
+
+    options.setOption("inputlimit", "125"); // temp fix
+    options.setOption("timelimit", "30");
+    //options.setOption("outputlimit", "200");
+    options.setOption("null-ratio", "0.3");
+    options.setOption("alias-ratio", "0.3");
+    options.setFlag("clear=100");
+    options.addClassList("resources/systemTest/jdk_classlist.txt");
+
+    // omit methods that use Random
+    options.setOption(
+        "omitmethods", "java2\\.util2\\.Collections\\.shuffle\\(java2\\.util2\\.List\\)");
+
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
+
+    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+
+    // TODO: maybe just generate and compile
+    //generateAndCompile(testEnvironment, options);
   }
 }

@@ -384,7 +384,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * How to use literal values that are specified via the <code>--literals-file</code> command-line
-   * option.
+   * option. Note that the package literal level cannot be specified if using <code>
+   * --weighted-constants</code> or <code>--weighted-sequences</code>.
    *
    * @see ClassLiteralsMode
    */
@@ -406,6 +407,23 @@ public abstract class GenInputsAbstract extends CommandHandler {
     /** each literal is used as input to any method under test */
     ALL
   }
+
+  /**
+   * Whether to use the weighted-constants static weighting scheme to bias the sequence selection.
+   * Note that this weighting scheme dominates the <code>--small-tests</code> weight scheme, but can
+   * be used with <code>--weighted-sequences</code>.
+   */
+  @Option("Whether to use weighted constants in sequence selection")
+  public static boolean weighted_constants = false;
+
+  /**
+   * What probability to select from only weighted-constant sequences during sequence selection.
+   * This is only applicable with the <code>--weighted-constants</code> option. Note that the set of
+   * weighted-constant sequences selected from also incorporate dynamic weights if <code>
+   * --weighted-sequences</code> is used.
+   */
+  @Option("What probability to select only constants mined through --weighted-constants")
+  public static double p_const = .01;
 
   // Implementation note: when checking whether a String S exceeds the given
   // maxlength, we test if StringEscapeUtils.escapeJava(S), because this is
@@ -440,6 +458,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Favor shorter tests during generation")
   public static boolean small_tests = false;
+
+  /**
+   * Whether to use the weighted-sequences dynamic weighting scheme to bias the sequence selection.
+   * Note that this weighting scheme dominates the <code>--small-tests</code> weight scheme, but can
+   * be used with <code>
+   * --weighted-constants</code>. Performance may be similar to <code>--small-tests</code>.
+   */
+  @Option("Whether to use weighted sequences in sequence selection")
+  public static boolean weighted_sequences = false;
 
   /**
    * Clear the component set each time it contains the given number of inputs.
@@ -592,6 +619,22 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /** Name of a file to which to log lots of information. If not specified, no logging is done. */
   @Option("<filename> Name of a file to which to log lots of information")
   public static FileWriter log = null;
+
+  /**
+   * Whether to output the file: <code>--output-sequence-info-filename</code>, which lists the total
+   * # sequences executed and average sequence size in csv format.
+   */
+  @Option(
+      "Whether to output the file that lists the total # sequences executed and avg sequence size")
+  public static boolean output_sequence_info = false;
+
+  /**
+   * The filename to output the sequence info results to. Only valid with <code>
+   * --output-sequence-info</code>
+   */
+  @Option(
+      "The filename to output the sequence info results to.  Only valid with --output-sequence-info")
+  public static String output_sequence_info_filename = "sequenceInfo.csv";
 
   /**
    * Create sequences but never execute them. Used to test performance of Randoop's sequence
