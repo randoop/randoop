@@ -743,7 +743,7 @@ public final class Sequence implements WeightedElement {
    * extend adds a new statement to this sequence using the operation of the given statement.
    * Intended as the only place that we reach inside a {@link Statement} for its operation.
    *
-   * @param statement is a {@link Statement} object from which the operation is copied.
+   * @param statement is a {@link Statement} object from which the operation is copied
    * @param inputs is the list of variables for input
    * @return sequence constructed from this one plus the operation
    * @see Sequence#extend(TypedOperation, List)
@@ -859,7 +859,7 @@ public final class Sequence implements WeightedElement {
   /**
    * Appends the statement at the given index to the {@code StringBuilder}.
    *
-   * @param b the {@link StringBuilder} to which the code is appended.
+   * @param b the {@link StringBuilder} to which the code is appended
    * @param index the position of the statement to print in this {@code Sequence}.
    */
   public void appendCode(StringBuilder b, int index) {
@@ -925,12 +925,12 @@ public final class Sequence implements WeightedElement {
    *
    * <p>Here is an example of a list of lines representing a sequence.
    *
-   * <pre>
-   * var0 = cons : java.util.HashMap.&lt;init&gt;() :
+   * <pre>{@code
+   * var0 = cons : java.util.HashMap.<init>() :
    * var1 = prim : double:-1.0 :
    * var2 = prim : java.lang.String:"hi!" :
    * var3 = method : java.util.HashMap.put(java.lang.Object,java.lang.Object) : var0 var1 var2
-   * </pre>
+   * }</pre>
    *
    * The above sequence corresponds to the following java code (with package names omitted for
    * brevity):
@@ -1140,7 +1140,7 @@ public final class Sequence implements WeightedElement {
    * Creates a sequence corresponding to the given non-null primitive value.
    *
    * @param value non-null reference to a primitive or String value
-   * @return a {@link Sequence} consisting of a statement created with the object.
+   * @return a {@link Sequence} consisting of a statement created with the object
    */
   public static Sequence createSequenceForPrimitive(Object value) {
     if (value == null) throw new IllegalArgumentException("value is null");
