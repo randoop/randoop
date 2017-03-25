@@ -95,7 +95,7 @@ public final class Statement {
    * Adds code for the statement to the given {@code StringBuilder}.
    *
    * @see Sequence#appendCode(StringBuilder, int)
-   * @param variable the {@link Variable} to be used if an initialization.
+   * @param variable the {@link Variable} to be used if an initialization
    * @param inputs the input list for the operation of the statement
    * @param b the {@code StringBuilder} to which code text is appended.
    */

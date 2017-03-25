@@ -11,9 +11,9 @@ import plume.UtilMDE;
  * Reads a list of records from a text file, where a record is partially specified by the client of
  * this class.
  *
- * <p>A record is a sequence of lines, where the first line is the string "START &lt;recordtype&gt;"
- * and the last line is the string "END &lt;recordtype&gt;" where &lt;recordtype&gt; is specified by
- * the client. For example:
+ * <p>A record is a sequence of lines, where the first line is the string "{@code START
+ * <recordtype>}" and the last line is the string "{@code END <recordtype>}" where {@code
+ * <recordtype>} is specified by the client. For example:
  *
  * <pre>START person
  * <em>... arbitrary text ...</em>

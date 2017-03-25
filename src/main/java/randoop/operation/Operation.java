@@ -114,7 +114,7 @@ public interface Operation {
    * Determines whether the reflective object in this {@link Operation} satisfies the <code>canUse
    * </code> criteria of the given {@link ReflectionPredicate}.
    *
-   * @param reflectionPredicate a {@link ReflectionPredicate} to be checked.
+   * @param reflectionPredicate a {@link ReflectionPredicate} to be checked
    * @return result of applying reflectionPredicate to object
    */
   boolean satisfies(ReflectionPredicate reflectionPredicate);

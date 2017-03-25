@@ -62,7 +62,7 @@ public class EnumConstant extends CallableOperation {
   /**
    * {@inheritDoc}
    *
-   * @return a {@link NormalExecution} object holding the value of the enum constant.
+   * @return a {@link NormalExecution} object holding the value of the enum constant
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {

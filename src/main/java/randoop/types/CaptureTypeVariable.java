@@ -90,15 +90,14 @@ class CaptureTypeVariable extends TypeVariable {
    *
    * <p>Creates an upper bound on a type variable resulting from a capture conversion (JLS section
    * 5.1.10) in the case that a wildcard has an upper bound other than Object. In particular, each
-   * object represents a bound on a variable <code>S<sub>i</sub></code> in a parameterized type
-   * <code>C&lt;S<sub>1</sub>,...,S<sub>n</sub>&gt;</code> defined as <code>
-   * glb(B<sub>i</sub>, U<sub>i</sub>[A<sub>i</sub>:=S<sub>i</sub>])</code> where
+   * object represents a bound on a variable <code>Si</code> in a parameterized type {@code
+   * C<S1,...,Sn>} defined as {@code glb(Bi, Ui[Ai:=Si])} where
    *
    * <ul>
-   *   <li><code>U<sub>i</sub></code> is the upper bound on the type variable <code>A<sub>i</sub>
-   *       </code> in the declared class <code>C&lt;A<sub>1</sub>,...,A<sub>n</sub>&gt;</code>,
+   *   <li><code>Ui</code> is the upper bound on the type variable <code>Ai</code> in the declared
+   *       class {@code C<A1,...,An>},
    *   <li><code>glb(S, T)</code> for types <code>S</code> and <code>T</code> is the intersection
-   *       type <code>S &amp; T</code>.
+   *       type {@code S & T}.
    * </ul>
    *
    * The JLS states that if <code>S</code> and <code>T</code> are both class types not related as

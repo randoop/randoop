@@ -92,7 +92,7 @@ public class ComponentManager {
   /**
    * Returns the number of (non-seed) sequences stored by the manager.
    *
-   * @return count of generated sequences in this {@link ComponentManager}.
+   * @return count of generated sequences in this {@link ComponentManager}
    */
   // FIXME subtract size of seeds!
   public int numGeneratedSequences() {

@@ -134,7 +134,7 @@ public final class NonreceiverTerm extends CallableOperation {
   /**
    * {@inheritDoc}
    *
-   * @return {@link NormalExecution} object enclosing value of this non-receiver term.
+   * @return {@link NormalExecution} object enclosing value of this non-receiver term
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
@@ -149,7 +149,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * Note: this does not explicitly box primitive values.
    *
    * @param inputVars ignored
-   * @param b {@link StringBuilder} to which string representation is appended.
+   * @param b {@link StringBuilder} to which string representation is appended
    */
   @Override
   public void appendCode(
@@ -182,7 +182,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * JavaTypes#CLASS_TYPE}.
    *
    * @param type the type of value desired
-   * @return a {@link NonreceiverTerm} with a canonical representative of the given type.
+   * @return a {@link NonreceiverTerm} with a canonical representative of the given type
    */
   static NonreceiverTerm createNullOrZeroTerm(Type type) {
     if (type.isBoxedPrimitive()) {
