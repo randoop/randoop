@@ -36,6 +36,7 @@ The Randoop homepage is
               <li><a href="#regression_test_failures">Regression test failures</a></li>
             </ul></li>
         </ul></li>
+      <li><a href="#minimize">Minimizing a failing JUnit test suite</a></li>
       <li><a href="#customize">Customizing Randoop's behavior to your application</a>
         <ul>
           <li><a href="#command-line-options">Command-line options</a></li>
@@ -216,7 +217,7 @@ Note that you don't need the <code>-classpath</code> argument if you add
 </p>
 
 <p>
-Randoop supports two commands:
+Randoop supports three commands:
 </p>
 
 <ul>
@@ -235,6 +236,15 @@ see <a href="#generating_tests">Generating Tests</a>. Example use:
 
 <pre class="code">
 java -ea -classpath <em>myclasspath</em>:$(RANDOOP_JAR) randoop.main.Main gentests --testclass=java.util.TreeSet --timelimit=60
+</pre>
+</li>
+
+<li> <b>minimize</b> minimizes a failing JUnit test suite. For details,
+see <a href="#minimize_failing_test_suite">Minimizing a Failing JUnit Test Suite</a>.
+Example use:
+
+<pre class="code">
+java -ea -cp <em>myclasspath</em>:$(RANDOOP_JAR) randoop.main.Main minimize --filepath=~/ErrorTestLang.java --fileclasspath=~/commons-lang.jar
 </pre>
 </li>
 
@@ -464,8 +474,8 @@ succinct: it shows a small number of method calls leading up to the
 assertion violation. Because Randoop's generation is random, the actual
 test revealing the error can be significantly longer, and contain many
 irrelevant calls that are not necessary to reveal the contract violation.
-You may wish to minimize the test case to ease debugging.
-<!-- We hope to include a test case minimizer in a future release of Randoop. -->
+You may wish to <a href="#minimize_failing_test_suite">minimize the test
+case</a> to ease debugging.
 </p>
 
 
@@ -618,6 +628,51 @@ can use
 the <a href="#map_calls"><code>map_calls</code> feature of the Randoop
 agent</a> to replace the new functionality by the old functionality.)
 </p>
+
+<h2 id="minimize">Minimizing a failing JUnit test suite</h2>
+
+<p>
+Randoop creates large test cases; when they fail, they may be hard for you
+to understand and debug.  Randoop includes a minimizer that, given a
+failing JUnit test suite file, produces a smaller one that fails in the
+same way:
+</p>
+<ul>
+  <li>Same failing assertions as in the original input test suite.</li>
+  <li>Same stack trace produced by failing assertions.</li>
+</ul>
+
+<p>
+The minimizer works by removing and simplifying methods and statements in its
+input file, without changing the test suite's failure behavior.
+</p>
+
+<p>
+The minimizer works on any JUnit test suite, so it is also useful to
+minimize failing tests that Randoop did not create.
+</p>
+
+<p>
+To minimize all failing tests in <code>ErrorTest1.java</code>, run
+Randoop as follows:
+</p>
+<pre class="code">
+java -ea -cp bin:randoop-all-3.1.1.jar randoop.main.Main minimize --filepath=~/ErrorTest1.java --fileclasspath=~/commons-lang.jar --testsuitetimeout=30
+</pre>
+
+<p>
+The minimizer will produce a Java file named <code>InputTestSuiteMinimized.java</code>
+where <code>InputTestSuite.java</code> is the name of the file being minimized. The main
+class within the Java file will be named <code>InputTestSuiteMinimized</code>. In the
+example above, the output file would be named <code>ErrorTest1Minimized.java</code>
+and the main class would be named <code>ErrorTest1Minimized</code>.
+</p>
+
+<p>
+  See the documentation for the
+  <a href="#optiongroup:Test-case-minimization-options">command-line options for failing test suite minimization</a>.
+</p>
+
 
 <h2 id="customize">Customizing Randoop's behavior to your application</h2>
 
@@ -1026,6 +1081,17 @@ Randoop about your application, and that is how we recommend using Randoop.
       <ul>
             <li id="option:visitor"><b>--visitor=</b><i>string</i> <code>[+]</code>.
              Install the given runtime visitor. See class randoop.ExecutionVisitor.
+      </ul>
+
+  <li id="optiongroup:Test-case-minimization-options">Test case minimization options
+      <ul>
+            <li id="option:suitepath"><b>--suitepath=</b><i>string</i>.
+             File containing the JUnit test suite to be minimized
+            <li id="option:suiteclasspath"><b>--suiteclasspath=</b><i>string</i>.
+             Classpath that includes dependencies needed to compile and run the JUnit test suite being
+ minimized.
+            <li id="option:testsuitetimeout"><b>--testsuitetimeout=</b><i>int</i>.
+             The maximum number of seconds allowed for the entire test suite to run. [default 30]
       </ul>
 
   <li id="optiongroup:Threading-and-timeouts">Threading and timeouts
@@ -1674,5 +1740,9 @@ please let us know so we can correct the oversight.
  -->
 <!--  LocalWords:  test10 var1 var2 s2 a1 ErrorTest RegressionTest o3 sgn
  -->
-<!--  LocalWords:  npe a' c' subtests AssertionError basename
+<!--  LocalWords:  npe a' c' subtests AssertionError basename cp filepath
+ -->
+<!--  LocalWords:  fileclasspath testcasetimeout Ayman Abdelghany Ren
+ -->
+<!--  LocalWords:  Kalauskas
  -->
