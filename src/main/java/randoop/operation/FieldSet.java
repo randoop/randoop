@@ -132,7 +132,7 @@ public class FieldSet extends CallableOperation {
 
   /**
    * Parses a description of a field setter in the given string. A setter description has the form
-   * "&lt;set&gt;( field-descriptor )" where "&lt;set&gt;" is literally what is expected.
+   * "{@code <set>( field-descriptor )}" where "{@code <set>}" is literally what is expected.
    *
    * @param descr string containing descriptor of field setter
    * @return the field setter for the given string descriptor

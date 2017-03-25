@@ -66,13 +66,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * or <code>--classlist</code> option.
    *
    * <p>A constructor line begins with <code>"cons :"</code> followed by the classname, the string
-   * <code>&lt;init&gt;</code>, and the constructor's parameter types enclosed in parentheses.
-   * Methods are specified in a similar way. For example:
+   * {@code <init>}, and the constructor's parameter types enclosed in parentheses. Methods are
+   * specified in a similar way. For example:
    *
-   * <pre class="code">
-   * cons : Type0.&lt;init&gt;(Type1, Type2, ..., TypeN)
+   * <pre>{@code
+   * cons : Type0.<init>(Type1, Type2, ..., TypeN)
    * method : Type0.method_name(Type1, Type2, ..., TypeN)
-   * </pre>
+   * }</pre>
    *
    * <p>Each <code>Type<i>i</i></code> must be fully-qualified (include package names).
    *

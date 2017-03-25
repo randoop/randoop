@@ -111,9 +111,9 @@ public class FieldGet extends CallableOperation {
   }
 
   /**
-   * Parses a getter for a field from a string. A getter description has the form "&lt;get&gt;(
-   * field-descriptor )" where &lt;get&gt;" is literal ("&lt; " and "&gt;" included), and
-   * field-descriptor is as recognized by
+   * Parses a getter for a field from a string. A getter description has the form "{@code <get>(
+   * field-descriptor )}" where "{@code <get>}" is literal ("{@code <}" and "{@code >}" included),
+   * and field-descriptor is as recognized by
    *
    * @param descr the string containing descriptor of getter for a field
    * @return the getter operation for the given string descriptor

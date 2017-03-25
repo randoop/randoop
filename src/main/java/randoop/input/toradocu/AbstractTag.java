@@ -82,9 +82,9 @@ class AbstractTag implements Tag {
   /**
    * Returns a string representation of this tag. The returned string is in the format "@throws
    * COMMENT" where COMMENT is the text of the comment in the tag. If translation has been attempted
-   * on this tag, then the returned string is also appended with " ==&gt; CONDITION" where CONDITION
-   * is the translated condition for the exception as a Java expression or the empty string if
-   * translation failed.
+   * on this tag, then the returned string is also appended with "{@code ==> CONDITION}" where
+   * CONDITION is the translated condition for the exception as a Java expression or the empty
+   * string if translation failed.
    *
    * @return a string representation of this tag
    */

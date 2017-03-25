@@ -266,8 +266,8 @@ public class GenericClassType extends ParameterizedType {
   /**
    * {@inheritDoc}
    *
-   * <p>Handles the specific cases of supertypes of a generic class <code>
-   * C&lt;F<sub>1</sub>,...,F<sub>n</sub>&gt;</code> for which the direct supertypes are:
+   * <p>Handles the specific cases of supertypes of a generic class {@code C<F1,...,Fn>} for which
+   * the direct supertypes are:
    *
    * <ol>
    *   <li>the direct superclass,

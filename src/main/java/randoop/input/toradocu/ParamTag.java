@@ -63,8 +63,9 @@ public class ParamTag extends AbstractTag {
    * Returns a string representation of this param tag. The returned string is in the format "@param
    * PARAMNAME COMMENT" where PARAMNAME is the fully qualified name of the parameter in the param
    * tag and COMMENT is the text of the comment in the param tag. If translation has been attempted
-   * on this tag, then the returned string is also appended with " ==&gt; CONDITION" where CONDITION
-   * is the translated condition as a Java expression or the empty string if translation failed.
+   * on this tag, then the returned string is also appended with "{@code ==> CONDITION}" where
+   * CONDITION is the translated condition as a Java expression or the empty string if translation
+   * failed.
    *
    * @return a string representation of this param tag
    */

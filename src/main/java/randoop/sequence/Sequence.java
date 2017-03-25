@@ -925,12 +925,12 @@ public final class Sequence implements WeightedElement {
    *
    * <p>Here is an example of a list of lines representing a sequence.
    *
-   * <pre>
-   * var0 = cons : java.util.HashMap.&lt;init&gt;() :
+   * <pre>{@code
+   * var0 = cons : java.util.HashMap.<init>() :
    * var1 = prim : double:-1.0 :
    * var2 = prim : java.lang.String:"hi!" :
    * var3 = method : java.util.HashMap.put(java.lang.Object,java.lang.Object) : var0 var1 var2
-   * </pre>
+   * }</pre>
    *
    * The above sequence corresponds to the following java code (with package names omitted for
    * brevity):

@@ -220,12 +220,10 @@ public final class ConstructorCall extends CallableOperation {
    *
    * <p>Examples:
    *
-   * <pre>
-   * <code>
-   *  java.util.ArrayList.&lt;init&gt;()
-   *  java.util.ArrayList.&lt;init&gt;(java.util.Collection)
-   * </code>
-   * </pre>
+   * <pre>{@code
+   * java.util.ArrayList.<init>()
+   * java.util.ArrayList.<init>(java.util.Collection)
+   * }</pre>
    *
    * @see #parse(String)
    * @return signature string for constructor
