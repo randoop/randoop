@@ -72,7 +72,7 @@ public class StringEscapeUtils {
    * output string: He didn't say, \"Stop!\"
    * </pre>
    *
-   * @param str String to escape values in, may be null
+   * @param str string to escape values in, may be null
    * @return a String with escaped values, <code>null</code> if input string was null
    */
   public static String escapeJava(String str) {
@@ -86,8 +86,8 @@ public class StringEscapeUtils {
    * <p>A <code>null</code> string input has no effect.
    *
    * @see #escapeJava(java.lang.String)
-   * @param out Writer to write escaped string into
-   * @param str String to escape values in, may be null
+   * @param out writer to write escaped string into
+   * @param str string to escape values in, may be null
    * @throws IllegalArgumentException if the Writer is <code>null</code>
    * @throws IOException if error occurs on underlying Writer
    */
@@ -188,7 +188,7 @@ public class StringEscapeUtils {
   /**
    * Returns an upper case hexadecimal <code>String</code> for the given character.
    *
-   * @param ch The character to convert
+   * @param ch the character to convert
    * @return an upper case hexadecimal <code>String</code>
    */
   private static String hex(char ch) {

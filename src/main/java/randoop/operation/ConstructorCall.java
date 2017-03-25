@@ -56,7 +56,7 @@ public final class ConstructorCall extends CallableOperation {
   /**
    * Return the reflective constructor corresponding to this ConstructorCall.
    *
-   * @return {@link Constructor} object called by this constructor call.
+   * @return {@link Constructor} object called by this constructor call
    */
   public Constructor<?> getConstructor() {
     return this.constructor;
@@ -291,7 +291,7 @@ public final class ConstructorCall extends CallableOperation {
   /**
    * {@inheritDoc}
    *
-   * @return true, because this is a {@link ConstructorCall}.
+   * @return true, because this is a {@link ConstructorCall}
    */
   @Override
   public boolean isConstructorCall() {

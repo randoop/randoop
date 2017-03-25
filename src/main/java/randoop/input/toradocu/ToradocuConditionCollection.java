@@ -546,7 +546,7 @@ public class ToradocuConditionCollection implements ConditionCollection {
    * only one return tag so the tag index is always 0.)
    *
    * @param tag the return tag
-   * @param methodIndex the position of the method in the JSON list.
+   * @param methodIndex the position of the method in the JSON list
    * @param methodQualifier the qualifier for the method name
    * @return the constructed method name
    */

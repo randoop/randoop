@@ -29,7 +29,7 @@ public class ParamTag extends AbstractTag {
   /**
    * Returns the parameter associated to the tag.
    *
-   * @return the parameter associated to the tag.
+   * @return the parameter associated to the tag
    */
   public Parameter parameter() {
     return parameter;

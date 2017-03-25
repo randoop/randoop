@@ -30,7 +30,7 @@ public class FieldGet extends CallableOperation {
   /**
    * FieldGetter sets the public field for the getter statement.
    *
-   * @param field the {@link AccessibleField} object from which to get values.
+   * @param field the {@link AccessibleField} object from which to get values
    */
   public FieldGet(AccessibleField field) {
     this.field = field;
@@ -179,7 +179,7 @@ public class FieldGet extends CallableOperation {
   /**
    * Determines whether enclosed {@link java.lang.reflect.Field} satisfies the given predicate.
    *
-   * @param predicate the {@link ReflectionPredicate} to be checked.
+   * @param predicate the {@link ReflectionPredicate} to be checked
    * @return true only if the field used in this getter satisfies predicate.canUse.
    */
   @Override

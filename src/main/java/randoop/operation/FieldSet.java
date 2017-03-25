@@ -219,7 +219,7 @@ public class FieldSet extends CallableOperation {
    * Determines whether enclosed {@link java.lang.reflect.Field Field} satisfies the given
    * predicate.
    *
-   * @param predicate the {@link ReflectionPredicate} to be checked.
+   * @param predicate the {@link ReflectionPredicate} to be checked
    * @return true only if the field used in this setter satisfies predicate.canUse.
    */
   @Override

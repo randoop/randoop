@@ -305,7 +305,7 @@ public final class MethodCall extends CallableOperation {
    *
    * <p>Determines whether enclosed {@link Method} satisfies the given predicate.
    *
-   * @param predicate the {@link ReflectionPredicate} to be checked.
+   * @param predicate the {@link ReflectionPredicate} to be checked
    * @return true only if the method in this object satisfies the canUse(Method) of predicate
    */
   @Override

@@ -106,7 +106,7 @@ public final class DocumentedMethod {
   /**
    * Returns an unmodifiable view of the param tags in this method.
    *
-   * @return an unmodifiable view of the param tags in this method.
+   * @return an unmodifiable view of the param tags in this method
    */
   public Set<ParamTag> paramTags() {
     return Collections.unmodifiableSet(paramTags);
