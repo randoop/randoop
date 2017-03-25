@@ -8,8 +8,8 @@ import randoop.main.Minimize;
 public class MinimizerComponentsTests {
 
   /**
-   * Tests the getClassName method and checks that the minimizer properly obtains a class name from
-   * a complete class path
+   * Tests the {@link Minimize#getClassName} method, which obtains a class name from the complete
+   * path to a class file.
    */
   @Test
   public void getClassNameTest() {
@@ -28,8 +28,8 @@ public class MinimizerComponentsTests {
   }
 
   /**
-   * Tests the getSimpleTypeName method and checks that the minimizer properly obtains a simple type
-   * name from a fully qualified type name
+   * Tests the {@link Minimize#getSimpleTypeName} method, which obtains a simple type name from a
+   * fully qualified type name.
    */
   @Test
   public void getSimpleNameTest() {

@@ -11,15 +11,25 @@ import org.junit.Test;
 import randoop.main.Minimize;
 
 public class MinimizerTests {
-  // Obtain system separators for path and file
   private static final String pathSeparator = System.getProperty("path.separator");
   private static final String fileSeparator = System.getProperty("file.separator");
 
-  // Directory to test inputs
+  /** Directory containing test inputs: suites to be minimized and goal minimized versions. */
   private static final String testDir = "test" + fileSeparator + "minimizer" + fileSeparator;
 
   /**
-   * Test the minimizer with an input file
+   * Test the minimizer with an input file. Uses no extra classpath dependencies and a timeout of 30
+   * seconds.
+   *
+   * @param filename the name of the file containing the test suite, in directory {@link #testDir}.
+   * @throws IOException thrown if output or expected output files can't be read
+   */
+  private void testWithInput(String filename) throws IOException {
+    testWithInput(testDir + filename, null, 30);
+  }
+
+  /**
+   * Test the minimizer with an input file.
    *
    * @param inputFilePath input file to minimize: a JUnit test suite
    * @param dependencies dependencies needed to compile and run the input file. This parameter is an
@@ -29,7 +39,7 @@ public class MinimizerTests {
    *     to run
    * @throws IOException thrown if output or expected output files can't be read
    */
-  private void testWithInput(String inputFilePath, String[] dependencies, String timeoutLimit)
+  private void testWithInput(String inputFilePath, String[] dependencies, int timeoutLimit)
       throws IOException {
     String outputFilePath =
         new StringBuilder(inputFilePath)
@@ -45,7 +55,6 @@ public class MinimizerTests {
     inputFilePath = inputFile.getAbsolutePath();
     outputFilePath = outputFile.getAbsolutePath();
 
-    // Classpath obtained by adding the necessary components together
     String classPath = null;
     if (dependencies != null) {
       classPath = "";
@@ -56,13 +65,13 @@ public class MinimizerTests {
     }
 
     // Create the arguments array and invoke the minimizer
-    Minimize.mainMinimize(inputFilePath, classPath, Integer.parseInt(timeoutLimit));
+    Minimize.mainMinimize(inputFilePath, classPath, timeoutLimit);
 
     // Compare obtained and expected output
     String obtainedOutput = readFile(outputFilePath, Charset.defaultCharset());
     String expectedOutput = readFile(expectedFilePath, Charset.defaultCharset());
 
-    // Handle carriage returns on different OS
+    // Handle carriage returns on different OSes.
     expectedOutput = expectedOutput.replaceAll("\\r\\n", "\n");
     obtainedOutput = obtainedOutput.replaceAll("\\r\\n", "\n");
 
@@ -70,148 +79,95 @@ public class MinimizerTests {
   }
 
   /**
-   * Read a file and return the String representation
+   * Read a file and return the contents as a String.
    *
    * @param filePath path to file
    * @param encoding character encoding
-   * @return String representation of the input file
+   * @return contents of the input file
    * @throws IOException if the file can't be read
    */
   private static String readFile(String filePath, Charset encoding) throws IOException {
-    byte[] encoded = Files.readAllBytes(Paths.get(filePath));
-    return new String(encoded, encoding);
+    byte[] contents = Files.readAllBytes(Paths.get(filePath));
+    return new String(contents, encoding);
   }
 
   @Test
   public void test1() throws IOException {
-    // Path to input file
-    String inputFilePath = testDir + "TestInput1.java";
-    String timeout = "30";
-
-    testWithInput(inputFilePath, null, timeout);
+    testWithInput("TestInput1.java");
   }
 
   @Test
   public void test2() throws IOException {
-    // Path to input file
-    String inputFilePath = testDir + "TestInput2.java";
-    String timeout = "30";
-
+    testWithInput("TestInput2.java");
     // Test input contains while loop.
-    testWithInput(inputFilePath, null, timeout);
   }
 
   @Test
   public void test3() throws IOException {
-    // Path to input file
-    String inputFilePath = testDir + "TestInput3.java";
-    String timeout = "30";
-
-    testWithInput(inputFilePath, null, timeout);
+    testWithInput("TestInput3.java");
   }
 
   @Test
   public void testWithImportsWithSameClassName() throws IOException {
-    // Path to input file
-    String inputFilePath = testDir + "TestInputImportsWithSameClassName.java";
-    String timeout = "30";
-
+    testWithInput("TestInputImportsWithSameClassName.java");
     // This test input uses ClassA belonging to package dir_a and ClassA belonging to
     // package dir_b. This test checks that the minimizer doesn't remove the fully
     // qualified type name for both instances of ClassA.
-    testWithInput(inputFilePath, null, timeout);
   }
 
   @Test
   public void testWithInputInSubDirectory() throws IOException {
-    // Path to input file
-    String inputFilePath =
-        testDir
-            + "testrootdir"
-            + fileSeparator
-            + "testsubdir"
-            + fileSeparator
-            + "TestInputSubDir1.java";
-    String timeout = "30";
-
+    testWithInput(
+        "testrootdir" + fileSeparator + "testsubdir" + fileSeparator + "TestInputSubDir1.java");
     // This test input file is located in a subdirectory and non-default package.
     // Checks that the minimizer is able to find the input file and minimize it.
-    testWithInput(inputFilePath, null, timeout);
   }
 
   @Test
   public void testWithPassingAssertionValue() throws IOException {
-    // Path to input file
-    String inputFilePath = testDir + "TestInputWithPassingAssertionValue.java";
-    String timeout = "30";
-
+    testWithInput("TestInputWithPassingAssertionValue.java");
     // This test input file has a passing assertion value. The minimized test suite
     // will use the value found in the assertion as a part of a replacement statement.
-    testWithInput(inputFilePath, null, timeout);
   }
 
   @Test
   public void testWithMultiplePassingAssertions() throws IOException {
-    // Path to input file
-    String inputFilePath = testDir + "TestInputWithMultiplePassingAssertions.java";
-    String timeout = "30";
-
+    testWithInput("TestInputWithMultiplePassingAssertions.java");
     // This test input file has a passing assertion value. The minimized test suite
     // will use the value found in the assertion as a part of a replacement statement.
-    testWithInput(inputFilePath, null, timeout);
   }
 
   @Test
   public void testWithWildcardImport() throws IOException {
-    // Path to input file
-    String inputFilePath = testDir + "TestInputWithWildcardImport.java";
-    String timeout = "30";
-
+    testWithInput("TestInputWithWildcardImport.java");
     // Test input with wildcard import already included. Redundant import statements
     // will not be added by the minimizer.
-    testWithInput(inputFilePath, null, timeout);
   }
 
   @Test
   public void testWithMultipleVarDeclarationsOnALine() throws IOException {
-    // Path to input file
-    String inputFilePath = testDir + "TestInputMultipleVarDeclarationsOnALine.java";
-    String timeout = "30";
-
+    testWithInput("TestInputMultipleVarDeclarationsOnALine.java");
     // Test input with multiple variable declarations on a single line. The minimizer
     // will not attempt to simplify these statements.
-    testWithInput(inputFilePath, null, timeout);
   }
 
   @Test
   public void testWithNoFailingTests() throws IOException {
-    // Path to input file
-    String inputFilePath = testDir + "TestInputWithNoFailingTests.java";
-    String timeout = "30";
-
+    testWithInput("TestInputWithNoFailingTests.java");
     // Test input with no failing tests. The minimizer will remove all lines in the
     // method bodies.
-    testWithInput(inputFilePath, null, timeout);
   }
 
   @Test
   public void testWithVariableReassignment() throws IOException {
-    // Path to input file
-    String inputFilePath = testDir + "TestInputWithVariableReassignment.java";
-    String timeout = "30";
-
+    testWithInput("TestInputWithVariableReassignment.java");
     // Test input with variable reassignment.
-    testWithInput(inputFilePath, null, timeout);
   }
 
   @Test
   public void testWithRuntimeException() throws IOException {
-    // Path to input file
-    String inputFilePath = testDir + "TestInputWithRuntimeException.java";
-    String timeout = "30";
-
+    testWithInput("TestInputWithRuntimeException.java");
     // Test input with runtime exception.
-    testWithInput(inputFilePath, null, timeout);
   }
 
   @Test
