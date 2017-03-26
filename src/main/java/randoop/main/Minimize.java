@@ -323,7 +323,7 @@ public class Minimize extends CommandHandler {
           // Use simplification of this statement and continue with next statement.
           replacementFound = true;
 
-          // Assertions are never simplified; if this is an assertion, it's the original statement.
+          // Assertions are never simplified, only removed.  If currStmt is an assertion, then stmt is null.
           storeValueFromAssertion(currStmt, primitiveValues);
           break;
         } else {
@@ -352,7 +352,7 @@ public class Minimize extends CommandHandler {
    *   <li>Remove the left hand side of a statement, retaining only the expression on the right.
    * </ul>
    *
-   * <p>Assertions are never simplified.
+   * <p>Assertions are never simplified, only removed completely.
    *
    * @param currStmt statement to simplify
    * @param primitiveValues map of primitive variable names to expressions representing their values
