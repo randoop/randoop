@@ -456,7 +456,7 @@ public class Minimize extends CommandHandler {
    */
   private static Statement rhsAssignZeroValue(VariableDeclarationExpr vdExpr) {
     if (vdExpr.getVars().size() != 1) {
-      // Number of variables declared in this expression is not one.
+      // Number of variables declared in this expression is not 1.
       return null;
     }
     Type type = vdExpr.getType();
