@@ -134,7 +134,7 @@ public final class NonreceiverTerm extends CallableOperation {
   /**
    * {@inheritDoc}
    *
-   * @return {@link NormalExecution} object enclosing value of this non-receiver term.
+   * @return {@link NormalExecution} object enclosing value of this non-receiver term
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
@@ -149,7 +149,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * Note: this does not explicitly box primitive values.
    *
    * @param inputVars ignored
-   * @param b {@link StringBuilder} to which string representation is appended.
+   * @param b {@link StringBuilder} to which string representation is appended
    */
   @Override
   public void appendCode(
@@ -182,7 +182,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * JavaTypes#CLASS_TYPE}.
    *
    * @param type the type of value desired
-   * @return a {@link NonreceiverTerm} with a canonical representative of the given type.
+   * @return a {@link NonreceiverTerm} with a canonical representative of the given type
    */
   static NonreceiverTerm createNullOrZeroTerm(Type type) {
     if (type.isBoxedPrimitive()) {
@@ -220,7 +220,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * String:" "                   represents: String x = " ";
    * String:"\""                  represents: String x = "\"";
    * String:"\n"                  represents: String x = "\n";
-   * String:"\u0000"              represents: String x = "\u0000";
+   * String:"\u263A"              represents: String x = "\u263A";
    * java.lang.Object:null        represents: Object x = null;
    * [[Ljava.lang.Object;:null    represents: Object[][] = null;
    * int:0                        represents: int x = 0;

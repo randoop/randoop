@@ -65,7 +65,7 @@ public final class InitializedArrayCreation extends CallableOperation {
   /**
    * {@inheritDoc}
    *
-   * @return {@link NormalExecution} object containing constructed array.
+   * @return {@link NormalExecution} object containing constructed array
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {

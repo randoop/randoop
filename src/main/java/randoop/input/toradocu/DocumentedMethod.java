@@ -106,7 +106,7 @@ public final class DocumentedMethod {
   /**
    * Returns an unmodifiable view of the param tags in this method.
    *
-   * @return an unmodifiable view of the param tags in this method.
+   * @return an unmodifiable view of the param tags in this method
    */
   public Set<ParamTag> paramTags() {
     return Collections.unmodifiableSet(paramTags);
@@ -230,7 +230,7 @@ public final class DocumentedMethod {
 
   /**
    * Returns return type (when present), fully qualified class, and signature of this method in the
-   * format "&lt;RETURN TYPE&gt; &lt;CLASS TYPE.METHOD SIGNATURE&gt;"
+   * format "{@code <RETURN TYPE> <CLASS TYPE.METHOD SIGNATURE>}"
    *
    * @return return the string representation of this method
    */

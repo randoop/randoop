@@ -63,9 +63,9 @@ public class StreamRedirectThread extends Thread {
   /**
    * Set up for copy.
    *
-   * @param name Name of the thread
-   * @param in Stream to copy from
-   * @param out Stream to copy to
+   * @param name name of the thread
+   * @param in stream to copy from
+   * @param out stream to copy to
    */
   public StreamRedirectThread(String name, InputStream in, OutputStream out) {
     super(name);

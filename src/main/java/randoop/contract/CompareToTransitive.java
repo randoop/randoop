@@ -10,8 +10,10 @@ import randoop.types.TypeTuple;
 /**
  * The contract: Checks the transitivity of the compare to method.
  *
- * <pre>((x0.compareTo(x1) &gt; 0) &amp;&amp; (x1.compareTo(x2) &gt; 0))
- * &rarr; (x0.compareTo(x2) &gt; 0)</pre>
+ * <pre>{@code
+ * ((x0.compareTo(x1) > 0) && (x1.compareTo(x2) > 0))
+ *  => (x0.compareTo(x2) > 0)
+ * }</pre>
  */
 public class CompareToTransitive implements ObjectContract {
   private static final CompareToTransitive instance = new CompareToTransitive();

@@ -358,7 +358,7 @@ public class ExecutableSequence {
    * Returns the values for the given variables in the {@link Execution} object. The variables are
    * {@link Variable} objects in the {@link Sequence} of this {@link ExecutableSequence} object.
    *
-   * @param vars a list of {@link Variable} objects.
+   * @param vars a list of {@link Variable} objects
    * @param execution the object representing outcome of executing this sequence
    * @return array of values corresponding to variables
    */
