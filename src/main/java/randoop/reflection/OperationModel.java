@@ -100,7 +100,7 @@ public class OperationModel {
   }
 
   /**
-   * Factory method to construct an operation model for a particular set of classes
+   * Factory method to construct an operation model for a particular set of classes.
    *
    * @param visibility the {@link randoop.reflection.VisibilityPredicate} to test accessibility of
    *     classes and class members
@@ -111,6 +111,7 @@ public class OperationModel {
    * @param methodSignatures the signatures of methods to be added to the model
    * @param errorHandler the handler for bad file name errors
    * @param literalsFileList the list of literals file names
+   * @param operationCollection the collection of specifications for operations
    * @return the operation model for the parameters
    * @throws OperationParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
@@ -141,6 +142,43 @@ public class OperationModel {
     model.addObjectConstructor();
 
     return model;
+  }
+
+  /**
+   * Factory method to construct an operation model for a particular set of classes without behavior
+   * specifications.
+   *
+   * @param visibility the {@link randoop.reflection.VisibilityPredicate} to test accessibility of
+   *     classes and class members
+   * @param reflectionPredicate the reflection predicate to determine which classes and class
+   *     members are used
+   * @param classnames the names of classes under test
+   * @param exercisedClassnames the names of classes to be tested by exercised heuristic
+   * @param methodSignatures the signatures of methods to be added to the model
+   * @param errorHandler the handler for bad file name errors
+   * @param literalsFileList the list of literals file names
+   * @return the operation model for the parameters
+   * @throws OperationParseException if a method signature is ill-formed
+   * @throws NoSuchMethodException if an attempt is made to load a non-existent method
+   */
+  public static OperationModel createModel(
+      VisibilityPredicate visibility,
+      ReflectionPredicate reflectionPredicate,
+      Set<String> classnames,
+      Set<String> exercisedClassnames,
+      Set<String> methodSignatures,
+      ClassNameErrorHandler errorHandler,
+      List<String> literalsFileList)
+      throws NoSuchMethodException, OperationParseException {
+    return createModel(
+        visibility,
+        reflectionPredicate,
+        classnames,
+        exercisedClassnames,
+        methodSignatures,
+        errorHandler,
+        literalsFileList,
+        null);
   }
 
   /**
