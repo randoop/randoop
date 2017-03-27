@@ -1,10 +1,36 @@
 package randoop.condition;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import randoop.util.Log;
+
 /**
  * Represents a condition on an operation. Kind of like a predicate, but with names changed to
  * protect the innocent.
  */
-public interface Condition {
+public class Condition {
+
+  /** The {@code java.lang.reflect.Method} to test this condition */
+  private final Method conditionMethod;
+
+  /** The comment describing this condition */
+  private final String comment;
+
+  /** The code text for this condition */
+  private final String conditionText;
+
+  /**
+   * Creates a {@link Condition} that calls the given condition method.
+   *
+   * @param conditionMethod the reflection object for the condition method
+   * @param comment the comment describing this condition
+   * @param conditionText the text for this condition
+   */
+  Condition(Method conditionMethod, String comment, String conditionText) {
+    this.conditionMethod = conditionMethod;
+    this.comment = comment;
+    this.conditionText = conditionText;
+  }
 
   /**
    * Indicate whether this condition is satisfied by the given values.
@@ -12,14 +38,33 @@ public interface Condition {
    * @param values the values to check the condition against
    * @return true if this condition is satisfied by the values, false otherwise
    */
-  boolean check(Object[] values);
+  public boolean check(Object[] values) {
+    try {
+      return (boolean) conditionMethod.invoke(null, values);
+    } catch (IllegalAccessException e) {
+      throw new RandoopConditionError("Failure executing condition method", e);
+    } catch (InvocationTargetException e) {
+      String message =
+          "Failure executing condition method: "
+              + conditionMethod
+              + "(invoke threw "
+              + e.getCause()
+              + ")";
+      if (Log.isLoggingOn()) {
+        Log.logLine(message);
+      }
+    }
+    return false;
+  }
 
   /**
    * Return text that describes this condition.
    *
    * @return text that describes this condition
    */
-  String getComment();
+  public String getComment() {
+    return comment;
+  }
 
   /**
    * Return this condition as a string. Arguments to the condition {@link
@@ -29,5 +74,7 @@ public interface Condition {
    *
    * @return the Java representation of the condition as a {@code String}
    */
-  String getConditionString();
+  public String getConditionString() {
+    return conditionText;
+  }
 }
