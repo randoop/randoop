@@ -282,7 +282,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean fail_on_condition_input_error = false;
 
   /**
-   * File containing side-effect-free observer methods. Specifying observers has two benefits: it
+   * File containing side-effect-free observer methods. Specifying observers has 2 benefits: it
    * makes regression tests stronger, and it helps Randoop create smaller tests.
    */
   ///////////////////////////////////////////////////////////////////
