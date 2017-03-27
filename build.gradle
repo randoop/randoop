@@ -241,6 +241,11 @@ test {
   exclude '**/randoop/output/JUnitCreatorTest.*'
 
   /*
+   * This test should go away when Toradocu integration goes away
+   */
+  exclude '**/randoop/input/toradocu/DeserializationTest.*'
+
+  /*
    * Problematic tests excluded during Gradle setup that need to be evaluated.
    * Unless otherwise noted, these are tests that were not previously run by
    * Makefile. However, some included tests were also not run, but are not

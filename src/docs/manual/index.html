@@ -39,6 +39,7 @@ The Randoop homepage is
       <li><a href="#customize">Customizing Randoop's behavior to your application</a>
         <ul>
           <li><a href="#command-line-options">Command-line options</a></li>
+          <li><a href="#specifications">Specifying method and constructor behavior</a></li>
           <li><a href="#map_calls">Avoiding calls to specific methods</a></li>
           <li><a href="#determining-calls-to-map">Determining which calls to place in the map_calls file</a></li>
           <li><a href="#checkrep">Specifying representation invariant methods (such as <code>checkRep</code>)</a></li>
@@ -796,17 +797,24 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>Use of this option is a last resort. Flaky tests are usually due to calling Randoop on
  side-effecting or nondeterministic methods, and a better solution is not to call Randoop on
  such methods. [default false]
-            <li id="option:toradocu-conditions"><b>--toradocu-conditions=</b><i>filename</i> <code>[+]</code>.
-             Read Toradocu JSON condition file to use Toradocu generated conditions to control how tests are
+            <li id="option:specifications"><b>--specifications=</b><i>filename</i> <code>[+]</code>.
+             Read JSON condition file to use specifications to control how tests are generated and
  classified.
 
- <p>Param-conditions are used as pre-conditions on method/constructor calls, with test sequences
- where the condition fails being classified as <code>BehaviorType.INVALID</code>.
+ <ul>
+   <li>
+       <p>Param-conditions are pre-conditions on method/constructor calls, with test sequences
+       where the condition fails being classified as <code>BehaviorType.INVALID</code>.
+   <li>
+       <p>Return-conditions are post-conditions on method/constructor calls, consisting of a
+       guard and a property. If the inputs to the call satisfy the guard, then the property is
+       checked after the call. If the property fails, the sequence is classified as <code>BehaviorType.ERROR</code>.
+   <li>Throws-conditions are post-conditions on expected exceptions: if the inputs to the call
+       satisfy the condition, when the exception is thrown the sequence is <code>BehaviorType.EXPECTED</code>, but, if it is not, the sequence is classified as <code>BehaviorType.ERROR</code>. If the throws-condition is not satisfied by the input, then ordinary
+       classification is applied.
+ </ul>
 
- <p>Throws-conditions are used to check exceptions: if the inputs to the call satisfy the
- condition, when the exception is thrown the sequence is <code>BehaviorType.EXPECTED</code>, but, if
- it is not, the sequence is classified as <code>BehaviorType.ERROR</code>. If the throws-condition is
- not satisfied by the input, then ordinary classification is applied.
+ See the User documentation for more details.
       </ul>
   <li id="optiongroup:Observer-methods">Observer methods
       <ul>
@@ -1025,6 +1033,68 @@ Randoop about your application, and that is how we recommend using Randoop.
 
 <code>[+]</code> marked option can be specified multiple times
 <!-- end options doc -->
+
+
+<h3 id="specifications">Specifying method and constructor behavior</h3>
+
+<p>
+A method or constructor can have expected behaviors that should be used in
+generating tests.
+These can be given to Randoop using the <code>--specifications=file</code>
+command-line option that takes a JSON file containing the specifications of
+contracts for methods or constructors.
+</p>
+
+<p>
+Randoop can use three kinds of specifications:
+</p>
+<ul>
+  <li>
+    A <i>param</i>-condition is a pre-condition on a method or constructor call,
+    determining whether a call is valid. For instance, an integer parameter
+    may be required to be non-negative, and no tests should pass a negative
+    value. A param-condition is specified using a boolean expression on the
+    values used in the call (the parameters and/or the receiving object).
+  </li>
+  <li>
+    A <i>return</i>-condition is a post-condition on a method call,
+    determining what value should be returned by the method based on the
+    receiving object and parameter values used in the call. Each condition
+    consists of a <i>guard</i>, a boolean expression that indicates what must
+    be true before the call, and a <i>property</i>, a boolean expression that
+    indicates what will be true after the call.
+    Describing the values returned by a method may involve a chain of conditions.
+    For instance, the return value of the Java 7
+    <a href="https://docs.oracle.com/javase/7/docs/api/java/util/Stack.html#empty()">Stack.empty()</a>
+    method is <code>true</code> if the stack has no items, and <code>false</code>
+    otherwise. This method has two return-conditions, the first being
+    "if the stack has no items, return true". The second rule, assuming the guard of
+    first rule ("the stack has no items") has been checked, is
+    "if true, then return false".
+  </li>
+  <li>
+    A <i>throws</i>-condition is a post-condition, determining when an exception
+    is expected based on the receiving object and parameter values used in the call.
+    For instance, the
+    <a href="https://docs.oracle.com/javase/7/docs/api/java/util/Stack.html#peek()">peek method</a>
+    of the Java 7 Stack class throws an exception <code>EmptyStackException</code>
+    if the stack is empty. For this method, if the stack is empty when the call
+    is made, it would be an error if the method is not thrown.
+  </li>
+</ul>
+<p>
+For a particular call, Randoop first checks for any failing param-conditions,
+then checks the guards for any throws-conditions, and, if none are satisfied,
+checks the guards for the return-conditions in the order they are given.
+</p>
+
+<p>
+The expected file format is a JSON list with elements that are the serialized form of the
+<a href="https://randoop.github.io/randoop/api/randoop/condition/specification/OperationSpecification.html">OperationSpecification</a>
+class.
+An example file is <a href="condition_spec_json_example.txt">here</a>.
+The serialized form is described in the API.
+</p>
 
 
 <h3 id="map_calls">Avoiding calls to specific methods</h3>
