@@ -46,31 +46,31 @@ public class OperationConditionTest {
 
     preValues = new Object[] {receiver, 1};
     assertTrue("should pass param condition", conditions.checkPreconditions(preValues));
-    TestCheckGenerator throwsGen = conditions.getThrowsCheckGenerator(preValues);
-    assertTrue("should not be a throws generator", throwsGen == null);
-    TestCheckGenerator retGen = conditions.getReturnCheckGenerator(preValues);
-    assertTrue("should be a return generator", retGen != null);
+    List<TestCheckGenerator> throwsGen = conditions.getThrowsCheckGenerator(preValues);
+    assertTrue("should not be a throws generator", throwsGen.isEmpty());
+    List<TestCheckGenerator> retGen = conditions.getReturnCheckGenerator(preValues);
+    assertFalse("should be a return generator", retGen.isEmpty());
 
     preValues = new Object[] {receiver, 6};
     assertTrue("should pass param condition", conditions.checkPreconditions(preValues));
     throwsGen = conditions.getThrowsCheckGenerator(preValues);
-    assertTrue("should not be a throws generator", throwsGen == null);
+    assertTrue("should not be a throws generator", throwsGen.isEmpty());
     retGen = conditions.getReturnCheckGenerator(preValues);
-    assertTrue("should be a return generator", retGen != null);
+    assertTrue("should be a return generator", !retGen.isEmpty());
 
     preValues = new Object[] {receiver, 11};
     assertTrue("should pass param condition", conditions.checkPreconditions(preValues));
     throwsGen = conditions.getThrowsCheckGenerator(preValues);
-    assertTrue("should not be a throws generator", throwsGen == null);
+    assertTrue("should not be a throws generator", throwsGen.isEmpty());
     retGen = conditions.getReturnCheckGenerator(preValues);
-    assertTrue("should be a return generator", retGen != null);
+    assertTrue("should be a return generator", !retGen.isEmpty());
 
     preValues = new Object[] {receiver, 16};
     assertTrue("should pass param condition", conditions.checkPreconditions(preValues));
     throwsGen = conditions.getThrowsCheckGenerator(preValues);
-    assertTrue("should not be a throws generator", throwsGen == null);
+    assertTrue("should not be a throws generator", throwsGen.isEmpty());
     retGen = conditions.getReturnCheckGenerator(preValues);
-    assertTrue("should be a return generator", retGen != null);
+    assertTrue("should be a return generator", !retGen.isEmpty());
 
     preValues = new Object[] {receiver, 21};
     assertTrue("should pass param condition", conditions.checkPreconditions(preValues));
