@@ -795,61 +795,6 @@ public class RandoopSystemTest {
         is(equalTo(runStatus.regressionTestCount)));
   }
 
-  //TODO figure out why Randoop wont generate the error test for this input class/spec
-  @Test
-  public void runConditionInputTest() {
-    TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("condition-input");
-    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.addTestClass("randoop.condition.ClassWithConditions");
-    options.setOption(
-        "specifications", "resources/systemTest/randoop/condition/classwithconditions.json");
-    options.setErrorBasename("ConditionError");
-    options.setRegressionBasename("ConditionRegression");
-    options.setOption("timelimit", "60");
-    options.setOption("outputlimit", "200");
-
-    //TODO should check for invalid test count
-    generateAndTestWithCoverage(
-        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
-  }
-
-  /** test input based on Toradocu tutorial example */
-  @Test
-  public void runToradocuExampleTest() {
-    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("toradocu-input");
-    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.addTestClass("net.Connection");
-    options.setOption(
-        "specifications", "resources/systemTest/randoop/condition/net_connection_conditions.json");
-    options.setErrorBasename("ConditionError");
-    options.setRegressionBasename("ConditionRegression");
-    options.setOption("timelimit", "30");
-    options.setOption("outputlimit", "200");
-
-    //TODO should check for invalid test count
-    generateAndTestWithCoverage(
-        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
-  }
-
-  /*
-  @Test
-  public void runInheritedToradocuTest() {
-    TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("toradocu-inherited");
-    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.addTestClass("pkg.SubClass");
-  //  options.setOption("toradocu-conditions", "resources/systemTest/SubClassConditions.json");
-    options.setErrorBasename("ConditionError");
-    options.setRegressionBasename("ConditionRegression");
-    options.setOption("timelimit", "30");
-    options.setOption("outputlimit", "200");
-
-    generateAndTestWithCoverage(
-        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
-  }
-  */
-
   /**
    * recreate problem with tests over Google Guava where value from private enum returned by public
    * method and value used in {@link randoop.test.ObjectCheck} surfaces in test code, creating
