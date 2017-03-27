@@ -1,7 +1,6 @@
 randoop
 randoop.compile
 randoop.condition
-randoop.condition.specification
 randoop.contract
 randoop.field
 randoop.generation
