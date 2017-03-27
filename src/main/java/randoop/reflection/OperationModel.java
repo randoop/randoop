@@ -77,8 +77,8 @@ public class OperationModel {
 
   /** Create an empty model of test context. */
   private OperationModel() {
-    classTypes = new LinkedHashSet<>();
-    inputTypes = new LinkedHashSet<>();
+    classTypes = new TreeSet<>();
+    inputTypes = new TreeSet<>();
     classLiteralMap = new MultiMap<>();
     annotatedTestValues = new LinkedHashSet<>();
     contracts = new ContractSet();
