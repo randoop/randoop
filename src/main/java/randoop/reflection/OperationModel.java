@@ -9,7 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import randoop.condition.ConditionCollection;
+import randoop.condition.SpecificationCollection;
 import randoop.contract.CompareToAntiSymmetric;
 import randoop.contract.CompareToEquals;
 import randoop.contract.CompareToReflexive;
@@ -124,7 +124,7 @@ public class OperationModel {
       Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList,
-      ConditionCollection operationCollection)
+      SpecificationCollection operationCollection)
       throws OperationParseException, NoSuchMethodException {
 
     OperationModel model = new OperationModel();
@@ -391,7 +391,7 @@ public class OperationModel {
       Set<ClassOrInterfaceType> concreteClassTypes,
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
-      ConditionCollection operationConditions) {
+      SpecificationCollection operationConditions) {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (ClassOrInterfaceType classType : concreteClassTypes) {
       mgr.apply(

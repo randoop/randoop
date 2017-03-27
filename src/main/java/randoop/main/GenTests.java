@@ -242,7 +242,8 @@ public class GenTests extends GenInputsAbstract {
      * Setup pre/post/throws-conditions for operations.
      * Currently only uses Toradocu generated conditions.
      */
-    SpecificationCollection operationConditions = null;
+    SpecificationCollection operationConditions =
+        SpecificationCollection.create(GenInputsAbstract.specifications);
 
     OperationModel operationModel = null;
     try {
