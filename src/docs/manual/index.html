@@ -1126,22 +1126,22 @@ call.
 <h3 id="checkrep">Specifying representation invariant methods (such as <code>checkRep</code>)</h3>
 
 <p>
-A representation invariant method checks that a class's internal
-representation satisfies expected properties. For example, a rep
-invariant method for a sorted list data structure may check that the
-elements in the list are indeed sorted; a rep invariant method for a
-balanced binary tree may check that the tree is balanced, etc.
+The "representation invariant" of a class is a property that all
+instances of the class must satisfy.  For example, a field might
+contain a non-negative number, or two fields might contain lists of
+the same length.
+Sometimes, a program contains a method that checks the rep invariant,
+for debugging purposes.
+If the rep invariant is ever violated, the program has a bug.
 </p>
 
 <p>
-You can tell Randoop that some methods in your classes under test are
-rep invariant methods, and Randoop will call these methods on objects
-of the appropriate type, outputting violations of the rep invariant as
-failing unit tests. To tell Randoop that a method in a class under
-test is a rep invariant method, add the
+By using the 
 <a href="https://randoop.github.io/randoop/api/randoop/CheckRep.html"><code>@CheckRep</code></a>
-annotation to the method declaration (don't forget to <code>import
-randoop.*</code>).
+annotation (don't forget to <code>import randoop.*</code>), you can
+tell Randoop which methods in your classes under test are rep
+invariant methods.  Randoop will call these methods; if the method
+ever fails, Randoop outputs the test as a failing test.
 </p>
 
 <p>
