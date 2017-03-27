@@ -261,29 +261,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean ignore_flaky_tests = false;
 
   /**
-   * Read Toradocu JSON condition file to use Toradocu generated conditions to control how tests are
-   * classified.
-   *
-   * <p>Param-conditions are used as pre-conditions on method/constructor calls, with test sequences
-   * where the condition fails being classified as {@link BehaviorType#INVALID}.
-   *
-   * <p>Throws-conditions are used to check exceptions: if the inputs to the call satisfy the
-   * condition, when the exception is thrown the sequence is {@link BehaviorType#EXPECTED}, but, if
-   * it is not, the sequence is classified as {@link BehaviorType#ERROR}. If the throws-condition is
-   * not satisfied by the input, then ordinary classification is applied.
-   */
-  @Option("Use Toradocu condition JSON file to classify behaviors for methods/constructors")
-  public static List<File> toradocu_conditions = null;
-
-  /**
-   * Throw exception when cannot find expected condition methods in Toradocu output. Otherwise a
-   * warning message is printed and the condition is ignored.
-   */
-  @Unpublicized
-  @Option("Allow failure when cannot find Toradocu condition methods")
-  public static boolean fail_on_condition_input_error = false;
-
-  /**
    * File containing side-effect-free observer methods. Specifying observers has 2 benefits: it
    * makes regression tests stronger, and it helps Randoop create smaller tests.
    */

@@ -798,17 +798,6 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>Use of this option is a last resort. Flaky tests are usually due to calling Randoop on
  side-effecting or nondeterministic methods, and a better solution is not to call Randoop on
  such methods. [default false]
-            <li id="option:toradocu-conditions"><b>--toradocu-conditions=</b><i>filename</i> <code>[+]</code>.
-             Read Toradocu JSON condition file to use Toradocu generated conditions to control how tests are
- classified.
-
- <p>Param-conditions are used as pre-conditions on method/constructor calls, with test sequences
- where the condition fails being classified as <code>BehaviorType.INVALID</code>.
-
- <p>Throws-conditions are used to check exceptions: if the inputs to the call satisfy the
- condition, when the exception is thrown the sequence is <code>BehaviorType.EXPECTED</code>, but, if
- it is not, the sequence is classified as <code>BehaviorType.ERROR</code>. If the throws-condition is
- not satisfied by the input, then ordinary classification is applied.
       </ul>
   <li id="optiongroup:Observer-methods">Observer methods
       <ul>
