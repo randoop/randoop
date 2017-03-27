@@ -4,6 +4,9 @@ import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestInputWithPassingAssertionValue {
+
+  // This test input file has a passing assertion value. The minimized test suite
+  // will use the value found in the assertion as a part of a replacement statement.
   @Test
   public void test1() throws Throwable {
     int a = 20;

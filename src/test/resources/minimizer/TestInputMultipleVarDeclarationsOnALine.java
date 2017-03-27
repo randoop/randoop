@@ -4,6 +4,9 @@ import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestInputMultipleVarDeclarationsOnALine {
+
+  // Test input with multiple variable declarations on a single line. The minimizer
+  // will not attempt to simplify these statements.
   @Test
   public void test1() throws Throwable {
     // Multiple variable declarations on one line.

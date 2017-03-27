@@ -5,6 +5,9 @@ import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestInputWithWildcardImport {
+
+  // Test input with wildcard import already included. Redundant import statements
+  // will not be added by the minimizer.
   @Test
   public void test1() throws Throwable {
     java.util.List<java.lang.Integer> list = new java.util.ArrayList<java.lang.Integer>();

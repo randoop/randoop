@@ -523,16 +523,17 @@ public class Minimize extends CommandHandler {
       return null;
     }
 
-    // Copy the variable declaration expression.
-    VariableDeclarationExpr exprCopy = (VariableDeclarationExpr) vdExpr.clone();
+    // Create the resulting expression, a copy of the original expression which
+    // will be modified and returned.
+    VariableDeclarationExpr resultExpr = (VariableDeclarationExpr) vdExpr.clone();
 
     // Obtain a reference to the variable declaration.
-    List<VariableDeclarator> vars = exprCopy.getVars();
+    List<VariableDeclarator> vars = resultExpr.getVars();
     VariableDeclarator vd = vars.get(0);
 
     // Based on the declared variable type, set the right hand to the value
     // that was passed in.
-    Type type = exprCopy.getType();
+    Type type = resultExpr.getType();
     if (type instanceof PrimitiveType) {
       switch (((PrimitiveType) type).getType()) {
         case Boolean:
@@ -564,10 +565,12 @@ public class Minimize extends CommandHandler {
       // Set right hand side to null.
       vd.setInit(new NullLiteralExpr());
     }
+
     // Create a new statement with the simplified expression.
-    ExpressionStmt newStmt = new ExpressionStmt(exprCopy);
-    exprCopy.setParentNode(newStmt);
-    return newStmt;
+    ExpressionStmt resultStmt = new ExpressionStmt(resultExpr);
+    resultExpr.setParentNode(resultStmt);
+
+    return resultStmt;
   }
 
   /**
@@ -585,15 +588,17 @@ public class Minimize extends CommandHandler {
       return null;
     }
 
-    // Copy the variable declaration expression.
-    VariableDeclarationExpr exprCopy = (VariableDeclarationExpr) vdExpr.clone();
-    List<VariableDeclarator> vars = exprCopy.getVars();
+    // Create the resulting expression, a copy of the original expression which
+    // will be modified and returned.
+    VariableDeclarationExpr resultExpr = (VariableDeclarationExpr) vdExpr.clone();
+    List<VariableDeclarator> vars = resultExpr.getVars();
     VariableDeclarator vd = vars.get(0);
 
     // Create a new statement with only the right hand side.
-    ExpressionStmt newStmt = new ExpressionStmt(vd.getInit());
-    exprCopy.setParentNode(newStmt);
-    return newStmt;
+    ExpressionStmt resultStmt = new ExpressionStmt(vd.getInit());
+    resultExpr.setParentNode(resultStmt);
+
+    return resultStmt;
   }
 
   /**
@@ -619,14 +624,14 @@ public class Minimize extends CommandHandler {
     // Map from fully-qualified type name to simple type name.
     Map<String, String> typeNameMap = new HashMap<String, String>();
     // Set of fully-qualified type names that are used in variable declarations.
-    Set<Type> fullyQualifiedNames = new HashSet<Type>();
+    Set<ClassOrInterfaceType> fullyQualifiedNames = new HashSet<ClassOrInterfaceType>();
     // Collect all of the type names in the compilation unit.
-    new TypeVisitor().visit(compUnit, fullyQualifiedNames);
+    new ClassTypeVisitor().visit(compUnit, fullyQualifiedNames);
 
     // Iterate through the set of fully-qualified names and fill the map
     // with mappings from fully-qualified names to simple type names. Also
     // add necessary import statements.
-    for (Type type : fullyQualifiedNames) {
+    for (ClassOrInterfaceType type : fullyQualifiedNames) {
       String typeName = type.toString();
 
       // If the type is a generic type, handle the main type.  The other
@@ -638,7 +643,7 @@ public class Minimize extends CommandHandler {
       // Add an import statement to the compilation unit.
       addImport(compUnit, typeName);
       // Add to the map, the fully-qualified type name to the simple type name.
-      typeNameMap.put(typeName, getSimpleTypeName(typeName));
+      typeNameMap.put(typeName, type.getName());
     }
 
     CompilationUnit result = compUnit;
@@ -671,20 +676,6 @@ public class Minimize extends CommandHandler {
       }
     }
     return result;
-  }
-
-  /**
-   * Get the simple type name of a fully-qualified type name. For example, {@code java.lang.String}
-   * should be simplified to {@code String}.
-   *
-   * @param typeName fully-qualified type name
-   * @return simple type name of {@code typeName}
-   */
-  public static String getSimpleTypeName(String typeName) {
-    int indexOflastSeparator = typeName.lastIndexOf('.');
-    return indexOflastSeparator > 0
-        ? typeName.substring(indexOflastSeparator + 1, typeName.length())
-        : typeName;
   }
 
   /**
@@ -1029,7 +1020,7 @@ public class Minimize extends CommandHandler {
   }
 
   /** Visit every class or interface type. */
-  private static class TypeVisitor extends VoidVisitorAdapter<Object> {
+  private static class ClassTypeVisitor extends VoidVisitorAdapter<Object> {
     /**
      * If the class or interface type is in a package that's not visible by default, add the type to
      * the set of types that is passed in as an argument. For instance, suppose that the type {@code
@@ -1044,7 +1035,7 @@ public class Minimize extends CommandHandler {
     @SuppressWarnings("unchecked")
     @Override
     public void visit(ClassOrInterfaceType n, Object arg) {
-      Set<Type> params = (Set<Type>) arg;
+      Set<ClassOrInterfaceType> params = (Set<ClassOrInterfaceType>) arg;
       // Add the type to the set if it's not a visible type be default.
       if (n.toString().contains(".")) {
         params.add(n);

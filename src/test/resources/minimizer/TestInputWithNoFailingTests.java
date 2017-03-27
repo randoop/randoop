@@ -4,7 +4,9 @@ import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestInputWithNoFailingTests {
-  // Test suite with no failing tests.
+
+  // Test input with no failing tests. The minimizer will remove all lines in the
+  // method bodies.
   @Test
   public void test1() throws Throwable {
     int a = 1;

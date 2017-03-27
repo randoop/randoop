@@ -3,8 +3,8 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class TestInput2 {
-  // Test simplification of programs with while loops
+public class TestInputWithWhileLoop {
+  // Test simplification of programs with while loops.
   @Test
   public void test1() throws Throwable {
     int a = 10;

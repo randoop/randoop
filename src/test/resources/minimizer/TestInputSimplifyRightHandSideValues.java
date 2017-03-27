@@ -3,8 +3,8 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class TestInput3 {
-  // Test simplification of right hand side values
+public class TestInputSimplifyRightHandSideValues {
+  // Test simplification of right hand side values.
   @Test
   public void test1() throws Throwable {
     int a = 1;

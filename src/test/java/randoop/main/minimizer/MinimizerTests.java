@@ -92,82 +92,64 @@ public class MinimizerTests {
   }
 
   @Test
-  public void test1() throws IOException {
-    testWithInput("TestInput1.java");
+  public void testWithMulitpleTestCases() throws IOException {
+    testWithInput("TestInputWithMulitpleTestCases.java");
   }
 
   @Test
-  public void test2() throws IOException {
-    testWithInput("TestInput2.java");
-    // Test input contains while loop.
+  public void testWithWhileLoop() throws IOException {
+    testWithInput("TestInputWithWhileLoop.java");
   }
 
   @Test
-  public void test3() throws IOException {
-    testWithInput("TestInput3.java");
+  public void testSimplifyRightHandSideValues() throws IOException {
+    testWithInput("TestInputSimplifyRightHandSideValues.java");
   }
 
   @Test
   public void testWithImportsWithSameClassName() throws IOException {
     testWithInput("TestInputImportsWithSameClassName.java");
-    // This test input uses ClassA belonging to package dir_a and ClassA belonging to
-    // package dir_b. This test checks that the minimizer doesn't remove the fully
-    // qualified type name for both instances of ClassA.
   }
 
   @Test
   public void testWithInputInSubDirectory() throws IOException {
     testWithInput(
         "testrootdir" + fileSeparator + "testsubdir" + fileSeparator + "TestInputSubDir1.java");
-    // This test input file is located in a subdirectory and non-default package.
-    // Checks that the minimizer is able to find the input file and minimize it.
   }
 
   @Test
   public void testWithPassingAssertionValue() throws IOException {
     testWithInput("TestInputWithPassingAssertionValue.java");
-    // This test input file has a passing assertion value. The minimized test suite
-    // will use the value found in the assertion as a part of a replacement statement.
   }
 
   @Test
   public void testWithMultiplePassingAssertions() throws IOException {
     testWithInput("TestInputWithMultiplePassingAssertions.java");
-    // This test input file has a passing assertion value. The minimized test suite
-    // will use the value found in the assertion as a part of a replacement statement.
   }
 
   @Test
   public void testWithWildcardImport() throws IOException {
     testWithInput("TestInputWithWildcardImport.java");
-    // Test input with wildcard import already included. Redundant import statements
-    // will not be added by the minimizer.
   }
 
   @Test
   public void testWithMultipleVarDeclarationsOnALine() throws IOException {
     testWithInput("TestInputMultipleVarDeclarationsOnALine.java");
-    // Test input with multiple variable declarations on a single line. The minimizer
-    // will not attempt to simplify these statements.
   }
 
   @Test
   public void testWithNoFailingTests() throws IOException {
     testWithInput("TestInputWithNoFailingTests.java");
-    // Test input with no failing tests. The minimizer will remove all lines in the
-    // method bodies.
   }
 
   @Test
   public void testWithVariableReassignment() throws IOException {
     testWithInput("TestInputWithVariableReassignment.java");
-    // Test input with variable reassignment.
   }
 
   @Test
   public void testWithRuntimeException() throws IOException {
     testWithInput("TestInputWithRuntimeException.java");
-    // Test input with runtime exception.
   }
 
   @Test

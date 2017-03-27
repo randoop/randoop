@@ -3,8 +3,8 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class TestInput1 {
-  // Test simplification of programs with multiple methods
+public class TestInputWithMulitpleTestCases {
+  // Test simplification of programs with multiple methods.
   @Test
   public void test1() throws Throwable {
     int a = 1;
