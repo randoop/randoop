@@ -232,7 +232,7 @@ public class RandoopSystemTest {
     options.setPackageName("foo.bar");
     options.setRegressionBasename("NaiveRegression");
     options.setErrorBasename("NaiveError");
-    options.setOption("inputlimit", "700");
+    options.setOption("outputlimit", "200");
     options.addTestClass("java2.util2.TreeSet");
     options.addTestClass("java2.util2.ArrayList");
     options.addTestClass("java2.util2.LinkedList");
@@ -240,6 +240,7 @@ public class RandoopSystemTest {
     options.setOption("omit-field-list", "resources/systemTest/naiveomitfields.txt");
 
     CoverageChecker coverageChecker = new CoverageChecker(options);
+
     coverageChecker.exclude("java2.util2.ArrayList.readObject(java.io.ObjectInputStream)");
     coverageChecker.exclude("java2.util2.ArrayList.remove(int)");
     coverageChecker.exclude("java2.util2.ArrayList.removeRange(int, int)");
@@ -262,6 +263,7 @@ public class RandoopSystemTest {
     coverageChecker.exclude("java2.util2.Collections.synchronizedSortedMap(java2.util2.SortedMap)");
     coverageChecker.exclude("java2.util2.Collections.unmodifiableSortedMap(java2.util2.SortedMap)");
     coverageChecker.exclude("java2.util2.LinkedList.add(int, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.LinkedList.get(int)");
     coverageChecker.exclude("java2.util2.LinkedList.readObject(java.io.ObjectInputStream)");
     coverageChecker.exclude("java2.util2.LinkedList.remove(int)");
     coverageChecker.exclude("java2.util2.LinkedList.writeObject(java.io.ObjectOutputStream)");
