@@ -1,0 +1,110 @@
+[
+  {
+    "operation": {
+      "classname": "randoop.condition.ClassWithConditions",
+      "name": "randoop.condition.ClassWithConditions",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "value"
+      ],
+      "receiverName": "receiver",
+      "returnName": "result"
+    },
+    "throwsSpecifications": [],
+    "returnSpecifications": [],
+    "paramSpecifications": [
+      {
+        "description": "must be positive",
+        "guard": {
+          "conditionText": "value > 0",
+          "description": "positive"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "randoop.condition.ClassWithConditions",
+      "name": "category",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "value"
+      ],
+      "receiverName": "receiver",
+      "returnName": "result"
+    },
+    "throwsSpecifications": [
+      {
+        "exceptionType": "java.lang.IllegalArgumentException",
+        "description": "should be less than 4*getValue",
+        "guard": {
+          "conditionText": "value >= 4*receiver.getValue()",
+          "description": "greater than 4*getValue()"
+        }
+      }
+    ],
+    "returnSpecifications": [
+      {
+        "property": {
+          "conditionText": "result.equals(ClassWithConditions.Range.ONE)",
+          "description": "return ONE"
+        },
+        "description": "value in first range",
+        "guard": {
+          "conditionText": "value < receiver.getValue()",
+          "description": "value in first range"
+        }
+      },
+      {
+        "property": {
+          "conditionText": "result.equals(ClassWithConditions.Range.TWO)",
+          "description": "return TWO"
+        },
+        "description": "value in second range",
+        "guard": {
+          "conditionText": "value < 2*receiver.getValue()",
+          "description": "value in second range"
+        }
+      },
+      {
+        "property": {
+          "conditionText": "result.equals(ClassWithConditions.Range.THREE)",
+          "description": "return THREE"
+        },
+        "description": "value in third range",
+        "guard": {
+          "conditionText": "value < 3*receiver.getValue()",
+          "description": "value in third range"
+        }
+      },
+      {
+        "property": {
+          "conditionText": "result.equals(ClassWithConditions.Range.FOUR)",
+          "description": "return FOUR"
+        },
+        "description": "otherwise, return FOUR",
+        "guard": {
+          "conditionText": "true",
+          "description": "otherwise"
+        }
+      }
+    ],
+    "paramSpecifications": [
+      {
+        "description": "must be positive",
+        "guard": {
+          "conditionText": "value > 0",
+          "description": "positive"
+        }
+      }
+    ]
+  }
+]
