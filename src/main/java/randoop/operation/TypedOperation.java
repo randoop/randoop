@@ -5,13 +5,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import plume.Pair;
 import randoop.ExecutionOutcome;
 import randoop.condition.Condition;
+import randoop.condition.OperationConditions;
 import randoop.field.AccessibleField;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
@@ -45,11 +43,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   /** The output type. */
   private final Type outputType;
 
-  /** The preconditions for this operation */
-  private List<Condition> preconditions;
-
-  /** The throws-conditions for this operation */
-  private Map<Condition, Pair<TestCheckGenerator, TestCheckGenerator>> postconditions;
+  /** The conditions on this operation */
+  private OperationConditions conditions;
 
   /**
    * Create typed operation for the given {@link Operation}.
@@ -62,8 +57,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     this.operation = operation;
     this.inputTypes = inputTypes;
     this.outputType = outputType;
-    this.preconditions = new ArrayList<>();
-    this.postconditions = new HashMap<>();
+    this.conditions = null;
   }
 
   @Override
@@ -536,14 +530,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    *     otherwise
    */
   public boolean checkPreconditions(Object[] values) {
-    Object[] args = addNullReceiver(values);
-
-    for (Condition condition : preconditions) {
-      if (!condition.check(args)) {
-        return false;
-      }
-    }
-    return true;
+    return conditions == null || conditions.checkPreconditions(addNullReceiver(values));
   }
 
   /**
@@ -551,21 +538,28 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * values, and if so returns the corresponding {@link TestCheckGenerator}.
    *
    * @param values the argument values
-   * @return the {@link TestCheckGenerator} to test postcondition, based on precondition satisfied
-   *     by the values
+   * @return the list of {@link TestCheckGenerator} object to test the property of the
+   *     return-specification with guard satisfied by the arguments.
    */
-  public TestCheckGenerator getPostCheckGenerator(Object[] values) {
-    Object[] args = addNullReceiver(values);
-    for (Map.Entry<Condition, Pair<TestCheckGenerator, TestCheckGenerator>> entry :
-        postconditions.entrySet()) {
-      Condition throwsCondition = entry.getKey();
-      if (throwsCondition.check(args)) {
-        return entry.getValue().a;
-      } else {
-        return entry.getValue().b;
-      }
+  public List<TestCheckGenerator> getReturnCheckGenerator(Object[] values) {
+    if (conditions != null) {
+      return conditions.getReturnCheckGenerator(addNullReceiver(values));
     }
-    return null;
+    return new ArrayList<>();
+  }
+
+  /**
+   * Checks whether this operation has a throws-specification with a guard satisfied by the argument
+   * values, and if so returns the corresponding {@link TestCheckGenerator}.
+   *
+   * @param values the argument values
+   * @return the {@link TestCheckGenerator} to test for the expected exception
+   */
+  public List<TestCheckGenerator> getThrowsCheckGenerator(Object[] values) {
+    if (conditions != null) {
+      return conditions.getThrowsCheckGenerator(addNullReceiver(values));
+    }
+    return new ArrayList<>();
   }
 
   /**
@@ -585,16 +579,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     return args;
   }
 
-  public void addConditions(List<Condition> preconditions) {
-    if (preconditions != null) {
-      this.preconditions.addAll(preconditions);
-    }
-  }
-
-  public void addConditions(
-      Map<Condition, Pair<TestCheckGenerator, TestCheckGenerator>> conditions) {
-    if (conditions != null) {
-      this.postconditions.putAll(conditions);
-    }
+  public void addConditions(OperationConditions conditions) {
+    this.conditions = conditions;
   }
 }
