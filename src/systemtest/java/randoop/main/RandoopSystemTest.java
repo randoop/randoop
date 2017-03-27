@@ -188,7 +188,7 @@ public class RandoopSystemTest {
     options.addTestClass("java2.util2.TreeSet");
     options.addTestClass("java2.util2.Collections");
     options.setFlag("no-error-revealing-tests");
-    options.setOption("inputlimit", "600");
+    options.setOption("outputlimit", "200");
     options.setOption("npe-on-null-input", "EXPECTED");
     options.setFlag("debug_checks");
     options.setOption("observers", "resources/systemTest/randoop1_observers.txt");
@@ -213,7 +213,6 @@ public class RandoopSystemTest {
     coverageChecker.exclude("java2.util2.Collections.unmodifiableSortedMap(java2.util2.SortedMap)");
     coverageChecker.exclude("java2.util2.TreeSet.readObject(java.io.ObjectInputStream)");
     coverageChecker.exclude("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
-    coverageChecker.exclude("java2.util2.TreeSet.tailSet(java.lang.Object)");
     coverageChecker.exclude("java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream)");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
