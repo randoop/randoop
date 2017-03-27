@@ -34,4 +34,9 @@ public class ParamSpecification extends Specification {
   public ParamSpecification(String description, Guard guard) {
     super(description, guard);
   }
+
+  @Override
+  public String toString() {
+    return "{ guard: " + getGuard() + " }";
+  }
 }

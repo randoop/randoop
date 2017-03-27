@@ -8,13 +8,26 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import javax.tools.DiagnosticCollector;
+import javax.tools.JavaFileObject;
+import plume.Pair;
+import randoop.compile.SequenceClassLoader;
+import randoop.compile.SequenceCompiler;
+import randoop.condition.specification.Guard;
 import randoop.condition.specification.Operation;
 import randoop.condition.specification.OperationSpecification;
+import randoop.condition.specification.ParamSpecification;
+import randoop.condition.specification.Property;
+import randoop.condition.specification.ReturnSpecification;
+import randoop.condition.specification.ThrowsSpecification;
 import randoop.reflection.TypeNames;
+import randoop.test.ExpectedExceptionGenerator;
+import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
 
 /**
@@ -27,13 +40,20 @@ public class SpecificationCollection {
   /** The map from reflection objects to the corresponding {@link OperationSpecification} */
   private final Map<AccessibleObject, OperationSpecification> specificationMap;
 
+  /** The compiler for creating conditionMethods */
+  private final SequenceCompiler compiler;
+
   /**
    * Creates a {@link SpecificationCollection} for the given specification map.
    *
    * @param specificationMap the map from reflection objects to {@link OperationSpecification}
    */
-  private SpecificationCollection(Map<AccessibleObject, OperationSpecification> specificationMap) {
+  SpecificationCollection(Map<AccessibleObject, OperationSpecification> specificationMap) {
     this.specificationMap = specificationMap;
+    DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
+    SequenceClassLoader sequenceClassLoader = new SequenceClassLoader(getClass().getClassLoader());
+    List<String> options = new ArrayList<>();
+    this.compiler = new SequenceCompiler(sequenceClassLoader, options, diagnostics);
   }
 
   /**
@@ -44,6 +64,9 @@ public class SpecificationCollection {
    *     OperationSpecification} objects.
    */
   public static SpecificationCollection create(List<File> specificationFiles) {
+    if (specificationFiles == null) {
+      return null;
+    }
     Map<AccessibleObject, OperationSpecification> specMap = new LinkedHashMap<>();
     for (File specificationFile : specificationFiles) {
       List<OperationSpecification> specificationList;
@@ -59,11 +82,19 @@ public class SpecificationCollection {
           Log.logLine(msg);
         }
         continue;
+      } catch (Throwable e) {
+        System.out.println("bad input");
+        continue;
       }
+
       for (OperationSpecification specification : specificationList) {
         AccessibleObject accessibleObject;
+        Operation operation = specification.getOperation();
+        if (operation == null) {
+          continue;
+        }
         try {
-          accessibleObject = getReflectionObject(specification.getOperation());
+          accessibleObject = getReflectionObject(operation);
         } catch (ClassNotFoundException | NoSuchMethodException e) {
           String msg =
               "Error loading operation for specification: "
@@ -140,6 +171,86 @@ public class SpecificationCollection {
       return null;
     }
     Declarations declarations = Declarations.create(accessibleObject, specification);
-    return OperationConditions.getOperationConditions(specification, declarations);
+
+    // translate the ParamSpecifications to Condition objects
+    List<Condition> paramConditions = new ArrayList<>();
+    for (ParamSpecification paramSpecification : specification.getParamSpecifications()) {
+      paramConditions.add(createCondition(paramSpecification.getGuard(), declarations));
+    }
+
+    // translate the ReturnSpecifications to Condition-ReturnCondition pairs
+    ArrayList<Pair<Condition, ReturnCondition>> returnConditions = new ArrayList<>();
+    for (ReturnSpecification returnSpecification : specification.getReturnSpecifications()) {
+      Condition preCondition = createCondition(returnSpecification.getGuard(), declarations);
+      ReturnCondition postCondition =
+          createCondition(returnSpecification.getProperty(), declarations);
+      returnConditions.add(new Pair<>(preCondition, postCondition));
+    }
+
+    // translate the ThrowsSpecifications to Condition-ExpectedExceptionGenerator pairs
+    LinkedHashMap<Condition, ExpectedExceptionGenerator> throwsConditions = new LinkedHashMap<>();
+    for (ThrowsSpecification throwsSpecification : specification.getThrowsSpecifications()) {
+      ClassOrInterfaceType exceptionType;
+      try {
+        exceptionType =
+            (ClassOrInterfaceType)
+                ClassOrInterfaceType.forName(throwsSpecification.getExceptionTypeName());
+      } catch (ClassNotFoundException e) {
+        String msg =
+            "Error in specification "
+                + throwsSpecification
+                + ". Cannot find exception type: "
+                + e.getMessage();
+        if (Log.isLoggingOn()) {
+          Log.logLine(msg);
+        }
+        continue;
+      }
+      Condition guardCondition = createCondition(throwsSpecification.getGuard(), declarations);
+      ExpectedExceptionGenerator generator =
+          new ExpectedExceptionGenerator(
+              exceptionType, "// " + throwsSpecification.getDescription());
+      throwsConditions.put(guardCondition, generator);
+    }
+
+    return new OperationConditions(paramConditions, returnConditions, throwsConditions);
+  }
+
+  /**
+   * Creates the {@link Condition} object for a given {@link Guard}.
+   *
+   * @param guard the guard to be converted to a {@link Condition}
+   * @param declarations the declarations for the specification the guard belongs to
+   * @return the {@link Condition} object for the given {@link Guard}
+   */
+  private Condition createCondition(Guard guard, Declarations declarations) {
+    Method conditionMethod =
+        ConditionMethodCreator.create(
+            declarations.getPackageName(),
+            declarations.getPreSignature(),
+            guard.getConditionText(),
+            compiler);
+    String comment = guard.getDescription();
+    String conditionText = declarations.replaceWithDummyVariables(guard.getConditionText());
+    return new Condition(conditionMethod, comment, conditionText);
+  }
+
+  /**
+   * Creates the {@link ReturnCondition} object for a given {@link Property}.
+   *
+   * @param property the property to be converted
+   * @param declarations the declarations for the specification the guard belongs to
+   * @return the {@link ReturnCondition} object for the given {@link Property}
+   */
+  private ReturnCondition createCondition(Property property, Declarations declarations) {
+    Method conditionMethod =
+        ConditionMethodCreator.create(
+            declarations.getPackageName(),
+            declarations.getPostSignature(),
+            property.getConditionText(),
+            compiler);
+    String comment = property.getDescription();
+    String conditionText = declarations.replaceWithDummyVariables(property.getConditionText());
+    return new ReturnCondition(conditionMethod, comment, conditionText);
   }
 }
