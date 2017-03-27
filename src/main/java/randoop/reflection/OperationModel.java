@@ -9,7 +9,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import randoop.condition.ConditionCollection;
 import randoop.contract.CompareToAntiSymmetric;
 import randoop.contract.CompareToEquals;
 import randoop.contract.CompareToReflexive;
@@ -111,7 +110,6 @@ public class OperationModel {
    * @param methodSignatures the signatures of methods to be added to the model
    * @param errorHandler the handler for bad file name errors
    * @param literalsFileList the list of literals file names
-   * @param operationCollection the conditions to be added to operations
    * @return the operation model for the parameters
    * @throws OperationParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
@@ -123,8 +121,7 @@ public class OperationModel {
       Set<String> exercisedClassnames,
       Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
-      List<String> literalsFileList,
-      ConditionCollection operationCollection)
+      List<String> literalsFileList)
       throws OperationParseException, NoSuchMethodException {
 
     OperationModel model = new OperationModel();
@@ -137,31 +134,11 @@ public class OperationModel {
         errorHandler,
         literalsFileList);
 
-    model.addOperations(model.classTypes, visibility, reflectionPredicate, operationCollection);
+    model.addOperations(model.classTypes, visibility, reflectionPredicate);
     model.addOperations(methodSignatures);
     model.addObjectConstructor();
 
     return model;
-  }
-
-  public static OperationModel createModel(
-      VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate,
-      Set<String> classnames,
-      Set<String> exercisedClassnames,
-      Set<String> methodSignatures,
-      ClassNameErrorHandler errorHandler,
-      List<String> literalsFileList)
-      throws NoSuchMethodException, OperationParseException {
-    return createModel(
-        visibility,
-        reflectionPredicate,
-        classnames,
-        exercisedClassnames,
-        methodSignatures,
-        errorHandler,
-        literalsFileList,
-        null);
   }
 
   /**
@@ -385,18 +362,15 @@ public class OperationModel {
    * @param concreteClassTypes the declaring class types for the operations
    * @param visibility the visibility predicate
    * @param reflectionPredicate the reflection predicate
-   * @param operationConditions the conditions to add to operations
    */
   private void addOperations(
       Set<ClassOrInterfaceType> concreteClassTypes,
       VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate,
-      ConditionCollection operationConditions) {
+      ReflectionPredicate reflectionPredicate) {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (ClassOrInterfaceType classType : concreteClassTypes) {
       mgr.apply(
-          new OperationExtractor(
-              classType, operations, reflectionPredicate, visibility, operationConditions),
+          new OperationExtractor(classType, operations, reflectionPredicate, visibility),
           classType.getRuntimeClass());
     }
   }
