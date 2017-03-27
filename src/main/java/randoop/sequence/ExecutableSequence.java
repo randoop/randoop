@@ -290,10 +290,20 @@ public class ExecutableSequence {
             return;
           }
           // if the operation is expected to throw an exception for these inputs
-          TestCheckGenerator expected = operation.getPostCheckGenerator(inputValues);
-          if (expected != null) {
-            //then extend TestCheckGenerator gen with check for postcondition/exception
-            gen = new ExtendGenerator(expected, gen);
+          List<TestCheckGenerator> expectedExceptions =
+              operation.getThrowsCheckGenerator(inputValues);
+          if (!expectedExceptions.isEmpty()) {
+            //then extend TestCheckGenerator gen with check for exception
+            for (TestCheckGenerator generator : expectedExceptions) {
+              gen = new ExtendGenerator(generator, gen);
+            }
+          } else {
+            // otherwise, if the operation has a return-specification property
+            List<TestCheckGenerator> properties = operation.getReturnCheckGenerator(inputValues);
+            for (TestCheckGenerator propertyGenerator : properties) {
+              //then extend TestCheckGenerator with check for property as post-condition
+              gen = new ExtendGenerator(propertyGenerator, gen);
+            }
           }
         }
       }
