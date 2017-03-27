@@ -126,14 +126,14 @@ added by hand): </p>
 </p>
 <ul>
   <li>
-    error-revealing tests that detect bugs in your current code, and
+    <b>error-revealing tests</b> that detect bugs in your current code, and
   </li>
   <li>
-    regression tests that can be used to detect future bugs.
+    <b>regression tests</b> that can be used to detect future bugs.
   </li>
 </ul>
 <p>
-You should repeatedly fix all the errors
+You should fix the errors
 revealed by the error-revealing tests suite then rerun Randoop, until it
 generates no more error-revealing tests.  Then, you can run the regression
 tests whenever you
@@ -247,17 +247,17 @@ java -ea -classpath <em>myclasspath</em>:$(RANDOOP_JAR) randoop.main.Main gentes
   tests, written to separate files.
 </p>
 <ul>
-  <li><a href="#error_revealing_tests"><i>Error-revealing tests</i></a>
+  <li><a href="#error_revealing_tests"><em>Error-revealing tests</em></a>
     are tests that fail when executed,
     indicating a potential error in one or more classes under test.
   </li>
   <li>
-    <a href="#regression_tests"><i>Regression tests</i></a>
+    <a href="#regression_tests"><em>Regression tests</em></a>
     are tests that pass when executed, and
     can be used to augment a regression test suite.
   </li>
 </ul>
-Other generated tests, classified as invalid, are discarded.
+Other generated tests, classified as <em>invalid</em>, are discarded.
 
 <p>
 This section of the manual gives an
@@ -396,8 +396,10 @@ You can use command-line arguments to customize Randoop's rules for classifying 
   <code>--checked-exception=expected</code>, or
   <code>--checked-exception=invalid</code>.
 </li>
-<li><code>OutOfMemoryError</code>. Option:
-<a href="#option:oom-exception"><code>--oom-exception</code></a>; default invalid</li>
+<li><code>OutOfMemoryError</code> or <code>StackOverflowError</code>. Options:
+<a href="#option:oom-exception"><code>--oom-exception</code></a>
+and <a href="#option:sof-exception"><code>--sof-exception</code></a>;
+default invalid</li>
 <li><code>NullPointerException</code> when <code>null</code> is passed as
   an argument to any method in the test.
 Option: <a href="#option:npe-on-null-input"><code>--npe-on-null-input</code></a>; default expected
@@ -427,7 +429,8 @@ Depending on your needs, you can override Randoop's default.
 </p>
 
 <p>
-A thrown exception is <em>not</em> considered a contract violation unless it is
+A thrown exception is <em>not</em> considered a contract violation unless the
+exception is
 tagged as error behavior. This is because a method may have a precondition that
 is unknown to Randoop.
 For example, a binary search implementation might
@@ -438,6 +441,12 @@ precondition, so by default it assumes that any exception thrown by a
 method is correct behavior in response to the values that it was passed.
 You can customize how exceptions are considered by
 <a href="#classifying_tests">assigning the exception behavior type</a>.
+</p>
+
+<p>
+You can also provide specifications of your code to further help
+Randoop classify tests; see the <a href="#checkrep">checkRep
+mechanism</a>.
 </p>
 
 
