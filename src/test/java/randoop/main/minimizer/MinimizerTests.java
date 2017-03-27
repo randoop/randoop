@@ -25,7 +25,7 @@ public class MinimizerTests {
    * @throws IOException thrown if output or expected output files can't be read
    */
   private void testWithInput(String filename) throws IOException {
-    testWithInput(testDir + filename, null, 30);
+    testWithInput(testDir + filename, null, 30, false);
   }
 
   /**
@@ -39,7 +39,8 @@ public class MinimizerTests {
    *     to run
    * @throws IOException thrown if output or expected output files can't be read
    */
-  private void testWithInput(String inputFilePath, String[] dependencies, int timeoutLimit)
+  private void testWithInput(
+      String inputFilePath, String[] dependencies, int timeoutLimit, boolean verboseOutput)
       throws IOException {
     String outputFilePath =
         new StringBuilder(inputFilePath)
@@ -65,7 +66,7 @@ public class MinimizerTests {
     }
 
     // Create the arguments array and invoke the minimizer
-    Minimize.mainMinimize(inputFilePath, classPath, timeoutLimit);
+    Minimize.mainMinimize(inputFilePath, classPath, timeoutLimit, verboseOutput);
 
     // Compare obtained and expected output
     String obtainedOutput = readFile(outputFilePath, Charset.defaultCharset());
@@ -173,6 +174,6 @@ public class MinimizerTests {
     String classPath = null;
 
     // Create the arguments array and invoke the minimizer
-    assertFalse(Minimize.mainMinimize(inputFilePath, classPath, Integer.parseInt(timeout)));
+    assertFalse(Minimize.mainMinimize(inputFilePath, classPath, Integer.parseInt(timeout), false));
   }
 }

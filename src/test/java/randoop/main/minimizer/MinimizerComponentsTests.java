@@ -26,34 +26,4 @@ public class MinimizerComponentsTests {
     String className = "MinimizerTest";
     assertEquals(className, Minimize.getClassName(filePath));
   }
-
-  /**
-   * Tests the {@link Minimize#getSimpleTypeName} method, which obtains a simple type name from a
-   * fully qualified type name.
-   */
-  @Test
-  public void getSimpleNameTest() {
-    String fullyQualifiedName;
-    String simpleName;
-
-    fullyQualifiedName = "org.apache.commons.lang3.concurrent.CircuitBreakingException";
-    simpleName = "CircuitBreakingException";
-    assertEquals(simpleName, Minimize.getSimpleTypeName(fullyQualifiedName));
-
-    fullyQualifiedName = "org.apache.commons.lang3.tuple.MutablePair";
-    simpleName = "MutablePair";
-    assertEquals(simpleName, Minimize.getSimpleTypeName(fullyQualifiedName));
-
-    fullyQualifiedName = "java.lang.String";
-    simpleName = "String";
-    assertEquals(simpleName, Minimize.getSimpleTypeName(fullyQualifiedName));
-
-    fullyQualifiedName = "SimpleType";
-    simpleName = "SimpleType";
-    assertEquals(simpleName, Minimize.getSimpleTypeName(fullyQualifiedName));
-
-    fullyQualifiedName = "java.util.HashMap";
-    simpleName = "HashMap";
-    assertEquals(simpleName, Minimize.getSimpleTypeName(fullyQualifiedName));
-  }
 }

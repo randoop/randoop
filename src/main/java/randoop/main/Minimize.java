@@ -98,6 +98,10 @@ public class Minimize extends CommandHandler {
   @Option("Timeout, in seconds, for the whole test suite")
   public static int testsuitetimeout = 30;
 
+  /** Output verbose output to standard output if true. */
+  @Option("Verbose, flag for verbose output")
+  public static boolean verboseminimizer = false;
+
   public Minimize() {
     super(
         "minimize",
@@ -147,7 +151,7 @@ public class Minimize extends CommandHandler {
     }
 
     // Call the main minimize method
-    return mainMinimize(suitepath, suiteclasspath, testsuitetimeout);
+    return mainMinimize(suitepath, suiteclasspath, testsuitetimeout, verboseminimizer);
   }
 
   /**
@@ -172,7 +176,8 @@ public class Minimize extends CommandHandler {
    * @return true if minimization produced a (possibly unchanged) file that fails the same way as
    *     the original file
    */
-  public static boolean mainMinimize(String filePath, String classPath, int timeoutLimit) {
+  public static boolean mainMinimize(
+      String filePath, String classPath, int timeoutLimit, boolean verboseOutput) {
     System.out.println("Reading and parsing: " + filePath);
 
     // Read and parse input Java file.
@@ -261,11 +266,15 @@ public class Minimize extends CommandHandler {
 
           // Get method's annotations.
           List<AnnotationExpr> annotationExprs = method.getAnnotations();
-          if (annotationExprs.toString().contains("@Test")) {
-            // Minimize the method only if it is a JUnit test method.
-            minimizeMethod(
-                method, cu, packageName, filePath, classpath, expectedOutput, timeoutLimit);
-            System.out.println("Minimized method " + method.getName());
+          for (AnnotationExpr annotationExpr : method.getAnnotations()) {
+            if (annotationExpr.toString().equals("@Test")) {
+              // Minimize the method only if it is a JUnit test method.
+              minimizeMethod(
+                  method, cu, packageName, filePath, classpath, expectedOutput, timeoutLimit);
+              System.out.println("Minimized method " + method.getName());
+
+              break;
+            }
           }
         }
       }
