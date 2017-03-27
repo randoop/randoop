@@ -4,22 +4,22 @@ import java.util.ArrayList;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
-import randoop.condition.Condition;
+import randoop.condition.ReturnCondition;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Variable;
 
-/** Checks the given post-condition */
+/** Checks the given post-condition after the last statement of a sequence. */
 public class PostConditionCheckGenerator implements TestCheckGenerator {
 
   /** the post-condition */
-  private final Condition postcondition;
+  private final ReturnCondition postcondition;
 
   /**
    * Create a {@link TestCheckGenerator} to test the given post-condition.
    *
    * @param postcondition the post-condition to be tested in generated {@link TestChecks}
    */
-  public PostConditionCheckGenerator(Condition postcondition) {
+  public PostConditionCheckGenerator(ReturnCondition postcondition) {
     this.postcondition = postcondition;
   }
 
