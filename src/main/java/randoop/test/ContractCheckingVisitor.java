@@ -28,7 +28,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
    * Create a new visitor that checks the given contracts after the last statement in a sequence is
    * executed.
    *
-   * @param contracts Expected to be unary contracts, i.e. for each contract <code>c</code>, <code>
+   * @param contracts expected to be unary contracts, i.e. for each contract <code>c</code>, <code>
    *     c.getArity() == 1</code>.
    * @param exceptionPredicate the predicate to test for exceptions that are errors
    */

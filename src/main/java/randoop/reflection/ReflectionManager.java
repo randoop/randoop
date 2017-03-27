@@ -76,7 +76,7 @@ public class ReflectionManager {
    * are otherwise still accessible by reflection. Each visitor is applied to each member at most
    * once.
    *
-   * @param c the {@link Class} object to be visited.
+   * @param c the {@link Class} object to be visited
    */
   public void apply(Class<?> c) {
     for (ClassVisitor visitor : visitors) {

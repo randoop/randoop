@@ -103,7 +103,7 @@ public class OperationModel {
    * Factory method to construct an operation model for a particular set of classes
    *
    * @param visibility the {@link randoop.reflection.VisibilityPredicate} to test accessibility of
-   *     classes and class members.
+   *     classes and class members
    * @param reflectionPredicate the reflection predicate to determine which classes and class
    *     members are used
    * @param classnames the names of classes under test

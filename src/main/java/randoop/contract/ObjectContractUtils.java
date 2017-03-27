@@ -71,7 +71,7 @@ public class ObjectContractUtils {
    * Replace dummy variables such as "x0" in the code by their real names.
    *
    * @param str the contract code as a string with dummy variables
-   * @param vars list of {@link randoop.sequence.Variable Variable} objects.
+   * @param vars list of {@link randoop.sequence.Variable Variable} objects
    * @return the contract code with actual variable names substituted for dummy names
    */
   public static String localizeContractCode(String str, Variable... vars) {

@@ -441,8 +441,8 @@ public class ForwardGenerator extends AbstractGenerator {
    * prefix, repeating the operation the given number of times. Used during generation.
    *
    * @param seq the sequence to extend
-   * @param operation the {@link TypedOperation} to repeat.
-   * @param times the number of times to repeat the {@link Operation}.
+   * @param operation the {@link TypedOperation} to repeat
+   * @param times the number of times to repeat the {@link Operation}
    * @return a new {@code Sequence}
    */
   private Sequence repeat(Sequence seq, TypedOperation operation, int times) {

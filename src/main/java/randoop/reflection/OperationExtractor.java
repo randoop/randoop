@@ -104,7 +104,7 @@ public class OperationExtractor extends DefaultClassVisitor {
   /**
    * Creates a {@link ConstructorCall} object for the {@link Constructor}.
    *
-   * @param constructor a {@link Constructor} object to be represented as an {@link Operation}.
+   * @param constructor a {@link Constructor} object to be represented as an {@link Operation}
    */
   @Override
   public void visit(Constructor<?> constructor) {
@@ -128,7 +128,7 @@ public class OperationExtractor extends DefaultClassVisitor {
   /**
    * Creates a {@link MethodCall} object for the {@link Method}.
    *
-   * @param method a {@link Method} object to be represented as an {@link Operation}.
+   * @param method a {@link Method} object to be represented as an {@link Operation}
    */
   @Override
   public void visit(Method method) {
@@ -159,7 +159,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * Adds the {@link Operation} objects corresponding to getters and setters appropriate to the kind
    * of field.
    *
-   * @param field a {@link Field} object to be represented as an {@link Operation}.
+   * @param field a {@link Field} object to be represented as an {@link Operation}
    */
   @Override
   public void visit(Field field) {
@@ -199,7 +199,7 @@ public class OperationExtractor extends DefaultClassVisitor {
   /**
    * Creates a {@link EnumConstant} object for the {@link Enum}.
    *
-   * @param e an {@link Enum} object to be represented as an {@link Operation}.
+   * @param e an {@link Enum} object to be represented as an {@link Operation}
    */
   @Override
   public void visit(Enum<?> e) {

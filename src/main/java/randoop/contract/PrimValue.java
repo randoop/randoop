@@ -49,7 +49,7 @@ public final class PrimValue implements ObjectContract {
   }
 
   /**
-   * @param value The value for the expression. Must be a primitive value or string.
+   * @param value the value for the expression. Must be a primitive value or string.
    * @param printMode the print mode in which the check is written as an assertion
    */
   public PrimValue(Object value, PrintMode printMode) {
