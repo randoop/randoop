@@ -220,7 +220,7 @@ public final class NonreceiverTerm extends CallableOperation {
    * String:" "                   represents: String x = " ";
    * String:"\""                  represents: String x = "\"";
    * String:"\n"                  represents: String x = "\n";
-   * String:"\u0000"              represents: String x = "\u0000";
+   * String:"\u263A"              represents: String x = "\u263A";
    * java.lang.Object:null        represents: Object x = null;
    * [[Ljava.lang.Object;:null    represents: Object[][] = null;
    * int:0                        represents: int x = 0;

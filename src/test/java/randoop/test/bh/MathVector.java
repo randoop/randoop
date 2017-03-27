@@ -60,7 +60,7 @@ public class MathVector implements Cloneable {
   /**
    * Set one of the dimensions of the vector to 1.0
    *
-   * @param j the dimension to set.
+   * @param j the dimension to set
    */
   public final void unit(int j) {
     for (int i = 0; i < NDIM; i++) {
