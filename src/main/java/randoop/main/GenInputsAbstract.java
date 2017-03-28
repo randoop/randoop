@@ -142,6 +142,17 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static File include_if_class_exercised = null;
 
   /**
+   * If false, Randoop halts and gives diagnostics about flaky tests -- tests that behave
+   * differently on different executions. If true, Randoop ignores them and does not output them.
+   *
+   * <p>Use of this option is a last resort. Flaky tests are usually due to calling Randoop on
+   * side-effecting or nondeterministic methods, and a better solution is not to call Randoop on
+   * such methods.
+   */
+  @Option("Whether to ignore non-determinism in test execution")
+  public static boolean ignore_flaky_tests = false;
+
+  /**
    * Whether to output error-revealing tests. Disables all output when used with <code>
    * --no-regression-tests</code>. Restricting output can result in long runs if the default values
    * of <code>--inputlimit</code> and <code>--timelimit</code> are used.
@@ -248,17 +259,27 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static BehaviorType sof_exception = BehaviorType.INVALID;
 
   /**
-   * Ignore the situation where a code sequence that previously executed normally throws an
-   * exception when executed as part of a longer test sequence. If true, the sequence will be
-   * classified as invalid. If false, Randoop will halt with information about the sequence to aid
-   * in identifying the issue.
+   * Read Toradocu JSON condition file to use Toradocu generated conditions to control how tests are
+   * classified.
    *
-   * <p>Use of this option is a last resort. Flaky tests are usually due to calling Randoop on
-   * side-effecting or nondeterministic methods, and a better solution is not to call Randoop on
-   * such methods.
+   * <p>Param-conditions are used as pre-conditions on method/constructor calls, with test sequences
+   * where the condition fails being classified as {@link BehaviorType#INVALID}.
+   *
+   * <p>Throws-conditions are used to check exceptions: if the inputs to the call satisfy the
+   * condition, when the exception is thrown the sequence is {@link BehaviorType#EXPECTED}, but, if
+   * it is not, the sequence is classified as {@link BehaviorType#ERROR}. If the throws-condition is
+   * not satisfied by the input, then ordinary classification is applied.
    */
-  @Option("Whether to ignore non-determinism in test execution")
-  public static boolean ignore_flaky_tests = false;
+  @Option("Use Toradocu condition JSON file to classify behaviors for methods/constructors")
+  public static List<File> toradocu_conditions = null;
+
+  /**
+   * Throw exception when cannot find expected condition methods in Toradocu output. Otherwise a
+   * warning message is printed and the condition is ignored.
+   */
+  @Unpublicized
+  @Option("Allow failure when cannot find Toradocu condition methods")
+  public static boolean fail_on_condition_input_error = false;
 
   /**
    * Read JSON condition file to use specifications to control how tests are generated and
