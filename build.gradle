@@ -135,6 +135,7 @@ dependencies {
    */
   agentTestCompile sourceSets.main.output
   agentTestRuntime project(':exercised-class')
+  agentTestRuntime project(':mapcall')
 
   jacocoagent group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.7.7.201606060606'
 
@@ -256,13 +257,7 @@ test {
   exclude 'randoop/operation/OperationParserTests.*'
 }
 
-/*
- * Configuration of agentTest task.
- * Runs JUnit with exercised-class Java agent over all classes in agentTest
- * sourceSet.
- * Requires that exercised-class jar file copied into Randoop build/libs.
- */
-task agentTest(type: Test, dependsOn: 'copyJars') {
+task exercisedClassTest(type: Test, dependsOn: 'copyJars') {
   /*
    * Set the working directory for JUnit tests to the resources directory
    * instead of the project directory.
@@ -282,6 +277,17 @@ task agentTest(type: Test, dependsOn: 'copyJars') {
 
   /* Turn off HTML reports -- handled by testReport task */
   reports.html.enabled = false
+}
+
+
+/*
+ * Configuration of agentTest task.
+ * Runs JUnit with exercised-class Java agent over all classes in agentTest
+ * sourceSet.
+ * Requires that exercised-class jar file copied into Randoop build/libs.
+ */
+task agentTest(dependsOn: ['exercisedClassTest', ':mapcall:test']) {
+  description 'Runs tests on javaagents'
 }
 
 /*
