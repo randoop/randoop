@@ -154,6 +154,11 @@ public class MinimizerTests {
   }
 
   @Test
+  public void testWithWrappedTypes() throws IOException {
+    testWithInput("TestInputWithWrappedTypes.java");
+  }
+
+  @Test
   public void testWithNonCompilingTest() throws IOException {
     // Path to input file
     String inputFilePath = testDir + "TestInputWithNonCompilingTest.java";
