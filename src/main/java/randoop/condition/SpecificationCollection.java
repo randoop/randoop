@@ -73,18 +73,13 @@ public class SpecificationCollection {
       try {
         specificationList = readSpecifications(specificationFile);
       } catch (IOException e) {
-        String msg =
-            "Unable to read specifications from file "
-                + specificationFile
-                + ". Exception: "
-                + e.getMessage();
+        String msg = "Unable to read specifications from file";
         if (Log.isLoggingOn()) {
-          Log.logLine(msg);
+          Log.logLine(msg + ": " + specificationFile);
         }
-        continue;
+        throw new RandoopConditionError(msg, e);
       } catch (Throwable e) {
-        System.out.println("bad input");
-        continue;
+        throw new RandoopConditionError("Bad input", e);
       }
 
       for (OperationSpecification specification : specificationList) {
@@ -104,7 +99,7 @@ public class SpecificationCollection {
           if (Log.isLoggingOn()) {
             Log.logLine(msg);
           }
-          continue;
+          throw new RandoopConditionError(msg, e);
         }
         specMap.put(accessibleObject, specification);
       }

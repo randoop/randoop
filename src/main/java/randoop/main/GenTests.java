@@ -21,6 +21,7 @@ import plume.SimpleLog;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
 import randoop.MultiVisitor;
+import randoop.condition.RandoopConditionError;
 import randoop.condition.SpecificationCollection;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
@@ -242,8 +243,13 @@ public class GenTests extends GenInputsAbstract {
      * Setup pre/post/throws-conditions for operations.
      * Currently only uses Toradocu generated conditions.
      */
-    SpecificationCollection operationConditions =
-        SpecificationCollection.create(GenInputsAbstract.specifications);
+    SpecificationCollection operationConditions = null;
+    try {
+      operationConditions = SpecificationCollection.create(GenInputsAbstract.specifications);
+    } catch (RandoopConditionError e) {
+      System.out.println("Error when reading conditions: " + e.getMessage());
+      System.exit(1);
+    }
 
     OperationModel operationModel = null;
     try {
