@@ -11,7 +11,7 @@
       "returnName": "result"
     },
     "throwsSpecifications": [],
-    "returnSpecifications": [],
-    "paramSpecifications": []
+    "postSpecifications": [],
+    "preSpecifications": []
   }
 ]

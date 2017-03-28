@@ -19,7 +19,7 @@ package randoop.condition.specification;
  * <p>where {@code code} is a declared identifier in the specification.
  *
  * <p>The identifiers in the property should be given in the {@link Identifiers} for the {@link
- * OperationSpecification} containing the {@link ReturnSpecification} where the property occurs.
+ * OperationSpecification} containing the {@link PostSpecification} where the property occurs.
  *
  * @see Specification
  */

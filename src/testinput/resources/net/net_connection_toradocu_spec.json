@@ -11,8 +11,8 @@
       "returnName": "result"
     },
     "throwsSpecifications": [],
-    "returnSpecifications": [],
-    "paramSpecifications": []
+    "postSpecifications": [],
+    "preSpecifications": []
   },
   {
     "operation": {
@@ -35,8 +35,8 @@
         }
       }
     ],
-    "returnSpecifications": [],
-    "paramSpecifications": []
+    "postSpecifications": [],
+    "preSpecifications": []
   },
   {
     "operation": {
@@ -71,8 +71,8 @@
         }
       }
     ],
-    "returnSpecifications": [],
-    "paramSpecifications": []
+    "postSpecifications": [],
+    "preSpecifications": []
   },
   {
     "operation": {
@@ -99,8 +99,8 @@
         }
       }
     ],
-    "returnSpecifications": [],
-    "paramSpecifications": [
+    "postSpecifications": [],
+    "preSpecifications": [
       {
         "description": "the code, must be positive",
         "guard": {

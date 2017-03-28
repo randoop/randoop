@@ -15,8 +15,8 @@
       "returnName": "result"
     },
     "throwsSpecifications": [],
-    "returnSpecifications": [],
-    "paramSpecifications": [
+    "postSpecifications": [],
+    "preSpecifications": [
       {
         "description": "the object count, must be positive",
         "guard": {
@@ -42,8 +42,8 @@
       "returnName": "result"
     },
     "throwsSpecifications": [],
-    "returnSpecifications": [],
-    "paramSpecifications": [
+    "postSpecifications": [],
+    "preSpecifications": [
       {
         "description": "the object count, must be positive",
         "guard": {
@@ -69,8 +69,8 @@
       "returnName": "result"
     },
     "throwsSpecifications": [],
-    "returnSpecifications": [],
-    "paramSpecifications": [
+    "postSpecifications": [],
+    "preSpecifications": [
       {
         "description": "the something count, must be positive",
         "guard": {

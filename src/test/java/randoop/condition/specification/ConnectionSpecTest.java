@@ -55,8 +55,8 @@ public class ConnectionSpecTest {
     assert m != null;
 
     Guard paramGuard = new Guard("the code must be positive", "code > 0");
-    ParamSpecification opParam = new ParamSpecification("the code must be positive", paramGuard);
-    List<ParamSpecification> paramList = new ArrayList<>();
+    PreSpecification opParam = new PreSpecification("the code must be positive", paramGuard);
+    List<PreSpecification> paramList = new ArrayList<>();
     throwsGuard = new Guard("the connection is not open", "!receiver.isOpen()");
     opThrows =
         new ThrowsSpecification(
@@ -80,9 +80,9 @@ public class ConnectionSpecTest {
     }
     Guard returnGuard = new Guard("", "true");
     Property property = new Property("received value is non-negative", "result >= 0");
-    ReturnSpecification opReturn =
-        new ReturnSpecification("returns non-negative received value", returnGuard, property);
-    List<ReturnSpecification> retList = new ArrayList<>();
+    PostSpecification opReturn =
+        new PostSpecification("returns non-negative received value", returnGuard, property);
+    List<PostSpecification> retList = new ArrayList<>();
     retList.add(opReturn);
     op = Operation.getOperation(m);
     opSpec = new OperationSpecification(op);

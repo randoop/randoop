@@ -20,8 +20,8 @@
         }
       }
     ],
-    "returnSpecifications": [],
-    "paramSpecifications": []
+    "postSpecifications": [],
+    "preSpecifications": []
   },
   {
     "operation": {
@@ -39,8 +39,8 @@
       "returnName": "result"
     },
     "throwsSpecifications": [],
-    "returnSpecifications": [],
-    "paramSpecifications": [
+    "postSpecifications": [],
+    "preSpecifications": [
       {
         "description": "the code must be positive",
         "guard": {
@@ -62,7 +62,7 @@
       "returnName": "result"
     },
     "throwsSpecifications": [],
-    "returnSpecifications": [
+    "postSpecifications": [
       {
         "property": {
           "conditionText": "result >= 0",
@@ -75,6 +75,6 @@
         }
       }
     ],
-    "paramSpecifications": []
+    "preSpecifications": []
   }
 ]

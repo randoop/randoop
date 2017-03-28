@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
-import randoop.condition.ReturnCondition;
+import randoop.condition.PostCondition;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Variable;
 
@@ -12,14 +12,14 @@ import randoop.sequence.Variable;
 public class PostConditionCheckGenerator implements TestCheckGenerator {
 
   /** the post-condition */
-  private final ReturnCondition postcondition;
+  private final PostCondition postcondition;
 
   /**
    * Create a {@link TestCheckGenerator} to test the given post-condition.
    *
    * @param postcondition the post-condition to be tested in generated {@link TestChecks}
    */
-  public PostConditionCheckGenerator(ReturnCondition postcondition) {
+  public PostConditionCheckGenerator(PostCondition postcondition) {
     this.postcondition = postcondition;
   }
 

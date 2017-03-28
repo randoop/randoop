@@ -7,8 +7,8 @@ import java.util.Objects;
 /**
  * A specification of a constructor or method, aka, an operation. Consists of the {@code
  * java.lang.reflect.AccessibleObject} for the operation, and lists of {@link ThrowsSpecification},
- * {@link ReturnSpecification}, and {@link ParamSpecification} objects that describe contracts on
- * the operation.
+ * {@link PostSpecification}, and {@link PreSpecification} objects that describe contracts on the
+ * operation.
  *
  * <p>The JSON serialization of this class is used to read the specifications for an operation given
  * using the {@link randoop.main.GenInputsAbstract#specifications} command-line option. The JSON
@@ -31,8 +31,8 @@ import java.util.Objects;
  *       "returnName": "result"
  *     },
  *    "throwsSpecifications": [],
- *    "returnSpecifications": [],
- *    "paramSpecifications": [
+ *    "postSpecifications": [],
+ *    "preSpecifications": [
  *      {
  *        "description": "the code must be positive",
  *        "guard": {
@@ -44,8 +44,8 @@ import java.util.Objects;
  *   }
  * </pre>
  *
- * See the classes {@link Operation}, {@link Identifiers}, {@link ParamSpecification}, {@link
- * ReturnSpecification}, and {@link ThrowsSpecification} for details on specifying those objects.
+ * See the classes {@link Operation}, {@link Identifiers}, {@link PreSpecification}, {@link
+ * PostSpecification}, and {@link ThrowsSpecification} for details on specifying those objects.
  */
 public class OperationSpecification {
 
@@ -59,10 +59,10 @@ public class OperationSpecification {
   private final List<ThrowsSpecification> throwsSpecifications;
 
   /** The list of post-conditions on the return value of the operation */
-  private final List<ReturnSpecification> returnSpecifications;
+  private final List<PostSpecification> postSpecifications;
 
   /** The list of pre-conditions on the parameters of the operation */
-  private final List<ParamSpecification> paramSpecifications;
+  private final List<PreSpecification> preSpecifications;
 
   /**
    * Creates an {@link OperationSpecification} for the given operation with no specifications and
@@ -85,8 +85,8 @@ public class OperationSpecification {
         operation,
         identifiers,
         new ArrayList<ThrowsSpecification>(),
-        new ArrayList<ReturnSpecification>(),
-        new ArrayList<ParamSpecification>());
+        new ArrayList<PostSpecification>(),
+        new ArrayList<PreSpecification>());
   }
 
   /**
@@ -96,20 +96,20 @@ public class OperationSpecification {
    * @param operation the reflection object for the operation, must be non-null
    * @param identifiers the identifiers used in the specifications
    * @param throwsSpecifications the list of specifications for the operation
-   * @param returnSpecifications the list of return specifications for the operation
-   * @param paramSpecifications the list of param specifications for the operation
+   * @param postSpecifications the list of return specifications for the operation
+   * @param preSpecifications the list of param specifications for the operation
    */
   public OperationSpecification(
       Operation operation,
       Identifiers identifiers,
       List<ThrowsSpecification> throwsSpecifications,
-      List<ReturnSpecification> returnSpecifications,
-      List<ParamSpecification> paramSpecifications) {
+      List<PostSpecification> postSpecifications,
+      List<PreSpecification> preSpecifications) {
     this.operation = operation;
     this.identifiers = identifiers;
     this.throwsSpecifications = throwsSpecifications;
-    this.returnSpecifications = returnSpecifications;
-    this.paramSpecifications = paramSpecifications;
+    this.postSpecifications = postSpecifications;
+    this.preSpecifications = preSpecifications;
   }
 
   @Override
@@ -121,8 +121,8 @@ public class OperationSpecification {
     return this.operation.equals(other.operation)
         && this.identifiers.equals(other.identifiers)
         && this.throwsSpecifications.equals(other.throwsSpecifications)
-        && this.returnSpecifications.equals(other.returnSpecifications)
-        && this.paramSpecifications.equals(other.paramSpecifications);
+        && this.postSpecifications.equals(other.postSpecifications)
+        && this.preSpecifications.equals(other.preSpecifications);
   }
 
   @Override
@@ -131,8 +131,8 @@ public class OperationSpecification {
         this.operation,
         this.identifiers,
         this.throwsSpecifications,
-        this.returnSpecifications,
-        this.paramSpecifications);
+        this.postSpecifications,
+        this.preSpecifications);
   }
 
   @Override
@@ -146,11 +146,11 @@ public class OperationSpecification {
         + "throwsSpecifications: "
         + this.throwsSpecifications
         + ", "
-        + "returnSpecifications: "
-        + this.returnSpecifications
+        + "postSpecifications: "
+        + this.postSpecifications
         + ", "
-        + "paramSpecifications: "
-        + this.paramSpecifications
+        + "preSpecifications: "
+        + this.preSpecifications
         + " }";
   }
 
@@ -158,12 +158,12 @@ public class OperationSpecification {
     throwsSpecifications.addAll(specifications);
   }
 
-  public void addReturnSpecifications(List<ReturnSpecification> specifications) {
-    returnSpecifications.addAll(specifications);
+  public void addReturnSpecifications(List<PostSpecification> specifications) {
+    postSpecifications.addAll(specifications);
   }
 
-  public void addParamSpecifications(List<ParamSpecification> specifications) {
-    paramSpecifications.addAll(specifications);
+  public void addParamSpecifications(List<PreSpecification> specifications) {
+    preSpecifications.addAll(specifications);
   }
 
   /**
@@ -193,11 +193,11 @@ public class OperationSpecification {
     return throwsSpecifications;
   }
 
-  public List<ReturnSpecification> getReturnSpecifications() {
-    return returnSpecifications;
+  public List<PostSpecification> getPostSpecifications() {
+    return postSpecifications;
   }
 
-  public List<ParamSpecification> getParamSpecifications() {
-    return paramSpecifications;
+  public List<PreSpecification> getPreSpecifications() {
+    return preSpecifications;
   }
 }

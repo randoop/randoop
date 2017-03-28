@@ -15,8 +15,8 @@
       "returnName": "result"
     },
     "throwsSpecifications": [],
-    "returnSpecifications": [],
-    "paramSpecifications": [
+    "postSpecifications": [],
+    "preSpecifications": [
       {
         "description": "must be positive",
         "guard": {
@@ -51,7 +51,7 @@
         }
       }
     ],
-    "returnSpecifications": [
+    "postSpecifications": [
       {
         "property": {
           "conditionText": "result.equals(ClassWithConditions.Range.ONE)",
@@ -97,7 +97,7 @@
         }
       }
     ],
-    "paramSpecifications": [
+    "preSpecifications": [
       {
         "description": "must be positive",
         "guard": {

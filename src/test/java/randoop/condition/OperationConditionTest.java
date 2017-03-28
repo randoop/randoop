@@ -18,9 +18,9 @@ import randoop.condition.specification.Guard;
 import randoop.condition.specification.Identifiers;
 import randoop.condition.specification.Operation;
 import randoop.condition.specification.OperationSpecification;
-import randoop.condition.specification.ParamSpecification;
+import randoop.condition.specification.PostSpecification;
+import randoop.condition.specification.PreSpecification;
 import randoop.condition.specification.Property;
-import randoop.condition.specification.ReturnSpecification;
 import randoop.condition.specification.ThrowsSpecification;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
@@ -92,7 +92,7 @@ public class OperationConditionTest {
     for (Check check : es.getChecks().get().keySet()) {
       assertEquals(
           "should check for ONE",
-          "randoop.condition.ReturnCondition(x2.equals(ClassWithConditions.Range.ONE))",
+          "randoop.condition.PostCondition(x2.equals(ClassWithConditions.Range.ONE))",
           check.getValue());
     }
 
@@ -104,7 +104,7 @@ public class OperationConditionTest {
     for (Check check : es.getChecks().get().keySet()) {
       assertEquals(
           "should check for TWO",
-          "randoop.condition.ReturnCondition(x2.equals(ClassWithConditions.Range.TWO))",
+          "randoop.condition.PostCondition(x2.equals(ClassWithConditions.Range.TWO))",
           check.getValue());
     }
 
@@ -116,7 +116,7 @@ public class OperationConditionTest {
     for (Check check : es.getChecks().get().keySet()) {
       assertEquals(
           "should check for THREE",
-          "randoop.condition.ReturnCondition(x2.equals(ClassWithConditions.Range.THREE))",
+          "randoop.condition.PostCondition(x2.equals(ClassWithConditions.Range.THREE))",
           check.getValue());
     }
 
@@ -128,7 +128,7 @@ public class OperationConditionTest {
     for (Check check : es.getChecks().get().keySet()) {
       assertEquals(
           "should check for FOUR",
-          "randoop.condition.ReturnCondition(x2.equals(ClassWithConditions.Range.FOUR))",
+          "randoop.condition.PostCondition(x2.equals(ClassWithConditions.Range.FOUR))",
           check.getValue());
     }
 
@@ -194,11 +194,11 @@ public class OperationConditionTest {
     OperationSpecification spec =
         new OperationSpecification(Operation.getOperation(method), new Identifiers(paramNames));
 
-    List<ParamSpecification> paramSpecifications = new ArrayList<>();
+    List<PreSpecification> preSpecifications = new ArrayList<>();
     Guard paramGuard = new Guard("positive", "value > 0");
-    ParamSpecification paramSpec = new ParamSpecification("must be positive", paramGuard);
-    paramSpecifications.add(paramSpec);
-    spec.addParamSpecifications(paramSpecifications);
+    PreSpecification paramSpec = new PreSpecification("must be positive", paramGuard);
+    preSpecifications.add(paramSpec);
+    spec.addParamSpecifications(preSpecifications);
 
     List<ThrowsSpecification> throwsSpecifications = new ArrayList<>();
     Guard throwsGuard = new Guard("greater than 4*getValue()", "value >= 4*receiver.getValue()");
@@ -208,31 +208,31 @@ public class OperationConditionTest {
     throwsSpecifications.add(throwsSpec);
     spec.addThrowsSpecifications(throwsSpecifications);
 
-    List<ReturnSpecification> returnSpecifications = new ArrayList<>();
+    List<PostSpecification> postSpecifications = new ArrayList<>();
     Guard retGuard;
     Property retProperty;
-    ReturnSpecification returnSpec;
+    PostSpecification returnSpec;
 
     retGuard = new Guard("value in first range", "value < receiver.getValue()");
     retProperty = new Property("return ONE", "result.equals(ClassWithConditions.Range.ONE)");
-    returnSpec = new ReturnSpecification("value in first range", retGuard, retProperty);
-    returnSpecifications.add(returnSpec);
+    returnSpec = new PostSpecification("value in first range", retGuard, retProperty);
+    postSpecifications.add(returnSpec);
 
     retGuard = new Guard("value in second range", "value < 2*receiver.getValue()");
     retProperty = new Property("return TWO", "result.equals(ClassWithConditions.Range.TWO)");
-    returnSpec = new ReturnSpecification("value in second range", retGuard, retProperty);
-    returnSpecifications.add(returnSpec);
+    returnSpec = new PostSpecification("value in second range", retGuard, retProperty);
+    postSpecifications.add(returnSpec);
 
     retGuard = new Guard("value in third range", "value < 3*receiver.getValue()");
     retProperty = new Property("return THREE", "result.equals(ClassWithConditions.Range.THREE)");
-    returnSpec = new ReturnSpecification("value in third range", retGuard, retProperty);
-    returnSpecifications.add(returnSpec);
+    returnSpec = new PostSpecification("value in third range", retGuard, retProperty);
+    postSpecifications.add(returnSpec);
 
     retGuard = new Guard("otherwise", "true");
     retProperty = new Property("return FOUR", "result.equals(ClassWithConditions.Range.FOUR)");
-    returnSpec = new ReturnSpecification("otherwise, return FOUR", retGuard, retProperty);
-    returnSpecifications.add(returnSpec);
-    spec.addReturnSpecifications(returnSpecifications);
+    returnSpec = new PostSpecification("otherwise, return FOUR", retGuard, retProperty);
+    postSpecifications.add(returnSpec);
+    spec.addReturnSpecifications(postSpecifications);
 
     Map<AccessibleObject, OperationSpecification> specMap = new HashMap<>();
     specMap.put(method, spec);

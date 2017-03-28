@@ -18,7 +18,7 @@ public class OperationConditions {
   private final List<Condition> preconditions;
 
   /** The return-conditions */
-  private final List<Pair<Condition, ReturnCondition>> returnConditions;
+  private final List<Pair<Condition, PostCondition>> returnConditions;
 
   /** The throws-conditions */
   private final Map<Condition, ExpectedExceptionGenerator> throwsConditions;
@@ -36,7 +36,7 @@ public class OperationConditions {
    */
   OperationConditions(
       List<Condition> preconditions,
-      List<Pair<Condition, ReturnCondition>> returnConditions,
+      List<Pair<Condition, PostCondition>> returnConditions,
       Map<Condition, ExpectedExceptionGenerator> throwsConditions) {
     this.preconditions = preconditions;
     this.returnConditions = returnConditions;
@@ -71,7 +71,7 @@ public class OperationConditions {
     if (this.supertypeConditions != null) {
       generators = supertypeConditions.getReturnCheckGenerator(args);
     }
-    for (Pair<Condition, ReturnCondition> entry : returnConditions) {
+    for (Pair<Condition, PostCondition> entry : returnConditions) {
       Condition precondition = entry.a;
       if (precondition.check(args)) {
         generators.add(new PostConditionCheckGenerator(entry.b.addPrestate(args)));

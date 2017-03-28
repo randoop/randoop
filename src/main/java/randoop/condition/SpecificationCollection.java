@@ -21,9 +21,9 @@ import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.Guard;
 import randoop.condition.specification.Operation;
 import randoop.condition.specification.OperationSpecification;
-import randoop.condition.specification.ParamSpecification;
+import randoop.condition.specification.PostSpecification;
+import randoop.condition.specification.PreSpecification;
 import randoop.condition.specification.Property;
-import randoop.condition.specification.ReturnSpecification;
 import randoop.condition.specification.ThrowsSpecification;
 import randoop.reflection.TypeNames;
 import randoop.test.ExpectedExceptionGenerator;
@@ -169,16 +169,15 @@ public class SpecificationCollection {
 
     // translate the ParamSpecifications to Condition objects
     List<Condition> paramConditions = new ArrayList<>();
-    for (ParamSpecification paramSpecification : specification.getParamSpecifications()) {
-      paramConditions.add(createCondition(paramSpecification.getGuard(), declarations));
+    for (PreSpecification preSpecification : specification.getPreSpecifications()) {
+      paramConditions.add(createCondition(preSpecification.getGuard(), declarations));
     }
 
-    // translate the ReturnSpecifications to Condition-ReturnCondition pairs
-    ArrayList<Pair<Condition, ReturnCondition>> returnConditions = new ArrayList<>();
-    for (ReturnSpecification returnSpecification : specification.getReturnSpecifications()) {
-      Condition preCondition = createCondition(returnSpecification.getGuard(), declarations);
-      ReturnCondition postCondition =
-          createCondition(returnSpecification.getProperty(), declarations);
+    // translate the ReturnSpecifications to Condition-PostCondition pairs
+    ArrayList<Pair<Condition, PostCondition>> returnConditions = new ArrayList<>();
+    for (PostSpecification postSpecification : specification.getPostSpecifications()) {
+      Condition preCondition = createCondition(postSpecification.getGuard(), declarations);
+      PostCondition postCondition = createCondition(postSpecification.getProperty(), declarations);
       returnConditions.add(new Pair<>(preCondition, postCondition));
     }
 
@@ -231,13 +230,13 @@ public class SpecificationCollection {
   }
 
   /**
-   * Creates the {@link ReturnCondition} object for a given {@link Property}.
+   * Creates the {@link PostCondition} object for a given {@link Property}.
    *
    * @param property the property to be converted
    * @param declarations the declarations for the specification the guard belongs to
-   * @return the {@link ReturnCondition} object for the given {@link Property}
+   * @return the {@link PostCondition} object for the given {@link Property}
    */
-  private ReturnCondition createCondition(Property property, Declarations declarations) {
+  private PostCondition createCondition(Property property, Declarations declarations) {
     Method conditionMethod =
         ConditionMethodCreator.create(
             declarations.getPackageName(),
@@ -246,6 +245,6 @@ public class SpecificationCollection {
             compiler);
     String comment = property.getDescription();
     String conditionText = declarations.replaceWithDummyVariables(property.getConditionText());
-    return new ReturnCondition(conditionMethod, comment, conditionText);
+    return new PostCondition(conditionMethod, comment, conditionText);
   }
 }
