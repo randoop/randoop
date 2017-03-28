@@ -4,7 +4,6 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
-
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -427,17 +426,17 @@ public class Minimize extends CommandHandler {
             return;
           }
 
-          Expression mExp;
+          Expression methodExp;
           // Retrieve the condition expression from the assert
           // statement.
           if (mArgs.size() == 1) {
-            mExp = mArgs.get(0);
+            methodExp = mArgs.get(0);
           } else {
-            mExp = mArgs.get(1);
+            methodExp = mArgs.get(1);
           }
 
-          if (mExp instanceof BinaryExpr) {
-            BinaryExpr binaryExp = (BinaryExpr) mExp;
+          if (methodExp instanceof BinaryExpr) {
+            BinaryExpr binaryExp = (BinaryExpr) methodExp;
             // Check that the operator is an equality operator.
             if (binaryExp.getOperator().equals(BinaryExpr.Operator.equals)) {
               // Retrieve and store the value associated with the
@@ -460,7 +459,7 @@ public class Minimize extends CommandHandler {
    * @param vdExpr variable declaration expression representing the current statement to simplify
    * @return a {@code Statement} object representing the simplified variable declaration expression
    *     if the type of the variable is a primitive and a value has been previously calculated.
-   *     Otherwise, {@code null} is returned. Also returns {@code null} if more than one variable is
+   *     Otherwise, {@code null} is returned. Also returns {@code null} if more than 1 variable is
    *     declared in the {@code VariableDeclarationExpr}.
    */
   private static Statement rhsAssignZeroValue(VariableDeclarationExpr vdExpr) {
@@ -493,13 +492,13 @@ public class Minimize extends CommandHandler {
    *     values
    * @return a {@code Statement} object representing the simplified variable declaration expression
    *     if the type of the variable is a primitive and a value has been previously calculated.
-   *     Otherwise, {@code null} is returned. Also returns {@code null} if more than one variable is
+   *     Otherwise, {@code null} is returned. Also returns {@code null} if more than 1 variable is
    *     declared in the {@code VariableDeclarationExpr}.
    */
   private static Statement rhsAssignValueFromPassingAssertion(
       VariableDeclarationExpr vdExpr, Map<String, String> primitiveValues) {
     if (vdExpr.getVars().size() != 1) {
-      // Number of variables declared in this expression is not one.
+      // Number of variables declared in this expression is not 1.
       return null;
     }
     // Get the name of the variable being declared.
@@ -523,12 +522,12 @@ public class Minimize extends CommandHandler {
    * @param value value that will be assigned to the variable being declared
    * @return a {@code Statement} object representing the simplified variable declaration expression
    *     if the type of the variable is a primitive and a value has been previously calculated.
-   *     Returns {@code null} if more than one variable is declared in the {@code
+   *     Returns {@code null} if more than 1 variable is declared in the {@code
    *     VariableDeclarationExpr}.
    */
   private static Statement rhsAssignWithValue(VariableDeclarationExpr vdExpr, String value) {
     if (vdExpr.getVars().size() != 1) {
-      // Number of variables declared in this expression is not one.
+      // Number of variables declared in this expression is not 1.
       return null;
     }
 
@@ -588,12 +587,12 @@ public class Minimize extends CommandHandler {
    *
    * @param vdExpr variable declaration expression that represents the statement to simplify
    * @return a {@code Statement} object that is equal to {@code vdExpr} without the assignment to
-   *     the declared variable. Returns {@code null} if more than one variable is declared in the
+   *     the declared variable. Returns {@code null} if more than 1 variable is declared in the
    *     {@code VariableDeclarationExpr}.
    */
   private static Statement removeLeftHandSideSimplification(VariableDeclarationExpr vdExpr) {
     if (vdExpr.getVars().size() > 1) {
-      // More than one variable declared in this expression.
+      // More than 1 variable declared in this expression.
       return null;
     }
 
@@ -760,11 +759,11 @@ public class Minimize extends CommandHandler {
     String executionDir = getExecutionDirectory(filePath, packageName);
 
     // Obtain directory path from file path.
-    Path fPath = Paths.get(filePath).getParent();
+    Path directoryContainingFile = Paths.get(filePath).getParent();
     // Directory path for the classpath.
     String dirPath = null;
-    if (fPath != null) {
-      dirPath = fPath.toString();
+    if (directoryContainingFile != null) {
+      dirPath = directoryContainingFile.toString();
     }
 
     // Fully-qualified classname
@@ -793,7 +792,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Get directory to execute command in given file path and package name
+   * Get directory to execute command in given file path and package name.
    *
    * @param filePath the absolute file path to the input Java file
    * @param packageName package name of input Java file
@@ -1146,8 +1145,8 @@ public class Minimize extends CommandHandler {
    * Calculate the length of a file, by number of lines.
    *
    * @param filepath absolute file path to the input file
-   * @return the number of lines in the file. Negative one is returned if an exception occurs from
-   *     finding or reading the file
+   * @return the number of lines in the file. Returns -1 if an exception occurs from finding or
+   *     reading the file
    */
   private static int getFileLength(String filepath) {
     int lines = 0;
