@@ -25,6 +25,7 @@ import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.PrimitiveType;
+import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import edu.emory.mathcs.backport.java.util.Collections;
@@ -380,11 +381,10 @@ public class Minimize extends CommandHandler {
         // Create and return a list of possible replacement statements.
         VariableDeclarationExpr vdExpr = (VariableDeclarationExpr) exp;
 
-        // Simplify right hand side to zero-equivalent value:  0, false, or null.
-        Statement rhsZeroValStmt = rhsAssignZeroValue(vdExpr);
-        if (rhsZeroValStmt != null) {
-          replacements.add(rhsZeroValStmt);
-        }
+        // Simplify right hand side to zero-equivalent value: 0, false,
+        // or null.
+        List<Statement> rhsZeroValStmts = rhsAssignZeroValue(vdExpr);
+        replacements.addAll(rhsZeroValStmts);
 
         // Simplify right hand side to a value that was previously found
         // in a passing assertion.
@@ -426,17 +426,17 @@ public class Minimize extends CommandHandler {
             return;
           }
 
-          Expression methodExp;
+          Expression mExp;
           // Retrieve the condition expression from the assert
           // statement.
           if (mArgs.size() == 1) {
-            methodExp = mArgs.get(0);
+            mExp = mArgs.get(0);
           } else {
-            methodExp = mArgs.get(1);
+            mExp = mArgs.get(1);
           }
 
-          if (methodExp instanceof BinaryExpr) {
-            BinaryExpr binaryExp = (BinaryExpr) methodExp;
+          if (mExp instanceof BinaryExpr) {
+            BinaryExpr binaryExp = (BinaryExpr) mExp;
             // Check that the operator is an equality operator.
             if (binaryExp.getOperator().equals(BinaryExpr.Operator.equals)) {
               // Retrieve and store the value associated with the
@@ -452,34 +452,44 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Return a variable declaration statement that replaces the right hand side by 0, false, or null,
-   * whichever is type correct. Returns null if there are multiple variable declarations in a single
-   * statement, such as {@code int i, j, k;}.
+   * Return a list of variable declaration statements that could replace the right hand side by 0,
+   * false, or null, whichever is type correct. Returns an empty list if there are multiple variable
+   * declarations in a single statement, such as {@code int i, j, k;}.
    *
    * @param vdExpr variable declaration expression representing the current statement to simplify
-   * @return a {@code Statement} object representing the simplified variable declaration expression
-   *     if the type of the variable is a primitive and a value has been previously calculated.
-   *     Otherwise, {@code null} is returned. Also returns {@code null} if more than 1 variable is
-   *     declared in the {@code VariableDeclarationExpr}.
+   * @return a list of {@code Statement} objects representing the simplified variable declaration
+   *     expression if the type of the variable is a primitive and a value has been previously
+   *     calculated.
    */
-  private static Statement rhsAssignZeroValue(VariableDeclarationExpr vdExpr) {
+  private static List<Statement> rhsAssignZeroValue(VariableDeclarationExpr vdExpr) {
+    List<Statement> resultList = new ArrayList<Statement>();
+
     if (vdExpr.getVars().size() != 1) {
       // Number of variables declared in this expression is not 1.
-      return null;
+      return resultList;
     }
+
     Type type = vdExpr.getType();
     if (type instanceof PrimitiveType) {
-      switch (((PrimitiveType) type).getType()) {
-        case Boolean:
-          return rhsAssignWithValue(vdExpr, "false");
-        case Char:
-          return rhsAssignWithValue(vdExpr, "");
-        default:
-          return rhsAssignWithValue(vdExpr, "0");
+      // Replacement with zero value on the right hand side.
+      resultList.add(rhsAssignWithValue(vdExpr, type, "0"));
+    } else {
+      // Replacement with null on the right hand side.
+      resultList.add(rhsAssignWithValue(vdExpr, type, null));
+      if (type instanceof ReferenceType) {
+        ReferenceType rType = (ReferenceType) type;
+        if (rType.getType() instanceof ClassOrInterfaceType) {
+          ClassOrInterfaceType classType = (ClassOrInterfaceType) rType.getType();
+          // Check if the type is a wrapped type.
+          if (classType.isBoxedType()) {
+            // Replacement with zero value on the right hand side.
+            resultList.add(rhsAssignWithValue(vdExpr, classType.toUnboxedType(), "0"));
+          }
+        }
       }
     }
-    // Replacement with null on the right hand side.
-    return rhsAssignWithValue(vdExpr, null);
+
+    return resultList;
   }
 
   /**
@@ -492,13 +502,13 @@ public class Minimize extends CommandHandler {
    *     values
    * @return a {@code Statement} object representing the simplified variable declaration expression
    *     if the type of the variable is a primitive and a value has been previously calculated.
-   *     Otherwise, {@code null} is returned. Also returns {@code null} if more than 1 variable is
+   *     Otherwise, {@code null} is returned. Also returns {@code null} if more than one variable is
    *     declared in the {@code VariableDeclarationExpr}.
    */
   private static Statement rhsAssignValueFromPassingAssertion(
       VariableDeclarationExpr vdExpr, Map<String, String> primitiveValues) {
     if (vdExpr.getVars().size() != 1) {
-      // Number of variables declared in this expression is not 1.
+      // Number of variables declared in this expression is not one.
       return null;
     }
     // Get the name of the variable being declared.
@@ -507,7 +517,7 @@ public class Minimize extends CommandHandler {
     // Check if the map contains a value found from a passing assertion.
     if (primitiveValues.containsKey(varName)) {
       String value = primitiveValues.get(varName);
-      return rhsAssignWithValue(vdExpr, value);
+      return rhsAssignWithValue(vdExpr, vdExpr.getType(), value);
     } else {
       // The map does not contain a value for this variable.
       return null;
@@ -522,16 +532,18 @@ public class Minimize extends CommandHandler {
    * @param value value that will be assigned to the variable being declared
    * @return a {@code Statement} object representing the simplified variable declaration expression
    *     if the type of the variable is a primitive and a value has been previously calculated.
-   *     Returns {@code null} if more than 1 variable is declared in the {@code
+   *     Returns {@code null} if more than one variable is declared in the {@code
    *     VariableDeclarationExpr}.
    */
-  private static Statement rhsAssignWithValue(VariableDeclarationExpr vdExpr, String value) {
+  private static Statement rhsAssignWithValue(
+      VariableDeclarationExpr vdExpr, Type exprType, String value) {
     if (vdExpr.getVars().size() != 1) {
-      // Number of variables declared in this expression is not 1.
+      // Number of variables declared in this expression is not one.
       return null;
     }
 
-    // Create the resulting expression, a copy of the original expression which
+    // Create the resulting expression, a copy of the original expression
+    // which
     // will be modified and returned.
     VariableDeclarationExpr resultExpr = (VariableDeclarationExpr) vdExpr.clone();
 
@@ -541,32 +553,33 @@ public class Minimize extends CommandHandler {
 
     // Based on the declared variable type, set the right hand to the value
     // that was passed in.
-    Type type = resultExpr.getType();
-    if (type instanceof PrimitiveType) {
-      switch (((PrimitiveType) type).getType()) {
+    if (exprType instanceof PrimitiveType) {
+      switch (((PrimitiveType) exprType).getType()) {
         case Boolean:
-          vd.setInit(new BooleanLiteralExpr(Boolean.parseBoolean(value)));
-          break;
-        case Byte:
-          vd.setInit(new IntegerLiteralExpr(value));
+          if (value.equals("0")) {
+            vd.setInit(new BooleanLiteralExpr(Boolean.parseBoolean("false")));
+          } else {
+            vd.setInit(new BooleanLiteralExpr(Boolean.parseBoolean(value)));
+          }
           break;
         case Char:
-          vd.setInit(new CharLiteralExpr(value));
+          if (value.equals("0")) {
+            vd.setInit(new CharLiteralExpr(""));
+          } else {
+            vd.setInit(new CharLiteralExpr(value));
+          }
           break;
+        case Byte:
         case Short:
-          vd.setInit(new IntegerLiteralExpr(value));
-          break;
         case Int:
           vd.setInit(new IntegerLiteralExpr(value));
           break;
-        case Long:
-          vd.setInit(new LongLiteralExpr(value));
-          break;
         case Float:
-          vd.setInit(new DoubleLiteralExpr(value));
-          break;
         case Double:
           vd.setInit(new DoubleLiteralExpr(value));
+          break;
+        case Long:
+          vd.setInit(new LongLiteralExpr(value));
           break;
       }
     } else {
@@ -587,16 +600,17 @@ public class Minimize extends CommandHandler {
    *
    * @param vdExpr variable declaration expression that represents the statement to simplify
    * @return a {@code Statement} object that is equal to {@code vdExpr} without the assignment to
-   *     the declared variable. Returns {@code null} if more than 1 variable is declared in the
+   *     the declared variable. Returns {@code null} if more than one variable is declared in the
    *     {@code VariableDeclarationExpr}.
    */
   private static Statement removeLeftHandSideSimplification(VariableDeclarationExpr vdExpr) {
     if (vdExpr.getVars().size() > 1) {
-      // More than 1 variable declared in this expression.
+      // More than one variable declared in this expression.
       return null;
     }
 
-    // Create the resulting expression, a copy of the original expression which
+    // Create the resulting expression, a copy of the original expression
+    // which
     // will be modified and returned.
     VariableDeclarationExpr resultExpr = (VariableDeclarationExpr) vdExpr.clone();
     List<VariableDeclarator> vars = resultExpr.getVars();
