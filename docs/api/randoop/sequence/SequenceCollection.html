@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>SequenceCollection (randoop 3.0.10 API)</title>
+<title>SequenceCollection (randoop 3.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="SequenceCollection (randoop 3.0.10 API)";
+            parent.document.title="SequenceCollection (randoop 3.1.2 API)";
         }
     }
     catch(err) {
@@ -110,36 +110,29 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">SequenceCollection</span>
 extends java.lang.Object</pre>
-<div class="block">A collection of sequences that makes its efficient to ask for all the
- sequences that create a value of a given type.
+<div class="block">A collection of sequences that makes its efficient to ask for all the sequences that create a
+ value of a given type.
 
- <p>
- RANDOOP IMPLEMENTATION NOTE.
- <p>
+ <p>RANDOOP IMPLEMENTATION NOTE.
 
- When creating new sequences, Randoop often needs to search for all the
- previously-generated sequences that create one or more values of a given
- type. Since this set can contain thousands of sequences, finding these
- sequences can can be time-consuming and a bottleneck in generation (as we
- discovered during profiling).
+ <p>When creating new sequences, Randoop often needs to search for all the previously-generated
+ sequences that create one or more values of a given type. Since this set can contain thousands of
+ sequences, finding these sequences can can be time-consuming and a bottleneck in generation (as
+ we discovered during profiling).
 
- <p>
-
- This class makes the above search faster by maintaining two data structures:
+ <p>This class makes the above search faster by maintaining two data structures:
 
  <ul>
- <li>A map from types to the sets of all sequences that create one or more
- values of exactly the given type.
-
- <li>A set of all the types that can be created with the existing set of
- sequences. The set is maintained as a <a href="../../randoop/SubTypeSet.html" title="class in randoop"><code>SubTypeSet</code></a> that allows for
- quick queries about can-be-used-as relationships among the types in the set.
+   <li>A map from types to the sets of all sequences that create one or more values of exactly the
+       given type.
+   <li>A set of all the types that can be created with the existing set of sequences. The set is
+       maintained as a <a href="../../randoop/SubTypeSet.html" title="class in randoop"><code>SubTypeSet</code></a> that allows for quick queries about can-be-used-as
+       relationships among the types in the set.
  </ul>
 
- To find all the sequences that create values of a given type, Randoop first
- uses the <code>SubTypeSet</code> to find the set <code>S</code> of feasible
- subtypes in set of sequences, and returns the range of <code>S</code> in the
- sequence map.</div>
+ To find all the sequences that create values of a given type, Randoop first uses the <code>
+ SubTypeSet</code> to find the set <code>S</code> of feasible subtypes in set of sequences, and
+ returns the range of <code>S</code> in the sequence map.</div>
 </li>
 </ul>
 </div>
@@ -251,8 +244,8 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code><a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/SequenceCollection.html#getSequencesForType-randoop.types.Type-boolean-">getSequencesForType</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type,
                    boolean&nbsp;exactMatch)</code>
-<div class="block">Searches through the set of active sequences to find all sequences whose
- types match with the parameter type.</div>
+<div class="block">Searches through the set of active sequences to find all sequences whose types match with the
+ parameter type.</div>
 </td>
 </tr>
 <tr id="i7" class="rowColor">
@@ -431,14 +424,12 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>add</h4>
 <pre>public&nbsp;void&nbsp;add(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;sequence)</pre>
-<div class="block">Add a sequence to this collection. This method takes into account the
- active indices in the sequence. If sequence[i] creates a values of type T,
- and sequence[i].isActive==true, then the sequence is seen as creating a
- useful value at index i. More precisely, the method/constructor at that
- index is said to produce a useful value (and if the user later queries for
- all sequences that create a T, the sequence will be in the collection
- returned by the query). How a value is deemed useful or not is left up to
- the client.</div>
+<div class="block">Add a sequence to this collection. This method takes into account the active indices in the
+ sequence. If sequence[i] creates a values of type T, and sequence[i].isActive==true, then the
+ sequence is seen as creating a useful value at index i. More precisely, the method/constructor
+ at that index is said to produce a useful value (and if the user later queries for all
+ sequences that create a T, the sequence will be in the collection returned by the query). How a
+ value is deemed useful or not is left up to the client.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>sequence</code> - the sequence to add to this collection</dd>
@@ -469,15 +460,15 @@ extends java.lang.Object</pre>
 <h4>getSequencesForType</h4>
 <pre>public&nbsp;<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;getSequencesForType(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type,
                                                 boolean&nbsp;exactMatch)</pre>
-<div class="block">Searches through the set of active sequences to find all sequences whose
- types match with the parameter type.</div>
+<div class="block">Searches through the set of active sequences to find all sequences whose types match with the
+ parameter type.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>type</code> - the type desired for the sequences being sought</dd>
 <dd><code>exactMatch</code> - the flag to indicate whether an exact type match is required</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>list of sequence objects that are of type 'type' and abide by the
-         constraints defined by nullOk</dd>
+<dd>list of sequence objects that are of type 'type' and abide by the constraints defined
+     by nullOk</dd>
 </dl>
 </li>
 </ul>

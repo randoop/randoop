@@ -441,11 +441,11 @@ public class ForwardGenerator extends AbstractGenerator {
    * prefix, repeating the operation the given number of times. Used during generation.
    *
    * @param seq the sequence to extend
-   * @param operation the {@link TypedOperation} to repeat.
-   * @param times the number of times to repeat the {@link Operation}.
+   * @param operation the {@link TypedOperation} to repeat
+   * @param times the number of times to repeat the {@link Operation}
    * @return a new {@code Sequence}
    */
-  protected Sequence repeat(Sequence seq, TypedOperation operation, int times) {
+  private Sequence repeat(Sequence seq, TypedOperation operation, int times) {
     Sequence retval = new Sequence(seq.statements);
     for (int i = 0; i < times; i++) {
       List<Integer> vil = new ArrayList<>();
@@ -472,7 +472,7 @@ public class ForwardGenerator extends AbstractGenerator {
   // Adds the string corresponding to the given newSequences to the
   // set allSequencesAsCode. The latter set is intended to mirror
   // the set allSequences, but stores strings instead of Sequences.
-  protected void randoopConsistencyTest2(Sequence newSequence) {
+  private void randoopConsistencyTest2(Sequence newSequence) {
     // Testing code.
     if (GenInputsAbstract.debug_checks) {
       this.allsequencesAsCode.add(newSequence.toCodeString());
@@ -482,7 +482,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
   // Checks that the set allSequencesAsCode contains a set of strings
   // equivalent to the sequences in allSequences.
-  protected void randoopConsistencyTests(Sequence newSequence) {
+  private void randoopConsistencyTests(Sequence newSequence) {
     // Testing code.
     if (GenInputsAbstract.debug_checks) {
       String code = newSequence.toCodeString();

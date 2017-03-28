@@ -4,7 +4,13 @@ import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import randoop.contract.CompareToAntiSymmetric;
 import randoop.contract.CompareToEquals;
 import randoop.contract.CompareToReflexive;
@@ -19,7 +25,11 @@ import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
 import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
-import randoop.operation.*;
+import randoop.operation.MethodCall;
+import randoop.operation.OperationParseException;
+import randoop.operation.OperationParser;
+import randoop.operation.TypedClassOperation;
+import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
 import randoop.types.ClassOrInterfaceType;
@@ -28,7 +38,8 @@ import randoop.util.MultiMap;
 
 /**
  * {@code WeightedConstantsOperationModel} represents the information context from which tests are
- * generated. It is also used to store information needed for constant mining. The model includes:
+ * generated. It is also used to store information needed for the <code>--weighted-constants</code>
+ * sequence selection weighting scheme. The model includes:
  *
  * <ul>
  *   <li>classes under test,
@@ -57,8 +68,12 @@ public class WeightedConstantsOperationModel extends AbstractOperationModel {
   /** Map for singleton sequences of literals extracted from classes. */
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
-  /** The term frequency mapping for each sequence in the set of all classes */
-  private Map<Sequence, Integer> tfFrequency;
+  /**
+   * The map of sequences to their term frequency: tf(t,d), where t is a sequence and d is all
+   * classes under test. Note that this is the raw frequency, just the number of times they occur
+   * within all classes under test.
+   */
+  private Map<Sequence, Integer> sequenceTermFrequency;
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
@@ -92,7 +107,7 @@ public class WeightedConstantsOperationModel extends AbstractOperationModel {
     exercisedClasses = new LinkedHashSet<>();
     operations = new TreeSet<>();
     classCount = 0;
-    tfFrequency = new HashMap<>();
+    sequenceTermFrequency = new HashMap<>();
   }
 
   /**
@@ -111,7 +126,6 @@ public class WeightedConstantsOperationModel extends AbstractOperationModel {
    * @throws OperationParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
-  // TODO discuss with Randoop developers how to appropriately handle static model creation with extensions
   public static WeightedConstantsOperationModel createModel(
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
@@ -141,7 +155,9 @@ public class WeightedConstantsOperationModel extends AbstractOperationModel {
 
   /**
    * Adds literals to the component manager, by parsing any literals files specified by the user.
-   * Includes literals at different levels indicated by {@link ClassLiteralsMode}.
+   * Includes literals at two different levels: a class level and a global level. Note that all
+   * sequences in class level (which are all class level literals) are a subset of those in global
+   * level (which are all sequences).
    *
    * @param compMgr the component manager
    * @param literalsFile the list of literals file names
@@ -154,6 +170,7 @@ public class WeightedConstantsOperationModel extends AbstractOperationModel {
     // manager.
     for (String filename : literalsFile) {
       MultiMap<ClassOrInterfaceType, Sequence> literalmap;
+      // For --weighted-constants, there are only two levels: class and global
       if (filename.equals("CLASSES")) {
         literalmap = classLiteralMap;
       } else {
@@ -161,8 +178,9 @@ public class WeightedConstantsOperationModel extends AbstractOperationModel {
       }
       for (ClassOrInterfaceType type : literalmap.keySet()) {
         for (Sequence seq : literalmap.getValues(type)) {
-          compMgr.addClassLevelLiteral(type, seq);
-          compMgr.addGeneratedSequence(seq);
+          compMgr.addClassLevelLiteral(
+              type, seq); // add sequence to the collection of class literals
+          compMgr.addGeneratedSequence(seq); // add sequence to the collection of all sequences
         }
       }
     }
@@ -244,8 +262,15 @@ public class WeightedConstantsOperationModel extends AbstractOperationModel {
     return annotatedTestValues;
   }
 
-  public Map<Sequence, Integer> getTfFrequency() {
-    return tfFrequency;
+  /**
+   * The map of sequences to their term frequency: tf(t,d), where t is a sequence and d is all
+   * classes under test. Note that this is the raw frequency, just the number of times they occur
+   * within all classes under test.
+   *
+   * @return map of sequences to their term frequency: tf(t,d)
+   */
+  public Map<Sequence, Integer> getSequenceTermFrequency() {
+    return sequenceTermFrequency;
   }
 
   /**
@@ -273,8 +298,10 @@ public class WeightedConstantsOperationModel extends AbstractOperationModel {
     mgr.add(new TypeExtractor(this.inputTypes, visibility));
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
+
+    // We supply the term frequency map to obtain the tf-idf weight for constant that are mined
     if (literalsFileList.contains("CLASSES")) {
-      mgr.add(new ClassLiteralExtractor(this.classLiteralMap, this.tfFrequency));
+      mgr.add(new ClassLiteralExtractor(this.classLiteralMap, this.sequenceTermFrequency));
     }
 
     // Collect classes under test

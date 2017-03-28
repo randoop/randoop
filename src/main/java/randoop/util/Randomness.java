@@ -92,6 +92,17 @@ public final class Randomness {
     throw new BugInRandoopException();
   }
 
+  /**
+   * Randomly selects an element from a weighted distribution of elements. These weights are with
+   * respect to each other, and are not normalized. Used internally when the <code>
+   * --weighted-constants</code> and/or <code>--weighted-sequences</code> options are used. Iterates
+   * through the entire list once, then does a binary search to select the element.
+   *
+   * @param list the list of elements to select from
+   * @param weights the map of elements to their weights
+   * @param <T> the type of the elements in the list
+   * @return a randomly selected element of type T
+   */
   public static <T extends WeightedElement> T randomMemberWeighted(
       SimpleList<T> list, Map<WeightedElement, Double> weights) {
 
@@ -118,13 +129,23 @@ public final class Randomness {
     }
     double randomPoint = Randomness.random.nextDouble() * max;
 
-    return list.get(binarySearchForIndex(list, cumulativeWeights, randomPoint));
+    assert list.size() + 1 == cumulativeWeights.size(); // because cumulative weights starts at 0
+
+    return list.get(binarySearchForIndex(cumulativeWeights, randomPoint));
   }
 
-  public static int binarySearchForIndex(
-      SimpleList<?> list, List<Double> cumulativeWeights, double point) {
+  /**
+   * Performs a binary search on a cumulative weight distribution and returns the corresponding
+   * index such that {@code cumulativeWeights.get(i) < point <= cumulativeWeights.get(i + 1) for
+   * index 0 <= i <= cumulativeWeights.size()},
+   *
+   * @param cumulativeWeights the cumulative weight distribution to search through
+   * @param point the value used to find the index within the cumulative weight distribution
+   * @return the index corresponding to point's location in the cumulative weight distribution
+   */
+  private static int binarySearchForIndex(List<Double> cumulativeWeights, double point) {
     int low = 0;
-    int high = list.size();
+    int high = cumulativeWeights.size();
     int mid = (low + high) / 2;
     while (!(cumulativeWeights.get(mid) < point && cumulativeWeights.get(mid + 1) >= point)) {
       if (cumulativeWeights.get(mid) < point) {

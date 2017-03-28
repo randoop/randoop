@@ -11,7 +11,13 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 import randoop.util.MultiMap;
 
-/** Created by Michael on 3/3/2017. */
+/**
+ * Template for implementing an OperationModel. Created to minimize the changes in {@code GenTests}
+ * due to the <code>--weighted-constants</code> and <code>--weighted-sequences</code> additions.
+ *
+ * @see OperationModel
+ * @see WeightedConstantsOperationModel
+ */
 public abstract class AbstractOperationModel {
 
   /**
@@ -77,6 +83,4 @@ public abstract class AbstractOperationModel {
   public abstract ContractSet getContracts();
 
   public abstract Set<Sequence> getAnnotatedTestValues();
-
-  //public abstract Map<Sequence, Integer> getTfFrequency();
 }

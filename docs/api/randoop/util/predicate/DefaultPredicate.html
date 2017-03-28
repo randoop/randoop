@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>DefaultPredicate (randoop 3.0.10 API)</title>
+<title>DefaultPredicate (randoop 3.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="DefaultPredicate (randoop 3.0.10 API)";
+            parent.document.title="DefaultPredicate (randoop 3.1.2 API)";
         }
     }
     catch(err) {
@@ -116,15 +116,15 @@ var activeTableTab = "activeTableTab";
 </dl>
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../randoop/util/predicate/AlwaysFalse.html" title="class in randoop.util.predicate">AlwaysFalse</a>, <a href="../../../randoop/util/predicate/AlwaysTrue.html" title="class in randoop.util.predicate">AlwaysTrue</a>, <a href="../../../randoop/util/predicate/AndPredicate.html" title="class in randoop.util.predicate">AndPredicate</a>, <a href="../../../randoop/test/ErrorTestPredicate.html" title="class in randoop.test">ErrorTestPredicate</a>, <a href="../../../randoop/test/ExcludeTestPredicate.html" title="class in randoop.test">ExcludeTestPredicate</a>, <a href="../../../randoop/test/IncludeIfCoversPredicate.html" title="class in randoop.test">IncludeIfCoversPredicate</a>, <a href="../../../randoop/test/IncludeTestPredicate.html" title="class in randoop.test">IncludeTestPredicate</a>, <a href="../../../randoop/util/predicate/OrPredicate.html" title="class in randoop.util.predicate">OrPredicate</a>, <a href="../../../randoop/test/RegressionTestPredicate.html" title="class in randoop.test">RegressionTestPredicate</a></dd>
+<dd><a href="../../../randoop/util/predicate/AlwaysFalse.html" title="class in randoop.util.predicate">AlwaysFalse</a>, <a href="../../../randoop/util/predicate/AlwaysTrue.html" title="class in randoop.util.predicate">AlwaysTrue</a>, <a href="../../../randoop/util/predicate/AndPredicate.html" title="class in randoop.util.predicate">AndPredicate</a>, <a href="../../../randoop/test/CompilableTestPredicate.html" title="class in randoop.test">CompilableTestPredicate</a>, <a href="../../../randoop/test/ErrorTestPredicate.html" title="class in randoop.test">ErrorTestPredicate</a>, <a href="../../../randoop/test/ExcludeTestPredicate.html" title="class in randoop.test">ExcludeTestPredicate</a>, <a href="../../../randoop/test/IncludeIfCoversPredicate.html" title="class in randoop.test">IncludeIfCoversPredicate</a>, <a href="../../../randoop/test/IncludeTestPredicate.html" title="class in randoop.test">IncludeTestPredicate</a>, <a href="../../../randoop/util/predicate/OrPredicate.html" title="class in randoop.util.predicate">OrPredicate</a>, <a href="../../../randoop/test/RegressionTestPredicate.html" title="class in randoop.test">RegressionTestPredicate</a></dd>
 </dl>
 <hr>
 <br>
 <pre>public abstract class <span class="typeNameLabel">DefaultPredicate&lt;T&gt;</span>
 extends java.lang.Object
 implements <a href="../../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;T&gt;</pre>
-<div class="block">Provides the default implementation of the <code>or</code> and <code>and</code> methods
- of the Predicate interface.</div>
+<div class="block">Provides the default implementation of the <code>or</code> and <code>and</code> methods of the Predicate
+ interface.</div>
 </li>
 </ul>
 </div>
@@ -163,15 +163,13 @@ implements <a href="../../../randoop/util/predicate/Predicate.html" title="inter
 <tr id="i0" class="altColor">
 <td class="colFirst"><code><a href="../../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;<a href="../../../randoop/util/predicate/DefaultPredicate.html" title="type parameter in DefaultPredicate">T</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/util/predicate/DefaultPredicate.html#and-randoop.util.predicate.Predicate-">and</a></span>(<a href="../../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;<a href="../../../randoop/util/predicate/DefaultPredicate.html" title="type parameter in DefaultPredicate">T</a>&gt;&nbsp;p)</code>
-<div class="block">Creates a new predicate that performs an and-also operator on this and the
- given predicate.</div>
+<div class="block">Creates a new predicate that performs an and-also operator on this and the given predicate.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="../../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;<a href="../../../randoop/util/predicate/DefaultPredicate.html" title="type parameter in DefaultPredicate">T</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../randoop/util/predicate/DefaultPredicate.html#or-randoop.util.predicate.Predicate-">or</a></span>(<a href="../../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;<a href="../../../randoop/util/predicate/DefaultPredicate.html" title="type parameter in DefaultPredicate">T</a>&gt;&nbsp;p)</code>
-<div class="block">Creates a new predicate that performs an or-else operator on this and the
- given predicate.</div>
+<div class="block">Creates a new predicate that performs an or-else operator on this and the given predicate.</div>
 </td>
 </tr>
 </table>
@@ -228,16 +226,15 @@ implements <a href="../../../randoop/util/predicate/Predicate.html" title="inter
 <h4>or</h4>
 <pre>public&nbsp;<a href="../../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;<a href="../../../randoop/util/predicate/DefaultPredicate.html" title="type parameter in DefaultPredicate">T</a>&gt;&nbsp;or(<a href="../../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;<a href="../../../randoop/util/predicate/DefaultPredicate.html" title="type parameter in DefaultPredicate">T</a>&gt;&nbsp;p)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../randoop/util/predicate/Predicate.html#or-randoop.util.predicate.Predicate-">Predicate</a></code></span></div>
-<div class="block">Creates a new predicate that performs an or-else operator on this and the
- given predicate.</div>
+<div class="block">Creates a new predicate that performs an or-else operator on this and the given predicate.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../randoop/util/predicate/Predicate.html#or-randoop.util.predicate.Predicate-">or</a></code>&nbsp;in interface&nbsp;<code><a href="../../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;<a href="../../../randoop/util/predicate/DefaultPredicate.html" title="type parameter in DefaultPredicate">T</a>&gt;</code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>p</code> - the second predicate to check</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>a predicate that returns true if this predicate is true or the
-         second predicate is true, and false if neither is true</dd>
+<dd>a predicate that returns true if this predicate is true or the second predicate is
+     true, and false if neither is true</dd>
 </dl>
 </li>
 </ul>
@@ -249,16 +246,15 @@ implements <a href="../../../randoop/util/predicate/Predicate.html" title="inter
 <h4>and</h4>
 <pre>public&nbsp;<a href="../../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;<a href="../../../randoop/util/predicate/DefaultPredicate.html" title="type parameter in DefaultPredicate">T</a>&gt;&nbsp;and(<a href="../../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;<a href="../../../randoop/util/predicate/DefaultPredicate.html" title="type parameter in DefaultPredicate">T</a>&gt;&nbsp;p)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../randoop/util/predicate/Predicate.html#and-randoop.util.predicate.Predicate-">Predicate</a></code></span></div>
-<div class="block">Creates a new predicate that performs an and-also operator on this and the
- given predicate.</div>
+<div class="block">Creates a new predicate that performs an and-also operator on this and the given predicate.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../randoop/util/predicate/Predicate.html#and-randoop.util.predicate.Predicate-">and</a></code>&nbsp;in interface&nbsp;<code><a href="../../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;<a href="../../../randoop/util/predicate/DefaultPredicate.html" title="type parameter in DefaultPredicate">T</a>&gt;</code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>p</code> - the second predicate to check</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>a predicate that returns true when this and the second predicate
-         return true, and false otherwise</dd>
+<dd>a predicate that returns true when this and the second predicate return true, and false
+     otherwise</dd>
 </dl>
 </li>
 </ul>

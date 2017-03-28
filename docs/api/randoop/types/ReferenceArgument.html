@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ReferenceArgument (randoop 3.0.10 API)</title>
+<title>ReferenceArgument (randoop 3.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ReferenceArgument (randoop 3.0.10 API)";
+            parent.document.title="ReferenceArgument (randoop 3.1.2 API)";
         }
     }
     catch(err) {
@@ -115,9 +115,9 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">ReferenceArgument</span>
 extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a></pre>
-<div class="block">Represents a reference type as a type argument to a parameterized type.
- (See
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.)</div>
+<div class="block">Represents a reference type as a type argument to a parameterized type. (See <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section
+ 4.5.1</a>.)</div>
 </li>
 </ul>
 </div>
@@ -187,8 +187,9 @@ extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ReferenceArgument.html#contains-randoop.types.TypeArgument-">contains</a></span>(<a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a>&nbsp;otherArgument)</code>
-<div class="block">Checks whether this type argument contains another argument, using relationship defined in
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.</div>
+<div class="block">Checks whether this type argument contains another argument, using relationship defined in <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section
+ 4.5.1</a>.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -412,13 +413,16 @@ extends <a href="../../randoop/types/TypeArgument.html" title="class in randoop.
 <li class="blockList">
 <h4>contains</h4>
 <pre>public&nbsp;boolean&nbsp;contains(<a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a>&nbsp;otherArgument)</pre>
-<div class="block">Checks whether this type argument contains another argument, using relationship defined in
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.
- Considers cases:
+<div class="block">Checks whether this type argument contains another argument, using relationship defined in <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section
+ 4.5.1</a>.
+
+ <p>Considers cases:
+
  <ul>
-   <li><code>T</code> contains <code>T</code></li>
-   <li><code>T</code> contains <code>? extends T</code></li>
-   <li><code>T</code> contains <code>? super T</code></li>
+   <li><code>T</code> contains <code>T</code>
+   <li><code>T</code> contains <code>? extends T</code>
+   <li><code>T</code> contains <code>? super T</code>
  </ul></div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>

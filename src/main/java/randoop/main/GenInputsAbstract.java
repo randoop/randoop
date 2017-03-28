@@ -66,13 +66,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * or <code>--classlist</code> option.
    *
    * <p>A constructor line begins with <code>"cons :"</code> followed by the classname, the string
-   * <code>&lt;init&gt;</code>, and the constructor's parameter types enclosed in parentheses.
-   * Methods are specified in a similar way. For example:
+   * {@code <init>}, and the constructor's parameter types enclosed in parentheses. Methods are
+   * specified in a similar way. For example:
    *
-   * <pre class="code">
-   * cons : Type0.&lt;init&gt;(Type1, Type2, ..., TypeN)
+   * <pre>{@code
+   * cons : Type0.<init>(Type1, Type2, ..., TypeN)
    * method : Type0.method_name(Type1, Type2, ..., TypeN)
-   * </pre>
+   * }</pre>
    *
    * <p>Each <code>Type<i>i</i></code> must be fully-qualified (include package names).
    *
@@ -131,14 +131,26 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * File containing fully qualified names of classes that the tests must exercise. This option only
-   * works if Randoop is run using <code>-javaagent:exercised_agent.jar</code> to instrument the
-   * classes. A test is output only if it exercises at least one of the class names in the file. A
-   * test exercises a class if it executes any constructor or method of the class, directly or
-   * indirectly (the constructor or method might not appear in the source code of the test).
-   * Included classes may be abstract.
+   * works if Randoop is run using the <a
+   * href="https://randoop.github.io/randoop/manual/index.html#exercised-filter">exercised-class
+   * javaagent</a> to instrument the classes. A test is output only if it exercises at least one of
+   * the class names in the file. A test exercises a class if it executes any constructor or method
+   * of the class, directly or indirectly (the constructor or method might not appear in the source
+   * code of the test). Included classes may be abstract.
    */
   @Option("File containing class names that tests must exercise")
   public static File include_if_class_exercised = null;
+
+  /**
+   * If false, Randoop halts and gives diagnostics about flaky tests -- tests that behave
+   * differently on different executions. If true, Randoop ignores them and does not output them.
+   *
+   * <p>Use of this option is a last resort. Flaky tests are usually due to calling Randoop on
+   * side-effecting or nondeterministic methods, and a better solution is not to call Randoop on
+   * such methods.
+   */
+  @Option("Whether to ignore non-determinism in test execution")
+  public static boolean ignore_flaky_tests = false;
 
   /**
    * Whether to output error-revealing tests. Disables all output when used with <code>
@@ -166,6 +178,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Whether to include assertions in regression tests")
   public static boolean no_regression_assertions = false;
+
+  /**
+   * Whether to check that generated sequences can be compiled. If true, the code for each generated
+   * sequence is compiled, and the sequence is only kept if the compilation succeeds without error.
+   * This check is useful because the assumptions in Randoop generation heuristics are sometimes
+   * violated by input methods, and, as a result, a generated test may not compile. This check does
+   * increases the runtime by approximately 50%.
+   */
+  @Option("Whether to check if test sequences are compilable")
+  public static boolean check_compilable = true;
 
   /**
    * The possible values for exception behavior types. The order INVALID, ERROR, EXPECTED should be
@@ -235,19 +257,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Whether StackOverflowError is an ERROR, EXPECTED or INVALID")
   public static BehaviorType sof_exception = BehaviorType.INVALID;
-
-  /**
-   * Ignore the situation where a code sequence that previously executed normally throws an
-   * exception when executed as part of a longer test sequence. If true, the sequence will be
-   * classified as invalid. If false, Randoop will halt with information about the sequence to aid
-   * in identifying the issue.
-   *
-   * <p>Use of this option is a last resort. Flaky tests are usually due to calling Randoop on
-   * side-effecting or nondeterministic methods, and a better solution is not to call Randoop on
-   * such methods.
-   */
-  @Option("Whether to ignore non-determinism in test execution")
-  public static boolean ignore_flaky_tests = false;
 
   /**
    * Read Toradocu JSON condition file to use Toradocu generated conditions to control how tests are
@@ -373,7 +382,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * How to use literal values that are specified via the <code>--literals-file</code> command-line
-   * option.
+   * option. Note that the package literal level cannot be specified if using <code>
+   * --weighted-constants</code> or <code>--weighted-sequences</code>.
    *
    * @see ClassLiteralsMode
    */
@@ -397,18 +407,20 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * Whether to use DigDog weighted constants in sequence selection. Note that this weighting scheme dominates the
-   * <code>--small-tests</code> weight scheme, but can be used with <code>--weighted-sequences</code>.
+   * Whether to use the weighted-constants static weighting scheme to bias the sequence selection.
+   * Note that this weighting scheme dominates the <code>--small-tests</code> weight scheme, but can
+   * be used with <code>--weighted-sequences</code>.
    */
-  // TODO: fix wording, does this dominate --literals-level?
-  @Option("Whether to use DigDog weighted constants in sequence selection")
+  @Option("Whether to use weighted constants in sequence selection")
   public static boolean weighted_constants = false;
 
   /**
-   * What probability to select the constants mined through <code>--weighted-constants</code> during sequence
-   * selection.
+   * What probability to select from only weighted-constant sequences during sequence selection.
+   * This is only applicable with the <code>--weighted-constants</code> option. Note that the set of
+   * weighted-constant sequences selected from also incorporate dynamic weights if <code>
+   * --weighted-sequences</code> is used.
    */
-  @Option("What probability to select the constants mined through DigDog's --weighted-constants")
+  @Option("What probability to select only constants mined through --weighted-constants")
   public static double p_const = .01;
 
   // Implementation note: when checking whether a String S exceeds the given
@@ -446,10 +458,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean small_tests = false;
 
   /**
-   * Whether to use DigDog weighted sequences in sequence selection. Note that this weighting scheme dominates the
-   * <code>--small-tests</code> weight scheme, but can be used with <code>--weighted-constants</code>.
+   * Whether to use the weighted-sequences dynamic weighting scheme to bias the sequence selection.
+   * Note that this weighting scheme dominates the <code>--small-tests</code> weight scheme, but can
+   * be used with <code>
+   * --weighted-constants</code>. Performance may be similar to <code>--small-tests</code>.
    */
-  @Option("Whether to use DigDog weighted sequences in sequence selection")
+  @Option("Whether to use weighted sequences in sequence selection")
   public static boolean weighted_sequences = false;
 
   /**
@@ -605,22 +619,24 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static FileWriter log = null;
 
   /**
-   * Whether to output the file: <code>--output-sequence-info-filename</code>, which lists the total # sequences executed
-   * and average sequence size in csv format.
+   * Whether to output the file: <code>--output-sequence-info-filename</code>, which lists the total
+   * # sequences executed and average sequence size in csv format.
    */
-  @Option("Whether to output the file that lists the total # sequences and avg sequence size")
+  @Option(
+      "Whether to output the file that lists the total # sequences executed and avg sequence size")
   public static boolean output_sequence_info = false;
 
   /**
-   * The filename to output the sequence info results to.  Only valid with <code>--output-sequence-info</code>
+   * The filename to output the sequence info results to. Only valid with <code>
+   * --output-sequence-info</code>
    */
   @Option(
       "The filename to output the sequence info results to.  Only valid with --output-sequence-info")
   public static String output_sequence_info_filename = "sequenceInfo.csv";
 
   /**
-   * Create sequences but never execute them. Used to test performance of
-   * Randoop's sequence generation code.
+   * Create sequences but never execute them. Used to test performance of Randoop's sequence
+   * generation code.
    */
   @Unpublicized
   @Option("Create sequences but never execute them")

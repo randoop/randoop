@@ -6,11 +6,9 @@ import java.util.List;
 import plume.UtilMDE;
 
 /**
- * Represents a parameterized type. A <i>parameterized type</i> is a type <code>
- * C&lt;T<sub>1</sub>,&hellip;,T<sub>k</sub>&gt;</code> where <code>
- * C&lt;F<sub>1</sub>,&hellip;,F<sub>k</sub>&gt;</code> is a generic class instantiated by a
- * substitution <code>[F<sub>i</sub>:=T<sub>i</sub>]</code>, and <code>T<sub>i</sub></code> is a
- * subtype of the upper bound <code>B<sub>i</sub></code> of the type parameter <code>F<sub>i</sub>
+ * Represents a parameterized type. A <i>parameterized type</i> is a type {@code C<T1,...,Tk>} where
+ * {@code C<F1,...,Fk>} is a generic class instantiated by a substitution <code>[Fi:=Ti]</code>, and
+ * <code>Ti</code> is a subtype of the upper bound <code>Bi</code> of the type parameter <code>Fi
  * </code>.
  *
  * @see GenericClassType

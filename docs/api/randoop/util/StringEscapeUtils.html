@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>StringEscapeUtils (randoop 3.0.10 API)</title>
+<title>StringEscapeUtils (randoop 3.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="StringEscapeUtils (randoop 3.0.10 API)";
+            parent.document.title="StringEscapeUtils (randoop 3.1.2 API)";
         }
     }
     catch(err) {
@@ -110,10 +110,7 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">StringEscapeUtils</span>
 extends java.lang.Object</pre>
-<div class="block"><p>
- Escapes and unescapes <code>String</code>s for Java, Java Script, HTML, XML,
- and SQL.
- </p></div>
+<div class="block">Escapes and unescapes <code>String</code>s for Java, JavaScript, HTML, XML, and SQL.</div>
 <dl>
 <dt><span class="simpleTagLabel">Since:</span></dt>
 <dd>2.0</dd>
@@ -137,9 +134,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/util/StringEscapeUtils.html#StringEscapeUtils--">StringEscapeUtils</a></span>()</code>
-<div class="block">
- <code>StringEscapeUtils</code> instances should NOT be constructed in
- standard programming.</div>
+<div class="block"><code>StringEscapeUtils</code> instances should NOT be constructed in standard programming.</div>
 </td>
 </tr>
 </table>
@@ -160,17 +155,15 @@ extends java.lang.Object</pre>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/StringEscapeUtils.html#escapeJava-java.lang.String-">escapeJava</a></span>(java.lang.String&nbsp;str)</code>
-<div class="block">
- Escapes the characters in a <code>String</code> using Java String rules.</div>
+<div class="block">Escapes the characters in a <code>String</code> using Java String rules.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/StringEscapeUtils.html#escapeJava-java.io.Writer-java.lang.String-">escapeJava</a></span>(java.io.Writer&nbsp;out,
           java.lang.String&nbsp;str)</code>
-<div class="block">
- Escapes the characters in a <code>String</code> using Java String rules to
- a <code>Writer</code>.</div>
+<div class="block">Escapes the characters in a <code>String</code> using Java String rules to a <code>Writer
+ </code>.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -187,9 +180,7 @@ extends java.lang.Object</pre>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>private static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/StringEscapeUtils.html#hex-char-">hex</a></span>(char&nbsp;ch)</code>
-<div class="block">
- Returns an upper case hexadecimal <code>String</code> for the given
- character.</div>
+<div class="block">Returns an upper case hexadecimal <code>String</code> for the given character.</div>
 </td>
 </tr>
 </table>
@@ -221,23 +212,15 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>StringEscapeUtils</h4>
 <pre>public&nbsp;StringEscapeUtils()</pre>
-<div class="block"><p>
- <code>StringEscapeUtils</code> instances should NOT be constructed in
- standard programming.
- </p>
+<div class="block"><code>StringEscapeUtils</code> instances should NOT be constructed in standard programming.
 
- <p>
- Instead, the class should be used as:
- </p>
+ <p>Instead, the class should be used as:
 
  <pre>
  StringEscapeUtils.escapeJava("foo");
  </pre>
 
- <p>
- This constructor is public to permit tools that require a JavaBean instance
- to operate.
- </p></div>
+ <p>This constructor is public to permit tools that require a JavaBean instance to operate.</div>
 </li>
 </ul>
 </li>
@@ -255,27 +238,16 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>escapeJava</h4>
 <pre>public static&nbsp;java.lang.String&nbsp;escapeJava(java.lang.String&nbsp;str)</pre>
-<div class="block"><p>
- Escapes the characters in a <code>String</code> using Java String rules.
- </p>
+<div class="block">Escapes the characters in a <code>String</code> using Java String rules.
 
- <p>
- Deals correctly with quotes and control-chars (tab, backslash, cr, ff,
- etc.)
- </p>
+ <p>Deals correctly with quotes and control-chars (tab, backslash, cr, ff, etc.)
 
- <p>
- So a tab becomes the characters <code>'\\'</code> and <code>'t'</code>.
- </p>
+ <p>So a tab becomes the characters <code>'\\'</code> and <code>'t'</code>.
 
- <p>
- The only difference between Java strings and JavaScript strings is that in
- JavaScript, a single quote must be escaped.
- </p>
+ <p>The only difference between Java strings and JavaScript strings is that in JavaScript, a
+ single quote must be escaped.
 
- <p>
- Example:
- </p>
+ <p>Example:
 
  <pre>
  input string: He didn't say, "Stop!"
@@ -298,14 +270,10 @@ extends java.lang.Object</pre>
 <pre>public static&nbsp;void&nbsp;escapeJava(java.io.Writer&nbsp;out,
                               java.lang.String&nbsp;str)
                        throws java.io.IOException</pre>
-<div class="block"><p>
- Escapes the characters in a <code>String</code> using Java String rules to
- a <code>Writer</code>.
- </p>
+<div class="block">Escapes the characters in a <code>String</code> using Java String rules to a <code>Writer
+ </code>.
 
- <p>
- A <code>null</code> string input has no effect.
- </p></div>
+ <p>A <code>null</code> string input has no effect.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>out</code> - Writer to write escaped string into</dd>
@@ -351,10 +319,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>hex</h4>
 <pre>private static&nbsp;java.lang.String&nbsp;hex(char&nbsp;ch)</pre>
-<div class="block"><p>
- Returns an upper case hexadecimal <code>String</code> for the given
- character.
- </p></div>
+<div class="block">Returns an upper case hexadecimal <code>String</code> for the given character.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>ch</code> - The character to convert</dd>

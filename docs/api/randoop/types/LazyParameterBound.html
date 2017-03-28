@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>LazyParameterBound (randoop 3.0.10 API)</title>
+<title>LazyParameterBound (randoop 3.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="LazyParameterBound (randoop 3.0.10 API)";
+            parent.document.title="LazyParameterBound (randoop 3.1.2 API)";
         }
     }
     catch(err) {
@@ -115,10 +115,9 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>class <span class="typeNameLabel">LazyParameterBound</span>
 extends <a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></pre>
-<div class="block">A lazy representation of a type bound in which a type variable occurs.
- Prevents type recognition from having to deal with recursive type bounds.
- All methods that need to evaluate the bound are provided with a substitution for the variable
- for which this object is a bound.</div>
+<div class="block">A lazy representation of a type bound in which a type variable occurs. Prevents type recognition
+ from having to deal with recursive type bounds. All methods that need to evaluate the bound are
+ provided with a substitution for the variable for which this object is a bound.</div>
 </li>
 </ul>
 </div>
@@ -357,8 +356,8 @@ extends <a href="../../randoop/types/ParameterBound.html" title="class in randoo
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code>equals</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if argument is a <code>LazyParameterBound</code>, and the rawtype
-         and parameters are identical, false otherwise</dd>
+<dd>true if argument is a <code>LazyParameterBound</code>, and the rawtype and parameters are
+     identical, false otherwise</dd>
 </dl>
 </li>
 </ul>
@@ -587,9 +586,9 @@ extends <a href="../../randoop/types/ParameterBound.html" title="class in randoo
 <pre>public&nbsp;boolean&nbsp;isUpperBound(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;argType,
                             <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
 <div class="block">Determines if this bound is an upper bound for the argument type.
- This generic type bound is satisfied by a concrete type if the concrete type
- formed by applying the substitution to this generic bound is satisfied by
- the concrete type.</div>
+
+ <p>This generic type bound is satisfied by a concrete type if the concrete type formed by
+ applying the substitution to this generic bound is satisfied by the concrete type.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/types/ParameterBound.html#isUpperBound-randoop.types.Type-randoop.types.Substitution-">isUpperBound</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></code></dd>
@@ -597,8 +596,8 @@ extends <a href="../../randoop/types/ParameterBound.html" title="class in randoo
 <dd><code>argType</code> - the concrete argument type</dd>
 <dd><code>substitution</code> - the substitution</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if this bound is satisfied by the concrete type when the
-         substitution is used on the bound, false otherwise</dd>
+<dd>true if this bound is satisfied by the concrete type when the substitution is used on
+     the bound, false otherwise</dd>
 </dl>
 </li>
 </ul>

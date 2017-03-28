@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ListOfLists (randoop 3.0.10 API)</title>
+<title>ListOfLists (randoop 3.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ListOfLists (randoop 3.0.10 API)";
+            parent.document.title="ListOfLists (randoop 3.1.2 API)";
         }
     }
     catch(err) {
@@ -120,13 +120,12 @@ var activeTableTab = "activeTableTab";
 <pre>public class <span class="typeNameLabel">ListOfLists&lt;T&gt;</span>
 extends <a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;T&gt;
 implements java.io.Serializable</pre>
-<div class="block">Given a list of lists, defines methods that can access all the elements as if
- they were part of a single list, without actually merging the lists.
+<div class="block">Given a list of lists, defines methods that can access all the elements as if they were part of a
+ single list, without actually merging the lists.
 
- This class is used for performance reasons. We want the ability to select
- elements collected across several lists, but we observed that creating a
- brand new list (i.e. via a sequence of List.addAll(..) operations can be very
- expensive, because it happened in a hot spot (method
+ <p>This class is used for performance reasons. We want the ability to select elements collected
+ across several lists, but we observed that creating a brand new list (i.e. via a sequence of
+ List.addAll(..) operations can be very expensive, because it happened in a hot spot (method
  SequenceCollection.getSequencesThatYield).</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
@@ -210,8 +209,8 @@ implements java.io.Serializable</pre>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/util/ListOfLists.html" title="type parameter in ListOfLists">T</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ListOfLists.html#getSublist-int-">getSublist</a></span>(int&nbsp;index)</code>
-<div class="block">Return the shortest sublist of this list that contains the index based on
- the compositional structure of this list.</div>
+<div class="block">Return the shortest sublist of this list that contains the index based on the compositional
+ structure of this list.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -377,8 +376,8 @@ implements java.io.Serializable</pre>
 <h4>getSublist</h4>
 <pre>public&nbsp;<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/util/ListOfLists.html" title="type parameter in ListOfLists">T</a>&gt;&nbsp;getSublist(int&nbsp;index)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/util/SimpleList.html#getSublist-int-">SimpleList</a></code></span></div>
-<div class="block">Return the shortest sublist of this list that contains the index based on
- the compositional structure of this list.</div>
+<div class="block">Return the shortest sublist of this list that contains the index based on the compositional
+ structure of this list.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/util/SimpleList.html#getSublist-int-">getSublist</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/util/ListOfLists.html" title="type parameter in ListOfLists">T</a>&gt;</code></dd>

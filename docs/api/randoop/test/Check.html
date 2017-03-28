@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Check (randoop 3.0.10 API)</title>
+<title>Check (randoop 3.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Check (randoop 3.0.10 API)";
+            parent.document.title="Check (randoop 3.1.2 API)";
         }
     }
     catch(err) {
@@ -49,7 +49,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li>Prev&nbsp;Class</li>
-<li><a href="../../randoop/test/ContractChecker.html" title="class in randoop.test"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/test/CompilableTestPredicate.html" title="class in randoop.test"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/test/Check.html" target="_top">Frames</a></li>
@@ -105,38 +105,30 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public interface <span class="typeNameLabel">Check</span></pre>
-<div class="block">A Check represents the expected runtime behavior of a Sequence, at a
- particular offset. When a unit test is run as a regression test, it should
- have the same behavior as it did previously, and the Check objects represent
- that previous, expected behavior. Some examples of Checks are:
+<div class="block">A Check represents the expected runtime behavior of a Sequence, at a particular offset. When a
+ unit test is run as a regression test, it should have the same behavior as it did previously, and
+ the Check objects represent that previous, expected behavior. Some examples of Checks are:
+
  <ul>
- <li><a href="../../randoop/test/ExpectedExceptionCheck.html" title="class in randoop.test"><code>ExpectedExceptionCheck</code></a> -- an exception should be thrown
- <li><a href="../../randoop/test/NoExceptionCheck.html" title="class in randoop.test"><code>NoExceptionCheck</code></a> -- no exception should be thrown
- <li><a href="../../randoop/test/ObjectCheck.html" title="class in randoop.test"><code>ObjectCheck</code></a> -- a particular <a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract"><code>ObjectContract</code></a> should hold
+   <li><a href="../../randoop/test/ExpectedExceptionCheck.html" title="class in randoop.test"><code>ExpectedExceptionCheck</code></a> -- an exception should be thrown
+   <li><a href="../../randoop/test/NoExceptionCheck.html" title="class in randoop.test"><code>NoExceptionCheck</code></a> -- no exception should be thrown
+   <li><a href="../../randoop/test/ObjectCheck.html" title="class in randoop.test"><code>ObjectCheck</code></a> -- a particular <a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract"><code>ObjectContract</code></a> should hold
  </ul>
 
- The visitor classes decorate a sequence with <code>Check</code> objects. A
- <code>Check</code> object is inserted as a decoration on a specific index of
- an <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence"><code>ExecutableSequence</code></a>. Thus, a check is always associated with a
- specific index in a sequence. A check at index i means that the check is to
- be performed after statement i finishes executing.
+ The visitor classes decorate a sequence with <code>Check</code> objects. A <code>Check</code>
+ object is inserted as a decoration on a specific index of an <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence"><code>ExecutableSequence</code></a>. Thus, a
+ check is always associated with a specific index in a sequence. A check at index i means that the
+ check is to be performed after statement i finishes executing.
 
- <p>
+ <p>A check implements two methods that specify the code to be emitted before and/or after a
+ statement in a <code>Sequence</code> is executed.
 
- A check implements two methods that specify the code to be emitted before
- and/or after a statement in a <code>Sequence</code> is executed.
-
- <p>
-
- A check may require some code to be emitted before and/or after the statement
- is printed. For example, a check for checking that <code>x</code> is not null
- after the statement "<code>Foo x =
- m()</code>" is executed might emit the assertion code
- "<code>assertNotNull(x);</code>", and would do so after the statement is
- printed. As a second example, a check for checking that an expected exception
- is thrown by a statement would need to emit something like
- "<code>try {</code>" before the statement, and the catch clause after the
- statement.</div>
+ <p>A check may require some code to be emitted before and/or after the statement is printed. For
+ example, a check for checking that <code>x</code> is not null after the statement "<code>Foo x =
+ m()</code>" is executed might emit the assertion code "<code>assertNotNull(x);</code>", and would
+ do so after the statement is printed. As a second example, a check for checking that an expected
+ exception is thrown by a statement would need to emit something like "<code>try {</code>" before
+ the statement, and the catch clause after the statement.</div>
 </li>
 </ul>
 </div>
@@ -176,15 +168,13 @@ var activeTableTab = "activeTableTab";
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/Check.html#toCodeStringPostStatement--">toCodeStringPostStatement</a></span>()</code>
-<div class="block">Returns a string of Java source code to be emitted after a statement
- containing this check.</div>
+<div class="block">Returns a string of Java source code to be emitted after a statement containing this check.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/Check.html#toCodeStringPreStatement--">toCodeStringPreStatement</a></span>()</code>
-<div class="block">Returns a string of Java source code to be emitted before a statement
- containing this check.</div>
+<div class="block">Returns a string of Java source code to be emitted before a statement containing this check.</div>
 </td>
 </tr>
 </table>
@@ -209,8 +199,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>toCodeStringPreStatement</h4>
 <pre>java.lang.String&nbsp;toCodeStringPreStatement()</pre>
-<div class="block">Returns a string of Java source code to be emitted before a statement
- containing this check.</div>
+<div class="block">Returns a string of Java source code to be emitted before a statement containing this check.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the string to be included before the statement</dd>
@@ -224,8 +213,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>toCodeStringPostStatement</h4>
 <pre>java.lang.String&nbsp;toCodeStringPostStatement()</pre>
-<div class="block">Returns a string of Java source code to be emitted after a statement
- containing this check.</div>
+<div class="block">Returns a string of Java source code to be emitted after a statement containing this check.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the string to be included following the statement</dd>
@@ -253,12 +241,11 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>getID</h4>
 <pre>java.lang.String&nbsp;getID()</pre>
-<div class="block">Returns a unique string identifier for the check. Two checks are the same
- if these identifiers match. The value is NOT included. Used to match
- up checks between the same sequence run at different times. Note that
- because of changes in the environment (e.g., static variables), two
- executions of the same sequence may have different checks (because the
- existence of some checks depends on the value of variables)</div>
+<div class="block">Returns a unique string identifier for the check. Two checks are the same if these identifiers
+ match. The value is NOT included. Used to match up checks between the same sequence run at
+ different times. Note that because of changes in the environment (e.g., static variables), two
+ executions of the same sequence may have different checks (because the existence of some checks
+ depends on the value of variables)</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a unique string identifier for this check</dd>
@@ -309,7 +296,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li>Prev&nbsp;Class</li>
-<li><a href="../../randoop/test/ContractChecker.html" title="class in randoop.test"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../randoop/test/CompilableTestPredicate.html" title="class in randoop.test"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/test/Check.html" target="_top">Frames</a></li>

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>TestChecks (randoop 3.0.10 API)</title>
+<title>TestChecks (randoop 3.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="TestChecks (randoop 3.0.10 API)";
+            parent.document.title="TestChecks (randoop 3.1.2 API)";
         }
     }
     catch(err) {
@@ -105,9 +105,8 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public interface <span class="typeNameLabel">TestChecks</span></pre>
-<div class="block">TestChecks represents the checks for a particular test sequence. Can either
- be all passing tests for a regression test, or all failing tests for an
- error-revealing test.</div>
+<div class="block">TestChecks represents the checks for a particular test sequence. Can either be all passing tests
+ for a regression test, or all failing tests for an error-revealing test.</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../randoop/test/RegressionChecks.html" title="class in randoop.test"><code>RegressionChecks</code></a>, 
@@ -257,8 +256,8 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>hasErrorBehavior</h4>
 <pre>boolean&nbsp;hasErrorBehavior()</pre>
-<div class="block">Indicate whether this object has any failing checks. (This is essentially
- asking whether this is an error revealing test.)</div>
+<div class="block">Indicate whether this object has any failing checks. (This is essentially asking whether this
+ is an error revealing test.)</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if this object has failing checks, false otherwise</dd>
@@ -300,8 +299,8 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>commonChecks</h4>
 <pre><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&nbsp;commonChecks(<a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&nbsp;checks)</pre>
-<div class="block">Returns the consensus checks for two sets of checks. Refuses to compare
- passing with failing checks.</div>
+<div class="block">Returns the consensus checks for two sets of checks. Refuses to compare passing with failing
+ checks.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>checks</code> - the <code>TestChecks</code> to compare with.</dd>

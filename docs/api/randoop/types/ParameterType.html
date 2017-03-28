@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ParameterType (randoop 3.0.10 API)</title>
+<title>ParameterType (randoop 3.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ParameterType (randoop 3.0.10 API)";
+            parent.document.title="ParameterType (randoop 3.1.2 API)";
         }
     }
     catch(err) {
@@ -129,8 +129,7 @@ var activeTableTab = "activeTableTab";
 <pre>public abstract class <span class="typeNameLabel">ParameterType</span>
 extends <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a></pre>
 <div class="block">An abstract class representing kinds of type parameters, which are either type variables or
- wildcard types.
- Manages both upper and lower type bounds.</div>
+ wildcard types. Manages both upper and lower type bounds.</div>
 </li>
 </ul>
 </div>
@@ -392,8 +391,7 @@ extends <a href="../../randoop/types/ReferenceType.html" title="class in randoop
 <pre>public&nbsp;java.lang.String&nbsp;getCanonicalName()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/Type.html#getCanonicalName--">Type</a></code></span></div>
 <div class="block">Returns the name of this type as the "canonical name" of the underlying runtime class.
- Identical to <a href="../../randoop/types/Type.html#getName--"><code>Type.getName()</code></a> except for types with type arguments.
- For <code>java.util.List&lt;T&gt;</code> returns <code>"java.util.List"</code>.</div>
+ Identical to <a href="../../randoop/types/Type.html#getName--"><code>Type.getName()</code></a> except for types with type arguments. For <code>java.util.List&lt;T&gt;</code> returns <code>"java.util.List"</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/types/Type.html#getCanonicalName--">getCanonicalName</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>
@@ -428,9 +426,8 @@ extends <a href="../../randoop/types/ReferenceType.html" title="class in randoop
 <h4>getTypeParameters</h4>
 <pre>public&nbsp;java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;getTypeParameters()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/ReferenceType.html#getTypeParameters--">ReferenceType</a></code></span></div>
-<div class="block">Returns the list of type parameters for this type.
- Reference types that may have type parameters include <a href="../../randoop/types/ArrayType.html" title="class in randoop.types"><code>ArrayType</code></a> (such as <code>E[]</code>),
- and subclasses of <a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types"><code>ParameterizedType</code></a>.</div>
+<div class="block">Returns the list of type parameters for this type. Reference types that may have type
+ parameters include <a href="../../randoop/types/ArrayType.html" title="class in randoop.types"><code>ArrayType</code></a> (such as <code>E[]</code>), and subclasses of <a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types"><code>ParameterizedType</code></a>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/types/ReferenceType.html#getTypeParameters--">getTypeParameters</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a></code></dd>
@@ -446,17 +443,16 @@ extends <a href="../../randoop/types/ReferenceType.html" title="class in randoop
 <li class="blockList">
 <h4>getRuntimeClass</h4>
 <pre>public&nbsp;java.lang.Class&lt;?&gt;&nbsp;getRuntimeClass()</pre>
-<div class="block">Returns the runtime <code>Class</code> object for this type.
- For use when reflection is needed.
- <p>
- Note that type variables and the null reference type do not have a runtime class, and this
+<div class="block">Returns the runtime <code>Class</code> object for this type. For use when reflection is needed.
+
+ <p>Note that type variables and the null reference type do not have a runtime class, and this
  method will return null in those cases.
- <p>
- This method should not be confused with the inherited <code>Object.getClass()</code> method,
- which returns the <code>Class&lt;?&gt;</code> for the <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> object, and not of the represented type.
- For instance, if a <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> object <code>t</code> represented the Java type <code>int</code>, then
- <code>t.getRuntimeClass()</code> would return <code>int.class</code> while <code>t.getClass()</code> would return
- <code>Type.class</code>.</div>
+
+ <p>This method should not be confused with the inherited <code>Object.getClass()</code> method,
+ which returns the <code>Class&lt;?&gt;</code> for the <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> object, and not of the represented
+ type. For instance, if a <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> object <code>t</code> represented the Java type <code>int</code>,
+ then <code>t.getRuntimeClass()</code> would return <code>int.class</code> while <code>t.getClass()</code>
+ would return <code>Type.class</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/types/Type.html#getRuntimeClass--">getRuntimeClass</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Condition (randoop 3.0.10 API)</title>
+<title>Condition (randoop 3.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Condition (randoop 3.0.10 API)";
+            parent.document.title="Condition (randoop 3.1.2 API)";
         }
     }
     catch(err) {
@@ -105,8 +105,8 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public interface <span class="typeNameLabel">Condition</span></pre>
-<div class="block">Represents a condition on an operation.
- Kind of like a predicate, but with names changed to protect the innocent.</div>
+<div class="block">Represents a condition on an operation. Kind of like a predicate, but with names changed to
+ protect the innocent.</div>
 </li>
 </ul>
 </div>
@@ -195,11 +195,9 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>getConditionString</h4>
 <pre>java.lang.String&nbsp;getConditionString()</pre>
-<div class="block">Return this condition as a string.
- Arguments to the condition <a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract"><code>ObjectContract</code></a> convention where variables
- are represented by <code>x0</code>, ..., <code>xn</code> for some number <code>n</code>.
- If the operation takes a receiver it will be <code>x0</code>, and if the operation has a return
- value it will be <code>xn</code> (the last variable).</div>
+<div class="block">Return this condition as a string. Arguments to the condition <a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract"><code>ObjectContract</code></a> convention where variables are represented by <code>x0</code>, ...,
+ <code>xn</code> for some number <code>n</code>. If the operation takes a receiver it will be <code>x0</code>,
+ and if the operation has a return value it will be <code>xn</code> (the last variable).</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the Java representation of the condition as a <code>String</code></dd>

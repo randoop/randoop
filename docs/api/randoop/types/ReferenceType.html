@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ReferenceType (randoop 3.0.10 API)</title>
+<title>ReferenceType (randoop 3.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ReferenceType (randoop 3.0.10 API)";
+            parent.document.title="ReferenceType (randoop 3.1.2 API)";
         }
     }
     catch(err) {
@@ -123,14 +123,16 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public abstract class <span class="typeNameLabel">ReferenceType</span>
 extends <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></pre>
-<div class="block">Represents a reference type defined in
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.3">JLS Section 4.3</a>
+<div class="block">Represents a reference type defined in <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.3">JLS Section 4.3</a>
+
  <pre>
    ReferenceType:
      ClassOrInterfaceType
      TypeVariable
      ArrayType
  </pre>
+
  This abstract type is used to mirror the grammar in the JLS.</div>
 </li>
 </ul>
@@ -216,8 +218,7 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ReferenceType.html#isCaptureVariable--">isCaptureVariable</a></span>()</code>
-<div class="block">Indicates whether this type is a capture type variable as constructed by
- <a href="../../randoop/types/InstantiatedType.html#applyCaptureConversion--"><code>InstantiatedType.applyCaptureConversion()</code></a>.</div>
+<div class="block">Indicates whether this type is a capture type variable as constructed by <a href="../../randoop/types/InstantiatedType.html#applyCaptureConversion--"><code>InstantiatedType.applyCaptureConversion()</code></a>.</div>
 </td>
 </tr>
 <tr id="i9" class="rowColor">
@@ -235,10 +236,10 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ReferenceType.html#isSubtypeOf-randoop.types.Type-">isSubtypeOf</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;otherType)</code>
-<div class="block">Test whether this type is a subtype of the given type according to
- transitive closure of definition of the <i>direct supertype</i> relation in
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10">
- section 4.10 of JLS for Java SE 8</a>.</div>
+<div class="block">Test whether this type is a subtype of the given type according to transitive closure of
+ definition of the <i>direct supertype</i> relation in <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10">section 4.10 of
+ JLS for Java SE 8</a>.</div>
 </td>
 </tr>
 </table>
@@ -294,10 +295,9 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <li class="blockList">
 <h4>forClass</h4>
 <pre>public static&nbsp;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&nbsp;forClass(java.lang.Class&lt;?&gt;&nbsp;classType)</pre>
-<div class="block">Returns a <code>ReferenceType</code> object for the given <code>Class</code> object.
- Creates arrays, classes, and interfaces.
- For arrays, calls <a href="../../randoop/types/ArrayType.html#forClass-java.lang.Class-"><code>ArrayType.forClass(Class)</code></a>.
- For other (class/interface) types, calls <a href="../../randoop/types/ClassOrInterfaceType.html#forClass-java.lang.Class-"><code>ClassOrInterfaceType.forClass(Class)</code></a>.</div>
+<div class="block">Returns a <code>ReferenceType</code> object for the given <code>Class</code> object. Creates arrays,
+ classes, and interfaces. For arrays, calls <a href="../../randoop/types/ArrayType.html#forClass-java.lang.Class-"><code>ArrayType.forClass(Class)</code></a>. For other
+ (class/interface) types, calls <a href="../../randoop/types/ClassOrInterfaceType.html#forClass-java.lang.Class-"><code>ClassOrInterfaceType.forClass(Class)</code></a>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>classType</code> - the <code>Class</code> object representing the type</dd>
@@ -313,14 +313,15 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <li class="blockList">
 <h4>forType</h4>
 <pre>public static&nbsp;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&nbsp;forType(java.lang.reflect.Type&nbsp;type)</pre>
-<div class="block">Creates a <code>ReferenceType</code> for the given <code>java.lang.reflect.Type</code>.
- Specifically, creates
+<div class="block">Creates a <code>ReferenceType</code> for the given <code>java.lang.reflect.Type</code>. Specifically,
+ creates
+
  <ul>
-   <li>an <a href="../../randoop/types/ArrayType.html" title="class in randoop.types"><code>ArrayType</code></a> if the reference is <code>GenericArrayType</code> or is a
-       <code>Class</code> object representing an array. </li>
-   <li>a <a href="../../randoop/types/TypeVariable.html" title="class in randoop.types"><code>TypeVariable</code></a>) if the reference is <code>java.lang.reflect.TypeVariable</code>.</li>
-   <li>a <a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types"><code>ClassOrInterfaceType</code></a> if the reference is none of those.</li>
-</ul></div>
+   <li>an <a href="../../randoop/types/ArrayType.html" title="class in randoop.types"><code>ArrayType</code></a> if the reference is <code>GenericArrayType</code> or is a <code>Class</code>
+       object representing an array.
+   <li>a <a href="../../randoop/types/TypeVariable.html" title="class in randoop.types"><code>TypeVariable</code></a>) if the reference is <code>java.lang.reflect.TypeVariable</code>.
+   <li>a <a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types"><code>ClassOrInterfaceType</code></a> if the reference is none of those.
+ </ul></div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>type</code> - the type reference</dd>
@@ -336,11 +337,10 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <li class="blockList">
 <h4>apply</h4>
 <pre>public abstract&nbsp;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&nbsp;apply(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
-<div class="block">Applies a substitution to a <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>.
- If the type is parameterized then replaces type variables that occur, otherwise returns this
- type.
- <p>
- This abstract method forces typing of substitutions applied to <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> objects
+<div class="block">Applies a substitution to a <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>. If the type is parameterized then replaces
+ type variables that occur, otherwise returns this type.
+
+ <p>This abstract method forces typing of substitutions applied to <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> objects
  without an explicit cast.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
@@ -376,9 +376,8 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <li class="blockList">
 <h4>getTypeParameters</h4>
 <pre>public&nbsp;java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;getTypeParameters()</pre>
-<div class="block">Returns the list of type parameters for this type.
- Reference types that may have type parameters include <a href="../../randoop/types/ArrayType.html" title="class in randoop.types"><code>ArrayType</code></a> (such as <code>E[]</code>),
- and subclasses of <a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types"><code>ParameterizedType</code></a>.</div>
+<div class="block">Returns the list of type parameters for this type. Reference types that may have type
+ parameters include <a href="../../randoop/types/ArrayType.html" title="class in randoop.types"><code>ArrayType</code></a> (such as <code>E[]</code>), and subclasses of <a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types"><code>ParameterizedType</code></a>.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the type parameters for this type</dd>
@@ -408,32 +407,29 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <pre>public&nbsp;boolean&nbsp;isAssignableFrom(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;sourceType)</pre>
 <div class="block">Indicates whether there is an assignment conversion from a source <code>Type</code> to this type.
  (In other words, a value of the source type can be assigned to an l-value of this type.)
- Returns true if this is a legal assignment conversion:
- <code>
+ Returns true if this is a legal assignment conversion: <code>
  Variable<sub>this</sub> = Expression<sub>sourcetype</sub>.
  </code>
- <p>
- Based on the definition of <i>assignment context</i> in
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.2">
- section 5.2 of the JDK 8 Java Language Specification</a>,
- a value of one type is assignable to a variable of another type if the
- first type can be converted to the second by
+
+ <p>Based on the definition of <i>assignment context</i> in <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.2">section 5.2 of the
+ JDK 8 Java Language Specification</a>, a value of one type is assignable to a variable of
+ another type if the first type can be converted to the second by
+
  <ul>
- <li> an identity conversion (section 5.1.1),
- <li> a widening primitive conversion (section 5.1.2),
- <li> a widening reference conversion (section 5.1.5),
- <li> a boxing conversion (5.1.7), or
- <li> an unboxing conversion (section 5.1.8) possibly followed by a widening conversion.
+   <li>an identity conversion (section 5.1.1),
+   <li>a widening primitive conversion (section 5.1.2),
+   <li>a widening reference conversion (section 5.1.5),
+   <li>a boxing conversion (5.1.7), or
+   <li>an unboxing conversion (section 5.1.8) possibly followed by a widening conversion.
  </ul>
- And, if after all those conversions, the type is a raw type, an
- unchecked conversion may occur.
- <p>
- For assignment to <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>, checks for widening reference conversion when the
- source type is also a reference type.
- See <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.5">section
- JLS 5.1.5</a>
- for details.
- </p></div>
+
+ And, if after all those conversions, the type is a raw type, an unchecked conversion may occur.
+
+ <p>For assignment to <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>, checks for widening reference conversion when the
+ source type is also a reference type. See <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.5">section JLS
+ 5.1.5</a> for details.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/types/Type.html#isAssignableFrom-randoop.types.Type-">isAssignableFrom</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>
@@ -451,10 +447,8 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <li class="blockList">
 <h4>isCaptureVariable</h4>
 <pre>public&nbsp;boolean&nbsp;isCaptureVariable()</pre>
-<div class="block">Indicates whether this type is a capture type variable as constructed by
- <a href="../../randoop/types/InstantiatedType.html#applyCaptureConversion--"><code>InstantiatedType.applyCaptureConversion()</code></a>.
- A capture type variable can only occur as a type argument in an <a href="../../randoop/types/InstantiatedType.html" title="class in randoop.types"><code>InstantiatedType</code></a>
- constructed by <a href="../../randoop/types/InstantiatedType.html#applyCaptureConversion--"><code>InstantiatedType.applyCaptureConversion()</code></a>.</div>
+<div class="block">Indicates whether this type is a capture type variable as constructed by <a href="../../randoop/types/InstantiatedType.html#applyCaptureConversion--"><code>InstantiatedType.applyCaptureConversion()</code></a>. A capture type variable can only occur as a type
+ argument in an <a href="../../randoop/types/InstantiatedType.html" title="class in randoop.types"><code>InstantiatedType</code></a> constructed by <a href="../../randoop/types/InstantiatedType.html#applyCaptureConversion--"><code>InstantiatedType.applyCaptureConversion()</code></a>.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if this type is a capture type variable, false otherwise</dd>
@@ -470,19 +464,14 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <pre>public&nbsp;boolean&nbsp;isInstantiationOf(<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&nbsp;otherType)</pre>
 <div class="block">Indicates whether this type is an instantiation of a more general type.
 
- For a general <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>, this is only true if the other
- type is the same, or the other type is a type variable for which
- this type satisfies the bounds.
- Other cases are handled by the overriding implementations
- <a href="../../randoop/types/ClassOrInterfaceType.html#isInstantiationOf-randoop.types.ReferenceType-"><code>ClassOrInterfaceType.isInstantiationOf(ReferenceType)</code></a>,
- <a href="../../randoop/types/InstantiatedType.html#isInstantiationOf-randoop.types.ReferenceType-"><code>InstantiatedType.isInstantiationOf(ReferenceType)</code></a>, and
- <a href="../../randoop/types/TypeVariable.html#isInstantiationOf-randoop.types.ReferenceType-"><code>TypeVariable.isInstantiationOf(ReferenceType)</code></a>.</div>
+ <p>For a general <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>, this is only true if the other type is the same, or the
+ other type is a type variable for which this type satisfies the bounds. Other cases are handled
+ by the overriding implementations <a href="../../randoop/types/ClassOrInterfaceType.html#isInstantiationOf-randoop.types.ReferenceType-"><code>ClassOrInterfaceType.isInstantiationOf(ReferenceType)</code></a>, <a href="../../randoop/types/InstantiatedType.html#isInstantiationOf-randoop.types.ReferenceType-"><code>InstantiatedType.isInstantiationOf(ReferenceType)</code></a>, and <a href="../../randoop/types/TypeVariable.html#isInstantiationOf-randoop.types.ReferenceType-"><code>TypeVariable.isInstantiationOf(ReferenceType)</code></a>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>otherType</code> - the general reference type</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if this type instantiates the other reference type,
- false otherwise</dd>
+<dd>true if this type instantiates the other reference type, false otherwise</dd>
 </dl>
 </li>
 </ul>
@@ -503,8 +492,8 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <h4>isReferenceType</h4>
 <pre>public&nbsp;boolean&nbsp;isReferenceType()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/Type.html#isReferenceType--">Type</a></code></span></div>
-<div class="block">Indicates whether this is a reference type.
- Note: implementing classes should ensure that this is equivalent to !(this.isPrimitive())</div>
+<div class="block">Indicates whether this is a reference type. Note: implementing classes should ensure that this
+ is equivalent to !(this.isPrimitive())</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/types/Type.html#isReferenceType--">isReferenceType</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>
@@ -520,11 +509,12 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <li class="blockList">
 <h4>isSubtypeOf</h4>
 <pre>public&nbsp;boolean&nbsp;isSubtypeOf(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;otherType)</pre>
-<div class="block">Test whether this type is a subtype of the given type according to
- transitive closure of definition of the <i>direct supertype</i> relation in
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10">
- section 4.10 of JLS for Java SE 8</a>.
- For <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>, returns true if <code>otherType</code> is <code>Object</code>.</div>
+<div class="block">Test whether this type is a subtype of the given type according to transitive closure of
+ definition of the <i>direct supertype</i> relation in <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10">section 4.10 of
+ JLS for Java SE 8</a>.
+
+ <p>For <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>, returns true if <code>otherType</code> is <code>Object</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/types/Type.html#isSubtypeOf-randoop.types.Type-">isSubtypeOf</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>

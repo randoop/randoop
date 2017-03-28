@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>WildcardType (randoop 3.0.10 API)</title>
+<title>WildcardType (randoop 3.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="WildcardType (randoop 3.0.10 API)";
+            parent.document.title="WildcardType (randoop 3.1.2 API)";
         }
     }
     catch(err) {
@@ -131,8 +131,10 @@ var activeTableTab = "activeTableTab";
 extends <a href="../../randoop/types/ParameterType.html" title="class in randoop.types">ParameterType</a></pre>
 <div class="block">Represents a wildcard type, which occurs as a type argument to a parameterized type.
 
- A wildcard may have either an upper or lower bound as defined in
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.
+ <p>A wildcard may have either an upper or lower bound as defined in <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section
+ 4.5.1</a>.
+
  <pre>
    ? [ extends ReferenceType ]
    ? [ super ReferenceType ]
@@ -218,12 +220,14 @@ extends <a href="../../randoop/types/ParameterType.html" title="class in randoop
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardType.html#contains-randoop.types.WildcardType-">contains</a></span>(<a href="../../randoop/types/WildcardType.html" title="class in randoop.types">WildcardType</a>&nbsp;otherType)</code>
 <div class="block">If this type has an upper bound, checks for containment cases:
+
  
    <code>? extends T</code> contains <code>? extends S</code> if <code>T.isSubtypeOf(S)</code>
    <code>? extends T</code> contains <code>?</code>
  
- Both of which are technically the same because from a reflection perspective <code>?</code> is
- just <code>? extends Object</code>.</div>
+
+ Both of which are technically the same because from a reflection perspective <code>?</code> is just
+ <code>? extends Object</code>.</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
@@ -239,8 +243,8 @@ extends <a href="../../randoop/types/ParameterType.html" title="class in randoop
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/WildcardType.html#getName--">getName</a></span>()</code>
-<div class="block">Returns the fully-qualified name of this type, including type arguments if
- this is a parameterized type.</div>
+<div class="block">Returns the fully-qualified name of this type, including type arguments if this is a
+ parameterized type.</div>
 </td>
 </tr>
 <tr id="i6" class="altColor">
@@ -365,9 +369,10 @@ extends <a href="../../randoop/types/ParameterType.html" title="class in randoop
 <li class="blockList">
 <h4>forType</h4>
 <pre>public static&nbsp;<a href="../../randoop/types/WildcardType.html" title="class in randoop.types">WildcardType</a>&nbsp;forType(java.lang.reflect.WildcardType&nbsp;type)</pre>
-<div class="block">Creates a wildcard type from a given reflection type.
- Assumes that the bounds array has a single element as defined in
-  <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.</div>
+<div class="block">Creates a wildcard type from a given reflection type. Assumes that the bounds array has a
+ single element as defined in <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section
+ 4.5.1</a>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>type</code> - the <code>java.lang.reflect.WildcardType</code> object</dd>
@@ -423,9 +428,8 @@ extends <a href="../../randoop/types/ParameterType.html" title="class in randoop
 <h4>getName</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getName()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/Type.html#getName--">Type</a></code></span></div>
-<div class="block">Returns the fully-qualified name of this type, including type arguments if
- this is a parameterized type.
- For <code>java.util.List&lt;T&gt;</code> return <code>"java.util.List&lt;T&gt;"</code>.</div>
+<div class="block">Returns the fully-qualified name of this type, including type arguments if this is a
+ parameterized type. For <code>java.util.List&lt;T&gt;</code> return <code>"java.util.List&lt;T&gt;"</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/types/Type.html#getName--">getName</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>
@@ -442,8 +446,7 @@ extends <a href="../../randoop/types/ParameterType.html" title="class in randoop
 <h4>getSimpleName</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getSimpleName()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/Type.html#getSimpleName--">Type</a></code></span></div>
-<div class="block">Returns the name of this type without type arguments or package qualifiers.
- For <code>java.util.List&lt;T&gt;</code>, returns <code>"List"</code>.</div>
+<div class="block">Returns the name of this type without type arguments or package qualifiers. For <code>java.util.List&lt;T&gt;</code>, returns <code>"List"</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/types/Type.html#getSimpleName--">getSimpleName</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>
@@ -469,11 +472,10 @@ extends <a href="../../randoop/types/ParameterType.html" title="class in randoop
 <h4>apply</h4>
 <pre>public&nbsp;<a href="../../randoop/types/WildcardType.html" title="class in randoop.types">WildcardType</a>&nbsp;apply(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/ReferenceType.html#apply-randoop.types.Substitution-">ReferenceType</a></code></span></div>
-<div class="block">Applies a substitution to a <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>.
- If the type is parameterized then replaces type variables that occur, otherwise returns this
- type.
- <p>
- This abstract method forces typing of substitutions applied to <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> objects
+<div class="block">Applies a substitution to a <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>. If the type is parameterized then replaces
+ type variables that occur, otherwise returns this type.
+
+ <p>This abstract method forces typing of substitutions applied to <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> objects
  without an explicit cast.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
@@ -510,18 +512,21 @@ extends <a href="../../randoop/types/ParameterType.html" title="class in randoop
 <h4>contains</h4>
 <pre>public&nbsp;boolean&nbsp;contains(<a href="../../randoop/types/WildcardType.html" title="class in randoop.types">WildcardType</a>&nbsp;otherType)</pre>
 <div class="block">If this type has an upper bound, checks for containment cases:
+
  <ul>
-   <li><code>? extends T</code> contains <code>? extends S</code> if <code>T.isSubtypeOf(S)</code></li>
-   <li><code>? extends T</code> contains <code>?</code></li>
+   <li><code>? extends T</code> contains <code>? extends S</code> if <code>T.isSubtypeOf(S)</code>
+   <li><code>? extends T</code> contains <code>?</code>
  </ul>
- Both of which are technically the same because from a reflection perspective <code>?</code> is
- just <code>? extends Object</code>.
- Otherwise, checks for the cases
+
+ Both of which are technically the same because from a reflection perspective <code>?</code> is just
+ <code>? extends Object</code>. Otherwise, checks for the cases
+
  <ul>
-   <li><code>? super T</code> contains <code>? super S</code> if <code>S.isSubtypeOf(T)</code></li>
-   <li><code>? super T</code> contains <code>?</code></li>
-   <li><code>? super T</code> contains <code>? extends Object</code></li>
+   <li><code>? super T</code> contains <code>? super S</code> if <code>S.isSubtypeOf(T)</code>
+   <li><code>? super T</code> contains <code>?</code>
+   <li><code>? super T</code> contains <code>? extends Object</code>
  </ul>
+
  The last two being equivalent from the perspective of reflection.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -539,8 +544,8 @@ extends <a href="../../randoop/types/ParameterType.html" title="class in randoop
 <h4>isGeneric</h4>
 <pre>public&nbsp;boolean&nbsp;isGeneric()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/Type.html#isGeneric--">Type</a></code></span></div>
-<div class="block">Indicate whether this type is generic.
- A type is <i>generic</i> if it has one or more type variables.</div>
+<div class="block">Indicate whether this type is generic. A type is <i>generic</i> if it has one or more type
+ variables.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/types/Type.html#isGeneric--">isGeneric</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>

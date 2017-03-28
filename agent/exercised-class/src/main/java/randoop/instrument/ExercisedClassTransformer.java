@@ -78,7 +78,8 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
         || qualifiedName.startsWith("sun.") // end of rt.jar name prefixes
         || qualifiedName.startsWith("org.junit.")
         || qualifiedName.startsWith("org.hamcrest.")
-        || qualifiedName.startsWith("org.gradle")) {
+        || qualifiedName.startsWith("org.gradle.")
+        || qualifiedName.startsWith("com.github.javaparser.")) {
       return bytecode;
     }
 

@@ -12,7 +12,6 @@ import java.util.List;
 import org.junit.Test;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
-import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.field.AccessibleField;
 import randoop.field.ClassWithFields;
@@ -46,7 +45,7 @@ public class FieldGetterTest {
       assertEquals("Output type should match type of field", fieldType, rhs.getOutputType());
 
       //code generation
-      String expected = "int i0 = randoop.field.ClassWithFields.fourField;" + Globals.lineSep;
+      String expected = "int i0 = randoop.field.ClassWithFields.fourField;";
       Statement st = new Statement(rhs);
       Sequence seq = new Sequence().extend(rhs, new ArrayList<Variable>());
       Variable var = new Variable(seq, 0);
@@ -89,7 +88,7 @@ public class FieldGetterTest {
       assertEquals("Output type should match type of field", fieldType, rhs.getOutputType());
 
       //code generation
-      String expected = "int i1 = classWithFields0.oneField;" + Globals.lineSep;
+      String expected = "int i1 = classWithFields0.oneField;";
 
       //first need a variable referring to an instance
       // - sequence where one is declared and initialized by constructed object
@@ -166,7 +165,7 @@ public class FieldGetterTest {
       assertEquals("Output type should match type of field", fieldType, rhs.getOutputType());
 
       //code generation
-      String expected = "int i0 = randoop.field.ClassWithFields.FIVEFIELD;" + Globals.lineSep;
+      String expected = "int i0 = randoop.field.ClassWithFields.FIVEFIELD;";
       Statement st_rhs = new Statement(rhs);
       Sequence seq = new Sequence().extend(rhs, new ArrayList<Variable>());
       Variable var = new Variable(seq, 0);

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>LazyReferenceBound (randoop 3.0.10 API)</title>
+<title>LazyReferenceBound (randoop 3.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="LazyReferenceBound (randoop 3.0.10 API)";
+            parent.document.title="LazyReferenceBound (randoop 3.1.2 API)";
         }
     }
     catch(err) {
@@ -120,14 +120,13 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>class <span class="typeNameLabel">LazyReferenceBound</span>
 extends <a href="../../randoop/types/ReferenceBound.html" title="class in randoop.types">ReferenceBound</a></pre>
-<div class="block">A lazy representation of a type bound in which a type variable occurs.
- Similar in purpose to <a href="../../randoop/types/LazyParameterBound.html" title="class in randoop.types"><code>LazyParameterBound</code></a>, but this class uses
- <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> as the bound instead of <code>java.lang.reflect.Type</code>.
- Also, prevents access to recursive type bounds, that would otherwise result in
- nonterminating calls to <a href="../../randoop/types/LazyReferenceBound.html#getTypeParameters--"><code>getTypeParameters()</code></a>.
- <p>
- Objects of this class are created by <a href="../../randoop/types/LazyParameterBound.html#apply-randoop.types.Substitution-"><code>LazyParameterBound.apply(Substitution)</code></a>
- when the substitution would replace a type variable with another type variable.</div>
+<div class="block">A lazy representation of a type bound in which a type variable occurs. Similar in purpose to
+ <a href="../../randoop/types/LazyParameterBound.html" title="class in randoop.types"><code>LazyParameterBound</code></a>, but this class uses <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> as the bound instead of
+ <code>java.lang.reflect.Type</code>. Also, prevents access to recursive type bounds, that would
+ otherwise result in nonterminating calls to <a href="../../randoop/types/LazyReferenceBound.html#getTypeParameters--"><code>getTypeParameters()</code></a>.
+
+ <p>Objects of this class are created by <a href="../../randoop/types/LazyParameterBound.html#apply-randoop.types.Substitution-"><code>LazyParameterBound.apply(Substitution)</code></a> when the
+ substitution would replace a type variable with another type variable.</div>
 </li>
 </ul>
 </div>
@@ -183,11 +182,7 @@ extends <a href="../../randoop/types/ReferenceBound.html" title="class in randoo
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/LazyReferenceBound.html#hashCode--">hashCode</a></span>()</code>
-<div class="block">
- <a href="../../randoop/types/LazyReferenceBound.html" title="class in randoop.types"><code>LazyReferenceBound</code></a> can be part of a recursive type, and so the hash code is based on
- the string representation of the bound to avoid recursive calls on <code>hashCode()</code>.</div>
-</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/LazyReferenceBound.html#hashCode--">hashCode</a></span>()</code></td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
@@ -278,7 +273,8 @@ extends <a href="../../randoop/types/ReferenceBound.html" title="class in randoo
 <h4>hashCode</h4>
 <pre>public&nbsp;int&nbsp;hashCode()</pre>
 <div class="block">
- <a href="../../randoop/types/LazyReferenceBound.html" title="class in randoop.types"><code>LazyReferenceBound</code></a> can be part of a recursive type, and so the hash code is based on
+
+ <p><a href="../../randoop/types/LazyReferenceBound.html" title="class in randoop.types"><code>LazyReferenceBound</code></a> can be part of a recursive type, and so the hash code is based on
  the string representation of the bound to avoid recursive calls on <code>hashCode()</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
@@ -400,8 +396,8 @@ extends <a href="../../randoop/types/ReferenceBound.html" title="class in randoo
 <dd><code>argType</code> - the concrete argument type</dd>
 <dd><code>substitution</code> - the substitution</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if this bound is satisfied by the concrete type when the
-         substitution is used on the bound, false otherwise</dd>
+<dd>true if this bound is satisfied by the concrete type when the substitution is used on
+     the bound, false otherwise</dd>
 </dl>
 </li>
 </ul>

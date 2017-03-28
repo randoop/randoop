@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>SimpleList (randoop 3.0.10 API)</title>
+<title>SimpleList (randoop 3.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="SimpleList (randoop 3.0.10 API)";
+            parent.document.title="SimpleList (randoop 3.1.2 API)";
         }
     }
     catch(err) {
@@ -114,44 +114,36 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public abstract class <span class="typeNameLabel">SimpleList&lt;T&gt;</span>
 extends java.lang.Object</pre>
-<div class="block">List implementation used by Randoop to store the sequence of
- <code>Statement</code>s making up a Sequence.
- <p>
+<div class="block">List implementation used by Randoop to store the sequence of <code>Statement</code>s making up a
+ Sequence.
 
- IMPLEMENTATION NOTE
- <p>
+ <p>IMPLEMENTATION NOTE
 
- Randoop's main generator (<a href="../../randoop/generation/ForwardGenerator.html" title="class in randoop.generation"><code>ForwardGenerator</code></a>) creates new sequences by concatenating existing sequences
- and appending a statement at the end. A naive implementation of concatenation
- copies the elements of the concatenated sub-sequences into a new list. The
- first implementation of Sequence concatenation took this approach.
+ <p>Randoop's main generator (<a href="../../randoop/generation/ForwardGenerator.html" title="class in randoop.generation"><code>ForwardGenerator</code></a>)
+ creates new sequences by concatenating existing sequences and appending a statement at the end. A
+ naive implementation of concatenation copies the elements of the concatenated sub-sequences into
+ a new list. The first implementation of Sequence concatenation took this approach.
 
- <p>
- When profiling Randoop, we observed that naive concatenation took up a large
- portion of the tool's running time, and the component set (i.e. the set of
- stored sequences used to create more sequences) quickly exhausted the memory
- available.
+ <p>When profiling Randoop, we observed that naive concatenation took up a large portion of the
+ tool's running time, and the component set (i.e. the set of stored sequences used to create more
+ sequences) quickly exhausted the memory available.
 
- <p>
- To improve memory and time efficiency, we now do concatenation differently.
- We store the list of statements in a Sequence in a SimpleList, an abstract
- class that has three subclasses:
+ <p>To improve memory and time efficiency, we now do concatenation differently. We store the list
+ of statements in a Sequence in a SimpleList, an abstract class that has three subclasses:
 
  <ul>
- <li><a href="../../randoop/util/ArrayListSimpleList.html" title="class in randoop.util"><code>ArrayListSimpleList</code></a>: a typical list is stored as an array list.
- <li><a href="../../randoop/util/ListOfLists.html" title="class in randoop.util"><code>ListOfLists</code></a>: a list that only stores pointers to its constituent
- sub-lists.
- <li><a href="../../randoop/util/OneMoreElementList.html" title="class in randoop.util"><code>OneMoreElementList</code></a>: stores a SimpleList plus one additional final
- element.
+   <li><a href="../../randoop/util/ArrayListSimpleList.html" title="class in randoop.util"><code>ArrayListSimpleList</code></a>: a typical list is stored as an array list.
+   <li><a href="../../randoop/util/ListOfLists.html" title="class in randoop.util"><code>ListOfLists</code></a>: a list that only stores pointers to its constituent sub-lists.
+   <li><a href="../../randoop/util/OneMoreElementList.html" title="class in randoop.util"><code>OneMoreElementList</code></a>: stores a SimpleList plus one additional final element.
  </ul>
- <p>
- When concatenating N Sequences to create a new sequence, we store the
- concatenated sequence statements in a ListofLists, which takes space (and
- creation time) proportional to N, not to the length of the new sequence.
- <p>
- When extending a Sequence with a new statement, we store the old sequence's
- statements plus the new statement in a <code>OneMoreElementList</code>, which
- takes up only 2 references in memory (and constant creation time).</div>
+
+ <p>When concatenating N Sequences to create a new sequence, we store the concatenated sequence
+ statements in a ListofLists, which takes space (and creation time) proportional to N, not to the
+ length of the new sequence.
+
+ <p>When extending a Sequence with a new statement, we store the old sequence's statements plus
+ the new statement in a <code>OneMoreElementList</code>, which takes up only 2 references in memory
+ (and constant creation time).</div>
 </li>
 </ul>
 </div>
@@ -196,8 +188,8 @@ extends java.lang.Object</pre>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>abstract <a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/util/SimpleList.html" title="type parameter in SimpleList">T</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/SimpleList.html#getSublist-int-">getSublist</a></span>(int&nbsp;index)</code>
-<div class="block">Return the shortest sublist of this list that contains the index based on
- the compositional structure of this list.</div>
+<div class="block">Return the shortest sublist of this list that contains the index based on the compositional
+ structure of this list.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -294,8 +286,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getSublist</h4>
 <pre>public abstract&nbsp;<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/util/SimpleList.html" title="type parameter in SimpleList">T</a>&gt;&nbsp;getSublist(int&nbsp;index)</pre>
-<div class="block">Return the shortest sublist of this list that contains the index based on
- the compositional structure of this list.</div>
+<div class="block">Return the shortest sublist of this list that contains the index based on the compositional
+ structure of this list.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>index</code> - the index into this list</dd>

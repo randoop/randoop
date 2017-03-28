@@ -24,6 +24,8 @@ jdk:
   - openjdk7
 
 # want more info when running tests and building manual
+# NOTE: the tasks here should at least be a subset of build task dependency in build.gradle
+#       update that task if you change this list
 script:
   - set -o errexit
   - ./gradlew assemble

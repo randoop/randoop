@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ExpectedExceptionCheckGen (randoop 3.0.10 API)</title>
+<title>ExpectedExceptionCheckGen (randoop 3.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ExpectedExceptionCheckGen (randoop 3.0.10 API)";
+            parent.document.title="ExpectedExceptionCheckGen (randoop 3.1.2 API)";
         }
     }
     catch(err) {
@@ -110,10 +110,8 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">ExpectedExceptionCheckGen</span>
 extends java.lang.Object</pre>
-<div class="block">A check generator that based on an <code>ExceptionPredicate</code> when given an
- exception, generates an <code>ExpectedExceptionCheck</code> object when the
- predicate is satisfied, and an <code>EmptyExceptionCheck</code> otherwise.
- Resulting tests only enforce expected matching exceptions.</div>
+<div class="block">A check generator that based on an <code>ExceptionPredicate</code> when given an exception, generates
+ an <code>ExpectedExceptionCheck</code> object when the predicate is satisfied, and an <code>EmptyExceptionCheck</code> otherwise. Resulting tests only enforce expected matching exceptions.</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../randoop/test/RegressionCaptureVisitor.html#visit-randoop.sequence.ExecutableSequence-"><code>RegressionCaptureVisitor.visit(randoop.sequence.ExecutableSequence)</code></a></dd>
@@ -161,8 +159,8 @@ extends java.lang.Object</pre>
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/ExpectedExceptionCheckGen.html#ExpectedExceptionCheckGen-randoop.reflection.VisibilityPredicate-randoop.test.predicate.ExceptionPredicate-">ExpectedExceptionCheckGen</a></span>(<a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a>&nbsp;visibility,
                          <a href="../../randoop/test/predicate/ExceptionPredicate.html" title="interface in randoop.test.predicate">ExceptionPredicate</a>&nbsp;isExpected)</code>
-<div class="block">Create an object that generates expected exception checks for exceptions
- that satisfy the given predicate, and empty exception checks for others.</div>
+<div class="block">Create an object that generates expected exception checks for exceptions that satisfy the given
+ predicate, and empty exception checks for others.</div>
 </td>
 </tr>
 </table>
@@ -183,8 +181,8 @@ extends java.lang.Object</pre>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>private java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ExpectedExceptionCheckGen.html#getCatchClassName-java.lang.Class-">getCatchClassName</a></span>(java.lang.Class&lt;? extends java.lang.Throwable&gt;&nbsp;c)</code>
-<div class="block">Returns the canonical name for the nearest visible class that will catch an
- exception with the given class.</div>
+<div class="block">Returns the canonical name for the nearest visible class that will catch an exception with the
+ given class.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
@@ -192,8 +190,8 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ExpectedExceptionCheckGen.html#getExceptionCheck-randoop.ExceptionalExecution-randoop.sequence.ExecutableSequence-int-">getExceptionCheck</a></span>(<a href="../../randoop/ExceptionalExecution.html" title="class in randoop">ExceptionalExecution</a>&nbsp;exec,
                  <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s,
                  int&nbsp;statementIndex)</code>
-<div class="block">Constructs an <code>ExceptionCheck</code> for the given exception and statement
- based on criteria of this generator.</div>
+<div class="block">Constructs an <code>ExceptionCheck</code> for the given exception and statement based on criteria of
+ this generator.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -258,8 +256,8 @@ extends java.lang.Object</pre>
 <h4>ExpectedExceptionCheckGen</h4>
 <pre>public&nbsp;ExpectedExceptionCheckGen(<a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a>&nbsp;visibility,
                                  <a href="../../randoop/test/predicate/ExceptionPredicate.html" title="interface in randoop.test.predicate">ExceptionPredicate</a>&nbsp;isExpected)</pre>
-<div class="block">Create an object that generates expected exception checks for exceptions
- that satisfy the given predicate, and empty exception checks for others.</div>
+<div class="block">Create an object that generates expected exception checks for exceptions that satisfy the given
+ predicate, and empty exception checks for others.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>visibility</code> - a predicate to determine visibility of exception classes</dd>
@@ -284,17 +282,16 @@ extends java.lang.Object</pre>
 <pre><a href="../../randoop/test/ExceptionCheck.html" title="class in randoop.test">ExceptionCheck</a>&nbsp;getExceptionCheck(<a href="../../randoop/ExceptionalExecution.html" title="class in randoop">ExceptionalExecution</a>&nbsp;exec,
                                  <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s,
                                  int&nbsp;statementIndex)</pre>
-<div class="block">Constructs an <code>ExceptionCheck</code> for the given exception and statement
- based on criteria of this generator.</div>
+<div class="block">Constructs an <code>ExceptionCheck</code> for the given exception and statement based on criteria of
+ this generator.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>exec</code> - the exception outcome of executing the statement in a sequence</dd>
 <dd><code>s</code> - the sequence where exception occurred</dd>
 <dd><code>statementIndex</code> - the position of the statement in the sequence</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>an <code>ExpectedExceptionCheck</code> object for exception and
-         statement if exception is checked, and an
-         <code>EmptyExceptionCheck</code> otherwise</dd>
+<dd>an <code>ExpectedExceptionCheck</code> object for exception and statement if exception is
+     checked, and an <code>EmptyExceptionCheck</code> otherwise</dd>
 </dl>
 </li>
 </ul>
@@ -321,8 +318,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getCatchClassName</h4>
 <pre>private&nbsp;java.lang.String&nbsp;getCatchClassName(java.lang.Class&lt;? extends java.lang.Throwable&gt;&nbsp;c)</pre>
-<div class="block">Returns the canonical name for the nearest visible class that will catch an
- exception with the given class.</div>
+<div class="block">Returns the canonical name for the nearest visible class that will catch an exception with the
+ given class.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>c</code> - the exception class</dd>

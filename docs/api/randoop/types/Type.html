@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Type (randoop 3.0.10 API)</title>
+<title>Type (randoop 3.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Type (randoop 3.0.10 API)";
+            parent.document.title="Type (randoop 3.1.2 API)";
         }
     }
     catch(err) {
@@ -119,36 +119,30 @@ var activeTableTab = "activeTableTab";
 <pre>public abstract class <span class="typeNameLabel">Type</span>
 extends java.lang.Object
 implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;</pre>
-<div class="block">The superclass of a class hierarchy representing Java types defined in JLS Section 4.1.
- This class corresponds directly to <i>Type</i> defined in the JLS, which is defined by
+<div class="block">The superclass of a class hierarchy representing Java types defined in JLS Section 4.1. This
+ class corresponds directly to <i>Type</i> defined in the JLS, which is defined by
+
  <pre>
    Type:
      ReferenceType
      PrimitiveType
  </pre>
- <p>
- The subclasses of this <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> class should be used to represent types in Randoop test generation
- rather than the reflection types.
- Using reflection, each Java type has a <code>Class&lt;?&gt;</code> object, including primitive types.
- But, things get a little complicated for generic and parameterized types, where the <code>Class</code>
- object represents the raw type of the generic class, but also carries the type parameters of the
- generic class.
- More information about types is available through the subinterfaces of
- <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Type.html"><code>java.lang.reflect.Type</code></a>,
- but working with generic and parameterized types is still awkward.
- This is in part because the correspondence to the JLS is unclear, but also because the provided
- methods do not implement all of the algorithms needed to work with types and type hierarchies as
- needed in Randoop.
- Effectively, the concrete subclasses of this class are facades for these reflective types, but
- they are identified with the definitions in the JLS, and provide the methods needed to test for
- assignability and test for subtypes.
- <p>
- <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> objects
- are constructed using the methods
- <a href="../../randoop/types/Type.html#forType-java.lang.reflect.Type-"><code>forType(java.lang.reflect.Type)</code></a>,
- <a href="../../randoop/types/Type.html#forClass-java.lang.Class-"><code>forClass(Class)</code></a>, or
- <a href="../../randoop/types/Type.html#forName-java.lang.String-"><code>forName(String)</code></a>.
- These methods translate the reflection types into objects of subclasses of this type.</div>
+
+ <p>The subclasses of this <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> class should be used to represent types in Randoop test
+ generation rather than the reflection types. Using reflection, each Java type has a <code>Class&lt;?&gt;</code> object, including primitive types. But, things get a little complicated for generic and
+ parameterized types, where the <code>Class</code> object represents the raw type of the generic class,
+ but also carries the type parameters of the generic class. More information about types is
+ available through the subinterfaces of <a
+ href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Type.html"><code>
+ java.lang.reflect.Type</code></a>, but working with generic and parameterized types is still
+ awkward. This is in part because the correspondence to the JLS is unclear, but also because the
+ provided methods do not implement all of the algorithms needed to work with types and type
+ hierarchies as needed in Randoop. Effectively, the concrete subclasses of this class are facades
+ for these reflective types, but they are identified with the definitions in the JLS, and provide
+ the methods needed to test for assignability and test for subtypes.
+
+ <p><a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> objects are constructed using the methods <a href="../../randoop/types/Type.html#forType-java.lang.reflect.Type-"><code>forType(java.lang.reflect.Type)</code></a>, <a href="../../randoop/types/Type.html#forClass-java.lang.Class-"><code>forClass(Class)</code></a>, or <a href="../../randoop/types/Type.html#forName-java.lang.String-"><code>forName(String)</code></a>. These
+ methods translate the reflection types into objects of subclasses of this type.</div>
 </li>
 </ul>
 </div>
@@ -187,8 +181,7 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 <tr id="i0" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#apply-randoop.types.Substitution-">apply</a></span>(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
-<div class="block">Returns the type created by instantiating the type parameters of this type
- with <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> objects.</div>
+<div class="block">Returns the type created by instantiating the type parameters of this type with <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> objects.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
@@ -210,16 +203,16 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>static <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#forName-java.lang.String-">forName</a></span>(java.lang.String&nbsp;typeName)</code>
-<div class="block">Returns a <code>Type</code> object for the given type name in
- <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getName--"><code>Class.getName</code></a>
- format.</div>
+<div class="block">Returns a <code>Type</code> object for the given type name in <a
+ href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getName--"><code>
+ Class.getName</code></a> format.</div>
 </td>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>static <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#forType-java.lang.reflect.Type-">forType</a></span>(java.lang.reflect.Type&nbsp;type)</code>
-<div class="block">Returns a type constructed from the object referenced by a
- <code>java.lang.reflect.Type</code> reference.</div>
+<div class="block">Returns a type constructed from the object referenced by a <code>java.lang.reflect.Type</code>
+ reference.</div>
 </td>
 </tr>
 <tr id="i6" class="altColor">
@@ -237,8 +230,8 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>abstract java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#getName--">getName</a></span>()</code>
-<div class="block">Returns the fully-qualified name of this type, including type arguments if
- this is a parameterized type.</div>
+<div class="block">Returns the fully-qualified name of this type, including type arguments if this is a
+ parameterized type.</div>
 </td>
 </tr>
 <tr id="i9" class="rowColor">
@@ -281,8 +274,8 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 <tr id="i15" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#isAssignableFromTypeOf-T-">isAssignableFromTypeOf</a></span>(T&nbsp;value)</code>
-<div class="block">Indicates whether there is an assignment conversion from the type of <code>value</code> to
- this type.</div>
+<div class="block">Indicates whether there is an assignment conversion from the type of <code>value</code> to this
+ type.</div>
 </td>
 </tr>
 <tr id="i16" class="altColor">
@@ -354,10 +347,10 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 <tr id="i27" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#isSubtypeOf-randoop.types.Type-">isSubtypeOf</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;otherType)</code>
-<div class="block">Test whether this type is a subtype of the given type according to
- transitive closure of definition of the <i>direct supertype</i> relation in
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10">
- section 4.10 of JLS for Java SE 8</a>.</div>
+<div class="block">Test whether this type is a subtype of the given type according to transitive closure of
+ definition of the <i>direct supertype</i> relation in <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10">section 4.10 of
+ JLS for Java SE 8</a>.</div>
 </td>
 </tr>
 <tr id="i28" class="altColor">
@@ -418,9 +411,7 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 <li class="blockList">
 <h4>forClass</h4>
 <pre>public static&nbsp;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;forClass(java.lang.Class&lt;?&gt;&nbsp;classType)</pre>
-<div class="block">Translates a <code>Class</code> into a <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> object.
- For primitive types, creates a <a href="../../randoop/types/PrimitiveType.html" title="class in randoop.types"><code>PrimitiveType</code></a> object.
- For reference types, delegates to <a href="../../randoop/types/ReferenceType.html#forClass-java.lang.Class-"><code>ReferenceType.forClass(Class)</code></a>.</div>
+<div class="block">Translates a <code>Class</code> into a <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> object. For primitive types, creates a <a href="../../randoop/types/PrimitiveType.html" title="class in randoop.types"><code>PrimitiveType</code></a> object. For reference types, delegates to <a href="../../randoop/types/ReferenceType.html#forClass-java.lang.Class-"><code>ReferenceType.forClass(Class)</code></a>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>classType</code> - the <code>Class</code> object for the type</dd>
@@ -437,14 +428,12 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 <h4>forName</h4>
 <pre>public static&nbsp;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;forName(java.lang.String&nbsp;typeName)
                     throws java.lang.ClassNotFoundException</pre>
-<div class="block">Returns a <code>Type</code> object for the given type name in
- <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getName--"><code>Class.getName</code></a>
- format.
- Uses reflection to find the corresponding type.
- <p>
- Note that <a href="../../randoop/types/Type.html#getName--"><code>getName()</code></a> does not return the type name in this format.
- To get the name in this format from a <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> object <code>t</code>, use
- <code>t.getRuntimeClass().getName()</code>.</div>
+<div class="block">Returns a <code>Type</code> object for the given type name in <a
+ href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getName--"><code>
+ Class.getName</code></a> format. Uses reflection to find the corresponding type.
+
+ <p>Note that <a href="../../randoop/types/Type.html#getName--"><code>getName()</code></a> does not return the type name in this format. To get the
+ name in this format from a <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> object <code>t</code>, use <code>t.getRuntimeClass().getName()</code>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>typeName</code> - the name of a type</dd>
@@ -478,14 +467,11 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 <li class="blockList">
 <h4>forType</h4>
 <pre>public static&nbsp;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;forType(java.lang.reflect.Type&nbsp;type)</pre>
-<div class="block">Returns a type constructed from the object referenced by a
- <code>java.lang.reflect.Type</code> reference.
- <p>
- Note that when the type corresponds to a generic class type, this method
- returns the type variables from the
- <code>getActualTypeArguments()</code>
- method to maintain the guarantees needed for
- <a href="../../randoop/types/ClassOrInterfaceType.html#isSubtypeOf-randoop.types.Type-"><code>ClassOrInterfaceType.isSubtypeOf(Type)</code></a>.</div>
+<div class="block">Returns a type constructed from the object referenced by a <code>java.lang.reflect.Type</code>
+ reference.
+
+ <p>Note that when the type corresponds to a generic class type, this method returns the type
+ variables from the <code>getActualTypeArguments()</code> method to maintain the guarantees needed for <a href="../../randoop/types/ClassOrInterfaceType.html#isSubtypeOf-randoop.types.Type-"><code>ClassOrInterfaceType.isSubtypeOf(Type)</code></a>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>type</code> - the type to interpret</dd>
@@ -503,21 +489,20 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 <li class="blockList">
 <h4>getRuntimeClass</h4>
 <pre>public abstract&nbsp;java.lang.Class&lt;?&gt;&nbsp;getRuntimeClass()</pre>
-<div class="block">Returns the runtime <code>Class</code> object for this type.
- For use when reflection is needed.
- <p>
- Note that type variables and the null reference type do not have a runtime class, and this
+<div class="block">Returns the runtime <code>Class</code> object for this type. For use when reflection is needed.
+
+ <p>Note that type variables and the null reference type do not have a runtime class, and this
  method will return null in those cases.
- <p>
- This method should not be confused with the inherited <code>Object.getClass()</code> method,
- which returns the <code>Class&lt;?&gt;</code> for the <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> object, and not of the represented type.
- For instance, if a <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> object <code>t</code> represented the Java type <code>int</code>, then
- <code>t.getRuntimeClass()</code> would return <code>int.class</code> while <code>t.getClass()</code> would return
- <code>Type.class</code>.</div>
+
+ <p>This method should not be confused with the inherited <code>Object.getClass()</code> method,
+ which returns the <code>Class&lt;?&gt;</code> for the <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> object, and not of the represented
+ type. For instance, if a <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> object <code>t</code> represented the Java type <code>int</code>,
+ then <code>t.getRuntimeClass()</code> would return <code>int.class</code> while <code>t.getClass()</code>
+ would return <code>Type.class</code>.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the <code>Class</code> that is the runtime representation of the type, or null if this type
-         is a type variable or null reference type.</dd>
+     is a type variable or null reference type.</dd>
 </dl>
 </li>
 </ul>
@@ -528,9 +513,8 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 <li class="blockList">
 <h4>getName</h4>
 <pre>public abstract&nbsp;java.lang.String&nbsp;getName()</pre>
-<div class="block">Returns the fully-qualified name of this type, including type arguments if
- this is a parameterized type.
- For <code>java.util.List&lt;T&gt;</code> return <code>"java.util.List&lt;T&gt;"</code>.</div>
+<div class="block">Returns the fully-qualified name of this type, including type arguments if this is a
+ parameterized type. For <code>java.util.List&lt;T&gt;</code> return <code>"java.util.List&lt;T&gt;"</code>.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the fully-qualified type name for this type</dd>
@@ -544,8 +528,7 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 <li class="blockList">
 <h4>getSimpleName</h4>
 <pre>public abstract&nbsp;java.lang.String&nbsp;getSimpleName()</pre>
-<div class="block">Returns the name of this type without type arguments or package qualifiers.
- For <code>java.util.List&lt;T&gt;</code>, returns <code>"List"</code>.</div>
+<div class="block">Returns the name of this type without type arguments or package qualifiers. For <code>java.util.List&lt;T&gt;</code>, returns <code>"List"</code>.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the name of this type without type arguments</dd>
@@ -560,8 +543,7 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 <h4>getCanonicalName</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getCanonicalName()</pre>
 <div class="block">Returns the name of this type as the "canonical name" of the underlying runtime class.
- Identical to <a href="../../randoop/types/Type.html#getName--"><code>getName()</code></a> except for types with type arguments.
- For <code>java.util.List&lt;T&gt;</code> returns <code>"java.util.List"</code>.</div>
+ Identical to <a href="../../randoop/types/Type.html#getName--"><code>getName()</code></a> except for types with type arguments. For <code>java.util.List&lt;T&gt;</code> returns <code>"java.util.List"</code>.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the fully-qualified canonical name of this type</dd>
@@ -576,8 +558,8 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 <h4>getUnqualifiedName</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getUnqualifiedName()</pre>
 <div class="block">Returns the name of this type without package name, but with type arguments if parameterized,
- and enclosing class if a member class.
- For instance, for <code>java.util.List&lt;T&gt;</code> would return <code>"List&lt;T&gt;"</code>.</div>
+ and enclosing class if a member class. For instance, for <code>java.util.List&lt;T&gt;</code> would return
+ <code>"List&lt;T&gt;"</code>.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the unqualified name of this type</dd>
@@ -649,8 +631,8 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 <li class="blockList">
 <h4>isGeneric</h4>
 <pre>public&nbsp;boolean&nbsp;isGeneric()</pre>
-<div class="block">Indicate whether this type is generic.
- A type is <i>generic</i> if it has one or more type variables.</div>
+<div class="block">Indicate whether this type is generic. A type is <i>generic</i> if it has one or more type
+ variables.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if this type is generic, false otherwise</dd>
@@ -720,9 +702,8 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 <li class="blockList">
 <h4>isParameterized</h4>
 <pre>public&nbsp;boolean&nbsp;isParameterized()</pre>
-<div class="block">Indicate whether this type is a parameterized type.
- (A <i>parameterized type</i> is a type <code>C&lt;T1,...,Tk&gt;</code>
- that instantiates a generic class <code>C&lt;F1,...,Fk&gt;</code>.</div>
+<div class="block">Indicate whether this type is a parameterized type. (A <i>parameterized type</i> is a type
+ <code>C&lt;T1,...,Tk&gt;</code> that instantiates a generic class <code>C&lt;F1,...,Fk&gt;</code>.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if this type is a parameterized type, false otherwise</dd>
@@ -750,8 +731,8 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 <li class="blockList">
 <h4>isRawtype</h4>
 <pre>public&nbsp;boolean&nbsp;isRawtype()</pre>
-<div class="block">Indicate whether this type is a rawtype of a generic class. The rawtype is
- the runtime type of the class that has type parameters erased.</div>
+<div class="block">Indicate whether this type is a rawtype of a generic class. The rawtype is the runtime type of
+ the class that has type parameters erased.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if this type is a rawtype of a generic class, false otherwise</dd>
@@ -765,8 +746,8 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 <li class="blockList">
 <h4>isReferenceType</h4>
 <pre>public&nbsp;boolean&nbsp;isReferenceType()</pre>
-<div class="block">Indicates whether this is a reference type.
- Note: implementing classes should ensure that this is equivalent to !(this.isPrimitive())</div>
+<div class="block">Indicates whether this is a reference type. Note: implementing classes should ensure that this
+ is equivalent to !(this.isPrimitive())</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if this type is a reference type, and false otherwise</dd>
@@ -794,22 +775,19 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 <li class="blockList">
 <h4>apply</h4>
 <pre>public&nbsp;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;apply(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
-<div class="block">Returns the type created by instantiating the type parameters of this type
- with <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> objects.
- Simply returns this type if it has no type parameters.
- In otherwords, this type is not a <a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types"><code>ParameterizedType</code></a>, which includes
- <a href="../../randoop/types/GenericClassType.html" title="class in randoop.types"><code>GenericClassType</code></a>.
- <p>
- There are contexts in which it is necessary to apply a substitution to a <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> and it
- is not clear whether the type is parameterized.  In particular, this method is defined here
+<div class="block">Returns the type created by instantiating the type parameters of this type with <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> objects. Simply returns this type if it has no type parameters. In otherwords,
+ this type is not a <a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types"><code>ParameterizedType</code></a>, which includes <a href="../../randoop/types/GenericClassType.html" title="class in randoop.types"><code>GenericClassType</code></a>.
+
+ <p>There are contexts in which it is necessary to apply a substitution to a <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> and it
+ is not clear whether the type is parameterized. In particular, this method is defined here
  because <a href="../../randoop/types/ArrayType.html" title="class in randoop.types"><code>ArrayType</code></a> can hold arbitrary types, including type variables and parameterized
  types.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>substitution</code> - the type substitution</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> constructed by substituting for type
- parameters in this type, or this type if this is not a generic class type</dd>
+<dd>the <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> constructed by substituting for type parameters in this type, or this
+     type if this is not a generic class type</dd>
 </dl>
 </li>
 </ul>
@@ -836,25 +814,24 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 <pre>public&nbsp;boolean&nbsp;isAssignableFrom(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;sourceType)</pre>
 <div class="block">Indicates whether there is an assignment conversion from a source <code>Type</code> to this type.
  (In other words, a value of the source type can be assigned to an l-value of this type.)
- Returns true if this is a legal assignment conversion:
- <code>
+ Returns true if this is a legal assignment conversion: <code>
  Variable<sub>this</sub> = Expression<sub>sourcetype</sub>.
  </code>
- <p>
- Based on the definition of <i>assignment context</i> in
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.2">
- section 5.2 of the JDK 8 Java Language Specification</a>,
- a value of one type is assignable to a variable of another type if the
- first type can be converted to the second by
+
+ <p>Based on the definition of <i>assignment context</i> in <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.2">section 5.2 of the
+ JDK 8 Java Language Specification</a>, a value of one type is assignable to a variable of
+ another type if the first type can be converted to the second by
+
  <ul>
- <li> an identity conversion (section 5.1.1),
- <li> a widening primitive conversion (section 5.1.2),
- <li> a widening reference conversion (section 5.1.5),
- <li> a boxing conversion (5.1.7), or
- <li> an unboxing conversion (section 5.1.8) possibly followed by a widening conversion.
+   <li>an identity conversion (section 5.1.1),
+   <li>a widening primitive conversion (section 5.1.2),
+   <li>a widening reference conversion (section 5.1.5),
+   <li>a boxing conversion (5.1.7), or
+   <li>an unboxing conversion (section 5.1.8) possibly followed by a widening conversion.
  </ul>
- And, if after all those conversions, the type is a raw type, an
- unchecked conversion may occur.</div>
+
+ And, if after all those conversions, the type is a raw type, an unchecked conversion may occur.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>sourceType</code> - the type to test for assignability</dd>
@@ -872,11 +849,10 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 <li class="blockList">
 <h4>isAssignableFromTypeOf</h4>
 <pre>public&nbsp;&lt;T&gt;&nbsp;boolean&nbsp;isAssignableFromTypeOf(T&nbsp;value)</pre>
-<div class="block">Indicates whether there is an assignment conversion from the type of <code>value</code> to
- this type.
- (Note this is equivalent to determining whether <code>value</code> can be assigned to an l-value of
- this type.)
- If the reference is null, then returns true only if this type is not primitive.</div>
+<div class="block">Indicates whether there is an assignment conversion from the type of <code>value</code> to this
+ type. (Note this is equivalent to determining whether <code>value</code> can be assigned to an
+ l-value of this type.) If the reference is null, then returns true only if this type is not
+ primitive.</div>
 <dl>
 <dt><span class="paramLabel">Type Parameters:</span></dt>
 <dd><code>T</code> - the type of the value</dd>
@@ -894,10 +870,10 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 <li class="blockList">
 <h4>isSubtypeOf</h4>
 <pre>public&nbsp;boolean&nbsp;isSubtypeOf(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;otherType)</pre>
-<div class="block">Test whether this type is a subtype of the given type according to
- transitive closure of definition of the <i>direct supertype</i> relation in
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10">
- section 4.10 of JLS for Java SE 8</a>.</div>
+<div class="block">Test whether this type is a subtype of the given type according to transitive closure of
+ definition of the <i>direct supertype</i> relation in <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10">section 4.10 of
+ JLS for Java SE 8</a>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>otherType</code> - the possible supertype</dd>

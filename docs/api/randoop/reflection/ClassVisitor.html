@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ClassVisitor (randoop 3.0.10 API)</title>
+<title>ClassVisitor (randoop 3.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ClassVisitor (randoop 3.0.10 API)";
+            parent.document.title="ClassVisitor (randoop 3.1.2 API)";
         }
     }
     catch(err) {
@@ -105,12 +105,12 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public interface <span class="typeNameLabel">ClassVisitor</span></pre>
-<div class="block">ClassVisitor defines the interface for a visitor class that uses reflection
- to collect information about a class and its members.
- <p>
- Note: if the visitor maintains state relative to <a href="../../randoop/reflection/ClassVisitor.html#visitBefore-java.lang.Class-"><code>visitBefore(Class)</code></a> and other methods
- that could be disrupted by visiting member classes (currently just enums), then a stack should
- be used to maintain whatever state needs to be remembered. For instance, <a href="../../randoop/reflection/OperationExtractor.html" title="class in randoop.reflection"><code>OperationExtractor</code></a>
+<div class="block">ClassVisitor defines the interface for a visitor class that uses reflection to collect
+ information about a class and its members.
+
+ <p>Note: if the visitor maintains state relative to <a href="../../randoop/reflection/ClassVisitor.html#visitBefore-java.lang.Class-"><code>visitBefore(Class)</code></a> and other methods
+ that could be disrupted by visiting member classes (currently just enums), then a stack should be
+ used to maintain whatever state needs to be remembered. For instance, <a href="../../randoop/reflection/OperationExtractor.html" title="class in randoop.reflection"><code>OperationExtractor</code></a>
  maintains the declaring class type for visited members, and when inner enums are visited the
  declaring class needs to be remembered and restored by <a href="../../randoop/reflection/ClassVisitor.html#visitAfter-java.lang.Class-"><code>visitAfter(Class)</code></a>.</div>
 <dl>

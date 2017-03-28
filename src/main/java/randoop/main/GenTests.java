@@ -1,5 +1,8 @@
 package randoop.main;
 
+import com.github.javaparser.ParseException;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.stmt.BlockStmt;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -20,22 +23,21 @@ import plume.Options.ArgException;
 import plume.SimpleLog;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
-import randoop.JunitFileWriter;
 import randoop.MultiVisitor;
-import randoop.condition.ConditionCollection;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
-import randoop.generation.DigDogGenerator;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
 import randoop.generation.WeightedComponentManager;
-import randoop.input.toradocu.ToradocuConditionCollection;
+import randoop.generation.WeightedGenerator;
 import randoop.instrument.ExercisedClassVisitor;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
+import randoop.output.JUnitCreator;
+import randoop.output.JavaFileWriter;
 import randoop.reflection.AbstractOperationModel;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
@@ -48,6 +50,7 @@ import randoop.reflection.WeightedConstantsOperationModel;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
+import randoop.test.CompilableTestPredicate;
 import randoop.test.ContractCheckingVisitor;
 import randoop.test.ContractSet;
 import randoop.test.ErrorTestPredicate;
@@ -102,6 +105,11 @@ public class GenTests extends GenInputsAbstract {
 
   private static final List<String> notes;
 
+  private BlockStmt afterAllFixtureBody;
+  private BlockStmt afterEachFixtureBody;
+  private BlockStmt beforeAllFixtureBody;
+  private BlockStmt beforeEachFixtureBody;
+
   static {
     notes = new ArrayList<>();
     notes.add(
@@ -150,7 +158,7 @@ public class GenTests extends GenInputsAbstract {
 
     Randomness.reset(randomseed);
 
-    java.security.Policy policy = java.security.Policy.getPolicy();
+    //java.security.Policy policy = java.security.Policy.getPolicy();
 
     // This is distracting to the user as the first thing shown, and is not very informative.
     // Reinstate it with a --verbose option.
@@ -177,9 +185,45 @@ public class GenTests extends GenInputsAbstract {
     }
 
     /*
+     * If there is fixture code check that it can be parsed first
+     */
+    boolean badFixtureText = false;
+
+    try {
+      afterAllFixtureBody =
+          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_after_all));
+    } catch (ParseException e) {
+      System.out.println("Error in after-all fixture text at token " + e.currentToken);
+      badFixtureText = true;
+    }
+    try {
+      afterEachFixtureBody =
+          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_after_each));
+    } catch (ParseException e) {
+      System.out.println("Error in after-each fixture text at token " + e.currentToken);
+      badFixtureText = true;
+    }
+    try {
+      beforeAllFixtureBody =
+          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_before_all));
+    } catch (ParseException e) {
+      System.out.println("Error in before-all fixture text at token " + e.currentToken);
+      badFixtureText = true;
+    }
+    try {
+      beforeEachFixtureBody =
+          JUnitCreator.parseFixture(getFileText(GenInputsAbstract.junit_before_each));
+    } catch (ParseException e) {
+      System.out.println("Error in before-each fixture text at token " + e.currentToken);
+      badFixtureText = true;
+    }
+    if (badFixtureText) {
+      System.exit(1);
+    }
+
+    /*
      * Setup model of classes under test
      */
-
     // get names of classes under test
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
 
@@ -211,25 +255,7 @@ public class GenTests extends GenInputsAbstract {
     Set<String> methodSignatures =
         GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
 
-    /*
-     * Setup pre/post/throws-conditions for operations.
-     * Currently only uses Toradocu generated conditions.
-     */
-    ConditionCollection operationConditions = null;
-    try {
-      if (GenInputsAbstract.toradocu_conditions != null) {
-        operationConditions =
-            ToradocuConditionCollection.createToradocuConditions(
-                GenInputsAbstract.toradocu_conditions);
-      }
-    } catch (IllegalArgumentException e) {
-      System.out.printf("%nError on condition input: %s%n", e.getMessage());
-      System.out.println("Exiting Randoop.");
-      System.exit(1);
-    }
-
     AbstractOperationModel operationModel = null;
-
     try {
       if (GenInputsAbstract.weighted_constants) {
         operationModel =
@@ -250,8 +276,7 @@ public class GenTests extends GenInputsAbstract {
                 coveredClassnames,
                 methodSignatures,
                 classNameErrorHandler,
-                GenInputsAbstract.literals_file,
-                operationConditions);
+                GenInputsAbstract.literals_file);
       }
     } catch (OperationParseException e) {
       System.out.printf("%nError: parse exception thrown %s%n", e);
@@ -315,9 +340,7 @@ public class GenTests extends GenInputsAbstract {
     components.addAll(operationModel.getAnnotatedTestValues());
 
     ComponentManager componentMgr;
-    if (GenInputsAbstract.weighted_sequences
-        || GenInputsAbstract.weighted_constants
-        || GenInputsAbstract.output_sequence_info) {
+    if (GenInputsAbstract.weighted_constants) {
       componentMgr = new WeightedComponentManager(components);
     } else {
       componentMgr = new ComponentManager(components);
@@ -353,23 +376,24 @@ public class GenTests extends GenInputsAbstract {
         || GenInputsAbstract.weighted_sequences
         || GenInputsAbstract.weighted_constants) {
 
-      Map<Sequence, Integer> tfFrequencies = null;
+      Map<Sequence, Integer> sequenceTermFrequencies = null;
       if (operationModel instanceof WeightedConstantsOperationModel) {
-        tfFrequencies = ((WeightedConstantsOperationModel) operationModel).getTfFrequency();
+        sequenceTermFrequencies =
+            ((WeightedConstantsOperationModel) operationModel).getSequenceTermFrequency();
       }
       int num_classes = operationModel.getClassTypes().size();
 
       explorer =
-          new DigDogGenerator(
+          new WeightedGenerator(
               model,
               observers,
               timelimit * 1000,
               inputlimit,
               outputlimit,
-              (WeightedComponentManager) componentMgr,
+              componentMgr,
               listenerMgr,
               num_classes,
-              tfFrequencies);
+              sequenceTermFrequencies);
 
     } else {
       explorer =
@@ -496,7 +520,7 @@ public class GenTests extends GenInputsAbstract {
           System.out.printf("%nError-revealing test output:%n");
           System.out.printf("Error-revealing test count: %d%n", errorSequences.size());
         }
-        outputTests(errorSequences, GenInputsAbstract.error_test_basename);
+        outputTests(GenInputsAbstract.error_test_basename, errorSequences);
       } else {
         if (!GenInputsAbstract.noprogressdisplay) {
           System.out.printf("%nNo error-revealing tests to output%n");
@@ -511,7 +535,7 @@ public class GenTests extends GenInputsAbstract {
           System.out.printf("%nRegression test output:%n");
           System.out.printf("Regression test count: %d%n", regressionSequences.size());
         }
-        outputTests(regressionSequences, GenInputsAbstract.regression_test_basename);
+        outputTests(GenInputsAbstract.regression_test_basename, regressionSequences);
       } else {
         if (!GenInputsAbstract.noprogressdisplay) {
           System.out.printf("No regression tests to output%n");
@@ -522,23 +546,23 @@ public class GenTests extends GenInputsAbstract {
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.printf("%nInvalid tests generated: %d", explorer.invalidSequenceCount);
     }
-    // TODO: output to file for sequence comparison between DigDog/Randoop
+
     if (GenInputsAbstract.output_sequence_info) {
-      DigDogGenerator fExplorer =
-          (DigDogGenerator) explorer; // should work, explorer should always be a forw.gen.
-      Map<Sequence, List<Integer>> debugMap = fExplorer.getSequenceSizeMap();
-      writeTestInfo(debugMap);
+      WeightedGenerator fExplorer = (WeightedGenerator) explorer;
+      writeTestInfo(fExplorer.getExecutedSequences());
     }
 
     return true;
   }
 
   /**
-   * Write each sequence's info out to GenInputsAbstract.output_sequence_info_filename in .csv format
-   * Its info is essentially snapshots of its weight formulas and how they change
-   * @param sequenceSizeMap the map of all executed sequences to their sizes
+   * Writes information of all executed sequences to the file name dictated by <code>
+   * --output-sequence-info-filename</code> in .csv format. The file is composed of three elements:
+   * (1) Total number of sequences executed, (2) the comma, (3) average sequence size.
+   *
+   * @param executedSequences the set of all executed sequences
    */
-  private void writeTestInfo(Map<Sequence, List<Integer>> sequenceSizeMap) {
+  private void writeTestInfo(Set<Sequence> executedSequences) {
     File tempDir = new File(GenInputsAbstract.output_sequence_info_filename);
     PrintStream out;
     try {
@@ -549,17 +573,16 @@ public class GenTests extends GenInputsAbstract {
       out = createTextOutputStream(GenInputsAbstract.output_sequence_info_filename);
       StringBuilder body = new StringBuilder();
 
-      body.append(sequenceSizeMap.keySet().size()); // number of sequences
-      body.append(',');
+      body.append(executedSequences.size()); // (1) total number of sequences executed
+      body.append(','); // (2) the comma
 
+      // get avg sequence size
       int accumulatedSequenceSize = 0;
-      for (Sequence seq : sequenceSizeMap.keySet()) {
-        for (Integer i : sequenceSizeMap.get(seq)) {
-          accumulatedSequenceSize += i; // gets the size of the sequence, not sqrt'd
-        }
+      for (Sequence seq : executedSequences) {
+        accumulatedSequenceSize += seq.size();
       }
-      double avgSeqSize = accumulatedSequenceSize * 1.0 / sequenceSizeMap.keySet().size();
-      body.append(avgSeqSize);
+      double avgSeqSize = accumulatedSequenceSize * 1.0 / executedSequences.size();
+      body.append(avgSeqSize); // (3) average sequence size
 
       out.println(body.toString());
     } catch (IOException e) {
@@ -673,7 +696,19 @@ public class GenTests extends GenInputsAbstract {
       if (!GenInputsAbstract.no_regression_tests) {
         checkTest = checkTest.or(new RegressionTestPredicate());
       }
-      isOutputTest = baseTest.and(checkTest);
+
+      if (GenInputsAbstract.check_compilable) {
+        JUnitCreator junitCreator =
+            JUnitCreator.getTestCreator(
+                junit_package_name,
+                beforeAllFixtureBody,
+                afterAllFixtureBody,
+                beforeEachFixtureBody,
+                afterEachFixtureBody);
+        isOutputTest = baseTest.and(checkTest.and(new CompilableTestPredicate(junitCreator)));
+      } else {
+        isOutputTest = baseTest.and(checkTest);
+      }
     }
     return isOutputTest;
   }
@@ -684,11 +719,18 @@ public class GenTests extends GenInputsAbstract {
    * @param sequences the sequences to output
    * @param junitPrefix the filename prefix for test output
    */
-  private void outputTests(List<ExecutableSequence> sequences, String junitPrefix) {
+  private void outputTests(String junitPrefix, List<ExecutableSequence> sequences) {
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.printf("Writing JUnit tests...%n");
     }
-    writeJUnitTests(junit_output_dir, sequences, junitPrefix);
+    JUnitCreator junitCreator =
+        JUnitCreator.getTestCreator(
+            junit_package_name,
+            beforeAllFixtureBody,
+            afterAllFixtureBody,
+            beforeEachFixtureBody,
+            afterEachFixtureBody);
+    writeJUnitTests(junitCreator, junit_output_dir, sequences, junitPrefix);
   }
 
   /**
@@ -746,13 +788,17 @@ public class GenTests extends GenInputsAbstract {
   /**
    * Writes the sequences as JUnit files to the specified directory.
    *
+   * @param junitCreator the JUnit test code generator
    * @param output_dir string name of output directory
    * @param seqList a list of sequences to write
    * @param junitClassname the base name for the class
    * @return list of files written
    */
   private static List<File> writeJUnitTests(
-      String output_dir, List<ExecutableSequence> seqList, String junitClassname) {
+      JUnitCreator junitCreator,
+      String output_dir,
+      List<ExecutableSequence> seqList,
+      String junitClassname) {
 
     List<File> files = new ArrayList<>();
 
@@ -760,35 +806,30 @@ public class GenTests extends GenInputsAbstract {
       List<List<ExecutableSequence>> seqPartition =
           CollectionsExt.formSublists(new ArrayList<>(seqList), testsperfile);
 
-      JunitFileWriter jfw = new JunitFileWriter(output_dir, junit_package_name, junitClassname);
+      String methodNamePrefix = "test";
 
-      List<String> beforeAllText = getFileText(GenInputsAbstract.junit_before_all);
-      if (beforeAllText != null) {
-        jfw.addBeforeAll(beforeAllText);
+      JavaFileWriter jfw = new JavaFileWriter(output_dir);
+
+      String classNameFormat = junitClassname + "%d";
+      for (int i = 0; i < seqPartition.size(); i++) {
+        List<ExecutableSequence> partition = seqPartition.get(i);
+        String testClassName = String.format(classNameFormat, i);
+        CompilationUnit classSource =
+            junitCreator.createTestClass(testClassName, methodNamePrefix, partition);
+        if (classSource != null) {
+          files.add(jfw.writeClass(junit_package_name, testClassName, classSource.toString()));
+        }
       }
 
-      List<String> afterAllText = getFileText(GenInputsAbstract.junit_after_all);
-      if (afterAllText != null) {
-        jfw.addAfterAll(afterAllText);
-      }
-
-      List<String> beforeEachText = getFileText(GenInputsAbstract.junit_before_each);
-      if (beforeEachText != null) {
-        jfw.addBeforeEach(beforeEachText);
-      }
-
-      List<String> afterEachText = getFileText(GenInputsAbstract.junit_after_each);
-      if (afterEachText != null) {
-        jfw.addAfterEach(afterEachText);
-      }
-
-      files.addAll(jfw.writeJUnitTestFiles(seqPartition));
-
+      String classSource;
+      String driverName = junitClassname;
       if (GenInputsAbstract.junit_reflection_allowed) {
-        files.add(jfw.writeSuiteFile());
+        classSource = junitCreator.createSuiteClass(driverName);
       } else {
-        files.add(jfw.writeDriverFile());
+        driverName = junitClassname + "Driver";
+        classSource = junitCreator.createTestDriver(driverName);
       }
+      files.add(jfw.writeClass(junit_package_name, driverName, classSource));
     } else { // preserves behavior from previous version
       System.out.println("No tests were created. No JUnit class created.");
     }

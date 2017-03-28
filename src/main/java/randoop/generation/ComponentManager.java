@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.TypeInstantiator;
@@ -68,6 +67,8 @@ public class ComponentManager {
   // May be null, which represents no package literals present.
   protected PackageLiterals packageLiterals = null;
 
+  private Set<Type> sequenceTypes;
+
   /** Create an empty component manager, with an empty seed sequence set. */
   public ComponentManager() {
     gralComponents = new SequenceCollection();
@@ -91,7 +92,7 @@ public class ComponentManager {
   /**
    * Returns the number of (non-seed) sequences stored by the manager.
    *
-   * @return count of generated sequences in this {@link ComponentManager}.
+   * @return count of generated sequences in this {@link ComponentManager}
    */
   // FIXME subtract size of seeds!
   public int numGeneratedSequences() {

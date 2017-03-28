@@ -16,11 +16,7 @@ import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.TypedOperation;
 import randoop.test.Check;
-import randoop.test.ExtendGenerator;
-import randoop.test.InvalidChecks;
-import randoop.test.InvalidValueCheck;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
 import randoop.types.ReferenceType;
@@ -160,8 +156,8 @@ public class ExecutableSequence {
    *
    * @return the sequence as a string
    */
-  public String toCodeString() {
-    StringBuilder b = new StringBuilder();
+  private List<String> toCodeLines() {
+    List<String> lines = new ArrayList<>();
     for (int i = 0; i < sequence.size(); i++) {
 
       // Only print primitive declarations if the last/only statement
@@ -180,17 +176,33 @@ public class ExecutableSequence {
         if (exObs != null) {
           oneStatement.insert(0, exObs.toCodeStringPreStatement());
           oneStatement.append(exObs.toCodeStringPostStatement());
-          oneStatement.append(Globals.lineSep);
         }
 
         // Print the rest of the checks.
         for (Check d : checks.get().keySet()) {
           oneStatement.insert(0, d.toCodeStringPreStatement());
           oneStatement.append(d.toCodeStringPostStatement());
-          oneStatement.append(Globals.lineSep);
         }
       }
-      b.append(oneStatement);
+      lines.add(oneStatement.toString());
+    }
+    return lines;
+  }
+
+  /**
+   * Return this sequence as code. Similar to {@link Sequence#toCodeString()} except includes the
+   * checks.
+   *
+   * <p>If for a given statement there is a check of type {@link randoop.test.ExceptionCheck}, that
+   * check's pre-statement code is printed immediately before the statement, and its post-statement
+   * code is printed immediately after the statement.
+   *
+   * @return the sequence as a string
+   */
+  public String toCodeString() {
+    StringBuilder b = new StringBuilder();
+    for (String line : toCodeLines()) {
+      b.append(line).append(Globals.lineSep);
     }
     return b.toString();
   }
@@ -264,24 +276,6 @@ public class ExecutableSequence {
 
       inputValues = getRuntimeInputs(executionResults.theList, inputs);
 
-      if (i == this.sequence.size() - 1) {
-        TypedOperation operation = this.sequence.getStatement(i).getOperation();
-        if (operation.isConstructorCall() || operation.isMethodCall()) {
-          if (!operation.checkPreconditions(inputValues)) {
-            //set checks invalid and return
-            checks = new InvalidChecks();
-            checks.add(new InvalidValueCheck(this, i));
-            return;
-          }
-          // if the operation is expected to throw an exception for these inputs
-          TestCheckGenerator expected = operation.getPostCheckGenerator(inputValues);
-          if (expected != null) {
-            //then extend TestCheckGenerator gen with check for postcondition/exception
-            gen = new ExtendGenerator(expected, gen);
-          }
-        }
-      }
-
       visitor.visitBeforeStatement(this, i);
       executeStatement(sequence, executionResults.theList, i, inputValues);
 
@@ -332,7 +326,7 @@ public class ExecutableSequence {
    * Returns the values for the given variables in the {@link Execution} object. The variables are
    * {@link Variable} objects in the {@link Sequence} of this {@link ExecutableSequence} object.
    *
-   * @param vars a list of {@link Variable} objects.
+   * @param vars a list of {@link Variable} objects
    * @param execution the object representing outcome of executing this sequence
    * @return array of values corresponding to variables
    */

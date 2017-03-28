@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>PostConditionCheckGenerator (randoop 3.0.10 API)</title>
+<title>PostConditionCheckGenerator (randoop 3.1.2 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="PostConditionCheckGenerator (randoop 3.0.10 API)";
+            parent.document.title="PostConditionCheckGenerator (randoop 3.1.2 API)";
         }
     }
     catch(err) {
@@ -181,8 +181,8 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/PostConditionCheckGenerator.html#visit-randoop.sequence.ExecutableSequence-">visit</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</code>
-<div class="block">Tests the post-condition against the values in the given <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence"><code>ExecutableSequence</code></a>, and
- if the condition is not satisfied returns a <a href="../../randoop/test/ErrorRevealingChecks.html" title="class in randoop.test"><code>ErrorRevealingChecks</code></a>.</div>
+<div class="block">Tests the post-condition against the values in the given <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence"><code>ExecutableSequence</code></a>, and if the
+ condition is not satisfied returns a <a href="../../randoop/test/ErrorRevealingChecks.html" title="class in randoop.test"><code>ErrorRevealingChecks</code></a>.</div>
 </td>
 </tr>
 </table>
@@ -254,18 +254,19 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <li class="blockList">
 <h4>visit</h4>
 <pre>public&nbsp;<a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&nbsp;visit(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</pre>
-<div class="block">Tests the post-condition against the values in the given <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence"><code>ExecutableSequence</code></a>, and
- if the condition is not satisfied returns a <a href="../../randoop/test/ErrorRevealingChecks.html" title="class in randoop.test"><code>ErrorRevealingChecks</code></a>.
- <p>
- Note that the operation input values passed to the post-condition are the values post-execution.</div>
+<div class="block">Tests the post-condition against the values in the given <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence"><code>ExecutableSequence</code></a>, and if the
+ condition is not satisfied returns a <a href="../../randoop/test/ErrorRevealingChecks.html" title="class in randoop.test"><code>ErrorRevealingChecks</code></a>.
+
+ <p>Note that the operation input values passed to the post-condition are the values
+ post-execution.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/TestCheckGenerator.html#visit-randoop.sequence.ExecutableSequence-">visit</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test">TestCheckGenerator</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>s</code> - the sequence for which checks are generated</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the <a href="../../randoop/test/ErrorRevealingChecks.html" title="class in randoop.test"><code>ErrorRevealingChecks</code></a> with a <a href="../../randoop/test/PostConditionCheck.html" title="class in randoop.test"><code>PostConditionCheck</code></a> if the post-condition
-          fails on the sequence, an <code>null</code> otherwise</dd>
+<dd>the <a href="../../randoop/test/ErrorRevealingChecks.html" title="class in randoop.test"><code>ErrorRevealingChecks</code></a> with a <a href="../../randoop/test/PostConditionCheck.html" title="class in randoop.test"><code>PostConditionCheck</code></a> if the
+     post-condition fails on the sequence, an <code>null</code> otherwise</dd>
 </dl>
 </li>
 </ul>

@@ -65,6 +65,9 @@ class RandoopRunStatus {
     command.add("-ea");
     command.add("-classpath");
     command.add(testEnvironment.getSystemTestClasspath());
+    if (testEnvironment.getJavaAgentPath() != null) {
+      command.add("-javaagent:" + testEnvironment.getJavaAgentPath());
+    }
     command.add("randoop.main.Main");
     command.add("gentests");
     command.addAll(options.getOptions());

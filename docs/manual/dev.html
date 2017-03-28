@@ -273,7 +273,7 @@ After the build, the classpath should include either of the following
 <ul>
   <li>
 <code>
-&lt;randoop-path&gt;/build/libs/randoop-3.0.10.jar:&lt;randoop-path&gt;/lib/plume.jar
+&lt;randoop-path&gt;/build/libs/randoop-3.1.2.jar:&lt;randoop-path&gt;/lib/plume.jar
 </code>
 </li>
 <li>
@@ -292,7 +292,7 @@ the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.
 So, for instance, the following will work to run the <code>exercised-class</code> agent:
 </p>
-<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/exercised-class-3.0.10.jar</code></pre>
+<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/exercised-class-3.1.2.jar</code></pre>
 
 
 
@@ -625,8 +625,8 @@ task described below.
     <li>
       Set environment variables for the old and new version numbers.  (Don't use the examples given here!)
       <pre>
-OLDVERSION=<em>3.0.10</em>
-NEWVERSION=<em>3.0.11</em></pre>
+OLDVERSION=<em>3.1.2</em>
+NEWVERSION=<em>3.1.3</em></pre>
       These are used for working with git.
     </li>
     <li>Update the version number and date in each of:
@@ -668,8 +668,8 @@ NEWVERSION=<em>3.0.11</em></pre>
     <a href="https://help.github.com/articles/creating-releases/">GitHub instructions for creating a release</a>;
     in particular, start at
     <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
-    click "Tags", click "add release notes" for the new tag (e.g., v<em>3.0.11</em>),
-    name it "Randoop version <em>3.0.11</em>", use the changelog entry as the
+    click "Tags", click "add release notes" for the new tag (e.g., v<em>3.1.3</em>),
+    name it "Randoop version <em>3.1.3</em>", use the changelog entry as the
     description (but remove any line breaks and check the preview), upload the
     jar files from <code>build/libs</code>,
     upload the zip file from <code>build/distributions</code>
@@ -679,16 +679,18 @@ NEWVERSION=<em>3.0.11</em></pre>
     Check that there are no broken links on the published website:
     <pre>./gradlew checklink</pre>
     Any output is written to a file <pre>checklink-log.txt</pre>
-    If there are any errors, fix them, rerun <pre>./gradlew buildRelease</pre>
+    If there are any errors,
+    verify that each link on the site is actually broken,
+    and if so, fix the link, and rerun <pre>./gradlew buildRelease</pre>
     and commit and push those changes.
     If the check succeeds, run: <pre>rm -f checklink-log.txt</pre>
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com.
     <br/>
-    Subject: Randoop version <em>3.0.11</em>
+    Subject: Randoop version <em>3.1.3</em>
     <br/>
-    Randoop <em>3.0.11</em> has been released and is available at
-    https://github.com/randoop/randoop/releases/.  The changelog appears below.
+    Randoop <em>3.1.3</em> has been released and is available at
+    https://github.com/randoop/randoop/releases/latest.  The changelog appears below.
   </li>
 </ol>
 
