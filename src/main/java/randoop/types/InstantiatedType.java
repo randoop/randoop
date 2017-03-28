@@ -192,14 +192,12 @@ public class InstantiatedType extends ParameterizedType {
   /**
    * Constructs the superclass type for this parameterized type.
    *
-   * <p>Implementation note: we can think of an {@link InstantiatedType} <code>
-   * A&lt;T<sub>1</sub>,&hellip;,T<sub>k</sub>&gt;</code> as being represented as a generic class
-   * <code>A&lt;F<sub>1</sub>,&hellip;,F<sub>k</sub>&gt;</code> with a substitution <code>
-   * [ F<sub>i</sub> := T<sub>i</sub>]</code> for all of the type parameters <code>F<sub>i</sub>
+   * <p>Implementation note: we can think of an {@link InstantiatedType} {@code A<T1,...,Tk>} as
+   * being represented as a generic class {@code A<F1,...,Fk>} with a substitution <code>
+   * [ Fi := Ti]</code> for all of the type parameters <code>Fi
    * </code>. So, when we compute a superclass, we first find the supertype of the generic class
-   * <code>B&lt;F<sub>1</sub>,&hellip;,F<sub>k</sub>&gt;</code>, and then apply the substitution
-   * <code>[ F<sub>i</sub> := T<sub>i</sub>]</code> using the method {@link
-   * GenericClassType#getSuperclass(Substitution)}.
+   * {@code B<F1,...,Fk>}, and then apply the substitution <code>[ Fi := Ti]</code> using the method
+   * {@link GenericClassType#getSuperclass(Substitution)}.
    *
    * @return the superclass type for this parameterized type
    */
@@ -291,17 +289,16 @@ public class InstantiatedType extends ParameterizedType {
 
   /**
    * Checks whether this type is an instantiation of the given instantiated type. This is only
-   * possible if this type is <code>A&lt;T<sub>1</sub>,&hellip;,T<sub>k</sub>&gt;</code> where all
-   * <code>T<sub>i</sub></code> are instantiated by ground types (e.g., does not have type
-   * variables), the other type is <code>A&lt;S<sub>1</sub>,&hellip;,S<sub>k</sub>&gt;</code>, and
-   * each <code>T<sub>i</sub></code> matches <code>S<sub>i</sub></code> for <code>i = 1,&hellip;,k
+   * possible if this type is {@code A<T1,...,Tk>} where all <code>Ti</code> are instantiated by
+   * ground types (e.g., does not have type variables), the other type is {@code A<S1,...,Sk>}, and
+   * each <code>Ti</code> matches <code>Si</code> for <code>i = 1,...,k
    * </code> as follows:
    *
    * <ol>
-   *   <li>If <code>S<sub>i</sub></code> is the variable <code>X</code> with lower bound <code>L
-   *       </code> and upper bound <code>U</code>, then <code>T<sub>i</sub></code> is a supertype of
-   *       <code>L</code> and a subtype of <code>U</code>
-   *   <li><code>S<sub>i</sub></code> is identical to <code>T<sub>i</sub></code>
+   *   <li>If <code>Si</code> is the variable <code>X</code> with lower bound <code>L
+   *       </code> and upper bound <code>U</code>, then <code>Ti</code> is a supertype of <code>L
+   *       </code> and a subtype of <code>U</code>
+   *   <li><code>Si</code> is identical to <code>Ti</code>
    * </ol>
    *
    * @see ReferenceType#isInstantiationOf(ReferenceType)
@@ -389,18 +386,14 @@ public class InstantiatedType extends ParameterizedType {
   /**
    * {@inheritDoc}
    *
-   * <p>Handles specific cases of supertypes of a parameterized type <code>
-   * C&lt;T<sub>1</sub>,&hellip;,T<sub>n</sub>&gt;</code> instantiating the generic type <code>
-   * C&lt;F<sub>1</sub>,&hellip;,F<sub>n</sub>&gt;</code> by substitution <code>
-   * &#952; =[F<sub>1</sub>:=T<sub>1</sub>,&hellip;,F<sub>n</sub>:=T<sub>n</sub>]</code> for which
-   * direct supertypes are:
+   * <p>Handles specific cases of supertypes of a parameterized type {@code C<T1,...,Tn>}
+   * instantiating the generic type {@code C<F1,...,Fn>} by substitution &theta;{@code
+   * =[F1:=T1,...,Fn:=Tn]} for which direct supertypes are:
    *
    * <ol>
-   *   <li><code>D&lt;U<sub>1</sub>&#952;,&hellip;,U<sub>k</sub>&#952;&gt;</code> where <code>
-   *       D&lt;U<sub>1</sub>,&hellip;,U<sub>k</sub>&gt;</code> is a supertype of <code>
-   *       C&lt;F<sub>1</sub>,&hellip;,F<sub>n</sub>&gt;</code>.
-   *   <li><code>C&lt;S<sub>1</sub>,&hellip;,S<sub>n</sub>&gt;</code> where S<sub>i</sub>
-   *       <i>contains</i> T<sub>i</sub> (JLS section 4.5.1).
+   *   <li>{@code D<U1}&theta;{@code ,...,Uk}&theta;{@code >} where {@code D<U1,...,Uk>} is a
+   *       supertype of {@code C<F1,...,Fn>}.
+   *   <li>{@code C<S1,...,Sn>} where Si <i>contains</i> Ti (JLS section 4.5.1).
    *   <li>The rawtype <code>C</code>.
    *   <li><code>Object</code> if generic form is interface with no interfaces as supertypes.
    * </ol>

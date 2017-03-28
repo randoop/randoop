@@ -5,7 +5,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
-import randoop.condition.ConditionCollection;
 import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
 import randoop.operation.MethodCall;
@@ -39,9 +38,6 @@ public class OperationExtractor extends DefaultClassVisitor {
   /** The collection of operations */
   private final Collection<TypedOperation> operations;
 
-  /** The collection of pre/post/throws-conditions to add to operations */
-  private final ConditionCollection operationConditions;
-
   /** The class type of the declaring class for the collected operations */
   private ClassOrInterfaceType classType;
 
@@ -53,27 +49,16 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param operations the collection of operations
    * @param predicate the reflection predicate
    * @param visibilityPredicate the predicate for test visibility
-   * @param operationConditions the collection of conditions to add to operations
    */
   public OperationExtractor(
       ClassOrInterfaceType classType,
       Collection<TypedOperation> operations,
       ReflectionPredicate predicate,
-      VisibilityPredicate visibilityPredicate,
-      ConditionCollection operationConditions) {
+      VisibilityPredicate visibilityPredicate) {
     this.classType = classType;
     this.operations = operations;
     this.predicate = predicate;
     this.visibilityPredicate = visibilityPredicate;
-    this.operationConditions = operationConditions;
-  }
-
-  public OperationExtractor(
-      ClassOrInterfaceType classType,
-      Collection<TypedOperation> operations,
-      ReflectionPredicate predicate,
-      VisibilityPredicate visibilityPredicate) {
-    this(classType, operations, predicate, visibilityPredicate, null);
   }
 
   /**
@@ -104,7 +89,7 @@ public class OperationExtractor extends DefaultClassVisitor {
   /**
    * Creates a {@link ConstructorCall} object for the {@link Constructor}.
    *
-   * @param constructor a {@link Constructor} object to be represented as an {@link Operation}.
+   * @param constructor a {@link Constructor} object to be represented as an {@link Operation}
    */
   @Override
   public void visit(Constructor<?> constructor) {
@@ -118,17 +103,13 @@ public class OperationExtractor extends DefaultClassVisitor {
       return;
     }
     TypedClassOperation operation = TypedOperation.forConstructor(constructor);
-    if (operationConditions != null) {
-      operation.addConditions(operationConditions.getPreconditions(constructor));
-      operation.addConditions(operationConditions.getThrowsConditions(constructor));
-    }
     addOperation(operation);
   }
 
   /**
    * Creates a {@link MethodCall} object for the {@link Method}.
    *
-   * @param method a {@link Method} object to be represented as an {@link Operation}.
+   * @param method a {@link Method} object to be represented as an {@link Operation}
    */
   @Override
   public void visit(Method method) {
@@ -148,10 +129,6 @@ public class OperationExtractor extends DefaultClassVisitor {
                 operation.getOutputType());
       }
     }
-    if (operationConditions != null) {
-      operation.addConditions(operationConditions.getPreconditions(method));
-      operation.addConditions(operationConditions.getThrowsConditions(method));
-    }
     addOperation(operation);
   }
 
@@ -159,7 +136,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    * Adds the {@link Operation} objects corresponding to getters and setters appropriate to the kind
    * of field.
    *
-   * @param field a {@link Field} object to be represented as an {@link Operation}.
+   * @param field a {@link Field} object to be represented as an {@link Operation}
    */
   @Override
   public void visit(Field field) {
@@ -199,7 +176,7 @@ public class OperationExtractor extends DefaultClassVisitor {
   /**
    * Creates a {@link EnumConstant} object for the {@link Enum}.
    *
-   * @param e an {@link Enum} object to be represented as an {@link Operation}.
+   * @param e an {@link Enum} object to be represented as an {@link Operation}
    */
   @Override
   public void visit(Enum<?> e) {

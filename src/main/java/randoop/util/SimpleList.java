@@ -72,7 +72,7 @@ public abstract class SimpleList<T> {
   /**
    * Returns a java.util.List version of this list.
    *
-   * @return {@link java.util.List} for this list.
+   * @return {@link java.util.List} for this list
    */
   public abstract List<T> toJDKList();
 }

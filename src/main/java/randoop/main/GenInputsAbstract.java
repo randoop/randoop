@@ -66,13 +66,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * or <code>--classlist</code> option.
    *
    * <p>A constructor line begins with <code>"cons :"</code> followed by the classname, the string
-   * <code>&lt;init&gt;</code>, and the constructor's parameter types enclosed in parentheses.
-   * Methods are specified in a similar way. For example:
+   * {@code <init>}, and the constructor's parameter types enclosed in parentheses. Methods are
+   * specified in a similar way. For example:
    *
-   * <pre class="code">
-   * cons : Type0.&lt;init&gt;(Type1, Type2, ..., TypeN)
+   * <pre>{@code
+   * cons : Type0.<init>(Type1, Type2, ..., TypeN)
    * method : Type0.method_name(Type1, Type2, ..., TypeN)
-   * </pre>
+   * }</pre>
    *
    * <p>Each <code>Type<i>i</i></code> must be fully-qualified (include package names).
    *
@@ -140,6 +140,17 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("File containing class names that tests must exercise")
   public static File include_if_class_exercised = null;
+
+  /**
+   * If false, Randoop halts and gives diagnostics about flaky tests -- tests that behave
+   * differently on different executions. If true, Randoop ignores them and does not output them.
+   *
+   * <p>Use of this option is a last resort. Flaky tests are usually due to calling Randoop on
+   * side-effecting or nondeterministic methods, and a better solution is not to call Randoop on
+   * such methods.
+   */
+  @Option("Whether to ignore non-determinism in test execution")
+  public static boolean ignore_flaky_tests = false;
 
   /**
    * Whether to output error-revealing tests. Disables all output when used with <code>
@@ -246,19 +257,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Whether StackOverflowError is an ERROR, EXPECTED or INVALID")
   public static BehaviorType sof_exception = BehaviorType.INVALID;
-
-  /**
-   * Ignore the situation where a code sequence that previously executed normally throws an
-   * exception when executed as part of a longer test sequence. If true, the sequence will be
-   * classified as invalid. If false, Randoop will halt with information about the sequence to aid
-   * in identifying the issue.
-   *
-   * <p>Use of this option is a last resort. Flaky tests are usually due to calling Randoop on
-   * side-effecting or nondeterministic methods, and a better solution is not to call Randoop on
-   * such methods.
-   */
-  @Option("Whether to ignore non-determinism in test execution")
-  public static boolean ignore_flaky_tests = false;
 
   /**
    * Read Toradocu JSON condition file to use Toradocu generated conditions to control how tests are

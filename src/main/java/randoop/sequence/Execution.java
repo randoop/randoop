@@ -10,7 +10,7 @@ import randoop.NotExecuted;
 /**
  * Represents the unfolding execution of a sequence.
  *
- * <p>This is essentially a wrapper around List&lt;ExecutionOutcome&gt;. Stores information in a
+ * <p>This is essentially a wrapper around {@code List<ExecutionOutcome>}. Stores information in a
  * list of ExecutionOutcome objects, one for each statement in the sequence.
  */
 public final class Execution {

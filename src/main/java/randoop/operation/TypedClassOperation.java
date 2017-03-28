@@ -114,7 +114,7 @@ public class TypedClassOperation extends TypedOperation {
    * StringBuilder.
    *
    * @param inputVars the list of variables that are inputs to operation
-   * @param b the {@link StringBuilder} to which code is added.
+   * @param b the {@link StringBuilder} to which code is added
    */
   public void appendCode(List<Variable> inputVars, StringBuilder b) {
     assert inputVars.size() == this.getInputTypes().size()
@@ -128,7 +128,7 @@ public class TypedClassOperation extends TypedOperation {
    * such that parsing the string returns an object equivalent to this object, i.e.
    * C.parse(this.s).equals(this).
    *
-   * @return string descriptor of {@link Operation} object.
+   * @return string descriptor of {@link Operation} object
    */
   @Override
   public String toParsableString() {

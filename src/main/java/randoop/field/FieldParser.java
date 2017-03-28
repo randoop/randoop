@@ -23,7 +23,7 @@ public class FieldParser {
    * @param descr the full string description
    * @param classname the name of the field's declaring class
    * @param fieldname the name of the field
-   * @return the {@link AccessibleField} for the given class and field name.
+   * @return the {@link AccessibleField} for the given class and field name
    * @throws OperationParseException if either name is malformed or incorrect
    */
   public static AccessibleField parse(String descr, String classname, String fieldname)

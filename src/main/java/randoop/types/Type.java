@@ -120,7 +120,7 @@ public abstract class Type implements Comparable<Type> {
    * would return {@code Type.class}.
    *
    * @return the {@link Class} that is the runtime representation of the type, or null if this type
-   *     is a type variable or null reference type.
+   *     is a type variable or null reference type
    */
   public abstract Class<?> getRuntimeClass();
 

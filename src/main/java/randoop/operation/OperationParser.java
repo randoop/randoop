@@ -22,9 +22,9 @@ public class OperationParser {
    * specifics of the Operation. For example, the following String represents the constructor for
    * HashMap:
    *
-   * <pre>
-   *   cons : java.util.HashMap.&lt;init&gt;()
-   * </pre>
+   * <pre>{@code
+   * cons : java.util.HashMap.<init>()
+   * }</pre>
    *
    * A class implementing Operation should define a static field named ID that corresponds to the ID
    * string used when parsing. The way this parse method works is by using the ID string to
