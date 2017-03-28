@@ -39,8 +39,10 @@ The Randoop homepage is
   <li><a href="#customize">Customizing Randoop's behavior to your application</a>
     <ul>
       <li><a href="#command-line-options">Command-line options</a></li>
-      <li><a href="#map_calls">Avoiding calls to specific methods</a></li>
-      <li><a href="#determining-calls-to-map">Determining which calls to place in the map_calls file</a></li>
+      <li><a href="#map_calls">Avoiding calls to specific methods</a>
+        <ul>
+          <li><a href="#determining-calls-to-map">Determining which calls to place in the map_calls file</a></li>
+        </ul></li>
       <li><a href="#checkrep">Specifying representation invariant methods (such as <code>checkRep</code>)</a></li>
       <li><a href="#exercised-filter">Instrumenting classes for filtering tests on exercised-classes</a></li>
       <li><a href="#primitives">Specifying additional primitive values</a></li>
@@ -1104,7 +1106,7 @@ methods</a>.
 </p>
 
 
-<h2 id="determining-calls-to-map">Determining which calls to place in the map_calls file</h2>
+<h3 id="determining-calls-to-map">Determining which calls to place in the map_calls file</h3>
 
 <p>
 If Randoop is calling methods that it should not (for example, while
