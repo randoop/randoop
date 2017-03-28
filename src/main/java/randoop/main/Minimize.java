@@ -4,7 +4,7 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.Node;
+
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -12,6 +12,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.AnnotationExpr;
+import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
 import com.github.javaparser.ast.expr.CharLiteralExpr;
 import com.github.javaparser.ast.expr.DoubleLiteralExpr;
@@ -421,29 +422,28 @@ public class Minimize extends CommandHandler {
         MethodCallExpr mCall = (MethodCallExpr) exp;
         // Check if the method call is an assertTrue statement
         if (mCall.getName().equals("assertTrue")) {
-          // Is an assertTrue statement.
           List<Expression> mArgs = mCall.getArgs();
+          if (mArgs.size() != 1 && mArgs.size() != 2) {
+            return;
+          }
+
+          Expression mExp;
+          // Retrieve the condition expression from the assert
+          // statement.
           if (mArgs.size() == 1) {
-            // Retrieve and store the value associated with the
-            // variable in the assertion.
-            Expression mExp = mArgs.get(0);
-            List<Node> children = mExp.getChildrenNodes();
+            mExp = mArgs.get(0);
+          } else {
+            mExp = mArgs.get(1);
+          }
 
-            // Check that the expression only has two nodes.
-            if (children.size() != 2) {
-              return;
-            }
-            String mExpStr = mExp.toString();
-
-            // Take the substring without the first and second expression nodes.
-            String firstExp = children.get(0).toString();
-            int secondExpIndex = mExpStr.lastIndexOf(children.get(1).toString());
-            mExpStr = mExpStr.substring(firstExp.length(), secondExpIndex);
-
-            // Check that the comparison is an equality comparison.
-            if (mExpStr.trim().equals("==")) {
-              String var = children.get(0).toString();
-              String val = children.get(1).toString();
+          if (mExp instanceof BinaryExpr) {
+            BinaryExpr binaryExp = (BinaryExpr) mExp;
+            // Check that the operator is an equality operator.
+            if (binaryExp.getOperator().equals(BinaryExpr.Operator.equals)) {
+              // Retrieve and store the value associated with the
+              // variable in the assertion.
+              String var = binaryExp.getLeft().toString();
+              String val = binaryExp.getRight().toString();
               primitiveValues.put(var, val);
             }
           }
