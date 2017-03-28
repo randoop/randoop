@@ -833,7 +833,7 @@ public class RandoopSystemTest {
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.addTestClass("net.Connection");
     options.setOption(
-        "specifications", "resources/systemTest/randoop/condition/net_connection_conditions.json");
+        "specifications", "resources/systemTest/net/net_connection_toradocu_spec.json");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
     options.setOption("timelimit", "30");
@@ -844,14 +844,13 @@ public class RandoopSystemTest {
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
   }
 
-  /*
   @Test
   public void runInheritedToradocuTest() {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("toradocu-inherited");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.addTestClass("pkg.SubClass");
-  //  options.setOption("toradocu-conditions", "resources/systemTest/SubClassConditions.json");
+    options.setOption("specifications", "resources/systemTest/pkg/pkg_subclass_toradocu_spec.json");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
     options.setOption("timelimit", "30");
@@ -860,7 +859,6 @@ public class RandoopSystemTest {
     generateAndTestWithCoverage(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
   }
-  */
 
   /**
    * recreate problem with tests over Google Guava where value from private enum returned by public

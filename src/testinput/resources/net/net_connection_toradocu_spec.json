@@ -1,0 +1,113 @@
+[
+  {
+    "operation": {
+      "classname": "net.Connection",
+      "name": "isOpen",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throwsSpecifications": [],
+    "returnSpecifications": [],
+    "paramSpecifications": []
+  },
+  {
+    "operation": {
+      "classname": "net.Connection",
+      "name": "open",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throwsSpecifications": [
+      {
+        "exceptionType": "java.lang.IllegalStateException",
+        "description": "throws IllegalStateException if the connection is already open",
+        "guard": {
+          "conditionText": "target.isOpen()",
+          "description": "if the connection is already open"
+        }
+      }
+    ],
+    "returnSpecifications": [],
+    "paramSpecifications": []
+  },
+  {
+    "operation": {
+      "classname": "net.Connection",
+      "name": "send",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "message"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throwsSpecifications": [
+      {
+        "exceptionType": "java.lang.NullPointerException",
+        "description": "throws NullPointerException if message is null",
+        "guard": {
+          "conditionText": "message==null",
+          "description": "if message is null"
+        }
+      },
+      {
+        "exceptionType": "java.lang.IllegalStateException",
+        "description": "throws IllegalStateException if the connection is not open",
+        "guard": {
+          "conditionText": "(target.isOpen()) == false",
+          "description": "if the connection is not open"
+        }
+      }
+    ],
+    "returnSpecifications": [],
+    "paramSpecifications": []
+  },
+  {
+    "operation": {
+      "classname": "net.Connection",
+      "name": "send",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "code"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throwsSpecifications": [
+      {
+        "exceptionType": "java.lang.IllegalStateException",
+        "description": "throws IllegalStateException if the connection is not open",
+        "guard": {
+          "conditionText": "(target.isOpen()) == false",
+          "description": "if the connection is not open"
+        }
+      }
+    ],
+    "returnSpecifications": [],
+    "paramSpecifications": [
+      {
+        "description": "the code, must be positive",
+        "guard": {
+          "conditionText": "code>0",
+          "description": "the code, must be positive"
+        }
+      }
+    ]
+  }
+]
