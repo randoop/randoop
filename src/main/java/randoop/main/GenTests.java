@@ -316,9 +316,7 @@ public class GenTests extends GenInputsAbstract {
     components.addAll(SeedSequences.defaultSeeds());
     components.addAll(operationModel.getAnnotatedTestValues());
 
-    ComponentManager componentMgr;
-    componentMgr = new ComponentManager(components);
-
+    ComponentManager componentMgr = new ComponentManager(components);
     operationModel.addClassLiterals(
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
@@ -346,9 +344,8 @@ public class GenTests extends GenInputsAbstract {
      */
     AbstractGenerator explorer;
 
-    Map<Sequence, Integer> literalsTermFrequency = operationModel.getLiteralsTermFrequency();
-
     int num_classes = operationModel.getClassTypes().size();
+    Map<Sequence, Integer> literalsTermFrequency = operationModel.getLiteralsTermFrequency();
 
     explorer =
         new ForwardGenerator(
