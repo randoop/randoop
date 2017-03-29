@@ -30,15 +30,12 @@ import randoop.generation.ForwardGenerator;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
-import randoop.generation.WeightedComponentManager;
-import randoop.generation.WeightedGenerator;
 import randoop.instrument.ExercisedClassVisitor;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
 import randoop.output.JUnitCreator;
 import randoop.output.JavaFileWriter;
-import randoop.reflection.AbstractOperationModel;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PackageVisibilityPredicate;
@@ -46,7 +43,6 @@ import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.RandoopInstantiationError;
 import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
-import randoop.reflection.WeightedConstantsOperationModel;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
@@ -166,13 +162,6 @@ public class GenTests extends GenInputsAbstract {
     //   System.out.printf("Using security policy %s%n", policy);
     // }
 
-    if (GenInputsAbstract.weighted_sequences) {
-      System.out.println("Weighted Sequences is enabled");
-    }
-    if (GenInputsAbstract.weighted_constants) {
-      System.out.println(
-          "Weighted constants is enabled.  With p_const = " + GenInputsAbstract.p_const);
-    }
     if (GenInputsAbstract.output_sequence_info) {
       System.out.println("Sequence information output is enabled.");
     }
@@ -255,29 +244,17 @@ public class GenTests extends GenInputsAbstract {
     Set<String> methodSignatures =
         GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
 
-    AbstractOperationModel operationModel = null;
+    OperationModel operationModel = null;
     try {
-      if (GenInputsAbstract.weighted_constants) {
-        operationModel =
-            WeightedConstantsOperationModel.createModel(
-                visibility,
-                reflectionPredicate,
-                classnames,
-                coveredClassnames,
-                methodSignatures,
-                classNameErrorHandler,
-                GenInputsAbstract.literals_file);
-      } else {
-        operationModel =
-            OperationModel.createModel(
-                visibility,
-                reflectionPredicate,
-                classnames,
-                coveredClassnames,
-                methodSignatures,
-                classNameErrorHandler,
-                GenInputsAbstract.literals_file);
-      }
+      operationModel =
+          OperationModel.createModel(
+              visibility,
+              reflectionPredicate,
+              classnames,
+              coveredClassnames,
+              methodSignatures,
+              classNameErrorHandler,
+              GenInputsAbstract.literals_file);
     } catch (OperationParseException e) {
       System.out.printf("%nError: parse exception thrown %s%n", e);
       System.out.println("Exiting Randoop.");
@@ -340,11 +317,7 @@ public class GenTests extends GenInputsAbstract {
     components.addAll(operationModel.getAnnotatedTestValues());
 
     ComponentManager componentMgr;
-    if (GenInputsAbstract.weighted_constants) {
-      componentMgr = new WeightedComponentManager(components);
-    } else {
-      componentMgr = new ComponentManager(components);
-    }
+    componentMgr = new ComponentManager(components);
 
     operationModel.addClassLiterals(
         componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
@@ -372,40 +345,22 @@ public class GenTests extends GenInputsAbstract {
      * Create the generator for this session.
      */
     AbstractGenerator explorer;
-    if (GenInputsAbstract.output_sequence_info
-        || GenInputsAbstract.weighted_sequences
-        || GenInputsAbstract.weighted_constants) {
 
-      Map<Sequence, Integer> sequenceTermFrequencies = null;
-      if (operationModel instanceof WeightedConstantsOperationModel) {
-        sequenceTermFrequencies =
-            ((WeightedConstantsOperationModel) operationModel).getSequenceTermFrequency();
-      }
-      int num_classes = operationModel.getClassTypes().size();
+    Map<Sequence, Integer> literalsTermFrequency = operationModel.getLiteralsTermFrequency();
 
-      explorer =
-          new WeightedGenerator(
-              model,
-              observers,
-              timelimit * 1000,
-              inputlimit,
-              outputlimit,
-              componentMgr,
-              listenerMgr,
-              num_classes,
-              sequenceTermFrequencies);
+    int num_classes = operationModel.getClassTypes().size();
 
-    } else {
-      explorer =
-          new ForwardGenerator(
-              model,
-              observers,
-              timelimit * 1000,
-              inputlimit,
-              outputlimit,
-              componentMgr,
-              listenerMgr);
-    }
+    explorer =
+        new ForwardGenerator(
+            model,
+            observers,
+            timelimit * 1000,
+            inputlimit,
+            outputlimit,
+            componentMgr,
+            listenerMgr,
+            num_classes,
+            literalsTermFrequency);
 
     /*
      * setup for check generation
@@ -548,8 +503,7 @@ public class GenTests extends GenInputsAbstract {
     }
 
     if (GenInputsAbstract.output_sequence_info) {
-      WeightedGenerator fExplorer = (WeightedGenerator) explorer;
-      writeTestInfo(fExplorer.getExecutedSequences());
+      writeTestInfo(((ForwardGenerator) explorer).getExecutedSequences());
     }
 
     return true;

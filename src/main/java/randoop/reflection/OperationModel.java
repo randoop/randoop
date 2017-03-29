@@ -5,8 +5,10 @@ import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import randoop.contract.CompareToAntiSymmetric;
@@ -35,7 +37,8 @@ import randoop.types.Type;
 import randoop.util.MultiMap;
 
 /**
- * {@code OperationModel} represents the information context from which tests are generated. The
+ * {@code OperationModel} represents the information context from which tests are generated. It is
+ * also used to store information needed for the static weighting scheme of extracted literals. The
  * model includes:
  *
  * <ul>
@@ -48,7 +51,7 @@ import randoop.util.MultiMap;
  * <p>This class manages all information about generic classes internally, and instantiates any type
  * variables in operations before returning them.
  */
-public class OperationModel extends AbstractOperationModel {
+public class OperationModel {
 
   /** The set of class declaration types for this model */
   private Set<ClassOrInterfaceType> classTypes;
@@ -65,6 +68,13 @@ public class OperationModel extends AbstractOperationModel {
   /** Map for singleton sequences of literals extracted from classes. */
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
 
+  /**
+   * The map of literals to their term frequency: tf(t,d), where t is a literal and d is all classes
+   * under test. Note that this is the raw frequency, just the number of times they occur within all
+   * classes under test.
+   */
+  private Map<Sequence, Integer> literalsTermFrequency;
+
   /** Set of singleton sequences for values from TestValue annotated fields. */
   private Set<Sequence> annotatedTestValues;
 
@@ -76,8 +86,8 @@ public class OperationModel extends AbstractOperationModel {
 
   /** Create an empty model of test context. */
   private OperationModel() {
-    classTypes = new TreeSet<>();
-    inputTypes = new TreeSet<>();
+    classTypes = new LinkedHashSet<>();
+    inputTypes = new LinkedHashSet<>();
     classLiteralMap = new MultiMap<>();
     annotatedTestValues = new LinkedHashSet<>();
     contracts = new ContractSet();
@@ -96,6 +106,7 @@ public class OperationModel extends AbstractOperationModel {
     exercisedClasses = new LinkedHashSet<>();
     operations = new TreeSet<>();
     classCount = 0;
+    literalsTermFrequency = new HashMap<>();
   }
 
   /**
@@ -143,7 +154,8 @@ public class OperationModel extends AbstractOperationModel {
 
   /**
    * Adds literals to the component manager, by parsing any literals files specified by the user.
-   * Includes literals at different levels indicated by {@link ClassLiteralsMode}.
+   * Includes literals at two different levels: a class level and a global level. Note that all
+   * literals in class level are a subset of the sequences in global level.
    *
    * @param compMgr the component manager
    * @param literalsFile the list of literals file names
@@ -151,36 +163,23 @@ public class OperationModel extends AbstractOperationModel {
    */
   public void addClassLiterals(
       ComponentManager compMgr, List<String> literalsFile, ClassLiteralsMode literalsLevel) {
+    // TODO: would adding a package level help?
 
     // Add a (1-element) sequence corresponding to each literal to the component
     // manager.
-
     for (String filename : literalsFile) {
       MultiMap<ClassOrInterfaceType, Sequence> literalmap;
+      // For literals, there are only two levels: class and global
       if (filename.equals("CLASSES")) {
         literalmap = classLiteralMap;
       } else {
         literalmap = LiteralFileReader.parse(filename);
       }
-
       for (ClassOrInterfaceType type : literalmap.keySet()) {
-        Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
         for (Sequence seq : literalmap.getValues(type)) {
-          switch (literalsLevel) {
-            case CLASS:
-              compMgr.addClassLevelLiteral(type, seq);
-              break;
-            case PACKAGE:
-              assert pkg != null;
-              compMgr.addPackageLevelLiteral(pkg, seq);
-              break;
-            case ALL:
-              compMgr.addGeneratedSequence(seq);
-              break;
-            default:
-              throw new Error(
-                  "Unexpected error in GenTests -- please report at https://github.com/randoop/randoop/issues");
-          }
+          compMgr.addClassLevelLiteral(
+              type, seq); // add sequence to the collection of class literals
+          compMgr.addGeneratedSequence(seq); // add sequence to the collection of all sequences
         }
       }
     }
@@ -264,6 +263,17 @@ public class OperationModel extends AbstractOperationModel {
   }
 
   /**
+   * The map of literals to their term frequency: tf(t,d), where t is a literal and d is all classes
+   * under test. Note that this is the raw frequency, just the number of times they occur within all
+   * classes under test.
+   *
+   * @return map of literals to their term frequency: tf(t,d)
+   */
+  public Map<Sequence, Integer> getLiteralsTermFrequency() {
+    return literalsTermFrequency;
+  }
+
+  /**
    * Gathers class types to be used in a run of Randoop and adds them to this {@code
    * OperationModel}. Specifically, collects types for classes-under-test, objects for
    * exercised-class heuristic, concrete input types, annotated test values, and literal values.
@@ -288,10 +298,10 @@ public class OperationModel extends AbstractOperationModel {
     mgr.add(new TypeExtractor(this.inputTypes, visibility));
     mgr.add(new TestValueExtractor(this.annotatedTestValues));
     mgr.add(new CheckRepExtractor(this.contracts));
+
+    // We supply the term frequency map to obtain the tf-idf weight for extracted literals
     if (literalsFileList.contains("CLASSES")) {
-      mgr.add(new ClassLiteralExtractor(this.classLiteralMap, null));
-      // tfFrequency is null, since it's only applicable when called by WeightedConstantsOperationModel.
-      // OperationModel doesn't use a tfFrequency.
+      mgr.add(new ClassLiteralExtractor(this.classLiteralMap, this.literalsTermFrequency));
     }
 
     // Collect classes under test
