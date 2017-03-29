@@ -21,46 +21,48 @@ The Randoop homepage is
 
 <p>Contents:</p>
 <!-- start toc.  do not edit; run html-update-toc instead -->
+<ul>
+  <li><a href="#Introduction">Introduction</a></li>
+  <li><a href="#getting_randoop">Installing Randoop</a></li>
+  <li><a href="#running_randoop">Running Randoop</a></li>
+  <li><a href="#generating_tests">Generating tests</a>
     <ul>
-      <li><a href="#Introduction">Introduction</a></li>
-      <li><a href="#getting_randoop">Installing Randoop</a></li>
-      <li><a href="#running_randoop">Running Randoop</a></li>
-      <li><a href="#generating_tests">Generating tests</a>
+      <li><a href="#example_collections">Example: Generating tests for <code>java.util.Collections</code></a></li>
+      <li><a href="#specifying-methods">Specifying methods and constructors that may appear in a test</a></li>
+      <li><a href="#classifying_tests">Classifying tests</a></li>
+      <li><a href="#error_revealing_tests">Error-revealing tests</a></li>
+      <li><a href="#regression_tests">Regression tests</a>
         <ul>
-          <li><a href="#example_collections">Example: Generating tests for <code>java.util.Collections</code></a></li>
-          <li><a href="#specifying-methods">Specifying methods and constructors that may appear in a test</a></li>
-          <li><a href="#classifying_tests">Classifying tests</a></li>
-          <li><a href="#error_revealing_tests">Error-revealing tests</a></li>
-          <li><a href="#regression_tests">Regression tests</a>
-            <ul>
-              <li><a href="#regression_test_failures">Regression test failures</a></li>
-            </ul></li>
+          <li><a href="#regression_test_failures">Regression test failures</a></li>
         </ul></li>
-      <li><a href="#customize">Customizing Randoop's behavior to your application</a>
+    </ul></li>
+  <li><a href="#customize">Customizing Randoop's behavior to your application</a>
+    <ul>
+      <li><a href="#command-line-options">Command-line options</a></li>
+      <li><a href="#map_calls">Avoiding calls to specific methods</a>
         <ul>
-          <li><a href="#command-line-options">Command-line options</a></li>
-          <li><a href="#map_calls">Avoiding calls to specific methods</a></li>
           <li><a href="#determining-calls-to-map">Determining which calls to place in the map_calls file</a></li>
-          <li><a href="#checkrep">Specifying representation invariant methods (such as <code>checkRep</code>)</a></li>
-          <li><a href="#exercised-filter">Instrumenting classes for filtering tests on exercised-classes</a></li>
-          <li><a href="#primitives">Specifying additional primitive values</a></li>
-          <li><a href="#usethreads">Speeding up test generation</a></li>
         </ul></li>
-      <li><a href="#getting_help">Getting help</a>
+      <li><a href="#checkrep">Specifying representation invariant methods (such as <code>checkRep</code>)</a></li>
+      <li><a href="#exercised-filter">Instrumenting classes for filtering tests on exercised-classes</a></li>
+      <li><a href="#primitives">Specifying additional primitive values</a></li>
+      <li><a href="#usethreads">Speeding up test generation</a></li>
+    </ul></li>
+  <li><a href="#getting_help">Getting help</a>
+    <ul>
+      <li><a href="#troubleshooting">Troubleshooting</a>
         <ul>
-          <li><a href="#troubleshooting">Troubleshooting</a>
-            <ul>
-              <li><a href="#cannot-find-main">Randoop does not run</a></li>
-              <li><a href="#no-class-found">Randoop cannot find class-under-test</a></li>
-              <li><a href="#no-tests-created">Randoop does not create tests</a></li>
-              <li><a href="#nontermination">Randoop does not terminate</a></li>
-              <li><a href="#nondeterminism">Randoop produces different output on different runs</a></li>
-              <li><a href="#flaky-tests">Randoop stopped because of a flaky test</a></li>
-              <li><a href="#dependent-tests">Tests behave differently in isolation or when reordered</a></li>
-            </ul></li>
+          <li><a href="#cannot-find-main">Randoop does not run</a></li>
+          <li><a href="#no-class-found">Randoop cannot find class-under-test</a></li>
+          <li><a href="#no-tests-created">Randoop does not create tests</a></li>
+          <li><a href="#nontermination">Randoop does not terminate</a></li>
+          <li><a href="#nondeterminism">Randoop produces different output on different runs</a></li>
+          <li><a href="#flaky-tests">Randoop stopped because of a flaky test</a></li>
+          <li><a href="#dependent-tests">Tests behave differently in isolation or when reordered</a></li>
         </ul></li>
-      <li><a href="#credits">Credits</a></li>
-    </ul>
+    </ul></li>
+  <li><a href="#credits">Credits</a></li>
+</ul>
 <!-- end toc -->
 
 <p>
@@ -77,7 +79,7 @@ There is a separate <a href="dev.html">Randoop Developer's Manual</a>.
 </p>
 
 
-<h2 id="Introduction">Introduction</h2>
+<h1 id="Introduction">Introduction</h1>
 
 <p> Writing tests is a difficult and time-consuming activity, and yet
 it is a crucial part of good software engineering. Randoop
@@ -150,7 +152,7 @@ occasions when they fail and reveal a bug or a regression failure.
 </p>
 
 
-<h2 id="getting_randoop">Installing Randoop</h2>
+<h1 id="getting_randoop">Installing Randoop</h1>
 
 <p>
   Download and unzip the file
@@ -186,7 +188,7 @@ occasions when they fail and reveal a bug or a regression failure.
 </p>
 
 
-<h2 id="running_randoop">Running Randoop</h2>
+<h1 id="running_randoop">Running Randoop</h1>
 
 <p>
 Run Randoop by invoking its main class <code>randoop.main.Main</code>:
@@ -241,7 +243,7 @@ java -ea -classpath <em>myclasspath</em>:$(RANDOOP_JAR) randoop.main.Main gentes
 </ul>
 
 
-<h2 id="generating_tests">Generating tests</h2>
+<h1 id="generating_tests">Generating tests</h1>
 
 <p>By default, Randoop generates and then outputs two kinds of unit
   tests, written to separate files.
@@ -269,7 +271,7 @@ describes
 and finally lists Randoop's <a href="#command-line-options">command-line options</a>. </p>
 
 
-<h3 id="example_collections">Example: Generating tests for <code>java.util.Collections</code></h3>
+<h2 id="example_collections">Example: Generating tests for <code>java.util.Collections</code></h2>
 
 <p>Imagine we want to generate tests for the
 class <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Collections.html"><code>java.util.Collections</code></a>.
@@ -316,7 +318,7 @@ RegressionTest will pass.
 </p>
 
 
-<h3 id="specifying-methods">Specifying methods and constructors that may appear in a test</h3>
+<h2 id="specifying-methods">Specifying methods and constructors that may appear in a test</h2>
 
 <p>
 Randoop only invokes a method or constructor <i>M</i> if <b>all</b> of the following are true:
@@ -375,7 +377,7 @@ Be careful when choosing
 classes and methods to test.</i></b>
 </p>
 
-<h3 id="classifying_tests">Classifying tests</h3>
+<h2 id="classifying_tests">Classifying tests</h2>
 
 <p>
 Randoop generates many tests internally, and it classifies each generated test as
@@ -450,7 +452,7 @@ mechanism</a>.
 </p>
 
 
-<h3 id="error_revealing_tests">Error-revealing tests</h3>
+<h2 id="error_revealing_tests">Error-revealing tests</h2>
 
 <p>
 When Randoop includes a error-revealing test in file <code>ErrorTest.java</code>,
@@ -478,7 +480,7 @@ You may wish to minimize the test case to ease debugging.
 </p>
 
 
-<h4 id="kinds_of_errors">What kinds of errors does Randoop check for?</h4>  <!-- omit from toc -->
+<h3 id="kinds_of_errors">What kinds of errors does Randoop check for?</h3>  <!-- omit from toc -->
 
 <p>
   When Randoop calls a method that creates an object, Randoop verifies that
@@ -539,7 +541,7 @@ You can add additional contracts to Randoop.
 </p>
 
 
-<h3 id="regression_tests">Regression tests</h3>
+<h2 id="regression_tests">Regression tests</h2>
 
 <p>
 The tests in the <code>RegressionTest*.java</code> files record the current behavior
@@ -573,7 +575,7 @@ and it will fail if the code is changed to no longer throw that exception.
 </p>
 
 
-<h4 id="regression_test_failures">Regression test failures</h4>
+<h3 id="regression_test_failures">Regression test failures</h3>
 
 <p>
 If a regression test fails, there are three possible causes.  You need to
@@ -628,7 +630,7 @@ the <a href="#map_calls"><code>map_calls</code> feature of the Randoop
 agent</a> to replace the new functionality by the old functionality.)
 </p>
 
-<h2 id="customize">Customizing Randoop's behavior to your application</h2>
+<h1 id="customize">Customizing Randoop's behavior to your application</h1>
 
 <p>
 If you run Randoop without any command-line arguments or customizations to
@@ -638,7 +640,7 @@ Randoop about your application, and that is how we recommend using Randoop.
 </p>
 
 
-<h3 id="command-line-options">Command-line options</h3>
+<h2 id="command-line-options">Command-line options</h2>
 
 <!-- start options doc (DO NOT EDIT BY HAND) -->
 <ul>
@@ -1036,7 +1038,7 @@ Randoop about your application, and that is how we recommend using Randoop.
 <!-- end options doc -->
 
 
-<h3 id="map_calls">Avoiding calls to specific methods</h3>
+<h2 id="map_calls">Avoiding calls to specific methods</h2>
 
 <p>
 The code under test may make calls to certain methods that you do not want
@@ -1134,7 +1136,7 @@ call.
 </p>
 
 
-<h3 id="checkrep">Specifying representation invariant methods (such as <code>checkRep</code>)</h3>
+<h2 id="checkrep">Specifying representation invariant methods (such as <code>checkRep</code>)</h2>
 
 <p>
 The "representation invariant" of a class is a property that all
@@ -1177,7 +1179,7 @@ exception escaping the method as the rep invariant being violated.
 
 </ul>
 
-<h3 id="exercised-filter">Instrumenting classes for filtering tests on exercised-classes</h3>
+<h2 id="exercised-filter">Instrumenting classes for filtering tests on exercised-classes</h2>
 
 <p>
   Randoop will ordinarily generate tests involving all accessible constructors,
@@ -1203,7 +1205,7 @@ exception escaping the method as the rep invariant being violated.
     <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.)
 </p>
 
-<h3 id="primitives">Specifying additional primitive values</h3>
+<h2 id="primitives">Specifying additional primitive values</h2>
 
 <p>
 By default, Randoop uses the following pool of primitive values as
@@ -1307,7 +1309,7 @@ classes under test
 </li>
 </ul>
 
-<h3 id="usethreads">Speeding up test generation</h3>
+<h2 id="usethreads">Speeding up test generation</h2>
 
 <p>
 If you're interested in increasing the number of tests that Randoop
@@ -1326,7 +1328,7 @@ taking too long to execute and cannot be killed by Randoop.
 </p>
 
 
-<h2 id="getting_help">Getting help</h2>
+<h1 id="getting_help">Getting help</h1>
 
 <p>You can get help on Randoop in the following ways:</p>
 
@@ -1382,9 +1384,9 @@ java -ea -classpath $(RANDOOP_JAR) randoop.main.Main help --unpub gentests
 </ul>
 
 
-<h3 id="troubleshooting">Troubleshooting</h3>
+<h2 id="troubleshooting">Troubleshooting</h2>
 
-<h4 id="cannot-find-main">Randoop does not run</h4>
+<h3 id="cannot-find-main">Randoop does not run</h3>
 
 <p>
   If the command to run Randoop has the output
@@ -1410,7 +1412,7 @@ See the Java Tutorial on
 <a href="https://docs.oracle.com/javase/tutorial/essential/environment/paths.html">path and classpaths</a>.
 </p>
 
-<h4 id="no-class-found">Randoop cannot find class-under-test</h4>
+<h3 id="no-class-found">Randoop cannot find class-under-test</h3>
 
 <p>
   If when Randoop is run, something like the following is output
@@ -1430,7 +1432,7 @@ No class found for type name "example.ExampleClass"
   for platform specific information on paths.
 </p>
 
-<h4 id="no-tests-created">Randoop does not create tests</h4>
+<h3 id="no-tests-created">Randoop does not create tests</h3>
 
 <p>
 If Randoop outputs
@@ -1444,7 +1446,7 @@ change.  See elsewhere in this manual for suggestions.
 </p>
 
 
-<h4 id="nontermination">Randoop does not terminate</h4>
+<h3 id="nontermination">Randoop does not terminate</h3>
 
 <p>
 If Randoop does not terminate, run it with the <code>--log=filename</code>
@@ -1459,7 +1461,7 @@ Control key, then press the Backslash key).
 </p>
 
 
-<h4 id="nondeterminism">Randoop produces different output on different runs</h4>
+<h3 id="nondeterminism">Randoop produces different output on different runs</h3>
 
 <p>
 Randoop is deterministic:  if you run it twice with the same arguments, it
@@ -1501,7 +1503,7 @@ sequential Java program are:
   </li>
 </ul>
 
-<h4 id="flaky-tests">Randoop stopped because of a flaky test</h4>
+<h3 id="flaky-tests">Randoop stopped because of a flaky test</h3>
 
 <p>
 Randoop extends previously-generated tests by adding new method calls to them.
@@ -1563,7 +1565,7 @@ rather than discarding them after generating them.
 </p>
 
 
-<h4 id="dependent-tests">Tests behave differently in isolation or when reordered</h4>
+<h3 id="dependent-tests">Tests behave differently in isolation or when reordered</h3>
 
 <p>
 Another symptom of calling Randoop on methods that have global side effects, in
@@ -1592,14 +1594,14 @@ tests</a>.
 </p>
 
 
-<!-- <h2 id="faq">FAQ: Frequently Asked Questions (and common problems)</h2> -->
-<!-- <h3 id="q1">How do I determine what "helper" classes to add?</h3> -->
-<!-- <h3 id="q2">Randoop generates many tests that look similar</h3> -->
-<!-- <h3 id="q3">Randoop does not output any tests</h3> -->
-<!-- <h3 id="q3">Randoop is hanging</h3> -->
+<!-- <h1 id="faq">FAQ: Frequently Asked Questions (and common problems)</h1> -->
+<!-- <h2 id="q1">How do I determine what "helper" classes to add?</h2> -->
+<!-- <h2 id="q2">Randoop generates many tests that look similar</h2> -->
+<!-- <h2 id="q3">Randoop does not output any tests</h2> -->
+<!-- <h2 id="q3">Randoop is hanging</h2> -->
 
 
-<h2 id="credits">Credits</h2>
+<h1 id="credits">Credits</h1>
 
 <p>
 The following individuals have contributed code to Randoop:
