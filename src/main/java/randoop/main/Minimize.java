@@ -219,12 +219,14 @@ public class Minimize extends CommandHandler {
     // Run the Java file.
     String runResult = runJavaFile(newFilePath, classPath, packageName, timeoutLimit);
 
-    // The expected output is a map from method name to failure stack trace with line numbers removed.
+    // The expected output is a map from method name to failure stack trace
+    // with line numbers removed.
     Map<String, String> expectedOutput = normalizeJUnitOutput(runResult);
 
     System.out.println("Minimizing: " + filePath);
 
-    // Minimize the Java test suite, simplify variable type names, sort the import statements,
+    // Minimize the Java test suite, simplify variable type names, sort the
+    // import statements,
     // and write to a new file.
     minimizeTestSuite(compUnit, packageName, filePath, classPath, expectedOutput, timeoutLimit);
     compUnit =
@@ -269,7 +271,8 @@ public class Minimize extends CommandHandler {
           List<AnnotationExpr> annotationExprs = method.getAnnotations();
           for (AnnotationExpr annotationExpr : method.getAnnotations()) {
             if (annotationExpr.toString().equals("@Test")) {
-              // Minimize the method only if it is a JUnit test method.
+              // Minimize the method only if it is a JUnit test
+              // method.
               minimizeMethod(
                   method, cu, packageName, filePath, classpath, expectedOutput, timeoutLimit);
               System.out.println("Minimized method " + method.getName());
@@ -312,7 +315,8 @@ public class Minimize extends CommandHandler {
     for (int i = statements.size() - 1; i >= 0; i--) {
       Statement currStmt = statements.get(i);
 
-      // Remove the current statement. We will re-insert simplifications of it.
+      // Remove the current statement. We will re-insert simplifications
+      // of it.
       statements.remove(i);
 
       // Obtain a list of possible replacements for the current statement.
@@ -320,20 +324,25 @@ public class Minimize extends CommandHandler {
       boolean replacementFound = false;
       for (Statement stmt : replacements) {
         // Add replacement statement to the method's body.
-        // If stmt is null, don't add anything since null represents removal of the statement.
+        // If stmt is null, don't add anything since null represents
+        // removal of the statement.
         if (stmt != null) {
           statements.add(i, stmt);
         }
 
-        // Write, compile, and run the new Java file with the new suffix "Minimized".
+        // Write, compile, and run the new Java file with the new suffix
+        // "Minimized".
         String newFilePath = writeToFile(compUnit, filePath, "Minimized");
         if (checkCorrectlyMinimized(
             newFilePath, classpath, packageName, expectedOutput, timeoutLimit)) {
-          // No compilation or runtime issues, obtained output is the same as the expected output.
-          // Use simplification of this statement and continue with next statement.
+          // No compilation or runtime issues, obtained output is the
+          // same as the expected output.
+          // Use simplification of this statement and continue with
+          // next statement.
           replacementFound = true;
 
-          // Assertions are never simplified, only removed.  If currStmt is an assertion, then stmt is null.
+          // Assertions are never simplified, only removed. If
+          // currStmt is an assertion, then stmt is null.
           storeValueFromAssertion(currStmt, primitiveValues);
           break;
         } else {
@@ -476,6 +485,7 @@ public class Minimize extends CommandHandler {
     } else {
       // Replacement with null on the right hand side.
       resultList.add(rhsAssignWithValue(vdExpr, type, null));
+
       if (type instanceof ReferenceType) {
         ReferenceType rType = (ReferenceType) type;
         if (rType.getType() instanceof ClassOrInterfaceType) {
@@ -564,7 +574,7 @@ public class Minimize extends CommandHandler {
           break;
         case Char:
           if (value.equals("0")) {
-            vd.setInit(new CharLiteralExpr(""));
+            vd.setInit(new CharLiteralExpr("\u0000"));
           } else {
             vd.setInit(new CharLiteralExpr(value));
           }
@@ -575,8 +585,18 @@ public class Minimize extends CommandHandler {
           vd.setInit(new IntegerLiteralExpr(value));
           break;
         case Float:
+          if (value.equals("0")) {
+            vd.setInit(new DoubleLiteralExpr("0.0f"));
+          } else {
+            vd.setInit(new DoubleLiteralExpr(value));
+          }
+          break;
         case Double:
-          vd.setInit(new DoubleLiteralExpr(value));
+          if (value.equals("0")) {
+            vd.setInit(new DoubleLiteralExpr("0.0"));
+          } else {
+            vd.setInit(new DoubleLiteralExpr(value));
+          }
           break;
         case Long:
           vd.setInit(new LongLiteralExpr(value));
@@ -645,7 +665,8 @@ public class Minimize extends CommandHandler {
       int timeoutLimit) {
     // Map from fully-qualified type name to simple type name.
     Map<String, String> typeNameMap = new HashMap<String, String>();
-    // Set of fully-qualified type names that are used in variable declarations.
+    // Set of fully-qualified type names that are used in variable
+    // declarations.
     Set<ClassOrInterfaceType> fullyQualifiedNames = new HashSet<ClassOrInterfaceType>();
     // Collect all of the type names in the compilation unit.
     new ClassTypeVisitor().visit(compUnit, fullyQualifiedNames);
@@ -654,17 +675,13 @@ public class Minimize extends CommandHandler {
     // with mappings from fully-qualified names to simple type names. Also
     // add necessary import statements.
     for (ClassOrInterfaceType type : fullyQualifiedNames) {
-      String typeName = type.toString();
+      String typeName = type.getScope() + "." + type.getName();
 
-      // If the type is a generic type, handle the main type.  The other
-      // elements are included in the list and are processed separately.
-      int leftAngleBracketIndex = typeName.indexOf('<');
-      if (leftAngleBracketIndex >= 0) {
-        typeName = typeName.substring(0, leftAngleBracketIndex);
-      }
       // Add an import statement to the compilation unit.
       addImport(compUnit, typeName);
-      // Add to the map, the fully-qualified type name to the simple type name.
+
+      // Add to the map, the fully-qualified type name to the simple type
+      // name.
       typeNameMap.put(typeName, type.getName());
     }
 
@@ -837,7 +854,8 @@ public class Minimize extends CommandHandler {
     Process process;
 
     if (executionDir == null || executionDir.isEmpty()) {
-      // Execution directory is null, execute command in default directory.
+      // Execution directory is null, execute command in default
+      // directory.
       try {
         process = Runtime.getRuntime().exec(command);
       } catch (IOException e) {
@@ -907,7 +925,8 @@ public class Minimize extends CommandHandler {
       return new Outputs("", "A computation in the process threw an exception.", 1);
     }
 
-    // Collect and return the results from the standard output and error output.
+    // Collect and return the results from the standard output and error
+    // output.
     return new Outputs(stdOutputString, errOutputString, timeLimitProcess.exitValue());
   }
 
@@ -935,9 +954,11 @@ public class Minimize extends CommandHandler {
       // Read through the trace, line by line.
       while ((line = bufReader.readLine()) != null) {
         String indexStr = index + ") ";
-        // Check if the current line is the start of a failure stack trace for a method.
+        // Check if the current line is the start of a failure stack
+        // trace for a method.
         if (line.startsWith(indexStr)) {
-          // If a previous failure stack trace is being read, add the existing method name
+          // If a previous failure stack trace is being read, add the
+          // existing method name
           // and stack trace to the map.
           if (methodName != null) {
             resultMap.put(methodName, result.toString());
@@ -949,11 +970,13 @@ public class Minimize extends CommandHandler {
           methodName = line;
           index += 1;
         } else if (line.isEmpty()) {
-          // Reached an empty line which marks the end of the JUnit output.
+          // Reached an empty line which marks the end of the JUnit
+          // output.
           resultMap.put(methodName, result.toString());
           break;
         } else if (methodName != null) {
-          // Look for a left-parentheses which marks the position where a line number will appear.
+          // Look for a left-parentheses which marks the position
+          // where a line number will appear.
           int lParenIndex = line.indexOf('(');
           if (lParenIndex >= 0) {
             // Remove the substring containing the line number.
@@ -1099,7 +1122,8 @@ public class Minimize extends CommandHandler {
         // Create a string representing a wildcard import.
         String wildcardName = importName.substring(0, lastSeparator);
         String wildcardImportStr = "import " + wildcardName + ".*" + ";";
-        // If a wildcard import exists, don't need to add a redundant import.
+        // If a wildcard import exists, don't need to add a redundant
+        // import.
         if (wildcardImportStr.equals(currImportStr)) {
           return;
         }
