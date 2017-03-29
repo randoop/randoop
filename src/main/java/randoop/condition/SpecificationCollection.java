@@ -90,12 +90,21 @@ public class SpecificationCollection {
         }
         try {
           accessibleObject = getReflectionObject(operation);
-        } catch (ClassNotFoundException | NoSuchMethodException e) {
+        } catch (ClassNotFoundException e) {
           String msg =
-              "Error loading operation for specification: "
-                  + specification.toString()
-                  + ". Exception: "
-                  + e.getMessage();
+              String.format(
+                  "Could not load operation for specification: %n%s%n" + "Class not found: %s",
+                  specification.getOperation().toString(), e.getMessage());
+
+          if (Log.isLoggingOn()) {
+            Log.logLine(msg);
+          }
+          throw new RandoopConditionError(msg, e);
+        } catch (NoSuchMethodException e) {
+          String msg =
+              String.format(
+                  "Could not load operation for specification: %n%s%n" + "No such method: %s",
+                  specification.getOperation().toString(), e.getMessage());
           if (Log.isLoggingOn()) {
             Log.logLine(msg);
           }
@@ -125,7 +134,7 @@ public class SpecificationCollection {
     }
     Class<?> declaringClass = TypeNames.getTypeForName(operation.getClassname());
     if (operation.isConstructor()) {
-      return declaringClass.getConstructor(argTypes);
+      return declaringClass.getDeclaredConstructor(argTypes);
     } else {
       return declaringClass.getDeclaredMethod(operation.getName(), argTypes);
     }

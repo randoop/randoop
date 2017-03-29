@@ -402,6 +402,8 @@ public class OperationModel {
    * @param concreteClassTypes the declaring class types for the operations
    * @param visibility the visibility predicate
    * @param reflectionPredicate the reflection predicate
+   * @param operationConditions the collection of {@link
+   *     randoop.condition.specification.OperationSpecification}
    */
   private void addOperations(
       Set<ClassOrInterfaceType> concreteClassTypes,

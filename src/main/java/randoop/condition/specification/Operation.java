@@ -108,13 +108,8 @@ public class Operation {
 
   @Override
   public String toString() {
-    return "{ classname: "
-        + classname
-        + ", name: "
-        + name
-        + ", parameterTypes: "
-        + parameterTypes
-        + " }";
+    return String.format(
+        "{%n classname: %s,%n name: %s,%n parameterTypes: %s%n}", classname, name, parameterTypes);
   }
 
   /**

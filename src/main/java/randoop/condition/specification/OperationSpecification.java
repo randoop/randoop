@@ -154,16 +154,43 @@ public class OperationSpecification {
         + " }";
   }
 
+  /**
+   * Adds {@link ThrowsSpecification} objects from the list to this {@link OperationSpecification}.
+   *
+   * @param specifications the list of {@link ThrowsSpecification} objects
+   */
   public void addThrowsSpecifications(List<ThrowsSpecification> specifications) {
     throwsSpecifications.addAll(specifications);
   }
 
+  /**
+   * Adds {@link PostSpecification} objects from the list to this {@link OperationSpecification}.
+   *
+   * @param specifications the list of {@link PostSpecification} objects
+   */
   public void addReturnSpecifications(List<PostSpecification> specifications) {
     postSpecifications.addAll(specifications);
   }
 
+  /**
+   * Adds {@link PreSpecification} objects from the list to this {@link OperationSpecification}.
+   *
+   * @param specifications the list of {@link PreSpecification} objects
+   */
   public void addParamSpecifications(List<PreSpecification> specifications) {
     preSpecifications.addAll(specifications);
+  }
+
+  /**
+   * Indicates whether this {@link OperationSpecification} contains any pre-, post- or
+   * throws-specifications.
+   *
+   * @return {@code true} if there are no pre-, post- or throws-specifications, false otherwise
+   */
+  public boolean isEmpty() {
+    return throwsSpecifications.isEmpty()
+        && postSpecifications.isEmpty()
+        && preSpecifications.isEmpty();
   }
 
   /**
@@ -185,7 +212,7 @@ public class OperationSpecification {
   }
 
   /**
-   * Return the list of {@link Specification} objects for this operation specification.
+   * Return the list of {@link ThrowsSpecification} objects for this {@link OperationSpecification}.
    *
    * @return the list of specifications for this operation specification, is non-null
    */
@@ -193,10 +220,20 @@ public class OperationSpecification {
     return throwsSpecifications;
   }
 
+  /**
+   * Return the list of {@link PostSpecification} objects for this {@link OperationSpecification}.
+   *
+   * @return the list of {@link PostSpecification} objects for this specification
+   */
   public List<PostSpecification> getPostSpecifications() {
     return postSpecifications;
   }
 
+  /**
+   * Return the list of {@link PreSpecification} objects for this {@link OperationSpecification}.
+   *
+   * @return the list of {@link PreSpecification} objects for this specification
+   */
   public List<PreSpecification> getPreSpecifications() {
     return preSpecifications;
   }
