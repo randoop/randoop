@@ -26,6 +26,7 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
+
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import edu.emory.mathcs.backport.java.util.Collections;
 import java.io.BufferedReader;
@@ -227,7 +228,8 @@ public class Minimize extends CommandHandler {
     // Minimize the Java test suite, simplify variable type names, sort the
     // import statements,
     // and write to a new file.
-    minimizeTestSuite(compUnit, packageName, filePath, classPath, expectedOutput, timeoutLimit);
+    minimizeTestSuite(
+        compUnit, packageName, filePath, classPath, expectedOutput, timeoutLimit, verboseOutput);
     compUnit =
         simplifyVariableTypeNames(
             compUnit, packageName, filePath, classPath, expectedOutput, timeoutLimit);
@@ -253,6 +255,7 @@ public class Minimize extends CommandHandler {
    * @param classpath classpath used to compile and run the Java file
    * @param expectedOutput expected JUnit output when the Java file is compiled and run
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
+   * @param verboseOuput prints out information about minimization status if true
    */
   private static void minimizeTestSuite(
       CompilationUnit cu,
@@ -260,7 +263,8 @@ public class Minimize extends CommandHandler {
       String filePath,
       String classpath,
       Map<String, String> expectedOutput,
-      int timeoutLimit) {
+      int timeoutLimit,
+      boolean verboseOuput) {
     for (TypeDeclaration type : cu.getTypes()) {
       for (BodyDeclaration member : type.getMembers()) {
         if (member instanceof MethodDeclaration) {
@@ -274,7 +278,10 @@ public class Minimize extends CommandHandler {
               // method.
               minimizeMethod(
                   method, cu, packageName, filePath, classpath, expectedOutput, timeoutLimit);
-              System.out.println("Minimized method " + method.getName());
+
+              if (verboseOuput) {
+                System.out.println("Minimized method " + method.getName() + ".");
+              }
 
               break;
             }
@@ -480,7 +487,7 @@ public class Minimize extends CommandHandler {
     Type type = vdExpr.getType();
     if (type instanceof PrimitiveType) {
       // Replacement with zero value on the right hand side.
-      resultList.add(rhsAssignWithValue(vdExpr, type, "0"));
+      resultList.add(rhsAssignWithValue(vdExpr, type, null));
     } else {
       // Replacement with null on the right hand side.
       resultList.add(rhsAssignWithValue(vdExpr, type, null));
@@ -492,7 +499,7 @@ public class Minimize extends CommandHandler {
           // Check if the type is a wrapped type.
           if (classType.isBoxedType()) {
             // Replacement with zero value on the right hand side.
-            resultList.add(rhsAssignWithValue(vdExpr, classType.toUnboxedType(), "0"));
+            resultList.add(rhsAssignWithValue(vdExpr, classType.toUnboxedType(), null));
           }
         }
       }
@@ -552,8 +559,7 @@ public class Minimize extends CommandHandler {
     }
 
     // Create the resulting expression, a copy of the original expression
-    // which
-    // will be modified and returned.
+    // which will be modified and returned.
     VariableDeclarationExpr resultExpr = (VariableDeclarationExpr) vdExpr.clone();
 
     // Obtain a reference to the variable declaration.
@@ -565,7 +571,7 @@ public class Minimize extends CommandHandler {
     if (exprType instanceof PrimitiveType) {
       switch (((PrimitiveType) exprType).getType()) {
         case Boolean:
-          if (value.equals("0")) {
+          if (value == null) {
             vd.setInit(new BooleanLiteralExpr(Boolean.parseBoolean("false")));
           } else {
             vd.setInit(new BooleanLiteralExpr(Boolean.parseBoolean(value)));
@@ -578,21 +584,25 @@ public class Minimize extends CommandHandler {
           vd.setInit(new IntegerLiteralExpr(value));
           break;
         case Float:
-          if (value.equals("0")) {
+          if (value == null) {
             vd.setInit(new DoubleLiteralExpr("0f"));
           } else {
             vd.setInit(new DoubleLiteralExpr(value));
           }
           break;
         case Double:
-          if (value.equals("0")) {
+          if (value == null) {
             vd.setInit(new DoubleLiteralExpr("0.0"));
           } else {
             vd.setInit(new DoubleLiteralExpr(value));
           }
           break;
         case Long:
-          vd.setInit(new LongLiteralExpr(value));
+          if (value == null) {
+            vd.setInit(new LongLiteralExpr("0l"));
+          } else {
+            vd.setInit(new LongLiteralExpr(value));
+          }
           break;
       }
     } else {
@@ -618,13 +628,12 @@ public class Minimize extends CommandHandler {
    */
   private static Statement removeLeftHandSideSimplification(VariableDeclarationExpr vdExpr) {
     if (vdExpr.getVars().size() > 1) {
-      // More than one variable declared in this expression.
+      // More than 1 variable declared in this expression.
       return null;
     }
 
     // Create the resulting expression, a copy of the original expression
-    // which
-    // will be modified and returned.
+    // which will be modified and returned.
     VariableDeclarationExpr resultExpr = (VariableDeclarationExpr) vdExpr.clone();
     List<VariableDeclarator> vars = resultExpr.getVars();
     VariableDeclarator vd = vars.get(0);
@@ -700,6 +709,7 @@ public class Minimize extends CommandHandler {
         System.err.println("IOUtils error creating input stream from string.");
         continue;
       }
+
       // Check that the simplification is correct.
       String newFilePath = writeToFile(result, filePath, "Minimized");
       if (checkCorrectlyMinimized(
@@ -754,12 +764,12 @@ public class Minimize extends CommandHandler {
     // Obtain directory to carry out compilation and execution step.
     String executionDir = getExecutionDirectory(filePath, packageName);
 
-    // Command to compile the input Java file
+    // Command to compile the input Java file.
     String command = "javac -classpath " + systemClassPath;
-    // Add current directory to class path
+    // Add current directory to class path.
     command += pathSeparator + ".";
     if (classpath != null) {
-      // Add specified classpath to command
+      // Add specified classpath to command.
       command += pathSeparator + classpath;
     }
     command += " " + filePath;
@@ -790,7 +800,7 @@ public class Minimize extends CommandHandler {
       dirPath = directoryContainingFile.toString();
     }
 
-    // Fully-qualified classname
+    // Fully-qualified classname.
     String fqClassName = getClassName(filePath);
     if (packageName != null) {
       fqClassName = packageName + "." + fqClassName;
@@ -941,7 +951,7 @@ public class Minimize extends CommandHandler {
 
     StringBuilder result = new StringBuilder();
     try {
-      // JUnit output starts with index 1 for first failure
+      // JUnit output starts with index 1 for first failure.
       int index = 1;
 
       // Read through the trace, line by line.
@@ -951,8 +961,7 @@ public class Minimize extends CommandHandler {
         // trace for a method.
         if (line.startsWith(indexStr)) {
           // If a previous failure stack trace is being read, add the
-          // existing method name
-          // and stack trace to the map.
+          // existing method name and stack trace to the map.
           if (methodName != null) {
             resultMap.put(methodName, result.toString());
 
