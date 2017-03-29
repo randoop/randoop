@@ -18,7 +18,10 @@ public class TestInputWithWrappedTypes {
     Float f = 10.0f;
     org.junit.Assert.assertTrue(f - 10.0f < 0.001f);
 
+    Character c = 'c';
+    org.junit.Assert.assertTrue(c == 'c');
+
     // Failing assertion.
-    org.junit.Assert.assertTrue(d * i * f > 1000.0);
+    org.junit.Assert.assertTrue(d * i * f * c > 70000.0);
   }
 }

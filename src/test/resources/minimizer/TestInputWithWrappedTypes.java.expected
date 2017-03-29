@@ -10,9 +10,10 @@ public class TestInputWithWrappedTypesMinimized {
     @Test
     public void test1() throws Throwable {
         Integer i = 0;
-        Double d = 2.0;
-        Float f = 10.0f;
+        Double d = 0.0;
+        Float f = 0f;
+        Character c = 0;
         // Failing assertion.
-        org.junit.Assert.assertTrue(d * i * f > 1000.0);
+        org.junit.Assert.assertTrue(d * i * f * c > 70000.0);
     }
 }

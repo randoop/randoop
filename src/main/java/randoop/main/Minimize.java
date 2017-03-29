@@ -13,7 +13,7 @@ import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
-import com.github.javaparser.ast.expr.CharLiteralExpr;
+
 import com.github.javaparser.ast.expr.DoubleLiteralExpr;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.IntegerLiteralExpr;
@@ -573,12 +573,6 @@ public class Minimize extends CommandHandler {
           }
           break;
         case Char:
-          if (value.equals("0")) {
-            vd.setInit(new CharLiteralExpr("\u0000"));
-          } else {
-            vd.setInit(new CharLiteralExpr(value));
-          }
-          break;
         case Byte:
         case Short:
         case Int:
@@ -586,7 +580,7 @@ public class Minimize extends CommandHandler {
           break;
         case Float:
           if (value.equals("0")) {
-            vd.setInit(new DoubleLiteralExpr("0.0f"));
+            vd.setInit(new DoubleLiteralExpr("0f"));
           } else {
             vd.setInit(new DoubleLiteralExpr(value));
           }
