@@ -382,8 +382,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * How to use literal values that are specified via the <code>--literals-file</code> command-line
-   * option. Note that the package literal level cannot be specified if using <code>
-   * --weighted-constants</code> or <code>--weighted-sequences</code>.
+   * option. Note that this is no longer supported. All literal values supplied by the
+   * aforementioned option are used at a global and class level by default.
    *
    * @see ClassLiteralsMode
    */
@@ -406,21 +406,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
     ALL
   }
 
-  /**
-   * Whether to use the weighted-constants static weighting scheme to bias the sequence selection.
-   * Note that this weighting scheme dominates the <code>--small-tests</code> weight scheme, but can
-   * be used with <code>--weighted-sequences</code>.
-   */
-  @Option("Whether to use weighted constants in sequence selection")
-  public static boolean weighted_constants = false;
-
-  /**
-   * What probability to select from only weighted-constant sequences during sequence selection.
-   * This is only applicable with the <code>--weighted-constants</code> option. Note that the set of
-   * weighted-constant sequences selected from also incorporate dynamic weights if <code>
-   * --weighted-sequences</code> is used.
-   */
-  @Option("What probability to select only constants mined through --weighted-constants")
+  /** What probability to select from only extracted literal sequences during sequence selection. */
+  @Option("What probability to select only extracted literals")
   public static double p_const = .01;
 
   // Implementation note: when checking whether a String S exceeds the given
@@ -448,7 +435,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static double alias_ratio = 0;
 
   /**
-   * Favor shorter sequences when assembling new sequences out of old ones.
+   * Favor shorter sequences when assembling new sequences out of old ones. Randoop already favors
+   * shorter sequences by default while striving for higher coverage, but this option may be
+   * beneficial in some cases.
    *
    * <p>Randoop generates new tests by combining old previously-generated tests. If this option is
    * given, tests with fewer calls are given greater weight during its random selection. This has
@@ -456,15 +445,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Favor shorter tests during generation")
   public static boolean small_tests = false;
-
-  /**
-   * Whether to use the weighted-sequences dynamic weighting scheme to bias the sequence selection.
-   * Note that this weighting scheme dominates the <code>--small-tests</code> weight scheme, but can
-   * be used with <code>
-   * --weighted-constants</code>. Performance may be similar to <code>--small-tests</code>.
-   */
-  @Option("Whether to use weighted sequences in sequence selection")
-  public static boolean weighted_sequences = false;
 
   /**
    * Clear the component set each time it contains the given number of inputs.

@@ -2,8 +2,11 @@ package randoop.generation;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
+import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedClassOperation;
 import randoop.operation.TypedOperation;
 import randoop.reflection.TypeInstantiator;
@@ -15,12 +18,13 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.PrimitiveType;
 import randoop.types.Type;
-import randoop.util.ListOfLists;
+import randoop.util.Randomness;
 import randoop.util.SimpleList;
 
 /**
  * Stores and provides means to access the component sequences generated during a run of Randoop.
- * "Component sequences" are sequences that Randoop uses to create larger sequences.
+ * "Component sequences" are sequences that Randoop uses to create larger sequences. Also stores and
+ * provides means to access the frequency of extracted class literals.
  *
  * <p>This class manages different collections of component sequences:
  *
@@ -28,7 +32,6 @@ import randoop.util.SimpleList;
  *   <li>General components that can be used as input to any method in any class.
  *   <li>Class literals: components representing literal values that apply only to a specific class
  *       and should not be used as inputs to other classes.
- *   <li>Package literals: analogous to class literals but at the package level.
  * </ul>
  *
  * SEED SEQUENCES. Seed sequences are sequences that were not created during the generation process
@@ -39,10 +42,17 @@ import randoop.util.SimpleList;
  */
 public class ComponentManager {
 
+  /**
+   * This frequency represents the number of times a class-level literal occurs in all classes under
+   * test. Used for the static weighting scheme of extracted class-level literals, which is used in
+   * the weighted sequence selection.
+   */
+  private Map<Sequence, Integer> literalFrequency;
+
   /** The principal set of sequences used to create other, larger sequences by the generator. */
   // Is never null. Contains both general components
   // and seed sequences.
-  protected SequenceCollection gralComponents;
+  private SequenceCollection gralComponents;
 
   /**
    * The subset of the sequences that were given pre-generation to the component manager (via its
@@ -51,21 +61,21 @@ public class ComponentManager {
   // Seeds are all contained in gralComponents. This list
   // is kept to restore seeds if the user calls
   // clearGeneratedSequences().
-  protected final Collection<Sequence> gralSeeds;
+  private final Collection<Sequence> gralSeeds;
 
   /**
    * A set of additional components representing literals that should only be used as input to
    * specific classes.
    */
   // May be null, which represents no class literals present.
-  protected ClassLiterals classLiterals = null;
+  private ClassLiterals classLiterals = null;
 
   /**
    * A set of additional components representing literals that should only be used as input to
    * specific packages.
    */
   // May be null, which represents no package literals present.
-  protected PackageLiterals packageLiterals = null;
+  private PackageLiterals packageLiterals = null;
 
   private Set<Type> sequenceTypes;
 
@@ -76,8 +86,9 @@ public class ComponentManager {
   }
 
   /**
-   * Create a component manager, initially populated with the given sequences, which are considered
-   * seed sequences.
+   * Create a component manager, initially populated with the given sequences (which are considered
+   * seed sequences) and with a literalFrequency map to support sequences' static weighted-constants
+   * weighting scheme.
    *
    * @param generalSeeds seed sequences. Can be null, in which case the seed sequences set is
    *     considered empty.
@@ -87,6 +98,7 @@ public class ComponentManager {
     seedSet.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSet);
     gralComponents = new SequenceCollection(seedSet);
+    literalFrequency = new LinkedHashMap<>();
   }
 
   /**
@@ -128,12 +140,17 @@ public class ComponentManager {
   }
 
   /**
-   * Add a component sequence.
+   * Add a component sequence, and update the sequence's frequency.
    *
    * @param sequence the sequence
    */
   public void addGeneratedSequence(Sequence sequence) {
     gralComponents.add(sequence);
+    if (literalFrequency.containsKey(sequence)) {
+      literalFrequency.put(sequence, literalFrequency.get(sequence) + 1);
+    } else {
+      literalFrequency.put(sequence, 1);
+    }
   }
 
   /**
@@ -141,6 +158,11 @@ public class ComponentManager {
    */
   void clearGeneratedSequences() {
     gralComponents = new SequenceCollection(this.gralSeeds);
+  }
+
+  /** @return the mapping of sequences to their frequency */
+  public Map<Sequence, Integer> getLiteralFrequency() {
+    return literalFrequency;
   }
 
   /*
@@ -165,8 +187,9 @@ public class ComponentManager {
 
   /**
    * Returns component sequences that create values of the type required by the i-th input value of
-   * the given statement. Any applicable class- or package-level literals, those are added to the
-   * collection as well.
+   * the given statement. With probability <code>--p-const</code> (as given by the command-line
+   * option), this only returns the subset of these component sequences that are extracted literals.
+   * Otherwise, it returns all of these component sequences.
    *
    * @param operation the statement
    * @param i the input value index of statement
@@ -175,34 +198,51 @@ public class ComponentManager {
   @SuppressWarnings("unchecked")
   SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i) {
 
+    //TODO: this is causing a lot of the issues with the tests
     Type neededType = operation.getInputTypes().get(i);
 
     SimpleList<Sequence> ret = gralComponents.getSequencesForType(neededType, false);
     if (operation instanceof TypedClassOperation) {
-      if (classLiterals != null || packageLiterals != null) {
-
+      if (Randomness.weightedCoinFlip(GenInputsAbstract.p_const)) {
         ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
         if (declaringCls != null) {
           if (classLiterals != null) {
             SimpleList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
-            if (!sl.isEmpty()) {
-              ret = new ListOfLists<>(ret, sl);
-            }
-          }
-
-          if (packageLiterals != null) {
-            Package pkg = declaringCls.getPackage();
-            if (pkg != null) {
-              SimpleList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
-              if (!sl.isEmpty()) {
-                ret = new ListOfLists<>(ret, sl);
-              }
-            }
+            return sl;
           }
         }
       }
     }
     return ret;
+
+    //    Type neededType = operation.getInputTypes().get(i);
+    //
+    //    SimpleList<Sequence> ret = gralComponents.getSequencesForType(neededType, false);
+    //    if (operation instanceof TypedClassOperation) {
+    //      if (classLiterals != null || packageLiterals != null) {
+    //
+    //        ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+    //        if (declaringCls != null) {
+    //          if (classLiterals != null) {
+    //            SimpleList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
+    //            if (!sl.isEmpty()) {
+    //              ret = new ListOfLists<>(ret, sl);
+    //            }
+    //          }
+    //
+    //          if (packageLiterals != null) {
+    //            Package pkg = declaringCls.getPackage();
+    //            if (pkg != null) {
+    //              SimpleList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
+    //              if (!sl.isEmpty()) {
+    //                ret = new ListOfLists<>(ret, sl);
+    //              }
+    //            }
+    //          }
+    //        }
+    //      }
+    //    }
+    //    return ret;
   }
 
   /**

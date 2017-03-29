@@ -2,8 +2,11 @@ package randoop.generation;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import randoop.BugInRandoopException;
 import randoop.DummyVisitor;
@@ -34,9 +37,42 @@ import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
 import randoop.util.SimpleList;
+import randoop.util.WeightedElement;
 
-/** Randoop's forward, component-based generator. */
+/**
+ * Randoop's forward, component-based generator. Stores the information necessary for the weighted
+ * random selection of input sequences.
+ *
+ * <p>For weighted random selection of an input sequence, there are three weighting schemes:
+ *
+ * <ul>
+ *   <li>Dynamic weighting scheme applicable to all sequences
+ *   <li>Static weighting scheme applicable to only extracted literals
+ *   <li>Default static weighting scheme from {@link Sequence}, applicable to all sequences
+ * </ul>
+ */
 public class ForwardGenerator extends AbstractGenerator {
+
+  /**
+   * Map of sequences to their combined weights. Accounts for the three weighting schemes for each
+   * sequence.
+   */
+  private final Map<WeightedElement, Double> weightMap = new HashMap<>();
+
+  /**
+   * Map of sequences to the number of times they've been executed. Used with the dynamic weighting
+   * scheme.
+   */
+  private final Map<WeightedElement, Integer> sequenceExecutionNumber = new HashMap<>();
+
+  /**
+   * Map of extracted literal sequences to their static weights. Note that these weights are never
+   * changed once initialized.
+   */
+  private final Map<Sequence, Double> literalWeights = new HashMap<>();
+
+  /** Set of all executed sequences */
+  private final Set<Sequence> executedSequences = new HashSet<>();
 
   /**
    * The set of ALL sequences ever generated, including sequences that were executed and then
@@ -65,6 +101,8 @@ public class ForwardGenerator extends AbstractGenerator {
   // been generated, to add the value to the components.
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
+  // Called if you don't want to use the static weighting scheme for extracted literals. Currently used in regression tests and for
+  // backwards compatibility.
   public ForwardGenerator(
       List<TypedOperation> operations,
       Set<TypedOperation> observers,
@@ -81,7 +119,57 @@ public class ForwardGenerator extends AbstractGenerator {
         maxOutSequences,
         componentManager,
         null,
-        listenerManager);
+        listenerManager,
+        0,
+        null);
+  }
+
+  // Called if you don't want to use the static weighting scheme for extracted literals. Currently used in regression tests and for
+  // backwards compatibility.
+  public ForwardGenerator(
+      List<TypedOperation> operations,
+      Set<TypedOperation> observers,
+      long timeMillis,
+      int maxGenSequences,
+      int maxOutSequences,
+      ComponentManager componentManager,
+      IStopper stopper,
+      RandoopListenerManager listenerManager) {
+
+    this(
+        operations,
+        observers,
+        timeMillis,
+        maxGenSequences,
+        maxOutSequences,
+        componentManager,
+        stopper,
+        listenerManager,
+        0,
+        null);
+  }
+
+  public ForwardGenerator(
+      List<TypedOperation> operations,
+      Set<TypedOperation> observers,
+      long timeMillis,
+      int maxGenSequences,
+      int maxOutSequences,
+      ComponentManager componentManager,
+      RandoopListenerManager listenerManager,
+      int numClasses,
+      Map<Sequence, Integer> literalsTermFrequency) {
+    this(
+        operations,
+        observers,
+        timeMillis,
+        maxGenSequences,
+        maxOutSequences,
+        componentManager,
+        null,
+        listenerManager,
+        numClasses,
+        literalsTermFrequency);
   }
 
   public ForwardGenerator(
@@ -92,7 +180,9 @@ public class ForwardGenerator extends AbstractGenerator {
       int maxOutSequences,
       ComponentManager componentManager,
       IStopper stopper,
-      RandoopListenerManager listenerManager) {
+      RandoopListenerManager listenerManager,
+      int numClasses,
+      Map<Sequence, Integer> literalsTermFrequencies) {
 
     super(
         operations,
@@ -108,6 +198,32 @@ public class ForwardGenerator extends AbstractGenerator {
     this.instantiator = componentManager.getTypeInstantiator();
 
     initializeRuntimePrimitivesSeen();
+
+    if (literalsTermFrequencies != null) {
+      // calculate weighting schemes for extracted literals
+      int totalNumLiterals = 0;
+      for (Sequence s : literalsTermFrequencies.keySet()) {
+        totalNumLiterals += literalsTermFrequencies.get(s);
+      }
+      for (Map.Entry<Sequence, Integer> m : componentManager.getLiteralFrequency().entrySet()) {
+
+        // note that this is adjusting the tf(t,d) by normalizing it across the sum of all sequences' tf(t,d)
+        // TODO: explore performance with unnormalized tf(t,d), as well as inter-weight tuning
+        double weight =
+            ((double) literalsTermFrequencies.get(m.getKey()) / totalNumLiterals)
+                * Math.log((double) (numClasses + 1) / ((numClasses + 1) - m.getValue()));
+        literalWeights.put(m.getKey(), weight);
+      }
+    }
+  }
+
+  /**
+   * Should only be called once Randoop is done with executing tests.
+   *
+   * @return the set of all executed sequences
+   */
+  public Set<Sequence> getExecutedSequences() {
+    return executedSequences;
   }
 
   /**
@@ -159,6 +275,8 @@ public class ForwardGenerator extends AbstractGenerator {
     eSeq.exectime = endTime - startTime;
     startTime = endTime; // reset start time.
 
+    processWeights(eSeq);
+
     processSequence(eSeq);
 
     if (eSeq.sequence.hasActiveFlags()) {
@@ -170,6 +288,62 @@ public class ForwardGenerator extends AbstractGenerator {
     eSeq.gentime = gentime;
 
     return eSeq;
+  }
+
+  /**
+   * Updates eSeq's combined weight, which is a combination of the dynamic weighting scheme,
+   * extracted literals static weighting scheme, and {@link Sequence}'s default static weighting
+   * scheme.
+   *
+   * @param eSeq the recently executed sequence which needs a weight update
+   */
+  private void processWeights(ExecutableSequence eSeq) {
+
+    assert eSeq.sequence != null;
+
+    double weight =
+        eSeq.sequence.getWeight(); // final weight used in the actual weighted random selection
+    // use a sequence's default weight as the initial value
+    double dynamicWeight;
+    double literalWeight;
+
+    // TODO: explore fine-tuning of weight interactions. Specifically, magnitudes between literalsWeight and
+    // dynamicWeight are drastic.  This affects the selection in the global pool, where there can be some
+    // sequences with only literalsWeight weights, which are extremely small.
+
+    // update # times a sequence has been executed
+    if (sequenceExecutionNumber.containsKey(eSeq.sequence)) {
+      sequenceExecutionNumber.put(eSeq.sequence, sequenceExecutionNumber.get(eSeq.sequence) + 1);
+    } else {
+      sequenceExecutionNumber.put(eSeq.sequence, 1);
+    }
+
+    // the dynamic weight formula
+    dynamicWeight =
+        1.0
+            / (eSeq.exectime
+                * sequenceExecutionNumber.get(eSeq.sequence)
+                * Math.sqrt(eSeq.sequence.size()));
+    // simply multiply it on top
+    weight *= dynamicWeight;
+
+    // applying the extracted class literals weights, only if this sequence is a class literal
+    if (literalWeights.containsKey(eSeq.sequence)) {
+      literalWeight = literalWeights.get(eSeq.sequence);
+      // layer it on top
+      weight *= literalWeight;
+    }
+
+    assert weight >= 0;
+
+    weightMap.put(eSeq.sequence, weight); // update the final weight for this sequence
+
+    if (GenInputsAbstract.output_sequence_info) {
+      // add it to our growing set of executed sequences if not already added
+      if (!executedSequences.contains(eSeq.sequence)) {
+        executedSequences.add(eSeq.sequence);
+      }
+    }
   }
 
   @Override
@@ -190,7 +364,7 @@ public class ForwardGenerator extends AbstractGenerator {
    *
    * @param seq the sequence
    */
-  protected void processSequence(ExecutableSequence seq) {
+  private void processSequence(ExecutableSequence seq) {
 
     if (seq.hasNonExecutedStatements()) {
       if (Log.isLoggingOn()) {
@@ -302,7 +476,7 @@ public class ForwardGenerator extends AbstractGenerator {
    *
    * @return a new sequence, or null
    */
-  protected ExecutableSequence createNewUniqueSequence() {
+  private ExecutableSequence createNewUniqueSequence() {
 
     if (Log.isLoggingOn()) {
       Log.logLine("-------------------------------------------");
@@ -538,7 +712,7 @@ public class ForwardGenerator extends AbstractGenerator {
   // flag
   // of the returned object is false.
   @SuppressWarnings("unchecked")
-  protected InputsAndSuccessFlag selectInputs(TypedOperation operation) {
+  private InputsAndSuccessFlag selectInputs(TypedOperation operation) {
 
     // Variable inputTypes contains the values required as input to the
     // statement given as a parameter to the selectInputs method.
@@ -738,7 +912,7 @@ public class ForwardGenerator extends AbstractGenerator {
       if (GenInputsAbstract.small_tests) {
         chosenSeq = Randomness.randomMemberWeighted(l);
       } else {
-        chosenSeq = Randomness.randomMember(l);
+        chosenSeq = Randomness.randomMemberWeighted(l, weightMap);
       }
 
       // Now, find values that satisfy the constraint set.
