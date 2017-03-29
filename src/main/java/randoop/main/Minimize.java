@@ -26,9 +26,7 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
-
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import edu.emory.mathcs.backport.java.util.Collections;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -43,6 +41,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -151,7 +150,7 @@ public class Minimize extends CommandHandler {
       System.exit(1);
     }
 
-    // Call the main minimize method
+    // Call the main minimize method.
     return mainMinimize(suitepath, suiteclasspath, testsuitetimeout, verboseminimizer);
   }
 
@@ -226,8 +225,7 @@ public class Minimize extends CommandHandler {
     System.out.println("Minimizing: " + filePath);
 
     // Minimize the Java test suite, simplify variable type names, sort the
-    // import statements,
-    // and write to a new file.
+    // import statements, and write to a new file.
     minimizeTestSuite(
         compUnit, packageName, filePath, classPath, expectedOutput, timeoutLimit, verboseOutput);
     compUnit =
@@ -274,8 +272,7 @@ public class Minimize extends CommandHandler {
           List<AnnotationExpr> annotationExprs = method.getAnnotations();
           for (AnnotationExpr annotationExpr : method.getAnnotations()) {
             if (annotationExpr.toString().equals("@Test")) {
-              // Minimize the method only if it is a JUnit test
-              // method.
+              // Minimize the method only if it is a JUnit test method.
               minimizeMethod(
                   method, cu, packageName, filePath, classpath, expectedOutput, timeoutLimit);
 
@@ -581,7 +578,11 @@ public class Minimize extends CommandHandler {
         case Byte:
         case Short:
         case Int:
-          vd.setInit(new IntegerLiteralExpr(value));
+          if (value == null) {
+            vd.setInit(new IntegerLiteralExpr("0"));
+          } else {
+            vd.setInit(new IntegerLiteralExpr(value));
+          }
           break;
         case Float:
           if (value == null) {
@@ -612,7 +613,6 @@ public class Minimize extends CommandHandler {
 
     // Create a new statement with the simplified expression.
     ExpressionStmt resultStmt = new ExpressionStmt(resultExpr);
-    resultExpr.setParentNode(resultStmt);
 
     return resultStmt;
   }
@@ -640,7 +640,6 @@ public class Minimize extends CommandHandler {
 
     // Create a new statement with only the right hand side.
     ExpressionStmt resultStmt = new ExpressionStmt(vd.getInit());
-    resultExpr.setParentNode(resultStmt);
 
     return resultStmt;
   }
