@@ -59,14 +59,17 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   private final Map<WeightedElement, Double> weightMap = new HashMap<>();
 
-  /** Map of sequences to the number of times they've been executed. */
+  /**
+   * Map of sequences to the number of times they've been executed. Used with the dynamic weighting
+   * scheme.
+   */
   private final Map<WeightedElement, Integer> sequenceExecutionNumber = new HashMap<>();
 
   /**
    * Map of extracted literal sequences to their static weights. Note that these weights are never
    * changed once initialized.
    */
-  private final Map<Sequence, Double> constantWeights = new HashMap<>();
+  private final Map<Sequence, Double> literalWeights = new HashMap<>();
 
   /** Set of all executed sequences */
   private final Set<Sequence> executedSequences = new HashSet<>();
@@ -198,18 +201,18 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (literalsTermFrequencies != null) {
       // calculate weighting schemes for extracted literals
-      int totalNumConstants = 0;
+      int totalNumLiterals = 0;
       for (Sequence s : literalsTermFrequencies.keySet()) {
-        totalNumConstants += literalsTermFrequencies.get(s);
+        totalNumLiterals += literalsTermFrequencies.get(s);
       }
       for (Map.Entry<Sequence, Integer> m : componentManager.getLiteralFrequency().entrySet()) {
 
         // note that this is adjusting the tf(t,d) by normalizing it across the sum of all sequences' tf(t,d)
         // TODO: explore performance with unnormalized tf(t,d), as well as inter-weight tuning
         double weight =
-            ((double) literalsTermFrequencies.get(m.getKey()) / totalNumConstants)
+            ((double) literalsTermFrequencies.get(m.getKey()) / totalNumLiterals)
                 * Math.log((double) (numClasses + 1) / ((numClasses + 1) - m.getValue()));
-        constantWeights.put(m.getKey(), weight);
+        literalWeights.put(m.getKey(), weight);
       }
     }
   }
@@ -302,7 +305,7 @@ public class ForwardGenerator extends AbstractGenerator {
         eSeq.sequence.getWeight(); // final weight used in the actual weighted random selection
     // use a sequence's default weight as the initial value
     double dynamicWeight;
-    double literalsWeight;
+    double literalWeight;
 
     // TODO: explore fine-tuning of weight interactions. Specifically, magnitudes between literalsWeight and
     // dynamicWeight are drastic.  This affects the selection in the global pool, where there can be some
@@ -325,10 +328,10 @@ public class ForwardGenerator extends AbstractGenerator {
     weight *= dynamicWeight;
 
     // applying the extracted class literals weights, only if this sequence is a class literal
-    if (constantWeights.containsKey(eSeq.sequence)) {
-      literalsWeight = constantWeights.get(eSeq.sequence);
+    if (literalWeights.containsKey(eSeq.sequence)) {
+      literalWeight = literalWeights.get(eSeq.sequence);
       // layer it on top
-      weight *= literalsWeight;
+      weight *= literalWeight;
     }
 
     assert weight >= 0;

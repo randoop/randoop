@@ -872,37 +872,60 @@ public class RandoopSystemTest {
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
-  // TODO: can take too much heap space and timeout/fail
-  @Test
-  public void runWeightedSequencesTest() {
-    TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("weighted-sequences");
+  // These tests were used when Randoop didn't use weighted random selection by default
+  //  // TODO: can take too much heap space and timeout/fail
+  //  @Test
+  //  public void runWeightedSequencesTest() {
+  //    TestEnvironment testEnvironment =
+  //        systemTestEnvironment.createTestEnvironment("weighted-sequences");
+  //
+  //    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+  //    options.setPackageName("");
+  //    options.setRegressionBasename("WeightedSequencesReg");
+  //    options.setErrorBasename("WeightedSequencesErr");
+  //    options.setFlag("weighted-sequences");
+  //
+  //    setUpAndRunWeightedTests(testEnvironment, options);
+  //  }
+  //
+  //  // TODO: can take too much heap space and timeout/fail
+  //  @Test
+  //  public void runWeightedConstantsTest() {
+  //    TestEnvironment testEnvironment =
+  //        systemTestEnvironment.createTestEnvironment("weighted-constants");
+  //
+  //    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+  //    options.setPackageName("");
+  //    options.setRegressionBasename("WeightedConstantsReg");
+  //    options.setErrorBasename("WeightedConstantsErr");
+  //    options.setFlag("weighted-constants");
+  //
+  //    setUpAndRunWeightedTests(testEnvironment, options);
+  //  }
+  //  // TODO: can take too much heap space and timeout/fail
+  //  @Test
+  //  public void runWeightedOutputSequenceInfo() {
+  //    TestEnvironment testEnvironment =
+  //            systemTestEnvironment.createTestEnvironment("weighted-sequenceInfo");
+  //
+  //    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+  //    options.setPackageName("");
+  //    options.setRegressionBasename("WeightedSequenceInfoCompareReg");
+  //    options.setErrorBasename("WeightedSequenceInfoCompareErr");
+  //    options.setOption("literals-level", "CLASS");
+  //    options.setOption("literals-file", "CLASSES");
+  //    options.setFlag("weighted-sequences");
+  //    options.setFlag("weighted-constants");
+  //    options.setFlag("output-sequence-info");
+  //
+  //    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+  //    ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
+  //
+  //    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+  //    renameOutputTo("weighted-sequenceInfo.csv");
+  //  }
 
-    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
-    options.setRegressionBasename("WeightedSequencesReg");
-    options.setErrorBasename("WeightedSequencesErr");
-    options.setFlag("weighted-sequences");
-
-    setUpAndRunWeightedTests(testEnvironment, options);
-  }
-
-  // TODO: can take too much heap space and timeout/fail
-  @Test
-  public void runWeightedConstantsTest() {
-    TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("weighted-constants");
-
-    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
-    options.setRegressionBasename("WeightedConstantsReg");
-    options.setErrorBasename("WeightedConstantsErr");
-    options.setFlag("weighted-constants");
-
-    setUpAndRunWeightedTests(testEnvironment, options);
-  }
-
-  // TODO: comment
+  // Tests the --output-sequence-info flag, which outputs information about the generated sequence pool
   @Test
   public void runRandoopOutputSequenceInfo() {
     TestEnvironment testEnvironment =
@@ -916,28 +939,11 @@ public class RandoopSystemTest {
     //options.setOption("literals-file", "CLASSES");
     options.setFlag("output-sequence-info");
 
-    setUpAndRunWeightedTests(testEnvironment, options);
+    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+    ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
+
+    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
     renameOutputTo("randoop-sequenceInfo.csv");
-  }
-
-  // TODO: can take too much heap space and timeout/fail
-  @Test
-  public void runWeightedOutputSequenceInfo() {
-    TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("weighted-sequenceInfo");
-
-    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
-    options.setRegressionBasename("WeightedSequenceInfoCompareReg");
-    options.setErrorBasename("WeightedSequenceInfoCompareErr");
-    options.setOption("literals-level", "CLASS");
-    options.setOption("literals-file", "CLASSES");
-    options.setFlag("weighted-sequences");
-    options.setFlag("weighted-constants");
-    options.setFlag("output-sequence-info");
-
-    setUpAndRunWeightedTests(testEnvironment, options);
-    renameOutputTo("weighted-sequenceInfo.csv");
   }
 
   /* ------------------------------ utility methods ---------------------------------- */
@@ -1175,27 +1181,27 @@ public class RandoopSystemTest {
     }
   }
 
-  /** TODO: occasional issues with heap space running out without inputlimit */
-  private void setUpAndRunWeightedTests(TestEnvironment testEnvironment, RandoopOptions options) {
-
-    options.setOption("inputlimit", "125"); // temp fix
-    options.setOption("timelimit", "30");
-    //options.setOption("outputlimit", "200");
-    options.setOption("null-ratio", "0.3");
-    options.setOption("alias-ratio", "0.3");
-    options.setFlag("clear=100");
-    options.addClassList("resources/systemTest/jdk_classlist.txt");
-
-    // omit methods that use Random
-    options.setOption(
-        "omitmethods", "java2\\.util2\\.Collections\\.shuffle\\(java2\\.util2\\.List\\)");
-
-    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
-    ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
-
-    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
-
-    // TODO: maybe just generate and compile
-    //generateAndCompile(testEnvironment, options);
-  }
+  //  /** TODO: occasional issues with heap space running out without inputlimit */
+  //  private void setUpAndRunWeightedTests(TestEnvironment testEnvironment, RandoopOptions options) {
+  //
+  //    options.setOption("inputlimit", "125"); // temp fix
+  //    options.setOption("timelimit", "30");
+  //    //options.setOption("outputlimit", "200");
+  //    options.setOption("null-ratio", "0.3");
+  //    options.setOption("alias-ratio", "0.3");
+  //    options.setFlag("clear=100");
+  //    options.addClassList("resources/systemTest/jdk_classlist.txt");
+  //
+  //    // omit methods that use Random
+  //    options.setOption(
+  //        "omitmethods", "java2\\.util2\\.Collections\\.shuffle\\(java2\\.util2\\.List\\)");
+  //
+  //    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
+  //    ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
+  //
+  //    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
+  //
+  //    // TODO: maybe just generate and compile
+  //    //generateAndCompile(testEnvironment, options);
+  //  }
 }
