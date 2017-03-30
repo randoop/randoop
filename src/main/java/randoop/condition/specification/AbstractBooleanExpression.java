@@ -1,15 +1,23 @@
 package randoop.condition.specification;
 
+import com.google.gson.annotations.SerializedName;
 import java.util.Objects;
 
 /** Abstract representation of boolean expressions that occur in {@link Specification} objects. */
 public abstract class AbstractBooleanExpression {
 
   /** The text of the Java code for this expression */
+  @SerializedName("condition")
   private final String conditionText;
 
   /** The description of the expression */
   private final String description;
+
+  /** A default constructor is expected for Gson serialization. */
+  private AbstractBooleanExpression() {
+    this.conditionText = "";
+    this.description = "";
+  }
 
   /**
    * Creates a {@link AbstractBooleanExpression} with the given description and condition code.

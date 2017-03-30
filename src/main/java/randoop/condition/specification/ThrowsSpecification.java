@@ -1,5 +1,6 @@
 package randoop.condition.specification;
 
+import com.google.gson.annotations.SerializedName;
 import java.util.Objects;
 
 /**
@@ -26,7 +27,13 @@ import java.util.Objects;
 public class ThrowsSpecification extends Specification {
 
   /** The fully-qualified name of the type of the expected exception */
+  @SerializedName("exception")
   private final String exceptionType;
+
+  private ThrowsSpecification() {
+    super();
+    this.exceptionType = "";
+  }
 
   /**
    * Creates a {@link ThrowsSpecification} representing an exception expected when the guard is

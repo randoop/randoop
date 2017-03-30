@@ -1,5 +1,6 @@
 package randoop.condition.specification;
 
+import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -56,13 +57,25 @@ public class OperationSpecification {
   private final Identifiers identifiers;
 
   /** The specification of expected exceptions for the operation */
+  @SerializedName("throws")
   private final List<ThrowsSpecification> throwsSpecifications;
 
   /** The list of post-conditions on the return value of the operation */
+  @SerializedName("post")
   private final List<PostSpecification> postSpecifications;
 
   /** The list of pre-conditions on the parameters of the operation */
+  @SerializedName("pre")
   private final List<PreSpecification> preSpecifications;
+
+  /** Default constructor is needed for Gson serialization */
+  private OperationSpecification() {
+    this.operation = null;
+    this.identifiers = new Identifiers();
+    this.throwsSpecifications = new ArrayList<>();
+    this.postSpecifications = new ArrayList<>();
+    this.preSpecifications = new ArrayList<>();
+  }
 
   /**
    * Creates an {@link OperationSpecification} for the given operation with no specifications and

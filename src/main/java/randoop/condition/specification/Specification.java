@@ -14,6 +14,12 @@ public abstract class Specification {
   /** The {@link Guard} for this specification */
   private final Guard guard;
 
+  /** Default constructor for Gson serialization. */
+  protected Specification() {
+    this.description = "";
+    this.guard = null;
+  }
+
   /**
    * Creates a {@link Specification} with the given guard.
    *

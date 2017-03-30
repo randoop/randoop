@@ -44,6 +44,13 @@ public class Operation {
   /** The list of fully-qualified type names for the parameters of this operation */
   private final List<String> parameterTypes;
 
+  /** A default constructor is expected for Gson serialization. */
+  private Operation() {
+    this.classname = "";
+    this.name = "";
+    this.parameterTypes = new ArrayList<>();
+  }
+
   /**
    * Create an {@link Operation} object given the names of the declaring class, method or
    * constructor, the parameter types, parameter names, receiver name and return value name.
@@ -121,7 +128,7 @@ public class Operation {
   private static List<String> getTypeNames(Class<?>[] classes) {
     List<String> parameterTypes = new ArrayList<>();
     for (Class<?> aClass : classes) {
-      parameterTypes.add(aClass.getCanonicalName());
+      parameterTypes.add(aClass.getName());
     }
     return parameterTypes;
   }

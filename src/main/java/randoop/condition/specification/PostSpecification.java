@@ -35,6 +35,12 @@ public class PostSpecification extends Specification {
   /** The post-condition */
   private final Property property;
 
+  /** Default constructor for Gson serialization. */
+  private PostSpecification() {
+    super();
+    this.property = null;
+  }
+
   /**
    * Creates a {@link PostSpecification} with the given guard and property.
    *
