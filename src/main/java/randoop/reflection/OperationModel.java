@@ -155,8 +155,7 @@ public class OperationModel {
 
   /**
    * Adds literals to the component manager, by parsing any literals files specified by the user.
-   * Includes literals at two different levels: a class level and a global level. Note that all
-   * literals in class level are a subset of the sequences in global level.
+   * Includes literals at different levels indicated by {@link ClassLiteralsMode}.
    *
    * @param compMgr the component manager
    * @param literalsFile the list of literals file names
@@ -164,26 +163,17 @@ public class OperationModel {
    */
   public void addClassLiterals(
       ComponentManager compMgr, List<String> literalsFile, ClassLiteralsMode literalsLevel) {
-    // TODO: would adding a package level help?
 
     // Add a (1-element) sequence corresponding to each literal to the component
     // manager.
+
     for (String filename : literalsFile) {
       MultiMap<ClassOrInterfaceType, Sequence> literalmap;
-      // For literals, there are only two levels: class and global
       if (filename.equals("CLASSES")) {
         literalmap = classLiteralMap;
       } else {
         literalmap = LiteralFileReader.parse(filename);
       }
-      //      for (ClassOrInterfaceType type : literalmap.keySet()) {
-      //        for (Sequence seq : literalmap.getValues(type)) {
-      //          compMgr.addClassLevelLiteral(
-      //              type, seq); // add sequence to the collection of class literals
-      //          compMgr.addGeneratedSequence(seq); // add sequence to the collection of all sequences
-      //        }
-      //      }
-      //    }
 
       for (ClassOrInterfaceType type : literalmap.keySet()) {
         Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
@@ -196,7 +186,7 @@ public class OperationModel {
               assert pkg != null;
               compMgr.addPackageLevelLiteral(pkg, seq);
               break;
-            case SPECIAL:
+            case CLASS_OR_ALL:
               compMgr.addClassLevelLiteral(
                   type, seq); // add sequence to the collection of class literals
               compMgr.addGeneratedSequence(seq); // add sequence to the collection of all sequences

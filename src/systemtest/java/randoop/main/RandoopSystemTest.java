@@ -251,26 +251,26 @@ public class RandoopSystemTest {
     options.setOption("omit-field-list", "resources/systemTest/naiveomitfields.txt");
 
     CoverageChecker coverageChecker = new CoverageChecker(options);
-    coverageChecker.exclude("java2.util2.ArrayList.add(int, java.lang.Object)");
-    coverageChecker.exclude("java2.util2.ArrayList.get(int)");
-    coverageChecker.exclude("java2.util2.ArrayList.lastIndexOf(java.lang.Object)");
+    //    coverageChecker.exclude("java2.util2.ArrayList.add(int, java.lang.Object)");
+    //    coverageChecker.exclude("java2.util2.ArrayList.get(int)");
+    //    coverageChecker.exclude("java2.util2.ArrayList.lastIndexOf(java.lang.Object)");
     coverageChecker.exclude("java2.util2.ArrayList.readObject(java.io.ObjectInputStream)");
-    coverageChecker.exclude("java2.util2.ArrayList.remove(int)");
+    //    coverageChecker.exclude("java2.util2.ArrayList.remove(int)");
     coverageChecker.exclude("java2.util2.ArrayList.removeRange(int, int)");
     coverageChecker.exclude("java2.util2.ArrayList.set(int, java.lang.Object)");
     coverageChecker.exclude("java2.util2.ArrayList.writeObject(java.io.ObjectOutputStream)");
     coverageChecker.exclude("java2.util2.Collections.eq(java.lang.Object, java.lang.Object)");
     coverageChecker.exclude("java2.util2.Collections.get(java2.util2.ListIterator, int)");
-    coverageChecker.exclude(
-        "java2.util2.Collections.indexOfSubList(java2.util2.List, java2.util2.List)");
+    //    coverageChecker.exclude(
+    //        "java2.util2.Collections.indexOfSubList(java2.util2.List, java2.util2.List)");
     coverageChecker.exclude(
         "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object)");
     coverageChecker.exclude(
         "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object, java2.util2.Comparator)");
     coverageChecker.exclude("java2.util2.Collections.rotate2(java2.util2.List, int)");
-    coverageChecker.exclude("java2.util2.Collections.shuffle(java2.util2.List)");
-    coverageChecker.exclude(
-        "java2.util2.Collections.shuffle(java2.util2.List, java2.util2.Random)");
+    //    coverageChecker.exclude("java2.util2.Collections.shuffle(java2.util2.List)");
+    //    coverageChecker.exclude(
+    //        "java2.util2.Collections.shuffle(java2.util2.List, java2.util2.Random)");
     coverageChecker.exclude("java2.util2.Collections.swap(java.lang.Object[], int, int)");
     coverageChecker.exclude("java2.util2.Collections.swap(java2.util2.List, int, int)");
     coverageChecker.exclude(
@@ -280,32 +280,33 @@ public class RandoopSystemTest {
     coverageChecker.exclude(
         "java2.util2.Collections.synchronizedSet(java2.util2.Set, java.lang.Object)");
     coverageChecker.exclude("java2.util2.Collections.synchronizedSortedMap(java2.util2.SortedMap)");
-    coverageChecker.exclude("java2.util2.Collections.unmodifiableList(java2.util2.List)");
+    //    coverageChecker.exclude("java2.util2.Collections.unmodifiableList(java2.util2.List)");
     coverageChecker.exclude("java2.util2.Collections.unmodifiableSortedMap(java2.util2.SortedMap)");
-    coverageChecker.exclude("java2.util2.Collections.unmodifiableSortedSet(java2.util2.SortedSet)");
-    coverageChecker.exclude("java2.util2.LinkedList.add(int, java.lang.Object)");
-    coverageChecker.exclude("java2.util2.LinkedList.addFirst(java.lang.Object)");
-    coverageChecker.exclude("java2.util2.LinkedList.addLast(java.lang.Object)");
-    coverageChecker.exclude("java2.util2.LinkedList.get(int)");
+    //    coverageChecker.exclude("java2.util2.Collections.unmodifiableSortedSet(java2.util2.SortedSet)");
+    //    coverageChecker.exclude("java2.util2.LinkedList.add(int, java.lang.Object)");
+    //    coverageChecker.exclude("java2.util2.LinkedList.addFirst(java.lang.Object)");
+    //    coverageChecker.exclude("java2.util2.LinkedList.addLast(java.lang.Object)");
+    //    coverageChecker.exclude("java2.util2.LinkedList.get(int)");
     coverageChecker.exclude("java2.util2.LinkedList.readObject(java.io.ObjectInputStream)");
     coverageChecker.exclude("java2.util2.LinkedList.remove(int)");
     coverageChecker.exclude("java2.util2.LinkedList.writeObject(java.io.ObjectOutputStream)");
     coverageChecker.exclude("java2.util2.TreeSet.first()");
-    coverageChecker.exclude("java2.util2.TreeSet.headSet(java.lang.Object)");
+    //    coverageChecker.exclude("java2.util2.TreeSet.headSet(java.lang.Object)");
     coverageChecker.exclude("java2.util2.TreeSet.last()");
     coverageChecker.exclude("java2.util2.TreeSet.readObject(java.io.ObjectInputStream)");
     coverageChecker.exclude("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
     coverageChecker.exclude("java2.util2.TreeSet.tailSet(java.lang.Object)");
     coverageChecker.exclude("java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream)");
 
-    /* TODO: should determine whether these are important */
+    /* necessary to be covered? */
     coverageChecker.exclude("java2.util2.Collections.enumeration(java2.util2.Collection)");
     coverageChecker.exclude("java2.util2.Collections.synchronizedSet(java2.util2.Set)");
-    coverageChecker.exclude("java2.util2.Collections.unmodifiableMap(java2.util2.Map)");
+    //    coverageChecker.exclude("java2.util2.Collections.unmodifiableMap(java2.util2.Map)");
     coverageChecker.exclude("java2.util2.Collections.unmodifiableSet(java2.util2.Set)");
     coverageChecker.exclude("java2.util2.LinkedList.clone()");
-    coverageChecker.exclude("java2.util2.LinkedList.remove(java.lang.Object)");
-    coverageChecker.exclude("java2.util2.LinkedList.toArray()");
+    //    coverageChecker.exclude("java2.util2.LinkedList.remove(java.lang.Object)");
+    //    coverageChecker.exclude("java2.util2.LinkedList.toArray()");
+    coverageChecker.exclude("java2.util2.LinkedList.set(int, java.lang.Object)");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
@@ -383,7 +384,7 @@ public class RandoopSystemTest {
 
     coverageChecker.ignore("examples.Buggy.StackOverflowError()");
 
-    /* TODO: should determine whether these are important */
+    /* necessary to be covered? */
     coverageChecker.ignore("examples.Buggy.Buggy3.equals(java.lang.Object)");
     coverageChecker.ignore("examples.Buggy.Buggy3.hashCode()");
     coverageChecker.ignore("examples.Buggy.Buggy5.equals(java.lang.Object)");
@@ -892,59 +893,6 @@ public class RandoopSystemTest {
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
-  // These tests were used when Randoop didn't use weighted random selection by default
-  //  // TODO: can take too much heap space and timeout/fail
-  //  @Test
-  //  public void runWeightedSequencesTest() {
-  //    TestEnvironment testEnvironment =
-  //        systemTestEnvironment.createTestEnvironment("weighted-sequences");
-  //
-  //    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-  //    options.setPackageName("");
-  //    options.setRegressionBasename("WeightedSequencesReg");
-  //    options.setErrorBasename("WeightedSequencesErr");
-  //    options.setFlag("weighted-sequences");
-  //
-  //    setUpAndRunWeightedTests(testEnvironment, options);
-  //  }
-  //
-  //  // TODO: can take too much heap space and timeout/fail
-  //  @Test
-  //  public void runWeightedConstantsTest() {
-  //    TestEnvironment testEnvironment =
-  //        systemTestEnvironment.createTestEnvironment("weighted-constants");
-  //
-  //    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-  //    options.setPackageName("");
-  //    options.setRegressionBasename("WeightedConstantsReg");
-  //    options.setErrorBasename("WeightedConstantsErr");
-  //    options.setFlag("weighted-constants");
-  //
-  //    setUpAndRunWeightedTests(testEnvironment, options);
-  //  }
-  //  // TODO: can take too much heap space and timeout/fail
-  //  @Test
-  //  public void runWeightedOutputSequenceInfo() {
-  //    TestEnvironment testEnvironment =
-  //            systemTestEnvironment.createTestEnvironment("weighted-sequenceInfo");
-  //
-  //    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-  //    options.setPackageName("");
-  //    options.setRegressionBasename("WeightedSequenceInfoCompareReg");
-  //    options.setErrorBasename("WeightedSequenceInfoCompareErr");
-  //    options.setOption("literals-level", "CLASS");
-  //    options.setOption("literals-file", "CLASSES");
-  //    options.setFlag("weighted-sequences");
-  //    options.setFlag("weighted-constants");
-  //    options.setFlag("output-sequence-info");
-  //
-  //    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
-  //    ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
-  //
-  //    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
-  //    renameOutputTo("weighted-sequenceInfo.csv");
-  //  }
-
   // Tests the --output-sequence-info flag, which outputs information about the generated sequence pool
   @Test
   public void runRandoopOutputSequenceInfo() {
@@ -958,6 +906,19 @@ public class RandoopSystemTest {
     options.setOption("literals-level", "CLASS");
     options.setOption("literals-file", "CLASSES");
     options.setFlag("output-sequence-info");
+
+    // stuff
+    options.setOption("inputlimit", "125"); // temp fix
+    options.setOption("timelimit", "30");
+    //options.setOption("outputlimit", "200");
+    options.setOption("null-ratio", "0.3");
+    options.setOption("alias-ratio", "0.3");
+    options.setFlag("clear=100");
+    options.addClassList("resources/systemTest/jdk_classlist.txt");
+
+    // omit methods that use Random
+    options.setOption(
+        "omitmethods", "java2\\.util2\\.Collections\\.shuffle\\(java2\\.util2\\.List\\)");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
@@ -1184,9 +1145,12 @@ public class RandoopSystemTest {
   }
 
   /**
-   * Helper function for the weightedTests. Use this to rename the .csv file named by <code>
-   * --output-sequence-info-filename</code> since the weightedTests write to the same directory.
-   * Would not be an issue in normal conditions, as the .csv file will always be overwritten.
+   * Outdated helper function for the weightedTests. Use this to rename the .csv file named by
+   * <code>
+   * --output-sequence-info-filename</code> since the weightedTests write to the same base directory
+   * in the build/working-directories folder. Note you can now just add the option <code>
+   * --output-sequence-info-filename</code> to not overwrite. Would not be an issue in normal
+   * conditions, as the .csv file will always be overwritten.
    *
    * @param newFileName the name which <code>--output-sequence-info-filename</code> will be renamed
    *     to
@@ -1200,28 +1164,4 @@ public class RandoopSystemTest {
       fail("Couldn't rename file");
     }
   }
-
-  //  /** TODO: occasional issues with heap space running out without inputlimit */
-  //  private void setUpAndRunWeightedTests(TestEnvironment testEnvironment, RandoopOptions options) {
-  //
-  //    options.setOption("inputlimit", "125"); // temp fix
-  //    options.setOption("timelimit", "30");
-  //    //options.setOption("outputlimit", "200");
-  //    options.setOption("null-ratio", "0.3");
-  //    options.setOption("alias-ratio", "0.3");
-  //    options.setFlag("clear=100");
-  //    options.addClassList("resources/systemTest/jdk_classlist.txt");
-  //
-  //    // omit methods that use Random
-  //    options.setOption(
-  //        "omitmethods", "java2\\.util2\\.Collections\\.shuffle\\(java2\\.util2\\.List\\)");
-  //
-  //    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
-  //    ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
-  //
-  //    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
-  //
-  //    // TODO: maybe just generate and compile
-  //    //generateAndCompile(testEnvironment, options);
-  //  }
 }
