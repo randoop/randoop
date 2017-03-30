@@ -878,12 +878,13 @@ Randoop about your application, and that is how we recommend using Randoop.
  test.
             <li id="option:literals-level"><b>--literals-level=</b><i>enum</i>.
              How to use literal values that are specified via the <code>--literals-file</code> command-line
- option. Note that this is no longer supported. All literal values supplied by the
- aforementioned option are used at a global and class level by default. See: <code>ClassLiteralsMode</code>. [default CLASS]
+ option. See: <code>ClassLiteralsMode</code>. [default CLASS]
 <ul>
   <li><b>NONE</b> do not use literals specified in a literals file
   <li><b>CLASS</b> a literal for a given class is used as input only to methods of that class
   <li><b>PACKAGE</b> a literal is used as input to methods of any classes in the same package
+  <li><b>SPECIAL</b> a literal for a given class is used as input only to methods of that class with probability
+ <code>--p-const</code>, otherwise each literal is used as input to any method under test
   <li><b>ALL</b> each literal is used as input to any method under test
 </ul>
 

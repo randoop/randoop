@@ -298,6 +298,15 @@ public class RandoopSystemTest {
     coverageChecker.exclude("java2.util2.TreeSet.tailSet(java.lang.Object)");
     coverageChecker.exclude("java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream)");
 
+    /* TODO: should determine whether these are important */
+    coverageChecker.exclude("java2.util2.Collections.enumeration(java2.util2.Collection)");
+    coverageChecker.exclude("java2.util2.Collections.synchronizedSet(java2.util2.Set)");
+    coverageChecker.exclude("java2.util2.Collections.unmodifiableMap(java2.util2.Map)");
+    coverageChecker.exclude("java2.util2.Collections.unmodifiableSet(java2.util2.Set)");
+    coverageChecker.exclude("java2.util2.LinkedList.clone()");
+    coverageChecker.exclude("java2.util2.LinkedList.remove(java.lang.Object)");
+    coverageChecker.exclude("java2.util2.LinkedList.toArray()");
+
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
 
@@ -373,6 +382,17 @@ public class RandoopSystemTest {
     coverageChecker.ignore("examples.Buggy.BuggyEqualsTransitive.hashCode()");
 
     coverageChecker.ignore("examples.Buggy.StackOverflowError()");
+
+    /* TODO: should determine whether these are important */
+    coverageChecker.ignore("examples.Buggy.Buggy3.equals(java.lang.Object)");
+    coverageChecker.ignore("examples.Buggy.Buggy3.hashCode()");
+    coverageChecker.ignore("examples.Buggy.Buggy5.equals(java.lang.Object)");
+    coverageChecker.ignore("examples.Buggy.Buggy5.getOne()");
+    coverageChecker.ignore("examples.Buggy.Buggy5.getTwo()");
+    coverageChecker.ignore("examples.Buggy.BuggyEqualsTransitive.equals(java.lang.Object)");
+    coverageChecker.ignore("examples.Buggy.BuggyEqualsTransitive.getOne()");
+    coverageChecker.ignore("examples.Buggy.BuggyEqualsTransitive.getThree()");
+    coverageChecker.ignore("examples.Buggy.BuggyEqualsTransitive.getTwo()");
 
     /* these should be covered, but are in failing assertions and wont show up in JaCoCo results */
     coverageChecker.exclude(
@@ -935,8 +955,8 @@ public class RandoopSystemTest {
     options.setPackageName("");
     options.setRegressionBasename("RandoopSequenceInfoCompareReg");
     options.setErrorBasename("RandoopSequenceInfoCompareErr");
-    //options.setOption("literals-level", "CLASS");
-    //options.setOption("literals-file", "CLASSES");
+    options.setOption("literals-level", "CLASS");
+    options.setOption("literals-file", "CLASSES");
     options.setFlag("output-sequence-info");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;

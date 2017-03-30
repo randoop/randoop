@@ -86,6 +86,7 @@ public class OperationModel {
 
   /** Create an empty model of test context. */
   private OperationModel() {
+    // TODO: linkedhashset better than treeset?
     classTypes = new LinkedHashSet<>();
     inputTypes = new LinkedHashSet<>();
     classLiteralMap = new MultiMap<>();
@@ -175,11 +176,38 @@ public class OperationModel {
       } else {
         literalmap = LiteralFileReader.parse(filename);
       }
+      //      for (ClassOrInterfaceType type : literalmap.keySet()) {
+      //        for (Sequence seq : literalmap.getValues(type)) {
+      //          compMgr.addClassLevelLiteral(
+      //              type, seq); // add sequence to the collection of class literals
+      //          compMgr.addGeneratedSequence(seq); // add sequence to the collection of all sequences
+      //        }
+      //      }
+      //    }
+
       for (ClassOrInterfaceType type : literalmap.keySet()) {
+        Package pkg = (literalsLevel == ClassLiteralsMode.PACKAGE ? type.getPackage() : null);
         for (Sequence seq : literalmap.getValues(type)) {
-          compMgr.addClassLevelLiteral(
-              type, seq); // add sequence to the collection of class literals
-          compMgr.addGeneratedSequence(seq); // add sequence to the collection of all sequences
+          switch (literalsLevel) {
+            case CLASS:
+              compMgr.addClassLevelLiteral(type, seq);
+              break;
+            case PACKAGE:
+              assert pkg != null;
+              compMgr.addPackageLevelLiteral(pkg, seq);
+              break;
+            case SPECIAL:
+              compMgr.addClassLevelLiteral(
+                  type, seq); // add sequence to the collection of class literals
+              compMgr.addGeneratedSequence(seq); // add sequence to the collection of all sequences
+              break;
+            case ALL:
+              compMgr.addGeneratedSequence(seq);
+              break;
+            default:
+              throw new Error(
+                  "Unexpected error in GenTests -- please report at https://github.com/randoop/randoop/issues");
+          }
         }
       }
     }

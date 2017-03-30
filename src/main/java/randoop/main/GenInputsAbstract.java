@@ -382,8 +382,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * How to use literal values that are specified via the <code>--literals-file</code> command-line
-   * option. Note that this is no longer supported. All literal values supplied by the
-   * aforementioned option are used at a global and class level by default.
+   * option.
    *
    * @see ClassLiteralsMode
    */
@@ -402,6 +401,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
     CLASS,
     /** a literal is used as input to methods of any classes in the same package */
     PACKAGE,
+    /**
+     * a literal for a given class is used as input only to methods of that class with probability
+     * <code>--p-const</code>, otherwise each literal is used as input to any method under test
+     */
+    SPECIAL,
     /** each literal is used as input to any method under test */
     ALL
   }

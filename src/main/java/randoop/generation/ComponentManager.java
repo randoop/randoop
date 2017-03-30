@@ -18,6 +18,7 @@ import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.PrimitiveType;
 import randoop.types.Type;
+import randoop.util.ListOfLists;
 import randoop.util.Randomness;
 import randoop.util.SimpleList;
 
@@ -203,7 +204,28 @@ public class ComponentManager {
 
     SimpleList<Sequence> ret = gralComponents.getSequencesForType(neededType, false);
     if (operation instanceof TypedClassOperation) {
-      if (Randomness.weightedCoinFlip(GenInputsAbstract.p_const)) {
+      if (classLiterals != null || packageLiterals != null) {
+
+        ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+        if (declaringCls != null) {
+          if (classLiterals != null) {
+            SimpleList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
+            if (!sl.isEmpty()) {
+              ret = new ListOfLists<>(ret, sl);
+            }
+          }
+
+          if (packageLiterals != null) {
+            Package pkg = declaringCls.getPackage();
+            if (pkg != null) {
+              SimpleList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
+              if (!sl.isEmpty()) {
+                ret = new ListOfLists<>(ret, sl);
+              }
+            }
+          }
+        }
+      } else if (Randomness.weightedCoinFlip(GenInputsAbstract.p_const)) {
         ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
         if (declaringCls != null) {
           if (classLiterals != null) {
