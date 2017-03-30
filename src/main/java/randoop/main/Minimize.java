@@ -37,8 +37,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.Charset;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -54,6 +52,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import plume.Option;
 import plume.OptionGroup;
@@ -207,16 +206,26 @@ public class Minimize extends CommandHandler {
       // No package declaration.
     }
 
-    // Write to a new file with 'Minimized' appended to the name.
-    String newFilePath = writeToFile(compUnit, filePath, "Minimized");
+    File originalFile = new File(filePath);
+    // Create a new string to represent the new file name.
+    String minimizedFileName =
+        new StringBuilder(filePath).insert(filePath.lastIndexOf('.'), "Minimized").toString();
+    File minimizedFile = new File(minimizedFileName);
 
-    // Compile the Java file and check that the exit value is zero.
-    if (compileJavaFile(newFilePath, classPath, packageName, timeoutLimit) != 0) {
+    // Rename the overall class to [old class name][suffix].
+    String orgClassName = FilenameUtils.removeExtension(originalFile.getName());
+    new ClassRenamer().visit(compUnit, new String[] {orgClassName, "Minimized"});
+
+    // Write the compilation unit to the minimized file.
+    writeToFile(compUnit, minimizedFile);
+
+    // Compile the Java file and check that the exit value is 0.
+    if (compileJavaFile(minimizedFile, classPath, packageName, timeoutLimit) != 0) {
       System.err.println("Error when compiling file " + filePath + ". Aborting.");
       return false;
     }
     // Run the Java file.
-    String runResult = runJavaFile(newFilePath, classPath, packageName, timeoutLimit);
+    String runResult = runJavaFile(minimizedFile, classPath, packageName, timeoutLimit);
 
     // The expected output is a map from method name to failure stack trace
     // with line numbers removed.
@@ -225,21 +234,27 @@ public class Minimize extends CommandHandler {
     System.out.println("Minimizing: " + filePath);
 
     // Minimize the Java test suite, simplify variable type names, sort the
-    // import statements, and write to a new file.
+    // import statements, and write to the minimized file.
     minimizeTestSuite(
-        compUnit, packageName, filePath, classPath, expectedOutput, timeoutLimit, verboseOutput);
+        compUnit,
+        packageName,
+        minimizedFile,
+        classPath,
+        expectedOutput,
+        timeoutLimit,
+        verboseOutput);
     compUnit =
         simplifyVariableTypeNames(
-            compUnit, packageName, filePath, classPath, expectedOutput, timeoutLimit);
+            compUnit, packageName, minimizedFile, classPath, expectedOutput, timeoutLimit);
     sortImports(compUnit);
 
-    writeToFile(compUnit, filePath, "Minimized");
+    writeToFile(compUnit, minimizedFile);
 
     System.out.println("Minimizing complete.\n");
 
     // Output original and minimized file lengths.
-    System.out.println("Original file length: " + getFileLength(filePath) + " lines.");
-    System.out.println("Minimized file length: " + getFileLength(newFilePath) + " lines.");
+    System.out.println("Original file length: " + getFileLength(originalFile) + " lines.");
+    System.out.println("Minimized file length: " + getFileLength(minimizedFile) + " lines.");
 
     return true;
   }
@@ -249,34 +264,33 @@ public class Minimize extends CommandHandler {
    *
    * @param cu the compilation unit to minimize; will be modified by side effect
    * @param packageName the package that the Java file is in
-   * @param filePath the path to the Java file that is being minimized
+   * @param file the Java file that is being minimized
    * @param classpath classpath used to compile and run the Java file
    * @param expectedOutput expected JUnit output when the Java file is compiled and run
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
-   * @param verboseOuput prints out information about minimization status if true
+   * @param verboseOutput prints out information about minimization status if true
    */
   private static void minimizeTestSuite(
       CompilationUnit cu,
       String packageName,
-      String filePath,
+      File file,
       String classpath,
       Map<String, String> expectedOutput,
       int timeoutLimit,
-      boolean verboseOuput) {
+      boolean verboseOutput) {
     for (TypeDeclaration type : cu.getTypes()) {
       for (BodyDeclaration member : type.getMembers()) {
         if (member instanceof MethodDeclaration) {
           MethodDeclaration method = (MethodDeclaration) member;
 
           // Get method's annotations.
-          List<AnnotationExpr> annotationExprs = method.getAnnotations();
           for (AnnotationExpr annotationExpr : method.getAnnotations()) {
             if (annotationExpr.toString().equals("@Test")) {
               // Minimize the method only if it is a JUnit test method.
               minimizeMethod(
-                  method, cu, packageName, filePath, classpath, expectedOutput, timeoutLimit);
+                  method, cu, packageName, file, classpath, expectedOutput, timeoutLimit);
 
-              if (verboseOuput) {
+              if (verboseOutput) {
                 System.out.println("Minimized method " + method.getName() + ".");
               }
 
@@ -295,7 +309,7 @@ public class Minimize extends CommandHandler {
    * @param compUnit compilation unit for the Java file that we are minimizing; will be modified by
    *     side effect
    * @param packageName the package that the Java file is in
-   * @param filePath path to the Java file that we are minimizing
+   * @param file the Java file that we are minimizing
    * @param classpath classpath needed to compile and run the Java file
    * @param expectedOutput expected output from running the JUnit test suite
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
@@ -304,7 +318,7 @@ public class Minimize extends CommandHandler {
       MethodDeclaration method,
       CompilationUnit compUnit,
       String packageName,
-      String filePath,
+      File file,
       String classpath,
       Map<String, String> expectedOutput,
       int timeoutLimit) {
@@ -335,9 +349,8 @@ public class Minimize extends CommandHandler {
 
         // Write, compile, and run the new Java file with the new suffix
         // "Minimized".
-        String newFilePath = writeToFile(compUnit, filePath, "Minimized");
-        if (checkCorrectlyMinimized(
-            newFilePath, classpath, packageName, expectedOutput, timeoutLimit)) {
+        writeToFile(compUnit, file);
+        if (checkCorrectlyMinimized(file, classpath, packageName, expectedOutput, timeoutLimit)) {
           // No compilation or runtime issues, obtained output is the
           // same as the expected output.
           // Use simplification of this statement and continue with
@@ -651,7 +664,7 @@ public class Minimize extends CommandHandler {
    * @param compUnit compilation unit containing an AST for a Java file, the compilation unit will
    *     be modified if a correct minimization of the method is found
    * @param packageName the package that the Java file is in
-   * @param filePath absolute file path to the input Java file
+   * @param file the input Java file
    * @param classpath classpath needed to compile and run the Java file
    * @param expectedOutput expected standard output from running the JUnit test suite
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
@@ -660,7 +673,7 @@ public class Minimize extends CommandHandler {
   private static CompilationUnit simplifyVariableTypeNames(
       CompilationUnit compUnit,
       String packageName,
-      String filePath,
+      File file,
       String classpath,
       Map<String, String> expectedOutput,
       int timeoutLimit) {
@@ -710,9 +723,8 @@ public class Minimize extends CommandHandler {
       }
 
       // Check that the simplification is correct.
-      String newFilePath = writeToFile(result, filePath, "Minimized");
-      if (checkCorrectlyMinimized(
-          newFilePath, classpath, packageName, expectedOutput, timeoutLimit)) {
+      writeToFile(result, file);
+      if (checkCorrectlyMinimized(file, classpath, packageName, expectedOutput, timeoutLimit)) {
         result = compUnitWithSimpleTypeNames;
       }
     }
@@ -723,7 +735,7 @@ public class Minimize extends CommandHandler {
    * Check if a Java file has been correctly minimized. The file should not have compilation errors
    * or run-time errors. The file should fail in the same way as the original file.
    *
-   * @param filePath the absolute path to the Java file
+   * @param file the file being checked
    * @param classpath classpath needed to compile/run Java file
    * @param packageName the package that the Java file is in
    * @param expectedOutput expected output of running JUnit test suite
@@ -732,18 +744,18 @@ public class Minimize extends CommandHandler {
    *     expected output
    */
   private static boolean checkCorrectlyMinimized(
-      String filePath,
+      File file,
       String classpath,
       String packageName,
       Map<String, String> expectedOutput,
       int timeoutLimit) {
     // Check that the exit value from compiling the Java file is zero.
-    if (compileJavaFile(filePath, classpath, packageName, timeoutLimit) != 0) {
+    if (compileJavaFile(file, classpath, packageName, timeoutLimit) != 0) {
       return false;
     }
 
     // Run the Java file and get the standard output.
-    String runResult = runJavaFile(filePath, classpath, packageName, timeoutLimit);
+    String runResult = runJavaFile(file, classpath, packageName, timeoutLimit);
 
     // Compare the standard output with the expected output.
     return expectedOutput.equals(normalizeJUnitOutput(runResult));
@@ -752,16 +764,16 @@ public class Minimize extends CommandHandler {
   /**
    * Compile a Java file and return the compilation exit value.
    *
-   * @param filePath the absolute path to the Java file to be compiled and executed
+   * @param file the file to be compiled and executed
    * @param classpath dependencies and complete classpath to compile and run the Java program
    * @param packageName the package that the Java file is in
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
    * @return exit value of compiling the Java file
    */
   private static int compileJavaFile(
-      String filePath, String classpath, String packageName, int timeoutLimit) {
+      File file, String classpath, String packageName, int timeoutLimit) {
     // Obtain directory to carry out compilation and execution step.
-    String executionDir = getExecutionDirectory(filePath, packageName);
+    String executionDir = getExecutionDirectory(file.getAbsolutePath(), packageName);
 
     // Command to compile the input Java file.
     String command = "javac -classpath " + systemClassPath;
@@ -771,7 +783,8 @@ public class Minimize extends CommandHandler {
       // Add specified classpath to command.
       command += pathSeparator + classpath;
     }
-    command += " " + filePath;
+
+    command += " " + file.getAbsolutePath();
 
     // Compile specified Java file.
     return runProcess(command, executionDir, timeoutLimit).exitValue;
@@ -780,27 +793,25 @@ public class Minimize extends CommandHandler {
   /**
    * Run a Java file and return the standard output.
    *
-   * @param filePath the absolute path to the Java file to be compiled and executed
+   * @param file the file to be compiled and executed
    * @param classpath dependencies and complete classpath to compile and run the Java program
    * @param packageName the package that the Java file is in
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
    * @return the standard output from running the Java file
    */
   private static String runJavaFile(
-      String filePath, String classpath, String packageName, int timeoutLimit) {
+      File file, String classpath, String packageName, int timeoutLimit) {
     // Obtain directory to carry out compilation and execution step.
-    String executionDir = getExecutionDirectory(filePath, packageName);
+    String executionDir = getExecutionDirectory(file.getAbsolutePath(), packageName);
 
-    // Obtain directory path from file path.
-    Path directoryContainingFile = Paths.get(filePath).getParent();
     // Directory path for the classpath.
     String dirPath = null;
-    if (directoryContainingFile != null) {
-      dirPath = directoryContainingFile.toString();
+    if (file.getParentFile() != null) {
+      dirPath = file.getParentFile().getPath();
     }
 
     // Fully-qualified classname.
-    String fqClassName = getClassName(filePath);
+    String fqClassName = FilenameUtils.removeExtension(file.getName());
     if (packageName != null) {
       fqClassName = packageName + "." + fqClassName;
     }
@@ -999,51 +1010,20 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Write a compilation unit to a Java file. The file that is written to is the file path obtained
-   * by appending the suffix to the end of the file's name, before the file type suffix.
+   * Write a compilation unit to a Java file.
    *
    * @param compUnit the compilation unit to write to file
-   * @param filePath the absolute path to the input Java file
-   * @param suffix the suffix to append to the name of the new Java file
-   * @return {@code String} representing the absolute path to the newly written Java file. Returns
-   *     {@code null} if error occurred in writing to the new file
+   * @param file file to write to
    */
-  private static String writeToFile(CompilationUnit compUnit, String filePath, String suffix) {
-    // Rename the overall class to [old class name][suffix].
-    new ClassRenamer().visit(compUnit, new String[] {getClassName(filePath), suffix});
-
-    // Create a new string to represent the new file name.
-    String newFileName =
-        new StringBuilder(filePath).insert(filePath.lastIndexOf('.'), suffix).toString();
-
-    // Write the compilation unit to the new file.
-    try (BufferedWriter bw = new BufferedWriter(new FileWriter(newFileName))) {
+  private static void writeToFile(CompilationUnit compUnit, File file) {
+    // Write the compilation unit to the file.
+    try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
       bw.write(compUnit.toString());
     } catch (IOException e) {
-      System.err.println("Error writing to file: " + newFileName);
+      System.err.println("Error writing to file: " + file);
       e.printStackTrace();
       System.exit(1);
     }
-
-    return newFileName;
-  }
-
-  /**
-   * Given the absolute file path to a Java file, return the simple class name of the file.
-   *
-   * @param filePath absolute path to a Java file, the file path should not be null.
-   * @return the simple class name
-   */
-  public static String getClassName(String filePath) {
-    if (filePath == null) {
-      System.err.println("File path should not be null.");
-      System.exit(1);
-    }
-
-    // Get the name of the file without full path.
-    String fileName = Paths.get(filePath).getFileName().toString();
-    // Remove .java extension from file name.
-    return fileName.substring(0, fileName.indexOf('.'));
   }
 
   /** Visit every class or interface type. */
@@ -1183,25 +1163,24 @@ public class Minimize extends CommandHandler {
   /**
    * Calculate the length of a file, by number of lines.
    *
-   * @param filepath absolute file path to the input file
+   * @param file the input file
    * @return the number of lines in the file. Returns -1 if an exception occurs from finding or
    *     reading the file
    */
-  private static int getFileLength(String filepath) {
+  private static int getFileLength(File file) {
     int lines = 0;
     try {
       // Read and count the number of lines in the file.
-      BufferedReader reader = new BufferedReader(new FileReader(filepath));
+      BufferedReader reader = new BufferedReader(new FileReader(file));
       while (reader.readLine() != null) {
         lines++;
       }
       reader.close();
     } catch (FileNotFoundException e) {
-      System.err.println(
-          "File length not calculated, file not found exception for file " + filepath);
+      System.err.println("File length not calculated, file not found exception for file " + file);
       System.exit(1);
     } catch (IOException e) {
-      System.err.println("File length not calculated, file read exception for file " + filepath);
+      System.err.println("File length not calculated, file read exception for file " + file);
       System.exit(1);
     }
     return lines;

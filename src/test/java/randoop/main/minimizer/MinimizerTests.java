@@ -25,7 +25,7 @@ public class MinimizerTests {
    * @throws IOException thrown if output or expected output files can't be read
    */
   private void testWithInput(String filename) throws IOException {
-    testWithInput(testDir + filename, null, 30, false);
+    testWithInput(testDir + filename, null, 30, true);
   }
 
   /**
