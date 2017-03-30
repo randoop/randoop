@@ -224,6 +224,7 @@ public class Minimize extends CommandHandler {
       System.err.println("Error when compiling file " + filePath + ". Aborting.");
       return false;
     }
+
     // Run the Java file.
     String runResult = runJavaFile(minimizedFile, classPath, packageName, timeoutLimit);
 
@@ -247,12 +248,10 @@ public class Minimize extends CommandHandler {
         simplifyVariableTypeNames(
             compUnit, packageName, minimizedFile, classPath, expectedOutput, timeoutLimit);
     sortImports(compUnit);
-
     writeToFile(compUnit, minimizedFile);
 
-    System.out.println("Minimizing complete.\n");
-
     // Output original and minimized file lengths.
+    System.out.println("Minimizing complete.\n");
     System.out.println("Original file length: " + getFileLength(originalFile) + " lines.");
     System.out.println("Minimized file length: " + getFileLength(minimizedFile) + " lines.");
 
@@ -328,7 +327,7 @@ public class Minimize extends CommandHandler {
     // found in a passing assertion.
     Map<String, String> primitiveValues = new HashMap<String, String>();
 
-    // Iterate through the list of statements, from last to first
+    // Iterate through the list of statements, from last to first.
     for (int i = statements.size() - 1; i >= 0; i--) {
       Statement currStmt = statements.get(i);
 
@@ -351,10 +350,8 @@ public class Minimize extends CommandHandler {
         // "Minimized".
         writeToFile(compUnit, file);
         if (checkCorrectlyMinimized(file, classpath, packageName, expectedOutput, timeoutLimit)) {
-          // No compilation or runtime issues, obtained output is the
-          // same as the expected output.
-          // Use simplification of this statement and continue with
-          // next statement.
+          // No compilation or runtime issues, obtained output is the same as the expected output.
+          // Use simplification of this statement and continue with next statement.
           replacementFound = true;
 
           // Assertions are never simplified, only removed. If
@@ -372,6 +369,54 @@ public class Minimize extends CommandHandler {
         // No correct simplification found.
         // Add back the original statement to the list of statements.
         statements.add(i, currStmt);
+      }
+    }
+  }
+
+  /**
+   * If {@code currStmt} is a statement that is an assertTrue statement using an '==' operator,
+   * store the value associated with the variable in the {@code primitiveValues} map.
+   *
+   * @param currStmt a statement
+   * @param primitiveValues a map of variable names to variable values; modified if {@code currStmt}
+   *     is a passing assertion, asserting a variable's value.
+   */
+  private static void storeValueFromAssertion(
+      Statement currStmt, Map<String, String> primitiveValues) {
+    // Check if the statement is an assertion regarding a value that can be
+    // used in a simplification later on.
+    if (currStmt instanceof ExpressionStmt) {
+      Expression exp = ((ExpressionStmt) currStmt).getExpression();
+      if (exp instanceof MethodCallExpr) {
+        MethodCallExpr mCall = (MethodCallExpr) exp;
+        // Check if the method call is an assertTrue statement
+        if (mCall.getName().equals("assertTrue")) {
+          List<Expression> mArgs = mCall.getArgs();
+          if (mArgs.size() != 1 && mArgs.size() != 2) {
+            return;
+          }
+
+          Expression mExp;
+          // Retrieve the condition expression from the assert
+          // statement.
+          if (mArgs.size() == 1) {
+            mExp = mArgs.get(0);
+          } else {
+            mExp = mArgs.get(1);
+          }
+
+          if (mExp instanceof BinaryExpr) {
+            BinaryExpr binaryExp = (BinaryExpr) mExp;
+            // Check that the operator is an equality operator.
+            if (binaryExp.getOperator().equals(BinaryExpr.Operator.equals)) {
+              // Retrieve and store the value associated with the
+              // variable in the assertion.
+              String var = binaryExp.getLeft().toString();
+              String val = binaryExp.getRight().toString();
+              primitiveValues.put(var, val);
+            }
+          }
+        }
       }
     }
   }
@@ -426,54 +471,6 @@ public class Minimize extends CommandHandler {
       }
     }
     return replacements;
-  }
-
-  /**
-   * If {@code currStmt} is a statement that is an assertTrue statement using an '==' operator,
-   * store the value associated with the variable in the {@code primitiveValues} map.
-   *
-   * @param currStmt a statement
-   * @param primitiveValues a map of variable names to variable values; modified if {@code currStmt}
-   *     is a passing assertion, asserting a variable's value.
-   */
-  private static void storeValueFromAssertion(
-      Statement currStmt, Map<String, String> primitiveValues) {
-    // Check if the statement is an assertion regarding a value that can be
-    // used in a simplification later on.
-    if (currStmt instanceof ExpressionStmt) {
-      Expression exp = ((ExpressionStmt) currStmt).getExpression();
-      if (exp instanceof MethodCallExpr) {
-        MethodCallExpr mCall = (MethodCallExpr) exp;
-        // Check if the method call is an assertTrue statement
-        if (mCall.getName().equals("assertTrue")) {
-          List<Expression> mArgs = mCall.getArgs();
-          if (mArgs.size() != 1 && mArgs.size() != 2) {
-            return;
-          }
-
-          Expression mExp;
-          // Retrieve the condition expression from the assert
-          // statement.
-          if (mArgs.size() == 1) {
-            mExp = mArgs.get(0);
-          } else {
-            mExp = mArgs.get(1);
-          }
-
-          if (mExp instanceof BinaryExpr) {
-            BinaryExpr binaryExp = (BinaryExpr) mExp;
-            // Check that the operator is an equality operator.
-            if (binaryExp.getOperator().equals(BinaryExpr.Operator.equals)) {
-              // Retrieve and store the value associated with the
-              // variable in the assertion.
-              String var = binaryExp.getLeft().toString();
-              String val = binaryExp.getRight().toString();
-              primitiveValues.put(var, val);
-            }
-          }
-        }
-      }
-    }
   }
 
   /**
@@ -564,7 +561,7 @@ public class Minimize extends CommandHandler {
   private static Statement rhsAssignWithValue(
       VariableDeclarationExpr vdExpr, Type exprType, String value) {
     if (vdExpr.getVars().size() != 1) {
-      // Number of variables declared in this expression is not one.
+      // Number of variables declared in this expression is not 1.
       return null;
     }
 
@@ -624,10 +621,8 @@ public class Minimize extends CommandHandler {
       vd.setInit(new NullLiteralExpr());
     }
 
-    // Create a new statement with the simplified expression.
-    ExpressionStmt resultStmt = new ExpressionStmt(resultExpr);
-
-    return resultStmt;
+    // Return a new statement with the simplified expression.
+    return new ExpressionStmt(resultExpr);
   }
 
   /**
@@ -651,10 +646,8 @@ public class Minimize extends CommandHandler {
     List<VariableDeclarator> vars = resultExpr.getVars();
     VariableDeclarator vd = vars.get(0);
 
-    // Create a new statement with only the right hand side.
-    ExpressionStmt resultStmt = new ExpressionStmt(vd.getInit());
-
-    return resultStmt;
+    // Return a new statement with only the right hand side.
+    return new ExpressionStmt(vd.getInit());
   }
 
   /**
