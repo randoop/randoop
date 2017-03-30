@@ -47,6 +47,10 @@ The Randoop homepage is
         <ul>
           <li><a href="#method-specifications">Method specifications</a>
             <ul>
+              <li><a href="#identifying-specified-operation">Identifying specified method/constructor</a></li>
+              <li><a href="#listing-specification-identifiers">Declaring identifiers</a></li>
+              <li><a href="#condition-details">Specifying conditions</a></li>
+              <li><a href="#method-specification-syntax">Method specification syntax</a></li>
               <li><a href="#method-specification-evaluation-rules">Evaluation rules</a></li>
               <li><a href="#method-specification-inheritance">Inheritance</a></li>
             </ul></li>
@@ -1156,14 +1160,14 @@ You can provide a specification of the behavior of your code.  Randoop will use 
 </p>
 
 <p>
-You can specify <a href="#method-specifications">the behavior of methods</a>, and you can specify <a href="#representation-invariants">representation invariants for classes</a>.
+You can specify both <a href="#method-specifications">the behavior of methods and constructors</a>, and <a href="#representation-invariants">representation invariants for classes</a>.
 </p>
 
 
 <h3 id="method-specifications">Method specifications</h3>
 
 <p>
-A method specification indicates the method's contract:  under what circumstances can it be called, and how should it behave when called?
+A specification of a method or constructor indicates the circumstances when it can be called, and how it should behave when called.
 These can be given to Randoop using the <code>--specifications=file</code>
 command-line option that takes a JSON file containing the specifications of
 contracts for methods or constructors.
@@ -1171,76 +1175,267 @@ The expected file format is a JSON list with elements that are the serialized fo
 <a href="https://randoop.github.io/randoop/api/randoop/condition/specification/OperationSpecification.html">OperationSpecification</a>
 class.
 An example file is <a href="condition_spec_json_example.txt">here</a>.
-The serialized form is described in the API.
+The serialized form is described below, with more detail in the API.
 </p>
 
 <p>
 This section uses the following terminology:
 </p>
-<dl>
-  <dt>guard</dt>
-  <dd>A <em>guard</em> is a Java boolean expression that is evaluated in the pre-state -- that is, before a method starts to execute.</dd>
-
-  <dt>property</dt>
-  <dd>A <em>property</em> is a boolean expression that is evaluated in the post-state -- that is, after a method has finished executing.</dd>
-</dl>
+<ul>
+  <li>A <em>guard</em> is a Java Boolean expression that is evaluated in the pre-state -- that is, before a method starts to execute.</li>
+  <li>A <em>property</em> is a Boolean expression that is evaluated in the post-state -- that is, after a method has finished executing.</li>
+</ul>
 
 <p>
-A method specification consists of three parts, all of which are optional.
+A method/constructor specification consists of a description of the method/constructor,
+a list of identifiers used in the specification, and lists of three types of
+specifications: pre-conditions, (normal) post-conditions and throws-conditions.
+</p>
+
+
+<h4 id="identifying-specified-operation">Identifying specified method/constructor</h4>
+
+<p>
+A method/constructor is described by its declaring class, the method/constructor
+name, and the list of parameter types in Java binary format
+(aka, <code>Class.forName()</code> format).
+This is given as a JSON object with fields <code>classname</code>, <code>name</code> and <code>parameterTypes</code>,
+all of which are required.
+For instance, the following object from the example
+</p>
+
+<pre><code>
+  {
+    "classname": "net.Connection",
+    "name": "send",
+    "parameterTypes": [ "int" ]
+  }
+</code></pre>
+
+<p>
+describes the method <code>net.Connection.send(int)</code>. Note that member classes must
+be preceded by a <code>$</code> (e.g., a member class <code>pkg.A.B</code>
+should be written as <code>pkg.A$B</code>)
+</p>
+
+
+<h4 id="listing-specification-identifiers">Declaring identifiers</h4>
+
+<p>
+The identifiers used in the Boolean expressions of a specification are given
+separately if needed.
+By default, Randoop will assume that the object receiving a method call is named
+by <code>receiver</code>, and the return value is referred to as <code>result</code>.
+So, if these names are used in the specifications and the method has no parameters, the identifiers are optional.
+Otherwise, the identifiers need to include the parameters.
+</p>
+
+<p>
+Continuing the example, the method <code>net.Connection.send(int)</code> must at least
+list the parameter name:
+</p>
+
+<pre><code>
+  { "parameters": [ "code" ] }
+</code></pre>
+
+<p>
+which indicates that the single parameter of the method is referred to by the
+name <code>code</code>.
+Of course, the receiver and return names can also be given:
+</p>
+
+<pre><code>
+  {
+    "parameters": [ "code" ],
+    "receiverName": "receiver",
+    "returnName": "result"
+  }
+</code></pre>
+
+<p>
+though, in this case, the values for <code>receiverName</code> and
+<code>returnName</code> are defaults and do not need to be listed.
+</p>
+
+
+<h4 id="condition-details">Specifying conditions</h4>
+
+<p>
+The specifications are given in a list for each of the different types of specification.
 </p>
 
 <dl>
-  <dt>pre-condition = GUARD</dt>
-  <dd>A pre-condition indicates requirements that must be satisfied by the
+  <dt><i>Pre-condition</i></dt>
+  <dd>
+    <p>
+      A <i>pre-condition</i> indicates a requirement that must be satisfied by the
   caller.  If the caller does not satisfy the pre-condition, then the call
-  is invalid or illegal.  You specify a pre-condition as a single boolean
-  expression:
-  <b>[[TODO: how are the formal parameters denoted in the property?]]</b>
-
+  is invalid.  A pre-condition is given as as a JSON object with a field
+  <<code>guard</code>, which is an object that has a field <code>condition</code>.
+  For the running example, the method <code>net.Connection.send(int)</code>
+  has a pre-condition
 <p>
-  EXAMPLES
-</p>
+
+  <pre><code>
+    {
+      "description": "the code must be positive",
+      "guard": { "condition": "code > 0" }
+    }
+  </code></pre>
+
+  <p>
+  that indicates the integer argument in a call to the method has to be positive.
+  Both the specification and guard have an optional field code>description</code>
+  that Randoop will use in comments in the generated tests.
+  </p>
+
+  <p>
+  The condition in a guard must only refer to state of the receiver and parameters
+  before the call to the method, and so the <code>returnName</code> identifier
+  cannot occur.  Otherwise, the guard may be any Boolean expression over
+  the parameter and receiver names.
+  For instance, we could have also required that <code>receiver.isOpen()</code>
+  with the condition <code>receiver.isOpen() &amp;&amp; code > 0</code>.
+  However, in this case, we could simply have two pre-condition objects, since
+  both will be checked.
+  </p>
   </dd>
 </dl>
-
-<p>
-A post-condition indicates requirements that must be satisfied by the method implementation. If the caller satisfies the method's pre-condition and the method returns normally (without throwing an exception), then the post-condition must be satisfied or else the method is buggy.  There are two types of post-conditions:  normal postconditions that indicate what values the method returns, and exceptional postconditions that indicate what exceptions the method throws.
-</p>
 
 <dl>
-  <dt>normal post-condition = [ &lsaquo;guard, property&rsaquo;, ... ]</dt>
+  <dt><i>(Normal) Post-condition</i></dt>
   <dd>
-    You specify a normal post-condition as an ordered list of
-    &lsaquo;guard, property&rsaquo; pairs.  For the first guard that is
-    satisfied in the list, the property must be satisfied.  In the simplest
-    case, there is one pair, and the guard is "true".
-    <b>[[TODO: how is the return value denoted in the property?]]</b>
+    <p>
+    A post-condition indicates a requirement that must be satisfied by the method
+    implementation. A normal postcondition indicates what values the method
+    returns. If the caller satisfies the method's pre-condition and the method
+    returns normally (without throwing an exception), then the post-condition
+    must be satisfied or else the method is buggy.  If an exception is thrown,
+    the ordinary rules are used to classify the call.
+    </p>
 
-<p>
-  EXAMPLES
-</p>
-  </dd>
+    <p>
+    You specify a normal post-condition as guard-property pair.
+    (A property is given using the same format as a guard.)
+    In the example file, the method <code>net.Connection.receive()</code> has
+    the post-condition
+    </p>
 
-  <dt>exceptional post-condition = { &lsaquo;guard, ExceptionName&rsaquo;, ... }</dt>
-  <dd>
-    You specify an exceptional post-condition as a set of &lsaquo;guard,
-    ExceptionName&rsaquo; pairs.  If a guard is satisfied, then the method
-    is supposed to throw that exception or a subclass of it.
+  <pre><code>
+    {
+      "guard": { "condition": "true" },
+      "property": { "condition": "result >= 0" },
+      "description": "returns non-negative received value"
+    }
+  </code></pre>
 
-<p>
-  EXAMPLES
-</p>
+  <p>
+  which requires that the return value always be non-negative.
+  </p>
 
-<p>
-The set is unordered and may contain duplicate guards and/or ExceptionNames.
-This enables a method whose behavior is specified as
-  @throws NullPointerException if a is null
-  @throws IndexOutOfBoundsException if i is negative
-to be considered as correct if, when called with a=null and i=-1, it throws either of the specified exceptions.
-</p>
+  <p>
+  The guards of post-conditions are evaluated in the order that the post-conditions
+  are listed. This means that we could have a list like
+  </p>
+
+  <pre><code>
+    [
+      {
+        "guard": { "condition" : "!receiver.isOpen()" },
+        "property": { "condition": "result == -1" },
+        "description": "if this is not open, return -1"
+      },
+      {
+        "guard": { "condition": "true" },
+        "property": { "condition": "result >= 0" },
+        "description": "otherwise, returns non-negative received value"
+      }
+    ]
+  </code></pre>
+
+  <p>
+    that indicates the error-case should be tested first, followed by the
+    general case that has the guard <code>true</code>.
+  </p>
+
   </dd>
 </dl>
 
+<dl>
+  <dt><i>Throws-condition</i></dt>
+  <dd>
+    <p>
+    A post-condition indicates requirements that must be satisfied by the method
+    implementation. A throws-condition is a post-condition that indicates an
+    exception the method is expected to throw. If a call satisfies the guard of
+    a throws-condition, the exception must be thrown, or the method is buggy.
+    </p>
+
+    <p>
+    You specify a throws-condition as a guard-exception pair.
+    If a guard is satisfied, then the method is supposed to throw an exception
+    of the named class, or a subclass of the named class.
+    From the example file, the <code>net.Connection.open()</code> method has
+    the throws-condition
+    </p>
+
+    <pre><code>
+      {
+        "exception": "java.lang.IllegalStateException",
+        "description": "throws IllegalStateException if the connection is already open",
+        "guard": { "condition": "receiver.isOpen()" }
+      }
+    </code></pre>
+
+    <p>
+    Similar to normal post-conditions, throws-conditions are given in a list.
+    The list, however, is treated as an (unordered) set, and may contain
+    duplicate guards and exceptions. This enables a method whose behavior is specified as
+    </p>
+
+    <pre><code>
+      [
+        {
+          "guard": "a == null",
+          "exception": "java.lang.NullPointerException",
+          "description": "throws NullPointerException if a is null"
+        },
+        {
+          "guard": "i < 0",
+          "exception": "java.lang.IndexOutOfBoundsException",
+          "description": "throws IndexOutOfBoundsException if i is negative"
+        }
+      ]
+    </code></pre>
+
+    <p>
+    to be considered as correct if, when called with <code>a==null</code> and
+    <code>i==-1</code>, it throws either of the specified exceptions.
+    </p>
+  </dd>
+</dl>
+
+
+<h4 id="method-specification-syntax">Method specification syntax</h4>
+
+<p>
+Given these details, the full specification is specified as a JSON object as
+</p>
+
+<pre><code>
+  {
+    "operation": <i>operation-object</i>,
+    "identifiers": <i>identifiers-object</i>,
+    "pre": <i>pre-condition-list</i>,
+    "post": <i>normal-post-condition-list</i>,
+    "throws": <i>throws-condition-list</i>
+  }
+</code></pre>
+
+<p>
+where only the <code>operation</code> field is required.
+</p>
 
 <h4 id="method-specification-evaluation-rules">Evaluation rules</h4>
 
@@ -1290,7 +1485,7 @@ Randoop does no check of whether the guards are exhaustive or disjoint.
 <h4 id="method-specification-inheritance">Inheritance</h4>
 
 <p>
-When method <code>Sub.m</code> overrides method <code>Super.m</code> in a superclass, 
+When method <code>Sub.m</code> overrides method <code>Super.m</code> in a superclass,
 <code>Sub.m</code> must satisfy the specification of <code>Super.m</code>.
 Randoop tests both specifications, as follows:
 </p>
@@ -1325,7 +1520,7 @@ If the rep invariant is ever violated, the program has a bug.
 </p>
 
 <p>
-By using the 
+By using the
 <a href="https://randoop.github.io/randoop/api/randoop/CheckRep.html"><code>@CheckRep</code></a>
 annotation (don't forget to <code>import randoop.*</code>), you can
 tell Randoop which methods in your classes under test are rep

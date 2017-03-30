@@ -10,18 +10,18 @@
       "receiverName": "receiver",
       "returnName": "result"
     },
-    "throwsSpecifications": [
+    "throws": [
       {
-        "exceptionType": "java.lang.IllegalStateException",
+        "exception": "java.lang.IllegalStateException",
         "description": "throws IllegalStateException if the connection is already open",
         "guard": {
-          "conditionText": "receiver.isOpen()",
+          "condition": "receiver.isOpen()",
           "description": "if the connection is already open"
         }
       }
     ],
-    "postSpecifications": [],
-    "preSpecifications": []
+    "post": [],
+    "pre": []
   },
   {
     "operation": {
@@ -38,13 +38,13 @@
       "receiverName": "receiver",
       "returnName": "result"
     },
-    "throwsSpecifications": [],
-    "postSpecifications": [],
-    "preSpecifications": [
+    "throws": [],
+    "post": [],
+    "pre": [
       {
         "description": "the code must be positive",
         "guard": {
-          "conditionText": "code > 0",
+          "condition": "code > 0",
           "description": "the code must be positive"
         }
       }
@@ -61,20 +61,20 @@
       "receiverName": "receiver",
       "returnName": "result"
     },
-    "throwsSpecifications": [],
-    "postSpecifications": [
+    "throws": [],
+    "post": [
       {
         "property": {
-          "conditionText": "result >= 0",
+          "condition": "result >= 0",
           "description": "received value is non-negative"
         },
         "description": "returns non-negative received value",
         "guard": {
-          "conditionText": "true",
+          "condition": "true",
           "description": ""
         }
       }
     ],
-    "preSpecifications": []
+    "pre": []
   }
 ]
