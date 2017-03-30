@@ -1382,9 +1382,9 @@ The specifications are given in a list for each of the different types of specif
 
     <pre><code>
       {
+        "guard": { "condition": "receiver.isOpen()" },
         "exception": "java.lang.IllegalStateException",
-        "description": "throws IllegalStateException if the connection is already open",
-        "guard": { "condition": "receiver.isOpen()" }
+        "description": "throws IllegalStateException if the connection is already open"
       }
     </code></pre>
 
@@ -1397,12 +1397,12 @@ The specifications are given in a list for each of the different types of specif
     <pre><code>
       [
         {
-          "guard": "a == null",
+          "guard": { "condition": "a == null" },
           "exception": "java.lang.NullPointerException",
           "description": "throws NullPointerException if a is null"
         },
         {
-          "guard": "i < 0",
+          "guard": { "condition": "i < 0" },
           "exception": "java.lang.IndexOutOfBoundsException",
           "description": "throws IndexOutOfBoundsException if i is negative"
         }
