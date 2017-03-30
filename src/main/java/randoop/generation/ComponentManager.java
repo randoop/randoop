@@ -199,7 +199,6 @@ public class ComponentManager {
   @SuppressWarnings("unchecked")
   SimpleList<Sequence> getSequencesForType(TypedOperation operation, int i) {
 
-    //TODO: this is causing a lot of the issues with the tests
     Type neededType = operation.getInputTypes().get(i);
 
     SimpleList<Sequence> ret = gralComponents.getSequencesForType(neededType, false);
