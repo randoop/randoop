@@ -1272,7 +1272,7 @@ The specifications are given in a list for each of the different types of specif
       A <i>pre-condition</i> indicates a requirement that must be satisfied by the
   caller.  If the caller does not satisfy the pre-condition, then the call
   is invalid.  A pre-condition is given as as a JSON object with a field
-  <<code>guard</code>, which is an object that has a field <code>condition</code>.
+  <code>guard</code>, which is an object that has a field <code>condition</code>.
   For the running example, the method <code>net.Connection.send(int)</code>
   has a pre-condition
 <p>
@@ -1286,7 +1286,7 @@ The specifications are given in a list for each of the different types of specif
 
   <p>
   that indicates the integer argument in a call to the method has to be positive.
-  Both the specification and guard have an optional field code>description</code>
+  Both the specification and guard have an optional field <code>description</code>
   that Randoop will use in comments in the generated tests.
   </p>
 
@@ -1325,7 +1325,7 @@ The specifications are given in a list for each of the different types of specif
   <pre><code>
     {
       "guard": { "condition": "true" },
-      "property": { "condition": "result >= 0" },
+      "property": { "condition": "result &gt;= 0" },
       "description": "returns non-negative received value"
     }
   </code></pre>
@@ -1348,7 +1348,7 @@ The specifications are given in a list for each of the different types of specif
       },
       {
         "guard": { "condition": "true" },
-        "property": { "condition": "result >= 0" },
+        "property": { "condition": "result &gt;= 0" },
         "description": "otherwise, returns non-negative received value"
       }
     ]
@@ -1402,7 +1402,7 @@ The specifications are given in a list for each of the different types of specif
           "description": "throws NullPointerException if a is null"
         },
         {
-          "guard": { "condition": "i < 0" },
+          "guard": { "condition": "i &lt; 0" },
           "exception": "java.lang.IndexOutOfBoundsException",
           "description": "throws IndexOutOfBoundsException if i is negative"
         }
