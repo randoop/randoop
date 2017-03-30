@@ -14,13 +14,13 @@
       "receiverName": "receiver",
       "returnName": "result"
     },
-    "throwsSpecifications": [],
-    "postSpecifications": [],
-    "preSpecifications": [
+    "throws": [],
+    "post": [],
+    "pre": [
       {
         "description": "must be positive",
         "guard": {
-          "conditionText": "value > 0",
+          "condition": "value > 0",
           "description": "positive"
         }
       }
@@ -41,67 +41,67 @@
       "receiverName": "receiver",
       "returnName": "result"
     },
-    "throwsSpecifications": [
+    "throws": [
       {
-        "exceptionType": "java.lang.IllegalArgumentException",
+        "exception": "java.lang.IllegalArgumentException",
         "description": "should be less than 4*getValue",
         "guard": {
-          "conditionText": "value >= 4*receiver.getValue()",
+          "condition": "value >= 4*receiver.getValue()",
           "description": "greater than 4*getValue()"
         }
       }
     ],
-    "postSpecifications": [
+    "post": [
       {
         "property": {
-          "conditionText": "result.equals(ClassWithConditions.Range.ONE)",
+          "condition": "result.equals(ClassWithConditions.Range.ONE)",
           "description": "return ONE"
         },
         "description": "value in first range",
         "guard": {
-          "conditionText": "value < receiver.getValue()",
+          "condition": "value < receiver.getValue()",
           "description": "value in first range"
         }
       },
       {
         "property": {
-          "conditionText": "result.equals(ClassWithConditions.Range.TWO)",
+          "condition": "result.equals(ClassWithConditions.Range.TWO)",
           "description": "return TWO"
         },
         "description": "value in second range",
         "guard": {
-          "conditionText": "value < 2*receiver.getValue()",
+          "condition": "value < 2*receiver.getValue()",
           "description": "value in second range"
         }
       },
       {
         "property": {
-          "conditionText": "result.equals(ClassWithConditions.Range.THREE)",
+          "condition": "result.equals(ClassWithConditions.Range.THREE)",
           "description": "return THREE"
         },
         "description": "value in third range",
         "guard": {
-          "conditionText": "value < 3*receiver.getValue()",
+          "condition": "value < 3*receiver.getValue()",
           "description": "value in third range"
         }
       },
       {
         "property": {
-          "conditionText": "result.equals(ClassWithConditions.Range.FOUR)",
+          "condition": "result.equals(ClassWithConditions.Range.FOUR)",
           "description": "return FOUR"
         },
         "description": "otherwise, return FOUR",
         "guard": {
-          "conditionText": "true",
+          "condition": "true",
           "description": "otherwise"
         }
       }
     ],
-    "preSpecifications": [
+    "pre": [
       {
         "description": "must be positive",
         "guard": {
-          "conditionText": "value > 0",
+          "condition": "value > 0",
           "description": "positive"
         }
       }

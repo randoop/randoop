@@ -14,13 +14,13 @@
       "receiverName": "target",
       "returnName": "result"
     },
-    "throwsSpecifications": [],
-    "postSpecifications": [],
-    "preSpecifications": [
+    "throws": [],
+    "post": [],
+    "pre": [
       {
         "description": "the object count, must be positive",
         "guard": {
-          "conditionText": "count>0",
+          "condition": "count>0",
           "description": "the object count, must be positive"
         }
       }
@@ -41,13 +41,13 @@
       "receiverName": "target",
       "returnName": "result"
     },
-    "throwsSpecifications": [],
-    "postSpecifications": [],
-    "preSpecifications": [
+    "throws": [],
+    "post": [],
+    "pre": [
       {
         "description": "the object count, must be positive",
         "guard": {
-          "conditionText": "count>0",
+          "condition": "count>0",
           "description": "the object count, must be positive"
         }
       }
@@ -68,13 +68,13 @@
       "receiverName": "target",
       "returnName": "result"
     },
-    "throwsSpecifications": [],
-    "postSpecifications": [],
-    "preSpecifications": [
+    "throws": [],
+    "post": [],
+    "pre": [
       {
         "description": "the something count, must be positive",
         "guard": {
-          "conditionText": "count>0",
+          "condition": "count>0",
           "description": "the something count, must be positive"
         }
       }

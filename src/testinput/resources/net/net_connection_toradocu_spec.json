@@ -2,21 +2,6 @@
   {
     "operation": {
       "classname": "net.Connection",
-      "name": "isOpen",
-      "parameterTypes": []
-    },
-    "identifiers": {
-      "parameters": [],
-      "receiverName": "target",
-      "returnName": "result"
-    },
-    "throwsSpecifications": [],
-    "postSpecifications": [],
-    "preSpecifications": []
-  },
-  {
-    "operation": {
-      "classname": "net.Connection",
       "name": "open",
       "parameterTypes": []
     },
@@ -25,18 +10,18 @@
       "receiverName": "target",
       "returnName": "result"
     },
-    "throwsSpecifications": [
+    "throws": [
       {
-        "exceptionType": "java.lang.IllegalStateException",
+        "exception": "java.lang.IllegalStateException",
         "description": "throws IllegalStateException if the connection is already open",
         "guard": {
-          "conditionText": "target.isOpen()",
+          "condition": "target.isOpen()",
           "description": "if the connection is already open"
         }
       }
     ],
-    "postSpecifications": [],
-    "preSpecifications": []
+    "post": [],
+    "pre": []
   },
   {
     "operation": {
@@ -53,26 +38,26 @@
       "receiverName": "target",
       "returnName": "result"
     },
-    "throwsSpecifications": [
+    "throws": [
       {
-        "exceptionType": "java.lang.NullPointerException",
+        "exception": "java.lang.NullPointerException",
         "description": "throws NullPointerException if message is null",
         "guard": {
-          "conditionText": "message==null",
+          "condition": "message==null",
           "description": "if message is null"
         }
       },
       {
-        "exceptionType": "java.lang.IllegalStateException",
+        "exception": "java.lang.IllegalStateException",
         "description": "throws IllegalStateException if the connection is not open",
         "guard": {
-          "conditionText": "(target.isOpen()) == false",
+          "condition": "(target.isOpen()) == false",
           "description": "if the connection is not open"
         }
       }
     ],
-    "postSpecifications": [],
-    "preSpecifications": []
+    "post": [],
+    "pre": []
   },
   {
     "operation": {
@@ -89,25 +74,49 @@
       "receiverName": "target",
       "returnName": "result"
     },
-    "throwsSpecifications": [
+    "throws": [
       {
-        "exceptionType": "java.lang.IllegalStateException",
+        "exception": "java.lang.IllegalStateException",
         "description": "throws IllegalStateException if the connection is not open",
         "guard": {
-          "conditionText": "(target.isOpen()) == false",
+          "condition": "(target.isOpen()) == false",
           "description": "if the connection is not open"
         }
       }
     ],
-    "postSpecifications": [],
-    "preSpecifications": [
+    "post": [],
+    "pre": [
       {
         "description": "the code, must be positive",
         "guard": {
-          "conditionText": "code>0",
+          "condition": "code>0",
           "description": "the code, must be positive"
         }
       }
     ]
+  },
+  {
+    "operation": {
+      "classname": "net.Connection",
+      "name": "receive",
+      "parameterTypes": []
+    },
+    "identifiers": {
+      "parameters": [],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalStateException",
+        "description": "throws IllegalStateException if the connection is not open",
+        "guard": {
+          "condition": "(target.isOpen()) == false",
+          "description": "if the connection is not open"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
   }
 ]
