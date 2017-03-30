@@ -23,9 +23,13 @@ public class ConditionMethodCreator {
     }
     Method conditionMethod;
     Method[] methods = conditionClass.getDeclaredMethods();
-    assert methods.length == 1
-        : "should only be one method in condition class, found " + methods.length;
-    return methods[0];
+    for (Method method : methods) {
+      if (method.getName().equals(CONDITION_METHOD_NAME)) {
+        return method;
+      }
+    }
+    assert false : "didn't manage to create condition method";
+    return null;
   }
 
   private static String createClass(
