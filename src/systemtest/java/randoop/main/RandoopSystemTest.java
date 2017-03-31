@@ -301,20 +301,20 @@ public class RandoopSystemTest {
     // The following are coverage inconsistencies between Travis and local machines
     // TODO may also be inconsistent in themselves--may pass/fail on same machine
 
-    /* TODO classify behavior */
-    coverageChecker.exclude("java2.util2.ArrayList.add(int, java.lang.Object)");
-    coverageChecker.exclude("java2.util2.ArrayList.add(java.lang.Object)");
-    coverageChecker.exclude("java2.util2.ArrayList.clone()");
-    coverageChecker.exclude("java2.util2.ArrayList.trimToSize()");
-    coverageChecker.exclude("java2.util2.Collections.max(java2.util2.Collection)");
-    coverageChecker.exclude("java2.util2.Collections.rotate(java2.util2.List, int)");
-    coverageChecker.exclude("java2.util2.Collections.rotate1(java2.util2.List, int)");
-    coverageChecker.exclude(
-        "java2.util2.Collections.singletonMap(java.lang.Object, java.lang.Object)");
-    coverageChecker.exclude(
-        "java2.util2.Collections.sort(java2.util2.List, java2.util2.Comparator)");
-    coverageChecker.exclude("java2.util2.Collections.synchronizedMap(java2.util2.Map)");
-    coverageChecker.exclude("java2.util2.LinkedList.lastIndexOf(java.lang.Object)");
+    /* covered locally, covered on Travis */
+    //    coverageChecker.exclude("java2.util2.ArrayList.add(int, java.lang.Object)");
+    //    coverageChecker.exclude("java2.util2.ArrayList.add(java.lang.Object)");
+    //    coverageChecker.exclude("java2.util2.ArrayList.clone()");
+    //    coverageChecker.exclude("java2.util2.ArrayList.trimToSize()");
+    //    coverageChecker.exclude("java2.util2.Collections.max(java2.util2.Collection)");
+    //    coverageChecker.exclude("java2.util2.Collections.rotate(java2.util2.List, int)");
+    //    coverageChecker.exclude("java2.util2.Collections.rotate1(java2.util2.List, int)");
+    //    coverageChecker.exclude(
+    //        "java2.util2.Collections.singletonMap(java.lang.Object, java.lang.Object)");
+    //    coverageChecker.exclude(
+    //        "java2.util2.Collections.sort(java2.util2.List, java2.util2.Comparator)");
+    //    coverageChecker.exclude("java2.util2.Collections.synchronizedMap(java2.util2.Map)");
+    //    coverageChecker.exclude("java2.util2.LinkedList.lastIndexOf(java.lang.Object)");
 
     /* Covered locally, inconsistently covered on Travis */
     coverageChecker.ignore("java2.util2.LinkedList.add(java.lang.Object)");
@@ -334,6 +334,7 @@ public class RandoopSystemTest {
     coverageChecker.ignore("java2.util2.LinkedList.get(int)");
 
     /* Not covered locally, not covered on Travis, but not correctly excluded on Travis with coverageChecker.exclude() */
+    // TODO: verify with reversions to TreeSet in OperationModel
     coverageChecker.ignore("java2.util2.ArrayList.get(int)");
     coverageChecker.ignore("java2.util2.ArrayList.remove(int)");
     coverageChecker.ignore("java2.util2.LinkedList.add(int, java.lang.Object)");
@@ -417,9 +418,7 @@ public class RandoopSystemTest {
 
     coverageChecker.ignore("examples.Buggy.StackOverflowError()");
 
-    /* TODO classify behavior */
-    coverageChecker.exclude("examples.Buggy.BuggyCompareToSubs.getOne()");
-    coverageChecker.exclude("examples.Buggy.BuggyCompareToTransitive.getThree()");
+    /* Excluded locally and on Travis */
     coverageChecker.exclude("examples.Buggy.Buggy3.equals(java.lang.Object)");
     coverageChecker.exclude("examples.Buggy.Buggy3.hashCode()");
     coverageChecker.exclude("examples.Buggy.Buggy5.equals(java.lang.Object)");
@@ -429,6 +428,10 @@ public class RandoopSystemTest {
     coverageChecker.exclude("examples.Buggy.BuggyEqualsTransitive.getOne()");
     coverageChecker.exclude("examples.Buggy.BuggyEqualsTransitive.getThree()");
     coverageChecker.exclude("examples.Buggy.BuggyEqualsTransitive.getTwo()");
+
+    /* Covered locally, covered on Travis */
+    //    coverageChecker.exclude("examples.Buggy.BuggyCompareToSubs.getOne()");
+    //    coverageChecker.exclude("examples.Buggy.BuggyCompareToTransitive.getThree()");
 
     /* Inconsistently covered locally, covered on Travis */
     coverageChecker.ignore("examples.Buggy.BuggyCompareToTransitive.getTwo()");
