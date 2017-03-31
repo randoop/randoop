@@ -16,6 +16,7 @@ import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
+import randoop.compile.CompilerUtil;
 
 /** Captures the compilation status for a set of test files. */
 class CompilationStatus {
@@ -80,21 +81,6 @@ class CompilationStatus {
    * @param err the {@code PrintStream}
    */
   void printDiagnostics(PrintStream err) {
-    for (Diagnostic<? extends JavaFileObject> diag : diagnostics) {
-      if (diag != null) {
-        if (diag.getSource() != null) {
-          String sourceName = diag.getSource().toUri().toString();
-          if (diag.getLineNumber() >= 0) {
-            err.printf(
-                "Error on line %d, col %d of %s%n%s%n",
-                diag.getLineNumber(), diag.getColumnNumber(), sourceName, diag.getMessage(null));
-          } else {
-            err.printf("%s%n", diag.getMessage(null));
-          }
-        } else {
-          err.printf("%s%n", diag.getMessage(null));
-        }
-      }
-    }
+    CompilerUtil.printDiagnostics(err, diagnostics);
   }
 }
