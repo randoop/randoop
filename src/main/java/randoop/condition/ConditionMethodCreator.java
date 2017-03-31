@@ -1,6 +1,9 @@
 package randoop.condition;
 
 import java.lang.reflect.Method;
+import java.util.List;
+import javax.tools.Diagnostic;
+import javax.tools.JavaFileObject;
 import randoop.Globals;
 import randoop.compile.SequenceCompiler;
 import randoop.compile.SequenceCompilerException;
@@ -19,7 +22,8 @@ public class ConditionMethodCreator {
     try {
       conditionClass = compiler.compile(packageName, conditionClassName, classText);
     } catch (SequenceCompilerException e) {
-      throw new RandoopConditionError("Condition method did not compile", e);
+      String msg = getMessage(e.getDiagnostics().getDiagnostics(), classText);
+      throw new RandoopConditionError(msg, e);
     }
     Method conditionMethod;
     Method[] methods = conditionClass.getDeclaredMethods();
@@ -30,6 +34,25 @@ public class ConditionMethodCreator {
     }
     assert false : "didn't manage to create condition method";
     return null;
+  }
+
+  private static String getMessage(
+      List<Diagnostic<? extends JavaFileObject>> diagnostics, String classText) {
+    String msg = "Condition method did not compile: ";
+    for (Diagnostic<? extends JavaFileObject> diag : diagnostics) {
+      if (diag != null) {
+        String diagMessage = diag.getMessage(null);
+        if (diagMessage.contains("unreported exception")) {
+          msg +=
+              String.format(
+                  "condition may not throw exception, throws %s",
+                  diagMessage.substring(0, diagMessage.indexOf(';')));
+        } else {
+          msg += diagMessage;
+        }
+      }
+    }
+    return msg;
   }
 
   private static String createClass(

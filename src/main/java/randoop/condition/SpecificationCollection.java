@@ -227,12 +227,17 @@ public class SpecificationCollection {
    * @return the {@link Condition} object for the given {@link Guard}
    */
   private Condition createCondition(Guard guard, Declarations declarations) {
-    Method conditionMethod =
-        ConditionMethodCreator.create(
-            declarations.getPackageName(),
-            declarations.getPreSignature(),
-            guard.getConditionText(),
-            compiler);
+    Method conditionMethod;
+    try {
+      conditionMethod =
+          ConditionMethodCreator.create(
+              declarations.getPackageName(),
+              declarations.getPreSignature(),
+              guard.getConditionText(),
+              compiler);
+    } catch (RandoopConditionError e) {
+      throw new RandoopConditionError("guard condition " + guard.getConditionText(), e);
+    }
     String comment = guard.getDescription();
     String conditionText = declarations.replaceWithDummyVariables(guard.getConditionText());
     return new Condition(conditionMethod, comment, conditionText);
@@ -246,12 +251,17 @@ public class SpecificationCollection {
    * @return the {@link PostCondition} object for the given {@link Property}
    */
   private PostCondition createCondition(Property property, Declarations declarations) {
-    Method conditionMethod =
-        ConditionMethodCreator.create(
-            declarations.getPackageName(),
-            declarations.getPostSignature(),
-            property.getConditionText(),
-            compiler);
+    Method conditionMethod;
+    try {
+      conditionMethod =
+          ConditionMethodCreator.create(
+              declarations.getPackageName(),
+              declarations.getPostSignature(),
+              property.getConditionText(),
+              compiler);
+    } catch (RandoopConditionError e) {
+      throw new RandoopConditionError("property condition " + property.getConditionText(), e);
+    }
     String comment = property.getDescription();
     String conditionText = declarations.replaceWithDummyVariables(property.getConditionText());
     return new PostCondition(conditionMethod, comment, conditionText);

@@ -295,6 +295,9 @@ public class GenTests extends GenInputsAbstract {
       }
       // System.out.println("Exiting Randoop.");
       System.exit(1);
+    } catch (RandoopConditionError e) {
+      System.out.printf("Error: %s%n", e.getMessage());
+      System.exit(1);
     }
     assert operationModel != null;
 
@@ -453,6 +456,9 @@ public class GenTests extends GenInputsAbstract {
       System.out.printf("Operation reflection name: %s%n", e.getOperationName());
       System.out.printf("%s%n", e.getException());
       e.printStackTrace();
+      System.exit(1);
+    } catch (RandoopConditionError e) {
+      System.out.printf("%nError during generation: %n%s%n", e.getMessage());
       System.exit(1);
     }
 

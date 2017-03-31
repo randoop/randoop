@@ -4,7 +4,7 @@ package randoop.condition;
 public class RandoopConditionError extends Error {
   private static final long serialVersionUID = 3517219213949862963L;
 
-  RandoopConditionError(String s, Throwable cause) {
+  public RandoopConditionError(String s, Throwable cause) {
     super(s, cause);
   }
 

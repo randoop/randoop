@@ -13,10 +13,10 @@ import java.util.Objects;
  *
  * <pre>
  *   {
- *      "exceptionType": "java.lang.IllegalStateException",
+ *      "exception": "java.lang.IllegalStateException",
  *      "description": "throws IllegalStateException if the connection is already open",
  *      "guard": {
- *         "conditionText": "receiver.isOpen()",
+ *         "condition": "receiver.isOpen()",
  *         "description": "if the connection is already open"
  *       }
  *   }

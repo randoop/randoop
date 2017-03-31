@@ -53,8 +53,9 @@ public class Condition {
       if (Log.isLoggingOn()) {
         Log.logLine(message);
       }
+      throw new RandoopConditionError(
+          "Condition method for " + conditionText + " threw exception", e.getCause());
     }
-    return false;
   }
 
   /**
