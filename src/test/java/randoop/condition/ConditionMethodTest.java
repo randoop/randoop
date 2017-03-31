@@ -46,6 +46,30 @@ public class ConditionMethodTest {
     Condition simple = createCondition("", "(String s)", "s.length()", "// int is not a boolean");
   }
 
+  @Test
+  public void testErrorThrown() {
+    thrown.expect(RandoopConditionError.class);
+    Condition error =
+        createCondition(
+            "randoop.condition",
+            "(randoop.condition.ConditionWithException r)",
+            "r.errorPredicate()",
+            "throws an Error");
+    error.check(new Object[] {new ConditionWithException()});
+  }
+
+  @Test
+  public void testThrowableThrown() {
+    thrown.expect(RandoopConditionError.class);
+    Condition throwable =
+        createCondition(
+            "randoop.condition",
+            "(randoop.condition.ConditionWithException r)",
+            "r.throwablePredicate()",
+            "throws a Throwable");
+    throwable.check(new Object[] {new ConditionWithException()});
+  }
+
   private Condition createCondition(
       String packageName, String signature, String conditionText, String comment) {
     Method method =
