@@ -9,8 +9,8 @@ import java.util.Objects;
  * OperationSpecification}. These names need not match the actual declaration of the method.
  *
  * <p>The JSON serialization of this class is used to read the specifications for an operation given
- * using the {@link randoop.main.GenInputsAbstract#specifications} command-line option. The JSON
- * should include a JSON object labeled by the name of each field of this class, as in
+ * using the {@code --specifications} command-line option. The JSON should include a JSON object
+ * labeled by the name of each field of this class, as in
  *
  * <pre>
  *   {
