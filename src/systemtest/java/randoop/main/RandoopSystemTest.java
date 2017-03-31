@@ -216,6 +216,10 @@ public class RandoopSystemTest {
     coverageChecker.exclude("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
     coverageChecker.exclude("java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream)");
 
+    /* Inconsistently covered locally, covered on Travis */
+    coverageChecker.ignore(
+        "java2.util2.Collections.max(java2.util2.Collection, java2.util2.Comparator)");
+
     //TODO after changed types to ordered set in OperationModel, failing on Travis, but not locally
     coverageChecker.ignore("java2.util2.Collections.synchronizedSet(java2.util2.Set)");
     coverageChecker.ignore("java2.util2.Collections.synchronizedSortedSet(java2.util2.SortedSet)");
@@ -248,10 +252,10 @@ public class RandoopSystemTest {
 
     CoverageChecker coverageChecker = new CoverageChecker(options);
     // coverageChecker.exclude("java2.util2.ArrayList.add(int, java.lang.Object)");
-    // coverageChecker.exclude("java2.util2.ArrayList.get(int)");
+    coverageChecker.exclude("java2.util2.ArrayList.get(int)");
     //    coverageChecker.exclude("java2.util2.ArrayList.lastIndexOf(java.lang.Object)");
     coverageChecker.exclude("java2.util2.ArrayList.readObject(java.io.ObjectInputStream)");
-    //    coverageChecker.exclude("java2.util2.ArrayList.remove(int)");
+    coverageChecker.exclude("java2.util2.ArrayList.remove(int)");
     coverageChecker.exclude("java2.util2.ArrayList.removeRange(int, int)");
     coverageChecker.exclude("java2.util2.ArrayList.set(int, java.lang.Object)");
     coverageChecker.exclude("java2.util2.ArrayList.writeObject(java.io.ObjectOutputStream)");
@@ -278,10 +282,11 @@ public class RandoopSystemTest {
         "java2.util2.Collections.synchronizedSet(java2.util2.Set, java.lang.Object)");
     coverageChecker.exclude("java2.util2.Collections.synchronizedSortedMap(java2.util2.SortedMap)");
     //    coverageChecker.exclude("java2.util2.Collections.unmodifiableList(java2.util2.List)");
+    coverageChecker.exclude("java2.util2.Collections.unmodifiableMap(java2.util2.Map)");
     coverageChecker.exclude("java2.util2.Collections.unmodifiableSet(java2.util2.Set)");
     coverageChecker.exclude("java2.util2.Collections.unmodifiableSortedMap(java2.util2.SortedMap)");
     //    coverageChecker.exclude("java2.util2.Collections.unmodifiableSortedSet(java2.util2.SortedSet)");
-    //    coverageChecker.exclude("java2.util2.LinkedList.add(int, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.LinkedList.add(int, java.lang.Object)");
     //    coverageChecker.exclude("java2.util2.LinkedList.addFirst(java.lang.Object)");
     //    coverageChecker.exclude("java2.util2.LinkedList.addLast(java.lang.Object)");
     //    coverageChecker.exclude("java2.util2.LinkedList.get(int)");
@@ -315,11 +320,13 @@ public class RandoopSystemTest {
     coverageChecker.ignore("java2.util2.LinkedList.add(java.lang.Object)");
     coverageChecker.ignore("java2.util2.LinkedList.lastIndexOf(java.lang.Object)");
     coverageChecker.ignore("java2.util2.LinkedList.set(int, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.LinkedList.toArray()");
     coverageChecker.ignore("java2.util2.TreeSet.isEmpty()");
 
     /* Not covered locally, inconsistently covered on Travis */
     coverageChecker.ignore("java2.util2.Collections.eq(java.lang.Object, java.lang.Object)");
     coverageChecker.ignore("java2.util2.LinkedList.clone()");
+    coverageChecker.exclude("java2.util2.LinkedList.remove(java.lang.Object)");
     coverageChecker.ignore("java2.util2.TreeSet.first()");
     coverageChecker.ignore("java2.util2.TreeSet.headSet(java.lang.Object)");
     coverageChecker.ignore("java2.util2.TreeSet.last()");
@@ -328,15 +335,6 @@ public class RandoopSystemTest {
     coverageChecker.ignore("java2.util2.Collections.synchronizedSet(java2.util2.Set)");
     coverageChecker.ignore("java2.util2.TreeSet.tailSet(java.lang.Object)");
     coverageChecker.ignore("java2.util2.LinkedList.get(int)");
-
-    /* Not covered locally, not covered on Travis, but not correctly excluded on Travis with coverageChecker.exclude() */
-    // TODO: verify with reversions to TreeSet in OperationModel
-    coverageChecker.exclude("java2.util2.ArrayList.get(int)");
-    coverageChecker.exclude("java2.util2.ArrayList.remove(int)");
-    coverageChecker.exclude("java2.util2.LinkedList.add(int, java.lang.Object)");
-    coverageChecker.exclude("java2.util2.Collections.unmodifiableMap(java2.util2.Map)");
-    coverageChecker.exclude("java2.util2.LinkedList.remove(java.lang.Object)");
-    coverageChecker.exclude("java2.util2.LinkedList.toArray()");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
