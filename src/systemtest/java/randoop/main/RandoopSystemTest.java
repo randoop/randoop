@@ -251,8 +251,8 @@ public class RandoopSystemTest {
     options.setOption("omit-field-list", "resources/systemTest/naiveomitfields.txt");
 
     CoverageChecker coverageChecker = new CoverageChecker(options);
-    // coverageChecker.exclude("java2.util2.ArrayList.add(int, java.lang.Object)");
-    coverageChecker.exclude("java2.util2.ArrayList.get(int)");
+    //    coverageChecker.exclude("java2.util2.ArrayList.add(int, java.lang.Object)");
+    //    coverageChecker.exclude("java2.util2.ArrayList.get(int)");
     //    coverageChecker.exclude("java2.util2.ArrayList.lastIndexOf(java.lang.Object)");
     coverageChecker.exclude("java2.util2.ArrayList.readObject(java.io.ObjectInputStream)");
     coverageChecker.exclude("java2.util2.ArrayList.remove(int)");
@@ -320,13 +320,16 @@ public class RandoopSystemTest {
     coverageChecker.ignore("java2.util2.LinkedList.add(java.lang.Object)");
     coverageChecker.ignore("java2.util2.LinkedList.lastIndexOf(java.lang.Object)");
     coverageChecker.ignore("java2.util2.LinkedList.set(int, java.lang.Object)");
-    coverageChecker.exclude("java2.util2.LinkedList.toArray()");
+    coverageChecker.ignore("java2.util2.LinkedList.toArray()");
     coverageChecker.ignore("java2.util2.TreeSet.isEmpty()");
+
+    /* Inconsistently covered locally, not covered on Travis */
+    coverageChecker.ignore("java2.util2.ArrayList.get(int)");
 
     /* Not covered locally, inconsistently covered on Travis */
     coverageChecker.ignore("java2.util2.Collections.eq(java.lang.Object, java.lang.Object)");
     coverageChecker.ignore("java2.util2.LinkedList.clone()");
-    coverageChecker.exclude("java2.util2.LinkedList.remove(java.lang.Object)");
+    coverageChecker.ignore("java2.util2.LinkedList.remove(java.lang.Object)");
     coverageChecker.ignore("java2.util2.TreeSet.first()");
     coverageChecker.ignore("java2.util2.TreeSet.headSet(java.lang.Object)");
     coverageChecker.ignore("java2.util2.TreeSet.last()");
