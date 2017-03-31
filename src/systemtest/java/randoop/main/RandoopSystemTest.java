@@ -223,10 +223,9 @@ public class RandoopSystemTest {
     coverageChecker.ignore("java2.util2.TreeSet.last()");
     coverageChecker.ignore("java2.util2.TreeSet.tailSet(java.lang.Object)");
 
-    // see if this is problematic on Travis
-    // needs to be excluded or ignored locally, but is covered on Travis
-    coverageChecker.ignore(
-        "java2.util2.Collections.max(java2.util2.Collection, java2.util2.Comparator)");
+    // TODO after changed types to ordered set in OperationModel and added weighted literals/sequences, covered locally, _ on Travis
+    //    coverageChecker.ignore(
+    //        "java2.util2.Collections.max(java2.util2.Collection, java2.util2.Comparator)");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
