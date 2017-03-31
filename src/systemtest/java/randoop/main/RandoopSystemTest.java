@@ -302,19 +302,19 @@ public class RandoopSystemTest {
     // TODO may also be inconsistent in themselves--may pass/fail on same machine
 
     /* TODO classify behavior */
-    coverageChecker.ignore("java2.util2.ArrayList.add(int, java.lang.Object)");
-    coverageChecker.ignore("java2.util2.ArrayList.add(java.lang.Object)");
-    coverageChecker.ignore("java2.util2.ArrayList.clone()");
-    coverageChecker.ignore("java2.util2.ArrayList.trimToSize()");
-    coverageChecker.ignore("java2.util2.Collections.max(java2.util2.Collection)");
-    coverageChecker.ignore("java2.util2.Collections.rotate(java2.util2.List, int)");
-    coverageChecker.ignore("java2.util2.Collections.rotate1(java2.util2.List, int)");
-    coverageChecker.ignore(
+    coverageChecker.exclude("java2.util2.ArrayList.add(int, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.ArrayList.add(java.lang.Object)");
+    coverageChecker.exclude("java2.util2.ArrayList.clone()");
+    coverageChecker.exclude("java2.util2.ArrayList.trimToSize()");
+    coverageChecker.exclude("java2.util2.Collections.max(java2.util2.Collection)");
+    coverageChecker.exclude("java2.util2.Collections.rotate(java2.util2.List, int)");
+    coverageChecker.exclude("java2.util2.Collections.rotate1(java2.util2.List, int)");
+    coverageChecker.exclude(
         "java2.util2.Collections.singletonMap(java.lang.Object, java.lang.Object)");
-    coverageChecker.ignore(
+    coverageChecker.exclude(
         "java2.util2.Collections.sort(java2.util2.List, java2.util2.Comparator)");
-    coverageChecker.ignore("java2.util2.Collections.synchronizedMap(java2.util2.Map)");
-    coverageChecker.ignore("java2.util2.LinkedList.lastIndexOf(java.lang.Object)");
+    coverageChecker.exclude("java2.util2.Collections.synchronizedMap(java2.util2.Map)");
+    coverageChecker.exclude("java2.util2.LinkedList.lastIndexOf(java.lang.Object)");
 
     /* Covered locally, inconsistently covered on Travis */
     coverageChecker.ignore("java2.util2.LinkedList.add(java.lang.Object)");
@@ -418,17 +418,17 @@ public class RandoopSystemTest {
     coverageChecker.ignore("examples.Buggy.StackOverflowError()");
 
     /* TODO classify behavior */
-    coverageChecker.ignore("examples.Buggy.BuggyCompareToSubs.getOne()");
-    coverageChecker.ignore("examples.Buggy.BuggyCompareToTransitive.getThree()");
-    coverageChecker.ignore("examples.Buggy.Buggy3.equals(java.lang.Object)");
-    coverageChecker.ignore("examples.Buggy.Buggy3.hashCode()");
-    coverageChecker.ignore("examples.Buggy.Buggy5.equals(java.lang.Object)");
-    coverageChecker.ignore("examples.Buggy.Buggy5.getOne()");
-    coverageChecker.ignore("examples.Buggy.Buggy5.getTwo()");
-    coverageChecker.ignore("examples.Buggy.BuggyEqualsTransitive.equals(java.lang.Object)");
-    coverageChecker.ignore("examples.Buggy.BuggyEqualsTransitive.getOne()");
-    coverageChecker.ignore("examples.Buggy.BuggyEqualsTransitive.getThree()");
-    coverageChecker.ignore("examples.Buggy.BuggyEqualsTransitive.getTwo()");
+    coverageChecker.exclude("examples.Buggy.BuggyCompareToSubs.getOne()");
+    coverageChecker.exclude("examples.Buggy.BuggyCompareToTransitive.getThree()");
+    coverageChecker.exclude("examples.Buggy.Buggy3.equals(java.lang.Object)");
+    coverageChecker.exclude("examples.Buggy.Buggy3.hashCode()");
+    coverageChecker.exclude("examples.Buggy.Buggy5.equals(java.lang.Object)");
+    coverageChecker.exclude("examples.Buggy.Buggy5.getOne()");
+    coverageChecker.exclude("examples.Buggy.Buggy5.getTwo()");
+    coverageChecker.exclude("examples.Buggy.BuggyEqualsTransitive.equals(java.lang.Object)");
+    coverageChecker.exclude("examples.Buggy.BuggyEqualsTransitive.getOne()");
+    coverageChecker.exclude("examples.Buggy.BuggyEqualsTransitive.getThree()");
+    coverageChecker.exclude("examples.Buggy.BuggyEqualsTransitive.getTwo()");
 
     /* Inconsistently covered locally, covered on Travis */
     coverageChecker.ignore("examples.Buggy.BuggyCompareToTransitive.getTwo()");
