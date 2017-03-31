@@ -87,8 +87,9 @@ public class OperationModel {
   /** Create an empty model of test context. */
   private OperationModel() {
     // TODO: linkedhashset better than treeset?
-    classTypes = new LinkedHashSet<>();
-    inputTypes = new LinkedHashSet<>();
+    // TODO: might be causing coverage issues in systemTest
+    classTypes = new TreeSet<>();
+    inputTypes = new TreeSet<>();
     classLiteralMap = new MultiMap<>();
     annotatedTestValues = new LinkedHashSet<>();
     contracts = new ContractSet();
