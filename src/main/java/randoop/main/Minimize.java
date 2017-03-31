@@ -37,7 +37,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.Charset;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -117,7 +116,6 @@ public class Minimize extends CommandHandler {
         new Options(Minimize.class));
   }
 
-  private static final String fileSeparator = System.getProperty("file.separator");
   private static final String pathSeparator = System.getProperty("path.separator");
   private static final String systemClassPath = System.getProperty("java.class.path");
 
