@@ -860,6 +860,23 @@ public class RandoopSystemTest {
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
   }
 
+  @Test
+  public void runConditionWithExceptionTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("condition-with-exception");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("randoop.condition.ConditionWithException");
+    options.setOption(
+        "specifications", "resources/systemTest/randoop/condition/condition_with_exception.json");
+    options.setErrorBasename("ConditionError");
+    options.setRegressionBasename("ConditionRegression");
+    options.setOption("timelimit", "30");
+    options.setOption("outputlimit", "200");
+
+    RandoopRunStatus status = generateAndCompile(testEnvironment, options, true);
+    assertTrue("generation should have failed", status.processStatus.exitStatus != 0);
+  }
+
   /**
    * recreate problem with tests over Google Guava where value from private enum returned by public
    * method and value used in {@link randoop.test.ObjectCheck} surfaces in test code, creating
@@ -1113,14 +1130,16 @@ public class RandoopSystemTest {
     RandoopRunStatus runStatus =
         RandoopRunStatus.generateAndCompile(environment, options, allowRandoopFailure);
 
-    System.out.println("Randoop:");
-    boolean prevLineIsBlank = false;
-    for (String line : runStatus.processStatus.outputLines) {
-      if ((line.isEmpty() && !prevLineIsBlank)
-          || (!line.isEmpty() && !line.startsWith("Progress update:"))) {
-        System.out.println(line);
+    if (!allowRandoopFailure) {
+      System.out.println("Randoop:");
+      boolean prevLineIsBlank = false;
+      for (String line : runStatus.processStatus.outputLines) {
+        if ((line.isEmpty() && !prevLineIsBlank)
+            || (!line.isEmpty() && !line.startsWith("Progress update:"))) {
+          System.out.println(line);
+        }
+        prevLineIsBlank = line.isEmpty();
       }
-      prevLineIsBlank = line.isEmpty();
     }
     return runStatus;
   }
