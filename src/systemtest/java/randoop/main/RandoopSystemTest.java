@@ -223,7 +223,7 @@ public class RandoopSystemTest {
     coverageChecker.ignore("java2.util2.TreeSet.last()");
     coverageChecker.ignore("java2.util2.TreeSet.tailSet(java.lang.Object)");
 
-    // TODO after changed types to ordered set in OperationModel and added weighted literals/sequences, covered locally, _ on Travis
+    // after changed types to ordered set in OperationModel and added weighted literals/sequences, covered locally, covered on Travis
     //    coverageChecker.ignore(
     //        "java2.util2.Collections.max(java2.util2.Collection, java2.util2.Comparator)");
 
@@ -306,6 +306,10 @@ public class RandoopSystemTest {
 
     // The following coverage inconsistencies between Travis and local seem to be inconsistent in themselves
     // They aren't always covered/excluded
+
+    /* Covered locally, inconsistently covered on Travis */
+    coverageChecker.exclude("java2.util2.LinkedList.add(java.lang.Object)");
+    coverageChecker.exclude("java2.util2.TreeSet.isEmpty()");
 
     /* tbd */
     coverageChecker.ignore("java2.util2.ArrayList.add(int, java.lang.Object)");
