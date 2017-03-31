@@ -37,6 +37,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.Charset;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -54,6 +55,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import plume.Option;
 import plume.OptionGroup;
 import plume.Options;
@@ -766,7 +768,7 @@ public class Minimize extends CommandHandler {
   private static int compileJavaFile(
       File file, String classpath, String packageName, int timeoutLimit) {
     // Obtain directory to carry out compilation and execution step.
-    String executionDir = getExecutionDirectory(file.getAbsolutePath(), packageName);
+    File executionDir = getExecutionDirectory(file, packageName);
 
     // Command to compile the input Java file.
     String command = "javac -classpath " + systemClassPath;
@@ -795,7 +797,7 @@ public class Minimize extends CommandHandler {
   private static String runJavaFile(
       File file, String classpath, String packageName, int timeoutLimit) {
     // Obtain directory to carry out compilation and execution step.
-    String executionDir = getExecutionDirectory(file.getAbsolutePath(), packageName);
+    File executionDir = getExecutionDirectory(file, packageName);
 
     // Directory path for the classpath.
     String dirPath = null;
@@ -831,21 +833,23 @@ public class Minimize extends CommandHandler {
   /**
    * Get directory to execute command in given file path and package name.
    *
-   * @param filePath the absolute file path to the input Java file
+   * @param file the input Java file
    * @param packageName package name of input Java file
-   * @return String of the directory to execute the commands in. Null if packageName is null.
+   * @return the directory to execute the commands in. Null if packageName is null.
    */
-  private static String getExecutionDirectory(String filePath, String packageName) {
+  private static File getExecutionDirectory(File file, String packageName) {
     if (packageName == null) {
       return null;
     }
 
-    String packageAsDirectory = packageName.replace(".", fileSeparator);
-    int index = filePath.lastIndexOf(packageAsDirectory);
-    if (index < 0) {
-      return null;
+    // Determine how many layers above we should be executing the process in.
+    int foldersAbove = StringUtils.countMatches(packageName, ".") + 2;
+    for (int i = 0; i < foldersAbove; i++) {
+      file = file.getParentFile();
     }
-    return filePath.substring(0, index);
+
+    // Return the directory.
+    return file;
   }
 
   /**
@@ -856,10 +860,10 @@ public class Minimize extends CommandHandler {
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
    * @return an {@code Outputs} object containing the standard and error output
    */
-  private static Outputs runProcess(String command, String executionDir, int timeoutLimit) {
+  private static Outputs runProcess(String command, File executionDir, int timeoutLimit) {
     Process process;
 
-    if (executionDir == null || executionDir.isEmpty()) {
+    if (executionDir == null || executionDir.toString().isEmpty()) {
       // Execution directory is null, execute command in default
       // directory.
       try {
@@ -870,7 +874,7 @@ public class Minimize extends CommandHandler {
     } else {
       // Input Java file is in a package, execute in the root directory.
       try {
-        process = Runtime.getRuntime().exec(command, null, new File(executionDir));
+        process = Runtime.getRuntime().exec(command, null, executionDir);
       } catch (IOException e) {
         return new Outputs("", "I/O error occurred when running process.", 1);
       }
