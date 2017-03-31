@@ -294,7 +294,7 @@ public class RandoopSystemTest {
     coverageChecker.exclude("java2.util2.LinkedList.writeObject(java.io.ObjectOutputStream)");
     //    coverageChecker.exclude("java2.util2.TreeSet.first()");
     //    coverageChecker.exclude("java2.util2.TreeSet.headSet(java.lang.Object)");
-    coverageChecker.exclude("java2.util2.TreeSet.last()");
+    //    coverageChecker.exclude("java2.util2.TreeSet.last()");
     coverageChecker.exclude("java2.util2.TreeSet.readObject(java.io.ObjectInputStream)");
     coverageChecker.exclude("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
     coverageChecker.exclude("java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream)");
@@ -310,6 +310,7 @@ public class RandoopSystemTest {
     coverageChecker.ignore("java2.util2.LinkedList.clone()");
     coverageChecker.ignore("java2.util2.TreeSet.first()");
     coverageChecker.ignore("java2.util2.TreeSet.headSet(java.lang.Object)");
+    coverageChecker.exclude("java2.util2.TreeSet.last()");
 
     /* Covered locally, inconsistently covered on Travis */
     coverageChecker.ignore("java2.util2.LinkedList.add(java.lang.Object)");
