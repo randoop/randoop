@@ -307,9 +307,11 @@ public class RandoopSystemTest {
     coverageChecker.exclude("java2.util2.Collections.synchronizedSet(java2.util2.Set)");
     coverageChecker.exclude("java2.util2.Collections.unmodifiableSet(java2.util2.Set)");
     coverageChecker.exclude("java2.util2.LinkedList.clone()");
+
+    /* These are covered locally but not on Travis */
     coverageChecker.exclude("java2.util2.LinkedList.set(int, java.lang.Object)");
 
-    /* when excluded from the coverageChecker, these pass locally, but fail on Travis */
+    /* when excluded from the coverageChecker, these are excluded and the test passes locally, but are not excluded and the test fails on Travis */
     coverageChecker.ignore("java2.util2.ArrayList.get(int)");
     coverageChecker.ignore("java2.util2.ArrayList.remove(int)");
     coverageChecker.ignore("java2.util2.LinkedList.add(int, java.lang.Object)");
