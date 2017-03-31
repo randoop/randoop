@@ -1,0 +1,28 @@
+[
+  {
+    "operation": {
+      "classname": "randoop.condition.ConditionWithException",
+      "name": "getZero",
+      "parameterTypes": [ ]
+    },
+    "pre": [
+      {
+        "guard": { "condition": "receiver.errorPredicate()" },
+        "description": "this is going to throw an Error"
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "randoop.condition.ConditionWithException",
+      "name": "getOne",
+      "parameterTypes": []
+    },
+    "pre": [
+      {
+        "guard": { "condition": "receiver.throwablePredicate()" },
+        "description": "this is going to throw a Throwable"
+      }
+    ]
+  }
+]
