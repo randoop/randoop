@@ -292,7 +292,7 @@ public class RandoopSystemTest {
     coverageChecker.exclude("java2.util2.LinkedList.readObject(java.io.ObjectInputStream)");
     coverageChecker.exclude("java2.util2.LinkedList.remove(int)");
     coverageChecker.exclude("java2.util2.LinkedList.writeObject(java.io.ObjectOutputStream)");
-    coverageChecker.exclude("java2.util2.TreeSet.first()");
+    //    coverageChecker.exclude("java2.util2.TreeSet.first()");
     //    coverageChecker.exclude("java2.util2.TreeSet.headSet(java.lang.Object)");
     coverageChecker.exclude("java2.util2.TreeSet.last()");
     coverageChecker.exclude("java2.util2.TreeSet.readObject(java.io.ObjectInputStream)");
@@ -302,14 +302,18 @@ public class RandoopSystemTest {
     /* necessary to be covered? See if these are problematic on Travis */
     coverageChecker.exclude("java2.util2.Collections.enumeration(java2.util2.Collection)");
     coverageChecker.exclude("java2.util2.Collections.unmodifiableSet(java2.util2.Set)");
-    coverageChecker.exclude("java2.util2.LinkedList.clone()");
 
     // The following coverage inconsistencies between Travis and local seem to be inconsistent in themselves
     // They aren't always covered/excluded
 
+    /* Not covered locally, inconsistently covered on Travis */
+    coverageChecker.ignore("java2.util2.LinkedList.clone()");
+    coverageChecker.ignore("java2.util2.TreeSet.first()");
+    coverageChecker.ignore("java2.util2.TreeSet.headSet(java.lang.Object)");
+
     /* Covered locally, inconsistently covered on Travis */
-    coverageChecker.exclude("java2.util2.LinkedList.add(java.lang.Object)");
-    coverageChecker.exclude("java2.util2.TreeSet.isEmpty()");
+    coverageChecker.ignore("java2.util2.LinkedList.add(java.lang.Object)");
+    coverageChecker.ignore("java2.util2.TreeSet.isEmpty()");
 
     /* tbd */
     coverageChecker.ignore("java2.util2.ArrayList.add(int, java.lang.Object)");
