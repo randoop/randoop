@@ -35,8 +35,8 @@ The Randoop homepage is
         <ul>
           <li><a href="#regression_test_failures">Regression test failures</a></li>
         </ul></li>
-      </ul></li>
-  <li><a href="#minimize">Minimizing a failing JUnit test suite</a></li>
+      <li><a href="#minimize">Minimizing a failing JUnit test suite</a></li>
+    </ul></li>
   <li><a href="#customize">Customizing Randoop's behavior to your application</a>
     <ul>
       <li><a href="#command-line-options">Command-line options</a></li>
@@ -246,7 +246,7 @@ see <a href="#minimize_failing_test_suite">Minimizing a Failing JUnit Test Suite
 Example use:
 
 <pre class="code">
-java -ea -cp <em>myclasspath</em>:$(RANDOOP_JAR) randoop.main.Main minimize --filepath=~/ErrorTestLang.java --fileclasspath=~/commons-lang.jar
+java -ea -cp <em>myclasspath</em>:$(RANDOOP_JAR) randoop.main.Main minimize --suitepath=~/ErrorTestLang.java --suiteclasspath=~/commons-lang.jar
 </pre>
 </li>
 
@@ -668,7 +668,7 @@ To minimize all failing tests in <code>ErrorTest1.java</code>, run
 Randoop as follows:
 </p>
 <pre class="code">
-java -ea -cp bin:randoop-all-3.1.1.jar randoop.main.Main minimize --filepath=~/ErrorTest1.java --fileclasspath=~/commons-lang.jar --testsuitetimeout=30
+java -ea -cp bin:randoop-all-3.1.1.jar randoop.main.Main minimize --suitepath=~/ErrorTest1.java --suiteclasspath=~/commons-lang.jar --testsuitetimeout=30
 </pre>
 
 <p>
