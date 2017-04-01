@@ -172,6 +172,7 @@ public class Minimize extends CommandHandler {
    * @param filePath the path to the Java file that is being minimized
    * @param classPath classpath used to compile and run the Java file
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
+   * @param verboseOutput whether to produce verbose output
    * @return true if minimization produced a (possibly unchanged) file that fails the same way as
    *     the original file
    */
