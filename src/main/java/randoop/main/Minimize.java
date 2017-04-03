@@ -116,16 +116,18 @@ public class Minimize extends CommandHandler {
         new Options(Minimize.class));
   }
 
-  private static final String pathSeparator = System.getProperty("path.separator");
-  private static final String systemClassPath = System.getProperty("java.class.path");
+  private static final String PATH_SEPARATOR = System.getProperty("path.separator");
+  private static final String SYSTEM_CLASS_PATH = System.getProperty("java.class.path");
+
+  // The suffix to postpend onto the name of the minimized file and class.
+  private static final String SUFFIX = "Minimized";
 
   /**
    * Check that the required parameters have been specified by the command-line options and then
    * call the mainMinimize method.
    *
-   * @param args first parameter is the path to the Java file to be minimized. The second parameter
-   *     is the classpath needed to compile and run the Java file. The third parameter is the
-   *     timeout time, in seconds, for the whole test suite.
+   * @param args parameters, specified by keyword, for the input file, the classpath, the timeout
+   *     value and the verbose flag
    * @return true if the command was handled successfully
    * @throws RandoopTextuiException thrown if incorrect arguments are passed
    */
@@ -144,7 +146,15 @@ public class Minimize extends CommandHandler {
       System.out.println("You must specify an input file path.");
       System.out.println("Use the --suitepath option.");
       System.exit(1);
-    } else if (Minimize.testsuitetimeout <= 0) {
+    }
+
+    // Check that the input file is a Java file.
+    if (!FilenameUtils.getExtension(Minimize.suitepath).equals("java")) {
+      System.out.println("The input file must be a Java file.");
+      System.exit(1);
+    }
+
+    if (Minimize.testsuitetimeout <= 0) {
       System.out.println("You must specify a positive timeout value.");
       System.exit(1);
     }
@@ -186,11 +196,11 @@ public class Minimize extends CommandHandler {
       compUnit = JavaParser.parse(inputStream);
     } catch (ParseException e) {
       System.err.println("Error parsing Java file: " + filePath);
-      System.err.println(e);
+      e.printStackTrace();
       return false;
     } catch (IOException e) {
       System.err.println("Error reading Java file: " + filePath);
-      System.err.println(e);
+      e.printStackTrace();
       return false;
     }
 
@@ -208,15 +218,14 @@ public class Minimize extends CommandHandler {
     }
 
     File originalFile = new File(filePath);
-    // Create a new string to represent the new file name.
+
+    // Create a new file; the file and the class within will have "Minimized" postpended.
     String minimizedFileName =
-        new StringBuilder(filePath).insert(filePath.lastIndexOf('.'), "Minimized").toString();
+        new StringBuilder(filePath).insert(filePath.lastIndexOf('.'), SUFFIX).toString();
     File minimizedFile = new File(minimizedFileName);
-
-    // Rename the overall class to [old class name][suffix].
-    String orgClassName = FilenameUtils.removeExtension(originalFile.getName());
-    new ClassRenamer().visit(compUnit, new String[] {orgClassName, "Minimized"});
-
+    // Rename the overall class to [original class name][suffix].
+    String origClassName = FilenameUtils.removeExtension(originalFile.getName());
+    new ClassRenamer().visit(compUnit, new String[] {origClassName, SUFFIX});
     // Write the compilation unit to the minimized file.
     writeToFile(compUnit, minimizedFile);
 
@@ -248,7 +257,6 @@ public class Minimize extends CommandHandler {
     compUnit =
         simplifyVariableTypeNames(
             compUnit, packageName, minimizedFile, classPath, expectedOutput, timeoutLimit);
-    sortImports(compUnit);
 
     writeToFile(compUnit, minimizedFile);
 
@@ -260,9 +268,9 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Visit and minimize every method within a compilation unit.
+   * Visit and minimize every JUnit test method within a compilation unit.
    *
-   * @param cu the compilation unit to minimize; will be modified by side effect
+   * @param cu the compilation unit to minimize; is modified by side effect
    * @param packageName the package that the Java file is in
    * @param file the Java file that is being minimized; is modified by side effect
    * @param classpath classpath used to compile and run the Java file
@@ -283,18 +291,12 @@ public class Minimize extends CommandHandler {
         if (member instanceof MethodDeclaration) {
           MethodDeclaration method = (MethodDeclaration) member;
 
-          // Get method's annotations.
-          for (AnnotationExpr annotationExpr : method.getAnnotations()) {
-            if (annotationExpr.toString().equals("@Test")) {
-              // Minimize the method only if it is a JUnit test method.
-              minimizeMethod(
-                  method, cu, packageName, file, classpath, expectedOutput, timeoutLimit);
+          // Minimize the method only if it is a JUnit test method.
+          if (isTestMethod(method)) {
+            minimizeMethod(method, cu, packageName, file, classpath, expectedOutput, timeoutLimit);
 
-              if (verboseOutput) {
-                System.out.println("Minimized method " + method.getName() + ".");
-              }
-
-              break;
+            if (verboseOutput) {
+              System.out.println("Minimized method " + method.getName() + ".");
             }
           }
         }
@@ -303,11 +305,28 @@ public class Minimize extends CommandHandler {
   }
 
   /**
+   * Check if the method is a JUnit test method.
+   *
+   * @param methodDeclaration the method declaration to check
+   * @return true if the method is a JUnit test method
+   */
+  private static boolean isTestMethod(MethodDeclaration methodDeclaration) {
+    // Iterate through the method's annotations and check for the test annotation.
+    for (AnnotationExpr annotationExpr : methodDeclaration.getAnnotations()) {
+      if (annotationExpr.toString().equals("@Test")) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
    * Minimize a method by minimizing each statement in turn.
    *
-   * @param method the method to minimize; will be modified by side effect
-   * @param compUnit compilation unit for the Java file that we are minimizing; will be modified by
-   *     side effect
+   * @param method the method to minimize; is modified by side effect
+   * @param compUnit compilation unit for the Java file that we are minimizing; is modified by side
+   *     effect
    * @param packageName the package that the Java file is in
    * @param file the Java file that is being minimized; is modified by side effect
    * @param classpath classpath needed to compile and run the Java file
@@ -363,6 +382,7 @@ public class Minimize extends CommandHandler {
           }
         }
       }
+
       if (!replacementFound) {
         // No correct simplification found.
         // Add back the original statement to the list of statements.
@@ -604,7 +624,7 @@ public class Minimize extends CommandHandler {
           break;
         case Long:
           if (value == null) {
-            vd.setInit(new LongLiteralExpr("0l"));
+            vd.setInit(new LongLiteralExpr("0L"));
           } else {
             vd.setInit(new LongLiteralExpr(value));
           }
@@ -646,7 +666,8 @@ public class Minimize extends CommandHandler {
 
   /**
    * Simplify the variable type names in a compilation unit. For example, {@code java.lang.String}
-   * should be simplified to {@code String}.
+   * should be simplified to {@code String}. Additionally sort the import statements of the
+   * compilation unit.
    *
    * @param compUnit compilation unit containing an AST for a Java file, the compilation unit will
    *     be modified if a correct minimization of the method is found
@@ -708,6 +729,9 @@ public class Minimize extends CommandHandler {
         result = compUnitWithSimpleTypeNames;
       }
     }
+
+    sortImports(result);
+
     return result;
   }
 
@@ -756,12 +780,12 @@ public class Minimize extends CommandHandler {
     File executionDir = getExecutionDirectory(file, packageName);
 
     // Command to compile the input Java file.
-    String command = "javac -classpath " + systemClassPath;
+    String command = "javac -classpath " + SYSTEM_CLASS_PATH;
     // Add current directory to class path.
-    command += pathSeparator + ".";
+    command += PATH_SEPARATOR + ".";
     if (classpath != null) {
       // Add specified classpath to command.
-      command += pathSeparator + classpath;
+      command += PATH_SEPARATOR + classpath;
     }
 
     command += " " + file.getAbsolutePath();
@@ -797,16 +821,16 @@ public class Minimize extends CommandHandler {
     }
 
     // Command to run the Java file.
-    String command = "java -classpath " + systemClassPath;
+    String command = "java -classpath " + SYSTEM_CLASS_PATH;
     // Add current directory to class path.
-    command += pathSeparator + ".";
+    command += PATH_SEPARATOR + ".";
     if (dirPath != null) {
       // Use directory as defined by the file path.
-      command += pathSeparator + dirPath;
+      command += PATH_SEPARATOR + dirPath;
     }
     if (classpath != null) {
       // Add specified classpath to command.
-      command += pathSeparator + classpath;
+      command += PATH_SEPARATOR + classpath;
     }
     // Add JUnitCore command.
     command += " org.junit.runner.JUnitCore " + fqClassName;
