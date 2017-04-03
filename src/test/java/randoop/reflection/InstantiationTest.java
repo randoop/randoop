@@ -285,8 +285,7 @@ public class InstantiationTest {
   */
 
   private OperationModel createModel(Set<String> names, String packageName) {
-    VisibilityPredicate visibility =
-        new PackageVisibilityPredicate(Package.getPackage(packageName));
+    VisibilityPredicate visibility = new PackageVisibilityPredicate(packageName);
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Set<String> exercisedClassnames = new LinkedHashSet<>();
     Set<String> methodSignatures = new LinkedHashSet<>();
