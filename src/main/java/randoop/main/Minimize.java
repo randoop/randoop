@@ -839,7 +839,16 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Get directory to execute command in, given file path and package name.
+   * Get directory to execute command in, given file path and package name. Returns a {@code File}
+   * pointing to the directory that the Java file should be executed in.
+   *
+   * <p>For the simplest case where the Java file is nested in a single package layer, i.e.
+   * MyJavaFile.java is in the package mypackage, the folder structure would be
+   * src/mypackage/MyJavaFile.java. Here, we need to execute the Java file in the src/ directory. We
+   * go up 2 layers from the directory of the Java file to get to the parent directory of the
+   * directory for the package. For the general case where MyJavaFile.java is nested within multiple
+   * layers of packages, we count the number of separators, i.e. ".", and add 2 to get the number of
+   * layers to go up from the Java file's directory.
    *
    * @param file the Java file to be executed
    * @param packageName package name of input Java file
@@ -851,6 +860,7 @@ public class Minimize extends CommandHandler {
     }
 
     // Determine how many layers above we should be executing the process in.
+    // Add 2 which is for the case where the file is located in a single layer of packaging.
     int foldersAbove = StringUtils.countMatches(packageName, ".") + 2;
     for (int i = 0; i < foldersAbove; i++) {
       file = file.getParentFile();
