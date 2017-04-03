@@ -219,11 +219,12 @@ public class GenTests extends GenInputsAbstract {
         GenInputsAbstract.getStringSetFromFile(omit_field_list, "Error reading field file");
 
     VisibilityPredicate visibility;
-    Package junitPackage = Package.getPackage(GenInputsAbstract.junit_package_name);
-    if (junitPackage == null || GenInputsAbstract.only_test_public_members) {
+    if (GenInputsAbstract.junit_package_name == null
+        || GenInputsAbstract.only_test_public_members) {
+      System.out.println("not using package " + GenInputsAbstract.junit_package_name);
       visibility = new PublicVisibilityPredicate();
     } else {
-      visibility = new PackageVisibilityPredicate(junitPackage);
+      visibility = new PackageVisibilityPredicate(GenInputsAbstract.junit_package_name);
     }
 
     ReflectionPredicate reflectionPredicate =
