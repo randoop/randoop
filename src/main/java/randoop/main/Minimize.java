@@ -820,7 +820,6 @@ public class Minimize extends CommandHandler {
       fqClassName = packageName + "." + fqClassName;
     }
 
-    // Command to run the Java file.
     String command = "java -classpath " + SYSTEM_CLASS_PATH;
     // Add current directory to class path.
     command += PATH_SEPARATOR + ".";
@@ -840,7 +839,7 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Get directory to execute command in given file path and package name.
+   * Get directory to execute command in, given file path and package name.
    *
    * @param file the Java file to be executed
    * @param packageName package name of input Java file
