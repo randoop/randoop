@@ -291,7 +291,7 @@ public class GenTests extends GenInputsAbstract {
     List<TypedOperation> model = operationModel.getOperations();
 
     if (model.isEmpty()) {
-      Log.out.println("There are no methods to test. Exiting.");
+      System.out.println("There are no methods to test. Exiting.");
       System.exit(1);
     }
     if (!GenInputsAbstract.noprogressdisplay) {
@@ -362,7 +362,6 @@ public class GenTests extends GenInputsAbstract {
     } catch (NoSuchMethodException e) {
       assert false : "failed to get Object constructor: " + e;
     }
-    assert objectConstructor != null;
 
     Sequence newObj = new Sequence().extend(objectConstructor);
     Set<Sequence> excludeSet = new LinkedHashSet<>();
@@ -417,6 +416,13 @@ public class GenTests extends GenInputsAbstract {
 
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.printf("Explorer = %s\n", explorer);
+    }
+
+    /* log setup */
+    operationModel.log();
+    if (Log.isLoggingOn()) {
+      Log.logLine("Initial sequences (seeds):");
+      componentMgr.log();
     }
 
     /* Generate tests */
