@@ -881,21 +881,15 @@ public class Minimize extends CommandHandler {
   private static Outputs runProcess(String command, File executionDir, int timeoutLimit) {
     Process process;
 
-    if (executionDir == null || executionDir.toString().isEmpty()) {
-      // Execution directory is null, execute command in default
-      // directory.
-      try {
-        process = Runtime.getRuntime().exec(command);
-      } catch (IOException e) {
-        return new Outputs("", "I/O error occurred when running process.", 1);
-      }
-    } else {
-      // Input Java file is in a package, execute in the root directory.
-      try {
-        process = Runtime.getRuntime().exec(command, null, executionDir);
-      } catch (IOException e) {
-        return new Outputs("", "I/O error occurred when running process.", 1);
-      }
+    if (executionDir != null && executionDir.toString().isEmpty()) {
+      // Execute command in the default directory.
+      executionDir = null;
+    }
+
+    try {
+      process = Runtime.getRuntime().exec(command, null, executionDir);
+    } catch (IOException e) {
+      return new Outputs("", "I/O error occurred when running process.", 1);
     }
 
     final TimeLimitProcess timeLimitProcess = new TimeLimitProcess(process, timeoutLimit * 1000);
