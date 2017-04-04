@@ -514,15 +514,13 @@ public class Minimize extends CommandHandler {
       // Replacement with null on the right hand side.
       resultList.add(rhsAssignWithValue(vdExpr, type, null));
 
-      if (type instanceof ReferenceType) {
-        ReferenceType rType = (ReferenceType) type;
-        if (rType.getType() instanceof ClassOrInterfaceType) {
-          ClassOrInterfaceType classType = (ClassOrInterfaceType) rType.getType();
-          // Check if the type is a boxed primitive type.
-          if (classType.isBoxedType()) {
-            // Replacement with zero value on the right hand side.
-            resultList.add(rhsAssignWithValue(vdExpr, classType.toUnboxedType(), null));
-          }
+      ReferenceType rType = (ReferenceType) type;
+      if (rType.getType() instanceof ClassOrInterfaceType) {
+        ClassOrInterfaceType classType = (ClassOrInterfaceType) rType.getType();
+        // Check if the type is a boxed primitive type.
+        if (classType.isBoxedType()) {
+          // Replacement with zero value on the right hand side.
+          resultList.add(rhsAssignWithValue(vdExpr, classType.toUnboxedType(), null));
         }
       }
     }
@@ -567,6 +565,7 @@ public class Minimize extends CommandHandler {
    * to the value that is passed in.
    *
    * @param vdExpr variable declaration expression representing the current statement to simplify
+   * @param exprType type of the variable declaration expression
    * @param value value that will be assigned to the variable being declared
    * @return a {@code Statement} object representing the simplified variable declaration expression
    *     if the type of the variable is a primitive and a value has been previously calculated.
