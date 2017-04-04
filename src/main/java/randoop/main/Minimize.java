@@ -798,20 +798,26 @@ public class Minimize extends CommandHandler {
    * Run a Java file and return the standard output.
    *
    * @param file the file to be compiled and executed
-   * @param classpath dependencies and complete classpath to compile and run the Java program
+   * @param userClassPath dependencies and complete classpath to compile and run the Java program
    * @param packageName the package that the Java file is in
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
    * @return the standard output from running the Java file
    */
   private static String runJavaFile(
-      File file, String classpath, String packageName, int timeoutLimit) {
+      File file, String userClassPath, String packageName, int timeoutLimit) {
     // Obtain directory to carry out compilation and execution step.
     File executionDir = getExecutionDirectory(file, packageName);
 
     // Directory path for the classpath.
-    String dirPath = null;
+    String dirPath = ".";
     if (file.getParentFile() != null) {
-      dirPath = file.getParentFile().getPath();
+      dirPath += PATH_SEPARATOR + file.getParentFile().getPath();
+    }
+
+    // Classpath for running the Java file.
+    String classpath = SYSTEM_CLASS_PATH + PATH_SEPARATOR + dirPath;
+    if (userClassPath != null) {
+      classpath += PATH_SEPARATOR + userClassPath;
     }
 
     // Fully-qualified classname.
@@ -820,21 +826,9 @@ public class Minimize extends CommandHandler {
       fqClassName = packageName + "." + fqClassName;
     }
 
-    String command = "java -classpath " + SYSTEM_CLASS_PATH;
-    // Add current directory to class path.
-    command += PATH_SEPARATOR + ".";
-    if (dirPath != null) {
-      // Use directory as defined by the file path.
-      command += PATH_SEPARATOR + dirPath;
-    }
-    if (classpath != null) {
-      // Add specified classpath to command.
-      command += PATH_SEPARATOR + classpath;
-    }
-    // Add JUnitCore command.
-    command += " org.junit.runner.JUnitCore " + fqClassName;
+    String command = "java -classpath " + classpath + " org.junit.runner.JUnitCore " + fqClassName;
 
-    // Run the specified Java file.
+    // Run the specified Java file and return the standard output.
     return runProcess(command, executionDir, timeoutLimit).stdout;
   }
 
