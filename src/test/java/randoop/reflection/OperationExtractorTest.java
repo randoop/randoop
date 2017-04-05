@@ -201,7 +201,13 @@ public class OperationExtractorTest {
       assertThat(
           "should be wildcard or variable",
           operation.getName(),
-          anyOf(is(equalTo("mTypeVariable")), is(equalTo("mWildcard"))));
+          anyOf(
+              is(
+                  equalTo(
+                      "randoop.reflection.visibilitytest.InaccessibleArgumentInput.mTypeVariable")),
+              is(
+                  equalTo(
+                      "randoop.reflection.visibilitytest.InaccessibleArgumentInput.mWildcard"))));
     }
   }
 }

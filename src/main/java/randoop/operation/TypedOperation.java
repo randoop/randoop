@@ -76,7 +76,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    */
   @Override
   public int compareTo(TypedOperation op) {
-    int result = this.operation.getName().compareTo(op.getName());
+    int result = this.getName().compareTo(op.getName());
     if (result != 0) {
       return result;
     }

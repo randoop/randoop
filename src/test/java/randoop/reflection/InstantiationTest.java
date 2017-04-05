@@ -46,23 +46,24 @@ public class InstantiationTest {
     classnames.add(packageName + "." + "YW");
     classnames.add(packageName + "." + "RML");
 
+    String classname = packageName + "." + "GenericBounds";
     Set<String> methodNames = new LinkedHashSet<>();
-    methodNames.add("m00");
-    methodNames.add("m01");
-    methodNames.add("m02");
-    methodNames.add("m03");
-    methodNames.add("m04");
-    methodNames.add("m05");
-    methodNames.add("m06");
-    methodNames.add("m07");
-    methodNames.add("m08");
+    methodNames.add(classname + "." + "m00");
+    methodNames.add(classname + "." + "m01");
+    methodNames.add(classname + "." + "m02");
+    methodNames.add(classname + "." + "m03");
+    methodNames.add(classname + "." + "m04");
+    methodNames.add(classname + "." + "m05");
+    methodNames.add(classname + "." + "m06");
+    methodNames.add(classname + "." + "m07");
+    methodNames.add(classname + "." + "m08");
     //    methodNames.add("m09");
     System.out.println("Note: test for m09 is disabled until have constraint propagation working");
-    methodNames.add("m10");
-    methodNames.add("m11");
-    methodNames.add("m12");
-    methodNames.add("getZ");
-    methodNames.add("setZ");
+    methodNames.add(classname + "." + "m10");
+    methodNames.add(classname + "." + "m11");
+    methodNames.add(classname + "." + "m12");
+    methodNames.add("randoop.reflection.RML.getZ");
+    methodNames.add("randoop.reflection.RML.setZ");
 
     OperationModel model = createModel(classnames, packageName);
 
@@ -348,7 +349,7 @@ public class InstantiationTest {
         if (!nullOKNames.contains(operation.getName())) {
           TypedClassOperation classOperation =
               instantiator.instantiate((TypedClassOperation) operation);
-          if (!operation.getName().equals("m09")) {
+          if (!operation.getName().equals("randoop.reflection.GenericBounds.m09")) {
             assertNotNull(
                 "instantiation of method " + operation + " should not be null", classOperation);
             addTypes(classOperation, inputTypes);

@@ -85,7 +85,8 @@ public class Main {
       if (!success) {
         System.out.println();
         System.out.println("Randoop failed.");
-        System.out.println("Last sequence under execution: " + AbstractGenerator.currSeq);
+        System.out.println("Last sequence under execution: ");
+        System.out.println(AbstractGenerator.currSeq);
         System.exit(1);
       }
     }
