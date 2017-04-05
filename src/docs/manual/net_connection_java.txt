@@ -1,0 +1,47 @@
+package net;
+
+/**
+ * Example class for describing the specification of methods.
+ */
+public class Connection {
+
+  /** @returns true if the connection is open, false otherwise */
+  public boolean isOpen() {
+    ...
+  }
+
+  /**
+   * Establishes a new connection.
+   *
+   * @throws IllegalStateException if the connection is already open
+   */
+  public void open() {
+    ...
+  }
+
+  /**
+   * Sends a message.
+   *
+   * @throws NullPointerException if message is null
+   * @throws IllegalStateException if the connection is not open
+   */
+  public void send(String message) {
+    ...
+  }
+
+  /**
+   * @param code  the code, must be positive
+   * @throws IllegalStateException if the connection is not open
+   */
+  public void send(int code) {
+    ...
+  }
+
+  /**
+   * @return the received non-negative code value
+   * @throws IllegalStateException if the connection is not open
+   */
+  public int receive() {
+    ...
+  }
+}

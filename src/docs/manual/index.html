@@ -1167,14 +1167,15 @@ You can specify both <a href="#method-specifications">the behavior of methods an
 <h3 id="method-specifications">Method specifications</h3>
 
 <p>
-A specification of a method or constructor indicates the circumstances when it can be called, and how it should behave when called.
+A specification of a method (or constructor) indicates the circumstances when the method can be called, and how it should behave when called.
 These can be given to Randoop using the <code>--specifications=file</code>
 command-line option that takes a JSON file containing the specifications of
 contracts for methods or constructors.
 The expected file format is a JSON list with elements that are the serialized form of the
 <a href="https://randoop.github.io/randoop/api/randoop/condition/specification/OperationSpecification.html">OperationSpecification</a>
 class.
-An example file is <a href="condition_spec_json_example.txt">here</a>.
+An example file is <a href="condition_spec_json_example.txt">here</a>, which
+provides specifications for an example class <code><a href="net_connection_java.txt">net.Connection</a></code>.
 The serialized form is described below, with more detail in the API.
 </p>
 
@@ -1182,14 +1183,18 @@ The serialized form is described below, with more detail in the API.
 This section uses the following terminology:
 </p>
 <ul>
-  <li>A <em>guard</em> is a Java Boolean expression that is evaluated in the pre-state -- that is, before a method starts to execute.</li>
+  <li>A <em>guard</em> is a Boolean expression that is evaluated in the pre-state -- that is, before a method starts to execute.</li>
   <li>A <em>property</em> is a Boolean expression that is evaluated in the post-state -- that is, after a method has finished executing.</li>
 </ul>
+<p>
+The expression for a guard or property may not throw an exception.
+</p>
 
 <p>
-A method/constructor specification consists of a description of the method/constructor,
-a list of identifiers used in the specification, and lists of three types of
-specifications: pre-conditions, (normal) post-conditions and throws-conditions.
+A method/constructor specification consists of the identity of the method/constructor,
+a list of identifiers used in the specification, and lists of specifications for
+three types of conditions: pre-conditions, (normal) post-conditions and throws-conditions.
+Parts of the specification are optional in some situations, details are given below.
 </p>
 
 
@@ -1215,17 +1220,17 @@ For instance, the following object from the example
 <p>
 describes the method <code>net.Connection.send(int)</code>. Note that member classes must
 be preceded by a <code>$</code> (e.g., a member class <code>pkg.A.B</code>
-should be written as <code>pkg.A$B</code>)
+should be written as <code>pkg.A$B</code>).
 </p>
-
 
 <h4 id="listing-specification-identifiers">Declaring identifiers</h4>
 
 <p>
-The identifiers used in the Boolean expressions of a specification are given
-separately if needed.
-By default, Randoop will assume that the object receiving a method call is named
-by <code>receiver</code>, and the return value is referred to as <code>result</code>.
+The identifiers used in the Boolean expressions of a specification are listed
+separately, but need only be listed when the method/constructor has parameters
+or the defaults are not used for the receiving object or return value.
+By default, the object receiving a method call is referred to as <code>receiver</code>,
+and the return value of the method is referred to as <code>result</code>.
 So, if these names are used in the specifications and the method has no parameters, the identifiers are optional.
 Otherwise, the identifiers need to include the parameters.
 </p>
@@ -1262,7 +1267,7 @@ though, in this case, the values for <code>receiverName</code> and
 <h4 id="condition-details">Specifying conditions</h4>
 
 <p>
-The specifications are given in a list for each of the different types of specification.
+The condition specifications are given in a list for each of the different types of specification.
 </p>
 
 <dl>
@@ -1280,7 +1285,7 @@ The specifications are given in a list for each of the different types of specif
   <pre><code>
     {
       "description": "the code must be positive",
-      "guard": { "condition": "code > 0" }
+      "guard": "code > 0"
     }
   </code></pre>
 
@@ -1288,12 +1293,14 @@ The specifications are given in a list for each of the different types of specif
   that indicates the integer argument in a call to the method has to be positive.
   Both the specification and guard have an optional field <code>description</code>
   that Randoop will use in comments in the generated tests.
+  (To include the description for the guard, the guard should be written as
+  `{ "condition": "code > 0 ", "description": "the code is positive" }`.)
   </p>
 
   <p>
   The condition in a guard must only refer to state of the receiver and parameters
   before the call to the method, and so the <code>returnName</code> identifier
-  cannot occur.  Otherwise, the guard may be any Boolean expression over
+  may not occur.  Otherwise, the guard may be any Boolean expression over
   the parameter and receiver names.
   For instance, we could have also required that <code>receiver.isOpen()</code>
   with the condition <code>receiver.isOpen() &amp;&amp; code > 0</code>.
@@ -1324,8 +1331,8 @@ The specifications are given in a list for each of the different types of specif
 
   <pre><code>
     {
-      "guard": { "condition": "true" },
-      "property": { "condition": "result &gt;= 0" },
+      "guard": "true",
+      "property": "result &gt;= 0",
       "description": "returns non-negative received value"
     }
   </code></pre>
@@ -1342,13 +1349,13 @@ The specifications are given in a list for each of the different types of specif
   <pre><code>
     [
       {
-        "guard": { "condition" : "!receiver.isOpen()" },
-        "property": { "condition": "result == -1" },
+        "guard": "!receiver.isOpen()",
+        "property": "result == -1",
         "description": "if this is not open, return -1"
       },
       {
-        "guard": { "condition": "true" },
-        "property": { "condition": "result &gt;= 0" },
+        "guard": "true",
+        "property": "result &gt;= 0",
         "description": "otherwise, returns non-negative received value"
       }
     ]
@@ -1369,7 +1376,7 @@ The specifications are given in a list for each of the different types of specif
     A post-condition indicates requirements that must be satisfied by the method
     implementation. A throws-condition is a post-condition that indicates an
     exception the method is expected to throw. If a call satisfies the guard of
-    a throws-condition, the exception must be thrown, or the method is buggy.
+    a throws-condition, the exception must be thrown or the method is buggy.
     </p>
 
     <p>
@@ -1382,7 +1389,7 @@ The specifications are given in a list for each of the different types of specif
 
     <pre><code>
       {
-        "guard": { "condition": "receiver.isOpen()" },
+        "guard": "receiver.isOpen()",
         "exception": "java.lang.IllegalStateException",
         "description": "throws IllegalStateException if the connection is already open"
       }
@@ -1390,19 +1397,19 @@ The specifications are given in a list for each of the different types of specif
 
     <p>
     Similar to normal post-conditions, throws-conditions are given in a list.
-    The list, however, is treated as an (unordered) set, and may contain
+    The list, however, is treated as a set (meaning unordered), and may contain
     duplicate guards and exceptions. This enables a method whose behavior is specified as
     </p>
 
     <pre><code>
       [
         {
-          "guard": { "condition": "a == null" },
+          "guard": "a == null",
           "exception": "java.lang.NullPointerException",
           "description": "throws NullPointerException if a is null"
         },
         {
-          "guard": { "condition": "i &lt; 0" },
+          "guard": "i &lt; 0",
           "exception": "java.lang.IndexOutOfBoundsException",
           "description": "throws IndexOutOfBoundsException if i is negative"
         }
@@ -1440,67 +1447,58 @@ where only the <code>operation</code> field is required.
 <h4 id="method-specification-evaluation-rules">Evaluation rules</h4>
 
 <p>
-Here is how Randoop uses method specifications to classify the last method call in a test.  If one rule does not classify a call, then fall through to the next case.
+Randoop generates each test sequence by first selecting the method or constructor
+that occurs as the last call in the sequence.
+The specification of this method/constructor is used to classify the test sequence with the following rules:
 </p>
 
 <ol>
-  <li>
-    If the pre-condition guard is violated, then Randoop classifies the
-    method call as invalid.  (Actually, Randoop avoids even trying the
-    method call.)
-
-  <li>
-    Randoop evaluates all the guards, before calling the method.  This is
-    also called evaluating them in the pre-state.  If a guard throws an
-    exception, the guard is considered to not be satisfied.  (As an
-    optimization, Randoop only needs to evaluate the guards in the normal
-    post-condition up to the first one that succeeds.)
-
-  <li>
-    Randoop determines the set of satisfied guards in the exceptional
-    post-condition.  If there is at least one, then let E be the set of
-    exceptions that correspond to the satisfied guards.  The method call is
-    classified as expected behavior if it throws a checked exception that
-    is in E or is a subclass of something in E.  The method is classified
-    as incorrect behavior if it throws any other checked exception, or if
-    it does not throw an exception.
-
-  <li>
-    Randoop evaluates the property corresponding to the first satisfied
-    guard.  If there is one, Randoop evaluates the method as
-    error-revealing behavior if the property is not satisfied or if the
-    method call threw an exception.
-
-  <li>
-    If the method call throws an exception, classify according it to the
-    rules of <a href="#classifying-tests">classifying tests</a>, which
-    usually means the behavior is treated as normal behavior.
+  <li>Before the call:
+    <ol>
+      <li>
+        If the guard of any pre-condition is violated before the call, then Randoop
+        classifies the method call as invalid and the sequence is discarded.
+      </li>
+      <li>
+        If the guard of any throws-condition is satisfied before the call, the exception
+        from the condition is added to a set <code>E</code> of expected exceptions.
+        If, in addition, the method overrides a method that has a throws-condition whose guard is satisfied,
+        the exception from the inherited condition is added to a set <code>I</code> of inherited exceptions.
+      </li>
+      <li>
+        The guards of normal-preconditions are evaluated in order, and the property
+        for the first satisfied guard is placed into a list <code>P</code>.
+        If the method overrides a method that has a post-condition whose guard is satisfied,
+        the property from the inherited condition is added to to the end of the list <code>P</code>.
+      </li>
+    </ol>
+  </li>
+  <li>After the call:
+    <ol>
+      <li>
+        If the call throws a checked exception, the sequence is classified as
+        having expected behavior if the thrown exception is either a
+        member of <code>E</code> or <code>I</code>, or is a subclass of a member
+        of <code>E</code> or <code>I</code>.
+        If at least one of <code>E</code> or <code>I</code> is non-empty,
+        the sequence is classified as error-revealing if the thrown exception is
+        not a member of either set.
+        Otherwise, the sequence is classified according it to the
+        rules of <a href="#classifying-tests">classifying tests</a>.
+      </li>
+      <li>
+        If the call terminates normally, the sequence is classifed as having
+        expected behavior if there are no expected exceptions and all properties
+        <code>P</code> are satisfied.
+        Otherwise, the sequence is classified as error-revealing.
+      </li>
+    </ol>
+  </li>
 </ol>
 
 <p>
 Randoop does no check of whether the guards are exhaustive or disjoint.
 </p>
-
-
-<h4 id="method-specification-inheritance">Inheritance</h4>
-
-<p>
-When method <code>Sub.m</code> overrides method <code>Super.m</code> in a superclass,
-<code>Sub.m</code> must satisfy the specification of <code>Super.m</code>.
-Randoop tests both specifications, as follows:
-</p>
-
-<ul>
-  <li>
-  preconditions:  if <code>Sub.m</code> has a precondition, test it.
-  Otherwise, test <code>Super.m</code>'s precondition.  Never test both.
-
- <li>
- post-conditions:  Use the rules give above to test the exceptional and
- normal post-condition of <code>Sub.m</code>, and use them to test the
- post-condition of <code>Super.m</code>.  If either indicates the test is
- error-revealing, then the test is error-revealing.
-</ul>
 
 <p>
 <b>[[TODO: discuss how Randoop ships with specifications for libraries such as the JDK.  (It should do so!)  Discuss how to augment and/or remove them.]]</b>
