@@ -3,7 +3,6 @@ package randoop.output;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import randoop.util.Log;
 
 public class JavaFileWriter {
 
@@ -73,7 +72,7 @@ public class JavaFileWriter {
     try {
       return new PrintStream(file);
     } catch (IOException e) {
-      Log.out.println("Exception thrown while creating text print stream:" + file.getName());
+      System.out.println("Exception thrown while creating text print stream:" + file.getName());
       e.printStackTrace();
       System.exit(1);
       throw new Error("This can't happen");

@@ -306,12 +306,21 @@ check.dependsOn jacocoTestReport
 /*
  * Task to build the root directory of working directories used by the
  * JUnit tests in the systemTest task.
+ * If the directory exists then cleans out the contents.
  */
 task generateWorkingDirs {
   doLast {
     def generated = file(workingDirectories)
     if (! generated.exists()) {
       generated.mkdir()
+    } else {
+      def workingFiles = fileTree(workingDirectories) {
+        include '**/*.java'
+        include '**/*.class'
+        include '**/*.exec'
+        include '**/*.txt'
+      }
+      delete workingFiles
     }
   }
 }

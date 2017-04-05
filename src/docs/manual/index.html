@@ -762,6 +762,13 @@ Randoop about your application, and that is how we recommend using Randoop.
  the class names in the file. A test exercises a class if it executes any constructor or method
  of the class, directly or indirectly (the constructor or method might not appear in the source
  code of the test). Included classes may be abstract.
+            <li id="option:ignore-flaky-tests"><b>--ignore-flaky-tests=</b><i>boolean</i>.
+             If false, Randoop halts and gives diagnostics about flaky tests -- tests that behave
+ differently on different executions. If true, Randoop ignores them and does not output them.
+
+ <p>Use of this option is a last resort. Flaky tests are usually due to calling Randoop on
+ side-effecting or nondeterministic methods, and a better solution is not to call Randoop on
+ such methods. [default false]
       </ul>
   <li id="optiongroup:Which-tests-to-output">Which tests to output
       <ul>
@@ -853,15 +860,17 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li><b>INVALID</b> Occurrence of exception indicates an invalid test
 </ul>
 
-            <li id="option:ignore-flaky-tests"><b>--ignore-flaky-tests=</b><i>boolean</i>.
-             Ignore the situation where a code sequence that previously executed normally throws an
- exception when executed as part of a longer test sequence. If true, the sequence will be
- classified as invalid. If false, Randoop will halt with information about the sequence to aid
- in identifying the issue.
+            <li id="option:toradocu-conditions"><b>--toradocu-conditions=</b><i>filename</i> <code>[+]</code>.
+             Read Toradocu JSON condition file to use Toradocu generated conditions to control how tests are
+ classified.
 
- <p>Use of this option is a last resort. Flaky tests are usually due to calling Randoop on
- side-effecting or nondeterministic methods, and a better solution is not to call Randoop on
- such methods. [default false]
+ <p>Param-conditions are used as pre-conditions on method/constructor calls, with test sequences
+ where the condition fails being classified as <code>BehaviorType.INVALID</code>.
+
+ <p>Throws-conditions are used to check exceptions: if the inputs to the call satisfy the
+ condition, when the exception is thrown the sequence is <code>BehaviorType.EXPECTED</code>, but, if
+ it is not, the sequence is classified as <code>BehaviorType.ERROR</code>. If the throws-condition is
+ not satisfied by the input, then ordinary classification is applied.
       </ul>
   <li id="optiongroup:Observer-methods">Observer methods
       <ul>
@@ -1203,7 +1212,7 @@ If the rep invariant is ever violated, the program has a bug.
 </p>
 
 <p>
-By using the 
+By using the
 <a href="https://randoop.github.io/randoop/api/randoop/CheckRep.html"><code>@CheckRep</code></a>
 annotation (don't forget to <code>import randoop.*</code>), you can
 tell Randoop which methods in your classes under test are rep
@@ -1465,6 +1474,21 @@ of classes-under-test will be the same each time you run it.
 See the Java Tutorial on
 <a href="https://docs.oracle.com/javase/tutorial/essential/environment/paths.html">path and classpaths</a>.
 </p>
+
+<p>
+  If the command to run Randoop has the output
+</p>
+<pre>
+Cannot find the Java compiler. Check that classpath includes tools.jar
+</pre>
+<p>
+  then you have installed Java incorrectly.
+  You perhaps have the JRE on your path before the JDK.
+  Ensure that <code>JAVA_HOME</code> appears at the <em>front</em> of your path.
+  If you run the Windows operating system, see the
+  <a href="https://douglascayers.com/2015/05/30/how-to-set-custom-java-path-after-installing-jdk-8/">instructions for setting a custom Java path after installing JDK 8</a>.
+</p>
+
 
 <h3 id="no-class-found">Randoop cannot find class-under-test</h3>
 

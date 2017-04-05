@@ -269,20 +269,12 @@ public abstract class AbstractGenerator {
     if (checkGenerator == null) {
       throw new Error("Generator not properly initialized - must have a TestCheckGenerator");
     }
-    Log.log(this.operations);
 
     timer.startTiming();
 
     if (!GenInputsAbstract.noprogressdisplay) {
       progressDisplay = new ProgressDisplay(this, listenerMgr, ProgressDisplay.Mode.MULTILINE, 200);
       progressDisplay.start();
-    }
-
-    if (Log.isLoggingOn()) {
-      Log.logLine("Initial sequences (seeds):");
-      for (Sequence s : componentManager.getAllGeneratedSequences()) {
-        Log.logLine(s.toString());
-      }
     }
 
     // Notify listeners that exploration is starting.
