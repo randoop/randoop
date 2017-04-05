@@ -15,6 +15,7 @@ import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
 import com.github.javaparser.ast.expr.DoubleLiteralExpr;
 import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.IntegerLiteralExpr;
 import com.github.javaparser.ast.expr.LiteralExpr;
 import com.github.javaparser.ast.expr.LongLiteralExpr;
@@ -351,7 +352,7 @@ public class Minimize extends CommandHandler {
 
     // Find all the names of the primitive and wrapped type variables.
     Set<String> primitiveAndWrappedTypeVars = new HashSet<String>();
-    new VarDeclVisitor().visit(compUnit, primitiveAndWrappedTypeVars);
+    new VarDeclExprVisitor().visit(compUnit, primitiveAndWrappedTypeVars);
 
     // Iterate through the list of statements, from last to first.
     for (int i = statements.size() - 1; i >= 0; i--) {
@@ -712,46 +713,28 @@ public class Minimize extends CommandHandler {
       String classpath,
       Map<String, String> expectedOutput,
       int timeoutLimit) {
-
     // Set of fully-qualified type names that are used in variable declarations.
     Set<ClassOrInterfaceType> fullyQualifiedNames = new HashSet<ClassOrInterfaceType>();
     new ClassTypeVisitor().visit(compUnit, fullyQualifiedNames);
 
-    // Map from fully-qualified type name to simple type name.
-    Map<String, String> typeNameMap = new HashMap<String, String>();
+    CompilationUnit result = compUnit;
     for (ClassOrInterfaceType type : fullyQualifiedNames) {
+      // Copy and modify the compilation unit.
+      CompilationUnit compUnitWithSimpleTypeNames = (CompilationUnit) result.clone();
+
+      // String representation of the fully qualified type name.
       String typeName = type.getScope() + "." + type.getName();
-      typeNameMap.put(typeName, type.getName());
 
       // Add an import statement for the type.
-      addImport(compUnit, typeName);
-    }
+      addImport(compUnitWithSimpleTypeNames, typeName);
 
-    CompilationUnit result = compUnit;
-    List<ImportDeclaration> imports = result.getImports();
-    for (String type : typeNameMap.keySet()) {
-      String compUnitStr = result.toString();
-
-      // Replace all instances of the fully-qualified type name with the
-      // simple type name.
-      if (compUnitStr.contains(type)) {
-        compUnitStr = compUnitStr.replace(type, typeNameMap.get(type));
-      }
-      CompilationUnit compUnitWithSimpleTypeNames;
-      try {
-        // Parse the compilation unit and set the imports.
-        compUnitWithSimpleTypeNames = JavaParser.parse(IOUtils.toInputStream(compUnitStr, "UTF-8"));
-        compUnitWithSimpleTypeNames.setImports(imports);
-      } catch (ParseException e) {
-        System.err.println("Error parsing into a compilation unit.");
-        continue;
-      } catch (IOException e) {
-        System.err.println("IOUtils error creating input stream from string.");
-        continue;
-      }
+      // Simplify class type names, method call names, and field names.
+      new ClassTypeNameSimplifyVisitor().visit(compUnitWithSimpleTypeNames, type);
+      new MethodTypeNameSimplifyVisitor().visit(compUnitWithSimpleTypeNames, type);
+      new FieldAccessTypeNameSimplifyVisitor().visit(compUnitWithSimpleTypeNames, type);
 
       // Check that the simplification is correct.
-      writeToFile(result, file);
+      writeToFile(compUnitWithSimpleTypeNames, file);
       if (checkCorrectlyMinimized(file, classpath, packageName, expectedOutput, timeoutLimit)) {
         result = compUnitWithSimpleTypeNames;
       }
@@ -1097,8 +1080,11 @@ public class Minimize extends CommandHandler {
     }
   }
 
-  /** Visit every variable declaration. */
-  private static class VarDeclVisitor extends VoidVisitorAdapter<Object> {
+  /**
+   * Visit every variable declaration. Adds to a set of strings for all the names of variables that
+   * are either primitive or wrapped types.
+   */
+  private static class VarDeclExprVisitor extends VoidVisitorAdapter<Object> {
     /**
      * Visit every variable declaration.
      *
@@ -1121,6 +1107,84 @@ public class Minimize extends CommandHandler {
       if (n.getType() instanceof PrimitiveType || (classType != null && classType.isBoxedType())) {
         for (VariableDeclarator vd : n.getVars()) {
           variables.add(vd.getId().getName());
+        }
+      }
+    }
+  }
+
+  /** Visit every class or interface type. */
+  private static class ClassTypeNameSimplifyVisitor extends VoidVisitorAdapter<Object> {
+    /**
+     * Visit every class or interface type. Simplify the type name by removing the scope component
+     * if the visited object is of the same type as that contained in the argument that is passed
+     * in.
+     *
+     * @param arg a {@code ClassOrInterfaceType} object
+     */
+    @Override
+    public void visit(ClassOrInterfaceType n, Object arg) {
+      ClassOrInterfaceType typeName = (ClassOrInterfaceType) arg;
+
+      // If the class type is a generic types, visit each one of the
+      // parameter types as well.
+      for (Type argType : n.getTypeArgs()) {
+        ReferenceType rType = (ReferenceType) argType;
+        if (rType.getType() instanceof ClassOrInterfaceType) {
+          this.visit((ClassOrInterfaceType) rType.getType(), arg);
+        }
+      }
+
+      // Remove the scope component of the type.
+      if (n.getScope() != null && typeName.getScope().equals(n.getScope())) {
+        n.setScope(null);
+      }
+    }
+  }
+
+  /** Visit every method call expression. */
+  private static class MethodTypeNameSimplifyVisitor extends VoidVisitorAdapter<Object> {
+    /**
+     * Visit every method call expression. Simplify the type name by removing the scope component if
+     * the visited object is of the same type as that contained in the argument that is passed in.
+     *
+     * @param arg a {@code ClassOrInterfaceType} object
+     */
+    @Override
+    public void visit(MethodCallExpr n, Object arg) {
+      ClassOrInterfaceType typeName = (ClassOrInterfaceType) arg;
+      if (n.getScope() != null
+          && n.getScope().toString().equals(typeName.getScope() + "." + typeName.getName())) {
+        try {
+          // Set scope to be just the name of the type.
+          n.setScope(JavaParser.parseExpression(typeName.getName()));
+        } catch (ParseException e) {
+          // Error parsing type name.
+          e.printStackTrace();
+        }
+      }
+    }
+  }
+
+  /** Visit every field access expression. */
+  private static class FieldAccessTypeNameSimplifyVisitor extends VoidVisitorAdapter<Object> {
+    /**
+     * Visit every field access expression. Simplify the type name by removing the scope component
+     * if the visited object is of the same type as that contained in the argument that is passed
+     * in.
+     *
+     * @param arg a {@code ClassOrInterfaceType} object
+     */
+    @Override
+    public void visit(FieldAccessExpr n, Object arg) {
+      ClassOrInterfaceType typeName = (ClassOrInterfaceType) arg;
+      if (n.getScope() != null
+          && n.getScope().toString().equals(typeName.getScope() + "." + typeName.getName())) {
+        try {
+          // Set scope to be just the name of the type.
+          n.setScope(JavaParser.parseExpression(typeName.getName()));
+        } catch (ParseException e) {
+          // Error parsing type name.
+          e.printStackTrace();
         }
       }
     }
