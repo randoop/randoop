@@ -16,8 +16,10 @@ import com.github.javaparser.ast.expr.BooleanLiteralExpr;
 import com.github.javaparser.ast.expr.DoubleLiteralExpr;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.IntegerLiteralExpr;
+import com.github.javaparser.ast.expr.LiteralExpr;
 import com.github.javaparser.ast.expr.LongLiteralExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.NullLiteralExpr;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
@@ -347,6 +349,10 @@ public class Minimize extends CommandHandler {
     // found in a passing assertion.
     Map<String, String> primitiveValues = new HashMap<String, String>();
 
+    // Find all the names of the primitive and wrapped type variables.
+    Set<String> primitiveAndWrappedTypeVars = new HashSet<String>();
+    new VarDeclVisitor().visit(compUnit, primitiveAndWrappedTypeVars);
+
     // Iterate through the list of statements, from last to first.
     for (int i = statements.size() - 1; i >= 0; i--) {
       Statement currStmt = statements.get(i);
@@ -373,7 +379,7 @@ public class Minimize extends CommandHandler {
 
           // Assertions are never simplified, only removed.
           // If currStmt is an assertion, then stmt is null.
-          storeValueFromAssertion(currStmt, primitiveValues);
+          storeValueFromAssertion(currStmt, primitiveValues, primitiveAndWrappedTypeVars);
           break; // break replacement loop; continue statements loop.
         } else {
           // Issue encountered, remove the faulty replacement.
@@ -397,17 +403,21 @@ public class Minimize extends CommandHandler {
    *
    * @param currStmt a statement
    * @param primitiveValues a map of variable names to variable values; modified if {@code currStmt}
-   *     is a passing assertion, asserting a variable's value.
+   *     is a passing assertion, asserting a variable's value
+   * @param primitiveAndWrappedTypeVars set containing the names of all primitive and wrapped type
+   *     variables
    */
   private static void storeValueFromAssertion(
-      Statement currStmt, Map<String, String> primitiveValues) {
+      Statement currStmt,
+      Map<String, String> primitiveValues,
+      Set<String> primitiveAndWrappedTypeVars) {
     // Check if the statement is an assertion regarding a value that can be
     // used in a simplification later on.
     if (currStmt instanceof ExpressionStmt) {
       Expression exp = ((ExpressionStmt) currStmt).getExpression();
       if (exp instanceof MethodCallExpr) {
         MethodCallExpr mCall = (MethodCallExpr) exp;
-        // Check if the method call is an assertTrue statement
+        // Check that the method call is an assertTrue statement.
         if (mCall.getName().equals("assertTrue")) {
           List<Expression> mArgs = mCall.getArgs();
           // The condition expression from the assert statement.
@@ -420,15 +430,33 @@ public class Minimize extends CommandHandler {
             return;
           }
 
+          // Check that the expression is a binary expression.
           if (mExp instanceof BinaryExpr) {
             BinaryExpr binaryExp = (BinaryExpr) mExp;
             // Check that the operator is an equality operator.
             if (binaryExp.getOperator().equals(BinaryExpr.Operator.equals)) {
               // Retrieve and store the value associated with the
               // variable in the assertion.
-              String var = binaryExp.getLeft().toString();
-              String val = binaryExp.getRight().toString();
-              primitiveValues.put(var, val);
+              Expression leftExpr = binaryExp.getLeft();
+              Expression rightExpr = binaryExp.getRight();
+
+              // Swap two expressions if left is a literal expression.
+              if (leftExpr instanceof LiteralExpr) {
+                Expression temp = leftExpr;
+                leftExpr = rightExpr;
+                rightExpr = temp;
+              }
+
+              // Check that the left is a variable name and the right is a literal.
+              if (leftExpr instanceof NameExpr && rightExpr instanceof LiteralExpr) {
+                NameExpr nameExpr = (NameExpr) leftExpr;
+                // Check that the variable is a primitive or wrapped type.
+                if (primitiveAndWrappedTypeVars.contains(nameExpr.getName())) {
+                  String var = binaryExp.getLeft().toString();
+                  String val = binaryExp.getRight().toString();
+                  primitiveValues.put(var, val);
+                }
+              }
             }
           }
         }
@@ -1065,6 +1093,35 @@ public class Minimize extends CommandHandler {
       // Add the type to the set if it's not a visible type be default.
       if (n.toString().contains(".")) {
         params.add(n);
+      }
+    }
+  }
+
+  /** Visit every variable declaration. */
+  private static class VarDeclVisitor extends VoidVisitorAdapter<Object> {
+    /**
+     * Visit every variable declaration.
+     *
+     * @param arg a set containing the names of all the primitive and wrapped type variables.
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public void visit(VariableDeclarationExpr n, Object arg) {
+      Set<String> variables = (Set<String>) arg;
+
+      ClassOrInterfaceType classType = null;
+      if (n.getType() instanceof ReferenceType) {
+        ReferenceType rType = (ReferenceType) n.getType();
+        if (rType.getType() instanceof ClassOrInterfaceType) {
+          classType = (ClassOrInterfaceType) rType.getType();
+        }
+      }
+
+      // Check if the variable's type is a primitive or a wrapped type.
+      if (n.getType() instanceof PrimitiveType || (classType != null && classType.isBoxedType())) {
+        for (VariableDeclarator vd : n.getVars()) {
+          variables.add(vd.getId().getName());
+        }
       }
     }
   }
