@@ -1782,6 +1782,17 @@ See the Java Tutorial on
 <a href="https://docs.oracle.com/javase/tutorial/essential/environment/paths.html">path and classpaths</a>.
 </p>
 
+<p>
+  If the command to run Randoop has the output
+</p>
+<pre>
+Cannot find the Java compiler. Check that classpath includes tools.jar
+</pre>
+<p>
+  then you have installed Java incorrectly.  You perhaps have the JRE on your path before the JDK.  Ensure that \<JAVA_HOME> appears at the <em>front</em> of your path.  If you run the Windows operating system, see the <a href="https://douglascayers.com/2015/05/30/how-to-set-custom-java-path-after-installing-jdk-8/">instructions for setting a custom Java path after installing JDK 8</a>.
+</p>
+
+
 <h3 id="no-class-found">Randoop cannot find class-under-test</h3>
 
 <p>

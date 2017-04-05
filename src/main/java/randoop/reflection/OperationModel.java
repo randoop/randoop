@@ -2,6 +2,7 @@ package randoop.reflection;
 
 import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import randoop.Globals;
 import randoop.condition.SpecificationCollection;
 import randoop.contract.CompareToAntiSymmetric;
 import randoop.contract.CompareToEquals;
@@ -24,6 +26,7 @@ import randoop.contract.EqualsTransitive;
 import randoop.contract.ObjectContract;
 import randoop.generation.ComponentManager;
 import randoop.main.ClassNameErrorHandler;
+import randoop.main.GenInputsAbstract;
 import randoop.operation.MethodCall;
 import randoop.operation.OperationParseException;
 import randoop.operation.OperationParser;
@@ -33,6 +36,7 @@ import randoop.sequence.Sequence;
 import randoop.test.ContractSet;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
+import randoop.util.Log;
 import randoop.util.MultiMap;
 
 /**
@@ -301,6 +305,24 @@ public class OperationModel {
 
   public Set<Sequence> getAnnotatedTestValues() {
     return annotatedTestValues;
+  }
+
+  public void log() {
+    if (!Log.isLoggingOn()) {
+      return;
+    }
+
+    try {
+      GenInputsAbstract.log.write("Operations: " + Globals.lineSep);
+      for (TypedOperation t : this.operations) {
+        GenInputsAbstract.log.write(t.toString());
+        GenInputsAbstract.log.write(Globals.lineSep);
+        GenInputsAbstract.log.flush();
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+      System.exit(1);
+    }
   }
 
   /**
