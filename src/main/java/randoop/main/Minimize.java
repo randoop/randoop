@@ -490,8 +490,6 @@ public class Minimize extends CommandHandler {
    *   <li>Remove the left hand side of a statement, retaining only the expression on the right.
    * </ul>
    *
-   * <p>
-   *
    * <p>Assertions are never simplified, only removed completely.
    *
    * @param currStmt statement to simplify
