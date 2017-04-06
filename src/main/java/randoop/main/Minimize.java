@@ -743,8 +743,19 @@ public class Minimize extends CommandHandler {
     Set<ClassOrInterfaceType> fullyQualifiedNames = new HashSet<ClassOrInterfaceType>();
     new ClassTypeVisitor().visit(compUnit, fullyQualifiedNames);
 
+    // Sort the types in order to add imports and simplify variable names in a consistent manner.
+    List<ClassOrInterfaceType> typeList = new ArrayList<ClassOrInterfaceType>(fullyQualifiedNames);
+    Collections.sort(
+        typeList,
+        new Comparator<ClassOrInterfaceType>() {
+          @Override
+          public int compare(ClassOrInterfaceType o1, ClassOrInterfaceType o2) {
+            return o1.toString().compareTo(o2.toString());
+          }
+        });
+
     CompilationUnit result = compUnit;
-    for (ClassOrInterfaceType type : fullyQualifiedNames) {
+    for (ClassOrInterfaceType type : typeList) {
       // Copy and modify the compilation unit.
       CompilationUnit compUnitWithSimpleTypeNames = (CompilationUnit) result.clone();
 
