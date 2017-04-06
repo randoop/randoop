@@ -66,6 +66,8 @@ import plume.TimeLimitProcess;
 /**
  * This program minimizes a failing JUnit test suite. Its three command-line arguments are:
  *
+ * <p>
+ *
  * <ol>
  *   <li>the Java file whose failing tests will be minimized
  *   <li>optional classpath containing dependencies needed to compile and run the Java file
@@ -73,11 +75,15 @@ import plume.TimeLimitProcess;
  *       30 seconds.
  * </ol>
  *
+ * <p>
+ *
  * <p>In a method that contains a failing assertion, the program will iterate through the method's
  * list of statements, from last to first. For each statement, possible replacement statements are
  * considered, from most minimized to least minimized. Removing the statement is the most a
  * statement can be minimized. Leaving the statement unchanged is the least that the statement can
  * be minimized.
+ *
+ * <p>
  *
  * <p>If a replacement causes the output test suite to fail differently than the original test
  * suite, the algorithm tries a different replacement. If no replacement allows the output test
@@ -169,13 +175,19 @@ public class Minimize extends CommandHandler {
   /**
    * Minimize the input test file.
    *
+   * <p>
+   *
    * <p>Given an input Java file, minimization produces an output file that is as small as possible
    * (as few lines of code as possible) and that fails the same way:
+   *
+   * <p>
    *
    * <ol>
    *   <li>Same failing assertions as in the original input test suite.
    *   <li>Same stacktrace produced by failing assertions.
    * </ol>
+   *
+   * <p>
    *
    * <p>The original input Java file will be compiled and run once. The "expected output" is a map
    * from test method name to failure stack trace. A method is included in the map only if the
@@ -469,12 +481,16 @@ public class Minimize extends CommandHandler {
    * Return a list of statements that are a simplification of a given statement, in order from most
    * to least minimized. The possible minimizations are:
    *
+   * <p>
+   *
    * <ul>
    *   <li>Remove a statement, represented by null.
    *   <li>Replace the right hand side expression with {@code 0}, {@code false}, or {@code null}.
    *   <li>Replace right hand side by a calculated value obtained from a passing assertion.
    *   <li>Remove the left hand side of a statement, retaining only the expression on the right.
    * </ul>
+   *
+   * <p>
    *
    * <p>Assertions are never simplified, only removed completely.
    *
@@ -594,8 +610,9 @@ public class Minimize extends CommandHandler {
    * to the value that is passed in.
    *
    * @param vdExpr variable declaration expression representing the current statement to simplify
-   * @param exprType type of the variable declaration expression
-   * @param value value that will be assigned to the variable being declared
+   * @param exprType type of the variable declaration expression, should not be null
+   * @param value value that will be assigned to the variable being declared. If the value is null,
+   *     then the right hand side will have the zero value of the variable declaration's type.
    * @return a {@code Statement} object representing the simplified variable declaration expression
    *     if the type of the variable is a primitive and a value has been previously calculated.
    *     Returns {@code null} if more than one variable is declared in the {@code
@@ -618,53 +635,62 @@ public class Minimize extends CommandHandler {
     // Based on the declared variable type, set the right hand to the value
     // that was passed in.
     if (exprType instanceof PrimitiveType) {
-      switch (((PrimitiveType) exprType).getType()) {
-        case Boolean:
-          if (value == null) {
-            vd.setInit(new BooleanLiteralExpr(Boolean.parseBoolean("false")));
-          } else {
-            vd.setInit(new BooleanLiteralExpr(Boolean.parseBoolean(value)));
-          }
-          break;
-        case Char:
-        case Byte:
-        case Short:
-        case Int:
-          if (value == null) {
-            vd.setInit(new IntegerLiteralExpr("0"));
-          } else {
-            vd.setInit(new IntegerLiteralExpr(value));
-          }
-          break;
-        case Float:
-          if (value == null) {
-            vd.setInit(new DoubleLiteralExpr("0f"));
-          } else {
-            vd.setInit(new DoubleLiteralExpr(value));
-          }
-          break;
-        case Double:
-          if (value == null) {
-            vd.setInit(new DoubleLiteralExpr("0.0"));
-          } else {
-            vd.setInit(new DoubleLiteralExpr(value));
-          }
-          break;
-        case Long:
-          if (value == null) {
-            vd.setInit(new LongLiteralExpr("0L"));
-          } else {
-            vd.setInit(new LongLiteralExpr(value));
-          }
-          break;
-      }
+      vd.setInit(getLiteralExpression(value, ((PrimitiveType) exprType).getType()));
     } else {
-      // Set right hand side to null.
+      // Set right hand side to the null expression.
       vd.setInit(new NullLiteralExpr());
     }
 
     // Return a new statement with the simplified expression.
     return new ExpressionStmt(resultExpr);
+  }
+
+  /**
+   * Return a literal expression with the value that is passed in.
+   *
+   * @param value the value for the literal expression. If null, the value of the literal expression
+   *     will be the zero value for the type that is passed in.
+   * @param type the type of the expression, needs to be one of the eight primitive types
+   * @return a literal expression containing the value that is passed in, null if the type that is
+   *     passed in is not one of the primitive types
+   */
+  private static LiteralExpr getLiteralExpression(String value, PrimitiveType.Primitive type) {
+    switch (type) {
+      case Boolean:
+        if (value == null) {
+          return new BooleanLiteralExpr(Boolean.parseBoolean("false"));
+        } else {
+          return new BooleanLiteralExpr(Boolean.parseBoolean(value));
+        }
+      case Char:
+      case Byte:
+      case Short:
+      case Int:
+        if (value == null) {
+          return new IntegerLiteralExpr("0");
+        } else {
+          return new IntegerLiteralExpr(value);
+        }
+      case Float:
+        if (value == null) {
+          return new DoubleLiteralExpr("0f");
+        } else {
+          return new DoubleLiteralExpr(value);
+        }
+      case Double:
+        if (value == null) {
+          return new DoubleLiteralExpr("0.0");
+        } else {
+          return new DoubleLiteralExpr(value);
+        }
+      case Long:
+        if (value == null) {
+          return new LongLiteralExpr("0L");
+        } else {
+          return new LongLiteralExpr(value);
+        }
+    }
+    return null;
   }
 
   /**
@@ -845,6 +871,8 @@ public class Minimize extends CommandHandler {
   /**
    * Get directory to execute command in, given file path and package name. Returns a {@code File}
    * pointing to the directory that the Java file should be executed in.
+   *
+   * <p>
    *
    * <p>For the simplest case where the Java file is nested in a single package layer, i.e.
    * MyJavaFile.java is in the package mypackage, the folder structure would be
