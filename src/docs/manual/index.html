@@ -1174,7 +1174,6 @@ The file format is a JSON list with elements that are the serialized form of the
 class.
 An <a href="condition_spec_json_example.txt">example specification file</a>, which
 provides specifications for an example class <code><a href="net_connection_java.txt">net.Connection</a></code>.
-[[TODO: Give the class realistic Javadoc, not the sentence "Example class...".]]
 The serialized form is described below, with more detail in the <a href="https://randoop.github.io/randoop/api/randoop/condition/specification/OperationSpecification.html">API documentation</a>.
 </p>
 
@@ -1204,10 +1203,9 @@ It consists of the declaring class, method
 name, and parameter types.
 Types are given in the format used by
 <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getName--"><code>Class.forName()</code></a>; for example, member classes are set off with "<code>$</code>", as in <code>pkg.Class$InnerClass</code>.
+</p>
 
-
-
-This is given as a JSON object with fields <code>classname</code>, <code>name</code> and <code>parameterTypes</code>,
+The method signature is given as a JSON object with fields <code>classname</code>, <code>name</code> and <code>parameterTypes</code>,
 all of which are required.
 For instance, the method <code>net.Connection.send(int)</code> is represented as
 </p>
@@ -1224,9 +1222,11 @@ For instance, the method <code>net.Connection.send(int)</code> is represented as
 <h4 id="parameter-names">Parameter names</h4>
 
 <p>
-A guard is a boolean expression that can use formal parameters (including
-the receiver); properties can also refer to the return value.
-Therefore, the specification must name the parameters; for example:
+A guard is a boolean expression that can use the formal parameters (including
+the receiver); while properties can also refer to the return value.
+These expressions may use default names for the receiver (<code>receiver</code)
+and the return value (<code>result</code>), but the specification must
+name the method parameters; for example:
 </p>
 
 <pre><code>
@@ -1235,19 +1235,20 @@ Therefore, the specification must name the parameters; for example:
 
 <p>
 indicates that the single formal parameter of the method is referred to by
-the name <code>code</code>.
+the name <code>code</code>, and that the defaults will be used for receiver
+and return value.
 </p>
 
 <p>
 Optionally, you may specify a name for the receiver and for the return
-value.  This example uses the defaults:
+value.  For example
 </p>
 
 <pre><code>
   {
     "parameters": [ "code" ],
-    "receiverName": "receiver",
-    "returnName": "result"
+    "receiverName": "target",
+    "returnName": "returnValue"
   }
 </code></pre>
 
@@ -1255,7 +1256,7 @@ value.  This example uses the defaults:
 <h4 id="condition-details">Specifying conditions</h4>
 
 <p>
-The specification contains 3 lists, one for each the different type of condition.
+The specification contains 3 lists of conditions, one for each different type of condition.
 </p>
 
 <dl>
@@ -1269,10 +1270,11 @@ The specification contains 3 lists, one for each the different type of condition
   </p>
 
   <p>
-  A pre-condition is written as as a JSON object with a field
-  <code>guard</code>, which is an object that has a field <code>condition</code>.
+  A pre-condition is written as a JSON object with a field
+  <code>guard</code>, which minimally the text of the expression.
   To specify that the argument to a call to <code>net.Connection.send(int)</code>
   must be positive, you could write the condition
+  </p>
 
   <pre><code>
     {
@@ -1282,15 +1284,14 @@ The specification contains 3 lists, one for each the different type of condition
   </code></pre>
 
   <p>
-  Both the condition and guard have an optional field <code>description</code>
+  The condition has an optional field <code>description</code>
   that Randoop will use in comments in the generated tests.
-  (To include the description for the guard, the guard should be written as
-  <pre>{ "condition": "code &gt; 0 ", "description": "the code is positive" }</pre>.)
   </p>
 
   <p>
-  As another example, it would be possible to write a single pre-condition
-  <code>receiver.isOpen() &amp;&amp; code &gt; 0</code> or, equivalently,
+  All pre-conditions are checked before a call is made to a method.
+  So, if we wanted to extend this condition, requiring both that the <code>Connection</code> is open and the code is nonnegative
+  could be written as a single pre-condition <code>receiver.isOpen() &amp;&amp; code &gt; 0</code> or, equivalently,
   two pre-conditions <code>receiver.isOpen()</code> and <code>code &gt; 0</code>
   However, in this case, we could simply have two pre-condition objects, since
   both will be checked.

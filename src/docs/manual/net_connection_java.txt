@@ -1,17 +1,32 @@
 package net;
 
 /**
- * Example class for describing the specification of methods.
+ * Represents a connection on a communication channel. Allows sending messages
+ * both coded as integers, or as text strings.
  */
 public class Connection {
 
-  /** @returns true if the connection is open, false otherwise */
+  /**
+   * Creates a closed connection for the given communication channel.
+   *
+   * @param channel the communication channel, must be non-null
+   */
+  public Connection(Channel channel) {
+   ...
+  }
+
+  /**
+   * Indicates whether this {@link Connection} is open.
+   *
+   * @returns true if the connection is open, false otherwise
+   */
   public boolean isOpen() {
     ...
   }
 
   /**
-   * Establishes a new connection.
+   * Establishes this {@link Connection} allowing messages to be sent
+   * and received.
    *
    * @throws IllegalStateException if the connection is already open
    */
@@ -20,7 +35,7 @@ public class Connection {
   }
 
   /**
-   * Sends a message.
+   * Sends a text message on this {@link Connection}.
    *
    * @throws NullPointerException if message is null
    * @throws IllegalStateException if the connection is not open
@@ -30,6 +45,8 @@ public class Connection {
   }
 
   /**
+   * Sends a coded integer message on this {@link Connection}
+   *
    * @param code  the code, must be positive
    * @throws IllegalStateException if the connection is not open
    */
@@ -38,6 +55,8 @@ public class Connection {
   }
 
   /**
+   * Receives a coded integer message on this {@link Connection}.
+   *
    * @return the received non-negative code value
    * @throws IllegalStateException if the connection is not open
    */
