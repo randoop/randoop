@@ -1,7 +1,7 @@
 package randoop.condition;
 
 /**
- * Created by bjkeller on 4/7/17.
+ * These are inputs for testing behavior on conditions
  */
 class ParentWithException {
   /** @throws RuntimeException if arg is null */
@@ -28,7 +28,8 @@ class ChildWithException extends ParentWithException {
   }
 
   @Override
-  void m2(Object arg) {
+  void m2(Object arg) throws Throwable {
+    super.m2(arg);
     if (arg == null) {
       throw new NullPointerException("arg");
     }
