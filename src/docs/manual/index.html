@@ -1207,7 +1207,7 @@ Types are given in the format used by
 
 <p>
 The method signature is given as a JSON object with fields <code>classname</code>,
-<code>name</code> and <code>parameterTypes</code>,
+<code>name</code>, and <code>parameterTypes</code>,
 all of which are required.
 For instance, the method <code>net.Connection.send(int)</code> is represented as
 </p>
@@ -1225,7 +1225,7 @@ For instance, the method <code>net.Connection.send(int)</code> is represented as
 
 <p>
 A guard is a boolean expression that can use the formal parameters (including
-the receiver); while properties can also refer to the return value.
+the receiver); a property can also refer to the return value.
 These expressions may use default names for the receiver (<code>receiver</code>)
 and the return value (<code>result</code>), but the specification must
 name the method parameters; for example:
@@ -1243,7 +1243,7 @@ and return value.
 
 <p>
 Optionally, you may specify a name for the receiver and for the return
-value.  For example
+value.  For example:
 </p>
 
 <pre><code>
@@ -1273,7 +1273,7 @@ The specification contains 3 lists of conditions, one for each different type of
 
   <p>
   A pre-condition is written as a JSON object with a field
-  <code>guard</code>, which minimally the text of the expression.
+  <code>guard</code>, which is minimally the text of the expression.
   To specify that the argument to a call to <code>net.Connection.send(int)</code>
   must be positive, you could write the condition
   </p>
