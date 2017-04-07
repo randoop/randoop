@@ -262,4 +262,10 @@ public class ComponentManager {
   TypeInstantiator getTypeInstantiator() {
     return gralComponents.getTypeInstantiator();
   }
+
+  public void log() {
+    for (Sequence s : gralComponents.getAllSequences()) {
+      s.log();
+    }
+  }
 }

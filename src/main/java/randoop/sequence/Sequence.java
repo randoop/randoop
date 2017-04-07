@@ -1,5 +1,6 @@
 package randoop.sequence;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -17,6 +18,7 @@ import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
+import randoop.util.Log;
 import randoop.util.OneMoreElementList;
 import randoop.util.Randomness;
 import randoop.util.SimpleList;
@@ -1160,5 +1162,21 @@ public final class Sequence implements WeightedElement {
     }
 
     return new Sequence().extend(TypedOperation.createPrimitiveInitialization(type, value));
+  }
+
+  public void log() {
+    if (!Log.isLoggingOn()) {
+      return;
+    }
+
+    try {
+      GenInputsAbstract.log.write(Globals.lineSep + Globals.lineSep);
+      GenInputsAbstract.log.write(this.toFullCodeString());
+      GenInputsAbstract.log.flush();
+
+    } catch (IOException e) {
+      e.printStackTrace();
+      System.exit(1);
+    }
   }
 }

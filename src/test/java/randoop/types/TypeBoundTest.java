@@ -201,7 +201,7 @@ public class TypeBoundTest {
   private Map<String, TypeVariable> getArgumentTypes(Class<?> classType) {
     Map<String, TypeVariable> arguments = new LinkedHashMap<>();
     ReflectionManager mgr =
-        new ReflectionManager(new PackageVisibilityPredicate(classType.getPackage()));
+        new ReflectionManager(new PackageVisibilityPredicate(classType.getPackage().getName()));
     mgr.apply(new ArgumentVisitor(arguments), classType);
     return arguments;
   }
