@@ -1170,11 +1170,11 @@ A specification of a method (including constructors) indicates the circumstances
 The <code>--specifications=file</code>
 command-line option names a file containing the method specifications.
 The file format is a JSON list with elements that are the serialized form of the
-<a href="https://randoop.github.io/randoop/api/randoop/condition/specification/OperationSpecification.html">OperationSpecification</a>
+<a href="../api/randoop/condition/specification/OperationSpecification.html">OperationSpecification</a>
 class.
 An <a href="condition_spec_json_example.txt">example specification file</a>, which
 provides specifications for an example class <code><a href="net_connection_java.txt">net.Connection</a></code>.
-The serialized form is described below, with more detail in the <a href="https://randoop.github.io/randoop/api/randoop/condition/specification/OperationSpecification.html">API documentation</a>.
+The serialized form is described below, with more detail in the <a href="../api/randoop/condition/specification/OperationSpecification.html">API documentation</a>.
 </p>
 
 <p>
@@ -1496,7 +1496,7 @@ If the rep invariant is ever violated, the program has a bug.
 
 <p>
 By using the
-<a href="https://randoop.github.io/randoop/api/randoop/CheckRep.html"><code>@CheckRep</code></a>
+<a href="../api/randoop/CheckRep.html"><code>@CheckRep</code></a>
 annotation (don't forget to <code>import randoop.*</code>), you can
 tell Randoop which methods in your classes under test are rep
 invariant methods.  Randoop will call these methods; if the method
