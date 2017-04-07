@@ -66,8 +66,6 @@ import plume.TimeLimitProcess;
 /**
  * This program minimizes a failing JUnit test suite. Its three command-line arguments are:
  *
- * <p>
- *
  * <ol>
  *   <li>the Java file whose failing tests will be minimized
  *   <li>optional classpath containing dependencies needed to compile and run the Java file
@@ -75,15 +73,11 @@ import plume.TimeLimitProcess;
  *       30 seconds.
  * </ol>
  *
- * <p>
- *
  * <p>In a method that contains a failing assertion, the program will iterate through the method's
  * list of statements, from last to first. For each statement, possible replacement statements are
  * considered, from most minimized to least minimized. Removing the statement is the most a
  * statement can be minimized. Leaving the statement unchanged is the least that the statement can
  * be minimized.
- *
- * <p>
  *
  * <p>If a replacement causes the output test suite to fail differently than the original test
  * suite, the algorithm tries a different replacement. If no replacement allows the output test
@@ -175,19 +169,13 @@ public class Minimize extends CommandHandler {
   /**
    * Minimize the input test file.
    *
-   * <p>
-   *
    * <p>Given an input Java file, minimization produces an output file that is as small as possible
    * (as few lines of code as possible) and that fails the same way:
-   *
-   * <p>
    *
    * <ol>
    *   <li>Same failing assertions as in the original input test suite.
    *   <li>Same stacktrace produced by failing assertions.
    * </ol>
-   *
-   * <p>
    *
    * <p>The original input Java file will be compiled and run once. The "expected output" is a map
    * from test method name to failure stack trace. A method is included in the map only if the
@@ -480,8 +468,6 @@ public class Minimize extends CommandHandler {
   /**
    * Return a list of statements that are a simplification of a given statement, in order from most
    * to least minimized. The possible minimizations are:
-   *
-   * <p>
    *
    * <ul>
    *   <li>Remove a statement, represented by null.
@@ -880,8 +866,6 @@ public class Minimize extends CommandHandler {
   /**
    * Get directory to execute command in, given file path and package name. Returns a {@code File}
    * pointing to the directory that the Java file should be executed in.
-   *
-   * <p>
    *
    * <p>For the simplest case where the Java file is nested in a single package layer, i.e.
    * MyJavaFile.java is in the package mypackage, the folder structure would be
