@@ -25,14 +25,6 @@ public final class Randomness {
 
   private static int totalCallsToRandom = 0;
 
-  public static boolean nextRandomBool() {
-    totalCallsToRandom++;
-    if (Log.isLoggingOn()) {
-      Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
-    }
-    return random.nextBoolean();
-  }
-
   /**
    * Uniformly random int from [0, i)
    *

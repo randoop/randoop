@@ -169,7 +169,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
     }
     int result = 0;
     for (int i = 0; i < this.size() && result == 0; i++) {
-      result = list.get(i).getCanonicalName().compareTo(tuple.list.get(i).getCanonicalName());
+      result = list.get(i).compareTo(tuple.list.get(i));
     }
     return result;
   }

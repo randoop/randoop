@@ -77,7 +77,7 @@ public abstract class AbstractGenerator {
    * generate sequences. In other words, statements specifies the universe of operations from which
    * sequences are generated.
    */
-  public List<TypedOperation> operations;
+  protected final List<TypedOperation> operations;
 
   /** Container for execution visitors used during execution of sequences. */
   protected ExecutionVisitor executionVisitor;
