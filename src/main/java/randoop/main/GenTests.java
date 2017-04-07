@@ -289,14 +289,14 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     }
 
-    List<TypedOperation> model = operationModel.getOperations();
+    List<TypedOperation> operations = operationModel.getOperations();
 
-    if (model.isEmpty()) {
+    if (operations.isEmpty()) {
       System.out.println("There are no methods to test. Exiting.");
       System.exit(1);
     }
     if (!GenInputsAbstract.noprogressdisplay) {
-      System.out.println("PUBLIC MEMBERS=" + model.size());
+      System.out.println("PUBLIC MEMBERS=" + operations.size());
     }
 
     /*
@@ -339,7 +339,13 @@ public class GenTests extends GenInputsAbstract {
     AbstractGenerator explorer;
     explorer =
         new ForwardGenerator(
-            model, observers, timelimit * 1000, inputlimit, outputlimit, componentMgr, listenerMgr);
+            operations,
+            observers,
+            timelimit * 1000,
+            inputlimit,
+            outputlimit,
+            componentMgr,
+            listenerMgr);
 
     /*
      * setup for check generation

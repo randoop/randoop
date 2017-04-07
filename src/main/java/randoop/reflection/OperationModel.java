@@ -76,7 +76,7 @@ public class OperationModel {
   private ContractSet contracts;
 
   /** Set of concrete operations extracted from classes */
-  private Set<TypedOperation> operations;
+  private final Set<TypedOperation> operations;
 
   /** Create an empty model of test context. */
   private OperationModel() {
