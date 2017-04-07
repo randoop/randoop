@@ -1290,11 +1290,9 @@ The specification contains 3 lists of conditions, one for each different type of
 
   <p>
   All pre-conditions are checked before a call is made to a method.
-  So, if we wanted to extend this condition, requiring both that the <code>Connection</code> is open and the code is nonnegative
-  could be written as a single pre-condition <code>receiver.isOpen() &amp;&amp; code &gt; 0</code> or, equivalently,
-  two pre-conditions <code>receiver.isOpen()</code> and <code>code &gt; 0</code>
-  However, in this case, we could simply have two pre-condition objects, since
-  both will be checked.
+  This means that if we wanted a condition requiring both that the <code>Connection</code> is open and the code is nonnegative,
+  then this could be written equivalently as a single pre-condition <code>receiver.isOpen() &amp;&amp; code &gt; 0</code> or
+  as two pre-conditions <code>receiver.isOpen()</code> and <code>code &gt; 0</code>.
   </p>
   </dd>
 </dl>
@@ -1423,9 +1421,9 @@ Given these details, the full specification is specified as a JSON object as
   {
     "operation": <i>operation-object</i>,
     "identifiers": <i>identifiers-object</i>,
-    "pre": <i>pre-condition-list</i>,
-    "post": <i>normal-post-condition-list</i>,
-    "throws": <i>throws-condition-list</i>
+    "pre-conditions": <i>pre-condition-list</i>,
+    "post-conditions": <i>normal-post-condition-list</i>,
+    "throws-conditions": <i>throws-condition-list</i>
   }
 </code></pre>
 
@@ -1448,15 +1446,11 @@ Randoop classifies a test sequence according to its last method call.
       </li>
       <li>
         If the guard of any throws-condition is satisfied before the call, the exception
-        from the condition is added to a set <code>E</code> of expected exceptions.
-        If, in addition, the method overrides a method that has a throws-condition whose guard is satisfied,
-        the exception from the inherited condition is added to a set <code>I</code> of inherited exceptions.
+        from the condition is added to a set <code>expected</code> of expected exceptions.
       </li>
       <li>
         The guards of normal-preconditions are evaluated in order, and the property
-        for the first satisfied guard is placed into a list <code>P</code>.
-        If the method overrides a method that has a post-condition whose guard is satisfied,
-        the property from the inherited condition is added to to the end of the list <code>P</code>.
+        for the first satisfied guard is placed into a set <code>properties</code>.
       </li>
     </ol>
   </li>
@@ -1464,23 +1458,30 @@ Randoop classifies a test sequence according to its last method call.
     <ol>
       <li>
         If the call throws a checked exception, the sequence is classified as
-        having expected behavior if the thrown exception is either a
-        member of <code>E</code> or <code>I</code>, or is a subclass of a member
-        of <code>E</code> or <code>I</code>.
-        If at least one of <code>E</code> or <code>I</code> is non-empty,
+        having expected behavior if the thrown exception is a member of the set
+        <code>expected</code>, or is a subclass of a member
+        of <code>expected</code>.
+        If the set <code>expected</code> is non-empty,
         the sequence is classified as error-revealing if the thrown exception is
-        not a member of either set.
+        not a member of the set.
         Otherwise, the sequence is classified according to the
         rules of <a href="#classifying-tests">classifying tests</a>.
       </li>
       <li>
         If the call terminates normally, the sequence is classifed as having
         expected behavior if there are no expected exceptions
-        (e.g., <code>E</code> is empty) and all properties in <code>P</code> are
+        (e.g., <code>expected</code> is empty) and all properties in <code>properties</code> are
         satisfied.
         Otherwise, the sequence is classified as error-revealing.
       </li>
     </ol>
+  </li>
+  <li>
+    If the method is inherited, the method call is also checked against all
+    specifications of overriden methods in the inheritance chain.
+    If the call is invalid by any specification, the sequence is classified as invalid.
+    If the call is error-revealing by any specification, the sequence is classified as error-revealing.
+    Otherwise, all specifications are satisfied and the sequence has expected behavior.
   </li>
 </ol>
 
