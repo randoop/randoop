@@ -73,9 +73,9 @@ import plume.TimeLimitProcess;
  *       30 seconds.
  * </ol>
  *
- * <p>In a method that contains a failing assertion, the program will iterate through the method's
- * list of statements, from last to first. For each statement, possible replacement statements are
- * considered, from most minimized to least minimized. Removing the statement is the most a
+ * <p>In a method that contains a failing assertion, the minimizer will iterate through the method's
+ * list of statements, from last to first. For each statement, it tries possible replacement
+ * statements, from most minimized to least minimized. Removing the statement is the most a
  * statement can be minimized. Leaving the statement unchanged is the least that the statement can
  * be minimized.
  *
@@ -129,8 +129,8 @@ public class Minimize extends CommandHandler {
    * Check that the required parameters have been specified by the command-line options and then
    * call the mainMinimize method.
    *
-   * @param args parameters, specified by keyword, for the input file, the classpath, the timeout
-   *     value and the verbose flag
+   * @param args parameters, specified in command-line style, for the input file, the classpath, the
+   *     timeout value, and the verbose flag
    * @return true if the command was handled successfully
    * @throws RandoopTextuiException thrown if incorrect arguments are passed
    */
@@ -256,9 +256,9 @@ public class Minimize extends CommandHandler {
         timeoutLimit,
         verboseOutput);
 
-    // Cleanup: simplify variable type names and sort the import statements.
+    // Cleanup: simplify type names and sort the import statements.
     compUnit =
-        simplifyVariableTypeNames(
+        simplifyTypeNames(
             compUnit, packageName, minimizedFile, classPath, expectedOutput, timeoutLimit);
 
     writeToFile(compUnit, minimizedFile);
@@ -279,7 +279,7 @@ public class Minimize extends CommandHandler {
    * @param classpath classpath used to compile and run the Java file
    * @param expectedOutput expected JUnit output when the Java file is compiled and run
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
-   * @param verboseOutput prints out information about minimization status if true
+   * @param verboseOutput whether to print information about minimization status
    */
   private static void minimizeTestSuite(
       CompilationUnit cu,
@@ -350,9 +350,9 @@ public class Minimize extends CommandHandler {
     // found in a passing assertion.
     Map<String, String> primitiveValues = new HashMap<String, String>();
 
-    // Find all the names of the primitive and wrapped type variables.
-    Set<String> primitiveAndWrappedTypeVars = new HashSet<String>();
-    new VarDeclExprVisitor().visit(compUnit, primitiveAndWrappedTypeVars);
+    // Find all the names of the primitive and wrapped types.
+    Set<String> primitiveAndWrappedTypes = new HashSet<String>();
+    new VarDeclExprVisitor().visit(compUnit, primitiveAndWrappedTypes);
 
     // Iterate through the list of statements, from last to first.
     for (int i = statements.size() - 1; i >= 0; i--) {
@@ -380,7 +380,7 @@ public class Minimize extends CommandHandler {
 
           // Assertions are never simplified, only removed.
           // If currStmt is an assertion, then stmt is null.
-          storeValueFromAssertion(currStmt, primitiveValues, primitiveAndWrappedTypeVars);
+          storeValueFromAssertion(currStmt, primitiveValues, primitiveAndWrappedTypes);
           break; // break replacement loop; continue statements loop.
         } else {
           // Issue encountered, remove the faulty replacement.
@@ -492,13 +492,10 @@ public class Minimize extends CommandHandler {
     if (currStmt instanceof ExpressionStmt) {
       Expression exp = ((ExpressionStmt) currStmt).getExpression();
       if (exp instanceof VariableDeclarationExpr) {
-        // Create and return a list of possible replacement statements.
         VariableDeclarationExpr vdExpr = (VariableDeclarationExpr) exp;
 
-        // Simplify right hand side to zero-equivalent value: 0, false,
-        // or null.
-        List<Statement> rhsZeroValStmts = rhsAssignZeroValue(vdExpr);
-        replacements.addAll(rhsZeroValStmts);
+        // Simplify right hand side to zero-equivalent value: 0, false, or null.
+        replacements.addAll(rhsAssignZeroValue(vdExpr));
 
         // Simplify right hand side to a value that was previously found
         // in a passing assertion.
@@ -524,8 +521,7 @@ public class Minimize extends CommandHandler {
    *
    * @param vdExpr variable declaration expression representing the current statement to simplify
    * @return a list of {@code Statement} objects representing the simplified variable declaration
-   *     expression if the type of the variable is a primitive and a value has been previously
-   *     calculated.
+   *     expression
    */
   private static List<Statement> rhsAssignZeroValue(VariableDeclarationExpr vdExpr) {
     List<Statement> resultList = new ArrayList<Statement>();
@@ -567,7 +563,7 @@ public class Minimize extends CommandHandler {
    *     values
    * @return a {@code Statement} object representing the simplified variable declaration expression
    *     if the type of the variable is a primitive and a value has been previously calculated.
-   *     Otherwise, {@code null} is returned. Also returns {@code null} if more than one variable is
+   *     Otherwise, returns {@code null}. Also returns {@code null} if more than one variable is
    *     declared in the {@code VariableDeclarationExpr}.
    */
   private static Statement rhsAssignValueFromPassingAssertion(
@@ -597,8 +593,7 @@ public class Minimize extends CommandHandler {
    * @param exprType type of the variable declaration expression, should not be null
    * @param value value that will be assigned to the variable being declared. If the value is null,
    *     then the right hand side will have the zero value of the variable declaration's type.
-   * @return a {@code Statement} object representing the simplified variable declaration expression
-   *     if the type of the variable is a primitive and a value has been previously calculated.
+   * @return a {@code Statement} object representing the simplified variable declaration expression.
    *     Returns {@code null} if more than one variable is declared in the {@code
    *     VariableDeclarationExpr}.
    */
@@ -703,9 +698,11 @@ public class Minimize extends CommandHandler {
   }
 
   /**
-   * Simplify the variable type names in a compilation unit. For example, {@code java.lang.String}
-   * should be simplified to {@code String}. Additionally sort the import statements of the
-   * compilation unit.
+   * Simplify the type names in a compilation unit. For example, {@code java.lang.String} should be
+   * simplified to {@code String}. If two different types have the same simple type name, then the
+   * lexicographically first one is simplified and the other is left unchanged.
+   *
+   * <p>Additionally, sort the import statements of the compilation unit.
    *
    * @param compUnit compilation unit containing an AST for a Java file, the compilation unit will
    *     be modified if a correct minimization of the method is found
@@ -716,7 +713,7 @@ public class Minimize extends CommandHandler {
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
    * @return {@code CompilationUnit} with fully-qualified type names simplified to simple type names
    */
-  private static CompilationUnit simplifyVariableTypeNames(
+  private static CompilationUnit simplifyTypeNames(
       CompilationUnit compUnit,
       String packageName,
       File file,
