@@ -47,8 +47,8 @@ The Randoop homepage is
         <ul>
           <li><a href="#method-specifications">Method specifications</a>
             <ul>
-              <li><a href="#identifying-specified-operation">Identifying specified method/constructor</a></li>
-              <li><a href="#listing-specification-identifiers">Declaring identifiers</a></li>
+              <li><a href="#method-signatures">Method signatures</a></li>
+              <li><a href="#parameter-names">Parameter names</a></li>
               <li><a href="#condition-details">Specifying conditions</a></li>
               <li><a href="#method-specification-syntax">Method specification syntax</a></li>
               <li><a href="#method-specification-evaluation-rules">Evaluation rules</a></li>
@@ -1166,46 +1166,50 @@ You can specify both <a href="#method-specifications">the behavior of methods an
 <h3 id="method-specifications">Method specifications</h3>
 
 <p>
-A specification of a method (or constructor) indicates the circumstances when the method can be called, and how it should behave when called.
-These can be given to Randoop using the <code>--specifications=file</code>
-command-line option that takes a JSON file containing the specifications of
-contracts for methods or constructors.
-The expected file format is a JSON list with elements that are the serialized form of the
+A specification of a method (including constructors) indicates the circumstances when the method can be called, and how it should behave when called.
+The <code>--specifications=file</code>
+command-line option names a file containing the method specifications.
+The file format is a JSON list with elements that are the serialized form of the
 <a href="https://randoop.github.io/randoop/api/randoop/condition/specification/OperationSpecification.html">OperationSpecification</a>
 class.
-An example file is <a href="condition_spec_json_example.txt">here</a>, which
+An <a href="condition_spec_json_example.txt">example specification file</a>, which
 provides specifications for an example class <code><a href="net_connection_java.txt">net.Connection</a></code>.
-The serialized form is described below, with more detail in the API.
+[[TODO: Give the class realistic Javadoc, not the sentence "Example class...".]]
+The serialized form is described below, with more detail in the <a href="https://randoop.github.io/randoop/api/randoop/condition/specification/OperationSpecification.html">API documentation</a>.
 </p>
 
 <p>
 This section uses the following terminology:
 </p>
 <ul>
-  <li>A <em>guard</em> is a Boolean expression that is evaluated in the pre-state -- that is, before a method starts to execute.</li>
-  <li>A <em>property</em> is a Boolean expression that is evaluated in the post-state -- that is, after a method has finished executing.</li>
+  <li>A <em>guard</em> is a Boolean expression that is evaluated in the pre-state &mdash; that is, before a method starts to execute.</li>
+  <li>A <em>property</em> is a Boolean expression that is evaluated in the post-state &mdash; that is, after a method has finished executing.</li>
 </ul>
 <p>
 The expression for a guard or property may not throw an exception.
 </p>
 
 <p>
-A method/constructor specification consists of the identity of the method/constructor,
-a list of identifiers used in the specification, and lists of specifications for
-three types of conditions: pre-conditions, (normal) post-conditions and throws-conditions.
-Parts of the specification are optional in some situations, details are given below.
+A method specification consists of the method signature,
+parameter names, a list of pre-conditions, a list of (normal) post-conditions, and a list of throws-conditions (exceptional post-conditions).
+Parts of the specification are optional, details are given below.
 </p>
 
 
-<h4 id="identifying-specified-operation">Identifying specified method/constructor</h4>
+<h4 id="method-signatures">Method signatures</h4>
 
 <p>
-A method/constructor is described by its declaring class, the method/constructor
-name, and the list of parameter types in Java binary format
-(aka, <code>Class.forName()</code> format).
+A method signature uniquely describes a method.
+It consists of the declaring class, method
+name, and parameter types.
+Types are given in the format used by
+<a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getName--"><code>Class.forName()</code></a>; for example, member classes are set off with "<code>$</code>", as in <code>pkg.Class$InnerClass</code>.
+
+
+
 This is given as a JSON object with fields <code>classname</code>, <code>name</code> and <code>parameterTypes</code>,
 all of which are required.
-For instance, the following object from the example
+For instance, the method <code>net.Connection.send(int)</code> is represented as
 </p>
 
 <pre><code>
@@ -1216,27 +1220,13 @@ For instance, the following object from the example
   }
 </code></pre>
 
-<p>
-describes the method <code>net.Connection.send(int)</code>. Note that member classes must
-be preceded by a <code>$</code> (e.g., a member class <code>pkg.A.B</code>
-should be written as <code>pkg.A$B</code>).
-</p>
 
-<h4 id="listing-specification-identifiers">Declaring identifiers</h4>
+<h4 id="parameter-names">Parameter names</h4>
 
 <p>
-The identifiers used in the Boolean expressions of a specification are listed
-separately, but need only be listed when the method/constructor has parameters
-or the defaults are not used for the receiving object or return value.
-By default, the object receiving a method call is referred to as <code>receiver</code>,
-and the return value of the method is referred to as <code>result</code>.
-So, if these names are used in the specifications and the method has no parameters, the identifiers are optional.
-Otherwise, the identifiers need to include the parameters.
-</p>
-
-<p>
-Continuing the example, the method <code>net.Connection.send(int)</code> must at least
-list the parameter name:
+A guard is a boolean expression that can use formal parameters (including
+the receiver); properties can also refer to the return value.
+Therefore, the specification must name the parameters; for example:
 </p>
 
 <pre><code>
@@ -1244,9 +1234,13 @@ list the parameter name:
 </code></pre>
 
 <p>
-which indicates that the single parameter of the method is referred to by the
-name <code>code</code>.
-Of course, the receiver and return names can also be given:
+indicates that the single formal parameter of the method is referred to by
+the name <code>code</code>.
+</p>
+
+<p>
+Optionally, you may specify a name for the receiver and for the return
+value.  This example uses the defaults:
 </p>
 
 <pre><code>
@@ -1257,52 +1251,47 @@ Of course, the receiver and return names can also be given:
   }
 </code></pre>
 
-<p>
-though, in this case, the values for <code>receiverName</code> and
-<code>returnName</code> are defaults and do not need to be listed.
-</p>
-
 
 <h4 id="condition-details">Specifying conditions</h4>
 
 <p>
-The condition specifications are given in a list for each of the different types of specification.
+The specification contains 3 lists, one for each the different type of condition.
 </p>
 
 <dl>
   <dt><i>Pre-condition</i></dt>
   <dd>
-    <p>
-      A <i>pre-condition</i> indicates a requirement that must be satisfied by the
-  caller.  If the caller does not satisfy the pre-condition, then the call
-  is invalid.  A pre-condition is given as as a JSON object with a field
+  <p>
+  A <i>pre-condition</i> indicates a requirement that must be satisfied
+  by the caller.  If the caller does not satisfy the pre-condition,
+  then the call is invalid.  A pre-condition is a guard:  a boolean
+  expression evaluated before the call occurs.
+  </p>
+
+  <p>
+  A pre-condition is written as as a JSON object with a field
   <code>guard</code>, which is an object that has a field <code>condition</code>.
-  For the running example, the method <code>net.Connection.send(int)</code>
-  has a pre-condition
-<p>
+  To specify that the argument to a call to <code>net.Connection.send(int)</code>
+  must be positive, you could write the condition
 
   <pre><code>
     {
       "description": "the code must be positive",
-      "guard": "code > 0"
+      "guard": "code &gt; 0"
     }
   </code></pre>
 
   <p>
-  that indicates the integer argument in a call to the method has to be positive.
-  Both the specification and guard have an optional field <code>description</code>
+  Both the condition and guard have an optional field <code>description</code>
   that Randoop will use in comments in the generated tests.
   (To include the description for the guard, the guard should be written as
-  `{ "condition": "code > 0 ", "description": "the code is positive" }`.)
+  <pre>{ "condition": "code &gt; 0 ", "description": "the code is positive" }</pre>.)
   </p>
 
   <p>
-  The condition in a guard must only refer to state of the receiver and parameters
-  before the call to the method, and so the <code>returnName</code> identifier
-  may not occur.  Otherwise, the guard may be any Boolean expression over
-  the parameter and receiver names.
-  For instance, we could have also required that <code>receiver.isOpen()</code>
-  with the condition <code>receiver.isOpen() &amp;&amp; code > 0</code>.
+  As another example, it would be possible to write a single pre-condition
+  <code>receiver.isOpen() &amp;&amp; code &gt; 0</code> or, equivalently,
+  two pre-conditions <code>receiver.isOpen()</code> and <code>code &gt; 0</code>
   However, in this case, we could simply have two pre-condition objects, since
   both will be checked.
   </p>
@@ -1446,9 +1435,7 @@ where only the <code>operation</code> field is required.
 <h4 id="method-specification-evaluation-rules">Evaluation rules</h4>
 
 <p>
-Randoop generates each test sequence by first selecting the method or constructor
-that occurs as the last call in the sequence.
-The specification of this method/constructor is used to classify the test sequence with the following rules:
+Randoop classifies a test sequence according to its last method call.
 </p>
 
 <ol>
@@ -1482,7 +1469,7 @@ The specification of this method/constructor is used to classify the test sequen
         If at least one of <code>E</code> or <code>I</code> is non-empty,
         the sequence is classified as error-revealing if the thrown exception is
         not a member of either set.
-        Otherwise, the sequence is classified according it to the
+        Otherwise, the sequence is classified according to the
         rules of <a href="#classifying-tests">classifying tests</a>.
       </li>
       <li>
