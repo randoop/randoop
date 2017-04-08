@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -222,7 +223,8 @@ public class Minimize extends CommandHandler {
 
     File originalFile = new File(filePath);
 
-    // Create a new file; the file and the class within will have "Minimized" postpended.
+    // Create a new file; the file and the class within will have
+    // "Minimized" postpended.
     String minimizedFileName =
         new StringBuilder(filePath).insert(filePath.lastIndexOf('.'), SUFFIX).toString();
     File minimizedFile = new File(minimizedFileName);
@@ -314,7 +316,8 @@ public class Minimize extends CommandHandler {
    * @return true if the method is a JUnit test method
    */
   private static boolean isTestMethod(MethodDeclaration methodDeclaration) {
-    // Iterate through the method's annotations and check for the test annotation.
+    // Iterate through the method's annotations and check for the test
+    // annotation.
     for (AnnotationExpr annotationExpr : methodDeclaration.getAnnotations()) {
       if (annotationExpr.toString().equals("@Test")) {
         return true;
@@ -352,7 +355,7 @@ public class Minimize extends CommandHandler {
 
     // Find all the names of the primitive and wrapped types.
     Set<String> primitiveAndWrappedTypes = new HashSet<String>();
-    new VarDeclExprVisitor().visit(compUnit, primitiveAndWrappedTypes);
+    new PrimitiveAndWrappedTypeVarNameCollector().visit(compUnit, primitiveAndWrappedTypes);
 
     // Iterate through the list of statements, from last to first.
     for (int i = statements.size() - 1; i >= 0; i--) {
@@ -366,7 +369,8 @@ public class Minimize extends CommandHandler {
       boolean replacementFound = false;
       for (Statement stmt : replacements) {
         // Add replacement statement to the method's body.
-        // If stmt is null, don't add anything since null represents removal of the statement.
+        // If stmt is null, don't add anything since null represents
+        // removal of the statement.
         if (stmt != null) {
           statements.add(i, stmt);
         }
@@ -374,8 +378,10 @@ public class Minimize extends CommandHandler {
         // Write, compile, and run the new Java file.
         writeToFile(compUnit, file);
         if (checkCorrectlyMinimized(file, classpath, packageName, expectedOutput, timeoutLimit)) {
-          // No compilation or runtime issues, obtained output is the same as the expected output.
-          // Use simplification of this statement and continue with next statement.
+          // No compilation or runtime issues, obtained output is the
+          // same as the expected output.
+          // Use simplification of this statement and continue with
+          // next statement.
           replacementFound = true;
 
           // Assertions are never simplified, only removed.
@@ -441,17 +447,20 @@ public class Minimize extends CommandHandler {
               Expression leftExpr = binaryExp.getLeft();
               Expression rightExpr = binaryExp.getRight();
 
-              // Swap two expressions if left is a literal expression.
+              // Swap two expressions if left is a literal
+              // expression.
               if (leftExpr instanceof LiteralExpr) {
                 Expression temp = leftExpr;
                 leftExpr = rightExpr;
                 rightExpr = temp;
               }
 
-              // Check that the left is a variable name and the right is a literal.
+              // Check that the left is a variable name and the
+              // right is a literal.
               if (leftExpr instanceof NameExpr && rightExpr instanceof LiteralExpr) {
                 NameExpr nameExpr = (NameExpr) leftExpr;
-                // Check that the variable is a primitive or wrapped type.
+                // Check that the variable is a primitive or
+                // wrapped type.
                 if (primitiveAndWrappedTypeVars.contains(nameExpr.getName())) {
                   String var = binaryExp.getLeft().toString();
                   String val = binaryExp.getRight().toString();
@@ -494,7 +503,8 @@ public class Minimize extends CommandHandler {
       if (exp instanceof VariableDeclarationExpr) {
         VariableDeclarationExpr vdExpr = (VariableDeclarationExpr) exp;
 
-        // Simplify right hand side to zero-equivalent value: 0, false, or null.
+        // Simplify right hand side to zero-equivalent value: 0, false,
+        // or null.
         replacements.addAll(rhsAssignZeroValue(vdExpr));
 
         // Simplify right hand side to a value that was previously found
@@ -630,8 +640,8 @@ public class Minimize extends CommandHandler {
    * @param value the value for the literal expression. If null, the value of the literal expression
    *     will be the zero value for the type that is passed in.
    * @param type the type of the expression, needs to be one of the eight primitive types
-   * @return a literal expression containing the value that is passed in, null if the type that is
-   *     passed in is not one of the primitive types
+   * @return a literal expression containing the value that is passed in
+   * @throws IllegalArgumentException is the type passed in is not a primitive type
    */
   private static LiteralExpr getLiteralExpression(String value, PrimitiveType.Primitive type) {
     switch (type) {
@@ -668,8 +678,10 @@ public class Minimize extends CommandHandler {
         } else {
           return new LongLiteralExpr(value);
         }
+      default:
+        throw new IllegalArgumentException(
+            "Type passed to get a literal expression was not a primitive type.");
     }
-    return null;
   }
 
   /**
@@ -720,31 +732,31 @@ public class Minimize extends CommandHandler {
       String classpath,
       Map<String, String> expectedOutput,
       int timeoutLimit) {
-    // Set of fully-qualified type names that are used in variable declarations.
-    Set<ClassOrInterfaceType> fullyQualifiedNames = new HashSet<ClassOrInterfaceType>();
+    // Set of fully-qualified type names that are used in variable
+    // declarations.
+    Set<ClassOrInterfaceType> fullyQualifiedNames =
+        new TreeSet<ClassOrInterfaceType>(
+            new Comparator<ClassOrInterfaceType>() {
+              @Override
+              public int compare(ClassOrInterfaceType o1, ClassOrInterfaceType o2) {
+                return o1.toString().compareTo(o2.toString());
+              }
+            });
     new ClassTypeVisitor().visit(compUnit, fullyQualifiedNames);
 
-    // Sort the types in order to add imports and simplify variable names in a consistent manner.
-    List<ClassOrInterfaceType> typeList = new ArrayList<ClassOrInterfaceType>(fullyQualifiedNames);
-    Collections.sort(
-        typeList,
-        new Comparator<ClassOrInterfaceType>() {
-          @Override
-          public int compare(ClassOrInterfaceType o1, ClassOrInterfaceType o2) {
-            return o1.toString().compareTo(o2.toString());
-          }
-        });
-
     CompilationUnit result = compUnit;
-    for (ClassOrInterfaceType type : typeList) {
+    for (ClassOrInterfaceType type : fullyQualifiedNames) {
       // Copy and modify the compilation unit.
       CompilationUnit compUnitWithSimpleTypeNames = (CompilationUnit) result.clone();
 
       // String representation of the fully qualified type name.
       String typeName = type.getScope() + "." + type.getName();
 
-      // Add an import statement for the type.
-      addImport(compUnitWithSimpleTypeNames, typeName);
+      // Check that the type is not in the java.lang package.
+      if (!type.getScope().toString().equals("java.lang")) {
+        // Add an import statement for the type.
+        addImport(compUnitWithSimpleTypeNames, typeName);
+      }
 
       // Simplify class type names, method call names, and field names.
       new ClassTypeNameSimplifyVisitor().visit(compUnitWithSimpleTypeNames, type);
@@ -881,8 +893,10 @@ public class Minimize extends CommandHandler {
       return null;
     }
 
-    // Determine how many layers above we should be executing the process in.
-    // Add 2 which is for the case where the file is located in a single layer of packaging.
+    // Determine how many layers above we should be executing the process
+    // in.
+    // Add 2 which is for the case where the file is located in a single
+    // layer of packaging.
     int foldersAbove = StringUtils.countMatches(packageName, ".") + 2;
     for (int i = 0; i < foldersAbove; i++) {
       file = file.getParentFile();
@@ -1091,9 +1105,21 @@ public class Minimize extends CommandHandler {
     @Override
     public void visit(ClassOrInterfaceType n, Object arg) {
       Set<ClassOrInterfaceType> params = (Set<ClassOrInterfaceType>) arg;
+
+      // If the class type is a generic types, visit each one of the
+      // parameter types as well.
+      for (Type argType : n.getTypeArgs()) {
+        ReferenceType rType = (ReferenceType) argType;
+        if (rType.getType() instanceof ClassOrInterfaceType) {
+          this.visit((ClassOrInterfaceType) rType.getType(), arg);
+        }
+      }
+
       // Add the type to the set if it's not a visible type be default.
-      if (n.toString().contains(".")) {
-        params.add(n);
+      if (n.getScope() != null) {
+        // Add a copy, so that modifying removing the scope later won't
+        // affect this instance which is used for comparisons only.
+        params.add((ClassOrInterfaceType) n.clone());
       }
     }
   }
@@ -1102,11 +1128,12 @@ public class Minimize extends CommandHandler {
    * Visit every variable declaration. Adds to a set of strings for all the names of variables that
    * are either primitive or wrapped types.
    */
-  private static class VarDeclExprVisitor extends VoidVisitorAdapter<Object> {
+  private static class PrimitiveAndWrappedTypeVarNameCollector extends VoidVisitorAdapter<Object> {
     /**
      * Visit every variable declaration.
      *
-     * @param arg a set containing the names of all the primitive and wrapped type variables.
+     * @param arg a set containing the names of all the variables that are of primitive or wrapped
+     *     types.
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -1143,6 +1170,13 @@ public class Minimize extends CommandHandler {
     public void visit(ClassOrInterfaceType n, Object arg) {
       ClassOrInterfaceType typeName = (ClassOrInterfaceType) arg;
 
+      // Remove the scope component of the type.
+      if (n.getScope() != null
+          && typeName.getScope() != null
+          && typeName.getScope().equals(n.getScope())) {
+        n.setScope(null);
+      }
+
       // If the class type is a generic types, visit each one of the
       // parameter types as well.
       for (Type argType : n.getTypeArgs()) {
@@ -1150,11 +1184,6 @@ public class Minimize extends CommandHandler {
         if (rType.getType() instanceof ClassOrInterfaceType) {
           this.visit((ClassOrInterfaceType) rType.getType(), arg);
         }
-      }
-
-      // Remove the scope component of the type.
-      if (n.getScope() != null && typeName.getScope().equals(n.getScope())) {
-        n.setScope(null);
       }
     }
   }
@@ -1171,6 +1200,7 @@ public class Minimize extends CommandHandler {
     public void visit(MethodCallExpr n, Object arg) {
       ClassOrInterfaceType typeName = (ClassOrInterfaceType) arg;
       if (n.getScope() != null
+          && typeName.getScope() != null
           && n.getScope().toString().equals(typeName.getScope() + "." + typeName.getName())) {
         try {
           // Set scope to be just the name of the type.
@@ -1196,6 +1226,7 @@ public class Minimize extends CommandHandler {
     public void visit(FieldAccessExpr n, Object arg) {
       ClassOrInterfaceType typeName = (ClassOrInterfaceType) arg;
       if (n.getScope() != null
+          && typeName.getScope() != null
           && n.getScope().toString().equals(typeName.getScope() + "." + typeName.getName())) {
         try {
           // Set scope to be just the name of the type.
@@ -1232,11 +1263,13 @@ public class Minimize extends CommandHandler {
     for (ImportDeclaration im : importDeclarations) {
       String currImportStr = im.toString().trim();
 
-      // Check if the compilation unit already includes the import exactly.
+      // Check if the compilation unit already includes the import
+      // exactly.
       if (importStr.equals(currImportStr)) {
         return;
       }
-      // Check if the compilation unit already includes the import as a wildcard.
+      // Check if the compilation unit already includes the import as a
+      // wildcard.
       // Get index of last separator.
       int lastSeparator = importName.lastIndexOf('.');
       if (lastSeparator >= 0) {

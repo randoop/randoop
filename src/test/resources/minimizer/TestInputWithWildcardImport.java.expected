@@ -9,7 +9,7 @@ public class TestInputWithWildcardImportMinimized {
     // Test input with wildcard import already included. Redundant import statements will not be added by the minimizer.
     @Test
     public void test1() throws Throwable {
-        List<java.lang.Integer> list = new ArrayList<java.lang.Integer>();
+        List<Integer> list = new ArrayList<Integer>();
         list.add(1);
         list.add(2);
         list.add(3);
