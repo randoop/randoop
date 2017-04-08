@@ -641,7 +641,6 @@ public class Minimize extends CommandHandler {
    *     will be the zero value for the type that is passed in.
    * @param type the type of the expression, needs to be one of the eight primitive types
    * @return a literal expression containing the value that is passed in
-   * @throws IllegalArgumentException is the type passed in is not a primitive type
    */
   private static LiteralExpr getLiteralExpression(String value, PrimitiveType.Primitive type) {
     switch (type) {
