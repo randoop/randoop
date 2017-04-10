@@ -10,12 +10,17 @@ import java.io.IOException;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaFileObject;
 import plume.Pair;
+import plume.UtilMDE;
 import randoop.compile.SequenceClassLoader;
 import randoop.compile.SequenceCompiler;
 import randoop.condition.specification.Guard;
@@ -40,16 +45,26 @@ public class SpecificationCollection {
   /** The map from reflection objects to the corresponding {@link OperationSpecification} */
   private final Map<AccessibleObject, OperationSpecification> specificationMap;
 
+  /** The map from reflection object to overridden method with specification */
+  private final Map<AccessibleObject, Set<Method>> parentMap;
+
   /** The compiler for creating conditionMethods */
   private final SequenceCompiler compiler;
+
+  private Map<AccessibleObject, OperationConditions> conditionMap;
 
   /**
    * Creates a {@link SpecificationCollection} for the given specification map.
    *
    * @param specificationMap the map from reflection objects to {@link OperationSpecification}
+   * @param parentMap the map to overridden method with specification
    */
-  SpecificationCollection(Map<AccessibleObject, OperationSpecification> specificationMap) {
+  SpecificationCollection(
+      Map<AccessibleObject, OperationSpecification> specificationMap,
+      Map<AccessibleObject, Set<Method>> parentMap) {
     this.specificationMap = specificationMap;
+    this.parentMap = parentMap;
+    this.conditionMap = new HashMap<>();
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
     SequenceClassLoader sequenceClassLoader = new SequenceClassLoader(getClass().getClassLoader());
     List<String> options = new ArrayList<>();
@@ -67,6 +82,7 @@ public class SpecificationCollection {
     if (specificationFiles == null) {
       return null;
     }
+    Map<Signature, HashSet<Method>> sigMap = new LinkedHashMap<>();
     Map<AccessibleObject, OperationSpecification> specMap = new LinkedHashMap<>();
     for (File specificationFile : specificationFiles) {
       List<OperationSpecification> specificationList;
@@ -111,9 +127,54 @@ public class SpecificationCollection {
           throw new RandoopConditionError(msg, e);
         }
         specMap.put(accessibleObject, specification);
+        if (accessibleObject instanceof Method) {
+          Signature signature = Signature.create((Method) accessibleObject);
+          HashSet<Method> objectSet = sigMap.get(signature);
+          if (objectSet == null) {
+            objectSet = new HashSet<>();
+          }
+          objectSet.add((Method) accessibleObject);
+          sigMap.put(signature, objectSet);
+        }
       }
     }
-    return new SpecificationCollection(specMap);
+    Map<AccessibleObject, Set<Method>> parentMap = buildParentMap(sigMap);
+    return new SpecificationCollection(specMap, parentMap);
+  }
+
+  private static Map<AccessibleObject, Set<Method>> buildParentMap(
+      Map<Signature, HashSet<Method>> sigMap) {
+    Map<AccessibleObject, Set<Method>> parentMap = new HashMap<>();
+    for (Map.Entry<Signature, HashSet<Method>> entry : sigMap.entrySet()) {
+      for (Method method : entry.getValue()) {
+        Class<?> declaringClass = method.getDeclaringClass();
+        Class<?> superclass = declaringClass.getSuperclass();
+        Set<Method> parents = findParent(superclass, entry.getKey(), entry.getValue());
+        if (!parents.isEmpty()) {
+          parentMap.put(method, parents);
+        }
+      }
+    }
+    return parentMap;
+  }
+
+  private static Set<Method> findParent(
+      Class<?> classType, Signature signature, Set<Method> stopSet) {
+    Set<Method> parents = new HashSet<>();
+    if (classType != null) {
+      Method parent = signature.getMethod(classType);
+      if (parent != null) {
+        if (stopSet.contains(parent)) {
+          parents.add(parent);
+        }
+      }
+      Class<?> superclass = classType.getSuperclass();
+      parents.addAll(findParent(superclass, signature, stopSet));
+      for (Class<?> supertype : classType.getInterfaces()) {
+        parents.addAll(findParent(supertype, signature, stopSet));
+      }
+    }
+    return parents;
   }
 
   /**
@@ -170,13 +231,43 @@ public class SpecificationCollection {
    *     constructor, {@code null} if there is none
    */
   public OperationConditions getOperationConditions(AccessibleObject accessibleObject) {
+    OperationConditions conditions = conditionMap.get(accessibleObject);
+    if (conditions != null) {
+      return conditions;
+    }
+
     OperationSpecification specification = specificationMap.get(accessibleObject);
     if (specification == null) {
       return null;
     }
+
     Declarations declarations = Declarations.create(accessibleObject, specification);
 
-    // translate the ParamSpecifications to Condition objects
+    conditions = createConditions(specification, declarations);
+
+    Set<Method> parents = parentMap.get(accessibleObject);
+    if (parents != null) {
+      for (Method parent : parents) {
+        OperationConditions parentConditions = getOperationConditions(parent);
+        conditions.addParent(parentConditions);
+      }
+    }
+
+    conditionMap.put(accessibleObject, conditions);
+    return conditions;
+  }
+
+  /**
+   * Create the {@link OperationConditions} object for the given {@link OperationSpecification}
+   * using the {@link Declarations}.
+   *
+   * @param specification the specification from which the conditions are to be created
+   * @param declarations the declarations to be used in the conditions
+   * @return the {@link OperationConditions} for the given specification
+   */
+  private OperationConditions createConditions(
+      OperationSpecification specification, Declarations declarations) {
+    OperationConditions conditions; // translate the ParamSpecifications to Condition objects
     List<Condition> paramConditions = new ArrayList<>();
     for (PreSpecification preSpecification : specification.getPreSpecifications()) {
       paramConditions.add(createCondition(preSpecification.getGuard(), declarations));
@@ -216,7 +307,8 @@ public class SpecificationCollection {
       throwsConditions.put(guardCondition, generator);
     }
 
-    return new OperationConditions(paramConditions, returnConditions, throwsConditions);
+    conditions = new OperationConditions(paramConditions, returnConditions, throwsConditions);
+    return conditions;
   }
 
   /**
@@ -265,5 +357,61 @@ public class SpecificationCollection {
     String comment = property.getDescription();
     String conditionText = declarations.replaceWithDummyVariables(property.getConditionText());
     return new PostCondition(conditionMethod, comment, conditionText);
+  }
+
+  /**
+   * Represents a method signature. Used to manage groups of methods likely to have
+   * override/implementation relationships.
+   */
+  private static class Signature {
+    private final String name;
+    private final Class<?>[] parameterTypes;
+
+    Signature(String name, Class<?>[] parameterTypes) {
+      this.name = name;
+      this.parameterTypes = parameterTypes;
+    }
+
+    public static Signature create(Method method) {
+      return new Signature(method.getName(), method.getParameterTypes());
+    }
+
+    @Override
+    public boolean equals(Object object) {
+      if (!(object instanceof Signature)) {
+        return false;
+      }
+      Signature signature = (Signature) object;
+      if (!this.name.equals(signature.name)) {
+        return false;
+      }
+      if (this.parameterTypes.length != signature.parameterTypes.length) {
+        return false;
+      }
+      for (int i = 0; i < parameterTypes.length; i++) {
+        if (!this.parameterTypes[i].equals(signature.parameterTypes[i])) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(name, parameterTypes);
+    }
+
+    @Override
+    public String toString() {
+      return name + "(" + UtilMDE.join(parameterTypes, ",") + ")";
+    }
+
+    public Method getMethod(Class<?> declaringClass) {
+      try {
+        return declaringClass.getDeclaredMethod(name, parameterTypes);
+      } catch (NoSuchMethodException e) {
+        return null;
+      }
+    }
   }
 }

@@ -26,6 +26,9 @@ public class OperationConditions {
   /** Conditions of the operation of supertype */
   private OperationConditions supertypeConditions;
 
+  /** The parent conditions for this object */
+  private List<OperationConditions> parentList;
+
   /**
    * Creates an {@link OperationConditions} object for the given pre-conditions, return-conditions,
    * and throws-conditions.
@@ -41,6 +44,7 @@ public class OperationConditions {
     this.preconditions = preconditions;
     this.returnConditions = returnConditions;
     this.throwsConditions = throwsConditions;
+    this.parentList = new ArrayList<>();
   }
 
   /**
@@ -101,5 +105,9 @@ public class OperationConditions {
       }
     }
     return generators;
+  }
+
+  void addParent(OperationConditions parentConditions) {
+    parentList.add(parentConditions);
   }
 }
