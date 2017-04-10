@@ -388,7 +388,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option(
       "How to use literal values specified via --literals-file: ALL, CLASS_OR_ALL, PACKAGE, CLASS, or NONE")
-  public static ClassLiteralsMode literals_level = ClassLiteralsMode.CLASS_OR_ALL;
+  public static ClassLiteralsMode literals_level = ClassLiteralsMode.CLASS;
 
   /**
    * The possible values of the literals_level command-line argument.
