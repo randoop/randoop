@@ -10,7 +10,7 @@ import javax.tools.SimpleJavaFileObject;
 
 /**
  * based on {@code javaxtools.compiler.JavaFileObjectImple} from <a
- * href="http://www.ibm.com/developerworks/library/j-jcomp/index.html">Create dynamic applications
+ * href="https://www.ibm.com/developerworks/library/j-jcomp/index.html">Create dynamic applications
  * with javax.tools</a>.
  */
 class SequenceJavaFileObject extends SimpleJavaFileObject {
