@@ -10,10 +10,10 @@ import java.util.Objects;
 import randoop.ExecutionOutcome;
 import randoop.condition.Condition;
 import randoop.condition.OperationConditions;
+import randoop.condition.OutcomeTable;
 import randoop.field.AccessibleField;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
-import randoop.test.TestCheckGenerator;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GenericClassType;
@@ -522,44 +522,11 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     return operation.isUncheckedCast();
   }
 
-  /**
-   * Checks that the preconditions for this operation are met by the given values.
-   *
-   * @param values the input values
-   * @return true if the values satisfy the preconditions or there are no preconditions; false
-   *     otherwise
-   */
-  public boolean checkPreconditions(Object[] values) {
-    return conditions == null || conditions.checkPreconditions(addNullReceiver(values));
-  }
-
-  /**
-   * Checks whether this operation has a postcondition clause that is satisfied by the argument
-   * values, and if so returns the corresponding {@link TestCheckGenerator}.
-   *
-   * @param values the argument values
-   * @return the list of {@link TestCheckGenerator} object to test the property of the
-   *     return-specification with guard satisfied by the arguments.
-   */
-  public List<TestCheckGenerator> getReturnCheckGenerator(Object[] values) {
+  public OutcomeTable checkConditions(Object[] values) {
     if (conditions != null) {
-      return conditions.getReturnCheckGenerator(addNullReceiver(values));
+      return conditions.check(addNullReceiver(values));
     }
-    return new ArrayList<>();
-  }
-
-  /**
-   * Checks whether this operation has a throws-specification with a guard satisfied by the argument
-   * values, and if so returns the corresponding {@link TestCheckGenerator}.
-   *
-   * @param values the argument values
-   * @return the {@link TestCheckGenerator} to test for the expected exception
-   */
-  public List<TestCheckGenerator> getThrowsCheckGenerator(Object[] values) {
-    if (conditions != null) {
-      return conditions.getThrowsCheckGenerator(addNullReceiver(values));
-    }
-    return new ArrayList<>();
+    return new OutcomeTable();
   }
 
   /**

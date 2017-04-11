@@ -31,7 +31,6 @@ import randoop.condition.specification.PreSpecification;
 import randoop.condition.specification.Property;
 import randoop.condition.specification.ThrowsSpecification;
 import randoop.reflection.TypeNames;
-import randoop.test.ExpectedExceptionGenerator;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
 
@@ -282,7 +281,7 @@ public class SpecificationCollection {
     }
 
     // translate the ThrowsSpecifications to Condition-ExpectedExceptionGenerator pairs
-    LinkedHashMap<Condition, ExpectedExceptionGenerator> throwsConditions = new LinkedHashMap<>();
+    LinkedHashMap<Condition, ExpectedException> throwsConditions = new LinkedHashMap<>();
     for (ThrowsSpecification throwsSpecification : specification.getThrowsSpecifications()) {
       ClassOrInterfaceType exceptionType;
       try {
@@ -301,10 +300,9 @@ public class SpecificationCollection {
         continue;
       }
       Condition guardCondition = createCondition(throwsSpecification.getGuard(), declarations);
-      ExpectedExceptionGenerator generator =
-          new ExpectedExceptionGenerator(
-              exceptionType, "// " + throwsSpecification.getDescription());
-      throwsConditions.put(guardCondition, generator);
+      ExpectedException exception =
+          new ExpectedException(exceptionType, "// " + throwsSpecification.getDescription());
+      throwsConditions.put(guardCondition, exception);
     }
 
     conditions = new OperationConditions(paramConditions, returnConditions, throwsConditions);
