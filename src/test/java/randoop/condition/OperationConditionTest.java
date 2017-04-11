@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.junit.Test;
 import randoop.DummyVisitor;
 import randoop.condition.specification.Guard;
@@ -29,7 +30,6 @@ import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 import randoop.test.Check;
 import randoop.test.DummyCheckGenerator;
-import randoop.test.TestCheckGenerator;
 import randoop.types.JavaTypes;
 
 public class OperationConditionTest {
@@ -42,10 +42,13 @@ public class OperationConditionTest {
 
     Object[] preValues;
     preValues = new Object[] {receiver, -1};
-    assertFalse("should fail param condition", conditions.checkPreconditions(preValues));
+    OutcomeTable table = conditions.check(preValues);
+    assertTrue("should fail param condition", table.isInvalid());
 
     preValues = new Object[] {receiver, 1};
-    assertTrue("should pass param condition", conditions.checkPreconditions(preValues));
+    table = conditions.check(preValues);
+    assertFalse("should pass param condition", table.isInvalid());
+    /*
     List<TestCheckGenerator> throwsGen = conditions.getThrowsCheckGenerator(preValues);
     assertTrue("should not be a throws generator", throwsGen.isEmpty());
     List<TestCheckGenerator> retGen = conditions.getReturnCheckGenerator(preValues);
@@ -76,6 +79,7 @@ public class OperationConditionTest {
     assertTrue("should pass param condition", conditions.checkPreconditions(preValues));
     throwsGen = conditions.getThrowsCheckGenerator(preValues);
     assertTrue("should be a throws generator", throwsGen != null);
+    */
   }
 
   @Test
@@ -234,9 +238,10 @@ public class OperationConditionTest {
     postSpecifications.add(returnSpec);
     spec.addReturnSpecifications(postSpecifications);
 
+    Map<AccessibleObject, Set<Method>> parentMap = new HashMap<>();
     Map<AccessibleObject, OperationSpecification> specMap = new HashMap<>();
     specMap.put(method, spec);
-    SpecificationCollection collection = new SpecificationCollection(specMap);
+    SpecificationCollection collection = new SpecificationCollection(specMap, parentMap);
     return collection.getOperationConditions(method);
   }
 }
