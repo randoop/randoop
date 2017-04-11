@@ -1,9 +1,12 @@
 package randoop.test;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NotExecuted;
+import randoop.condition.ExpectedException;
 import randoop.sequence.Execution;
 import randoop.types.ClassOrInterfaceType;
 
@@ -15,10 +18,7 @@ import randoop.types.ClassOrInterfaceType;
 public class MissingExceptionCheck implements Check {
 
   /** The type of the expected exception */
-  private final ClassOrInterfaceType expected;
-
-  /** The comment describing the condition when the exception should be thrown */
-  private final String conditionComment;
+  private final List<Set<ExpectedException>> expected;
 
   /** The index of the statement where the exception should be thrown */
   private final int index;
@@ -27,13 +27,11 @@ public class MissingExceptionCheck implements Check {
    * Creates a {@link MissingExceptionCheck} object for the expected exception type at the given
    * statement.
    *
-   * @param expected the type of the expected exception
-   * @param conditionComment the comment text describing when exception should be thrown
+   * @param expected the expected exceptions
    * @param index the statement index
    */
-  MissingExceptionCheck(ClassOrInterfaceType expected, String conditionComment, int index) {
+  MissingExceptionCheck(List<Set<ExpectedException>> expected, int index) {
     this.expected = expected;
-    this.conditionComment = conditionComment;
     this.index = index;
   }
 
@@ -43,26 +41,30 @@ public class MissingExceptionCheck implements Check {
       return false;
     }
     MissingExceptionCheck other = (MissingExceptionCheck) obj;
-    return this.expected.equals(other.expected)
-        && this.conditionComment.equals(other.conditionComment)
-        && this.index == other.index;
+    return this.expected.equals(other.expected) && this.index == other.index;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(this.expected, this.conditionComment, this.index);
+    return Objects.hash(this.expected, this.index);
   }
 
   @Override
   public String toCodeStringPreStatement() {
-    return String.format(
-        "// this statement should throw %s %s%n", expected.getName(), conditionComment);
+    StringBuilder msg = new StringBuilder(String.format("// this statement should throw one of%n"));
+    for (Set<ExpectedException> exceptionSet : expected) {
+      for (ExpectedException exception : exceptionSet) {
+        msg.append(
+            String.format(
+                "//   %s %s%n", exception.getExceptionType().getName(), exception.getComment()));
+      }
+    }
+    return msg.toString();
   }
 
   @Override
   public String toCodeStringPostStatement() {
-    return String.format(
-        "org.junit.Assert.fail(\"exception %s is expected\");", expected.getName());
+    return "org.junit.Assert.fail(\"exception is expected\");";
   }
 
   @Override
@@ -95,6 +97,13 @@ public class MissingExceptionCheck implements Check {
     ExceptionalExecution exec = (ExceptionalExecution) outcomeAtIndex;
     Throwable t = exec.getException();
     ClassOrInterfaceType thrownType = ClassOrInterfaceType.forClass(t.getClass());
-    return thrownType.isSubtypeOf(expected);
+    for (Set<ExpectedException> exceptionSet : expected) {
+      for (ExpectedException exception : exceptionSet) {
+        if (!thrownType.isSubtypeOf(exception.getExceptionType())) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 }

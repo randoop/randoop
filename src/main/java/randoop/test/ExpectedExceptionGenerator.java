@@ -1,8 +1,11 @@
 package randoop.test;
 
+import java.util.List;
+import java.util.Set;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NotExecuted;
+import randoop.condition.ExpectedException;
 import randoop.sequence.ExecutableSequence;
 import randoop.types.ClassOrInterfaceType;
 
@@ -16,12 +19,10 @@ import randoop.types.ClassOrInterfaceType;
  * checks or error-revealing checks.
  */
 public class ExpectedExceptionGenerator implements TestCheckGenerator {
-  private final ClassOrInterfaceType expected;
-  private final String conditionComment;
+  private final List<Set<ExpectedException>> exceptionSets;
 
-  public ExpectedExceptionGenerator(ClassOrInterfaceType expected, String conditionComment) {
-    this.expected = expected;
-    this.conditionComment = conditionComment;
+  public ExpectedExceptionGenerator(List<Set<ExpectedException>> exceptionSets) {
+    this.exceptionSets = exceptionSets;
   }
 
   /**
@@ -42,18 +43,28 @@ public class ExpectedExceptionGenerator implements TestCheckGenerator {
       ExceptionalExecution exec = (ExceptionalExecution) result;
       Throwable throwable = exec.getException();
       ClassOrInterfaceType throwableType = ClassOrInterfaceType.forClass(throwable.getClass());
-      if (throwableType.isSubtypeOf(expected)) { // if exception is one expected
-        Check check = new ExpectedExceptionCheck(throwable, finalIndex, expected.getName());
-        checks.add(check);
-        return checks;
+      for (Set<ExpectedException> exceptionSet : exceptionSets) {
+        for (ExpectedException exception : exceptionSet) {
+          ClassOrInterfaceType expected = exception.getExceptionType();
+          if (!throwableType.isSubtypeOf(expected)) { // if exception is not in set
+            // XXX this doesn't carry information about exception that occurred
+            return getMissingExceptionTestChecks(finalIndex);
+          }
+        }
       }
-      // otherwise, exception should be handled normally
-    } else { // if execution was normal, then expected exception is missing
-      checks = new ErrorRevealingChecks();
-      Check check = new MissingExceptionCheck(expected, conditionComment, finalIndex);
+      Check check = new ExpectedExceptionCheck(throwable, finalIndex, throwableType.getName());
       checks.add(check);
+      return checks;
+    } else { // if execution was normal, then expected exception is missing
+      checks = getMissingExceptionTestChecks(finalIndex);
     }
 
+    return checks;
+  }
+
+  private TestChecks getMissingExceptionTestChecks(int finalIndex) {
+    TestChecks checks = new ErrorRevealingChecks();
+    checks.add(new MissingExceptionCheck(exceptionSets, finalIndex));
     return checks;
   }
 
@@ -62,7 +73,7 @@ public class ExpectedExceptionGenerator implements TestCheckGenerator {
    *
    * @return the type of the expected exception
    */
-  public ClassOrInterfaceType getExpected() {
-    return expected;
+  public List<Set<ExpectedException>> getExpected() {
+    return exceptionSets;
   }
 }

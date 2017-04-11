@@ -1,6 +1,7 @@
 package randoop.test;
 
 import java.util.ArrayList;
+import java.util.List;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
@@ -8,24 +9,25 @@ import randoop.condition.PostCondition;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Variable;
 
-/** Checks the given post-condition after the last statement of a sequence. */
+/** Checks the given post-conditions after the last statement of a sequence. */
 public class PostConditionCheckGenerator implements TestCheckGenerator {
 
-  /** the post-condition */
-  private final PostCondition postcondition;
+  /** the post-conditions */
+  private final List<PostCondition> postConditions;
 
   /**
    * Create a {@link TestCheckGenerator} to test the given post-condition.
    *
-   * @param postcondition the post-condition to be tested in generated {@link TestChecks}
+   * @param postConditions the post-condition to be tested in generated {@link TestChecks}
    */
-  public PostConditionCheckGenerator(PostCondition postcondition) {
-    this.postcondition = postcondition;
+  public PostConditionCheckGenerator(List<PostCondition> postConditions) {
+    this.postConditions = postConditions;
   }
 
   /**
-   * Tests the post-condition against the values in the given {@link ExecutableSequence}, and if the
-   * condition is not satisfied returns a {@link ErrorRevealingChecks}.
+   * Tests all of the the post-conditions against the values in the given {@link
+   * ExecutableSequence}, and if the condition is not satisfied returns a {@link
+   * ErrorRevealingChecks}.
    *
    * <p>Note that the operation input values passed to the post-condition are the values
    * post-execution.
@@ -48,12 +50,13 @@ public class PostConditionCheckGenerator implements TestCheckGenerator {
       if (s.sequence.getStatement(finalIndex).getOperation().isStatic()) {
         inputValues = addNullReceiver(inputValues);
       }
-      if (!postcondition.check(inputValues)) {
-        checks = new ErrorRevealingChecks();
-      } else {
-        checks = new RegressionChecks();
+      checks = new RegressionChecks();
+      for (PostCondition postCondition : postConditions) {
+        if (!postCondition.check(inputValues)) {
+          checks = new ErrorRevealingChecks();
+        }
       }
-      checks.add(new PostConditionCheck(postcondition, inputs));
+      checks.add(new PostConditionCheck(postConditions, inputs));
     } else { // if execution was exceptional, return empty checks
       checks = new ErrorRevealingChecks();
     }

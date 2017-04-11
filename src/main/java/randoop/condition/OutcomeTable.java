@@ -3,12 +3,16 @@ package randoop.condition;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import randoop.test.ExpectedExceptionGenerator;
+import randoop.test.ExtendGenerator;
+import randoop.test.InvalidCheckGenerator;
+import randoop.test.PostConditionCheckGenerator;
 import randoop.test.TestCheckGenerator;
 
 /** Records the outcome of checking all of the conditions for a method. */
 public class OutcomeTable {
   private boolean isEmpty = true;
-  private boolean hasInvalid = false;
+  private boolean hasValid = false;
   private final List<Set<ExpectedException>> exceptionSets;
   private final List<PostCondition> postConditions;
 
@@ -33,8 +37,7 @@ public class OutcomeTable {
       if (postCondition != null) {
         postConditions.add(postCondition);
       }
-    } else {
-      hasInvalid = true;
+      hasValid = true;
     }
     if (!expectedExceptions.isEmpty()) {
       exceptionSets.add(expectedExceptions);
@@ -49,12 +52,25 @@ public class OutcomeTable {
    *     exceptions; false, otherwise
    */
   public boolean isInvalid() {
-    return !isEmpty && hasInvalid && exceptionSets.isEmpty();
+    return !isEmpty && !hasValid && exceptionSets.isEmpty();
   }
 
   public TestCheckGenerator addPostCheckGenerator(TestCheckGenerator gen) {
+    if (isEmpty) {
+      return gen;
+    }
 
-    //new ExtendGenerator(theNewGenerator, gen);
+    if (!exceptionSets.isEmpty()) {
+      if (!hasValid) {
+        gen = new InvalidCheckGenerator(); // will be invalid if exception doesn't say otherwise
+      }
+      return new ExtendGenerator(new ExpectedExceptionGenerator(exceptionSets), gen);
+    }
+
+    if (!postConditions.isEmpty()) {
+      return new PostConditionCheckGenerator(postConditions);
+    }
+
     return gen;
   }
 }

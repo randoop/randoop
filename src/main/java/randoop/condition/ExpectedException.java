@@ -31,4 +31,12 @@ public class ExpectedException {
   public String toString() {
     return exceptionType + " " + comment;
   }
+
+  public ClassOrInterfaceType getExceptionType() {
+    return exceptionType;
+  }
+
+  public String getComment() {
+    return comment;
+  }
 }
