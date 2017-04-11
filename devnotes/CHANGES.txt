@@ -1,3 +1,8 @@
+Version 3.1.4, released April 11, 2017
+
+Fixes a bug uncovered in obscure cases when package visibility is used.
+
+
 Version 3.1.3, released April 11, 2017
 
 Fixes a bug where package visibility checks fail to work correctly.

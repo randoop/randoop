@@ -7,7 +7,7 @@ import java.io.PrintStream;
 /** Various general global variables used throughout Randoop. */
 public class Globals {
 
-  public static final String RANDOOP_VERSION = "3.1.3";
+  public static final String RANDOOP_VERSION = "3.1.4";
 
   public static final String lineSep = System.getProperty("line.separator");
 
