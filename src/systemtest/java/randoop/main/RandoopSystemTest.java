@@ -218,9 +218,17 @@ public class RandoopSystemTest {
 
     // The following are known coverage inconsistencies when using --literals-level=CLASS_OR_ALL with --p.const=.01
     // These inconsistencies depend on the value of --p_const
-    /* Inconsistently covered locally, covered on Travis */
     if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS_OR_ALL
         && GenInputsAbstract.p_const == .01) {
+      /* Inconsistent locally, covered on Travis */
+      coverageChecker.ignore(
+          "java2.util2.Collections.max(java2.util2.Collection, java2.util2.Comparator)");
+    }
+
+    // Coverage inconsistencies
+    if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS) {
+      /* Inconsistent on Travis */
+      coverageChecker.ignore("java2.util2.Collections.eq(java.lang.Object, java.lang.Object)");
       coverageChecker.ignore(
           "java2.util2.Collections.max(java2.util2.Collection, java2.util2.Comparator)");
     }
@@ -315,8 +323,22 @@ public class RandoopSystemTest {
     if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS) {
 
       /* inconsistent on Travis  */
-      coverageChecker.ignore("java2.util2.LinkedList.get(int)");
+      coverageChecker.ignore("java2.util2.ArrayList.add(int, java.lang.Object)");
+      coverageChecker.ignore("java2.util2.ArrayList.add(java.lang.Object)");
+      coverageChecker.ignore("java2.util2.ArrayList.clone()");
+      coverageChecker.ignore("java2.util2.ArrayList.trimToSize()");
+      coverageChecker.ignore("java2.util2.Collections.max(java2.util2.Collection)");
+      coverageChecker.ignore("java2.util2.Collections.rotate(java2.util2.List, int)");
+      coverageChecker.ignore("java2.util2.Collections.rotate1(java2.util2.List, int)");
+      coverageChecker.ignore(
+          "java2.util2.Collections.singletonMap(java.lang.Object, java.lang.Object)");
+      coverageChecker.ignore(
+          "java2.util2.Collections.sort(java2.util2.List, java2.util2.Comparator)");
+      coverageChecker.ignore("java2.util2.Collections.synchronizedMap(java2.util2.Map)");
       coverageChecker.ignore("java2.util2.Collections.synchronizedSet(java2.util2.Set)");
+      coverageChecker.ignore("java2.util2.LinkedList.add(java.lang.Object)");
+      coverageChecker.ignore("java2.util2.LinkedList.get(int)");
+      coverageChecker.ignore("java2.util2.LinkedList.lastIndexOf(java.lang.Object)");
       coverageChecker.ignore("java2.util2.TreeSet.last()");
       coverageChecker.ignore("java2.util2.TreeSet.tailSet(java.lang.Object)");
 
@@ -459,13 +481,13 @@ public class RandoopSystemTest {
       /* Inconsistent locally and on Travis */
       coverageChecker.ignore("examples.Buggy.BuggyCompareToSubs.getOne()");
     }
-    //
-    //    /* Covered locally, inconsistently covered on Travis */
+
+    /* Covered locally, inconsistently covered on Travis */
     //    coverageChecker.ignore("examples.Buggy.BuggyCompareToSubs.getOne()");
-    //    // high suspicion this method is inconsistent on Travis is well
-    //    //    coverageChecker.exclude("examples.Buggy.BuggyCompareToTransitive.getThree()");
+    //    high suspicion this method is inconsistent on Travis is well
+    //    coverageChecker.exclude("examples.Buggy.BuggyCompareToTransitive.getThree()");
     //
-    //    /* Inconsistently covered locally, covered on Travis */
+    /* Inconsistently covered locally, covered on Travis */
     //    coverageChecker.ignore("examples.Buggy.BuggyCompareToTransitive.getTwo()");
 
     /* these should be covered, but are in failing assertions and wont show up in JaCoCo results */
