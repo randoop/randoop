@@ -313,17 +313,19 @@ public class RandoopSystemTest {
 
     // Known coverage inconsistencies when using --literals-level=CLASS
     if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS) {
+
       /* inconsistent on Travis  */
       coverageChecker.ignore("java2.util2.LinkedList.get(int)");
       coverageChecker.ignore("java2.util2.Collections.synchronizedSet(java2.util2.Set)");
+      coverageChecker.ignore("java2.util2.TreeSet.last()");
       coverageChecker.ignore("java2.util2.TreeSet.tailSet(java.lang.Object)");
+
       /* inconsistent on local machine */
       coverageChecker.ignore("java2.util2.ArrayList.get(int)");
     }
 
     // The following are known coverage inconsistencies when using --literals-level=CLASS_OR_ALL with --p.const=.01
     // These also depend on the value of --p_const
-
     if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS_OR_ALL
         && GenInputsAbstract.p_const == .01) {
 
