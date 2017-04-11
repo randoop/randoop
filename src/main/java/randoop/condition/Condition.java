@@ -2,6 +2,7 @@ package randoop.condition;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Objects;
 import randoop.util.Log;
 
 /**
@@ -30,6 +31,27 @@ public class Condition {
     this.conditionMethod = conditionMethod;
     this.comment = comment;
     this.conditionText = conditionText;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (!(object instanceof Condition)) {
+      return false;
+    }
+    Condition other = (Condition) object;
+    return this.conditionMethod.equals(other.conditionMethod)
+        && this.comment.equals(other.comment)
+        && this.conditionText.equals(other.conditionText);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(conditionMethod, comment, conditionText);
+  }
+
+  @Override
+  public String toString() {
+    return conditionText + " // " + comment;
   }
 
   /**
