@@ -1,16 +1,18 @@
 package randoop.condition;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import plume.Pair;
-import randoop.test.ExpectedExceptionGenerator;
-import randoop.test.PostConditionCheckGenerator;
-import randoop.test.TestCheckGenerator;
 
 /**
  * Represents the conditions on an operation including conditions on parameters, return conditions,
  * and expected exceptions.
+ *
+ * <p>The {@link OperationConditions} for a method form an arbitrary tree consisting of conditions
+ * for methods of supertypes, each of which has attached specifications.
  */
 public class OperationConditions {
 
@@ -21,10 +23,7 @@ public class OperationConditions {
   private final List<Pair<Condition, PostCondition>> returnConditions;
 
   /** The throws-conditions */
-  private final Map<Condition, ExpectedExceptionGenerator> throwsConditions;
-
-  /** Conditions of the operation of supertype */
-  private OperationConditions supertypeConditions;
+  private final Map<Condition, ExpectedException> throwsConditions;
 
   /** The parent conditions for this object */
   private List<OperationConditions> parentList;
@@ -40,11 +39,27 @@ public class OperationConditions {
   OperationConditions(
       List<Condition> preconditions,
       List<Pair<Condition, PostCondition>> returnConditions,
-      Map<Condition, ExpectedExceptionGenerator> throwsConditions) {
+      Map<Condition, ExpectedException> throwsConditions) {
     this.preconditions = preconditions;
     this.returnConditions = returnConditions;
     this.throwsConditions = throwsConditions;
     this.parentList = new ArrayList<>();
+  }
+
+  public OutcomeTable check(Object[] args) {
+    OutcomeTable table = new OutcomeTable();
+    this.check(args, table);
+    for (OperationConditions conditions : parentList) {
+      conditions.check(args, table);
+    }
+    return table;
+  }
+
+  private void check(Object[] args, OutcomeTable table) {
+    boolean preconditionCheck = checkPreconditions(args);
+    Set<ExpectedException> expectedExceptions = checkThrowsConditions(args);
+    PostCondition postCondition = checkPostconditions(args);
+    table.add(preconditionCheck, expectedExceptions, postCondition);
   }
 
   /**
@@ -53,7 +68,7 @@ public class OperationConditions {
    * @param args the argument values
    * @return false if some precondition fails on the argument values, true otherwise
    */
-  public boolean checkPreconditions(Object[] args) {
+  private boolean checkPreconditions(Object[] args) {
     for (Condition condition : preconditions) {
       if (!condition.check(args)) {
         return false;
@@ -62,49 +77,25 @@ public class OperationConditions {
     return true;
   }
 
-  /**
-   * Returns the list of {@link PostConditionCheckGenerator} objects that apply for the operation
-   * given the argument values.
-   *
-   * @param args the argument values
-   * @return the {@link TestCheckGenerator} to check the property of the return specification for
-   *     which the guard is satisfied by the arguments, {@code null} if no guard was satisfied
-   */
-  public List<TestCheckGenerator> getReturnCheckGenerator(Object[] args) {
-    List<TestCheckGenerator> generators = new ArrayList<>();
-    if (this.supertypeConditions != null) {
-      generators = supertypeConditions.getReturnCheckGenerator(args);
+  private Set<ExpectedException> checkThrowsConditions(Object[] args) {
+    Set<ExpectedException> expectedExceptions = new LinkedHashSet<>();
+    for (Map.Entry<Condition, ExpectedException> entry : throwsConditions.entrySet()) {
+      Condition precondition = entry.getKey();
+      if (precondition.check(args)) {
+        expectedExceptions.add(entry.getValue());
+      }
     }
+    return expectedExceptions;
+  }
+
+  private PostCondition checkPostconditions(Object[] args) {
     for (Pair<Condition, PostCondition> entry : returnConditions) {
       Condition precondition = entry.a;
       if (precondition.check(args)) {
-        generators.add(new PostConditionCheckGenerator(entry.b.addPrestate(args)));
-        break;
+        return entry.b.addPrestate(args);
       }
     }
-    return generators;
-  }
-
-  /**
-   * Returns the {@link ExpectedExceptionGenerator} for the throws-specification for which the guard
-   * is satisfied by the given arguments.
-   *
-   * @param args the argument values
-   * @return the list of {@link ExpectedExceptionGenerator} objects to check for the expected
-   *     exceptions from the throws-specifications for which the guard is satisfied.
-   */
-  public List<TestCheckGenerator> getThrowsCheckGenerator(Object[] args) {
-    List<TestCheckGenerator> generators = new ArrayList<>();
-    if (this.supertypeConditions != null) {
-      generators = supertypeConditions.getThrowsCheckGenerator(args);
-    }
-    for (Map.Entry<Condition, ExpectedExceptionGenerator> entry : throwsConditions.entrySet()) {
-      Condition precondition = entry.getKey();
-      if (precondition.check(args)) {
-        generators.add(entry.getValue());
-      }
-    }
-    return generators;
+    return null;
   }
 
   void addParent(OperationConditions parentConditions) {
