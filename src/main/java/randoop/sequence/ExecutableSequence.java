@@ -15,10 +15,10 @@ import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
+import randoop.condition.OutcomeTable;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.test.Check;
-import randoop.test.ExtendGenerator;
 import randoop.test.InvalidChecks;
 import randoop.test.InvalidValueCheck;
 import randoop.test.TestCheckGenerator;
@@ -283,28 +283,13 @@ public class ExecutableSequence {
       if (i == this.sequence.size() - 1) {
         TypedOperation operation = this.sequence.getStatement(i).getOperation();
         if (operation.isConstructorCall() || operation.isMethodCall()) {
-          if (!operation.checkPreconditions(inputValues)) {
-            //set checks invalid and return
+          OutcomeTable outcome = operation.checkConditions(inputValues);
+          if (outcome.isInvalid()) {
             checks = new InvalidChecks();
             checks.add(new InvalidValueCheck(this, i));
             return;
           }
-          // if the operation is expected to throw an exception for these inputs
-          List<TestCheckGenerator> expectedExceptions =
-              operation.getThrowsCheckGenerator(inputValues);
-          if (!expectedExceptions.isEmpty()) {
-            //then extend TestCheckGenerator gen with check for exception
-            for (TestCheckGenerator generator : expectedExceptions) {
-              gen = new ExtendGenerator(generator, gen);
-            }
-          } else {
-            // otherwise, if the operation has a return-specification property
-            List<TestCheckGenerator> properties = operation.getReturnCheckGenerator(inputValues);
-            for (TestCheckGenerator propertyGenerator : properties) {
-              //then extend TestCheckGenerator with check for property as post-condition
-              gen = new ExtendGenerator(propertyGenerator, gen);
-            }
-          }
+          gen = outcome.addPostCheckGenerator(gen);
         }
       }
 
