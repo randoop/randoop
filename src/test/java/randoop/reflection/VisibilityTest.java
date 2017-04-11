@@ -36,6 +36,8 @@ import randoop.types.TypeTuple;
 
 public class VisibilityTest {
 
+  //TODO need to add test case for when o.getPackage()==null for objects passed to predicate
+
   /*
    * package private class
    * package visibility
