@@ -482,13 +482,15 @@ public class RandoopSystemTest {
       coverageChecker.ignore("examples.Buggy.BuggyCompareToSubs.getOne()");
     }
 
-    /* Covered locally, inconsistently covered on Travis */
-    //    coverageChecker.ignore("examples.Buggy.BuggyCompareToSubs.getOne()");
-    //    high suspicion this method is inconsistent on Travis is well
-    //    coverageChecker.exclude("examples.Buggy.BuggyCompareToTransitive.getThree()");
-    //
-    /* Inconsistently covered locally, covered on Travis */
-    //    coverageChecker.ignore("examples.Buggy.BuggyCompareToTransitive.getTwo()");
+    // Coverage inconsistencies
+    if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS_OR_ALL) {
+      /* Covered locally, inconsistent on Travis */
+      coverageChecker.ignore("examples.Buggy.BuggyCompareToSubs.getOne()");
+      /* Inconsistent locally, covered on Travis */
+      coverageChecker.ignore("examples.Buggy.BuggyCompareToTransitive.getTwo()");
+      /* high suspicion this method is inconsistent on Travis is well */
+      //    coverageChecker.ignore("examples.Buggy.BuggyCompareToTransitive.getThree()");
+    }
 
     /* these should be covered, but are in failing assertions and wont show up in JaCoCo results */
     coverageChecker.exclude(
