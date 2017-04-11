@@ -322,6 +322,8 @@ public class RandoopSystemTest {
 
       /* inconsistent on local machine */
       coverageChecker.ignore("java2.util2.ArrayList.get(int)");
+      coverageChecker.ignore("java2.util2.LinkedList.set(int, java.lang.Object)");
+      coverageChecker.ignore("java2.util2.LinkedList.toArray()");
     }
 
     // The following are known coverage inconsistencies when using --literals-level=CLASS_OR_ALL with --p.const=.01
@@ -451,6 +453,12 @@ public class RandoopSystemTest {
     coverageChecker.exclude("examples.Buggy.BuggyEqualsTransitive.getOne()");
     coverageChecker.exclude("examples.Buggy.BuggyEqualsTransitive.getThree()");
     coverageChecker.exclude("examples.Buggy.BuggyEqualsTransitive.getTwo()");
+
+    // Coverage inconsistencies
+    if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS) {
+      /* Inconsistent locally and on Travis */
+      coverageChecker.ignore("examples.Buggy.BuggyCompareToSubs.getOne()");
+    }
     //
     //    /* Covered locally, inconsistently covered on Travis */
     //    coverageChecker.ignore("examples.Buggy.BuggyCompareToSubs.getOne()");
