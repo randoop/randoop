@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>FieldGet (randoop 3.1.2 API)</title>
+<title>FieldGet (randoop 3.1.3 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="FieldGet (randoop 3.1.2 API)";
+            parent.document.title="FieldGet (randoop 3.1.3 API)";
         }
     }
     catch(err) {
@@ -324,7 +324,7 @@ extends <a href="../../randoop/operation/CallableOperation.html" title="class in
 <div class="block">FieldGetter sets the public field for the getter statement.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>field</code> - the <a href="../../randoop/field/AccessibleField.html" title="class in randoop.field"><code>AccessibleField</code></a> object from which to get values.</dd>
+<dd><code>field</code> - the <a href="../../randoop/field/AccessibleField.html" title="class in randoop.field"><code>AccessibleField</code></a> object from which to get values</dd>
 </dl>
 </li>
 </ul>
@@ -469,9 +469,9 @@ extends <a href="../../randoop/operation/CallableOperation.html" title="class in
 <h4>parse</h4>
 <pre>public static&nbsp;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;parse(java.lang.String&nbsp;descr)
                             throws <a href="../../randoop/operation/OperationParseException.html" title="class in randoop.operation">OperationParseException</a></pre>
-<div class="block">Parses a getter for a field from a string. A getter description has the form "&lt;get&gt;(
- field-descriptor )" where &lt;get&gt;" is literal ("&lt; " and "&gt;" included), and
- field-descriptor is as recognized by</div>
+<div class="block">Parses a getter for a field from a string. A getter description has the form "<code>&lt;get&gt;(
+ field-descriptor )</code>" where "<code>&lt;get&gt;</code>" is literal ("<code>&lt;</code>" and "<code>&gt;</code>" included),
+ and field-descriptor is as recognized by</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>descr</code> - the string containing descriptor of getter for a field</dd>
@@ -553,7 +553,7 @@ extends <a href="../../randoop/operation/CallableOperation.html" title="class in
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/operation/CallableOperation.html#satisfies-randoop.reflection.ReflectionPredicate-">satisfies</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/operation/CallableOperation.html" title="class in randoop.operation">CallableOperation</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>predicate</code> - the <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection"><code>ReflectionPredicate</code></a> to be checked.</dd>
+<dd><code>predicate</code> - the <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection"><code>ReflectionPredicate</code></a> to be checked</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true only if the field used in this getter satisfies predicate.canUse.</dd>
 </dl>

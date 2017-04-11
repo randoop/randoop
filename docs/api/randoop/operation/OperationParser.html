@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>OperationParser (randoop 3.1.2 API)</title>
+<title>OperationParser (randoop 3.1.3 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="OperationParser (randoop 3.1.2 API)";
+            parent.document.title="OperationParser (randoop 3.1.3 API)";
         }
     }
     catch(err) {
@@ -217,9 +217,9 @@ extends java.lang.Object</pre>
  specifics of the Operation. For example, the following String represents the constructor for
  HashMap:
 
- <pre>
-   cons : java.util.HashMap.&lt;init&gt;()
- </pre>
+ <pre><code>
+ cons : java.util.HashMap.&lt;init&gt;()
+ </code></pre>
 
  A class implementing Operation should define a static field named ID that corresponds to the ID
  string used when parsing. The way this parse method works is by using the ID string to

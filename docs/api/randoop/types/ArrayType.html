@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ArrayType (randoop 3.1.2 API)</title>
+<title>ArrayType (randoop 3.1.3 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ArrayType (randoop 3.1.2 API)";
+            parent.document.title="ArrayType (randoop 3.1.3 API)";
         }
     }
     catch(err) {
@@ -613,7 +613,7 @@ extends <a href="../../randoop/types/ReferenceType.html" title="class in randoop
 <dd><code><a href="../../randoop/types/Type.html#getRuntimeClass--">getRuntimeClass</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the <code>Class</code> that is the runtime representation of the type, or null if this type
-     is a type variable or null reference type.</dd>
+     is a type variable or null reference type</dd>
 </dl>
 </li>
 </ul>
@@ -686,9 +686,8 @@ extends <a href="../../randoop/types/ReferenceType.html" title="class in randoop
  5.1.5</a> for details.
 
  <p>For an array type, check for assignability by reference widening. If not otherwise
- assignable, check for unchecked conversion, which occurs when this type is <code>
- C&lt;T<sub>1</sub>,&hellip;,T<sub>k</sub>&gt;[]</code> and other type is <code>C[]</code>
- (e.g., the component type is the rawtype <code>C</code>).</div>
+ assignable, check for unchecked conversion, which occurs when this type is <code>C&lt;T1,...,Tk&gt;[]</code> and other type is <code>C[]</code> (e.g., the component type is the rawtype
+ <code>C</code>).</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/types/ReferenceType.html#isAssignableFrom-randoop.types.Type-">isAssignableFrom</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a></code></dd>
