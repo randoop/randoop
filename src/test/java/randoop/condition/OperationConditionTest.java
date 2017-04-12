@@ -31,6 +31,7 @@ import randoop.sequence.Variable;
 import randoop.test.Check;
 import randoop.test.DummyCheckGenerator;
 import randoop.test.ExpectedExceptionGenerator;
+import randoop.test.PostConditionCheck;
 import randoop.test.PostConditionCheckGenerator;
 import randoop.test.TestCheckGenerator;
 import randoop.types.JavaTypes;
@@ -99,10 +100,14 @@ public class OperationConditionTest {
     assertFalse("should not have failure", es.hasFailure());
 
     for (Check check : es.getChecks().get().keySet()) {
-      assertEquals(
-          "should check for ONE",
-          "java.util.ArrayList(x2.equals(ClassWithConditions.Range.ONE))",
-          check.getValue());
+      assertTrue("should be post-condition check", check instanceof PostConditionCheck);
+      PostConditionCheck postConditionCheck = (PostConditionCheck) check;
+      for (PostCondition condition : postConditionCheck.getPostConditions()) {
+        assertEquals(
+            "should check for ONE",
+            "x2.equals(ClassWithConditions.Range.ONE)",
+            condition.getConditionString());
+      }
     }
 
     es = createSequence(6);
@@ -111,10 +116,14 @@ public class OperationConditionTest {
     assertFalse("should not have failure", es.hasFailure());
 
     for (Check check : es.getChecks().get().keySet()) {
-      assertEquals(
-          "should check for TWO",
-          "randoop.condition.PostCondition(x2.equals(ClassWithConditions.Range.TWO))",
-          check.getValue());
+      assertTrue("should be post-condition check", check instanceof PostConditionCheck);
+      PostConditionCheck postConditionCheck = (PostConditionCheck) check;
+      for (PostCondition condition : postConditionCheck.getPostConditions()) {
+        assertEquals(
+            "should check for TWO",
+            "x2.equals(ClassWithConditions.Range.TWO)",
+            condition.getConditionString());
+      }
     }
 
     es = createSequence(11);
@@ -123,10 +132,14 @@ public class OperationConditionTest {
     assertTrue("should have failure", es.hasFailure());
 
     for (Check check : es.getChecks().get().keySet()) {
-      assertEquals(
-          "should check for THREE",
-          "randoop.condition.PostCondition(x2.equals(ClassWithConditions.Range.THREE))",
-          check.getValue());
+      assertTrue("should be post-condition check", check instanceof PostConditionCheck);
+      PostConditionCheck postConditionCheck = (PostConditionCheck) check;
+      for (PostCondition condition : postConditionCheck.getPostConditions()) {
+        assertEquals(
+            "should check for THREE",
+            "x2.equals(ClassWithConditions.Range.THREE)",
+            condition.getConditionString());
+      }
     }
 
     es = createSequence(16);
@@ -135,10 +148,14 @@ public class OperationConditionTest {
     assertFalse("should not have failure", es.hasFailure());
 
     for (Check check : es.getChecks().get().keySet()) {
-      assertEquals(
-          "should check for FOUR",
-          "randoop.condition.PostCondition(x2.equals(ClassWithConditions.Range.FOUR))",
-          check.getValue());
+      assertTrue("should be post-condition check", check instanceof PostConditionCheck);
+      PostConditionCheck postConditionCheck = (PostConditionCheck) check;
+      for (PostCondition condition : postConditionCheck.getPostConditions()) {
+        assertEquals(
+            "should check for FOUR",
+            "x2.equals(ClassWithConditions.Range.FOUR)",
+            condition.getConditionString());
+      }
     }
 
     es = createSequence(21);
