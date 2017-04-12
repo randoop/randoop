@@ -78,4 +78,13 @@ public class PostConditionCheck implements Check {
   public boolean evaluate(Execution execution) {
     return false;
   }
+
+  /**
+   * Get the list of {@link PostCondition} objects for this {@link PostConditionCheck}.
+   *
+   * @return the {@link PostCondition} list for this check
+   */
+  public List<PostCondition> getPostConditions() {
+    return postConditions;
+  }
 }
