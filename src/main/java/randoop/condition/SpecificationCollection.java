@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -147,8 +148,7 @@ public class SpecificationCollection {
     for (Map.Entry<Signature, HashSet<Method>> entry : sigMap.entrySet()) {
       for (Method method : entry.getValue()) {
         Class<?> declaringClass = method.getDeclaringClass();
-        Class<?> superclass = declaringClass.getSuperclass();
-        Set<Method> parents = findParent(superclass, entry.getKey(), entry.getValue());
+        Set<Method> parents = findParents(declaringClass, entry.getValue());
         if (!parents.isEmpty()) {
           parentMap.put(method, parents);
         }
@@ -157,20 +157,23 @@ public class SpecificationCollection {
     return parentMap;
   }
 
-  private static Set<Method> findParent(
-      Class<?> classType, Signature signature, Set<Method> stopSet) {
+  /**
+   * Finds the methods that are members of the stop set and belong to the supertypes of the given
+   * class type.
+   *
+   * @param classType the class whose supertypes are searched
+   * @param stopSet the set of methods
+   * @return the set of methods with the signature and in the stop set from lowest supertypes of the
+   *     class type.
+   */
+  private static Set<Method> findParents(Class<?> classType, Set<Method> stopSet) {
     Set<Method> parents = new HashSet<>();
     if (classType != null) {
-      Method parent = signature.getMethod(classType);
-      if (parent != null) {
-        if (stopSet.contains(parent)) {
-          parents.add(parent);
+      for (Method method : stopSet) {
+        Class<?> declaringClass = method.getDeclaringClass();
+        if (declaringClass != classType && declaringClass.isAssignableFrom(classType)) {
+          parents.add(method);
         }
-      }
-      Class<?> superclass = classType.getSuperclass();
-      parents.addAll(findParent(superclass, signature, stopSet));
-      for (Class<?> supertype : classType.getInterfaces()) {
-        parents.addAll(findParent(supertype, signature, stopSet));
       }
     }
     return parents;
@@ -239,7 +242,6 @@ public class SpecificationCollection {
     if (specification == null) {
       return null;
     }
-
     Declarations declarations = Declarations.create(accessibleObject, specification);
 
     conditions = createConditions(specification, declarations);
@@ -396,20 +398,16 @@ public class SpecificationCollection {
 
     @Override
     public int hashCode() {
-      return Objects.hash(name, parameterTypes);
+      return Objects.hash(name, Arrays.hashCode(parameterTypes));
     }
 
     @Override
     public String toString() {
-      return name + "(" + UtilMDE.join(parameterTypes, ",") + ")";
-    }
-
-    public Method getMethod(Class<?> declaringClass) {
-      try {
-        return declaringClass.getDeclaredMethod(name, parameterTypes);
-      } catch (NoSuchMethodException e) {
-        return null;
+      List<String> typeNames = new ArrayList<>();
+      for (Class<?> type : parameterTypes) {
+        typeNames.add(type.getName());
       }
+      return name + "(" + UtilMDE.join(typeNames, ",") + ")";
     }
   }
 }
