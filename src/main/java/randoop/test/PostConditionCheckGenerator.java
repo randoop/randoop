@@ -44,19 +44,25 @@ public class PostConditionCheckGenerator implements TestCheckGenerator {
     if (result instanceof NotExecuted) {
       throw new Error("Abnormal execution in sequence: " + s);
     } else if (result instanceof NormalExecution) {
+      List<PostCondition> failed = new ArrayList<>();
       ArrayList<Variable> inputs = new ArrayList<>(s.sequence.getInputs(finalIndex));
       inputs.add(s.sequence.getVariable(finalIndex));
       Object[] inputValues = s.getRuntimeInputs(inputs);
       if (s.sequence.getStatement(finalIndex).getOperation().isStatic()) {
         inputValues = addNullReceiver(inputValues);
       }
-      checks = new RegressionChecks();
       for (PostCondition postCondition : postConditions) {
         if (!postCondition.check(inputValues)) {
-          checks = new ErrorRevealingChecks();
+          failed.add(postCondition);
         }
       }
-      checks.add(new PostConditionCheck(postConditions, inputs));
+      if (failed.isEmpty()) {
+        checks = new RegressionChecks();
+        checks.add(new PostConditionCheck(postConditions, inputs));
+      } else {
+        checks = new ErrorRevealingChecks();
+        checks.add(new PostConditionCheck(failed, inputs));
+      }
     } else { // if execution was exceptional, return empty checks
       checks = new ErrorRevealingChecks();
     }
