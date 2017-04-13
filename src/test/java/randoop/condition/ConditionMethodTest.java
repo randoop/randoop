@@ -48,26 +48,28 @@ public class ConditionMethodTest {
 
   @Test
   public void testErrorThrown() {
-    thrown.expect(RandoopConditionError.class);
     Condition error =
         createCondition(
             "randoop.condition",
             "(randoop.condition.ConditionWithException r)",
             "r.errorPredicate()",
             "throws an Error");
-    error.check(new Object[] {new ConditionWithException()});
+    assertFalse(
+        "should be false when error thrown",
+        error.check(new Object[] {new ConditionWithException()}));
   }
 
   @Test
   public void testThrowableThrown() {
-    thrown.expect(RandoopConditionError.class);
     Condition throwable =
         createCondition(
             "randoop.condition",
             "(randoop.condition.ConditionWithException r)",
             "r.throwablePredicate()",
             "throws a Throwable");
-    throwable.check(new Object[] {new ConditionWithException()});
+    assertFalse(
+        "should be false when exception thrown",
+        throwable.check(new Object[] {new ConditionWithException()}));
   }
 
   private Condition createCondition(
