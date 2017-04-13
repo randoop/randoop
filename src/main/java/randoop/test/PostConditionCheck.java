@@ -3,6 +3,7 @@ package randoop.test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import plume.UtilMDE;
 import randoop.Globals;
 import randoop.condition.PostCondition;
@@ -28,6 +29,40 @@ public class PostConditionCheck implements Check {
   PostConditionCheck(List<PostCondition> postConditions, ArrayList<Variable> inputVariables) {
     this.postConditions = postConditions;
     this.inputVariables = inputVariables.toArray(new Variable[0]);
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (!(object instanceof PostConditionCheck)) {
+      return false;
+    }
+    PostConditionCheck other = (PostConditionCheck) object;
+    if (!this.postConditions.equals(other.postConditions)) {
+      return false;
+    }
+    if (this.inputVariables.length != other.inputVariables.length) {
+      return false;
+    }
+    for (int i = 0; i < this.inputVariables.length; i++) {
+      if (!this.inputVariables[i].equals(other.inputVariables[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(postConditions, Arrays.hashCode(inputVariables));
+  }
+
+  @Override
+  public String toString() {
+    List<String> conditionStrings = new ArrayList<>();
+    for (PostCondition condition : postConditions) {
+      conditionStrings.add(condition.getConditionString());
+    }
+    return UtilMDE.join(conditionStrings, "&&");
   }
 
   @Override
