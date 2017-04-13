@@ -1,14 +1,12 @@
 package randoop.condition;
 
 /**
- * Created by bjkeller on 4/10/17.
+ * Input for tests of inherited specifications.
+ * {@link ConditionsSuperClass#m(String)} returns length of string.
+ * Intended to be used with different sets of specifications
  */
 public class OverridingConditionsClass extends ConditionsSuperClass implements ConditionsInterface, OtherConditionsInterface {
-  /**
-   * @param s a string, not null
-   * @return value >= 2 * s.length()
-   */
   public int m(String s) {
-    return s.length() * 2;
+    return s.length();
   }
 }

@@ -106,5 +106,43 @@
         }
       }
     ]
+  },
+  {
+    "operation": {
+      "classname": "randoop.condition.ClassWithConditions",
+      "name": "badness",
+      "parameterTypes": [
+        "randoop.condition.ClassWithConditions$Range",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "range",
+        "value"
+      ],
+      "receiverName": "receiver",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "must be positive",
+        "guard": {
+          "condition": "value > 0",
+          "description": "positive"
+        }
+      },
+      {
+        "exception": "java.lang.Throwable",
+        "description": "nonnull",
+        "guard": {
+          "condition": "range != null",
+          "description": "not null"
+        }
+      }
+    ],
+    "pre": [],
+    "post": []
   }
 ]

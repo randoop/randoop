@@ -1,7 +1,8 @@
 package randoop.condition;
 
 /**
- * Created by bjkeller on 4/10/17.
+ * Input for tests of inherited conditions.
+ * @see OverridingConditionsClass
  */
 public class ConditionsSuperClass {
   public int m(String s) {

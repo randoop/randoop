@@ -39,4 +39,14 @@ public class ClassWithConditions {
     THREE,
     FOUR
   }
+
+  public static void badness(Range range, int value) throws Throwable {
+    if (range == null) {
+      throw new NullPointerException("range is null");
+      //throw new IllegalStateException("bad");
+    }
+    if (value <= 0) {
+      throw new IllegalArgumentException("bad value");
+    }
+  }
 }
