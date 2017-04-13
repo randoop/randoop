@@ -873,8 +873,24 @@ public class RandoopSystemTest {
     options.setOption("timelimit", "30");
     options.setOption("outputlimit", "200");
 
-    RandoopRunStatus status = generateAndCompile(testEnvironment, options, true);
-    assertTrue("generation should have failed", status.processStatus.exitStatus != 0);
+    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+  }
+
+  /** Test */
+  @Test
+  public void runInheritedConditionsTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("inherited-conditions");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("randoop.condition.OverridingConditionsClass");
+    options.setOption(
+        "specifications", "resources/systemTest/randoop/condition/overridingconditionsclass.json");
+    options.setErrorBasename("ConditionsError");
+    options.setRegressionBasename("ConditionsRegresion");
+    options.setOption("timelimit", "30");
+    options.setOption("outputlimit", "200");
+
+    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
   /**
