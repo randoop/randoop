@@ -81,8 +81,9 @@ public class PostConditionCheck implements Check {
           .append("// Checks the post-condition: ")
           .append(postCondition.getComment())
           .append(Globals.lineSep);
+      //TODO output whether postcondition failed or succeeded
       builder
-          .append("org.junit.Assert.assertTrue( \"Post-condition failed: ")
+          .append("org.junit.Assert.assertTrue( \"Post-condition: ")
           .append(postCondition.getComment())
           .append("\",")
           .append(conditionString)
