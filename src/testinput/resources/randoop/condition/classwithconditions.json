@@ -54,7 +54,7 @@
     "post": [
       {
         "property": {
-          "condition": "result.equals(ClassWithConditions.Range.ONE)",
+          "condition": "result.equals(randoop.condition.ClassWithConditions.Range.ONE)",
           "description": "return ONE"
         },
         "description": "value in first range",
@@ -65,7 +65,7 @@
       },
       {
         "property": {
-          "condition": "result.equals(ClassWithConditions.Range.TWO)",
+          "condition": "result.equals(randoop.condition.ClassWithConditions.Range.TWO)",
           "description": "return TWO"
         },
         "description": "value in second range",
@@ -76,7 +76,7 @@
       },
       {
         "property": {
-          "condition": "result.equals(ClassWithConditions.Range.THREE)",
+          "condition": "result.equals(randoop.condition.ClassWithConditions.Range.THREE)",
           "description": "return THREE"
         },
         "description": "value in third range",
@@ -87,7 +87,7 @@
       },
       {
         "property": {
-          "condition": "result.equals(ClassWithConditions.Range.FOUR)",
+          "condition": "result.equals(randoop.condition.ClassWithConditions.Range.FOUR)",
           "description": "return FOUR"
         },
         "description": "otherwise, return FOUR",
