@@ -4,7 +4,12 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import plume.UtilMDE;
 import randoop.condition.specification.Identifiers;
 import randoop.condition.specification.OperationSpecification;
@@ -106,13 +111,35 @@ public class Declarations {
 
   String replaceWithDummyVariables(String conditionText) {
     int varIndex = 0;
+    Map<String, String> replacements = new HashMap<>();
     if (receiverType != null) {
-      conditionText = conditionText.replace(receiverName, "x" + varIndex++);
+      replacements.put(receiverName, "x" + varIndex++);
     }
     for (String parameterName : parameterNames) {
-      conditionText = conditionText.replace(parameterName, "x" + varIndex++);
+      replacements.put(parameterName, "x" + varIndex++);
     }
-    conditionText = conditionText.replace(returnName, "x" + varIndex);
+    replacements.put(returnName, "x" + varIndex);
+
+    // make sure that we are replacing from longer to shorter strings to avoid mangled replacement
+    Set<String> names =
+        new TreeSet<>(
+            new Comparator<String>() {
+              @Override
+              public int compare(String o1, String o2) {
+                if (o1.length() < o2.length()) {
+                  return 1; // shorter last
+                } else if (o1.length() > o2.length()) {
+                  return -1; // longer first
+                }
+                return o1.compareTo(o2);
+              }
+            });
+    names.addAll(replacements.keySet());
+
+    for (String name : names) {
+      conditionText = conditionText.replace(name, replacements.get(name));
+    }
+
     return conditionText;
   }
 }
