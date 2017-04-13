@@ -920,6 +920,7 @@ public class RandoopSystemTest {
     options.setErrorBasename("CompError");
     options.setRegressionBasename("CompRegression");
     options.setOption("timelimit", "30");
+    options.setFlag("check-compilable");
 
     CoverageChecker coverageChecker = new CoverageChecker(options);
     coverageChecker.ignore("compileerr.WildcardCollection.getAStringList()");
