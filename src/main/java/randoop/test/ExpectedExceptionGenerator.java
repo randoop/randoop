@@ -44,12 +44,10 @@ public class ExpectedExceptionGenerator implements TestCheckGenerator {
       Throwable throwable = exec.getException();
       ClassOrInterfaceType throwableType = ClassOrInterfaceType.forClass(throwable.getClass());
       for (Set<ExpectedException> exceptionSet : exceptionSets) {
-        for (ExpectedException exception : exceptionSet) {
-          ClassOrInterfaceType expected = exception.getExceptionType();
-          if (!throwableType.isSubtypeOf(expected)) { // if exception is not in set
-            // XXX this doesn't carry information about exception that occurred
-            return getMissingExceptionTestChecks(finalIndex);
-          }
+        ClassOrInterfaceType matchingType = findMatchingExpectedType(throwableType, exceptionSet);
+        if (matchingType == null) {
+          //XXX this doesn't carry information about exception that occurred
+          return getMissingExceptionTestChecks(finalIndex);
         }
       }
       Check check = new ExpectedExceptionCheck(throwable, finalIndex, throwableType.getName());
@@ -60,6 +58,17 @@ public class ExpectedExceptionGenerator implements TestCheckGenerator {
     }
 
     return checks;
+  }
+
+  private ClassOrInterfaceType findMatchingExpectedType(
+      ClassOrInterfaceType throwableType, Set<ExpectedException> expectedExceptions) {
+    for (ExpectedException exception : expectedExceptions) {
+      ClassOrInterfaceType expected = exception.getExceptionType();
+      if (throwableType.isSubtypeOf(expected)) { // if exception is in set
+        return expected;
+      }
+    }
+    return null;
   }
 
   private TestChecks getMissingExceptionTestChecks(int finalIndex) {
