@@ -48,6 +48,7 @@ class RandoopOptions {
     RandoopOptions options = new RandoopOptions();
     options.setOption("junit-output-dir", testEnvironment.sourceDir.toString());
     options.setOption("log", testEnvironment.workingDir + "/randoop-log.txt");
+    options.unsetFlag("check-compilable");
     return options;
   }
 
