@@ -22,10 +22,9 @@ public class ConditionMethodCreator {
     try {
       conditionClass = compiler.compile(packageName, conditionClassName, classText);
     } catch (SequenceCompilerException e) {
-      String msg = getMessage(e.getDiagnostics().getDiagnostics(), classText);
+      String msg = getMessage(e.getDiagnostics().getDiagnostics());
       throw new RandoopConditionError(msg, e);
     }
-    Method conditionMethod;
     Method[] methods = conditionClass.getDeclaredMethods();
     for (Method method : methods) {
       if (method.getName().equals(CONDITION_METHOD_NAME)) {
@@ -36,23 +35,22 @@ public class ConditionMethodCreator {
     return null;
   }
 
-  private static String getMessage(
-      List<Diagnostic<? extends JavaFileObject>> diagnostics, String classText) {
-    String msg = "Condition method did not compile: ";
+  private static String getMessage(List<Diagnostic<? extends JavaFileObject>> diagnostics) {
+    StringBuilder msg = new StringBuilder("Condition method did not compile: ");
     for (Diagnostic<? extends JavaFileObject> diag : diagnostics) {
       if (diag != null) {
         String diagMessage = diag.getMessage(null);
         if (diagMessage.contains("unreported exception")) {
-          msg +=
+          msg.append(
               String.format(
-                  "condition may not throw exception, throws %s",
-                  diagMessage.substring(0, diagMessage.indexOf(';')));
+                  "condition threw exception %s",
+                  diagMessage.substring(0, diagMessage.indexOf(';'))));
         } else {
-          msg += diagMessage;
+          msg.append(diagMessage);
         }
       }
     }
-    return msg;
+    return msg.toString();
   }
 
   private static String createClass(
@@ -70,7 +68,7 @@ public class ConditionMethodCreator {
         + "  public static boolean "
         + CONDITION_METHOD_NAME
         + signature
-        + " {"
+        + " throws Throwable {"
         + Globals.lineSep
         + "    return "
         + conditionText
