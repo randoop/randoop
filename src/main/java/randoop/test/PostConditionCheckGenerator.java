@@ -63,6 +63,7 @@ public class PostConditionCheckGenerator implements TestCheckGenerator {
         checks = new ErrorRevealingChecks();
         checks.add(new PostConditionCheck(failed, inputs));
       }
+      s.sequence.disableShortForm();
     } else { // if execution was exceptional, return empty checks
       checks = new ErrorRevealingChecks();
     }

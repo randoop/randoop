@@ -449,40 +449,6 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * The hashcode of a sequence is the sum of each statement's hashcode. This seems good enough, and
-   * it makes computing hashCode of a concatenation of sequences faster (it's just the addition of
-   * each sequence's' hashCode). Otherwise, hashCode computation used to be a hotspot.
-   *
-   * @param statements the list of statements over which to compute the hash code
-   * @return the sum of the hash codes of the statements in the sequence
-   */
-  private static int computeHashcode(SimpleList<Statement> statements) {
-    int hashCode = 0;
-    for (int i = 0; i < statements.size(); i++) {
-      Statement s = statements.get(i);
-      hashCode += s.hashCode();
-    }
-    return hashCode;
-  }
-
-  /**
-   * Counts the number of statements in a list that are not initializations with a primitive type.
-   * For instance <code>int var7 = 0</code>.
-   *
-   * @param statements the list of {@link Statement} objects
-   * @return count of statements other than primitive initializations
-   */
-  private static int computeNetSize(SimpleList<Statement> statements) {
-    int netSize = 0;
-    for (int i = 0; i < statements.size(); i++) {
-      if (!(statements.get(i).isPrimitiveInitialization())) {
-        netSize++;
-      }
-    }
-    return netSize;
-  }
-
-  /**
    * Set lastStatementVariables and lastStatementTypes to their appropriate values. See
    * documentation for these fields for more info.
    */
@@ -1044,24 +1010,74 @@ public final class Sequence implements WeightedElement {
     return new Sequence(statements.getSublist(index));
   }
 
+  /** Write this sequence to the Randoop log. */
   public void log() {
     if (!Log.isLoggingOn()) {
       return;
     }
-
     try {
       GenInputsAbstract.log.write(Globals.lineSep + Globals.lineSep);
       GenInputsAbstract.log.write(this.toFullCodeString());
       GenInputsAbstract.log.flush();
-
     } catch (IOException e) {
       e.printStackTrace();
       System.exit(1);
     }
   }
 
+  /**
+   * Indicate whether this sequence can be printed with variable values substituted for the variable
+   * in operation arguments. If true, the initialization of the variable will not be included in the
+   * sequence when dumped to a file.
+   *
+   * @return true if the short form of variables can be used for this sequence, and false otherwise.
+   */
   boolean canUseShortForm() {
     return allowShortForm;
+  }
+
+  /**
+   * Disables the use of variable values as arguments in this sequence. This is a hack to deal with
+   * inability to determine when a variable definition is necessary because it is used more than
+   * once, which is an issue because post-conditions can use variables but don't have the abilility
+   * to use the sort-form.
+   */
+  public void disableShortForm() {
+    allowShortForm = false;
+  }
+
+  /**
+   * The hashcode of a sequence is the sum of each statement's hashcode. This seems good enough, and
+   * it makes computing hashCode of a concatenation of sequences faster (it's just the addition of
+   * each sequence's' hashCode). Otherwise, hashCode computation used to be a hotspot.
+   *
+   * @param statements the list of statements over which to compute the hash code
+   * @return the sum of the hash codes of the statements in the sequence
+   */
+  private static int computeHashcode(SimpleList<Statement> statements) {
+    int hashCode = 0;
+    for (int i = 0; i < statements.size(); i++) {
+      Statement s = statements.get(i);
+      hashCode += s.hashCode();
+    }
+    return hashCode;
+  }
+
+  /**
+   * Counts the number of statements in a list that are not initializations with a primitive type.
+   * For instance <code>int var7 = 0</code>.
+   *
+   * @param statements the list of {@link Statement} objects
+   * @return count of statements other than primitive initializations
+   */
+  private static int computeNetSize(SimpleList<Statement> statements) {
+    int netSize = 0;
+    for (int i = 0; i < statements.size(); i++) {
+      if (!(statements.get(i).isPrimitiveInitialization())) {
+        netSize++;
+      }
+    }
+    return netSize;
   }
 
   /**
