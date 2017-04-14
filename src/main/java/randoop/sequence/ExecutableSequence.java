@@ -167,7 +167,9 @@ public class ExecutableSequence {
       // Only print primitive declarations if the last/only statement
       // of the sequence, because, otherwise, primitive values will be used as
       // actual parameters: e.g. "foo(3)" instead of "int x = 3 ; foo(x)"
-      if (sequence.getStatement(i).getShortForm() != null && i < sequence.size() - 1) {
+      if (sequence.canUseShortForm()
+          && sequence.getStatement(i).getShortForm() != null
+          && i < sequence.size() - 1) {
         continue;
       }
 

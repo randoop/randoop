@@ -56,11 +56,194 @@ public final class Sequence implements WeightedElement {
    */
   private transient /* final */ List<Type> lastStatementTypes;
 
+  private transient boolean allowShortForm;
+
   /**
    * The list of statement indices that as determined by construction define outputs of this
    * sequence.
    */
   private List<Integer> outputIndices;
+
+  /** Create a new, empty sequence. */
+  public Sequence() {
+    this(new ArrayListSimpleList<Statement>(), 0, 0);
+  }
+
+  /**
+   * Create a sequence that has the given statements and hashCode (hashCode is for optimization).
+   *
+   * <p>See {@link #computeHashcode(SimpleList)} for details on the hashCode.
+   *
+   * @param statements the statements of the new sequence
+   * @param hashCode the hashcode for the new sequence
+   * @param netSize the net size for the new sequence
+   */
+  private Sequence(SimpleList<Statement> statements, int hashCode, int netSize) {
+    if (statements == null) {
+      throw new IllegalArgumentException("`statements' argument cannot be null");
+    }
+    this.statements = statements;
+    this.savedHashCode = hashCode;
+    this.savedNetSize = netSize;
+    this.computeLastStatementInfo();
+    this.outputIndices = new ArrayList<>();
+    this.allowShortForm = true;
+    this.outputIndices.add(this.statements.size() - 1);
+    this.activeFlags = new BitSet(this.size());
+    this.setAllActiveFlags();
+    this.checkRep();
+  }
+
+  /**
+   * Create a sequence with the given statements.
+   *
+   * @param statements the statements
+   */
+  public Sequence(SimpleList<Statement> statements) {
+    this(statements, computeHashcode(statements), computeNetSize(statements));
+  }
+
+  /**
+   * Returns a sequence that is of the form "Foo f = null;" where Foo is the given class.
+   *
+   * @param c the type for initialized variable
+   * @return the sequence consisting of the initialization
+   */
+  public static Sequence zero(Type c) {
+    return new Sequence()
+        .extend(TypedOperation.createNullOrZeroInitializationForType(c), new ArrayList<Variable>());
+  }
+
+  /**
+   * Creates a sequence corresponding to the given non-null primitive value.
+   *
+   * @param value non-null reference to a primitive or String value
+   * @return a {@link Sequence} consisting of a statement created with the object
+   */
+  public static Sequence createSequenceForPrimitive(Object value) {
+    if (value == null) throw new IllegalArgumentException("value is null");
+    Type type = Type.forValue(value);
+
+    if (!TypedOperation.isNonreceiverType(type)) {
+      throw new IllegalArgumentException("value is not a (boxed) primitive or String");
+    }
+
+    if (type.isBoxedPrimitive()) {
+      type = ((NonParameterizedType) type).toPrimitive();
+    }
+
+    if (type.equals(JavaTypes.STRING_TYPE) && !Value.stringLengthOK((String) value)) {
+      throw new IllegalArgumentException(
+          "value is a string of length > " + GenInputsAbstract.string_maxlen);
+    }
+
+    return new Sequence().extend(TypedOperation.createPrimitiveInitialization(type, value));
+  }
+
+  /**
+   * Creates a sequence consisting of the given operation given the input.
+   *
+   * @param operation the operation for the sequence
+   * @param inputSequences the sequences computing inputs to the operation
+   * @param indexes the indices of the inputs to the operation
+   * @return the sequence that applies the operation to the given inputs
+   */
+  public static Sequence createSequence(
+      TypedOperation operation, List<Sequence> inputSequences, List<Integer> indexes) {
+    Sequence inputSequence = Sequence.concatenate(inputSequences);
+    List<Variable> inputs = new ArrayList<>();
+    for (Integer inputIndex : indexes) {
+      Variable v = inputSequence.getVariable(inputIndex);
+      inputs.add(v);
+    }
+    return inputSequence.extend(operation, inputs);
+  }
+
+  public static Sequence createSequence(TypedOperation operation, Sequence inputSequence) {
+    List<Variable> inputs = new ArrayList<>();
+    for (int index : inputSequence.getOutputIndices()) {
+      inputs.add(inputSequence.getVariable(index));
+    }
+    return inputSequence.extend(operation, inputs);
+  }
+
+  public static Sequence createSequence(List<Sequence> sequences, List<Integer> variables) {
+    assert sequences.size() == variables.size() : "must be one variable for each sequence";
+    Sequence sequence = Sequence.concatenate(sequences);
+    List<Integer> outputIndices = new ArrayList<>();
+    int size = 0;
+    for (int i = 0; i < sequences.size(); i++) {
+      outputIndices.add(size + variables.get(i));
+      size += sequences.get(i).size();
+    }
+    sequence.outputIndices = outputIndices;
+    return sequence;
+  }
+
+  /**
+   * Returns a new sequence that is equivalent to this sequence plus the given operation appended to
+   * the end.
+   *
+   * @param operation the operation to add
+   * @param inputVariables the input variables
+   * @return the sequence formed by appending the given operation to this sequence
+   */
+  public final Sequence extend(TypedOperation operation, List<Variable> inputVariables) {
+    checkInputs(operation, inputVariables);
+    List<RelativeNegativeIndex> indexList = new ArrayList<>(1);
+    for (Variable v : inputVariables) {
+      indexList.add(getRelativeIndexForVariable(size(), v));
+    }
+    Statement statement = new Statement(operation, indexList);
+    int newNetSize = (operation.isNonreceivingValue()) ? this.savedNetSize : this.savedNetSize + 1;
+    return new Sequence(
+        new OneMoreElementList<>(this.statements, statement),
+        this.savedHashCode + statement.hashCode(),
+        newNetSize);
+  }
+
+  /**
+   * Returns a new sequence that is equivalent to this sequence plus the given statement appended at
+   * the end.
+   *
+   * @param operation the operation to add
+   * @param inputs the input variables for the operation
+   * @return the sequence formed by appending the given operation to this sequence
+   */
+  public final Sequence extend(TypedOperation operation, Variable... inputs) {
+    return extend(operation, Arrays.asList(inputs));
+  }
+
+  /**
+   * extend adds a new statement to this sequence using the operation of the given statement.
+   * Intended as the only place that we reach inside a {@link Statement} for its operation.
+   *
+   * @param statement is a {@link Statement} object from which the operation is copied
+   * @param inputs is the list of variables for input
+   * @return sequence constructed from this one plus the operation
+   * @see Sequence#extend(TypedOperation, List)
+   */
+  public final Sequence extend(Statement statement, List<Variable> inputs) {
+    return extend(statement.getOperation(), inputs);
+  }
+
+  /**
+   * Create a new sequence that is the concatenation of the given sequences.
+   *
+   * @param sequences the list of sequences to concatenate
+   * @return the concatenation of the sequences in the list
+   */
+  public static Sequence concatenate(List<Sequence> sequences) {
+    List<SimpleList<Statement>> statements1 = new ArrayList<>();
+    int newHashCode = 0;
+    int newNetSize = 0;
+    for (Sequence c : sequences) {
+      newHashCode += c.savedHashCode;
+      newNetSize += c.savedNetSize;
+      statements1.add(c.statements);
+    }
+    return new Sequence(new ListOfLists<>(statements1), newHashCode, newNetSize);
+  }
 
   /*
    * Weight is used by heuristic that favors smaller sequences so it makes sense
@@ -177,7 +360,7 @@ public final class Sequence implements WeightedElement {
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
       // don't dump primitive initializations, if using literals
-      if (getStatement(i).getShortForm() != null) {
+      if (canUseShortForm() && getStatement(i).getShortForm() != null) {
         continue;
       }
       appendCode(b, i);
@@ -193,7 +376,7 @@ public final class Sequence implements WeightedElement {
    *
    * @return a string containing Java code for this sequence
    */
-  public String toFullCodeString() {
+  private String toFullCodeString() {
     // XXX can we do this so that substitutions don't happen?
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
@@ -234,139 +417,6 @@ public final class Sequence implements WeightedElement {
     activeFlags.clear(i);
   }
 
-  // Used internally (i.e. in package randoop.sequence) to represent inputs
-  // to a statement.
-  //
-  // IMPLEMENTATION NOTE: Recall that a sequence is a sequence
-  // of statements where the inputs to a statement are values created
-  // by earlier statements. Instead of using a Variable to represent such
-  // inputs, we use a RelativeNegativeIndex, which is just a wrapper
-  // for an integer. The integer represents a negative offset from the
-  // statement index in which this RelativeNegativeIndex lives, and
-  // the offset points to the statement that created the values that is
-  // used as an input. In other words, a RelativeNegativeIndex says
-  // "I represent the value created by the N-th statement above me".
-  //
-  // For example, the sequence
-  //
-  // x = new Foo(); Bar b = x.m();
-  //
-  // is internally represented as follows:
-  //
-  // first element: Foo() applied to inputs []
-  // second element: m() applied to inputs [-1]
-  //
-  // Here is a brief history of why we use this particular representation.
-  //
-  // The very first way we represented inputs to a statement was
-  // using a list of StatementWithInput objects, i.e. an input was just
-  // a reference to a previous statement that created the input value.
-  // For example, a sequence might be represented as follows:
-  //
-  // StatementWithInputs@123: Foo() applied to inputs []
-  // StatementWithInputs@124: m() applied to inputs [StatementWithInputs@123]
-  //
-  // We discovered that a big slowdown in the input generator was that we were
-  // consuming lots of memory when creating sequences: for example, in memory,
-  // when extending the sequence x = new Foo(); Bar b = x.m(); we cloned each
-  // statement, created a new list, added the cloned statements, and finally
-  // appended the new statement to the new list.
-  //
-  // Instead of cloning, we might imagine just using the original statements
-  // in the new sequence. This does not work. For example, let's say that we
-  // implement this scheme,
-  // so that everywhere we need "new Foo()" we use the same statement (more
-  // precisely, the same StatementWithInputs). Then, we cannot express
-  // Foo f1 = new Foo(); Foo f2 = new Foo(); f1.equals(f2); because its
-  // internal representation must be
-  //
-  // StatementWithInputs@123: Foo() applied to inputs []
-  // StatementWithInputs@123: Foo() applied to inputs []
-  // StatementWithInputs@125: Object.equals(Object) applied to inputs
-  // [StatementWithInputs@123,
-  // StatementWithInputs@123]
-  //
-  // It's clear that if we want to reuse statements, we cannot directly
-  // use the statements as inputs.
-  //
-  // We can instead use indices: 0 represents the value created by the
-  // first statement, 1 the second, etc. Now we can express the above
-  // sequence:
-  //
-  // Foo() applied to inputs []
-  // Foo() applied to inputs []
-  // Foo() applied to inputs [0, 1]
-  //
-  // This scheme makes it relatively expensive to concatenate sequences
-  // (some generators do lots of concatenation, so concatenation is the
-  // hotspot). Because indexing is absolute, some statements
-  // will need to have their input indices updated. For example, let's say we
-  // wanted to concatenate two copies of the
-  // last sequence above. We cannot just concatenate the statements, because
-  // then we have
-  //
-  // Foo() applied to inputs []
-  // Foo() applied to inputs []
-  // Foo() applied to inputs [0, 1]
-  // Foo() applied to inputs []
-  // Foo() applied to inputs []
-  // Foo() applied to inputs [0, 1]
-  //
-  // While we really want
-  //
-  // Foo() applied to inputs []
-  // Foo() applied to inputs []
-  // Foo() applied to inputs [0, 1]
-  // Foo() applied to inputs []
-  // Foo() applied to inputs []
-  // Foo() applied to inputs [3, 4]
-  //
-  // This means that we need to (1) adjust indices, which takes time, and
-  // (2) create new statements that represent the adjusted indices, which
-  // breaks the "reuse statements" idea.
-  //
-  // Relative indices are the current implementation. Instead of representing
-  // inputs as indices that start from the beginning of the sequence, a
-  // statement's
-  // indices are represented by a relative, negative offsets:
-  //
-  // Foo() applied to inputs []
-  // Foo() applied to inputs []
-  // Foo() applied to inputs [-2, -1]
-  // Foo() applied to inputs []
-  // Foo() applied to inputs []
-  // Foo() applied to inputs [-2, -1]
-  //
-  // Now concatenation is easier: to concatenate two sequences, concatenate
-  // their statements. Also, we do not need to create any new
-  // statements.
-  static final class RelativeNegativeIndex {
-
-    public final int index;
-
-    RelativeNegativeIndex(int index) {
-      if (index >= 0) {
-        throw new IllegalArgumentException("invalid index (expecting non-positive): " + index);
-      }
-      this.index = index;
-    }
-
-    @Override
-    public String toString() {
-      return Integer.toString(index);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      return o instanceof RelativeNegativeIndex && this.index == ((RelativeNegativeIndex) o).index;
-    }
-
-    @Override
-    public int hashCode() {
-      return this.index;
-    }
-  }
-
   /**
    * Returns the relative negative index that would result if we use the given value as an input to
    * the statement at position statementPosition.
@@ -398,76 +448,14 @@ public final class Sequence implements WeightedElement {
     return new Variable(this, absoluteIndex);
   }
 
-  /** Create a new, empty sequence. */
-  public Sequence() {
-    this(new ArrayListSimpleList<Statement>(), 0, 0);
-  }
-
   /**
-   * Returns a sequence that is of the form "Foo f = null;" where Foo is the given class.
+   * The hashcode of a sequence is the sum of each statement's hashcode. This seems good enough, and
+   * it makes computing hashCode of a concatenation of sequences faster (it's just the addition of
+   * each sequence's' hashCode). Otherwise, hashCode computation used to be a hotspot.
    *
-   * @param c the type for initialized variable
-   * @return the sequence consisting of the initialization
+   * @param statements the list of statements over which to compute the hash code
+   * @return the sum of the hash codes of the statements in the sequence
    */
-  public static Sequence zero(Type c) {
-    return new Sequence()
-        .extend(TypedOperation.createNullOrZeroInitializationForType(c), new ArrayList<Variable>());
-  }
-
-  /**
-   * Create a sequence with the given statements.
-   *
-   * @param statements the statements
-   */
-  public Sequence(SimpleList<Statement> statements) {
-    this(statements, computeHashcode(statements), computeNetSize(statements));
-  }
-
-  /**
-   * Creates a sequence consisting of the given operation given the input.
-   *
-   * @param operation the operation for the sequence
-   * @param inputSequences the sequences computing inputs to the operation
-   * @param indexes the indices of the inputs to the operation
-   * @return the sequence that applies the operation to the given inputs
-   */
-  public static Sequence createSequence(
-      TypedOperation operation, List<Sequence> inputSequences, List<Integer> indexes) {
-    Sequence inputSequence = Sequence.concatenate(inputSequences);
-    List<Variable> inputs = new ArrayList<>();
-    for (Integer inputIndex : indexes) {
-      Variable v = inputSequence.getVariable(inputIndex);
-      inputs.add(v);
-    }
-    return inputSequence.extend(operation, inputs);
-  }
-
-  public static Sequence createSequence(TypedOperation operation, Sequence inputSequence) {
-    List<Variable> inputs = new ArrayList<>();
-    for (int index : inputSequence.getOutputIndices()) {
-      inputs.add(inputSequence.getVariable(index));
-    }
-    return inputSequence.extend(operation, inputs);
-  }
-
-  public static Sequence createSequence(List<Sequence> sequences, List<Integer> variables) {
-    assert sequences.size() == variables.size() : "must be one variable for each sequence";
-    Sequence sequence = Sequence.concatenate(sequences);
-    List<Integer> outputIndices = new ArrayList<>();
-    int size = 0;
-    for (int i = 0; i < sequences.size(); i++) {
-      outputIndices.add(size + variables.get(i));
-      size += sequences.get(i).size();
-    }
-    sequence.outputIndices = outputIndices;
-    return sequence;
-  }
-
-  // The hashcode of a sequence is the sum of each statement's hashcode.
-  // This seems good enough, and it makes computing hashCode of a
-  // concatenation of sequences faster (it's just the addition of each
-  // sequence's'
-  // hashCode). Otherwise, hashCode computation used to be a hotspot.
   private static int computeHashcode(SimpleList<Statement> statements) {
     int hashCode = 0;
     for (int i = 0; i < statements.size(); i++) {
@@ -494,27 +482,10 @@ public final class Sequence implements WeightedElement {
     return netSize;
   }
 
-  // Create a sequence that has the given statements and hashCode (hashCode is
-  // for optimization).
-  //
-  // See comment at computeHashCode method for notes on hashCode.
-  private Sequence(SimpleList<Statement> statements, int hashCode, int netSize) {
-    if (statements == null) {
-      throw new IllegalArgumentException("`statements' argument cannot be null");
-    }
-    this.statements = statements;
-    this.savedHashCode = hashCode;
-    this.savedNetSize = netSize;
-    computeLastStatementInfo();
-    this.outputIndices = new ArrayList<>();
-    outputIndices.add(this.statements.size() - 1);
-    this.activeFlags = new BitSet(this.size());
-    setAllActiveFlags();
-    checkRep();
-  }
-
-  // Set lastStatementVariables and lastStatementTypes to their appropriate
-  // values. See documentation for these fields for more info.
+  /**
+   * Set lastStatementVariables and lastStatementTypes to their appropriate values. See
+   * documentation for these fields for more info.
+   */
   private void computeLastStatementInfo() {
     this.lastStatementTypes = new ArrayList<>();
     this.lastStatementVariables = new ArrayList<>();
@@ -707,53 +678,6 @@ public final class Sequence implements WeightedElement {
     if (i < 0 || i > size() - 1) throw new IllegalArgumentException();
   }
 
-  /**
-   * Returns a new sequence that is equivalent to this sequence plus the given operation appended to
-   * the end.
-   *
-   * @param operation the operation to add
-   * @param inputVariables the input variables
-   * @return the sequence formed by appending the given operation to this sequence
-   */
-  public final Sequence extend(TypedOperation operation, List<Variable> inputVariables) {
-    checkInputs(operation, inputVariables);
-    List<RelativeNegativeIndex> indexList = new ArrayList<>(1);
-    for (Variable v : inputVariables) {
-      indexList.add(getRelativeIndexForVariable(size(), v));
-    }
-    Statement statement = new Statement(operation, indexList);
-    int newNetSize = (operation.isNonreceivingValue()) ? this.savedNetSize : this.savedNetSize + 1;
-    return new Sequence(
-        new OneMoreElementList<>(this.statements, statement),
-        this.savedHashCode + statement.hashCode(),
-        newNetSize);
-  }
-
-  /**
-   * Returns a new sequence that is equivalent to this sequence plus the given statement appended at
-   * the end.
-   *
-   * @param operation the operation to add
-   * @param inputs the input variables for the operation
-   * @return the sequence formed by appending the given operation to this sequence
-   */
-  public final Sequence extend(TypedOperation operation, Variable... inputs) {
-    return extend(operation, Arrays.asList(inputs));
-  }
-
-  /**
-   * extend adds a new statement to this sequence using the operation of the given statement.
-   * Intended as the only place that we reach inside a {@link Statement} for its operation.
-   *
-   * @param statement is a {@link Statement} object from which the operation is copied
-   * @param inputs is the list of variables for input
-   * @return sequence constructed from this one plus the operation
-   * @see Sequence#extend(TypedOperation, List)
-   */
-  public Sequence extend(Statement statement, List<Variable> inputs) {
-    return extend(statement.getOperation(), inputs);
-  }
-
   // Argument checker for extend method.
   // These checks should be caught by checkRep() too.
   private void checkInputs(TypedOperation operation, List<Variable> inputVariables) {
@@ -823,24 +747,6 @@ public final class Sequence implements WeightedElement {
         throw new IllegalArgumentException(msg);
       }
     }
-  }
-
-  /**
-   * Create a new sequence that is the concatenation of the given sequences.
-   *
-   * @param sequences the list of sequences to concatenate
-   * @return the concatenation of the sequences in the list
-   */
-  public static Sequence concatenate(List<Sequence> sequences) {
-    List<SimpleList<Statement>> statements1 = new ArrayList<>();
-    int newHashCode = 0;
-    int newNetSize = 0;
-    for (Sequence c : sequences) {
-      newHashCode += c.savedHashCode;
-      newNetSize += c.savedNetSize;
-      statements1.add(c.statements);
-    }
-    return new Sequence(new ListOfLists<>(statements1), newHashCode, newNetSize);
   }
 
   /**
@@ -1138,32 +1044,6 @@ public final class Sequence implements WeightedElement {
     return new Sequence(statements.getSublist(index));
   }
 
-  /**
-   * Creates a sequence corresponding to the given non-null primitive value.
-   *
-   * @param value non-null reference to a primitive or String value
-   * @return a {@link Sequence} consisting of a statement created with the object
-   */
-  public static Sequence createSequenceForPrimitive(Object value) {
-    if (value == null) throw new IllegalArgumentException("value is null");
-    Type type = Type.forValue(value);
-
-    if (!TypedOperation.isNonreceiverType(type)) {
-      throw new IllegalArgumentException("value is not a (boxed) primitive or String");
-    }
-
-    if (type.isBoxedPrimitive()) {
-      type = ((NonParameterizedType) type).toPrimitive();
-    }
-
-    if (type.equals(JavaTypes.STRING_TYPE) && !Value.stringLengthOK((String) value)) {
-      throw new IllegalArgumentException(
-          "value is a string of length > " + GenInputsAbstract.string_maxlen);
-    }
-
-    return new Sequence().extend(TypedOperation.createPrimitiveInitialization(type, value));
-  }
-
   public void log() {
     if (!Log.isLoggingOn()) {
       return;
@@ -1177,6 +1057,115 @@ public final class Sequence implements WeightedElement {
     } catch (IOException e) {
       e.printStackTrace();
       System.exit(1);
+    }
+  }
+
+  boolean canUseShortForm() {
+    return allowShortForm;
+  }
+
+  /**
+   * Used internally (i.e. in package randoop.sequence) to represent inputs to a statement.
+   *
+   * <p>IMPLEMENTATION NOTE: Recall that a sequence is a sequence of statements where the inputs to
+   * a statement are values created by earlier statements. Instead of using a Variable to represent
+   * such inputs, we use a RelativeNegativeIndex, which is just a wrapper for an integer. The
+   * integer represents a negative offset from the statement index in which this
+   * RelativeNegativeIndex lives, and the offset points to the statement that created the values
+   * that is used as an input. In other words, a RelativeNegativeIndex says "I represent the value
+   * created by the N-th statement above me".
+   *
+   * <p>For example, the sequence
+   *
+   * <p>x = new Foo(); Bar b = x.m();
+   *
+   * <p>is internally represented as follows:
+   *
+   * <p>first element: Foo() applied to inputs [] second element: m() applied to inputs [-1]
+   *
+   * <p>Here is a brief history of why we use this particular representation.
+   *
+   * <p>The very first way we represented inputs to a statement was using a list of
+   * StatementWithInput objects, i.e. an input was just a reference to a previous statement that
+   * created the input value. For example, a sequence might be represented as follows:
+   *
+   * <p>StatementWithInputs@123: Foo() applied to inputs [] StatementWithInputs@124: m() applied to
+   * inputs [StatementWithInputs@123]
+   *
+   * <p>We discovered that a big slowdown in the input generator was that we were consuming lots of
+   * memory when creating sequences: for example, in memory, when extending the sequence x = new
+   * Foo(); Bar b = x.m(); we cloned each statement, created a new list, added the cloned
+   * statements, and finally appended the new statement to the new list.
+   *
+   * <p>Instead of cloning, we might imagine just using the original statements in the new sequence.
+   * This does not work. For example, let's say that we implement this scheme, so that everywhere we
+   * need "new Foo()" we use the same statement (more precisely, the same StatementWithInputs).
+   * Then, we cannot express Foo f1 = new Foo(); Foo f2 = new Foo(); f1.equals(f2); because its
+   * internal representation must be
+   *
+   * <p>StatementWithInputs@123: Foo() applied to inputs [] StatementWithInputs@123: Foo() applied
+   * to inputs [] StatementWithInputs@125: Object.equals(Object) applied to inputs
+   * [StatementWithInputs@123, StatementWithInputs@123]
+   *
+   * <p>It's clear that if we want to reuse statements, we cannot directly use the statements as
+   * inputs.
+   *
+   * <p>We can instead use indices: 0 represents the value created by the first statement, 1 the
+   * second, etc. Now we can express the above sequence:
+   *
+   * <p>Foo() applied to inputs [] Foo() applied to inputs [] Foo() applied to inputs [0, 1]
+   *
+   * <p>This scheme makes it relatively expensive to concatenate sequences (some generators do lots
+   * of concatenation, so concatenation is the hotspot). Because indexing is absolute, some
+   * statements will need to have their input indices updated. For example, let's say we wanted to
+   * concatenate two copies of the last sequence above. We cannot just concatenate the statements,
+   * because then we have
+   *
+   * <p>Foo() applied to inputs [] Foo() applied to inputs [] Foo() applied to inputs [0, 1] Foo()
+   * applied to inputs [] Foo() applied to inputs [] Foo() applied to inputs [0, 1]
+   *
+   * <p>While we really want
+   *
+   * <p>Foo() applied to inputs [] Foo() applied to inputs [] Foo() applied to inputs [0, 1] Foo()
+   * applied to inputs [] Foo() applied to inputs [] Foo() applied to inputs [3, 4]
+   *
+   * <p>This means that we need to (1) adjust indices, which takes time, and (2) create new
+   * statements that represent the adjusted indices, which breaks the "reuse statements" idea.
+   *
+   * <p>Relative indices are the current implementation. Instead of representing inputs as indices
+   * that start from the beginning of the sequence, a statement's indices are represented by a
+   * relative, negative offsets:
+   *
+   * <p>Foo() applied to inputs [] Foo() applied to inputs [] Foo() applied to inputs [-2, -1] Foo()
+   * applied to inputs [] Foo() applied to inputs [] Foo() applied to inputs [-2, -1]
+   *
+   * <p>Now concatenation is easier: to concatenate two sequences, concatenate their statements.
+   * Also, we do not need to create any new statements.
+   */
+  static final class RelativeNegativeIndex {
+
+    public final int index;
+
+    RelativeNegativeIndex(int index) {
+      if (index >= 0) {
+        throw new IllegalArgumentException("invalid index (expecting non-positive): " + index);
+      }
+      this.index = index;
+    }
+
+    @Override
+    public String toString() {
+      return Integer.toString(index);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      return o instanceof RelativeNegativeIndex && this.index == ((RelativeNegativeIndex) o).index;
+    }
+
+    @Override
+    public int hashCode() {
+      return this.index;
     }
   }
 }
