@@ -61,6 +61,7 @@ public class SpecificationCollection {
    * Creates a {@link SpecificationCollection} for the given specification map.
    *
    * @param specificationMap the map from reflection objects to {@link OperationSpecification}
+   * @param signatureMap the map from signatures to methods with specifications
    * @param parentMap the map to overridden method with specification
    */
   SpecificationCollection(
