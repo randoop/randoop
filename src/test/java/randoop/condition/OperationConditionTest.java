@@ -279,7 +279,7 @@ public class OperationConditionTest {
    * conditions.
    *
    * @return the {@link OperationConditions} object for {@link ClassWithConditions#category(int)}
-   * @param method
+   * @param method the method for which to get conditions
    */
   private OperationConditions getMethodConditions(Method method) {
     List<String> paramNames = new ArrayList<>();
@@ -331,7 +331,9 @@ public class OperationConditionTest {
     specMap.put(method, spec);
 
     Map<AccessibleObject, Set<Method>> parentMap = new HashMap<>();
-    SpecificationCollection collection = new SpecificationCollection(specMap, parentMap);
+    Map<SpecificationCollection.Signature, Set<Method>> signatureMap = new HashMap<>();
+    SpecificationCollection collection =
+        new SpecificationCollection(specMap, signatureMap, parentMap);
     return collection.getOperationConditions(method);
   }
 
@@ -363,7 +365,9 @@ public class OperationConditionTest {
     Map<AccessibleObject, OperationSpecification> specMap = new HashMap<>();
     specMap.put(constructor, spec);
     Map<AccessibleObject, Set<Method>> parentMap = new HashMap<>();
-    SpecificationCollection collection = new SpecificationCollection(specMap, parentMap);
+    Map<SpecificationCollection.Signature, Set<Method>> signatureMap = new HashMap<>();
+    SpecificationCollection collection =
+        new SpecificationCollection(specMap, signatureMap, parentMap);
     return collection.getOperationConditions(constructor);
   }
 
@@ -390,7 +394,9 @@ public class OperationConditionTest {
     Map<AccessibleObject, OperationSpecification> specMap = new HashMap<>();
     specMap.put(method, spec);
     Map<AccessibleObject, Set<Method>> parentMap = new HashMap<>();
-    SpecificationCollection collection = new SpecificationCollection(specMap, parentMap);
+    Map<SpecificationCollection.Signature, Set<Method>> signatureMap = new HashMap<>();
+    SpecificationCollection collection =
+        new SpecificationCollection(specMap, signatureMap, parentMap);
     return collection.getOperationConditions(method);
   }
 }

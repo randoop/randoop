@@ -381,7 +381,7 @@ public class SpecificationCollection {
    * Represents a method signature. Used to manage groups of methods likely to have
    * override/implementation relationships.
    */
-  private static class Signature {
+  static class Signature {
     private final String name;
     private final Class<?>[] parameterTypes;
 
