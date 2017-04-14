@@ -1,6 +1,7 @@
 package randoop.condition;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,14 @@ public class OperationConditions {
 
   /** The parent conditions for this object */
   private List<OperationConditions> parentList;
+
+  /** Creates an empty {@link OperationConditions} object. */
+  OperationConditions() {
+    this(
+        new ArrayList<Condition>(),
+        new ArrayList<Pair<Condition, PostCondition>>(),
+        new HashMap<Condition, ExpectedException>());
+  }
 
   /**
    * Creates an {@link OperationConditions} object for the given pre-conditions, return-conditions,
@@ -100,5 +109,12 @@ public class OperationConditions {
 
   void addParent(OperationConditions parentConditions) {
     parentList.add(parentConditions);
+  }
+
+  public boolean isEmpty() {
+    return preconditions.isEmpty()
+        && returnConditions.isEmpty()
+        && throwsConditions.isEmpty()
+        && parentList.isEmpty();
   }
 }

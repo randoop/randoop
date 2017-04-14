@@ -45,12 +45,16 @@ public class SpecificationCollection {
   /** The map from reflection objects to the corresponding {@link OperationSpecification} */
   private final Map<AccessibleObject, OperationSpecification> specificationMap;
 
+  /** The map from method signatures to methods with that signature and specifications */
+  private final Map<Signature, Set<Method>> signatureMap;
+
   /** The map from reflection object to overridden method with specification */
   private final Map<AccessibleObject, Set<Method>> parentMap;
 
   /** The compiler for creating conditionMethods */
   private final SequenceCompiler compiler;
 
+  /** Map for memoizing conditions for specifications coverted by parent search */
   private Map<AccessibleObject, OperationConditions> conditionMap;
 
   /**
@@ -61,8 +65,10 @@ public class SpecificationCollection {
    */
   SpecificationCollection(
       Map<AccessibleObject, OperationSpecification> specificationMap,
+      Map<Signature, Set<Method>> signatureMap,
       Map<AccessibleObject, Set<Method>> parentMap) {
     this.specificationMap = specificationMap;
+    this.signatureMap = signatureMap;
     this.parentMap = parentMap;
     this.conditionMap = new HashMap<>();
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
@@ -82,7 +88,7 @@ public class SpecificationCollection {
     if (specificationFiles == null) {
       return null;
     }
-    Map<Signature, HashSet<Method>> sigMap = new LinkedHashMap<>();
+    Map<Signature, Set<Method>> sigMap = new LinkedHashMap<>();
     Map<AccessibleObject, OperationSpecification> specMap = new LinkedHashMap<>();
     for (File specificationFile : specificationFiles) {
       List<OperationSpecification> specificationList;
@@ -129,7 +135,7 @@ public class SpecificationCollection {
         specMap.put(accessibleObject, specification);
         if (accessibleObject instanceof Method) {
           Signature signature = Signature.create((Method) accessibleObject);
-          HashSet<Method> objectSet = sigMap.get(signature);
+          Set<Method> objectSet = sigMap.get(signature);
           if (objectSet == null) {
             objectSet = new HashSet<>();
           }
@@ -139,13 +145,13 @@ public class SpecificationCollection {
       }
     }
     Map<AccessibleObject, Set<Method>> parentMap = buildParentMap(sigMap);
-    return new SpecificationCollection(specMap, parentMap);
+    return new SpecificationCollection(specMap, sigMap, parentMap);
   }
 
   private static Map<AccessibleObject, Set<Method>> buildParentMap(
-      Map<Signature, HashSet<Method>> sigMap) {
+      Map<Signature, Set<Method>> sigMap) {
     Map<AccessibleObject, Set<Method>> parentMap = new HashMap<>();
-    for (Map.Entry<Signature, HashSet<Method>> entry : sigMap.entrySet()) {
+    for (Map.Entry<Signature, Set<Method>> entry : sigMap.entrySet()) {
       for (Method method : entry.getValue()) {
         Class<?> declaringClass = method.getDeclaringClass();
         Set<Method> parents = findParents(declaringClass, entry.getValue());
@@ -239,22 +245,33 @@ public class SpecificationCollection {
     }
 
     OperationSpecification specification = specificationMap.get(accessibleObject);
-    if (specification == null) {
-      return null;
+    if (specification != null) {
+      Declarations declarations = Declarations.create(accessibleObject, specification);
+      conditions = createConditions(specification, declarations);
+    } else {
+      conditions = new OperationConditions();
     }
-    Declarations declarations = Declarations.create(accessibleObject, specification);
 
-    conditions = createConditions(specification, declarations);
-
-    Set<Method> parents = parentMap.get(accessibleObject);
-    if (parents != null) {
-      for (Method parent : parents) {
-        OperationConditions parentConditions = getOperationConditions(parent);
-        conditions.addParent(parentConditions);
+    if (accessibleObject instanceof Method) {
+      Method method = (Method) accessibleObject;
+      Set<Method> parents = parentMap.get(accessibleObject);
+      if (parents == null) {
+        Set<Method> sigSet = signatureMap.get(Signature.create(method));
+        if (sigSet != null) {
+          parents = findParents(method.getDeclaringClass(), sigSet);
+        }
+      }
+      if (parents != null) {
+        for (Method parent : parents) {
+          OperationConditions parentConditions = getOperationConditions(parent);
+          conditions.addParent(parentConditions);
+        }
       }
     }
 
-    conditionMap.put(accessibleObject, conditions);
+    if (!conditions.isEmpty()) {
+      conditionMap.put(accessibleObject, conditions);
+    }
     return conditions;
   }
 
