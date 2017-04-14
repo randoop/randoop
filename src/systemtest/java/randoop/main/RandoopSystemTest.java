@@ -876,7 +876,6 @@ public class RandoopSystemTest {
     generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
-  /*
   @Test
   public void runInheritedConditionsTest() {
     TestEnvironment testEnvironment =
@@ -892,7 +891,6 @@ public class RandoopSystemTest {
 
     generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
-  */
 
   /**
    * recreate problem with tests over Google Guava where value from private enum returned by public
