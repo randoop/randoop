@@ -1,0 +1,144 @@
+Randoop project ideas
+
+***
+
+Randoop for C/C++ programs
+
+  There are two major ways in which this could be approached.  First would
+  be to work with C/C++ source using some existing analysis tools that
+  support C.  This has all of the disadvantages that we encountered with
+  dfec (difficulty supporting different variants of C).  But its possible
+  that better tools exist today for parsing C programs and obtaining
+  information about them.  A little bit of time looking into this though,
+  seems to indicate that while this might be somewhat improved it is still
+  not easy and that issues with specific programs would still arise.
+
+  The other major alternative would be to work with binaries and debug
+  information as does fjalar.  There are certainly issues with the debug
+  information (as Robert has discovered) and it is not easy to figure out
+  everything that you need to know.  But these issues seem more constrained
+  than do those related to the many dialects of C/C++.  I think that would
+  be the easiest way to get the symbol information.  Its possible that
+  when not operating under valgrind, that there are easier approaches to
+  obtaining the dwarf information (eg, libdwarf,
+  http://reality.sgiweb.org/davea/dwarf.html and others)
+
+  After the symbol information is obtained, the next step is to generate
+  and run the test sequences.  Generation should be pretty similar to
+  Java.  There are semantic differences between Java and C/C++, but it
+  seems like there is a pretty straightforward map between them (even for
+  C programs)
+
+  There are again two approaches to running the sequences.  The easiest
+  approach would be to write out the source of the sequence, compile it,
+  and run it.  This has the downside of adding a lot of overhead.  Also,
+  Randoop is based around feedback from the runs, so each sequence really
+  needs to be run immediately (ie, you can't easily batch them up to cut down on
+  the overhead).  Another approach would be to dynamically build the
+  code for the sequences.  Its possible that a tool such as DynamoRio might
+  make this easier.  This would be significantly harder, but would probably
+  achieve dramatic performance improvements.  I think the way to approach
+  this would be to implement the source approach first and add the code
+  gen approach later to improve the performance.
+
+  There is also a platform question.  I presume that since our other tools
+  are linux based (ie, fjalar, kvasir), that this would be linux based as
+  well.
+
+  The following rough task list is based on using debug information and the
+  source approach to running tests on linux.  It also presumes that the
+  new tool will still be written in Java (and in fact that Randoop/Java and
+  Randoop/C will be a single program)
+
+    - Gather symbol information (list of routines and their parameters)
+      from debug (DWARF) information.  Based on Fjalar.  This is difficult
+      to estimate.  I talked to Robert and if all of the information we need
+      is already handled by Fjalar this isn't too hard, but if it is not, then
+      dealing with the debug information is very hard.  Or use another library
+      that may be easier to use outside of Valgrind.
+
+      6-8 man weeks
+
+    - Integrate C/C++ symbol information with Randoop.  Either by creating 
+      native calls for Fjalar or by running Fjalar separately, writing the
+      information to a more understandable file format, and reading that into
+      Java.  Another approach would be to combine this with the previous task
+      and write a Java dwarf reader.  But I don't think that is best
+
+      2 man weeks
+
+    - Support C/C++ test sequences.  Basically this is building C/C++ 
+      support into all of the types that now presume Java reflection.  
+      Optimally a test sequence could include either Java or C/C++ 
+      sequences.  After this is complete, the C/C++ test sequences could
+      be handled just as Java ones are, including reading and writing
+      serialized versions and source versions.
+
+      3 man weeks
+
+    - Execute C/C++ test sequences by writing out source, compiling and 
+      running it.  An interesting problem here will be handling exceptions
+      and other problems that occur when running.
+
+      4 man weeks
+
+    - Optimize executing test sequences by dynamically creating the code
+      to make the calls.  Some of the work (such as setting up the stack)
+      could perhaps be done directly rather than with dynamically created
+      code.  Again, a big problem will be dealing with exceptions and other
+      runtime errors.  This would seem to require JINI native calls added
+      to the Java program (or a separate C based program).
+
+      12 man weeks.
+
+    - Misc.  All of the things I haven't thought of.
+
+      8 man weeks.
+
+  Interestingly, this is less than I would have originally thought.
+  I think it is perhaps relatively possible to have something working at
+  a similar level to what we have today for Java in about 6 man months of
+  work.  Calendar time would probably be significantly longer unless the
+  person doing this had nothing else to do.
+
+Extensions to Randoop
+
+  - Automatically use a safe security manager that can easily be extended
+    by the user.  Now, the security manager has to be specified by the user
+    in the normal fashion on the command line
+
+    1 man week
+
+  - Support an annotation that specifies a routine that returns a set of 
+    legal values for a parameter (that randoop wouldn't otherwise guess)
+
+    2 man weeks
+
+  - Complete the dynamic dataflow enhancement to Randoop.  This works to some
+    extent, but there are quite a few issues.  And there need to be better
+    responses to the information built into Randoop
+
+    4-8 man weeks
+
+  - Support null and reference immutability annotations
+    This could both cut down the search space and possibly allow more
+    actual errors to be found (such as null dereference errors when nulls
+    are allowed).
+
+    4 man weeks (presuming reflection relatively easily supports annotations)
+
+  - Automatic reduction of the test cases down to a more manageable
+    size.  Not sure how best to do this or how well this would work, but
+    they are pretty unmanageable now.  Of course, if you only look at ones
+    that fail and use the approach that I already added (to essentially
+    provide decprecated versions of any tested methods that now act
+    differently) then it might be pretty easy to work with a fairly large
+    number of tests.
+
+    6-10 man weeks.
+
+  - Investigate more test cases (perhaps Daikon), find classes that are
+    not well covered and figure out how to improve things.
+
+    Could spend virtually any amount of time on this, but I figure that
+    some progress would get made in 4 man weeks.

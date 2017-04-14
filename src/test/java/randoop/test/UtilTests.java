@@ -1,7 +1,5 @@
 package randoop.test;
 
-import junit.framework.TestCase;
-
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,7 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import junit.framework.TestCase;
 import randoop.util.CollectionsExt;
 import randoop.util.Randomness;
 import randoop.util.Util;

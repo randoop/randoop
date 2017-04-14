@@ -1,5 +1,12 @@
 package randoop.main;
 
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -7,13 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 /**
  * Captures the status of a Randoop run, along with status from the compilation of the Randoop
@@ -37,10 +37,10 @@ class RandoopRunStatus {
    * Creates a {@link RandoopRunStatus} object with the given {@link ProcessStatus}, operator count,
    * and generated test counts.
    *
-   * @param processStatus  the status of Randoop execution
-   * @param operatorCount  the number of operators used in generation
-   * @param regressionTestCount  the number of generated regression tests
-   * @param errorTestCount  the number of generated error-revealing tests
+   * @param processStatus the status of Randoop execution
+   * @param operatorCount the number of operators used in generation
+   * @param regressionTestCount the number of generated regression tests
+   * @param errorTestCount the number of generated error-revealing tests
    */
   private RandoopRunStatus(
       ProcessStatus processStatus, int operatorCount, int regressionTestCount, int errorTestCount) {
@@ -53,8 +53,8 @@ class RandoopRunStatus {
   /**
    * Runs Randoop and compiles.
    *
-   * @param testEnvironment  the {@link TestEnvironment} for this run
-   * @param options  the command-line arguments to Randoop
+   * @param testEnvironment the {@link TestEnvironment} for this run
+   * @param options the command-line arguments to Randoop
    * @return the status information collected from generation and compilation
    */
   static RandoopRunStatus generateAndCompile(
@@ -65,6 +65,9 @@ class RandoopRunStatus {
     command.add("-ea");
     command.add("-classpath");
     command.add(testEnvironment.getSystemTestClasspath());
+    if (testEnvironment.getJavaAgentPath() != null) {
+      command.add("-javaagent:" + testEnvironment.getJavaAgentPath());
+    }
     command.add("randoop.main.Main");
     command.add("gentests");
     command.addAll(options.getOptions());
@@ -103,7 +106,13 @@ class RandoopRunStatus {
     CompilationStatus compileStatus =
         CompilationStatus.compileTests(testClassSourceFiles, classDir.toString());
     if (!compileStatus.succeeded) {
+      if (randoopExitStatus.exitStatus == 0) {
+        for (String line : randoopExitStatus.outputLines) {
+          System.err.println(line);
+        }
+      }
       compileStatus.printDiagnostics(System.err);
+
       fail("Compilation failed");
     }
 
@@ -120,14 +129,13 @@ class RandoopRunStatus {
 
   /**
    * Collects the list of {@code File} objects for the files in the given directory that have the
-   * extension.
-   * If the directory contains any files that do not begin with one of the given basenames,
-   * then fails the calling test.
+   * extension. If the directory contains any files that do not begin with one of the given
+   * basenames, then fails the calling test.
    *
-   * @param dirPath  the directory path
-   * @param extension  the expected file extension
-   * @param regressionBasename  the basename for regression tests
-   * @param errorBasename  the basename for error-revealing tests
+   * @param dirPath the directory path
+   * @param extension the expected file extension
+   * @param regressionBasename the basename for regression tests
+   * @param errorBasename the basename for error-revealing tests
    * @return the list of tests with the extension in the directory
    */
   private static List<File> getFiles(
@@ -149,12 +157,11 @@ class RandoopRunStatus {
   }
 
   /**
-   * Converts the {@link ProcessStatus} of a Randoop run to a {@link RandoopRunStatus}
-   * object.
-   * Counts the numbers of operators collected, regression tests generated,
-   * and error-revealing tests generated.
+   * Converts the {@link ProcessStatus} of a Randoop run to a {@link RandoopRunStatus} object.
+   * Counts the numbers of operators collected, regression tests generated, and error-revealing
+   * tests generated.
    *
-   * @param ps  the {@link ProcessStatus} from a Randoop run
+   * @param ps the {@link ProcessStatus} from a Randoop run
    * @return the {@link RandoopRunStatus} for the given process status
    */
   private static RandoopRunStatus getRandoopRunStatus(ProcessStatus ps) {

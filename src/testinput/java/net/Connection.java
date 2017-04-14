@@ -5,22 +5,12 @@ package net;
  * generate the {@code net_Connection} class at the top level of the testinput source set.
  * If this class is modified, it should be run through Toradocu again to generate that input file
  * again.
- * java -jar ../build/libs/toradocu-1.0-all.jar org.toradocu.Toradocu \
- * --target-class net.Connection \
- * --source-dir src --class-dir src \
- * --condition-translator-output ConnectionConditions.json \
- * --oracle-generation false \
- * --export-conditions connection-conditions
  */
 public class Connection {
 
   private boolean open = false;
 
-  /**
-   * Indicates whether this connection is open.
-   *
-   * @returns true if this connection is open, false otherwise
-   */
+  /** @returns true if the connection is open, false otherwise */
   public boolean isOpen() {
     return open;
   }
@@ -67,5 +57,16 @@ public class Connection {
     if (code < 1) { // sanity check on precondition
       throw new IllegalArgumentException();
     }
+  }
+
+  /**
+   * @return the received non-negative code value
+   * @throws IllegalStateException if the connection is not open
+   */
+  public int receive() {
+    if (!this.isOpen()) {
+      throw new IllegalStateException();
+    }
+    return 1; //dummy value
   }
 }

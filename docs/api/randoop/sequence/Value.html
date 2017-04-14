@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Value (randoop 3.0.9 API)</title>
+<title>Value (randoop 3.1.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Value (randoop 3.0.9 API)";
+            parent.document.title="Value (randoop 3.1.4 API)";
         }
     }
     catch(err) {
@@ -179,9 +179,8 @@ extends java.lang.Object</pre>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Value.html#looksLikeObjectToString-java.lang.String-">looksLikeObjectToString</a></span>(java.lang.String&nbsp;s)</code>
-<div class="block">Returns true if the given string looks like it came from a call of
- Object.toString(); in other words, looks something like
- <code>"&lt;em&gt;classname&lt;/em&gt;@&lt;em&gt;hex&lt;/em&gt;"</code>.</div>
+<div class="block">Returns true if the given string looks like it came from a call of Object.toString(); in other
+ words, looks something like <code>"&lt;em&gt;classname&lt;/em&gt;@&lt;em&gt;hex&lt;/em&gt;"</code>.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -193,8 +192,8 @@ extends java.lang.Object</pre>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Value.html#toCodeString-java.lang.Object-">toCodeString</a></span>(java.lang.Object&nbsp;value)</code>
-<div class="block">Given a primitive, boxed primitive, or String, returns a String that can
- be used in Java source to represent it.</div>
+<div class="block">Given a primitive, boxed primitive, or String, returns a String that can be used in Java source
+ to represent it.</div>
 </td>
 </tr>
 </table>
@@ -269,12 +268,12 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>toCodeString</h4>
 <pre>public static&nbsp;java.lang.String&nbsp;toCodeString(java.lang.Object&nbsp;value)</pre>
-<div class="block">Given a primitive, boxed primitive, or String, returns a String that can
- be used in Java source to represent it.</div>
+<div class="block">Given a primitive, boxed primitive, or String, returns a String that can be used in Java source
+ to represent it.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>value</code> - the value to create a String representation for.
- The value's type must be a primitive type, a String, or null.</dd>
+<dd><code>value</code> - the value to create a String representation for. The value's type must be a
+     primitive type, a String, or null.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a string representing code for the given value</dd>
 </dl>
@@ -287,19 +286,14 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>looksLikeObjectToString</h4>
 <pre>public static&nbsp;boolean&nbsp;looksLikeObjectToString(java.lang.String&nbsp;s)</pre>
-<div class="block">Returns true if the given string looks like it came from a call of
- Object.toString(); in other words, looks something like
- <code>"&lt;em&gt;classname&lt;/em&gt;@&lt;em&gt;hex&lt;/em&gt;"</code>. Such strings are rarely useful in generation because
- they contain non-reproducible hash strings.
+<div class="block">Returns true if the given string looks like it came from a call of Object.toString(); in other
+ words, looks something like <code>"&lt;em&gt;classname&lt;/em&gt;@&lt;em&gt;hex&lt;/em&gt;"</code>. Such strings are rarely
+ useful in generation because they contain non-reproducible hash strings.
 
- This method is actually more restrictive in what it determines to look like
- it came from Object.toString(): it deems anything that has a substring matching the pattern
-
- <code>@[0-9a-h]{1,8}</code>
-
- Meaning, if it looks like the string contains the <code>"@&lt;em&gt;hex&lt;/em&gt;"</code>
- pattern, the method returns true. This almost always works and is a
- faster check.</div>
+ <p>This method is actually more restrictive in what it determines to look like it came from
+ Object.toString(): it deems anything that has a substring matching the pattern
+ <code>@[0-9a-h]{1,8}</code>. Meaning, if it looks like the string contains the <code>"@&lt;em&gt;hex&lt;/em&gt;"</code> pattern, the method returns true. This almost always works and is a faster
+ check.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>s</code> - the string</dd>
@@ -315,17 +309,16 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>stringLengthOK</h4>
 <pre>public static&nbsp;boolean&nbsp;stringLengthOK(java.lang.String&nbsp;s)</pre>
-<div class="block">Returns true if the given string is deemed to be reasonable (i.e. not too long)
- based on the --string-maxlen=N parameter.
- <p>
- If Randoop generates tests using strings that are too long, this can
- result in non-compilable tests due to the JVM's limit on the length of a string.
- <p>
- A string S is too long if, when printed as code in a generated unit test,
- it may result in a non-compilable test. In order to determine this, we have
- to consider not the length of s, but the length of the string that would be
- printed to obtain s, which may be different due to escaped and unicode characters.
- This method takes this into account.</div>
+<div class="block">Returns true if the given string is deemed to be reasonable (i.e. not too long) based on the
+ --string-maxlen=N parameter.
+
+ <p>If Randoop generates tests using strings that are too long, this can result in
+ non-compilable tests due to the JVM's limit on the length of a string.
+
+ <p>A string S is too long if, when printed as code in a generated unit test, it may result in a
+ non-compilable test. In order to determine this, we have to consider not the length of s, but
+ the length of the string that would be printed to obtain s, which may be different due to
+ escaped and unicode characters. This method takes this into account.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>s</code> - the string</dd>

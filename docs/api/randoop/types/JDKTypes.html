@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>JDKTypes (randoop 3.0.9 API)</title>
+<title>JDKTypes (randoop 3.1.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="JDKTypes (randoop 3.0.9 API)";
+            parent.document.title="JDKTypes (randoop 3.1.4 API)";
         }
     }
     catch(err) {
@@ -112,8 +112,7 @@ var activeTableTab = "activeTableTab";
 extends java.lang.Object</pre>
 <div class="block">Defines type constants for classes in the JDK Collections.
 
- These types should be maintained as new JDK versions are released.
- Updated for JDK 8.</div>
+ <p>These types should be maintained as new JDK versions are released. Updated for JDK 8.</div>
 </li>
 </ul>
 </div>
@@ -473,8 +472,8 @@ extends java.lang.Object</pre>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>static <a href="../../randoop/types/GenericClassType.html" title="class in randoop.types">GenericClassType</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/JDKTypes.html#getImplementingType-randoop.types.ParameterizedType-">getImplementingType</a></span>(<a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types">ParameterizedType</a>&nbsp;type)</code>
-<div class="block">Returns an arbitrary (but fixed) concrete collection type for each Collections type
- (e.g., returns <code>ArrayList</code> for <code>List</code>).</div>
+<div class="block">Returns an arbitrary (but fixed) concrete collection type for each Collections type (e.g.,
+ returns <code>ArrayList</code> for <code>List</code>).</div>
 </td>
 </tr>
 </table>
@@ -1041,9 +1040,9 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getImplementingType</h4>
 <pre>public static&nbsp;<a href="../../randoop/types/GenericClassType.html" title="class in randoop.types">GenericClassType</a>&nbsp;getImplementingType(<a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types">ParameterizedType</a>&nbsp;type)</pre>
-<div class="block">Returns an arbitrary (but fixed) concrete collection type for each Collections type
- (e.g., returns <code>ArrayList</code> for <code>List</code>).
- If a type is already concrete, then returns that type.</div>
+<div class="block">Returns an arbitrary (but fixed) concrete collection type for each Collections type (e.g.,
+ returns <code>ArrayList</code> for <code>List</code>). If a type is already concrete, then returns that
+ type.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>type</code> - the (abstract) Collections type</dd>

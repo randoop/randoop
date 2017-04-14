@@ -45,8 +45,8 @@ import java.io.Reader;
 import java.io.Writer;
 
 /**
- * StreamRedirectThread is a thread which copies it's input to it's output and
- * terminates when it completes.
+ * StreamRedirectThread is a thread which copies it's input to it's output and terminates when it
+ * completes.
  *
  * @version StreamRedirectThread.java 1.4 03/01/23 16:33:15
  * @author Robert Field
@@ -63,12 +63,9 @@ public class StreamRedirectThread extends Thread {
   /**
    * Set up for copy.
    *
-   * @param name
-   *          Name of the thread
-   * @param in
-   *          Stream to copy from
-   * @param out
-   *          Stream to copy to
+   * @param name name of the thread
+   * @param in stream to copy from
+   * @param out stream to copy to
    */
   public StreamRedirectThread(String name, InputStream in, OutputStream out) {
     super(name);
@@ -79,9 +76,7 @@ public class StreamRedirectThread extends Thread {
     setPriority(Thread.MAX_PRIORITY - 1);
   }
 
-  /**
-   * Copy.
-   */
+  /** Copy. */
   @Override
   public void run() {
     try {

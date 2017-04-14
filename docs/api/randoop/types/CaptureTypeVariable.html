@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>CaptureTypeVariable (randoop 3.0.9 API)</title>
+<title>CaptureTypeVariable (randoop 3.1.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="CaptureTypeVariable (randoop 3.0.9 API)";
+            parent.document.title="CaptureTypeVariable (randoop 3.1.4 API)";
         }
     }
     catch(err) {
@@ -136,13 +136,13 @@ var activeTableTab = "activeTableTab";
 extends <a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a></pre>
 <div class="block">Represents a type variable introduced by capture conversion over a wildcard type argument.
 
- A <code>CaptureTypeVariable</code> has both an upper and lower bound determined by combining the
- wildcard bound with the <a href="../../randoop/types/ParameterBound.html" title="class in randoop.types"><code>ParameterBound</code></a> on the type parameter.
- An object is constructed from a wildcard using the wildcard bound to determine the initial upper
- or lower bound.
- The <a href="../../randoop/types/CaptureTypeVariable.html#convert-randoop.types.TypeVariable-randoop.types.Substitution-"><code>convert(TypeVariable, Substitution)</code></a> method is then used to update the bounds
- to match the definition in JLS section 5.1.10,
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">Capture Conversion</a>.</div>
+ <p>A <code>CaptureTypeVariable</code> has both an upper and lower bound determined by combining the
+ wildcard bound with the <a href="../../randoop/types/ParameterBound.html" title="class in randoop.types"><code>ParameterBound</code></a> on the type parameter. An object is constructed
+ from a wildcard using the wildcard bound to determine the initial upper or lower bound. The
+ <a href="../../randoop/types/CaptureTypeVariable.html#convert-randoop.types.TypeVariable-randoop.types.Substitution-"><code>convert(TypeVariable, Substitution)</code></a> method is then used to update the bounds to match
+ the definition in JLS section 5.1.10, <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">Capture
+ Conversion</a>.</div>
 </li>
 </ul>
 </div>
@@ -234,9 +234,9 @@ extends <a href="../../randoop/types/TypeVariable.html" title="class in randoop.
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/CaptureTypeVariable.html#convert-randoop.types.TypeVariable-randoop.types.Substitution-">convert</a></span>(<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&nbsp;typeParameter,
        <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
-<div class="block">Converts the bounds on this <code>CaptureTypeVariable</code> by including those of the formal
- type parameters of the generic type, and applying the implied substitution between the
- type parameters and capture conversion argument list.</div>
+<div class="block">Converts the bounds on this <code>CaptureTypeVariable</code> by including those of the formal type
+ parameters of the generic type, and applying the implied substitution between the type
+ parameters and capture conversion argument list.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -251,8 +251,8 @@ extends <a href="../../randoop/types/TypeVariable.html" title="class in randoop.
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/CaptureTypeVariable.html#getName--">getName</a></span>()</code>
-<div class="block">Returns the fully-qualified name of this type, including type arguments if
- this is a parameterized type.</div>
+<div class="block">Returns the fully-qualified name of this type, including type arguments if this is a
+ parameterized type.</div>
 </td>
 </tr>
 <tr id="i5" class="rowColor">
@@ -268,8 +268,7 @@ extends <a href="../../randoop/types/TypeVariable.html" title="class in randoop.
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/CaptureTypeVariable.html#isCaptureVariable--">isCaptureVariable</a></span>()</code>
-<div class="block">Indicates whether this type is a capture type variable as constructed by
- <a href="../../randoop/types/InstantiatedType.html#applyCaptureConversion--"><code>InstantiatedType.applyCaptureConversion()</code></a>.</div>
+<div class="block">Indicates whether this type is a capture type variable as constructed by <a href="../../randoop/types/InstantiatedType.html#applyCaptureConversion--"><code>InstantiatedType.applyCaptureConversion()</code></a>.</div>
 </td>
 </tr>
 <tr id="i8" class="altColor">
@@ -377,8 +376,8 @@ extends <a href="../../randoop/types/TypeVariable.html" title="class in randoop.
 <li class="blockList">
 <h4>CaptureTypeVariable</h4>
 <pre>CaptureTypeVariable(<a href="../../randoop/types/WildcardArgument.html" title="class in randoop.types">WildcardArgument</a>&nbsp;wildcard)</pre>
-<div class="block">Creates a <a href="../../randoop/types/CaptureTypeVariable.html" title="class in randoop.types"><code>CaptureTypeVariable</code></a> for the given wildcard.
- Created object is not complete until <a href="../../randoop/types/CaptureTypeVariable.html#convert-randoop.types.TypeVariable-randoop.types.Substitution-"><code>convert(TypeVariable, Substitution)</code></a> is run.</div>
+<div class="block">Creates a <a href="../../randoop/types/CaptureTypeVariable.html" title="class in randoop.types"><code>CaptureTypeVariable</code></a> for the given wildcard. Created object is not complete
+ until <a href="../../randoop/types/CaptureTypeVariable.html#convert-randoop.types.TypeVariable-randoop.types.Substitution-"><code>convert(TypeVariable, Substitution)</code></a> is run.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>wildcard</code> - the wildcard argument</dd>
@@ -460,29 +459,27 @@ extends <a href="../../randoop/types/TypeVariable.html" title="class in randoop.
 <h4>convert</h4>
 <pre>public&nbsp;void&nbsp;convert(<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&nbsp;typeParameter,
                     <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
-<div class="block">Converts the bounds on this <code>CaptureTypeVariable</code> by including those of the formal
- type parameters of the generic type, and applying the implied substitution between the
- type parameters and capture conversion argument list.
- Implements the clauses of the JLS section 5.1.10,
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">Capture Conversion</a>.
- <p>
- Creates an upper bound on a type variable resulting from a capture conversion (JLS section 5.1.10)
- in the case that a wildcard has an upper bound other than Object.
- In particular, each object represents a bound on a variable <code>S<sub>i</sub></code> in a
- parameterized type
- <code>C&lt;S<sub>1</sub>,...,S<sub>n</sub>&gt;</code>
- defined as
- <code>glb(B<sub>i</sub>, U<sub>i</sub>[A<sub>i</sub>:=S<sub>i</sub>])</code>
- where
+<div class="block">Converts the bounds on this <code>CaptureTypeVariable</code> by including those of the formal type
+ parameters of the generic type, and applying the implied substitution between the type
+ parameters and capture conversion argument list. Implements the clauses of the JLS section
+ 5.1.10, <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">Capture
+ Conversion</a>.
+
+ <p>Creates an upper bound on a type variable resulting from a capture conversion (JLS section
+ 5.1.10) in the case that a wildcard has an upper bound other than Object. In particular, each
+ object represents a bound on a variable <code>Si</code> in a parameterized type <code>C&lt;S1,...,Sn&gt;</code> defined as <code>glb(Bi, Ui[Ai:=Si])</code> where
+
  <ul>
-   <li><code>U<sub>i</sub></code> is the upper bound on the type variable <code>A<sub>i</sub></code>
-   in the declared class <code>C&lt;A<sub>1</sub>,...,A<sub>n</sub>&gt;</code>,</li>
-   <li><code>glb(S, T)</code> for types <code>S</code> and <code>T</code> is the intersection type
-   <code>S &amp; T</code>.</li>
+   <li><code>Ui</code> is the upper bound on the type variable <code>Ai</code> in the declared
+       class <code>C&lt;A1,...,An&gt;</code>,
+   <li><code>glb(S, T)</code> for types <code>S</code> and <code>T</code> is the intersection
+       type <code>S &amp; T</code>.
  </ul>
+
  The JLS states that if <code>S</code> and <code>T</code> are both class types not related as
- subtypes, then the greatest lower bound of the two types is a compiler error.
- Technically it is the null type.</div>
+ subtypes, then the greatest lower bound of the two types is a compiler error. Technically it is
+ the null type.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>typeParameter</code> - the formal type parameter of the generic type</dd>
@@ -498,9 +495,8 @@ extends <a href="../../randoop/types/TypeVariable.html" title="class in randoop.
 <h4>getName</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getName()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/Type.html#getName--">Type</a></code></span></div>
-<div class="block">Returns the fully-qualified name of this type, including type arguments if
- this is a parameterized type.
- For <code>java.util.List&lt;T&gt;</code> return <code>"java.util.List&lt;T&gt;"</code>.</div>
+<div class="block">Returns the fully-qualified name of this type, including type arguments if this is a
+ parameterized type. For <code>java.util.List&lt;T&gt;</code> return <code>"java.util.List&lt;T&gt;"</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/types/Type.html#getName--">getName</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>
@@ -517,8 +513,7 @@ extends <a href="../../randoop/types/TypeVariable.html" title="class in randoop.
 <h4>getSimpleName</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getSimpleName()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/Type.html#getSimpleName--">Type</a></code></span></div>
-<div class="block">Returns the name of this type without type arguments or package qualifiers.
- For <code>java.util.List&lt;T&gt;</code>, returns <code>"List"</code>.</div>
+<div class="block">Returns the name of this type without type arguments or package qualifiers. For <code>java.util.List&lt;T&gt;</code>, returns <code>"List"</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/types/Type.html#getSimpleName--">getSimpleName</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>
@@ -535,10 +530,8 @@ extends <a href="../../randoop/types/TypeVariable.html" title="class in randoop.
 <h4>isCaptureVariable</h4>
 <pre>public&nbsp;boolean&nbsp;isCaptureVariable()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/ReferenceType.html#isCaptureVariable--">ReferenceType</a></code></span></div>
-<div class="block">Indicates whether this type is a capture type variable as constructed by
- <a href="../../randoop/types/InstantiatedType.html#applyCaptureConversion--"><code>InstantiatedType.applyCaptureConversion()</code></a>.
- A capture type variable can only occur as a type argument in an <a href="../../randoop/types/InstantiatedType.html" title="class in randoop.types"><code>InstantiatedType</code></a>
- constructed by <a href="../../randoop/types/InstantiatedType.html#applyCaptureConversion--"><code>InstantiatedType.applyCaptureConversion()</code></a>.</div>
+<div class="block">Indicates whether this type is a capture type variable as constructed by <a href="../../randoop/types/InstantiatedType.html#applyCaptureConversion--"><code>InstantiatedType.applyCaptureConversion()</code></a>. A capture type variable can only occur as a type
+ argument in an <a href="../../randoop/types/InstantiatedType.html" title="class in randoop.types"><code>InstantiatedType</code></a> constructed by <a href="../../randoop/types/InstantiatedType.html#applyCaptureConversion--"><code>InstantiatedType.applyCaptureConversion()</code></a>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/types/ReferenceType.html#isCaptureVariable--">isCaptureVariable</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a></code></dd>
@@ -555,8 +548,8 @@ extends <a href="../../randoop/types/TypeVariable.html" title="class in randoop.
 <h4>isGeneric</h4>
 <pre>public&nbsp;boolean&nbsp;isGeneric()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/Type.html#isGeneric--">Type</a></code></span></div>
-<div class="block">Indicate whether this type is generic.
- A type is <i>generic</i> if it has one or more type variables.</div>
+<div class="block">Indicate whether this type is generic. A type is <i>generic</i> if it has one or more type
+ variables.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/types/Type.html#isGeneric--">isGeneric</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>
@@ -573,11 +566,10 @@ extends <a href="../../randoop/types/TypeVariable.html" title="class in randoop.
 <h4>apply</h4>
 <pre>public&nbsp;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&nbsp;apply(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/ReferenceType.html#apply-randoop.types.Substitution-">ReferenceType</a></code></span></div>
-<div class="block">Applies a substitution to a <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>.
- If the type is parameterized then replaces type variables that occur, otherwise returns this
- type.
- <p>
- This abstract method forces typing of substitutions applied to <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> objects
+<div class="block">Applies a substitution to a <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>. If the type is parameterized then replaces
+ type variables that occur, otherwise returns this type.
+
+ <p>This abstract method forces typing of substitutions applied to <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> objects
  without an explicit cast.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>

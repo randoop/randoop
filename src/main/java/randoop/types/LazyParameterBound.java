@@ -5,14 +5,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-
 import randoop.BugInRandoopException;
 
 /**
- * A lazy representation of a type bound in which a type variable occurs.
- * Prevents type recognition from having to deal with recursive type bounds.
- * All methods that need to evaluate the bound are provided with a substitution for the variable
- * for which this object is a bound.
+ * A lazy representation of a type bound in which a type variable occurs. Prevents type recognition
+ * from having to deal with recursive type bounds. All methods that need to evaluate the bound are
+ * provided with a substitution for the variable for which this object is a bound.
  */
 class LazyParameterBound extends ParameterBound {
 
@@ -22,7 +20,7 @@ class LazyParameterBound extends ParameterBound {
   /**
    * Creates a {@code LazyParameterBound} from the given rawtype and type parameters.
    *
-   * @param boundType  the reflection type for this bound
+   * @param boundType the reflection type for this bound
    */
   LazyParameterBound(java.lang.reflect.Type boundType) {
     this.boundType = boundType;
@@ -30,8 +28,9 @@ class LazyParameterBound extends ParameterBound {
 
   /**
    * {@inheritDoc}
-   * @return true if argument is a {@code LazyParameterBound}, and the rawtype
-   *         and parameters are identical, false otherwise
+   *
+   * @return true if argument is a {@code LazyParameterBound}, and the rawtype and parameters are
+   *     identical, false otherwise
    */
   @Override
   public boolean equals(Object obj) {
@@ -95,10 +94,11 @@ class LazyParameterBound extends ParameterBound {
 
   /**
    * Applies a substitution to a reflection type that occurs as an actual argument of a
-   * parameterized type bound, to create a type argument to a {@link randoop.types.ParameterizedType}.
+   * parameterized type bound, to create a type argument to a {@link
+   * randoop.types.ParameterizedType}.
    *
-   * @param type  the reflection type
-   * @param substitution  the type substitution
+   * @param type the reflection type
+   * @param substitution the type substitution
    * @return the type argument
    */
   private static TypeArgument apply(
@@ -176,7 +176,7 @@ class LazyParameterBound extends ParameterBound {
   /**
    * Collects the type parameters from the given reflection {@code Type} object.
    *
-   * @param type  the {@code Type} reference
+   * @param type the {@code Type} reference
    * @return the list of type variables in the given type
    */
   private static List<TypeVariable> getTypeParameters(java.lang.reflect.Type type) {
@@ -256,9 +256,9 @@ class LazyParameterBound extends ParameterBound {
 
   /**
    * {@inheritDoc}
-   * This generic type bound is satisfied by a concrete type if the concrete type
-   * formed by applying the substitution to this generic bound is satisfied by
-   * the concrete type.
+   *
+   * <p>This generic type bound is satisfied by a concrete type if the concrete type formed by
+   * applying the substitution to this generic bound is satisfied by the concrete type.
    */
   @Override
   public boolean isUpperBound(Type argType, Substitution<ReferenceType> substitution) {

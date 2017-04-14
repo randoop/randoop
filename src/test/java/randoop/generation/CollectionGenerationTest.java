@@ -1,11 +1,15 @@
 package randoop.generation;
 
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
+import org.junit.Test;
 import randoop.DummyVisitor;
 import randoop.operation.EnumConstant;
 import randoop.operation.TypedClassOperation;
@@ -25,15 +29,7 @@ import randoop.types.TypeTuple;
 import randoop.util.Randomness;
 import randoop.util.SimpleList;
 
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertTrue;
-
-/**
- * Tests to check Collection generation.
- */
+/** Tests to check Collection generation. */
 public class CollectionGenerationTest {
 
   private ComponentManager setupComponentManager() {

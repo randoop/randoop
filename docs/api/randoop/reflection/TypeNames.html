@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>TypeNames (randoop 3.0.9 API)</title>
+<title>TypeNames (randoop 3.1.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="TypeNames (randoop 3.0.9 API)";
+            parent.document.title="TypeNames (randoop 3.1.4 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":9};
+var methods = {"i0":9,"i1":9,"i2":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -111,10 +111,10 @@ var activeTableTab = "activeTableTab";
 <pre>public class <span class="typeNameLabel">TypeNames</span>
 extends java.lang.Object</pre>
 <div class="block">TypeNames provides a pair of static methods to:
+
  <ul>
- <li>get string names for classes and primitive types, and
- <li>get the <code>Class</code> object for a string representing a class or
- primitive type.
+   <li>get string names for classes and primitive types, and
+   <li>get the <code>Class</code> object for a string representing a class or primitive type.
  </ul></div>
 </li>
 </ul>
@@ -152,10 +152,21 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>private static java.lang.Class&lt;?&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeNames.html#getArrayType-java.lang.String-">getArrayType</a></span>(java.lang.String&nbsp;typeName)</code>
+<div class="block">For an array type name, returns the corresponding <code>Class&lt;&gt;</code> object.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>static java.lang.Class&lt;?&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeNames.html#getTypeForName-java.lang.String-">getTypeForName</a></span>(java.lang.String&nbsp;typeName)</code>
-<div class="block">Returns <code>Class</code> object for a fully qualified class name or primitive
- type name.</div>
+<div class="block">Returns <code>Class</code> object for a fully qualified class name or primitive type name.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>private static boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeNames.html#isArrayType-java.lang.String-">isArrayType</a></span>(java.lang.String&nbsp;typeName)</code>
+<div class="block">Indicates whether the type name is for an array type (e.g., ends with brackets)</div>
 </td>
 </tr>
 </table>
@@ -200,13 +211,12 @@ extends java.lang.Object</pre>
 <a name="getTypeForName-java.lang.String-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getTypeForName</h4>
 <pre>public static&nbsp;java.lang.Class&lt;?&gt;&nbsp;getTypeForName(java.lang.String&nbsp;typeName)
                                          throws java.lang.ClassNotFoundException</pre>
-<div class="block">Returns <code>Class</code> object for a fully qualified class name or primitive
- type name.</div>
+<div class="block">Returns <code>Class</code> object for a fully qualified class name or primitive type name.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>typeName</code> - a fully-qualified class name or primitive type name</dd>
@@ -214,6 +224,42 @@ extends java.lang.Object</pre>
 <dd><code>Class</code> object for type given in string</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.ClassNotFoundException</code> - if string is not a recognized type</dd>
+</dl>
+</li>
+</ul>
+<a name="getArrayType-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getArrayType</h4>
+<pre>private static&nbsp;java.lang.Class&lt;?&gt;&nbsp;getArrayType(java.lang.String&nbsp;typeName)
+                                        throws java.lang.ClassNotFoundException</pre>
+<div class="block">For an array type name, returns the corresponding <code>Class&lt;&gt;</code> object.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>typeName</code> - the array type name</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the <code>Class&lt;&gt;</code> object for the type</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.lang.ClassNotFoundException</code> - if <code>typeName</code> is not the name of a valid type in the
+     classpath</dd>
+</dl>
+</li>
+</ul>
+<a name="isArrayType-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>isArrayType</h4>
+<pre>private static&nbsp;boolean&nbsp;isArrayType(java.lang.String&nbsp;typeName)</pre>
+<div class="block">Indicates whether the type name is for an array type (e.g., ends with brackets)</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>typeName</code> - the type name</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if <code>typeName</code> ends with brackets, false otherwise</dd>
 </dl>
 </li>
 </ul>

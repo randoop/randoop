@@ -5,7 +5,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-
 import plume.UtilMDE;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
@@ -15,23 +14,19 @@ import randoop.types.Type;
 import randoop.types.TypeTuple;
 import randoop.types.TypeVariable;
 
-/**
- * Represents a type decoration for an operation that has a declaring class.
- */
+/** Represents a type decoration for an operation that has a declaring class. */
 public class TypedClassOperation extends TypedOperation {
-  /**
-   * The declaring type for this operation
-   */
+  /** The declaring type for this operation */
   private final ClassOrInterfaceType declaringType;
 
   /**
    * Creates a {@link TypedClassOperation} for a given {@link CallableOperation} indicating the
    * signature of the operation.
    *
-   * @param operation  the {@link CallableOperation}
-   * @param declaringType  the declaring class type for this operation
-   * @param inputTypes  the input types for the operation
-   * @param outputType  the output types for the operation
+   * @param operation the {@link CallableOperation}
+   * @param declaringType the declaring class type for this operation
+   * @param inputTypes the input types for the operation
+   * @param outputType the output types for the operation
    */
   public TypedClassOperation(
       CallableOperation operation,
@@ -57,14 +52,14 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   /**
-   * Compares this operation to another {@link TypedOperation}.
-   * Ensures that any {@link TypedTermOperation} objects precedes a {@link TypedClassOperation}.
-   * Otherwise, orders {@link TypedClassOperation} objects by first comparing the declaring types,
-   * and then comparing by {@link TypedOperation#compareTo(TypedOperation)}.
+   * Compares this operation to another {@link TypedOperation}. Ensures that any {@link
+   * TypedTermOperation} objects precedes a {@link TypedClassOperation}. Otherwise, orders {@link
+   * TypedClassOperation} objects by first comparing the declaring types, and then comparing by
+   * {@link TypedOperation#compareTo(TypedOperation)}.
    *
-   * @param op  the {@link TypedOperation} to compare with this operation
-   * @return value &lt; 0 if this operation precedes {@code op}, 0 if the
-   *         operations are identical, and &gt; 0 if this operation succeeds op
+   * @param op the {@link TypedOperation} to compare with this operation
+   * @return value &lt; 0 if this operation precedes {@code op}, 0 if the operations are identical,
+   *     and &gt; 0 if this operation succeeds op
    */
   @Override
   public int compareTo(TypedOperation op) {
@@ -91,10 +86,10 @@ public class TypedClassOperation extends TypedOperation {
   }
 
   /**
-   * Creates a {@link TypedOperation} from this operation by
-   * using the given {@link Substitution} on type variables.
+   * Creates a {@link TypedOperation} from this operation by using the given {@link Substitution} on
+   * type variables.
    *
-   * @param substitution  the type substitution
+   * @param substitution the type substitution
    * @return the concrete operation with type variables replaced by substitution
    */
   public TypedClassOperation apply(Substitution<ReferenceType> substitution) {
@@ -119,7 +114,7 @@ public class TypedClassOperation extends TypedOperation {
    * StringBuilder.
    *
    * @param inputVars the list of variables that are inputs to operation
-   * @param b         the {@link StringBuilder} to which code is added.
+   * @param b the {@link StringBuilder} to which code is added
    */
   public void appendCode(List<Variable> inputVars, StringBuilder b) {
     assert inputVars.size() == this.getInputTypes().size()
@@ -133,7 +128,7 @@ public class TypedClassOperation extends TypedOperation {
    * such that parsing the string returns an object equivalent to this object, i.e.
    * C.parse(this.s).equals(this).
    *
-   * @return string descriptor of {@link Operation} object.
+   * @return string descriptor of {@link Operation} object
    */
   @Override
   public String toParsableString() {
@@ -148,7 +143,12 @@ public class TypedClassOperation extends TypedOperation {
       b.append(UtilMDE.join(this.getTypeParameters(), ","));
       b.append(">").append(" ");
     }
-    return b.toString() + declaringType + "." + super.toString();
+    return b.toString() + super.toString();
+  }
+
+  @Override
+  public String getName() {
+    return declaringType + "." + super.getName();
   }
 
   @Override

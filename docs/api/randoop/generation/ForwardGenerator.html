@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ForwardGenerator (randoop 3.0.9 API)</title>
+<title>ForwardGenerator (randoop 3.1.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ForwardGenerator (randoop 3.0.9 API)";
+            parent.document.title="ForwardGenerator (randoop 3.1.4 API)";
         }
     }
     catch(err) {
@@ -137,8 +137,8 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 <tr class="altColor">
 <td class="colFirst"><code>private java.util.Set&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#allSequences">allSequences</a></span></code>
-<div class="block">The set of ALL sequences ever generated, including sequences that were
- executed and then discarded.</div>
+<div class="block">The set of ALL sequences ever generated, including sequences that were executed and then
+ discarded.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -237,16 +237,15 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>java.util.Set&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#getSubsumedSequences--">getSubsumedSequences</a></span>()</code>
-<div class="block">Returns the set of sequences that are included in other sequences to
- generate inputs (and, so, are subsumed by another sequence).</div>
+<div class="block">Returns the set of sequences that are included in other sequences to generate inputs (and, so,
+ are subsumed by another sequence).</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>private void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#initializeRuntimePrimitivesSeen--">initializeRuntimePrimitivesSeen</a></span>()</code>
-<div class="block">The runtimePrimitivesSeen set contains primitive values seen during
- generation/execution and is used to determine new values that should be
- added to the component set.</div>
+<div class="block">The runtimePrimitivesSeen set contains primitive values seen during generation/execution and is
+ used to determine new values that should be added to the component set.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
@@ -274,8 +273,8 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ForwardGenerator.html#repeat-randoop.sequence.Sequence-randoop.operation.TypedOperation-int-">repeat</a></span>(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;seq,
       <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
       int&nbsp;times)</code>
-<div class="block">Adds the given operation to a new <code>Sequence</code> with the statements of
- this object as a prefix, repeating the operation the given number of times.</div>
+<div class="block">Adds the given operation to a new <code>Sequence</code> with the statements of this object as a
+ prefix, repeating the operation the given number of times.</div>
 </td>
 </tr>
 <tr id="i9" class="rowColor">
@@ -324,8 +323,8 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 <li class="blockList">
 <h4>allSequences</h4>
 <pre>private final&nbsp;java.util.Set&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt; allSequences</pre>
-<div class="block">The set of ALL sequences ever generated, including sequences that were
- executed and then discarded.</div>
+<div class="block">The set of ALL sequences ever generated, including sequences that were executed and then
+ discarded.</div>
 </li>
 </ul>
 <a name="observers">
@@ -437,10 +436,9 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 <li class="blockList">
 <h4>initializeRuntimePrimitivesSeen</h4>
 <pre>private&nbsp;void&nbsp;initializeRuntimePrimitivesSeen()</pre>
-<div class="block">The runtimePrimitivesSeen set contains primitive values seen during
- generation/execution and is used to determine new values that should be
- added to the component set. The component set initially contains a set of
- primitive sequences; this method puts those primitives in this set.</div>
+<div class="block">The runtimePrimitivesSeen set contains primitive values seen during generation/execution and is
+ used to determine new values that should be added to the component set. The component set
+ initially contains a set of primitive sequences; this method puts those primitives in this set.</div>
 </li>
 </ul>
 <a name="step--">
@@ -484,18 +482,15 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 <li class="blockList">
 <h4>processSequence</h4>
 <pre>private&nbsp;void&nbsp;processSequence(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;seq)</pre>
-<div class="block">Determines what indices in the given sequence are active. An active index i
- means that the i-th method call creates an interesting/useful value that
- can be used as an input to a larger sequence; inactive indices are never
- used as inputs. The effect of setting active/inactive indices is that the
- SequenceCollection to which the given sequences is added only considers the
- active indices when deciding whether the sequence creates values of a given
- type.
- <p>
- In addition to determining active indices, this method determines if any
- primitive values created during execution of the sequence are new values
- not encountered before. Such values are added to the component manager so
- they can be used during subsequent generation attempts.</div>
+<div class="block">Determines what indices in the given sequence are active. An active index i means that the i-th
+ method call creates an interesting/useful value that can be used as an input to a larger
+ sequence; inactive indices are never used as inputs. The effect of setting active/inactive
+ indices is that the SequenceCollection to which the given sequences is added only considers the
+ active indices when deciding whether the sequence creates values of a given type.
+
+ <p>In addition to determining active indices, this method determines if any primitive values
+ created during execution of the sequence are new values not encountered before. Such values are
+ added to the component manager so they can be used during subsequent generation attempts.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>seq</code> - the sequence</dd>
@@ -509,10 +504,10 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 <li class="blockList">
 <h4>createNewUniqueSequence</h4>
 <pre>private&nbsp;<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;createNewUniqueSequence()</pre>
-<div class="block">Tries to create and execute a new sequence. If the sequence is new (not
- already in the specified component manager), then it is executed and added
- to the manager's sequences. If the sequence created is already in the
- manager's sequences, this method has no effect, and returns null.</div>
+<div class="block">Tries to create and execute a new sequence. If the sequence is new (not already in the
+ specified component manager), then it is executed and added to the manager's sequences. If the
+ sequence created is already in the manager's sequences, this method has no effect, and returns
+ null.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a new sequence, or null</dd>
@@ -528,14 +523,13 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 <pre>private&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;repeat(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;seq,
                         <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
                         int&nbsp;times)</pre>
-<div class="block">Adds the given operation to a new <code>Sequence</code> with the statements of
- this object as a prefix, repeating the operation the given number of times.
- Used during generation.</div>
+<div class="block">Adds the given operation to a new <code>Sequence</code> with the statements of this object as a
+ prefix, repeating the operation the given number of times. Used during generation.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>seq</code> - the sequence to extend</dd>
-<dd><code>operation</code> - the <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation"><code>TypedOperation</code></a> to repeat.</dd>
-<dd><code>times</code> - the number of times to repeat the <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a>.</dd>
+<dd><code>operation</code> - the <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation"><code>TypedOperation</code></a> to repeat</dd>
+<dd><code>times</code> - the number of times to repeat the <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a new <code>Sequence</code></dd>
 </dl>
@@ -575,8 +569,8 @@ extends <a href="../../randoop/generation/AbstractGenerator.html" title="class i
 <li class="blockList">
 <h4>getSubsumedSequences</h4>
 <pre>public&nbsp;java.util.Set&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;getSubsumedSequences()</pre>
-<div class="block">Returns the set of sequences that are included in other sequences to
- generate inputs (and, so, are subsumed by another sequence).</div>
+<div class="block">Returns the set of sequences that are included in other sequences to generate inputs (and, so,
+ are subsumed by another sequence).</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/generation/AbstractGenerator.html#getSubsumedSequences--">getSubsumedSequences</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/generation/AbstractGenerator.html" title="class in randoop.generation">AbstractGenerator</a></code></dd>

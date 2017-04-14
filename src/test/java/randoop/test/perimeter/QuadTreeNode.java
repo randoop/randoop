@@ -1,48 +1,31 @@
 package randoop.test.perimeter;
-/**
- * A class representing a node in the quad tree.
- */
+/** A class representing a node in the quad tree. */
 public abstract class QuadTreeNode {
-  /**
-   * Variable used to determine the x-axis size of the image
-   */
+  /** Variable used to determine the x-axis size of the image */
   static int gcmp = 4194304;
-  /**
-   * Variable used to determine the y-axis size of the image
-   */
+  /** Variable used to determine the y-axis size of the image */
   static int lcmp = 1048576;
 
   /**
-   * The quadrant that this node represents (i.e., northwest, northeast,
-   * southwest, or southeast).
+   * The quadrant that this node represents (i.e., northwest, northeast, southwest, or southeast).
    */
   protected Quadrant quadrant;
-  /**
-   * Node that represents the northwest quadrant of the image
-   */
+  /** Node that represents the northwest quadrant of the image */
   protected QuadTreeNode nw;
-  /**
-   * Node that represents the northeast quadrant of the image
-   */
+  /** Node that represents the northeast quadrant of the image */
   protected QuadTreeNode ne;
-  /**
-   * Node that represents the southwest quadrant of the image
-   */
+  /** Node that represents the southwest quadrant of the image */
   protected QuadTreeNode sw;
-  /**
-   * Node that represents the southeast quadrant of the image
-   */
+  /** Node that represents the southeast quadrant of the image */
   protected QuadTreeNode se;
-  /**
-   * Node that represents the parent quadrant of the image
-   */
+  /** Node that represents the parent quadrant of the image */
   protected QuadTreeNode parent;
 
   // enumeration for direction
-  public final static int NORTH = 0;
-  public final static int EAST = 1;
-  public final static int SOUTH = 2;
-  public final static int WEST = 3;
+  public static final int NORTH = 0;
+  public static final int EAST = 1;
+  public static final int SOUTH = 2;
+  public static final int WEST = 3;
 
   /**
    * Create a leaf node in the Quad Tree.
@@ -95,6 +78,7 @@ public abstract class QuadTreeNode {
 
   /**
    * Return the node representing the north west quadrant.
+   *
    * @return the node representing the north west quadrant
    */
   public final QuadTreeNode getNorthWest() {
@@ -102,6 +86,7 @@ public abstract class QuadTreeNode {
   }
   /**
    * Return the node representing the north east quadrant.
+   *
    * @return the node representing the north east quadrant
    */
   public final QuadTreeNode getNorthEast() {
@@ -109,6 +94,7 @@ public abstract class QuadTreeNode {
   }
   /**
    * Return the node representing the south west quadrant.
+   *
    * @return the node representing the south west quadrant
    */
   public final QuadTreeNode getSouthWest() {
@@ -116,6 +102,7 @@ public abstract class QuadTreeNode {
   }
   /**
    * Return the node representing the south east quadrant.
+   *
    * @return the node representing the south east quadrant
    */
   public final QuadTreeNode getSouthEast() {
@@ -124,6 +111,7 @@ public abstract class QuadTreeNode {
 
   /**
    * Create an image which is represented using a QuadTreeNode.
+   *
    * @param size size of image
    * @param center_x x coordinate of center
    * @param center_y y coordinate of center
@@ -165,31 +153,29 @@ public abstract class QuadTreeNode {
   }
 
   /**
-   * Compute the total perimeter of a binary image that is represented
-   * as a quadtree using Samet's algorithm.
+   * Compute the total perimeter of a binary image that is represented as a quadtree using Samet's
+   * algorithm.
    *
    * @param size the size of the image that this node represents (size X size)
    * @return the size of the perimeter of the image
    */
-  abstract public int perimeter(int size);
+  public abstract int perimeter(int size);
 
   /**
-   * Sum the perimeter of all white leaves in the two specified
-   * quadrants of the sub quad tree rooted at this node.
+   * Sum the perimeter of all white leaves in the two specified quadrants of the sub quad tree
+   * rooted at this node.
    *
    * @param quad1 the first specified quadrant
    * @param quad2 the second specified quadrant
    * @param size the size of the image represented by this node
    * @return the perimeter of the adjacent nodes
    */
-  abstract public int sumAdjacent(Quadrant quad1, Quadrant quad2, int size);
+  public abstract int sumAdjacent(Quadrant quad1, Quadrant quad2, int size);
 
   /**
-   * Return the neighbor of this node in the given direction which is
-   * greater than or equal in size to this node.  If the node doesn't
-   * exist, then a grey node of equal size is returned.  Otherwise,
-   * the node is adjacent to the border of the image and null is
-   * returned.
+   * Return the neighbor of this node in the given direction which is greater than or equal in size
+   * to this node. If the node doesn't exist, then a grey node of equal size is returned. Otherwise,
+   * the node is adjacent to the border of the image and null is returned.
    *
    * @param dir the direction of the neighbor
    * @return the appropriate neighbor based upon the direction, or null
@@ -211,6 +197,7 @@ public abstract class QuadTreeNode {
 
   /**
    * Count the number of leaves in the quad tree.
+   *
    * @return the number of leaves in the quad tree
    */
   public int countTree() {

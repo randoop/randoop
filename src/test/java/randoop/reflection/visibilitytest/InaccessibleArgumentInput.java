@@ -2,12 +2,9 @@ package randoop.reflection.visibilitytest;
 
 import java.util.List;
 import java.util.Map;
-
 import randoop.reflection.OperationExtractorTest;
 
-/**
- * Input class for {@link OperationExtractorTest#inaccessibleArgumentTest()}
- */
+/** Input class for {@link OperationExtractorTest#inaccessibleArgumentTest()} */
 public class InaccessibleArgumentInput {
   private InaccessibleArgumentInput() {}
 

@@ -6,7 +6,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
@@ -14,9 +13,8 @@ import randoop.util.ListOfLists;
 import randoop.util.SimpleList;
 
 /**
- * For a given class C, ClassLiterals maps C (if present) to a collection of
- * literals (represented as single-element sequences) that can be used as inputs
- * to members of the given class.
+ * For a given class C, ClassLiterals maps C (if present) to a collection of literals (represented
+ * as single-element sequences) that can be used as inputs to members of the given class.
  */
 public class ClassLiterals extends MappedSequences<ClassOrInterfaceType> {
 
@@ -49,10 +47,9 @@ public class ClassLiterals extends MappedSequences<ClassOrInterfaceType> {
   }
 
   /**
-   * Gets superclasses for the given class. Stops at null or Object (excludes
-   * Object from result).
+   * Gets superclasses for the given class. Stops at null or Object (excludes Object from result).
    *
-   * @param cls  the class/interface type
+   * @param cls the class/interface type
    * @return the superclasses for the given type
    */
   private Set<ClassOrInterfaceType> getSuperClasses(ClassOrInterfaceType cls) {

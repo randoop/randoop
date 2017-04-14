@@ -5,18 +5,15 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-
-import plume.Pair;
 import randoop.ExecutionOutcome;
 import randoop.condition.Condition;
+import randoop.condition.OperationConditions;
+import randoop.condition.OutcomeTable;
 import randoop.field.AccessibleField;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
-import randoop.test.TestCheckGenerator;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GenericClassType;
@@ -29,8 +26,9 @@ import randoop.types.TypeTuple;
 import randoop.types.TypeVariable;
 
 /**
- * Type decorator of {@link Operation} objects.
- * An operation has zero or more input types, and one output type that may be {@code void}.
+ * Type decorator of {@link Operation} objects. An operation has zero or more input types, and one
+ * output type that may be {@code void}.
+ *
  * @see randoop.operation.TypedClassOperation
  * @see randoop.operation.TypedTermOperation
  */
@@ -39,35 +37,27 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   /** The operation to be decorated */
   private final CallableOperation operation;
 
-  /**
-   * The type tuple of input types.
-   */
+  /** The type tuple of input types. */
   private final TypeTuple inputTypes;
 
-  /**
-   * The output type.
-   */
+  /** The output type. */
   private final Type outputType;
 
-  /** The preconditions for this operation */
-  private List<Condition> preconditions;
-
-  /** The throws-conditions for this operation */
-  private Map<Condition, Pair<TestCheckGenerator, TestCheckGenerator>> postconditions;
+  /** The conditions on this operation */
+  private OperationConditions conditions;
 
   /**
    * Create typed operation for the given {@link Operation}.
    *
-   * @param operation  the operation to wrap
-   * @param inputTypes  the input types
-   * @param outputType  the output types
+   * @param operation the operation to wrap
+   * @param inputTypes the input types
+   * @param outputType the output types
    */
   TypedOperation(CallableOperation operation, TypeTuple inputTypes, Type outputType) {
     this.operation = operation;
     this.inputTypes = inputTypes;
     this.outputType = outputType;
-    this.preconditions = new ArrayList<>();
-    this.postconditions = new HashMap<>();
+    this.conditions = null;
   }
 
   @Override
@@ -82,17 +72,17 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Compares this {@link TypedOperation} to another.
-   * Orders operations by lexicographical comparison, alphabetically comparing operation names,
-   * then input type names, and finally output type names.
+   * Compares this {@link TypedOperation} to another. Orders operations by lexicographical
+   * comparison, alphabetically comparing operation names, then input type names, and finally output
+   * type names.
    *
-   * @param op  the {@link TypedOperation} to compare with this operation
-   * @return value &lt; 0 if this operation precedes {@code op}, 0 if the
-   *         operations are identical, and &gt; 0 if this operation succeeds op
+   * @param op the {@link TypedOperation} to compare with this operation
+   * @return value &lt; 0 if this operation precedes {@code op}, 0 if the operations are identical,
+   *     and &gt; 0 if this operation succeeds op
    */
   @Override
   public int compareTo(TypedOperation op) {
-    int result = this.operation.getName().compareTo(op.getName());
+    int result = this.getName().compareTo(op.getName());
     if (result != 0) {
       return result;
     }
@@ -153,8 +143,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   public abstract boolean hasWildcardTypes();
 
   /**
-   * Indicate whether this operation is generic.
-   * An operation is generic if any of its input and output types are generic.
+   * Indicate whether this operation is generic. An operation is generic if any of its input and
+   * output types are generic.
    *
    * @return true if the operation is generic, false if not
    */
@@ -206,8 +196,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * Appends Java text for this operation to the given {@code StringBuilder}, and using the given
    * variables.
    *
-   * @param inputVars  the list of input variables for this operation
-   * @param b  the {@code StringBuilder}
+   * @param inputVars the list of input variables for this operation
+   * @param b the {@code StringBuilder}
    */
   public abstract void appendCode(List<Variable> inputVars, StringBuilder b);
 
@@ -216,7 +206,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * ResultOrException object and can output results to specified PrintStream.
    *
    * @param input array containing appropriate inputs to operation
-   * @param out   stream to output results of execution; if null, nothing is printed
+   * @param out stream to output results of execution; if null, nothing is printed
    * @return results of executing this statement
    */
   public ExecutionOutcome execute(Object[] input, PrintStream out) {
@@ -230,7 +220,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * Applies the given substitution to the generic types in this operation, and returns a new
    * operation with the instantiated types.
    *
-   * @param substitution  the substitution
+   * @param substitution the substitution
    * @return the operation resulting from applying the substitution to the types of this operation
    */
   public abstract TypedOperation apply(Substitution<ReferenceType> substitution);
@@ -239,7 +229,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
    * Applies a capture conversion to the wildcard types of this operation, and returns a new
    * operation with new type variables for the wildcard types.
    *
-   * @return the operation result from applying a capture conversion to wildcard types of this operation
+   * @return the operation result from applying a capture conversion to wildcard types of this
+   *     operation
    */
   public abstract TypedOperation applyCaptureConversion();
 
@@ -258,7 +249,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   /**
    * Constructs a {@link TypedOperation} for a constructor object.
    *
-   * @param constructor  the reflective constructor object
+   * @param constructor the reflective constructor object
    * @return the typed operation for the constructor
    */
   public static TypedClassOperation forConstructor(Constructor<?> constructor) {
@@ -276,7 +267,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   /**
    * Constructs a {@link TypedOperation} for a method object.
    *
-   * @param method  the reflective method object
+   * @param method the reflective method object
    * @return the typed operation for the given method
    */
   public static TypedClassOperation forMethod(Method method) {
@@ -308,12 +299,11 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
 
   /**
    * Constructs a {@link TypedOperation} for an enum from a method object that is a member of an
-   * anonymous class for an enum constant.
-   * Will return null if the method is
+   * anonymous class for an enum constant. Will return null if the method is
    *
-   * @param method  the method of the anonymous class
-   * @param methodParamTypes  the parameter types of the method
-   * @param enumClass  the declaring class
+   * @param method the method of the anonymous class
+   * @param methodParamTypes the parameter types of the method
+   * @param enumClass the declaring class
    * @return the typed operation for the given method
    */
   private static TypedClassOperation getAnonEnumOperation(
@@ -381,8 +371,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   /**
    * Creates a {@link TypedOperation} that represents a read access to a field.
    *
-   * @param field  the field
-   * @param declaringType  the declaring type for the field
+   * @param field the field
+   * @param declaringType the declaring type for the field
    * @return an operation to access the given field of the declaring type
    */
   public static TypedClassOperation createGetterForField(
@@ -400,8 +390,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   /**
    * Creates a {@link TypedOperation} that represents a write access to a field.
    *
-   * @param field  the field
-   * @param declaringType  the declaring type of the field
+   * @param field the field
+   * @param declaringType the declaring type of the field
    * @return an operation to set the value of the given field of the declaring type
    */
   public static TypedClassOperation createSetterForField(
@@ -434,7 +424,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   /**
    * Creates an operation that initializes a variable to a given primitive value.
    *
-   * @param type  the primitive type
+   * @param type the primitive type
    * @param value the value for initialization
    * @return the initialization operation
    */
@@ -457,8 +447,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   /**
    * Creates an operation that creates an array of the given type and size.
    *
-   * @param arrayType  the type of the array
-   * @param size  the size of the created array
+   * @param arrayType the type of the array
+   * @param size the size of the created array
    * @return the array creation operation
    */
   public static TypedOperation createInitializedArrayCreation(ArrayType arrayType, int size) {
@@ -474,7 +464,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   /**
    * Creates a simple array creation operation for the given type.
    *
-   * @param arrayType  the desired array type
+   * @param arrayType the desired array type
    * @return an operation to create an array of the given type
    */
   public static TypedOperation createArrayCreation(ArrayType arrayType) {
@@ -487,8 +477,8 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   /**
    * Creates an operation to cast from one type to another.
    *
-   * @param fromType  the input type
-   * @param toType  the resulting type
+   * @param fromType the input type
+   * @param toType the resulting type
    * @return an operation that casts the input type to the result type
    */
   public static TypedOperation createCast(Type fromType, Type toType) {
@@ -501,7 +491,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   /**
    * Creates an operation to assign a value to an array element.
    *
-   * @param arrayType  the type of the array
+   * @param arrayType the type of the array
    * @return return an operation that
    */
   public static TypedOperation createArrayElementAssignment(ArrayType arrayType) {
@@ -515,10 +505,10 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
-   * Determines whether the given {@link Type} is the type of a non-receiver term:
-   * primitive, boxed primitive, or {@code String}.
+   * Determines whether the given {@link Type} is the type of a non-receiver term: primitive, boxed
+   * primitive, or {@code String}.
    *
-   * @param type  the {@link Type}
+   * @param type the {@link Type}
    * @return true if the type is primitive, boxed primitive or {@code String}; false otherwise
    */
   public static boolean isNonreceiverType(Type type) {
@@ -532,49 +522,18 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     return operation.isUncheckedCast();
   }
 
-  /**
-   * Checks that the preconditions for this operation are met by the given values.
-   *
-   * @param values  the input values
-   * @return true if the values satisfy the preconditions or there are no preconditions; false otherwise
-   */
-  public boolean checkPreconditions(Object[] values) {
-    Object[] args = addNullReceiver(values);
-
-    for (Condition condition : preconditions) {
-      if (!condition.check(args)) {
-        return false;
-      }
+  public OutcomeTable checkConditions(Object[] values) {
+    if (conditions != null) {
+      return conditions.check(addNullReceiver(values));
     }
-    return true;
+    return new OutcomeTable();
   }
 
   /**
-   * Checks whether this operation has a postcondition clause that is satisfied by the argument
-   * values, and if so returns the corresponding {@link TestCheckGenerator}.
+   * Fixes the argument array for checking an {@link Operation} -- inserting {@code null} as first
+   * argument when this operation is static.
    *
-   * @param values  the argument values
-   * @return the {@link TestCheckGenerator} to test postcondition, based on precondition satisfied by the values
-   */
-  public TestCheckGenerator getPostCheckGenerator(Object[] values) {
-    Object[] args = addNullReceiver(values);
-    for (Map.Entry<Condition, Pair<TestCheckGenerator, TestCheckGenerator>> entry :
-        postconditions.entrySet()) {
-      Condition throwsCondition = entry.getKey();
-      if (throwsCondition.check(args)) {
-        return entry.getValue().a;
-      } else {
-        return entry.getValue().b;
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Fixes the argument array for checking an {@link Operation} -- inserting {@code null} as first argument
-   * when this operation is static.
-   *
-   * @param values  the argument array for this operation
+   * @param values the argument array for this operation
    * @return the corresponding operation array for checking a {@link Condition}
    */
   private Object[] addNullReceiver(Object[] values) {
@@ -587,20 +546,14 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     return args;
   }
 
-  public void addConditions(List<Condition> preconditions) {
-    if (preconditions != null) {
-      this.preconditions.addAll(preconditions);
-    }
-  }
-
-  public void addConditions(
-      Map<Condition, Pair<TestCheckGenerator, TestCheckGenerator>> conditions) {
-    if (conditions != null) {
-      this.postconditions.putAll(conditions);
-    }
+  public void addConditions(OperationConditions conditions) {
+    this.conditions = conditions;
   }
 
   public boolean hasPreconditions() {
-    return !preconditions.isEmpty();
+    if (conditions != null) {
+      return conditions.hasPreconditions();
+    }
+    return false;
   }
 }

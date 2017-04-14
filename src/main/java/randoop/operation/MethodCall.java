@@ -1,17 +1,14 @@
 package randoop.operation;
 
 import java.io.PrintStream;
-import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Objects;
-
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.reflection.ReflectionPredicate;
-import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
@@ -19,22 +16,21 @@ import randoop.util.MethodReflectionCode;
 import randoop.util.ReflectionExecutor;
 
 /**
- * MethodCall is a {@link Operation} that represents a call to a method. It is
- * a wrapper for a reflective Method object, and caches values of computed
- * reflective calls.
- * <p>
- * An an {@link Operation}, a call to a non-static method<br>
- *   <code>T mname (T1,...,Tn)</code><br>
- * of class C can be represented formally as an operation
- * <i>mname</i>: [<i>C, T1,...,Tn</i>] &rarr; <i>T</i>.
- * If this method is static, then we could write the operation as
- * <i>C.mname</i>: [<i>T1,...,Tn</i>] &rarr; <i>T</i>
+ * MethodCall is a {@link Operation} that represents a call to a method. It is a wrapper for a
+ * reflective Method object, and caches values of computed reflective calls.
+ *
+ * <p>An an {@link Operation}, a call to a non-static method<br>
+ * <code>T mname (T1,...,Tn)</code><br>
+ * of class C can be represented formally as an operation<br>
+ * <i>mname</i>: [<i>C, T1,...,Tn</i>] &rarr; <i>T</i>.<br>
+ * If this method is static, then we could write the operation as<br>
+ * <i>C.mname</i>: [<i>T1,...,Tn</i>] &rarr; <i>T</i><br>
  * (a class instance not being needed as an input).
- * <p>
- * The execution of a {@code MethodCall} executes the enclosed {@link Method}
- * given values for the inputs.
- * <p>
- * (Class previously called RMethod.)
+ *
+ * <p>The execution of a {@code MethodCall} executes the enclosed {@link Method} given values for
+ * the inputs.
+ *
+ * <p>(Class previously called RMethod.)
  */
 public final class MethodCall extends CallableOperation {
 
@@ -60,7 +56,7 @@ public final class MethodCall extends CallableOperation {
   /**
    * MethodCall creates an object corresponding to the given reflective method.
    *
-   * @param method  the reflective method object
+   * @param method the reflective method object
    */
   public MethodCall(Method method) {
     if (method == null) {
@@ -84,8 +80,10 @@ public final class MethodCall extends CallableOperation {
 
   /**
    * {@inheritDoc}
-   * Issues the code that corresponds to calling the method with the provided
-   * {@link Variable} objects as arguments.
+   *
+   * <p>Issues the code that corresponds to calling the method with the provided {@link Variable}
+   * objects as arguments.
+   *
    * @param inputVars is the list of actual arguments to be printed
    */
   @Override
@@ -127,18 +125,7 @@ public final class MethodCall extends CallableOperation {
         sb.append("(").append(inputTypes.get(i).getName()).append(")");
       }
 
-      String param = inputVars.get(i).getName();
-
-      // In the short output format, statements like "int x = 3" are not added
-      // to a sequence; instead, the value (e.g. "3") is inserted directly added
-      // as arguments to method calls.
-      Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement();
-
-      String shortForm = statementCreatingVar.getShortForm();
-      if (shortForm != null) {
-        param = shortForm;
-      }
-
+      String param = getArgumentString(inputVars.get(i));
       sb.append(param);
     }
     sb.append(")");
@@ -159,8 +146,9 @@ public final class MethodCall extends CallableOperation {
 
   /**
    * {@inheritDoc}
-   * @return {@link NormalExecution} with return value if execution normal,
-   *         otherwise {@link ExceptionalExecution} if an exception thrown.
+   *
+   * @return {@link NormalExecution} with return value if execution normal, otherwise {@link
+   *     ExceptionalExecution} if an exception thrown.
    */
   @Override
   public ExecutionOutcome execute(Object[] input, PrintStream out) {
@@ -192,6 +180,7 @@ public final class MethodCall extends CallableOperation {
 
   /**
    * {@inheritDoc}
+   *
    * @return true if this method is static, and false otherwise
    */
   @Override
@@ -201,11 +190,10 @@ public final class MethodCall extends CallableOperation {
 
   /**
    * {@inheritDoc}
-   * The descriptor for a method is a string representing the method signature.
    *
-   * Examples:
-   *  java.util.ArrayList.get(int)
-   *  java.util.ArrayList.add(int,java.lang.Object)
+   * <p>The descriptor for a method is a string representing the method signature.
+   *
+   * <p>Examples: java.util.ArrayList.get(int) java.util.ArrayList.add(int,java.lang.Object)
    */
   @Override
   public String toParsableString(Type declaringType, TypeTuple inputTypes, Type outputType) {
@@ -219,16 +207,13 @@ public final class MethodCall extends CallableOperation {
   }
 
   /**
-   * Parses a method call in a string descriptor and returns a
-   * {@link MethodCall} object. Should satisfy
-   * <code>parse(op.toParsableString()).equals(op)</code> for Operation op.
+   * Parses a method call in a string descriptor and returns a {@link MethodCall} object. Should
+   * satisfy <code>parse(op.toParsableString()).equals(op)</code> for Operation op.
    *
    * @see OperationParser#parse(String)
-   *
-   * @param signature  a string descriptor
+   * @param signature a string descriptor
    * @return the method call operation for the given string descriptor
-   * @throws OperationParseException
-   *           if s does not match expected descriptor
+   * @throws OperationParseException if s does not match expected descriptor
    */
   public static TypedClassOperation parse(String signature) throws OperationParseException {
     if (signature == null) {
@@ -276,6 +261,7 @@ public final class MethodCall extends CallableOperation {
 
   /**
    * {@inheritDoc}
+   *
    * @return true always, since this is a method call
    */
   @Override
@@ -285,6 +271,7 @@ public final class MethodCall extends CallableOperation {
 
   /**
    * {@inheritDoc}
+   *
    * @return true always, since this is a method call
    */
   @Override
@@ -303,9 +290,10 @@ public final class MethodCall extends CallableOperation {
 
   /**
    * {@inheritDoc}
-   * Determines whether enclosed {@link Method} satisfies the given predicate.
    *
-   * @param predicate the {@link ReflectionPredicate} to be checked.
+   * <p>Determines whether enclosed {@link Method} satisfies the given predicate.
+   *
+   * @param predicate the {@link ReflectionPredicate} to be checked
    * @return true only if the method in this object satisfies the canUse(Method) of predicate
    */
   @Override

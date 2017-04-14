@@ -3,9 +3,7 @@ package randoop.test;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * Added to handle identification of false alarms from failed preconditions.
- */
+/** Added to handle identification of false alarms from failed preconditions. */
 public class FalseAlarmTestChecks extends InvalidChecks {
 
   private Check check;

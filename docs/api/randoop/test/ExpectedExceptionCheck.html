@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ExpectedExceptionCheck (randoop 3.0.9 API)</title>
+<title>ExpectedExceptionCheck (randoop 3.1.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ExpectedExceptionCheck (randoop 3.0.9 API)";
+            parent.document.title="ExpectedExceptionCheck (randoop 3.1.4 API)";
         }
     }
     catch(err) {
@@ -119,11 +119,12 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">ExpectedExceptionCheck</span>
 extends <a href="../../randoop/test/ExceptionCheck.html" title="class in randoop.test">ExceptionCheck</a></pre>
-<div class="block">An <code>ExceptionCheck</code> that enforces the expectation of an exception being
- thrown. In particular,
+<div class="block">An <code>ExceptionCheck</code> that enforces the expectation of an exception being thrown. In
+ particular,
+
  <ul>
- <li>fails if exception is not thrown, and
- <li>succeeds only when expected exception is thrown.
+   <li>fails if exception is not thrown, and
+   <li>succeeds only when expected exception is thrown.
  </ul></div>
 </li>
 </ul>
@@ -161,8 +162,8 @@ extends <a href="../../randoop/test/ExceptionCheck.html" title="class in randoop
 <td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/ExpectedExceptionCheck.html#ExpectedExceptionCheck-java.lang.Throwable-int-java.lang.String-">ExpectedExceptionCheck</a></span>(java.lang.Throwable&nbsp;exception,
                       int&nbsp;statementIndex,
                       java.lang.String&nbsp;catchClassName)</code>
-<div class="block">Creates check that enforces expectation that an exception is thrown by the
- statement at the statement index.</div>
+<div class="block">Creates check that enforces expectation that an exception is thrown by the statement at the
+ statement index.</div>
 </td>
 </tr>
 </table>
@@ -189,8 +190,7 @@ extends <a href="../../randoop/test/ExceptionCheck.html" title="class in randoop
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ExpectedExceptionCheck.html#appendTryBehavior-java.lang.StringBuilder-">appendTryBehavior</a></span>(java.lang.StringBuilder&nbsp;b)</code>
-<div class="block">Appends code to follow the statement throwing expected exception in try
- block.</div>
+<div class="block">Appends code to follow the statement throwing expected exception in try block.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -237,13 +237,12 @@ extends <a href="../../randoop/test/ExceptionCheck.html" title="class in randoop
 <pre>ExpectedExceptionCheck(java.lang.Throwable&nbsp;exception,
                        int&nbsp;statementIndex,
                        java.lang.String&nbsp;catchClassName)</pre>
-<div class="block">Creates check that enforces expectation that an exception is thrown by the
- statement at the statement index.</div>
+<div class="block">Creates check that enforces expectation that an exception is thrown by the statement at the
+ statement index.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>exception</code> - the expected exception</dd>
-<dd><code>statementIndex</code> - the index of the statement in the sequence where exception is
-          thrown</dd>
+<dd><code>statementIndex</code> - the index of the statement in the sequence where exception is thrown</dd>
 <dd><code>catchClassName</code> - the name of exception to be caught</dd>
 </dl>
 </li>
@@ -263,8 +262,9 @@ extends <a href="../../randoop/test/ExceptionCheck.html" title="class in randoop
 <li class="blockList">
 <h4>appendTryBehavior</h4>
 <pre>protected&nbsp;void&nbsp;appendTryBehavior(java.lang.StringBuilder&nbsp;b)</pre>
-<div class="block">Appends code to follow the statement throwing expected exception in try
- block. Appends a fail assertion after statement in try block.</div>
+<div class="block">Appends code to follow the statement throwing expected exception in try block.
+
+ <p>Appends a fail assertion after statement in try block.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/ExceptionCheck.html#appendTryBehavior-java.lang.StringBuilder-">appendTryBehavior</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/test/ExceptionCheck.html" title="class in randoop.test">ExceptionCheck</a></code></dd>
@@ -280,7 +280,9 @@ extends <a href="../../randoop/test/ExceptionCheck.html" title="class in randoop
 <li class="blockList">
 <h4>appendCatchBehavior</h4>
 <pre>protected&nbsp;void&nbsp;appendCatchBehavior(java.lang.StringBuilder&nbsp;b)</pre>
-<div class="block">Appends code for catch block behavior corresponding to expected exception. Appends assertion to confirm expected exception caught.</div>
+<div class="block">Appends code for catch block behavior corresponding to expected exception.
+
+ <p>Appends assertion to confirm expected exception caught.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/ExceptionCheck.html#appendCatchBehavior-java.lang.StringBuilder-">appendCatchBehavior</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/test/ExceptionCheck.html" title="class in randoop.test">ExceptionCheck</a></code></dd>
@@ -296,14 +298,15 @@ extends <a href="../../randoop/test/ExceptionCheck.html" title="class in randoop
 <li class="blockList">
 <h4>evaluate</h4>
 <pre>public&nbsp;boolean&nbsp;evaluate(<a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence">Execution</a>&nbsp;execution)</pre>
-<div class="block">Evaluates this check on the given execution of a sequence. Checks that an exception of the expected type is thrown by
- the statement in this object in the given <a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence"><code>Execution</code></a>.</div>
+<div class="block">Evaluates this check on the given execution of a sequence.
+
+ <p>Checks that an exception of the expected type is thrown by the statement in this object in
+ the given <a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence"><code>Execution</code></a>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>execution</code> - the execution of sequence on which to test this check</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if statement throws the expected exception, and false
-         otherwise</dd>
+<dd>true if statement throws the expected exception, and false otherwise</dd>
 </dl>
 </li>
 </ul>

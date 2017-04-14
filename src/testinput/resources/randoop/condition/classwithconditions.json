@@ -1,0 +1,148 @@
+[
+  {
+    "operation": {
+      "classname": "randoop.condition.ClassWithConditions",
+      "name": "randoop.condition.ClassWithConditions",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "value"
+      ],
+      "receiverName": "receiver",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [],
+    "pre": [
+      {
+        "description": "must be positive",
+        "guard": {
+          "condition": "value > 0",
+          "description": "positive"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "randoop.condition.ClassWithConditions",
+      "name": "category",
+      "parameterTypes": [
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "value"
+      ],
+      "receiverName": "receiver",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IllegalArgumentException",
+        "description": "should be less than 4*getValue",
+        "guard": {
+          "condition": "value >= 4*receiver.getValue()",
+          "description": "greater than 4*getValue()"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(randoop.condition.ClassWithConditions.Range.ONE)",
+          "description": "return ONE"
+        },
+        "description": "value in first range",
+        "guard": {
+          "condition": "value < receiver.getValue()",
+          "description": "value in first range"
+        }
+      },
+      {
+        "property": {
+          "condition": "result.equals(randoop.condition.ClassWithConditions.Range.TWO)",
+          "description": "return TWO"
+        },
+        "description": "value in second range",
+        "guard": {
+          "condition": "value < 2*receiver.getValue()",
+          "description": "value in second range"
+        }
+      },
+      {
+        "property": {
+          "condition": "result.equals(randoop.condition.ClassWithConditions.Range.THREE)",
+          "description": "return THREE"
+        },
+        "description": "value in third range",
+        "guard": {
+          "condition": "value < 3*receiver.getValue()",
+          "description": "value in third range"
+        }
+      },
+      {
+        "property": {
+          "condition": "result.equals(randoop.condition.ClassWithConditions.Range.FOUR)",
+          "description": "return FOUR"
+        },
+        "description": "otherwise, return FOUR",
+        "guard": {
+          "condition": "true",
+          "description": "otherwise"
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "must be positive",
+        "guard": {
+          "condition": "value > 0",
+          "description": "positive"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "randoop.condition.ClassWithConditions",
+      "name": "badness",
+      "parameterTypes": [
+        "randoop.condition.ClassWithConditions$Range",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "range",
+        "value"
+      ],
+      "receiverName": "receiver",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "must be positive",
+        "guard": {
+          "condition": "value > 0",
+          "description": "positive"
+        }
+      },
+      {
+        "exception": "java.lang.Throwable",
+        "description": "nonnull",
+        "guard": {
+          "condition": "range != null",
+          "description": "not null"
+        }
+      }
+    ],
+    "pre": [],
+    "post": []
+  }
+]

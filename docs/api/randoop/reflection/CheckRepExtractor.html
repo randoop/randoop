@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>CheckRepExtractor (randoop 3.0.9 API)</title>
+<title>CheckRepExtractor (randoop 3.1.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="CheckRepExtractor (randoop 3.0.9 API)";
+            parent.document.title="CheckRepExtractor (randoop 3.1.4 API)";
         }
     }
     catch(err) {
@@ -119,9 +119,8 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>class <span class="typeNameLabel">CheckRepExtractor</span>
 extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class in randoop.reflection">DefaultClassVisitor</a></pre>
-<div class="block"><code>CheckRepExtractor</code> is a <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> that inspects the methods passed to it to
- see if they are annotated with <a href="../../randoop/CheckRep.html" title="annotation in randoop"><code>CheckRep</code></a>, are non-static, and have either a
- <code>boolean</code> or <code>void</code> return type.</div>
+<div class="block"><code>CheckRepExtractor</code> is a <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> that inspects the methods passed to it to see
+ if they are annotated with <a href="../../randoop/CheckRep.html" title="annotation in randoop"><code>CheckRep</code></a>, are non-static, and have either a <code>boolean</code> or <code>void</code> return type.</div>
 </li>
 </ul>
 </div>
@@ -269,9 +268,10 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <h4>visit</h4>
 <pre>public&nbsp;void&nbsp;visit(java.lang.reflect.Method&nbsp;m)</pre>
 <div class="block">Perform an action on a method.
- If the method is annotated with <a href="../../randoop/CheckRep.html" title="annotation in randoop"><code>CheckRep</code></a>, non-static, and with boolean or void
- return type, then a <a href="../../randoop/contract/CheckRepContract.html" title="class in randoop.contract"><code>CheckRepContract</code></a> for the method is added to the
- contracts set.</div>
+
+ <p>If the method is annotated with <a href="../../randoop/CheckRep.html" title="annotation in randoop"><code>CheckRep</code></a>, non-static, and with boolean or
+ void return type, then a <a href="../../randoop/contract/CheckRepContract.html" title="class in randoop.contract"><code>CheckRepContract</code></a> for the method is added to
+ the contracts set.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/reflection/ClassVisitor.html#visit-java.lang.reflect.Method-">visit</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection">ClassVisitor</a></code></dd>

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ReflectionManager (randoop 3.0.9 API)</title>
+<title>ReflectionManager (randoop 3.1.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ReflectionManager (randoop 3.0.9 API)";
+            parent.document.title="ReflectionManager (randoop 3.1.4 API)";
         }
     }
     catch(err) {
@@ -110,30 +110,29 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">ReflectionManager</span>
 extends java.lang.Object</pre>
-<div class="block">ReflectionManager reflectively visits a <code>Class</code> instance to apply a set
- of <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> objects to the class members. Uses a
- <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection"><code>VisibilityPredicate</code></a> and heuristics to determine which classes and
- class members to visit.
- <p>
- For a non-enum class, visits:
+<div class="block">ReflectionManager reflectively visits a <code>Class</code> instance to apply a set of <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> objects to the class members. Uses a <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection"><code>VisibilityPredicate</code></a> and heuristics to
+ determine which classes and class members to visit.
+
+ <p>For a non-enum class, visits:
+
  <ul>
- <li>all methods satisfying predicate.
- <li>all constructors satisfying predicate.
- <li>all fields that satisfy predicate and are not hidden. (A hidden field is
- a member of superclass with field of same name in current class. These are
- accessible via reflection.).
- <li>inner enums satisfying predicate.
+   <li>all methods satisfying predicate.
+   <li>all constructors satisfying predicate.
+   <li>all fields that satisfy predicate and are not hidden. (A hidden field is a member of
+       superclass with field of same name in current class. These are accessible via reflection.).
+   <li>inner enums satisfying predicate.
  </ul>
- <p>
- For an enum, visits:
+
+ <p>For an enum, visits:
+
  <ul>
- <li>all enum constants.
- <li>methods of the enum satisfying predicate other than <code>values</code>
- and <code>valueOf</code>.
- <li>methods defined for enum constants that satisfy predicate.
+   <li>all enum constants.
+   <li>methods of the enum satisfying predicate other than <code>values</code> and <code>valueOf
+       </code>.
+   <li>methods defined for enum constants that satisfy predicate.
  </ul>
- <p>
- Note that visitors may have their own predicates, but need not check visibility.</div>
+
+ <p>Note that visitors may have their own predicates, but need not check visibility.</div>
 </li>
 </ul>
 </div>
@@ -215,8 +214,8 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/reflection/ReflectionManager.html#ReflectionManager-randoop.reflection.VisibilityPredicate-">ReflectionManager</a></span>(<a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a>&nbsp;predicate)</code>
-<div class="block">Creates a manager object that uses the given predicate to determine which
- classes, methods and constructors should be visited.</div>
+<div class="block">Creates a manager object that uses the given predicate to determine which classes, methods and
+ constructors should be visited.</div>
 </td>
 </tr>
 </table>
@@ -237,23 +236,22 @@ extends java.lang.Object</pre>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/ReflectionManager.html#add-randoop.reflection.ClassVisitor-">add</a></span>(<a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection">ClassVisitor</a>&nbsp;visitor)</code>
-<div class="block">Registers a <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> for use by the
- <a href="../../randoop/reflection/ReflectionManager.html#apply-java.lang.Class-"><code>apply(Class)</code></a> method.</div>
+<div class="block">Registers a <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> for use by the <a href="../../randoop/reflection/ReflectionManager.html#apply-java.lang.Class-"><code>apply(Class)</code></a> method.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/ReflectionManager.html#apply-java.lang.Class-">apply</a></span>(java.lang.Class&lt;?&gt;&nbsp;c)</code>
-<div class="block">Applies the registered <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> objects of this object to the
- given class and its members that satisfy the given predicate.</div>
+<div class="block">Applies the registered <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> objects of this object to the given class and its
+ members that satisfy the given predicate.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/ReflectionManager.html#apply-randoop.reflection.ClassVisitor-java.lang.Class-">apply</a></span>(<a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection">ClassVisitor</a>&nbsp;visitor,
      java.lang.Class&lt;?&gt;&nbsp;c)</code>
-<div class="block">Applies the given <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> visitor to the class object and its members that
- satisfy the predicate of this reflection manager.</div>
+<div class="block">Applies the given <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> visitor to the class object and its members that satisfy
+ the predicate of this reflection manager.</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
@@ -385,13 +383,11 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>ReflectionManager</h4>
 <pre>public&nbsp;ReflectionManager(<a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a>&nbsp;predicate)</pre>
-<div class="block">Creates a manager object that uses the given predicate to determine which
- classes, methods and constructors should be visited. The list of visitors
- is initially empty.</div>
+<div class="block">Creates a manager object that uses the given predicate to determine which classes, methods and
+ constructors should be visited. The list of visitors is initially empty.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>predicate</code> - the predicate to indicate whether classes and class members should
-          be visited</dd>
+<dd><code>predicate</code> - the predicate to indicate whether classes and class members should be visited</dd>
 </dl>
 </li>
 </ul>
@@ -410,8 +406,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>add</h4>
 <pre>public&nbsp;void&nbsp;add(<a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection">ClassVisitor</a>&nbsp;visitor)</pre>
-<div class="block">Registers a <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> for use by the
- <a href="../../randoop/reflection/ReflectionManager.html#apply-java.lang.Class-"><code>apply(Class)</code></a> method.</div>
+<div class="block">Registers a <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> for use by the <a href="../../randoop/reflection/ReflectionManager.html#apply-java.lang.Class-"><code>apply(Class)</code></a> method.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>visitor</code> - the <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> object to add</dd>
@@ -425,14 +420,13 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>apply</h4>
 <pre>public&nbsp;void&nbsp;apply(java.lang.Class&lt;?&gt;&nbsp;c)</pre>
-<div class="block">Applies the registered <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> objects of this object to the
- given class and its members that satisfy the given predicate.
- Excludes fields that are hidden by inheritance that are otherwise still accessible by
- reflection.
- Each visitor is applied to each member at most once.</div>
+<div class="block">Applies the registered <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> objects of this object to the given class and its
+ members that satisfy the given predicate. Excludes fields that are hidden by inheritance that
+ are otherwise still accessible by reflection. Each visitor is applied to each member at most
+ once.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>c</code> - the <code>Class</code> object to be visited.</dd>
+<dd><code>c</code> - the <code>Class</code> object to be visited</dd>
 </dl>
 </li>
 </ul>
@@ -444,10 +438,10 @@ extends java.lang.Object</pre>
 <h4>apply</h4>
 <pre>public&nbsp;void&nbsp;apply(<a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection">ClassVisitor</a>&nbsp;visitor,
                   java.lang.Class&lt;?&gt;&nbsp;c)</pre>
-<div class="block">Applies the given <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> visitor to the class object and its members that
- satisfy the predicate of this reflection manager.
- <p>
- Sorts class members to ensure a canonical order for visits.</div>
+<div class="block">Applies the given <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> visitor to the class object and its members that satisfy
+ the predicate of this reflection manager.
+
+ <p>Sorts class members to ensure a canonical order for visits.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>visitor</code> - the <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> to apply to the class</dd>
@@ -463,18 +457,15 @@ extends java.lang.Object</pre>
 <h4>applyToEnum</h4>
 <pre>private&nbsp;void&nbsp;applyToEnum(<a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection">ClassVisitor</a>&nbsp;visitor,
                          java.lang.Class&lt;?&gt;&nbsp;c)</pre>
-<div class="block">Applies the visitors to the constants and methods of the given enum. A
- method is included if it satisfies the predicate, and either is declared in
- the enum, or in the anonymous class of some constant. Note that methods
- will either belong to the enum itself, or to an anonymous class attached to
- a constant. Ordinarily, the type of the constant is the enum, but when
- there is an anonymous class for constant e, e.getClass() returns the
- anonymous class. This is used to check for method overrides (that could
- include Object methods) within the constant.
- <p>
- Heuristically exclude methods <code>values</code> and <code>valueOf</code>
- since their definition is implicit, and we aren't testing Java enum
- implementation.</div>
+<div class="block">Applies the visitors to the constants and methods of the given enum. A method is included if it
+ satisfies the predicate, and either is declared in the enum, or in the anonymous class of some
+ constant. Note that methods will either belong to the enum itself, or to an anonymous class
+ attached to a constant. Ordinarily, the type of the constant is the enum, but when there is an
+ anonymous class for constant e, e.getClass() returns the anonymous class. This is used to check
+ for method overrides (that could include Object methods) within the constant.
+
+ <p>Heuristically exclude methods <code>values</code> and <code>valueOf</code> since their
+ definition is implicit, and we aren't testing Java enum implementation.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>visitor</code> - the <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a></dd>
@@ -554,8 +545,7 @@ extends java.lang.Object</pre>
 <h4>visitAfter</h4>
 <pre>private&nbsp;void&nbsp;visitAfter(<a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection">ClassVisitor</a>&nbsp;v,
                         java.lang.Class&lt;?&gt;&nbsp;c)</pre>
-<div class="block">Apply a visitor to a class. Called at the end of
- <a href="../../randoop/reflection/ReflectionManager.html#apply-java.lang.Class-"><code>apply(Class)</code></a>.</div>
+<div class="block">Apply a visitor to a class. Called at the end of <a href="../../randoop/reflection/ReflectionManager.html#apply-java.lang.Class-"><code>apply(Class)</code></a>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>v</code> - the <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a></dd>
@@ -571,8 +561,7 @@ extends java.lang.Object</pre>
 <h4>visitBefore</h4>
 <pre>private&nbsp;void&nbsp;visitBefore(<a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection">ClassVisitor</a>&nbsp;v,
                          java.lang.Class&lt;?&gt;&nbsp;c)</pre>
-<div class="block">Apply a visitor to a class. Called at the beginning of
- <a href="../../randoop/reflection/ReflectionManager.html#apply-java.lang.Class-"><code>apply(Class)</code></a>.</div>
+<div class="block">Apply a visitor to a class. Called at the beginning of <a href="../../randoop/reflection/ReflectionManager.html#apply-java.lang.Class-"><code>apply(Class)</code></a>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>v</code> - the <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a></dd>
@@ -592,7 +581,8 @@ extends java.lang.Object</pre>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>m</code> - the method to check for visibility</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if the method, each parameter type, and the return type are all visible; and false otherwise</dd>
+<dd>true if the method, each parameter type, and the return type are all visible; and false
+     otherwise</dd>
 </dl>
 </li>
 </ul>

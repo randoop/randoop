@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Randomness (randoop 3.0.9 API)</title>
+<title>Randomness (randoop 3.1.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Randomness (randoop 3.0.9 API)";
+            parent.document.title="Randomness (randoop 3.1.4 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -177,41 +177,37 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>static boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Randomness.html#nextRandomBool--">nextRandomBool</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i1" class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Randomness.html#nextRandomInt-int-">nextRandomInt</a></span>(int&nbsp;i)</code>
 <div class="block">Uniformly random int from [0, i)</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Randomness.html#randomBoolFromDistribution-double-double-">randomBoolFromDistribution</a></span>(double&nbsp;falseProb_,
                           double&nbsp;trueProb_)</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;T</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Randomness.html#randomMember-java.util.List-">randomMember</a></span>(java.util.List&lt;T&gt;&nbsp;list)</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;T</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Randomness.html#randomMember-randoop.util.SimpleList-">randomMember</a></span>(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;T&gt;&nbsp;list)</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>static &lt;T extends <a href="../../randoop/util/WeightedElement.html" title="interface in randoop.util">WeightedElement</a>&gt;<br>T</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Randomness.html#randomMemberWeighted-randoop.util.SimpleList-">randomMemberWeighted</a></span>(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;T&gt;&nbsp;list)</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;T</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Randomness.html#randomSetMember-java.util.Collection-">randomSetMember</a></span>(java.util.Collection&lt;T&gt;&nbsp;set)</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Randomness.html#reset-long-">reset</a></span>(long&nbsp;newSeed)</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Randomness.html#weightedCoinFlip-double-">weightedCoinFlip</a></span>(double&nbsp;trueProb)</code>&nbsp;</td>
 </tr>
@@ -257,8 +253,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>random</h4>
 <pre>static&nbsp;java.util.Random random</pre>
-<div class="block">The random number used any testtime a random choice is made. (Developer
- note: do not declare new Random objects; use this one instead).</div>
+<div class="block">The random number used any testtime a random choice is made. (Developer note: do not declare
+ new Random objects; use this one instead).</div>
 </li>
 </ul>
 <a name="totalCallsToRandom">
@@ -302,15 +298,6 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>reset</h4>
 <pre>public static&nbsp;void&nbsp;reset(long&nbsp;newSeed)</pre>
-</li>
-</ul>
-<a name="nextRandomBool--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>nextRandomBool</h4>
-<pre>public static&nbsp;boolean&nbsp;nextRandomBool()</pre>
 </li>
 </ul>
 <a name="nextRandomInt-int-">

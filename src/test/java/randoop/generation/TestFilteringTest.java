@@ -1,8 +1,6 @@
 package randoop.generation;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,7 +9,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
-
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import randoop.DummyVisitor;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
@@ -33,8 +33,6 @@ import randoop.types.Type;
 import randoop.util.MultiMap;
 import randoop.util.predicate.Predicate;
 
-import static org.junit.Assert.assertTrue;
-
 public class TestFilteringTest {
 
   private static OptionsCache optionsCache;
@@ -51,8 +49,7 @@ public class TestFilteringTest {
   }
 
   /**
-   * Make sure that we are getting both regression and error tests with
-   * default filtering settings.
+   * Make sure that we are getting both regression and error tests with default filtering settings.
    */
   @Test
   public void nonemptyOutputTest() {
@@ -67,6 +64,7 @@ public class TestFilteringTest {
     GenInputsAbstract.npe_on_null_input = BehaviorType.ERROR;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
+    GenInputsAbstract.sof_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
 
@@ -81,8 +79,7 @@ public class TestFilteringTest {
   }
 
   /**
-   * Make sure there is no output when dont-output-tests is set.
-   * Need to set an input limit here.
+   * Make sure there is no output when dont-output-tests is set. Need to set an input limit here.
    */
   @Test
   public void noOutputTest() {
@@ -97,6 +94,7 @@ public class TestFilteringTest {
     GenInputsAbstract.npe_on_null_input = BehaviorType.ERROR;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
+    GenInputsAbstract.sof_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.inputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
@@ -111,9 +109,7 @@ public class TestFilteringTest {
     assertTrue("should have no error tests", eTests.size() == 0);
   }
 
-  /**
-   * Make sure get no error test output when no-error-revealing-tests is set.
-   */
+  /** Make sure get no error test output when no-error-revealing-tests is set. */
   @Test
   public void noErrorOutputTest() {
     GenInputsAbstract.dont_output_tests = false;
@@ -127,6 +123,7 @@ public class TestFilteringTest {
     GenInputsAbstract.npe_on_null_input = BehaviorType.ERROR;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
+    GenInputsAbstract.sof_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
 
@@ -141,8 +138,8 @@ public class TestFilteringTest {
   }
 
   /**
-   * Make sure that no regression tests are output when no-regression-tests is set.
-   * Better to set inputlimit here since most tests are regression tests.
+   * Make sure that no regression tests are output when no-regression-tests is set. Better to set
+   * inputlimit here since most tests are regression tests.
    */
   @Test
   public void noRegressionOutputTest() {
@@ -157,6 +154,7 @@ public class TestFilteringTest {
     GenInputsAbstract.npe_on_null_input = BehaviorType.ERROR;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
+    GenInputsAbstract.sof_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.inputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
@@ -171,10 +169,7 @@ public class TestFilteringTest {
     assertTrue("should have some error tests", eTests.size() > 0);
   }
 
-  /**
-   * Having both Error and Regression tests turned off should give nothing.
-   * Set inputlimit
-   */
+  /** Having both Error and Regression tests turned off should give nothing. Set inputlimit */
   @Test
   public void noErrorOrRegressionOutputTest() {
     GenInputsAbstract.dont_output_tests = false;
@@ -188,6 +183,7 @@ public class TestFilteringTest {
     GenInputsAbstract.npe_on_null_input = BehaviorType.ERROR;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
+    GenInputsAbstract.sof_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.inputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
@@ -202,9 +198,7 @@ public class TestFilteringTest {
     assertTrue("should have no error tests", eTests.size() == 0);
   }
 
-  /**
-   * Filtering tests matching CUT should produce output tests.
-   */
+  /** Filtering tests matching CUT should produce output tests. */
   @Test
   public void matchOutputTest() {
     GenInputsAbstract.dont_output_tests = false;
@@ -218,6 +212,7 @@ public class TestFilteringTest {
     GenInputsAbstract.npe_on_null_input = BehaviorType.ERROR;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
+    GenInputsAbstract.sof_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.inputlimit = 1000;
     GenInputsAbstract.forbid_null = false;

@@ -1,11 +1,10 @@
 package randoop.test;
 
 /**
- * Coin enum based on examples from Java Language Specification
- * intended to be used with tests in Randoop.
+ * Coin enum based on examples from Java Language Specification intended to be used with tests in
+ * Randoop.
  *
  * @see CoinPurse
- *
  */
 public enum Coin {
   PENNY(1),

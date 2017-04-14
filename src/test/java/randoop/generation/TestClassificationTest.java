@@ -1,8 +1,12 @@
 package randoop.generation;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,7 +14,9 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import randoop.DummyVisitor;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
@@ -42,17 +48,9 @@ import randoop.util.SimpleList;
 import randoop.util.predicate.AlwaysTrue;
 import randoop.util.predicate.Predicate;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 /**
- * Tests the classification of tests based on exception behavior assignments.
- * So, question is where exceptions are placed.
+ * Tests the classification of tests based on exception behavior assignments. So, question is where
+ * exceptions are placed.
  */
 public class TestClassificationTest {
 
@@ -70,9 +68,8 @@ public class TestClassificationTest {
   }
 
   /**
-   * Tests the classification of tests when all exceptions are invalid.
-   * Because of class will have no error tests, and regression tests
-   * should have no exceptions.
+   * Tests the classification of tests when all exceptions are invalid. Because of class will have
+   * no error tests, and regression tests should have no exceptions.
    */
   @Test
   public void allInvalidTest() {
@@ -83,6 +80,7 @@ public class TestClassificationTest {
     GenInputsAbstract.npe_on_null_input = BehaviorType.INVALID;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.INVALID;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
+    GenInputsAbstract.sof_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
 
@@ -111,9 +109,8 @@ public class TestClassificationTest {
   }
 
   /**
-   * Tests the classification of tests when all exceptions are errors.
-   * All exceptions should show as NoExceptionCheck, and should be no
-   * expected exceptions in regression tests.
+   * Tests the classification of tests when all exceptions are errors. All exceptions should show as
+   * NoExceptionCheck, and should be no expected exceptions in regression tests.
    */
   @Test
   public void allErrorTest() {
@@ -124,6 +121,7 @@ public class TestClassificationTest {
     GenInputsAbstract.npe_on_null_input = BehaviorType.ERROR;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.ERROR;
+    GenInputsAbstract.sof_exception = BehaviorType.ERROR;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
 
@@ -166,9 +164,8 @@ public class TestClassificationTest {
   }
 
   /**
-   * Tests classification of tests when all exceptions are expected.
-   * All exceptions should show as expected exception checks, and
-   * there should be no error tests.
+   * Tests classification of tests when all exceptions are expected. All exceptions should show as
+   * expected exception checks, and there should be no error tests.
    */
   @Test
   public void allExpectedTest() {
@@ -179,6 +176,7 @@ public class TestClassificationTest {
     GenInputsAbstract.npe_on_null_input = BehaviorType.EXPECTED;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.EXPECTED;
     GenInputsAbstract.oom_exception = BehaviorType.EXPECTED;
+    GenInputsAbstract.sof_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
 
@@ -208,11 +206,9 @@ public class TestClassificationTest {
   }
 
   /**
-   * Tests classification of tests when behavior type defaults are set
-   * (checked and unchecked exceptions are expected, and both NPE-on-null
-   * and OOM are invalid).
-   * Because class throws NPE without input, should see NPE as expected when no
-   * null inputs. Otherwise, should not see NPE.
+   * Tests classification of tests when behavior type defaults are set (checked and unchecked
+   * exceptions are expected, and both NPE-on-null and OOM are invalid). Because class throws NPE
+   * without input, should see NPE as expected when no null inputs. Otherwise, should not see NPE.
    */
   @Test
   public void defaultsTest() {
@@ -223,6 +219,7 @@ public class TestClassificationTest {
     GenInputsAbstract.npe_on_null_input = BehaviorType.EXPECTED;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
+    GenInputsAbstract.sof_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
 
@@ -267,10 +264,9 @@ public class TestClassificationTest {
   }
 
   /**
-   * Tests default behaviors with regression assertions turned off.
-   * Means that because class throws NPE without input, should see NPE as
-   * empty exception when there are no null inputs.
-   * Otherwise, should not see NPE, or any other checks.
+   * Tests default behaviors with regression assertions turned off. Means that because class throws
+   * NPE without input, should see NPE as empty exception when there are no null inputs. Otherwise,
+   * should not see NPE, or any other checks.
    */
   @Test
   public void defaultsWithNoRegressionAssertions() {
@@ -281,6 +277,7 @@ public class TestClassificationTest {
     GenInputsAbstract.npe_on_null_input = BehaviorType.EXPECTED;
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
+    GenInputsAbstract.sof_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
 

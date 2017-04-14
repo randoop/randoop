@@ -1,8 +1,8 @@
 package randoop.reflection.supertypetest;
 
 /**
- * This enum implements an interface with overloaded methods named {@code alpha} with distinct types.
- * Used to test that Randoop reflection code returns both.
+ * This enum implements an interface with overloaded methods named {@code alpha} with distinct
+ * types. Used to test that Randoop reflection code returns both.
  */
 public enum InheritedEnum implements TheSupertype {
   ONE {

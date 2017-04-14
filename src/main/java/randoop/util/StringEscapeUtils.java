@@ -22,10 +22,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * <p>
- * Escapes and unescapes <code>String</code>s for Java, Java Script, HTML, XML,
- * and SQL.
- * </p>
+ * Escapes and unescapes <code>String</code>s for Java, JavaScript, HTML, XML, and SQL.
  *
  * @author Apache Jakarta Turbine
  * @author GenerationJavaCore library
@@ -43,23 +40,15 @@ import java.io.Writer;
 public class StringEscapeUtils {
 
   /**
-   * <p>
-   * <code>StringEscapeUtils</code> instances should NOT be constructed in
-   * standard programming.
-   * </p>
+   * <code>StringEscapeUtils</code> instances should NOT be constructed in standard programming.
    *
-   * <p>
-   * Instead, the class should be used as:
-   * </p>
+   * <p>Instead, the class should be used as:
    *
    * <pre>
    * StringEscapeUtils.escapeJava("foo");
    * </pre>
    *
-   * <p>
-   * This constructor is public to permit tools that require a JavaBean instance
-   * to operate.
-   * </p>
+   * <p>This constructor is public to permit tools that require a JavaBean instance to operate.
    */
   public StringEscapeUtils() { // Empty.
   }
@@ -67,35 +56,23 @@ public class StringEscapeUtils {
   // Java and JavaScript
   // --------------------------------------------------------------------------
   /**
-   * <p>
    * Escapes the characters in a <code>String</code> using Java String rules.
-   * </p>
    *
-   * <p>
-   * Deals correctly with quotes and control-chars (tab, backslash, cr, ff,
-   * etc.)
-   * </p>
+   * <p>Deals correctly with quotes and control-chars (tab, backslash, cr, ff, etc.)
    *
-   * <p>
-   * So a tab becomes the characters <code>'\\'</code> and <code>'t'</code>.
-   * </p>
+   * <p>So a tab becomes the characters <code>'\\'</code> and <code>'t'</code>.
    *
-   * <p>
-   * The only difference between Java strings and JavaScript strings is that in
-   * JavaScript, a single quote must be escaped.
-   * </p>
+   * <p>The only difference between Java strings and JavaScript strings is that in JavaScript, a
+   * single quote must be escaped.
    *
-   * <p>
-   * Example:
-   * </p>
+   * <p>Example:
    *
    * <pre>
    * input string: He didn't say, "Stop!"
    * output string: He didn't say, \"Stop!\"
    * </pre>
    *
-   * @param str
-   *          String to escape values in, may be null
+   * @param str string to escape values in, may be null
    * @return a String with escaped values, <code>null</code> if input string was null
    */
   public static String escapeJava(String str) {
@@ -103,24 +80,16 @@ public class StringEscapeUtils {
   }
 
   /**
-   * <p>
-   * Escapes the characters in a <code>String</code> using Java String rules to
-   * a <code>Writer</code>.
-   * </p>
+   * Escapes the characters in a <code>String</code> using Java String rules to a <code>Writer
+   * </code>.
    *
-   * <p>
-   * A <code>null</code> string input has no effect.
-   * </p>
+   * <p>A <code>null</code> string input has no effect.
    *
    * @see #escapeJava(java.lang.String)
-   * @param out
-   *          Writer to write escaped string into
-   * @param str
-   *          String to escape values in, may be null
-   * @throws IllegalArgumentException
-   *           if the Writer is <code>null</code>
-   * @throws IOException
-   *           if error occurs on underlying Writer
+   * @param out writer to write escaped string into
+   * @param str string to escape values in, may be null
+   * @throws IllegalArgumentException if the Writer is <code>null</code>
+   * @throws IOException if error occurs on underlying Writer
    */
   public static void escapeJava(Writer out, String str) throws IOException {
     escapeJavaStyleString(out, str, false);
@@ -217,13 +186,9 @@ public class StringEscapeUtils {
   }
 
   /**
-   * <p>
-   * Returns an upper case hexadecimal <code>String</code> for the given
-   * character.
-   * </p>
+   * Returns an upper case hexadecimal <code>String</code> for the given character.
    *
-   * @param ch
-   *          The character to convert
+   * @param ch the character to convert
    * @return an upper case hexadecimal <code>String</code>
    */
   private static String hex(char ch) {

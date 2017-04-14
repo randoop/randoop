@@ -2,15 +2,12 @@ package randoop.contract;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
-/**
- * The contract: <code>o1.equals(o2) &rArr; o2.equals(o1)</code>.
- */
+/** The contract: <code>o1.equals(o2) &rArr; o2.equals(o1)</code>. */
 public final class EqualsSymmetric implements ObjectContract {
   private static final EqualsSymmetric instance = new EqualsSymmetric();
 

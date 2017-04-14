@@ -1,8 +1,7 @@
 package randoop.test;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -11,7 +10,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
-
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import randoop.DummyVisitor;
 import randoop.Globals;
 import randoop.contract.EqualsHashcode;
@@ -34,9 +35,6 @@ import randoop.util.MultiMap;
 import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;
 import randoop.util.Util;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 /*
 Note: I disabled this test in the build script because the test-script includes the use of
@@ -64,24 +62,28 @@ public class SequenceTests {
   /**
    * Tests the sequence execution and code generation aspects of Randoop.
    *
-   * Reads in a file describing a collection of sequences along with the test
-   * code that Randoop should generate after executing them. The file consists
-   * of a collection of records, each of the form:
+   * <p>Reads in a file describing a collection of sequences along with the test code that Randoop
+   * should generate after executing them. The file consists of a collection of records, each of the
+   * form:
    *
+   * <pre>
    * START TEST
    * TEST_ID
-   * <string identifying this test for debugging>
+   * string-identifying-this-test-for-debugging
    * SEQUENCE
    * <parseable sequence description>
    * EXPECTED_CODE
-   * <Expected Java code resulting from sequence execution>
+   * expected-Java-code-resulting-from-sequence-execution
    * END RECORD
+   * </pre>
    *
-   * Each sequence is parsed, then two checks performed:
+   * <p>Each sequence is parsed, then two checks performed:
    *
-   * 1. (Test parsing code) s.toParsableString() can be parsed back into an equivalent sequence
-   * 2. (Test execution and test generation code) sequence is executed and the resulting test code is
-   *    compared with the expected code from the "EXPECTED_CODE" field in the record.
+   * <ol>
+   *   <li>(Test parsing code) s.toParsableString() can be parsed back into an equivalent sequence
+   *   <li>(Test execution and test generation code) sequence is executed and the resulting test
+   *       code is compared with the expected code from the "EXPECTED_CODE" field in the record.
+   * </ol>
    */
   @Test
   public void test1() throws Exception {
@@ -101,9 +103,7 @@ public class SequenceTests {
     reader.parse(b);
   }
 
-  /**
-   * The "default" set of visitors that Randoop uses during execution.
-   */
+  /** The "default" set of visitors that Randoop uses during execution. */
   private static final TestCheckGenerator testGen;
 
   static {
@@ -126,6 +126,7 @@ public class SequenceTests {
                 expectation,
                 new MultiMap<Type, TypedOperation>(),
                 new LinkedHashSet<TypedOperation>(),
+                visibility,
                 true));
   }
 

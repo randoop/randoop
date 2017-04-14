@@ -1,8 +1,6 @@
 package randoop.reflection;
 
-/**
- * Used to test whether the member types are being collected from a class.
- */
+/** Used to test whether the member types are being collected from a class. */
 public class ClassWithMemberTypes {
   public static class StaticClass {}
 

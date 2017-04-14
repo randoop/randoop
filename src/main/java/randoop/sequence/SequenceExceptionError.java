@@ -1,10 +1,9 @@
 package randoop.sequence;
 
 /**
- * Exception representing occurrence of a "flaky" test sequence where an
- * exception was thrown by a statement other than the last of the sequence.
- * Occurs when a statement in an input sequence, that previously terminated
- * normally, throws an exception. Includes information needed to report the
+ * Exception representing occurrence of a "flaky" test sequence where an exception was thrown by a
+ * statement other than the last of the sequence. Occurs when a statement in an input sequence, that
+ * previously terminated normally, throws an exception. Includes information needed to report the
  * error.
  */
 public class SequenceExceptionError extends Error {
@@ -22,15 +21,12 @@ public class SequenceExceptionError extends Error {
   private int position;
 
   /**
-   * Create an exception for the exception thrown by the statement at the given
-   * position in the test sequence.
+   * Create an exception for the exception thrown by the statement at the given position in the test
+   * sequence.
    *
-   * @param testSequence
-   *          the test sequence
-   * @param position
-   *          the position of the statement that threw the exception
-   * @param exception
-   *          the exception
+   * @param testSequence the test sequence
+   * @param position the position of the statement that threw the exception
+   * @param exception the exception
    */
   public SequenceExceptionError(
       ExecutableSequence testSequence, int position, Throwable exception) {
@@ -50,8 +46,7 @@ public class SequenceExceptionError extends Error {
   }
 
   /**
-   * Returns the string representation of the statement that threw the
-   * exception.
+   * Returns the string representation of the statement that threw the exception.
    *
    * @return the string representation of the statement
    */
@@ -69,8 +64,7 @@ public class SequenceExceptionError extends Error {
   }
 
   /**
-   * Returns the input sequence containing the statement that threw the
-   * exception.
+   * Returns the input sequence containing the statement that threw the exception.
    *
    * @return the input sequence from which exception was thrown
    */

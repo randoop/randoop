@@ -1,0 +1,41 @@
+[
+  {
+    "operation": {
+      "classname": "randoop.condition.ConditionsSuperClass",
+      "name": "m",
+      "parameterTypes": [
+        "java.lang.String"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "receiver",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "description": "return value >= s.length()",
+        "guard" : {
+          "condition": "true",
+          "description": "always"
+        },
+        "property": {
+          "condition": "result >= s.length()",
+          "description": "result at least string length"
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "s not null",
+        "guard": {
+          "condition": "s != null",
+          "description": "not null"
+        }
+      }
+    ]
+  }
+]

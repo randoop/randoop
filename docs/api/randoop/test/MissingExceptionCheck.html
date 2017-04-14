@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>MissingExceptionCheck (randoop 3.0.9 API)</title>
+<title>MissingExceptionCheck (randoop 3.1.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="MissingExceptionCheck (randoop 3.0.9 API)";
+            parent.document.title="MissingExceptionCheck (randoop 3.1.4 API)";
         }
     }
     catch(err) {
@@ -115,9 +115,9 @@ var activeTableTab = "activeTableTab";
 <pre>public class <span class="typeNameLabel">MissingExceptionCheck</span>
 extends java.lang.Object
 implements <a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></pre>
-<div class="block">Represents the fact that a statement should throw an exception, but did not.
- It is used in an error-revealing test to indicate that normal execution of the statement
- violates the stated throws-condition of the method/constructor.</div>
+<div class="block">Represents the fact that a statement should throw an exception, but did not. It is used in an
+ error-revealing test to indicate that normal execution of the statement violates the stated
+ throws-condition of the method/constructor.</div>
 </li>
 </ul>
 </div>
@@ -172,8 +172,8 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/MissingExceptionCheck.html#MissingExceptionCheck-randoop.types.ClassOrInterfaceType-java.lang.String-int-">MissingExceptionCheck</a></span>(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;expected,
                      java.lang.String&nbsp;conditionComment,
                      int&nbsp;index)</code>
-<div class="block">Creates a <a href="../../randoop/test/MissingExceptionCheck.html" title="class in randoop.test"><code>MissingExceptionCheck</code></a> object for the expected exception type
- at the given statement.</div>
+<div class="block">Creates a <a href="../../randoop/test/MissingExceptionCheck.html" title="class in randoop.test"><code>MissingExceptionCheck</code></a> object for the expected exception type at the given
+ statement.</div>
 </td>
 </tr>
 </table>
@@ -220,15 +220,13 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/MissingExceptionCheck.html#toCodeStringPostStatement--">toCodeStringPostStatement</a></span>()</code>
-<div class="block">Returns a string of Java source code to be emitted after a statement
- containing this check.</div>
+<div class="block">Returns a string of Java source code to be emitted after a statement containing this check.</div>
 </td>
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/MissingExceptionCheck.html#toCodeStringPreStatement--">toCodeStringPreStatement</a></span>()</code>
-<div class="block">Returns a string of Java source code to be emitted before a statement
- containing this check.</div>
+<div class="block">Returns a string of Java source code to be emitted before a statement containing this check.</div>
 </td>
 </tr>
 </table>
@@ -300,8 +298,8 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <pre>MissingExceptionCheck(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;expected,
                       java.lang.String&nbsp;conditionComment,
                       int&nbsp;index)</pre>
-<div class="block">Creates a <a href="../../randoop/test/MissingExceptionCheck.html" title="class in randoop.test"><code>MissingExceptionCheck</code></a> object for the expected exception type
- at the given statement.</div>
+<div class="block">Creates a <a href="../../randoop/test/MissingExceptionCheck.html" title="class in randoop.test"><code>MissingExceptionCheck</code></a> object for the expected exception type at the given
+ statement.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>expected</code> - the type of the expected exception</dd>
@@ -352,8 +350,7 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <h4>toCodeStringPreStatement</h4>
 <pre>public&nbsp;java.lang.String&nbsp;toCodeStringPreStatement()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/test/Check.html#toCodeStringPreStatement--">Check</a></code></span></div>
-<div class="block">Returns a string of Java source code to be emitted before a statement
- containing this check.</div>
+<div class="block">Returns a string of Java source code to be emitted before a statement containing this check.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/Check.html#toCodeStringPreStatement--">toCodeStringPreStatement</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></code></dd>
@@ -370,8 +367,7 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <h4>toCodeStringPostStatement</h4>
 <pre>public&nbsp;java.lang.String&nbsp;toCodeStringPostStatement()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/test/Check.html#toCodeStringPostStatement--">Check</a></code></span></div>
-<div class="block">Returns a string of Java source code to be emitted after a statement
- containing this check.</div>
+<div class="block">Returns a string of Java source code to be emitted after a statement containing this check.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/Check.html#toCodeStringPostStatement--">toCodeStringPostStatement</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></code></dd>
@@ -405,12 +401,11 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <h4>getID</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getID()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/test/Check.html#getID--">Check</a></code></span></div>
-<div class="block">Returns a unique string identifier for the check. Two checks are the same
- if these identifiers match. The value is NOT included. Used to match
- up checks between the same sequence run at different times. Note that
- because of changes in the environment (e.g., static variables), two
- executions of the same sequence may have different checks (because the
- existence of some checks depends on the value of variables)</div>
+<div class="block">Returns a unique string identifier for the check. Two checks are the same if these identifiers
+ match. The value is NOT included. Used to match up checks between the same sequence run at
+ different times. Note that because of changes in the environment (e.g., static variables), two
+ executions of the same sequence may have different checks (because the existence of some checks
+ depends on the value of variables)</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/Check.html#getID--">getID</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></code></dd>
@@ -426,8 +421,10 @@ implements <a href="../../randoop/test/Check.html" title="interface in randoop.t
 <li class="blockList">
 <h4>evaluate</h4>
 <pre>public&nbsp;boolean&nbsp;evaluate(<a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence">Execution</a>&nbsp;execution)</pre>
-<div class="block">Evaluates this check on the given execution of a sequence. Checks that an exception of the expected type is thrown by
- the statement in this object in the given <a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence"><code>Execution</code></a>.</div>
+<div class="block">Evaluates this check on the given execution of a sequence.
+
+ <p>Checks that an exception of the expected type is thrown by the statement in this object in
+ the given <a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence"><code>Execution</code></a>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/Check.html#evaluate-randoop.sequence.Execution-">evaluate</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></code></dd>

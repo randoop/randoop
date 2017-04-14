@@ -1,31 +1,34 @@
 package randoop.test;
 
+import java.util.List;
+import java.util.Set;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NotExecuted;
+import randoop.condition.ExpectedException;
 import randoop.sequence.ExecutableSequence;
 import randoop.types.ClassOrInterfaceType;
 
 /**
  * A {@link TestCheckGenerator} that generates checks for exceptions that are expected at a
- * particular statement.
- * Creates a {@link ExpectedExceptionCheck} that is returned in a {@link RegressionChecks}
- * collection if the exception occurs, or a {@link ErrorRevealingChecks} collection if not.
+ * particular statement. Creates a {@link ExpectedExceptionCheck} that is returned in a {@link
+ * RegressionChecks} collection if the exception occurs, or a {@link ErrorRevealingChecks}
+ * collection if not.
  *
- * Note that this generator is distinct from other check generators that either return regression
+ * <p>Note that this generator is distinct from other check generators that either return regression
  * checks or error-revealing checks.
  */
 public class ExpectedExceptionGenerator implements TestCheckGenerator {
-  private final ClassOrInterfaceType expected;
-  private final String conditionComment;
+  private final List<Set<ExpectedException>> exceptionSets;
 
-  public ExpectedExceptionGenerator(ClassOrInterfaceType expected, String conditionComment) {
-    this.expected = expected;
-    this.conditionComment = conditionComment;
+  public ExpectedExceptionGenerator(List<Set<ExpectedException>> exceptionSets) {
+    this.exceptionSets = exceptionSets;
   }
 
   /**
-   * {@inheritDoc} Adds checks for an expected exception at the final statement of the sequence.
+   * {@inheritDoc}
+   *
+   * <p>Adds checks for an expected exception at the final statement of the sequence.
    */
   @Override
   public TestChecks visit(ExecutableSequence s) {
@@ -40,18 +43,42 @@ public class ExpectedExceptionGenerator implements TestCheckGenerator {
       ExceptionalExecution exec = (ExceptionalExecution) result;
       Throwable throwable = exec.getException();
       ClassOrInterfaceType throwableType = ClassOrInterfaceType.forClass(throwable.getClass());
-      if (throwableType.isSubtypeOf(expected)) { // if exception is one expected
-        Check check = new ExpectedExceptionCheck(throwable, finalIndex, expected.getName());
-        checks.add(check);
-        return checks;
+      for (Set<ExpectedException> exceptionSet : exceptionSets) {
+        ClassOrInterfaceType matchingType = findMatchingExpectedType(throwableType, exceptionSet);
+        if (matchingType == null) {
+          //XXX this doesn't carry information about exception that occurred
+          return getMissingExceptionTestChecks(finalIndex);
+        }
       }
-      // otherwise, exception should be handled normally
-    } else { // if execution was normal, then expected exception is missing
-      checks = new ErrorRevealingChecks();
-      Check check = new MissingExceptionCheck(expected, conditionComment, finalIndex);
+      Check check = new ExpectedExceptionCheck(throwable, finalIndex, throwableType.getName());
       checks.add(check);
+      return checks;
+    } else { // if execution was normal, then expected exception is missing
+      checks = getMissingExceptionTestChecks(finalIndex);
     }
 
+    return checks;
+  }
+
+  @Override
+  public TestCheckGenerator getGenerator() {
+    return this;
+  }
+
+  private ClassOrInterfaceType findMatchingExpectedType(
+      ClassOrInterfaceType throwableType, Set<ExpectedException> expectedExceptions) {
+    for (ExpectedException exception : expectedExceptions) {
+      ClassOrInterfaceType expected = exception.getExceptionType();
+      if (throwableType.isSubtypeOf(expected)) { // if exception is in set
+        return expected;
+      }
+    }
+    return null;
+  }
+
+  private TestChecks getMissingExceptionTestChecks(int finalIndex) {
+    TestChecks checks = new ErrorRevealingChecks();
+    checks.add(new MissingExceptionCheck(exceptionSets, finalIndex));
     return checks;
   }
 
@@ -60,7 +87,7 @@ public class ExpectedExceptionGenerator implements TestCheckGenerator {
    *
    * @return the type of the expected exception
    */
-  public ClassOrInterfaceType getExpected() {
-    return expected;
+  public List<Set<ExpectedException>> getExpected() {
+    return exceptionSets;
   }
 }

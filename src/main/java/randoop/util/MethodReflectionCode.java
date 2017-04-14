@@ -6,8 +6,8 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
 /**
- * This is used to wrap a method together with its parameters, ready for
- * execution. Can be run only once.
+ * This is used to wrap a method together with its parameters, ready for execution. Can be run only
+ * once.
  */
 public final class MethodReflectionCode extends ReflectionCode {
 

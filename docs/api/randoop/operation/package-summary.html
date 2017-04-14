@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>randoop.operation (randoop 3.0.9 API)</title>
+<title>randoop.operation (randoop 3.1.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="randoop.operation (randoop 3.0.9 API)";
+            parent.document.title="randoop.operation (randoop 3.1.4 API)";
         }
     }
     catch(err) {
@@ -43,7 +43,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/main/package-summary.html">Prev&nbsp;Package</a></li>
-<li><a href="../../randoop/reflection/package-summary.html">Next&nbsp;Package</a></li>
+<li><a href="../../randoop/output/package-summary.html">Next&nbsp;Package</a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/operation/package-summary.html" target="_top">Frames</a></li>
@@ -84,8 +84,7 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a></td>
 <td class="colLast">
-<div class="block">Operation represents the constructs that can occur in a statement as part of
- a test sequence.</div>
+<div class="block">Operation represents the constructs that can occur in a statement as part of a test sequence.</div>
 </td>
 </tr>
 </tbody>
@@ -115,38 +114,35 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/operation/CallableOperation.html" title="class in randoop.operation">CallableOperation</a></td>
 <td class="colLast">
-<div class="block">CallableOperation is an abstract implementation of the Operation interface to
- provide default implementations of Operation predicates that are false except
- for a few kinds of operations.</div>
+<div class="block">CallableOperation is an abstract implementation of the Operation interface to provide default
+ implementations of Operation predicates that are false except for a few kinds of operations.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/operation/ConstructorCall.html" title="class in randoop.operation">ConstructorCall</a></td>
 <td class="colLast">
-<div class="block">ConstructorCall is an <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> that represents a call to a
- constructor, and holds a reference to a reflective
- <code>Constructor</code> object.</div>
+<div class="block">ConstructorCall is an <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> that represents a call to a constructor, and holds a
+ reference to a reflective <code>Constructor</code> object.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/operation/EnumConstant.html" title="class in randoop.operation">EnumConstant</a></td>
 <td class="colLast">
-<div class="block">EnumConstant is an <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> representing a constant value from an
- enum.</div>
+<div class="block">EnumConstant is an <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> representing a constant value from an enum.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/operation/FieldGet.html" title="class in randoop.operation">FieldGet</a></td>
 <td class="colLast">
-<div class="block">FieldGetter is an adapter that creates a <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> from a
- <a href="../../randoop/field/AccessibleField.html" title="class in randoop.field"><code>AccessibleField</code></a> and behaves like a getter for the field.</div>
+<div class="block">FieldGetter is an adapter that creates a <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> from a <a href="../../randoop/field/AccessibleField.html" title="class in randoop.field"><code>AccessibleField</code></a> and
+ behaves like a getter for the field.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/operation/FieldSet.html" title="class in randoop.operation">FieldSet</a></td>
 <td class="colLast">
-<div class="block">FieldSetter is an adapter for a <a href="../../randoop/field/AccessibleField.html" title="class in randoop.field"><code>AccessibleField</code></a> as a
- <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> that acts like a setter for the field.</div>
+<div class="block">FieldSetter is an adapter for a <a href="../../randoop/field/AccessibleField.html" title="class in randoop.field"><code>AccessibleField</code></a> as a <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> that acts like a
+ setter for the field.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -165,8 +161,8 @@
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/operation/NonreceiverTerm.html" title="class in randoop.operation">NonreceiverTerm</a></td>
 <td class="colLast">
-<div class="block">Represents a value that either cannot (primitive or null values), or we don't
- care to have (String, Class) be a receiver for a method call as an <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a>.</div>
+<div class="block">Represents a value that either cannot (primitive or null values), or we don't care to have
+ (String, Class) be a receiver for a method call as an <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a>.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -178,17 +174,14 @@
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/operation/ReflectionArrayCreation.html" title="class in randoop.operation">ReflectionArrayCreation</a></td>
 <td class="colLast">
-<div class="block">Represents an array creation using reflection, and corresponds to the code
- <code>
-   (List&lt;String&gt;[])(Array.newInstance(componentType, length));
- </code></div>
+<div class="block">Represents an array creation using reflection, and corresponds to the code <code>(List&lt;String&gt;[])(Array.newInstance(componentType, length));</code></div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/operation/TypeArguments.html" title="class in randoop.operation">TypeArguments</a></td>
 <td class="colLast">
-<div class="block">TypeArguments provides static methods for creating and recognizing strings
- representing the type arguments of a method or constructor.</div>
+<div class="block">TypeArguments provides static methods for creating and recognizing strings representing the type
+ arguments of a method or constructor.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -256,7 +249,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../randoop/main/package-summary.html">Prev&nbsp;Package</a></li>
-<li><a href="../../randoop/reflection/package-summary.html">Next&nbsp;Package</a></li>
+<li><a href="../../randoop/output/package-summary.html">Next&nbsp;Package</a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?randoop/operation/package-summary.html" target="_top">Frames</a></li>

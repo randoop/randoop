@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ParameterBound (randoop 3.0.9 API)</title>
+<title>ParameterBound (randoop 3.1.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ParameterBound (randoop 3.0.9 API)";
+            parent.document.title="ParameterBound (randoop 3.1.4 API)";
         }
     }
     catch(err) {
@@ -114,29 +114,27 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public abstract class <span class="typeNameLabel">ParameterBound</span>
 extends java.lang.Object</pre>
-<div class="block">Represents a type bound on a type variable or wildcard occurring as a type parameter of
- a generic class, interface, method or constructor.
- <p>
- Type bounds for explicitly defined type variables of generic declarations are defined in
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.1.2">JLS section 8.1.2</a>
- as
+<div class="block">Represents a type bound on a type variable or wildcard occurring as a type parameter of a generic
+ class, interface, method or constructor.
+
+ <p>Type bounds for explicitly defined type variables of generic declarations are defined in <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.1.2">JLS section
+ 8.1.2</a> as
+
  <pre>
    TypeBound:
      extends TypeVariable
      extends ClassOrInterfaceType [ &amp; InterfaceType ]
  </pre>
- Type bounds for wildcards may be any reference type, which includes type variables, so the
- <a href="../../randoop/types/ParameterBound.html" title="class in randoop.types"><code>ParameterBound</code></a> class hierarchy is simplified to use this <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> objects
- as bounds. Intersection types (which includes the greatest lower bound construction used in
- capture conversion) are explicitly represented.
- And, recursive type bounds are avoided by holding any <code>java.lang.reflect.Type</code> with
- variables as a <a href="../../randoop/types/LazyParameterBound.html" title="class in randoop.types"><code>LazyParameterBound</code></a>.
- <p>
- Type parameters only have upper bounds, but variables introduced by capture conversion can have
- lower bounds.
- This class and its subclasses can represent both, with the default lower bound being
- <a href="../../randoop/types/JavaTypes.html#NULL_TYPE"><code>JavaTypes.NULL_TYPE</code></a>,
- and the default upperbound being <a href="../../randoop/types/JavaTypes.html#OBJECT_TYPE"><code>JavaTypes.OBJECT_TYPE</code></a>.</div>
+
+ Type bounds for wildcards may be any reference type, which includes type variables, so the <a href="../../randoop/types/ParameterBound.html" title="class in randoop.types"><code>ParameterBound</code></a> class hierarchy is simplified to use this <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> objects as
+ bounds. Intersection types (which includes the greatest lower bound construction used in capture
+ conversion) are explicitly represented. And, recursive type bounds are avoided by holding any
+ <code>java.lang.reflect.Type</code> with variables as a <a href="../../randoop/types/LazyParameterBound.html" title="class in randoop.types"><code>LazyParameterBound</code></a>.
+
+ <p>Type parameters only have upper bounds, but variables introduced by capture conversion can
+ have lower bounds. This class and its subclasses can represent both, with the default lower bound
+ being <a href="../../randoop/types/JavaTypes.html#NULL_TYPE"><code>JavaTypes.NULL_TYPE</code></a>, and the default upperbound being <a href="../../randoop/types/JavaTypes.html#OBJECT_TYPE"><code>JavaTypes.OBJECT_TYPE</code></a>.</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../randoop/types/EagerReferenceBound.html" title="class in randoop.types"><code>EagerReferenceBound</code></a>, 
@@ -200,8 +198,7 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code>(package private) static <a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ParameterBound.html#forType-java.util.Set-java.lang.reflect.Type-">forType</a></span>(java.util.Set&lt;java.lang.reflect.TypeVariable&lt;?&gt;&gt;&nbsp;variableSet,
        java.lang.reflect.Type&nbsp;type)</code>
-<div class="block">Creates a <code>ParameterBound</code> object from a single
- <code>java.lang.reflect.Type</code>.</div>
+<div class="block">Creates a <code>ParameterBound</code> object from a single <code>java.lang.reflect.Type</code>.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
@@ -241,7 +238,8 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code>(package private) boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ParameterBound.html#isLowerBound-randoop.types.ParameterBound-randoop.types.Substitution-">isLowerBound</a></span>(<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;bound,
             <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
-<div class="block">Tests whether this is a lower bound on the type of a given bound with respect to a type substitution.</div>
+<div class="block">Tests whether this is a lower bound on the type of a given bound with respect to a type
+ substitution.</div>
 </td>
 </tr>
 <tr id="i10" class="altColor">
@@ -354,10 +352,10 @@ extends java.lang.Object</pre>
 <pre>static&nbsp;<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;forTypes(java.util.Set&lt;java.lang.reflect.TypeVariable&lt;?&gt;&gt;&nbsp;variableSet,
                                java.lang.reflect.Type[]&nbsp;bounds)</pre>
 <div class="block">Creates a bound from the array of bounds of a <code>java.lang.reflect.TypeVariable</code>.
- <p>
- The bounds of a type parameter are restricted, but those of a wildcard may be any reference type.
- See
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.1.2">JLS section 8.1.2</a>.</div>
+
+ <p>The bounds of a type parameter are restricted, but those of a wildcard may be any reference
+ type. See <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.1.2">JLS
+ section 8.1.2</a>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>variableSet</code> - the set of variables affected by this bound</dd>
@@ -375,17 +373,14 @@ extends java.lang.Object</pre>
 <h4>forType</h4>
 <pre>static&nbsp;<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;forType(java.util.Set&lt;java.lang.reflect.TypeVariable&lt;?&gt;&gt;&nbsp;variableSet,
                               java.lang.reflect.Type&nbsp;type)</pre>
-<div class="block">Creates a <code>ParameterBound</code> object from a single
- <code>java.lang.reflect.Type</code>.
- Tests for types that are represented by <code>Class</code> objects, or
- <code>java.lang.reflect.ParameterizedType</code> objects.</div>
+<div class="block">Creates a <code>ParameterBound</code> object from a single <code>java.lang.reflect.Type</code>. Tests for
+ types that are represented by <code>Class</code> objects, or <code>java.lang.reflect.ParameterizedType</code> objects.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>variableSet</code> - the set of type variables bound by this type</dd>
 <dd><code>type</code> - the type for type bound</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>a type bound that ensures the given type is satisfied as an upper
-         bound</dd>
+<dd>a type bound that ensures the given type is satisfied as an upper bound</dd>
 </dl>
 </li>
 </ul>
@@ -524,13 +519,15 @@ extends java.lang.Object</pre>
 <h4>isLowerBound</h4>
 <pre>boolean&nbsp;isLowerBound(<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;bound,
                      <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
-<div class="block">Tests whether this is a lower bound on the type of a given bound with respect to a type substitution.</div>
+<div class="block">Tests whether this is a lower bound on the type of a given bound with respect to a type
+ substitution.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>bound</code> - the other bound</dd>
 <dd><code>substitution</code> - the type substitution</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true, if this bound is a lower bound on the type of the given bound, and false otherwise</dd>
+<dd>true, if this bound is a lower bound on the type of the given bound, and false
+     otherwise</dd>
 </dl>
 </li>
 </ul>
@@ -578,8 +575,8 @@ extends java.lang.Object</pre>
 <dd><code>argType</code> - the concrete argument type</dd>
 <dd><code>subst</code> - the substitution</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if this bound is satisfied by the concrete type when the
-         substitution is used on the bound, false otherwise</dd>
+<dd>true if this bound is satisfied by the concrete type when the substitution is used on
+     the bound, false otherwise</dd>
 </dl>
 </li>
 </ul>

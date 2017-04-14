@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>TypeArgument (randoop 3.0.9 API)</title>
+<title>TypeArgument (randoop 3.1.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="TypeArgument (randoop 3.0.9 API)";
+            parent.document.title="TypeArgument (randoop 3.1.4 API)";
         }
     }
     catch(err) {
@@ -114,8 +114,10 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public abstract class <span class="typeNameLabel">TypeArgument</span>
 extends java.lang.Object</pre>
-<div class="block">Represents a type argument of a parameterized type as described in
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.
+<div class="block">Represents a type argument of a parameterized type as described in <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section
+ 4.5.1</a>.
+
  <pre>
    TypeArgument:
      ReferenceType
@@ -170,8 +172,9 @@ extends java.lang.Object</pre>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>abstract boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeArgument.html#contains-randoop.types.TypeArgument-">contains</a></span>(<a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a>&nbsp;otherArgument)</code>
-<div class="block">Checks whether this type argument contains another argument, using relationship defined in
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.</div>
+<div class="block">Checks whether this type argument contains another argument, using relationship defined in <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section
+ 4.5.1</a>.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -181,8 +184,7 @@ extends java.lang.Object</pre>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>static <a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/TypeArgument.html#forType-java.lang.reflect.Type-">forType</a></span>(java.lang.reflect.Type&nbsp;type)</code>
-<div class="block">Converts a <code>java.lang.reflect.Type</code> to a <code>TypeArgument</code>
- object.</div>
+<div class="block">Converts a <code>java.lang.reflect.Type</code> to a <code>TypeArgument</code> object.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
@@ -271,8 +273,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>forType</h4>
 <pre>public static&nbsp;<a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a>&nbsp;forType(java.lang.reflect.Type&nbsp;type)</pre>
-<div class="block">Converts a <code>java.lang.reflect.Type</code> to a <code>TypeArgument</code>
- object.</div>
+<div class="block">Converts a <code>java.lang.reflect.Type</code> to a <code>TypeArgument</code> object.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>type</code> - the type of a type argument</dd>
@@ -313,8 +314,9 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>contains</h4>
 <pre>public abstract&nbsp;boolean&nbsp;contains(<a href="../../randoop/types/TypeArgument.html" title="class in randoop.types">TypeArgument</a>&nbsp;otherArgument)</pre>
-<div class="block">Checks whether this type argument contains another argument, using relationship defined in
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.</div>
+<div class="block">Checks whether this type argument contains another argument, using relationship defined in <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section
+ 4.5.1</a>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>otherArgument</code> - the other <code>TypeArgument</code></dd>

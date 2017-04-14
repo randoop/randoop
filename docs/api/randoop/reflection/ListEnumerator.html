@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ListEnumerator (randoop 3.0.9 API)</title>
+<title>ListEnumerator (randoop 3.1.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ListEnumerator (randoop 3.0.9 API)";
+            parent.document.title="ListEnumerator (randoop 3.1.4 API)";
         }
     }
     catch(err) {
@@ -116,9 +116,9 @@ var activeTableTab = "activeTableTab";
 extends java.lang.Object
 implements java.util.Iterator&lt;java.util.List&lt;T&gt;&gt;</pre>
 <div class="block">Enumerates the set of lists formed by selecting values sequentially from a list of candidates,
- such that each generlist has a value from each candidate list.
- the length of the lists .
- For instance, given <code>[["a1", "a2"], ["b1"], ["c1", "c2", "c3"]]</code> enumerates
+ such that each generlist has a value from each candidate list. the length of the lists . For
+ instance, given <code>[["a1", "a2"], ["b1"], ["c1", "c2", "c3"]]</code> enumerates
+
  <pre>
    ["a1", "b1", "c1"]
    ["a1", "b1", "c2"]
@@ -127,6 +127,7 @@ implements java.util.Iterator&lt;java.util.List&lt;T&gt;&gt;</pre>
    ["a2", "b1", "c2"]
    ["a2", "b1", "c3"]
  </pre>
+
  by successive calls to <a href="../../randoop/reflection/ListEnumerator.html#next--"><code>next()</code></a>.</div>
 </li>
 </ul>
@@ -300,8 +301,8 @@ implements java.util.Iterator&lt;java.util.List&lt;T&gt;&gt;</pre>
 <li class="blockList">
 <h4>ListEnumerator</h4>
 <pre>ListEnumerator(java.util.List&lt;java.util.List&lt;<a href="../../randoop/reflection/ListEnumerator.html" title="type parameter in ListEnumerator">T</a>&gt;&gt;&nbsp;candidates)</pre>
-<div class="block">Creates a <a href="../../randoop/reflection/ListEnumerator.html" title="class in randoop.reflection"><code>ListEnumerator</code></a> for lists constructed from the given candidates.
- Each generated list will be the same length as the given list.</div>
+<div class="block">Creates a <a href="../../randoop/reflection/ListEnumerator.html" title="class in randoop.reflection"><code>ListEnumerator</code></a> for lists constructed from the given candidates. Each
+ generated list will be the same length as the given list.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>candidates</code> - lists of candidate values for each position in generated lists</dd>

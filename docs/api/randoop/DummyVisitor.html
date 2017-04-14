@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>DummyVisitor (randoop 3.0.9 API)</title>
+<title>DummyVisitor (randoop 3.1.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="DummyVisitor (randoop 3.0.9 API)";
+            parent.document.title="DummyVisitor (randoop 3.1.4 API)";
         }
     }
     catch(err) {
@@ -154,8 +154,8 @@ implements <a href="../randoop/ExecutionVisitor.html" title="interface in randoo
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/DummyVisitor.html#initialize-randoop.sequence.ExecutableSequence-">initialize</a></span>(<a href="../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;executableSequence)</code>
-<div class="block">Called before execution of a sequence, to allow the visitor to perform any
- initialization steps required before execution.</div>
+<div class="block">Called before execution of a sequence, to allow the visitor to perform any initialization steps
+ required before execution.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
@@ -225,8 +225,8 @@ implements <a href="../randoop/ExecutionVisitor.html" title="interface in randoo
 <h4>initialize</h4>
 <pre>public&nbsp;void&nbsp;initialize(<a href="../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;executableSequence)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../randoop/ExecutionVisitor.html#initialize-randoop.sequence.ExecutableSequence-">ExecutionVisitor</a></code></span></div>
-<div class="block">Called before execution of a sequence, to allow the visitor to perform any
- initialization steps required before execution.</div>
+<div class="block">Called before execution of a sequence, to allow the visitor to perform any initialization steps
+ required before execution.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../randoop/ExecutionVisitor.html#initialize-randoop.sequence.ExecutableSequence-">initialize</a></code>&nbsp;in interface&nbsp;<code><a href="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</a></code></dd>
@@ -245,8 +245,8 @@ implements <a href="../randoop/ExecutionVisitor.html" title="interface in randoo
                                  int&nbsp;i)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../randoop/ExecutionVisitor.html#visitBeforeStatement-randoop.sequence.ExecutableSequence-int-">ExecutionVisitor</a></code></span></div>
 <div class="block">Invoked by ExecutableSequence.execute before the i-th statement executes.
- <p>
- Precondition: statements 0..i-1 have been executed.</div>
+
+ <p>Precondition: statements 0..i-1 have been executed.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../randoop/ExecutionVisitor.html#visitBeforeStatement-randoop.sequence.ExecutableSequence-int-">visitBeforeStatement</a></code>&nbsp;in interface&nbsp;<code><a href="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</a></code></dd>
@@ -266,8 +266,8 @@ implements <a href="../randoop/ExecutionVisitor.html" title="interface in randoo
                                 int&nbsp;i)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../randoop/ExecutionVisitor.html#visitAfterStatement-randoop.sequence.ExecutableSequence-int-">ExecutionVisitor</a></code></span></div>
 <div class="block">Invoked by ExecutableSequence.execute after the i-th statement executes.
- <p>
- Precondition: statements 0..i have been executed.</div>
+
+ <p>Precondition: statements 0..i have been executed.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../randoop/ExecutionVisitor.html#visitAfterStatement-randoop.sequence.ExecutableSequence-int-">visitAfterStatement</a></code>&nbsp;in interface&nbsp;<code><a href="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</a></code></dd>

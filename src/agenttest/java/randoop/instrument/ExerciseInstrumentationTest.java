@@ -9,9 +9,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
 import org.junit.Test;
-
 import randoop.reflection.TypeNames;
 
 public class ExerciseInstrumentationTest {
