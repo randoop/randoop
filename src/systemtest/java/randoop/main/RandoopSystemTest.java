@@ -879,13 +879,61 @@ public class RandoopSystemTest {
   @Test
   public void runInheritedConditionsTest() {
     TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("inherited-conditions");
+        systemTestEnvironment.createTestEnvironment("conditions-inherited");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.addTestClass("randoop.condition.OverridingConditionsClass");
     options.setOption(
         "specifications", "resources/systemTest/randoop/condition/overridingconditionsclass.json");
     options.setErrorBasename("ConditionsError");
-    options.setRegressionBasename("ConditionsRegresion");
+    options.setRegressionBasename("ConditionsRegression");
+    options.setOption("timelimit", "30");
+    options.setOption("outputlimit", "200");
+
+    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+  }
+
+  @Test
+  public void runSuperclassConditionsTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("conditions-superclass");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("randoop.condition.OverridingConditionsClass");
+    options.setOption(
+        "specifications", "resources/systemTest/randoop/condition/conditionsuperclass.json");
+    options.setErrorBasename("ConditionsError");
+    options.setRegressionBasename("ConditionsRegression");
+    options.setOption("timelimit", "30");
+    options.setOption("outputlimit", "200");
+
+    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+  }
+
+  @Test
+  public void runInterfaceConditionsTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("conditions-interface");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("randoop.condition.OverridingConditionsClass");
+    options.setOption(
+        "specifications", "resources/systemTest/randoop/condition/conditionsinterface.json");
+    options.setErrorBasename("ConditionsError");
+    options.setRegressionBasename("ConditionsRegression");
+    options.setOption("timelimit", "30");
+    options.setOption("outputlimit", "200");
+
+    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+  }
+
+  @Test
+  public void runSuperSuperclassConditionsTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("conditions-supersuperclass");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("randoop.condition.OverridingConditionsClass");
+    options.setOption(
+        "specifications", "resources/systemTest/randoop/condition/conditionsupersuperclass.json");
+    options.setErrorBasename("ConditionsError");
+    options.setRegressionBasename("ConditionsRegression");
     options.setOption("timelimit", "30");
     options.setOption("outputlimit", "200");
 
