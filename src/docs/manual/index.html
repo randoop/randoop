@@ -1051,26 +1051,23 @@ test, by using the
 <code>--omitmethods=regexp</code> command-line option.
 However, this does not prevent Randoop from calling methods that are not members
 of the classes under test, which can still be problematic during test generation.
+To avoid these methods, you can provide a different implementation that will be
+used when running Randoop.
 </p>
 
 <p>
-To deal with these methods, you can provide a different implementation of a
-method that will be used when running Randoop.
-To transform calls to undesired methods, use the Java agent in the
-<code>mapcall-3.1.4.jar</code>
-file (either in the unzipped distribution file, or downloaded from the
-<a href="https://github.com/randoop/randoop/releases/latest">latest release</a>)
-by passing the following command-line option to <code>java</code> when running
-Randoop:
+To transform calls to undesired methods, use the
+Java agent in the <code>mapcall-3.1.4.jar</code>
+file by passing the following command-line option to <code>java</code> when
+running Randoop:
 </p>
 <pre>
     -javaagent:$(RANDOOP_PATH)/mapcall-3.1.4.jar
 </pre>
 <p>
-When you run the generated tests, you will also need to supply the same
-<code>-javaagent:...</code> argument.
+This argument must also be given when the generated tests are run to replace
+calls to the methods, avoiding the problematic calls.
 </p>
-
 
 <p>
 The Randoop <code>mapcall</code> agent transforms the code under test, replacing
@@ -1092,26 +1089,29 @@ By default, the agent makes the following replacements:
   </li>
 </ul>
 <p>
-However, you can override these default replacements by providing your own
-implementations along with replacements specified in a text file.
+However, you can also define your own replacements, and can even override
+these defaults, by providing your own implementations with the replacements
+specified in a text file.
 </p>
 
 <p>
-For example, the file <a href="map_calls_example.txt">map_calls_example.txt</a>
+For example, the file <a href="replace_calls_example.txt">replace_calls_example.txt</a>
 describes replacements for calls to three Swing methods and <code>System.exit()</code>
-by calls to methods defined in the class <a href="RandoopMappedCalls.java.txt">RandoopMappedCalls.java</a>.
+by calls to methods defined in the class
+<a href="RandoopMappedCalls.java.txt">RandoopMappedCalls.java</a>.
 To use this replacement, include the class file for <code>RandoopMappedCalls</code>
 on the classpath, and run the agent by including the following on the Randoop
 command-line:
 </p>
 <pre>
-    -javaagent:$(RANDOOP_PATH)/mapcall-3.1.2.jar=--map_calls=map_calls_example.txt
+    -javaagent:$(RANDOOP_PATH)/mapcall-3.1.2.jar=--map_calls=replace_calls_example.txt
 </pre>
 <p>
-As before, when you run the generated tests, you will need to supply the same
-<code>-javaagent:...</code> argument.
+When you run the generated tests, you will need to supply the same
+<code>-javaagent:...</code> argument to ensure calls to the replacement methods.
 </p>
 
+<h3 id="map-calls-format">Replacement file format</h3>
 <p>
 The replacement-file format is
 </p>
@@ -1215,7 +1215,7 @@ and the class replacement could be written as
 <p>
 If Randoop is calling methods that it should not (for example, while
 generating tests, a dialog box pops up), then you need to add more calls to
-you map_calls file.  While the dialog box is displayed, determine which
+your map_calls file.  While the dialog box is displayed, determine which
 calls are executing by examining the stack trace.  On Unix this can be done
 by typing <code>Ctrl-\</code> (hold down the Control key, then press the
 Backslash key).

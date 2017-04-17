@@ -1,5 +1,5 @@
 //
-// This file specifies a set of method call substitutions when running 
+// This file specifies a set of method call substitutions when running
 // under Randoop.
 //
 // Calls that put up a dialog box (popup) are converted
