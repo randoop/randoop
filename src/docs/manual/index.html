@@ -1046,14 +1046,16 @@ require user interaction, such as popping up a modal dialog box.
 </p>
 
 <p>
-You can prevent Randoop from calling certain methods in the code under
+You can prevent Randoop from directly calling certain methods in the code under
 test, by using the
 <code>--omitmethods=regexp</code> command-line option.
+However, this does not prevent Randoop from calling methods that are not members
+of the classes under test, which can still be problematic during test generation.
 </p>
 
 <p>
-Alternately, you can provide a different implementation of a method that will be
-used when running Randoop.
+To deal with these methods, you can provide a different implementation of a
+method that will be used when running Randoop.
 To transform calls to undesired methods, use the Java agent in the
 <code>mapcall-3.1.4.jar</code>
 file (either in the unzipped distribution file, or downloaded from the
