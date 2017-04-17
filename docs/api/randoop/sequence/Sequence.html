@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Sequence (randoop 3.1.2 API)</title>
+<title>Sequence (randoop 3.1.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Sequence (randoop 3.1.2 API)";
+            parent.document.title="Sequence (randoop 3.1.4 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":9,"i7":10,"i8":9,"i9":9,"i10":9,"i11":9,"i12":9,"i13":9,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":9,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":9,"i40":9,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10,"i47":10,"i48":10,"i49":10,"i50":9};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":9,"i7":10,"i8":9,"i9":9,"i10":9,"i11":9,"i12":9,"i13":9,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":9,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":9,"i41":9,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10,"i47":10,"i48":10,"i49":10,"i50":10,"i51":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -479,67 +479,71 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 </td>
 </tr>
 <tr id="i39" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#log--">log</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i40" class="altColor">
 <td class="colFirst"><code>static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#parse-java.util.List-">parse</a></span>(java.util.List&lt;java.lang.String&gt;&nbsp;statements)</code>
 <div class="block">NOTE: the ONLY place this is used is in a test.</div>
 </td>
 </tr>
-<tr id="i40" class="altColor">
+<tr id="i41" class="rowColor">
 <td class="colFirst"><code>static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#parse-java.lang.String-">parse</a></span>(java.lang.String&nbsp;string)</code>
 <div class="block">Parse a sequence encoded as a strings.</div>
 </td>
 </tr>
-<tr id="i41" class="rowColor">
+<tr id="i42" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#randomVariableForTypeLastStatement-randoop.types.Type-">randomVariableForTypeLastStatement</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type)</code>&nbsp;</td>
 </tr>
-<tr id="i42" class="altColor">
+<tr id="i43" class="rowColor">
 <td class="colFirst"><code>private void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#setAllActiveFlags--">setAllActiveFlags</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i43" class="rowColor">
+<tr id="i44" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#size--">size</a></span>()</code>
 <div class="block">The number of statements in the sequence.</div>
 </td>
 </tr>
-<tr id="i44" class="altColor">
+<tr id="i45" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#toCodeString--">toCodeString</a></span>()</code>
 <div class="block">Returns the Java source code representation of this sequence with values substituted for simple
  initializations.</div>
 </td>
 </tr>
-<tr id="i45" class="rowColor">
+<tr id="i46" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#toFullCodeString--">toFullCodeString</a></span>()</code>
 <div class="block">Returns the Java source representation of this sequence showing all statements.</div>
 </td>
 </tr>
-<tr id="i46" class="altColor">
+<tr id="i47" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#toParsableString--">toParsableString</a></span>()</code>
 <div class="block">Returns a string representing this sequence.</div>
 </td>
 </tr>
-<tr id="i47" class="rowColor">
+<tr id="i48" class="altColor">
 <td class="colFirst"><code>private java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#toParsableString-java.lang.String-">toParsableString</a></span>(java.lang.String&nbsp;statementSep)</code>
 <div class="block">Like toParsableString, but the client can specify a string that will be used a separator
  between statements.</div>
 </td>
 </tr>
-<tr id="i48" class="altColor">
+<tr id="i49" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i49" class="rowColor">
+<tr id="i50" class="altColor">
 <td class="colFirst"><code>private boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#verifyFalse-java.lang.String-randoop.sequence.Sequence-">verifyFalse</a></span>(java.lang.String&nbsp;message,
            <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;other)</code>&nbsp;</td>
 </tr>
-<tr id="i50" class="altColor">
+<tr id="i51" class="rowColor">
 <td class="colFirst"><code>static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#zero-randoop.types.Type-">zero</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;c)</code>
 <div class="block">Returns a sequence that is of the form "Foo f = null;" where Foo is the given class.</div>
@@ -1233,7 +1237,7 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
  Intended as the only place that we reach inside a <a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence"><code>Statement</code></a> for its operation.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>statement</code> - is a <a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence"><code>Statement</code></a> object from which the operation is copied.</dd>
+<dd><code>statement</code> - is a <a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence"><code>Statement</code></a> object from which the operation is copied</dd>
 <dd><code>inputs</code> - is the list of variables for input</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>sequence constructed from this one plus the operation</dd>
@@ -1296,7 +1300,7 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <div class="block">Appends the statement at the given index to the <code>StringBuilder</code>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>b</code> - the <code>StringBuilder</code> to which the code is appended.</dd>
+<dd><code>b</code> - the <code>StringBuilder</code> to which the code is appended</dd>
 <dd><code>index</code> - the position of the statement to print in this <code>Sequence</code>.</dd>
 </dl>
 </li>
@@ -1367,12 +1371,12 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 
  <p>Here is an example of a list of lines representing a sequence.
 
- <pre>
+ <pre><code>
  var0 = cons : java.util.HashMap.&lt;init&gt;() :
  var1 = prim : double:-1.0 :
  var2 = prim : java.lang.String:"hi!" :
  var3 = method : java.util.HashMap.put(java.lang.Object,java.lang.Object) : var0 var1 var2
- </pre>
+ </code></pre>
 
  The above sequence corresponds to the following java code (with package names omitted for
  brevity):
@@ -1482,7 +1486,7 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <a name="createSequenceForPrimitive-java.lang.Object-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>createSequenceForPrimitive</h4>
 <pre>public static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;createSequenceForPrimitive(java.lang.Object&nbsp;value)</pre>
@@ -1491,8 +1495,17 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>value</code> - non-null reference to a primitive or String value</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>a <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence"><code>Sequence</code></a> consisting of a statement created with the object.</dd>
+<dd>a <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence"><code>Sequence</code></a> consisting of a statement created with the object</dd>
 </dl>
+</li>
+</ul>
+<a name="log--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>log</h4>
+<pre>public&nbsp;void&nbsp;log()</pre>
 </li>
 </ul>
 </li>

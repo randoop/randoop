@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import randoop.Globals;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
@@ -50,7 +51,7 @@ public class SequenceCollection {
 
   private SubTypeSet typeSet = new SubTypeSet(false);
 
-  private Set<Type> sequenceTypes = new LinkedHashSet<>();
+  private Set<Type> sequenceTypes = new TreeSet<>();
 
   private int sequenceCount = 0;
 

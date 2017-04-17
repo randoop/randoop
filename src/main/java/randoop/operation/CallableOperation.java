@@ -5,6 +5,7 @@ import java.lang.reflect.AccessibleObject;
 import java.util.List;
 import randoop.ExecutionOutcome;
 import randoop.reflection.ReflectionPredicate;
+import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
@@ -93,6 +94,27 @@ public abstract class CallableOperation implements Operation {
       Type outputType,
       List<Variable> inputVars,
       StringBuilder b);
+
+  /**
+   * Returns the variable as a string to be used as an argument to an operation. Determines if the
+   * value of the variable can be given in short form. In the short output format, statements that
+   * assign to a primitive or string literal, like "int x = 3" are not added to a sequence; instead,
+   * the value (e.g. "3") is inserted directly added as arguments to method calls.
+   *
+   * @param variable the variable for which the argument string is constructed
+   * @return the argument string for the variable
+   */
+  String getArgumentString(Variable variable) {
+    String index = variable.getName();
+    if (variable.canUseShortForm()) {
+      Statement statementCreatingIndex = variable.getDeclaringStatement();
+      String shortIndex = statementCreatingIndex.getShortForm();
+      if (shortIndex != null) {
+        index = shortIndex;
+      }
+    }
+    return index;
+  }
 
   /**
    * Returns a string representation of this Operation, which can be read by static parse method for

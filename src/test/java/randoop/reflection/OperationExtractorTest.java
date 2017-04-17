@@ -157,7 +157,8 @@ public class OperationExtractorTest {
   public void partialInstantiationTest() {
     final Set<TypedOperation> operations = new LinkedHashSet<>();
     ReflectionManager mgr =
-        new ReflectionManager(new PackageVisibilityPredicate(this.getClass().getPackage()));
+        new ReflectionManager(
+            new PackageVisibilityPredicate(this.getClass().getPackage().getName()));
 
     String classname = "randoop.reflection.PartialBindingInput";
     Class<?> c = null;
@@ -200,7 +201,13 @@ public class OperationExtractorTest {
       assertThat(
           "should be wildcard or variable",
           operation.getName(),
-          anyOf(is(equalTo("mTypeVariable")), is(equalTo("mWildcard"))));
+          anyOf(
+              is(
+                  equalTo(
+                      "randoop.reflection.visibilitytest.InaccessibleArgumentInput.mTypeVariable")),
+              is(
+                  equalTo(
+                      "randoop.reflection.visibilitytest.InaccessibleArgumentInput.mWildcard"))));
     }
   }
 }

@@ -219,11 +219,12 @@ public class GenTests extends GenInputsAbstract {
         GenInputsAbstract.getStringSetFromFile(omit_field_list, "Error reading field file");
 
     VisibilityPredicate visibility;
-    Package junitPackage = Package.getPackage(GenInputsAbstract.junit_package_name);
-    if (junitPackage == null || GenInputsAbstract.only_test_public_members) {
+    if (GenInputsAbstract.junit_package_name == null
+        || GenInputsAbstract.only_test_public_members) {
+      System.out.println("not using package " + GenInputsAbstract.junit_package_name);
       visibility = new PublicVisibilityPredicate();
     } else {
-      visibility = new PackageVisibilityPredicate(junitPackage);
+      visibility = new PackageVisibilityPredicate(GenInputsAbstract.junit_package_name);
     }
 
     ReflectionPredicate reflectionPredicate =
@@ -288,14 +289,14 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     }
 
-    List<TypedOperation> model = operationModel.getOperations();
+    List<TypedOperation> operations = operationModel.getOperations();
 
-    if (model.isEmpty()) {
-      Log.out.println("There are no methods to test. Exiting.");
+    if (operations.isEmpty()) {
+      System.out.println("There are no methods to test. Exiting.");
       System.exit(1);
     }
     if (!GenInputsAbstract.noprogressdisplay) {
-      System.out.println("PUBLIC MEMBERS=" + model.size());
+      System.out.println("PUBLIC MEMBERS=" + operations.size());
     }
 
     /*
@@ -338,7 +339,13 @@ public class GenTests extends GenInputsAbstract {
     AbstractGenerator explorer;
     explorer =
         new ForwardGenerator(
-            model, observers, timelimit * 1000, inputlimit, outputlimit, componentMgr, listenerMgr);
+            operations,
+            observers,
+            timelimit * 1000,
+            inputlimit,
+            outputlimit,
+            componentMgr,
+            listenerMgr);
 
     /*
      * setup for check generation
@@ -362,7 +369,6 @@ public class GenTests extends GenInputsAbstract {
     } catch (NoSuchMethodException e) {
       assert false : "failed to get Object constructor: " + e;
     }
-    assert objectConstructor != null;
 
     Sequence newObj = new Sequence().extend(objectConstructor);
     Set<Sequence> excludeSet = new LinkedHashSet<>();
@@ -417,6 +423,13 @@ public class GenTests extends GenInputsAbstract {
 
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.printf("Explorer = %s\n", explorer);
+    }
+
+    /* log setup */
+    operationModel.log();
+    if (Log.isLoggingOn()) {
+      Log.logLine("Initial sequences (seeds):");
+      componentMgr.log();
     }
 
     /* Generate tests */
