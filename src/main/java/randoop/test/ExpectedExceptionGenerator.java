@@ -52,7 +52,6 @@ public class ExpectedExceptionGenerator implements TestCheckGenerator {
       }
       Check check = new ExpectedExceptionCheck(throwable, finalIndex, throwableType.getName());
       checks.add(check);
-      return checks;
     } else { // if execution was normal, then expected exception is missing
       checks = getMissingExceptionTestChecks(finalIndex);
     }

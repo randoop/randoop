@@ -1,7 +1,10 @@
 package randoop.generation;
 
-import static randoop.sequence.ExecutableSequence.*;
+import static randoop.sequence.ExecutableSequence.ConditionType;
+import static randoop.sequence.ExecutableSequence.Transition;
 
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -9,7 +12,10 @@ import java.util.Set;
 import plume.Option;
 import plume.OptionGroup;
 import plume.Unpublicized;
-import randoop.*;
+import randoop.DummyVisitor;
+import randoop.ExecutionVisitor;
+import randoop.Globals;
+import randoop.RandoopStat;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.sequence.ExecutableSequence;
@@ -54,6 +60,31 @@ public abstract class AbstractGenerator {
   private EnumMap<ExecutableSequence.ConditionType, EnumMap<ExecutableSequence.Transition, Integer>>
       conditionTransitionCounts = new EnumMap<>(ConditionType.class);
 
+  private void handleConditionTransition(ExecutableSequence eSeq) {
+    // count transitions
+    addConditionTransition(eSeq.conditionType, eSeq.conditionTransition);
+
+    if (eSeq.conditionType == ConditionType.NONE) {
+      return;
+    }
+
+    if (GenInputsAbstract.transition_log != null) {
+      try {
+        GenInputsAbstract.transition_log.write(
+            "type: "
+                + eSeq.conditionType.name()
+                + " transition: "
+                + eSeq.conditionTransition.name()
+                + Globals.lineSep);
+        GenInputsAbstract.transition_log.write(eSeq.toCodeString() + Globals.lineSep);
+        GenInputsAbstract.transition_log.write("-----------------------" + Globals.lineSep);
+        GenInputsAbstract.transition_log.flush();
+      } catch (IOException e) {
+        throw new Error("error while writing transition log: " + GenInputsAbstract.transition_log);
+      }
+    }
+  }
+
   private void addConditionTransition(ConditionType type, Transition transition) {
     EnumMap<ExecutableSequence.Transition, Integer> transitionMap =
         conditionTransitionCounts.get(type);
@@ -69,30 +100,30 @@ public abstract class AbstractGenerator {
     conditionTransitionCounts.put(type, transitionMap);
   }
 
-  public void printConditionTransition() {
-    System.out.printf("Condition Type");
+  public void printConditionTransition(PrintStream out) {
+    out.printf("Condition Type");
     for (Transition transition : Transition.values()) {
-      System.out.printf(",%s", transition.name());
+      out.printf(",%s", transition.name());
     }
-    System.out.printf("%n");
+    out.printf("%n");
     for (ConditionType type : ConditionType.values()) {
-      System.out.printf("%s", type.name());
+      out.printf("%s", type.name());
       EnumMap<Transition, Integer> transitionMap = conditionTransitionCounts.get(type);
       if (transitionMap == null) {
         for (Transition transition : Transition.values()) {
-          System.out.printf(",%d", 0);
+          out.printf(",%d", 0);
         }
       } else {
         for (Transition transition : Transition.values()) {
           Integer count = transitionMap.get(transition);
           if (count != null) {
-            System.out.printf(",%d", (int) count);
+            out.printf(",%d", (int) count);
           } else {
-            System.out.printf(",%d", 0);
+            out.printf(",%d", 0);
           }
         }
       }
-      System.out.printf("%n");
+      out.printf("%n");
     }
   }
 
@@ -370,8 +401,7 @@ public abstract class AbstractGenerator {
         num_failing_sequences++;
       }
 
-      // count transitions
-      addConditionTransition(eSeq.conditionType, eSeq.conditionTransition);
+      handleConditionTransition(eSeq);
 
       if (outputTest.test(eSeq)) {
         if (!eSeq.hasInvalidBehavior()) {

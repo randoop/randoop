@@ -308,6 +308,7 @@ public class ExecutableSequence {
           if (expected.getGenerator() instanceof PostConditionCheckGenerator) {
             conditionType = ConditionType.RETURN;
           } else if (expected.getGenerator() instanceof ExpectedExceptionGenerator) {
+            //this generator may be followed by an invalid check generator
             conditionType = ConditionType.THROWS;
           }
         }
@@ -373,7 +374,7 @@ public class ExecutableSequence {
     } else if (conditionChecks.hasErrorBehavior()) {
       if (checks.hasInvalidBehavior()) {
         conditionTransition = Transition.INVALID_TO_ERROR;
-      } else if (checks.hasErrorBehavior()) { //would have been regression
+      } else if (checks.hasErrorBehavior()) {
         conditionTransition = Transition.ERROR_TO_ERROR;
       } else {
         conditionTransition = Transition.REGRESSION_TO_ERROR;
