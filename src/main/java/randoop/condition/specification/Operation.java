@@ -82,12 +82,12 @@ public class Operation {
     List<String> parameterTypes = null;
     if (op instanceof Method) {
       Method m = (Method) op;
-      classname = m.getDeclaringClass().getCanonicalName();
+      classname = m.getDeclaringClass().getName();
       name = m.getName();
       parameterTypes = Operation.getTypeNames(m.getParameterTypes());
     } else if (op instanceof Constructor) {
       Constructor<?> constructor = (Constructor<?>) op;
-      classname = constructor.getDeclaringClass().getCanonicalName();
+      classname = constructor.getDeclaringClass().getName();
       name = constructor.getName();
       parameterTypes = Operation.getTypeNames(constructor.getParameterTypes());
     }
