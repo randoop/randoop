@@ -41,7 +41,10 @@ The Randoop homepage is
       <li><a href="#command-line-options">Command-line options</a></li>
       <li><a href="#map_calls">Avoiding calls to specific methods</a>
         <ul>
-          <li><a href="#determining-calls-to-map">Determining which calls to place in the map_calls file</a></li>
+          <li><a href="#map-calls-format">Replacement file format</a>
+            <ul>
+              <li><a href="#determining-calls-to-map">Determining which calls to place in the map_calls file</a></li>
+            </ul></li>
         </ul></li>
       <li><a href="#checkrep">Specifying representation invariant methods (such as <code>checkRep</code>)</a></li>
       <li><a href="#exercised-filter">Instrumenting classes for filtering tests on exercised-classes</a></li>
@@ -1046,28 +1049,27 @@ require user interaction, such as popping up a modal dialog box.
 </p>
 
 <p>
-You can prevent Randoop from directly calling certain methods in the code under
-test, by using the
-<code>--omitmethods=regexp</code> command-line option.
-However, this does not prevent Randoop from calling methods that are not members
-of the classes under test, which can still be problematic during test generation.
-To avoid these methods, you can provide a different implementation that will be
-used when running Randoop.
+It is not enough to use the <code>--omitmethods=regexp</code> command-line
+option.  That option is only applicable to methods in the code under test,
+not to libraries.  Furthermore, it only prevents Randoop
+from <em>directly</em> calling the specified methods; Randoop might still
+call methods that call them indirectly.
 </p>
 
 <p>
-To transform calls to undesired methods, use the
-Java agent in the <code>mapcall-3.1.4.jar</code>
-file by passing the following command-line option to <code>java</code> when
-running Randoop:
+Rather than preventing Randoop from calling the problematic methods, you
+will provide an alternate implementation of the method that will be used
+when running Randoop.
+</p>
+
+<p>
+To transform calls to undesired methods so that they use an alternate
+implementation, pass the following command-line option to <code>java</code> when
+running Randoop <b>and</b> when running the generated tests:
 </p>
 <pre>
     -javaagent:$(RANDOOP_PATH)/mapcall-3.1.4.jar
 </pre>
-<p>
-This argument must also be given when the generated tests are run to replace
-calls to the methods, avoiding the problematic calls.
-</p>
 
 <p>
 The Randoop <code>mapcall</code> agent transforms the code under test, replacing
@@ -1081,7 +1083,7 @@ By default, the agent makes the following replacements:
   </li>
   <li>
     A call to a method from AWT and Swing classes is replaced by a call to an
-    implementation that does as little as possible.  Specificaly, for a
+    implementation that does as little as possible.  Specifically, for a
     <code>void</code>-method, the replacement does nothing;
     for a method that returns a class type, the replacement returns
     <code>null</code>; for a <code>boolean</code>-method, the replacement returns
@@ -1089,7 +1091,7 @@ By default, the agent makes the following replacements:
   </li>
 </ul>
 <p>
-However, you can also define your own replacements, and can even override
+You can define your own replacements, and can even override
 these defaults, by providing your own implementations with the replacements
 specified in a text file.
 </p>
@@ -1100,28 +1102,26 @@ describes replacements for calls to three Swing methods and <code>System.exit()<
 by calls to methods defined in the class
 <a href="RandoopMappedCalls.java.txt">RandoopMappedCalls.java</a>.
 To use this replacement, include the class file for <code>RandoopMappedCalls</code>
-on the classpath, and run the agent by including the following on the Randoop
-command-line:
+on the classpath, and run the agent by including the following on the
+command line when running Randoop <b>and</b> when running the generated tests:
 </p>
 <pre>
     -javaagent:$(RANDOOP_PATH)/mapcall-3.1.2.jar=--map_calls=replace_calls_example.txt
 </pre>
-<p>
-When you run the generated tests, you will need to supply the same
-<code>-javaagent:...</code> argument to ensure calls to the replacement methods.
-</p>
+
 
 <h3 id="map-calls-format">Replacement file format</h3>
 <p>
 The replacement-file format is
 </p>
 <pre>
-global-replacements
-regex
-  specific-replacements
+global-replacement
+...
+class-name-regex
+  class-specific-replacement
   ...
-regex
-  specific-replacements
+class-name-regex
+  class-specific-replacement
   ...
 ...
 </pre>
@@ -1134,7 +1134,7 @@ replacements-file.)
 </p>
 
 <p>
-Replacements can be specified by package, class or method.
+A replacement can be specified by package, class or method.
 A <i>package replacement</i> is indicated by a line
 </p>
 <pre>
@@ -1149,10 +1149,10 @@ new package. For instance, the line
 java.awt mock.java.awt
 </pre>
 <p>
-would map a call to <code>java.awt.Button.getLabel()</code> to
-<code>mock.java.awt.Button.getLabel()</code>, and a call to
-<code>java.awt.Canvas.paint(Graphics)</code> to
-<code>mock.java.awt.Canvas.paint(Graphics)</code>.
+would map a call to <code><b>java.awt</b>.Button.getLabel()</code> to
+<code><b>mock.java.awt</b>.Button.getLabel()</code>, and a call to
+<code><b>java.awt</b>.Canvas.paint(Graphics)</code> to
+<code><b>mock.java.awt</b>.Canvas.paint(Graphics)</code>.
 </p>
 
 <p>
@@ -1169,8 +1169,8 @@ method with the same name in the new class. For instance, the line
 java.awt.Button mock.java.awt.Button
 </pre>
 <p>
-would map a call to <code>java.awt.Button.getLabel()</code> to
-<code>mock.java.awt.Button.getLabel()</code>.
+would map a call to <code><b>java.awt.Button</b>.getLabel()</code> to
+<code><b>mock.java.awt.Button</b>.getLabel()</code>.
 In contrast to the package replacement above, a call to
 <code>java.awt.Canvas.paint(Graphics)</code> would be unaffected.
 </p>
@@ -1196,14 +1196,14 @@ and would not affect the other methods in the class or package.
 
 <p>
 The replacements don't have to be specific about the class or method of the
-new name if they do not change. For instance, the method replacement above could
+new name if they do not change. For instance, the class replacement above could
 be written as
 </p>
 <pre>
   java.awt.Button mock.java.awt
 </pre>
 <p>
-and the class replacement could be written as
+and the method replacement could be written as
 </p>
 <pre>
   java.awt.Button.getLabel() mock.java.awt
@@ -1773,5 +1773,9 @@ please let us know so we can correct the oversight.
  -->
 <!--  LocalWords:  test10 var1 var2 s2 a1 ErrorTest RegressionTest o3 sgn
  -->
-<!--  LocalWords:  npe a' c' subtests AssertionError basename
+<!--  LocalWords:  npe a' c' subtests AssertionError basename myclasspath
+ -->
+<!--  LocalWords:  sof toradocu JSON pre AWT RandoopMappedCalls awt JRE
+ -->
+<!--  LocalWords:  classpaths ExampleClass Ayman Abdelghany Ren Kalauskas
  -->
