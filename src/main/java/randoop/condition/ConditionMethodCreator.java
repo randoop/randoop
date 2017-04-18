@@ -22,7 +22,7 @@ public class ConditionMethodCreator {
     try {
       conditionClass = compiler.compile(packageName, conditionClassName, classText);
     } catch (SequenceCompilerException e) {
-      String msg = getMessage(e.getDiagnostics().getDiagnostics());
+      String msg = getMessage(e.getDiagnostics().getDiagnostics(), classText);
       throw new RandoopConditionError(msg, e);
     }
     Method[] methods = conditionClass.getDeclaredMethods();
@@ -35,7 +35,8 @@ public class ConditionMethodCreator {
     return null;
   }
 
-  private static String getMessage(List<Diagnostic<? extends JavaFileObject>> diagnostics) {
+  private static String getMessage(
+      List<Diagnostic<? extends JavaFileObject>> diagnostics, String classText) {
     StringBuilder msg = new StringBuilder("Condition method did not compile: ");
     for (Diagnostic<? extends JavaFileObject> diag : diagnostics) {
       if (diag != null) {
@@ -50,6 +51,7 @@ public class ConditionMethodCreator {
         }
       }
     }
+    msg.append(String.format("%nClass Declaration:%n%s", classText));
     return msg.toString();
   }
 
