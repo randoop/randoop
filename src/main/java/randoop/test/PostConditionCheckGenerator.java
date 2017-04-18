@@ -40,6 +40,9 @@ public class PostConditionCheckGenerator implements TestCheckGenerator {
   public TestChecks visit(ExecutableSequence s) {
     int finalIndex = s.sequence.size() - 1;
     ExecutionOutcome result = s.getResult(finalIndex);
+
+    s.conditionType = ExecutableSequence.ConditionType.PARAM;
+
     TestChecks checks;
     if (result instanceof NotExecuted) {
       throw new Error("Abnormal execution in sequence: " + s);
@@ -63,6 +66,7 @@ public class PostConditionCheckGenerator implements TestCheckGenerator {
         checks = new ErrorRevealingChecks();
         checks.add(new PostConditionCheck(failed, inputs));
       }
+
       s.sequence.disableShortForm();
     } else { // if execution was exceptional, return empty checks
       checks = new ErrorRevealingChecks();

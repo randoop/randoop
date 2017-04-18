@@ -19,11 +19,9 @@ import randoop.condition.OutcomeTable;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
 import randoop.test.Check;
-import randoop.test.ExpectedExceptionGenerator;
 import randoop.test.FalseAlarmTestChecks;
 import randoop.test.InvalidChecks;
 import randoop.test.InvalidValueCheck;
-import randoop.test.PostConditionCheckGenerator;
 import randoop.test.PostConditionFailureChecks;
 import randoop.test.RegressionChecks;
 import randoop.test.TestCheckGenerator;
@@ -295,22 +293,13 @@ public class ExecutableSequence {
         TypedOperation operation = this.sequence.getStatement(i).getOperation();
         if (operation.isConstructorCall() || operation.isMethodCall()) {
           OutcomeTable outcome = operation.checkConditions(inputValues);
-          if (operation.hasPreconditions()) {
-            conditionType = ConditionType.PARAM;
-          }
           if (outcome.isInvalid()) {
-            //Not intended for release -- a hack to count false-alarms that become invalid due to precondition failures
+            conditionType = ConditionType.PARAM;
             conditionChecks = new InvalidChecks();
             conditionChecks.add(new InvalidValueCheck(this, i));
-            //return;
           }
           expected = outcome.addPostCheckGenerator(gen);
-          if (expected.getGenerator() instanceof PostConditionCheckGenerator) {
-            conditionType = ConditionType.RETURN;
-          } else if (expected.getGenerator() instanceof ExpectedExceptionGenerator) {
-            //this generator may be followed by an invalid check generator
-            conditionType = ConditionType.THROWS;
-          }
+          //note: condition type set by generator
         }
       }
 
@@ -345,6 +334,14 @@ public class ExecutableSequence {
 
     checks = gen.visit(this);
 
+    // did having conditions change the behavior?
+    //if post condition
+    if (conditionType != ConditionType.PARAM) {
+      if (expected != null) {
+        conditionChecks = expected.visit(this);
+      }
+    }
+
     if (conditionType == ConditionType.NONE) {
       if (checks.hasInvalidBehavior()) {
         conditionTransition = Transition.INVALID_TO_INVALID;
@@ -354,13 +351,6 @@ public class ExecutableSequence {
         conditionTransition = Transition.REGRESSION_TO_REGRESSION;
       }
       return;
-    }
-
-    // did having conditions change the behavior?
-    //if post condition
-    if (conditionType != ConditionType.PARAM) {
-      assert expected != null : "should have post-condition";
-      conditionChecks = expected.visit(this);
     }
 
     if (conditionChecks.hasInvalidBehavior()) {
@@ -388,7 +378,7 @@ public class ExecutableSequence {
         conditionTransition = Transition.REGRESSION_TO_REGRESSION;
       }
     }
-
+    assert conditionType != ConditionType.NONE;
     checks = conditionChecks;
   }
 
