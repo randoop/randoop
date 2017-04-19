@@ -188,7 +188,8 @@ public class OperationModelTest {
 
     List<TypedOperation> alphaOps = new ArrayList<>();
     for (TypedOperation operation : model.getOperations()) {
-      if (operation.getName().equals("alpha")) {
+      String simpleOpName = operation.getName().substring(operation.getName().lastIndexOf('.') + 1);
+      if (simpleOpName.equals("alpha")) {
         alphaOps.add(operation);
       }
     }
@@ -320,7 +321,8 @@ public class OperationModelTest {
     for (TypedOperation operation : operations) {
       if (!operation.isConstructorCall() && operation instanceof TypedClassOperation) {
         TypedClassOperation op = (TypedClassOperation) operation;
-        if (op.getName().equals("<get>(CONSTANT)")) {
+        String simpleOpName = op.getName().substring(op.getName().lastIndexOf('.') + 1);
+        if (simpleOpName.equals("<get>(CONSTANT)")) {
           constantOps.add(op);
         }
       }

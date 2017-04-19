@@ -5,7 +5,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
-import randoop.condition.ConditionCollection;
 import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
 import randoop.operation.MethodCall;
@@ -39,9 +38,6 @@ public class OperationExtractor extends DefaultClassVisitor {
   /** The collection of operations */
   private final Collection<TypedOperation> operations;
 
-  /** The collection of pre/post/throws-conditions to add to operations */
-  private final ConditionCollection operationConditions;
-
   /** The class type of the declaring class for the collected operations */
   private ClassOrInterfaceType classType;
 
@@ -53,27 +49,16 @@ public class OperationExtractor extends DefaultClassVisitor {
    * @param operations the collection of operations
    * @param predicate the reflection predicate
    * @param visibilityPredicate the predicate for test visibility
-   * @param operationConditions the collection of conditions to add to operations
    */
   public OperationExtractor(
       ClassOrInterfaceType classType,
       Collection<TypedOperation> operations,
       ReflectionPredicate predicate,
-      VisibilityPredicate visibilityPredicate,
-      ConditionCollection operationConditions) {
+      VisibilityPredicate visibilityPredicate) {
     this.classType = classType;
     this.operations = operations;
     this.predicate = predicate;
     this.visibilityPredicate = visibilityPredicate;
-    this.operationConditions = operationConditions;
-  }
-
-  public OperationExtractor(
-      ClassOrInterfaceType classType,
-      Collection<TypedOperation> operations,
-      ReflectionPredicate predicate,
-      VisibilityPredicate visibilityPredicate) {
-    this(classType, operations, predicate, visibilityPredicate, null);
   }
 
   /**
@@ -118,10 +103,6 @@ public class OperationExtractor extends DefaultClassVisitor {
       return;
     }
     TypedClassOperation operation = TypedOperation.forConstructor(constructor);
-    if (operationConditions != null) {
-      operation.addConditions(operationConditions.getPreconditions(constructor));
-      operation.addConditions(operationConditions.getThrowsConditions(constructor));
-    }
     addOperation(operation);
   }
 
@@ -147,10 +128,6 @@ public class OperationExtractor extends DefaultClassVisitor {
                 operation.getInputTypes(),
                 operation.getOutputType());
       }
-    }
-    if (operationConditions != null) {
-      operation.addConditions(operationConditions.getPreconditions(method));
-      operation.addConditions(operationConditions.getThrowsConditions(method));
     }
     addOperation(operation);
   }

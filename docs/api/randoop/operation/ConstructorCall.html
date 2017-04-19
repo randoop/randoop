@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ConstructorCall (randoop 3.1.2 API)</title>
+<title>ConstructorCall (randoop 3.1.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ConstructorCall (randoop 3.1.2 API)";
+            parent.document.title="ConstructorCall (randoop 3.1.4 API)";
         }
     }
     catch(err) {
@@ -384,7 +384,7 @@ extends <a href="../../randoop/operation/CallableOperation.html" title="class in
 <div class="block">Return the reflective constructor corresponding to this ConstructorCall.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd><code>Constructor</code> object called by this constructor call.</dd>
+<dd><code>Constructor</code> object called by this constructor call</dd>
 </dl>
 </li>
 </ul>
@@ -519,12 +519,10 @@ extends <a href="../../randoop/operation/CallableOperation.html" title="class in
 
  <p>Examples:
 
- <pre>
- <code>
-  java.util.ArrayList.&lt;init&gt;()
-  java.util.ArrayList.&lt;init&gt;(java.util.Collection)
- </code>
- </pre></div>
+ <pre><code>
+ java.util.ArrayList.&lt;init&gt;()
+ java.util.ArrayList.&lt;init&gt;(java.util.Collection)
+ </code></pre></div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/operation/CallableOperation.html#toParsableString-randoop.types.Type-randoop.types.TypeTuple-randoop.types.Type-">toParsableString</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/operation/CallableOperation.html" title="class in randoop.operation">CallableOperation</a></code></dd>
@@ -574,7 +572,7 @@ extends <a href="../../randoop/operation/CallableOperation.html" title="class in
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/operation/CallableOperation.html#isConstructorCall--">isConstructorCall</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/operation/CallableOperation.html" title="class in randoop.operation">CallableOperation</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true, because this is a <a href="../../randoop/operation/ConstructorCall.html" title="class in randoop.operation"><code>ConstructorCall</code></a>.</dd>
+<dd>true, because this is a <a href="../../randoop/operation/ConstructorCall.html" title="class in randoop.operation"><code>ConstructorCall</code></a></dd>
 </dl>
 </li>
 </ul>
@@ -608,7 +606,7 @@ extends <a href="../../randoop/operation/CallableOperation.html" title="class in
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/operation/CallableOperation.html#satisfies-randoop.reflection.ReflectionPredicate-">satisfies</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/operation/CallableOperation.html" title="class in randoop.operation">CallableOperation</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>predicate</code> - <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection"><code>ReflectionPredicate</code></a> against which object to be checked.</dd>
+<dd><code>predicate</code> - <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection"><code>ReflectionPredicate</code></a> against which object to be checked</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true only if the constructor in this object satisfies the <a href="../../randoop/reflection/ReflectionPredicate.html#test-java.lang.reflect.Constructor-"><code>ReflectionPredicate.test(Constructor)</code></a> implemented by predicate.</dd>
 </dl>

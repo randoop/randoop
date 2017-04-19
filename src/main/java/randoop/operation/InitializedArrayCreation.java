@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.ArrayType;
 import randoop.types.Type;
@@ -107,19 +106,7 @@ public final class InitializedArrayCreation extends CallableOperation {
         b.append(", ");
       }
 
-      String param = inputVars.get(i).getName();
-
-      // In the short output format, statements like "int x = 3" are not added
-      // to a sequence; instead, the value (e.g. "3") is inserted directly
-      // as arguments to method calls.
-      Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement();
-      if (statementCreatingVar.isPrimitiveInitialization()
-          && !statementCreatingVar.isNullInitialization()) {
-        String shortForm = statementCreatingVar.getShortForm();
-        if (shortForm != null) {
-          param = shortForm;
-        }
-      }
+      String param = getArgumentString(inputVars.get(i));
       b.append(param);
     }
     b.append(" }");

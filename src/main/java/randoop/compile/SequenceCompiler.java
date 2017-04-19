@@ -13,7 +13,7 @@ import javax.tools.ToolProvider;
  * Compiles a Java class given as a {@code String}.
  *
  * <p>A simplified version of the {@code javaxtools.compiler.CharSequenceCompiler} from <a
- * href="http://www.ibm.com/developerworks/library/j-jcomp/index.html">Create dynamic applications
+ * href="https://www.ibm.com/developerworks/library/j-jcomp/index.html">Create dynamic applications
  * with javax.tools</a>.
  */
 public class SequenceCompiler {

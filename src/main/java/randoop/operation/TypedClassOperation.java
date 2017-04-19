@@ -143,7 +143,12 @@ public class TypedClassOperation extends TypedOperation {
       b.append(UtilMDE.join(this.getTypeParameters(), ","));
       b.append(">").append(" ");
     }
-    return b.toString() + declaringType + "." + super.toString();
+    return b.toString() + super.toString();
+  }
+
+  @Override
+  public String getName() {
+    return declaringType + "." + super.getName();
   }
 
   @Override

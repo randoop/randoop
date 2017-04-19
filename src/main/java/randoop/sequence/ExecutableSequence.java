@@ -16,11 +16,7 @@ import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.TypedOperation;
 import randoop.test.Check;
-import randoop.test.ExtendGenerator;
-import randoop.test.InvalidChecks;
-import randoop.test.InvalidValueCheck;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
 import randoop.types.ReferenceType;
@@ -167,7 +163,9 @@ public class ExecutableSequence {
       // Only print primitive declarations if the last/only statement
       // of the sequence, because, otherwise, primitive values will be used as
       // actual parameters: e.g. "foo(3)" instead of "int x = 3 ; foo(x)"
-      if (sequence.getStatement(i).getShortForm() != null && i < sequence.size() - 1) {
+      if (sequence.canUseShortForm()
+          && sequence.getStatement(i).getShortForm() != null
+          && i < sequence.size() - 1) {
         continue;
       }
 
@@ -279,24 +277,6 @@ public class ExecutableSequence {
       Object[] inputValues;
 
       inputValues = getRuntimeInputs(executionResults.theList, inputs);
-
-      if (i == this.sequence.size() - 1) {
-        TypedOperation operation = this.sequence.getStatement(i).getOperation();
-        if (operation.isConstructorCall() || operation.isMethodCall()) {
-          if (!operation.checkPreconditions(inputValues)) {
-            //set checks invalid and return
-            checks = new InvalidChecks();
-            checks.add(new InvalidValueCheck(this, i));
-            return;
-          }
-          // if the operation is expected to throw an exception for these inputs
-          TestCheckGenerator expected = operation.getPostCheckGenerator(inputValues);
-          if (expected != null) {
-            //then extend TestCheckGenerator gen with check for postcondition/exception
-            gen = new ExtendGenerator(expected, gen);
-          }
-        }
-      }
 
       visitor.visitBeforeStatement(this, i);
       executeStatement(sequence, executionResults.theList, i, inputValues);

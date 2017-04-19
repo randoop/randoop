@@ -36,6 +36,8 @@ import randoop.types.TypeTuple;
 
 public class VisibilityTest {
 
+  //TODO need to add test case for when o.getPackage()==null for objects passed to predicate
+
   /*
    * package private class
    * package visibility
@@ -101,8 +103,8 @@ public class VisibilityTest {
       fail("should have nonempty expected method set");
     }
 
-    Package testPackage = Package.getPackage("randoop.reflection.visibilitytest");
-    VisibilityPredicate visibility = new PackageVisibilityPredicate(testPackage);
+    VisibilityPredicate visibility =
+        new PackageVisibilityPredicate("randoop.reflection.visibilitytest");
 
     assertTrue("class should be visible", visibility.isVisible(c));
 
@@ -304,8 +306,8 @@ public class VisibilityTest {
 
     assertFalse("should have nonempty expected  method set", expectedMethods.isEmpty());
 
-    Package testPackage = Package.getPackage("randoop.reflection.visibilitytest");
-    VisibilityPredicate visibility = new PackageVisibilityPredicate(testPackage);
+    VisibilityPredicate visibility =
+        new PackageVisibilityPredicate("randoop.reflection.visibilitytest");
 
     assertTrue("class should be visible", visibility.isVisible(c));
 
