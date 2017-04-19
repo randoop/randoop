@@ -113,7 +113,7 @@ public class SpecificationCollection {
         }
         try {
           accessibleObject = getReflectionObject(operation);
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | NoClassDefFoundError e) {
           String msg =
               String.format(
                   "Could not load operation for specification: %n%s%n" + "Class not found: %s",
