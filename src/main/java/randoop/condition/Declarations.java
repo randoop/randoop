@@ -46,7 +46,7 @@ public class Declarations {
     if (object instanceof Method) {
       Method method = (Method) object;
       return new Declarations(
-          method.getDeclaringClass().getPackage().getName(),
+          getPackageName(method),
           method.getReturnType(),
           identifiers.getReturnName(),
           method.getDeclaringClass(),
@@ -65,6 +65,25 @@ public class Declarations {
           identifiers.getParameterNames());
     }
     return null;
+  }
+
+  /**
+   * Returns a package name for a condition method for the {@code Method}. If the package name for
+   * the {@code Method} object begins with {@code java.}, the returned name has {@code randoop.}
+   * added to the front. Otherwise, the returned package name is the same as for the {@code Method}
+   * object.
+   *
+   * @param method the {@code Method} used to find the package name
+   * @return the package name for {@code method} or if that package begins with {@code java.}, a
+   *     package name beginning with {@code randoop.} followed by the package name of {@code
+   *     method}.
+   */
+  private static String getPackageName(Method method) {
+    String packageName = method.getDeclaringClass().getPackage().getName();
+    if (packageName.startsWith("java.")) {
+      packageName = "randoop." + packageName;
+    }
+    return packageName;
   }
 
   /**
