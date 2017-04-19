@@ -1,0 +1,23 @@
+//
+// This file specifies a set of method call substitutions when running
+// under Randoop.
+// You don't have to use it, because Randoop already has these particular
+// substitutions built in.
+//
+// This file transforms calls that are made from the 
+// com.mypackage and com.myotherpackage packages.
+//  * calls that put up a dialog box (popup)
+//  * calls to System.exit
+//
+// You must supply a RandoopMappedCalls.class file to Randoop when using
+// these method call substitutions.  The supplied one
+//  * converts dialog box calls into a call that writes a message to standard
+//    out.  This allows the tests to run without human intervention.
+//  * converts System.exit calls to write a message.
+//    This prevents the program under test from terminationg Randoop.
+
+com.mypackage.*|com.myotherpackage.*
+  javax.swing.JOptionPane.showMessageDialog(java.awt.Component, java.lang.Object, java.lang.String, int) com.mypackage.RandoopMappedCalls
+  javax.swing.JOptionPane.showConfirmDialog(java.awt.Component, java.lang.Object, java.lang.String, int) com.mypackage.RandoopMappedCalls
+  javax.swing.JOptionPane.showConfirmDialog(java.awt.Component, java.lang.Object, java.lang.String, int, int) com.mypackage.RandoopMappedCalls
+  java.lang.System.exit(int) com.mypackage.RandoopMappedCalls
