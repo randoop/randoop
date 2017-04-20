@@ -1062,6 +1062,9 @@ Rather than preventing Randoop from calling the problematic methods, you
 will provide an alternate implementation of the method that will be used
 when running Randoop.
 </p>
+<pre>
+    -javaagent:$(RANDOOP_PATH)/mapcall-3.1.4.jar=--map_calls=map_calls.txt
+</pre>
 
 <p>
 To transform calls to undesired methods so that they use an alternate
