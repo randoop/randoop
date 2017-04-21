@@ -112,9 +112,17 @@ public class OperationConditions {
   }
 
   public boolean isEmpty() {
-    return preconditions.isEmpty()
-        && returnConditions.isEmpty()
-        && throwsConditions.isEmpty()
-        && parentList.isEmpty();
+    if (!preconditions.isEmpty()
+        || !returnConditions.isEmpty()
+        || !throwsConditions.isEmpty()
+        || !parentList.isEmpty()) {
+      return false;
+    }
+    for (OperationConditions conditions : parentList) {
+      if (!conditions.isEmpty()) {
+        return false;
+      }
+    }
+    return true;
   }
 }
