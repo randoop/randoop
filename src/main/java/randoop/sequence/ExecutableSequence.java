@@ -293,8 +293,10 @@ public class ExecutableSequence {
         TypedOperation operation = this.sequence.getStatement(i).getOperation();
         if (operation.isConstructorCall() || operation.isMethodCall()) {
           OutcomeTable outcome = operation.checkConditions(inputValues);
-          if (outcome.isInvalid()) {
+          if (operation.hasPreconditions()) {
             conditionType = ConditionType.PARAM;
+          }
+          if (outcome.isInvalid()) {
             conditionChecks = new InvalidChecks();
             conditionChecks.add(new InvalidValueCheck(this, i));
           }
