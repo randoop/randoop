@@ -594,7 +594,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static FileWriter log = null;
 
   @Option("Name of file to write sequence classification information")
-  public static FileWriter transition_log = null;
+  public static String transition_dir = null;
 
   /**
    * Create sequences but never execute them. Used to test performance of Randoop's sequence

@@ -4,7 +4,11 @@ import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -351,6 +355,28 @@ public class GenTests extends GenInputsAbstract {
       observers.addAll(observerMap.getValues(keyType));
     }
 
+    FileWriter transitionLog = null;
+    File transitionDir = null;
+    if (GenInputsAbstract.transition_dir != null) {
+      transitionDir = new File(GenInputsAbstract.transition_dir);
+      if (!transitionDir.exists()) {
+        boolean success = transitionDir.mkdir();
+        if (!success) {
+          System.out.println("Error creating directory: " + GenInputsAbstract.transition_dir);
+          System.exit(1);
+        }
+      }
+      File transitionLogFile = new File(transitionDir, "transition-log.txt");
+      try {
+        transitionLog = new FileWriter(transitionLogFile, true);
+        transitionLog.write(String.format("******** run start *********%n"));
+        transitionLog.flush();
+      } catch (IOException e) {
+        System.out.printf("Error setting up transition directory");
+        System.exit(1);
+      }
+    }
+
     /*
      * Create the generator for this session.
      */
@@ -363,7 +389,8 @@ public class GenTests extends GenInputsAbstract {
             inputlimit,
             outputlimit,
             componentMgr,
-            listenerMgr);
+            listenerMgr,
+            transitionLog);
 
     /*
      * setup for check generation
@@ -475,6 +502,15 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     }
 
+    if (transitionLog != null) {
+      try {
+        transitionLog.close();
+      } catch (IOException e) {
+        System.out.println("Error closing transition log file");
+        System.exit(1);
+      }
+    }
+
     /* post generation */
     if (GenInputsAbstract.dont_output_tests) {
       return true;
@@ -513,8 +549,18 @@ public class GenTests extends GenInputsAbstract {
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.printf("%nInvalid tests generated: %d", explorer.invalidSequenceCount);
       System.out.printf("%nCondition Transitions:%n");
-      explorer.printConditionTransition(System.out);
     }
+
+    if (GenInputsAbstract.transition_dir != null) {
+      File transitionTable = new File(transitionDir, "transition-table.txt");
+      try (PrintStream out = new PrintStream(new FileOutputStream(transitionTable, true))) {
+        explorer.printConditionTransition(out);
+      } catch (FileNotFoundException e) {
+        System.out.printf("Error: unable to open transition-table file");
+        System.exit(1);
+      }
+    }
+
     return true;
   }
 

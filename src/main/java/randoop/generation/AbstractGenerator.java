@@ -3,6 +3,7 @@ package randoop.generation;
 import static randoop.sequence.ExecutableSequence.ConditionType;
 import static randoop.sequence.ExecutableSequence.Transition;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -60,6 +61,8 @@ public abstract class AbstractGenerator {
   private EnumMap<ExecutableSequence.ConditionType, EnumMap<ExecutableSequence.Transition, Integer>>
       conditionTransitionCounts = new EnumMap<>(ConditionType.class);
 
+  private FileWriter transitionLog;
+
   private void handleConditionTransition(ExecutableSequence eSeq) {
     // count transitions
     addConditionTransition(eSeq.conditionType, eSeq.conditionTransition);
@@ -68,19 +71,19 @@ public abstract class AbstractGenerator {
       return;
     }
 
-    if (GenInputsAbstract.transition_log != null) {
+    if (transitionLog != null) {
       try {
-        GenInputsAbstract.transition_log.write(
+        transitionLog.write(
             "type: "
                 + eSeq.conditionType.name()
                 + " transition: "
                 + eSeq.conditionTransition.name()
                 + Globals.lineSep);
-        GenInputsAbstract.transition_log.write(eSeq.toCodeString() + Globals.lineSep);
-        GenInputsAbstract.transition_log.write("-----------------------" + Globals.lineSep);
-        GenInputsAbstract.transition_log.flush();
+        transitionLog.write(eSeq.toCodeString() + Globals.lineSep);
+        transitionLog.write("-----------------------" + Globals.lineSep);
+        transitionLog.flush();
       } catch (IOException e) {
-        throw new Error("error while writing transition log: " + GenInputsAbstract.transition_log);
+        throw new Error("error while writing transition log: " + transitionLog);
       }
     }
   }
@@ -227,7 +230,8 @@ public abstract class AbstractGenerator {
       int maxOutSequences,
       ComponentManager componentManager,
       IStopper stopper,
-      RandoopListenerManager listenerManager) {
+      RandoopListenerManager listenerManager,
+      FileWriter transitionLog) {
     assert operations != null;
 
     this.maxTimeMillis = timeMillis;
@@ -245,6 +249,7 @@ public abstract class AbstractGenerator {
 
     this.stopper = stopper;
     this.listenerMgr = listenerManager;
+    this.transitionLog = transitionLog;
   }
 
   /**
