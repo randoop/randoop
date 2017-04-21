@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
+import randoop.condition.OperationConditions;
 import randoop.condition.SpecificationCollection;
 import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
@@ -119,9 +120,13 @@ public class OperationExtractor extends DefaultClassVisitor {
     }
     TypedClassOperation operation = TypedOperation.forConstructor(constructor);
     if (operationSpecifications != null) {
-      operation.addConditions(operationSpecifications.getOperationConditions(constructor));
+      OperationConditions conditions = operationSpecifications.getOperationConditions(constructor);
+      if (!conditions.isEmpty()) {
+        operation.addConditions(conditions);
+        addOperation(operation);
+      }
     }
-    addOperation(operation);
+    //addOperation(operation);
   }
 
   /**
@@ -148,9 +153,13 @@ public class OperationExtractor extends DefaultClassVisitor {
       }
     }
     if (operationSpecifications != null) {
-      operation.addConditions(operationSpecifications.getOperationConditions(method));
+      OperationConditions conditions = operationSpecifications.getOperationConditions(method);
+      if (!conditions.isEmpty()) {
+        operation.addConditions(conditions);
+        addOperation(operation);
+      }
     }
-    addOperation(operation);
+    //addOperation(operation);
   }
 
   /**
