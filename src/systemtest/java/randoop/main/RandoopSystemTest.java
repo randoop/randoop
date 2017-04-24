@@ -844,6 +844,46 @@ public class RandoopSystemTest {
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
   }
 
+  //TODO need these 3 together: counts should not change when standard classification changes
+  /*
+    @Test
+    public void runToradocuExampleWithInvalidExceptionsTest() {
+      TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("toradocu-input");
+      RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+      options.addTestClass("net.Connection");
+      options.setOption(
+              "specifications", "resources/systemTest/net/net_connection_toradocu_spec.json");
+      options.setErrorBasename("ConditionError");
+      options.setRegressionBasename("ConditionRegression");
+      options.setOption("timelimit", "30");
+      options.setOption("outputlimit", "200");
+      options.setOption("checked-exception","INVALID");
+      options.setOption("unchecked-exception","INVALID");
+
+      //TODO should check for invalid test count
+      generateAndTestWithCoverage(
+              testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
+    }
+
+    @Test
+    public void runToradocuExampleWithErrorExceptionsTest() {
+      TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("toradocu-input");
+      RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+      options.addTestClass("net.Connection");
+      options.setOption(
+              "specifications", "resources/systemTest/net/net_connection_toradocu_spec.json");
+      options.setErrorBasename("ConditionError");
+      options.setRegressionBasename("ConditionRegression");
+      options.setOption("timelimit", "30");
+      options.setOption("outputlimit", "200");
+      options.setOption("checked-exception","ERROR");
+      options.setOption("unchecked-exception","ERROR");
+
+      //TODO should check for invalid test count
+      generateAndTestWithCoverage(
+              testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
+    }
+  */
   @Test
   public void runInheritedToradocuTest() {
     TestEnvironment testEnvironment =
