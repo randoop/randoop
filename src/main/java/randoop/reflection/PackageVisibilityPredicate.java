@@ -18,7 +18,7 @@ import java.lang.reflect.Modifier;
 public class PackageVisibilityPredicate implements VisibilityPredicate {
 
   /** The package name from which to test visibility of elements. */
-  private String packageName;
+  private final String packageName;
 
   /**
    * Create a predicate that tests visibility. Class members must either be public, or accessible
@@ -87,7 +87,11 @@ public class PackageVisibilityPredicate implements VisibilityPredicate {
    *     private is not set in modifiers, false otherwise
    */
   private boolean isVisible(int mods, Package otherPackage) {
+    String otherPackageName = "";
+    if (otherPackage != null) {
+      otherPackageName = otherPackage.getName();
+    }
     return Modifier.isPublic(mods)
-        || (packageName.equals(otherPackage.getName()) && !Modifier.isPrivate(mods));
+        || (packageName.equals(otherPackageName) && !Modifier.isPrivate(mods));
   }
 }

@@ -8,7 +8,6 @@ import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.reflection.ReflectionPredicate;
-import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
@@ -129,19 +128,7 @@ public final class ConstructorCall extends CallableOperation {
         b.append("(").append(inputTypes.get(i).getName()).append(")");
       }
 
-      String param = inputVars.get(i).getName();
-
-      // In the short output format, statements that assign to a primitive
-      // or string literal, like "int x = 3" are not added to a sequence;
-      // instead, the value (e.g. "3") is inserted directly added as
-      // arguments to method calls.
-      Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement();
-
-      String shortForm = statementCreatingVar.getShortForm();
-      if (shortForm != null) {
-        param = shortForm;
-      }
-
+      String param = getArgumentString(inputVars.get(i));
       b.append(param);
     }
     b.append(")");

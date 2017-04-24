@@ -10,7 +10,6 @@ import randoop.NormalExecution;
 import randoop.field.AccessibleField;
 import randoop.field.FieldParser;
 import randoop.reflection.ReflectionPredicate;
-import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
@@ -107,16 +106,7 @@ public class FieldSet extends CallableOperation {
 
     // variable/value to be assigned is either only or second entry in list
     int index = inputVars.size() - 1;
-
-    // TODO this is duplicate code from RMethod - should factor out behavior
-    String rhs = inputVars.get(index).getName();
-    Statement statementCreatingVar = inputVars.get(index).getDeclaringStatement();
-
-    String shortForm = statementCreatingVar.getShortForm();
-    if (shortForm != null) {
-      rhs = shortForm;
-    }
-
+    String rhs = getArgumentString(inputVars.get(index));
     b.append(rhs);
   }
 

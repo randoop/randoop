@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>AbstractGenerator (randoop 3.1.2 API)</title>
+<title>AbstractGenerator (randoop 3.1.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="AbstractGenerator (randoop 3.1.2 API)";
+            parent.document.title="AbstractGenerator (randoop 3.1.4 API)";
         }
     }
     catch(err) {
@@ -210,7 +210,7 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#num_steps">num_steps</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>java.util.List&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;</code></td>
+<td class="colFirst"><code>protected java.util.List&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/AbstractGenerator.html#operations">operations</a></span></code>
 <div class="block">The list of statement kinds (methods, constructors, primitive value declarations, etc.) used to
  generate sequences.</div>
@@ -504,7 +504,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>operations</h4>
-<pre>public&nbsp;java.util.List&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt; operations</pre>
+<pre>protected final&nbsp;java.util.List&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt; operations</pre>
 <div class="block">The list of statement kinds (methods, constructors, primitive value declarations, etc.) used to
  generate sequences. In other words, statements specifies the universe of operations from which
  sequences are generated.</div>
@@ -642,7 +642,7 @@ extends java.lang.Object</pre>
 <div class="block">Constructs a generator with the given parameters.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>operations</code> - Statements (e.g. methods and constructors) used to create sequences. Cannot
+<dd><code>operations</code> - statements (e.g. methods and constructors) used to create sequences. Cannot
      be null.</dd>
 <dd><code>timeMillis</code> - maximum time to spend in generation. Must be non-negative.</dd>
 <dd><code>maxGeneratedSequences</code> - the maximum number of sequences to generate. Must be non-negative.</dd>
@@ -650,8 +650,8 @@ extends java.lang.Object</pre>
 <dd><code>componentManager</code> - the component manager to use to store sequences during component-based
      generation. Can be null, in which case the generator's component manager is initialized as
      <code>new ComponentManager()</code>.</dd>
-<dd><code>stopper</code> - Optional, additional stopping criterion for the generator. Can be null.</dd>
-<dd><code>listenerManager</code> - Manager that stores and calls any listeners to use during generation.
+<dd><code>stopper</code> - optional, additional stopping criterion for the generator. Can be null.</dd>
+<dd><code>listenerManager</code> - manager that stores and calls any listeners to use during generation.
      Can be null.</dd>
 </dl>
 </li>
