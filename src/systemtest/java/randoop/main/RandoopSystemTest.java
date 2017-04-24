@@ -223,6 +223,8 @@ public class RandoopSystemTest {
       /* Inconsistent locally, covered on Travis */
       coverageChecker.ignore(
           "java2.util2.Collections.max(java2.util2.Collection, java2.util2.Comparator)");
+      /* Inconsistent on Travis */
+      coverageChecker.ignore("java2.util2.Collections.eq(java.lang.Object, java.lang.Object)");
     }
 
     // Coverage inconsistencies
@@ -486,6 +488,7 @@ public class RandoopSystemTest {
     if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS_OR_ALL) {
       /* Covered locally, inconsistent on Travis */
       coverageChecker.ignore("examples.Buggy.BuggyCompareToSubs.getOne()");
+      coverageChecker.ignore("examples.Buggy.BuggyCompareToSubs.getThree()");
       /* Inconsistent locally, covered on Travis */
       coverageChecker.ignore("examples.Buggy.BuggyCompareToTransitive.getTwo()");
       /* high suspicion this method is inconsistent on Travis is well */
