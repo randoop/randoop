@@ -111,6 +111,7 @@ public class ICSE07ContainersTest {
             Integer.MAX_VALUE,
             componentMgr,
             stopper,
+            null,
             null);
     explorer.addTestCheckGenerator(new DummyCheckGenerator());
     explorer.explore();

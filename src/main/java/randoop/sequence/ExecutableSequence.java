@@ -118,6 +118,8 @@ public class ExecutableSequence {
   private static PrintStream ps_output_buffer = new PrintStream(output_buffer);
 
   private IdentityMultiMap<Object, Variable> variableMap;
+  public GenInputsAbstract.BehaviorType standardClassification;
+  public GenInputsAbstract.BehaviorType conditionClassification;
 
   /**
    * Create an executable sequence that executes the given sequence.
@@ -293,9 +295,6 @@ public class ExecutableSequence {
         TypedOperation operation = this.sequence.getStatement(i).getOperation();
         if (operation.isConstructorCall() || operation.isMethodCall()) {
           OutcomeTable outcome = operation.checkConditions(inputValues);
-          if (operation.hasPreconditions()) {
-            conditionType = ConditionType.PARAM;
-          }
           if (outcome.isInvalid()) {
             conditionChecks = new InvalidChecks();
             conditionChecks.add(new InvalidValueCheck(this, i));
@@ -335,78 +334,28 @@ public class ExecutableSequence {
     visitor.visitAfterSequence(this);
 
     checks = gen.visit(this);
+    standardClassification = classify(checks);
 
-    // did having conditions change the behavior?
-    //if post condition
-    if (conditionType != ConditionType.PARAM) {
+    if (!conditionChecks.hasInvalidBehavior()) {
       if (expected != null) {
         conditionChecks = expected.visit(this);
       }
     }
 
-    if (conditionType == ConditionType.NONE) {
-      if (checks.hasInvalidBehavior()) {
-        conditionTransition = Transition.INVALID_TO_INVALID;
-      } else if (checks.hasErrorBehavior()) {
-        conditionTransition = Transition.ERROR_TO_ERROR;
-      } else {
-        conditionTransition = Transition.REGRESSION_TO_REGRESSION;
-      }
-      return;
-    }
+    conditionClassification = classify(conditionChecks);
 
-    if (conditionChecks.hasInvalidBehavior()) {
-      if (checks.hasInvalidBehavior()) {
-        conditionTransition = Transition.INVALID_TO_INVALID;
-      } else if (checks.hasErrorBehavior()) {
-        conditionTransition = Transition.ERROR_TO_INVALID;
-      } else {
-        conditionTransition = Transition.REGRESSION_TO_INVALID;
-      }
-    } else if (conditionChecks.hasErrorBehavior()) {
-      if (checks.hasInvalidBehavior()) {
-        conditionTransition = Transition.INVALID_TO_ERROR;
-      } else if (checks.hasErrorBehavior()) {
-        conditionTransition = Transition.ERROR_TO_ERROR;
-      } else {
-        conditionTransition = Transition.REGRESSION_TO_ERROR;
-      }
-    } else {
-      if (checks.hasInvalidBehavior()) {
-        conditionTransition = Transition.INVALID_TO_REGRESSION;
-      } else if (checks.hasErrorBehavior()) {
-        conditionTransition = Transition.ERROR_TO_REGRESSION;
-      } else {
-        conditionTransition = Transition.REGRESSION_TO_REGRESSION;
-      }
-    }
-    assert conditionType != ConditionType.NONE;
     checks = conditionChecks;
   }
 
-  public enum Transition {
-    REGRESSION_TO_ERROR,
-    REGRESSION_TO_INVALID,
-    REGRESSION_TO_REGRESSION,
-    INVALID_TO_ERROR,
-    INVALID_TO_INVALID,
-    INVALID_TO_REGRESSION,
-    ERROR_TO_INVALID,
-    ERROR_TO_REGRESSION,
-    ERROR_TO_ERROR,
-    NONE;
+  private GenInputsAbstract.BehaviorType classify(TestChecks checks) {
+    if (checks.hasInvalidBehavior()) {
+      return GenInputsAbstract.BehaviorType.INVALID;
+    } else if (checks.hasErrorBehavior()) {
+      return GenInputsAbstract.BehaviorType.ERROR;
+    } else {
+      return GenInputsAbstract.BehaviorType.EXPECTED;
+    }
   }
-
-  public Transition conditionTransition = Transition.NONE;
-
-  public enum ConditionType {
-    RETURN,
-    THROWS,
-    PARAM,
-    NONE;
-  }
-
-  public ConditionType conditionType = ConditionType.NONE;
 
   public Object[] getRuntimeInputs(List<Variable> inputs) {
     return getRuntimeInputs(executionResults.theList, inputs);

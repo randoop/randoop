@@ -1,8 +1,5 @@
 package randoop.generation;
 
-import static randoop.sequence.ExecutableSequence.ConditionType;
-import static randoop.sequence.ExecutableSequence.Transition;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -58,26 +55,22 @@ public abstract class AbstractGenerator {
   @RandoopStat("Number of invalid sequences generated.")
   public int invalidSequenceCount = 0;
 
-  private EnumMap<ExecutableSequence.ConditionType, EnumMap<ExecutableSequence.Transition, Integer>>
-      conditionTransitionCounts = new EnumMap<>(ConditionType.class);
+  private EnumMap<GenInputsAbstract.BehaviorType, EnumMap<GenInputsAbstract.BehaviorType, Integer>>
+      transitionCountMap = new EnumMap<>(GenInputsAbstract.BehaviorType.class);
 
   private FileWriter transitionLog;
 
   private void handleConditionTransition(ExecutableSequence eSeq) {
     // count transitions
-    addConditionTransition(eSeq.conditionType, eSeq.conditionTransition);
-
-    if (eSeq.conditionType == ConditionType.NONE) {
-      return;
-    }
+    addConditionTransition(eSeq);
 
     if (transitionLog != null) {
       try {
         transitionLog.write(
-            "type: "
-                + eSeq.conditionType.name()
-                + " transition: "
-                + eSeq.conditionTransition.name()
+            "transition: "
+                + eSeq.standardClassification.name()
+                + " => "
+                + eSeq.conditionClassification
                 + Globals.lineSep);
         transitionLog.write(eSeq.toCodeString() + Globals.lineSep);
         transitionLog.write("-----------------------" + Globals.lineSep);
@@ -88,37 +81,39 @@ public abstract class AbstractGenerator {
     }
   }
 
-  private void addConditionTransition(ConditionType type, Transition transition) {
-    EnumMap<ExecutableSequence.Transition, Integer> transitionMap =
-        conditionTransitionCounts.get(type);
-    if (transitionMap == null) {
-      transitionMap = new EnumMap<>(Transition.class);
+  private void addConditionTransition(ExecutableSequence eSeq) {
+    EnumMap<GenInputsAbstract.BehaviorType, Integer> countMap =
+        transitionCountMap.get(eSeq.standardClassification);
+    if (countMap == null) {
+      countMap = new EnumMap<>(GenInputsAbstract.BehaviorType.class);
     }
-    Integer count = transitionMap.get(transition);
+    Integer count = countMap.get(eSeq.conditionClassification);
     if (count == null) {
-      transitionMap.put(transition, 1);
+      countMap.put(eSeq.conditionClassification, 1);
     } else {
-      transitionMap.put(transition, count + 1);
+      countMap.put(eSeq.conditionClassification, count + 1);
     }
-    conditionTransitionCounts.put(type, transitionMap);
+    transitionCountMap.put(eSeq.standardClassification, countMap);
   }
 
-  public void printConditionTransition(PrintStream out) {
-    out.printf("Condition Type");
-    for (Transition transition : Transition.values()) {
-      out.printf(",%s", transition.name());
+  public void printTransitionTable(PrintStream out) {
+    out.printf("Classification");
+    for (GenInputsAbstract.BehaviorType behaviorType : GenInputsAbstract.BehaviorType.values()) {
+      out.printf(",%s", behaviorType.name());
     }
     out.printf("%n");
-    for (ConditionType type : ConditionType.values()) {
+    for (GenInputsAbstract.BehaviorType type : GenInputsAbstract.BehaviorType.values()) {
       out.printf("%s", type.name());
-      EnumMap<Transition, Integer> transitionMap = conditionTransitionCounts.get(type);
+      EnumMap<GenInputsAbstract.BehaviorType, Integer> transitionMap = transitionCountMap.get(type);
       if (transitionMap == null) {
-        for (Transition transition : Transition.values()) {
+        for (GenInputsAbstract.BehaviorType conditionType :
+            GenInputsAbstract.BehaviorType.values()) {
           out.printf(",%d", 0);
         }
       } else {
-        for (Transition transition : Transition.values()) {
-          Integer count = transitionMap.get(transition);
+        for (GenInputsAbstract.BehaviorType conditionType :
+            GenInputsAbstract.BehaviorType.values()) {
+          Integer count = transitionMap.get(conditionType);
           if (count != null) {
             out.printf(",%d", (int) count);
           } else {

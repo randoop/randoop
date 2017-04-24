@@ -125,7 +125,8 @@ public class SpecialCoveredClassTest {
             GenInputsAbstract.inputlimit,
             GenInputsAbstract.outputlimit,
             componentMgr,
-            listenerMgr);
+            listenerMgr,
+            null);
     GenTests genTests = new GenTests();
 
     TypedOperation objectConstructor = null;

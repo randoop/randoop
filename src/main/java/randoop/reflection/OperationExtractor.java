@@ -123,10 +123,9 @@ public class OperationExtractor extends DefaultClassVisitor {
       OperationConditions conditions = operationSpecifications.getOperationConditions(constructor);
       if (!conditions.isEmpty()) {
         operation.addConditions(conditions);
-        addOperation(operation);
       }
     }
-    //addOperation(operation);
+    addOperation(operation);
   }
 
   /**
@@ -156,10 +155,9 @@ public class OperationExtractor extends DefaultClassVisitor {
       OperationConditions conditions = operationSpecifications.getOperationConditions(method);
       if (!conditions.isEmpty()) {
         operation.addConditions(conditions);
-        addOperation(operation);
       }
     }
-    //addOperation(operation);
+    addOperation(operation);
   }
 
   /**

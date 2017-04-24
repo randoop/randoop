@@ -249,8 +249,8 @@ public class TestFilteringTest {
             GenInputsAbstract.inputlimit,
             GenInputsAbstract.outputlimit,
             componentMgr,
-            null,
-            listenerMgr);
+            listenerMgr,
+            null);
     GenTests genTests = new GenTests();
     Predicate<ExecutableSequence> isOutputTest =
         genTests.createTestOutputPredicate(new HashSet<Sequence>(), new HashSet<Class<?>>(), null);

@@ -554,7 +554,7 @@ public class GenTests extends GenInputsAbstract {
     if (GenInputsAbstract.transition_dir != null) {
       File transitionTable = new File(transitionDir, "transition-table.txt");
       try (PrintStream out = new PrintStream(new FileOutputStream(transitionTable, true))) {
-        explorer.printConditionTransition(out);
+        explorer.printTransitionTable(out);
       } catch (FileNotFoundException e) {
         System.out.printf("Error: unable to open transition-table file");
         System.exit(1);

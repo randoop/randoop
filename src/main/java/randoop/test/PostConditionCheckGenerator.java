@@ -41,8 +41,6 @@ public class PostConditionCheckGenerator implements TestCheckGenerator {
     int finalIndex = s.sequence.size() - 1;
     ExecutionOutcome result = s.getResult(finalIndex);
 
-    s.conditionType = ExecutableSequence.ConditionType.PARAM;
-
     TestChecks checks;
     if (result instanceof NotExecuted) {
       throw new Error("Abnormal execution in sequence: " + s);

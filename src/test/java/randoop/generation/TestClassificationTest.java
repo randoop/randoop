@@ -401,8 +401,8 @@ public class TestClassificationTest {
             GenInputsAbstract.inputlimit,
             GenInputsAbstract.outputlimit,
             componentMgr,
-            null,
-            listenerMgr);
+            listenerMgr,
+            null);
     Predicate<ExecutableSequence> isOutputTest = new AlwaysTrue<>();
     gen.addTestPredicate(isOutputTest);
 
