@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import javax.tools.DiagnosticCollector;
-import javax.tools.JavaFileObject;
 import plume.Pair;
 import plume.UtilMDE;
 import randoop.compile.SequenceClassLoader;
@@ -72,10 +70,9 @@ public class SpecificationCollection {
     this.signatureMap = signatureMap;
     this.parentMap = parentMap;
     this.conditionMap = new HashMap<>();
-    DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
     SequenceClassLoader sequenceClassLoader = new SequenceClassLoader(getClass().getClassLoader());
     List<String> options = new ArrayList<>();
-    this.compiler = new SequenceCompiler(sequenceClassLoader, options, diagnostics);
+    this.compiler = new SequenceCompiler(sequenceClassLoader, options);
   }
 
   /**

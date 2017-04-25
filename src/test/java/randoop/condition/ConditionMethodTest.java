@@ -83,6 +83,6 @@ public class ConditionMethodTest {
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
     SequenceClassLoader sequenceClassLoader = new SequenceClassLoader(getClass().getClassLoader());
     List<String> options = new ArrayList<>();
-    return new SequenceCompiler(sequenceClassLoader, options, diagnostics);
+    return new SequenceCompiler(sequenceClassLoader, options);
   }
 }
