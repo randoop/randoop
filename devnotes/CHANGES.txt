@@ -1,3 +1,8 @@
+Version 3.1.5, released X X, 2017
+
+- fixes some things a user wont know about yet
+
+
 Version 3.1.4, released April 11, 2017
 
 Fixes a bug uncovered in obscure cases when package visibility is used.

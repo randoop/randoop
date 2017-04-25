@@ -178,7 +178,7 @@ public class SequenceCompilerTest {
     List<String> options = new ArrayList<>();
     options.add("-Xmaxerrs");
     options.add("1000");
-    return new SequenceCompiler(classLoader, options, diagnostics);
+    return new SequenceCompiler(classLoader, options);
   }
 
   private void printDiagnostics(
