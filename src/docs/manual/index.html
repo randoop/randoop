@@ -1022,11 +1022,12 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li id="optiongroup:Threading-and-timeouts">Threading and timeouts
       <ul>
             <li id="option:usethreads"><b>--usethreads=</b><i>boolean</i>.
-             Use if Randoop is exhibiting nonterminating behavior, which is usually due to execution of code
- under test that results in an infinite loop. With this option, Randoop executes each test in a
- separate thread and kills tests that take too long to finish. Tests killed in this manner are
- not reported to the user. The downside is a BIG (order-of-magnitude) decrease in generation
- speed. The tests are not run in parallel, merely in isolation. [default true]
+             If true, Randoop executes each test in a separate thread and kills tests that take too long to
+ finish. Tests killed in this manner are not reported to the user.
+
+ <p>Use this option if Randoop does not terminate is usually due to execution of code under test
+ that results in an infinite loop. The downside of this option is a BIG (order-of-magnitude)
+ decrease in generation speed. The tests are not run in parallel, merely in isolation. [default true]
             <li id="option:timeout"><b>--timeout=</b><i>int</i>.
              After this many milliseconds, a non-returning method call, and its associated test, are stopped
  forcefully. Only meaningful if --usethreads is also specified. [default 5000]
