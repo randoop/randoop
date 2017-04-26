@@ -1,8 +1,10 @@
 package randoop.condition.specification;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Contains the identifiers used in the guards and properties of the specifications in a {@link
@@ -99,6 +101,7 @@ public class Identifiers {
         + returnName
         + " }";
   }
+
   /**
    * Returns the parameter names in this {@link Identifiers} object.
    *
@@ -124,5 +127,38 @@ public class Identifiers {
    */
   public String getReturnName() {
     return returnName;
+  }
+
+  /**
+   * Indicates whether any identifier names occur more than once in this {@link Identifiers}.
+   *
+   * @return true if a name occurs more than once, false otherwise
+   */
+  public boolean hasNameConflict() {
+    Set<String> names = new HashSet<>(parameters);
+    return names.size() != parameters.size()
+        || parameters.contains(receiverName)
+        || parameters.contains(returnName);
+  }
+
+  /**
+   * Returns the set of identifier names that occur more than once in this {@link Identifiers}
+   * object.
+   *
+   * @return the set of identifier names that occur more than once in this object
+   */
+  public Set<String> getConflictingNames() {
+    Set<String> conflictingNames = new HashSet<>();
+    Set<String> names = new HashSet<>();
+    names.add(receiverName);
+    if (!names.add(returnName)) {
+      conflictingNames.add(returnName);
+    }
+    for (String parameter : parameters) {
+      if (!names.add(parameter)) {
+        conflictingNames.add(parameter);
+      }
+    }
+    return conflictingNames;
   }
 }
