@@ -55,6 +55,7 @@ The Randoop homepage is
           <li><a href="#cannot-find-main">Randoop does not run</a></li>
           <li><a href="#no-class-found">Randoop cannot find class-under-test</a></li>
           <li><a href="#no-tests-created">Randoop does not create tests</a></li>
+          <li><a href="#not-enough-tests-created">Randoop does not create enough tests</a></li>
           <li><a href="#nontermination">Randoop does not terminate</a></li>
           <li><a href="#nondeterminism">Randoop produces different output on different runs</a></li>
           <li><a href="#flaky-tests">Randoop stopped because of a flaky test</a></li>
@@ -1021,11 +1022,12 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li id="optiongroup:Threading-and-timeouts">Threading and timeouts
       <ul>
             <li id="option:usethreads"><b>--usethreads=</b><i>boolean</i>.
-             Use if Randoop is exhibiting nonterminating behavior, which is usually due to execution of code
- under test that results in an infinite loop. With this option, Randoop executes each test in a
- separate thread and kills tests that take too long to finish. Tests killed in this manner are
- not reported to the user. The downside is a BIG (order-of-magnitude) decrease in generation
- speed. The tests are not run in parallel, merely in isolation. [default true]
+             If true, Randoop executes each test in a separate thread and kills tests that take too long to
+ finish. Tests killed in this manner are not reported to the user.
+
+ <p>Use this option if Randoop does not terminate is usually due to execution of code under test
+ that results in an infinite loop. The downside of this option is a BIG (order-of-magnitude)
+ decrease in generation speed. The tests are not run in parallel, merely in isolation. [default true]
             <li id="option:timeout"><b>--timeout=</b><i>int</i>.
              After this many milliseconds, a non-returning method call, and its associated test, are stopped
  forcefully. Only meaningful if --usethreads is also specified. [default 5000]
@@ -1405,19 +1407,21 @@ classes under test
 <h2 id="usethreads">Speeding up test generation</h2>
 
 <p>
-If you're interested in increasing the number of tests that Randoop
-generates in a given amount of time, you can try running Randoop with
-the option <code>--usethreads=false</code>. This will cause Randoop to
+To increase the number of tests that Randoop generates in a given amount of
+time, run Randoop with <code>--usethreads=false</code>. This will cause
+Randoop to
 use a single thread to execute all tests, and can speed up the tool by
 an order of magnitude.
 </p>
 
-<p>By default, Randoop executes generated tests in separate threads,
-so that it can kill non-terminating threads that might otherwise
-prevent Randoop from making progress. For this reason, if you
-set <code>--usethreads</code> to <code>false</code> and Randoop
-appears to hang, it may be due to a randomly-generated test that is
-taking too long to execute and cannot be killed by Randoop.
+<p>
+When running with <code>--usethreads=false</code> (the default), Randoop
+executes each generated test in a separate thread.  This enables Randoop to
+detect and discard non-terminating tests.  If you
+set <code>--usethreads</code> to <code>false</code> and Randoop appears to
+hang, it may be due to a randomly-generated test that is taking too long to
+execute and cannot be killed by Randoop.  Also see the section
+on <a href="#nontermination">Randoop non-termination</a>.
 </p>
 
 
@@ -1540,6 +1544,7 @@ No class found for type name "example.ExampleClass"
   for platform specific information on paths.
 </p>
 
+
 <h3 id="no-tests-created">Randoop does not create tests</h3>
 
 <p>
@@ -1554,19 +1559,49 @@ change.  See elsewhere in this manual for suggestions.
 </p>
 
 
+<h3 id="not-enough-tests-created">Randoop does not create enough tests</h3>
+
+<p>
+Randoop works <em>much</em> better if you provide information to it via
+command-line arguments.  Spending just a little bit of effort may have a
+big impact on Randoop's performance.  Find a test that you think Randoop
+should be able to generate, and then provide Randoop with the needed
+information, or consult with the Randoop developers.
+</p>
+
+<p>
+Also see the section on <a href="#usethreads">speeding up test generation</a>.
+</p>
+
+
 <h3 id="nontermination">Randoop does not terminate</h3>
 
 <p>
-If Randoop does not terminate, run it with the <code>--log=filename</code>
-command-line option, and either examine the log or send it to the Randoop
-developers for diagnosis.
+If Randoop does not terminate, that might be because Randoop is creating
+tests that do not terminate (or that execute for a very long time).
+Here are three ways to deal with the problem.
 </p>
-
-<p>
-You can also determine which calls are executing by examining the stack
-trace.  On Unix this can be done by typing <code>Ctrl-\</code> (hold down the
-Control key, then press the Backslash key).
-</p>
+<ul>
+  <li>
+    Run Randoop with the command-line options <code>--usethreads=true
+    --timeout=5000</code>.  This will cause Randoop to discard tests in
+    which any directly-called method takes longer than 5 seconds to run.
+  </li>
+  <li>
+    Determine which calls are executing by examining the stack trace.  On
+    Unix this can be done by typing <code>Ctrl-\</code> (hold down the
+    Control key, then press the Backslash key).  If the same methods appear
+    in multiple such stack traces, then you
+    can <a href="#specifying-methods">exclude them from consideration by
+    Randoop</a> or <a href="#map_calls">prevent the JVM from calling the
+    method</a>.
+  </li>
+  <li>
+    If you suspect the problem may be a bug in Randoop, use the
+    <code>--log=filename</code> command-line option, and either examine the
+    log or send it to the Randoop developers for diagnosis.
+  </li>
+</ul>
 
 
 <h3 id="nondeterminism">Randoop produces different output on different runs</h3>
@@ -1773,5 +1808,11 @@ please let us know so we can correct the oversight.
  -->
 <!--  LocalWords:  test10 var1 var2 s2 a1 ErrorTest RegressionTest o3 sgn
  -->
-<!--  LocalWords:  npe a' c' subtests AssertionError basename
+<!--  LocalWords:  npe a' c' subtests AssertionError basename myclasspath
+ -->
+<!--  LocalWords:  Comparator sof toradocu JSON Param unpublicized JRE Ren
+ -->
+<!--  LocalWords:  classpaths ExampleClass Ayman Abdelghany Waylon
+ -->
+<!--  LocalWords:  Inozemtseva Kalauskas
  -->
