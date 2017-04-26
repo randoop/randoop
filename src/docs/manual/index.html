@@ -1067,12 +1067,17 @@ file by passing the following command-line option to <code>java</code> when
 running Randoop:
 </p>
 <pre>
+    -javaagent:$(RANDOOP_PATH)/mapcall-3.1.4.jar=--map_calls=map_calls.txt
+</pre>
+
+<p>
+To transform calls to undesired methods so that they use an alternate
+implementation, pass the following command-line option to <code>java</code> when
+running Randoop <b>and</b> when running the generated tests:
+</p>
+<pre>
     -javaagent:$(RANDOOP_PATH)/mapcall-3.1.4.jar
 </pre>
-<p>
-This argument must also be given when the generated tests are run to replace
-calls to the methods, avoiding the problematic calls.
-</p>
 
 <p>
 The Randoop <code>mapcall</code> agent transforms the code under test, replacing
@@ -1086,7 +1091,7 @@ By default, the agent makes the following replacements:
   </li>
   <li>
     A call to a method from AWT and Swing classes is replaced by a call to an
-    implementation that does as little as possible.  Specificaly, for a
+    implementation that does as little as possible.  Specifically, for a
     <code>void</code>-method, the replacement does nothing;
     for a method that returns a class type, the replacement returns
     <code>null</code>; for a <code>boolean</code>-method, the replacement returns
@@ -1095,7 +1100,7 @@ By default, the agent makes the following replacements:
   </li>
 </ul>
 <p>
-However, you can also define your own replacements, and can even override
+You can define your own replacements, and can even override
 these defaults, by providing your own implementations with the replacements
 specified in a text file.
 </p>
@@ -1110,16 +1115,13 @@ As an example, the class <a href="RandoopMappedCalls.java.txt">RandoopMappedCall
 defines methods to replace three Swing methods as described by the replacement
 file <a href="replace_calls_example.txt">replace_calls_example.txt</a>.
 To use this replacement, include the class file for <code>RandoopMappedCalls</code>
-on the classpath, and run the agent by including the following on the Randoop
-command-line:
+on the classpath, and run the agent by including the following on the
+command line when running Randoop <b>and</b> when running the generated tests:
 </p>
 <pre>
     -javaagent:$(RANDOOP_PATH)/mapcall-3.1.2.jar=--map_calls=replace_calls_example.txt
 </pre>
-<p>
-When you run the generated tests, you will need to supply the same
-<code>-javaagent:...</code> argument to ensure calls to the replacement methods.
-</p>
+
 
 <h3 id="map-calls-format">Replacement file format</h3>
 <p>
