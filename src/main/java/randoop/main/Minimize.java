@@ -69,13 +69,13 @@ import plume.TimeLimitProcess;
  *
  * <ol>
  *   <li>the Java file whose failing tests will be minimized
- *   <li>optional classpath containing dependencies needed to compile and run the Java file
- *   <li>optional timeout limit, in seconds, allowed for the whole test suite to run. The default is
- *       30 seconds.
+ *   <li>an optional classpath containing dependencies needed to compile and run the Java file
+ *   <li>an optional timeout limit, in seconds, allowed for the whole test suite to run. The default
+ *       is 30 seconds.
  * </ol>
  *
- * <p>In a method that contains a failing assertion, the minimizer will iterate through the method's
- * list of statements, from last to first. For each statement, it tries possible replacement
+ * <p>In a method that contains a failing assertion, the minimizer will iterate through the
+ * statements of the method, from last to first. For each statement, it tries possible replacement
  * statements, from most minimized to least minimized. Removing the statement is the most a
  * statement can be minimized. Leaving the statement unchanged is the least that the statement can
  * be minimized.
@@ -116,14 +116,20 @@ public class Minimize extends CommandHandler {
         null,
         "Path to Java file whose failing tests will be minimized, classpath to compile and run the Java file, maximum time (in seconds) allowed for a single unit test case to run before it times out.",
         "A minimized JUnit test suite (as one Java file) named \"InputFileMinimized.java\" if \"InputFile.java\" were the name of the input file.",
-        "java -ea -cp bin:randoop-all-3.1.1.jar randoop.main.Main minimize --suitepath=~/RandoopTests/src/ErrorTestLang.java --suiteclasspath=~/RandoopTests/commons-lang3-3.5.jar --testsuitetimeout=30",
+        "java randoop.main.Main minimize --suitepath=~/RandoopTests/src/ErrorTestLang.java --suiteclasspath=~/RandoopTests/commons-lang3-3.5.jar --testsuitetimeout=30",
         new Options(Minimize.class));
   }
 
+  /** Path separator as defined by the system, used to separate elements of the classpath. */
   private static final String PATH_SEPARATOR = System.getProperty("path.separator");
+
+  /**
+   * System class path, a part of the classpath that is used to compile and run the input test
+   * suite.
+   */
   private static final String SYSTEM_CLASS_PATH = System.getProperty("java.class.path");
 
-  // The suffix to postpend onto the name of the minimized file and class.
+  /** The suffix to postpend onto the name of the minimized file and class. */
   private static final String SUFFIX = "Minimized";
 
   /**
@@ -349,8 +355,7 @@ public class Minimize extends CommandHandler {
       int timeoutLimit) {
     List<Statement> statements = method.getBody().getStmts();
 
-    // Map from primitive variable name to the variable's value which is
-    // found in a passing assertion.
+    // Map from primitive variable name to the variable's value extracted from a passing assertion.
     Map<String, String> primitiveValues = new HashMap<String, String>();
 
     // Find all the names of the primitive and wrapped types.
@@ -893,8 +898,7 @@ public class Minimize extends CommandHandler {
     }
 
     // Determine how many layers above we should be executing the process
-    // in.
-    // Add 2 which is for the case where the file is located in a single
+    // in. Add 2 which is for the case where the file is located in a single
     // layer of packaging.
     int foldersAbove = StringUtils.countMatches(packageName, ".") + 2;
     for (int i = 0; i < foldersAbove; i++) {
