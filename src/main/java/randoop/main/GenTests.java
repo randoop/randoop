@@ -43,6 +43,7 @@ import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
+import randoop.sequence.SequenceExecutionException;
 import randoop.test.CompilableTestPredicate;
 import randoop.test.ContractCheckingVisitor;
 import randoop.test.ContractSet;
@@ -450,6 +451,10 @@ public class GenTests extends GenInputsAbstract {
           "%nError in generation with operation: %n%s%n", e.getInstantiatedOperation());
       System.out.printf("Operation reflection name: %s%n", e.getOperationName());
       System.out.printf("%s%n", e.getException());
+      e.printStackTrace();
+      System.exit(1);
+    } catch (SequenceExecutionException e) {
+      System.out.printf("%nError executing generated sequence: %n%s%n", e.getMessage());
       e.printStackTrace();
       System.exit(1);
     }
