@@ -1041,6 +1041,30 @@ public class RandoopSystemTest {
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
+  /**
+   * Expecting something like
+   *
+   * <pre>
+   * generation.Dim6Matrix dim6Matrix = new generation.Dim6Matrix();
+   * generation.Dim5Matrix copy = dim6Matrix.copy();
+   * double d = copy.a1;
+   * </pre>
+   *
+   * which fails at the second line in the JVM because of a bad cast that is not caught using
+   * reflection.
+   */
+  @Test
+  public void runBadCopyCastTest() {
+    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("bad-copy-cast");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("generation.Dim5Matrix");
+    options.addTestClass("generation.Dim6Matrix");
+    options.setOption("outputlimit", "200");
+    options.setOption("timelimit", "20");
+
+    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+  }
+
   /* ------------------------------ utility methods ---------------------------------- */
 
   /**
