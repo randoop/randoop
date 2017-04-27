@@ -170,8 +170,8 @@ public class Minimize extends CommandHandler {
   /**
    * Minimize the input test file.
    *
-   * <p>Given an input Java file, minimization produces an output file that is as small as possible
-   * (as few lines of code as possible) and that fails the same way:
+   * <p>Given an input Java file, minimization produces a smaller file that fails in the same way as
+   * the original, having the same failing assertions with the same stack trace.
    *
    * <ol>
    *   <li>Same failing assertions as in the original input test suite.
