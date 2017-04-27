@@ -14,7 +14,7 @@
 <h1>Randoop Manual</h1> <!-- omit from toc -->
 
 <p>
-This is the manual for Randoop version 3.1.2, released March 21, 2017.
+This is the manual for Randoop version 3.1.4, released April 11, 2017.
 The Randoop homepage is
 <a href="https://randoop.github.io/randoop/">https://randoop.github.io/randoop/</a>.
 </p>
@@ -56,6 +56,7 @@ The Randoop homepage is
           <li><a href="#cannot-find-main">Randoop does not run</a></li>
           <li><a href="#no-class-found">Randoop cannot find class-under-test</a></li>
           <li><a href="#no-tests-created">Randoop does not create tests</a></li>
+          <li><a href="#not-enough-tests-created">Randoop does not create enough tests</a></li>
           <li><a href="#nontermination">Randoop does not terminate</a></li>
           <li><a href="#nondeterminism">Randoop produces different output on different runs</a></li>
           <li><a href="#flaky-tests">Randoop stopped because of a flaky test</a></li>
@@ -157,16 +158,16 @@ occasions when they fail and reveal a bug or a regression failure.
 
 <p>
   Download and unzip the file
-  <a href="https://github.com/randoop/randoop/releases/download/v3.1.2/randoop-3.1.2.zip"><code>randoop-3.1.2.zip</code></a>.
+  <a href="https://github.com/randoop/randoop/releases/download/v3.1.4/randoop-3.1.4.zip"><code>randoop-3.1.4.zip</code></a>.
 <!-- from the
   <a href="https://github.com/randoop/randoop/releases/latest">latest
     release</a>.
 -->
 <!--
   This zip archive contains the Randoop jar file
-  <code>randoop-all-3.1.2.jar</code>, the Java agent jar files
-  (<code>exercised-class-3.1.2.jar</code> and
-   <code>mapcall-3.1.2.jar</code>),
+  <code>randoop-all-3.1.4.jar</code>, the Java agent jar files
+  (<code>exercised-class-3.1.4.jar</code> and
+   <code>mapcall-3.1.4.jar</code>),
   and this documentation.
 -->
   Set an environment variable
@@ -174,7 +175,7 @@ occasions when they fail and reveal a bug or a regression failure.
   the path of the unzipped archive,
   and set an environment variable
   <code>RANDOOP_JAR</code> to
-  the location of <code>randoop-all-3.1.2.jar</code>
+  the location of <code>randoop-all-3.1.4.jar</code>
   within the unzipped archive.
 </p>
 
@@ -201,7 +202,7 @@ java -ea randoop.main.Main <em>command</em> <em>args...</em>
 
 <p>
 The classpath needs to contain both Randoop
-(<code>randoop-all-3.1.2.jar</code>) and the
+(<code>randoop-all-3.1.4.jar</code>) and the
 classes under test.
 For instance, if the current working directory contains a directory named
 <code>bin</code> containing your compiled classes, then you would use:
@@ -1076,11 +1077,12 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li id="optiongroup:Threading-and-timeouts">Threading and timeouts
       <ul>
             <li id="option:usethreads"><b>--usethreads=</b><i>boolean</i>.
-             Use if Randoop is exhibiting nonterminating behavior, which is usually due to execution of code
- under test that results in an infinite loop. With this option, Randoop executes each test in a
- separate thread and kills tests that take too long to finish. Tests killed in this manner are
- not reported to the user. The downside is a BIG (order-of-magnitude) decrease in generation
- speed. The tests are not run in parallel, merely in isolation. [default true]
+             If true, Randoop executes each test in a separate thread and kills tests that take too long to
+ finish. Tests killed in this manner are not reported to the user.
+
+ <p>Use this option if Randoop does not terminate is usually due to execution of code under test
+ that results in an infinite loop. The downside of this option is a BIG (order-of-magnitude)
+ decrease in generation speed. The tests are not run in parallel, merely in isolation. [default true]
             <li id="option:timeout"><b>--timeout=</b><i>int</i>.
              After this many milliseconds, a non-returning method call, and its associated test, are stopped
  forcefully. Only meaningful if --usethreads is also specified. [default 5000]
@@ -1125,13 +1127,13 @@ that you provide.
 
 <p>
 To transform calls to undesired methods, use the Java agent in the
-<code>mapcall-3.1.2.jar</code>
+<code>mapcall-3.1.4.jar</code>
 file (either in the unzipped distribution file, or downloaded from the
 <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>).
 Then use this file pass the following command-line option to <code>java</code> when running Randoop:
 </p>
 <pre>
-    -javaagent:$(RANDOOP_PATH)/mapcall-3.1.2.jar=--map_calls=map_calls.txt
+    -javaagent:$(RANDOOP_PATH)/mapcall-3.1.4.jar=--map_calls=map_calls.txt
 </pre>
 <p>
 (<b>Note:</b> If you supply the <code>-javaagent</code> option to <code>java</code>
@@ -1253,17 +1255,17 @@ exception escaping the method as the rep invariant being violated.
   <code>--include-if-class-exercised</code> option.
   However, for this option to work, the classes must be instrumented to indicate
   when they are exercised.
-  To instrument classes for this filter, also use the <code>exercised-class-3.1.2.jar</code>
+  To instrument classes for this filter, also use the <code>exercised-class-3.1.4.jar</code>
   by giving the following command-line option for java
 </p>
 <pre><code>
-  -javaagent:$(RANDOOP_PATH)/exercised-class-3.1.2.jar
+  -javaagent:$(RANDOOP_PATH)/exercised-class-3.1.4.jar
 </code></pre>
 <p>
   This will instrument any non-abstract constructor and method of loaded
   classes so that the use of a class can be detected.
   (The instrumentation is not done on any JDK or JUnit classes.)
-  (The <code>exercised-class-3.1.2.jar</code> file can be found in the
+  (The <code>exercised-class-3.1.4.jar</code> file can be found in the
     unzipped distribution archive, or can be downloaded from the
     <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.)
 </p>
@@ -1375,19 +1377,21 @@ classes under test
 <h2 id="usethreads">Speeding up test generation</h2>
 
 <p>
-If you're interested in increasing the number of tests that Randoop
-generates in a given amount of time, you can try running Randoop with
-the option <code>--usethreads=false</code>. This will cause Randoop to
+To increase the number of tests that Randoop generates in a given amount of
+time, run Randoop with <code>--usethreads=false</code>. This will cause
+Randoop to
 use a single thread to execute all tests, and can speed up the tool by
 an order of magnitude.
 </p>
 
-<p>By default, Randoop executes generated tests in separate threads,
-so that it can kill non-terminating threads that might otherwise
-prevent Randoop from making progress. For this reason, if you
-set <code>--usethreads</code> to <code>false</code> and Randoop
-appears to hang, it may be due to a randomly-generated test that is
-taking too long to execute and cannot be killed by Randoop.
+<p>
+When running with <code>--usethreads=false</code> (the default), Randoop
+executes each generated test in a separate thread.  This enables Randoop to
+detect and discard non-terminating tests.  If you
+set <code>--usethreads</code> to <code>false</code> and Randoop appears to
+hang, it may be due to a randomly-generated test that is taking too long to
+execute and cannot be killed by Randoop.  Also see the section
+on <a href="#nontermination">Randoop non-termination</a>.
 </p>
 
 
@@ -1510,6 +1514,7 @@ No class found for type name "example.ExampleClass"
   for platform specific information on paths.
 </p>
 
+
 <h3 id="no-tests-created">Randoop does not create tests</h3>
 
 <p>
@@ -1524,19 +1529,49 @@ change.  See elsewhere in this manual for suggestions.
 </p>
 
 
+<h3 id="not-enough-tests-created">Randoop does not create enough tests</h3>
+
+<p>
+Randoop works <em>much</em> better if you provide information to it via
+command-line arguments.  Spending just a little bit of effort may have a
+big impact on Randoop's performance.  Find a test that you think Randoop
+should be able to generate, and then provide Randoop with the needed
+information, or consult with the Randoop developers.
+</p>
+
+<p>
+Also see the section on <a href="#usethreads">speeding up test generation</a>.
+</p>
+
+
 <h3 id="nontermination">Randoop does not terminate</h3>
 
 <p>
-If Randoop does not terminate, run it with the <code>--log=filename</code>
-command-line option, and either examine the log or send it to the Randoop
-developers for diagnosis.
+If Randoop does not terminate, that might be because Randoop is creating
+tests that do not terminate (or that execute for a very long time).
+Here are three ways to deal with the problem.
 </p>
-
-<p>
-You can also determine which calls are executing by examining the stack
-trace.  On Unix this can be done by typing <code>Ctrl-\</code> (hold down the
-Control key, then press the Backslash key).
-</p>
+<ul>
+  <li>
+    Run Randoop with the command-line options <code>--usethreads=true
+    --timeout=5000</code>.  This will cause Randoop to discard tests in
+    which any directly-called method takes longer than 5 seconds to run.
+  </li>
+  <li>
+    Determine which calls are executing by examining the stack trace.  On
+    Unix this can be done by typing <code>Ctrl-\</code> (hold down the
+    Control key, then press the Backslash key).  If the same methods appear
+    in multiple such stack traces, then you
+    can <a href="#specifying-methods">exclude them from consideration by
+    Randoop</a> or <a href="#map_calls">prevent the JVM from calling the
+    method</a>.
+  </li>
+  <li>
+    If you suspect the problem may be a bug in Randoop, use the
+    <code>--log=filename</code> command-line option, and either examine the
+    log or send it to the Randoop developers for diagnosis.
+  </li>
+</ul>
 
 
 <h3 id="nondeterminism">Randoop produces different output on different runs</h3>
@@ -1743,9 +1778,11 @@ please let us know so we can correct the oversight.
  -->
 <!--  LocalWords:  test10 var1 var2 s2 a1 ErrorTest RegressionTest o3 sgn
  -->
-<!--  LocalWords:  npe a' c' subtests AssertionError basename cp filepath
+<!--  LocalWords:  npe a' c' subtests AssertionError basename myclasspath
  -->
-<!--  LocalWords:  fileclasspath testcasetimeout Ayman Abdelghany Ren
+<!--  LocalWords:  Comparator sof toradocu JSON Param unpublicized JRE Ren
  -->
-<!--  LocalWords:  Kalauskas
+<!--  LocalWords:  classpaths ExampleClass Ayman Abdelghany Waylon
+ -->
+<!--  LocalWords:  Inozemtseva Kalauskas
  -->

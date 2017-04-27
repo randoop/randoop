@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>GenInputsAbstract (randoop 3.1.2 API)</title>
+<title>GenInputsAbstract (randoop 3.1.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="GenInputsAbstract (randoop 3.1.2 API)";
+            parent.document.title="GenInputsAbstract (randoop 3.1.4 API)";
         }
     }
     catch(err) {
@@ -252,8 +252,8 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <tr class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/main/GenInputsAbstract.html#ignore_flaky_tests">ignore_flaky_tests</a></span></code>
-<div class="block">Ignore the situation where a code sequence that previously executed normally throws an
- exception when executed as part of a longer test sequence.</div>
+<div class="block">If false, Randoop halts and gives diagnostics about flaky tests -- tests that behave
+ differently on different executions.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -677,13 +677,13 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
  or <code>--classlist</code> option.
 
  <p>A constructor line begins with <code>"cons :"</code> followed by the classname, the string
- <code>&lt;init&gt;</code>, and the constructor's parameter types enclosed in parentheses.
- Methods are specified in a similar way. For example:
+ <code>&lt;init&gt;</code>, and the constructor's parameter types enclosed in parentheses. Methods are
+ specified in a similar way. For example:
 
- <pre class="code">
+ <pre><code>
  cons : Type0.&lt;init&gt;(Type1, Type2, ..., TypeN)
  method : Type0.method_name(Type1, Type2, ..., TypeN)
- </pre>
+ </code></pre>
 
  <p>Each <code>Type<i>i</i></code> must be fully-qualified (include package names).
 
@@ -775,6 +775,21 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
  the class names in the file. A test exercises a class if it executes any constructor or method
  of the class, directly or indirectly (the constructor or method might not appear in the source
  code of the test). Included classes may be abstract.</div>
+</li>
+</ul>
+<a name="ignore_flaky_tests">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ignore_flaky_tests</h4>
+<pre>public static&nbsp;boolean ignore_flaky_tests</pre>
+<div class="block">If false, Randoop halts and gives diagnostics about flaky tests -- tests that behave
+ differently on different executions. If true, Randoop ignores them and does not output them.
+
+ <p>Use of this option is a last resort. Flaky tests are usually due to calling Randoop on
+ side-effecting or nondeterministic methods, and a better solution is not to call Randoop on
+ such methods.</div>
 </li>
 </ul>
 <a name="no_error_revealing_tests">
@@ -904,23 +919,6 @@ extends <a href="../../randoop/main/CommandHandler.html" title="class in randoop
 <div class="block">If a test throws a <code>StackOverflowError</code> exception, should it be included in the
  error-revealing test suite (value: ERROR), regression test suite (value: EXPECTED), or should
  it be discarded (value: INVALID)?</div>
-</li>
-</ul>
-<a name="ignore_flaky_tests">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>ignore_flaky_tests</h4>
-<pre>public static&nbsp;boolean ignore_flaky_tests</pre>
-<div class="block">Ignore the situation where a code sequence that previously executed normally throws an
- exception when executed as part of a longer test sequence. If true, the sequence will be
- classified as invalid. If false, Randoop will halt with information about the sequence to aid
- in identifying the issue.
-
- <p>Use of this option is a last resort. Flaky tests are usually due to calling Randoop on
- side-effecting or nondeterministic methods, and a better solution is not to call Randoop on
- such methods.</div>
 </li>
 </ul>
 <a name="toradocu_conditions">

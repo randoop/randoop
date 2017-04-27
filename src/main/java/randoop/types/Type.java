@@ -143,7 +143,9 @@ public abstract class Type implements Comparable<Type> {
   /**
    * Returns the name of this type as the "canonical name" of the underlying runtime class.
    * Identical to {@link #getName()} except for types with type arguments. For {@code
-   * java.util.List<T>} returns {@code "java.util.List"}.
+   * java.util.List<T>} returns {@code "java.util.List"}. Returns {@code null} when {@code
+   * Class<?>.getCanonicalName()} does for the underlying {@code Class<?>} object (e.g., the type is
+   * a local or anonymous class, or array type where the component type that has no canonical name).
    *
    * @return the fully-qualified canonical name of this type
    */
@@ -395,8 +397,21 @@ public abstract class Type implements Comparable<Type> {
     return false;
   }
 
+  /**
+   * Compare this {@link Type} to another. Uses the names of the underlying {@code Class<?>}
+   * objects. Uses canonical names if both have them, otherwise uses {@code Class<?>.getName()}.
+   *
+   * @param type the type to compare against
+   * @return -1 if this type precedes {@code type}, 1 if this type succeeds {@code type}, and 0 if
+   *     they are equal.
+   */
   @Override
   public int compareTo(Type type) {
-    return this.getCanonicalName().compareTo(type.getCanonicalName());
+    String name1 = this.getCanonicalName();
+    String name2 = this.getCanonicalName();
+    if (name1 != null && name2 != null) {
+      return this.getCanonicalName().compareTo(type.getCanonicalName());
+    }
+    return this.getRuntimeClass().getName().compareTo(this.getRuntimeClass().getName());
   }
 }

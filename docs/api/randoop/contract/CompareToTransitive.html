@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>CompareToTransitive (randoop 3.1.2 API)</title>
+<title>CompareToTransitive (randoop 3.1.4 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="CompareToTransitive (randoop 3.1.2 API)";
+            parent.document.title="CompareToTransitive (randoop 3.1.4 API)";
         }
     }
     catch(err) {
@@ -117,8 +117,10 @@ extends java.lang.Object
 implements <a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract">ObjectContract</a></pre>
 <div class="block">The contract: Checks the transitivity of the compare to method.
 
- <pre>((x0.compareTo(x1) &gt; 0) &amp;&amp; (x1.compareTo(x2) &gt; 0))
- &rarr; (x0.compareTo(x2) &gt; 0)</pre></div>
+ <pre><code>
+ ((x0.compareTo(x1) &gt; 0) &amp;&amp; (x1.compareTo(x2) &gt; 0))
+  =&gt; (x0.compareTo(x2) &gt; 0)
+ </code></pre></div>
 </li>
 </ul>
 </div>

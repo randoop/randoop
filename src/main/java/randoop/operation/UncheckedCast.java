@@ -4,7 +4,6 @@ import java.io.PrintStream;
 import java.util.List;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
@@ -64,15 +63,7 @@ class UncheckedCast extends CallableOperation {
       StringBuilder b) {
     b.append("(").append(type.getName()).append(")");
     int i = 0;
-    String param = inputVars.get(i).getName();
-
-    Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement();
-
-    String shortForm = statementCreatingVar.getShortForm();
-    if (shortForm != null) {
-      param = shortForm;
-    }
-
+    String param = getArgumentString(inputVars.get(i));
     b.append(param);
   }
 
