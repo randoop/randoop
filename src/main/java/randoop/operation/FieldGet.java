@@ -10,6 +10,7 @@ import randoop.NormalExecution;
 import randoop.field.AccessibleField;
 import randoop.field.FieldParser;
 import randoop.reflection.ReflectionPredicate;
+import randoop.sequence.SequenceExecutionException;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
@@ -46,6 +47,7 @@ public class FieldGet extends CallableOperation {
    * @param out the stream for printing output (unused)
    * @return outcome of access
    * @throws BugInRandoopException if field access throws bug exception
+   * @throws SequenceExecutionException if field access has a type exception
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
@@ -58,7 +60,7 @@ public class FieldGet extends CallableOperation {
       Object value = field.getValue(input);
       return new NormalExecution(value, 0);
 
-    } catch (BugInRandoopException e) {
+    } catch (BugInRandoopException | SequenceExecutionException e) {
       throw e;
     } catch (Throwable thrown) {
       return new ExceptionalExecution(thrown, 0);

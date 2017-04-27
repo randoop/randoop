@@ -45,6 +45,7 @@ import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
+import randoop.sequence.SequenceExecutionException;
 import randoop.test.CompilableTestPredicate;
 import randoop.test.ContractCheckingVisitor;
 import randoop.test.ContractSet;
@@ -472,6 +473,10 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     } catch (RandoopConditionError e) {
       System.out.printf("%nError during generation: %n%s%n", e.getMessage());
+      System.exit(1);
+    } catch (SequenceExecutionException e) {
+      System.out.printf("%nError executing generated sequence: %n%s%n", e.getMessage());
+      e.printStackTrace();
       System.exit(1);
     }
 

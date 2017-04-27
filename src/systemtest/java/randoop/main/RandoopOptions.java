@@ -33,8 +33,8 @@ class RandoopOptions {
     this.options = new ArrayList<>();
     this.classnames = new HashSet<>();
     this.packageName = "";
-    this.regressionBasename = "";
-    this.errorBasename = "";
+    this.regressionBasename = "RegressionTest";
+    this.errorBasename = "ErrorTest";
   }
 
   /**
