@@ -23,7 +23,7 @@ public class Condition {
   /**
    * Creates a {@link Condition} that calls the given condition method.
    *
-   * @param conditionMethod the reflection object for the condition method
+   * @param conditionMethod the reflection Method for the condition method
    * @param comment the comment describing this condition
    * @param conditionText the text for this condition
    */
@@ -89,10 +89,10 @@ public class Condition {
   }
 
   /**
-   * Return this condition as a string. Arguments to the condition {@link
-   * randoop.contract.ObjectContract} convention where variables are represented by {@code x0}, ...,
-   * {@code xn} for some number {@code n}. If the operation takes a receiver it will be {@code x0},
-   * and if the operation has a return value it will be {@code xn} (the last variable).
+   * Return this condition as a string representation of Java code. Arguments to the condition
+   * {@link randoop.contract.ObjectContract} convention where variables are represented by {@code
+   * x0}, ..., {@code xn} for some number {@code n}. If the operation takes a receiver it will be
+   * {@code x0}, and if the operation has a return value it will be {@code xn} (the last variable).
    *
    * @return the Java representation of the condition as a {@code String}
    */
