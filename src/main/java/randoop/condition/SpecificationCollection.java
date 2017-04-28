@@ -108,6 +108,17 @@ public class SpecificationCollection {
         if (operation == null) {
           continue;
         }
+        if (specification.getIdentifiers().hasNameConflict()) {
+          String msg =
+              String.format(
+                  "Ignoring specification with identifer name conflict: %s",
+                  specification.getOperation().toString());
+          System.out.println(msg);
+          if (Log.isLoggingOn()) {
+            Log.logLine(msg);
+          }
+          continue;
+        }
         try {
           accessibleObject = getReflectionObject(operation);
         } catch (ClassNotFoundException | NoClassDefFoundError e) {
