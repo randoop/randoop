@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ReflectionExecutor (randoop 3.1.4 API)</title>
+<title>ReflectionExecutor (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ReflectionExecutor (randoop 3.1.4 API)";
+            parent.document.title="ReflectionExecutor (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -159,8 +159,8 @@ extends java.lang.Object</pre>
 <tr class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ReflectionExecutor.html#usethreads">usethreads</a></span></code>
-<div class="block">Use if Randoop is exhibiting nonterminating behavior, which is usually due to execution of code
- under test that results in an infinite loop.</div>
+<div class="block">If true, Randoop executes each test in a separate thread and kills tests that take too long to
+ finish.</div>
 </td>
 </tr>
 </table>
@@ -266,11 +266,12 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>usethreads</h4>
 <pre>public static&nbsp;boolean usethreads</pre>
-<div class="block">Use if Randoop is exhibiting nonterminating behavior, which is usually due to execution of code
- under test that results in an infinite loop. With this option, Randoop executes each test in a
- separate thread and kills tests that take too long to finish. Tests killed in this manner are
- not reported to the user. The downside is a BIG (order-of-magnitude) decrease in generation
- speed. The tests are not run in parallel, merely in isolation.</div>
+<div class="block">If true, Randoop executes each test in a separate thread and kills tests that take too long to
+ finish. Tests killed in this manner are not reported to the user.
+
+ <p>Use this option if Randoop does not terminate is usually due to execution of code under test
+ that results in an infinite loop. The downside of this option is a BIG (order-of-magnitude)
+ decrease in generation speed. The tests are not run in parallel, merely in isolation.</div>
 </li>
 </ul>
 <a name="timeout">
