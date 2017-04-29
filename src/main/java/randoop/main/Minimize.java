@@ -74,7 +74,8 @@ import plume.TimeLimitProcess;
  *       is 30 seconds.
  * </ol>
  *
- * <p>In a method that contains a failing assertion, the minimizer will iterate through the
+ * <p>The minimizer will only attempt to minimize methods that are annotated with the @Test
+ * annotation. In a method that contains a failing assertion, the minimizer will iterate through the
  * statements of the method, from last to first. For each statement, it tries possible replacement
  * statements, from most minimized to least minimized. Removing the statement is the most a
  * statement can be minimized. Leaving the statement unchanged is the least that the statement can
@@ -184,10 +185,12 @@ public class Minimize extends CommandHandler {
    *   <li>Same stacktrace produced by failing assertions.
    * </ol>
    *
-   * <p>The original input Java file will be compiled and run once. The "expected output" is a map
-   * from test method name to failure stack trace. A method is included in the map only if the
-   * method contains a failing assertion. Thus, the expected output of a test suite with no failing
-   * tests will be empty.
+   * <p>The original input Java file will be compiled and run once. The "expected output" derived
+   * from the standard output from running the input file is a map from test method name to failure
+   * stack trace. A method is included in the map only if the method contains a failing assertion.
+   * Thus, the "expected output" of running a test suite with no failing tests will be an empty map.
+   * The "expected output" will be used during subsequent runs of the modified test suite to
+   * determine whether or not the test suite still fails in the same way.
    *
    * @param filePath the path to the Java file that is being minimized
    * @param classPath classpath used to compile and run the Java file
@@ -229,8 +232,7 @@ public class Minimize extends CommandHandler {
 
     File originalFile = new File(filePath);
 
-    // Create a new file; the file and the class within will have
-    // "Minimized" postpended.
+    // Create a new file; the file and the class within will have "Minimized" postpended.
     String minimizedFileName =
         new StringBuilder(filePath).insert(filePath.lastIndexOf('.'), SUFFIX).toString();
     File minimizedFile = new File(minimizedFileName);
