@@ -4,9 +4,8 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import randoop.main.Minimize;
 
@@ -48,13 +47,9 @@ public class MinimizerTests {
             .toString();
     String expectedFilePath = inputFilePath + ".expected";
 
-    // Obtain File object references
-    File inputFile = new File(inputFilePath);
+    // Obtain File object references.
     File outputFile = new File(outputFilePath);
-
-    // Obtain the complete path to the input, output, and expected files
-    inputFilePath = inputFile.getAbsolutePath();
-    outputFilePath = outputFile.getAbsolutePath();
+    File expectedFile = new File(expectedFilePath);
 
     String classPath = null;
     if (dependencies != null) {
@@ -65,31 +60,11 @@ public class MinimizerTests {
       }
     }
 
-    // Create the arguments array and invoke the minimizer
+    // Create the arguments array and invoke the minimizer.
     Minimize.mainMinimize(inputFilePath, classPath, timeoutLimit, verboseOutput);
 
-    // Compare obtained and expected output
-    String obtainedOutput = readFile(outputFilePath, Charset.defaultCharset());
-    String expectedOutput = readFile(expectedFilePath, Charset.defaultCharset());
-
-    // Handle carriage returns on different OSes.
-    expectedOutput = expectedOutput.replaceAll("\\r\\n", "\n");
-    obtainedOutput = obtainedOutput.replaceAll("\\r\\n", "\n");
-
-    assertEquals(expectedOutput, obtainedOutput);
-  }
-
-  /**
-   * Read a file and return the contents as a String.
-   *
-   * @param filePath path to file
-   * @param encoding character encoding
-   * @return contents of the input file
-   * @throws IOException if the file can't be read
-   */
-  private static String readFile(String filePath, Charset encoding) throws IOException {
-    byte[] contents = Files.readAllBytes(Paths.get(filePath));
-    return new String(contents, encoding);
+    // Compare obtained and expected output.
+    assertTrue(FileUtils.contentEqualsIgnoreEOL(outputFile, expectedFile, null));
   }
 
   @Test
@@ -160,25 +135,20 @@ public class MinimizerTests {
 
   @Test
   public void testWithNonCompilingTest() throws IOException {
-    // Path to input file
+    // Path to input file.
     String inputFilePath = testDir + "TestInputWithNonCompilingTest.java";
     String timeout = "30";
 
-    String outputFilePath =
-        new StringBuilder(inputFilePath)
-            .insert(inputFilePath.lastIndexOf('.'), "Minimized")
-            .toString();
-
-    // Obtain File object references
+    // Obtain File object references.
     File inputFile = new File(inputFilePath);
 
-    // Obtain the complete path to the input, output, and expected files
+    // Obtain the complete path to the input, output, and expected files.
     inputFilePath = inputFile.getAbsolutePath();
 
-    // Classpath obtained by adding the necessary components together
+    // Classpath obtained by adding the necessary components together.
     String classPath = null;
 
-    // Create the arguments array and invoke the minimizer
+    // Create the arguments array and invoke the minimizer.
     assertFalse(Minimize.mainMinimize(inputFilePath, classPath, Integer.parseInt(timeout), false));
   }
 }
