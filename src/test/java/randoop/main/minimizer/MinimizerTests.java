@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import randoop.main.Minimize;
@@ -30,7 +29,7 @@ public class MinimizerTests {
   /**
    * Test the minimizer with an input file.
    *
-   * @param inputFilePath input file to minimize: a JUnit test suite
+   * @param inputFilePath path to a JUnit test suite
    * @param dependencies dependencies needed to compile and run the input file. This parameter is an
    *     array of Strings, each representing an element of the classpath, for instance, a directory
    *     or a jar file.
@@ -47,7 +46,7 @@ public class MinimizerTests {
             .toString();
     String expectedFilePath = inputFilePath + ".expected";
 
-    // Obtain File object references.
+    // Obtain file object references.
     File outputFile = new File(outputFilePath);
     File expectedFile = new File(expectedFilePath);
 
@@ -139,7 +138,7 @@ public class MinimizerTests {
     String inputFilePath = testDir + "TestInputWithNonCompilingTest.java";
     String timeout = "30";
 
-    // Obtain File object references.
+    // Obtain file object references.
     File inputFile = new File(inputFilePath);
 
     // Obtain the complete path to the input, output, and expected files.

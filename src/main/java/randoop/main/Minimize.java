@@ -250,8 +250,7 @@ public class Minimize extends CommandHandler {
 
     String runResult = runJavaFile(minimizedFile, classPath, packageName, timeoutLimit);
 
-    // expectedOutput is a map from method name to failure stack trace
-    // with line numbers removed.
+    // expectedOutput is a map from method name to failure stack trace with line numbers removed.
     Map<String, String> expectedOutput = normalizeJUnitOutput(runResult);
 
     System.out.println("Minimizing: " + filePath);
@@ -385,14 +384,11 @@ public class Minimize extends CommandHandler {
         // Write, compile, and run the new Java file.
         writeToFile(compUnit, file);
         if (checkCorrectlyMinimized(file, classpath, packageName, expectedOutput, timeoutLimit)) {
-          // No compilation or runtime issues, obtained output is the
-          // same as the expected output.
-          // Use simplification of this statement and continue with
-          // next statement.
+          // No compilation or runtime issues, obtained output is the same as the expected output.
+          // Use simplification of this statement and continue with next statement.
           replacementFound = true;
 
-          // Assertions are never simplified, only removed.
-          // If currStmt is an assertion, then stmt is null.
+          // Assertions are never simplified, only removed. If currStmt is an assertion, then stmt is null.
           storeValueFromAssertion(currStmt, primitiveValues, primitiveAndWrappedTypes);
           break; // break replacement loop; continue statements loop.
         } else {
@@ -404,8 +400,7 @@ public class Minimize extends CommandHandler {
       }
 
       if (!replacementFound) {
-        // No correct simplification found.
-        // Add back the original statement to the list of statements.
+        // No correct simplification found. Add back the original statement to the list of statements.
         statements.add(i, currStmt);
       }
     }
@@ -454,20 +449,17 @@ public class Minimize extends CommandHandler {
               Expression leftExpr = binaryExp.getLeft();
               Expression rightExpr = binaryExp.getRight();
 
-              // Swap two expressions if left is a literal
-              // expression.
+              // Swap two expressions if left is a literal expression.
               if (leftExpr instanceof LiteralExpr) {
                 Expression temp = leftExpr;
                 leftExpr = rightExpr;
                 rightExpr = temp;
               }
 
-              // Check that the left is a variable name and the
-              // right is a literal.
+              // Check that the left is a variable name and the right is a literal.
               if (leftExpr instanceof NameExpr && rightExpr instanceof LiteralExpr) {
                 NameExpr nameExpr = (NameExpr) leftExpr;
-                // Check that the variable is a primitive or
-                // wrapped type.
+                // Check that the variable is a primitive or wrapped type.
                 if (primitiveAndWrappedTypeVars.contains(nameExpr.getName())) {
                   String var = binaryExp.getLeft().toString();
                   String val = binaryExp.getRight().toString();
@@ -510,12 +502,10 @@ public class Minimize extends CommandHandler {
       if (exp instanceof VariableDeclarationExpr) {
         VariableDeclarationExpr vdExpr = (VariableDeclarationExpr) exp;
 
-        // Simplify right hand side to zero-equivalent value: 0, false,
-        // or null.
+        // Simplify right hand side to zero-equivalent value: 0, false, or null.
         replacements.addAll(rhsAssignZeroValue(vdExpr));
 
-        // Simplify right hand side to a value that was previously found
-        // in a passing assertion.
+        // Simplify right hand side to a value that was previously found in a passing assertion.
         Statement rhsAssertValStmt = rhsAssignValueFromPassingAssertion(vdExpr, primitiveValues);
         if (rhsAssertValStmt != null) {
           replacements.add(rhsAssertValStmt);
@@ -1268,14 +1258,12 @@ public class Minimize extends CommandHandler {
     for (ImportDeclaration im : importDeclarations) {
       String currImportStr = im.toString().trim();
 
-      // Check if the compilation unit already includes the import
-      // exactly.
+      // Check if the compilation unit already includes the import exactly.
       if (importStr.equals(currImportStr)) {
         return;
       }
       // Check if the compilation unit already includes the import as a
-      // wildcard.
-      // Get index of last separator.
+      // wildcard. Get index of last separator.
       int lastSeparator = importName.lastIndexOf('.');
       if (lastSeparator >= 0) {
         // Create a string representing a wildcard import.
