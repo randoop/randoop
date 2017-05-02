@@ -111,7 +111,7 @@ public class SpecificationCollection {
         if (specification.getIdentifiers().hasNameConflict()) {
           String msg =
               String.format(
-                  "Ignoring specification with identifer name conflict: %s",
+                  "Ignoring specification with identifier name conflict: %s",
                   specification.getOperation().toString());
           System.out.println(msg);
           if (Log.isLoggingOn()) {
@@ -124,7 +124,7 @@ public class SpecificationCollection {
         } catch (ClassNotFoundException | NoClassDefFoundError e) {
           String msg =
               String.format(
-                  "Could not load operation for specification: %n%s%n" + "Class not found: %s",
+                  "Could not load specification operation: %n%s%n" + "Class not found: %s",
                   specification.getOperation().toString(), e.getMessage());
 
           if (Log.isLoggingOn()) {
@@ -134,12 +134,22 @@ public class SpecificationCollection {
         } catch (NoSuchMethodException e) {
           String msg =
               String.format(
-                  "Could not load operation for specification: %n%s%n" + "No such method: %s",
+                  "Could not load specification operation: %n%s%n" + "No such method: %s",
                   specification.getOperation().toString(), e.getMessage());
           if (Log.isLoggingOn()) {
             Log.logLine(msg);
           }
           throw new RandoopConditionError(msg, e);
+        } catch (ExceptionInInitializerError e) {
+          String msg =
+              String.format(
+                  "Could not load specification operation: %n%s%n"
+                      + "Exception thrown by initializer",
+                  specification.getOperation().toString(), e.toString());
+          if (Log.isLoggingOn()) {
+            Log.logLine(msg);
+          }
+          continue; //XXX should we throw exception or just discard spec?
         }
         specMap.put(accessibleObject, specification);
         if (accessibleObject instanceof Method) {
@@ -205,17 +215,20 @@ public class SpecificationCollection {
    */
   private static AccessibleObject getReflectionObject(Operation operation)
       throws ClassNotFoundException, NoSuchMethodException {
-    List<String> paramTypeNames = operation.getParameterTypeNames();
-    Class<?>[] argTypes = new Class<?>[paramTypeNames.size()];
-    for (int i = 0; i < argTypes.length; i++) {
-      argTypes[i] = TypeNames.getTypeForName(paramTypeNames.get(i));
+    if (operation.isValid()) {
+      List<String> paramTypeNames = operation.getParameterTypeNames();
+      Class<?>[] argTypes = new Class<?>[paramTypeNames.size()];
+      for (int i = 0; i < argTypes.length; i++) {
+        argTypes[i] = TypeNames.getTypeForName(paramTypeNames.get(i));
+      }
+      Class<?> declaringClass = TypeNames.getTypeForName(operation.getClassname());
+      if (operation.isConstructor()) {
+        return declaringClass.getDeclaredConstructor(argTypes);
+      } else {
+        return declaringClass.getDeclaredMethod(operation.getName(), argTypes);
+      }
     }
-    Class<?> declaringClass = TypeNames.getTypeForName(operation.getClassname());
-    if (operation.isConstructor()) {
-      return declaringClass.getDeclaredConstructor(argTypes);
-    } else {
-      return declaringClass.getDeclaredMethod(operation.getName(), argTypes);
-    }
+    return null;
   }
 
   /**

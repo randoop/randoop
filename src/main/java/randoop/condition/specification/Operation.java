@@ -163,4 +163,12 @@ public class Operation {
   public boolean isConstructor() {
     return name.equals(classname);
   }
+
+  public boolean isValid() {
+    return classname != null
+        && !classname.isEmpty()
+        && name != null
+        && !name.isEmpty()
+        && parameterTypes != null;
+  }
 }
