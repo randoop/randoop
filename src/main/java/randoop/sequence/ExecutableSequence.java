@@ -192,7 +192,7 @@ public class ExecutableSequence {
         // Print the rest of the checks.
         for (Check d : checks.get().keySet()) {
           oneStatement.insert(0, d.toCodeStringPreStatement());
-          oneStatement.append(d.toCodeStringPostStatement());
+          oneStatement.append(Globals.lineSep + d.toCodeStringPostStatement());
         }
       }
       lines.add(oneStatement.toString());
