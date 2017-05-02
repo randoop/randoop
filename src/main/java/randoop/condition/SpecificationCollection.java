@@ -145,7 +145,7 @@ public class SpecificationCollection {
               String.format(
                   "Could not load specification operation: %n%s%n"
                       + "Exception thrown by initializer",
-                  specification.getOperation().toString(), e.toString());
+                  specification.getOperation().toString());
           if (Log.isLoggingOn()) {
             Log.logLine(msg);
           }
@@ -268,8 +268,9 @@ public class SpecificationCollection {
 
     OperationSpecification specification = specificationMap.get(accessibleObject);
     if (specification != null) {
-      Declarations declarations = Declarations.create(accessibleObject, specification);
-      conditions = createConditions(specification, declarations);
+      ConditionSignature signature =
+          ConditionSignature.create(accessibleObject, specification.getIdentifiers());
+      conditions = createConditions(specification, signature);
     } else {
       conditions = new OperationConditions();
     }
@@ -299,19 +300,19 @@ public class SpecificationCollection {
 
   /**
    * Create the {@link OperationConditions} object for the given {@link OperationSpecification}
-   * using the {@link Declarations}.
+   * using the {@link ConditionSignature}.
    *
    * @param specification the specification from which the conditions are to be created
-   * @param declarations the declarations to be used in the conditions
+   * @param signature the declarations to be used in the conditions
    * @return the {@link OperationConditions} for the given specification
    */
   private OperationConditions createConditions(
-      OperationSpecification specification, Declarations declarations) {
+      OperationSpecification specification, ConditionSignature signature) {
     OperationConditions conditions; // translate the ParamSpecifications to Condition objects
     List<Condition> paramConditions = new ArrayList<>();
     for (PreSpecification preSpecification : specification.getPreSpecifications()) {
       try {
-        paramConditions.add(createCondition(preSpecification.getGuard(), declarations));
+        paramConditions.add(createCondition(preSpecification.getGuard(), signature));
       } catch (RandoopConditionError e) {
         System.out.println("Warning: discarded uncompilable precondition: " + e.getMessage());
       }
@@ -321,9 +322,8 @@ public class SpecificationCollection {
     ArrayList<Pair<Condition, PostCondition>> returnConditions = new ArrayList<>();
     for (PostSpecification postSpecification : specification.getPostSpecifications()) {
       try {
-        Condition preCondition = createCondition(postSpecification.getGuard(), declarations);
-        PostCondition postCondition =
-            createCondition(postSpecification.getProperty(), declarations);
+        Condition preCondition = createCondition(postSpecification.getGuard(), signature);
+        PostCondition postCondition = createCondition(postSpecification.getProperty(), signature);
         returnConditions.add(new Pair<>(preCondition, postCondition));
       } catch (RandoopConditionError e) {
         System.out.println("Warning: discarding uncompilable postcondition: " + e.getMessage());
@@ -350,7 +350,7 @@ public class SpecificationCollection {
         continue;
       }
       try {
-        Condition guardCondition = createCondition(throwsSpecification.getGuard(), declarations);
+        Condition guardCondition = createCondition(throwsSpecification.getGuard(), signature);
         ExpectedException exception =
             new ExpectedException(exceptionType, "// " + throwsSpecification.getDescription());
         throwsConditions.put(guardCondition, exception);
@@ -367,23 +367,23 @@ public class SpecificationCollection {
    * Creates the {@link Condition} object for a given {@link Guard}.
    *
    * @param guard the guard to be converted to a {@link Condition}
-   * @param declarations the declarations for the specification the guard belongs to
+   * @param signature the declarations for the specification the guard belongs to
    * @return the {@link Condition} object for the given {@link Guard}
    */
-  private Condition createCondition(Guard guard, Declarations declarations) {
+  private Condition createCondition(Guard guard, ConditionSignature signature) {
     Method conditionMethod;
     try {
       conditionMethod =
           ConditionMethodCreator.create(
-              declarations.getPackageName(),
-              declarations.getPreSignature(),
+              signature.getPackageName(),
+              signature.getPreConditionSignature(),
               guard.getConditionText(),
               compiler);
     } catch (RandoopConditionError e) {
       throw new RandoopConditionError("guard condition " + guard.getConditionText(), e);
     }
     String comment = guard.getDescription();
-    String conditionText = declarations.replaceWithDummyVariables(guard.getConditionText());
+    String conditionText = signature.replaceWithDummyVariables(guard.getConditionText());
     return new Condition(conditionMethod, comment, conditionText);
   }
 
@@ -391,23 +391,23 @@ public class SpecificationCollection {
    * Creates the {@link PostCondition} object for a given {@link Property}.
    *
    * @param property the property to be converted
-   * @param declarations the declarations for the specification the guard belongs to
+   * @param signature the declarations for the specification the guard belongs to
    * @return the {@link PostCondition} object for the given {@link Property}
    */
-  private PostCondition createCondition(Property property, Declarations declarations) {
+  private PostCondition createCondition(Property property, ConditionSignature signature) {
     Method conditionMethod;
     try {
       conditionMethod =
           ConditionMethodCreator.create(
-              declarations.getPackageName(),
-              declarations.getPostSignature(),
+              signature.getPackageName(),
+              signature.getPostConditionSignature(),
               property.getConditionText(),
               compiler);
     } catch (RandoopConditionError e) {
       throw new RandoopConditionError("property condition " + property.getConditionText(), e);
     }
     String comment = property.getDescription();
-    String conditionText = declarations.replaceWithDummyVariables(property.getConditionText());
+    String conditionText = signature.replaceWithDummyVariables(property.getConditionText());
     return new PostCondition(conditionMethod, comment, conditionText);
   }
 
