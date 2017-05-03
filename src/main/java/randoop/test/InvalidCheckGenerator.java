@@ -13,6 +13,6 @@ public class InvalidCheckGenerator implements TestCheckGenerator {
 
   @Override
   public TestCheckGenerator getGenerator() {
-    return null;
+    return this;
   }
 }
