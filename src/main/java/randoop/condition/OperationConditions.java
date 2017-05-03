@@ -17,7 +17,7 @@ import plume.Pair;
  */
 public class OperationConditions {
 
-  /** The pre-conditions */
+  /** The pre-conditions for the operation */
   private final List<Condition> preconditions;
 
   /** The return-conditions */

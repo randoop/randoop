@@ -678,7 +678,7 @@ public class ForwardGenerator extends AbstractGenerator {
         // 2. COMMON CASE: ask the component manager for all sequences that
         // yield the required type.
         if (Log.isLoggingOn()) {
-          Log.logLine("Will query component set for objects of type" + inputType);
+          Log.logLine("Will query component set for objects of type " + inputType);
         }
         l = componentManager.getSequencesForType(operation, i);
       }

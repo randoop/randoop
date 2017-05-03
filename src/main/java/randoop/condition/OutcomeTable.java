@@ -55,20 +55,40 @@ public class OutcomeTable {
     return !isEmpty && !hasValid && exceptionSets.isEmpty();
   }
 
+  /**
+   * Constructs the {@link TestCheckGenerator} to apply post call by extending the given generator.
+   *
+   * <ul>
+   *   <li>if this table is empty, returns the given generator
+   *   <li>if this table has expected exceptions, then returns a generator that checks for those
+   *       exceptions.
+   *   <li>if all preconditions fail, then return an {@link InvalidCheckGenerator}.
+   *   <li>if there are post-conditions, then extend the given generator with a {@link
+   *       PostConditionCheckGenerator}.
+   * </ul>
+   *
+   * (Pre-conditions are checked here to allow for conflicts with throws-conditions.)
+   *
+   * @param gen the generator to extend
+   * @return the {@link TestCheckGenerator} to check for expected outcomes in this table
+   */
   public TestCheckGenerator addPostCheckGenerator(TestCheckGenerator gen) {
     if (isEmpty) {
       return gen;
     }
 
+    // if there are expected exceptions, then override pre-conditions
     if (!exceptionSets.isEmpty()) {
-      if (!hasValid) {
-        gen = new InvalidCheckGenerator(); // will be invalid if exception doesn't say otherwise
-      }
-      return new ExtendGenerator(new ExpectedExceptionGenerator(exceptionSets), gen);
+      return new ExpectedExceptionGenerator(exceptionSets);
+    }
+
+    // had conflict with pre-conditions
+    if (!hasValid) {
+      gen = new InvalidCheckGenerator();
     }
 
     if (!postConditions.isEmpty()) {
-      return new PostConditionCheckGenerator(postConditions);
+      return new ExtendGenerator(new PostConditionCheckGenerator(postConditions), gen);
     }
 
     return gen;
