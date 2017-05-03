@@ -242,4 +242,9 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
     }
     return checks;
   }
+
+  @Override
+  public TestCheckGenerator getGenerator() {
+    return this;
+  }
 }

@@ -10,4 +10,9 @@ public class InvalidCheckGenerator implements TestCheckGenerator {
     checks.add(new InvalidValueCheck(s, s.sequence.size() - 1));
     return checks;
   }
+
+  @Override
+  public TestCheckGenerator getGenerator() {
+    return null;
+  }
 }

@@ -60,6 +60,11 @@ public class ExpectedExceptionGenerator implements TestCheckGenerator {
     return checks;
   }
 
+  @Override
+  public TestCheckGenerator getGenerator() {
+    return this;
+  }
+
   private ClassOrInterfaceType findMatchingExpectedType(
       ClassOrInterfaceType throwableType, Set<ExpectedException> expectedExceptions) {
     for (ExpectedException exception : expectedExceptions) {

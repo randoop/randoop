@@ -70,6 +70,11 @@ public class PostConditionCheckGenerator implements TestCheckGenerator {
     return checks;
   }
 
+  @Override
+  public TestCheckGenerator getGenerator() {
+    return this;
+  }
+
   private Object[] addNullReceiver(Object[] values) {
     Object[] args = new Object[values.length + 1];
     args[0] = null;

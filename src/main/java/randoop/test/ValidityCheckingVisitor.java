@@ -71,4 +71,9 @@ public class ValidityCheckingVisitor implements TestCheckGenerator {
 
     return checks;
   }
+
+  @Override
+  public TestCheckGenerator getGenerator() {
+    return this;
+  }
 }
