@@ -283,6 +283,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Use specifications from JSON file to classify behaviors for methods/constructors")
   public static List<File> specifications = null;
 
+  /** Allow Randoop to fail if the Java condition text of a specification cannot be compiled. */
+  @Option("Terminate Randoop if specification condition is uncompilable")
+  public static boolean fail_on_condition_error = false;
+
   /**
    * File containing side-effect-free observer methods. Specifying observers has 2 benefits: it
    * makes regression tests stronger, and it helps Randoop create smaller tests.
