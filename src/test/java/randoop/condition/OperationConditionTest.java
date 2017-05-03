@@ -31,8 +31,8 @@ import randoop.sequence.Variable;
 import randoop.test.Check;
 import randoop.test.DummyCheckGenerator;
 import randoop.test.ExpectedExceptionGenerator;
+import randoop.test.ExtendGenerator;
 import randoop.test.PostConditionCheck;
-import randoop.test.PostConditionCheckGenerator;
 import randoop.test.TestCheckGenerator;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
@@ -64,36 +64,35 @@ public class OperationConditionTest {
     TestCheckGenerator gen = table.addPostCheckGenerator(new DummyCheckGenerator());
     assertFalse(
         "should not be a exception check generator", gen instanceof ExpectedExceptionGenerator);
-    assertTrue(
-        "should be a post-condition check generator", gen instanceof PostConditionCheckGenerator);
+    assertTrue("should be a post-condition check generator", gen instanceof ExtendGenerator);
 
     preValues = new Object[] {receiver, 6};
     table = conditions.check(preValues);
     gen = table.addPostCheckGenerator(new DummyCheckGenerator());
     assertFalse("should pass param condition", table.isInvalid());
     assertFalse("should not be a throws generator", gen instanceof ExpectedExceptionGenerator);
-    assertTrue("should be a return generator", gen instanceof PostConditionCheckGenerator);
+    assertTrue("should be a return generator", gen instanceof ExtendGenerator);
 
     preValues = new Object[] {receiver, 11};
     table = conditions.check(preValues);
     gen = table.addPostCheckGenerator(new DummyCheckGenerator());
     assertTrue("should pass param condition", !table.isInvalid());
     assertFalse("should not be a throws generator", gen instanceof ExpectedExceptionGenerator);
-    assertTrue("should be a return generator", gen instanceof PostConditionCheckGenerator);
+    assertTrue("should be a return generator", gen instanceof ExtendGenerator);
 
     preValues = new Object[] {receiver, 16};
     table = conditions.check(preValues);
     gen = table.addPostCheckGenerator(new DummyCheckGenerator());
     assertTrue("should pass param condition", !table.isInvalid());
     assertFalse("should not be a throws generator", gen instanceof ExpectedExceptionGenerator);
-    assertTrue("should be a return generator", gen instanceof PostConditionCheckGenerator);
+    assertTrue("should be a return generator", gen instanceof ExtendGenerator);
 
     preValues = new Object[] {receiver, 21};
     table = conditions.check(preValues);
     gen = table.addPostCheckGenerator(new DummyCheckGenerator());
     assertTrue("should pass param condition", !table.isInvalid());
-    assertFalse("should not be a throws generator", gen instanceof ExpectedExceptionGenerator);
-    assertFalse("should be a return generator", gen instanceof PostConditionCheckGenerator);
+    assertFalse("should be a return generator", gen instanceof ExtendGenerator);
+    assertTrue("should be a throws generator", gen instanceof ExpectedExceptionGenerator);
   }
 
   @Test
@@ -111,11 +110,11 @@ public class OperationConditionTest {
   @Test
   public void methodSequenceTest() {
     ExecutableSequence es;
-    es = createCategorySequence(5, -1);
+    es = createCategorySequence(-1);
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
     assertTrue("should be invalid sequence", es.hasInvalidBehavior());
 
-    es = createCategorySequence(5, 1);
+    es = createCategorySequence(1);
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
     assertFalse("should be valid sequence", es.hasInvalidBehavior());
     assertFalse("should not have failure", es.hasFailure());
@@ -131,7 +130,7 @@ public class OperationConditionTest {
       }
     }
 
-    es = createCategorySequence(5, 6);
+    es = createCategorySequence(6);
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
     assertFalse("should be valid sequence", es.hasInvalidBehavior());
     assertFalse("should not have failure", es.hasFailure());
@@ -147,7 +146,7 @@ public class OperationConditionTest {
       }
     }
 
-    es = createCategorySequence(5, 11);
+    es = createCategorySequence(11);
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
     assertFalse("should be valid sequence", es.hasInvalidBehavior());
     assertTrue("should have failure", es.hasFailure());
@@ -163,7 +162,7 @@ public class OperationConditionTest {
       }
     }
 
-    es = createCategorySequence(5, 16);
+    es = createCategorySequence(16);
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
     assertFalse("should be valid sequence", es.hasInvalidBehavior());
     assertFalse("should not have failure", es.hasFailure());
@@ -179,7 +178,7 @@ public class OperationConditionTest {
       }
     }
 
-    es = createCategorySequence(5, 21);
+    es = createCategorySequence(21);
     es.execute(new DummyVisitor(), new DummyCheckGenerator());
     assertFalse("should be valid sequence", es.hasInvalidBehavior());
     assertFalse("should not have failure", es.hasFailure());
@@ -215,7 +214,7 @@ public class OperationConditionTest {
     return new ExecutableSequence(sequence);
   }
 
-  private ExecutableSequence createCategorySequence(int initValue, int value) {
+  private ExecutableSequence createCategorySequence(int value) {
     Class<?> c = ClassWithConditions.class;
     Constructor<?> reflectionConstructor = null;
     try {
@@ -234,9 +233,7 @@ public class OperationConditionTest {
     methodOp.addConditions(getMethodConditions(method));
 
     Sequence sequence = new Sequence();
-    sequence =
-        sequence.extend(
-            TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, initValue));
+    sequence = sequence.extend(TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, 5));
     sequence = sequence.extend(constructorOp, sequence.getLastVariable());
     sequence =
         sequence.extend(TypedOperation.createPrimitiveInitialization(JavaTypes.INT_TYPE, value));
