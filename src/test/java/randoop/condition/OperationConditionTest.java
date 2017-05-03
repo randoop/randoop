@@ -31,8 +31,8 @@ import randoop.sequence.Variable;
 import randoop.test.Check;
 import randoop.test.DummyCheckGenerator;
 import randoop.test.ExpectedExceptionGenerator;
-import randoop.test.ExtendGenerator;
 import randoop.test.PostConditionCheck;
+import randoop.test.PostConditionCheckGenerator;
 import randoop.test.TestCheckGenerator;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
@@ -64,34 +64,40 @@ public class OperationConditionTest {
     TestCheckGenerator gen = table.addPostCheckGenerator(new DummyCheckGenerator());
     assertFalse(
         "should not be a exception check generator", gen instanceof ExpectedExceptionGenerator);
-    assertTrue("should be a post-condition check generator", gen instanceof ExtendGenerator);
+    assertTrue(
+        "should be a post-condition check generator",
+        gen.getGenerator() instanceof PostConditionCheckGenerator);
 
     preValues = new Object[] {receiver, 6};
     table = conditions.check(preValues);
     gen = table.addPostCheckGenerator(new DummyCheckGenerator());
     assertFalse("should pass param condition", table.isInvalid());
     assertFalse("should not be a throws generator", gen instanceof ExpectedExceptionGenerator);
-    assertTrue("should be a return generator", gen instanceof ExtendGenerator);
+    assertTrue(
+        "should be a return generator", gen.getGenerator() instanceof PostConditionCheckGenerator);
 
     preValues = new Object[] {receiver, 11};
     table = conditions.check(preValues);
     gen = table.addPostCheckGenerator(new DummyCheckGenerator());
     assertTrue("should pass param condition", !table.isInvalid());
     assertFalse("should not be a throws generator", gen instanceof ExpectedExceptionGenerator);
-    assertTrue("should be a return generator", gen instanceof ExtendGenerator);
+    assertTrue(
+        "should be a return generator", gen.getGenerator() instanceof PostConditionCheckGenerator);
 
     preValues = new Object[] {receiver, 16};
     table = conditions.check(preValues);
     gen = table.addPostCheckGenerator(new DummyCheckGenerator());
     assertTrue("should pass param condition", !table.isInvalid());
     assertFalse("should not be a throws generator", gen instanceof ExpectedExceptionGenerator);
-    assertTrue("should be a return generator", gen instanceof ExtendGenerator);
+    assertTrue(
+        "should be a return generator", gen.getGenerator() instanceof PostConditionCheckGenerator);
 
     preValues = new Object[] {receiver, 21};
     table = conditions.check(preValues);
     gen = table.addPostCheckGenerator(new DummyCheckGenerator());
     assertTrue("should pass param condition", !table.isInvalid());
-    assertFalse("should be a return generator", gen instanceof ExtendGenerator);
+    assertFalse(
+        "should be a return generator", gen.getGenerator() instanceof PostConditionCheckGenerator);
     assertTrue("should be a throws generator", gen instanceof ExpectedExceptionGenerator);
   }
 

@@ -29,6 +29,7 @@ import randoop.condition.specification.PostSpecification;
 import randoop.condition.specification.PreSpecification;
 import randoop.condition.specification.Property;
 import randoop.condition.specification.ThrowsSpecification;
+import randoop.main.GenInputsAbstract;
 import randoop.reflection.TypeNames;
 import randoop.types.ClassOrInterfaceType;
 import randoop.util.Log;
@@ -314,6 +315,9 @@ public class SpecificationCollection {
       try {
         paramConditions.add(createCondition(preSpecification.getGuard(), signature));
       } catch (RandoopConditionError e) {
+        if (GenInputsAbstract.fail_on_condition_error) {
+          throw e;
+        }
         System.out.println("Warning: discarded uncompilable precondition: " + e.getMessage());
       }
     }
@@ -326,6 +330,9 @@ public class SpecificationCollection {
         PostCondition postCondition = createCondition(postSpecification.getProperty(), signature);
         returnConditions.add(new Pair<>(preCondition, postCondition));
       } catch (RandoopConditionError e) {
+        if (GenInputsAbstract.fail_on_condition_error) {
+          throw e;
+        }
         System.out.println("Warning: discarding uncompilable postcondition: " + e.getMessage());
       }
     }
@@ -355,6 +362,9 @@ public class SpecificationCollection {
             new ExpectedException(exceptionType, "// " + throwsSpecification.getDescription());
         throwsConditions.put(guardCondition, exception);
       } catch (RandoopConditionError e) {
+        if (GenInputsAbstract.fail_on_condition_error) {
+          throw e;
+        }
         System.out.println("Warning: discarding uncompilable throws-condition: " + e.getMessage());
       }
     }
