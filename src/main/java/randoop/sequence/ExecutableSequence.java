@@ -183,7 +183,7 @@ public class ExecutableSequence {
         // Print the rest of the checks.
         for (Check d : checks.get().keySet()) {
           oneStatement.insert(0, d.toCodeStringPreStatement());
-          oneStatement.append(d.toCodeStringPostStatement());
+          oneStatement.append(Globals.lineSep).append(d.toCodeStringPostStatement());
         }
       }
       lines.add(oneStatement.toString());
@@ -370,7 +370,12 @@ public class ExecutableSequence {
       // assert ((statement.isMethodCall() && !statement.isStatic()) ?
       // inputVariables[0] != null : true);
 
-      ExecutionOutcome r = statement.execute(inputVariables, Globals.blackHole);
+      ExecutionOutcome r;
+      try {
+        r = statement.execute(inputVariables, Globals.blackHole);
+      } catch (SequenceExecutionException e) {
+        throw new SequenceExecutionException("Exception during execution of " + statement, e);
+      }
       assert r != null;
       if (GenInputsAbstract.capture_output) {
         System.setOut(orig_out);

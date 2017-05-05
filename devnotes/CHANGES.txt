@@ -1,6 +1,10 @@
-Version 3.1.5, released X X, 2017
+Version 3.1.5, released April 28, 2017
 
-- fixes some things a user wont know about yet
+Fixes a bug where a call to a method with a type variable return type should
+result in a ClassCastException does not throw the exception, but instead leads
+to a later failure when invoking a class member.
+
+Fixes and improves error handling.
 
 
 Version 3.1.4, released April 11, 2017

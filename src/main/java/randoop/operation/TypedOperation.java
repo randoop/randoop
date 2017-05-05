@@ -288,6 +288,9 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     paramTypes.addAll(methodParamTypes);
     TypeTuple inputTypes = new TypeTuple(paramTypes);
     Type outputType = Type.forType(method.getGenericReturnType());
+    if (outputType.isVariable()) {
+      return new TypedClassOperationWithCast(op, declaringType, inputTypes, outputType);
+    }
     return new TypedClassOperation(op, declaringType, inputTypes, outputType);
   }
 
