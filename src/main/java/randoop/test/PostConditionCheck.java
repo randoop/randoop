@@ -26,7 +26,7 @@ public class PostConditionCheck implements Check {
    * @param postConditions the post-condition for this check
    * @param inputVariables the input variables for this condition check
    */
-  PostConditionCheck(List<PostCondition> postConditions, ArrayList<Variable> inputVariables) {
+  public PostConditionCheck(List<PostCondition> postConditions, List<Variable> inputVariables) {
     this.postConditions = postConditions;
     this.inputVariables = inputVariables.toArray(new Variable[0]);
   }

@@ -1,0 +1,372 @@
+[
+  {
+    "operation": {
+      "classname": "java.io.PrintWriter",
+      "name": "print",
+      "parameterTypes": [
+        "[C"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "s"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If s is null",
+        "guard": {
+          "condition": "s==null",
+          "description": "If s is null"
+        }
+      }
+    ],
+    "post": [],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.PrintWriter",
+      "name": "printf",
+      "parameterTypes": [
+        "java.lang.String",
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "format",
+        "args"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.IllegalFormatException",
+        "description": "throws IllegalFormatException If a format string contains an illegal syntax, a format specifier that is incompatible with the given arguments, insufficient arguments given the format string, or other illegal conditions. For specification of all possible formatting errors, see the Details section of the formatter class specification.",
+        "guard": {
+          "condition": "format.contains(java.lang.CharSequence)",
+          "description": "If a format string contains an illegal syntax, a format specifier that is incompatible with the given arguments, insufficient arguments given the format string, or other illegal conditions. For specification of all possible formatting errors, see the Details section of the formatter class specification."
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If the format is null",
+        "guard": {
+          "condition": "format==null",
+          "description": "If the format is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "This writer"
+        },
+        "description": "return This writer",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.PrintWriter",
+      "name": "printf",
+      "parameterTypes": [
+        "java.util.Locale",
+        "java.lang.String",
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "l",
+        "format",
+        "args"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.IllegalFormatException",
+        "description": "throws IllegalFormatException If a format string contains an illegal syntax, a format specifier that is incompatible with the given arguments, insufficient arguments given the format string, or other illegal conditions. For specification of all possible formatting errors, see the Details section of the formatter class specification.",
+        "guard": {
+          "condition": "format.contains(java.lang.CharSequence)",
+          "description": "If a format string contains an illegal syntax, a format specifier that is incompatible with the given arguments, insufficient arguments given the format string, or other illegal conditions. For specification of all possible formatting errors, see the Details section of the formatter class specification."
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If the format is null",
+        "guard": {
+          "condition": "format==null",
+          "description": "If the format is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "This writer"
+        },
+        "description": "return This writer",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "The locale to apply during formatting. If l is null then no localization is applied.",
+        "guard": {
+          "condition": "l==null",
+          "description": "The locale to apply during formatting. If l is null then no localization is applied."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.io.PrintWriter",
+      "name": "format",
+      "parameterTypes": [
+        "java.lang.String",
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "format",
+        "args"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.IllegalFormatException",
+        "description": "throws IllegalFormatException If a format string contains an illegal syntax, a format specifier that is incompatible with the given arguments, insufficient arguments given the format string, or other illegal conditions. For specification of all possible formatting errors, see the Details section of the Formatter class specification.",
+        "guard": {
+          "condition": "format.contains(java.lang.CharSequence)",
+          "description": "If a format string contains an illegal syntax, a format specifier that is incompatible with the given arguments, insufficient arguments given the format string, or other illegal conditions. For specification of all possible formatting errors, see the Details section of the Formatter class specification."
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If the format is null",
+        "guard": {
+          "condition": "format==null",
+          "description": "If the format is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "This writer"
+        },
+        "description": "return This writer",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  },
+  {
+    "operation": {
+      "classname": "java.io.PrintWriter",
+      "name": "format",
+      "parameterTypes": [
+        "java.util.Locale",
+        "java.lang.String",
+        "[Ljava.lang.Object;"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "l",
+        "format",
+        "args"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.util.IllegalFormatException",
+        "description": "throws IllegalFormatException If a format string contains an illegal syntax, a format specifier that is incompatible with the given arguments, insufficient arguments given the format string, or other illegal conditions. For specification of all possible formatting errors, see the Details section of the formatter class specification.",
+        "guard": {
+          "condition": "format.contains(java.lang.CharSequence)",
+          "description": "If a format string contains an illegal syntax, a format specifier that is incompatible with the given arguments, insufficient arguments given the format string, or other illegal conditions. For specification of all possible formatting errors, see the Details section of the formatter class specification."
+        }
+      },
+      {
+        "exception": "java.lang.NullPointerException",
+        "description": "throws NullPointerException If the format is null",
+        "guard": {
+          "condition": "format==null",
+          "description": "If the format is null"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "This writer"
+        },
+        "description": "return This writer",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "The locale to apply during formatting. If l is null then no localization is applied.",
+        "guard": {
+          "condition": "l==null",
+          "description": "The locale to apply during formatting. If l is null then no localization is applied."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.io.PrintWriter",
+      "name": "append",
+      "parameterTypes": [
+        "java.lang.CharSequence"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "csq"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "This writer"
+        },
+        "description": "return This writer",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "The character sequence to append. If csq is null, then the four characters \"null\" are appended to this writer.",
+        "guard": {
+          "condition": "csq==null",
+          "description": "The character sequence to append. If csq is null, then the four characters \"null\" are appended to this writer."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.io.PrintWriter",
+      "name": "append",
+      "parameterTypes": [
+        "java.lang.CharSequence",
+        "int",
+        "int"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "csq",
+        "start",
+        "end"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [
+      {
+        "exception": "java.lang.IndexOutOfBoundsException",
+        "description": "throws IndexOutOfBoundsException If start or end are negative, start is greater than end, or end is greater than csq.length()",
+        "guard": {
+          "condition": "start<0 || end<0 || end>csq.length() || start>end",
+          "description": "If start or end are negative, start is greater than end, or end is greater than csq.length()"
+        }
+      }
+    ],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "This writer"
+        },
+        "description": "return This writer",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": [
+      {
+        "description": "The character sequence from which a subsequence will be appended. If csq is null, then characters will be appended as if csq contained the four characters \"null\".",
+        "guard": {
+          "condition": "csq==null",
+          "description": "The character sequence from which a subsequence will be appended. If csq is null, then characters will be appended as if csq contained the four characters \"null\"."
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "java.io.PrintWriter",
+      "name": "append",
+      "parameterTypes": [
+        "char"
+      ]
+    },
+    "identifiers": {
+      "parameters": [
+        "c"
+      ],
+      "receiverName": "target",
+      "returnName": "result"
+    },
+    "throws": [],
+    "post": [
+      {
+        "property": {
+          "condition": "result.equals(target)",
+          "description": "This writer"
+        },
+        "description": "return This writer",
+        "guard": {
+          "condition": "true",
+          "description": ""
+        }
+      }
+    ],
+    "pre": []
+  }
+]

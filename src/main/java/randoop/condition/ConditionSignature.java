@@ -15,7 +15,7 @@ import plume.UtilMDE;
 import randoop.condition.specification.Identifiers;
 import randoop.sequence.Variable;
 
-/** Represents the sigature of a condition method for a particular {@code AccessibleObject}. */
+/** Represents the signature of a condition method for a particular {@code AccessibleObject}. */
 public class ConditionSignature {
 
   private static final String DUMMY_VARIABLE_NAME = "x";
