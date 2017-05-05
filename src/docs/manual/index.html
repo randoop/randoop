@@ -644,10 +644,10 @@ agent</a> to replace the new functionality by the old functionality.)
 <h2 id="minimize">Minimizing a failing JUnit test suite</h2>
 
 <p>
-Randoop creates large test cases; when they fail, they may be hard for you
-to understand and debug.  Randoop includes a minimizer that, given a failing
-JUnit test suite, produces a smaller test suite that fails in the same way as
-the original, having the same failing assertions with the same stack trace.
+Randoop includes a minimizer that, given a failing JUnit test suite file,
+produces a smaller one that fails in the same way as the original, having the
+same failing assertions with the same stack trace. Minimized test suites should
+contain test cases that are easier to understand and debug.
 </p>
 <ul>
   <li>Same failing assertions as in the original input test suite.</li>
