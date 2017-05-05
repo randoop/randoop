@@ -641,7 +641,8 @@ public final class Sequence implements WeightedElement {
   }
 
   void checkIndex(int i) {
-    if (i < 0 || i > size() - 1) throw new IllegalArgumentException();
+    if (i < 0 || i > size() - 1)
+      throw new IllegalArgumentException("index " + i + " out of range [0, " + (size() - 1) + "]");
   }
 
   // Argument checker for extend method.
