@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>CallableOperation (randoop 3.1.2 API)</title>
+<title>CallableOperation (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="CallableOperation (randoop 3.1.2 API)";
+            parent.document.title="CallableOperation (randoop 3.1.5 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":6};
+var methods = {"i0":6,"i1":6,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -175,67 +175,73 @@ implements <a href="../../randoop/operation/Operation.html" title="interface in 
 </td>
 </tr>
 <tr id="i2" class="altColor">
+<td class="colFirst"><code>(package private) java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#getArgumentString-randoop.sequence.Variable-">getArgumentString</a></span>(<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&nbsp;variable)</code>
+<div class="block">Returns the variable as a string to be used as an argument to an operation.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.lang.reflect.AccessibleObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#getReflectionObject--">getReflectionObject</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#getValue--">getValue</a></span>()</code>
 <div class="block">Returns the "value" of an operation that is actually a ground term, meaning a constant of some
  form.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#isConstantField--">isConstantField</a></span>()</code>
 <div class="block">Predicate to indicate whether this object represents a constant field.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#isConstructorCall--">isConstructorCall</a></span>()</code>
 <div class="block">Predicate to indicate whether object represents a call to a constructor.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#isMessage--">isMessage</a></span>()</code>
 <div class="block">Predicate to indicate whether object represents a method-call-like operation (either static or
  instance).</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#isMethodCall--">isMethodCall</a></span>()</code>
 <div class="block">Indicates whether this object represents a method-call operation (either static or instance).</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#isNonreceivingValue--">isNonreceivingValue</a></span>()</code>
 <div class="block">Predicate to indicate whether this object represents a value of a non-receiving type (includes
  numbers, strings, and null).</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#isStatic--">isStatic</a></span>()</code>
 <div class="block">Predicate to indicate whether object represents a static operation on the declaring class.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#isUncheckedCast--">isUncheckedCast</a></span>()</code>
 <div class="block">Predicate to indicate whether this object represents an unchecked cast.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#satisfies-randoop.reflection.ReflectionPredicate-">satisfies</a></span>(<a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;predicate)</code>
 <div class="block">Checks whether reflective object contained in an <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> satisfies the predicate.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>abstract java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/operation/CallableOperation.html#toParsableString-randoop.types.Type-randoop.types.TypeTuple-randoop.types.Type-">toParsableString</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;declaringType,
                 <a href="../../randoop/types/TypeTuple.html" title="class in randoop.types">TypeTuple</a>&nbsp;inputTypes,
@@ -446,7 +452,7 @@ implements <a href="../../randoop/operation/Operation.html" title="interface in 
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/operation/Operation.html#satisfies-randoop.reflection.ReflectionPredicate-">satisfies</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/operation/Operation.html" title="interface in randoop.operation">Operation</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>predicate</code> - <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection"><code>ReflectionPredicate</code></a> against which object to be checked.</dd>
+<dd><code>predicate</code> - <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection"><code>ReflectionPredicate</code></a> against which object to be checked</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>false as there is no object to check</dd>
 </dl>
@@ -491,6 +497,25 @@ implements <a href="../../randoop/operation/Operation.html" title="interface in 
 <dd><code>outputType</code> - the output type for this operation</dd>
 <dd><code>inputVars</code> - the list of variables that are inputs to operation</dd>
 <dd><code>b</code> - the <code>StringBuilder</code> to which code is added</dd>
+</dl>
+</li>
+</ul>
+<a name="getArgumentString-randoop.sequence.Variable-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getArgumentString</h4>
+<pre>java.lang.String&nbsp;getArgumentString(<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&nbsp;variable)</pre>
+<div class="block">Returns the variable as a string to be used as an argument to an operation. Determines if the
+ value of the variable can be given in short form. In the short output format, statements that
+ assign to a primitive or string literal, like "int x = 3" are not added to a sequence; instead,
+ the value (e.g. "3") is inserted directly added as arguments to method calls.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>variable</code> - the variable for which the argument string is constructed</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the argument string for the variable</dd>
 </dl>
 </li>
 </ul>

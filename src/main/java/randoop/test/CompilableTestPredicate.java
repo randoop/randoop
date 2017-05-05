@@ -48,7 +48,7 @@ public class CompilableTestPredicate extends DefaultPredicate<ExecutableSequence
     options.add("-g:none");
     // no warnings:
     options.add("-Xlint:none");
-    this.compiler = new SequenceCompiler(sequenceClassLoader, options, diagnostics);
+    this.compiler = new SequenceCompiler(sequenceClassLoader, options);
     this.junitCreator = junitCreator;
     this.nameGenerator = new NameGenerator("RandoopTemporarySeqTest");
   }

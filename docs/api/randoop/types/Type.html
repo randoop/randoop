@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Type (randoop 3.1.2 API)</title>
+<title>Type (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Type (randoop 3.1.2 API)";
+            parent.document.title="Type (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -192,7 +192,9 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#compareTo-randoop.types.Type-">compareTo</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/Type.html#compareTo-randoop.types.Type-">compareTo</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type)</code>
+<div class="block">Compare this <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> to another.</div>
+</td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>static <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></td>
@@ -502,7 +504,7 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the <code>Class</code> that is the runtime representation of the type, or null if this type
-     is a type variable or null reference type.</dd>
+     is a type variable or null reference type</dd>
 </dl>
 </li>
 </ul>
@@ -543,7 +545,8 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 <h4>getCanonicalName</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getCanonicalName()</pre>
 <div class="block">Returns the name of this type as the "canonical name" of the underlying runtime class.
- Identical to <a href="../../randoop/types/Type.html#getName--"><code>getName()</code></a> except for types with type arguments. For <code>java.util.List&lt;T&gt;</code> returns <code>"java.util.List"</code>.</div>
+ Identical to <a href="../../randoop/types/Type.html#getName--"><code>getName()</code></a> except for types with type arguments. For <code>java.util.List&lt;T&gt;</code> returns <code>"java.util.List"</code>. Returns <code>null</code> when <code>Class&lt;?&gt;.getCanonicalName()</code> does for the underlying <code>Class&lt;?&gt;</code> object (e.g., the type is
+ a local or anonymous class, or array type where the component type that has no canonical name).</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the fully-qualified canonical name of this type</dd>
@@ -903,9 +906,16 @@ implements java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title
 <li class="blockList">
 <h4>compareTo</h4>
 <pre>public&nbsp;int&nbsp;compareTo(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type)</pre>
+<div class="block">Compare this <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> to another. Uses the names of the underlying <code>Class&lt;?&gt;</code>
+ objects. Uses canonical names if both have them, otherwise uses <code>Class&lt;?&gt;.getName()</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>compareTo</code>&nbsp;in interface&nbsp;<code>java.lang.Comparable&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;</code></dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>type</code> - the type to compare against</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>-1 if this type precedes <code>type</code>, 1 if this type succeeds <code>type</code>, and 0 if
+     they are equal.</dd>
 </dl>
 </li>
 </ul>

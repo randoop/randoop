@@ -194,8 +194,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (seq.hasNonExecutedStatements()) {
       if (Log.isLoggingOn()) {
-        Log.logLine(
-            "Making all indices inactive (sequence has non-executed statements, so judging it inadequate for further extension).");
+        Log.logLine("Sequence has non-executed statements: excluding from extension pool.");
         Log.logLine(
             "Non-executed statement: " + seq.statementToCodeString(seq.getNonExecutedIndex()));
       }
@@ -205,8 +204,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (seq.hasFailure()) {
       if (Log.isLoggingOn()) {
-        Log.logLine(
-            "Making all indices inactive (sequence reveals a failure, so judging it inadequate for further extension)");
+        Log.logLine("Sequence has failure: excluding from extension pool.");
         Log.logLine("Failing sequence: " + seq.toCodeString());
       }
       seq.sequence.clearAllActiveFlags();
@@ -215,7 +213,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (seq.hasInvalidBehavior()) {
       if (Log.isLoggingOn()) {
-        Log.logLine("Making all indices inactive (sequence has invalid behavior)");
+        Log.logLine("Sequence has invalid behavior: discarding and excluding from extension pool.");
         Log.logLine("Invalid sequence: " + seq.toCodeString());
       }
       seq.sequence.clearAllActiveFlags();
@@ -224,8 +222,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (!seq.isNormalExecution()) {
       if (Log.isLoggingOn()) {
-        Log.logLine(
-            "Making all indices inactive (exception thrown, or failure revealed during execution).");
+        Log.logLine("Sequence throws exception or has failure: excluding from extension pool.");
         Log.logLine(
             "Statement with non-normal execution: "
                 + seq.statementToCodeString(seq.getNonNormalExecutionIndex()));
@@ -317,7 +314,6 @@ public class ForwardGenerator extends AbstractGenerator {
     if (Log.isLoggingOn()) {
       Log.logLine("Selected operation: " + operation.toString());
     }
-
     if (operation.isGeneric() || operation.hasWildcardTypes()) {
       try {
         operation = instantiator.instantiate((TypedClassOperation) operation);
@@ -677,7 +673,7 @@ public class ForwardGenerator extends AbstractGenerator {
         // 2. COMMON CASE: ask the component manager for all sequences that
         // yield the required type.
         if (Log.isLoggingOn()) {
-          Log.logLine("Will query component set for objects of type" + inputType);
+          Log.logLine("Will query component set for objects of type " + inputType);
         }
         l = componentManager.getSequencesForType(operation, i);
       }

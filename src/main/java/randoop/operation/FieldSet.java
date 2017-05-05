@@ -10,7 +10,7 @@ import randoop.NormalExecution;
 import randoop.field.AccessibleField;
 import randoop.field.FieldParser;
 import randoop.reflection.ReflectionPredicate;
-import randoop.sequence.Statement;
+import randoop.sequence.SequenceExecutionException;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
@@ -55,6 +55,7 @@ public class FieldSet extends CallableOperation {
    * @param out the stream for printing output (unused)
    * @return outcome of access, either void normal execution or captured exception
    * @throws BugInRandoopException if field access throws bug exception
+   * @throws SequenceExecutionException if field access has type exception
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
@@ -68,7 +69,7 @@ public class FieldSet extends CallableOperation {
 
     try {
       field.setValue(instance, input);
-    } catch (BugInRandoopException e) {
+    } catch (BugInRandoopException | SequenceExecutionException e) {
       throw e;
     } catch (Throwable thrown) {
       return new ExceptionalExecution(thrown, 0);
@@ -107,16 +108,7 @@ public class FieldSet extends CallableOperation {
 
     // variable/value to be assigned is either only or second entry in list
     int index = inputVars.size() - 1;
-
-    // TODO this is duplicate code from RMethod - should factor out behavior
-    String rhs = inputVars.get(index).getName();
-    Statement statementCreatingVar = inputVars.get(index).getDeclaringStatement();
-
-    String shortForm = statementCreatingVar.getShortForm();
-    if (shortForm != null) {
-      rhs = shortForm;
-    }
-
+    String rhs = getArgumentString(inputVars.get(index));
     b.append(rhs);
   }
 

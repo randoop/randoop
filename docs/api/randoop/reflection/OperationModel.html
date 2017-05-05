@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>OperationModel (randoop 3.1.2 API)</title>
+<title>OperationModel (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="OperationModel (randoop 3.1.2 API)";
+            parent.document.title="OperationModel (randoop 3.1.5 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":9,"i6":9,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":9,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -251,10 +251,9 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>private void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#addOperations-java.util.Set-randoop.reflection.VisibilityPredicate-randoop.reflection.ReflectionPredicate-randoop.condition.ConditionCollection-">addOperations</a></span>(java.util.Set&lt;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&gt;&nbsp;concreteClassTypes,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#addOperations-java.util.Set-randoop.reflection.VisibilityPredicate-randoop.reflection.ReflectionPredicate-">addOperations</a></span>(java.util.Set&lt;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&gt;&nbsp;concreteClassTypes,
              <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a>&nbsp;visibility,
-             <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;reflectionPredicate,
-             <a href="../../randoop/condition/ConditionCollection.html" title="interface in randoop.condition">ConditionCollection</a>&nbsp;operationConditions)</code>
+             <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;reflectionPredicate)</code>
 <div class="block">Iterates through a set of simple and instantiated class types and uses reflection to extract
  the operations that satisfy both the visibility and reflection predicates, and then adds them
  to the operation set of this model.</div>
@@ -274,64 +273,57 @@ extends java.lang.Object</pre>
            java.util.Set&lt;java.lang.String&gt;&nbsp;exercisedClassnames,
            java.util.Set&lt;java.lang.String&gt;&nbsp;methodSignatures,
            <a href="../../randoop/main/ClassNameErrorHandler.html" title="interface in randoop.main">ClassNameErrorHandler</a>&nbsp;errorHandler,
-           java.util.List&lt;java.lang.String&gt;&nbsp;literalsFileList)</code>&nbsp;</td>
-</tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code>static <a href="../../randoop/reflection/OperationModel.html" title="class in randoop.reflection">OperationModel</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#createModel-randoop.reflection.VisibilityPredicate-randoop.reflection.ReflectionPredicate-java.util.Set-java.util.Set-java.util.Set-randoop.main.ClassNameErrorHandler-java.util.List-randoop.condition.ConditionCollection-">createModel</a></span>(<a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a>&nbsp;visibility,
-           <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;reflectionPredicate,
-           java.util.Set&lt;java.lang.String&gt;&nbsp;classnames,
-           java.util.Set&lt;java.lang.String&gt;&nbsp;exercisedClassnames,
-           java.util.Set&lt;java.lang.String&gt;&nbsp;methodSignatures,
-           <a href="../../randoop/main/ClassNameErrorHandler.html" title="interface in randoop.main">ClassNameErrorHandler</a>&nbsp;errorHandler,
-           java.util.List&lt;java.lang.String&gt;&nbsp;literalsFileList,
-           <a href="../../randoop/condition/ConditionCollection.html" title="interface in randoop.condition">ConditionCollection</a>&nbsp;operationCollection)</code>
+           java.util.List&lt;java.lang.String&gt;&nbsp;literalsFileList)</code>
 <div class="block">Factory method to construct an operation model for a particular set of classes</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>java.util.Set&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#getAnnotatedTestValues--">getAnnotatedTestValues</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.util.Set&lt;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#getClassTypes--">getClassTypes</a></span>()</code>
 <div class="block">Returns the set of types for classes under test.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/test/ContractSet.html" title="class in randoop.test">ContractSet</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#getContracts--">getContracts</a></span>()</code>
 <div class="block">Returns all <a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract"><code>ObjectContract</code></a> objects for this run of Randoop.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>java.util.Set&lt;java.lang.Class&lt;?&gt;&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#getExercisedClasses--">getExercisedClasses</a></span>()</code>
 <div class="block">Returns the set of identified <code>Class&lt;?&gt;</code> objects for the exercised class heuristic.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>java.util.Set&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#getInputTypes--">getInputTypes</a></span>()</code>
 <div class="block">Returns the set of input types that occur as parameters in classes under test.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#getObservers-java.util.Set-">getObservers</a></span>(java.util.Set&lt;java.lang.String&gt;&nbsp;observerSignatures)</code>
 <div class="block">Gets observer methods from the set of signatures.</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#getOperations--">getOperations</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#hasClasses--">hasClasses</a></span>()</code>
 <div class="block">Indicate whether the model has class types.</div>
 </td>
+</tr>
+<tr id="i14" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/OperationModel.html#log--">log</a></span>()</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -431,7 +423,7 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>operations</h4>
-<pre>private&nbsp;java.util.Set&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt; operations</pre>
+<pre>private final&nbsp;java.util.Set&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt; operations</pre>
 <div class="block">Set of concrete operations extracted from classes</div>
 </li>
 </ul>
@@ -461,43 +453,6 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="createModel-randoop.reflection.VisibilityPredicate-randoop.reflection.ReflectionPredicate-java.util.Set-java.util.Set-java.util.Set-randoop.main.ClassNameErrorHandler-java.util.List-randoop.condition.ConditionCollection-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createModel</h4>
-<pre>public static&nbsp;<a href="../../randoop/reflection/OperationModel.html" title="class in randoop.reflection">OperationModel</a>&nbsp;createModel(<a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a>&nbsp;visibility,
-                                         <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;reflectionPredicate,
-                                         java.util.Set&lt;java.lang.String&gt;&nbsp;classnames,
-                                         java.util.Set&lt;java.lang.String&gt;&nbsp;exercisedClassnames,
-                                         java.util.Set&lt;java.lang.String&gt;&nbsp;methodSignatures,
-                                         <a href="../../randoop/main/ClassNameErrorHandler.html" title="interface in randoop.main">ClassNameErrorHandler</a>&nbsp;errorHandler,
-                                         java.util.List&lt;java.lang.String&gt;&nbsp;literalsFileList,
-                                         <a href="../../randoop/condition/ConditionCollection.html" title="interface in randoop.condition">ConditionCollection</a>&nbsp;operationCollection)
-                                  throws <a href="../../randoop/operation/OperationParseException.html" title="class in randoop.operation">OperationParseException</a>,
-                                         java.lang.NoSuchMethodException</pre>
-<div class="block">Factory method to construct an operation model for a particular set of classes</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>visibility</code> - the <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection"><code>VisibilityPredicate</code></a> to test accessibility of
-     classes and class members.</dd>
-<dd><code>reflectionPredicate</code> - the reflection predicate to determine which classes and class
-     members are used</dd>
-<dd><code>classnames</code> - the names of classes under test</dd>
-<dd><code>exercisedClassnames</code> - the names of classes to be tested by exercised heuristic</dd>
-<dd><code>methodSignatures</code> - the signatures of methods to be added to the model</dd>
-<dd><code>errorHandler</code> - the handler for bad file name errors</dd>
-<dd><code>literalsFileList</code> - the list of literals file names</dd>
-<dd><code>operationCollection</code> - the conditions to be added to operations</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the operation model for the parameters</dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../randoop/operation/OperationParseException.html" title="class in randoop.operation">OperationParseException</a></code> - if a method signature is ill-formed</dd>
-<dd><code>java.lang.NoSuchMethodException</code> - if an attempt is made to load a non-existent method</dd>
-</dl>
-</li>
-</ul>
 <a name="createModel-randoop.reflection.VisibilityPredicate-randoop.reflection.ReflectionPredicate-java.util.Set-java.util.Set-java.util.Set-randoop.main.ClassNameErrorHandler-java.util.List-">
 <!--   -->
 </a>
@@ -511,12 +466,25 @@ extends java.lang.Object</pre>
                                          java.util.Set&lt;java.lang.String&gt;&nbsp;methodSignatures,
                                          <a href="../../randoop/main/ClassNameErrorHandler.html" title="interface in randoop.main">ClassNameErrorHandler</a>&nbsp;errorHandler,
                                          java.util.List&lt;java.lang.String&gt;&nbsp;literalsFileList)
-                                  throws java.lang.NoSuchMethodException,
-                                         <a href="../../randoop/operation/OperationParseException.html" title="class in randoop.operation">OperationParseException</a></pre>
+                                  throws <a href="../../randoop/operation/OperationParseException.html" title="class in randoop.operation">OperationParseException</a>,
+                                         java.lang.NoSuchMethodException</pre>
+<div class="block">Factory method to construct an operation model for a particular set of classes</div>
 <dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>visibility</code> - the <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection"><code>VisibilityPredicate</code></a> to test accessibility of
+     classes and class members</dd>
+<dd><code>reflectionPredicate</code> - the reflection predicate to determine which classes and class
+     members are used</dd>
+<dd><code>classnames</code> - the names of classes under test</dd>
+<dd><code>exercisedClassnames</code> - the names of classes to be tested by exercised heuristic</dd>
+<dd><code>methodSignatures</code> - the signatures of methods to be added to the model</dd>
+<dd><code>errorHandler</code> - the handler for bad file name errors</dd>
+<dd><code>literalsFileList</code> - the list of literals file names</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the operation model for the parameters</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.NoSuchMethodException</code></dd>
-<dd><code><a href="../../randoop/operation/OperationParseException.html" title="class in randoop.operation">OperationParseException</a></code></dd>
+<dd><code><a href="../../randoop/operation/OperationParseException.html" title="class in randoop.operation">OperationParseException</a></code> - if a method signature is ill-formed</dd>
+<dd><code>java.lang.NoSuchMethodException</code> - if an attempt is made to load a non-existent method</dd>
 </dl>
 </li>
 </ul>
@@ -649,6 +617,15 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;java.util.Set&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;getAnnotatedTestValues()</pre>
 </li>
 </ul>
+<a name="log--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>log</h4>
+<pre>public&nbsp;void&nbsp;log()</pre>
+</li>
+</ul>
 <a name="addClassTypes-randoop.reflection.VisibilityPredicate-randoop.reflection.ReflectionPredicate-java.util.Set-java.util.Set-randoop.main.ClassNameErrorHandler-java.util.List-">
 <!--   -->
 </a>
@@ -675,7 +652,7 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="addOperations-java.util.Set-randoop.reflection.VisibilityPredicate-randoop.reflection.ReflectionPredicate-randoop.condition.ConditionCollection-">
+<a name="addOperations-java.util.Set-randoop.reflection.VisibilityPredicate-randoop.reflection.ReflectionPredicate-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -683,8 +660,7 @@ extends java.lang.Object</pre>
 <h4>addOperations</h4>
 <pre>private&nbsp;void&nbsp;addOperations(java.util.Set&lt;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&gt;&nbsp;concreteClassTypes,
                            <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a>&nbsp;visibility,
-                           <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;reflectionPredicate,
-                           <a href="../../randoop/condition/ConditionCollection.html" title="interface in randoop.condition">ConditionCollection</a>&nbsp;operationConditions)</pre>
+                           <a href="../../randoop/reflection/ReflectionPredicate.html" title="interface in randoop.reflection">ReflectionPredicate</a>&nbsp;reflectionPredicate)</pre>
 <div class="block">Iterates through a set of simple and instantiated class types and uses reflection to extract
  the operations that satisfy both the visibility and reflection predicates, and then adds them
  to the operation set of this model.</div>
@@ -693,7 +669,6 @@ extends java.lang.Object</pre>
 <dd><code>concreteClassTypes</code> - the declaring class types for the operations</dd>
 <dd><code>visibility</code> - the visibility predicate</dd>
 <dd><code>reflectionPredicate</code> - the reflection predicate</dd>
-<dd><code>operationConditions</code> - the conditions to add to operations</dd>
 </dl>
 </li>
 </ul>

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>randoop.operation (randoop 3.1.2 API)</title>
+<title>randoop.operation (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="randoop.operation (randoop 3.1.2 API)";
+            parent.document.title="randoop.operation (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -174,9 +174,7 @@
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/operation/ReflectionArrayCreation.html" title="class in randoop.operation">ReflectionArrayCreation</a></td>
 <td class="colLast">
-<div class="block">Represents an array creation using reflection, and corresponds to the code <code>
-   (List&lt;String&gt;[])(Array.newInstance(componentType, length));
- </code></div>
+<div class="block">Represents an array creation using reflection, and corresponds to the code <code>(List&lt;String&gt;[])(Array.newInstance(componentType, length));</code></div>
 </td>
 </tr>
 <tr class="altColor">
@@ -193,18 +191,26 @@
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><a href="../../randoop/operation/TypedClassOperationWithCast.html" title="class in randoop.operation">TypedClassOperationWithCast</a></td>
+<td class="colLast">
+<div class="block">Represents a method with a return type that is a type variable that must be instantiated, and for
+ which execution performs a cast to the instantiating type to emulate handling of casts that are
+ not done in reflection.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a></td>
 <td class="colLast">
 <div class="block">Type decorator of <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> objects.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/operation/TypedTermOperation.html" title="class in randoop.operation">TypedTermOperation</a></td>
 <td class="colLast">
 <div class="block">Represents operations that have no declaring class.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/operation/UncheckedCast.html" title="class in randoop.operation">UncheckedCast</a></td>
 <td class="colLast">
 <div class="block">An <a href="../../randoop/operation/Operation.html" title="interface in randoop.operation"><code>Operation</code></a> to perform an explicit cast.</div>

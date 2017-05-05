@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>RecordListReader (randoop 3.1.2 API)</title>
+<title>RecordListReader (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="RecordListReader (randoop 3.1.2 API)";
+            parent.document.title="RecordListReader (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -113,9 +113,8 @@ extends java.lang.Object</pre>
 <div class="block">Reads a list of records from a text file, where a record is partially specified by the client of
  this class.
 
- <p>A record is a sequence of lines, where the first line is the string "START &lt;recordtype&gt;"
- and the last line is the string "END &lt;recordtype&gt;" where &lt;recordtype&gt; is specified by
- the client. For example:
+ <p>A record is a sequence of lines, where the first line is the string "<code>START
+ &lt;recordtype&gt;</code>" and the last line is the string "<code>END &lt;recordtype&gt;</code>" where <code>&lt;recordtype&gt;</code> is specified by the client. For example:
 
  <pre>START person
  <em>... arbitrary text ...</em>

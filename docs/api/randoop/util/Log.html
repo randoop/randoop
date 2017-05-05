@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Log (randoop 3.1.2 API)</title>
+<title>Log (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Log (randoop 3.1.2 API)";
+            parent.document.title="Log (randoop 3.1.5 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9};
+var methods = {"i0":9,"i1":9,"i2":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -74,13 +74,13 @@ var activeTableTab = "activeTableTab";
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
@@ -116,37 +116,6 @@ extends java.lang.Object</pre>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
-<ul class="blockList">
-<li class="blockList"><a name="field.summary">
-<!--   -->
-</a>
-<h3>Field Summary</h3>
-<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
-<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Field and Description</th>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static java.io.ByteArrayOutputStream</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Log.html#bos">bos</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static java.io.PrintStream</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Log.html#err">err</a></span></code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static java.io.PrintStream</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Log.html#out">out</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static java.io.PrintStream</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Log.html#systemOutErrStream">systemOutErrStream</a></span></code>&nbsp;</td>
-</tr>
-</table>
-</li>
-</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.summary">
@@ -184,17 +153,9 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Log.html#log-java.util.List-">log</a></span>(java.util.List&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;model)</code>&nbsp;</td>
-</tr>
-<tr id="i2" class="altColor">
-<td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Log.html#log-randoop.sequence.Sequence-">log</a></span>(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;s)</code>&nbsp;</td>
-</tr>
-<tr id="i3" class="rowColor">
-<td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Log.html#log-java.lang.String-">log</a></span>(java.lang.String&nbsp;s)</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Log.html#logLine-java.lang.String-">logLine</a></span>(java.lang.String&nbsp;s)</code>&nbsp;</td>
 </tr>
@@ -214,50 +175,6 @@ extends java.lang.Object</pre>
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
-<!-- ============ FIELD DETAIL =========== -->
-<ul class="blockList">
-<li class="blockList"><a name="field.detail">
-<!--   -->
-</a>
-<h3>Field Detail</h3>
-<a name="bos">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>bos</h4>
-<pre>public static final&nbsp;java.io.ByteArrayOutputStream bos</pre>
-</li>
-</ul>
-<a name="systemOutErrStream">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>systemOutErrStream</h4>
-<pre>public static final&nbsp;java.io.PrintStream systemOutErrStream</pre>
-</li>
-</ul>
-<a name="err">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>err</h4>
-<pre>public static final&nbsp;java.io.PrintStream err</pre>
-</li>
-</ul>
-<a name="out">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>out</h4>
-<pre>public static final&nbsp;java.io.PrintStream out</pre>
-</li>
-</ul>
-</li>
-</ul>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.detail">
@@ -297,24 +214,6 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>logLine</h4>
 <pre>public static&nbsp;void&nbsp;logLine(java.lang.String&nbsp;s)</pre>
-</li>
-</ul>
-<a name="log-randoop.sequence.Sequence-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>log</h4>
-<pre>public static&nbsp;void&nbsp;log(<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;s)</pre>
-</li>
-</ul>
-<a name="log-java.util.List-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>log</h4>
-<pre>public static&nbsp;void&nbsp;log(java.util.List&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;model)</pre>
 </li>
 </ul>
 <a name="isLoggingOn--">
@@ -379,13 +278,13 @@ extends java.lang.Object</pre>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>

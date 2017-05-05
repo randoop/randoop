@@ -21,14 +21,12 @@ import plume.SimpleLog;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
 import randoop.MultiVisitor;
-import randoop.condition.ConditionCollection;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
-import randoop.input.toradocu.ToradocuConditionCollection;
 import randoop.instrument.ExercisedClassVisitor;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
@@ -45,6 +43,7 @@ import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
+import randoop.sequence.SequenceExecutionException;
 import randoop.test.CompilableTestPredicate;
 import randoop.test.ContractCheckingVisitor;
 import randoop.test.ContractSet;
@@ -221,11 +220,12 @@ public class GenTests extends GenInputsAbstract {
         GenInputsAbstract.getStringSetFromFile(omit_field_list, "Error reading field file");
 
     VisibilityPredicate visibility;
-    Package junitPackage = Package.getPackage(GenInputsAbstract.junit_package_name);
-    if (junitPackage == null || GenInputsAbstract.only_test_public_members) {
+    if (GenInputsAbstract.junit_package_name == null
+        || GenInputsAbstract.only_test_public_members) {
+      System.out.println("not using package " + GenInputsAbstract.junit_package_name);
       visibility = new PublicVisibilityPredicate();
     } else {
-      visibility = new PackageVisibilityPredicate(junitPackage);
+      visibility = new PackageVisibilityPredicate(GenInputsAbstract.junit_package_name);
     }
 
     ReflectionPredicate reflectionPredicate =
@@ -239,23 +239,6 @@ public class GenTests extends GenInputsAbstract {
     Set<String> methodSignatures =
         GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
 
-    /*
-     * Setup pre/post/throws-conditions for operations.
-     * Currently only uses Toradocu generated conditions.
-     */
-    ConditionCollection operationConditions = null;
-    try {
-      if (GenInputsAbstract.toradocu_conditions != null) {
-        operationConditions =
-            ToradocuConditionCollection.createToradocuConditions(
-                GenInputsAbstract.toradocu_conditions);
-      }
-    } catch (IllegalArgumentException e) {
-      System.out.printf("%nError on condition input: %s%n", e.getMessage());
-      System.out.println("Exiting Randoop.");
-      System.exit(1);
-    }
-
     OperationModel operationModel = null;
     try {
       operationModel =
@@ -266,8 +249,7 @@ public class GenTests extends GenInputsAbstract {
               coveredClassnames,
               methodSignatures,
               classNameErrorHandler,
-              GenInputsAbstract.literals_file,
-              operationConditions);
+              GenInputsAbstract.literals_file);
     } catch (OperationParseException e) {
       System.out.printf("%nError: parse exception thrown %s%n", e);
       System.out.println("Exiting Randoop.");
@@ -308,14 +290,14 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     }
 
-    List<TypedOperation> model = operationModel.getOperations();
+    List<TypedOperation> operations = operationModel.getOperations();
 
-    if (model.isEmpty()) {
-      Log.out.println("There are no methods to test. Exiting.");
+    if (operations.isEmpty()) {
+      System.out.println("There are no methods to test. Exiting.");
       System.exit(1);
     }
     if (!GenInputsAbstract.noprogressdisplay) {
-      System.out.println("PUBLIC MEMBERS=" + model.size());
+      System.out.println("PUBLIC MEMBERS=" + operations.size());
     }
 
     /*
@@ -358,7 +340,13 @@ public class GenTests extends GenInputsAbstract {
     AbstractGenerator explorer;
     explorer =
         new ForwardGenerator(
-            model, observers, timelimit * 1000, inputlimit, outputlimit, componentMgr, listenerMgr);
+            operations,
+            observers,
+            timelimit * 1000,
+            inputlimit,
+            outputlimit,
+            componentMgr,
+            listenerMgr);
 
     /*
      * setup for check generation
@@ -382,7 +370,6 @@ public class GenTests extends GenInputsAbstract {
     } catch (NoSuchMethodException e) {
       assert false : "failed to get Object constructor: " + e;
     }
-    assert objectConstructor != null;
 
     Sequence newObj = new Sequence().extend(objectConstructor);
     Set<Sequence> excludeSet = new LinkedHashSet<>();
@@ -439,6 +426,13 @@ public class GenTests extends GenInputsAbstract {
       System.out.printf("Explorer = %s\n", explorer);
     }
 
+    /* log setup */
+    operationModel.log();
+    if (Log.isLoggingOn()) {
+      Log.logLine("Initial sequences (seeds):");
+      componentMgr.log();
+    }
+
     /* Generate tests */
     try {
       explorer.explore();
@@ -457,6 +451,10 @@ public class GenTests extends GenInputsAbstract {
           "%nError in generation with operation: %n%s%n", e.getInstantiatedOperation());
       System.out.printf("Operation reflection name: %s%n", e.getOperationName());
       System.out.printf("%s%n", e.getException());
+      e.printStackTrace();
+      System.exit(1);
+    } catch (SequenceExecutionException e) {
+      System.out.printf("%nError executing generated sequence: %n%s%n", e.getMessage());
       e.printStackTrace();
       System.exit(1);
     }

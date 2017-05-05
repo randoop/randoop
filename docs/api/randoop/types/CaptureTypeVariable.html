@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>CaptureTypeVariable (randoop 3.1.2 API)</title>
+<title>CaptureTypeVariable (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="CaptureTypeVariable (randoop 3.1.2 API)";
+            parent.document.title="CaptureTypeVariable (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -468,13 +468,11 @@ extends <a href="../../randoop/types/TypeVariable.html" title="class in randoop.
 
  <p>Creates an upper bound on a type variable resulting from a capture conversion (JLS section
  5.1.10) in the case that a wildcard has an upper bound other than Object. In particular, each
- object represents a bound on a variable <code>S<sub>i</sub></code> in a parameterized type
- <code>C&lt;S<sub>1</sub>,...,S<sub>n</sub>&gt;</code> defined as <code>
- glb(B<sub>i</sub>, U<sub>i</sub>[A<sub>i</sub>:=S<sub>i</sub>])</code> where
+ object represents a bound on a variable <code>Si</code> in a parameterized type <code>C&lt;S1,...,Sn&gt;</code> defined as <code>glb(Bi, Ui[Ai:=Si])</code> where
 
  <ul>
-   <li><code>U<sub>i</sub></code> is the upper bound on the type variable <code>A<sub>i</sub>
-       </code> in the declared class <code>C&lt;A<sub>1</sub>,...,A<sub>n</sub>&gt;</code>,
+   <li><code>Ui</code> is the upper bound on the type variable <code>Ai</code> in the declared
+       class <code>C&lt;A1,...,An&gt;</code>,
    <li><code>glb(S, T)</code> for types <code>S</code> and <code>T</code> is the intersection
        type <code>S &amp; T</code>.
  </ul>

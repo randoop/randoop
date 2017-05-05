@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>SequenceCompiler (randoop 3.1.2 API)</title>
+<title>SequenceCompiler (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="SequenceCompiler (randoop 3.1.2 API)";
+            parent.document.title="SequenceCompiler (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -113,7 +113,7 @@ extends java.lang.Object</pre>
 <div class="block">Compiles a Java class given as a <code>String</code>.
 
  <p>A simplified version of the <code>javaxtools.compiler.CharSequenceCompiler</code> from <a
- href="http://www.ibm.com/developerworks/library/j-jcomp/index.html">Create dynamic applications
+ href="https://www.ibm.com/developerworks/library/j-jcomp/index.html">Create dynamic applications
  with javax.tools</a>.</div>
 </li>
 </ul>
@@ -146,18 +146,12 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private javax.tools.DiagnosticCollector&lt;javax.tools.JavaFileObject&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceCompiler.html#diagnostics">diagnostics</a></span></code>
-<div class="block">The diagnostics collector for this compiler</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/compile/SequenceJavaFileManager.html" title="class in randoop.compile">SequenceJavaFileManager</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceCompiler.html#fileManager">fileManager</a></span></code>
 <div class="block">The <code>FileManager</code> for this compiler</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>private java.util.List&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceCompiler.html#options">options</a></span></code>
 <div class="block">the options to the compiler</div>
@@ -178,9 +172,8 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceCompiler.html#SequenceCompiler-randoop.compile.SequenceClassLoader-java.util.List-javax.tools.DiagnosticCollector-">SequenceCompiler</a></span>(<a href="../../randoop/compile/SequenceClassLoader.html" title="class in randoop.compile">SequenceClassLoader</a>&nbsp;classLoader,
-                java.util.List&lt;java.lang.String&gt;&nbsp;options,
-                javax.tools.DiagnosticCollector&lt;javax.tools.JavaFileObject&gt;&nbsp;diagnostics)</code>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/compile/SequenceCompiler.html#SequenceCompiler-randoop.compile.SequenceClassLoader-java.util.List-">SequenceCompiler</a></span>(<a href="../../randoop/compile/SequenceClassLoader.html" title="class in randoop.compile">SequenceClassLoader</a>&nbsp;classLoader,
+                java.util.List&lt;java.lang.String&gt;&nbsp;options)</code>
 <div class="block">Creates a <a href="../../randoop/compile/SequenceCompiler.html" title="class in randoop.compile"><code>SequenceCompiler</code></a> with the given <code>ClassLoader</code>, options list, and <code>DiagnosticsCollector</code>.</div>
 </td>
 </tr>
@@ -262,16 +255,6 @@ extends java.lang.Object</pre>
 <div class="block">the options to the compiler</div>
 </li>
 </ul>
-<a name="diagnostics">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>diagnostics</h4>
-<pre>private final&nbsp;javax.tools.DiagnosticCollector&lt;javax.tools.JavaFileObject&gt; diagnostics</pre>
-<div class="block">The diagnostics collector for this compiler</div>
-</li>
-</ul>
 <a name="classLoader">
 <!--   -->
 </a>
@@ -300,21 +283,19 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="SequenceCompiler-randoop.compile.SequenceClassLoader-java.util.List-javax.tools.DiagnosticCollector-">
+<a name="SequenceCompiler-randoop.compile.SequenceClassLoader-java.util.List-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>SequenceCompiler</h4>
 <pre>public&nbsp;SequenceCompiler(<a href="../../randoop/compile/SequenceClassLoader.html" title="class in randoop.compile">SequenceClassLoader</a>&nbsp;classLoader,
-                        java.util.List&lt;java.lang.String&gt;&nbsp;options,
-                        javax.tools.DiagnosticCollector&lt;javax.tools.JavaFileObject&gt;&nbsp;diagnostics)</pre>
+                        java.util.List&lt;java.lang.String&gt;&nbsp;options)</pre>
 <div class="block">Creates a <a href="../../randoop/compile/SequenceCompiler.html" title="class in randoop.compile"><code>SequenceCompiler</code></a> with the given <code>ClassLoader</code>, options list, and <code>DiagnosticsCollector</code>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>classLoader</code> - the class loader for this compiler</dd>
 <dd><code>options</code> - the compiler options</dd>
-<dd><code>diagnostics</code> - the diagnostics collector</dd>
 </dl>
 </li>
 </ul>

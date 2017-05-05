@@ -13,7 +13,7 @@ import javax.tools.ToolProvider;
  * Compiles a Java class given as a {@code String}.
  *
  * <p>A simplified version of the {@code javaxtools.compiler.CharSequenceCompiler} from <a
- * href="http://www.ibm.com/developerworks/library/j-jcomp/index.html">Create dynamic applications
+ * href="https://www.ibm.com/developerworks/library/j-jcomp/index.html">Create dynamic applications
  * with javax.tools</a>.
  */
 public class SequenceCompiler {
@@ -23,9 +23,6 @@ public class SequenceCompiler {
 
   /** the options to the compiler */
   private final List<String> options;
-
-  /** The diagnostics collector for this compiler */
-  private final DiagnosticCollector<JavaFileObject> diagnostics;
 
   /** The {@code ClassLoader} for this compiler */
   private final SequenceClassLoader classLoader;
@@ -39,15 +36,10 @@ public class SequenceCompiler {
    *
    * @param classLoader the class loader for this compiler
    * @param options the compiler options
-   * @param diagnostics the diagnostics collector
    */
-  public SequenceCompiler(
-      SequenceClassLoader classLoader,
-      List<String> options,
-      final DiagnosticCollector<JavaFileObject> diagnostics) {
+  public SequenceCompiler(SequenceClassLoader classLoader, List<String> options) {
     this.classLoader = classLoader;
     this.compiler = ToolProvider.getSystemJavaCompiler();
-    this.diagnostics = diagnostics;
     this.options = new ArrayList<>(options);
 
     if (this.compiler == null) {
@@ -55,7 +47,7 @@ public class SequenceCompiler {
           "Cannot find the Java compiler. " + "Check that classpath includes tools.jar");
     }
 
-    JavaFileManager standardFileManager = compiler.getStandardFileManager(diagnostics, null, null);
+    JavaFileManager standardFileManager = compiler.getStandardFileManager(null, null, null);
     this.fileManager = new SequenceJavaFileManager(standardFileManager, classLoader);
   }
 
@@ -78,6 +70,7 @@ public class SequenceCompiler {
     JavaFileObject source = new SequenceJavaFileObject(classFileName, classSource);
     sources.add(source);
     fileManager.putFileForInput(StandardLocation.SOURCE_PATH, packageName, classFileName, source);
+    DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 
     JavaCompiler.CompilationTask task =
         compiler.getTask(null, fileManager, diagnostics, options, null, sources);
@@ -104,7 +97,7 @@ public class SequenceCompiler {
     JavaFileObject source = new SequenceJavaFileObject(classFileName, classSource);
     sources.add(source);
     fileManager.putFileForInput(StandardLocation.SOURCE_PATH, packageName, classFileName, source);
-
+    DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
     JavaCompiler.CompilationTask task =
         compiler.getTask(null, fileManager, diagnostics, options, null, sources);
     Boolean succeeded = task.call();

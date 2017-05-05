@@ -5,6 +5,7 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 import randoop.BugInRandoopException;
 import randoop.reflection.ReflectionPredicate;
+import randoop.sequence.SequenceExecutionException;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
@@ -108,7 +109,7 @@ public class AccessibleField {
     try {
       ret = field.get(object);
     } catch (IllegalArgumentException e) {
-      throw new BugInRandoopException("Field access to object of wrong type: " + e.getMessage());
+      throw new SequenceExecutionException("Field access to object of wrong type: ", e);
     } catch (IllegalAccessException e) {
       throw new BugInRandoopException(
           "Access control violation for field: " + field.getName() + "; " + e.getMessage());
@@ -130,7 +131,7 @@ public class AccessibleField {
     try {
       field.set(object, value);
     } catch (IllegalArgumentException e) {
-      throw new BugInRandoopException("Field set to object of wrong type: " + e.getMessage());
+      throw new SequenceExecutionException("Field set to object of wrong type", e);
     } catch (IllegalAccessException e) {
       throw new BugInRandoopException("Access control violation for field: " + e.getMessage());
     }

@@ -142,6 +142,17 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static File include_if_class_exercised = null;
 
   /**
+   * If false, Randoop halts and gives diagnostics about flaky tests -- tests that behave
+   * differently on different executions. If true, Randoop ignores them and does not output them.
+   *
+   * <p>Use of this option is a last resort. Flaky tests are usually due to calling Randoop on
+   * side-effecting or nondeterministic methods, and a better solution is not to call Randoop on
+   * such methods.
+   */
+  @Option("Whether to ignore non-determinism in test execution")
+  public static boolean ignore_flaky_tests = false;
+
+  /**
    * Whether to output error-revealing tests. Disables all output when used with <code>
    * --no-regression-tests</code>. Restricting output can result in long runs if the default values
    * of <code>--inputlimit</code> and <code>--timelimit</code> are used.
@@ -246,19 +257,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Whether StackOverflowError is an ERROR, EXPECTED or INVALID")
   public static BehaviorType sof_exception = BehaviorType.INVALID;
-
-  /**
-   * Ignore the situation where a code sequence that previously executed normally throws an
-   * exception when executed as part of a longer test sequence. If true, the sequence will be
-   * classified as invalid. If false, Randoop will halt with information about the sequence to aid
-   * in identifying the issue.
-   *
-   * <p>Use of this option is a last resort. Flaky tests are usually due to calling Randoop on
-   * side-effecting or nondeterministic methods, and a better solution is not to call Randoop on
-   * such methods.
-   */
-  @Option("Whether to ignore non-determinism in test execution")
-  public static boolean ignore_flaky_tests = false;
 
   /**
    * Read Toradocu JSON condition file to use Toradocu generated conditions to control how tests are
