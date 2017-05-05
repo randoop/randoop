@@ -4,6 +4,7 @@ import static randoop.output.NameGenerator.numDigits;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
+import com.github.javaparser.TokenMgrError;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.PackageDeclaration;
@@ -296,6 +297,12 @@ public class JUnitCreator {
       }
     } catch (ParseException e) {
       System.out.println("Parse error while creating test method " + className + "." + methodName);
+      return null;
+    } catch (TokenMgrError e) {
+      System.out.println(
+          "Lexical error while creating test method " + className + "." + methodName);
+      System.out.println("Exception: " + e.getMessage());
+      System.out.println(sequenceBlockString);
       return null;
     }
 
