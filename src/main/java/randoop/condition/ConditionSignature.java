@@ -141,7 +141,8 @@ public class ConditionSignature {
             });
     names.addAll(replacements.keySet());
     for (String name : names) {
-      conditionText = conditionText.replace(name, replacements.get(name));
+      String namePattern = "\\b" + name + "\\b";
+      conditionText = conditionText.replaceAll(namePattern, replacements.get(name));
     }
     return conditionText;
   }
