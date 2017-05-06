@@ -77,7 +77,8 @@ public class ObjectContractUtils {
   public static String localizeContractCode(String str, Variable... vars) {
     for (int i = 0; i < vars.length; i++) {
       // See documentation for ObjectContract.toCommentString().
-      str = str.replaceAll("x" + i, vars[i].getName());
+      String pattern = "\\bx" + i + "\\b";
+      str = str.replaceAll(pattern, vars[i].getName());
     }
     return str;
   }
