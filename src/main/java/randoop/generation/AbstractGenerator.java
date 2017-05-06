@@ -65,18 +65,20 @@ public abstract class AbstractGenerator {
     addConditionTransition(eSeq);
 
     if (transitionLog != null) {
-      try {
-        transitionLog.write(
-            "transition: "
-                + eSeq.standardClassification.name()
-                + " => "
-                + eSeq.conditionClassification
-                + Globals.lineSep);
-        transitionLog.write(eSeq.toCodeString() + Globals.lineSep);
-        transitionLog.write("-----------------------" + Globals.lineSep);
-        transitionLog.flush();
-      } catch (IOException e) {
-        throw new Error("error while writing transition log: " + transitionLog);
+      if (eSeq.standardClassification != eSeq.conditionClassification) {
+        try {
+          transitionLog.write(
+              "transition: "
+                  + eSeq.standardClassification.name()
+                  + " => "
+                  + eSeq.conditionClassification
+                  + Globals.lineSep);
+          transitionLog.write(eSeq.toCodeString() + Globals.lineSep);
+          transitionLog.write("-----------------------" + Globals.lineSep);
+          transitionLog.flush();
+        } catch (IOException e) {
+          throw new Error("error while writing transition log: " + transitionLog);
+        }
       }
     }
   }
