@@ -1,0 +1,15 @@
+//
+// This file specifies a set of method call substitutions when running
+// under Randoop.
+// You don't have to use it, because Randoop already has these particular
+// substitutions built in.
+//
+// Calls that put up a dialog box (popup) are converted
+// into a call that simply writes a message to standard out.
+
+//
+// You must include the RandoopMappedCalls.class file on the classpath
+// when using these method call substitutions.
+javax.swing.JOptionPane.showMessageDialog(java.awt.Component, java.lang.Object, java.lang.String, int) com.mypackage.RandoopMappedCalls.showMessageDialog(java.awt.Component, java.lang.Object, java.lang.String, int)
+javax.swing.JOptionPane.showConfirmDialog(java.awt.Component, java.lang.Object, java.lang.String, int) com.mypackage.RandoopMappedCalls.showConfirmDialog(java.awt.Component, java.lang.Object, java.lang.String, int)
+javax.swing.JOptionPane.showConfirmDialog(java.awt.Component, java.lang.Object, java.lang.String, int, int) com.mypackage.RandoopMappedCalls.showConfirmDialog(java.awt.Component, java.lang.Object, java.lang.String, int, int)
