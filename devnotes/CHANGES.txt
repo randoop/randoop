@@ -1,3 +1,12 @@
+Version ?, released May ?, 2017
+
+Fixes a problem in progress reporting where the wrong count was being used forerror-revealing
+sequences
+
+
+
+
+
 Version 3.1.5, released April 28, 2017
 
 Fixes a bug where a call to a method with a type variable return type should
