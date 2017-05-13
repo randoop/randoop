@@ -92,7 +92,7 @@ Randoop now
   types in previously generated test sequences. As a result, Randoop is able to
   generate more diverse instantiations of generics, as well as multidimensional
   arrays.
-- supports insertion of Java code into text fixtures when tests are written to
+- supports insertion of Java code into test fixtures when tests are written to
   disk. Given as filename to new command-line arguments: --junit-before-each,
   --junit-after-each, --junit-before-all, and --junit-after-each.
 
