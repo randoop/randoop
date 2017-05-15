@@ -17,6 +17,7 @@ public class Main {
     handlers = new ArrayList<>();
     handlers.add(new GenTests());
     handlers.add(new Help());
+    handlers.add(new Minimize());
   }
 
   // The main method simply calls nonStaticMain.

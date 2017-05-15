@@ -159,6 +159,9 @@ dependencies {
    * requires compiled source.
    */
   manual sourceSets.main.output
+
+  /* JavaParser used by Minimize for the manual */
+  manual group: 'com.github.javaparser', name: 'javaparser-core', version: '2.4.0'
 }
 
 /*
@@ -542,7 +545,8 @@ task updateUserOptions(dependsOn: 'assemble'){
   def fileList = [
     file("${projectDir}/src/main/java/randoop/main/GenInputsAbstract.java"),
     file("${projectDir}/src/main/java/randoop/generation/AbstractGenerator.java"),
-    file("${projectDir}/src/main/java/randoop/util/ReflectionExecutor.java")
+    file("${projectDir}/src/main/java/randoop/util/ReflectionExecutor.java"),
+    file("${projectDir}/src/main/java/randoop/main/Minimize.java")
   ]
   doLast {
     project.exec {
