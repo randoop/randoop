@@ -1,10 +1,10 @@
 Version ?, released May ?, 2017
 
-Fixes a problem in progress reporting where the wrong count was being used forerror-revealing
-sequences
+Adds a minimize command that can be run from the command line to simplify
+failing tests to make it easier to understand the test sequence.
 
-
-
+Fixes a problem in progress reporting where the wrong count was being used for
+error-revealing sequences
 
 
 Version 3.1.5, released April 28, 2017
