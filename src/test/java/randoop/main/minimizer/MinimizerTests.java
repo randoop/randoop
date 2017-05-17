@@ -87,6 +87,11 @@ public class MinimizerTests {
   }
 
   @Test
+  public void testWithImportsFromSamePackage() throws IOException {
+    testWithInput("TestInputImportsFromSamePackage.java");
+  }
+
+  @Test
   public void testWithInputInSubDirectory() throws IOException {
     testWithInput(
         "testrootdir" + fileSeparator + "testsubdir" + fileSeparator + "TestInputSubDir1.java");
