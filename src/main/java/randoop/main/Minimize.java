@@ -1168,7 +1168,8 @@ public class Minimize extends CommandHandler {
       // Remove the scope component of the type.
       if (n.getScope() != null
           && typeName.getScope() != null
-          && typeName.getScope().equals(n.getScope())) {
+          && typeName.getScope().equals(n.getScope())
+          && typeName.getName().equals(n.getName())) {
         n.setScope(null);
       }
 
