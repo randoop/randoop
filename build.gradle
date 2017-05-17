@@ -52,12 +52,21 @@ def workingDirectories = "$buildDir/working-directories"
 
 sourceSets {
   /* JUnit tests that must be run with -javaagent */
-  agentTest {
+  exercisedTest {
     java {
-      srcDir 'src/agenttest/java'
+      srcDir 'src/exercisedtest/java'
     }
     resources {
-      srcDir 'src/agenttest/resources'
+      srcDir 'src/exercisedtest/resources'
+    }
+  }
+
+  macallTest {
+    java {
+      srcDir 'src/mapcalltest/java'
+    }
+    resources {
+      srcDir 'src/mapcalltest/resources'
     }
   }
 
@@ -108,8 +117,8 @@ configurations {
    * The agent tests are JUnit tests run with the exercised-class-agent, so
    * borrow from unit test configurations.
    */
-  agentTestCompile.extendsFrom testCompile
-  agentTestRuntime.extendsFrom testRuntime
+  exercisedTestCompile.extendsFrom testCompile
+  exercisedTestRuntime.extendsFrom testRuntime
 
   systemTestCompile.extendsFrom testCompile
   systemTestRuntime.extendsFrom testRuntime
@@ -130,12 +139,12 @@ dependencies {
   testCompile sourceSets.testInput.output
 
   /*
-   * sourceSet agentTest uses output from main sourceSet, and agent projects.
+   * sourceSet exercisedTest uses output from main sourceSet, and agent projects.
    * (Also, see configuration block.)
    */
-  agentTestCompile sourceSets.main.output
-  agentTestRuntime project(':exercised-class')
-  agentTestRuntime project(':mapcall')
+  exercisedTestCompile sourceSets.main.output
+  exercisedTestRuntime project(':exercised-class')
+  exercisedTestRuntime project(':mapcall')
 
   jacocoagent group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.7.7.201606060606'
 
@@ -190,7 +199,7 @@ tasks.verifyGoogleJavaFormat {
  */
 compileJava.options.compilerArgs = ['-Xlint','-g','-Xlint:-classfile']
 compileTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
-compileAgentTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
+compileExercisedTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileSystemTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
 
@@ -203,7 +212,7 @@ clean.dependsOn ':exercised-class:clean'
 /*
  * Configuration for testing.
  * In terms of build, we have two kinds of tests, both using JUnit.
- *   * Those in src/agenttest require the exercised-class Java agent.
+ *   * Those in src/exercisedtest require the exercised-class Java agent.
  *   * Those in src/test are run without the agent.
  *     This second group includes tests that run the full Randoop over
  *     classes that (mostly) are located in src/testinput.
@@ -260,14 +269,14 @@ test {
   exclude 'randoop/operation/OperationParserTests.*'
 }
 
-task exercisedClassTest(type: Test, dependsOn: 'copyJars') {
+task exercisedTest(type: Test, dependsOn: 'copyJars') {
   /*
    * Set the working directory for JUnit tests to the resources directory
    * instead of the project directory.
    */
-  workingDir = sourceSets.agentTest.output.resourcesDir
-  testClassesDir = sourceSets.agentTest.output.classesDir
-  classpath = sourceSets.agentTest.runtimeClasspath
+  workingDir = sourceSets.exercisedTest.output.resourcesDir
+  testClassesDir = sourceSets.exercisedTest.output.classesDir
+  classpath = sourceSets.exercisedTest.runtimeClasspath
   jvmArgs "-javaagent:$buildDir/libs/exercised-class-$version"+".jar"
 
   /*
@@ -282,22 +291,11 @@ task exercisedClassTest(type: Test, dependsOn: 'copyJars') {
   reports.html.enabled = false
 }
 
-
 /*
- * Configuration of agentTest task.
- * Runs JUnit with exercised-class Java agent over all classes in agentTest
- * sourceSet.
- * Requires that exercised-class jar file copied into Randoop build/libs.
- */
-task agentTest(dependsOn: ['exercisedClassTest', ':mapcall:test']) {
-  description 'Runs tests on javaagents'
-}
-
-/*
- * Link the agentTest task into project check task. Includes agent tests into
+ * Link the exercisedTest task into project check task. Includes agent tests into
  * the project build task.
  */
-check.dependsOn agentTest
+check.dependsOn exercisedTest
 
 jacocoTestReport {
   group 'Report'
