@@ -1,21 +1,19 @@
 package randoop.generation.types;
 
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import randoop.types.JavaTypes;
-import randoop.types.NonParameterizedType;
-import randoop.types.ReferenceType;
-
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import org.junit.Test;
+import randoop.types.JavaTypes;
+import randoop.types.NonParameterizedType;
+import randoop.types.ReferenceType;
 
 public class IntervalDomainTest {
   @Test

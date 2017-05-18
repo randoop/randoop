@@ -7,15 +7,12 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Represents a parameterized type as a generic class instantiated with
- * type arguments.
- * <p>
- * Note that {@link java.lang.reflect.ParameterizedType} is an interface that
- * can represent either a parameterized type in the sense meant here, or a
- * generic class.
- * Conversion to this type from this and other {@link java.lang.reflect.Type}
- * interfaces is handled by
- * {@link Type#forType(java.lang.reflect.Type)}.
+ * Represents a parameterized type as a generic class instantiated with type arguments.
+ *
+ * <p>Note that {@link java.lang.reflect.ParameterizedType} is an interface that can represent
+ * either a parameterized type in the sense meant here, or a generic class. Conversion to this type
+ * from this and other {@link java.lang.reflect.Type} interfaces is handled by {@link
+ * Type#forType(java.lang.reflect.Type)}.
  */
 public class InstantiatedType extends ParameterizedType {
 
@@ -27,8 +24,8 @@ public class InstantiatedType extends ParameterizedType {
   /**
    * Create a parameterized type from the generic class type.
    *
-   * @param instantiatedType  the generic class type
-   * @param argumentList  the list of argument types
+   * @param instantiatedType the generic class type
+   * @param argumentList the list of argument types
    * @throws IllegalArgumentException if either argument is null
    */
   InstantiatedType(GenericClassType instantiatedType, List<TypeArgument> argumentList) {
@@ -42,9 +39,9 @@ public class InstantiatedType extends ParameterizedType {
 
   /**
    * {@inheritDoc}
-   * Test if the given object is equal to this parameterized type.
-   * Two parameterized types are equal if they have the same raw type and
-   * the same type arguments.
+   *
+   * <p>Test if the given object is equal to this parameterized type. Two parameterized types are
+   * equal if they have the same raw type and the same type arguments.
    */
   @Override
   public boolean equals(Object obj) {
@@ -76,21 +73,18 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   /**
-   * Constructs a capture conversion for this type.
-   * If this type has wildcard type arguments, then introduces {@link CaptureTypeVariable} for each
-   * wildcard as described in the JLS, section 5.1.10,
-   * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">Capture Conversion</a>.
+   * Constructs a capture conversion for this type. If this type has wildcard type arguments, then
+   * introduces {@link CaptureTypeVariable} for each wildcard as described in the JLS, section
+   * 5.1.10, <a
+   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">Capture
+   * Conversion</a>.
    *
-   * <p>
-   * Based on algorithm in
-   * Mads Torgerson <i>et al.</i>
-   * "<a href="http://www.jot.fm/issues/issue_2004_12/article5.pdf">Adding Wildcards to the Java Programming Language</a>",
-   * Journal of Object Technology, 3 (December 2004) 11, 97-116. Special Issue: OOPS track at SAC 2004.
-   * </p>
+   * <p>Based on algorithm in Mads Torgerson <i>et al.</i> "<a
+   * href="http://www.jot.fm/issues/issue_2004_12/article5.pdf">Adding Wildcards to the Java
+   * Programming Language</a>", Journal of Object Technology, 3 (December 2004) 11, 97-116. Special
+   * Issue: OOPS track at SAC 2004.
    *
-   * <p>
-   * If this type has no wildcards, then returns this type.
-   *</p>
+   * <p>If this type has no wildcards, then returns this type.
    *
    * @return the capture conversion type for this type
    */
@@ -123,7 +117,7 @@ public class InstantiatedType extends ParameterizedType {
 
     List<TypeArgument> convertedArgumentList = new ArrayList<>();
     for (ReferenceType type : convertedTypeList) {
-      convertedArgumentList.add(new ReferenceArgument(type));
+      convertedArgumentList.add(TypeArgument.forType(type));
     }
 
     return (InstantiatedType)
@@ -132,8 +126,8 @@ public class InstantiatedType extends ParameterizedType {
 
   /**
    * Constructs the list of interface supertypes for this parameterized type.
-   * <p>
-   * See the implementation note for {@link #getSuperclass()}.
+   *
+   * <p>See the implementation note for {@link #getSuperclass()}.
    *
    * @return list of interface supertypes for this parameterized type
    */
@@ -156,14 +150,17 @@ public class InstantiatedType extends ParameterizedType {
 
   /**
    * {@inheritDoc}
-   * An instantiated type may have a wildcard, and so must perform capture conversion before doing
-   * supertype search.
+   *
+   * <p>An instantiated type may have a wildcard, and so must perform capture conversion before
+   * doing supertype search.
    */
   @Override
   public InstantiatedType getMatchingSupertype(GenericClassType goalType) {
+    /*
     if (this.hasWildcard()) {
       return this.applyCaptureConversion().getMatchingSupertype(goalType);
     }
+    */
     if (this.isInstantiationOf(goalType)) {
       return this;
     }
@@ -194,17 +191,13 @@ public class InstantiatedType extends ParameterizedType {
 
   /**
    * Constructs the superclass type for this parameterized type.
-   * <p>
-   * Implementation note: we can think of an {@link InstantiatedType}
-   * <code>A&lt;T<sub>1</sub>,&hellip;,T<sub>k</sub>&gt;</code>
-   * as being represented as a generic class
-   * <code>A&lt;F<sub>1</sub>,&hellip;,F<sub>k</sub>&gt;</code>
-   * with a substitution <code>[ F<sub>i</sub> := T<sub>i</sub>]</code>
-   * for all of the type parameters <code>F<sub>i</sub></code>.
-   * So, when we compute a superclass, we first find the supertype of the generic class
-   * <code>B&lt;F<sub>1</sub>,&hellip;,F<sub>k</sub>&gt;</code>,
-   * and then apply the substitution <code>[ F<sub>i</sub> := T<sub>i</sub>]</code>
-   * using the method {@link GenericClassType#getSuperclass(Substitution)}.
+   *
+   * <p>Implementation note: we can think of an {@link InstantiatedType} {@code A<T1,...,Tk>} as
+   * being represented as a generic class {@code A<F1,...,Fk>} with a substitution <code>
+   * [ Fi := Ti]</code> for all of the type parameters <code>Fi
+   * </code>. So, when we compute a superclass, we first find the supertype of the generic class
+   * {@code B<F1,...,Fk>}, and then apply the substitution <code>[ Fi := Ti]</code> using the method
+   * {@link GenericClassType#getSuperclass(Substitution)}.
    *
    * @return the superclass type for this parameterized type
    */
@@ -228,17 +221,19 @@ public class InstantiatedType extends ParameterizedType {
   public List<TypeVariable> getTypeParameters() {
     Set<TypeVariable> paramSet = new LinkedHashSet<>(super.getTypeParameters());
     for (TypeArgument argument : argumentList) {
-      paramSet.addAll(argument.getTypeParameters());
+      List<TypeVariable> params = argument.getTypeParameters();
+      paramSet.addAll(params);
     }
     return new ArrayList<>(paramSet);
   }
 
   /**
    * Creates the type substitution of the type arguments of this type for the type variables of the
-   * instantiated class, if the type arguments are reference types.
-   * If any type argument is a wildcard, then null is returned.
+   * instantiated class, if the type arguments are reference types. If any type argument is a
+   * wildcard, then null is returned.
    *
-   * @return the type substitution of the type arguments of this class for the type variables of the instantiated type
+   * @return the type substitution of the type arguments of this class for the type variables of the
+   *     instantiated type
    */
   public Substitution<ReferenceType> getTypeSubstitution() {
     List<ReferenceType> arguments = new ArrayList<>();
@@ -293,25 +288,21 @@ public class InstantiatedType extends ParameterizedType {
   }
 
   /**
-   * Checks whether this type is an instantiation of the given instantiated type.
-   * This is only possible if this type is <code>A&lt;T<sub>1</sub>,&hellip;,T<sub>k</sub>&gt;</code>
-   * where all <code>T<sub>i</sub></code> are instantiated by ground types (e.g., does not have type variables),
-   * the other type is <code>A&lt;S<sub>1</sub>,&hellip;,S<sub>k</sub>&gt;</code>, and
-   * each <code>T<sub>i</sub></code> matches <code>S<sub>i</sub></code> for <code>i = 1,&hellip;,k</code>
-   * as follows:
-   * <ol>
-   *   <li>
-   *     If <code>S<sub>i</sub></code> is the variable <code>X</code> with lower bound <code>L</code>
-   *     and upper bound <code>U</code>, then <code>T<sub>i</sub></code>
-   *     is a supertype of <code>L</code> and a subtype of <code>U</code>
-   *   </li>
-   *   <li>
-   *     <code>S<sub>i</sub></code> is identical to <code>T<sub>i</sub></code>
-   *   </li>
-   * </ol>
-   * @see ReferenceType#isInstantiationOf(ReferenceType)
+   * Checks whether this type is an instantiation of the given instantiated type. This is only
+   * possible if this type is {@code A<T1,...,Tk>} where all <code>Ti</code> are instantiated by
+   * ground types (e.g., does not have type variables), the other type is {@code A<S1,...,Sk>}, and
+   * each <code>Ti</code> matches <code>Si</code> for <code>i = 1,...,k
+   * </code> as follows:
    *
-   * @param otherType  the other {@link InstantiatedType}
+   * <ol>
+   *   <li>If <code>Si</code> is the variable <code>X</code> with lower bound <code>L
+   *       </code> and upper bound <code>U</code>, then <code>Ti</code> is a supertype of <code>L
+   *       </code> and a subtype of <code>U</code>
+   *   <li><code>Si</code> is identical to <code>Ti</code>
+   * </ol>
+   *
+   * @see ReferenceType#isInstantiationOf(ReferenceType)
+   * @param otherType the other {@link InstantiatedType}
    * @return true if this type is an instantiation of the other type, false otherwise
    */
   @Override
@@ -345,8 +336,7 @@ public class InstantiatedType extends ParameterizedType {
       if (this.instantiatedType.equals(otherInstType.instantiatedType)) {
         for (int i = 0; i < this.argumentList.size(); i++) {
           Substitution<ReferenceType> subst =
-              this
-                  .argumentList
+              this.argumentList
                   .get(i)
                   .getInstantiatingSubstitution(otherInstType.argumentList.get(i));
           if (subst == null) {
@@ -376,8 +366,7 @@ public class InstantiatedType extends ParameterizedType {
 
   /**
    * Determines if this type is recursive in the sense that the type is the bound of its type
-   * argument.
-   * So, should have a single type argument that is a subtype of this type.
+   * argument. So, should have a single type argument that is a subtype of this type.
    *
    * @return true if the type argument is a subtype of this type, false otherwise
    */
@@ -396,75 +385,59 @@ public class InstantiatedType extends ParameterizedType {
 
   /**
    * {@inheritDoc}
-   * Handles specific cases of supertypes of a parameterized type
-   *  <code>C&lt;T<sub>1</sub>,&hellip;,T<sub>n</sub>&gt;</code>
-   * instantiating the generic type
-   *  <code>C&lt;F<sub>1</sub>,&hellip;,F<sub>n</sub>&gt;</code>
-   * by substitution
-   *  <code>&#952; =[F<sub>1</sub>:=T<sub>1</sub>,&hellip;,F<sub>n</sub>:=T<sub>n</sub>]</code>
-   * for which direct supertypes are:
-   * <ol>
-   *   <li> <code>D&lt;U<sub>1</sub>&#952;,&hellip;,U<sub>k</sub>&#952;&gt;</code>
-   *        where <code>D&lt;U<sub>1</sub>,&hellip;,U<sub>k</sub>&gt;</code> is a
-   *        supertype of <code>C&lt;F<sub>1</sub>,&hellip;,F<sub>n</sub>&gt;</code>.
-   *   <li> <code>C&lt;S<sub>1</sub>,&hellip;,S<sub>n</sub>&gt;</code> where
-   *        S<sub>i</sub> <i>contains</i> T<sub>i</sub> (JLS section 4.5.1).
    *
-   *   <li> The rawtype <code>C</code>.
-   *   <li> <code>Object</code> if generic form is interface with no
-   *   interfaces as supertypes.
+   * <p>Handles specific cases of supertypes of a parameterized type {@code C<T1,...,Tn>}
+   * instantiating the generic type {@code C<F1,...,Fn>} by substitution &theta;{@code
+   * =[F1:=T1,...,Fn:=Tn]} for which direct supertypes are:
+   *
+   * <ol>
+   *   <li>{@code D<U1}&theta;{@code ,...,Uk}&theta;{@code >} where {@code D<U1,...,Uk>} is a
+   *       supertype of {@code C<F1,...,Fn>}.
+   *   <li>{@code C<S1,...,Sn>} where Si <i>contains</i> Ti (JLS section 4.5.1).
+   *   <li>The rawtype <code>C</code>.
+   *   <li><code>Object</code> if generic form is interface with no interfaces as supertypes.
    * </ol>
    */
   @Override
   public boolean isSubtypeOf(Type otherType) {
-    if (this.hasWildcard()) { // JLS 4.10.2 - has to be tested first
-      return this.applyCaptureConversion().isSubtypeOf(otherType);
+    if (otherType.isParameterized()) {
+
+      // second clause: rawtype same and parameters S_i of otherType contains T_i of this
+      if (otherType.hasRuntimeClass(this.getRuntimeClass())) {
+        ParameterizedType otherParameterizedType = (ParameterizedType) otherType;
+        List<TypeArgument> otherTypeArguments = otherParameterizedType.getTypeArguments();
+        List<TypeArgument> thisTypeArguments = this.getTypeArguments();
+        assert otherTypeArguments.size() == thisTypeArguments.size();
+        int i = 0;
+        while (i < thisTypeArguments.size()
+            && otherTypeArguments.get(i).contains(thisTypeArguments.get(i))) {
+          i++;
+        }
+        if (i == thisTypeArguments.size()) {
+          return true;
+        }
+      }
+
+      // first clause.
+      InstantiatedType otherInstandiatedType = (InstantiatedType) otherType;
+      InstantiatedType superType =
+          this.getMatchingSupertype(otherInstandiatedType.instantiatedType);
+      if (superType != null && superType.equals(otherType)) {
+        return true;
+      }
     }
 
     if (super.isSubtypeOf(otherType)) {
       return true;
     }
 
-    if (!otherType.isParameterized()) {
-
-      if (super.isSubtypeOf(otherType)) {
-        return true;
-      }
-
-      // rawtype is a direct supertype (see JLS section 4.10.2)
-      if (otherType.isRawtype()) {
-        if (otherType.hasRuntimeClass(this.getRuntimeClass())) {
-          return true;
-        }
-
-        NonParameterizedType rawtype = new NonParameterizedType(this.getRuntimeClass());
-        return rawtype.isSubtypeOf(otherType);
-      }
-
-      return false;
+    // wildcard clause
+    if (this.hasWildcard()) { // JLS 4.10.2
+      // old note says this has to be tested first
+      return this.applyCaptureConversion().isSubtypeOf(otherType);
     }
 
-    // second clause: rawtype same and parameters S_i of otherType contains T_i of this
-    if (otherType.hasRuntimeClass(this.getRuntimeClass())) {
-      ParameterizedType otherParameterizedType = (ParameterizedType) otherType;
-      List<TypeArgument> otherTypeArguments = otherParameterizedType.getTypeArguments();
-      List<TypeArgument> thisTypeArguments = this.getTypeArguments();
-      assert otherTypeArguments.size() == thisTypeArguments.size();
-      int i = 0;
-      while (i < thisTypeArguments.size()
-          && otherTypeArguments.get(i).contains(thisTypeArguments.get(i))) {
-        i++;
-      }
-      if (i == thisTypeArguments.size()) {
-        return true;
-      }
-    }
-
-    // first clause.
-    InstantiatedType pt = (InstantiatedType) otherType;
-    InstantiatedType superType = this.getMatchingSupertype(pt.instantiatedType);
-
-    return superType != null && pt.equals(superType);
+    return this.getRawtype().isSubtypeOf(otherType);
   }
 
   public NonParameterizedType getRawtype() {

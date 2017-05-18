@@ -1,12 +1,8 @@
 package randoop.generation.types;
 
-import java.util.Iterator;
-
 import randoop.types.ReferenceType;
 
-/**
- * Represents an empty {@link TypeDomain}
- */
+/** Represents an empty {@link TypeDomain} */
 public class EmptyDomain implements TypeDomain {
 
   private EmptyDomain() {}

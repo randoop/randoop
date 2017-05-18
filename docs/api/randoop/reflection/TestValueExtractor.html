@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>TestValueExtractor (randoop 3.0.8-prerelease API)</title>
+<title>TestValueExtractor (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="TestValueExtractor (randoop 3.0.8-prerelease API)";
+            parent.document.title="TestValueExtractor (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -119,9 +119,9 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">TestValueExtractor</span>
 extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class in randoop.reflection">DefaultClassVisitor</a></pre>
-<div class="block"><code>TestValueExtractor</code> is a <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> that inspects the fields passed to it to
- see if they are annotated with <a href="../../randoop/TestValue.html" title="annotation in randoop"><code>TestValue</code></a>, are static, and
- have type that is primitive, String, or an array of primitive or String.</div>
+<div class="block"><code>TestValueExtractor</code> is a <a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection"><code>ClassVisitor</code></a> that inspects the fields passed to it to see
+ if they are annotated with <a href="../../randoop/TestValue.html" title="annotation in randoop"><code>TestValue</code></a>, are static, and have type that is
+ primitive, String, or an array of primitive or String.</div>
 </li>
 </ul>
 </div>
@@ -266,9 +266,10 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <h4>visit</h4>
 <pre>public&nbsp;void&nbsp;visit(java.lang.reflect.Field&nbsp;f)</pre>
 <div class="block">Perform an action on a field.
- If the field is static and is annotated with <code>randoop.TestValue</code>, adds the value of the
- field to the sequence set constructed by this visitor.
- Requires that the field type be primitive, String, or an array of primitive or String type.</div>
+
+ <p>If the field is static and is annotated with <code>randoop.TestValue</code>, adds the value of
+ the field to the sequence set constructed by this visitor. Requires that the field type be
+ primitive, String, or an array of primitive or String type.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/reflection/ClassVisitor.html#visit-java.lang.reflect.Field-">visit</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection">ClassVisitor</a></code></dd>

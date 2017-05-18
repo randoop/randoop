@@ -3,18 +3,17 @@ package randoop.field;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
-
 import randoop.BugInRandoopException;
 import randoop.reflection.ReflectionPredicate;
+import randoop.sequence.SequenceExecutionException;
 import randoop.sequence.Variable;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 
 /**
  * AccessibleField represents an accessible field of a class object, which can be an instance field,
- * a static field, or a static final field.
- * Meant to be adapted by either {@link randoop.operation.FieldSet FieldSet} or
- * {@link randoop.operation.FieldGet FieldGet} for use as a
+ * a static field, or a static final field. Meant to be adapted by either {@link
+ * randoop.operation.FieldSet FieldSet} or {@link randoop.operation.FieldGet FieldGet} for use as a
  * {@link randoop.operation.Operation Operation}.
  */
 public class AccessibleField {
@@ -27,8 +26,8 @@ public class AccessibleField {
   /**
    * Create the public field object for the given {@code Field}.
    *
-   * @param field  the field
-   * @param declaringType  the type for the declaring class of this field
+   * @param field the field
+   * @param declaringType the type for the declaring class of this field
    */
   public AccessibleField(Field field, ClassOrInterfaceType declaringType) {
     this.field = field;
@@ -51,9 +50,8 @@ public class AccessibleField {
   /**
    * Translates field into a string representing fully qualified name.
    *
-   * @param declaringType  the declaring type for this field
-   * @param inputVars
-   *          list of input variables
+   * @param declaringType the declaring type for this field
+   * @param inputVars list of input variables
    * @return string representing code representation of field
    */
   public String toCode(Type declaringType, List<Variable> inputVars) {
@@ -67,19 +65,17 @@ public class AccessibleField {
   }
 
   /**
-   * Returns a string descriptor of a field that can be parsed by
-   * {@link FieldParser#parse(String, String, String)}.
+   * Returns a string descriptor of a field that can be parsed by {@link FieldParser#parse(String,
+   * String, String)}.
    *
-   * @param declaringType  the declaring class type for this field
+   * @param declaringType the declaring class type for this field
    * @return a String for type-field pair describing field
    */
   public String toParsableString(Type declaringType) {
     return declaringType.getName() + "." + field.getName();
   }
 
-  /**
-   * Returns string representation of underlying {@link java.lang.reflect.Field} object.
-   */
+  /** Returns string representation of underlying {@link java.lang.reflect.Field} object. */
   @Override
   public String toString() {
     return field.toString();
@@ -100,23 +96,20 @@ public class AccessibleField {
   }
 
   /**
-   * Uses reflection to return the value of the field for the given object.
-   * Suppresses exceptions that occur because PublicField was not correctly
-   * initialized.
+   * Uses reflection to return the value of the field for the given object. Suppresses exceptions
+   * that occur because PublicField was not correctly initialized.
    *
-   * @param object
-   *          instance to which field belongs, or null if field is static
+   * @param object instance to which field belongs, or null if field is static
    * @return reference to value of field
-   * @throws BugInRandoopException
-   *           if field access throws {@link IllegalArgumentException} or
-   *           {@link IllegalAccessException}.
+   * @throws BugInRandoopException if field access throws {@link IllegalArgumentException} or {@link
+   *     IllegalAccessException}.
    */
   public Object getValue(Object object) {
     Object ret;
     try {
       ret = field.get(object);
     } catch (IllegalArgumentException e) {
-      throw new BugInRandoopException("Field access to object of wrong type: " + e.getMessage());
+      throw new SequenceExecutionException("Field access to object of wrong type: ", e);
     } catch (IllegalAccessException e) {
       throw new BugInRandoopException(
           "Access control violation for field: " + field.getName() + "; " + e.getMessage());
@@ -125,23 +118,20 @@ public class AccessibleField {
   }
 
   /**
-   * Uses reflection to set the value of the field for the given object.
-   * Suppresses exceptions that occur because setup was incorrect.
+   * Uses reflection to set the value of the field for the given object. Suppresses exceptions that
+   * occur because setup was incorrect.
    *
-   * @param object
-   *          instance to which field belongs, or null if static
-   * @param value
-   *          new value to assign to field
-   * @throws BugInRandoopException
-   *           if field access throws {@link IllegalArgumentException} or
-   *           {@link IllegalAccessException}.
+   * @param object instance to which field belongs, or null if static
+   * @param value new value to assign to field
+   * @throws BugInRandoopException if field access throws {@link IllegalArgumentException} or {@link
+   *     IllegalAccessException}.
    */
   public void setValue(Object object, Object value) {
     assert !isFinal : "cannot set a final field";
     try {
       field.set(object, value);
     } catch (IllegalArgumentException e) {
-      throw new BugInRandoopException("Field set to object of wrong type: " + e.getMessage());
+      throw new SequenceExecutionException("Field set to object of wrong type", e);
     } catch (IllegalAccessException e) {
       throw new BugInRandoopException("Access control violation for field: " + e.getMessage());
     }
@@ -161,11 +151,9 @@ public class AccessibleField {
   }
 
   /**
-   * satisfies checks whether the enclosed {@link Field} object satisfies the
-   * given predicate.
+   * satisfies checks whether the enclosed {@link Field} object satisfies the given predicate.
    *
-   * @param predicate
-   *          the {@link ReflectionPredicate} to check this.field against.
+   * @param predicate the {@link ReflectionPredicate} to check this.field against.
    * @return true if this.field satisfies predicate.canUse(field).
    */
   public boolean satisfies(ReflectionPredicate predicate) {

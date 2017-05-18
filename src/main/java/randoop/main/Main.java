@@ -2,12 +2,11 @@ package randoop.main;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import randoop.generation.AbstractGenerator;
 
 /**
- * Main entry point for Randoop. Asks the command handlers who can handle the
- * command given by the user, and passes control to whoever does.
+ * Main entry point for Randoop. Asks the command handlers who can handle the command given by the
+ * user, and passes control to whoever does.
  */
 public class Main {
 
@@ -18,6 +17,7 @@ public class Main {
     handlers = new ArrayList<>();
     handlers.add(new GenTests());
     handlers.add(new Help());
+    handlers.add(new Minimize());
   }
 
   // The main method simply calls nonStaticMain.
@@ -86,7 +86,8 @@ public class Main {
       if (!success) {
         System.out.println();
         System.out.println("Randoop failed.");
-        System.out.println("Last sequence under execution: " + AbstractGenerator.currSeq);
+        System.out.println("Last sequence under execution: ");
+        System.out.println(AbstractGenerator.currSeq);
         System.exit(1);
       }
     }

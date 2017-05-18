@@ -19,14 +19,18 @@ before_install:
 sudo: required
 
 jdk:
-  - oraclejdk8
-  - oraclejdk7
   - openjdk7
+  - oraclejdk7
+  - oraclejdk8
 
 # want more info when running tests and building manual
+# NOTE: the tasks here should at least be a subset of build task dependency in build.gradle
+#       update that task if you change this list
 script:
+  - set -o errexit
   - ./gradlew assemble
   - ./gradlew --info check
+  - ./gradlew javadoc
   - ./gradlew --info manual
   - ./gradlew validateManual
   - ./gradlew verifyGoogleJavaFormat

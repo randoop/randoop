@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Serialized Form (randoop 3.0.8-prerelease API)</title>
+<title>Serialized Form (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="javadocstyle.css" title="Style">
 <script type="text/javascript" src="script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Serialized Form (randoop 3.0.8-prerelease API)";
+            parent.document.title="Serialized Form (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -108,6 +108,66 @@
 </ul>
 </li>
 <li class="blockList">
+<h2 title="Package">Package&nbsp;randoop.compile</h2>
+<ul class="blockList">
+<li class="blockList"><a name="randoop.compile.SequenceCompilerException">
+<!--   -->
+</a>
+<h3>Class <a href="randoop/compile/SequenceCompilerException.html" title="class in randoop.compile">randoop.compile.SequenceCompilerException</a> extends java.lang.Throwable implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-1901576275093767250L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList">
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>sourceText</h4>
+<pre>java.lang.String sourceText</pre>
+<div class="block">the source text for the class</div>
+</li>
+<li class="blockListLast">
+<h4>diagnostics</h4>
+<pre>javax.tools.DiagnosticCollector&lt;S&gt; diagnostics</pre>
+<div class="block">the compiler diagnostics</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList">
+<h2 title="Package">Package&nbsp;randoop.generation</h2>
+<ul class="blockList">
+<li class="blockList"><a name="randoop.generation.RandoopGenerationError">
+<!--   -->
+</a>
+<h3>Class <a href="randoop/generation/RandoopGenerationError.html" title="class in randoop.generation">randoop.generation.RandoopGenerationError</a> extends java.lang.Error implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-2655768762421700468L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList">
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>operation</h4>
+<pre><a href="randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a> operation</pre>
+</li>
+<li class="blockListLast">
+<h4>exception</h4>
+<pre>java.lang.Throwable exception</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList">
 <h2 title="Package">Package&nbsp;randoop.main</h2>
 <ul class="blockList">
 <li class="blockList"><a name="randoop.main.RandoopClassNameError">
@@ -118,6 +178,17 @@
 <dt>serialVersionUID:</dt>
 <dd>-3625971508842588810L</dd>
 </dl>
+<ul class="blockList">
+<li class="blockList">
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>className</h4>
+<pre>java.lang.String className</pre>
+</li>
+</ul>
+</li>
+</ul>
 </li>
 <li class="blockList"><a name="randoop.main.RandoopTextuiException">
 <!--   -->
@@ -141,6 +212,35 @@
 <dt>serialVersionUID:</dt>
 <dd>1L</dd>
 </dl>
+</li>
+</ul>
+</li>
+<li class="blockList">
+<h2 title="Package">Package&nbsp;randoop.reflection</h2>
+<ul class="blockList">
+<li class="blockList"><a name="randoop.reflection.RandoopInstantiationError">
+<!--   -->
+</a>
+<h3>Class <a href="randoop/reflection/RandoopInstantiationError.html" title="class in randoop.reflection">randoop.reflection.RandoopInstantiationError</a> extends java.lang.Error implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>3611612630372756721L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList">
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>opName</h4>
+<pre>java.lang.String opName</pre>
+</li>
+<li class="blockListLast">
+<h4>exception</h4>
+<pre>java.lang.Throwable exception</pre>
+</li>
+</ul>
+</li>
+</ul>
 </li>
 </ul>
 </li>
@@ -265,6 +365,15 @@
 </ul>
 </li>
 </ul>
+</li>
+<li class="blockList"><a name="randoop.sequence.SequenceExecutionException">
+<!--   -->
+</a>
+<h3>Class <a href="randoop/sequence/SequenceExecutionException.html" title="class in randoop.sequence">randoop.sequence.SequenceExecutionException</a> extends java.lang.RuntimeException implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-5962830721815152881L</dd>
+</dl>
 </li>
 <li class="blockList"><a name="randoop.sequence.SequenceParseException">
 <!--   -->

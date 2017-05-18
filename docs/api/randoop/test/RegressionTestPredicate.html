@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>RegressionTestPredicate (randoop 3.0.8-prerelease API)</title>
+<title>RegressionTestPredicate (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="RegressionTestPredicate (randoop 3.0.8-prerelease API)";
+            parent.document.title="RegressionTestPredicate (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -119,8 +119,8 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">RegressionTestPredicate</span>
 extends <a href="../../randoop/util/predicate/DefaultPredicate.html" title="class in randoop.util.predicate">DefaultPredicate</a>&lt;<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&gt;</pre>
-<div class="block"><code>RegressionTestPredicate</code> determines whether to keep an
- <code>ExecutableSequence</code> as a regression test.</div>
+<div class="block"><code>RegressionTestPredicate</code> determines whether to keep an <code>ExecutableSequence</code> as a
+ regression test.</div>
 </li>
 </ul>
 </div>
@@ -215,15 +215,13 @@ extends <a href="../../randoop/util/predicate/DefaultPredicate.html" title="clas
 <li class="blockList">
 <h4>test</h4>
 <pre>public&nbsp;boolean&nbsp;test(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</pre>
-<div class="block">Determines whether an executable sequence is a valid regression test. In
- particular, shouldn't have failures (an error-revealing test), and
- shouldn't have <a href="../../randoop/util/TimeoutExceededException.html" title="class in randoop.util"><code>TimeoutExceededException</code></a>.</div>
+<div class="block">Determines whether an executable sequence is a valid regression test. In particular, shouldn't
+ have failures (an error-revealing test), and shouldn't have <a href="../../randoop/util/TimeoutExceededException.html" title="class in randoop.util"><code>TimeoutExceededException</code></a>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>s</code> - the object to test</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if has no failures and does not involve a timeout exception,
-         false otherwise</dd>
+<dd>true if has no failures and does not involve a timeout exception, false otherwise</dd>
 </dl>
 </li>
 </ul>

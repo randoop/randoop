@@ -2,7 +2,6 @@ package randoop.reflection;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Sequence;

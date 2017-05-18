@@ -1,21 +1,18 @@
 package randoop.generation.types;
 
-import org.junit.Test;
-
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-import randoop.types.JavaTypes;
-import randoop.types.ReferenceType;
-
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import org.junit.Test;
+import randoop.types.JavaTypes;
+import randoop.types.ReferenceType;
 
 public class SetDomainTest {
   @Test

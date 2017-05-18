@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Represents a reference type as a type argument to a parameterized type.
- * (See
- * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.)
+ * Represents a reference type as a type argument to a parameterized type. (See <a
+ * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section
+ * 4.5.1</a>.)
  */
 public class ReferenceArgument extends TypeArgument {
 
@@ -16,20 +16,24 @@ public class ReferenceArgument extends TypeArgument {
   /**
    * Creates a {@code ReferenceArgument} for the given {@link ReferenceType}.
    *
-   * @param referenceType  the {@link ReferenceType}
+   * @param referenceType the {@link ReferenceType}
    */
-  ReferenceArgument(ReferenceType referenceType) {
+  private ReferenceArgument(ReferenceType referenceType) {
     this.referenceType = referenceType;
   }
 
   /**
    * Creates a {@code ReferenceArgument} from the given type.
    *
-   * @param type  the type
+   * @param type the type
    * @return a {@code ReferenceArgument} for the given type
    */
   public static ReferenceArgument forType(java.lang.reflect.Type type) {
-    return new ReferenceArgument(ReferenceType.forType(type));
+    return forType(ReferenceType.forType(type));
+  }
+
+  public static ReferenceArgument forType(ReferenceType referenceType) {
+    return new ReferenceArgument(referenceType);
   }
 
   @Override
@@ -52,17 +56,19 @@ public class ReferenceArgument extends TypeArgument {
   }
 
   @Override
-  public ReferenceArgument apply(Substitution<ReferenceType> substitution) {
-    return new ReferenceArgument(referenceType.apply(substitution));
+  public TypeArgument apply(Substitution<ReferenceType> substitution) {
+    return TypeArgument.forType(referenceType.apply(substitution));
   }
 
   /**
    * {@inheritDoc}
-   * Considers cases:
+   *
+   * <p>Considers cases:
+   *
    * <ul>
-   *   <li>{@code T} contains {@code T}</li>
-   *   <li>{@code T} contains {@code ? extends T}</li>
-   *   <li>{@code T} contains {@code ? super T}</li>
+   *   <li>{@code T} contains {@code T}
+   *   <li>{@code T} contains {@code ? extends T}
+   *   <li>{@code T} contains {@code ? super T}
    * </ul>
    */
   @Override
@@ -122,5 +128,10 @@ public class ReferenceArgument extends TypeArgument {
     }
     ReferenceType otherReferenceType = ((ReferenceArgument) otherArgument).getReferenceType();
     return referenceType.getInstantiatingSubstitution(otherReferenceType);
+  }
+
+  @Override
+  public boolean isVariable() {
+    return referenceType.isVariable();
   }
 }

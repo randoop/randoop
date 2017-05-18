@@ -2,7 +2,6 @@ package randoop.contract;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
@@ -10,12 +9,11 @@ import randoop.types.TypeTuple;
 
 /**
  * The contract: <code>x == null</code>.
- * <p>
- * Obviously, this is not a property that must hold of all objects in a test.
- * Randoop creates an instance of this contract when, during execution of a
- * sequence, it determines that the above property holds. The property thus
- * represents a <i>regression</i> as it captures the behavior of the code when
- * it is executed.
+ *
+ * <p>Obviously, this is not a property that must hold of all objects in a test. Randoop creates an
+ * instance of this contract when, during execution of a sequence, it determines that the above
+ * property holds. The property thus represents a <i>regression</i> as it captures the behavior of
+ * the code when it is executed.
  */
 public final class IsNull implements ObjectContract {
 

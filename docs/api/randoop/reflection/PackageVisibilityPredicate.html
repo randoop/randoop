@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>PackageVisibilityPredicate (randoop 3.0.8-prerelease API)</title>
+<title>PackageVisibilityPredicate (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="PackageVisibilityPredicate (randoop 3.0.8-prerelease API)";
+            parent.document.title="PackageVisibilityPredicate (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -115,16 +115,14 @@ var activeTableTab = "activeTableTab";
 <pre>public class <span class="typeNameLabel">PackageVisibilityPredicate</span>
 extends java.lang.Object
 implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a></pre>
-<div class="block">A predicate that tests for visibility of a class, method, constructor, or
- field relative to a particular package. A top-level class is accessible from
- the package if it is public, or if it is package-private in the given
- package. Otherwise, an element is accessible from the package if it is either
- public, or, if in the same package, then not private.
- <p>
- The predicate is used to determine what can be accessed from a Randoop
- generated JUnit test in the given package. So, this class does not implement
- Java's full accessibility rules; those for subclasses and default-visibility
- are not relevant to this predicate.</div>
+<div class="block">A predicate that tests for visibility of a class, method, constructor, or field relative to a
+ particular package. A top-level class is accessible from the package if it is public, or if it is
+ package-private in the given package. Otherwise, an element is accessible from the package if it
+ is either public, or, if in the same package, then not private.
+
+ <p>The predicate is used to determine what can be accessed from a Randoop generated JUnit test in
+ the given package. So, this class does not implement Java's full accessibility rules; those for
+ subclasses and default-visibility are not relevant to this predicate.</div>
 </li>
 </ul>
 </div>
@@ -144,9 +142,9 @@ implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="in
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private java.lang.Package</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/PackageVisibilityPredicate.html#thePackage">thePackage</a></span></code>
-<div class="block">The package from which to test visibility of elements.</div>
+<td class="colFirst"><code>private java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/PackageVisibilityPredicate.html#packageName">packageName</a></span></code>
+<div class="block">The package name from which to test visibility of elements.</div>
 </td>
 </tr>
 </table>
@@ -164,7 +162,7 @@ implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="in
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/reflection/PackageVisibilityPredicate.html#PackageVisibilityPredicate-java.lang.Package-">PackageVisibilityPredicate</a></span>(java.lang.Package&nbsp;thePackage)</code>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/reflection/PackageVisibilityPredicate.html#PackageVisibilityPredicate-java.lang.String-">PackageVisibilityPredicate</a></span>(java.lang.String&nbsp;packageName)</code>
 <div class="block">Create a predicate that tests visibility.</div>
 </td>
 </tr>
@@ -236,14 +234,14 @@ implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="in
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="thePackage">
+<a name="packageName">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>thePackage</h4>
-<pre>private&nbsp;java.lang.Package thePackage</pre>
-<div class="block">The package from which to test visibility of elements.</div>
+<h4>packageName</h4>
+<pre>private final&nbsp;java.lang.String packageName</pre>
+<div class="block">The package name from which to test visibility of elements.</div>
 </li>
 </ul>
 </li>
@@ -254,18 +252,18 @@ implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="in
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="PackageVisibilityPredicate-java.lang.Package-">
+<a name="PackageVisibilityPredicate-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>PackageVisibilityPredicate</h4>
-<pre>public&nbsp;PackageVisibilityPredicate(java.lang.Package&nbsp;thePackage)</pre>
-<div class="block">Create a predicate that tests visibility. Class members must either be
- public, or accessible relative to the given package <code>thePackage</code>.</div>
+<pre>public&nbsp;PackageVisibilityPredicate(java.lang.String&nbsp;packageName)</pre>
+<div class="block">Create a predicate that tests visibility. Class members must either be public, or accessible
+ relative to the given package <code>packageName</code>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>thePackage</code> - the package to use for package accessibility test</dd>
+<dd><code>packageName</code> - the package to use for package accessibility test</dd>
 </dl>
 </li>
 </ul>
@@ -291,8 +289,7 @@ implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="in
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>c</code> - the class object to check</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if class is public or package private in <code>thePackage</code>,
-         false otherwise</dd>
+<dd>true if class is public or package private in <code>packageName</code>, false otherwise</dd>
 </dl>
 </li>
 </ul>
@@ -310,8 +307,8 @@ implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="in
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>m</code> - the Method object to check</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if method is public or a member of a class in
-         <code>thePackage</code> and not private, false otherwise</dd>
+<dd>true if method is public or a member of a class in <code>packageName</code> and not private,
+     false otherwise</dd>
 </dl>
 </li>
 </ul>
@@ -329,8 +326,8 @@ implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="in
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>c</code> - the constructor object to check</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if constructor is public or member of a class in
-         <code>thePackage</code> and not private, false otherwise</dd>
+<dd>true if constructor is public or member of a class in <code>packageName</code> and not
+     private, false otherwise</dd>
 </dl>
 </li>
 </ul>
@@ -348,8 +345,8 @@ implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="in
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>f</code> - the field object to check</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if field is public or member of a class in <code>thePackage</code>
-         and not private, false otherwise</dd>
+<dd>true if field is public or member of a class in <code>packageName</code> and not private,
+     false otherwise</dd>
 </dl>
 </li>
 </ul>
@@ -367,8 +364,8 @@ implements <a href="../../randoop/reflection/VisibilityPredicate.html" title="in
 <dd><code>mods</code> - the modifier bit string</dd>
 <dd><code>otherPackage</code> - the package to test for relative accessibility</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if public set in modifiers or if otherPackage is the same as
-         thePackage and private is not set in modifiers, false otherwise</dd>
+<dd>true if public set in modifiers or if otherPackage is the same as packageName and
+     private is not set in modifiers, false otherwise</dd>
 </dl>
 </li>
 </ul>

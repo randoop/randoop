@@ -1,12 +1,13 @@
 package randoop.test;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
+import org.junit.Test;
 import randoop.TestValue;
 import randoop.generation.SeedSequences;
 import randoop.operation.TypedOperation;
@@ -17,17 +18,15 @@ import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 import randoop.types.JavaTypes;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 public class SeedSequencesTests {
 
   @Test
   public void testGetSeedsFromAnnotatedFields() {
-    Package thisPackage = this.getClass().getPackage();
 
     Set<Sequence> annotatedTestValues = new LinkedHashSet<>();
-    ReflectionManager manager = new ReflectionManager(new PackageVisibilityPredicate(thisPackage));
+    ReflectionManager manager =
+        new ReflectionManager(
+            new PackageVisibilityPredicate(this.getClass().getPackage().getName()));
     manager.add(new TestValueExtractor(annotatedTestValues));
 
     try {
@@ -79,7 +78,8 @@ public class SeedSequencesTests {
 
     Set<Sequence> s4 = new LinkedHashSet<>();
     ReflectionManager managerS4 =
-        new ReflectionManager(new PackageVisibilityPredicate(thisPackage));
+        new ReflectionManager(
+            new PackageVisibilityPredicate(this.getClass().getPackage().getName()));
     managerS4.add(new TestValueExtractor(s4));
 
     managerS4.apply(TestValueExamples.class);
@@ -124,7 +124,7 @@ class MissingStaticMod {
 @SuppressWarnings("unused")
 class BadType0 {
   // not static
-  @TestValue static public Integer x1 = 0;
+  @TestValue public static Integer x1 = 0;
 }
 
 @SuppressWarnings("unused")

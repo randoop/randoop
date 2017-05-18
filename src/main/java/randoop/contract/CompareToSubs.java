@@ -2,15 +2,16 @@ package randoop.contract;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import randoop.Globals;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * The contract: Checks the substitutability property of compareTo for equals
- * (x0.compareTo(x1) == 0) &rarr; (Math.signum(x0.compareTo(x2)) == Math.signum(x1.compareTo(x2)))
+ * The contract: Checks the substitutability property of compareTo for equals.
+ *
+ * <pre>(x0.compareTo(x1) == 0)
+ * &rarr; (Math.signum(x0.compareTo(x2)) == Math.signum(x1.compareTo(x2)))</pre>
  */
 public class CompareToSubs implements ObjectContract {
   private static final CompareToSubs instance = new CompareToSubs();

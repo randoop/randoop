@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ReferenceBound (randoop 3.0.8-prerelease API)</title>
+<title>ReferenceBound (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ReferenceBound (randoop 3.0.8-prerelease API)";
+            parent.document.title="ReferenceBound (randoop 3.1.5 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10};
+var methods = {"i0":6,"i1":6,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -223,6 +223,12 @@ extends <a href="../../randoop/types/ParameterBound.html" title="class in randoo
 </td>
 </tr>
 <tr id="i8" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ReferenceBound.html#isVariable--">isVariable</a></span>()</code>
+<div class="block">Indicates whether this bound is a type variable.</div>
+</td>
+</tr>
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ReferenceBound.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
@@ -232,7 +238,7 @@ extends <a href="../../randoop/types/ParameterBound.html" title="class in randoo
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;randoop.types.<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></h3>
-<code><a href="../../randoop/types/ParameterBound.html#forType-randoop.types.ReferenceType-">forType</a>, <a href="../../randoop/types/ParameterBound.html#forType-java.lang.reflect.Type-">forType</a>, <a href="../../randoop/types/ParameterBound.html#forTypes-java.lang.reflect.Type:A-">forTypes</a>, <a href="../../randoop/types/ParameterBound.html#getTypeParameters--">getTypeParameters</a>, <a href="../../randoop/types/ParameterBound.html#isLowerBound-randoop.types.ParameterBound-randoop.types.Substitution-">isLowerBound</a>, <a href="../../randoop/types/ParameterBound.html#isLowerBound-randoop.types.Type-randoop.types.Substitution-">isLowerBound</a>, <a href="../../randoop/types/ParameterBound.html#isSubtypeOf-randoop.types.ParameterBound-">isSubtypeOf</a>, <a href="../../randoop/types/ParameterBound.html#isTypeVariable-java.lang.reflect.Type-">isTypeVariable</a>, <a href="../../randoop/types/ParameterBound.html#isUpperBound-randoop.types.ParameterBound-randoop.types.Substitution-">isUpperBound</a>, <a href="../../randoop/types/ParameterBound.html#isUpperBound-randoop.types.Type-randoop.types.Substitution-">isUpperBound</a></code></li>
+<code><a href="../../randoop/types/ParameterBound.html#forType-randoop.types.ReferenceType-">forType</a>, <a href="../../randoop/types/ParameterBound.html#forType-java.util.Set-java.lang.reflect.Type-">forType</a>, <a href="../../randoop/types/ParameterBound.html#forTypes-java.util.Set-java.lang.reflect.Type:A-">forTypes</a>, <a href="../../randoop/types/ParameterBound.html#getTypeParameters--">getTypeParameters</a>, <a href="../../randoop/types/ParameterBound.html#isLowerBound-randoop.types.ParameterBound-randoop.types.Substitution-">isLowerBound</a>, <a href="../../randoop/types/ParameterBound.html#isLowerBound-randoop.types.Type-randoop.types.Substitution-">isLowerBound</a>, <a href="../../randoop/types/ParameterBound.html#isSubtypeOf-randoop.types.ParameterBound-">isSubtypeOf</a>, <a href="../../randoop/types/ParameterBound.html#isTypeVariable-java.lang.reflect.Type-">isTypeVariable</a>, <a href="../../randoop/types/ParameterBound.html#isUpperBound-randoop.types.ParameterBound-randoop.types.Substitution-">isUpperBound</a>, <a href="../../randoop/types/ParameterBound.html#isUpperBound-randoop.types.Type-randoop.types.Substitution-">isUpperBound</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -423,7 +429,7 @@ extends <a href="../../randoop/types/ParameterBound.html" title="class in randoo
 <a name="isObject--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>isObject</h4>
 <pre>public&nbsp;boolean&nbsp;isObject()</pre>
@@ -434,6 +440,23 @@ extends <a href="../../randoop/types/ParameterBound.html" title="class in randoo
 <dd><code><a href="../../randoop/types/ParameterBound.html#isObject--">isObject</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if this bound is <code>Object</code>, false otherwise</dd>
+</dl>
+</li>
+</ul>
+<a name="isVariable--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>isVariable</h4>
+<pre>public&nbsp;boolean&nbsp;isVariable()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/ParameterBound.html#isVariable--">ParameterBound</a></code></span></div>
+<div class="block">Indicates whether this bound is a type variable.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="../../randoop/types/ParameterBound.html#isVariable--">isVariable</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if this bound is a type variable, false otherwise</dd>
 </dl>
 </li>
 </ul>

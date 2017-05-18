@@ -94,7 +94,7 @@ public class RatPoly {
   /** Returns the degree of this.
    * requires: !this.isNaN()
    * @return the largest exponent with a non-zero coefficient, or 0
-   * if this is "0".
+   * if this is "0"
    */
   public int degree() {
     if (terms.size() > 0) {
@@ -118,7 +118,7 @@ public class RatPoly {
     return ZERO;
   }
 
-  /** @return true if and only if this has some coefficient = "NaN".
+  /** @return true if and only if this has some coefficient = "NaN"
    */
   public boolean isNaN() {
     if (terms == null) throw new RuntimeException("terms is null");

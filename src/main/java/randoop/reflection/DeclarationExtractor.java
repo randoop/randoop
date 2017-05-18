@@ -1,7 +1,6 @@
 package randoop.reflection;
 
 import java.util.Set;
-
 import randoop.types.ClassOrInterfaceType;
 
 /**

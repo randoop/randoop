@@ -3,18 +3,14 @@ package randoop.operation;
 import java.io.PrintStream;
 import java.lang.reflect.Array;
 import java.util.List;
-
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
-/**
- * Created by bjkeller on 8/19/16.
- */
+/** Created by bjkeller on 8/19/16. */
 class ArrayElementSet extends CallableOperation {
 
   private final int ARRAY = 0;
@@ -52,19 +48,10 @@ class ArrayElementSet extends CallableOperation {
       StringBuilder b) {
 
     b.append(inputVars.get(ARRAY).getName()).append("[");
-    String index = inputVars.get(INDEX).getName();
-    Statement statementCreatingIndex = inputVars.get(INDEX).getDeclaringStatement();
-    String shortIndex = statementCreatingIndex.getShortForm();
-    if (shortIndex != null) {
-      index = shortIndex;
-    }
+    Variable indexVariable = inputVars.get(INDEX);
+    String index = getArgumentString(indexVariable);
     b.append(index).append("]").append(" = ");
-    String value = inputVars.get(VALUE).getName();
-    Statement statementCreatingVar = inputVars.get(VALUE).getDeclaringStatement();
-    String shortValue = statementCreatingVar.getShortForm();
-    if (shortValue != null) {
-      value = shortValue;
-    }
+    String value = getArgumentString(inputVars.get(VALUE));
     b.append(value);
   }
 

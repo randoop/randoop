@@ -4,9 +4,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-/**
- * Method {@link #parse} parses a string representing a {@link Operation}.
- */
+/** Method {@link #parse} parses a string representing a {@link Operation}. */
 public class OperationParser {
 
   private OperationParser() {
@@ -14,35 +12,31 @@ public class OperationParser {
   }
 
   /**
-   * Parses a string representing an {code Operation}.
-   * The string is expected to be of the form:
+   * Parses a string representing an {code Operation}. The string is expected to be of the form:
    *
    * <pre>
    *   ID : DESCRIPTION
    * </pre>
    *
-   * Where ID is a string identifying the type of Operation, and DESCRIPTION
-   * represents more specifics of the Operation. For example, the following
-   * String represents the constructor for HashMap:
+   * Where ID is a string identifying the type of Operation, and DESCRIPTION represents more
+   * specifics of the Operation. For example, the following String represents the constructor for
+   * HashMap:
    *
-   * <pre>
-   *   cons : java.util.HashMap.&lt;init&gt;()
-   * </pre>
+   * <pre>{@code
+   * cons : java.util.HashMap.<init>()
+   * }</pre>
    *
-   * A class implementing Operation should define a static field named ID
-   * that corresponds to the ID string used when parsing. The way this parse
-   * method works is by using the ID string to determine the specific
-   * Operation class C, and the calling C.parse(String) on the DESCRIPTION
+   * A class implementing Operation should define a static field named ID that corresponds to the ID
+   * string used when parsing. The way this parse method works is by using the ID string to
+   * determine the specific Operation class C, and the calling C.parse(String) on the DESCRIPTION
    * String.
-   * <p>
-   * For more details on the exact form of DESCRIPTION, see the different
-   * classes implementing Operation.
    *
-   * @param str
-   *          the string to be parsed
+   * <p>For more details on the exact form of DESCRIPTION, see the different classes implementing
+   * Operation.
+   *
+   * @param str the string to be parsed
    * @return the operation for the given string descriptor
-   * @throws OperationParseException
-   *           if the string does not have expected format
+   * @throws OperationParseException if the string does not have expected format
    */
   public static TypedOperation parse(String str) throws OperationParseException {
     if (str == null || str.length() == 0) {
@@ -105,11 +99,10 @@ public class OperationParser {
   }
 
   /**
-   * Returns the "id" for the Operation. The ID is really the kind or a tag,
-   * such as "prim". It is not a unique identifier for individual Operations.
+   * Returns the "id" for the Operation. The ID is really the kind or a tag, such as "prim". It is
+   * not a unique identifier for individual Operations.
    *
-   * @param op
-   *          the operation
+   * @param op the operation
    * @return the ID string for the operation
    */
   public static String getId(TypedOperation op) {

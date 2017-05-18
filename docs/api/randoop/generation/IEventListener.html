@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>IEventListener (randoop 3.0.8-prerelease API)</title>
+<title>IEventListener (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="IEventListener (randoop 3.0.8-prerelease API)";
+            parent.document.title="IEventListener (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -101,8 +101,8 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public interface <span class="typeNameLabel">IEventListener</span></pre>
-<div class="block">Defines various event during Randoop's generation at which an implementing
- class can be notified and perform some action.</div>
+<div class="block">Defines various event during Randoop's generation at which an implementing class can be notified
+ and perform some action.</div>
 </li>
 </ul>
 </div>
@@ -130,22 +130,21 @@ var activeTableTab = "activeTableTab";
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/IEventListener.html#explorationStart--">explorationStart</a></span>()</code>
-<div class="block">Called immediately at the start of test generation, before any generation
- steps have occurred.</div>
+<div class="block">Called immediately at the start of test generation, before any generation steps have occurred.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/IEventListener.html#generationStepPost-randoop.sequence.ExecutableSequence-">generationStepPost</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</code>
-<div class="block">Called by the AbstractGenerator during each generation iteration,
- immediately after a generation <code>step()</code> has completed.</div>
+<div class="block">Called by the AbstractGenerator during each generation iteration, immediately after a
+ generation <code>step()</code> has completed.</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/IEventListener.html#generationStepPre--">generationStepPre</a></span>()</code>
-<div class="block">Called by the AbstractGenerator during each generation iteration,
- immediately before a generation <code>step()</code> is performed.</div>
+<div class="block">Called by the AbstractGenerator during each generation iteration, immediately before a
+ generation <code>step()</code> is performed.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
@@ -182,8 +181,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>explorationStart</h4>
 <pre>void&nbsp;explorationStart()</pre>
-<div class="block">Called immediately at the start of test generation, before any generation
- steps have occurred.</div>
+<div class="block">Called immediately at the start of test generation, before any generation steps have occurred.</div>
 </li>
 </ul>
 <a name="explorationEnd--">
@@ -203,8 +201,8 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>generationStepPre</h4>
 <pre>void&nbsp;generationStepPre()</pre>
-<div class="block">Called by the AbstractGenerator during each generation iteration,
- immediately before a generation <code>step()</code> is performed.</div>
+<div class="block">Called by the AbstractGenerator during each generation iteration, immediately before a
+ generation <code>step()</code> is performed.</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../randoop/generation/AbstractGenerator.html" title="class in randoop.generation"><code>AbstractGenerator</code></a></dd>
@@ -218,13 +216,13 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>generationStepPost</h4>
 <pre>void&nbsp;generationStepPost(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</pre>
-<div class="block">Called by the AbstractGenerator during each generation iteration,
- immediately after a generation <code>step()</code> has completed.</div>
+<div class="block">Called by the AbstractGenerator during each generation iteration, immediately after a
+ generation <code>step()</code> has completed.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>s</code> - sequence that was generated and executed in the last generation
-          step. Can b null, which means the last step was unable to generate
-          a sequence (e.g. due to a bad random choice).</dd>
+<dd><code>s</code> - sequence that was generated and executed in the last generation step. Can b null,
+     which means the last step was unable to generate a sequence (e.g. due to a bad random
+     choice).</dd>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../randoop/generation/AbstractGenerator.html" title="class in randoop.generation"><code>AbstractGenerator</code></a></dd>
 </dl>
@@ -237,8 +235,8 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>progressThreadUpdate</h4>
 <pre>void&nbsp;progressThreadUpdate()</pre>
-<div class="block">Called by ProgressDisplay at regular intervals to monitor progress.
- Implementing classes can use this opportunity to update state.</div>
+<div class="block">Called by ProgressDisplay at regular intervals to monitor progress. Implementing classes can
+ use this opportunity to update state.</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../randoop/util/ProgressDisplay.html" title="class in randoop.util"><code>ProgressDisplay</code></a></dd>
@@ -252,8 +250,8 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>stopGeneration</h4>
 <pre>boolean&nbsp;stopGeneration()</pre>
-<div class="block">Called by AbstractGenerator to determine if generation should stop. True
- signals to the generator that generation should stop.</div>
+<div class="block">Called by AbstractGenerator to determine if generation should stop. True signals to the
+ generator that generation should stop.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if generation should stop, false otherwise</dd>

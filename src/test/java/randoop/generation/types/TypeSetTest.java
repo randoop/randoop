@@ -1,23 +1,21 @@
 package randoop.generation.types;
 
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import randoop.types.GenericClassType;
-import randoop.types.JavaTypes;
-import randoop.types.ReferenceType;
-import randoop.types.Substitution;
-import randoop.types.Type;
-
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import org.junit.Test;
+import randoop.types.GenericClassType;
+import randoop.types.JavaTypes;
+import randoop.types.ReferenceType;
+import randoop.types.Substitution;
+import randoop.types.Type;
 
 public class TypeSetTest {
 

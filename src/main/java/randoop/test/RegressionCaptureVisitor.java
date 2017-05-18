@@ -1,7 +1,6 @@
 package randoop.test;
 
 import java.util.Set;
-
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -14,29 +13,29 @@ import randoop.contract.ObserverEqValue;
 import randoop.contract.PrimValue;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.TypedOperation;
+import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Value;
 import randoop.sequence.Variable;
-import randoop.types.Type;
 import randoop.types.PrimitiveTypes;
+import randoop.types.Type;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 
 /**
- * An {@code ExecutionVisitor} that records regression checks on the values
- * created by the sequence.
+ * An {@code ExecutionVisitor} that records regression checks on the values created by the sequence.
  *
- * NOTES:
+ * <p>NOTES:
  *
  * <ul>
- * <li>Only creates checks over variables whose type is primitive or String.
- * <li>Does not create checks for the return values of Object.toString() and
- * Object.hashCode() as their values can vary from run to run.
- * <li>Does not create checks for Strings that contain the string ";@" as this
- * is a good indication that at least part of the String came from a call of
- * Object.toString() (e.g. "[[Ljava.lang.Object;@5780d9]" is the string
- * representation of a list containing one Object).
+ *   <li>Only creates checks over variables whose type is primitive or String.
+ *   <li>Does not create checks for the return values of Object.toString() and Object.hashCode() as
+ *       their values can vary from run to run.
+ *   <li>Does not create checks for Strings that contain the string ";@" as this is a good
+ *       indication that at least part of the String came from a call of Object.toString() (e.g.
+ *       "[[Ljava.lang.Object;@5780d9]" is the string representation of a list containing one
+ *       Object).
  * </ul>
  */
 public final class RegressionCaptureVisitor implements TestCheckGenerator {
@@ -44,30 +43,32 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
   private ExpectedExceptionCheckGen exceptionExpectation;
   private MultiMap<Type, TypedOperation> observerMap;
   private final Set<TypedOperation> excludeSet;
+  private final VisibilityPredicate isVisible;
   private boolean includeAssertions;
 
   public RegressionCaptureVisitor(
       ExpectedExceptionCheckGen exceptionExpectation,
       MultiMap<Type, TypedOperation> observerMap,
       Set<TypedOperation> excludeSet,
+      VisibilityPredicate isVisible,
       boolean includeAssertions) {
     this.exceptionExpectation = exceptionExpectation;
     this.observerMap = observerMap;
     this.excludeSet = excludeSet;
+    this.isVisible = isVisible;
     this.includeAssertions = includeAssertions;
   }
 
   /**
-   * {@inheritDoc} Iterates over all statements of the sequence to create
-   * regression assertions. If visitor is set to include assertions, then
-   * assertions are generated for both normal execution and exceptions. A
-   * try-catch block is always generated for exceptions, but whether assertions
-   * are included is determined by the {@link ExpectedExceptionCheckGen} given
-   * when creating this visitor.
+   * {@inheritDoc}
    *
-   * @throws Error
-   *           if any statement is not executed, or exception occurs before last
-   *           statement
+   * <p>Iterates over all statements of the sequence to create regression assertions. If visitor is
+   * set to include assertions, then assertions are generated for both normal execution and
+   * exceptions. A try-catch block is always generated for exceptions, but whether assertions are
+   * included is determined by the {@link ExpectedExceptionCheckGen} given when creating this
+   * visitor.
+   *
+   * @throws Error if any statement is not executed, or exception occurs before last statement
    */
   @Override
   public TestChecks visit(ExecutableSequence s) {
@@ -167,7 +168,7 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
             // System.out.printf ("Adding objectcheck %s to seq %08X\n",
             // oc, s.seq_id());
 
-          } else if (o.getClass().isEnum()) {
+          } else if (o.getClass().isEnum() && isVisible.isVisible(o.getClass())) {
             ObjectCheck oc = new ObjectCheck(new EnumValue((Enum<?>) o), var);
             checks.add(oc);
           } else { // its a more complex type with a non-null value

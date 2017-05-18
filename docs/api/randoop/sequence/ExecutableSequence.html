@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ExecutableSequence (randoop 3.0.8-prerelease API)</title>
+<title>ExecutableSequence (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ExecutableSequence (randoop 3.0.8-prerelease API)";
+            parent.document.title="ExecutableSequence (randoop 3.1.5 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":9,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":9,"i15":9,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":9,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":9,"i16":9,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -110,61 +110,50 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">ExecutableSequence</span>
 extends java.lang.Object</pre>
-<div class="block">An ExecutableSequence wraps a <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence"><code>Sequence</code></a> with functionality for
- executing the sequence. It also lets the client add <a href="../../randoop/test/Check.html" title="interface in randoop.test"><code>Check</code></a>s that check
- expected behaviors of the execution.
- <p>
- An ExecutableSequence augments a sequence with three additional pieces of
- data:
+<div class="block">An ExecutableSequence wraps a <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence"><code>Sequence</code></a> with functionality for executing the sequence. It
+ also lets the client add <a href="../../randoop/test/Check.html" title="interface in randoop.test"><code>Check</code></a>s that check expected behaviors of the execution.
+
+ <p>An ExecutableSequence augments a sequence with three additional pieces of data:
+
  <ul>
- <li><b>Execution results.</b> An ExecutableSequence can be executed, and the
- results of the execution (meaning the objects created during execution, and
- any exceptions thrown) are made available to clients or execution visitors to
- inspect.
- <li><b>Checks.</b> A check is an object representing an expected runtime
- behavior of the sequence. Clients can add checks to specific indices of the
- sequence. For example, a client might add a <code>NotNull</code> check to the
- ith index of a sequence to signify that the value returned by the statement
- at index i should not be null.
- <li><b>Check evaluation results.</b> Corresponding to every check is a
- boolean value that represents whether the check passed or failed during the
- last execution of the sequence.
+   <li><b>Execution results.</b> An ExecutableSequence can be executed, and the results of the
+       execution (meaning the objects created during execution, and any exceptions thrown) are
+       made available to clients or execution visitors to inspect.
+   <li><b>Checks.</b> A check is an object representing an expected runtime behavior of the
+       sequence. Clients can add checks to specific indices of the sequence. For example, a client
+       might add a <code>NotNull</code> check to the ith index of a sequence to signify that the
+       value returned by the statement at index i should not be null.
+   <li><b>Check evaluation results.</b> Corresponding to every check is a boolean value that
+       represents whether the check passed or failed during the last execution of the sequence.
  </ul>
- <p>
 
- Of the three pieces of data above, an ExecutableSequence only directly
- manages the first one, i.e. the execution results. Other pieces of data,
- including checks and check evaluation results, are added or removed by the
- client of the ExecutableSequence. One way of doing this is by implementing an
- <a href="../../randoop/ExecutionVisitor.html" title="interface in randoop"><code>ExecutionVisitor</code></a> and passing it as an argument to the
- <code>execute</code> method.
+ <p>Of the three pieces of data above, an ExecutableSequence only directly manages the first one,
+ i.e. the execution results. Other pieces of data, including checks and check evaluation results,
+ are added or removed by the client of the ExecutableSequence. One way of doing this is by
+ implementing an <a href="../../randoop/ExecutionVisitor.html" title="interface in randoop"><code>ExecutionVisitor</code></a> and passing it as an argument to the <code>execute
+ </code> method.
 
- <p>
+ <p>The method <code>execute(ExecutionVisitor v)</code> executes the code that the sequence
+ represents. This method uses reflection to execute each element in the sequence (method call,
+ constructor call, primitive or array declaration, etc). Before executing each statement (e.g. the
+ i-th statement), execute(v) calls v.visitBefore(this, i), and after executing each statement, it
+ calls v.visitAfter(this, i). The purpose of the visitor is to examine the unfolding execution,
+ and take some action depending on its intended purpose. For example, it may decorate the sequence
+ with <a href="../../randoop/test/Check.html" title="interface in randoop.test"><code>Check</code></a>s about the execution.
 
- The method <code>execute(ExecutionVisitor v)</code> executes the code that
- the sequence represents. This method uses reflection to execute each element
- in the sequence (method call, constructor call, primitive or array
- declaration, etc). Before executing each statement (e.g. the i-th statement),
- execute(v) calls v.visitBefore(this, i), and after executing each statement,
- it calls v.visitAfter(this, i). The purpose of the visitor is to examine the
- unfolding execution, and take some action depending on its intended purpose.
- For example, it may decorate the sequence with <a href="../../randoop/test/Check.html" title="interface in randoop.test"><code>Check</code></a>s about the
- execution.
-
- <p>
-
- NOTES.
+ <p>NOTES.
 
  <ul>
- <li>It only makes sense to call the following methods <b>after</b> executing
- the i-th statement in a sequence:
- <ul>
- <li>isNormalExecution(i)
- <li>isExceptionalExecution(i)
- <li>getExecutionResult(i)
- <li>getResult(i)
- <li>getException(i)
- </ul>
+   <li>It only makes sense to call the following methods <b>after</b> executing the i-th statement
+       in a sequence:
+       <ul>
+         <li>isNormalExecution(i)
+         <li>isExceptionalExecution(i)
+         <li>getExecutionResult(i)
+         <li>getResult(i)
+         <li>getException(i)
+       </ul>
+
  </ul></div>
 </li>
 </ul>
@@ -193,22 +182,20 @@ extends java.lang.Object</pre>
 <tr class="rowColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#exectime">exectime</a></span></code>
-<div class="block">How long it took to execute this sequence in nanoseconds, excluding
- generation time.</div>
+<div class="block">How long it took to execute this sequence in nanoseconds, excluding generation time.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence">Execution</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#executionResults">executionResults</a></span></code>
-<div class="block">Contains the runtime objects created and exceptions thrown (if any) during
- execution of this sequence.</div>
+<div class="block">Contains the runtime objects created and exceptions thrown (if any) during execution of this
+ sequence.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#gentime">gentime</a></span></code>
-<div class="block">How long it took to generate this sequence in nanoseconds, excluding
- execution time.</div>
+<div class="block">How long it took to generate this sequence in nanoseconds, excluding execution time.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -280,8 +267,7 @@ extends java.lang.Object</pre>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#coversClass-java.lang.Class-">coversClass</a></span>(java.lang.Class&lt;?&gt;&nbsp;c)</code>
-<div class="block">Indicates whether the given class is covered by the most recent execution
- of this sequence.</div>
+<div class="block">Indicates whether the given class is covered by the most recent execution of this sequence.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -323,22 +309,21 @@ extends java.lang.Object</pre>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../randoop/sequence/ReferenceValue.html" title="class in randoop.sequence">ReferenceValue</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#getInputValues--">getInputValues</a></span>()</code>
-<div class="block">Returns the list of input reference type values used to compute the
- input values of the last statement.</div>
+<div class="block">Returns the list of input reference type values used to compute the input values of the last
+ statement.</div>
 </td>
 </tr>
 <tr id="i9" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../randoop/sequence/ReferenceValue.html" title="class in randoop.sequence">ReferenceValue</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#getLastStatementValues--">getLastStatementValues</a></span>()</code>
-<div class="block">Returns the list of (reference type) values created and used by the last statement
- of this sequence.</div>
+<div class="block">Returns the list of (reference type) values created and used by the last statement of this
+ sequence.</div>
 </td>
 </tr>
 <tr id="i10" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#getNonExecutedIndex--">getNonExecutedIndex</a></span>()</code>
-<div class="block">Returns the index i for a non-executed statement, or -1 if there is no such
- index.</div>
+<div class="block">Returns the index i for a non-executed statement, or -1 if there is no such index.</div>
 </td>
 </tr>
 <tr id="i11" class="rowColor">
@@ -357,83 +342,93 @@ extends java.lang.Object</pre>
                 java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputs)</code>&nbsp;</td>
 </tr>
 <tr id="i14" class="altColor">
+<td class="colFirst"><code>java.lang.Object[]</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#getRuntimeInputs-java.util.List-">getRuntimeInputs</a></span>(java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputs)</code>&nbsp;</td>
+</tr>
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>static java.lang.Object[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#getRuntimeValuesForVars-java.util.List-randoop.sequence.Execution-">getRuntimeValuesForVars</a></span>(java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;vars,
                        <a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence">Execution</a>&nbsp;execution)</code>
 <div class="block">Returns the values for the given variables in the <a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence"><code>Execution</code></a> object.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>private static java.lang.Object[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#getRuntimeValuesForVars-java.util.List-java.util.List-">getRuntimeValuesForVars</a></span>(java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;vars,
                        java.util.List&lt;<a href="../../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</a>&gt;&nbsp;execution)</code>&nbsp;</td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>private java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#getValue-int-">getValue</a></span>(int&nbsp;index)</code>&nbsp;</td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#getVariables-java.lang.Object-">getVariables</a></span>(java.lang.Object&nbsp;value)</code>
 <div class="block">Returns the set of variables that have the given value in the outcome of executing this
  sequence.</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#hasFailure--">hasFailure</a></span>()</code>
 <div class="block">Indicate whether checks are failing or passing.</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#hasInvalidBehavior--">hasInvalidBehavior</a></span>()</code>
 <div class="block">Indicate whether there are any invalid checks.</div>
 </td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#hasNonExecutedStatements--">hasNonExecutedStatements</a></span>()</code>
 <div class="block">Returns whether the sequence contains a non-executed statement.</div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#hasNullInput--">hasNullInput</a></span>()</code>
 <div class="block">Indicates whether the executed sequence has any null input values.</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#isNormalExecution--">isNormalExecution</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>private boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#isNormalExecution-int-">isNormalExecution</a></span>(int&nbsp;i)</code>
 <div class="block">This method is typically used by ExecutionVisitors.</div>
 </td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#statementToCodeString-int-">statementToCodeString</a></span>(int&nbsp;i)</code>
 <div class="block">Return the code representation of the i'th statement.</div>
 </td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#throwsException-java.lang.Class-">throwsException</a></span>(java.lang.Class&lt;?&gt;&nbsp;exceptionClass)</code>&nbsp;</td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i28" class="altColor">
+<td class="colFirst"><code>private java.util.List&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#toCodeLines--">toCodeLines</a></span>()</code>
+<div class="block">Return this sequence as code.</div>
+</td>
+</tr>
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#toCodeString--">toCodeString</a></span>()</code>
 <div class="block">Return this sequence as code.</div>
 </td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/ExecutableSequence.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
@@ -486,10 +481,9 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>executionResults</h4>
 <pre>private transient&nbsp;<a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence">Execution</a> executionResults</pre>
-<div class="block">Contains the runtime objects created and exceptions thrown (if any) during
- execution of this sequence. Invariant: sequence.size() ==
- executionResults.size(). Transient because it can contain arbitrary objects
- that may not be serializable.</div>
+<div class="block">Contains the runtime objects created and exceptions thrown (if any) during execution of this
+ sequence. Invariant: sequence.size() == executionResults.size(). Transient because it can
+ contain arbitrary objects that may not be serializable.</div>
 </li>
 </ul>
 <a name="gentime">
@@ -499,9 +493,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>gentime</h4>
 <pre>public&nbsp;long gentime</pre>
-<div class="block">How long it took to generate this sequence in nanoseconds, excluding
- execution time. Must be directly set by the generator that creates this
- object (no code in this class sets its value).</div>
+<div class="block">How long it took to generate this sequence in nanoseconds, excluding execution time. Must be
+ directly set by the generator that creates this object (no code in this class sets its value).</div>
 </li>
 </ul>
 <a name="exectime">
@@ -511,9 +504,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>exectime</h4>
 <pre>public&nbsp;long exectime</pre>
-<div class="block">How long it took to execute this sequence in nanoseconds, excluding
- generation time. Must be directly set by the generator that creates this
- object. (no code in this class sets its value).</div>
+<div class="block">How long it took to execute this sequence in nanoseconds, excluding generation time. Must be
+ directly set by the generator that creates this object. (no code in this class sets its value).</div>
 </li>
 </ul>
 <a name="hasNullInput">
@@ -525,7 +517,7 @@ extends java.lang.Object</pre>
 <pre>private&nbsp;boolean hasNullInput</pre>
 <div class="block">Flag to record whether execution of sequence has a null input.
 
- [This is wonky, it really belongs to execution.]</div>
+ <p>[This is wonky, it really belongs to execution.]</div>
 </li>
 </ul>
 <a name="output_buffer">
@@ -599,6 +591,25 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
+<a name="toCodeLines--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toCodeLines</h4>
+<pre>private&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;toCodeLines()</pre>
+<div class="block">Return this sequence as code. Similar to <a href="../../randoop/sequence/Sequence.html#toCodeString--"><code>Sequence.toCodeString()</code></a> except includes the
+ checks.
+
+ <p>If for a given statement there is a check of type <a href="../../randoop/test/ExceptionCheck.html" title="class in randoop.test"><code>ExceptionCheck</code></a>, that
+ check's pre-statement code is printed immediately before the statement, and its post-statement
+ code is printed immediately after the statement.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the sequence as a string</dd>
+</dl>
+</li>
+</ul>
 <a name="toCodeString--">
 <!--   -->
 </a>
@@ -606,13 +617,12 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>toCodeString</h4>
 <pre>public&nbsp;java.lang.String&nbsp;toCodeString()</pre>
-<div class="block">Return this sequence as code. Similar to <a href="../../randoop/sequence/Sequence.html#toCodeString--"><code>Sequence.toCodeString()</code></a>
- except includes the checks.
+<div class="block">Return this sequence as code. Similar to <a href="../../randoop/sequence/Sequence.html#toCodeString--"><code>Sequence.toCodeString()</code></a> except includes the
+ checks.
 
- If for a given statement there is a check of type
- <a href="../../randoop/test/ExceptionCheck.html" title="class in randoop.test"><code>ExceptionCheck</code></a>, that check's pre-statement code is printed
- immediately before the statement, and its post-statement code is printed
- immediately after the statement.</div>
+ <p>If for a given statement there is a check of type <a href="../../randoop/test/ExceptionCheck.html" title="class in randoop.test"><code>ExceptionCheck</code></a>, that
+ check's pre-statement code is printed immediately before the statement, and its post-statement
+ code is printed immediately after the statement.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the sequence as a string</dd>
@@ -660,28 +670,27 @@ extends java.lang.Object</pre>
 <pre>private&nbsp;void&nbsp;execute(<a href="../../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</a>&nbsp;visitor,
                      <a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test">TestCheckGenerator</a>&nbsp;gen,
                      boolean&nbsp;ignoreException)</pre>
-<div class="block">Execute this sequence, invoking the given visitor as the execution unfolds.
- After invoking this method, the client can query the outcome of executing
- each statement via the method <code>getResult(i)</code>.
+<div class="block">Execute this sequence, invoking the given visitor as the execution unfolds. After invoking this
+ method, the client can query the outcome of executing each statement via the method <code>
+ getResult(i)</code>.
 
  <ul>
- <li>Before the sequence is executed, clears execution results and calls
- <code>visitor.initialize(this)</code>.
- <li>Executes each statement in the sequence. Before executing each
- statement calls the given visitor's <code>visitBefore</code> method. After
- executing each statement, calls the visitor's <code>visitAfter</code>
- method.
- <li>Execution stops if one of the following conditions holds:
- <ul>
- <li>All statements in the sequences have been executed.
- <li>A statement's execution results in an exception and
- <code>stop_on_exception==true</code>.
- <li>A <code>null</code> input value is implicitly passed to the statement
- (i.e., not via explicit declaration like x = null)
- <li>After executing the i-th statement and calling the visitor's
- <code>visitAfter</code> method, a <code>ContractViolation</code> check is
- present at index i.
- </ul>
+   <li>Before the sequence is executed, clears execution results and calls <code>
+       visitor.initialize(this)</code>.
+   <li>Executes each statement in the sequence. Before executing each statement calls the given
+       visitor's <code>visitBefore</code> method. After executing each statement, calls the
+       visitor's <code>visitAfter</code> method.
+   <li>Execution stops if one of the following conditions holds:
+       <ul>
+         <li>All statements in the sequences have been executed.
+         <li>A statement's execution results in an exception and <code>stop_on_exception==true
+             </code>.
+         <li>A <code>null</code> input value is implicitly passed to the statement (i.e., not
+             via explicit declaration like x = null)
+         <li>After executing the i-th statement and calling the visitor's <code>visitAfter
+             </code> method, a <code>ContractViolation</code> check is present at index i.
+       </ul>
+
  </ul></div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -689,6 +698,15 @@ extends java.lang.Object</pre>
 <dd><code>gen</code> - the check generator</dd>
 <dd><code>ignoreException</code> - the flag to indicate exceptions should be ignored</dd>
 </dl>
+</li>
+</ul>
+<a name="getRuntimeInputs-java.util.List-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRuntimeInputs</h4>
+<pre>public&nbsp;java.lang.Object[]&nbsp;getRuntimeInputs(java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputs)</pre>
 </li>
 </ul>
 <a name="getRuntimeInputs-java.util.List-java.util.List-">
@@ -709,12 +727,11 @@ extends java.lang.Object</pre>
 <h4>getRuntimeValuesForVars</h4>
 <pre>public static&nbsp;java.lang.Object[]&nbsp;getRuntimeValuesForVars(java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;vars,
                                                          <a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence">Execution</a>&nbsp;execution)</pre>
-<div class="block">Returns the values for the given variables in the <a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence"><code>Execution</code></a> object.
- The variables are <a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence"><code>Variable</code></a> objects in the <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence"><code>Sequence</code></a> of this
- <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence"><code>ExecutableSequence</code></a> object.</div>
+<div class="block">Returns the values for the given variables in the <a href="../../randoop/sequence/Execution.html" title="class in randoop.sequence"><code>Execution</code></a> object. The variables are
+ <a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence"><code>Variable</code></a> objects in the <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence"><code>Sequence</code></a> of this <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence"><code>ExecutableSequence</code></a> object.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>vars</code> - a list of <a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence"><code>Variable</code></a> objects.</dd>
+<dd><code>vars</code> - a list of <a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence"><code>Variable</code></a> objects</dd>
 <dd><code>execution</code> - the object representing outcome of executing this sequence</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>array of values corresponding to variables</dd>
@@ -752,7 +769,7 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;<a href="../../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</a>&nbsp;getResult(int&nbsp;index)</pre>
 <div class="block">This method is typically used by ExecutionVisitors.
 
- The result of executing the i-th element of the sequence.</div>
+ <p>The result of executing the i-th element of the sequence.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>index</code> - the statement index</dd>
@@ -791,8 +808,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getLastStatementValues</h4>
 <pre>public&nbsp;java.util.List&lt;<a href="../../randoop/sequence/ReferenceValue.html" title="class in randoop.sequence">ReferenceValue</a>&gt;&nbsp;getLastStatementValues()</pre>
-<div class="block">Returns the list of (reference type) values created and used by the last statement
- of this sequence.</div>
+<div class="block">Returns the list of (reference type) values created and used by the last statement of this
+ sequence.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the list of values created and used by the last statement of this sequence</dd>
@@ -806,8 +823,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getInputValues</h4>
 <pre>public&nbsp;java.util.List&lt;<a href="../../randoop/sequence/ReferenceValue.html" title="class in randoop.sequence">ReferenceValue</a>&gt;&nbsp;getInputValues()</pre>
-<div class="block">Returns the list of input reference type values used to compute the
- input values of the last statement.</div>
+<div class="block">Returns the list of input reference type values used to compute the input values of the last
+ statement.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the list of input values used to compute values in last statement</dd>
@@ -876,9 +893,8 @@ extends java.lang.Object</pre>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>exceptionClass</code> - the exception thrown</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the index in the sequence at which an exception of the given class
-         (or a class compatible with it) was thrown. If no such exception,
-         returns -1.</dd>
+<dd>the index in the sequence at which an exception of the given class (or a class
+     compatible with it) was thrown. If no such exception, returns -1.</dd>
 </dl>
 </li>
 </ul>
@@ -893,8 +909,8 @@ extends java.lang.Object</pre>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>exceptionClass</code> - the exception class</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if an exception of the given class (or a class compatible with
-         it) has been thrown during this sequence's execution</dd>
+<dd>true if an exception of the given class (or a class compatible with it) has been thrown
+     during this sequence's execution</dd>
 </dl>
 </li>
 </ul>
@@ -905,8 +921,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>hasNonExecutedStatements</h4>
 <pre>public&nbsp;boolean&nbsp;hasNonExecutedStatements()</pre>
-<div class="block">Returns whether the sequence contains a non-executed statement. That
- happens if some statement before the last one throws an exception.</div>
+<div class="block">Returns whether the sequence contains a non-executed statement. That happens if some statement
+ before the last one throws an exception.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if this sequence has non-executed statements, false otherwise</dd>
@@ -920,9 +936,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getNonExecutedIndex</h4>
 <pre>public&nbsp;int&nbsp;getNonExecutedIndex()</pre>
-<div class="block">Returns the index i for a non-executed statement, or -1 if there is no such
- index. Note that a statement is considered executed even if it throws an
- exception.</div>
+<div class="block">Returns the index i for a non-executed statement, or -1 if there is no such index. Note that a
+ statement is considered executed even if it throws an exception.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the index of a non-executed statement in this sequence</dd>
@@ -993,8 +1008,7 @@ extends java.lang.Object</pre>
 <div class="block">Indicate whether there are any invalid checks.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if the test checks have been set and are for invalid behavior,
-         false otherwise</dd>
+<dd>true if the test checks have been set and are for invalid behavior, false otherwise</dd>
 </dl>
 </li>
 </ul>
@@ -1019,8 +1033,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>coversClass</h4>
 <pre>public&nbsp;boolean&nbsp;coversClass(java.lang.Class&lt;?&gt;&nbsp;c)</pre>
-<div class="block">Indicates whether the given class is covered by the most recent execution
- of this sequence.</div>
+<div class="block">Indicates whether the given class is covered by the most recent execution of this sequence.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>c</code> - the class to be covered</dd>

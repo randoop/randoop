@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ProgressDisplay (randoop 3.0.8-prerelease API)</title>
+<title>ProgressDisplay (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ProgressDisplay (randoop 3.0.8-prerelease API)";
+            parent.document.title="ProgressDisplay (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -201,8 +201,7 @@ extends java.lang.Thread</pre>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/ProgressDisplay.html#shouldStop">shouldStop</a></span></code>
-<div class="block">Clients should set this variable instead of calling Thread.stop(), which is
- deprecated.</div>
+<div class="block">Clients should set this variable instead of calling Thread.stop(), which is deprecated.</div>
 </td>
 </tr>
 </table>
@@ -372,8 +371,8 @@ extends java.lang.Thread</pre>
 <li class="blockList">
 <h4>shouldStop</h4>
 <pre>public&nbsp;boolean shouldStop</pre>
-<div class="block">Clients should set this variable instead of calling Thread.stop(), which is
- deprecated. Typically a client calls "display()" before setting this.</div>
+<div class="block">Clients should set this variable instead of calling Thread.stop(), which is deprecated.
+ Typically a client calls "display()" before setting this.</div>
 </li>
 </ul>
 <a name="lastNumSeqsIncrease">
@@ -481,8 +480,8 @@ extends java.lang.Thread</pre>
 <li class="blockList">
 <h4>display</h4>
 <pre>public&nbsp;void&nbsp;display()</pre>
-<div class="block">Displays the current status. Call this if you don't want to wait until the
- next automatic display.</div>
+<div class="block">Displays the current status. Call this if you don't want to wait until the next automatic
+ display.</div>
 </li>
 </ul>
 <a name="display-java.lang.String-">

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>OrPredicate (randoop 3.0.8-prerelease API)</title>
+<title>OrPredicate (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="OrPredicate (randoop 3.0.8-prerelease API)";
+            parent.document.title="OrPredicate (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -123,9 +123,8 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">OrPredicate&lt;T&gt;</span>
 extends <a href="../../../randoop/util/predicate/DefaultPredicate.html" title="class in randoop.util.predicate">DefaultPredicate</a>&lt;T&gt;</pre>
-<div class="block">A Predicate that implements the or-else operator on two predicates. The
- or-else operator is a short-circuited or, which only tests the second
- predicate if the first returns false.</div>
+<div class="block">A Predicate that implements the or-else operator on two predicates. The or-else operator is a
+ short-circuited or, which only tests the second predicate if the first returns false.</div>
 </li>
 </ul>
 </div>
@@ -169,8 +168,7 @@ extends <a href="../../../randoop/util/predicate/DefaultPredicate.html" title="c
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../randoop/util/predicate/OrPredicate.html#OrPredicate-randoop.util.predicate.Predicate-randoop.util.predicate.Predicate-">OrPredicate</a></span>(<a href="../../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;<a href="../../../randoop/util/predicate/OrPredicate.html" title="type parameter in OrPredicate">T</a>&gt;&nbsp;first,
            <a href="../../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;<a href="../../../randoop/util/predicate/OrPredicate.html" title="type parameter in OrPredicate">T</a>&gt;&nbsp;second)</code>
-<div class="block">Constructs a predicate that will test the first predicate and then the
- second.</div>
+<div class="block">Constructs a predicate that will test the first predicate and then the second.</div>
 </td>
 </tr>
 </table>
@@ -261,8 +259,7 @@ extends <a href="../../../randoop/util/predicate/DefaultPredicate.html" title="c
 <h4>OrPredicate</h4>
 <pre>public&nbsp;OrPredicate(<a href="../../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;<a href="../../../randoop/util/predicate/OrPredicate.html" title="type parameter in OrPredicate">T</a>&gt;&nbsp;first,
                    <a href="../../../randoop/util/predicate/Predicate.html" title="interface in randoop.util.predicate">Predicate</a>&lt;<a href="../../../randoop/util/predicate/OrPredicate.html" title="type parameter in OrPredicate">T</a>&gt;&nbsp;second)</pre>
-<div class="block">Constructs a predicate that will test the first predicate and then the
- second.</div>
+<div class="block">Constructs a predicate that will test the first predicate and then the second.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>first</code> - the predicate to test first</dd>
@@ -287,14 +284,14 @@ extends <a href="../../../randoop/util/predicate/DefaultPredicate.html" title="c
 <li class="blockList">
 <h4>test</h4>
 <pre>public&nbsp;boolean&nbsp;test(<a href="../../../randoop/util/predicate/OrPredicate.html" title="type parameter in OrPredicate">T</a>&nbsp;t)</pre>
-<div class="block">Determine whether object satisfies this predicate. Return the short-circuited or of the two predicates for the
- value t</div>
+<div class="block">Determine whether object satisfies this predicate.
+
+ <p>Return the short-circuited or of the two predicates for the value t</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>t</code> - the object to test</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if either the first or second predicate is true on t, and
-         false otherwise</dd>
+<dd>true if either the first or second predicate is true on t, and false otherwise</dd>
 </dl>
 </li>
 </ul>

@@ -2,17 +2,13 @@ package randoop.util;
 
 import java.util.Date;
 import java.util.Map;
-
+import plume.UtilMDE;
 import randoop.Globals;
+import randoop.generation.AbstractGenerator;
 import randoop.generation.RandoopListenerManager;
 import randoop.main.GenInputsAbstract;
-import randoop.generation.AbstractGenerator;
 
-import plume.UtilMDE;
-
-/**
- * Modified from Daikon.FileIOProgress.
- */
+/** Modified from Daikon.FileIOProgress. */
 // TODO: Split this class into two: one is responsible for
 // displaying information at a regular interval, and a
 // second class is responsible for monitoring for progress
@@ -20,10 +16,8 @@ import plume.UtilMDE;
 // Currently this class does both things.
 public class ProgressDisplay extends Thread {
 
-  /**
-   * Lock so that unfortunate interleaving of this printing can be avoided
-   */
-  public final static Object print_synchro = new Object();
+  /** Lock so that unfortunate interleaving of this printing can be avoided */
+  public static final Object print_synchro = new Object();
 
   private static int progresswidth = 170;
 
@@ -67,8 +61,8 @@ public class ProgressDisplay extends Thread {
   }
 
   /**
-   * Clients should set this variable instead of calling Thread.stop(), which is
-   * deprecated. Typically a client calls "display()" before setting this.
+   * Clients should set this variable instead of calling Thread.stop(), which is deprecated.
+   * Typically a client calls "display()" before setting this.
    */
   public boolean shouldStop = false;
 
@@ -154,8 +148,8 @@ public class ProgressDisplay extends Thread {
   }
 
   /**
-   * Displays the current status. Call this if you don't want to wait until the
-   * next automatic display.
+   * Displays the current status. Call this if you don't want to wait until the next automatic
+   * display.
    */
   public void display() {
     if (GenInputsAbstract.progressinterval == -1) return;
@@ -165,7 +159,7 @@ public class ProgressDisplay extends Thread {
   /**
    * Displays the given message.
    *
-   * @param message  the message to display
+   * @param message the message to display
    */
   private void display(String message) {
     if (GenInputsAbstract.progressinterval == -1) return;

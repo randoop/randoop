@@ -3,14 +3,11 @@ package randoop.generation.types;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
 import randoop.types.JavaTypes;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 
-/**
- * Created by bjkeller on 12/14/16.
- */
+/** Created by bjkeller on 12/14/16. */
 public class DomainTestUtilities {
   static ReferenceType makeComparableType(ReferenceType type) {
     Substitution<ReferenceType> substitution =

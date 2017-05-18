@@ -3,16 +3,14 @@ package randoop.generation.types;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
 import randoop.types.JavaTypes;
 import randoop.types.ReferenceType;
 
 /**
  * Represents a type domain as an interval of reference types determined by a lower and upper bound.
  * Allows bounds to be represented by a set of types, with the least upper bound and greatest lower
- * bound being the formal bounds of the interval.
- * Note that the greatest lower bound is the same as a
- *
+ * bound being the formal bounds of the interval. Note that the greatest lower bound is the same as
+ * a
  */
 public class IntervalDomain implements TypeDomain {
 

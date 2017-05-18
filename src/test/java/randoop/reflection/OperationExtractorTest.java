@@ -1,18 +1,5 @@
 package randoop.reflection;
 
-import org.junit.Test;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import randoop.operation.TypedClassOperation;
-import randoop.operation.TypedOperation;
-import randoop.types.ClassOrInterfaceType;
-import randoop.types.JavaTypes;
-import randoop.types.ReferenceType;
-import randoop.types.Substitution;
-import randoop.types.Type;
-
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -21,9 +8,17 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+import org.junit.Test;
+import randoop.operation.TypedOperation;
+import randoop.types.ClassOrInterfaceType;
+import randoop.types.JavaTypes;
+import randoop.types.ReferenceType;
+import randoop.types.Substitution;
+
 /**
- * Tests for {@link OperationExtractor}  to ensure it is
- * collecting the right types and operations.
+ * Tests for {@link OperationExtractor} to ensure it is collecting the right types and operations.
  * Tests separately for a concrete class and a generic class.
  */
 public class OperationExtractorTest {
@@ -162,7 +157,8 @@ public class OperationExtractorTest {
   public void partialInstantiationTest() {
     final Set<TypedOperation> operations = new LinkedHashSet<>();
     ReflectionManager mgr =
-        new ReflectionManager(new PackageVisibilityPredicate(this.getClass().getPackage()));
+        new ReflectionManager(
+            new PackageVisibilityPredicate(this.getClass().getPackage().getName()));
 
     String classname = "randoop.reflection.PartialBindingInput";
     Class<?> c = null;
@@ -205,7 +201,13 @@ public class OperationExtractorTest {
       assertThat(
           "should be wildcard or variable",
           operation.getName(),
-          anyOf(is(equalTo("mTypeVariable")), is(equalTo("mWildcard"))));
+          anyOf(
+              is(
+                  equalTo(
+                      "randoop.reflection.visibilitytest.InaccessibleArgumentInput.mTypeVariable")),
+              is(
+                  equalTo(
+                      "randoop.reflection.visibilitytest.InaccessibleArgumentInput.mWildcard"))));
     }
   }
 }

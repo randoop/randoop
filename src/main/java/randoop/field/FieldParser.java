@@ -1,14 +1,14 @@
 package randoop.field;
 
 import java.lang.reflect.Field;
-
 import randoop.operation.OperationParseException;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.Type;
 
 /**
- * Recognizes a string representation of a field as part of parsing an
- * {@link randoop.operation.Operation} that is a {@link randoop.operation.FieldGet} or {@link randoop.operation.FieldSet} operation.
+ * Recognizes a string representation of a field as part of parsing an {@link
+ * randoop.operation.Operation} that is a {@link randoop.operation.FieldGet} or {@link
+ * randoop.operation.FieldSet} operation.
  */
 public class FieldParser {
 
@@ -17,13 +17,13 @@ public class FieldParser {
   }
 
   /**
-   * Recognizes a field from a string description, using class and field name
-   * tokens, and returns a {@link AccessibleField} object.
+   * Recognizes a field from a string description, using class and field name tokens, and returns a
+   * {@link AccessibleField} object.
    *
-   * @param descr  the full string description
-   * @param classname  the name of the field's declaring class
-   * @param fieldname  the name of the field
-   * @return the {@link AccessibleField} for the given class and field name.
+   * @param descr the full string description
+   * @param classname the name of the field's declaring class
+   * @param fieldname the name of the field
+   * @return the {@link AccessibleField} for the given class and field name
    * @throws OperationParseException if either name is malformed or incorrect
    */
   public static AccessibleField parse(String descr, String classname, String fieldname)
@@ -63,10 +63,8 @@ public class FieldParser {
   /**
    * Searches the field list of a class for a field that has the given name.
    *
-   * @param type
-   *          class object
-   * @param fieldName
-   *          field name for which to search the class
+   * @param type class object
+   * @param fieldName field name for which to search the class
    * @return field of the class with the given name
    */
   private static Field fieldForName(Class<?> type, String fieldName) {

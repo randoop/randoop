@@ -4,10 +4,8 @@ import java.io.PrintStream;
 import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Objects;
-
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.ArrayType;
 import randoop.types.Type;
@@ -15,24 +13,25 @@ import randoop.types.TypeTuple;
 
 /**
  * InitializedArrayCreation is an {@link Operation} representing the construction of a
- * one-dimensional array with a given element type and length.
- * The InitializedArrayCreation operation requires a list of elements in an initializer.
- * For instance, <code>new int[2]</code> is the {@code InitializedArrayCreation} in the
- * initialization<br>
+ * one-dimensional array with a given element type and length. The InitializedArrayCreation
+ * operation requires a list of elements in an initializer. For instance, <code>new int[2]</code> is
+ * the {@code InitializedArrayCreation} in the initialization<br>
  * <code>int[] x = new int[2] { 3, 7 };</code><br>
  * with the initializer list as inputs.
- * <p>
- * In terms of the notation used for the {@link Operation} class, a creation of
- * an array of elements of type <i>e</i> with length <i>n</i> has a signature [
- * <i>e,...,e</i>] &rarr; <i>t</i>, where [<i>e,...,e</i>] is a list of length
- * <i>n</i>, and <i>t</i> is the array type.
- * <p>
- * InitializedArrayCreation objects are immutable.
+ *
+ * <p>In terms of the notation used for the {@link Operation} class, a creation of an array of
+ * elements of type <i>e</i> with length <i>n</i> has a signature [ <i>e,...,e</i>] &rarr; <i>t</i>,
+ * where [<i>e,...,e</i>] is a list of length <i>n</i>, and <i>t</i> is the array type.
+ *
+ * <p>InitializedArrayCreation objects are immutable.
  */
 public final class InitializedArrayCreation extends CallableOperation {
 
-  /** ID for parsing purposes.
-   * @see OperationParser#parse */
+  /**
+   * ID for parsing purposes.
+   *
+   * @see OperationParser#parse
+   */
   public static final String ID = "array";
 
   // State variables.
@@ -40,12 +39,11 @@ public final class InitializedArrayCreation extends CallableOperation {
   private final Type elementType;
 
   /**
-   * Creates an object representing the construction of an array that holds
-   * values of the element type and has the given length.
+   * Creates an object representing the construction of an array that holds values of the element
+   * type and has the given length.
    *
-   * @param length
-   *          number of objects allowed in the array
-   * @param arrayType  the type of array this operation creates
+   * @param length number of objects allowed in the array
+   * @param arrayType the type of array this operation creates
    */
   InitializedArrayCreation(ArrayType arrayType, int length) {
     assert length >= 0 : "array length may not be negative: " + length;
@@ -66,7 +64,7 @@ public final class InitializedArrayCreation extends CallableOperation {
   /**
    * {@inheritDoc}
    *
-   * @return {@link NormalExecution} object containing constructed array.
+   * @return {@link NormalExecution} object containing constructed array
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
@@ -87,9 +85,7 @@ public final class InitializedArrayCreation extends CallableOperation {
     return elementType.getName() + "[" + length + "]";
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void appendCode(
       Type declaringType,
@@ -110,19 +106,7 @@ public final class InitializedArrayCreation extends CallableOperation {
         b.append(", ");
       }
 
-      String param = inputVars.get(i).getName();
-
-      // In the short output format, statements like "int x = 3" are not added
-      // to a sequence; instead, the value (e.g. "3") is inserted directly
-      // as arguments to method calls.
-      Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement();
-      if (statementCreatingVar.isPrimitiveInitialization()
-          && !statementCreatingVar.isNullInitialization()) {
-        String shortForm = statementCreatingVar.getShortForm();
-        if (shortForm != null) {
-          param = shortForm;
-        }
-      }
+      String param = getArgumentString(inputVars.get(i));
       b.append(param);
     }
     b.append(" }");
@@ -143,10 +127,12 @@ public final class InitializedArrayCreation extends CallableOperation {
   }
 
   /**
-   * {@inheritDoc} Creates string of the form TYPE[NUMELEMS] where TYPE is the
-   * type of the array, and NUMELEMS is the number of elements.
+   * {@inheritDoc}
    *
-   * Example: int[3]
+   * <p>Creates string of the form TYPE[NUMELEMS] where TYPE is the type of the array, and NUMELEMS
+   * is the number of elements.
+   *
+   * <p>Example: int[3]
    *
    * @return string descriptor for array creation
    */
@@ -161,16 +147,13 @@ public final class InitializedArrayCreation extends CallableOperation {
   }
 
   /**
-   * Parses an array declaration in a string descriptor in the form generated by
-   * {@link InitializedArrayCreation#toParsableString(Type, TypeTuple, Type)}.
+   * Parses an array declaration in a string descriptor in the form generated by {@link
+   * InitializedArrayCreation#toParsableString(Type, TypeTuple, Type)}.
    *
    * @see OperationParser#parse(String)
-   *
-   * @param str
-   *          the string to be parsed for the {@code InitializedArrayCreation}.
+   * @param str the string to be parsed for the {@code InitializedArrayCreation}.
    * @return the array creation for the given string descriptor
-   * @throws OperationParseException
-   *           if string does not have expected form
+   * @throws OperationParseException if string does not have expected form
    */
   public static TypedOperation parse(String str) throws OperationParseException {
     int openBr = str.indexOf('[');

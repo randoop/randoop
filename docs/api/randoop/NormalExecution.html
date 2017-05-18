@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>NormalExecution (randoop 3.0.8-prerelease API)</title>
+<title>NormalExecution (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="NormalExecution (randoop 3.0.8-prerelease API)";
+            parent.document.title="NormalExecution (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -117,18 +117,16 @@ var activeTableTab = "activeTableTab";
 extends <a href="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</a></pre>
 <div class="block">Means that the statement that this result represents completed normally.
 
- Method r.getRuntimeVariable() returns the runtime value that the statement
- returns (null for void method calls).
+ <p>Method r.getRuntimeVariable() returns the runtime value that the statement returns (null for
+ void method calls).
 
- IMPORTANT NOTE: The object returned by getRuntimeVariable() is the actual
- runtime object created during execution of the sequence (call it s). This
- means that if you invoke s.execute(v) and then you invoke
- s.getResult(i).getRuntimeVariable(), the state of the object you get is the
- FINAL state of the object after s finished executing, NOT the state of the
- object after the i-th statement was executed. Similarly, if you invoke
- getRuntimeVariable() sometime in the middle of the execution of s (e.g.
- you're an ExecutionVisitor and you invoke getRuntimeVariable()), you'll get
- the state in whatever state it is at that point in the execution.</div>
+ <p>IMPORTANT NOTE: The object returned by getRuntimeVariable() is the actual runtime object
+ created during execution of the sequence (call it s). This means that if you invoke s.execute(v)
+ and then you invoke s.getResult(i).getRuntimeVariable(), the state of the object you get is the
+ FINAL state of the object after s finished executing, NOT the state of the object after the i-th
+ statement was executed. Similarly, if you invoke getRuntimeVariable() sometime in the middle of
+ the execution of s (e.g. you're an ExecutionVisitor and you invoke getRuntimeVariable()), you'll
+ get the state in whatever state it is at that point in the execution.</div>
 </li>
 </ul>
 </div>
@@ -208,8 +206,7 @@ extends <a href="../randoop/ExecutionOutcome.html" title="class in randoop">Exec
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/NormalExecution.html#toString--">toString</a></span>()</code>
-<div class="block">Warning: this method calls toString() of code under test, which may have
- arbitrary behavior.</div>
+<div class="block">Warning: this method calls toString() of code under test, which may have arbitrary behavior.</div>
 </td>
 </tr>
 </table>
@@ -301,8 +298,8 @@ extends <a href="../randoop/ExecutionOutcome.html" title="class in randoop">Exec
 <li class="blockList">
 <h4>toString</h4>
 <pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
-<div class="block">Warning: this method calls toString() of code under test, which may have
- arbitrary behavior. We use this method in randoop.test.SequenceTests.</div>
+<div class="block">Warning: this method calls toString() of code under test, which may have arbitrary behavior. We
+ use this method in randoop.test.SequenceTests.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>

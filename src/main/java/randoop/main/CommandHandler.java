@@ -3,14 +3,13 @@ package randoop.main;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-
+import plume.Options;
 import randoop.Globals;
 import randoop.util.Util;
-import plume.Options;
 
 /**
- * A command is the first argument given to Randoop. A command handler handles
- * one command. It also takes care of printing the command's documentation.
+ * A command is the first argument given to Randoop. A command handler handles one command. It also
+ * takes care of printing the command's documentation.
  */
 public abstract class CommandHandler {
 
@@ -28,13 +27,13 @@ public abstract class CommandHandler {
   /**
    * No arguments should be null.
    *
-   * @param command  the name of the command
-   * @param pitch  the description of the command
-   * @param commandGrammar  the usage of the command
-   * @param where  the where
-   * @param summary  the summary of the command
-   * @param notes  the notes for the command
-   * @param input  the input
+   * @param command the name of the command
+   * @param pitch the description of the command
+   * @param commandGrammar the usage of the command
+   * @param where the where
+   * @param summary the summary of the command
+   * @param notes the notes for the command
+   * @param input the input
    * @param output the output
    * @param example the usage example
    * @param options the command line arguments
@@ -76,7 +75,7 @@ public abstract class CommandHandler {
   /**
    * Prints out formatted text in (google code) Wiki format.
    *
-   * @param out  the output stream for printing html formatted usage
+   * @param out the output stream for printing html formatted usage
    */
   public final void printHTML(PrintStream out) {
 

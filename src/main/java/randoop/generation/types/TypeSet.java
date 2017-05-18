@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
 import plume.UtilMDE;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.GenericClassType;
@@ -17,8 +16,8 @@ import randoop.types.ReferenceType;
 import randoop.types.Type;
 
 /**
- * A set of non-generic Types that is upward closed by supertypes:
- * for type t in S, all supertypes s of t are in the set S.
+ * A set of non-generic Types that is upward closed by supertypes: for type t in S, all supertypes s
+ * of t are in the set S.
  */
 public class TypeSet {
 
@@ -31,9 +30,7 @@ public class TypeSet {
   /** The count of unique parameterized types. */
   private int parameterizedTypeCount;
 
-  /**
-   * Creates an empty {@link TypeSet}.
-   */
+  /** Creates an empty {@link TypeSet}. */
   TypeSet() {
     nonParameterizedTypes = new LinkedHashSet<>();
     parameterizedTypes = new HashMap<>();
@@ -75,7 +72,7 @@ public class TypeSet {
   /**
    * Adds the given type and its supertypes to this set.
    *
-   * @param type  the type to add
+   * @param type the type to add
    * @return true if the type is added, and false if not
    */
   public boolean add(Type type) {
@@ -113,7 +110,7 @@ public class TypeSet {
   /**
    * Returns the list of nonParameterizedTypes that match the given {@link ParameterizedType}.
    *
-   * @param searchType  the type to search for matches
+   * @param searchType the type to search for matches
    * @return the list of matching nonParameterizedTypes
    */
   public List<Type> match(Type searchType) {
@@ -152,7 +149,7 @@ public class TypeSet {
   /**
    * Indicates whether the given type is a member of this type set.
    *
-   * @param type  the type for which to search
+   * @param type the type for which to search
    * @return true if the type is an element of this set.
    */
   public boolean contains(Type type) {

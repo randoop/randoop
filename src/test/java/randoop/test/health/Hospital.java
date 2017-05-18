@@ -2,9 +2,7 @@ package randoop.test.health;
 
 import java.util.Enumeration;
 
-/**
- * A class representing a hospital in the Columbian health care system.
- **/
+/** A class representing a hospital in the Columbian health care system. */
 public class Hospital {
   private int personnel;
   private int freePersonnel;
@@ -26,8 +24,9 @@ public class Hospital {
 
   /**
    * Add a patient to this hospital
+   *
    * @param p the patient
-   **/
+   */
   public final void putInHospital(Patient p) {
     int num = p.hospitalsVisited;
     p.hospitalsVisited++;
@@ -42,11 +41,11 @@ public class Hospital {
   }
 
   /**
-   * Check the patients inside the hospital to see if any are finished.
-   * If so, then free up the personnel and and the patient to the returned
-   * list.
+   * Check the patients inside the hospital to see if any are finished. If so, then free up the
+   * personnel and and the patient to the returned list.
+   *
    * @param returned a list of patients
-   **/
+   */
   public final void checkPatientsInside(List returned) {
     for (Enumeration e = inside.elements(); e.hasMoreElements(); ) {
       Patient p = (Patient) e.nextElement();
@@ -61,8 +60,9 @@ public class Hospital {
 
   /**
    * Asses the patients in the village.
+   *
    * @param v the village that owns the hospital
-   **/
+   */
   public final List checkPatientsAssess(Village v) {
     List up = new List();
     for (Enumeration e = assess.elements(); e.hasMoreElements(); ) {

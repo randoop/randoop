@@ -1,7 +1,6 @@
 package randoop.util;
 
 import java.io.PrintStream;
-
 import plume.Option;
 import plume.OptionGroup;
 import plume.UtilMDE;
@@ -9,9 +8,9 @@ import plume.UtilMDE;
 /**
  * Executes the code of a ReflectionCode object.
  *
- * This class maintains an "executor" thread. Code is executed on that thread.
- * If the code takes longer than the specified timeout, the thread is killed and
- * a TimeoutExceededException exception is reported.
+ * <p>This class maintains an "executor" thread. Code is executed on that thread. If the code takes
+ * longer than the specified timeout, the thread is killed and a TimeoutExceededException exception
+ * is reported.
  */
 public final class ReflectionExecutor {
 
@@ -20,21 +19,20 @@ public final class ReflectionExecutor {
   }
 
   /**
-   * Use if Randoop is exhibiting nonterminating behavior, which is usually due
-   * to execution of code under test that results in an infinite loop. With this
-   * option, Randoop executes each test in a separate thread and kills tests
-   * that take too long to finish. Tests killed in this manner are not reported
-   * to the user. The downside is a BIG (order-of-magnitude) decrease in
-   * generation speed.  The tests are not run in parallel, merely in isolation.
+   * If true, Randoop executes each test in a separate thread and kills tests that take too long to
+   * finish. Tests killed in this manner are not reported to the user.
+   *
+   * <p>Use this option if Randoop does not terminate is usually due to execution of code under test
+   * that results in an infinite loop. The downside of this option is a BIG (order-of-magnitude)
+   * decrease in generation speed. The tests are not run in parallel, merely in isolation.
    */
   @OptionGroup("Threading and timeouts")
   @Option("Execute each test in a separate thread, with timeout")
   public static boolean usethreads = true;
 
   /**
-   * After this many milliseconds, a non-returning method call, and its
-   * associated test, are stopped forcefully. Only meaningful if --usethreads is
-   * also specified.
+   * After this many milliseconds, a non-returning method call, and its associated test, are stopped
+   * forcefully. Only meaningful if --usethreads is also specified.
    */
   @Option("Maximum number of milliseconds a test may run. Only meaningful with --usethreads")
   public static int timeout = 5000;
@@ -88,12 +86,11 @@ public final class ReflectionExecutor {
   }
 
   /**
-   * Executes code.runReflectionCode(). If no exception is thrown, returns null.
-   * Otherwise, returns the exception thrown.
+   * Executes code.runReflectionCode(). If no exception is thrown, returns null. Otherwise, returns
+   * the exception thrown.
    *
-   * @param code  the {@link ReflectionCode} to be executed
-   * @param out
-   *          stream to print message to or null if message is to be ignored
+   * @param code the {@link ReflectionCode} to be executed
+   * @param out stream to print message to or null if message is to be ignored
    * @return null or the exception thrown
    */
   @SuppressWarnings("deprecation")
@@ -134,8 +131,8 @@ public final class ReflectionExecutor {
   /**
    * without threads.
    *
-   * @param code   the {@link ReflectionCode} to be executed
-   * @param out   the string to print messages; null if no output
+   * @param code the {@link ReflectionCode} to be executed
+   * @param out the string to print messages; null if no output
    * @return null, or the exception thrown
    */
   private static Throwable executeReflectionCodeUnThreaded(ReflectionCode code, PrintStream out) {

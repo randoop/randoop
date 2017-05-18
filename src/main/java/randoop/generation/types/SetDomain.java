@@ -4,12 +4,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
-
 import randoop.types.ReferenceType;
 
-/**
- * Represents a type domain that is simply a set of types.
- */
+/** Represents a type domain that is simply a set of types. */
 public class SetDomain implements TypeDomain, Iterable<ReferenceType> {
 
   private final Set<ReferenceType> types;

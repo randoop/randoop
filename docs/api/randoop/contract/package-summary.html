@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>randoop.contract (randoop 3.0.8-prerelease API)</title>
+<title>randoop.contract (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="randoop.contract (randoop 3.0.8-prerelease API)";
+            parent.document.title="randoop.contract (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -42,7 +42,7 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../randoop/package-summary.html">Prev&nbsp;Package</a></li>
+<li><a href="../../randoop/condition/package-summary.html">Prev&nbsp;Package</a></li>
 <li><a href="../../randoop/field/package-summary.html">Next&nbsp;Package</a></li>
 </ul>
 <ul class="navList">
@@ -84,8 +84,7 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract">ObjectContract</a></td>
 <td class="colLast">
-<div class="block">An object contract represents a property that must hold of any object of a
- given class.</div>
+<div class="block">An object contract represents a property that must hold of any object of a given class.</div>
 </td>
 </tr>
 </tbody>
@@ -102,29 +101,26 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/contract/CheckRepContract.html" title="class in randoop.contract">CheckRepContract</a></td>
 <td class="colLast">
-<div class="block">Represents the contract that an object should conform to its representation
- invariant, as expressed in a user-supplied representation check method.</div>
+<div class="block">Represents the contract that an object must conform to its representation invariant, as expressed
+ in a user-supplied representation check method.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/contract/CompareToAntiSymmetric.html" title="class in randoop.contract">CompareToAntiSymmetric</a></td>
 <td class="colLast">
-<div class="block">The contract: Checks that an object is antisymmetric over compareTo
- <code>Math.signum(x0.compareTo(x1)) == -Math.signum(x1.compareTo(x0))</code>.</div>
+<div class="block">The contract: Checks that an object is antisymmetric over compareTo.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/contract/CompareToEquals.html" title="class in randoop.contract">CompareToEquals</a></td>
 <td class="colLast">
-<div class="block">The contract: Checks that compareTo is consistent with equals
- <code>(x0.compareTo(x1) == 0) == x0.equals(x1)</code>.</div>
+<div class="block">The contract: Checks that compareTo is consistent with equals.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/contract/CompareToReflexive.html" title="class in randoop.contract">CompareToReflexive</a></td>
 <td class="colLast">
-<div class="block">The contract: Checks that an object is reflexive over compareTo
- <code>x0.compareTo(x0) == 0</code>.</div>
+<div class="block">The contract: Checks that an object is reflexive over compareTo.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -136,15 +132,13 @@
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/contract/CompareToSubs.html" title="class in randoop.contract">CompareToSubs</a></td>
 <td class="colLast">
-<div class="block">The contract: Checks the substitutability property of compareTo for equals
- (x0.compareTo(x1) == 0) &rarr; (Math.signum(x0.compareTo(x2)) == Math.signum(x1.compareTo(x2)))</div>
+<div class="block">The contract: Checks the substitutability property of compareTo for equals.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/contract/CompareToTransitive.html" title="class in randoop.contract">CompareToTransitive</a></td>
 <td class="colLast">
-<div class="block">The contract: Checks the transitivity of the compare to method
- <code>((x0.compareTo(x1) &gt; 0) &amp;&amp; (x1.compareTo(x2) &gt; 0)) &rarr; (x0.compareTo(x2) &gt; 0)</code>.</div>
+<div class="block">The contract: Checks the transitivity of the compare to method.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -156,8 +150,7 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/contract/EqualsHashcode.html" title="class in randoop.contract">EqualsHashcode</a></td>
 <td class="colLast">
-<div class="block">The contract:
- <code>o1.equals(o2) &rArr; o1.hashCode() == o2.hashCode()</code>.</div>
+<div class="block">The contract: <code>o1.equals(o2) &rArr; o1.hashCode() == o2.hashCode()</code>.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -187,8 +180,8 @@
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/contract/EqualsTransitive.html" title="class in randoop.contract">EqualsTransitive</a></td>
 <td class="colLast">
-<div class="block">The contract: Checks the transitivity of equals for an object
- <code>(x0.equals(x1) &amp;&amp; x1.equals(x2)) &rarr; x0.equals(x2)</code>.</div>
+<div class="block">The contract: Checks the transitivity of equals for an object <code>
+ (x0.equals(x1) &amp;&amp; x1.equals(x2)) &rarr; x0.equals(x2)</code>.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -212,22 +205,19 @@
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/contract/ObjectContractUtils.html" title="class in randoop.contract">ObjectContractUtils</a></td>
 <td class="colLast">
-<div class="block">Utility methods for safely executing and printing <a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract"><code>ObjectContract</code></a>
- code.</div>
+<div class="block">Utility methods for safely executing and printing <a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract"><code>ObjectContract</code></a> code.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/contract/ObserverEqValue.html" title="class in randoop.contract">ObserverEqValue</a></td>
 <td class="colLast">
-<div class="block">A check recording the value that an observer method returned during
- execution, e.g.</div>
+<div class="block">A check recording the value that an observer method returned during execution, e.g.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/contract/PrimValue.html" title="class in randoop.contract">PrimValue</a></td>
 <td class="colLast">
-<div class="block">A check recording the value of a primitive value obtained during execution,
- (e.g.</div>
+<div class="block">A check recording the value of a primitive value obtained during execution, (e.g.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -278,7 +268,7 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../randoop/package-summary.html">Prev&nbsp;Package</a></li>
+<li><a href="../../randoop/condition/package-summary.html">Prev&nbsp;Package</a></li>
 <li><a href="../../randoop/field/package-summary.html">Next&nbsp;Package</a></li>
 </ul>
 <ul class="navList">

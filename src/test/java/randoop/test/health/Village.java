@@ -2,10 +2,7 @@ package randoop.test.health;
 
 import java.util.Enumeration;
 
-/**
- * A class represnting a village in the Columbian health care system
- * simulation.
- **/
+/** A class represnting a village in the Columbian health care system simulation. */
 public class Village {
   private Village[] forward;
   private Village back;
@@ -14,20 +11,21 @@ public class Village {
   private int label;
   private int seed;
 
-  private final static int IA = 16807;
-  private final static float IM = 2147483647;
-  private final static float AM = ((float) 1.0 / IM);
-  private final static int IQ = 127773;
-  private final static int IR = 2836;
-  private final static int MASK = 123459876;
+  private static final int IA = 16807;
+  private static final float IM = 2147483647;
+  private static final float AM = ((float) 1.0 / IM);
+  private static final int IQ = 127773;
+  private static final int IR = 2836;
+  private static final int MASK = 123459876;
 
   /**
    * Construct an empty village.
+   *
    * @param level the
    * @param l the unique label for the village
    * @param p a reference to the "parent" village
    * @param s the user supplied seed value
-   **/
+   */
   public Village(int level, int l, Village p, int s) {
     back = p;
     label = l;
@@ -38,21 +36,21 @@ public class Village {
   }
 
   /**
-   * Add a connection from this village to the specifed village.
-   * Each village contains connections to four other ones.
+   * Add a connection from this village to the specifed village. Each village contains connections
+   * to four other ones.
    *
    * @param i the village number
    * @param c the village to add
-   **/
+   */
   public void addVillage(int i, Village c) {
     forward[i] = c;
   }
 
   /**
-   * Return true if a patient should stay in this village or
-   * move up to the "parent" village.
+   * Return true if a patient should stay in this village or move up to the "parent" village.
+   *
    * @return true if a patient says in this village
-   **/
+   */
   public final boolean staysHere() {
     float rand = myRand(seed);
     seed = (int) (rand * IM);
@@ -60,16 +58,15 @@ public class Village {
   }
 
   /**
-   * Create a set of villages.  Villages are represented as a quad tree.
-   * Each village contains references to four other villages.  Users
-   * specify the number of levels.
+   * Create a set of villages. Villages are represented as a quad tree. Each village contains
+   * references to four other villages. Users specify the number of levels.
    *
    * @param level the number of level of villages
    * @param label a unique label for the village
    * @param back a link to the "parent" village
    * @param seed the user supplied seed value
    * @return the village that was created
-   **/
+   */
   public static final Village createVillage(int level, int label, Village back, int seed) {
     if (level == 0) {
       return null;
@@ -85,8 +82,9 @@ public class Village {
 
   /**
    * Simulate the Columbian health care system for a village.
+   *
    * @return a list of patients refered to the next village
-   **/
+   */
   public List simulate() {
     // the list of patients refered from each child village
     List[] val = new List[4];
@@ -124,8 +122,9 @@ public class Village {
 
   /**
    * Summarize results of the simulation for the Village
+   *
    * @return a summary of the simulation results for the village
-   **/
+   */
   public Results getResults() {
     Results[] fval = new Results[4];
     for (int i = 3; i >= 0; i--) {
@@ -156,8 +155,9 @@ public class Village {
 
   /**
    * Try to generate more patients for the village.
+   *
    * @return a new patient or null if a new patient isn't created
-   **/
+   */
   private Patient generatePatient() {
     float rand = myRand(seed);
     seed = (int) (rand * IM);
@@ -173,9 +173,7 @@ public class Village {
     return (new Integer(label)).toString();
   }
 
-  /**
-   * Random number generator.
-   **/
+  /** Random number generator. */
   public static float myRand(int idum) {
     idum ^= MASK;
     int k = idum / IQ;

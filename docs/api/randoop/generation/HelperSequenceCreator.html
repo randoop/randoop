@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>HelperSequenceCreator (randoop 3.0.8-prerelease API)</title>
+<title>HelperSequenceCreator (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="HelperSequenceCreator (randoop 3.0.8-prerelease API)";
+            parent.document.title="HelperSequenceCreator (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -185,8 +185,7 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code>(package private) static <a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/HelperSequenceCreator.html#createArraySequence-randoop.generation.ComponentManager-randoop.types.Type-">createArraySequence</a></span>(<a href="../../randoop/generation/ComponentManager.html" title="class in randoop.generation">ComponentManager</a>&nbsp;components,
                    <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;collectionType)</code>
-<div class="block">Returns a sequence that creates an object of type compatible with the given
- class.</div>
+<div class="block">Returns a sequence that creates an object of type compatible with the given class.</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
@@ -298,11 +297,10 @@ extends java.lang.Object</pre>
 <h4>createArraySequence</h4>
 <pre>static&nbsp;<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;createArraySequence(<a href="../../randoop/generation/ComponentManager.html" title="class in randoop.generation">ComponentManager</a>&nbsp;components,
                                                 <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;collectionType)</pre>
-<div class="block">Returns a sequence that creates an object of type compatible with the given
- class. Wraps the object in a list, and returns the list.
+<div class="block">Returns a sequence that creates an object of type compatible with the given class. Wraps the
+ object in a list, and returns the list.
 
- CURRENTLY, will return a sequence (i.e. a non-empty list) only if cls is an
- array.</div>
+ <p>CURRENTLY, will return a sequence (i.e. a non-empty list) only if cls is an array.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>components</code> - the component manager with existing sequences</dd>
@@ -388,10 +386,9 @@ extends java.lang.Object</pre>
 <h4>createGenericArrayCreationSequence</h4>
 <pre>private static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;createGenericArrayCreationSequence(<a href="../../randoop/types/ArrayType.html" title="class in randoop.types">ArrayType</a>&nbsp;arrayType,
                                                            int&nbsp;length)</pre>
-<div class="block">Creates a <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence"><code>Sequence</code></a> for creating an array with parameterized type.
- Resulting code looks like <code>(ElementType[])new RawElementType[dim0]</code>.
- Note that the <code>SuppressWarnings</code> annotation is added when the assignment with the cast
- is output.</div>
+<div class="block">Creates a <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence"><code>Sequence</code></a> for creating an array with parameterized type. Resulting code looks
+ like <code>(ElementType[])new RawElementType[dim0]</code>. Note that the <code>SuppressWarnings</code>
+ annotation is added when the assignment with the cast is output.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>arrayType</code> - the type of the array</dd>
@@ -408,13 +405,14 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getDefaultConstructor</h4>
 <pre>private static&nbsp;java.lang.reflect.Constructor&lt;?&gt;&nbsp;getDefaultConstructor(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;creationType)</pre>
-<div class="block">Gets the default constructor for a <a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types"><code>ClassOrInterfaceType</code></a>.
- Returns null if the type has none.</div>
+<div class="block">Gets the default constructor for a <a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types"><code>ClassOrInterfaceType</code></a>. Returns null if the type has
+ none.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>creationType</code> - the class type</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the reflection object for the default constructor of the given type; null, if there is none</dd>
+<dd>the reflection object for the default constructor of the given type; null, if there is
+     none</dd>
 </dl>
 </li>
 </ul>
@@ -426,10 +424,10 @@ extends java.lang.Object</pre>
 <h4>getImplementingType</h4>
 <pre>private static&nbsp;<a href="../../randoop/types/InstantiatedType.html" title="class in randoop.types">InstantiatedType</a>&nbsp;getImplementingType(<a href="../../randoop/types/InstantiatedType.html" title="class in randoop.types">InstantiatedType</a>&nbsp;elementType)</pre>
 <div class="block">Constructs an implementing type for an abstract subtype of <code>java.util.Collection</code> using
- the <a href="../../randoop/types/JDKTypes.html#getImplementingType-randoop.types.ParameterizedType-"><code>JDKTypes.getImplementingType(ParameterizedType)</code></a> method.
- Otherwise, returns the given type.
- <p>
-   Note: this should ensure that the type has some mechanism for constructing an object</div>
+ the <a href="../../randoop/types/JDKTypes.html#getImplementingType-randoop.types.ParameterizedType-"><code>JDKTypes.getImplementingType(ParameterizedType)</code></a> method. Otherwise, returns the
+ given type.
+
+ <p>Note: this should ensure that the type has some mechanism for constructing an object</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>elementType</code> - the type</dd>

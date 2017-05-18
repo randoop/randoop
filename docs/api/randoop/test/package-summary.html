@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>randoop.test (randoop 3.0.8-prerelease API)</title>
+<title>randoop.test (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="randoop.test (randoop 3.0.8-prerelease API)";
+            parent.document.title="randoop.test (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -84,8 +84,7 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a></td>
 <td class="colLast">
-<div class="block">A Check represents the expected runtime behavior of a Sequence, at a
- particular offset.</div>
+<div class="block">A Check represents the expected runtime behavior of a Sequence, at a particular offset.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -112,92 +111,102 @@
 </tr>
 <tbody>
 <tr class="altColor">
+<td class="colFirst"><a href="../../randoop/test/CompilableTestPredicate.html" title="class in randoop.test">CompilableTestPredicate</a></td>
+<td class="colLast">
+<div class="block"><code>TestPredicate</code> that checks whether the given <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence"><code>ExecutableSequence</code></a> is compilable.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/test/ContractChecker.html" title="class in randoop.test">ContractChecker</a></td>
 <td class="colLast">
 <div class="block">Perform checks over a <a href="../../randoop/util/TupleSet.html" title="class in randoop.util"><code>TupleSet</code></a>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/test/ContractCheckingVisitor.html" title="class in randoop.test">ContractCheckingVisitor</a></td>
 <td class="colLast">
 <div class="block">An execution visitor that generates checks for error-revealing tests.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/test/ContractSet.html" title="class in randoop.test">ContractSet</a></td>
 <td class="colLast">
 <div class="block">Manages the set of <a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract"><code>ObjectContract</code></a> objects.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/test/DummyCheckGenerator.html" title="class in randoop.test">DummyCheckGenerator</a></td>
 <td class="colLast">
 <div class="block">Returns an empty TestChecks.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/test/EmptyExceptionCheck.html" title="class in randoop.test">EmptyExceptionCheck</a></td>
 <td class="colLast">
-<div class="block">An <code>ExceptionCheck</code> that doesn't enforce the expectation of an
- exception by the statement at the statement index.</div>
+<div class="block">An <code>ExceptionCheck</code> that doesn't enforce the expectation of an exception by the statement
+ at the statement index.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/test/ErrorRevealingChecks.html" title="class in randoop.test">ErrorRevealingChecks</a></td>
 <td class="colLast">
 <div class="block">ErrorRevealingChecks represent failing checks for a particular test sequence.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/test/ErrorTestPredicate.html" title="class in randoop.test">ErrorTestPredicate</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/test/ExceptionCheck.html" title="class in randoop.test">ExceptionCheck</a></td>
 <td class="colLast">
-<div class="block">An <code>ExceptionCheck</code> is used to indicate that an exception is expected
- at a particular statement in a sequence.</div>
+<div class="block">An <code>ExceptionCheck</code> is used to indicate that an exception is expected at a particular
+ statement in a sequence.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/test/ExcludeTestPredicate.html" title="class in randoop.test">ExcludeTestPredicate</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../randoop/test/ExpectedExceptionCheck.html" title="class in randoop.test">ExpectedExceptionCheck</a></td>
 <td class="colLast">
-<div class="block">An <code>ExceptionCheck</code> that enforces the expectation of an exception being
- thrown.</div>
+<div class="block">An <code>ExceptionCheck</code> that enforces the expectation of an exception being thrown.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="../../randoop/test/ExpectedExceptionCheckGen.html" title="class in randoop.test">ExpectedExceptionCheckGen</a></td>
+<td class="colLast">
+<div class="block">A check generator that based on an <code>ExceptionPredicate</code> when given an exception, generates
+ an <code>ExpectedExceptionCheck</code> object when the predicate is satisfied, and an <code>EmptyExceptionCheck</code> otherwise.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><a href="../../randoop/test/ExpectedExceptionCheckGen.html" title="class in randoop.test">ExpectedExceptionCheckGen</a></td>
+<td class="colFirst"><a href="../../randoop/test/ExpectedExceptionGenerator.html" title="class in randoop.test">ExpectedExceptionGenerator</a></td>
 <td class="colLast">
-<div class="block">A check generator that based on an <code>ExceptionPredicate</code> when given an
- exception, generates an <code>ExpectedExceptionCheck</code> object when the
- predicate is satisfied, and an <code>EmptyExceptionCheck</code> otherwise.</div>
+<div class="block">A <a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test"><code>TestCheckGenerator</code></a> that generates checks for exceptions that are expected at a
+ particular statement.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/test/ExtendGenerator.html" title="class in randoop.test">ExtendGenerator</a></td>
 <td class="colLast">
-<div class="block">This <code>TestCheckGenerator</code> combines two generators, using the invalid
- and failure checks from the first, and, if none of those, then returning the
- output of the second.</div>
+<div class="block">This <code>TestCheckGenerator</code> combines two generators, using the invalid and failure checks
+ from the first, and, if none of those, then returning the output of the second.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/test/IncludeIfCoversPredicate.html" title="class in randoop.test">IncludeIfCoversPredicate</a></td>
 <td class="colLast">
-<div class="block">Checks whether the most recent execution of the <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence"><code>ExecutableSequence</code></a>
- covers any of the classes in this predicate.</div>
+<div class="block">Checks whether the most recent execution of the <a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence"><code>ExecutableSequence</code></a> covers any of the
+ classes in this predicate.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/test/IncludeTestPredicate.html" title="class in randoop.test">IncludeTestPredicate</a></td>
 <td class="colLast">
-<div class="block">A test predicate that checks for the occurrence of variables that match the
- given regular expression.</div>
+<div class="block">A test predicate that checks for the occurrence of variables that match the given regular
+ expression.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -209,32 +218,56 @@
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/test/InvalidExceptionCheck.html" title="class in randoop.test">InvalidExceptionCheck</a></td>
 <td class="colLast">
-<div class="block">An <code>InvalidExceptionCheck</code> represents the occurrence of an exception
- tagged as an invalid behavior during <code>Check</code> generation.</div>
+<div class="block">An <code>InvalidExceptionCheck</code> represents the occurrence of an exception tagged as an invalid
+ behavior during <code>Check</code> generation.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../randoop/test/InvalidValueCheck.html" title="class in randoop.test">InvalidValueCheck</a></td>
+<td class="colLast">
+<div class="block">Represents the occurrence of an invalid value for a <a href="../../randoop/condition/Condition.html" title="interface in randoop.condition"><code>Condition</code></a> of the
+ <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation"><code>TypedOperation</code></a> in a <a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence"><code>Statement</code></a>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="../../randoop/test/MissingExceptionCheck.html" title="class in randoop.test">MissingExceptionCheck</a></td>
+<td class="colLast">
+<div class="block">Represents the fact that a statement should throw an exception, but did not.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/test/NoExceptionCheck.html" title="class in randoop.test">NoExceptionCheck</a></td>
 <td class="colLast">
-<div class="block">This check represents the fact that a statement should not throw an
- exception.</div>
+<div class="block">This check represents the fact that a statement should not throw an exception.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/test/ObjectCheck.html" title="class in randoop.test">ObjectCheck</a></td>
 <td class="colLast">
-<div class="block">A check that checks for expected properties of one or more objects generated
- during the execution of a <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence"><code>Sequence</code></a>, for example:
+<div class="block">A check that checks for expected properties of one or more objects generated during the execution
+ of a <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence"><code>Sequence</code></a>, for example:
+
  
- Checking that the objects created during execution of a sequence respect
- reflexivity, transitivity and symmetry of equality.</div>
+   Checking that the objects created during execution of a sequence respect reflexivity,
+       transitivity and symmetry of equality.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../randoop/test/PostConditionCheck.html" title="class in randoop.test">PostConditionCheck</a></td>
+<td class="colLast">
+<div class="block">Represents the observed failure of a post-condition.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="../../randoop/test/PostConditionCheckGenerator.html" title="class in randoop.test">PostConditionCheckGenerator</a></td>
+<td class="colLast">
+<div class="block">Checks the given post-condition</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/test/RegressionCaptureVisitor.html" title="class in randoop.test">RegressionCaptureVisitor</a></td>
 <td class="colLast">
-<div class="block">An <code>ExecutionVisitor</code> that records regression checks on the values
- created by the sequence.</div>
+<div class="block">An <code>ExecutionVisitor</code> that records regression checks on the values created by the sequence.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -244,16 +277,15 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../randoop/test/RegressionTestPredicate.html" title="class in randoop.test">RegressionTestPredicate</a></td>
 <td class="colLast">
-<div class="block"><code>RegressionTestPredicate</code> determines whether to keep an
- <code>ExecutableSequence</code> as a regression test.</div>
+<div class="block"><code>RegressionTestPredicate</code> determines whether to keep an <code>ExecutableSequence</code> as a
+ regression test.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../randoop/test/ValidityCheckingVisitor.html" title="class in randoop.test">ValidityCheckingVisitor</a></td>
 <td class="colLast">
-<div class="block">A <code>ValidityCheckingVisitor</code> checks for occurrences of exceptions that
- have been tagged as invalid behaviors as represented by a
- <code>ExceptionPredicate</code>.</div>
+<div class="block">A <code>ValidityCheckingVisitor</code> checks for occurrences of exceptions that have been tagged as
+ invalid behaviors as represented by a <code>ExceptionPredicate</code>.</div>
 </td>
 </tr>
 </tbody>

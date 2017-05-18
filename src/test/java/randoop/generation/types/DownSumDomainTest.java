@@ -1,21 +1,16 @@
 package randoop.generation.types;
 
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
+import org.junit.Test;
 import randoop.types.JavaTypes;
 import randoop.types.ReferenceType;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-/**
- * Created by bjkeller on 12/14/16.
- */
+/** Created by bjkeller on 12/14/16. */
 public class DownSumDomainTest {
 
   @Test

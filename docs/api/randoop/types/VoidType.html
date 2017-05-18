@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>VoidType (randoop 3.0.8-prerelease API)</title>
+<title>VoidType (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="VoidType (randoop 3.0.8-prerelease API)";
+            parent.document.title="VoidType (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -119,12 +119,12 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">VoidType</span>
 extends <a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></pre>
-<div class="block">Represents <code>void</code>.
- Technically, <code>void</code> is used to indicate that a method has no return values, and is not a
- type. However, we need to pretend that it is to be able to represent typed operations.
- <p>
- The decision to have <code>void</code> be a separate "type" is counter to the fact that the reflection
- method <code>Class.isPrimitive()</code> returns true for <code>void</code>.</div>
+<div class="block">Represents <code>void</code>. Technically, <code>void</code> is used to indicate that a method has no
+ return values, and is not a type. However, we need to pretend that it is to be able to represent
+ typed operations.
+
+ <p>The decision to have <code>void</code> be a separate "type" is counter to the fact that the
+ reflection method <code>Class.isPrimitive()</code> returns true for <code>void</code>.</div>
 </li>
 </ul>
 </div>
@@ -188,8 +188,8 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/VoidType.html#getName--">getName</a></span>()</code>
-<div class="block">Returns the fully-qualified name of this type, including type arguments if
- this is a parameterized type.</div>
+<div class="block">Returns the fully-qualified name of this type, including type arguments if this is a
+ parameterized type.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -221,10 +221,10 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/VoidType.html#isSubtypeOf-randoop.types.Type-">isSubtypeOf</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;otherType)</code>
-<div class="block">Test whether this type is a subtype of the given type according to
- transitive closure of definition of the <i>direct supertype</i> relation in
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10">
- section 4.10 of JLS for Java SE 8</a>.</div>
+<div class="block">Test whether this type is a subtype of the given type according to transitive closure of
+ definition of the <i>direct supertype</i> relation in <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10">section 4.10 of
+ JLS for Java SE 8</a>.</div>
 </td>
 </tr>
 <tr id="i8" class="altColor">
@@ -356,23 +356,22 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <h4>getRuntimeClass</h4>
 <pre>public&nbsp;java.lang.Class&lt;?&gt;&nbsp;getRuntimeClass()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/Type.html#getRuntimeClass--">Type</a></code></span></div>
-<div class="block">Returns the runtime <code>Class</code> object for this type.
- For use when reflection is needed.
- <p>
- Note that type variables and the null reference type do not have a runtime class, and this
+<div class="block">Returns the runtime <code>Class</code> object for this type. For use when reflection is needed.
+
+ <p>Note that type variables and the null reference type do not have a runtime class, and this
  method will return null in those cases.
- <p>
- This method should not be confused with the inherited <code>Object.getClass()</code> method,
- which returns the <code>Class&lt;?&gt;</code> for the <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> object, and not of the represented type.
- For instance, if a <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> object <code>t</code> represented the Java type <code>int</code>, then
- <code>t.getRuntimeClass()</code> would return <code>int.class</code> while <code>t.getClass()</code> would return
- <code>Type.class</code>.</div>
+
+ <p>This method should not be confused with the inherited <code>Object.getClass()</code> method,
+ which returns the <code>Class&lt;?&gt;</code> for the <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> object, and not of the represented
+ type. For instance, if a <a href="../../randoop/types/Type.html" title="class in randoop.types"><code>Type</code></a> object <code>t</code> represented the Java type <code>int</code>,
+ then <code>t.getRuntimeClass()</code> would return <code>int.class</code> while <code>t.getClass()</code>
+ would return <code>Type.class</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/types/Type.html#getRuntimeClass--">getRuntimeClass</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the <code>Class</code> that is the runtime representation of the type, or null if this type
-         is a type variable or null reference type.</dd>
+     is a type variable or null reference type</dd>
 </dl>
 </li>
 </ul>
@@ -384,9 +383,8 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <h4>getName</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getName()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/Type.html#getName--">Type</a></code></span></div>
-<div class="block">Returns the fully-qualified name of this type, including type arguments if
- this is a parameterized type.
- For <code>java.util.List&lt;T&gt;</code> return <code>"java.util.List&lt;T&gt;"</code>.</div>
+<div class="block">Returns the fully-qualified name of this type, including type arguments if this is a
+ parameterized type. For <code>java.util.List&lt;T&gt;</code> return <code>"java.util.List&lt;T&gt;"</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/types/Type.html#getName--">getName</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>
@@ -403,8 +401,7 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <h4>getSimpleName</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getSimpleName()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/Type.html#getSimpleName--">Type</a></code></span></div>
-<div class="block">Returns the name of this type without type arguments or package qualifiers.
- For <code>java.util.List&lt;T&gt;</code>, returns <code>"List"</code>.</div>
+<div class="block">Returns the name of this type without type arguments or package qualifiers. For <code>java.util.List&lt;T&gt;</code>, returns <code>"List"</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/types/Type.html#getSimpleName--">getSimpleName</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>
@@ -437,11 +434,12 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <li class="blockList">
 <h4>isSubtypeOf</h4>
 <pre>public&nbsp;boolean&nbsp;isSubtypeOf(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;otherType)</pre>
-<div class="block">Test whether this type is a subtype of the given type according to
- transitive closure of definition of the <i>direct supertype</i> relation in
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10">
- section 4.10 of JLS for Java SE 8</a>.
- Returns false, since <code>void</code> is not a subtype of any type</div>
+<div class="block">Test whether this type is a subtype of the given type according to transitive closure of
+ definition of the <i>direct supertype</i> relation in <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10">section 4.10 of
+ JLS for Java SE 8</a>.
+
+ <p>Returns false, since <code>void</code> is not a subtype of any type</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/types/Type.html#isSubtypeOf-randoop.types.Type-">isSubtypeOf</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>
@@ -461,26 +459,26 @@ extends <a href="../../randoop/types/Type.html" title="class in randoop.types">T
 <pre>public&nbsp;boolean&nbsp;isAssignableFrom(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;sourceType)</pre>
 <div class="block">Indicates whether there is an assignment conversion from a source <code>Type</code> to this type.
  (In other words, a value of the source type can be assigned to an l-value of this type.)
- Returns true if this is a legal assignment conversion:
- <code>
+ Returns true if this is a legal assignment conversion: <code>
  Variable<sub>this</sub> = Expression<sub>sourcetype</sub>.
  </code>
- <p>
- Based on the definition of <i>assignment context</i> in
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.2">
- section 5.2 of the JDK 8 Java Language Specification</a>,
- a value of one type is assignable to a variable of another type if the
- first type can be converted to the second by
+
+ <p>Based on the definition of <i>assignment context</i> in <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.2">section 5.2 of the
+ JDK 8 Java Language Specification</a>, a value of one type is assignable to a variable of
+ another type if the first type can be converted to the second by
+
  <ul>
- <li> an identity conversion (section 5.1.1),
- <li> a widening primitive conversion (section 5.1.2),
- <li> a widening reference conversion (section 5.1.5),
- <li> a boxing conversion (5.1.7), or
- <li> an unboxing conversion (section 5.1.8) possibly followed by a widening conversion.
+   <li>an identity conversion (section 5.1.1),
+   <li>a widening primitive conversion (section 5.1.2),
+   <li>a widening reference conversion (section 5.1.5),
+   <li>a boxing conversion (5.1.7), or
+   <li>an unboxing conversion (section 5.1.8) possibly followed by a widening conversion.
  </ul>
- And, if after all those conversions, the type is a raw type, an
- unchecked conversion may occur.
- Return false because cannot assign to void.</div>
+
+ And, if after all those conversions, the type is a raw type, an unchecked conversion may occur.
+
+ <p>Return false because cannot assign to void.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/types/Type.html#isAssignableFrom-randoop.types.Type-">isAssignableFrom</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>

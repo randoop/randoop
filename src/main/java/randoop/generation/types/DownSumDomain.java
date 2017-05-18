@@ -5,14 +5,12 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-
 import randoop.types.ReferenceType;
 
 /**
  * Represents a type domain that is a direct sum of domains determined by upper bound types.
- * Effectively this is a union of domains where each domain is tagged by an upper bound.
- * This translates to a {@code Map} from the upper bound to the restricted domain.
+ * Effectively this is a union of domains where each domain is tagged by an upper bound. This
+ * translates to a {@code Map} from the upper bound to the restricted domain.
  */
 public class DownSumDomain implements TypeDomain {
 

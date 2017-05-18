@@ -6,12 +6,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-
 import plume.UtilMDE;
 
 /**
- * {@code TypeTuple} represents an ordered tuple of type objects.
- * Type tuples primarily used to represent the input types of operations.
+ * {@code TypeTuple} represents an ordered tuple of type objects. Type tuples primarily used to
+ * represent the input types of operations.
  */
 public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
 
@@ -21,15 +20,13 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   /**
    * Creates a type tuple from the list of types, preserving the order.
    *
-   * @param list  the list of types
+   * @param list the list of types
    */
   public TypeTuple(List<Type> list) {
     this.list = new ArrayList<>(list);
   }
 
-  /**
-   * Creates an empty type tuple.
-   */
+  /** Creates an empty type tuple. */
   public TypeTuple() {
     this(new ArrayList<Type>());
   }
@@ -54,10 +51,10 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   }
 
   /**
-   * Applies a substitution to a type tuple, replacing any occurrences of type variables.
-   * Resulting tuple may only be partially instantiated.
+   * Applies a substitution to a type tuple, replacing any occurrences of type variables. Resulting
+   * tuple may only be partially instantiated.
    *
-   * @param substitution  the substitution
+   * @param substitution the substitution
    * @return a new type tuple resulting from applying the given substitution to this tuple
    */
   public TypeTuple apply(Substitution<ReferenceType> substitution) {
@@ -89,7 +86,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
   /**
    * Return the ith component type of this tuple.
    *
-   * @param i  the component index
+   * @param i the component index
    * @return the component type at the position
    */
   public Type get(int i) {
@@ -172,7 +169,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
     }
     int result = 0;
     for (int i = 0; i < this.size() && result == 0; i++) {
-      result = list.get(i).getCanonicalName().compareTo(tuple.list.get(i).getCanonicalName());
+      result = list.get(i).compareTo(tuple.list.get(i));
     }
     return result;
   }

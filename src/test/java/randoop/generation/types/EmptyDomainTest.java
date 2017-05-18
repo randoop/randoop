@@ -1,16 +1,12 @@
 package randoop.generation.types;
 
-import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-
+import org.junit.Test;
 import randoop.types.JavaTypes;
 import randoop.types.ReferenceType;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class EmptyDomainTest {
 
