@@ -61,7 +61,7 @@ sourceSets {
     }
   }
 
-  macallTest {
+  mapcallTest {
     java {
       srcDir 'src/mapcalltest/java'
     }
@@ -118,7 +118,9 @@ configurations {
    * borrow from unit test configurations.
    */
   exercisedTestCompile.extendsFrom testCompile
+  mapcallTestCompile.extendsFrom testCompile
   exercisedTestRuntime.extendsFrom testRuntime
+  mapcallTestRuntime.extendsFrom testRuntime
 
   systemTestCompile.extendsFrom testCompile
   systemTestRuntime.extendsFrom testRuntime
@@ -144,7 +146,8 @@ dependencies {
    */
   exercisedTestCompile sourceSets.main.output
   exercisedTestRuntime project(':exercised-class')
-  exercisedTestRuntime project(':mapcall')
+
+  mapcallTestRuntime project(':mapcall')
 
   jacocoagent group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.7.7.201606060606'
 
@@ -200,6 +203,7 @@ tasks.verifyGoogleJavaFormat {
 compileJava.options.compilerArgs = ['-Xlint','-g','-Xlint:-classfile']
 compileTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileExercisedTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
+compileMapcallTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileSystemTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
 
@@ -296,6 +300,21 @@ task exercisedTest(type: Test, dependsOn: 'copyJars') {
  * the project build task.
  */
 check.dependsOn exercisedTest
+
+task mapcallTest(type: Test, dependsOn: 'copyJars') {
+  workingDir = sourceSets.mapcallTest.output.resourcesDir
+  testClassesDir = sourceSets.mapcallTest.output.classesDir
+  classpath = sourceSets.mapcallTest.runtimeClasspath
+  jvmArgs "-javagent:$buildDir/libs/mapcall-${version}.jar"
+  testLogging {
+    showStandardStreams = true
+    exceptionFormat = 'full'
+  }
+
+  /* Turn off HTML reports -- handled by testReport task */
+  reports.html.enabled = false
+}
+check.dependsOn mapcallTest
 
 jacocoTestReport {
   group 'Report'

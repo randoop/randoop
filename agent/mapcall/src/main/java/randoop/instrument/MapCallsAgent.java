@@ -9,20 +9,43 @@ import java.util.Arrays;
 import plume.Option;
 import plume.Options;
 
-public class Premain {
+/**
+ * The MapCalls javaagent applies the {@link CallReplacementTransformer} to map calls in loaded
+ * classes to alternate implementations.
+ *
+ * <p>Each replacement indicates how the method in a call is to be replaced:
+ *
+ * <ul>
+ *   <li> replacing the method by a specific alternate method;
+ *   <li> replacing the method by a method of the same name in a different class; or
+ *   <li> replacing the method by a method of the same name, in a class of the same name, but
+ *       occurring in a different package.
+ * </ul>
+ *
+ * <p>Replacements are loaded from text files where each line is a pair of method, class, or package
+ * names. Both method and class names must be fully qualified.
+ *
+ * <p>The agent loads default replacements from an internal resource file {@code
+ * "replacements.txt"}. User replacements are then loaded using the {@link #map_calls} command-line
+ * argument. Any default may be overriden by a user replacement.
+ */
+public class MapCallsAgent {
 
+  @SuppressWarnings("WeakerAccess")
   @Option("print debug information")
   public static boolean debug = false;
 
+  @SuppressWarnings("WeakerAccess")
   @Option("print progress information")
   public static boolean verbose = false;
 
+  @SuppressWarnings("WeakerAccess")
   @Option("file containing methods calls to map to substitute methods")
   public static File map_calls = null;
 
   /**
-   * Entry point of the java agent. Sets up the transformer {@link Instrument} so that when classes
-   * are loaded they are first transformed.
+   * Entry point of the java agent. Sets up the transformer {@link CallReplacementTransformer} so
+   * that when classes are loaded they are first transformed.
    *
    * @param agentArgs the arguments to the agent
    * @param inst the {@code Instrumentation} object
@@ -35,28 +58,44 @@ public class Premain {
           "In premain, agentargs ='%s', " + "Instrumentation = '%s'%n", agentArgs, inst);
     }
 
-    // Parse our arguments
-    Options options = new Options(Premain.class);
-    String[] target_args = options.parse_or_usage(agentArgs);
-    if (target_args.length > 0) {
-      System.err.printf("Unexpected agent arguments %s%n", Arrays.toString(target_args));
+    if (agentArgs != null) { // if there are any arguments, parse them
+      Options options = new Options(MapCallsAgent.class);
+      String[] target_args = options.parse_or_usage(agentArgs);
+      if (target_args.length > 0) {
+        System.err.printf("Unexpected agent arguments %s%n", Arrays.toString(target_args));
+        System.exit(1);
+      }
+    }
+
+    CallReplacementTransformer transformer = new CallReplacementTransformer();
+
+    InputStream in = transformer.getClass().getResourceAsStream("/replacements.txt");
+    if (in == null) {
+      System.err.println("Unable to open default replacements file. Please report.");
       System.exit(1);
     }
 
-    Instrument transformer = new Instrument();
-
-    InputStream in = transformer.getClass().getResourceAsStream("replacements.txt");
-
     // Read the default map file
-    transformer.readMapFile(new InputStreamReader(in), "default-replacements");
+    try {
+      transformer.readMapFile(new InputStreamReader(in), "default-replacements");
+    } catch (Throwable e) {
+      System.err.printf("Error reading default replacement file:%n  %s%n", e.getMessage());
+      System.err.println("  Please report.");
+      System.exit(1);
+    }
 
     // Read the user replacement file
     if (map_calls != null) {
-      transformer.readMapFile(map_calls);
-      transformer.addMapFileShutdownHook();
+      try {
+        transformer.readMapFile(map_calls);
+      } catch (Throwable e) {
+        System.err.printf("Error reading replacement file %s:%n  %s%n", map_calls, e.getMessage());
+        System.exit(1);
+      }
     }
 
-    // Instrument transformer = new Instrument();
+    transformer.addMapFileShutdownHook();
+
     inst.addTransformer(transformer);
   }
 }

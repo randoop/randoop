@@ -1,29 +1,38 @@
+/* build file for mapcall agent */
+
 description = "mapcall agent"
+
 configurations {
   plume
   compile.extendsFrom plume
 }
+
 dependencies {
   // use plume.jar from parent project
   plume project(path: ':', configuration: 'plume' )
+  compile group: 'junit', name: 'junit', version: '4.+'
 }
 
+/*
+ * Jar needs to be executable as a javaagent.
+ * (Indirectly, uses the processResources task configured below.)
+ */
 jar {
-  //want the following, but resulting file is much larger
-  //from { configurations.plume.collect { it.isDirectory() ? it : zipTree(it) } }
+  from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
   manifest {
     attributes(
-      "Premain-Class": "randoop.instrument.Premain",
+      "Premain-Class": "randoop.instrument.MapCallsAgent",
       "Can-Redefine-Classes": "true"
       )
   }
 }
 
-test {
-  jvmArgs "-javaagent:$buildDir/libs/mapcall-$version" + ".jar=--map_calls=$buildDir/resources/test/randoop/instrument/mapcalls.txt"
-
-  testLogging {
-    showStandardStreams = true
-    exceptionFormat = 'full'
-  }
+/*
+ * Change copy task for resources so that unzips the mock-rt.jar file instead
+ * of simply copying it to build/resources
+ */
+processResources {
+  from 'src/main/resources'
+  from zipTree('src/main/resources/mock-rt.jar')
+  exclude '**/mock-rt.jar'
 }
