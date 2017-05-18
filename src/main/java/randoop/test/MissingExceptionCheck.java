@@ -1,8 +1,10 @@
 package randoop.test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import plume.UtilMDE;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NotExecuted;
@@ -64,7 +66,17 @@ public class MissingExceptionCheck implements Check {
 
   @Override
   public String toCodeStringPostStatement() {
-    return "org.junit.Assert.fail(\"exception is expected\");";
+    List<String> exceptionNameList = new ArrayList<>();
+    for (Set<ExpectedException> set : expected) {
+      List<String> expectedNames = new ArrayList<>();
+      for (ExpectedException exception : set) {
+        expectedNames.add(exception.getExceptionType().getName());
+      }
+      exceptionNameList.add("\"[ " + UtilMDE.join(expectedNames, ", ") + " ]\"");
+    }
+    return "org.junit.Assert.fail(\"exception is expected: \" + "
+        + UtilMDE.join(exceptionNameList, " + ")
+        + ");";
   }
 
   @Override
