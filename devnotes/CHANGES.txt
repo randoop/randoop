@@ -1,10 +1,10 @@
 Version ?, released May ?, 2017
 
-Fixes a problem in progress reporting where the wrong count was being used forerror-revealing
-sequences
+Adds a minimize command that can be run from the command line to simplify
+failing tests to make it easier to understand the test sequence.
 
-
-
+Fixes a problem in progress reporting where the wrong count was being used for
+error-revealing sequences
 
 
 Version 3.1.5, released April 28, 2017
@@ -101,7 +101,7 @@ Randoop now
   types in previously generated test sequences. As a result, Randoop is able to
   generate more diverse instantiations of generics, as well as multidimensional
   arrays.
-- supports insertion of Java code into text fixtures when tests are written to
+- supports insertion of Java code into test fixtures when tests are written to
   disk. Given as filename to new command-line arguments: --junit-before-each,
   --junit-after-each, --junit-before-all, and --junit-after-each.
 

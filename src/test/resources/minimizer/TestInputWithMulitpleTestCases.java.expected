@@ -1,0 +1,23 @@
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
+
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class TestInputWithMulitpleTestCasesMinimized {
+
+    // Test simplification of programs with multiple methods.
+    @Test
+    public void test1() throws Throwable {
+        int c = 0;
+        c++;
+        org.junit.Assert.assertTrue(c == 3);
+    }
+
+    @Test
+    public void test2() throws Throwable {
+        String s = "Hello";
+        s += " World";
+        String t = s.replace('o', 'y');
+        org.junit.Assert.assertEquals(t, "Hello World");
+    }
+}
