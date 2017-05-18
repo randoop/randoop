@@ -7,15 +7,12 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Represents a parameterized type as a generic class instantiated with
- * type arguments.
- * <p>
- * Note that {@link java.lang.reflect.ParameterizedType} is an interface that
- * can represent either a parameterized type in the sense meant here, or a
- * generic class.
- * Conversion to this type from this and other {@link java.lang.reflect.Type}
- * interfaces is handled by
- * {@link Type#forType(ParameterTable,java.lang.reflect.Type)}.
+ * Represents a parameterized type as a generic class instantiated with type arguments.
+ *
+ * <p>Note that {@link java.lang.reflect.ParameterizedType} is an interface that can represent
+ * either a parameterized type in the sense meant here, or a generic class. Conversion to this type
+ * from this and other {@link java.lang.reflect.Type} interfaces is handled by {@link
+ * Type#forType(ParameterTable,java.lang.reflect.Type)}.
  */
 public class InstantiatedType extends ParameterizedType {
 

@@ -11,29 +11,25 @@ import java.lang.reflect.WildcardType;
  *     ReferenceType
  *     PrimitiveType
  * </pre>
- * <p>
- * The subclasses of this {@link Type} class should be used to represent types in Randoop test generation
- * rather than the reflection types.
- * Using reflection, each Java type has a {@code Class<?>} object, including primitive types.
- * But, things get a little complicated for generic and parameterized types, where the {@code Class}
- * object represents the raw type of the generic class, but also carries the type parameters of the
- * generic class.
- * More information about types is available through the subinterfaces of
- * <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Type.html"><code>java.lang.reflect.Type</code></a>,
- * but working with generic and parameterized types is still awkward.
- * This is in part because the correspondence to the JLS is unclear, but also because the provided
- * methods do not implement all of the algorithms needed to work with types and type hierarchies as
- * needed in Randoop.
- * Effectively, the concrete subclasses of this class are facades for these reflective types, but
- * they are identified with the definitions in the JLS, and provide the methods needed to test for
- * assignability and test for subtypes.
- * <p>
- * {@link Type} objects
- * are constructed using the methods
- * {@link #forType(ParameterTable,java.lang.reflect.Type)},
- * {@link #forClass(Class)}, or
- * {@link #forName(String)}.
- * These methods translate the reflection types into objects of subclasses of this type.
+ *
+ * <p>The subclasses of this {@link Type} class should be used to represent types in Randoop test
+ * generation rather than the reflection types. Using reflection, each Java type has a {@code
+ * Class<?>} object, including primitive types. But, things get a little complicated for generic and
+ * parameterized types, where the {@code Class} object represents the raw type of the generic class,
+ * but also carries the type parameters of the generic class. More information about types is
+ * available through the subinterfaces of <a
+ * href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Type.html"><code>
+ * java.lang.reflect.Type</code></a>, but working with generic and parameterized types is still
+ * awkward. This is in part because the correspondence to the JLS is unclear, but also because the
+ * provided methods do not implement all of the algorithms needed to work with types and type
+ * hierarchies as needed in Randoop. Effectively, the concrete subclasses of this class are facades
+ * for these reflective types, but they are identified with the definitions in the JLS, and provide
+ * the methods needed to test for assignability and test for subtypes.
+ *
+ * <p>{@link Type} objects are constructed using the methods {@link
+ * #forType(ParameterTable,java.lang.reflect.Type)}, {@link #forClass(Class)}, or {@link
+ * #forName(String)}. These methods translate the reflection types into objects of subclasses of
+ * this type.
  */
 public abstract class Type implements Comparable<Type> {
 

@@ -56,7 +56,6 @@ public class OperationModel {
 
   private final VisibilityPredicate visibility;
   private final ReflectionPredicate reflectionPredicate;
-  private final ConditionCollection operationConditions;
 
   /** The set of class declaration types for this model */
   private Set<ClassOrInterfaceType> classTypes;
@@ -84,17 +83,13 @@ public class OperationModel {
 
   /**
    * Create an empty model of test context.
-   * @param visibility  the {@link VisibilityPredicate} for this model
-   * @param reflectionPredicate  the {@link ReflectionPredicate} for this model
-   * @param operationConditions  the conditions to add to operations in this model
+   *
+   * @param visibility the {@link VisibilityPredicate} for this model
+   * @param reflectionPredicate the {@link ReflectionPredicate} for this model
    */
-  private OperationModel(
-      VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate,
-      ConditionCollection operationConditions) {
+  private OperationModel(VisibilityPredicate visibility, ReflectionPredicate reflectionPredicate) {
     this.visibility = visibility;
     this.reflectionPredicate = reflectionPredicate;
-    this.operationConditions = operationConditions;
     classTypes = new TreeSet<>();
     inputTypes = new TreeSet<>();
     classLiteralMap = new MultiMap<>();
@@ -143,11 +138,11 @@ public class OperationModel {
       List<String> literalsFileList)
       throws OperationParseException, NoSuchMethodException {
 
-    OperationModel model = new OperationModel(visibility, reflectionPredicate, conditionCollection);
+    OperationModel model = new OperationModel(visibility, reflectionPredicate);
 
     model.addClassTypes(classnames, exercisedClassnames, errorHandler, literalsFileList);
 
-    model.addOperations(model.classTypes, visibility, reflectionPredicate);
+    model.addOperations(visibility, reflectionPredicate);
     model.addOperations(methodSignatures);
     model.addObjectConstructor();
 
@@ -300,8 +295,6 @@ public class OperationModel {
    * exercised-class heuristic, concrete input types, annotated test values, and literal values.
    * Also collects annotated test values, and class literal values used in test generation.
    *
-   * @param visibility the visibility predicate
-   * @param reflectionPredicate the predicate to determine which reflection objects are used
    * @param classnames the names of classes-under-test
    * @param exercisedClassnames the names of classes used in exercised-class heuristic
    * @param errorHandler the handler for bad class names
@@ -388,14 +381,11 @@ public class OperationModel {
    * the operations that satisfy both the visibility and reflection predicates, and then adds them
    * to the operation set of this model.
    *
-   * @param concreteClassTypes the declaring class types for the operations
    * @param visibility the visibility predicate
    * @param reflectionPredicate the reflection predicate
    */
   private void addOperations(
-      Set<ClassOrInterfaceType> concreteClassTypes,
-      VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate) {
+      VisibilityPredicate visibility, ReflectionPredicate reflectionPredicate) {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (ClassOrInterfaceType classType : classTypes) {
       mgr.apply(

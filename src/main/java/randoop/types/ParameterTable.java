@@ -9,20 +9,21 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Represents a table of parameters for a generic declaration, which may be
- * a class ({@link GenericClassType}, a method, or a constructor (both represented as
- * {@link randoop.operation.TypedClassOperation}).
- * Manages the mapping from reflection {@code java.lang.reflect.TypeVariable<>} to
- * {@link randoop.types.TypeVariable},
- * as well as the parameter order.
+ * Represents a table of parameters for a generic declaration, which may be a class ({@link
+ * GenericClassType}, a method, or a constructor (both represented as {@link
+ * randoop.operation.TypedClassOperation}). Manages the mapping from reflection {@code
+ * java.lang.reflect.TypeVariable<>} to {@link randoop.types.TypeVariable}, as well as the parameter
+ * order.
  */
 public class ParameterTable {
 
-  /** The map from reflection types to {@link randoop.types.TypeVariable}. null if table is empty. */
+  /**
+   * The map from reflection types to {@link randoop.types.TypeVariable}. null if table is empty.
+   */
   private final LinkedHashMap<java.lang.reflect.TypeVariable<?>, TypeVariable> parameterMap;
 
   /** Singleton object for an empty table. */
-  private final static ParameterTable emptyTable = new ParameterTable();
+  private static final ParameterTable emptyTable = new ParameterTable();
 
   /** The {@link ParameterTable} for the enclosing type. May be null */
   private final ParameterTable enclosingTable;
@@ -62,6 +63,7 @@ public class ParameterTable {
 
   /**
    * Creates an empty {@link ParameterTable}.
+   *
    * @see #emptyTable
    */
   private ParameterTable() {
@@ -73,7 +75,8 @@ public class ParameterTable {
    * Private constructor used by {@link #createTable(ParameterTable, GenericDeclaration)} to create
    * the {@link ParameterTable} from a {@code LinkedHashMap<>} constructed from a parameter array.
    *
-   * @param parameterMap  the {@code LinkedHashMap<>} mapping reflection parameters to {@link TypeVariable}
+   * @param parameterMap the {@code LinkedHashMap<>} mapping reflection parameters to {@link
+   *     TypeVariable}
    */
   private ParameterTable(
       ParameterTable enclosingTable,
@@ -83,9 +86,10 @@ public class ParameterTable {
   }
 
   /**
-   * Returns the parameter list for the generic declaration corresponding to this {@link ParameterTable}.
-   * The order of type variables is preserved from the order of the parameters given in the
-   * {@code GenericDeclaration} argument to {@link #createTable(ParameterTable, GenericDeclaration)}.
+   * Returns the parameter list for the generic declaration corresponding to this {@link
+   * ParameterTable}. The order of type variables is preserved from the order of the parameters
+   * given in the {@code GenericDeclaration} argument to {@link #createTable(ParameterTable,
+   * GenericDeclaration)}.
    *
    * @return the parameters in the same order as the generic declaration
    */
@@ -97,9 +101,10 @@ public class ParameterTable {
   }
 
   /**
-   * Returns the {@link TypeVariable} corresponding to the given {@code java.lang.reflect.TypeVariable<>}.
+   * Returns the {@link TypeVariable} corresponding to the given {@code
+   * java.lang.reflect.TypeVariable<>}.
    *
-   * @param type  the reflection type variable object
+   * @param type the reflection type variable object
    * @return the {@link TypeVariable} for {@code type}, null otherwise
    */
   public TypeVariable get(java.lang.reflect.TypeVariable<?> type) {

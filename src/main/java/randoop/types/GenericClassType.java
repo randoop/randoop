@@ -18,9 +18,8 @@ public class GenericClassType extends ParameterizedType {
   private ParameterTable parameterTable;
 
   /**
-   * Creates a {@link GenericClassType} for the given raw type.
-   * This type represents the declaration of the class type, and so the {@link ParameterTable} is
-   * constructed for the type.
+   * Creates a {@link GenericClassType} for the given raw type. This type represents the declaration
+   * of the class type, and so the {@link ParameterTable} is constructed for the type.
    *
    * @param rawType the {@code Class} raw type
    */

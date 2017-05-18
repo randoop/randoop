@@ -17,9 +17,9 @@ import plume.UtilMDE;
 public abstract class ParameterizedType extends ClassOrInterfaceType {
 
   /**
-   * Creates a {@link GenericClassType} for the given reflective {@link Class} object.
-   * A {@code Class<>} object that represents a parameterized type, is treated as a "declaration"
-   * from which the type parameters are extracted and available as a {@link ParameterTable}.
+   * Creates a {@link GenericClassType} for the given reflective {@link Class} object. A {@code
+   * Class<>} object that represents a parameterized type, is treated as a "declaration" from which
+   * the type parameters are extracted and available as a {@link ParameterTable}.
    *
    * @param typeClass the class type
    * @return a generic class type for the given type
@@ -42,8 +42,8 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    * Performs the conversion of {@code java.lang.reflect.ParameterizedType} to a {@code
    * ParameterizedType} .
    *
-   * @param parameterTable  the table of type parameters for the declaration context of this type
-   * @param type  the reflective type object
+   * @param parameterTable the table of type parameters for the declaration context of this type
+   * @param type the reflective type object
    * @return an object of type {@code ParameterizedType}
    */
   public static ParameterizedType forType(

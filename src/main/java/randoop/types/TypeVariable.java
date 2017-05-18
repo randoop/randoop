@@ -41,7 +41,9 @@ public abstract class TypeVariable extends ParameterType {
     java.lang.reflect.TypeVariable<?> v = (java.lang.reflect.TypeVariable) type;
     Set<java.lang.reflect.TypeVariable<?>> variableSet = new HashSet<>();
     variableSet.add(v);
-    return new ExplicitTypeVariable(v, ParameterBound.forTypes(variableSet, v.getBounds()));
+    //XXX using empty table below is shaky -- need to make sure this works
+    return new ExplicitTypeVariable(
+        v, ParameterBound.forTypes(ParameterTable.emptyTable(), variableSet, v.getBounds()));
   }
 
   @Override

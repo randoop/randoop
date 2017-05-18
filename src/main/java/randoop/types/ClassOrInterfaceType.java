@@ -53,10 +53,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
 
   /**
    * Creates a {@link ClassOrInterfaceType} object for a given {@code java.lang.reflect.Type}
-   * reference when there is no generic declaration.
-   * This occurs when supertypes are found for a type.
+   * reference when there is no generic declaration. This occurs when supertypes are found for a
+   * type.
    *
-   * @param type  the type reference
+   * @param type the type reference
    * @return the {@link ClassOrInterfaceType} for the given {@code type}
    */
   public static ClassOrInterfaceType forType(java.lang.reflect.Type type) {
@@ -70,11 +70,10 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
   }
 
   /**
-   * Creates a {@code ClassOrInterfaceType} object for a given
-   * {@code java.lang.reflect.Type} reference.
-   * If type is a {@code java.lang.reflect.ParameterizedType}, then calls
-   * {@link ParameterizedType#forType(ParameterTable,java.lang.reflect.Type)}.
-   * Otherwise, if type is a {@code Class} object, calls {@link #forClass(Class)}.
+   * Creates a {@code ClassOrInterfaceType} object for a given {@code java.lang.reflect.Type}
+   * reference. If type is a {@code java.lang.reflect.ParameterizedType}, then calls {@link
+   * ParameterizedType#forType(ParameterTable,java.lang.reflect.Type)}. Otherwise, if type is a
+   * {@code Class} object, calls {@link #forClass(Class)}.
    *
    * @param type the type reference
    * @return the {@code ClassOrInterfaceType} object for the given type
