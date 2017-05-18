@@ -1106,32 +1106,23 @@ Randoop about your application, and that is how we recommend using Randoop.
 <h2 id="map_calls">Avoiding calls to specific methods</h2>
 
 <p>
-The code under test may make calls to methods that you do not want
-Randoop to execute because their behavior is problematic during test generation
-or testing itself. These would include methods such as <code>System.exit</code>
-that when run will terminate both the target program and also Randoop, but also
-methods that require user interaction, such as those that open a modal dialog
+The code under test may make calls to methods that you do not want executed.
+These are methods whose behavior can be problematic during test generation or testing itself.
+One example is <code>System.exit</code> that when called during test generation by Randoop will terminate both the
+target program and Randoop.
+Other examples, include methods that require user interaction, such as those that open a modal dialog
 box.
 </p>
 
 <p>
 You can prevent Randoop from making direct calls to certain methods
-in the code under test, by using the <code>--omitmethods=regexp</code>
+in the code under test by using the <code>--omitmethods=regexp</code>
 command-line option to indicate the methods that are not to be called.
 However, this option does not prevent Randoop from making indirect calls to
 a method, especially a method that is not a member of a class under test.
 Instead, to handle indirect calls, you can transform calls to certain methods
 by providing a different implementation that will be used when running Randoop.
 </p>
-
-<p>
-Transform calls with the Java agent in the <code>mapcall-3.1.4.jar</code>
-file by passing the following command-line option to <code>java</code> when
-running Randoop:
-</p>
-<pre>
-    -javaagent:$(RANDOOP_PATH)/mapcall-3.1.4.jar=--map_calls=map_calls.txt
-</pre>
 
 <p>
 To transform calls to undesired methods so that they use an alternate
@@ -1150,7 +1141,7 @@ By default, the agent makes the following replacements:
 <ul>
   <li>
     A call to <code>System.exit()</code> is replaced by a call to a method that
-    throws a Randoop-specific exception, that Randoop includes in the generated tests.
+    throws a Randoop-specific exception that Randoop includes in the generated tests.
   </li>
   <li>
     A call to a method from AWT and Swing classes is replaced by a call to an
@@ -1167,48 +1158,9 @@ You can define your own replacements, and can even override
 these defaults, by providing your own implementations with the replacements
 specified in a text file.
 </p>
-<pre>
-java.awt mock.java.awt
-</pre>
-would map a call to <code>java.awt.Button.getLabel()</code> to
-<code>mock.java.awt.Button.getLabel()</code>, and a call to
-<code>java.awt.Canvas.paint(Graphics)</code> to
-<code>mock.java.awt.Canvas.paint(Graphics)</code>.
 
 <p>
-For instance, instead of the default replacements, we might want methods that
-create dialog boxes to print the dialog message to standard out.
-We can do this by defining replacement methods in a new class,
-and providing a description of the replacements to the <code>mapcall</code>
-agent in a text file.
-As an example, the class <a href="RandoopMappedCalls.java.txt">RandoopMappedCalls.java</a>
-defines methods to replace three Swing methods as described by the replacement
-file <a href="replace_calls_example.txt">replace_calls_example.txt</a>.
-To use this replacement, include the class file for <code>RandoopMappedCalls</code>
-on the classpath, and run the agent by including the following on the
-command line when running Randoop <b>and</b> when running the generated tests:
-</p>
-<pre>
-    -javaagent:$(RANDOOP_PATH)/mapcall-3.1.2.jar=--map_calls=replace_calls_example.txt
-</pre>
-<p>
-and indicates that a call to any method of the old class should be mapped to a
-method with the same name in the new class. For instance, the line
-</p>
-<pre>
-java.awt.Button mock.java.awt.Button
-</pre>
-<p>
-would map a call to <code>java.awt.Button.getLabel()</code> to
-<code>mock.java.awt.Button.getLabel()</code>.
-In contrast to the package replacement above, a call to
-<code>java.awt.Canvas.paint(Graphics)</code> would be unaffected.
-</p>
-
-
-<h3 id="map-calls-format">Replacement file format</h3>
-<p>
-The replacement-file is simply a list of replacements each of which is a pair o
+The replacement-file is simply a list of replacements each of which is a pair of
 packages, classes or methods.
 For instance, the line
 </p>
@@ -1226,15 +1178,47 @@ Concretely, a call to <code>java.awt.Button.getLabel()</code> would be mapped to
 </p>
 
 <p>
-  Blank lines and <code>//</code> comments are ignored in the
-  replacements-file.
+Replacements can also be given for classes and methods.
+For instance, the line
 </p>
+<pre>
+java.awt.Button mock.java.awt.Button
+</pre>
+<p>
+describes a class replacement that maps a call to <code>java.awt.Button.getLabel()</code> to
+<code>mock.java.awt.Button.getLabel()</code>.
+In contrast to the package replacement above, a call to
+<code>java.awt.Canvas.paint(Graphics)</code> would be unaffected.
+</p>
+
+<p>
+  (Blank lines and <code>//</code> comments are ignored in the
+  replacements-file.)
+</p>
+
+
+<p>
+The replacement file is used by using the <code>mapcall</code> and providing
+the file as an argument.
+For example, the class <a href="RandoopMappedCalls.java.txt">RandoopMappedCalls.java</a>
+defines methods to replace three Swing methods as described by the replacement
+file <a href="replace_calls_example.txt">replace_calls_example.txt</a>.
+To use this replacement, include the class file for <code>RandoopMappedCalls</code>
+on the classpath, and run the agent by including the following on the
+command line when running Randoop <b>and</b> when running the generated tests:
+</p>
+<pre>
+    -javaagent:$(RANDOOP_PATH)/mapcall-3.1.5.jar=--map_calls=replace_calls_example.txt
+</pre>
+
 
 
 <h3 id="creating-call-replacements">Creating replacement methods</h3>
 
 <p>
-The Randoop command <code>replacements</code> will given a jar file and a
+When you have a large number of methods for which you need replacements,
+Randoop provides a utility that will construct them for you.
+The Randoop command <code>replacements</code> will, given a jar file and a
 replacement file, generate a jar file with mocked methods as indicated by the
 replacements:
 </p>
@@ -1251,16 +1235,17 @@ for a method that returns a class type, the replacement returns
 the replacement returns zero.
 </p>
 
+<i>Note:</i> the <code>replacements</code> utility only takes a file defining
+package replacements. You can create a jar file using the package replacements
+and then use the jar file with another replacements file if class or method replacements are needed.
 
-<h4 id="determining-calls-to-map">Determining which calls to place in the map_calls file</h4>
+
+<h3 id="determining-calls-to-map">Determining which calls to place in the replacements file</h3>
 
 <p>
 If Randoop is calling methods that it should not (for example, while
-generating tests, a dialog box pops up), then you need to add more calls to
-your map_calls file.  While the dialog box is displayed, determine which
-calls are executing by examining the stack trace.  On Unix this can be done
-by typing <code>Ctrl-\</code> (hold down the Control key, then press the
-Backslash key).
+generating tests, a dialog box pops up), then you need to use the <code>mapcall</code> agent.
+If problems continue, you need to add more calls to your replacements file.
 </p>
 
 <p>
@@ -1268,6 +1253,13 @@ To determine the specific method, examine the application's code where it
 calls the method that puts up the box (or other unwanted activity).  If it
 is a virtual call, the map must specify the name of the type used in the
 call.
+</p>
+
+<p>
+For a dialog box, while the dialog box is displayed, determine which
+  calls are executing by examining the stack trace.  On Unix this can be done
+  by typing <code>Ctrl-\</code> (hold down the Control key, then press the
+  Backslash key)
 </p>
 
 
