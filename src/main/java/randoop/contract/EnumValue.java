@@ -3,13 +3,12 @@ package randoop.contract;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
 /**
- * A check for a particular value of an <code>Enum</code>.
- * To be used in regression tests when <code>Enum</code> values are created.
+ * A check for a particular value of an <code>Enum</code>. To be used in regression tests when
+ * <code>Enum</code> values are created.
  */
 public final class EnumValue implements ObjectContract {
 

@@ -1,13 +1,5 @@
 package randoop.types;
 
-import org.junit.Test;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
-import randoop.types.test.ParameterInput;
-
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -15,6 +7,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.Test;
+import randoop.types.test.ParameterInput;
 
 public class ParameterizedTypeTest {
 
@@ -309,14 +307,9 @@ public class ParameterizedTypeTest {
   }
 
   /**
-   * Test what happens when get type parameters for cases
-   * {@code Iterable<String>}
-   * {@code Iterable<T>}
-   * {@code Iterable<? extends T>}
-   * {@code Iterable<? super T>}
-   * {@code Iterable<Cap of ? extends T>}
-   * {@code Iterable<Cap of ? super T>}
-   * {@code Iterable<? extends Comparable<T>}
+   * Test what happens when get type parameters for cases {@code Iterable<String>} {@code
+   * Iterable<T>} {@code Iterable<? extends T>} {@code Iterable<? super T>} {@code Iterable<Cap of ?
+   * extends T>} {@code Iterable<Cap of ? super T>} {@code Iterable<? extends Comparable<T>}
    */
   @Test
   public void testTypeParameters() {

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>EagerReferenceBound (randoop 3.0.9 API)</title>
+<title>EagerReferenceBound (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="EagerReferenceBound (randoop 3.0.9 API)";
+            parent.document.title="EagerReferenceBound (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -120,9 +120,8 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>class <span class="typeNameLabel">EagerReferenceBound</span>
 extends <a href="../../randoop/types/ReferenceBound.html" title="class in randoop.types">ReferenceBound</a></pre>
-<div class="block">Represents a bound on a type variable where the bound is a <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>
- that can be used directly.
- Contrast with <a href="../../randoop/types/LazyReferenceBound.html" title="class in randoop.types"><code>LazyReferenceBound</code></a>.</div>
+<div class="block">Represents a bound on a type variable where the bound is a <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> that can be used
+ directly. Contrast with <a href="../../randoop/types/LazyReferenceBound.html" title="class in randoop.types"><code>LazyReferenceBound</code></a>.</div>
 </li>
 </ul>
 </div>
@@ -182,7 +181,8 @@ extends <a href="../../randoop/types/ReferenceBound.html" title="class in randoo
 <td class="colFirst"><code>(package private) boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/EagerReferenceBound.html#isLowerBound-randoop.types.ParameterBound-randoop.types.Substitution-">isLowerBound</a></span>(<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;bound,
             <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</code>
-<div class="block">Tests whether this is a lower bound on the type of a given bound with respect to a type substitution.</div>
+<div class="block">Tests whether this is a lower bound on the type of a given bound with respect to a type
+ substitution.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
@@ -356,7 +356,8 @@ extends <a href="../../randoop/types/ReferenceBound.html" title="class in randoo
 <pre>boolean&nbsp;isLowerBound(<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;bound,
                      <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/ParameterBound.html#isLowerBound-randoop.types.ParameterBound-randoop.types.Substitution-">ParameterBound</a></code></span></div>
-<div class="block">Tests whether this is a lower bound on the type of a given bound with respect to a type substitution.</div>
+<div class="block">Tests whether this is a lower bound on the type of a given bound with respect to a type
+ substitution.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/types/ParameterBound.html#isLowerBound-randoop.types.ParameterBound-randoop.types.Substitution-">isLowerBound</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></code></dd>
@@ -364,7 +365,8 @@ extends <a href="../../randoop/types/ReferenceBound.html" title="class in randoo
 <dd><code>bound</code> - the other bound</dd>
 <dd><code>substitution</code> - the type substitution</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true, if this bound is a lower bound on the type of the given bound, and false otherwise</dd>
+<dd>true, if this bound is a lower bound on the type of the given bound, and false
+     otherwise</dd>
 </dl>
 </li>
 </ul>
@@ -404,8 +406,8 @@ extends <a href="../../randoop/types/ReferenceBound.html" title="class in randoo
 <dd><code>argType</code> - the concrete argument type</dd>
 <dd><code>subst</code> - the substitution</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if this bound is satisfied by the concrete type when the
-         substitution is used on the bound, false otherwise</dd>
+<dd>true if this bound is satisfied by the concrete type when the substitution is used on
+     the bound, false otherwise</dd>
 </dl>
 </li>
 </ul>

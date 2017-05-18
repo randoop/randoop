@@ -1,13 +1,19 @@
 package randoop.reflection;
 
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
+import org.junit.Test;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.ThrowClassNameError;
 import randoop.operation.OperationParseException;
@@ -23,17 +29,7 @@ import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 import randoop.types.Type;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-/**
- * Tests instantiation of type parameters by OperationModel
- */
+/** Tests instantiation of type parameters by OperationModel */
 public class InstantiationTest {
 
   @Test
@@ -50,23 +46,24 @@ public class InstantiationTest {
     classnames.add(packageName + "." + "YW");
     classnames.add(packageName + "." + "RML");
 
+    String classname = packageName + "." + "GenericBounds";
     Set<String> methodNames = new LinkedHashSet<>();
-    methodNames.add("m00");
-    methodNames.add("m01");
-    methodNames.add("m02");
-    methodNames.add("m03");
-    methodNames.add("m04");
-    methodNames.add("m05");
-    methodNames.add("m06");
-    methodNames.add("m07");
-    methodNames.add("m08");
+    methodNames.add(classname + "." + "m00");
+    methodNames.add(classname + "." + "m01");
+    methodNames.add(classname + "." + "m02");
+    methodNames.add(classname + "." + "m03");
+    methodNames.add(classname + "." + "m04");
+    methodNames.add(classname + "." + "m05");
+    methodNames.add(classname + "." + "m06");
+    methodNames.add(classname + "." + "m07");
+    methodNames.add(classname + "." + "m08");
     //    methodNames.add("m09");
     System.out.println("Note: test for m09 is disabled until have constraint propagation working");
-    methodNames.add("m10");
-    methodNames.add("m11");
-    methodNames.add("m12");
-    methodNames.add("getZ");
-    methodNames.add("setZ");
+    methodNames.add(classname + "." + "m10");
+    methodNames.add(classname + "." + "m11");
+    methodNames.add(classname + "." + "m12");
+    methodNames.add("randoop.reflection.RML.getZ");
+    methodNames.add("randoop.reflection.RML.setZ");
 
     OperationModel model = createModel(classnames, packageName);
 
@@ -98,10 +95,10 @@ public class InstantiationTest {
 
   /**
    * This test fails if {@code D_BST} is removed since model always chooses {@code String} for
-   * parameter to {@code BST} and without {@code D_BST} there is no class that implements
-   * {@code C_BST<String>}.
+   * parameter to {@code BST} and without {@code D_BST} there is no class that implements {@code
+   * C_BST<String>}.
    *
-   * it should be possible for it to pass with {@code B_BST}.
+   * <p>it should be possible for it to pass with {@code B_BST}.
    */
   /*
   @Test
@@ -202,9 +199,7 @@ public class InstantiationTest {
   }
   */
 
-  /**
-   * Based on a case from imglib2.
-   */
+  /** Based on a case from imglib2. */
   @Test
   public void testIntersectionType() {
     Set<String> classnames = new LinkedHashSet<>();
@@ -227,9 +222,7 @@ public class InstantiationTest {
     }
   }
 
-  /**
-   * Based on a case from Apache Commons Collections.
-   */
+  /** Based on a case from Apache Commons Collections. */
   @Test
   public void testCaptureConvInstantiation() {
     Set<String> classnames = new LinkedHashSet<>();
@@ -293,8 +286,7 @@ public class InstantiationTest {
   */
 
   private OperationModel createModel(Set<String> names, String packageName) {
-    VisibilityPredicate visibility =
-        new PackageVisibilityPredicate(Package.getPackage(packageName));
+    VisibilityPredicate visibility = new PackageVisibilityPredicate(packageName);
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Set<String> exercisedClassnames = new LinkedHashSet<>();
     Set<String> methodSignatures = new LinkedHashSet<>();
@@ -357,7 +349,7 @@ public class InstantiationTest {
         if (!nullOKNames.contains(operation.getName())) {
           TypedClassOperation classOperation =
               instantiator.instantiate((TypedClassOperation) operation);
-          if (!operation.getName().equals("m09")) {
+          if (!operation.getName().equals("randoop.reflection.GenericBounds.m09")) {
             assertNotNull(
                 "instantiation of method " + operation + " should not be null", classOperation);
             addTypes(classOperation, inputTypes);

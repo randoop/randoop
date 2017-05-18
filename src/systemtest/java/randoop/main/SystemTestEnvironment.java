@@ -1,14 +1,13 @@
 package randoop.main;
 
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.junit.Assert.fail;
-
-/**
- * Manages the TestEnvironment for a system test run.
- */
+/** Manages the TestEnvironment for a system test run. */
 class SystemTestEnvironment {
   /** The default directory name for test source files */
   private static final String SOURCE_DIR_NAME = "java";
@@ -31,48 +30,80 @@ class SystemTestEnvironment {
   /** The path for the root directory for test input classes. */
   final Path testInputClassDir;
 
+  final Path mapcallAgentPath;
+
+  final Path excercisedClassAgentPath;
+
   /**
    * Initializes a {@link SystemTestEnvironment} with the given classpath, working directory, input
    * class directory, and JaCoCo agent path.
    *
-   * @param classpath  the class path for this system test run
-   * @param workingDir  the working directory for this system test run
-   * @param testInputClassDir  the input class directory
-   * @param jacocoAgentPath  the path for the jacocoagent.jar file
+   * @param classpath the class path for this system test run
+   * @param workingDir the working directory for this system test run
+   * @param testInputClassDir the input class directory
+   * @param jacocoAgentPath the path for the jacocoagent.jar file
    */
   private SystemTestEnvironment(
-      String classpath, Path workingDir, Path testInputClassDir, Path jacocoAgentPath) {
+      String classpath,
+      Path workingDir,
+      Path testInputClassDir,
+      Path jacocoAgentPath,
+      Path mapcallAgentPath,
+      Path excercisedClassAgentPath) {
     this.classpath = classpath;
     this.systemTestWorkingDir = workingDir;
     this.testInputClassDir = testInputClassDir;
     this.jacocoAgentPath = jacocoAgentPath;
+    this.mapcallAgentPath = mapcallAgentPath;
+    this.excercisedClassAgentPath = excercisedClassAgentPath;
   }
 
   /**
-   * Creates the system test environment using the given classpath and build directory.
-   * Assumes working directories, test input class files, and the jacoco agent jar file are all
-   * located within the build directory.
+   * Creates the system test environment using the given classpath and build directory. Assumes
+   * working directories, test input class files, and the jacoco agent jar file are all located
+   * within the build directory.
    *
-   * @param classpath  the system test classpath
-   * @param buildDir  the build directory
+   * @param classpath the system test classpath
+   * @param buildDir the build directory
    * @return the system test environment with
    */
   static SystemTestEnvironment createSystemTestEnvironment(String classpath, Path buildDir) {
     Path workingDir = buildDir.resolve("working-directories");
     Path testInputClassDir = buildDir.resolve("classes/testInput");
     Path jacocoAgentPath = buildDir.resolve("jacocoagent/jacocoagent.jar");
-    return new SystemTestEnvironment(classpath, workingDir, testInputClassDir, jacocoAgentPath);
+    Path libsPath = buildDir.resolve("libs");
+    Path mapcallAgentPath = null;
+    Path exercisedClassAgentPath = null;
+    try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(libsPath)) {
+      for (Path entry : dirStream) {
+        if (entry.getFileName().toString().startsWith("exercised-class")) {
+          exercisedClassAgentPath = entry;
+        }
+        if (entry.getFileName().toString().startsWith("mapcall")) {
+          mapcallAgentPath = entry;
+        }
+      }
+    } catch (IOException e) {
+      fail("unable to get build directory contents");
+    }
+    return new SystemTestEnvironment(
+        classpath,
+        workingDir,
+        testInputClassDir,
+        jacocoAgentPath,
+        mapcallAgentPath,
+        exercisedClassAgentPath);
   }
 
   /**
-   * Creates the {@link TestEnvironment} for a test using the given directory name.
-   * Creates a subdirectory in the {@link #systemTestWorkingDir} that
-   * contains the subdirectories for source, class and JaCoCo files using the directory names
-   * {@link #SOURCE_DIR_NAME}, {@link #CLASS_DIR_NAME}, and {@link #JACOCO_DIR_NAME}.
-   * <p>
-   * Will fail calling test if an {@code IOException} is thrown
+   * Creates the {@link TestEnvironment} for a test using the given directory name. Creates a
+   * subdirectory in the {@link #systemTestWorkingDir} that contains the subdirectories for source,
+   * class and JaCoCo files using the directory names {@link #SOURCE_DIR_NAME}, {@link
+   * #CLASS_DIR_NAME}, and {@link #JACOCO_DIR_NAME}.
    *
-   * @param dirname  the name of the directory to create
+   * <p>Will fail calling test if an {@code IOException} is thrown
+   *
+   * @param dirname the name of the directory to create
    * @return the {@link TestEnvironment} with the directory as the working directory
    */
   TestEnvironment createTestEnvironment(String dirname) {
@@ -94,8 +125,8 @@ class SystemTestEnvironment {
   /**
    * Creates a directory in the given parent directory with the subdirectory name.
    *
-   * @param parentDir  the parent directory
-   * @param subdirName  the subdirectory name
+   * @param parentDir the parent directory
+   * @param subdirName the subdirectory name
    * @return the path of the created subdirectory
    */
   private Path createSubDirectory(Path parentDir, String subdirName) throws IOException {

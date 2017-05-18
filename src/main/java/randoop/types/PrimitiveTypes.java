@@ -8,9 +8,9 @@ import java.util.Set;
 
 /**
  * Utilities for working with {@code Class<?> objects} that Java reflection treats as primitive,
- * which includes primitive types and {@code void}.
- * Provides conversion from primitive type names (and "void") to {@code Class} objects,
- * boxing and unboxing, as well as primitive subtype and assignment tests.
+ * which includes primitive types and {@code void}. Provides conversion from primitive type names
+ * (and "void") to {@code Class} objects, boxing and unboxing, as well as primitive subtype and
+ * assignment tests.
  */
 public final class PrimitiveTypes {
   private PrimitiveTypes() {
@@ -61,10 +61,10 @@ public final class PrimitiveTypes {
   }
 
   /**
-   * Primitive widening map.
-   * Maps a primitive type to the set of primitive types to which it may be converted by widening
-   * as defined in
-   * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.2">JLS section 5.1.2</a>.
+   * Primitive widening map. Maps a primitive type to the set of primitive types to which it may be
+   * converted by widening as defined in <a
+   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.2">JLS section
+   * 5.1.2</a>.
    */
   private static final Map<Class<?>, Set<Class<?>>> wideningTable = new HashMap<>();
 
@@ -88,10 +88,10 @@ public final class PrimitiveTypes {
   }
 
   /**
-   * Return the {@code Class<?>} object for the given primitive type name or "void".
-   * These are names that {@code Class.forName()} will not convert.
+   * Return the {@code Class<?>} object for the given primitive type name or "void". These are names
+   * that {@code Class.forName()} will not convert.
    *
-   * @param typeName  the name of the type
+   * @param typeName the name of the type
    * @return the {@code Class<?>} object for the type, or null
    */
   public static Class<?> classForName(String typeName) {
@@ -99,13 +99,13 @@ public final class PrimitiveTypes {
   }
 
   /**
-   * Tests assignability from source to target type via identity conversion
-   * and widening primitive conversion.
+   * Tests assignability from source to target type via identity conversion and widening primitive
+   * conversion.
    *
-   * @param target  the target type for assignment; that is, the lvalue or left-hand side.
-   *    Must be primitive.
-   * @param source  the source type for assignment; that is, the rvalue or right-hand side.
-   *    Must be primitive.
+   * @param target the target type for assignment; that is, the lvalue or left-hand side. Must be
+   *     primitive.
+   * @param source the source type for assignment; that is, the rvalue or right-hand side. Must be
+   *     primitive.
    * @return true if the source type can be assigned to the target type, false otherwise
    */
   static boolean isAssignable(Class<?> target, Class<?> source) {
@@ -120,7 +120,7 @@ public final class PrimitiveTypes {
   /**
    * Determine if the given {@code Class<?>} is a boxed primitive type.
    *
-   * @param c  the {@code Class<?>}
+   * @param c the {@code Class<?>}
    * @return true if the {@code Class<?>} is a boxed primitive, false otherwise
    */
   public static boolean isBoxedPrimitive(Class<?> c) {
@@ -128,11 +128,10 @@ public final class PrimitiveTypes {
   }
 
   /**
-   * Indicates whether the first primitive type is a (transitive) subtype of the second primitive
-   * as determined by primitive widening.
-   * Note: returns false when both types are the same.
+   * Indicates whether the first primitive type is a (transitive) subtype of the second primitive as
+   * determined by primitive widening. Note: returns false when both types are the same.
    *
-   * @param first  the first primitive type
+   * @param first the first primitive type
    * @param second the second primitive type
    * @return true if the first type is a subtype of the second type
    */
@@ -147,7 +146,7 @@ public final class PrimitiveTypes {
   /**
    * Return boxed type for a primitive type
    *
-   * @param cls  the {@code Class} object for the primitive type
+   * @param cls the {@code Class} object for the primitive type
    * @return the boxed type for the primitive type, or null if the given type is not primitive
    */
   static Class<?> toBoxedType(Class<?> cls) {
@@ -157,7 +156,7 @@ public final class PrimitiveTypes {
   /**
    * Returns the primitive {@code Class<?>} type for a boxed primitive type.
    *
-   * @param c  the {@code Class<?>} type
+   * @param c the {@code Class<?>} type
    * @return the primitive type for the boxed type, or null if given type is not a boxed primitive
    */
   static Class<?> toUnboxedType(Class<?> c) {

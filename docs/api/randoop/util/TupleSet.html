@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>TupleSet (randoop 3.0.9 API)</title>
+<title>TupleSet (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="TupleSet (randoop 3.0.9 API)";
+            parent.document.title="TupleSet (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -185,22 +185,22 @@ extends java.lang.Object</pre>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/util/TupleSet.html" title="class in randoop.util">TupleSet</a>&lt;<a href="../../randoop/util/TupleSet.html" title="type parameter in TupleSet">E</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/TupleSet.html#exhaustivelyExtend-java.util.List-">exhaustivelyExtend</a></span>(java.util.List&lt;<a href="../../randoop/util/TupleSet.html" title="type parameter in TupleSet">E</a>&gt;&nbsp;elements)</code>
-<div class="block">Creates a new tuple set from this set by inserting elements of the given list
- at all positions in the tuple.</div>
+<div class="block">Creates a new tuple set from this set by inserting elements of the given list at all positions
+ in the tuple.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/util/TupleSet.html" title="class in randoop.util">TupleSet</a>&lt;<a href="../../randoop/util/TupleSet.html" title="type parameter in TupleSet">E</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/TupleSet.html#extend-java.util.List-">extend</a></span>(java.util.List&lt;<a href="../../randoop/util/TupleSet.html" title="type parameter in TupleSet">E</a>&gt;&nbsp;elements)</code>
-<div class="block">Extends all of the elements of the current tuple set with all of the elements of
- the given list.</div>
+<div class="block">Extends all of the elements of the current tuple set with all of the elements of the given
+ list.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/TupleSet.html#findAndTransform-randoop.util.TupleVisitor-">findAndTransform</a></span>(<a href="../../randoop/util/TupleVisitor.html" title="interface in randoop.util">TupleVisitor</a>&lt;<a href="../../randoop/util/TupleSet.html" title="type parameter in TupleSet">E</a>,T&gt;&nbsp;visitor)</code>
-<div class="block">Finds the first tuple that the visitor is able to transform,
- and returns the result of the transformation.</div>
+<div class="block">Finds the first tuple that the visitor is able to transform, and returns the result of the
+ transformation.</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
@@ -208,8 +208,7 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/TupleSet.html#insert-E-java.util.List-int-">insert</a></span>(<a href="../../randoop/util/TupleSet.html" title="type parameter in TupleSet">E</a>&nbsp;e,
       java.util.List&lt;<a href="../../randoop/util/TupleSet.html" title="type parameter in TupleSet">E</a>&gt;&nbsp;tuple,
       int&nbsp;i)</code>
-<div class="block">Returns a new list that is formed by inserting the element at the given position
- in the tuple.</div>
+<div class="block">Returns a new list that is formed by inserting the element at the given position in the tuple.</div>
 </td>
 </tr>
 </table>
@@ -297,10 +296,9 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>extend</h4>
 <pre>public&nbsp;<a href="../../randoop/util/TupleSet.html" title="class in randoop.util">TupleSet</a>&lt;<a href="../../randoop/util/TupleSet.html" title="type parameter in TupleSet">E</a>&gt;&nbsp;extend(java.util.List&lt;<a href="../../randoop/util/TupleSet.html" title="type parameter in TupleSet">E</a>&gt;&nbsp;elements)</pre>
-<div class="block">Extends all of the elements of the current tuple set with all of the elements of
- the given list.
- In other words, if there are <i>k</i> elements given then each tuple will be replaced by <i>k</i>
- new tuples extended by one of the input elements.</div>
+<div class="block">Extends all of the elements of the current tuple set with all of the elements of the given
+ list. In other words, if there are <i>k</i> elements given then each tuple will be replaced by
+ <i>k</i> new tuples extended by one of the input elements.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>elements</code> - the list of elements</dd>
@@ -316,8 +314,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>exhaustivelyExtend</h4>
 <pre>public&nbsp;<a href="../../randoop/util/TupleSet.html" title="class in randoop.util">TupleSet</a>&lt;<a href="../../randoop/util/TupleSet.html" title="type parameter in TupleSet">E</a>&gt;&nbsp;exhaustivelyExtend(java.util.List&lt;<a href="../../randoop/util/TupleSet.html" title="type parameter in TupleSet">E</a>&gt;&nbsp;elements)</pre>
-<div class="block">Creates a new tuple set from this set by inserting elements of the given list
- at all positions in the tuple.</div>
+<div class="block">Creates a new tuple set from this set by inserting elements of the given list at all positions
+ in the tuple.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>elements</code> - the list of elements</dd>
@@ -337,8 +335,7 @@ extends java.lang.Object</pre>
 <pre>private&nbsp;java.util.List&lt;<a href="../../randoop/util/TupleSet.html" title="type parameter in TupleSet">E</a>&gt;&nbsp;insert(<a href="../../randoop/util/TupleSet.html" title="type parameter in TupleSet">E</a>&nbsp;e,
                                  java.util.List&lt;<a href="../../randoop/util/TupleSet.html" title="type parameter in TupleSet">E</a>&gt;&nbsp;tuple,
                                  int&nbsp;i)</pre>
-<div class="block">Returns a new list that is formed by inserting the element at the given position
- in the tuple.</div>
+<div class="block">Returns a new list that is formed by inserting the element at the given position in the tuple.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>e</code> - the element to insert</dd>
@@ -356,8 +353,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>findAndTransform</h4>
 <pre>public&nbsp;&lt;T&gt;&nbsp;T&nbsp;findAndTransform(<a href="../../randoop/util/TupleVisitor.html" title="interface in randoop.util">TupleVisitor</a>&lt;<a href="../../randoop/util/TupleSet.html" title="type parameter in TupleSet">E</a>,T&gt;&nbsp;visitor)</pre>
-<div class="block">Finds the first tuple that the visitor is able to transform,
- and returns the result of the transformation.</div>
+<div class="block">Finds the first tuple that the visitor is able to transform, and returns the result of the
+ transformation.</div>
 <dl>
 <dt><span class="paramLabel">Type Parameters:</span></dt>
 <dd><code>T</code> - the return type of the visitor</dd>

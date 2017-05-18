@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Represents a reference type as a type argument to a parameterized type.
- * (See
- * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.)
+ * Represents a reference type as a type argument to a parameterized type. (See <a
+ * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section
+ * 4.5.1</a>.)
  */
 public class ReferenceArgument extends TypeArgument {
 
@@ -16,7 +16,7 @@ public class ReferenceArgument extends TypeArgument {
   /**
    * Creates a {@code ReferenceArgument} for the given {@link ReferenceType}.
    *
-   * @param referenceType  the {@link ReferenceType}
+   * @param referenceType the {@link ReferenceType}
    */
   private ReferenceArgument(ReferenceType referenceType) {
     this.referenceType = referenceType;
@@ -25,7 +25,7 @@ public class ReferenceArgument extends TypeArgument {
   /**
    * Creates a {@code ReferenceArgument} from the given type.
    *
-   * @param type  the type
+   * @param type the type
    * @return a {@code ReferenceArgument} for the given type
    */
   public static ReferenceArgument forType(
@@ -63,11 +63,13 @@ public class ReferenceArgument extends TypeArgument {
 
   /**
    * {@inheritDoc}
-   * Considers cases:
+   *
+   * <p>Considers cases:
+   *
    * <ul>
-   *   <li>{@code T} contains {@code T}</li>
-   *   <li>{@code T} contains {@code ? extends T}</li>
-   *   <li>{@code T} contains {@code ? super T}</li>
+   *   <li>{@code T} contains {@code T}
+   *   <li>{@code T} contains {@code ? extends T}
+   *   <li>{@code T} contains {@code ? super T}
    * </ul>
    */
   @Override

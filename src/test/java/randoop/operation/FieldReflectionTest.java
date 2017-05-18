@@ -1,6 +1,9 @@
 package randoop.operation;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -10,7 +13,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
+import org.junit.Test;
 import randoop.field.AccessibleField;
 import randoop.field.ClassWithFields;
 import randoop.field.SubclassWithFields;
@@ -26,21 +29,14 @@ import randoop.types.RandoopTypeException;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 /**
- * FieldReflectionTest consists of tests of reflection collection of field methods
- * to verify that field operations are collected as expected.
- *
+ * FieldReflectionTest consists of tests of reflection collection of field methods to verify that
+ * field operations are collected as expected.
  */
 public class FieldReflectionTest {
 
   /**
-   * basicFields tests that all of the expected fields are collected for the
-   * ClassWithFields class.
+   * basicFields tests that all of the expected fields are collected for the ClassWithFields class.
    */
   @Test
   public void basicFields() {
@@ -103,8 +99,8 @@ public class FieldReflectionTest {
   }
 
   /**
-   * inheritedFields looks for operations built for inherited fields.
-   * Avoid hidden fields, because we cannot get to them without reflection.
+   * inheritedFields looks for operations built for inherited fields. Avoid hidden fields, because
+   * we cannot get to them without reflection.
    */
   @Test
   public void inheritedFields() {
@@ -151,10 +147,7 @@ public class FieldReflectionTest {
     assertEquals("number of operations ", 2 * expected.size() - 1 + 2, actual.size());
   }
 
-  /**
-   * filteredFields checks to ensure we don't get any fields that should be removed
-   *
-   */
+  /** filteredFields checks to ensure we don't get any fields that should be removed */
   @Test
   public void filteredFields() {
     Class<?> c = ClassWithFields.class;
@@ -184,9 +177,8 @@ public class FieldReflectionTest {
   }
 
   /**
-   * getOperations maps a field into possible operations.
-   * Looks at modifiers to decide which kind of field wrapper
-   * to create and then builds list with getter and setter.
+   * getOperations maps a field into possible operations. Looks at modifiers to decide which kind of
+   * field wrapper to create and then builds list with getter and setter.
    *
    * @param f reflective Field object
    * @return a list of getter/setter statements for the field

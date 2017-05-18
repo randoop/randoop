@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>CollectionsExt (randoop 3.0.9 API)</title>
+<title>CollectionsExt (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="CollectionsExt (randoop 3.0.9 API)";
+            parent.document.title="CollectionsExt (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -167,8 +167,8 @@ extends java.lang.Object</pre>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>(package private) static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/CollectionsExt.html#toStringInLines-java.util.Collection-">toStringInLines</a></span>(java.util.Collection&lt;?&gt;&nbsp;c)</code>
-<div class="block">Prints out the String.valueOf() of all elements of the collection,
- inserting a new line after each element.</div>
+<div class="block">Prints out the String.valueOf() of all elements of the collection, inserting a new line after
+ each element.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
@@ -243,9 +243,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>toStringInLines</h4>
 <pre>static&nbsp;java.lang.String&nbsp;toStringInLines(java.util.Collection&lt;?&gt;&nbsp;c)</pre>
-<div class="block">Prints out the String.valueOf() of all elements of the collection,
- inserting a new line after each element. The order is specified by the
- collection's iterator.</div>
+<div class="block">Prints out the String.valueOf() of all elements of the collection, inserting a new line after
+ each element. The order is specified by the collection's iterator.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>c</code> - the collection of objects to include in string</dd>
@@ -261,8 +260,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>toStringLines</h4>
 <pre>private static&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;toStringLines(java.util.Collection&lt;?&gt;&nbsp;c)</pre>
-<div class="block">List of String.valueOf() of all elements of the collection. The order is
- specified by the collection's iterator.</div>
+<div class="block">List of String.valueOf() of all elements of the collection. The order is specified by the
+ collection's iterator.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>c</code> - the collection of objects to include in string</dd>
@@ -279,12 +278,10 @@ extends java.lang.Object</pre>
 <h4>formSublists</h4>
 <pre>public static&nbsp;&lt;T&gt;&nbsp;java.util.List&lt;java.util.List&lt;T&gt;&gt;&nbsp;formSublists(java.util.List&lt;T&gt;&nbsp;list,
                                                                  int&nbsp;maxLength)</pre>
-<div class="block">Divides the argument into sublists of at most the given length.
- All sublists except at most one will have length exactly <code>maxLength</code>.
- No sublist will be empty.
+<div class="block">Divides the argument into sublists of at most the given length. All sublists except at most one
+ will have length exactly <code>maxLength</code>. No sublist will be empty.
 
- The result list is unmodifiable.
- It does <em>not</em> copy the list and simply shares it.</div>
+ <p>The result list is unmodifiable. It does <em>not</em> copy the list and simply shares it.</div>
 <dl>
 <dt><span class="paramLabel">Type Parameters:</span></dt>
 <dd><code>T</code> - the element type</dd>

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ExpectedExceptionGenerator (randoop 3.0.9 API)</title>
+<title>ExpectedExceptionGenerator (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ExpectedExceptionGenerator (randoop 3.0.9 API)";
+            parent.document.title="ExpectedExceptionGenerator (randoop 3.1.5 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10};
+var methods = {"i0":10,"i1":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -116,11 +116,10 @@ var activeTableTab = "activeTableTab";
 extends java.lang.Object
 implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test">TestCheckGenerator</a></pre>
 <div class="block">A <a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test"><code>TestCheckGenerator</code></a> that generates checks for exceptions that are expected at a
- particular statement.
- Creates a <a href="../../randoop/test/ExpectedExceptionCheck.html" title="class in randoop.test"><code>ExpectedExceptionCheck</code></a> that is returned in a <a href="../../randoop/test/RegressionChecks.html" title="class in randoop.test"><code>RegressionChecks</code></a>
- collection if the exception occurs, or a <a href="../../randoop/test/ErrorRevealingChecks.html" title="class in randoop.test"><code>ErrorRevealingChecks</code></a> collection if not.
+ particular statement. Creates a <a href="../../randoop/test/ExpectedExceptionCheck.html" title="class in randoop.test"><code>ExpectedExceptionCheck</code></a> that is returned in a <a href="../../randoop/test/RegressionChecks.html" title="class in randoop.test"><code>RegressionChecks</code></a> collection if the exception occurs, or a <a href="../../randoop/test/ErrorRevealingChecks.html" title="class in randoop.test"><code>ErrorRevealingChecks</code></a>
+ collection if not.
 
- Note that this generator is distinct from other check generators that either return regression
+ <p>Note that this generator is distinct from other check generators that either return regression
  checks or error-revealing checks.</div>
 </li>
 </ul>
@@ -182,10 +181,16 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code><a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ExpectedExceptionGenerator.html#getExpected--">getExpected</a></span>()</code>
+<div class="block">Returns the type of the expected exception.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/ExpectedExceptionGenerator.html#visit-randoop.sequence.ExecutableSequence-">visit</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</code>
-<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code>
- based on the criteria of this generator.</div>
+<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code> based on the criteria
+ of this generator.</div>
 </td>
 </tr>
 </table>
@@ -257,12 +262,14 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <a name="visit-randoop.sequence.ExecutableSequence-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>visit</h4>
 <pre>public&nbsp;<a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&nbsp;visit(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</pre>
-<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code>
- based on the criteria of this generator. Adds checks for an expected exception at the final statement of the sequence.</div>
+<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code> based on the criteria
+ of this generator.
+
+ <p>Adds checks for an expected exception at the final statement of the sequence.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/TestCheckGenerator.html#visit-randoop.sequence.ExecutableSequence-">visit</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test">TestCheckGenerator</a></code></dd>
@@ -270,6 +277,20 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <dd><code>s</code> - the sequence for which checks are generated</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the generated check set for the sequence</dd>
+</dl>
+</li>
+</ul>
+<a name="getExpected--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getExpected</h4>
+<pre>public&nbsp;<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;getExpected()</pre>
+<div class="block">Returns the type of the expected exception.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the type of the expected exception</dd>
 </dl>
 </li>
 </ul>

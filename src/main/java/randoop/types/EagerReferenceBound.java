@@ -3,16 +3,15 @@ package randoop.types;
 import java.util.List;
 
 /**
- * Represents a bound on a type variable where the bound is a {@link ReferenceType}
- * that can be used directly.
- * Contrast with {@link LazyReferenceBound}.
+ * Represents a bound on a type variable where the bound is a {@link ReferenceType} that can be used
+ * directly. Contrast with {@link LazyReferenceBound}.
  */
 class EagerReferenceBound extends ReferenceBound {
 
   /**
    * Creates a bound for the given reference type.
    *
-   * @param boundType  the reference boundType
+   * @param boundType the reference boundType
    */
   EagerReferenceBound(ReferenceType boundType) {
     super(boundType);

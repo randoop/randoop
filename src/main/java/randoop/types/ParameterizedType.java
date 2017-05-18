@@ -3,16 +3,13 @@ package randoop.types;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-
 import plume.UtilMDE;
 
 /**
- * Represents a parameterized type.
- * A <i>parameterized type</i> is a type <code>C&lt;T<sub>1</sub>,&hellip;,T<sub>k</sub>&gt;</code>
- * where <code>C&lt;F<sub>1</sub>,&hellip;,F<sub>k</sub>&gt;</code> is a generic class
- * instantiated by a substitution <code>[F<sub>i</sub>:=T<sub>i</sub>]</code>, and
- * <code>T<sub>i</sub></code> is a subtype of the upper bound <code>B<sub>i</sub></code> of
- * the type parameter <code>F<sub>i</sub></code>.
+ * Represents a parameterized type. A <i>parameterized type</i> is a type {@code C<T1,...,Tk>} where
+ * {@code C<F1,...,Fk>} is a generic class instantiated by a substitution <code>[Fi:=Ti]</code>, and
+ * <code>Ti</code> is a subtype of the upper bound <code>Bi</code> of the type parameter <code>Fi
+ * </code>.
  *
  * @see GenericClassType
  * @see InstantiatedType
@@ -24,8 +21,8 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
    * A {@code Class<>} object that represents a parameterized type, is treated as a "declaration"
    * from which the type parameters are extracted and available as a {@link ParameterTable}.
    *
-   * @param typeClass  the class type
-   * @return  a generic class type for the given type
+   * @param typeClass the class type
+   * @return a generic class type for the given type
    */
   public static GenericClassType forClass(Class<?> typeClass) {
     if (typeClass.getTypeParameters().length == 0) {
@@ -42,8 +39,8 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
   }
 
   /**
-   * Performs the conversion of {@code java.lang.reflect.ParameterizedType} to
-   * a {@code ParameterizedType} .
+   * Performs the conversion of {@code java.lang.reflect.ParameterizedType} to a {@code
+   * ParameterizedType} .
    *
    * @param parameterTable  the table of type parameters for the declaration context of this type
    * @param type  the reflective type object
@@ -90,9 +87,9 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
 
   /**
    * {@inheritDoc}
-   * Returns the fully qualified name of this type with fully qualified type
-   * arguments.
-   * E.g., {@code java.lang.List<java.lang.String>}
+   *
+   * <p>Returns the fully qualified name of this type with fully qualified type arguments. E.g.,
+   * {@code java.lang.List<java.lang.String>}
    */
   @Override
   public String getName() {

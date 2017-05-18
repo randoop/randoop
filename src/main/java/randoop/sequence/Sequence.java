@@ -1,5 +1,6 @@
 package randoop.sequence;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -7,7 +8,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.OperationParseException;
@@ -18,6 +18,7 @@ import randoop.types.NonParameterizedType;
 import randoop.types.Type;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
+import randoop.util.Log;
 import randoop.util.OneMoreElementList;
 import randoop.util.Randomness;
 import randoop.util.SimpleList;
@@ -25,15 +26,14 @@ import randoop.util.WeightedElement;
 
 /**
  * Immutable.
- * <p>
- * A sequence of {@link Statement}s. Each element in the sequence represents a
- * particular {@link Statement}, like a method call
- * <code>Foo f = m(i1...iN)</code> or a declaration <code>int x = 0</code>.
- * <p>
- * This class represents only the structure of a well-formed sequence of
- * statements, and does not contain any information about the runtime behavior
- * of the sequence. The class randoop.ExecutableSequence adds functionality that
- * executes the sequence.
+ *
+ * <p>A sequence of {@link Statement}s. Each element in the sequence represents a particular {@link
+ * Statement}, like a method call <code>Foo f = m(i1...iN)</code> or a declaration <code>int x = 0
+ * </code>.
+ *
+ * <p>This class represents only the structure of a well-formed sequence of statements, and does not
+ * contain any information about the runtime behavior of the sequence. The class
+ * randoop.ExecutableSequence adds functionality that executes the sequence.
  */
 public final class Sequence implements WeightedElement {
 
@@ -43,20 +43,20 @@ public final class Sequence implements WeightedElement {
   public final SimpleList<Statement> statements;
 
   /**
-   * The variables that are inputs or output for the last statement of this sequence.
-   * These hold the values "produced" by some statement of the sequence.
-   * Should be final but cannot because of serialization.
-   * This info is used by some generators.
+   * The variables that are inputs or output for the last statement of this sequence. These hold the
+   * values "produced" by some statement of the sequence. Should be final but cannot because of
+   * serialization. This info is used by some generators.
    */
   private transient /* final */ List<Variable> lastStatementVariables;
 
   /**
-   * The types of the inputs and output for the last statement of this sequence.
-   * Excludes void in the case the output type of the operation of the last statement is void.
-   * Should be final but cannot because of serialization.
-   * This info is used by some generators.
+   * The types of the inputs and output for the last statement of this sequence. Excludes void in
+   * the case the output type of the operation of the last statement is void. Should be final but
+   * cannot because of serialization. This info is used by some generators.
    */
   private transient /* final */ List<Type> lastStatementTypes;
+
+  private transient boolean allowShortForm;
 
   /**
    * The list of statement indices that as determined by construction define outputs of this
@@ -64,351 +64,49 @@ public final class Sequence implements WeightedElement {
    */
   private List<Integer> outputIndices;
 
-  /*
-   * Weight is used by heuristic that favors smaller sequences so it makes sense
-   * to define weight as the inverse of size.
-   */
-  @Override
-  public double getWeight() {
-    return 1 / (double) size();
-  }
-
-  /**
-   * The statement for the statement at the given index.
-   *
-   * @param index the index of the statement position in this sequence
-   * @return the statement at the given position
-   */
-  public final Statement getStatement(int index) {
-    return getStatementWithInputs(index);
-  }
-
-  /**
-   * The number of statements in the sequence.
-   *
-   * @return the number of statements in this sequence
-   */
-  public final int size() {
-    return statements.size();
-  }
-
-  /**
-   * The value created by the ith statement.
-   * @param i  the statement index
-   * @return the variable created by the statement at the given index
-   */
-  public Variable getVariable(int i) {
-    checkIndex(i);
-    return new Variable(this, i);
-  }
-
-  /**
-   * The variables involved in the last statement. This includes the output
-   * variable.
-   *
-   * @return the variables used in the last statement of this sequence
-   */
-  List<Variable> getVariablesOfLastStatement() {
-    return this.lastStatementVariables;
-  }
-
-  /**
-   * The types of all the variables involved in the last statement. This
-   * includes the output variable. The types returned are not the types in the
-   * signature of the Operation, but the types of the variables.
-   *
-   * @return the types of the variables in the last statement of this sequence
-   */
-  List<Type> getTypesForLastStatement() {
-    return this.lastStatementTypes;
-  }
-
-  /**
-   * The value created by the last statement in the sequence.
-   *
-   * @return the variable assigned to by the last statement of this sequence
-   */
-  public Variable getLastVariable() {
-    return new Variable(this, this.statements.size() - 1);
-  }
-
-  /**
-   * The statement that created this value.
-   *
-   * @param value  the variable
-   * @return the statement that assigned to this variable
-   */
-  public Statement getCreatingStatement(Variable value) {
-    if (value.sequence != this) throw new IllegalArgumentException("value.owner != this");
-    return statements.get((value).index);
-  }
-
-  /**
-   * Returns the list of output indices for use when sequences are dealt with compositionally.
-   * What is an output index is determined by how the sequence is created, but generally is the
-   * index of the last statement.
-   *
-   * @return the list of output indices for this sequence
-   */
-  public List<Integer> getOutputIndices() {
-    return outputIndices;
-  }
-
-  /**
-   * The inputs for the ith statement. Includes the receiver.
-   *
-   * @param statementIndex  the index for the statement
-   * @return the list of variables for the statement at the given index
-   */
-  public List<Variable> getInputs(int statementIndex) {
-    List<Variable> inputsAsVariables = new ArrayList<>();
-    for (RelativeNegativeIndex relIndex : this.statements.get(statementIndex).inputs) {
-      inputsAsVariables.add(getVariableForInput(statementIndex, relIndex));
-    }
-    return inputsAsVariables;
-  }
-
-  /**
-   * Returns the Java source code representation of this sequence with values substituted for
-   * simple initializations.
-   * Similar to  * {@link ExecutableSequence#toCodeString()} except does not include checks.
-   *
-   * @return a string containing Java code for this sequence
-   */
-  public String toCodeString() {
-    StringBuilder b = new StringBuilder();
-    for (int i = 0; i < size(); i++) {
-      // don't dump primitive initializations, if using literals
-      if (getStatement(i).getShortForm() != null) {
-        continue;
-      }
-      appendCode(b, i);
-    }
-    return b.toString();
-  }
-
-  /**
-   * Returns the Java source representation of this sequence showing all statements.
-   * Simplifications performed in {@link #toCodeString()} are preserved but initializations used
-   * will also be printed.
-   *
-   * @return a string containing Java code for this sequence
-   */
-  public String toFullCodeString() {
-    // XXX can we do this so that substitutions don't happen?
-    StringBuilder b = new StringBuilder();
-    for (int i = 0; i < size(); i++) {
-      appendCode(b, i);
-    }
-    return b.toString();
-  }
-
-  @Override
-  public String toString() {
-    return toCodeString();
-  }
-
-  /**
-   * A set of bits, where there is one bit associated with each index. Active
-   * flags are used during generation, to determine what values in an existing
-   * sequence are useful to be used as inputs when creating a new sequence out
-   * of the existing one.
-   */
-  private BitSet activeFlags;
-
-  public boolean hasActiveFlags() {
-    return !activeFlags.isEmpty();
-  }
-
-  boolean isActive(int i) {
-    return activeFlags.get(i);
-  }
-
-  private void setAllActiveFlags() {
-    activeFlags.set(0, this.size());
-  }
-
-  public void clearAllActiveFlags() {
-    activeFlags.clear(0, this.size());
-  }
-
-  public void clearActiveFlag(int i) {
-    activeFlags.clear(i);
-  }
-
-  // Used internally (i.e. in package randoop.sequence) to represent inputs
-  // to a statement.
-  //
-  // IMPLEMENTATION NOTE: Recall that a sequence is a sequence
-  // of statements where the inputs to a statement are values created
-  // by earlier statements. Instead of using a Variable to represent such
-  // inputs, we use a RelativeNegativeIndex, which is just a wrapper
-  // for an integer. The integer represents a negative offset from the
-  // statement index in which this RelativeNegativeIndex lives, and
-  // the offset points to the statement that created the values that is
-  // used as an input. In other words, a RelativeNegativeIndex says
-  // "I represent the value created by the N-th statement above me".
-  //
-  // For example, the sequence
-  //
-  // x = new Foo(); Bar b = x.m();
-  //
-  // is internally represented as follows:
-  //
-  // first element: Foo() applied to inputs []
-  // second element: m() applied to inputs [-1]
-  //
-  // Here is a brief history of why we use this particular representation.
-  //
-  // The very first way we represented inputs to a statement was
-  // using a list of StatementWithInput objects, i.e. an input was just
-  // a reference to a previous statement that created the input value.
-  // For example, a sequence might be represented as follows:
-  //
-  // StatementWithInputs@123: Foo() applied to inputs []
-  // StatementWithInputs@124: m() applied to inputs [StatementWithInputs@123]
-  //
-  // We discovered that a big slowdown in the input generator was that we were
-  // consuming lots of memory when creating sequences: for example, in memory,
-  // when extending the sequence x = new Foo(); Bar b = x.m(); we cloned each
-  // statement, created a new list, added the cloned statements, and finally
-  // appended the new statement to the new list.
-  //
-  // Instead of cloning, we might imagine just using the original statements
-  // in the new sequence. This does not work. For example, let's say that we
-  // implement this scheme,
-  // so that everywhere we need "new Foo()" we use the same statement (more
-  // precisely, the same StatementWithInputs). Then, we cannot express
-  // Foo f1 = new Foo(); Foo f2 = new Foo(); f1.equals(f2); because its
-  // internal representation must be
-  //
-  // StatementWithInputs@123: Foo() applied to inputs []
-  // StatementWithInputs@123: Foo() applied to inputs []
-  // StatementWithInputs@125: Object.equals(Object) applied to inputs
-  // [StatementWithInputs@123,
-  // StatementWithInputs@123]
-  //
-  // It's clear that if we want to reuse statements, we cannot directly
-  // use the statements as inputs.
-  //
-  // We can instead use indices: 0 represents the value created by the
-  // first statement, 1 the second, etc. Now we can express the above
-  // sequence:
-  //
-  // Foo() applied to inputs []
-  // Foo() applied to inputs []
-  // Foo() applied to inputs [0, 1]
-  //
-  // This scheme makes it relatively expensive to concatenate sequences
-  // (some generators do lots of concatenation, so concatenation is the
-  // hotspot). Because indexing is absolute, some statements
-  // will need to have their input indices updated. For example, let's say we
-  // wanted to concatenate two copies of the
-  // last sequence above. We cannot just concatenate the statements, because
-  // then we have
-  //
-  // Foo() applied to inputs []
-  // Foo() applied to inputs []
-  // Foo() applied to inputs [0, 1]
-  // Foo() applied to inputs []
-  // Foo() applied to inputs []
-  // Foo() applied to inputs [0, 1]
-  //
-  // While we really want
-  //
-  // Foo() applied to inputs []
-  // Foo() applied to inputs []
-  // Foo() applied to inputs [0, 1]
-  // Foo() applied to inputs []
-  // Foo() applied to inputs []
-  // Foo() applied to inputs [3, 4]
-  //
-  // This means that we need to (1) adjust indices, which takes time, and
-  // (2) create new statements that represent the adjusted indices, which
-  // breaks the "reuse statements" idea.
-  //
-  // Relative indices are the current implementation. Instead of representing
-  // inputs as indices that start from the beginning of the sequence, a
-  // statement's
-  // indices are represented by a relative, negative offsets:
-  //
-  // Foo() applied to inputs []
-  // Foo() applied to inputs []
-  // Foo() applied to inputs [-2, -1]
-  // Foo() applied to inputs []
-  // Foo() applied to inputs []
-  // Foo() applied to inputs [-2, -1]
-  //
-  // Now concatenation is easier: to concatenate two sequences, concatenate
-  // their statements. Also, we do not need to create any new
-  // statements.
-  static final class RelativeNegativeIndex {
-
-    public final int index;
-
-    RelativeNegativeIndex(int index) {
-      if (index >= 0) {
-        throw new IllegalArgumentException("invalid index (expecting non-positive): " + index);
-      }
-      this.index = index;
-    }
-
-    @Override
-    public String toString() {
-      return Integer.toString(index);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      return o instanceof RelativeNegativeIndex && this.index == ((RelativeNegativeIndex) o).index;
-    }
-
-    @Override
-    public int hashCode() {
-      return this.index;
-    }
-  }
-
-  /**
-   * Returns the relative negative index that would result if we use the given
-   * value as an input to the statement at position statementPosition.
-   * @param statementPosition  the position of the statement
-   * @param v  the variable
-   * @return the relative negative index computed from the position and variable
-   */
-  private static RelativeNegativeIndex getRelativeIndexForVariable(
-      int statementPosition, Variable v) {
-    if (v.index >= statementPosition) throw new IllegalArgumentException();
-    return new RelativeNegativeIndex(-(statementPosition - v.index));
-  }
-
-  /**
-   * Returns the Variable corresponding to the given input, which is an input to
-   * the statement at position statementPosition.
-   * @param statementPosition  the statement position
-   * @param input  relative index of the input variable
-   * @return the variable at the relative index from the given statement position
-   */
-  private Variable getVariableForInput(int statementPosition, RelativeNegativeIndex input) {
-    int absoluteIndex = statementPosition + input.index;
-    if (absoluteIndex < 0) {
-      throw new IllegalArgumentException(
-          "invalid index (expecting non-negative): " + absoluteIndex);
-    }
-    return new Variable(this, absoluteIndex);
-  }
-
-  /**
-   * Create a new, empty sequence.
-   */
+  /** Create a new, empty sequence. */
   public Sequence() {
     this(new ArrayListSimpleList<Statement>(), 0, 0);
   }
 
   /**
-   * Returns a sequence that is of the form "Foo f = null;" where Foo is the
-   * given class.
-   * @param c  the type for initialized variable
+   * Create a sequence that has the given statements and hashCode (hashCode is for optimization).
+   *
+   * <p>See {@link #computeHashcode(SimpleList)} for details on the hashCode.
+   *
+   * @param statements the statements of the new sequence
+   * @param hashCode the hashcode for the new sequence
+   * @param netSize the net size for the new sequence
+   */
+  private Sequence(SimpleList<Statement> statements, int hashCode, int netSize) {
+    if (statements == null) {
+      throw new IllegalArgumentException("`statements' argument cannot be null");
+    }
+    this.statements = statements;
+    this.savedHashCode = hashCode;
+    this.savedNetSize = netSize;
+    this.computeLastStatementInfo();
+    this.outputIndices = new ArrayList<>();
+    this.allowShortForm = true;
+    this.outputIndices.add(this.statements.size() - 1);
+    this.activeFlags = new BitSet(this.size());
+    this.setAllActiveFlags();
+    this.checkRep();
+  }
+
+  /**
+   * Create a sequence with the given statements.
+   *
+   * @param statements the statements
+   */
+  public Sequence(SimpleList<Statement> statements) {
+    this(statements, computeHashcode(statements), computeNetSize(statements));
+  }
+
+  /**
+   * Returns a sequence that is of the form "Foo f = null;" where Foo is the given class.
+   *
+   * @param c the type for initialized variable
    * @return the sequence consisting of the initialization
    */
   public static Sequence zero(Type c) {
@@ -417,20 +115,37 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Create a sequence with the given statements.
+   * Creates a sequence corresponding to the given non-null primitive value.
    *
-   * @param statements  the statements
+   * @param value non-null reference to a primitive or String value
+   * @return a {@link Sequence} consisting of a statement created with the object
    */
-  public Sequence(SimpleList<Statement> statements) {
-    this(statements, computeHashcode(statements), computeNetSize(statements));
+  public static Sequence createSequenceForPrimitive(Object value) {
+    if (value == null) throw new IllegalArgumentException("value is null");
+    Type type = Type.forValue(value);
+
+    if (!TypedOperation.isNonreceiverType(type)) {
+      throw new IllegalArgumentException("value is not a (boxed) primitive or String");
+    }
+
+    if (type.isBoxedPrimitive()) {
+      type = ((NonParameterizedType) type).toPrimitive();
+    }
+
+    if (type.equals(JavaTypes.STRING_TYPE) && !Value.stringLengthOK((String) value)) {
+      throw new IllegalArgumentException(
+          "value is a string of length > " + GenInputsAbstract.string_maxlen);
+    }
+
+    return new Sequence().extend(TypedOperation.createPrimitiveInitialization(type, value));
   }
 
   /**
    * Creates a sequence consisting of the given operation given the input.
    *
-   * @param operation  the operation for the sequence
-   * @param inputSequences  the sequences computing inputs to the operation
-   * @param indexes  the indices of the inputs to the operation
+   * @param operation the operation for the sequence
+   * @param inputSequences the sequences computing inputs to the operation
+   * @param indexes the indices of the inputs to the operation
    * @return the sequence that applies the operation to the given inputs
    */
   public static Sequence createSequence(
@@ -465,11 +180,282 @@ public final class Sequence implements WeightedElement {
     return sequence;
   }
 
-  // The hashcode of a sequence is the sum of each statement's hashcode.
-  // This seems good enough, and it makes computing hashCode of a
-  // concatenation of sequences faster (it's just the addition of each
-  // sequence's'
-  // hashCode). Otherwise, hashCode computation used to be a hotspot.
+  /**
+   * Returns a new sequence that is equivalent to this sequence plus the given operation appended to
+   * the end.
+   *
+   * @param operation the operation to add
+   * @param inputVariables the input variables
+   * @return the sequence formed by appending the given operation to this sequence
+   */
+  public final Sequence extend(TypedOperation operation, List<Variable> inputVariables) {
+    checkInputs(operation, inputVariables);
+    List<RelativeNegativeIndex> indexList = new ArrayList<>(1);
+    for (Variable v : inputVariables) {
+      indexList.add(getRelativeIndexForVariable(size(), v));
+    }
+    Statement statement = new Statement(operation, indexList);
+    int newNetSize = (operation.isNonreceivingValue()) ? this.savedNetSize : this.savedNetSize + 1;
+    return new Sequence(
+        new OneMoreElementList<>(this.statements, statement),
+        this.savedHashCode + statement.hashCode(),
+        newNetSize);
+  }
+
+  /**
+   * Returns a new sequence that is equivalent to this sequence plus the given statement appended at
+   * the end.
+   *
+   * @param operation the operation to add
+   * @param inputs the input variables for the operation
+   * @return the sequence formed by appending the given operation to this sequence
+   */
+  public final Sequence extend(TypedOperation operation, Variable... inputs) {
+    return extend(operation, Arrays.asList(inputs));
+  }
+
+  /**
+   * extend adds a new statement to this sequence using the operation of the given statement.
+   * Intended as the only place that we reach inside a {@link Statement} for its operation.
+   *
+   * @param statement is a {@link Statement} object from which the operation is copied
+   * @param inputs is the list of variables for input
+   * @return sequence constructed from this one plus the operation
+   * @see Sequence#extend(TypedOperation, List)
+   */
+  public final Sequence extend(Statement statement, List<Variable> inputs) {
+    return extend(statement.getOperation(), inputs);
+  }
+
+  /**
+   * Create a new sequence that is the concatenation of the given sequences.
+   *
+   * @param sequences the list of sequences to concatenate
+   * @return the concatenation of the sequences in the list
+   */
+  public static Sequence concatenate(List<Sequence> sequences) {
+    List<SimpleList<Statement>> statements1 = new ArrayList<>();
+    int newHashCode = 0;
+    int newNetSize = 0;
+    for (Sequence c : sequences) {
+      newHashCode += c.savedHashCode;
+      newNetSize += c.savedNetSize;
+      statements1.add(c.statements);
+    }
+    return new Sequence(new ListOfLists<>(statements1), newHashCode, newNetSize);
+  }
+
+  /*
+   * Weight is used by heuristic that favors smaller sequences so it makes sense
+   * to define weight as the inverse of size.
+   */
+  @Override
+  public double getWeight() {
+    return 1 / (double) size();
+  }
+
+  /**
+   * The statement for the statement at the given index.
+   *
+   * @param index the index of the statement position in this sequence
+   * @return the statement at the given position
+   */
+  public final Statement getStatement(int index) {
+    return getStatementWithInputs(index);
+  }
+
+  /**
+   * The number of statements in the sequence.
+   *
+   * @return the number of statements in this sequence
+   */
+  public final int size() {
+    return statements.size();
+  }
+
+  /**
+   * The value created by the ith statement.
+   *
+   * @param i the statement index
+   * @return the variable created by the statement at the given index
+   */
+  public Variable getVariable(int i) {
+    checkIndex(i);
+    return new Variable(this, i);
+  }
+
+  /**
+   * The variables involved in the last statement. This includes the output variable.
+   *
+   * @return the variables used in the last statement of this sequence
+   */
+  List<Variable> getVariablesOfLastStatement() {
+    return this.lastStatementVariables;
+  }
+
+  /**
+   * The types of all the variables involved in the last statement. This includes the output
+   * variable. The types returned are not the types in the signature of the Operation, but the types
+   * of the variables.
+   *
+   * @return the types of the variables in the last statement of this sequence
+   */
+  List<Type> getTypesForLastStatement() {
+    return this.lastStatementTypes;
+  }
+
+  /**
+   * The value created by the last statement in the sequence.
+   *
+   * @return the variable assigned to by the last statement of this sequence
+   */
+  public Variable getLastVariable() {
+    return new Variable(this, this.statements.size() - 1);
+  }
+
+  /**
+   * The statement that created this value.
+   *
+   * @param value the variable
+   * @return the statement that assigned to this variable
+   */
+  public Statement getCreatingStatement(Variable value) {
+    if (value.sequence != this) throw new IllegalArgumentException("value.owner != this");
+    return statements.get((value).index);
+  }
+
+  /**
+   * Returns the list of output indices for use when sequences are dealt with compositionally. What
+   * is an output index is determined by how the sequence is created, but generally is the index of
+   * the last statement.
+   *
+   * @return the list of output indices for this sequence
+   */
+  public List<Integer> getOutputIndices() {
+    return outputIndices;
+  }
+
+  /**
+   * The inputs for the ith statement. Includes the receiver.
+   *
+   * @param statementIndex the index for the statement
+   * @return the list of variables for the statement at the given index
+   */
+  public List<Variable> getInputs(int statementIndex) {
+    List<Variable> inputsAsVariables = new ArrayList<>();
+    for (RelativeNegativeIndex relIndex : this.statements.get(statementIndex).inputs) {
+      inputsAsVariables.add(getVariableForInput(statementIndex, relIndex));
+    }
+    return inputsAsVariables;
+  }
+
+  /**
+   * Returns the Java source code representation of this sequence with values substituted for simple
+   * initializations. Similar to * {@link ExecutableSequence#toCodeString()} except does not include
+   * checks.
+   *
+   * @return a string containing Java code for this sequence
+   */
+  public String toCodeString() {
+    StringBuilder b = new StringBuilder();
+    for (int i = 0; i < size(); i++) {
+      // don't dump primitive initializations, if using literals
+      if (canUseShortForm() && getStatement(i).getShortForm() != null) {
+        continue;
+      }
+      appendCode(b, i);
+      b.append(Globals.lineSep);
+    }
+    return b.toString();
+  }
+
+  /**
+   * Returns the Java source representation of this sequence showing all statements. Simplifications
+   * performed in {@link #toCodeString()} are preserved but initializations used will also be
+   * printed.
+   *
+   * @return a string containing Java code for this sequence
+   */
+  private String toFullCodeString() {
+    // XXX can we do this so that substitutions don't happen?
+    StringBuilder b = new StringBuilder();
+    for (int i = 0; i < size(); i++) {
+      appendCode(b, i);
+    }
+    return b.toString();
+  }
+
+  @Override
+  public String toString() {
+    return toCodeString();
+  }
+
+  /**
+   * A set of bits, where there is one bit associated with each index. Active flags are used during
+   * generation, to determine what values in an existing sequence are useful to be used as inputs
+   * when creating a new sequence out of the existing one.
+   */
+  private BitSet activeFlags;
+
+  public boolean hasActiveFlags() {
+    return !activeFlags.isEmpty();
+  }
+
+  boolean isActive(int i) {
+    return activeFlags.get(i);
+  }
+
+  private void setAllActiveFlags() {
+    activeFlags.set(0, this.size());
+  }
+
+  public void clearAllActiveFlags() {
+    activeFlags.clear(0, this.size());
+  }
+
+  public void clearActiveFlag(int i) {
+    activeFlags.clear(i);
+  }
+
+  /**
+   * Returns the relative negative index that would result if we use the given value as an input to
+   * the statement at position statementPosition.
+   *
+   * @param statementPosition the position of the statement
+   * @param v the variable
+   * @return the relative negative index computed from the position and variable
+   */
+  private static RelativeNegativeIndex getRelativeIndexForVariable(
+      int statementPosition, Variable v) {
+    if (v.index >= statementPosition) throw new IllegalArgumentException();
+    return new RelativeNegativeIndex(-(statementPosition - v.index));
+  }
+
+  /**
+   * Returns the Variable corresponding to the given input, which is an input to the statement at
+   * position statementPosition.
+   *
+   * @param statementPosition the statement position
+   * @param input relative index of the input variable
+   * @return the variable at the relative index from the given statement position
+   */
+  private Variable getVariableForInput(int statementPosition, RelativeNegativeIndex input) {
+    int absoluteIndex = statementPosition + input.index;
+    if (absoluteIndex < 0) {
+      throw new IllegalArgumentException(
+          "invalid index (expecting non-negative): " + absoluteIndex);
+    }
+    return new Variable(this, absoluteIndex);
+  }
+
+  /**
+   * The hashcode of a sequence is the sum of each statement's hashcode. This seems good enough, and
+   * it makes computing hashCode of a concatenation of sequences faster (it's just the addition of
+   * each sequence's' hashCode). Otherwise, hashCode computation used to be a hotspot.
+   *
+   * @param statements the list of statements over which to compute the hash code
+   * @return the sum of the hash codes of the statements in the sequence
+   */
   private static int computeHashcode(SimpleList<Statement> statements) {
     int hashCode = 0;
     for (int i = 0; i < statements.size(); i++) {
@@ -480,11 +466,10 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Counts the number of statements in a list that are not initializations with
-   * a primitive type. For instance <code>int var7 = 0</code>.
+   * Counts the number of statements in a list that are not initializations with a primitive type.
+   * For instance <code>int var7 = 0</code>.
    *
-   * @param statements
-   *          the list of {@link Statement} objects
+   * @param statements the list of {@link Statement} objects
    * @return count of statements other than primitive initializations
    */
   private static int computeNetSize(SimpleList<Statement> statements) {
@@ -497,27 +482,10 @@ public final class Sequence implements WeightedElement {
     return netSize;
   }
 
-  // Create a sequence that has the given statements and hashCode (hashCode is
-  // for optimization).
-  //
-  // See comment at computeHashCode method for notes on hashCode.
-  private Sequence(SimpleList<Statement> statements, int hashCode, int netSize) {
-    if (statements == null) {
-      throw new IllegalArgumentException("`statements' argument cannot be null");
-    }
-    this.statements = statements;
-    this.savedHashCode = hashCode;
-    this.savedNetSize = netSize;
-    computeLastStatementInfo();
-    this.outputIndices = new ArrayList<>();
-    outputIndices.add(this.statements.size() - 1);
-    this.activeFlags = new BitSet(this.size());
-    setAllActiveFlags();
-    checkRep();
-  }
-
-  // Set lastStatementVariables and lastStatementTypes to their appropriate
-  // values. See documentation for these fields for more info.
+  /**
+   * Set lastStatementVariables and lastStatementTypes to their appropriate values. See
+   * documentation for these fields for more info.
+   */
   private void computeLastStatementInfo() {
     this.lastStatementTypes = new ArrayList<>();
     this.lastStatementVariables = new ArrayList<>();
@@ -556,9 +524,7 @@ public final class Sequence implements WeightedElement {
     }
   }
 
-  /**
-   * Representation invariant check.
-   */
+  /** Representation invariant check. */
   private void checkRep() {
 
     if (!GenInputsAbstract.debug_checks) {
@@ -619,10 +585,7 @@ public final class Sequence implements WeightedElement {
     }
   }
 
-  /**
-   * Two sequences are equal if their statements(+inputs) are element-wise
-   * equal.
-   */
+  /** Two sequences are equal if their statements(+inputs) are element-wise equal. */
   @Override
   public final boolean equals(Object o) {
     if (!(o instanceof Sequence)) return false;
@@ -668,7 +631,7 @@ public final class Sequence implements WeightedElement {
   /**
    * True iff this sequence contains a statement at the given index.
    *
-   * @param index  the index to check for a statement
+   * @param index the index to check for a statement
    * @return true if the index is the position of a statement in this sequence, false otherwise
    */
   private boolean isValidIndex(int index) {
@@ -677,7 +640,8 @@ public final class Sequence implements WeightedElement {
 
   /**
    * An list of all the statements in this sequence.
-   * @return  the list of all statements in this sequence
+   *
+   * @return the list of all statements in this sequence
    */
   private SimpleList<Statement> getStatementsWithInputs() {
     // The list is constructed unmodifiable so we can just return it.
@@ -687,7 +651,7 @@ public final class Sequence implements WeightedElement {
   /**
    * The statement(+inputs) at the given index.
    *
-   * @param index  the statement position
+   * @param index the statement position
    * @return the {@link Statement} at the given index
    */
   private Statement getStatementWithInputs(int index) {
@@ -712,55 +676,6 @@ public final class Sequence implements WeightedElement {
 
   void checkIndex(int i) {
     if (i < 0 || i > size() - 1) throw new IllegalArgumentException();
-  }
-
-  /**
-   * Returns a new sequence that is equivalent to this sequence plus the given
-   * operation appended to the end.
-   *
-   * @param operation  the operation to add
-   * @param inputVariables  the input variables
-   * @return the sequence formed by appending the given operation to this sequence
-   */
-  public final Sequence extend(TypedOperation operation, List<Variable> inputVariables) {
-    checkInputs(operation, inputVariables);
-    List<RelativeNegativeIndex> indexList = new ArrayList<>(1);
-    for (Variable v : inputVariables) {
-      indexList.add(getRelativeIndexForVariable(size(), v));
-    }
-    Statement statement = new Statement(operation, indexList);
-    int newNetSize = (operation.isNonreceivingValue()) ? this.savedNetSize : this.savedNetSize + 1;
-    return new Sequence(
-        new OneMoreElementList<>(this.statements, statement),
-        this.savedHashCode + statement.hashCode(),
-        newNetSize);
-  }
-
-  /**
-   * Returns a new sequence that is equivalent to this sequence plus the given
-   * statement appended at the end.
-   * @param operation  the operation to add
-   * @param inputs  the input variables for the operation
-   * @return the sequence formed by appending the given operation to this sequence
-   */
-  public final Sequence extend(TypedOperation operation, Variable... inputs) {
-    return extend(operation, Arrays.asList(inputs));
-  }
-
-  /**
-   * extend adds a new statement to this sequence using the operation of the
-   * given statement. Intended as the only place that we reach inside a
-   * {@link Statement} for its operation.
-   *
-   * @param statement
-   *          is a {@link Statement} object from which the operation is copied.
-   * @param inputs
-   *          is the list of variables for input
-   * @return sequence constructed from this one plus the operation
-   * @see Sequence#extend(TypedOperation, List)
-   */
-  public Sequence extend(Statement statement, List<Variable> inputs) {
-    return extend(statement.getOperation(), inputs);
   }
 
   // Argument checker for extend method.
@@ -835,28 +750,10 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Create a new sequence that is the concatenation of the given sequences.
+   * The inputs for the ith statement, as indices. An index equal to x means that the input is the
+   * value created by the x-th statement in the sequence.
    *
-   * @param sequences
-   *          the list of sequences to concatenate
-   * @return the concatenation of the sequences in the list
-   */
-  public static Sequence concatenate(List<Sequence> sequences) {
-    List<SimpleList<Statement>> statements1 = new ArrayList<>();
-    int newHashCode = 0;
-    int newNetSize = 0;
-    for (Sequence c : sequences) {
-      newHashCode += c.savedHashCode;
-      newNetSize += c.savedNetSize;
-      statements1.add(c.statements);
-    }
-    return new Sequence(new ListOfLists<>(statements1), newHashCode, newNetSize);
-  }
-
-  /**
-   * The inputs for the ith statement, as indices. An index equal to x means
-   * that the input is the value created by the x-th statement in the sequence.
-   * @param i  the statement index
+   * @param i the statement index
    * @return the absolute indices for the input variables in the given statement
    */
   public List<Integer> getInputsAsAbsoluteIndices(int i) {
@@ -870,10 +767,8 @@ public final class Sequence implements WeightedElement {
   /**
    * Appends the statement at the given index to the {@code StringBuilder}.
    *
-   * @param b
-   *          the {@link StringBuilder} to which the code is appended.
-   * @param index
-   *          the position of the statement to print in this {@code Sequence}.
+   * @param b the {@link StringBuilder} to which the code is appended
+   * @param index the position of the statement to print in this {@code Sequence}.
    */
   public void appendCode(StringBuilder b, int index) {
     // Get strings representing the inputs to this statement.
@@ -882,16 +777,14 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Returns a string representing this sequence. The string can be parsed back
-   * into a sequence using the method Sequence.parse(String). In particular, the
-   * following invariant holds:
+   * Returns a string representing this sequence. The string can be parsed back into a sequence
+   * using the method Sequence.parse(String). In particular, the following invariant holds:
    *
    * <pre>
    * st.equals(parse(st.toParsableCode()))
    * </pre>
    *
-   * See the parse(List) for the required format of a String
-   * representing a Sequence.
+   * See the parse(List) for the required format of a String representing a Sequence.
    *
    * @return parsable string description of sequence
    */
@@ -900,11 +793,10 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Like toParsableString, but the client can specify a string that will be
-   * used a separator between statements.
+   * Like toParsableString, but the client can specify a string that will be used a separator
+   * between statements.
    *
-   * @param statementSep
-   *          the statement separator
+   * @param statementSep the statement separator
    * @return the string representation of this sequence
    */
   private String toParsableString(String statementSep) {
@@ -922,36 +814,34 @@ public final class Sequence implements WeightedElement {
   /**
    * NOTE: the ONLY place this is used is in a test.
    *
-   * Parse a sequence encoded as a list of strings, each string corresponding to
-   * one statement. This method is similar to parse(String), but expects the
-   * individual statements already as separate strings. Each statement is
-   * expected to be of the form:
+   * <p>Parse a sequence encoded as a list of strings, each string corresponding to one statement.
+   * This method is similar to parse(String), but expects the individual statements already as
+   * separate strings. Each statement is expected to be of the form:
    *
    * <pre>
    *   VAR = OPERATION : VAR ... VAR
    * </pre>
    *
-   * where the VAR are strings representing a variable name, and OPERATION is a
-   * string representing an Operation. For more on OPERATION, see the
-   * documentation for {@link OperationParser#parse(String)}.
+   * where the VAR are strings representing a variable name, and OPERATION is a string representing
+   * an Operation. For more on OPERATION, see the documentation for {@link
+   * OperationParser#parse(String)}.
    *
-   * The first VAR token represents the "output variable" that is the result of
-   * the statement call. The VAR tokens appearing after OPERATION represent the
-   * "input variables" to the statement call. At the i-th line, the input
-   * variable tokens should appear as an output variable for some previous j-th
-   * line, j &lt; i.
+   * <p>The first VAR token represents the "output variable" that is the result of the statement
+   * call. The VAR tokens appearing after OPERATION represent the "input variables" to the statement
+   * call. At the i-th line, the input variable tokens should appear as an output variable for some
+   * previous j-th line, j &lt; i.
    *
-   * Here is an example of a list of lines representing a sequence.
+   * <p>Here is an example of a list of lines representing a sequence.
    *
-   * <pre>
-   * var0 = cons : java.util.HashMap.&lt;init&gt;() :
+   * <pre>{@code
+   * var0 = cons : java.util.HashMap.<init>() :
    * var1 = prim : double:-1.0 :
    * var2 = prim : java.lang.String:"hi!" :
    * var3 = method : java.util.HashMap.put(java.lang.Object,java.lang.Object) : var0 var1 var2
-   * </pre>
+   * }</pre>
    *
-   * The above sequence corresponds to the following java code (with package
-   * names omitted for brevity):
+   * The above sequence corresponds to the following java code (with package names omitted for
+   * brevity):
    *
    * <pre>
    * HashMap var0 = new HashMap();
@@ -960,11 +850,11 @@ public final class Sequence implements WeightedElement {
    * Object var3 = var0.put(var1, var2);
    * </pre>
    *
-   * When writing/reading sequences out to file: you have two options: serialize
-   * the sequences using java's serialization mechanism, or write them out as
-   * parsable text. Serialization is faster, and text is human-readable.
+   * When writing/reading sequences out to file: you have two options: serialize the sequences using
+   * java's serialization mechanism, or write them out as parsable text. Serialization is faster,
+   * and text is human-readable.
    *
-   * @param statements  the list of statement strings
+   * @param statements the list of statement strings
    * @return the sequence constructed from the list of strings
    * @throws SequenceParseException if any statement cannot be parsed
    */
@@ -1092,36 +982,33 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Parse a sequence encoded as a strings. Convenience method for
-   * parse(List), which parses a sequence of strings, each representing
-   * a Statement. See that method for more documentation on the string
-   * representation of a sequence.
-   * <p>
-   * This method breaks up the given string into statements assuming that each
-   * statement is separated by a line separator character.
-   * <p>
-   * The following invariant holds:
+   * Parse a sequence encoded as a strings. Convenience method for parse(List), which parses a
+   * sequence of strings, each representing a Statement. See that method for more documentation on
+   * the string representation of a sequence.
+   *
+   * <p>This method breaks up the given string into statements assuming that each statement is
+   * separated by a line separator character.
+   *
+   * <p>The following invariant holds:
    *
    * <pre>
    * st.equals(parse(st.toParsableCode()))
    * </pre>
    *
-   * When writing/reading sequences out to file: you have two options: serialize
-   * the sequences using java's serialization mechanism, or write them out as
-   * parsable text. Serialization is faster, and text is human-readable.
+   * When writing/reading sequences out to file: you have two options: serialize the sequences using
+   * java's serialization mechanism, or write them out as parsable text. Serialization is faster,
+   * and text is human-readable.
    *
-   * @param string  the string descriptor
+   * @param string the string descriptor
    * @return the sequence constructed by parsing the input string
-   * @throws SequenceParseException
-   *           if string is not valid sequence
+   * @throws SequenceParseException if string is not valid sequence
    */
   public static Sequence parse(String string) throws SequenceParseException {
     return parse(Arrays.asList(string.split(Globals.lineSep)));
   }
 
   /**
-   * A sequence representing a single primitive values, like "Foo var0 = null"
-   * or "int var0 = 1".
+   * A sequence representing a single primitive values, like "Foo var0 = null" or "int var0 = 1".
    *
    * @return true if this sequence is a single primitive initialization statement, false otherwise
    */
@@ -1130,13 +1017,11 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Test whether any statement of this sequence has an operation whose
-   * declaring class matches the given regular expression.
+   * Test whether any statement of this sequence has an operation whose declaring class matches the
+   * given regular expression.
    *
-   * @param classNames
-   *          the regular expression to test class names
-   * @return true if any statement has operation with matching declaring class,
-   *         false otherwise
+   * @param classNames the regular expression to test class names
+   * @return true if any statement has operation with matching declaring class, false otherwise
    */
   public boolean hasUseOfMatchingClass(Pattern classNames) {
     for (int i = 0; i < statements.size(); i++) {
@@ -1149,39 +1034,138 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Using compositional structure of this sequence, return the subsequence of
-   * this sequence that contains the statement at the given index.
+   * Using compositional structure of this sequence, return the subsequence of this sequence that
+   * contains the statement at the given index.
    *
-   * @param index  the statement position in this sequence
+   * @param index the statement position in this sequence
    * @return the sequence containing the index position
    */
   Sequence getSubsequence(int index) {
     return new Sequence(statements.getSublist(index));
   }
 
+  public void log() {
+    if (!Log.isLoggingOn()) {
+      return;
+    }
+
+    try {
+      GenInputsAbstract.log.write(Globals.lineSep + Globals.lineSep);
+      GenInputsAbstract.log.write(this.toFullCodeString());
+      GenInputsAbstract.log.flush();
+
+    } catch (IOException e) {
+      e.printStackTrace();
+      System.exit(1);
+    }
+  }
+
+  boolean canUseShortForm() {
+    return allowShortForm;
+  }
+
   /**
-   * Creates a sequence corresponding to the given non-null primitive value.
+   * Used internally (i.e. in package randoop.sequence) to represent inputs to a statement.
    *
-   * @param value  non-null reference to a primitive or String value
-   * @return a {@link Sequence} consisting of a statement created with the object.
+   * <p>IMPLEMENTATION NOTE: Recall that a sequence is a sequence of statements where the inputs to
+   * a statement are values created by earlier statements. Instead of using a Variable to represent
+   * such inputs, we use a RelativeNegativeIndex, which is just a wrapper for an integer. The
+   * integer represents a negative offset from the statement index in which this
+   * RelativeNegativeIndex lives, and the offset points to the statement that created the values
+   * that is used as an input. In other words, a RelativeNegativeIndex says "I represent the value
+   * created by the N-th statement above me".
+   *
+   * <p>For example, the sequence
+   *
+   * <p>x = new Foo(); Bar b = x.m();
+   *
+   * <p>is internally represented as follows:
+   *
+   * <p>first element: Foo() applied to inputs [] second element: m() applied to inputs [-1]
+   *
+   * <p>Here is a brief history of why we use this particular representation.
+   *
+   * <p>The very first way we represented inputs to a statement was using a list of
+   * StatementWithInput objects, i.e. an input was just a reference to a previous statement that
+   * created the input value. For example, a sequence might be represented as follows:
+   *
+   * <p>StatementWithInputs@123: Foo() applied to inputs [] StatementWithInputs@124: m() applied to
+   * inputs [StatementWithInputs@123]
+   *
+   * <p>We discovered that a big slowdown in the input generator was that we were consuming lots of
+   * memory when creating sequences: for example, in memory, when extending the sequence x = new
+   * Foo(); Bar b = x.m(); we cloned each statement, created a new list, added the cloned
+   * statements, and finally appended the new statement to the new list.
+   *
+   * <p>Instead of cloning, we might imagine just using the original statements in the new sequence.
+   * This does not work. For example, let's say that we implement this scheme, so that everywhere we
+   * need "new Foo()" we use the same statement (more precisely, the same StatementWithInputs).
+   * Then, we cannot express Foo f1 = new Foo(); Foo f2 = new Foo(); f1.equals(f2); because its
+   * internal representation must be
+   *
+   * <p>StatementWithInputs@123: Foo() applied to inputs [] StatementWithInputs@123: Foo() applied
+   * to inputs [] StatementWithInputs@125: Object.equals(Object) applied to inputs
+   * [StatementWithInputs@123, StatementWithInputs@123]
+   *
+   * <p>It's clear that if we want to reuse statements, we cannot directly use the statements as
+   * inputs.
+   *
+   * <p>We can instead use indices: 0 represents the value created by the first statement, 1 the
+   * second, etc. Now we can express the above sequence:
+   *
+   * <p>Foo() applied to inputs [] Foo() applied to inputs [] Foo() applied to inputs [0, 1]
+   *
+   * <p>This scheme makes it relatively expensive to concatenate sequences (some generators do lots
+   * of concatenation, so concatenation is the hotspot). Because indexing is absolute, some
+   * statements will need to have their input indices updated. For example, let's say we wanted to
+   * concatenate two copies of the last sequence above. We cannot just concatenate the statements,
+   * because then we have
+   *
+   * <p>Foo() applied to inputs [] Foo() applied to inputs [] Foo() applied to inputs [0, 1] Foo()
+   * applied to inputs [] Foo() applied to inputs [] Foo() applied to inputs [0, 1]
+   *
+   * <p>While we really want
+   *
+   * <p>Foo() applied to inputs [] Foo() applied to inputs [] Foo() applied to inputs [0, 1] Foo()
+   * applied to inputs [] Foo() applied to inputs [] Foo() applied to inputs [3, 4]
+   *
+   * <p>This means that we need to (1) adjust indices, which takes time, and (2) create new
+   * statements that represent the adjusted indices, which breaks the "reuse statements" idea.
+   *
+   * <p>Relative indices are the current implementation. Instead of representing inputs as indices
+   * that start from the beginning of the sequence, a statement's indices are represented by a
+   * relative, negative offsets:
+   *
+   * <p>Foo() applied to inputs [] Foo() applied to inputs [] Foo() applied to inputs [-2, -1] Foo()
+   * applied to inputs [] Foo() applied to inputs [] Foo() applied to inputs [-2, -1]
+   *
+   * <p>Now concatenation is easier: to concatenate two sequences, concatenate their statements.
+   * Also, we do not need to create any new statements.
    */
-  public static Sequence createSequenceForPrimitive(Object value) {
-    if (value == null) throw new IllegalArgumentException("value is null");
-    Type type = Type.forValue(value);
+  static final class RelativeNegativeIndex {
 
-    if (!TypedOperation.isNonreceiverType(type)) {
-      throw new IllegalArgumentException("value is not a (boxed) primitive or String");
+    public final int index;
+
+    RelativeNegativeIndex(int index) {
+      if (index >= 0) {
+        throw new IllegalArgumentException("invalid index (expecting non-positive): " + index);
+      }
+      this.index = index;
     }
 
-    if (type.isBoxedPrimitive()) {
-      type = ((NonParameterizedType) type).toPrimitive();
+    @Override
+    public String toString() {
+      return Integer.toString(index);
     }
 
-    if (type.equals(JavaTypes.STRING_TYPE) && !Value.stringLengthOK((String) value)) {
-      throw new IllegalArgumentException(
-          "value is a string of length > " + GenInputsAbstract.string_maxlen);
+    @Override
+    public boolean equals(Object o) {
+      return o instanceof RelativeNegativeIndex && this.index == ((RelativeNegativeIndex) o).index;
     }
 
-    return new Sequence().extend(TypedOperation.createPrimitiveInitialization(type, value));
+    @Override
+    public int hashCode() {
+      return this.index;
+    }
   }
 }

@@ -2,10 +2,7 @@ package randoop.runtime;
 
 import java.io.File;
 
-/**
- * A message indicating that Randoop created a specific JUnit file containing
- * generated tests.
- */
+/** A message indicating that Randoop created a specific JUnit file containing generated tests. */
 public class CreatedJUnitFile implements IMessage {
 
   private static final long serialVersionUID = 3786576811718698647L;

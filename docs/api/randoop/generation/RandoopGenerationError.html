@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>RandoopGenerationError (randoop 3.0.9 API)</title>
+<title>RandoopGenerationError (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="RandoopGenerationError (randoop 3.0.9 API)";
+            parent.document.title="RandoopGenerationError (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -124,7 +124,7 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">RandoopGenerationError</span>
 extends java.lang.Error</pre>
-<div class="block">Created by bjkeller on 2/22/17.</div>
+<div class="block">Error class to signal generation errors that should stop Randoop execution.</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../serialized-form.html#randoop.generation.RandoopGenerationError">Serialized Form</a></dd>
@@ -156,10 +156,6 @@ extends java.lang.Error</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/RandoopGenerationError.html#operation">operation</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>private java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/RandoopGenerationError.html#operationName">operationName</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>private static long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/RandoopGenerationError.html#serialVersionUID">serialVersionUID</a></span></code>&nbsp;</td>
 </tr>
@@ -178,9 +174,11 @@ extends java.lang.Error</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/generation/RandoopGenerationError.html#RandoopGenerationError-java.lang.String-randoop.operation.TypedOperation-java.lang.Throwable-">RandoopGenerationError</a></span>(java.lang.String&nbsp;operationName,
-                      <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
-                      java.lang.Throwable&nbsp;exception)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/generation/RandoopGenerationError.html#RandoopGenerationError-randoop.operation.TypedOperation-java.lang.Throwable-">RandoopGenerationError</a></span>(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
+                      java.lang.Throwable&nbsp;exception)</code>
+<div class="block">Create a <a href="../../randoop/generation/RandoopGenerationError.html" title="class in randoop.generation"><code>RandoopGenerationError</code></a> representing an error that occurs during the generation
+ of a sequence for the given operation.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -199,15 +197,22 @@ extends java.lang.Error</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>java.lang.Throwable</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/RandoopGenerationError.html#getException--">getException</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/RandoopGenerationError.html#getException--">getException</a></span>()</code>
+<div class="block">Return the <code>Throwable</code> for this error.</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/RandoopGenerationError.html#getInstantiatedOperation--">getInstantiatedOperation</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/RandoopGenerationError.html#getInstantiatedOperation--">getInstantiatedOperation</a></span>()</code>
+<div class="block">Return the <code>String</code> representation of the <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation"><code>TypedOperation</code></a> in this error.</div>
+</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/RandoopGenerationError.html#getOperationName--">getOperationName</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/RandoopGenerationError.html#getOperationName--">getOperationName</a></span>()</code>
+<div class="block">Returns the name of the <code>java.lang.reflect.AccessibleObject</code> underlying the operation in
+ this object.</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -251,15 +256,6 @@ extends java.lang.Error</pre>
 </dl>
 </li>
 </ul>
-<a name="operationName">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>operationName</h4>
-<pre>private final&nbsp;java.lang.String operationName</pre>
-</li>
-</ul>
 <a name="operation">
 <!--   -->
 </a>
@@ -286,15 +282,21 @@ extends java.lang.Error</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="RandoopGenerationError-java.lang.String-randoop.operation.TypedOperation-java.lang.Throwable-">
+<a name="RandoopGenerationError-randoop.operation.TypedOperation-java.lang.Throwable-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>RandoopGenerationError</h4>
-<pre>public&nbsp;RandoopGenerationError(java.lang.String&nbsp;operationName,
-                              <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
-                              java.lang.Throwable&nbsp;exception)</pre>
+<pre>RandoopGenerationError(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
+                       java.lang.Throwable&nbsp;exception)</pre>
+<div class="block">Create a <a href="../../randoop/generation/RandoopGenerationError.html" title="class in randoop.generation"><code>RandoopGenerationError</code></a> representing an error that occurs during the generation
+ of a sequence for the given operation.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>operation</code> - the actual operation</dd>
+<dd><code>exception</code> - the exception thrown during generation</dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -312,6 +314,12 @@ extends java.lang.Error</pre>
 <li class="blockList">
 <h4>getOperationName</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getOperationName()</pre>
+<div class="block">Returns the name of the <code>java.lang.reflect.AccessibleObject</code> underlying the operation in
+ this object.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the name of the reflection object for the operation</dd>
+</dl>
 </li>
 </ul>
 <a name="getInstantiatedOperation--">
@@ -321,6 +329,11 @@ extends java.lang.Error</pre>
 <li class="blockList">
 <h4>getInstantiatedOperation</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getInstantiatedOperation()</pre>
+<div class="block">Return the <code>String</code> representation of the <a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation"><code>TypedOperation</code></a> in this error.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the <code>String</code> representation of the operation</dd>
+</dl>
 </li>
 </ul>
 <a name="getException--">
@@ -330,6 +343,11 @@ extends java.lang.Error</pre>
 <li class="blockList">
 <h4>getException</h4>
 <pre>public&nbsp;java.lang.Throwable&nbsp;getException()</pre>
+<div class="block">Return the <code>Throwable</code> for this error.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the <code>Throwable</code> for this error.</dd>
+</dl>
 </li>
 </ul>
 </li>

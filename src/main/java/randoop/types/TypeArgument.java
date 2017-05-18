@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a type argument of a parameterized type as described in
- * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.
+ * Represents a type argument of a parameterized type as described in <a
+ * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section
+ * 4.5.1</a>.
+ *
  * <pre>
  *   TypeArgument:
  *     ReferenceType
@@ -19,10 +21,9 @@ import java.util.List;
 public abstract class TypeArgument {
 
   /**
-   * Converts a {@code java.lang.reflect.Type} to a {@code TypeArgument}
-   * object.
+   * Converts a {@code java.lang.reflect.Type} to a {@code TypeArgument} object.
    *
-   * @param type  the type of a type argument
+   * @param type the type of a type argument
    * @return the {@code TypeArgument} for the given type
    */
   public static TypeArgument forType(ParameterTable parameterTable, java.lang.reflect.Type type) {
@@ -43,16 +44,17 @@ public abstract class TypeArgument {
   /**
    * Applies the type substitution to this type argument.
    *
-   * @param substitution  the substitution
+   * @param substitution the substitution
    * @return a version of this type argument with type variables replaced by the substitution
    */
   public abstract TypeArgument apply(Substitution<ReferenceType> substitution);
 
   /**
-   * Checks whether this type argument contains another argument, using relationship defined in
-   * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.
+   * Checks whether this type argument contains another argument, using relationship defined in <a
+   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section
+   * 4.5.1</a>.
    *
-   * @param otherArgument  the other {@code TypeArgument}
+   * @param otherArgument the other {@code TypeArgument}
    * @return true if this argument contains the other argument
    */
   public abstract boolean contains(TypeArgument otherArgument);
@@ -84,9 +86,9 @@ public abstract class TypeArgument {
 
   /**
    * Determines whether this type argument is an instantiation of the other argument.
-   * @see InstantiatedType#isInstantiationOf(ReferenceType)
    *
-   * @param otherArgument  the other argument
+   * @see InstantiatedType#isInstantiationOf(ReferenceType)
+   * @param otherArgument the other argument
    * @return true if this type is an instantiation of the other argument, false otherwise
    */
   boolean isInstantiationOf(TypeArgument otherArgument) {

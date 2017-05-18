@@ -1,5 +1,8 @@
 package randoop.generation;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import plume.Option;
 import plume.OptionGroup;
 import plume.Unpublicized;
@@ -16,17 +19,12 @@ import randoop.util.Timer;
 import randoop.util.predicate.AlwaysFalse;
 import randoop.util.predicate.Predicate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 /**
  * Algorithm template for implementing a test generator.
  *
- * The main generation loop is defined in method <code>explore()</code>, which
- * repeatedly generates a new sequence, determines if it a failing sequence, and
- * stops the process when the time or sequence limit expires. The process of
- * generating a new sequences is left abstract.
+ * <p>The main generation loop is defined in method <code>explore()</code>, which repeatedly
+ * generates a new sequence, determines if it a failing sequence, and stops the process when the
+ * time or sequence limit expires. The process of generating a new sequences is left abstract.
  *
  * @see ForwardGenerator
  */
@@ -51,49 +49,43 @@ public abstract class AbstractGenerator {
   public int invalidSequenceCount = 0;
 
   /**
-   * The timer used to determine how much time has elapsed since the start of
-   * generator and whether generation should stop.
+   * The timer used to determine how much time has elapsed since the start of generator and whether
+   * generation should stop.
    */
   public final Timer timer = new Timer();
 
   /**
-   * Time limit for generation. If generation reaches the specified time limit
-   * (in milliseconds), the generator stops generating sequences.
+   * Time limit for generation. If generation reaches the specified time limit (in milliseconds),
+   * the generator stops generating sequences.
    */
   public final long maxTimeMillis;
 
   /**
-   * Sequence limit for generation. If generation reaches the specified sequence
-   * limit, the generator stops generating sequences.
+   * Sequence limit for generation. If generation reaches the specified sequence limit, the
+   * generator stops generating sequences.
    */
   public final int maxGeneratedSequences;
 
   /**
-   * Limit for output. Once the specified number of sequences are in the output
-   * lists, the generator will stop.
+   * Limit for output. Once the specified number of sequences are in the output lists, the generator
+   * will stop.
    */
   public final int maxOutputSequences;
 
   /**
-   * The list of statement kinds (methods, constructors, primitive value
-   * declarations, etc.) used to generate sequences. In other words, statements
-   * specifies the universe of operations from which sequences are generated.
+   * The list of statement kinds (methods, constructors, primitive value declarations, etc.) used to
+   * generate sequences. In other words, statements specifies the universe of operations from which
+   * sequences are generated.
    */
-  public List<TypedOperation> operations;
+  protected final List<TypedOperation> operations;
 
-  /**
-   * Container for execution visitors used during execution of sequences.
-   */
+  /** Container for execution visitors used during execution of sequences. */
   protected ExecutionVisitor executionVisitor;
 
-  /**
-   * Component manager responsible for storing previously-generated sequences.
-   */
+  /** Component manager responsible for storing previously-generated sequences. */
   public ComponentManager componentManager;
 
-  /**
-   * Customizable stopping criterion in addition to time and sequence limits.
-   */
+  /** Customizable stopping criterion in addition to time and sequence limits. */
   private IStopper stopper;
 
   /**
@@ -103,65 +95,48 @@ public abstract class AbstractGenerator {
    */
   public RandoopListenerManager listenerMgr;
 
-  /**
-   * Updates the progress display message printed to the console.
-   */
+  /** Updates the progress display message printed to the console. */
   private ProgressDisplay progressDisplay;
 
   /**
-   * This field is set by Randoop to point to the sequence currently being
-   * executed. In the event that Randoop appears to hang, this sequence is
-   * printed out to console to help the user debug the cause of the hanging
-   * behavior.
+   * This field is set by Randoop to point to the sequence currently being executed. In the event
+   * that Randoop appears to hang, this sequence is printed out to console to help the user debug
+   * the cause of the hanging behavior.
    */
   public static Sequence currSeq = null;
 
   /**
-   * The list of error test sequences to be output as JUnit tests. May include
-   * subsequences of other sequences in the list.
+   * The list of error test sequences to be output as JUnit tests. May include subsequences of other
+   * sequences in the list.
    */
   public List<ExecutableSequence> outErrorSeqs = new ArrayList<>();
 
   /**
-   * The list of regression sequences to be output as JUnit tests. May include
-   * subsequences of other sequences in the list.
+   * The list of regression sequences to be output as JUnit tests. May include subsequences of other
+   * sequences in the list.
    */
   public List<ExecutableSequence> outRegressionSeqs = new ArrayList<>();
 
-  /**
-   * A filter to determine whether a sequence should be added to the output
-   * sequence lists.
-   */
+  /** A filter to determine whether a sequence should be added to the output sequence lists. */
   public Predicate<ExecutableSequence> outputTest;
 
-  /**
-   * Visitor to generate checks for a sequence.
-   */
+  /** Visitor to generate checks for a sequence. */
   protected TestCheckGenerator checkGenerator;
 
   /**
    * Constructs a generator with the given parameters.
    *
-   * @param operations
-   *          Statements (e.g. methods and constructors) used to create
-   *          sequences. Cannot be null.
-   * @param timeMillis
-   *          maximum time to spend in generation. Must be non-negative.
-   * @param maxGeneratedSequences
-   *          the maximum number of sequences to generate. Must be non-negative.
-   * @param maxOutSequences
-   *          the maximum number of sequences to output. Must be non-negative.
-   * @param componentManager
-   *          the component manager to use to store sequences during
-   *          component-based generation. Can be null, in which case the
-   *          generator's component manager is initialized as
-   *          <code>new ComponentManager()</code>.
-   * @param stopper
-   *          Optional, additional stopping criterion for the generator. Can be
-   *          null.
-   * @param listenerManager
-   *          Manager that stores and calls any listeners to use during
-   *          generation. Can be null.
+   * @param operations statements (e.g. methods and constructors) used to create sequences. Cannot
+   *     be null.
+   * @param timeMillis maximum time to spend in generation. Must be non-negative.
+   * @param maxGeneratedSequences the maximum number of sequences to generate. Must be non-negative.
+   * @param maxOutSequences the maximum number of sequences to output. Must be non-negative.
+   * @param componentManager the component manager to use to store sequences during component-based
+   *     generation. Can be null, in which case the generator's component manager is initialized as
+   *     <code>new ComponentManager()</code>.
+   * @param stopper optional, additional stopping criterion for the generator. Can be null.
+   * @param listenerManager manager that stores and calls any listeners to use during generation.
+   *     Can be null.
    */
   public AbstractGenerator(
       List<TypedOperation> operations,
@@ -191,11 +166,10 @@ public abstract class AbstractGenerator {
   }
 
   /**
-   * Registers test predicate with this generator for use while filtering
-   * generated tests for output.
+   * Registers test predicate with this generator for use while filtering generated tests for
+   * output.
    *
-   * @param outputTest
-   *          the predicate to be added to object
+   * @param outputTest the predicate to be added to object
    */
   public void addTestPredicate(Predicate<ExecutableSequence> outputTest) {
     if (outputTest == null) {
@@ -205,11 +179,9 @@ public abstract class AbstractGenerator {
   }
 
   /**
-   * Registers a visitor with this object for use while executing each generated
-   * sequence.
+   * Registers a visitor with this object for use while executing each generated sequence.
    *
-   * @param executionVisitor
-   *          the visitor
+   * @param executionVisitor the visitor
    */
   public void addExecutionVisitor(ExecutionVisitor executionVisitor) {
     if (executionVisitor == null) {
@@ -219,11 +191,10 @@ public abstract class AbstractGenerator {
   }
 
   /**
-   * Registers a visitor with this object to generate checks following execution
-   * of each generated test sequence.
+   * Registers a visitor with this object to generate checks following execution of each generated
+   * test sequence.
    *
-   * @param checkGenerator
-   *          the check generating visitor
+   * @param checkGenerator the check generating visitor
    */
   public void addTestCheckGenerator(TestCheckGenerator checkGenerator) {
     if (checkGenerator == null) {
@@ -233,17 +204,16 @@ public abstract class AbstractGenerator {
   }
 
   /**
-   * Tests stopping criteria and determines whether generation should stop.
-   * Criteria are checked in this order:
+   * Tests stopping criteria and determines whether generation should stop. Criteria are checked in
+   * this order:
+   *
    * <ul>
-   * <li>if there is a listener manager,
-   * {@link RandoopListenerManager#stopGeneration()} returns true,
-   * <li>the elapsed generation time is greater than or equal to the max time in
-   * milliseconds,
-   * <li>the number of output sequences is equal to the maximum output,
-   * <li>the number of generated sequences is equal to the maximum generated
-   * sequence count, or
-   * <li>if there is a stopper, {@link IStopper#stop()} returns true.
+   *   <li>if there is a listener manager, {@link RandoopListenerManager#stopGeneration()} returns
+   *       true,
+   *   <li>the elapsed generation time is greater than or equal to the max time in milliseconds,
+   *   <li>the number of output sequences is equal to the maximum output,
+   *   <li>the number of generated sequences is equal to the maximum generated sequence count, or
+   *   <li>if there is a stopper, {@link IStopper#stop()} returns true.
    * </ul>
    *
    * @return true if any of stopping criteria are met, otherwise false
@@ -267,8 +237,7 @@ public abstract class AbstractGenerator {
   /**
    * Returns the count of generated sequence currently for output.
    *
-   * @return the sum of the number of error and regression test sequences for
-   *         output
+   * @return the sum of the number of error and regression test sequences for output
    */
   public int numOutputSequences() {
     return outErrorSeqs.size() + outRegressionSeqs.size();
@@ -300,20 +269,12 @@ public abstract class AbstractGenerator {
     if (checkGenerator == null) {
       throw new Error("Generator not properly initialized - must have a TestCheckGenerator");
     }
-    Log.log(this.operations);
 
     timer.startTiming();
 
     if (!GenInputsAbstract.noprogressdisplay) {
       progressDisplay = new ProgressDisplay(this, listenerMgr, ProgressDisplay.Mode.MULTILINE, 200);
       progressDisplay.start();
-    }
-
-    if (Log.isLoggingOn()) {
-      Log.logLine("Initial sequences (seeds):");
-      for (Sequence s : componentManager.getAllGeneratedSequences()) {
-        Log.logLine(s.toString());
-      }
     }
 
     // Notify listeners that exploration is starting.
@@ -347,13 +308,10 @@ public abstract class AbstractGenerator {
 
       num_sequences_generated++;
 
-      if (eSeq.hasFailure()) {
-        num_failing_sequences++;
-      }
-
       if (outputTest.test(eSeq)) {
         if (!eSeq.hasInvalidBehavior()) {
           if (eSeq.hasFailure()) {
+            num_failing_sequences++;
             outErrorSeqs.add(eSeq);
           } else {
             outRegressionSeqs.add(eSeq);
@@ -406,9 +364,9 @@ public abstract class AbstractGenerator {
   public abstract Set<Sequence> getAllSequences();
 
   /**
-   * Returns the set of sequences that are used as inputs in other sequences
-   * (and can thus be thought of as subsumed by another sequence). This should
-   * only be called for subclasses that support this.
+   * Returns the set of sequences that are used as inputs in other sequences (and can thus be
+   * thought of as subsumed by another sequence). This should only be called for subclasses that
+   * support this.
    *
    * @return the set of sequences subsumed by other sequences
    */
@@ -417,8 +375,8 @@ public abstract class AbstractGenerator {
   }
 
   /**
-   * Returns the generated regression test sequences for output. Filters out
-   * subsequences, which can be retrieved using {@link #getSubsumedSequences()}
+   * Returns the generated regression test sequences for output. Filters out subsequences, which can
+   * be retrieved using {@link #getSubsumedSequences()}
    *
    * @return regression test sequences that do not occur in a longer sequence
    */
@@ -444,8 +402,8 @@ public abstract class AbstractGenerator {
   }
 
   /**
-   * Returns the total number of test sequences generated to output, including
-   * both regression tests and error-revealing tests.
+   * Returns the total number of test sequences generated to output, including both regression tests
+   * and error-revealing tests.
    *
    * @return the total number of test sequences saved for output
    */
@@ -456,8 +414,7 @@ public abstract class AbstractGenerator {
   /**
    * Sets the current sequence during exploration
    *
-   * @param s
-   *          the current sequence
+   * @param s the current sequence
    */
   protected void setCurrentSequence(Sequence s) {
     currSeq = s;

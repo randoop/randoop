@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>IntersectionTypeBound (randoop 3.0.9 API)</title>
+<title>IntersectionTypeBound (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="IntersectionTypeBound (randoop 3.0.9 API)";
+            parent.document.title="IntersectionTypeBound (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -115,16 +115,17 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>class <span class="typeNameLabel">IntersectionTypeBound</span>
 extends <a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></pre>
-<div class="block">Represents an intersection type bound on a type parameter in a class,
- interface, method or constructor (see
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.4">JLS section 4.4</a>).
- Alternatively, in capture conversion, it may also represent the greatest lower bound of two upper bounds (
- <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">JLS section 5.1.10</a>).
- <p>
- Java requires that an intersection type bound consist of class and
- interface types, with at most one class, and if there is a class it appears
- in the conjunction term first. This class preserves the order of the types.
- In a capture conversion, if both types are classes, one must be a subclass of the other.</div>
+<div class="block">Represents an intersection type bound on a type parameter in a class, interface, method or
+ constructor (see <a
+ href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.4">JLS section 4.4</a>).
+ Alternatively, in capture conversion, it may also represent the greatest lower bound of two upper
+ bounds ( <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.10">JLS
+ section 5.1.10</a>).
+
+ <p>Java requires that an intersection type bound consist of class and interface types, with at
+ most one class, and if there is a class it appears in the conjunction term first. This class
+ preserves the order of the types. In a capture conversion, if both types are classes, one must be
+ a subclass of the other.</div>
 </li>
 </ul>
 </div>
@@ -415,7 +416,8 @@ extends <a href="../../randoop/types/ParameterBound.html" title="class in randoo
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/types/ParameterBound.html#getTypeParameters--">getTypeParameters</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the list of type variables occurring in all of the type bounds of this intersection bound</dd>
+<dd>the list of type variables occurring in all of the type bounds of this intersection
+     bound</dd>
 </dl>
 </li>
 </ul>
@@ -431,7 +433,8 @@ extends <a href="../../randoop/types/ParameterBound.html" title="class in randoo
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/types/ParameterBound.html#hasWildcard--">hasWildcard</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if any type in the intersection type bound has a wildcard argument, false otherwise</dd>
+<dd>true if any type in the intersection type bound has a wildcard argument, false
+     otherwise</dd>
 </dl>
 </li>
 </ul>
@@ -461,8 +464,9 @@ extends <a href="../../randoop/types/ParameterBound.html" title="class in randoo
 <pre>public&nbsp;boolean&nbsp;isLowerBound(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;otherType,
                             <a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;subst)</pre>
 <div class="block">Indicates whether this bound is a lower bound of the given argument type.
- Specifically, this method checks that the argument type is a subtype of all of the member bounds
- of this object.</div>
+
+ <p>Specifically, this method checks that the argument type is a subtype of all of the member
+ bounds of this object.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/types/ParameterBound.html#isLowerBound-randoop.types.Type-randoop.types.Substitution-">isLowerBound</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></code></dd>
@@ -482,7 +486,8 @@ extends <a href="../../randoop/types/ParameterBound.html" title="class in randoo
 <h4>isObject</h4>
 <pre>public&nbsp;boolean&nbsp;isObject()</pre>
 <div class="block">Indicate whether this bound is <code>Object</code>.
- Determines whether all types in this bound are <code>Object</code>.</div>
+
+ <p>Determines whether all types in this bound are <code>Object</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/types/ParameterBound.html#isObject--">isObject</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></code></dd>
@@ -499,8 +504,9 @@ extends <a href="../../randoop/types/ParameterBound.html" title="class in randoo
 <h4>isSubtypeOf</h4>
 <pre>public&nbsp;boolean&nbsp;isSubtypeOf(<a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a>&nbsp;boundType)</pre>
 <div class="block">Indicates whether the type of this bound is a subtype of the type of the given bound.
- This method should never be tested for <a href="../../randoop/types/IntersectionTypeBound.html" title="class in randoop.types"><code>IntersectionTypeBound</code></a>.
- Will fail if assertions are enabled.</div>
+
+ <p>This method should never be tested for <a href="../../randoop/types/IntersectionTypeBound.html" title="class in randoop.types"><code>IntersectionTypeBound</code></a>. Will fail if
+ assertions are enabled.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/types/ParameterBound.html#isSubtypeOf-randoop.types.ParameterBound-">isSubtypeOf</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ParameterBound.html" title="class in randoop.types">ParameterBound</a></code></dd>
@@ -527,8 +533,7 @@ extends <a href="../../randoop/types/ParameterBound.html" title="class in randoo
 <dd><code>argType</code> - the concrete argument type</dd>
 <dd><code>subst</code> - the substitution</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if the argument type satisfies all of the bounds in this
- intersection type bound</dd>
+<dd>true if the argument type satisfies all of the bounds in this intersection type bound</dd>
 </dl>
 </li>
 </ul>
@@ -549,7 +554,8 @@ extends <a href="../../randoop/types/ParameterBound.html" title="class in randoo
 <dd><code>bound</code> - the other bound</dd>
 <dd><code>substitution</code> - the type substitution</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if the argument bound has all of the member bounds of this object as an upper bound</dd>
+<dd>true if the argument bound has all of the member bounds of this object as an upper
+     bound</dd>
 </dl>
 </li>
 </ul>

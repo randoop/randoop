@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>TypeTupleSet (randoop 3.0.9 API)</title>
+<title>TypeTupleSet (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="TypeTupleSet (randoop 3.0.9 API)";
+            parent.document.title="TypeTupleSet (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -110,12 +110,11 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>class <span class="typeNameLabel">TypeTupleSet</span>
 extends java.lang.Object</pre>
-<div class="block">Represents a set of lists of candidate type arguments for a <a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types"><code>ParameterizedType</code></a>,
- and uses this set to construct substitutions for a list of <a href="../../randoop/types/TypeArgument.html" title="class in randoop.types"><code>TypeArgument</code></a> objects.
- <p>
- Starts as a singleton list with the empty list, which is expanded by repeated use of
- the <a href="../../randoop/reflection/TypeTupleSet.html#extend-java.util.List-"><code>extend(List)</code></a> method that adds new types to the lists in the
- set, then the set of <a href="../../randoop/types/Substitution.html" title="class in randoop.types"><code>Substitution</code></a> objects is created by a call to <a href="../../randoop/reflection/TypeTupleSet.html#filter-java.util.List-"><code>filter(List)</code></a>.</div>
+<div class="block">Represents a set of lists of candidate type arguments for a <a href="../../randoop/types/ParameterizedType.html" title="class in randoop.types"><code>ParameterizedType</code></a>, and uses this set to construct substitutions for a list of
+ <a href="../../randoop/types/TypeArgument.html" title="class in randoop.types"><code>TypeArgument</code></a> objects.
+
+ <p>Starts as a singleton list with the empty list, which is expanded by repeated use of the
+ <a href="../../randoop/reflection/TypeTupleSet.html#extend-java.util.List-"><code>extend(List)</code></a> method that adds new types to the lists in the set, then the set of <a href="../../randoop/types/Substitution.html" title="class in randoop.types"><code>Substitution</code></a> objects is created by a call to <a href="../../randoop/reflection/TypeTupleSet.html#filter-java.util.List-"><code>filter(List)</code></a>.</div>
 </li>
 </ul>
 </div>
@@ -183,15 +182,13 @@ extends java.lang.Object</pre>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeTupleSet.html#extend-java.util.List-">extend</a></span>(java.util.List&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;types)</code>
-<div class="block">Extends all of the elements of the current tuple set with all of the types in
- the given list.</div>
+<div class="block">Extends all of the elements of the current tuple set with all of the types in the given list.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>(package private) java.util.List&lt;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeTupleSet.html#filter-java.util.List-">filter</a></span>(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters)</code>
-<div class="block">Returns a list of substitutions for type tuples that can instantiate the
- given list of <a href="../../randoop/types/TypeArgument.html" title="class in randoop.types"><code>TypeArgument</code></a> objects, and filters the set of tuples.</div>
+<div class="block">Returns a list of substitutions for type tuples that can instantiate the given list of <a href="../../randoop/types/TypeArgument.html" title="class in randoop.types"><code>TypeArgument</code></a> objects, and filters the set of tuples.</div>
 </td>
 </tr>
 </table>
@@ -269,8 +266,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>extend</h4>
 <pre>public&nbsp;void&nbsp;extend(java.util.List&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;types)</pre>
-<div class="block">Extends all of the elements of the current tuple set with all of the types in
- the given list.
+<div class="block">Extends all of the elements of the current tuple set with all of the types in the given list.
  In other words, if there are <i>k</i> types given then each tuple will be replaced by <i>k</i>
  new tuples extended by one of the input types.</div>
 <dl>
@@ -286,8 +282,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>filter</h4>
 <pre>java.util.List&lt;<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&gt;&nbsp;filter(java.util.List&lt;<a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a>&gt;&nbsp;typeParameters)</pre>
-<div class="block">Returns a list of substitutions for type tuples that can instantiate the
- given list of <a href="../../randoop/types/TypeArgument.html" title="class in randoop.types"><code>TypeArgument</code></a> objects, and filters the set of tuples.</div>
+<div class="block">Returns a list of substitutions for type tuples that can instantiate the given list of <a href="../../randoop/types/TypeArgument.html" title="class in randoop.types"><code>TypeArgument</code></a> objects, and filters the set of tuples.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>typeParameters</code> - the type arguments</dd>

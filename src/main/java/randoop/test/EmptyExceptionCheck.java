@@ -6,28 +6,27 @@ import randoop.NotExecuted;
 import randoop.sequence.Execution;
 
 /**
- * An {@code ExceptionCheck} that doesn't enforce the expectation of an
- * exception by the statement at the statement index. Allows for execution of
- * the statement to be either normal or throw an exception.
+ * An {@code ExceptionCheck} that doesn't enforce the expectation of an exception by the statement
+ * at the statement index. Allows for execution of the statement to be either normal or throw an
+ * exception.
  */
 public class EmptyExceptionCheck extends ExceptionCheck {
 
   /**
    * Creates an exception check for the given statement index.
    *
-   * @param exception
-   *          the exception thrown by statement
-   * @param statementIndex
-   *          the position of statement in sequence
-   * @param catchClassName
-   *          the name of the exception class to be caught
+   * @param exception the exception thrown by statement
+   * @param statementIndex the position of statement in sequence
+   * @param catchClassName the name of the exception class to be caught
    */
   EmptyExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
     super(exception, statementIndex, catchClassName);
   }
 
   /**
-   * {@inheritDoc} Appends comment indicating that catch is being ignored.
+   * {@inheritDoc}
+   *
+   * <p>Appends comment indicating that catch is being ignored.
    */
   @Override
   protected void appendCatchBehavior(StringBuilder b) {
@@ -39,8 +38,9 @@ public class EmptyExceptionCheck extends ExceptionCheck {
   }
 
   /**
-   * {@inheritDoc} Appends comment indicating that failure to throw exception
-   * being ignored.
+   * {@inheritDoc}
+   *
+   * <p>Appends comment indicating that failure to throw exception being ignored.
    */
   @Override
   protected void appendTryBehavior(StringBuilder b) {
@@ -52,13 +52,12 @@ public class EmptyExceptionCheck extends ExceptionCheck {
   }
 
   /**
-   * {@inheritDoc} This check passes if execution is either normal or an
-   * exception is thrown.
+   * {@inheritDoc}
    *
-   * @return true if execution outcome is normal or an exception, false
-   *         otherwise
-   * @throws IllegalArgumentException
-   *           if execution indicates statement not executed
+   * <p>This check passes if execution is either normal or an exception is thrown.
+   *
+   * @return true if execution outcome is normal or an exception, false otherwise
+   * @throws IllegalArgumentException if execution indicates statement not executed
    */
   @Override
   public boolean evaluate(Execution execution) {

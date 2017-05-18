@@ -1,28 +1,25 @@
 package randoop.sequence;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeSet;
-
+import org.junit.Test;
 import randoop.Globals;
 import randoop.operation.TypedOperation;
-import randoop.types.JavaTypes;
 import randoop.types.InstantiatedType;
 import randoop.types.JDKTypes;
+import randoop.types.JavaTypes;
 import randoop.types.ReferenceType;
 import randoop.types.Substitution;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 /**
- * This is the code for building a sequence by extension from the developer document.
- * Yeah, it works.
- * No, it doesn't look like the example b/c of variable naming and short form substitutions.
+ * This is the code for building a sequence by extension from the developer document. Yeah, it
+ * works. No, it doesn't look like the example b/c of variable naming and short form substitutions.
  */
 public class DevExampleCode {
 

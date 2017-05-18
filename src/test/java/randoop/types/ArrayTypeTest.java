@@ -7,7 +7,6 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-
 import org.junit.Test;
 
 public class ArrayTypeTest {

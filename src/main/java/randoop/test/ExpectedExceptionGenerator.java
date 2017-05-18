@@ -8,11 +8,11 @@ import randoop.types.ClassOrInterfaceType;
 
 /**
  * A {@link TestCheckGenerator} that generates checks for exceptions that are expected at a
- * particular statement.
- * Creates a {@link ExpectedExceptionCheck} that is returned in a {@link RegressionChecks}
- * collection if the exception occurs, or a {@link ErrorRevealingChecks} collection if not.
+ * particular statement. Creates a {@link ExpectedExceptionCheck} that is returned in a {@link
+ * RegressionChecks} collection if the exception occurs, or a {@link ErrorRevealingChecks}
+ * collection if not.
  *
- * Note that this generator is distinct from other check generators that either return regression
+ * <p>Note that this generator is distinct from other check generators that either return regression
  * checks or error-revealing checks.
  */
 public class ExpectedExceptionGenerator implements TestCheckGenerator {
@@ -25,7 +25,9 @@ public class ExpectedExceptionGenerator implements TestCheckGenerator {
   }
 
   /**
-   * {@inheritDoc} Adds checks for an expected exception at the final statement of the sequence.
+   * {@inheritDoc}
+   *
+   * <p>Adds checks for an expected exception at the final statement of the sequence.
    */
   @Override
   public TestChecks visit(ExecutableSequence s) {

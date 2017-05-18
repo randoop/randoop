@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ExplicitTypeVariable (randoop 3.0.9 API)</title>
+<title>ExplicitTypeVariable (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ExplicitTypeVariable (randoop 3.0.9 API)";
+            parent.document.title="ExplicitTypeVariable (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -134,8 +134,7 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>class <span class="typeNameLabel">ExplicitTypeVariable</span>
 extends <a href="../../randoop/types/TypeVariable.html" title="class in randoop.types">TypeVariable</a></pre>
-<div class="block">Represents a type variable that is a type parameter.
- (See JLS, section 4.3)</div>
+<div class="block">Represents a type variable that is a type parameter. (See JLS, section 4.3)</div>
 </li>
 </ul>
 </div>
@@ -208,16 +207,13 @@ extends <a href="../../randoop/types/TypeVariable.html" title="class in randoop.
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ExplicitTypeVariable.html#equals-java.lang.Object-">equals</a></span>(java.lang.Object&nbsp;obj)</code>
-<div class="block">
- Checks that the type parameter is equal.</div>
-</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ExplicitTypeVariable.html#equals-java.lang.Object-">equals</a></span>(java.lang.Object&nbsp;obj)</code></td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/types/ExplicitTypeVariable.html#getName--">getName</a></span>()</code>
-<div class="block">Returns the fully-qualified name of this type, including type arguments if
- this is a parameterized type.</div>
+<div class="block">Returns the fully-qualified name of this type, including type arguments if this is a
+ parameterized type.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
@@ -344,9 +340,9 @@ extends <a href="../../randoop/types/TypeVariable.html" title="class in randoop.
 <h4>equals</h4>
 <pre>public&nbsp;boolean&nbsp;equals(java.lang.Object&nbsp;obj)</pre>
 <div class="block">
- Checks that the type parameter is equal.
- This may be more restrictive than desired because equivalent TypeVariable
- objects from different instances of the same type may be distinct.</div>
+
+ <p>Checks that the type parameter is equal. This may be more restrictive than desired because
+ equivalent TypeVariable objects from different instances of the same type may be distinct.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/types/ParameterType.html#equals-java.lang.Object-">equals</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/ParameterType.html" title="class in randoop.types">ParameterType</a></code></dd>
@@ -389,9 +385,8 @@ extends <a href="../../randoop/types/TypeVariable.html" title="class in randoop.
 <h4>getName</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getName()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/Type.html#getName--">Type</a></code></span></div>
-<div class="block">Returns the fully-qualified name of this type, including type arguments if
- this is a parameterized type.
- For <code>java.util.List&lt;T&gt;</code> return <code>"java.util.List&lt;T&gt;"</code>.</div>
+<div class="block">Returns the fully-qualified name of this type, including type arguments if this is a
+ parameterized type. For <code>java.util.List&lt;T&gt;</code> return <code>"java.util.List&lt;T&gt;"</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/types/Type.html#getName--">getName</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>
@@ -408,8 +403,7 @@ extends <a href="../../randoop/types/TypeVariable.html" title="class in randoop.
 <h4>getSimpleName</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getSimpleName()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/Type.html#getSimpleName--">Type</a></code></span></div>
-<div class="block">Returns the name of this type without type arguments or package qualifiers.
- For <code>java.util.List&lt;T&gt;</code>, returns <code>"List"</code>.</div>
+<div class="block">Returns the name of this type without type arguments or package qualifiers. For <code>java.util.List&lt;T&gt;</code>, returns <code>"List"</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/types/Type.html#getSimpleName--">getSimpleName</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>
@@ -435,8 +429,8 @@ extends <a href="../../randoop/types/TypeVariable.html" title="class in randoop.
 <h4>isGeneric</h4>
 <pre>public&nbsp;boolean&nbsp;isGeneric()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/Type.html#isGeneric--">Type</a></code></span></div>
-<div class="block">Indicate whether this type is generic.
- A type is <i>generic</i> if it has one or more type variables.</div>
+<div class="block">Indicate whether this type is generic. A type is <i>generic</i> if it has one or more type
+ variables.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../randoop/types/Type.html#isGeneric--">isGeneric</a></code>&nbsp;in class&nbsp;<code><a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a></code></dd>
@@ -453,11 +447,10 @@ extends <a href="../../randoop/types/TypeVariable.html" title="class in randoop.
 <h4>apply</h4>
 <pre>public&nbsp;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&nbsp;apply(<a href="../../randoop/types/Substitution.html" title="class in randoop.types">Substitution</a>&lt;<a href="../../randoop/types/ReferenceType.html" title="class in randoop.types">ReferenceType</a>&gt;&nbsp;substitution)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../randoop/types/ReferenceType.html#apply-randoop.types.Substitution-">ReferenceType</a></code></span></div>
-<div class="block">Applies a substitution to a <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>.
- If the type is parameterized then replaces type variables that occur, otherwise returns this
- type.
- <p>
- This abstract method forces typing of substitutions applied to <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> objects
+<div class="block">Applies a substitution to a <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a>. If the type is parameterized then replaces
+ type variables that occur, otherwise returns this type.
+
+ <p>This abstract method forces typing of substitutions applied to <a href="../../randoop/types/ReferenceType.html" title="class in randoop.types"><code>ReferenceType</code></a> objects
  without an explicit cast.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>

@@ -4,7 +4,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Set;
-
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.ParameterTable;
 import randoop.types.PrimitiveType;
@@ -24,11 +23,11 @@ class TypeExtractor extends DefaultClassVisitor {
   private final VisibilityPredicate predicate;
 
   /**
-   * Creates a visitor that adds discovered concrete types to the given set if they satisfy
-   * the visibility predicate.
+   * Creates a visitor that adds discovered concrete types to the given set if they satisfy the
+   * visibility predicate.
    *
-   * @param inputTypes  the set of concrete types
-   * @param predicate  the visibility predicate
+   * @param inputTypes the set of concrete types
+   * @param predicate the visibility predicate
    */
   TypeExtractor(Set<Type> inputTypes, VisibilityPredicate predicate) {
     this.inputTypes = inputTypes;
@@ -37,7 +36,9 @@ class TypeExtractor extends DefaultClassVisitor {
 
   /**
    * {@inheritDoc}
-   * Adds all concrete parameter types from the constructor to the input types set of this object.
+   *
+   * <p>Adds all concrete parameter types from the constructor to the input types set of this
+   * object.
    */
   @Override
   public void visit(Constructor<?> c) {
@@ -48,8 +49,9 @@ class TypeExtractor extends DefaultClassVisitor {
 
   /**
    * {@inheritDoc}
-   * Adds any concrete type among parameter and return types to the input types set of this object.
-   * Avoids bridge methods, because may have rawtypes not useful in building tests.
+   *
+   * <p>Adds any concrete type among parameter and return types to the input types set of this
+   * object. Avoids bridge methods, because may have rawtypes not useful in building tests.
    */
   @Override
   public void visit(Method m) {
@@ -65,7 +67,8 @@ class TypeExtractor extends DefaultClassVisitor {
 
   /**
    * {@inheritDoc}
-   * Adds a concrete field type to the input types set of this object.
+   *
+   * <p>Adds a concrete field type to the input types set of this object.
    */
   @Override
   public void visit(Field f) {
@@ -74,10 +77,10 @@ class TypeExtractor extends DefaultClassVisitor {
   }
 
   /**
-   * Determines whether the given type is not generic, and, if so, adds the concrete type
-   * to the input types of this object.
+   * Determines whether the given general type is not generic, and, if so, adds the concrete type to
+   * the input types of this object.
    *
-   * @param reflectionType  the reflection type
+   * @param type the general type
    */
   private void add(java.lang.reflect.Type reflectionType) {
     if (isConcrete(reflectionType)) {
@@ -99,7 +102,8 @@ class TypeExtractor extends DefaultClassVisitor {
 
   /**
    * {@inheritDoc}
-   * Adds the class if it is concrete.
+   *
+   * <p>Adds the class if it is concrete.
    */
   @Override
   public void visitBefore(Class<?> c) {

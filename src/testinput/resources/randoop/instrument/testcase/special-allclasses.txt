@@ -1,0 +1,4 @@
+randoop.instrument.testcase.AbstractTarget
+randoop.instrument.testcase.ChildOfTarget
+randoop.instrument.testcase.InterfaceTarget
+randoop.instrument.testcase.ImplementorOfTarget

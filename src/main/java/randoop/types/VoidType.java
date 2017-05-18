@@ -1,12 +1,12 @@
 package randoop.types;
 
 /**
- * Represents {@code void}.
- * Technically, {@code void} is used to indicate that a method has no return values, and is not a
- * type. However, we need to pretend that it is to be able to represent typed operations.
- * <p>
- * The decision to have {@code void} be a separate "type" is counter to the fact that the reflection
- * method {@code Class.isPrimitive()} returns true for {@code void}.
+ * Represents {@code void}. Technically, {@code void} is used to indicate that a method has no
+ * return values, and is not a type. However, we need to pretend that it is to be able to represent
+ * typed operations.
+ *
+ * <p>The decision to have {@code void} be a separate "type" is counter to the fact that the
+ * reflection method {@code Class.isPrimitive()} returns true for {@code void}.
  */
 public class VoidType extends Type {
 
@@ -55,7 +55,8 @@ public class VoidType extends Type {
 
   /**
    * {@inheritDoc}
-   * Returns false, since {@code void} is not a subtype of any type
+   *
+   * <p>Returns false, since {@code void} is not a subtype of any type
    */
   @Override
   public boolean isSubtypeOf(Type otherType) {
@@ -64,7 +65,8 @@ public class VoidType extends Type {
 
   /**
    * {@inheritDoc}
-   * Return false because cannot assign to void.
+   *
+   * <p>Return false because cannot assign to void.
    */
   @Override
   public boolean isAssignableFrom(Type sourceType) {

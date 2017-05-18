@@ -1,24 +1,19 @@
 package randoop.util;
 
 import java.lang.reflect.InvocationTargetException;
-
 import randoop.util.RandoopSecurityManager.Status;
 
-/**
- * Implemented by parts of randoop that want to execute reflection code via
- * ReflectionExecutor.
- *
- */
+/** Implemented by parts of randoop that want to execute reflection code via ReflectionExecutor. */
 public abstract class ReflectionCode {
 
   /** has this been executed already */
   private boolean runAlready;
 
   /**
-   * Runs the reflection code that this object represents, but first, if
-   * System.getSecurityManager() returns a RandoopSecurityManager, this method
-   * sets the security manager's status to ON. Before exiting, this method sets
-   * the security manager's status to its status before this call.
+   * Runs the reflection code that this object represents, but first, if System.getSecurityManager()
+   * returns a RandoopSecurityManager, this method sets the security manager's status to ON. Before
+   * exiting, this method sets the security manager's status to its status before this call.
+   *
    * @throws InvocationTargetException if executed code throws an exception
    * @throws IllegalAccessException if the executed code involves inaccessible method or constructor
    * @throws InstantiationException if unable to create a new instance
@@ -66,7 +61,8 @@ public abstract class ReflectionCode {
    * @throws InstantiationException if unable to create a new instance
    * @throws IllegalAccessException if executed code involves inaccessible method
    * @throws InvocationTargetException if executed code throws an exception
-   * @throws NotCaughtIllegalStateException if execution results in conflicting error and success states
+   * @throws NotCaughtIllegalStateException if execution results in conflicting error and success
+   *     states
    */
   protected abstract void runReflectionCodeRaw()
       throws InstantiationException, IllegalAccessException, InvocationTargetException,

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>RegressionChecks (randoop 3.0.9 API)</title>
+<title>RegressionChecks (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="RegressionChecks (randoop 3.0.9 API)";
+            parent.document.title="RegressionChecks (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -283,7 +283,7 @@ implements <a href="../../randoop/test/TestChecks.html" title="interface in rand
 <ul class="blockListLast">
 <li class="blockList">
 <h4>RegressionChecks</h4>
-<pre>RegressionChecks()</pre>
+<pre>public&nbsp;RegressionChecks()</pre>
 </li>
 </ul>
 </li>
@@ -318,17 +318,16 @@ implements <a href="../../randoop/test/TestChecks.html" title="interface in rand
 <li class="blockList">
 <h4>add</h4>
 <pre>public&nbsp;void&nbsp;add(<a href="../../randoop/test/Check.html" title="interface in randoop.test">Check</a>&nbsp;check)</pre>
-<div class="block">Adds the given check to the sequence. Only one <code>ExceptionCheck</code> is
- allowed, and attempting to add a second check of this type will result in
- an <code>IllegalArgumentException</code></div>
+<div class="block">Adds the given check to the sequence. Only one <code>ExceptionCheck</code> is allowed, and
+ attempting to add a second check of this type will result in an <code>IllegalArgumentException</code></div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/TestChecks.html#add-randoop.test.Check-">add</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>check</code> - the check object to add to this set of checks</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.IllegalArgumentException</code> - If the given check's class is <code>ExceptionCheck</code> and there is
-           already an check of this class at the give index.</dd>
+<dd><code>java.lang.IllegalArgumentException</code> - If the given check's class is <code>ExceptionCheck</code> and there
+     is already an check of this class at the give index.</dd>
 </dl>
 </li>
 </ul>
@@ -344,8 +343,7 @@ implements <a href="../../randoop/test/TestChecks.html" title="interface in rand
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/TestChecks.html#get--">get</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>map of non-exception checks in this object, all of which are
-         passing</dd>
+<dd>map of non-exception checks in this object, all of which are passing</dd>
 </dl>
 </li>
 </ul>
@@ -361,8 +359,7 @@ implements <a href="../../randoop/test/TestChecks.html" title="interface in rand
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/TestChecks.html#hasChecks--">hasChecks</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if there are regression checks or an expected exception, false
-         otherwise</dd>
+<dd>true if there are regression checks or an expected exception, false otherwise</dd>
 </dl>
 </li>
 </ul>
@@ -373,8 +370,8 @@ implements <a href="../../randoop/test/TestChecks.html" title="interface in rand
 <li class="blockList">
 <h4>hasErrorBehavior</h4>
 <pre>public&nbsp;boolean&nbsp;hasErrorBehavior()</pre>
-<div class="block">Indicate whether this object has any failing checks. (This is essentially
- asking whether this is an error revealing test.)</div>
+<div class="block">Indicate whether this object has any failing checks. (This is essentially asking whether this
+ is an error revealing test.)</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/TestChecks.html#hasErrorBehavior--">hasErrorBehavior</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></dd>
@@ -434,8 +431,8 @@ implements <a href="../../randoop/test/TestChecks.html" title="interface in rand
 <h4>commonChecks</h4>
 <pre>public&nbsp;<a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&nbsp;commonChecks(<a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&nbsp;testChecks)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/test/TestChecks.html#commonChecks-randoop.test.TestChecks-">TestChecks</a></code></span></div>
-<div class="block">Returns the consensus checks for two sets of checks. Refuses to compare
- passing with failing checks.</div>
+<div class="block">Returns the consensus checks for two sets of checks. Refuses to compare passing with failing
+ checks.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/TestChecks.html#commonChecks-randoop.test.TestChecks-">commonChecks</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></dd>
@@ -453,7 +450,9 @@ implements <a href="../../randoop/test/TestChecks.html" title="interface in rand
 <li class="blockList">
 <h4>hasInvalidBehavior</h4>
 <pre>public&nbsp;boolean&nbsp;hasInvalidBehavior()</pre>
-<div class="block">Indicates whether this set of checks corresponds to valid behaviors. Returns false because regression checks are not invalid.</div>
+<div class="block">Indicates whether this set of checks corresponds to valid behaviors.
+
+ <p>Returns false because regression checks are not invalid.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/TestChecks.html#hasInvalidBehavior--">hasInvalidBehavior</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></dd>

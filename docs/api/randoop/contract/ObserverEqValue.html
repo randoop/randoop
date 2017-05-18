@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ObserverEqValue (randoop 3.0.9 API)</title>
+<title>ObserverEqValue (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ObserverEqValue (randoop 3.0.9 API)";
+            parent.document.title="ObserverEqValue (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -115,17 +115,14 @@ var activeTableTab = "activeTableTab";
 <pre>public final class <span class="typeNameLabel">ObserverEqValue</span>
 extends java.lang.Object
 implements <a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract">ObjectContract</a></pre>
-<div class="block">A check recording the value that an observer method returned during
- execution, e.g. a check recording that a collection's <code>size()</code>
- method returned <code>3</code> when called in particular sequence.
+<div class="block">A check recording the value that an observer method returned during execution, e.g. a check
+ recording that a collection's <code>size()</code> method returned <code>3</code> when called in
+ particular sequence.
 
- <p>
-
- ObserverEqValue checks are not checks that must hold of all objects of a
- given class (unlike a check like <a href="../../randoop/contract/EqualsReflexive.html" title="class in randoop.contract"><code>EqualsReflexive</code></a>, which must hold for
- any objects, no matter its execution context). Randoop creates an instance of
- this contract when, during execution of a sequence, it determines that the
- above property holds. The property thus represents a <i>regression</i> as it
+ <p>ObserverEqValue checks are not checks that must hold of all objects of a given class (unlike a
+ check like <a href="../../randoop/contract/EqualsReflexive.html" title="class in randoop.contract"><code>EqualsReflexive</code></a>, which must hold for any objects, no matter its execution
+ context). Randoop creates an instance of this contract when, during execution of a sequence, it
+ determines that the above property holds. The property thus represents a <i>regression</i> as it
  captures the behavior of the code when it is executed.</div>
 </li>
 </ul>
@@ -197,8 +194,8 @@ implements <a href="../../randoop/contract/ObjectContract.html" title="interface
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/contract/ObserverEqValue.html#evalExceptionMeansFailure--">evalExceptionMeansFailure</a></span>()</code>
-<div class="block">Communicates to Randoop how to interpret exceptional behavior from the
- <code>evaluate</code> method.</div>
+<div class="block">Communicates to Randoop how to interpret exceptional behavior from the <code>evaluate</code>
+ method.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -232,15 +229,15 @@ implements <a href="../../randoop/contract/ObjectContract.html" title="interface
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/contract/ObserverEqValue.html#toCodeString--">toCodeString</a></span>()</code>
-<div class="block">A string that can be used as Java source code and will result in the
- expression being evaluated.</div>
+<div class="block">A string that can be used as Java source code and will result in the expression being
+ evaluated.</div>
 </td>
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/contract/ObserverEqValue.html#toCommentString--">toCommentString</a></span>()</code>
-<div class="block">A string that will be inserted as a comment in the test before the code
- corresponding to this contract.</div>
+<div class="block">A string that will be inserted as a comment in the test before the code corresponding to this
+ contract.</div>
 </td>
 </tr>
 <tr id="i9" class="rowColor">
@@ -286,8 +283,7 @@ implements <a href="../../randoop/contract/ObjectContract.html" title="interface
 <li class="blockList">
 <h4>value</h4>
 <pre>public&nbsp;java.lang.Object value</pre>
-<div class="block">The runtime value of the observer. This variable holds a primitive value or
- String.</div>
+<div class="block">The runtime value of the observer. This variable holds a primitive value or String.</div>
 </li>
 </ul>
 </li>
@@ -350,14 +346,13 @@ implements <a href="../../randoop/contract/ObjectContract.html" title="interface
 <h4>toCodeString</h4>
 <pre>public&nbsp;java.lang.String&nbsp;toCodeString()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/contract/ObjectContract.html#toCodeString--">ObjectContract</a></code></span></div>
-<div class="block">A string that can be used as Java source code and will result in the
- expression being evaluated.
- <p>
- The string should be formatted as follows: the N-th object that
- participates in the contract check should be referred to as "xN" (for N one
- of 0, ... , 9). For example, if the expression of arity 2 represents a call
- of the equals method between two objects, the comment should be something
- like "x0.equals(x1)".</div>
+<div class="block">A string that can be used as Java source code and will result in the expression being
+ evaluated.
+
+ <p>The string should be formatted as follows: the N-th object that participates in the contract
+ check should be referred to as "xN" (for N one of 0, ... , 9). For example, if the expression
+ of arity 2 represents a call of the equals method between two objects, the comment should be
+ something like "x0.equals(x1)".</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/contract/ObjectContract.html#toCodeString--">toCodeString</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract">ObjectContract</a></code></dd>
@@ -376,13 +371,13 @@ implements <a href="../../randoop/contract/ObjectContract.html" title="interface
                  throws java.lang.Throwable</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/contract/ObjectContract.html#evaluate-java.lang.Object...-">ObjectContract</a></code></span></div>
 <div class="block">Evaluates the contract on the given values.
- <p>
- When calling this method during execution of a test, Randoop guarantees
- that <code>objects</code> does not contain any <code>null</code> objects,
- and that <code>objects.length == getArity()</code>.
- <p>
- This method should return <code>true</code> if the contract was satisfied
- and <code>false</code> if it was violated.</div>
+
+ <p>When calling this method during execution of a test, Randoop guarantees that <code>objects
+ </code> does not contain any <code>null</code> objects, and that <code>
+ objects.length == getArity()</code>.
+
+ <p>This method should return <code>true</code> if the contract was satisfied and <code>false
+ </code> if it was violated.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/contract/ObjectContract.html#evaluate-java.lang.Object...-">evaluate</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract">ObjectContract</a></code></dd>
@@ -437,9 +432,9 @@ implements <a href="../../randoop/contract/ObjectContract.html" title="interface
 <h4>toCommentString</h4>
 <pre>public&nbsp;java.lang.String&nbsp;toCommentString()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/contract/ObjectContract.html#toCommentString--">ObjectContract</a></code></span></div>
-<div class="block">A string that will be inserted as a comment in the test before the code
- corresponding to this contract.  Occurrences of variables x0, x1, x2,
- etc. in the string will be replaced by actual values.</div>
+<div class="block">A string that will be inserted as a comment in the test before the code corresponding to this
+ contract. Occurrences of variables x0, x1, x2, etc. in the string will be replaced by actual
+ values.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/contract/ObjectContract.html#toCommentString--">toCommentString</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract">ObjectContract</a></code></dd>
@@ -456,20 +451,20 @@ implements <a href="../../randoop/contract/ObjectContract.html" title="interface
 <h4>evalExceptionMeansFailure</h4>
 <pre>public&nbsp;boolean&nbsp;evalExceptionMeansFailure()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../randoop/contract/ObjectContract.html#evalExceptionMeansFailure--">ObjectContract</a></code></span></div>
-<div class="block">Communicates to Randoop how to interpret exceptional behavior from the
- <code>evaluate</code> method.
- <p>
- If this method returns <code>true</code>, Randoop will interpret an
- exception that escapes during evaluation as a failure of the contract.
- <p>
- If the method returns <code>false</code>, Randoop will interpret an
- exception as passing behavior.</div>
+<div class="block">Communicates to Randoop how to interpret exceptional behavior from the <code>evaluate</code>
+ method.
+
+ <p>If this method returns <code>true</code>, Randoop will interpret an exception that escapes
+ during evaluation as a failure of the contract.
+
+ <p>If the method returns <code>false</code>, Randoop will interpret an exception as passing
+ behavior.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/contract/ObjectContract.html#evalExceptionMeansFailure--">evalExceptionMeansFailure</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/contract/ObjectContract.html" title="interface in randoop.contract">ObjectContract</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if an exception in evaluating this contract should be
-         interpreted as a failure, false otherwise</dd>
+<dd>true if an exception in evaluating this contract should be interpreted as a failure,
+     false otherwise</dd>
 </dl>
 </li>
 </ul>

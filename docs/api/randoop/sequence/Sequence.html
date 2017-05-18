@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>Sequence (randoop 3.0.9 API)</title>
+<title>Sequence (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="Sequence (randoop 3.0.9 API)";
+            parent.document.title="Sequence (randoop 3.1.5 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":9,"i7":10,"i8":9,"i9":9,"i10":9,"i11":9,"i12":9,"i13":9,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":9,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":9,"i40":9,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10,"i47":10,"i48":10,"i49":10,"i50":9};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":9,"i8":10,"i9":9,"i10":9,"i11":9,"i12":9,"i13":9,"i14":9,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":9,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":9,"i42":9,"i43":10,"i44":10,"i45":10,"i46":10,"i47":10,"i48":10,"i49":10,"i50":10,"i51":10,"i52":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -116,15 +116,13 @@ var activeTableTab = "activeTableTab";
 extends java.lang.Object
 implements <a href="../../randoop/util/WeightedElement.html" title="interface in randoop.util">WeightedElement</a></pre>
 <div class="block">Immutable.
- <p>
- A sequence of <a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence"><code>Statement</code></a>s. Each element in the sequence represents a
- particular <a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence"><code>Statement</code></a>, like a method call
- <code>Foo f = m(i1...iN)</code> or a declaration <code>int x = 0</code>.
- <p>
- This class represents only the structure of a well-formed sequence of
- statements, and does not contain any information about the runtime behavior
- of the sequence. The class randoop.ExecutableSequence adds functionality that
- executes the sequence.</div>
+
+ <p>A sequence of <a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence"><code>Statement</code></a>s. Each element in the sequence represents a particular <a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence"><code>Statement</code></a>, like a method call <code>Foo f = m(i1...iN)</code> or a declaration <code>int x = 0
+ </code>.
+
+ <p>This class represents only the structure of a well-formed sequence of statements, and does not
+ contain any information about the runtime behavior of the sequence. The class
+ randoop.ExecutableSequence adds functionality that executes the sequence.</div>
 </li>
 </ul>
 </div>
@@ -145,7 +143,9 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>(package private) static class&nbsp;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.RelativeNegativeIndex.html" title="class in randoop.sequence">Sequence.RelativeNegativeIndex</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.RelativeNegativeIndex.html" title="class in randoop.sequence">Sequence.RelativeNegativeIndex</a></span></code>
+<div class="block">Used internally (i.e.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -169,37 +169,41 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>private boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#allowShortForm">allowShortForm</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>private java.util.List&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#lastStatementTypes">lastStatementTypes</a></span></code>
 <div class="block">The types of the inputs and output for the last statement of this sequence.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>private java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#lastStatementVariables">lastStatementVariables</a></span></code>
 <div class="block">The variables that are inputs or output for the last statement of this sequence.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#lastTimeUsed">lastTimeUsed</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>private java.util.List&lt;java.lang.Integer&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#outputIndices">outputIndices</a></span></code>
 <div class="block">The list of statement indices that as determined by construction define outputs of this
  sequence.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>private int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#savedHashCode">savedHashCode</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>private int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#savedNetSize">savedNetSize</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#statements">statements</a></span></code>
 <div class="block">The list of statements.</div>
@@ -236,7 +240,9 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <td class="colFirst"><code>private </code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#Sequence-randoop.util.SimpleList-int-int-">Sequence</a></span>(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements,
         int&nbsp;hashCode,
-        int&nbsp;netSize)</code>&nbsp;</td>
+        int&nbsp;netSize)</code>
+<div class="block">Create a sequence that has the given statements and hashCode (hashCode is for optimization).</div>
+</td>
 </tr>
 </table>
 </li>
@@ -261,55 +267,62 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 </td>
 </tr>
 <tr id="i1" class="rowColor">
+<td class="colFirst"><code>(package private) boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#canUseShortForm--">canUseShortForm</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>(package private) void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#checkIndex-int-">checkIndex</a></span>(int&nbsp;i)</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>private void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#checkInputs-randoop.operation.TypedOperation-java.util.List-">checkInputs</a></span>(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
            java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputVariables)</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>private void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#checkRep--">checkRep</a></span>()</code>
 <div class="block">Representation invariant check.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#clearActiveFlag-int-">clearActiveFlag</a></span>(int&nbsp;i)</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#clearAllActiveFlags--">clearAllActiveFlags</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code>private static int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#computeHashcode-randoop.util.SimpleList-">computeHashcode</a></span>(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements)</code>&nbsp;</td>
-</tr>
 <tr id="i7" class="rowColor">
-<td class="colFirst"><code>private void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#computeLastStatementInfo--">computeLastStatementInfo</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>private static int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#computeHashcode-randoop.util.SimpleList-">computeHashcode</a></span>(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements)</code>
+<div class="block">The hashcode of a sequence is the sum of each statement's hashcode.</div>
+</td>
 </tr>
 <tr id="i8" class="altColor">
-<td class="colFirst"><code>private static int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#computeNetSize-randoop.util.SimpleList-">computeNetSize</a></span>(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements)</code>
-<div class="block">Counts the number of statements in a list that are not initializations with
- a primitive type.</div>
+<td class="colFirst"><code>private void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#computeLastStatementInfo--">computeLastStatementInfo</a></span>()</code>
+<div class="block">Set lastStatementVariables and lastStatementTypes to their appropriate values.</div>
 </td>
 </tr>
 <tr id="i9" class="rowColor">
+<td class="colFirst"><code>private static int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#computeNetSize-randoop.util.SimpleList-">computeNetSize</a></span>(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements)</code>
+<div class="block">Counts the number of statements in a list that are not initializations with a primitive type.</div>
+</td>
+</tr>
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#concatenate-java.util.List-">concatenate</a></span>(java.util.List&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;sequences)</code>
 <div class="block">Create a new sequence that is the concatenation of the given sequences.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#createSequence-java.util.List-java.util.List-">createSequence</a></span>(java.util.List&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;sequences,
               java.util.List&lt;java.lang.Integer&gt;&nbsp;variables)</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#createSequence-randoop.operation.TypedOperation-java.util.List-java.util.List-">createSequence</a></span>(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
               java.util.List&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;inputSequences,
@@ -317,239 +330,239 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <div class="block">Creates a sequence consisting of the given operation given the input.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#createSequence-randoop.operation.TypedOperation-randoop.sequence.Sequence-">createSequence</a></span>(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
               <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;inputSequence)</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#createSequenceForPrimitive-java.lang.Object-">createSequenceForPrimitive</a></span>(java.lang.Object&nbsp;value)</code>
 <div class="block">Creates a sequence corresponding to the given non-null primitive value.</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#equals-java.lang.Object-">equals</a></span>(java.lang.Object&nbsp;o)</code>
-<div class="block">Two sequences are equal if their statements(+inputs) are element-wise
- equal.</div>
-</td>
-</tr>
-<tr id="i15" class="rowColor">
-<td class="colFirst"><code><a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#extend-randoop.sequence.Statement-java.util.List-">extend</a></span>(<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&nbsp;statement,
-      java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputs)</code>
-<div class="block">extend adds a new statement to this sequence using the operation of the
- given statement.</div>
+<div class="block">Two sequences are equal if their statements(+inputs) are element-wise equal.</div>
 </td>
 </tr>
 <tr id="i16" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#extend-randoop.operation.TypedOperation-java.util.List-">extend</a></span>(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
-      java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputVariables)</code>
-<div class="block">Returns a new sequence that is equivalent to this sequence plus the given
- operation appended to the end.</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#extend-randoop.sequence.Statement-java.util.List-">extend</a></span>(<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&nbsp;statement,
+      java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputs)</code>
+<div class="block">extend adds a new statement to this sequence using the operation of the given statement.</div>
 </td>
 </tr>
 <tr id="i17" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#extend-randoop.operation.TypedOperation-randoop.sequence.Variable...-">extend</a></span>(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
-      <a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>...&nbsp;inputs)</code>
-<div class="block">Returns a new sequence that is equivalent to this sequence plus the given
- statement appended at the end.</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#extend-randoop.operation.TypedOperation-java.util.List-">extend</a></span>(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
+      java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputVariables)</code>
+<div class="block">Returns a new sequence that is equivalent to this sequence plus the given operation appended to
+ the end.</div>
 </td>
 </tr>
 <tr id="i18" class="altColor">
+<td class="colFirst"><code><a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#extend-randoop.operation.TypedOperation-randoop.sequence.Variable...-">extend</a></span>(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
+      <a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>...&nbsp;inputs)</code>
+<div class="block">Returns a new sequence that is equivalent to this sequence plus the given statement appended at
+ the end.</div>
+</td>
+</tr>
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getCreatingStatement-randoop.sequence.Variable-">getCreatingStatement</a></span>(<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&nbsp;value)</code>
 <div class="block">The statement that created this value.</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getInputs-int-">getInputs</a></span>(int&nbsp;statementIndex)</code>
 <div class="block">The inputs for the ith statement.</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;java.lang.Integer&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getInputsAsAbsoluteIndices-int-">getInputsAsAbsoluteIndices</a></span>(int&nbsp;i)</code>
 <div class="block">The inputs for the ith statement, as indices.</div>
 </td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getLastVariable--">getLastVariable</a></span>()</code>
 <div class="block">The value created by the last statement in the sequence.</div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;java.lang.Integer&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getOutputIndices--">getOutputIndices</a></span>()</code>
 <div class="block">Returns the list of output indices for use when sequences are dealt with compositionally.</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>private static <a href="../../randoop/sequence/Sequence.RelativeNegativeIndex.html" title="class in randoop.sequence">Sequence.RelativeNegativeIndex</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getRelativeIndexForVariable-int-randoop.sequence.Variable-">getRelativeIndexForVariable</a></span>(int&nbsp;statementPosition,
                            <a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&nbsp;v)</code>
-<div class="block">Returns the relative negative index that would result if we use the given
- value as an input to the statement at position statementPosition.</div>
+<div class="block">Returns the relative negative index that would result if we use the given value as an input to
+ the statement at position statementPosition.</div>
 </td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getStatement-int-">getStatement</a></span>(int&nbsp;index)</code>
 <div class="block">The statement for the statement at the given index.</div>
 </td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getStatementsWithInputs--">getStatementsWithInputs</a></span>()</code>
 <div class="block">An list of all the statements in this sequence.</div>
 </td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getStatementWithInputs-int-">getStatementWithInputs</a></span>(int&nbsp;index)</code>
 <div class="block">The statement(+inputs) at the given index.</div>
 </td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>(package private) <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getSubsequence-int-">getSubsequence</a></span>(int&nbsp;index)</code>
-<div class="block">Using compositional structure of this sequence, return the subsequence of
- this sequence that contains the statement at the given index.</div>
+<div class="block">Using compositional structure of this sequence, return the subsequence of this sequence that
+ contains the statement at the given index.</div>
 </td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>(package private) java.util.List&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getTypesForLastStatement--">getTypesForLastStatement</a></span>()</code>
 <div class="block">The types of all the variables involved in the last statement.</div>
 </td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getVariable-int-">getVariable</a></span>(int&nbsp;i)</code>
 <div class="block">The value created by the ith statement.</div>
 </td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getVariableForInput-int-randoop.sequence.Sequence.RelativeNegativeIndex-">getVariableForInput</a></span>(int&nbsp;statementPosition,
                    <a href="../../randoop/sequence/Sequence.RelativeNegativeIndex.html" title="class in randoop.sequence">Sequence.RelativeNegativeIndex</a>&nbsp;input)</code>
-<div class="block">Returns the Variable corresponding to the given input, which is an input to
- the statement at position statementPosition.</div>
+<div class="block">Returns the Variable corresponding to the given input, which is an input to the statement at
+ position statementPosition.</div>
 </td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>(package private) java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getVariablesOfLastStatement--">getVariablesOfLastStatement</a></span>()</code>
 <div class="block">The variables involved in the last statement.</div>
 </td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#getWeight--">getWeight</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#hasActiveFlags--">hasActiveFlags</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i35" class="rowColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#hasUseOfMatchingClass-java.util.regex.Pattern-">hasUseOfMatchingClass</a></span>(java.util.regex.Pattern&nbsp;classNames)</code>
-<div class="block">Test whether any statement of this sequence has an operation whose
- declaring class matches the given regular expression.</div>
+<div class="block">Test whether any statement of this sequence has an operation whose declaring class matches the
+ given regular expression.</div>
 </td>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code>(package private) boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#isActive-int-">isActive</a></span>(int&nbsp;i)</code>&nbsp;</td>
 </tr>
-<tr id="i37" class="rowColor">
+<tr id="i38" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#isPrimitive--">isPrimitive</a></span>()</code>
-<div class="block">A sequence representing a single primitive values, like "Foo var0 = null"
- or "int var0 = 1".</div>
+<div class="block">A sequence representing a single primitive values, like "Foo var0 = null" or "int var0 = 1".</div>
 </td>
 </tr>
-<tr id="i38" class="altColor">
+<tr id="i39" class="rowColor">
 <td class="colFirst"><code>private boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#isValidIndex-int-">isValidIndex</a></span>(int&nbsp;index)</code>
 <div class="block">True iff this sequence contains a statement at the given index.</div>
 </td>
 </tr>
-<tr id="i39" class="rowColor">
+<tr id="i40" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#log--">log</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i41" class="rowColor">
 <td class="colFirst"><code>static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#parse-java.util.List-">parse</a></span>(java.util.List&lt;java.lang.String&gt;&nbsp;statements)</code>
 <div class="block">NOTE: the ONLY place this is used is in a test.</div>
 </td>
 </tr>
-<tr id="i40" class="altColor">
+<tr id="i42" class="altColor">
 <td class="colFirst"><code>static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#parse-java.lang.String-">parse</a></span>(java.lang.String&nbsp;string)</code>
 <div class="block">Parse a sequence encoded as a strings.</div>
 </td>
 </tr>
-<tr id="i41" class="rowColor">
+<tr id="i43" class="rowColor">
 <td class="colFirst"><code><a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#randomVariableForTypeLastStatement-randoop.types.Type-">randomVariableForTypeLastStatement</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type)</code>&nbsp;</td>
 </tr>
-<tr id="i42" class="altColor">
+<tr id="i44" class="altColor">
 <td class="colFirst"><code>private void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#setAllActiveFlags--">setAllActiveFlags</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i43" class="rowColor">
+<tr id="i45" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#size--">size</a></span>()</code>
 <div class="block">The number of statements in the sequence.</div>
 </td>
 </tr>
-<tr id="i44" class="altColor">
+<tr id="i46" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#toCodeString--">toCodeString</a></span>()</code>
-<div class="block">Returns the Java source code representation of this sequence with values substituted for
- simple initializations.</div>
+<div class="block">Returns the Java source code representation of this sequence with values substituted for simple
+ initializations.</div>
 </td>
 </tr>
-<tr id="i45" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<tr id="i47" class="rowColor">
+<td class="colFirst"><code>private java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#toFullCodeString--">toFullCodeString</a></span>()</code>
 <div class="block">Returns the Java source representation of this sequence showing all statements.</div>
 </td>
 </tr>
-<tr id="i46" class="altColor">
+<tr id="i48" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#toParsableString--">toParsableString</a></span>()</code>
 <div class="block">Returns a string representing this sequence.</div>
 </td>
 </tr>
-<tr id="i47" class="rowColor">
+<tr id="i49" class="rowColor">
 <td class="colFirst"><code>private java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#toParsableString-java.lang.String-">toParsableString</a></span>(java.lang.String&nbsp;statementSep)</code>
-<div class="block">Like toParsableString, but the client can specify a string that will be
- used a separator between statements.</div>
+<div class="block">Like toParsableString, but the client can specify a string that will be used a separator
+ between statements.</div>
 </td>
 </tr>
-<tr id="i48" class="altColor">
+<tr id="i50" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i49" class="rowColor">
+<tr id="i51" class="rowColor">
 <td class="colFirst"><code>private boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#verifyFalse-java.lang.String-randoop.sequence.Sequence-">verifyFalse</a></span>(java.lang.String&nbsp;message,
            <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;other)</code>&nbsp;</td>
 </tr>
-<tr id="i50" class="altColor">
+<tr id="i52" class="altColor">
 <td class="colFirst"><code>static <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/sequence/Sequence.html#zero-randoop.types.Type-">zero</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;c)</code>
-<div class="block">Returns a sequence that is of the form "Foo f = null;" where Foo is the
- given class.</div>
+<div class="block">Returns a sequence that is of the form "Foo f = null;" where Foo is the given class.</div>
 </td>
 </tr>
 </table>
@@ -600,10 +613,9 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <li class="blockList">
 <h4>lastStatementVariables</h4>
 <pre>private transient&nbsp;java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt; lastStatementVariables</pre>
-<div class="block">The variables that are inputs or output for the last statement of this sequence.
- These hold the values "produced" by some statement of the sequence.
- Should be final but cannot because of serialization.
- This info is used by some generators.</div>
+<div class="block">The variables that are inputs or output for the last statement of this sequence. These hold the
+ values "produced" by some statement of the sequence. Should be final but cannot because of
+ serialization. This info is used by some generators.</div>
 </li>
 </ul>
 <a name="lastStatementTypes">
@@ -613,10 +625,18 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <li class="blockList">
 <h4>lastStatementTypes</h4>
 <pre>private transient&nbsp;java.util.List&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt; lastStatementTypes</pre>
-<div class="block">The types of the inputs and output for the last statement of this sequence.
- Excludes void in the case the output type of the operation of the last statement is void.
- Should be final but cannot because of serialization.
- This info is used by some generators.</div>
+<div class="block">The types of the inputs and output for the last statement of this sequence. Excludes void in
+ the case the output type of the operation of the last statement is void. Should be final but
+ cannot because of serialization. This info is used by some generators.</div>
+</li>
+</ul>
+<a name="allowShortForm">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>allowShortForm</h4>
+<pre>private transient&nbsp;boolean allowShortForm</pre>
 </li>
 </ul>
 <a name="outputIndices">
@@ -637,10 +657,9 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <li class="blockList">
 <h4>activeFlags</h4>
 <pre>private&nbsp;java.util.BitSet activeFlags</pre>
-<div class="block">A set of bits, where there is one bit associated with each index. Active
- flags are used during generation, to determine what values in an existing
- sequence are useful to be used as inputs when creating a new sequence out
- of the existing one.</div>
+<div class="block">A set of bits, where there is one bit associated with each index. Active flags are used during
+ generation, to determine what values in an existing sequence are useful to be used as inputs
+ when creating a new sequence out of the existing one.</div>
 </li>
 </ul>
 <a name="savedHashCode">
@@ -679,10 +698,30 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <div class="block">Create a new, empty sequence.</div>
 </li>
 </ul>
-<a name="Sequence-randoop.util.SimpleList-">
+<a name="Sequence-randoop.util.SimpleList-int-int-">
 <!--   -->
 </a>
 <ul class="blockList">
+<li class="blockList">
+<h4>Sequence</h4>
+<pre>private&nbsp;Sequence(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements,
+                 int&nbsp;hashCode,
+                 int&nbsp;netSize)</pre>
+<div class="block">Create a sequence that has the given statements and hashCode (hashCode is for optimization).
+
+ <p>See <a href="../../randoop/sequence/Sequence.html#computeHashcode-randoop.util.SimpleList-"><code>computeHashcode(SimpleList)</code></a> for details on the hashCode.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>statements</code> - the statements of the new sequence</dd>
+<dd><code>hashCode</code> - the hashcode for the new sequence</dd>
+<dd><code>netSize</code> - the net size for the new sequence</dd>
+</dl>
+</li>
+</ul>
+<a name="Sequence-randoop.util.SimpleList-">
+<!--   -->
+</a>
+<ul class="blockListLast">
 <li class="blockList">
 <h4>Sequence</h4>
 <pre>public&nbsp;Sequence(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements)</pre>
@@ -693,17 +732,6 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 </dl>
 </li>
 </ul>
-<a name="Sequence-randoop.util.SimpleList-int-int-">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>Sequence</h4>
-<pre>private&nbsp;Sequence(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements,
-                 int&nbsp;hashCode,
-                 int&nbsp;netSize)</pre>
-</li>
-</ul>
 </li>
 </ul>
 <!-- ============ METHOD DETAIL ========== -->
@@ -712,6 +740,153 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="zero-randoop.types.Type-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>zero</h4>
+<pre>public static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;zero(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;c)</pre>
+<div class="block">Returns a sequence that is of the form "Foo f = null;" where Foo is the given class.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>c</code> - the type for initialized variable</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the sequence consisting of the initialization</dd>
+</dl>
+</li>
+</ul>
+<a name="createSequenceForPrimitive-java.lang.Object-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createSequenceForPrimitive</h4>
+<pre>public static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;createSequenceForPrimitive(java.lang.Object&nbsp;value)</pre>
+<div class="block">Creates a sequence corresponding to the given non-null primitive value.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>value</code> - non-null reference to a primitive or String value</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence"><code>Sequence</code></a> consisting of a statement created with the object</dd>
+</dl>
+</li>
+</ul>
+<a name="createSequence-randoop.operation.TypedOperation-java.util.List-java.util.List-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createSequence</h4>
+<pre>public static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;createSequence(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
+                                      java.util.List&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;inputSequences,
+                                      java.util.List&lt;java.lang.Integer&gt;&nbsp;indexes)</pre>
+<div class="block">Creates a sequence consisting of the given operation given the input.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>operation</code> - the operation for the sequence</dd>
+<dd><code>inputSequences</code> - the sequences computing inputs to the operation</dd>
+<dd><code>indexes</code> - the indices of the inputs to the operation</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the sequence that applies the operation to the given inputs</dd>
+</dl>
+</li>
+</ul>
+<a name="createSequence-randoop.operation.TypedOperation-randoop.sequence.Sequence-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createSequence</h4>
+<pre>public static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;createSequence(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
+                                      <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;inputSequence)</pre>
+</li>
+</ul>
+<a name="createSequence-java.util.List-java.util.List-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createSequence</h4>
+<pre>public static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;createSequence(java.util.List&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;sequences,
+                                      java.util.List&lt;java.lang.Integer&gt;&nbsp;variables)</pre>
+</li>
+</ul>
+<a name="extend-randoop.operation.TypedOperation-java.util.List-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>extend</h4>
+<pre>public final&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;extend(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
+                             java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputVariables)</pre>
+<div class="block">Returns a new sequence that is equivalent to this sequence plus the given operation appended to
+ the end.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>operation</code> - the operation to add</dd>
+<dd><code>inputVariables</code> - the input variables</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the sequence formed by appending the given operation to this sequence</dd>
+</dl>
+</li>
+</ul>
+<a name="extend-randoop.operation.TypedOperation-randoop.sequence.Variable...-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>extend</h4>
+<pre>public final&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;extend(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
+                             <a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>...&nbsp;inputs)</pre>
+<div class="block">Returns a new sequence that is equivalent to this sequence plus the given statement appended at
+ the end.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>operation</code> - the operation to add</dd>
+<dd><code>inputs</code> - the input variables for the operation</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the sequence formed by appending the given operation to this sequence</dd>
+</dl>
+</li>
+</ul>
+<a name="extend-randoop.sequence.Statement-java.util.List-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>extend</h4>
+<pre>public final&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;extend(<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&nbsp;statement,
+                             java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputs)</pre>
+<div class="block">extend adds a new statement to this sequence using the operation of the given statement.
+ Intended as the only place that we reach inside a <a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence"><code>Statement</code></a> for its operation.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>statement</code> - is a <a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence"><code>Statement</code></a> object from which the operation is copied</dd>
+<dd><code>inputs</code> - is the list of variables for input</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>sequence constructed from this one plus the operation</dd>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../randoop/sequence/Sequence.html#extend-randoop.operation.TypedOperation-java.util.List-"><code>extend(TypedOperation, List)</code></a></dd>
+</dl>
+</li>
+</ul>
+<a name="concatenate-java.util.List-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>concatenate</h4>
+<pre>public static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;concatenate(java.util.List&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;sequences)</pre>
+<div class="block">Create a new sequence that is the concatenation of the given sequences.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>sequences</code> - the list of sequences to concatenate</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the concatenation of the sequences in the list</dd>
+</dl>
+</li>
+</ul>
 <a name="getWeight--">
 <!--   -->
 </a>
@@ -778,8 +953,7 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <li class="blockList">
 <h4>getVariablesOfLastStatement</h4>
 <pre>java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;getVariablesOfLastStatement()</pre>
-<div class="block">The variables involved in the last statement. This includes the output
- variable.</div>
+<div class="block">The variables involved in the last statement. This includes the output variable.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the variables used in the last statement of this sequence</dd>
@@ -793,9 +967,9 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <li class="blockList">
 <h4>getTypesForLastStatement</h4>
 <pre>java.util.List&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;&nbsp;getTypesForLastStatement()</pre>
-<div class="block">The types of all the variables involved in the last statement. This
- includes the output variable. The types returned are not the types in the
- signature of the Operation, but the types of the variables.</div>
+<div class="block">The types of all the variables involved in the last statement. This includes the output
+ variable. The types returned are not the types in the signature of the Operation, but the types
+ of the variables.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the types of the variables in the last statement of this sequence</dd>
@@ -839,9 +1013,9 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <li class="blockList">
 <h4>getOutputIndices</h4>
 <pre>public&nbsp;java.util.List&lt;java.lang.Integer&gt;&nbsp;getOutputIndices()</pre>
-<div class="block">Returns the list of output indices for use when sequences are dealt with compositionally.
- What is an output index is determined by how the sequence is created, but generally is the
- index of the last statement.</div>
+<div class="block">Returns the list of output indices for use when sequences are dealt with compositionally. What
+ is an output index is determined by how the sequence is created, but generally is the index of
+ the last statement.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the list of output indices for this sequence</dd>
@@ -871,9 +1045,9 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <li class="blockList">
 <h4>toCodeString</h4>
 <pre>public&nbsp;java.lang.String&nbsp;toCodeString()</pre>
-<div class="block">Returns the Java source code representation of this sequence with values substituted for
- simple initializations.
- Similar to  * <a href="../../randoop/sequence/ExecutableSequence.html#toCodeString--"><code>ExecutableSequence.toCodeString()</code></a> except does not include checks.</div>
+<div class="block">Returns the Java source code representation of this sequence with values substituted for simple
+ initializations. Similar to * <a href="../../randoop/sequence/ExecutableSequence.html#toCodeString--"><code>ExecutableSequence.toCodeString()</code></a> except does not include
+ checks.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a string containing Java code for this sequence</dd>
@@ -886,10 +1060,10 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <ul class="blockList">
 <li class="blockList">
 <h4>toFullCodeString</h4>
-<pre>public&nbsp;java.lang.String&nbsp;toFullCodeString()</pre>
-<div class="block">Returns the Java source representation of this sequence showing all statements.
- Simplifications performed in <a href="../../randoop/sequence/Sequence.html#toCodeString--"><code>toCodeString()</code></a> are preserved but initializations used
- will also be printed.</div>
+<pre>private&nbsp;java.lang.String&nbsp;toFullCodeString()</pre>
+<div class="block">Returns the Java source representation of this sequence showing all statements. Simplifications
+ performed in <a href="../../randoop/sequence/Sequence.html#toCodeString--"><code>toCodeString()</code></a> are preserved but initializations used will also be
+ printed.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a string containing Java code for this sequence</dd>
@@ -962,8 +1136,8 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <h4>getRelativeIndexForVariable</h4>
 <pre>private static&nbsp;<a href="../../randoop/sequence/Sequence.RelativeNegativeIndex.html" title="class in randoop.sequence">Sequence.RelativeNegativeIndex</a>&nbsp;getRelativeIndexForVariable(int&nbsp;statementPosition,
                                                                           <a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&nbsp;v)</pre>
-<div class="block">Returns the relative negative index that would result if we use the given
- value as an input to the statement at position statementPosition.</div>
+<div class="block">Returns the relative negative index that would result if we use the given value as an input to
+ the statement at position statementPosition.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>statementPosition</code> - the position of the statement</dd>
@@ -981,8 +1155,8 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <h4>getVariableForInput</h4>
 <pre>private&nbsp;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&nbsp;getVariableForInput(int&nbsp;statementPosition,
                                      <a href="../../randoop/sequence/Sequence.RelativeNegativeIndex.html" title="class in randoop.sequence">Sequence.RelativeNegativeIndex</a>&nbsp;input)</pre>
-<div class="block">Returns the Variable corresponding to the given input, which is an input to
- the statement at position statementPosition.</div>
+<div class="block">Returns the Variable corresponding to the given input, which is an input to the statement at
+ position statementPosition.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>statementPosition</code> - the statement position</dd>
@@ -992,63 +1166,6 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 </dl>
 </li>
 </ul>
-<a name="zero-randoop.types.Type-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>zero</h4>
-<pre>public static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;zero(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;c)</pre>
-<div class="block">Returns a sequence that is of the form "Foo f = null;" where Foo is the
- given class.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>c</code> - the type for initialized variable</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the sequence consisting of the initialization</dd>
-</dl>
-</li>
-</ul>
-<a name="createSequence-randoop.operation.TypedOperation-java.util.List-java.util.List-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createSequence</h4>
-<pre>public static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;createSequence(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
-                                      java.util.List&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;inputSequences,
-                                      java.util.List&lt;java.lang.Integer&gt;&nbsp;indexes)</pre>
-<div class="block">Creates a sequence consisting of the given operation given the input.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>operation</code> - the operation for the sequence</dd>
-<dd><code>inputSequences</code> - the sequences computing inputs to the operation</dd>
-<dd><code>indexes</code> - the indices of the inputs to the operation</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the sequence that applies the operation to the given inputs</dd>
-</dl>
-</li>
-</ul>
-<a name="createSequence-randoop.operation.TypedOperation-randoop.sequence.Sequence-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createSequence</h4>
-<pre>public static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;createSequence(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
-                                      <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;inputSequence)</pre>
-</li>
-</ul>
-<a name="createSequence-java.util.List-java.util.List-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createSequence</h4>
-<pre>public static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;createSequence(java.util.List&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;sequences,
-                                      java.util.List&lt;java.lang.Integer&gt;&nbsp;variables)</pre>
-</li>
-</ul>
 <a name="computeHashcode-randoop.util.SimpleList-">
 <!--   -->
 </a>
@@ -1056,6 +1173,15 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <li class="blockList">
 <h4>computeHashcode</h4>
 <pre>private static&nbsp;int&nbsp;computeHashcode(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements)</pre>
+<div class="block">The hashcode of a sequence is the sum of each statement's hashcode. This seems good enough, and
+ it makes computing hashCode of a concatenation of sequences faster (it's just the addition of
+ each sequence's' hashCode). Otherwise, hashCode computation used to be a hotspot.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>statements</code> - the list of statements over which to compute the hash code</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the sum of the hash codes of the statements in the sequence</dd>
+</dl>
 </li>
 </ul>
 <a name="computeNetSize-randoop.util.SimpleList-">
@@ -1065,8 +1191,8 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <li class="blockList">
 <h4>computeNetSize</h4>
 <pre>private static&nbsp;int&nbsp;computeNetSize(<a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&gt;&nbsp;statements)</pre>
-<div class="block">Counts the number of statements in a list that are not initializations with
- a primitive type. For instance <code>int var7 = 0</code>.</div>
+<div class="block">Counts the number of statements in a list that are not initializations with a primitive type.
+ For instance <code>int var7 = 0</code>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>statements</code> - the list of <a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence"><code>Statement</code></a> objects</dd>
@@ -1082,6 +1208,8 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <li class="blockList">
 <h4>computeLastStatementInfo</h4>
 <pre>private&nbsp;void&nbsp;computeLastStatementInfo()</pre>
+<div class="block">Set lastStatementVariables and lastStatementTypes to their appropriate values. See
+ documentation for these fields for more info.</div>
 </li>
 </ul>
 <a name="checkRep--">
@@ -1101,8 +1229,7 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <li class="blockList">
 <h4>equals</h4>
 <pre>public final&nbsp;boolean&nbsp;equals(java.lang.Object&nbsp;o)</pre>
-<div class="block">Two sequences are equal if their statements(+inputs) are element-wise
- equal.</div>
+<div class="block">Two sequences are equal if their statements(+inputs) are element-wise equal.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code>equals</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
@@ -1196,66 +1323,6 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <pre>void&nbsp;checkIndex(int&nbsp;i)</pre>
 </li>
 </ul>
-<a name="extend-randoop.operation.TypedOperation-java.util.List-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>extend</h4>
-<pre>public final&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;extend(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
-                             java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputVariables)</pre>
-<div class="block">Returns a new sequence that is equivalent to this sequence plus the given
- operation appended to the end.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>operation</code> - the operation to add</dd>
-<dd><code>inputVariables</code> - the input variables</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the sequence formed by appending the given operation to this sequence</dd>
-</dl>
-</li>
-</ul>
-<a name="extend-randoop.operation.TypedOperation-randoop.sequence.Variable...-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>extend</h4>
-<pre>public final&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;extend(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
-                             <a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>...&nbsp;inputs)</pre>
-<div class="block">Returns a new sequence that is equivalent to this sequence plus the given
- statement appended at the end.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>operation</code> - the operation to add</dd>
-<dd><code>inputs</code> - the input variables for the operation</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the sequence formed by appending the given operation to this sequence</dd>
-</dl>
-</li>
-</ul>
-<a name="extend-randoop.sequence.Statement-java.util.List-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>extend</h4>
-<pre>public&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;extend(<a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence">Statement</a>&nbsp;statement,
-                       java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputs)</pre>
-<div class="block">extend adds a new statement to this sequence using the operation of the
- given statement. Intended as the only place that we reach inside a
- <a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence"><code>Statement</code></a> for its operation.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>statement</code> - is a <a href="../../randoop/sequence/Statement.html" title="class in randoop.sequence"><code>Statement</code></a> object from which the operation is copied.</dd>
-<dd><code>inputs</code> - is the list of variables for input</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>sequence constructed from this one plus the operation</dd>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../randoop/sequence/Sequence.html#extend-randoop.operation.TypedOperation-java.util.List-"><code>extend(TypedOperation, List)</code></a></dd>
-</dl>
-</li>
-</ul>
 <a name="checkInputs-randoop.operation.TypedOperation-java.util.List-">
 <!--   -->
 </a>
@@ -1266,22 +1333,6 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
                          java.util.List&lt;<a href="../../randoop/sequence/Variable.html" title="class in randoop.sequence">Variable</a>&gt;&nbsp;inputVariables)</pre>
 </li>
 </ul>
-<a name="concatenate-java.util.List-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>concatenate</h4>
-<pre>public static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;concatenate(java.util.List&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;sequences)</pre>
-<div class="block">Create a new sequence that is the concatenation of the given sequences.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>sequences</code> - the list of sequences to concatenate</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the concatenation of the sequences in the list</dd>
-</dl>
-</li>
-</ul>
 <a name="getInputsAsAbsoluteIndices-int-">
 <!--   -->
 </a>
@@ -1289,8 +1340,8 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <li class="blockList">
 <h4>getInputsAsAbsoluteIndices</h4>
 <pre>public&nbsp;java.util.List&lt;java.lang.Integer&gt;&nbsp;getInputsAsAbsoluteIndices(int&nbsp;i)</pre>
-<div class="block">The inputs for the ith statement, as indices. An index equal to x means
- that the input is the value created by the x-th statement in the sequence.</div>
+<div class="block">The inputs for the ith statement, as indices. An index equal to x means that the input is the
+ value created by the x-th statement in the sequence.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>i</code> - the statement index</dd>
@@ -1310,7 +1361,7 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <div class="block">Appends the statement at the given index to the <code>StringBuilder</code>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>b</code> - the <code>StringBuilder</code> to which the code is appended.</dd>
+<dd><code>b</code> - the <code>StringBuilder</code> to which the code is appended</dd>
 <dd><code>index</code> - the position of the statement to print in this <code>Sequence</code>.</dd>
 </dl>
 </li>
@@ -1322,16 +1373,14 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <li class="blockList">
 <h4>toParsableString</h4>
 <pre>public&nbsp;java.lang.String&nbsp;toParsableString()</pre>
-<div class="block">Returns a string representing this sequence. The string can be parsed back
- into a sequence using the method Sequence.parse(String). In particular, the
- following invariant holds:
+<div class="block">Returns a string representing this sequence. The string can be parsed back into a sequence
+ using the method Sequence.parse(String). In particular, the following invariant holds:
 
  <pre>
  st.equals(parse(st.toParsableCode()))
  </pre>
 
- See the parse(List) for the required format of a String
- representing a Sequence.</div>
+ See the parse(List) for the required format of a String representing a Sequence.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>parsable string description of sequence</dd>
@@ -1345,8 +1394,8 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <li class="blockList">
 <h4>toParsableString</h4>
 <pre>private&nbsp;java.lang.String&nbsp;toParsableString(java.lang.String&nbsp;statementSep)</pre>
-<div class="block">Like toParsableString, but the client can specify a string that will be
- used a separator between statements.</div>
+<div class="block">Like toParsableString, but the client can specify a string that will be used a separator
+ between statements.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>statementSep</code> - the statement separator</dd>
@@ -1365,36 +1414,33 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
                       throws <a href="../../randoop/sequence/SequenceParseException.html" title="class in randoop.sequence">SequenceParseException</a></pre>
 <div class="block">NOTE: the ONLY place this is used is in a test.
 
- Parse a sequence encoded as a list of strings, each string corresponding to
- one statement. This method is similar to parse(String), but expects the
- individual statements already as separate strings. Each statement is
- expected to be of the form:
+ <p>Parse a sequence encoded as a list of strings, each string corresponding to one statement.
+ This method is similar to parse(String), but expects the individual statements already as
+ separate strings. Each statement is expected to be of the form:
 
  <pre>
    VAR = OPERATION : VAR ... VAR
  </pre>
 
- where the VAR are strings representing a variable name, and OPERATION is a
- string representing an Operation. For more on OPERATION, see the
- documentation for <a href="../../randoop/operation/OperationParser.html#parse-java.lang.String-"><code>OperationParser.parse(String)</code></a>.
+ where the VAR are strings representing a variable name, and OPERATION is a string representing
+ an Operation. For more on OPERATION, see the documentation for <a href="../../randoop/operation/OperationParser.html#parse-java.lang.String-"><code>OperationParser.parse(String)</code></a>.
 
- The first VAR token represents the "output variable" that is the result of
- the statement call. The VAR tokens appearing after OPERATION represent the
- "input variables" to the statement call. At the i-th line, the input
- variable tokens should appear as an output variable for some previous j-th
- line, j &lt; i.
+ <p>The first VAR token represents the "output variable" that is the result of the statement
+ call. The VAR tokens appearing after OPERATION represent the "input variables" to the statement
+ call. At the i-th line, the input variable tokens should appear as an output variable for some
+ previous j-th line, j &lt; i.
 
- Here is an example of a list of lines representing a sequence.
+ <p>Here is an example of a list of lines representing a sequence.
 
- <pre>
+ <pre><code>
  var0 = cons : java.util.HashMap.&lt;init&gt;() :
  var1 = prim : double:-1.0 :
  var2 = prim : java.lang.String:"hi!" :
  var3 = method : java.util.HashMap.put(java.lang.Object,java.lang.Object) : var0 var1 var2
- </pre>
+ </code></pre>
 
- The above sequence corresponds to the following java code (with package
- names omitted for brevity):
+ The above sequence corresponds to the following java code (with package names omitted for
+ brevity):
 
  <pre>
  HashMap var0 = new HashMap();
@@ -1403,9 +1449,9 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
  Object var3 = var0.put(var1, var2);
  </pre>
 
- When writing/reading sequences out to file: you have two options: serialize
- the sequences using java's serialization mechanism, or write them out as
- parsable text. Serialization is faster, and text is human-readable.</div>
+ When writing/reading sequences out to file: you have two options: serialize the sequences using
+ java's serialization mechanism, or write them out as parsable text. Serialization is faster,
+ and text is human-readable.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>statements</code> - the list of statement strings</dd>
@@ -1424,23 +1470,22 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <h4>parse</h4>
 <pre>public static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;parse(java.lang.String&nbsp;string)
                       throws <a href="../../randoop/sequence/SequenceParseException.html" title="class in randoop.sequence">SequenceParseException</a></pre>
-<div class="block">Parse a sequence encoded as a strings. Convenience method for
- parse(List), which parses a sequence of strings, each representing
- a Statement. See that method for more documentation on the string
- representation of a sequence.
- <p>
- This method breaks up the given string into statements assuming that each
- statement is separated by a line separator character.
- <p>
- The following invariant holds:
+<div class="block">Parse a sequence encoded as a strings. Convenience method for parse(List), which parses a
+ sequence of strings, each representing a Statement. See that method for more documentation on
+ the string representation of a sequence.
+
+ <p>This method breaks up the given string into statements assuming that each statement is
+ separated by a line separator character.
+
+ <p>The following invariant holds:
 
  <pre>
  st.equals(parse(st.toParsableCode()))
  </pre>
 
- When writing/reading sequences out to file: you have two options: serialize
- the sequences using java's serialization mechanism, or write them out as
- parsable text. Serialization is faster, and text is human-readable.</div>
+ When writing/reading sequences out to file: you have two options: serialize the sequences using
+ java's serialization mechanism, or write them out as parsable text. Serialization is faster,
+ and text is human-readable.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>string</code> - the string descriptor</dd>
@@ -1458,8 +1503,7 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <li class="blockList">
 <h4>isPrimitive</h4>
 <pre>public&nbsp;boolean&nbsp;isPrimitive()</pre>
-<div class="block">A sequence representing a single primitive values, like "Foo var0 = null"
- or "int var0 = 1".</div>
+<div class="block">A sequence representing a single primitive values, like "Foo var0 = null" or "int var0 = 1".</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if this sequence is a single primitive initialization statement, false otherwise</dd>
@@ -1473,14 +1517,13 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <li class="blockList">
 <h4>hasUseOfMatchingClass</h4>
 <pre>public&nbsp;boolean&nbsp;hasUseOfMatchingClass(java.util.regex.Pattern&nbsp;classNames)</pre>
-<div class="block">Test whether any statement of this sequence has an operation whose
- declaring class matches the given regular expression.</div>
+<div class="block">Test whether any statement of this sequence has an operation whose declaring class matches the
+ given regular expression.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>classNames</code> - the regular expression to test class names</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if any statement has operation with matching declaring class,
-         false otherwise</dd>
+<dd>true if any statement has operation with matching declaring class, false otherwise</dd>
 </dl>
 </li>
 </ul>
@@ -1491,8 +1534,8 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 <li class="blockList">
 <h4>getSubsequence</h4>
 <pre><a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;getSubsequence(int&nbsp;index)</pre>
-<div class="block">Using compositional structure of this sequence, return the subsequence of
- this sequence that contains the statement at the given index.</div>
+<div class="block">Using compositional structure of this sequence, return the subsequence of this sequence that
+ contains the statement at the given index.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>index</code> - the statement position in this sequence</dd>
@@ -1501,20 +1544,22 @@ implements <a href="../../randoop/util/WeightedElement.html" title="interface in
 </dl>
 </li>
 </ul>
-<a name="createSequenceForPrimitive-java.lang.Object-">
+<a name="log--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>log</h4>
+<pre>public&nbsp;void&nbsp;log()</pre>
+</li>
+</ul>
+<a name="canUseShortForm--">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>createSequenceForPrimitive</h4>
-<pre>public static&nbsp;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;createSequenceForPrimitive(java.lang.Object&nbsp;value)</pre>
-<div class="block">Creates a sequence corresponding to the given non-null primitive value.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>value</code> - non-null reference to a primitive or String value</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>a <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence"><code>Sequence</code></a> consisting of a statement created with the object.</dd>
-</dl>
+<h4>canUseShortForm</h4>
+<pre>boolean&nbsp;canUseShortForm()</pre>
 </li>
 </ul>
 </li>

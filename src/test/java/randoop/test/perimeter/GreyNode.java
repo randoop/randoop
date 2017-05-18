@@ -1,12 +1,12 @@
 package randoop.test.perimeter;
 /**
- * A class to represent a grey quad tree node in the image.
- * A grey node represents a block of an image that contains
- * both 0s and 1s.
+ * A class to represent a grey quad tree node in the image. A grey node represents a block of an
+ * image that contains both 0s and 1s.
  */
 public class GreyNode extends QuadTreeNode {
   /**
    * Construct a <tt>grey</tt> image node.
+   *
    * @param quadrant the quadrant that this node represents
    * @param parent the parent node in the quad tree
    */
@@ -31,10 +31,9 @@ public class GreyNode extends QuadTreeNode {
   }
 
   /**
-   * Sum the perimeter of all white leaves in the two specified
-   * quadrants of the sub quad tree rooted at this node.  Since
-   * this is a grey node, we just recursively call this routine
-   * on the appropriate children (that may be white nodes).
+   * Sum the perimeter of all white leaves in the two specified quadrants of the sub quad tree
+   * rooted at this node. Since this is a grey node, we just recursively call this routine on the
+   * appropriate children (that may be white nodes).
    *
    * @param quad1 the first specified quadrant
    * @param quad2 the second specified quadrant

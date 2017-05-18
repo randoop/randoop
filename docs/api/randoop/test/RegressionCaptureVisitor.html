@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>RegressionCaptureVisitor (randoop 3.0.9 API)</title>
+<title>RegressionCaptureVisitor (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="RegressionCaptureVisitor (randoop 3.0.9 API)";
+            parent.document.title="RegressionCaptureVisitor (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -115,19 +115,18 @@ var activeTableTab = "activeTableTab";
 <pre>public final class <span class="typeNameLabel">RegressionCaptureVisitor</span>
 extends java.lang.Object
 implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test">TestCheckGenerator</a></pre>
-<div class="block">An <code>ExecutionVisitor</code> that records regression checks on the values
- created by the sequence.
+<div class="block">An <code>ExecutionVisitor</code> that records regression checks on the values created by the sequence.
 
- NOTES:
+ <p>NOTES:
 
  <ul>
- <li>Only creates checks over variables whose type is primitive or String.
- <li>Does not create checks for the return values of Object.toString() and
- Object.hashCode() as their values can vary from run to run.
- <li>Does not create checks for Strings that contain the string ";@" as this
- is a good indication that at least part of the String came from a call of
- Object.toString() (e.g. "[[Ljava.lang.Object;@5780d9]" is the string
- representation of a list containing one Object).
+   <li>Only creates checks over variables whose type is primitive or String.
+   <li>Does not create checks for the return values of Object.toString() and Object.hashCode() as
+       their values can vary from run to run.
+   <li>Does not create checks for Strings that contain the string ";@" as this is a good
+       indication that at least part of the String came from a call of Object.toString() (e.g.
+       "[[Ljava.lang.Object;@5780d9]" is the string representation of a list containing one
+       Object).
  </ul></div>
 </li>
 </ul>
@@ -160,6 +159,10 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/RegressionCaptureVisitor.html#includeAssertions">includeAssertions</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>private <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/RegressionCaptureVisitor.html#isVisible">isVisible</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/RegressionCaptureVisitor.html#observerMap">observerMap</a></span></code>&nbsp;</td>
 </tr>
@@ -178,9 +181,10 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/RegressionCaptureVisitor.html#RegressionCaptureVisitor-randoop.test.ExpectedExceptionCheckGen-randoop.util.MultiMap-java.util.Set-boolean-">RegressionCaptureVisitor</a></span>(<a href="../../randoop/test/ExpectedExceptionCheckGen.html" title="class in randoop.test">ExpectedExceptionCheckGen</a>&nbsp;exceptionExpectation,
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/test/RegressionCaptureVisitor.html#RegressionCaptureVisitor-randoop.test.ExpectedExceptionCheckGen-randoop.util.MultiMap-java.util.Set-randoop.reflection.VisibilityPredicate-boolean-">RegressionCaptureVisitor</a></span>(<a href="../../randoop/test/ExpectedExceptionCheckGen.html" title="class in randoop.test">ExpectedExceptionCheckGen</a>&nbsp;exceptionExpectation,
                         <a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;observerMap,
                         java.util.Set&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;excludeSet,
+                        <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a>&nbsp;isVisible,
                         boolean&nbsp;includeAssertions)</code>&nbsp;</td>
 </tr>
 </table>
@@ -201,8 +205,8 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <tr id="i0" class="altColor">
 <td class="colFirst"><code><a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/test/RegressionCaptureVisitor.html#visit-randoop.sequence.ExecutableSequence-">visit</a></span>(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</code>
-<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code>
- based on the criteria of this generator.</div>
+<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code> based on the criteria
+ of this generator.</div>
 </td>
 </tr>
 </table>
@@ -254,6 +258,15 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <pre>private final&nbsp;java.util.Set&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt; excludeSet</pre>
 </li>
 </ul>
+<a name="isVisible">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isVisible</h4>
+<pre>private final&nbsp;<a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a> isVisible</pre>
+</li>
+</ul>
 <a name="includeAssertions">
 <!--   -->
 </a>
@@ -271,7 +284,7 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="RegressionCaptureVisitor-randoop.test.ExpectedExceptionCheckGen-randoop.util.MultiMap-java.util.Set-boolean-">
+<a name="RegressionCaptureVisitor-randoop.test.ExpectedExceptionCheckGen-randoop.util.MultiMap-java.util.Set-randoop.reflection.VisibilityPredicate-boolean-">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -280,6 +293,7 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <pre>public&nbsp;RegressionCaptureVisitor(<a href="../../randoop/test/ExpectedExceptionCheckGen.html" title="class in randoop.test">ExpectedExceptionCheckGen</a>&nbsp;exceptionExpectation,
                                 <a href="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</a>&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>,<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;observerMap,
                                 java.util.Set&lt;<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&gt;&nbsp;excludeSet,
+                                <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a>&nbsp;isVisible,
                                 boolean&nbsp;includeAssertions)</pre>
 </li>
 </ul>
@@ -298,13 +312,14 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <li class="blockList">
 <h4>visit</h4>
 <pre>public&nbsp;<a href="../../randoop/test/TestChecks.html" title="interface in randoop.test">TestChecks</a>&nbsp;visit(<a href="../../randoop/sequence/ExecutableSequence.html" title="class in randoop.sequence">ExecutableSequence</a>&nbsp;s)</pre>
-<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code>
- based on the criteria of this generator. Iterates over all statements of the sequence to create
- regression assertions. If visitor is set to include assertions, then
- assertions are generated for both normal execution and exceptions. A
- try-catch block is always generated for exceptions, but whether assertions
- are included is determined by the <a href="../../randoop/test/ExpectedExceptionCheckGen.html" title="class in randoop.test"><code>ExpectedExceptionCheckGen</code></a> given
- when creating this visitor.</div>
+<div class="block">Generate a <code>TestChecks</code> object for the executed sequence <code>s</code> based on the criteria
+ of this generator.
+
+ <p>Iterates over all statements of the sequence to create regression assertions. If visitor is
+ set to include assertions, then assertions are generated for both normal execution and
+ exceptions. A try-catch block is always generated for exceptions, but whether assertions are
+ included is determined by the <a href="../../randoop/test/ExpectedExceptionCheckGen.html" title="class in randoop.test"><code>ExpectedExceptionCheckGen</code></a> given when creating this
+ visitor.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/test/TestCheckGenerator.html#visit-randoop.sequence.ExecutableSequence-">visit</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/test/TestCheckGenerator.html" title="interface in randoop.test">TestCheckGenerator</a></code></dd>
@@ -313,8 +328,7 @@ implements <a href="../../randoop/test/TestCheckGenerator.html" title="interface
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the generated check set for the sequence</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.Error</code> - if any statement is not executed, or exception occurs before last
-           statement</dd>
+<dd><code>java.lang.Error</code> - if any statement is not executed, or exception occurs before last statement</dd>
 </dl>
 </li>
 </ul>

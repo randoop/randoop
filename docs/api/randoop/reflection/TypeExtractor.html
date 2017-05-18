@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>TypeExtractor (randoop 3.0.9 API)</title>
+<title>TypeExtractor (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,7 +12,7 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="TypeExtractor (randoop 3.0.9 API)";
+            parent.document.title="TypeExtractor (randoop 3.1.5 API)";
         }
     }
     catch(err) {
@@ -168,8 +168,8 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeExtractor.html#TypeExtractor-java.util.Set-randoop.reflection.VisibilityPredicate-">TypeExtractor</a></span>(java.util.Set&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;&nbsp;inputTypes,
              <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a>&nbsp;predicate)</code>
-<div class="block">Creates a visitor that adds discovered concrete types to the given set if they satisfy
- the visibility predicate.</div>
+<div class="block">Creates a visitor that adds discovered concrete types to the given set if they satisfy the
+ visibility predicate.</div>
 </td>
 </tr>
 </table>
@@ -190,8 +190,8 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>private void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/reflection/TypeExtractor.html#addIfConcrete-randoop.types.Type-">addIfConcrete</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type)</code>
-<div class="block">Determines whether the given general type is not generic, and, if so, adds the concrete type
- to the input types of this object.</div>
+<div class="block">Determines whether the given general type is not generic, and, if so, adds the concrete type to
+ the input types of this object.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
@@ -283,8 +283,8 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <h4>TypeExtractor</h4>
 <pre>TypeExtractor(java.util.Set&lt;<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&gt;&nbsp;inputTypes,
               <a href="../../randoop/reflection/VisibilityPredicate.html" title="interface in randoop.reflection">VisibilityPredicate</a>&nbsp;predicate)</pre>
-<div class="block">Creates a visitor that adds discovered concrete types to the given set if they satisfy
- the visibility predicate.</div>
+<div class="block">Creates a visitor that adds discovered concrete types to the given set if they satisfy the
+ visibility predicate.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>inputTypes</code> - the set of concrete types</dd>
@@ -308,7 +308,9 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <h4>visit</h4>
 <pre>public&nbsp;void&nbsp;visit(java.lang.reflect.Constructor&lt;?&gt;&nbsp;c)</pre>
 <div class="block">Perform action on a constructor.
- Adds all concrete parameter types from the constructor to the input types set of this object.</div>
+
+ <p>Adds all concrete parameter types from the constructor to the input types set of this
+ object.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/reflection/ClassVisitor.html#visit-java.lang.reflect.Constructor-">visit</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection">ClassVisitor</a></code></dd>
@@ -327,8 +329,9 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <h4>visit</h4>
 <pre>public&nbsp;void&nbsp;visit(java.lang.reflect.Method&nbsp;m)</pre>
 <div class="block">Perform an action on a method.
- Adds any concrete type among parameter and return types to the input types set of this object.
- Avoids bridge methods, because may have rawtypes not useful in building tests.</div>
+
+ <p>Adds any concrete type among parameter and return types to the input types set of this
+ object. Avoids bridge methods, because may have rawtypes not useful in building tests.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/reflection/ClassVisitor.html#visit-java.lang.reflect.Method-">visit</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection">ClassVisitor</a></code></dd>
@@ -347,7 +350,8 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <h4>visit</h4>
 <pre>public&nbsp;void&nbsp;visit(java.lang.reflect.Field&nbsp;f)</pre>
 <div class="block">Perform an action on a field.
- Adds a concrete field type to the input types set of this object.</div>
+
+ <p>Adds a concrete field type to the input types set of this object.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/reflection/ClassVisitor.html#visit-java.lang.reflect.Field-">visit</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection">ClassVisitor</a></code></dd>
@@ -365,8 +369,8 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <li class="blockList">
 <h4>addIfConcrete</h4>
 <pre>private&nbsp;void&nbsp;addIfConcrete(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;type)</pre>
-<div class="block">Determines whether the given general type is not generic, and, if so, adds the concrete type
- to the input types of this object.</div>
+<div class="block">Determines whether the given general type is not generic, and, if so, adds the concrete type to
+ the input types of this object.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>type</code> - the general type</dd>
@@ -381,7 +385,8 @@ extends <a href="../../randoop/reflection/DefaultClassVisitor.html" title="class
 <h4>visitBefore</h4>
 <pre>public&nbsp;void&nbsp;visitBefore(java.lang.Class&lt;?&gt;&nbsp;c)</pre>
 <div class="block">Perform an action on a class. Occurs before other visit methods are called.
- Adds the class if it is concrete.</div>
+
+ <p>Adds the class if it is concrete.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/reflection/ClassVisitor.html#visitBefore-java.lang.Class-">visitBefore</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/reflection/ClassVisitor.html" title="interface in randoop.reflection">ClassVisitor</a></code></dd>

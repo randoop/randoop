@@ -1,8 +1,8 @@
 package randoop.test;
 
 /**
- * Test helper class for Randoop's long-string option that lets the
- * user set the maximum length of a string used to create an
+ * Test helper class for Randoop's {@link randoop.main.GenInputsAbstract#string_maxlen} option
+ * that lets the user set the maximum length of a string used to create an
  * assertion.
  */
 public class LongString {

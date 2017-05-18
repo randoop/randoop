@@ -4,10 +4,9 @@ import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-
+import plume.Pair;
 import randoop.BugInRandoopException;
 import randoop.Globals;
-import plume.Pair;
 
 public class TestCoverageInfo {
 

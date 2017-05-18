@@ -3,7 +3,6 @@ package randoop.contract;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 import randoop.Globals;
 import randoop.operation.TypedOperation;
 import randoop.sequence.Value;
@@ -13,32 +12,22 @@ import randoop.types.TypeTuple;
 import randoop.util.Util;
 
 /**
+ * A check recording the value that an observer method returned during execution, e.g. a check
+ * recording that a collection's <code>size()</code> method returned <code>3</code> when called in
+ * particular sequence.
  *
- * A check recording the value that an observer method returned during
- * execution, e.g. a check recording that a collection's <code>size()</code>
- * method returned <code>3</code> when called in particular sequence.
- *
- * <p>
- *
- * ObserverEqValue checks are not checks that must hold of all objects of a
- * given class (unlike a check like {@link EqualsReflexive}, which must hold for
- * any objects, no matter its execution context). Randoop creates an instance of
- * this contract when, during execution of a sequence, it determines that the
- * above property holds. The property thus represents a <i>regression</i> as it
+ * <p>ObserverEqValue checks are not checks that must hold of all objects of a given class (unlike a
+ * check like {@link EqualsReflexive}, which must hold for any objects, no matter its execution
+ * context). Randoop creates an instance of this contract when, during execution of a sequence, it
+ * determines that the above property holds. The property thus represents a <i>regression</i> as it
  * captures the behavior of the code when it is executed.
- *
  */
 public final class ObserverEqValue implements ObjectContract {
 
-  /**
-   * The observer method.
-   */
+  /** The observer method. */
   public TypedOperation observer;
 
-  /**
-   * The runtime value of the observer. This variable holds a primitive value or
-   * String.
-   */
+  /** The runtime value of the observer. This variable holds a primitive value or String. */
   public Object value;
 
   @Override
@@ -95,16 +84,14 @@ public final class ObserverEqValue implements ObjectContract {
         b.append(
             String.format(
                 "org.junit.Assert.assertTrue(x0.%s() == %s);",
-                methodname,
-                Value.toCodeString(value)));
+                methodname, Value.toCodeString(value)));
       }
     } else { // string
       // System.out.printf ("value = %s - %s\n", value, value.getClass());
       b.append(
           String.format(
               "org.junit.Assert.assertEquals(x0.%s(), %s);",
-              methodname,
-              Value.toCodeString(value)));
+              methodname, Value.toCodeString(value)));
     }
     return b.toString();
   }

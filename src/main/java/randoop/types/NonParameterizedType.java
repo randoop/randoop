@@ -5,10 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {@code NonParameterizedType} represents a non-parameterized class, interface,
- * enum, or the rawtype of a generic class.
- * It is a wrapper for a {@link Class} object, which is a runtime representation
- * of a type.
+ * {@code NonParameterizedType} represents a non-parameterized class, interface, enum, or the
+ * rawtype of a generic class. It is a wrapper for a {@link Class} object, which is a runtime
+ * representation of a type.
  */
 public class NonParameterizedType extends ClassOrInterfaceType {
 
@@ -18,7 +17,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
   /**
    * Create a {@link NonParameterizedType} object for the runtime class
    *
-   * @param runtimeType  the runtime class for the type
+   * @param runtimeType the runtime class for the type
    */
   public NonParameterizedType(Class<?> runtimeType) {
     assert !runtimeType.isPrimitive() : "must be reference type, got " + runtimeType.getName();
@@ -27,6 +26,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   /**
    * {@inheritDoc}
+   *
    * @return true if the runtime types are the same, false otherwise
    */
   @Override
@@ -45,8 +45,8 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   /**
    * {@inheritDoc}
-   * @see #getName()
    *
+   * @see #getName()
    * @return the name of this type
    */
   @Override
@@ -136,8 +136,10 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   /**
    * {@inheritDoc}
-   * Specifically checks for
-   * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.7">boxing conversion (section 5.1.7)</a>
+   *
+   * <p>Specifically checks for <a
+   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.7">boxing conversion
+   * (section 5.1.7)</a>
    */
   @Override
   public boolean isAssignableFrom(Type sourceType) {
@@ -164,11 +166,12 @@ public class NonParameterizedType extends ClassOrInterfaceType {
 
   /**
    * {@inheritDoc}
-   * For a {@link NonParameterizedType}, if this type
-   * instantiates the {@code otherType}, which is a {@link NonParameterizedType}
-   * by {@link ClassOrInterfaceType#isInstantiationOf(ReferenceType)} also
-   * checks that runtime classes are equal. This allows for proper matching
-   * of member classes that are of {@link NonParameterizedType}.
+   *
+   * <p>For a {@link NonParameterizedType}, if this type instantiates the {@code otherType}, which
+   * is a {@link NonParameterizedType} by {@link
+   * ClassOrInterfaceType#isInstantiationOf(ReferenceType)} also checks that runtime classes are
+   * equal. This allows for proper matching of member classes that are of {@link
+   * NonParameterizedType}.
    */
   @Override
   public boolean isInstantiationOf(ReferenceType otherType) {

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 
-<title>ComponentManager (randoop 3.0.9 API)</title>
+<title>ComponentManager (randoop 3.1.5 API)</title>
 
 <link rel="stylesheet" type="text/css" href="../../javadocstyle.css" title="Style">
 <script type="text/javascript" src="../../script.js"></script>
@@ -12,13 +12,13 @@
 <script type="text/javascript"><!--
     try {
         if (location.href.indexOf('is-external=true') == -1) {
-            parent.document.title="ComponentManager (randoop 3.0.9 API)";
+            parent.document.title="ComponentManager (randoop 3.1.5 API)";
         }
     }
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -110,25 +110,23 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">ComponentManager</span>
 extends java.lang.Object</pre>
-<div class="block">Stores and provides means to access the component sequences generated during
- a run of Randoop. "Component sequences" are sequences that Randoop uses to
- create larger sequences.
+<div class="block">Stores and provides means to access the component sequences generated during a run of Randoop.
+ "Component sequences" are sequences that Randoop uses to create larger sequences.
 
- This class manages different collections of component sequences:
+ <p>This class manages different collections of component sequences:
 
  <ul>
- <li>General components that can be used as input to any method in any class.
- <li>Class literals: components representing literal values that apply only to
- a specific class and should not be used as inputs to other classes.
- <li>Package literals: analogous to class literals but at the package level.
+   <li>General components that can be used as input to any method in any class.
+   <li>Class literals: components representing literal values that apply only to a specific class
+       and should not be used as inputs to other classes.
+   <li>Package literals: analogous to class literals but at the package level.
  </ul>
 
- SEED SEQUENCES. Seed sequences are sequences that were not created during the
- generation process but obtained via other means. They include (1) sequences
- passed via the constructor, (2) class literals, and (3) package literals. The
- only different treatment of seed sequences is during calls to the
- clearGeneratedSequences() method, which removes only general, non-seed
- components from the collection.</div>
+ SEED SEQUENCES. Seed sequences are sequences that were not created during the generation process
+ but obtained via other means. They include (1) sequences passed via the constructor, (2) class
+ literals, and (3) package literals. The only different treatment of seed sequences is during
+ calls to the clearGeneratedSequences() method, which removes only general, non-seed components
+ from the collection.</div>
 </li>
 </ul>
 </div>
@@ -150,29 +148,28 @@ extends java.lang.Object</pre>
 <tr class="altColor">
 <td class="colFirst"><code>private <a href="../../randoop/sequence/ClassLiterals.html" title="class in randoop.sequence">ClassLiterals</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ComponentManager.html#classLiterals">classLiterals</a></span></code>
-<div class="block">A set of additional components representing literals that should only be
- used as input to specific classes.</div>
+<div class="block">A set of additional components representing literals that should only be used as input to
+ specific classes.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/sequence/SequenceCollection.html" title="class in randoop.sequence">SequenceCollection</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ComponentManager.html#gralComponents">gralComponents</a></span></code>
-<div class="block">The principal set of sequences used to create other, larger sequences by
- the generator.</div>
+<div class="block">The principal set of sequences used to create other, larger sequences by the generator.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>private java.util.Collection&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ComponentManager.html#gralSeeds">gralSeeds</a></span></code>
-<div class="block">The subset of the sequences that were given pre-generation to the component
- manager (via its constructor).</div>
+<div class="block">The subset of the sequences that were given pre-generation to the component manager (via its
+ constructor).</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>private <a href="../../randoop/sequence/PackageLiterals.html" title="class in randoop.sequence">PackageLiterals</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ComponentManager.html#packageLiterals">packageLiterals</a></span></code>
-<div class="block">A set of additional components representing literals that should only be
- used as input to specific packages.</div>
+<div class="block">A set of additional components representing literals that should only be used as input to
+ specific packages.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -200,8 +197,8 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/generation/ComponentManager.html#ComponentManager-java.util.Collection-">ComponentManager</a></span>(java.util.Collection&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;generalSeeds)</code>
-<div class="block">Create a component manager, initially populated with the given sequences,
- which are considered seed sequences.</div>
+<div class="block">Create a component manager, initially populated with the given sequences, which are considered
+ seed sequences.</div>
 </td>
 </tr>
 </table>
@@ -223,8 +220,8 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ComponentManager.html#addClassLevelLiteral-randoop.types.ClassOrInterfaceType-randoop.sequence.Sequence-">addClassLevelLiteral</a></span>(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;type,
                     <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;seq)</code>
-<div class="block">Add a sequence representing a literal value that can be used when testing
- members of the given class.</div>
+<div class="block">Add a sequence representing a literal value that can be used when testing members of the given
+ class.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
@@ -237,15 +234,14 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ComponentManager.html#addPackageLevelLiteral-java.lang.Package-randoop.sequence.Sequence-">addPackageLevelLiteral</a></span>(java.lang.Package&nbsp;pkg,
                       <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;seq)</code>
-<div class="block">Add a sequence representing a literal value that can be used when testing
- classes in the given package.</div>
+<div class="block">Add a sequence representing a literal value that can be used when testing classes in the given
+ package.</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>(package private) void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ComponentManager.html#clearGeneratedSequences--">clearGeneratedSequences</a></span>()</code>
-<div class="block">Removes any components sequences added so far, except for seed sequences,
- which are preserved.</div>
+<div class="block">Removes any components sequences added so far, except for seed sequences, which are preserved.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
@@ -261,16 +257,15 @@ extends java.lang.Object</pre>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>(package private) <a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ComponentManager.html#getSequencesForType-randoop.types.Type-">getSequencesForType</a></span>(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;cls)</code>
-<div class="block">Returns all the general component sequences that create values of the given
- class.</div>
+<div class="block">Returns all the general component sequences that create values of the given class.</div>
 </td>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>(package private) <a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ComponentManager.html#getSequencesForType-randoop.operation.TypedOperation-int-">getSequencesForType</a></span>(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
                    int&nbsp;i)</code>
-<div class="block">Returns component sequences that create values of the type required by the
- i-th input value of the given statement.</div>
+<div class="block">Returns component sequences that create values of the type required by the i-th input value of
+ the given statement.</div>
 </td>
 </tr>
 <tr id="i8" class="altColor">
@@ -278,6 +273,10 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ComponentManager.html#getTypeInstantiator--">getTypeInstantiator</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i9" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ComponentManager.html#log--">log</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/generation/ComponentManager.html#numGeneratedSequences--">numGeneratedSequences</a></span>()</code>
 <div class="block">Returns the number of (non-seed) sequences stored by the manager.</div>
@@ -312,8 +311,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>gralComponents</h4>
 <pre>private&nbsp;<a href="../../randoop/sequence/SequenceCollection.html" title="class in randoop.sequence">SequenceCollection</a> gralComponents</pre>
-<div class="block">The principal set of sequences used to create other, larger sequences by
- the generator.</div>
+<div class="block">The principal set of sequences used to create other, larger sequences by the generator.</div>
 </li>
 </ul>
 <a name="gralSeeds">
@@ -323,8 +321,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>gralSeeds</h4>
 <pre>private final&nbsp;java.util.Collection&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt; gralSeeds</pre>
-<div class="block">The subset of the sequences that were given pre-generation to the component
- manager (via its constructor).</div>
+<div class="block">The subset of the sequences that were given pre-generation to the component manager (via its
+ constructor).</div>
 </li>
 </ul>
 <a name="classLiterals">
@@ -334,8 +332,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>classLiterals</h4>
 <pre>private&nbsp;<a href="../../randoop/sequence/ClassLiterals.html" title="class in randoop.sequence">ClassLiterals</a> classLiterals</pre>
-<div class="block">A set of additional components representing literals that should only be
- used as input to specific classes.</div>
+<div class="block">A set of additional components representing literals that should only be used as input to
+ specific classes.</div>
 </li>
 </ul>
 <a name="packageLiterals">
@@ -345,8 +343,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>packageLiterals</h4>
 <pre>private&nbsp;<a href="../../randoop/sequence/PackageLiterals.html" title="class in randoop.sequence">PackageLiterals</a> packageLiterals</pre>
-<div class="block">A set of additional components representing literals that should only be
- used as input to specific packages.</div>
+<div class="block">A set of additional components representing literals that should only be used as input to
+ specific packages.</div>
 </li>
 </ul>
 <a name="sequenceTypes">
@@ -383,12 +381,12 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>ComponentManager</h4>
 <pre>public&nbsp;ComponentManager(java.util.Collection&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;generalSeeds)</pre>
-<div class="block">Create a component manager, initially populated with the given sequences,
- which are considered seed sequences.</div>
+<div class="block">Create a component manager, initially populated with the given sequences, which are considered
+ seed sequences.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>generalSeeds</code> - seed sequences. Can be null, in which case the seed sequences set
-          is considered empty.</dd>
+<dd><code>generalSeeds</code> - seed sequences. Can be null, in which case the seed sequences set is
+     considered empty.</dd>
 </dl>
 </li>
 </ul>
@@ -410,7 +408,7 @@ extends java.lang.Object</pre>
 <div class="block">Returns the number of (non-seed) sequences stored by the manager.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>count of generated sequences in this <a href="../../randoop/generation/ComponentManager.html" title="class in randoop.generation"><code>ComponentManager</code></a>.</dd>
+<dd>count of generated sequences in this <a href="../../randoop/generation/ComponentManager.html" title="class in randoop.generation"><code>ComponentManager</code></a></dd>
 </dl>
 </li>
 </ul>
@@ -422,8 +420,8 @@ extends java.lang.Object</pre>
 <h4>addClassLevelLiteral</h4>
 <pre>public&nbsp;void&nbsp;addClassLevelLiteral(<a href="../../randoop/types/ClassOrInterfaceType.html" title="class in randoop.types">ClassOrInterfaceType</a>&nbsp;type,
                                  <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;seq)</pre>
-<div class="block">Add a sequence representing a literal value that can be used when testing
- members of the given class.</div>
+<div class="block">Add a sequence representing a literal value that can be used when testing members of the given
+ class.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>type</code> - the class literal to add for the sequence</dd>
@@ -439,8 +437,8 @@ extends java.lang.Object</pre>
 <h4>addPackageLevelLiteral</h4>
 <pre>public&nbsp;void&nbsp;addPackageLevelLiteral(java.lang.Package&nbsp;pkg,
                                    <a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&nbsp;seq)</pre>
-<div class="block">Add a sequence representing a literal value that can be used when testing
- classes in the given package.</div>
+<div class="block">Add a sequence representing a literal value that can be used when testing classes in the given
+ package.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>pkg</code> - the package to add for the sequence</dd>
@@ -469,8 +467,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>clearGeneratedSequences</h4>
 <pre>void&nbsp;clearGeneratedSequences()</pre>
-<div class="block">Removes any components sequences added so far, except for seed sequences,
- which are preserved.</div>
+<div class="block">Removes any components sequences added so far, except for seed sequences, which are preserved.</div>
 </li>
 </ul>
 <a name="getAllGeneratedSequences--">
@@ -489,11 +486,10 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getSequencesForType</h4>
 <pre><a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;getSequencesForType(<a href="../../randoop/types/Type.html" title="class in randoop.types">Type</a>&nbsp;cls)</pre>
-<div class="block">Returns all the general component sequences that create values of the given
- class. If exactMatch==true returns only sequences that declare values of
- the exact class specified; if exactMatch==false returns sequences declaring
- values of cls or any other class that can be used as a cls (i.e. a subclass
- of cls).</div>
+<div class="block">Returns all the general component sequences that create values of the given class. If
+ exactMatch==true returns only sequences that declare values of the exact class specified; if
+ exactMatch==false returns sequences declaring values of cls or any other class that can be used
+ as a cls (i.e. a subclass of cls).</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>cls</code> - the query type</dd>
@@ -510,9 +506,9 @@ extends java.lang.Object</pre>
 <h4>getSequencesForType</h4>
 <pre><a href="../../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</a>&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;getSequencesForType(<a href="../../randoop/operation/TypedOperation.html" title="class in randoop.operation">TypedOperation</a>&nbsp;operation,
                                          int&nbsp;i)</pre>
-<div class="block">Returns component sequences that create values of the type required by the
- i-th input value of the given statement. Any applicable class- or
- package-level literals, those are added to the collection as well.</div>
+<div class="block">Returns component sequences that create values of the type required by the i-th input value of
+ the given statement. Any applicable class- or package-level literals, those are added to the
+ collection as well.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>operation</code> - the statement</dd>
@@ -529,9 +525,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getAllPrimitiveSequences</h4>
 <pre>java.util.Set&lt;<a href="../../randoop/sequence/Sequence.html" title="class in randoop.sequence">Sequence</a>&gt;&nbsp;getAllPrimitiveSequences()</pre>
-<div class="block">Returns all sequences that represent primitive values (e.g. sequences like
- "Foo var0 = null" or "int var0 = 1"), including general components, class
- literals and package literals.</div>
+<div class="block">Returns all sequences that represent primitive values (e.g. sequences like "Foo var0 = null" or
+ "int var0 = 1"), including general components, class literals and package literals.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the sequences for primitive values</dd>
@@ -541,10 +536,19 @@ extends java.lang.Object</pre>
 <a name="getTypeInstantiator--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getTypeInstantiator</h4>
 <pre><a href="../../randoop/reflection/TypeInstantiator.html" title="class in randoop.reflection">TypeInstantiator</a>&nbsp;getTypeInstantiator()</pre>
+</li>
+</ul>
+<a name="log--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>log</h4>
+<pre>public&nbsp;void&nbsp;log()</pre>
 </li>
 </ul>
 </li>

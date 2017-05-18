@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.ExecutionVisitor;
@@ -17,11 +16,7 @@ import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.TypedOperation;
 import randoop.test.Check;
-import randoop.test.ExtendGenerator;
-import randoop.test.InvalidChecks;
-import randoop.test.InvalidValueCheck;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
 import randoop.types.ReferenceType;
@@ -30,63 +25,51 @@ import randoop.util.IdentityMultiMap;
 import randoop.util.ProgressDisplay;
 
 /**
- * An ExecutableSequence wraps a {@link Sequence} with functionality for
- * executing the sequence. It also lets the client add {@link Check}s that check
- * expected behaviors of the execution.
- * <p>
- * An ExecutableSequence augments a sequence with three additional pieces of
- * data:
- * <ul>
- * <li><b>Execution results.</b> An ExecutableSequence can be executed, and the
- * results of the execution (meaning the objects created during execution, and
- * any exceptions thrown) are made available to clients or execution visitors to
- * inspect.
- * <li><b>Checks.</b> A check is an object representing an expected runtime
- * behavior of the sequence. Clients can add checks to specific indices of the
- * sequence. For example, a client might add a <code>NotNull</code> check to the
- * ith index of a sequence to signify that the value returned by the statement
- * at index i should not be null.
- * <li><b>Check evaluation results.</b> Corresponding to every check is a
- * boolean value that represents whether the check passed or failed during the
- * last execution of the sequence.
- * </ul>
- * <p>
+ * An ExecutableSequence wraps a {@link Sequence} with functionality for executing the sequence. It
+ * also lets the client add {@link Check}s that check expected behaviors of the execution.
  *
- * Of the three pieces of data above, an ExecutableSequence only directly
- * manages the first one, i.e. the execution results. Other pieces of data,
- * including checks and check evaluation results, are added or removed by the
- * client of the ExecutableSequence. One way of doing this is by implementing an
- * {@link ExecutionVisitor} and passing it as an argument to the
- * <code>execute</code> method.
- *
- * <p>
- *
- * The method <code>execute(ExecutionVisitor v)</code> executes the code that
- * the sequence represents. This method uses reflection to execute each element
- * in the sequence (method call, constructor call, primitive or array
- * declaration, etc). Before executing each statement (e.g. the i-th statement),
- * execute(v) calls v.visitBefore(this, i), and after executing each statement,
- * it calls v.visitAfter(this, i). The purpose of the visitor is to examine the
- * unfolding execution, and take some action depending on its intended purpose.
- * For example, it may decorate the sequence with {@link Check}s about the
- * execution.
- *
- * <p>
- *
- * NOTES.
+ * <p>An ExecutableSequence augments a sequence with three additional pieces of data:
  *
  * <ul>
- * <li>It only makes sense to call the following methods <b>after</b> executing
- * the i-th statement in a sequence:
- * <ul>
- * <li>isNormalExecution(i)
- * <li>isExceptionalExecution(i)
- * <li>getExecutionResult(i)
- * <li>getResult(i)
- * <li>getException(i)
- * </ul>
+ *   <li><b>Execution results.</b> An ExecutableSequence can be executed, and the results of the
+ *       execution (meaning the objects created during execution, and any exceptions thrown) are
+ *       made available to clients or execution visitors to inspect.
+ *   <li><b>Checks.</b> A check is an object representing an expected runtime behavior of the
+ *       sequence. Clients can add checks to specific indices of the sequence. For example, a client
+ *       might add a <code>NotNull</code> check to the ith index of a sequence to signify that the
+ *       value returned by the statement at index i should not be null.
+ *   <li><b>Check evaluation results.</b> Corresponding to every check is a boolean value that
+ *       represents whether the check passed or failed during the last execution of the sequence.
  * </ul>
  *
+ * <p>Of the three pieces of data above, an ExecutableSequence only directly manages the first one,
+ * i.e. the execution results. Other pieces of data, including checks and check evaluation results,
+ * are added or removed by the client of the ExecutableSequence. One way of doing this is by
+ * implementing an {@link ExecutionVisitor} and passing it as an argument to the <code>execute
+ * </code> method.
+ *
+ * <p>The method <code>execute(ExecutionVisitor v)</code> executes the code that the sequence
+ * represents. This method uses reflection to execute each element in the sequence (method call,
+ * constructor call, primitive or array declaration, etc). Before executing each statement (e.g. the
+ * i-th statement), execute(v) calls v.visitBefore(this, i), and after executing each statement, it
+ * calls v.visitAfter(this, i). The purpose of the visitor is to examine the unfolding execution,
+ * and take some action depending on its intended purpose. For example, it may decorate the sequence
+ * with {@link Check}s about the execution.
+ *
+ * <p>NOTES.
+ *
+ * <ul>
+ *   <li>It only makes sense to call the following methods <b>after</b> executing the i-th statement
+ *       in a sequence:
+ *       <ul>
+ *         <li>isNormalExecution(i)
+ *         <li>isExceptionalExecution(i)
+ *         <li>getExecutionResult(i)
+ *         <li>getResult(i)
+ *         <li>getException(i)
+ *       </ul>
+ *
+ * </ul>
  */
 public class ExecutableSequence {
 
@@ -97,36 +80,34 @@ public class ExecutableSequence {
   private TestChecks checks;
 
   /**
-   * Contains the runtime objects created and exceptions thrown (if any) during
-   * execution of this sequence. Invariant: sequence.size() ==
-   * executionResults.size(). Transient because it can contain arbitrary objects
-   * that may not be serializable.
+   * Contains the runtime objects created and exceptions thrown (if any) during execution of this
+   * sequence. Invariant: sequence.size() == executionResults.size(). Transient because it can
+   * contain arbitrary objects that may not be serializable.
    */
   private transient /* final */ Execution executionResults;
 
   /**
-   * How long it took to generate this sequence in nanoseconds, excluding
-   * execution time. Must be directly set by the generator that creates this
-   * object (no code in this class sets its value).
+   * How long it took to generate this sequence in nanoseconds, excluding execution time. Must be
+   * directly set by the generator that creates this object (no code in this class sets its value).
    */
   public long gentime = -1;
 
   /**
-   * How long it took to execute this sequence in nanoseconds, excluding
-   * generation time. Must be directly set by the generator that creates this
-   * object. (no code in this class sets its value).
+   * How long it took to execute this sequence in nanoseconds, excluding generation time. Must be
+   * directly set by the generator that creates this object. (no code in this class sets its value).
    */
   public long exectime = -1;
 
   /**
    * Flag to record whether execution of sequence has a null input.
    *
-   * [This is wonky, it really belongs to execution.]
+   * <p>[This is wonky, it really belongs to execution.]
    */
   private boolean hasNullInput;
 
   /** Output buffer used to capture the output from the executed sequence */
   private static ByteArrayOutputStream output_buffer = new ByteArrayOutputStream();
+
   private static PrintStream ps_output_buffer = new PrintStream(output_buffer);
 
   private IdentityMultiMap<Object, Variable> variableMap;
@@ -134,7 +115,7 @@ public class ExecutableSequence {
   /**
    * Create an executable sequence that executes the given sequence.
    *
-   * @param sequence  the underlying sequence for this executable sequence
+   * @param sequence the underlying sequence for this executable sequence
    */
   public ExecutableSequence(Sequence sequence) {
     this.sequence = sequence;
@@ -166,24 +147,25 @@ public class ExecutableSequence {
   }
 
   /**
-   * Return this sequence as code. Similar to {@link Sequence#toCodeString()}
-   * except includes the checks.
+   * Return this sequence as code. Similar to {@link Sequence#toCodeString()} except includes the
+   * checks.
    *
-   * If for a given statement there is a check of type
-   * {@link randoop.test.ExceptionCheck}, that check's pre-statement code is printed
-   * immediately before the statement, and its post-statement code is printed
-   * immediately after the statement.
+   * <p>If for a given statement there is a check of type {@link randoop.test.ExceptionCheck}, that
+   * check's pre-statement code is printed immediately before the statement, and its post-statement
+   * code is printed immediately after the statement.
    *
    * @return the sequence as a string
    */
-  public String toCodeString() {
-    StringBuilder b = new StringBuilder();
+  private List<String> toCodeLines() {
+    List<String> lines = new ArrayList<>();
     for (int i = 0; i < sequence.size(); i++) {
 
       // Only print primitive declarations if the last/only statement
       // of the sequence, because, otherwise, primitive values will be used as
       // actual parameters: e.g. "foo(3)" instead of "int x = 3 ; foo(x)"
-      if (sequence.getStatement(i).getShortForm() != null && i < sequence.size() - 1) {
+      if (sequence.canUseShortForm()
+          && sequence.getStatement(i).getShortForm() != null
+          && i < sequence.size() - 1) {
         continue;
       }
 
@@ -196,24 +178,41 @@ public class ExecutableSequence {
         if (exObs != null) {
           oneStatement.insert(0, exObs.toCodeStringPreStatement());
           oneStatement.append(exObs.toCodeStringPostStatement());
-          oneStatement.append(Globals.lineSep);
         }
 
         // Print the rest of the checks.
         for (Check d : checks.get().keySet()) {
           oneStatement.insert(0, d.toCodeStringPreStatement());
-          oneStatement.append(d.toCodeStringPostStatement());
-          oneStatement.append(Globals.lineSep);
+          oneStatement.append(Globals.lineSep).append(d.toCodeStringPostStatement());
         }
       }
-      b.append(oneStatement);
+      lines.add(oneStatement.toString());
+    }
+    return lines;
+  }
+
+  /**
+   * Return this sequence as code. Similar to {@link Sequence#toCodeString()} except includes the
+   * checks.
+   *
+   * <p>If for a given statement there is a check of type {@link randoop.test.ExceptionCheck}, that
+   * check's pre-statement code is printed immediately before the statement, and its post-statement
+   * code is printed immediately after the statement.
+   *
+   * @return the sequence as a string
+   */
+  public String toCodeString() {
+    StringBuilder b = new StringBuilder();
+    for (String line : toCodeLines()) {
+      b.append(line).append(Globals.lineSep);
     }
     return b.toString();
   }
 
   /**
    * Return the code representation of the i'th statement.
-   * @param i  the statement index
+   *
+   * @param i the statement index
    * @return the string representation of the statement
    */
   public String statementToCodeString(int i) {
@@ -225,46 +224,40 @@ public class ExecutableSequence {
   /**
    * Executes sequence, stopping on exceptions.
    *
-   * @param visitor
-   *          the {@link ExecutionVisitor} that collects checks from results
-   * @param gen
-   *          the check generator for tests
+   * @param visitor the {@link ExecutionVisitor} that collects checks from results
+   * @param gen the check generator for tests
    */
   public void execute(ExecutionVisitor visitor, TestCheckGenerator gen) {
     execute(visitor, gen, true);
   }
 
   /**
-   * Execute this sequence, invoking the given visitor as the execution unfolds.
-   * After invoking this method, the client can query the outcome of executing
-   * each statement via the method <code>getResult(i)</code>.
+   * Execute this sequence, invoking the given visitor as the execution unfolds. After invoking this
+   * method, the client can query the outcome of executing each statement via the method <code>
+   * getResult(i)</code>.
    *
    * <ul>
-   * <li>Before the sequence is executed, clears execution results and calls
-   * <code>visitor.initialize(this)</code>.
-   * <li>Executes each statement in the sequence. Before executing each
-   * statement calls the given visitor's <code>visitBefore</code> method. After
-   * executing each statement, calls the visitor's <code>visitAfter</code>
-   * method.
-   * <li>Execution stops if one of the following conditions holds:
-   * <ul>
-   * <li>All statements in the sequences have been executed.
-   * <li>A statement's execution results in an exception and
-   * <code>stop_on_exception==true</code>.
-   * <li>A <code>null</code> input value is implicitly passed to the statement
-   * (i.e., not via explicit declaration like x = null)
-   * <li>After executing the i-th statement and calling the visitor's
-   * <code>visitAfter</code> method, a <code>ContractViolation</code> check is
-   * present at index i.
-   * </ul>
+   *   <li>Before the sequence is executed, clears execution results and calls <code>
+   *       visitor.initialize(this)</code>.
+   *   <li>Executes each statement in the sequence. Before executing each statement calls the given
+   *       visitor's <code>visitBefore</code> method. After executing each statement, calls the
+   *       visitor's <code>visitAfter</code> method.
+   *   <li>Execution stops if one of the following conditions holds:
+   *       <ul>
+   *         <li>All statements in the sequences have been executed.
+   *         <li>A statement's execution results in an exception and <code>stop_on_exception==true
+   *             </code>.
+   *         <li>A <code>null</code> input value is implicitly passed to the statement (i.e., not
+   *             via explicit declaration like x = null)
+   *         <li>After executing the i-th statement and calling the visitor's <code>visitAfter
+   *             </code> method, a <code>ContractViolation</code> check is present at index i.
+   *       </ul>
+   *
    * </ul>
    *
-   * @param visitor
-   *          the {@code ExecutionVisitor}
-   * @param gen
-   *          the check generator
-   * @param ignoreException
-   *          the flag to indicate exceptions should be ignored
+   * @param visitor the {@code ExecutionVisitor}
+   * @param gen the check generator
+   * @param ignoreException the flag to indicate exceptions should be ignored
    */
   private void execute(ExecutionVisitor visitor, TestCheckGenerator gen, boolean ignoreException) {
 
@@ -284,24 +277,6 @@ public class ExecutableSequence {
       Object[] inputValues;
 
       inputValues = getRuntimeInputs(executionResults.theList, inputs);
-
-      if (i == this.sequence.size() - 1) {
-        TypedOperation operation = this.sequence.getStatement(i).getOperation();
-        if (operation.isConstructorCall() || operation.isMethodCall()) {
-          if (!operation.checkPreconditions(inputValues)) {
-            //set checks invalid and return
-            checks = new InvalidChecks();
-            checks.add(new InvalidValueCheck(this, i));
-            return;
-          }
-          // if the operation is expected to throw an exception for these inputs
-          TestCheckGenerator expected = operation.getPostCheckGenerator(inputValues);
-          if (expected != null) {
-            //then extend TestCheckGenerator gen with check for postcondition/exception
-            gen = new ExtendGenerator(expected, gen);
-          }
-        }
-      }
 
       visitor.visitBeforeStatement(this, i);
       executeStatement(sequence, executionResults.theList, i, inputValues);
@@ -350,14 +325,11 @@ public class ExecutableSequence {
   }
 
   /**
-   * Returns the values for the given variables in the {@link Execution} object.
-   * The variables are {@link Variable} objects in the {@link Sequence} of this
-   * {@link ExecutableSequence} object.
+   * Returns the values for the given variables in the {@link Execution} object. The variables are
+   * {@link Variable} objects in the {@link Sequence} of this {@link ExecutableSequence} object.
    *
-   * @param vars
-   *          a list of {@link Variable} objects.
-   * @param execution
-   *          the object representing outcome of executing this sequence
+   * @param vars a list of {@link Variable} objects
+   * @param execution the object representing outcome of executing this sequence
    * @return array of values corresponding to variables
    */
   public static Object[] getRuntimeValuesForVars(List<Variable> vars, Execution execution) {
@@ -398,7 +370,12 @@ public class ExecutableSequence {
       // assert ((statement.isMethodCall() && !statement.isStatic()) ?
       // inputVariables[0] != null : true);
 
-      ExecutionOutcome r = statement.execute(inputVariables, Globals.blackHole);
+      ExecutionOutcome r;
+      try {
+        r = statement.execute(inputVariables, Globals.blackHole);
+      } catch (SequenceExecutionException e) {
+        throw new SequenceExecutionException("Exception during execution of " + statement, e);
+      }
       assert r != null;
       if (GenInputsAbstract.capture_output) {
         System.setOut(orig_out);
@@ -413,7 +390,7 @@ public class ExecutableSequence {
   /**
    * This method is typically used by ExecutionVisitors.
    *
-   * The result of executing the i-th element of the sequence.
+   * <p>The result of executing the i-th element of the sequence.
    *
    * @param index the statement index
    * @return the outcome of the statement at index
@@ -441,8 +418,8 @@ public class ExecutableSequence {
   }
 
   /**
-   * Returns the list of (reference type) values created and used by the last statement
-   * of this sequence.
+   * Returns the list of (reference type) values created and used by the last statement of this
+   * sequence.
    *
    * @return the list of values created and used by the last statement of this sequence
    */
@@ -477,8 +454,8 @@ public class ExecutableSequence {
   }
 
   /**
-   * Returns the list of input reference type values used to compute the
-   * input values of the last statement.
+   * Returns the list of input reference type values used to compute the input values of the last
+   * statement.
    *
    * @return the list of input values used to compute values in last statement
    */
@@ -509,7 +486,7 @@ public class ExecutableSequence {
    * Returns the set of variables that have the given value in the outcome of executing this
    * sequence.
    *
-   * @param value  the value
+   * @param value the value
    * @return the set of variables that have the given value
    */
   public List<Variable> getVariables(Object value) {
@@ -524,7 +501,7 @@ public class ExecutableSequence {
   /**
    * This method is typically used by ExecutionVisitors.
    *
-   * @param i  the statement index to test for normal execution
+   * @param i the statement index to test for normal execution
    * @return true if execution of the i-th statement terminated normally
    */
   private boolean isNormalExecution(int i) {
@@ -544,10 +521,9 @@ public class ExecutableSequence {
   }
 
   /**
-   * @param exceptionClass  the exception thrown
-   * @return the index in the sequence at which an exception of the given class
-   *         (or a class compatible with it) was thrown. If no such exception,
-   *         returns -1.
+   * @param exceptionClass the exception thrown
+   * @return the index in the sequence at which an exception of the given class (or a class
+   *     compatible with it) was thrown. If no such exception, returns -1.
    */
   private int getExceptionIndex(Class<?> exceptionClass) {
     if (exceptionClass == null) {
@@ -562,17 +538,17 @@ public class ExecutableSequence {
   }
 
   /**
-   * @param exceptionClass  the exception class
-   * @return true if an exception of the given class (or a class compatible with
-   *         it) has been thrown during this sequence's execution
+   * @param exceptionClass the exception class
+   * @return true if an exception of the given class (or a class compatible with it) has been thrown
+   *     during this sequence's execution
    */
   public boolean throwsException(Class<?> exceptionClass) {
     return getExceptionIndex(exceptionClass) >= 0;
   }
 
   /**
-   * Returns whether the sequence contains a non-executed statement. That
-   * happens if some statement before the last one throws an exception.
+   * Returns whether the sequence contains a non-executed statement. That happens if some statement
+   * before the last one throws an exception.
    *
    * @return true if this sequence has non-executed statements, false otherwise
    */
@@ -581,9 +557,8 @@ public class ExecutableSequence {
   }
 
   /**
-   * Returns the index i for a non-executed statement, or -1 if there is no such
-   * index. Note that a statement is considered executed even if it throws an
-   * exception.
+   * Returns the index i for a non-executed statement, or -1 if there is no such index. Note that a
+   * statement is considered executed even if it throws an exception.
    *
    * @return the index of a non-executed statement in this sequence
    */
@@ -612,7 +587,7 @@ public class ExecutableSequence {
   /**
    * Indicates whether the executed sequence has any null input values.
    *
-   * @return  true if there is a null input value in this sequence, false otherwise
+   * @return true if there is a null input value in this sequence, false otherwise
    */
   public boolean hasNullInput() {
     return hasNullInput;
@@ -630,8 +605,7 @@ public class ExecutableSequence {
   /**
    * Indicate whether there are any invalid checks.
    *
-   * @return true if the test checks have been set and are for invalid behavior,
-   *         false otherwise
+   * @return true if the test checks have been set and are for invalid behavior, false otherwise
    */
   public boolean hasInvalidBehavior() {
     return checks != null && checks.hasInvalidBehavior();
@@ -640,19 +614,16 @@ public class ExecutableSequence {
   /**
    * Adds a covered class to the most recent execution results of this sequence.
    *
-   * @param c
-   *          the class covered by the execution of this sequence
+   * @param c the class covered by the execution of this sequence
    */
   public void addCoveredClass(Class<?> c) {
     executionResults.addCoveredClass(c);
   }
 
   /**
-   * Indicates whether the given class is covered by the most recent execution
-   * of this sequence.
+   * Indicates whether the given class is covered by the most recent execution of this sequence.
    *
-   * @param c
-   *          the class to be covered
+   * @param c the class to be covered
    * @return true if the class is covered by the sequence, false otherwise
    */
   public boolean coversClass(Class<?> c) {

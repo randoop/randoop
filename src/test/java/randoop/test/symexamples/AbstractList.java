@@ -16,7 +16,7 @@ public abstract class AbstractList extends AbstractCollection implements List {
     return true;
   }
 
-  abstract public Object get(int index);
+  public abstract Object get(int index);
 
   public Object set(int index, Object element) {
     throw new UnsupportedOperationException();

@@ -6,8 +6,7 @@ import java.util.Objects;
 /**
  * Represents a wildcard type argument to a parameterized type.
  *
- * <p>
- * The subclasses represent the type bound as given for the wildcard.
+ * <p>The subclasses represent the type bound as given for the wildcard.
  */
 class WildcardArgument extends TypeArgument {
 
@@ -17,17 +16,17 @@ class WildcardArgument extends TypeArgument {
   /**
    * Initializes the bound type.
    *
-   * @param argumentType  the wildcard type
+   * @param argumentType the wildcard type
    */
   WildcardArgument(WildcardType argumentType) {
     this.argumentType = argumentType;
   }
 
   /**
-   * Creates a {@code WildcardArgument} from a {@code java.lang.reflect.Type}.
-   * A wildcard may have either an upper or lower bound.
+   * Creates a {@code WildcardArgument} from a {@code java.lang.reflect.Type}. A wildcard may have
+   * either an upper or lower bound.
    *
-   * @param type  the {@code Type} object
+   * @param type the {@code Type} object
    * @return the {@code WildcardArgument} created from the given {@code Type}
    */
   public static WildcardArgument forType(
@@ -77,7 +76,6 @@ class WildcardArgument extends TypeArgument {
    * Applies a capture conversion to the bound of this {@link WildcardArgument}.
    *
    * @see ReferenceType#applyCaptureConversion()
-   *
    * @return this wildcard argument with capture conversion applied to the type bound
    */
   public WildcardArgument applyCaptureConversion() {
@@ -105,7 +103,8 @@ class WildcardArgument extends TypeArgument {
 
   /**
    * {@inheritDoc}
-   * Returns the type parameters of the bound of this wildcard argument
+   *
+   * <p>Returns the type parameters of the bound of this wildcard argument
    */
   @Override
   public List<TypeVariable> getTypeParameters() {
@@ -113,8 +112,8 @@ class WildcardArgument extends TypeArgument {
   }
 
   /**
-   * Indicates whether this wildcard argument has an upper bound.
-   * (If not, then it has a lower bound.)
+   * Indicates whether this wildcard argument has an upper bound. (If not, then it has a lower
+   * bound.)
    *
    * @return true if this wildcard argument has an upper bound, false if it has a lower bound
    */

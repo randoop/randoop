@@ -1,24 +1,20 @@
 package randoop.operation;
 
-import org.junit.Test;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-
+import org.junit.Test;
 import randoop.types.ArrayType;
 import randoop.types.ClassOrInterfaceType;
 import randoop.types.JavaTypes;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-/**
- * These tests are disabled in build.gradle
- */
+/** These tests are disabled in build.gradle */
 public class OperationParserTests {
 
   @Test

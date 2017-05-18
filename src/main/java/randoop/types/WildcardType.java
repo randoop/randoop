@@ -7,8 +7,10 @@ import java.util.Objects;
 /**
  * Represents a wildcard type, which occurs as a type argument to a parameterized type.
  *
- * A wildcard may have either an upper or lower bound as defined in
- * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.
+ * <p>A wildcard may have either an upper or lower bound as defined in <a
+ * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section
+ * 4.5.1</a>.
+ *
  * <pre>
  *   ? [ extends ReferenceType ]
  *   ? [ super ReferenceType ]
@@ -36,11 +38,12 @@ class WildcardType extends ParameterType {
   }
 
   /**
-   * Creates a wildcard type from a given reflection type.
-   * Assumes that the bounds array has a single element as defined in
-   *  <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section 4.5.1</a>.
+   * Creates a wildcard type from a given reflection type. Assumes that the bounds array has a
+   * single element as defined in <a
+   * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5.1">JLS Section
+   * 4.5.1</a>.
    *
-   * @param type  the {@code java.lang.reflect.WildcardType} object
+   * @param type the {@code java.lang.reflect.WildcardType} object
    * @return a {@link WildcardType} with the bounds from the given reflection type
    */
   public static WildcardType forType(
@@ -128,21 +131,24 @@ class WildcardType extends ParameterType {
 
   /**
    * If this type has an upper bound, checks for containment cases:
+   *
    * <ul>
-   *   <li>{@code ? extends T} contains {@code ? extends S} if {@code T.isSubtypeOf(S)}</li>
-   *   <li>{@code ? extends T} contains {@code ?}</li>
+   *   <li>{@code ? extends T} contains {@code ? extends S} if {@code T.isSubtypeOf(S)}
+   *   <li>{@code ? extends T} contains {@code ?}
    * </ul>
-   * Both of which are technically the same because from a reflection perspective {@code ?} is
-   * just {@code ? extends Object}.
-   * Otherwise, checks for the cases
+   *
+   * Both of which are technically the same because from a reflection perspective {@code ?} is just
+   * {@code ? extends Object}. Otherwise, checks for the cases
+   *
    * <ul>
-   *   <li>{@code ? super T} contains {@code ? super S} if {@code S.isSubtypeOf(T)}</li>
-   *   <li>{@code ? super T} contains {@code ?}</li>
-   *   <li>{@code ? super T} contains {@code ? extends Object}</li>
+   *   <li>{@code ? super T} contains {@code ? super S} if {@code S.isSubtypeOf(T)}
+   *   <li>{@code ? super T} contains {@code ?}
+   *   <li>{@code ? super T} contains {@code ? extends Object}
    * </ul>
+   *
    * The last two being equivalent from the perspective of reflection.
    *
-   * @param otherType  the type to check for
+   * @param otherType the type to check for
    * @return true if this type contains the other type, false otherwise
    */
   public boolean contains(WildcardType otherType) {
