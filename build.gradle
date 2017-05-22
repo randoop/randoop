@@ -6,6 +6,11 @@
  */
 
 plugins {
+  id 'java'
+  id 'eclipse'
+  id 'idea'
+  id 'jacoco'
+
   /*
    * Setup gradle-git so can clone plume-lib
    * https://github.com/ajoberstar/gradle-git
@@ -21,12 +26,6 @@ plugins {
 
 /* Common build configuration for Randoop and agents */
 allprojects {
-
-  /* This project and agent subprojects are Java projects */
-  apply plugin: 'java'
-  apply plugin: 'eclipse'
-  apply plugin: 'idea'
-  apply plugin: 'jacoco'
   sourceCompatibility = 1.7
   targetCompatibility = 1.7
 

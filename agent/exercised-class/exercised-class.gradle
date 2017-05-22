@@ -1,5 +1,11 @@
 // this is a Java project
 
+plugins {
+  id 'com.github.johnrengelman.shadow' version '2.0.0'
+  id 'java'
+  id 'jacoco'
+}
+
 description = "exercised-class instrumentation agent"
 
 configurations {
@@ -13,11 +19,38 @@ dependencies {
 }
 
 jar {
-  from { configurations.javassist.collect { it.isDirectory() ? it : zipTree(it) } }
   manifest {
     attributes(
       "Premain-Class": "randoop.instrument.ExercisedAgent",
       "Can-Redefine-Classes": "true"
       )
   }
+}
+
+shadowJar {
+  relocate 'com.github.javaparser', 'randoop.org.github.javaparser'
+  relocate 'com.google.common', 'randoop.com.google.common'
+  relocate 'com.google.gson', 'randoop.com.google.gson'
+  relocate 'com.google.thirdparty', 'randoop.com.google.thirdparty'
+  relocate 'com.jcraft.jsch', 'randoop.com.jcraft.jsch'
+  relocate 'com.sun.javadoc', 'randoop.com.sun.javadoc'
+  relocate 'com.sun.jna', 'randoop.com.sun.jna'
+  relocate 'com.trilead.ssh2', 'randoop.com.trilead.ssh2'
+  relocate 'de.regnis.q.sequence', 'randoop.de.regnis.q.sequence'
+  relocate 'edu.emory.mathcs.backport.java.util', 'randoop.edu.emory.mathcs.backport.java.util'
+  relocate 'javassist', 'randoop.javassist'
+  relocate 'junit', 'randoop.junit'
+  relocate 'net.fortuna.ical4j', 'randoop.net.fortuna.ical4j'
+  relocate 'nu.xom', 'randoop.nu.xom'
+  relocate 'org.antlr', 'randoop.org.antlr'
+  relocate 'org.apache', 'randoop.org.apache'
+  relocate 'org.ccil.cowan.tagsoup', 'randoop.org.ccil.cowan.tagsoup'
+  relocate 'org.checkerframework', 'randoop.org.checkerframework'
+  relocate 'org.hamcrest', 'randoop.org.hamcrest'
+  relocate 'org.ini4j', 'randoop.org.ini4j'
+  relocate 'org.junit', 'randoop.org.junit'
+  relocate 'org.slf4j', 'randoop.org.slf4j'
+  relocate 'org.tigris.subversion', 'randoop.org.tigris.subversion'
+  relocate 'org.tmatesoft', 'randoop.org.tmatesoft'
+  relocate 'plume', 'randoop.plume'
 }
