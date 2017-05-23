@@ -1,3 +1,3 @@
-randoop.instrument.testcase.A
-randoop.instrument.testcase.B
-randoop.instrument.testcase.C
+instrument.testcase.A
+instrument.testcase.B
+instrument.testcase.C

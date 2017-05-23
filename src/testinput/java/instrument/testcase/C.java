@@ -1,4 +1,4 @@
-package randoop.instrument.testcase;
+package instrument.testcase;
 
 public class C {
   private int value;

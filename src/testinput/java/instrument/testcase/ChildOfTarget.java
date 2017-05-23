@@ -1,4 +1,4 @@
-package randoop.instrument.testcase;
+package instrument.testcase;
 
 public class ChildOfTarget extends AbstractTarget {
 
