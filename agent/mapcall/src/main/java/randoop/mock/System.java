@@ -7,8 +7,15 @@ import randoop.SystemExitCalledError;
  * in {@code "resources/replacements.txt"}
  */
 public class System {
+
+  /**
+   * Default mock for {@code System.exit(status)}. Throws an exception to allow Randoop to generate
+   * tests that acknowledge that exit occurs.
+   *
+   * @param status the exit status
+   * @throws SystemExitCalledError with the status
+   */
   public static void exit(int status) {
-    String message = String.format("System exit with status %d ignored%n", status);
-    throw new SystemExitCalledError(message);
+    throw new SystemExitCalledError(status);
   }
 }

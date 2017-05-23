@@ -1,71 +1,7 @@
 // Default replacement file
+// Don't include any blanket package/class replacements here to avoid changing
+// behavior so drastically that affects methods, and creates uninteresting or
+// failing tests b/c of use of null or zero values.
 
 // Replacement for System.exit using method that throws SystemExitCalledError.
 java.lang.System.exit(int) randoop.mock.System.exit(int)
-
-// Replacements using mocks created by replacements utility
-com.sun.awt mock.com.sun.awt
-java.awt mock.java.awt
-java.awt.color mock.java.awt.color
-java.awt.datatransfer mock.java.awt.datatransfer
-java.awt.dnd mock.java.awt.dnd
-java.awt.dnd.peer mock.java.awt.dnd.peer
-java.awt.event mock.java.awt.event
-java.awt.font mock.java.awt.font
-java.awt.geom mock.java.awt.geom
-java.awt.im mock.java.awt.im
-java.awt.im.spi mock.java.awt.im.spi
-java.awt.image mock.java.awt.image
-java.awt.image.renderable mock.java.awt.image.renderable
-java.awt.peer mock.java.awt.peer
-java.awt.print mock.java.awt.print
-sun.awt mock.sun.awt
-sun.awt.datatransfer mock.sun.awt.datatransfer
-sun.awt.dnd mock.sun.awt.dnd
-sun.awt.event mock.sun.awt.event
-sun.awt.geom mock.sun.awt.geom
-sun.awt.im mock.sun.awt.im
-sun.awt.image mock.sun.awt.image
-sun.awt.image.codec mock.sun.awt.image.codec
-sun.awt.motif mock.sun.awt.motif
-sun.awt.resources mock.sun.awt.resources
-sun.awt.shell mock.sun.awt.shell
-sun.awt.util mock.sun.awt.util
-sun.awt.windows mock.sun.awt.windows
-com.sun.java.swing mock.com.sun.java.swing
-com.sun.java.swing.plaf.gtk mock.com.sun.java.swing.plaf.gtk
-com.sun.java.swing.plaf.gtk.resources mock.com.sun.java.swing.plaf.gtk.resources
-com.sun.java.swing.plaf.motif mock.com.sun.java.swing.plaf.motif
-com.sun.java.swing.plaf.motif.resources mock.com.sun.java.swing.plaf.motif.resources
-com.sun.java.swing.plaf.nimbus mock.com.sun.java.swing.plaf.nimbus
-com.sun.java.swing.plaf.windows mock.com.sun.java.swing.plaf.windows
-com.sun.java.swing.plaf.windows.resources mock.com.sun.java.swing.plaf.windows.resources
-com.sun.swing.internal.plaf.basic.resources mock.com.sun.swing.internal.plaf.basic.resources
-com.sun.swing.internal.plaf.metal.resources mock.com.sun.swing.internal.plaf.metal.resources
-com.sun.swing.internal.plaf.synth.resources mock.com.sun.swing.internal.plaf.synth.resources
-javax.swing mock.javax.swing
-javax.swing.border mock.javax.swing.border
-javax.swing.colorchooser mock.javax.swing.colorchooser
-javax.swing.event mock.javax.swing.event
-javax.swing.filechooser mock.javax.swing.filechooser
-javax.swing.plaf mock.javax.swing.plaf
-javax.swing.plaf.basic mock.javax.swing.plaf.basic
-javax.swing.plaf.metal mock.javax.swing.plaf.metal
-javax.swing.plaf.multi mock.javax.swing.plaf.multi
-javax.swing.plaf.nimbus mock.javax.swing.plaf.nimbus
-javax.swing.plaf.synth mock.javax.swing.plaf.synth
-javax.swing.table mock.javax.swing.table
-javax.swing.text mock.javax.swing.text
-javax.swing.text.html mock.javax.swing.text.html
-javax.swing.text.html.parser mock.javax.swing.text.html.parser
-javax.swing.text.rtf mock.javax.swing.text.rtf
-javax.swing.tree mock.javax.swing.tree
-javax.swing.undo mock.javax.swing.undo
-sun.swing mock.sun.swing
-sun.swing.icon mock.sun.swing.icon
-sun.swing.plaf mock.sun.swing.plaf
-sun.swing.plaf.synth mock.sun.swing.plaf.synth
-sun.swing.plaf.windows mock.sun.swing.plaf.windows
-sun.swing.table mock.sun.swing.table
-sun.swing.text mock.sun.swing.text
-sun.swing.text.html mock.sun.swing.text.html

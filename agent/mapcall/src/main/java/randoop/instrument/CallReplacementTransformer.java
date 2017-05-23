@@ -12,6 +12,7 @@ import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -66,7 +67,11 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   /** the map of class name prefix replacements */
   private final Map<String, String> prefixReplacementMap;
 
-  CallReplacementTransformer() {
+  /** the list of packages to exclude from transformation */
+  private final List<String> excludedPackages;
+
+  CallReplacementTransformer(List<String> excludedPackages) {
+    this.excludedPackages = excludedPackages;
     this.replacementMap = new HashMap<>();
     this.prefixReplacementMap = new HashMap<>();
   }
@@ -89,7 +94,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
     debug_transform.log("In Transform: class = %s%n", className);
     String fullClassName = className.replace("/", ".");
 
-    if (isBootClass(loader, fullClassName) || isRandoopClass(fullClassName)) {
+    if (isBootClass(loader, fullClassName) || isExcludedClass(fullClassName)) {
       return null;
     }
 
@@ -121,7 +126,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
     } catch (Throwable e) {
       System.out.format("Unexpected error %s in transform", e);
       e.printStackTrace();
-      return (null);
+      return null;
     }
   }
 
@@ -146,25 +151,24 @@ public class CallReplacementTransformer implements ClassFileTransformer {
     } else if (fullClassName.startsWith("sun.reflect")) {
       debug_transform.log("ignoring system class %s, in sun.reflect package", fullClassName);
       return true;
+    } else if (fullClassName.startsWith("com.sun.proxy.$Proxy")) {
+      debug_transform.log(
+          "ignoring class from com.sun package %s with nonnull loaders\n", fullClassName);
+      return true;
     }
-    /*
-    else if (fullClassName.startsWith("com.sun")) {
-      System.out.printf("Class from com.sun package %s with nonnull loaders\n", fullClassName);
-    }
-    */
     return false;
   }
 
-  /**
-   * Indicate whether the class with the given name is a Randoop class.
-   *
-   * @param fullClassName the class name to check
-   * @return true if the class name begins with {@code "randoop."}, false otherwise
-   */
-  private boolean isRandoopClass(String fullClassName) {
+  private boolean isExcludedClass(String fullClassName) {
     if (fullClassName.startsWith("randoop.")) {
       debug_transform.log("Not considering randoop class %s%n", fullClassName);
       return true;
+    }
+    for (String excludedPackage : excludedPackages) {
+      if (fullClassName.startsWith(excludedPackage)) {
+        debug_transform.log("Not considering excluded class %s%n", fullClassName);
+        return true;
+      }
     }
     return false;
   }
@@ -172,60 +176,54 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   /** Processes each method in cg replacing any specified calls with static user calls. */
   private boolean mapCalls(ClassGen cg) {
     boolean transformed = false;
-    try {
-      pgen = cg.getConstantPool();
+    pgen = cg.getConstantPool();
+    // Loop through each method in the class
+    Method[] methods = cg.getMethods();
+    for (Method method : methods) {
+      MethodGen mg = new MethodGen(method, cg.getClassName(), pgen);
 
-      // Loop through each method in the class
-      Method[] methods = cg.getMethods();
-      for (Method method : methods) {
-        MethodGen mg = new MethodGen(method, cg.getClassName(), pgen);
-
-        // Get the instruction list and skip methods with no instructions
-        InstructionList instructionList = mg.getInstructionList();
-        if (instructionList == null) {
-          continue;
-        }
-
-        if (MapCallsAgent.debug) {
-          System.out.format("Original code: %s%n", mg.getMethod().getCode());
-        }
-
-        instrumentMethod(mg, new InstructionFactory(cg));
-
-        // Remove the Local variable type table attribute (if any).
-        // Evidently, some changes we make require this to be updated, but
-        // without BCEL support, that would be hard to do. Just delete it
-        // for now (since it is optional, and we are unlikely to be used by
-        // a debugger)
-        for (Attribute a : mg.getCodeAttributes()) {
-          if (isLocalVariableTypeTable(a)) {
-            mg.removeCodeAttribute(a);
-          }
-        }
-
-        // Update the instruction list
-        mg.setInstructionList(instructionList);
-        mg.update();
-
-        // Update the max stack and Max Locals
-        mg.setMaxLocals();
-        mg.setMaxStack();
-        mg.update();
-
-        // Update the method in the class
-        cg.replaceMethod(method, mg.getMethod());
-        if (MapCallsAgent.debug) {
-          System.out.format("Modified code: %s%n", mg.getMethod().getCode());
-        }
-
-        transformed = true;
+      // Get the instruction list and skip methods with no instructions
+      InstructionList instructionList = mg.getInstructionList();
+      if (instructionList == null) {
+        continue;
       }
 
-      cg.update();
-    } catch (Exception e) {
-      System.out.format("Unexpected exception encountered: " + e);
-      e.printStackTrace();
+      if (MapCallsAgent.debug) {
+        System.out.format("Original code: %s%n", mg.getMethod().getCode());
+      }
+
+      instrumentMethod(mg, new InstructionFactory(cg));
+
+      // Remove the Local variable type table attribute (if any).
+      // Evidently, some changes we make require this to be updated, but
+      // without BCEL support, that would be hard to do. Just delete it
+      // for now (since it is optional, and we are unlikely to be used by
+      // a debugger)
+      for (Attribute a : mg.getCodeAttributes()) {
+        if (isLocalVariableTypeTable(a)) {
+          mg.removeCodeAttribute(a);
+        }
+      }
+
+      // Update the instruction list
+      mg.setInstructionList(instructionList);
+      mg.update();
+
+      // Update the max stack and Max Locals
+      mg.setMaxLocals();
+      mg.setMaxStack();
+      mg.update();
+
+      // Update the method in the class
+      cg.replaceMethod(method, mg.getMethod());
+      if (MapCallsAgent.debug) {
+        System.out.format("Modified code: %s%n", mg.getMethod().getCode());
+      }
+
+      transformed = true;
     }
+
+    cg.update();
 
     return transformed;
   }
@@ -284,7 +282,12 @@ public class CallReplacementTransformer implements ClassFileTransformer {
       case Const.INVOKEVIRTUAL:
         InstructionList instructionList = new InstructionList();
         InvokeInstruction invocation = (InvokeInstruction) inst;
-        MethodDef orig = MethodDef.of(invocation);
+        MethodDef orig = null;
+        try {
+          orig = MethodDef.of(invocation);
+        } catch (Throwable e) {
+          return null;
+        }
         MethodDef call = getReplacement(orig);
         if (call != null) {
           debug_transform.log(
@@ -296,7 +299,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
                   call.getName(),
                   invocation.getReturnType(pgen),
                   invocation.getArgumentTypes(pgen),
-                  invocation.getOpcode()));
+                  Const.INVOKESTATIC));
         }
         return instructionList;
 

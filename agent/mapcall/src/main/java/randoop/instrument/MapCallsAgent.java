@@ -1,11 +1,15 @@
 package randoop.instrument;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.instrument.Instrumentation;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import plume.Option;
 import plume.Options;
 
@@ -43,6 +47,10 @@ public class MapCallsAgent {
   @Option("file containing methods calls to map to substitute methods")
   public static File map_calls = null;
 
+  @SuppressWarnings("WeakerAccess")
+  @Option("file containing list of packages from which classes should not be loaded")
+  public static File dont_load = null;
+
   /**
    * Entry point of the java agent. Sets up the transformer {@link CallReplacementTransformer} so
    * that when classes are loaded they are first transformed.
@@ -67,7 +75,21 @@ public class MapCallsAgent {
       }
     }
 
-    CallReplacementTransformer transformer = new CallReplacementTransformer();
+    List<String> excludedPackages = new ArrayList<>();
+    if (dont_load != null) {
+      try (BufferedReader reader = new BufferedReader(new FileReader(dont_load))) {
+        String line = reader.readLine();
+        while (line != null) {
+          line = line.replaceFirst("//.*$", "").trim();
+          if (line.length() > 0) {
+            excludedPackages.add(line);
+          }
+          line = reader.readLine();
+        }
+      }
+    }
+
+    CallReplacementTransformer transformer = new CallReplacementTransformer(excludedPackages);
 
     InputStream in = transformer.getClass().getResourceAsStream("/replacements.txt");
     if (in == null) {
