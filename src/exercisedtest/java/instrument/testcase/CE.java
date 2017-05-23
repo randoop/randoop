@@ -1,15 +1,12 @@
-package randoop.instrument.testcase;
+package instrument.testcase;
 
-import randoop.CheckRep;
-
-public class D {
+public class CE {
   private int value;
 
-  public D(int value) {
+  public CE(int value) {
     this.value = value;
   }
 
-  @CheckRep
   public boolean isZero() {
     return value == 0;
   }

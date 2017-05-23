@@ -1,9 +1,9 @@
-package randoop.instrument.testcase;
+package instrument.testcase;
 
-public class AE {
+public class A {
   private int value;
 
-  AE(BE b) {
+  A(instrument.testcase.B b) {
     this.value = b.getValue();
   }
 

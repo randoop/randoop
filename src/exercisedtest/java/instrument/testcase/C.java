@@ -1,9 +1,9 @@
-package randoop.instrument.testcase;
+package instrument.testcase;
 
-public class CE {
+public class C {
   private int value;
 
-  public CE(int value) {
+  public C(int value) {
     this.value = value;
   }
 

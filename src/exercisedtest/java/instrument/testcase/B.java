@@ -1,12 +1,12 @@
-package randoop.instrument.testcase;
+package instrument.testcase;
 
 public class B {
   private int value;
-  private A a;
+  private instrument.testcase.A a;
 
   public B(int value) {
     this.value = value;
-    a = new A(this);
+    a = new instrument.testcase.A(this);
   }
 
   public int getValue() {

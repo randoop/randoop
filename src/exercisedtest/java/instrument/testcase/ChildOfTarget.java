@@ -1,6 +1,6 @@
-package randoop.instrument.testcase;
+package instrument.testcase;
 
-public class ChildOfTarget extends AbstractTarget {
+public class ChildOfTarget extends instrument.testcase.AbstractTarget {
 
   public ChildOfTarget(int i) {
     super(i);
