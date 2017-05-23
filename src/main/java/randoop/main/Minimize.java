@@ -280,7 +280,7 @@ public class Minimize extends CommandHandler {
     // Delete the .class file associated with the minimized Java file.
     cleanUp(minimizedFile, verboseOutput);
 
-    System.out.println("Minimizing complete.\n");
+    System.out.println("Minimizing complete.");
     System.out.println("Original file length: " + getFileLength(file) + " lines.");
     System.out.println("Minimized file length: " + getFileLength(minimizedFile) + " lines.");
 
@@ -1369,7 +1369,7 @@ public class Minimize extends CommandHandler {
    */
   private static void cleanUp(File outputFile, boolean verboseOutput) {
     String outputClassFileStr =
-        FilenameUtils.removeExtension(outputFile.getName()).concat(".class");
+        FilenameUtils.removeExtension(outputFile.getAbsolutePath()).concat(".class");
     File outputClassFile = new File(outputClassFileStr);
     try {
       boolean success = Files.deleteIfExists(outputClassFile.toPath());
