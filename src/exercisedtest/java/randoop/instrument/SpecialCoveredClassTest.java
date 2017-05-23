@@ -53,8 +53,8 @@ public class SpecialCoveredClassTest {
   @Test
   public void abstractClassTest() {
     GenInputsAbstract.silently_ignore_bad_class_names = false;
-    GenInputsAbstract.classlist = new File("randoop/instrument/testcase/special-allclasses.txt");
-    include_if_class_exercised = new File("randoop/instrument/testcase/special-coveredclasses.txt");
+    GenInputsAbstract.classlist = new File("instrument/testcase/special-allclasses.txt");
+    include_if_class_exercised = new File("instrument/testcase/special-coveredclasses.txt");
     ReflectionExecutor.usethreads = false;
     GenInputsAbstract.outputlimit = 5000;
     GenInputsAbstract.inputlimit = 10000;
@@ -92,9 +92,7 @@ public class SpecialCoveredClassTest {
     assertThat("should be one covered classes", coveredClasses.size(), is(equalTo(1)));
     for (Class<?> c : coveredClasses) {
       assertEquals(
-          "name should be AbstractTarget",
-          "randoop.instrument.testcase.AbstractTarget",
-          c.getName());
+          "name should be AbstractTarget", "instrument.testcase.AbstractTarget", c.getName());
     }
 
     // 2 classes plus Object
@@ -161,7 +159,7 @@ public class SpecialCoveredClassTest {
     //
     Class<?> at = null;
     try {
-      at = TypeNames.getTypeForName("randoop.instrument.testcase.AbstractTarget");
+      at = TypeNames.getTypeForName("instrument.testcase.AbstractTarget");
     } catch (ClassNotFoundException e) {
       fail("cannot find class: " + e);
     }
@@ -179,7 +177,7 @@ public class SpecialCoveredClassTest {
 
     Type it = null;
     try {
-      it = Type.forName("randoop.instrument.testcase.ImplementorOfTarget");
+      it = Type.forName("instrument.testcase.ImplementorOfTarget");
     } catch (ClassNotFoundException e) {
       fail("cannot find implementor class " + e);
     }
