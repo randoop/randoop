@@ -30,6 +30,9 @@ jar {
 }
 
 shadowJar {
+  // should be named mapcall-version.jar
+  classifier = null
+/*
   relocate 'com.google', 'randoop.com.google'
   relocate 'com.jcraft.jsch', 'randoop.com.jcraft.jsch'
   relocate 'com.sun.javadoc', 'randoop.com.sun.javadoc'
@@ -49,4 +52,5 @@ shadowJar {
   relocate 'org.tigris.subversion', 'randoop.org.tigris.subversion'
   relocate 'org.tmatesoft', 'randoop.org.tmatesoft'
   relocate 'plume', 'randoop.plume'
+  */
 }

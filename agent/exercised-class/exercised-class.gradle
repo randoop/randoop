@@ -28,6 +28,9 @@ jar {
 }
 
 shadowJar {
+  // should be named exercised-class-version.jar
+  classifier = null
+/*
   relocate 'com.github.javaparser', 'randoop.org.github.javaparser'
   relocate 'com.google.common', 'randoop.com.google.common'
   relocate 'com.google.gson', 'randoop.com.google.gson'
@@ -53,4 +56,5 @@ shadowJar {
   relocate 'org.tigris.subversion', 'randoop.org.tigris.subversion'
   relocate 'org.tmatesoft', 'randoop.org.tmatesoft'
   relocate 'plume', 'randoop.plume'
+  */
 }

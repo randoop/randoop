@@ -26,6 +26,8 @@ plugins {
 
 /* Common build configuration for Randoop and agents */
 allprojects {
+  apply plugin: 'java'
+
   sourceCompatibility = 1.7
   targetCompatibility = 1.7
 
@@ -117,8 +119,8 @@ configurations {
    * borrow from unit test configurations.
    */
   exercisedTestCompile.extendsFrom testCompile
-  mapcallTestCompile.extendsFrom testCompile
   exercisedTestRuntime.extendsFrom testRuntime
+  mapcallTestCompile.extendsFrom testCompile
   mapcallTestRuntime.extendsFrom testRuntime
 
   systemTestCompile.extendsFrom testCompile
@@ -146,7 +148,7 @@ dependencies {
   exercisedTestCompile sourceSets.main.output
   exercisedTestRuntime project(':exercised-class')
 
-  mapcallTestRuntime project(':mapcall')
+  mapcallTestCompile files(project(':mapcall').sourceSets.main.output)
 
   jacocoagent group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.7.7.201606060606'
 
@@ -280,7 +282,7 @@ task exercisedTest(type: Test, dependsOn: 'copyJars') {
   workingDir = sourceSets.exercisedTest.output.resourcesDir
   testClassesDir = sourceSets.exercisedTest.output.classesDir
   classpath = sourceSets.exercisedTest.runtimeClasspath
-  jvmArgs "-javaagent:$buildDir/libs/exercised-class-$version"+".jar"
+  jvmArgs "-javaagent:$buildDir/libs/exercised-class-${version}-all.jar"
 
   /*
    * Show as much as possible to console.
@@ -304,7 +306,7 @@ task mapcallTest(type: Test, dependsOn: 'copyJars') {
   workingDir = sourceSets.mapcallTest.output.resourcesDir
   testClassesDir = sourceSets.mapcallTest.output.classesDir
   classpath = sourceSets.mapcallTest.runtimeClasspath
-  jvmArgs "-javagent:$buildDir/libs/mapcall-${version}.jar"
+  jvmArgs "-javaagent:$buildDir/libs/mapcall-${version}-all.jar=--dont-load=load-exclusions.txt"
   testLogging {
     showStandardStreams = true
     exceptionFormat = 'full'
