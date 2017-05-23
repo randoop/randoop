@@ -29,7 +29,7 @@ public class LoadingWithAnnotationTest {
 
     Class<?> cc = null;
     try {
-      cc = TypeNames.getTypeForName("randoop.instrument.testcase.D");
+      cc = TypeNames.getTypeForName("instrument.testcase.D");
     } catch (ClassNotFoundException e) {
       fail("cannot find class: " + e);
     }
