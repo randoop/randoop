@@ -5,3 +5,8 @@
 
 // Replacement for System.exit using method that throws SystemExitCalledError.
 java.lang.System.exit(int) randoop.mock.System.exit(int)
+
+// Don't allow a JComponent to be visible
+javax.swing.JComponent.setVisible(boolean) randoop.mock.JComponent.setVisible(boolean)
+java.awt.Component.setVisible(boolean) randoop.mock.Component.setVisible(boolean)
+
