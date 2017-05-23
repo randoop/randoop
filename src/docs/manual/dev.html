@@ -169,8 +169,8 @@ pip install --user html5validator</code></pre>
     <td>to compile the <code>test</code> source set</td>
   </tr>
   <tr>
-    <td><code>./gradlew compileAgentTestJava</code></td>
-    <td>to compile the <code>agentTest</code> source set</td>
+    <td><code>./gradlew compileExercisedTestJava</code></td>
+    <td>to compile the <code>exercisedTest</code> source set</td>
   </tr>
   <tr>
     <td><code>./gradlew manual</code></td>
@@ -183,9 +183,10 @@ pip install --user html5validator</code></pre>
   A source set is a grouping of source files that can have its own set of
   dependencies and tasks.
   For instance, in the Randoop <code>build.gradle</code> there is the
-  <code>agentTest</code> source set that is separate from the <code>test</code> source
-  set because the test classes must run using the <code>exercised-class</code> Java
-  agent.
+  <code>exercisedTest</code> and <code>mapcallTest</code> source sets that
+  are separate from the <code>test</code> sourceset because the test classes
+  must run using the <code>exercised-class</code> and <code>mapcall</code> Java
+  agents.
   The Gradle Java plugin normally has two source sets named <code>main</code> and <code>test</code>,
   and the Randoop build script defines others to better structure the build process.
 </p>
@@ -324,7 +325,7 @@ destabilized the master branch.
   As you add new functionality to Randoop, you should also add new tests.
   Randoop has three kinds of tests:
   unit tests of Randoop internal classes (under directory <code>src/test</code>),
-  unit tests of Randoop Java agents (under directory <code>src/agenttest</code>), and
+  unit tests of Randoop Java agents (under directories <code>src/exercisedtest</code> and <code>src/mapcalltest</code>), and
   system tests that run Randoop on input classes.
 </p>
 
