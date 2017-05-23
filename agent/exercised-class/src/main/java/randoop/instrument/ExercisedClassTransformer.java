@@ -36,7 +36,7 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
   private ClassPool pool;
 
   /** Create {@code ExercisedClassTransformer}. */
-  public ExercisedClassTransformer() {
+  ExercisedClassTransformer() {
     super();
     pool = ClassPool.getDefault();
   }
@@ -56,7 +56,7 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
       byte[] classfileBuffer)
       throws IllegalClassFormatException {
 
-    byte[] bytecode = null;
+    byte[] bytecode;
 
     String qualifiedName = className.replace('/', '.');
 
@@ -76,11 +76,22 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
         || qualifiedName.startsWith("org.w3c")
         || qualifiedName.startsWith("org.xml.")
         || qualifiedName.startsWith("sun.") // end of rt.jar name prefixes
-        || qualifiedName.startsWith("org.junit.")
+    ) {
+      return null;
+    }
+
+    // run environment classes
+    if (qualifiedName.startsWith("org.junit.")
         || qualifiedName.startsWith("org.hamcrest.")
-        || qualifiedName.startsWith("org.gradle.")
-        || qualifiedName.startsWith("com.github.javaparser.")) {
-      return bytecode;
+        || qualifiedName.startsWith("org.gradle.")) {
+      return null;
+    }
+
+    // randoop classes
+    if (qualifiedName.startsWith("com.github.javaparser.")
+        || qualifiedName.startsWith("randoop.")
+        || qualifiedName.startsWith("plume.")) {
+      return null;
     }
 
     CtClass cc;
@@ -91,7 +102,7 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
     }
 
     if (cc.isFrozen() || cc.isInterface()) {
-      return bytecode;
+      return null;
     }
 
     // OK to transform bytecode
@@ -115,7 +126,6 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
    *
    * @see #transform(ClassLoader, String, Class, ProtectionDomain, byte[])
    * @param cc the {@code javassist.CtClass} object
-   * @throws CannotCompileException if inserted code doesn't compile
    */
   private void modifyClass(CtClass cc) {
     // add static field
