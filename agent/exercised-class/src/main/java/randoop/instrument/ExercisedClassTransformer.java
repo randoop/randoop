@@ -36,7 +36,7 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
   private ClassPool pool;
 
   /** Create {@code ExercisedClassTransformer}. */
-  public ExercisedClassTransformer() {
+  ExercisedClassTransformer() {
     super();
     pool = ClassPool.getDefault();
   }
@@ -56,7 +56,7 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
       byte[] classfileBuffer)
       throws IllegalClassFormatException {
 
-    byte[] bytecode = null;
+    byte[] bytecode;
 
     String qualifiedName = className.replace('/', '.');
 
@@ -126,7 +126,6 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
    *
    * @see #transform(ClassLoader, String, Class, ProtectionDomain, byte[])
    * @param cc the {@code javassist.CtClass} object
-   * @throws CannotCompileException if inserted code doesn't compile
    */
   private void modifyClass(CtClass cc) {
     // add static field
