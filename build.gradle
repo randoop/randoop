@@ -282,7 +282,7 @@ task exercisedTest(type: Test, dependsOn: 'copyJars') {
   workingDir = sourceSets.exercisedTest.output.resourcesDir
   testClassesDir = sourceSets.exercisedTest.output.classesDir
   classpath = sourceSets.exercisedTest.runtimeClasspath
-  jvmArgs "-javaagent:$buildDir/libs/exercised-class-${version}-all.jar"
+  jvmArgs "-javaagent:$buildDir/libs/exercised-class-${version}.jar"
 
   /*
    * Show as much as possible to console.
@@ -306,7 +306,7 @@ task mapcallTest(type: Test, dependsOn: 'copyJars') {
   workingDir = sourceSets.mapcallTest.output.resourcesDir
   testClassesDir = sourceSets.mapcallTest.output.classesDir
   classpath = sourceSets.mapcallTest.runtimeClasspath
-  jvmArgs "-javaagent:$buildDir/libs/mapcall-${version}-all.jar=--dont-load=load-exclusions.txt"
+  jvmArgs "-javaagent:$buildDir/libs/mapcall-${version}.jar=--dont-load=load-exclusions.txt"
   testLogging {
     showStandardStreams = true
     exceptionFormat = 'full'
