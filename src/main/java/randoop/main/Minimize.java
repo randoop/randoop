@@ -40,6 +40,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -170,8 +171,11 @@ public class Minimize extends CommandHandler {
       System.exit(1);
     }
 
+    // File object pointing to the file to be minimized.
+    File originalFile = new File(suitepath);
+
     // Call the main minimize method.
-    return mainMinimize(suitepath, suiteclasspath, testsuitetimeout, verboseminimizer);
+    return mainMinimize(originalFile, suiteclasspath, testsuitetimeout, verboseminimizer);
   }
 
   /**
@@ -192,7 +196,7 @@ public class Minimize extends CommandHandler {
    * The "expected output" will be used during subsequent runs of the modified test suite to
    * determine whether or not the test suite still fails in the same way.
    *
-   * @param filePath the path to the Java file that is being minimized
+   * @param file the Java file that is being minimized
    * @param classPath classpath used to compile and run the Java file
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
    * @param verboseOutput whether to produce verbose output
@@ -200,24 +204,26 @@ public class Minimize extends CommandHandler {
    *     the original file
    */
   public static boolean mainMinimize(
-      String filePath, String classPath, int timeoutLimit, boolean verboseOutput) {
-    System.out.println("Reading and parsing: " + filePath);
+      File file, String classPath, int timeoutLimit, boolean verboseOutput) {
+    System.out.println("Reading and parsing: " + file.getName());
 
     // Read and parse input Java file.
     CompilationUnit compUnit;
-    try (FileInputStream inputStream = new FileInputStream(filePath)) {
+    try (FileInputStream inputStream = new FileInputStream(file)) {
       compUnit = JavaParser.parse(inputStream);
     } catch (ParseException e) {
-      System.err.println("Error parsing Java file: " + filePath);
+      System.err.println("Error parsing Java file: " + file);
       e.printStackTrace();
       return false;
     } catch (IOException e) {
-      System.err.println("Error reading Java file: " + filePath);
+      System.err.println("Error reading Java file: " + file);
       e.printStackTrace();
       return false;
     }
 
-    System.out.println("Getting expected output.");
+    if (verboseOutput) {
+      System.out.println("Getting expected output.");
+    }
 
     // Find the package name of the input file if it has one.
     String packageName = null;
@@ -230,21 +236,20 @@ public class Minimize extends CommandHandler {
       // No package declaration.
     }
 
-    File originalFile = new File(filePath);
-
     // Create a new file; the file and the class within will have "Minimized" postpended.
+    String fileNameStr = file.getAbsolutePath();
     String minimizedFileName =
-        new StringBuilder(filePath).insert(filePath.lastIndexOf('.'), SUFFIX).toString();
+        new StringBuilder(fileNameStr).insert(fileNameStr.lastIndexOf('.'), SUFFIX).toString();
     File minimizedFile = new File(minimizedFileName);
     // Rename the overall class to [original class name][suffix].
-    String origClassName = FilenameUtils.removeExtension(originalFile.getName());
+    String origClassName = FilenameUtils.removeExtension(file.getName());
     new ClassRenamer().visit(compUnit, new String[] {origClassName, SUFFIX});
     // Write the compilation unit to the minimized file.
     writeToFile(compUnit, minimizedFile);
 
     // Compile the Java file and check that the exit value is 0.
     if (compileJavaFile(minimizedFile, classPath, packageName, timeoutLimit) != 0) {
-      System.err.println("Error when compiling file " + filePath + ". Aborting.");
+      System.err.println("Error when compiling file " + file + ". Aborting.");
       return false;
     }
 
@@ -253,7 +258,7 @@ public class Minimize extends CommandHandler {
     // expectedOutput is a map from method name to failure stack trace with line numbers removed.
     Map<String, String> expectedOutput = normalizeJUnitOutput(runResult);
 
-    System.out.println("Minimizing: " + filePath);
+    System.out.println("Minimizing: " + file.getName());
 
     // Minimize the Java test suite.
     minimizeTestSuite(
@@ -272,8 +277,11 @@ public class Minimize extends CommandHandler {
 
     writeToFile(compUnit, minimizedFile);
 
+    // Delete the .class file associated with the minimized Java file.
+    cleanUp(minimizedFile, verboseOutput);
+
     System.out.println("Minimizing complete.\n");
-    System.out.println("Original file length: " + getFileLength(originalFile) + " lines.");
+    System.out.println("Original file length: " + getFileLength(file) + " lines.");
     System.out.println("Minimized file length: " + getFileLength(minimizedFile) + " lines.");
 
     return true;
@@ -1351,6 +1359,27 @@ public class Minimize extends CommandHandler {
       System.exit(1);
     }
     return lines;
+  }
+
+  /**
+   * Deletes the .class file associated with the outputFile.
+   *
+   * @param outputFile
+   * @param verboseOutput whether to print information about minimization status
+   */
+  private static void cleanUp(File outputFile, boolean verboseOutput) {
+    String outputClassFileStr =
+        FilenameUtils.removeExtension(outputFile.getName()).concat(".class");
+    File outputClassFile = new File(outputClassFileStr);
+    try {
+      boolean success = Files.deleteIfExists(outputClassFile.toPath());
+
+      if (verboseOutput && success) {
+        System.out.println("Minimizer cleanup: Removed .class file.");
+      }
+    } catch (IOException e) {
+      System.err.println("IOException when cleaning up .class file.");
+    }
   }
 
   /**

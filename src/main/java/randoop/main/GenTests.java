@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import org.apache.commons.io.FilenameUtils;
 import plume.EntryReader;
 import plume.Options;
 import plume.Options.ArgException;
@@ -471,7 +472,20 @@ public class GenTests extends GenInputsAbstract {
           System.out.printf("%nError-revealing test output:%n");
           System.out.printf("Error-revealing test count: %d%n", errorSequences.size());
         }
-        outputTests(GenInputsAbstract.error_test_basename, errorSequences);
+        List<File> outputFiles = outputTests(GenInputsAbstract.error_test_basename, errorSequences);
+
+        // Minimize each error-revealing test that has been output.
+        for (File errorRevealingTestSuite : outputFiles) {
+          String baseName = FilenameUtils.removeExtension(errorRevealingTestSuite.getName());
+          // Minimize the file only if it is not the base ErrorTest file.
+          if (!baseName.equals(GenInputsAbstract.error_test_basename)) {
+            Minimize.mainMinimize(
+                errorRevealingTestSuite,
+                Minimize.suiteclasspath,
+                Minimize.testsuitetimeout,
+                Minimize.verboseminimizer);
+          }
+        }
       } else {
         if (!GenInputsAbstract.noprogressdisplay) {
           System.out.printf("%nNo error-revealing tests to output%n");
@@ -626,8 +640,9 @@ public class GenTests extends GenInputsAbstract {
    *
    * @param sequences the sequences to output
    * @param junitPrefix the filename prefix for test output
+   * @return list of files written
    */
-  private void outputTests(String junitPrefix, List<ExecutableSequence> sequences) {
+  private List<File> outputTests(String junitPrefix, List<ExecutableSequence> sequences) {
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.printf("Writing JUnit tests...%n");
     }
@@ -638,7 +653,7 @@ public class GenTests extends GenInputsAbstract {
             afterAllFixtureBody,
             beforeEachFixtureBody,
             afterEachFixtureBody);
-    writeJUnitTests(junitCreator, junit_output_dir, sequences, junitPrefix);
+    return writeJUnitTests(junitCreator, junit_output_dir, sequences, junitPrefix);
   }
 
   /**
