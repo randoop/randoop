@@ -20,7 +20,7 @@ public class ExerciseInstrumentationTest {
     // get class for A
     Class<?> ac = null;
     try {
-      ac = TypeNames.getTypeForName("randoop.instrument.testcase.AE");
+      ac = TypeNames.getTypeForName("instrument.testcase.AE");
     } catch (ClassNotFoundException e) {
       fail("cannot find class: " + e);
     }
@@ -50,7 +50,7 @@ public class ExerciseInstrumentationTest {
     // get class B
     Class<?> bc = null;
     try {
-      bc = TypeNames.getTypeForName("randoop.instrument.testcase.BE");
+      bc = TypeNames.getTypeForName("instrument.testcase.BE");
     } catch (ClassNotFoundException e) {
       fail("cannot find class: " + e);
     }
@@ -69,7 +69,7 @@ public class ExerciseInstrumentationTest {
     // get class A
     Class<?> cc = null;
     try {
-      cc = TypeNames.getTypeForName("randoop.instrument.testcase.CE");
+      cc = TypeNames.getTypeForName("instrument.testcase.CE");
     } catch (ClassNotFoundException e) {
       fail("cannot find class: " + e);
     }

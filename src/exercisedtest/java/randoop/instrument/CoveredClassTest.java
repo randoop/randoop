@@ -61,7 +61,7 @@ public class CoveredClassTest {
   public void testNoFilter() {
     System.out.println("no filter");
 
-    GenInputsAbstract.classlist = new File("randoop/instrument/testcase/allclasses.txt");
+    GenInputsAbstract.classlist = new File("instrument/testcase/allclasses.txt");
     include_if_classname_appears = null;
     GenInputsAbstract.include_if_class_exercised = null;
     // setup classes
@@ -78,14 +78,14 @@ public class CoveredClassTest {
 
     Class<?> ac = null;
     try {
-      ac = TypeNames.getTypeForName("randoop.instrument.testcase.A");
+      ac = TypeNames.getTypeForName("instrument.testcase.A");
     } catch (ClassNotFoundException e) {
       fail("cannot find class: " + e);
     }
 
     Class<?> cc = null;
     try {
-      cc = TypeNames.getTypeForName("randoop.instrument.testcase.C");
+      cc = TypeNames.getTypeForName("instrument.testcase.C");
     } catch (ClassNotFoundException e) {
       fail("cannot find class: " + e);
     }
@@ -99,10 +99,10 @@ public class CoveredClassTest {
   @Test
   public void testNameFilter() {
     System.out.println("name filter");
-    GenInputsAbstract.classlist = new File("randoop/instrument/testcase/allclasses.txt");
-    include_if_classname_appears = Pattern.compile("randoop\\.instrument\\.testcase\\.A"); //null;
+    GenInputsAbstract.classlist = new File("instrument/testcase/allclasses.txt");
+    include_if_classname_appears = Pattern.compile("instrument\\.testcase\\.A"); //null;
     GenInputsAbstract.include_if_class_exercised =
-        null; //"tests/randoop/instrument/testcase/coveredclasses.txt";
+        null; //"tests/instrument/testcase/coveredclasses.txt";
     // setup classes
 
     ForwardGenerator testGenerator = getGenerator();
@@ -117,14 +117,14 @@ public class CoveredClassTest {
 
     Class<?> ac = null;
     try {
-      ac = TypeNames.getTypeForName("randoop.instrument.testcase.A");
+      ac = TypeNames.getTypeForName("instrument.testcase.A");
     } catch (ClassNotFoundException e) {
       fail("cannot find class: " + e);
     }
 
     Class<?> cc = null;
     try {
-      cc = TypeNames.getTypeForName("randoop.instrument.testcase.C");
+      cc = TypeNames.getTypeForName("instrument.testcase.C");
     } catch (ClassNotFoundException e) {
       fail("cannot find class: " + e);
     }
@@ -138,10 +138,10 @@ public class CoveredClassTest {
   @Test
   public void testCoverageFilter() {
     System.out.println("coverage filter");
-    GenInputsAbstract.classlist = new File("randoop/instrument/testcase/allclasses.txt");
+    GenInputsAbstract.classlist = new File("instrument/testcase/allclasses.txt");
     include_if_classname_appears = null;
     GenInputsAbstract.include_if_class_exercised =
-        new File("randoop/instrument/testcase/coveredclasses.txt");
+        new File("instrument/testcase/coveredclasses.txt");
     // setup classes
 
     ForwardGenerator testGenerator = getGenerator();
@@ -156,14 +156,14 @@ public class CoveredClassTest {
 
     Class<?> ac = null;
     try {
-      ac = TypeNames.getTypeForName("randoop.instrument.testcase.A");
+      ac = TypeNames.getTypeForName("instrument.testcase.A");
     } catch (ClassNotFoundException e) {
       fail("cannot find class: " + e);
     }
 
     Class<?> cc = null;
     try {
-      cc = TypeNames.getTypeForName("randoop.instrument.testcase.C");
+      cc = TypeNames.getTypeForName("instrument.testcase.C");
     } catch (ClassNotFoundException e) {
       fail("cannot find class: " + e);
     }
