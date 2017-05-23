@@ -76,11 +76,22 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
         || qualifiedName.startsWith("org.w3c")
         || qualifiedName.startsWith("org.xml.")
         || qualifiedName.startsWith("sun.") // end of rt.jar name prefixes
-        || qualifiedName.startsWith("org.junit.")
+    ) {
+      return null;
+    }
+
+    // run environment classes
+    if (qualifiedName.startsWith("org.junit.")
         || qualifiedName.startsWith("org.hamcrest.")
-        || qualifiedName.startsWith("org.gradle.")
-        || qualifiedName.startsWith("com.github.javaparser.")) {
-      return bytecode;
+        || qualifiedName.startsWith("org.gradle.")) {
+      return null;
+    }
+
+    // randoop classes
+    if (qualifiedName.startsWith("com.github.javaparser.")
+        || qualifiedName.startsWith("randoop.")
+        || qualifiedName.startsWith("plume.")) {
+      return null;
     }
 
     CtClass cc;
@@ -91,7 +102,7 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
     }
 
     if (cc.isFrozen() || cc.isInterface()) {
-      return bytecode;
+      return null;
     }
 
     // OK to transform bytecode
