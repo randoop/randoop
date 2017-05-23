@@ -36,6 +36,10 @@ import org.apache.bcel.generic.LineNumberGen;
 import org.apache.bcel.generic.LocalVariableGen;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.generic.Type;
+import org.checkerframework.checker.initialization.qual.Initialized;
+import org.checkerframework.checker.interning.qual.UnknownInterned;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.UnknownKeyFor;
 import plume.BCELUtil;
 import plume.SimpleLog;
 import plume.StrTok;
@@ -199,6 +203,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
       // without BCEL support, that would be hard to do. Just delete it
       // for now (since it is optional, and we are unlikely to be used by
       // a debugger)
+      // Also remove the StackMap table because we are breaking it.
       for (Attribute a : mg.getCodeAttributes()) {
         if (isLocalVariableTypeTable(a)) {
           mg.removeCodeAttribute(a);
@@ -274,38 +279,64 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   private InstructionList transformInstruction(
       MethodGen mg, Instruction inst, InstructionFactory ifact) {
 
+    if (!(inst instanceof InvokeInstruction)) {
+      return null;
+    }
+    InvokeInstruction invocation = (InvokeInstruction) inst;
+    MethodDef orig = null;
+    try {
+      orig = MethodDef.of(invocation);
+    } catch (Throwable e) {
+      return null;
+    }
+    MethodDef call = getReplacement(orig);
+    if (call == null) {
+      return null;
+    }
+
+    debug_transform.log(
+        "%s.%s: Replacing method %s with %s%n",
+        mg.getClassName(), mg.getName(), orig.toString(), call.getQualifiedName());
+
+    InstructionList instructionList = new InstructionList();
+
     switch (inst.getOpcode()) {
       case Const.INVOKEDYNAMIC:
       case Const.INVOKEINTERFACE:
       case Const.INVOKESPECIAL:
-      case Const.INVOKESTATIC:
       case Const.INVOKEVIRTUAL:
-        InstructionList instructionList = new InstructionList();
-        InvokeInstruction invocation = (InvokeInstruction) inst;
-        MethodDef orig = null;
-        try {
-          orig = MethodDef.of(invocation);
-        } catch (Throwable e) {
-          return null;
-        }
-        MethodDef call = getReplacement(orig);
-        if (call != null) {
-          debug_transform.log(
-              "%s.%s: Replacing method %s with %s%n",
-              mg.getClassName(), mg.getName(), orig.toString(), call.getQualifiedName());
-          instructionList.append(
-              ifact.createInvoke(
-                  call.getClassname(),
-                  call.getName(),
-                  invocation.getReturnType(pgen),
-                  invocation.getArgumentTypes(pgen),
-                  Const.INVOKESTATIC));
-        }
-        return instructionList;
+        /*
+         * These are invocations where an implicit argument occurs in the call.
+         */
+        Type instanceType = invocation.getReferenceType(pgen);
+        @UnknownInterned
+        @UnknownKeyFor
+        @NonNull
+        @Initialized
+        Type[] arguments = BCELUtil.insert_type(instanceType, invocation.getArgumentTypes(pgen));
+        instructionList.append(
+            ifact.createInvoke(
+                call.getClassname(),
+                call.getName(),
+                invocation.getReturnType(pgen),
+                arguments,
+                Const.INVOKESTATIC));
+        break;
+
+      case Const.INVOKESTATIC:
+        instructionList.append(
+            ifact.createInvoke(
+                call.getClassname(),
+                call.getName(),
+                invocation.getReturnType(pgen),
+                invocation.getArgumentTypes(pgen),
+                Const.INVOKESTATIC));
+        break;
 
       default:
         return null;
     }
+    return instructionList;
   }
 
   /**
@@ -404,6 +435,10 @@ public class CallReplacementTransformer implements ClassFileTransformer {
 
   private boolean isLocalVariableTypeTable(Attribute a) {
     return (getAttributeName(a).equals("LocalVariableTypeTable"));
+  }
+
+  private boolean isStackMapTable(Attribute a) {
+    return (getAttributeName(a).equals("StackMapTable"));
   }
 
   /**
