@@ -174,6 +174,17 @@ public class CallReplacementTransformer implements ClassFileTransformer {
         return true;
       }
     }
+    // XXX these are temporary until can repackage Randoop
+    if (fullClassName.startsWith("plume.")
+        || fullClassName.startsWith("com.github.javaparser.")
+        || fullClassName.startsWith("org.checkerframework.")
+        || fullClassName.startsWith("com.sun.tools.javac.")
+        || fullClassName.startsWith("com.sun.source.util.")
+        || fullClassName.startsWith("com.sun.source.tree.")
+        || fullClassName.startsWith("com.sun.tools.doclint.")) {
+      debug_transform.log("Not considering randoop class %s%n", fullClassName);
+      return true;
+    }
     return false;
   }
 
@@ -617,14 +628,17 @@ public class CallReplacementTransformer implements ClassFileTransformer {
         return false;
       }
       MethodDef md = (MethodDef) obj;
-      if (!md.name.equals(this.name)) {
+      if (!this.classname.equals(md.classname)) {
+        return false;
+      }
+      if (!this.name.equals(md.name)) {
         return false;
       }
       if (this.argTypes.length != md.argTypes.length) {
         return false;
       }
       for (int i = 0; i < md.argTypes.length; i++) {
-        if (!md.argTypes[i].equals(this.argTypes[i])) {
+        if (!this.argTypes[i].equals(md.argTypes[i])) {
           return false;
         }
       }
@@ -633,7 +647,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
 
     @Override
     public int hashCode() {
-      return Objects.hash(name, Arrays.hashCode(argTypes));
+      return Objects.hash(classname, name, Arrays.hashCode(argTypes));
     }
 
     @Override
