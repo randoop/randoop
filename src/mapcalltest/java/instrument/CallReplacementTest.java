@@ -1,4 +1,4 @@
-package randoop.instrument;
+package instrument;
 
 import static org.junit.Assert.assertTrue;
 
@@ -34,7 +34,7 @@ public class CallReplacementTest {
     thrown = ExpectedException.none();
 
     JFrame frame = new JFrame("TestFrame");
-    
+
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
     //Create and set up the content pane.
@@ -47,5 +47,4 @@ public class CallReplacementTest {
 
     frame.setVisible(true);
   }
-
 }
