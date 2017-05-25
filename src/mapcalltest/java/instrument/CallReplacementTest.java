@@ -29,12 +29,12 @@ public class CallReplacementTest {
   }
 
   /* code borrowed from {@code createAndShowGUI()} in Oracle example components.DialogDemo */
-  /*  removed until replacements can be defined */
   @Test
   public void swingTest() {
     thrown = ExpectedException.none();
 
     JFrame frame = new JFrame("TestFrame");
+    
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
     //Create and set up the content pane.
@@ -44,7 +44,8 @@ public class CallReplacementTest {
 
     //Display the window.
     frame.pack();
+
     frame.setVisible(true);
   }
-  /**/
+
 }
