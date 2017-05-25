@@ -6,7 +6,90 @@
 // Replacement for System.exit using method that throws SystemExitCalledError.
 java.lang.System.exit(int) randoop.mock.System.exit(int)
 
-// Don't allow a JComponent to be visible
-javax.swing.JComponent.setVisible(boolean) randoop.mock.JComponent.setVisible(boolean)
-java.awt.Component.setVisible(boolean) randoop.mock.Component.setVisible(boolean)
+// Prevent AWT/Swing components/containers from displaying themselves.
+//
+java.awt.Component.setVisible(boolean) randoop.mock.Component.setVisible(java.awt.Component,boolean)
+java.awt.Component.show(boolean) randoop.mock.Component.show(java.awt.Component,boolean)
+java.awt.Component.show() randoop.mock.Component.show(java.awt.Component)
 
+javax.swing.JComponent.setVisible(boolean) randoop.mock.JComponent.setVisible(javax.swing.JComponent,boolean)
+javax.swing.JComponent.show(boolean) randoop.mock.JComponent.show(javax.swing.JComponent,boolean)
+javax.swing.JComponent.show() randoop.mock.JComponent.show(javax.swing.JComponent)
+
+javax.swing.JPanel.setVisible(boolean) randoop.mock.JPanel.setVisible(javax.swing.JPanel,boolean)
+javax.swing.JPanel.show(boolean) randoop.mock.JPanel.show(javax.swing.JPanel,boolean)
+javax.swing.JPanel.show() randoop.mock.JPanel.show(javax.swing.JPanel)
+
+java.awt.Window.pack() randoop.mock.Window.pack(java.awt.Window)
+java.awt.Window.setVisible(boolean) randoop.mock.Window.setVisible(java.awt.Window,boolean)
+java.awt.Window.show(boolean) randoop.mock.Window.show(java.awt.Window,boolean)
+java.awt.Window.show() randoop.mock.Window.show(java.awt.Window)
+
+java.awt.Dialog.pack() randoop.mock.Dialog.pack(java.awt.Dialog)
+java.awt.Dialog.setVisible(boolean) randoop.mock.Dialog.setVisible(java.awt.Dialog,boolean)
+java.awt.Dialog.show(boolean) randoop.mock.Dialog.show(java.awt.Dialog,boolean)
+java.awt.Dialog.show() randoop.mock.Dialog.show(java.awt.Dialog)
+
+java.awt.Frame.pack() randoop.mock.Frame.pack(java.awt.Frame)
+java.awt.Frame.setVisible(boolean) randoop.mock.Frame.setVisible(java.awt.Frame,boolean)
+java.awt.Frame.show(boolean) randoop.mock.Frame.show(java.awt.Frame,boolean)
+java.awt.Frame.show() randoop.mock.Frame.show(java.awt.Frame)
+//
+
+javax.swing.JDialog.pack() randoop.mock.JDialog.pack(javax.swing.JDialog)
+javax.swing.JDialog.setVisible(boolean) randoop.mock.JDialog.setVisible(javax.swing.JDialog,boolean)
+javax.swing.JDialog.show(boolean) randoop.mock.JDialog.show(javax.swing.JDialog,boolean)
+javax.swing.JDialog.show() randoop.mock.JDialog.show(javax.swing.JDialog)
+
+javax.swing.JFrame.pack() randoop.mock.JFrame.pack(javax.swing.JFrame)
+javax.swing.JFrame.setVisible(boolean) randoop.mock.JFrame.setVisible(javax.swing.JFrame,boolean)
+javax.swing.JFrame.show(boolean) randoop.mock.JFrame.show(javax.swing.JFrame,boolean)
+javax.swing.JFrame.show() randoop.mock.JFrame.show(javax.swing.JFrame)
+
+javax.swing.JWindow.pack() randoop.mock.JWindow.pack(javax.swing.JWindow)
+javax.swing.JWindow.setVisible(boolean) randoop.mock.JWindow.setVisible(javax.swing.JWindow,boolean)
+javax.swing.JWindow.show(boolean) randoop.mock.JWindow.show(javax.swing.JWindow,boolean)
+javax.swing.JWindow.show() randoop.mock.JWindow.show(javax.swing.JWindow)
+
+// Also want to
+// Prevent AWT/Swing components from starting threads. It appears that the threads are managed by
+// an AppContext in java.awt.Component. So, we want to replace calls to sun.awt.AppContext.getAppContext().
+// However, having the replacement method return null will result in NPEs.
+//sun.awt.AppContext.getAppContext() randoop.mock.AppContext.getAppContext()
+// Need to make sure that the call in java.awt.Component is not masked in CallReplacementTransformer
+
+// Also want to
+// Prevent AWT/Swing components from stealing focus.
+
+// NOTE: these replacements aren't currently done because they require modifying bootloaded classes
+// and the CallReplacementTransformer.transform() method skips those classes.
+
+// On some systems, moving a window to the front will take focus
+java.awt.Window.toFront() randoop.mock.Window(java.awt.Window)
+java.awt.Dialog.toFront() randoop.mock.Dialog(java.awt.Dialog)
+javax.swing.JDialog.toFront() randoop.mock.JDialog(javax.swing.JDialog)
+java.awt.Frame.toFront() randoop.mock.Frame(java.awt.Frame)
+javax.swing.JFrame.toFront() randoop.mock.JFrame(javax.swing.JFrame)
+javax.swing.JWindow.toFront() randoop.mock.JWindow(javax.swing.JWindow)
+
+
+// A component can request focus
+java.awt.Component.requestFocus() randoop.mock.Component.requestFocus(java.awt.Component)
+java.awt.Window.requestFocus() randoop.mock.Window.requestFocus(java.awt.Window)
+java.awt.Dialog.requestFocus() randoop.mock.Dialog.requestFocus(java.awt.Dialog)
+java.awt.Frame.requestFocus() randoop.mock.Frame.requestFocus(java.awt.Frame)
+javax.swing.JComponent.requestFocus() randoop.mock.JComponent.requestFocus(javax.swing.JComponent)
+javax.swing.JDialog.requestFocus() randoop.mock.JDialog.requestFocus(javax.swing.JDialog)
+javax.swing.JFrame.requestFocus() randoop.mock.JFrame.requestFocus(javax.swing.JFrame)
+javax.swing.JWindow.requestFocus() randoop.mock.JWindow.requestFocus(javax.swing.JWindow)
+
+java.awt.Component.requestFocus(boolean) randoop.mock.Component.requestFocus(java.awt.Component,boolean)
+java.awt.Window.requestFocus() randoop.mock.Window.requestFocus(java.awt.Window,boolean)
+java.awt.Dialog.requestFocus() randoop.mock.Dialog.requestFocus(java.awt.Dialog,boolean)
+java.awt.Frame.requestFocus() randoop.mock.Frame.requestFocus(java.awt.Frame,boolean)
+javax.swing.JComponent.requestFocus() randoop.mock.JComponent.requestFocus(javax.swing.JComponent,boolean)
+javax.swing.JDialog.requestFocus() randoop.mock.JDialog.requestFocus(javax.swing.JDialog,boolean)
+javax.swing.JFrame.requestFocus() randoop.mock.JFrame.requestFocus(javax.swing.JFrame,boolean)
+javax.swing.JWindow.requestFocus() randoop.mock.JWindow.requestFocus(javax.swing.JWindow,boolean)
+
+// NOTE: not sure this is a complete set of replacements.
