@@ -479,11 +479,11 @@ public class GenTests extends GenInputsAbstract {
           String baseName = FilenameUtils.removeExtension(errorRevealingTestSuite.getName());
           // Minimize the file only if it is not the base ErrorTest file.
           if (!baseName.equals(GenInputsAbstract.error_test_basename)) {
-            Minimize.mainMinimize(
-                errorRevealingTestSuite,
-                Minimize.suiteclasspath,
-                Minimize.testsuitetimeout,
-                Minimize.verboseminimizer);
+            /*Minimize.mainMinimize(
+            errorRevealingTestSuite,
+            Minimize.suiteclasspath,
+            Minimize.testsuitetimeout,
+            Minimize.verboseminimizer);*/
           }
         }
       } else {
