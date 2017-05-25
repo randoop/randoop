@@ -1,7 +1,4 @@
 instrument.testcase.A
 instrument.testcase.B
-<<<<<<< HEAD
 instrument.testcase.C
-=======
-instrument.testcase.C
->>>>>>> master
+

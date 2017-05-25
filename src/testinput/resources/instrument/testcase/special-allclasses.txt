@@ -1,4 +1,4 @@
-randoop.instrument.testcase.AbstractTarget
-randoop.instrument.testcase.ChildOfTarget
-randoop.instrument.testcase.InterfaceTarget
-randoop.instrument.testcase.ImplementorOfTarget
+instrument.testcase.AbstractTarget
+instrument.testcase.ChildOfTarget
+instrument.testcase.InterfaceTarget
+instrument.testcase.ImplementorOfTarget

@@ -1,2 +1,2 @@
-randoop.instrument.testcase.AbstractTarget
-randoop.instrument.testcase.InterfaceTarget
+instrument.testcase.AbstractTarget
+instrument.testcase.InterfaceTarget
