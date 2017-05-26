@@ -75,6 +75,14 @@ class TestRunStatus {
             + "destfile="
             + execFile
             + ",excludes=org.junit.*");
+    if (testEnvironment.getJavaAgentPath() != null) {
+      String agent = "-javaagent:" + testEnvironment.getJavaAgentPath();
+      String args = testEnvironment.getJavaAgentArgumentString();
+      if (args != null) {
+        agent = agent + "=" + args;
+      }
+      command.add(agent);
+    }
     command.add("-ea");
     command.add("-classpath");
     command.add(testClasspath);
@@ -82,6 +90,11 @@ class TestRunStatus {
     command.add(jUnitTestSuiteName);
 
     ProcessStatus status = ProcessStatus.runCommand(command);
+
+    System.out.format("%nJUnit: %s%n", basename);
+    for (String line : status.outputLines) {
+      System.out.println(line);
+    }
 
     File classesDirectory = testEnvironment.getTestInputClassDir().toFile();
     MethodCoverageMap coverageMap = MethodCoverageMap.collectCoverage(execFile, classesDirectory);
