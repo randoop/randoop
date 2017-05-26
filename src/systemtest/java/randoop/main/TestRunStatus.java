@@ -91,11 +91,6 @@ class TestRunStatus {
 
     ProcessStatus status = ProcessStatus.runCommand(command);
 
-    System.out.format("%nJUnit: %s%n", basename);
-    for (String line : status.outputLines) {
-      System.out.println(line);
-    }
-
     File classesDirectory = testEnvironment.getTestInputClassDir().toFile();
     MethodCoverageMap coverageMap = MethodCoverageMap.collectCoverage(execFile, classesDirectory);
 
