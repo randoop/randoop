@@ -850,10 +850,10 @@ public class RandoopSystemTest {
         systemTestEnvironment.createTestEnvironment("exercised-class");
     testEnvironment.addJavaAgent(systemTestEnvironment.excercisedClassAgentPath);
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.addClassList("resources/systemTest/randoop/instrument/testcase/allclasses.txt");
+    options.addClassList("resources/systemTest/instrument/testcase/allclasses.txt");
     options.setOption(
         "include-if-class-exercised",
-        "resources/systemTest/randoop/instrument/testcase/coveredclasses.txt");
+        "resources/systemTest/instrument/testcase/coveredclasses.txt");
     options.setOption("outputlimit", "250");
     options.setOption("inputlimit", "500");
     options.setErrorBasename("ExError");
@@ -861,10 +861,10 @@ public class RandoopSystemTest {
 
     CoverageChecker coverageChecker = new CoverageChecker(options);
     //TODO figure out why this method not covered
-    coverageChecker.ignore("randoop.instrument.testcase.A.toString()");
-    coverageChecker.exclude("randoop.instrument.testcase.C.getValue()");
-    coverageChecker.exclude("randoop.instrument.testcase.C.isZero()");
-    coverageChecker.exclude("randoop.instrument.testcase.C.jumpValue()");
+    coverageChecker.ignore("instrument.testcase.A.toString()");
+    coverageChecker.exclude("instrument.testcase.C.getValue()");
+    coverageChecker.exclude("instrument.testcase.C.isZero()");
+    coverageChecker.exclude("instrument.testcase.C.jumpValue()");
     generateAndTestWithCoverage(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
