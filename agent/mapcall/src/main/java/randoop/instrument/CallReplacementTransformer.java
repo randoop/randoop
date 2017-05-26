@@ -12,9 +12,9 @@ import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Pattern;
 import org.apache.bcel.Const;
 import org.apache.bcel.classfile.Attribute;
@@ -72,9 +72,9 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   private final Map<String, String> prefixReplacementMap;
 
   /** the list of packages to exclude from transformation */
-  private final List<String> excludedPackages;
+  private final Set<String> excludedPackages;
 
-  CallReplacementTransformer(List<String> excludedPackages) {
+  CallReplacementTransformer(Set<String> excludedPackages) {
     this.excludedPackages = excludedPackages;
     this.replacementMap = new HashMap<>();
     this.prefixReplacementMap = new HashMap<>();
@@ -85,6 +85,11 @@ public class CallReplacementTransformer implements ClassFileTransformer {
    *
    * <p>Transforms class by replacing calls to methods with corresponding calls defined in this
    * class.
+   *
+   * <p>Excludes bootloaded classes that are not AWT/Swing classes. Other exclusions are determined
+   * by the default and user provided exclusion files.
+   *
+   * @see MapCallsAgent
    */
   @Override
   public byte[] transform(
@@ -98,7 +103,8 @@ public class CallReplacementTransformer implements ClassFileTransformer {
     debug_transform.log("In Transform: class = %s%n", className);
     String fullClassName = className.replace("/", ".");
 
-    if (isBootClass(loader, fullClassName) || isExcludedClass(fullClassName)) {
+    if ((isBootClass(loader, fullClassName) && !isAWTSwingClass(fullClassName))
+        || isExcludedClass(fullClassName)) {
       return null;
     }
 
@@ -135,15 +141,30 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   }
 
   /**
-   * Don't instrument boot classes. We only want to instrument user classes classpath. Most boot
-   * classes have the null loader, but some generated classes (such as those in sun.reflect) will
-   * have a non-null loader. Some of these have a null parent loader, but some do not. The check for
-   * the sun.reflect package is a hack to catch all of these. A more consistent mechanism to
-   * determine boot classes would be preferrable.
+   * Indicates whether the named class is in either the AWT or Swing packages.
+   *
+   * @param classname the fully qualified class name, must be non-null
+   * @return true if the method is in either the AWT or Swing package, false otherwise
+   */
+  private boolean isAWTSwingClass(String classname) {
+    if (classname.startsWith("java.awt")) {
+      debug_transform.log("transforming AWT class %s", classname);
+      return true;
+    }
+    if (classname.startsWith("javax.swing")) {
+      debug_transform.log("transforming Swing class %s", classname);
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Indicate whether the class is boot loaded. Checks if the loader or the parent of the parent of
+   * the loader is {@code null}.
    *
    * @param loader the class loader for the method
    * @param fullClassName the fully qualified class name of the method
-   * @return true if the method should not be transformed, false, otherwise
+   * @return true if the class is boot loaded, false, otherwise
    */
   private boolean isBootClass(ClassLoader loader, String fullClassName) {
     if (loader == null) {
@@ -152,38 +173,20 @@ public class CallReplacementTransformer implements ClassFileTransformer {
     } else if (loader.getParent() == null) {
       debug_transform.log("ignoring system class %s, parent loader == null\n", fullClassName);
       return true;
-    } else if (fullClassName.startsWith("sun.reflect")) {
-      debug_transform.log("ignoring system class %s, in sun.reflect package", fullClassName);
-      return true;
-    } else if (fullClassName.startsWith("com.sun.proxy.$Proxy")) {
-      debug_transform.log(
-          "ignoring class from com.sun package %s with nonnull loaders\n", fullClassName);
-      return true;
     }
     return false;
   }
 
+  /**
+   * @param fullClassName
+   * @return
+   */
   private boolean isExcludedClass(String fullClassName) {
-    if (fullClassName.startsWith("randoop.")) {
-      debug_transform.log("Not considering randoop class %s%n", fullClassName);
-      return true;
-    }
     for (String excludedPackage : excludedPackages) {
       if (fullClassName.startsWith(excludedPackage)) {
         debug_transform.log("Not considering excluded class %s%n", fullClassName);
         return true;
       }
-    }
-    // XXX these are temporary until can repackage Randoop
-    if (fullClassName.startsWith("plume.")
-        || fullClassName.startsWith("com.github.javaparser.")
-        || fullClassName.startsWith("org.checkerframework.")
-        || fullClassName.startsWith("com.sun.tools.javac.")
-        || fullClassName.startsWith("com.sun.source.util.")
-        || fullClassName.startsWith("com.sun.source.tree.")
-        || fullClassName.startsWith("com.sun.tools.doclint.")) {
-      debug_transform.log("Not considering randoop class %s%n", fullClassName);
-      return true;
     }
     return false;
   }
@@ -294,7 +297,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
       return null;
     }
     InvokeInstruction invocation = (InvokeInstruction) inst;
-    MethodDef orig = null;
+    MethodDef orig;
     try {
       orig = MethodDef.of(invocation);
     } catch (Throwable e) {
@@ -446,10 +449,6 @@ public class CallReplacementTransformer implements ClassFileTransformer {
 
   private boolean isLocalVariableTypeTable(Attribute a) {
     return (getAttributeName(a).equals("LocalVariableTypeTable"));
-  }
-
-  private boolean isStackMapTable(Attribute a) {
-    return (getAttributeName(a).equals("StackMapTable"));
   }
 
   /**
