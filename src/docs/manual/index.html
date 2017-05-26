@@ -341,7 +341,7 @@ Randoop only invokes a method or constructor <i>M</i> if <b>all</b> of the follo
        <a href="#option:classlist"><code>--classlist</code></a>, or is a
        member named by <a href="#option:methodlist"><code>--methodlist</code></a>.
   </li>
-  <li> <i>M</i> does not match the pattern given
+  <li> <i>M</i> does not match any of the patterns given
        via <a href="#option:omitmethods"><code>--omitmethods</code></a>.
        </li>
   <li> All of the following are accessible from the package of the tests
@@ -733,13 +733,24 @@ Randoop about your application, and that is how we recommend using Randoop.
 
  <p>See an <a href= "https://randoop.github.io/randoop/manual/method_list_example.txt">
  example</a>.
-            <li id="option:omitmethods"><b>--omitmethods=</b><i>regex</i>.
-             Randoop will not attempt to directly call methods whose <code>java.lang.reflect.Method.toString()</code> matches the regular expression given. This does not
- prevent indirect calls to such methods from other, allowed methods.
+            <li id="option:omitmethods"><b>--omitmethods=</b><i>regex</i> <code>[+]</code>.
+             A pattern that indicates methods that should not be included in generated tests. Randoop will
+ not attempt to directly call methods whose <code>java.lang.reflect.Method.toString()</code> matches
+ the regular expression given. This does not prevent indirect calls to such methods from other,
+ allowed methods.
 
  <p>Randoop only calls methods that are specified by one of the <code>--testclass</code>, <code>
  -classlist</code>, or <code>--methodlist</code> command-line options; the purpose of <code>
  --omitmethods</code> is to override one of those other command-line options.
+
+ <p>Note:
+
+ <ul>
+   <li>The regex is unanchored, so <code>^</code> or <code>$</code> may be needed to get the
+       correct results.
+   <li>If a method is inherited without an override, the pattern must match the superclass
+       method.
+ </ul>
             <li id="option:omit-field-list"><b>--omit-field-list=</b><i>filename</i>.
              File that contains fully-qualified field names to be excluded from test generation. Otherwise,
  Randoop includes all public fields of classes under test as observer methods.
@@ -1094,6 +1105,8 @@ Randoop about your application, and that is how we recommend using Randoop.
  minimized.
             <li id="option:testsuitetimeout"><b>--testsuitetimeout=</b><i>int</i>.
              The maximum number of seconds allowed for the entire test suite to run. [default 30]
+            <li id="option:verboseminimizer"><b>--verboseminimizer=</b><i>boolean</i>.
+             Output verbose output to standard output if true. [default false]
       </ul>
 </ul>
 
