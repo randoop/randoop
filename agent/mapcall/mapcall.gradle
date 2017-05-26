@@ -7,14 +7,9 @@ plugins {
 
 description = "mapcall agent"
 
-configurations {
-  plume
-  compile.extendsFrom plume
-}
-
 dependencies {
   // use plume.jar from parent project
-  plume project(path: ':', configuration: 'plume' )
+  compile project(path: ':', configuration: 'plume' )
 }
 
 /*
