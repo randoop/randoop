@@ -891,6 +891,60 @@ public class RandoopSystemTest {
     generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
+  /**
+   * This test uses classes from (or based on) the <a
+   * href="http://docs.oracle.com/javase/tutorial/uiswing/examples/components/index.html">Swing
+   * Tutorial Examples</a>.
+   */
+  @Test
+  public void runSwingTest() {
+    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("swing-test");
+    testEnvironment.addJavaAgent(
+        systemTestEnvironment.mapcallAgentPath,
+        "--dont-transform=resources/systemTest/load-exclusions.txt");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("components");
+    options.addTestClass("components.DialogRunner");
+    //options.addTestClass("components.ArrowIcon");
+    //options.addTestClass("components.ConversionPanel");
+    //options.addTestClass("components.Converter");
+    //options.addTestClass("components.ConverterRangeModel");
+    //options.addTestClass("components.Corner");
+    //options.addTestClass("components.CrayonPanel");
+    options.addTestClass("components.CustomDialog");
+    //options.addTestClass("components.DynamicTree");
+    //options.addTestClass("components.FollowerRangeModel");
+    //options.addTestClass("components.Framework");
+    //options.addTestClass("components.GenealogyModel");
+    //options.addTestClass("components.GenealogyTree");
+    //options.addTestClass("components.ImageFileView");
+    //options.addTestClass("components.ImageFilter");
+    //options.addTestClass("components.ImagePreview");
+    //options.addTestClass("components.ListDialog");
+    //options.addTestClass("components.ListDialogRunner");
+    //options.addTestClass("components.MissingIcon");
+    //options.addTestClass("components.MyInternalFrame");
+    //options.addTestClass("components.Converter");
+    //options.addTestClass("components.Person");
+    //options.addTestClass("components.Rule");
+    //options.addTestClass("components.ScrollablePicture");
+    //options.addTestClass("components.Unit");
+    //options.addTestClass("components.Utils");
+
+    options.setOption("outputlimit", "400");
+    options.setOption("timelimit", "120");
+    options.setFlag("ignore-flaky-tests");
+
+    CoverageChecker checker = new CoverageChecker(options);
+    // requires input that cannot be created
+    checker.exclude("components.CustomDialog.actionPerformed(java.awt.event.ActionEvent)");
+    // not sure why this is not being called
+    checker.ignore("components.CustomDialog.clearAndHide()");
+
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
+  }
+
   /* ------------------------------ utility methods ---------------------------------- */
 
   /**
