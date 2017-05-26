@@ -75,6 +75,14 @@ class TestRunStatus {
             + "destfile="
             + execFile
             + ",excludes=org.junit.*");
+    if (testEnvironment.getJavaAgentPath() != null) {
+      String agent = "-javaagent:" + testEnvironment.getJavaAgentPath();
+      String args = testEnvironment.getJavaAgentArgumentString();
+      if (args != null) {
+        agent = agent + "=" + args;
+      }
+      command.add(agent);
+    }
     command.add("-ea");
     command.add("-classpath");
     command.add(testClasspath);
