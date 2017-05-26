@@ -474,16 +474,19 @@ public class GenTests extends GenInputsAbstract {
         }
         List<File> outputFiles = outputTests(GenInputsAbstract.error_test_basename, errorSequences);
 
-        // Minimize each error-revealing test that has been output.
-        for (File errorRevealingTestSuite : outputFiles) {
-          String baseName = FilenameUtils.removeExtension(errorRevealingTestSuite.getName());
-          // Minimize the file only if it is not the base ErrorTest file.
-          if (!baseName.equals(GenInputsAbstract.error_test_basename)) {
-            /*Minimize.mainMinimize(
-            errorRevealingTestSuite,
-            Minimize.suiteclasspath,
-            Minimize.testsuitetimeout,
-            Minimize.verboseminimizer);*/
+        // Automatically minimize the error-revealing test if the flag indicates to do so.
+        if (GenInputsAbstract.minimize) {
+          // Minimize each error-revealing test that has been output.
+          for (File errorRevealingTestSuite : outputFiles) {
+            String baseName = FilenameUtils.removeExtension(errorRevealingTestSuite.getName());
+            // Minimize the file only if it is not the base ErrorTest file.
+            if (!baseName.equals(GenInputsAbstract.error_test_basename)) {
+              Minimize.mainMinimize(
+                  errorRevealingTestSuite,
+                  Minimize.suiteclasspath,
+                  Minimize.testsuitetimeout,
+                  Minimize.verboseminimizer);
+            }
           }
         }
       } else {

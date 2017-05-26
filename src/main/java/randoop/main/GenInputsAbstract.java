@@ -666,4 +666,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
     }
     return elementSet;
   }
+
+  @OptionGroup(value = "Automatically minimize error-revealing tests")
+  /** Flag indicating whether or not to automatically minimize error-revealing tests. */
+  @Option("<boolean> to indicate automatic minimization of error-revealing tests")
+  public static boolean minimize = true;
 }
