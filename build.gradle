@@ -156,10 +156,11 @@ dependencies {
    * source set systemTest
    */
    systemTestCompile sourceSets.main.output
-   systemTestRuntime sourceSets.testInput.output
    systemTestCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
    systemTestCompile group: 'org.jacoco', name: 'org.jacoco.core', version: '0.7.7.201606060606'
    systemTestCompile group: 'org.jacoco', name: 'org.jacoco.report', version: '0.7.7.201606060606'
+   systemTestRuntime sourceSets.testInput.output
+   systemTestRuntime files(project(':mapcall').sourceSets.main.output)
 
   /*
    * sourceSet testInput depends on output of main.
@@ -306,7 +307,7 @@ task mapcallTest(type: Test, dependsOn: 'copyJars') {
   workingDir = sourceSets.mapcallTest.output.resourcesDir
   testClassesDir = sourceSets.mapcallTest.output.classesDir
   classpath = sourceSets.mapcallTest.runtimeClasspath
-  jvmArgs "-javaagent:$buildDir/libs/mapcall-${version}.jar=--dont-load=load-exclusions.txt"
+  jvmArgs "-javaagent:$buildDir/libs/mapcall-${version}.jar=--dont-transform=load-exclusions.txt"
   testLogging {
     showStandardStreams = true
     exceptionFormat = 'full'
