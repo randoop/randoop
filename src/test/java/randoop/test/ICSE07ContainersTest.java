@@ -68,7 +68,7 @@ public class ICSE07ContainersTest {
   private void runRandoop(
       String name,
       List<Class<?>> classList,
-      Pattern omitMethodPattern,
+      List<Pattern> omitMethodPatterns,
       IStopper stopper,
       Set<String> excludeNames) {
 
@@ -90,7 +90,7 @@ public class ICSE07ContainersTest {
           new OperationExtractor(
               classType,
               model,
-              new DefaultReflectionPredicate(omitMethodPattern, excludeNames),
+              new DefaultReflectionPredicate(omitMethodPatterns, excludeNames),
               visibility),
           c);
     }
@@ -137,13 +137,11 @@ public class ICSE07ContainersTest {
         excludeNames.add(f.getDeclaringClass().getName() + "." + f.getName());
       }
     }
-    runRandoop(
-        "FibHeap",
-        classList,
+    List<Pattern> omitPatterns = new ArrayList<>();
+    omitPatterns.add(
         Pattern.compile(
-            "decreaseKey|delete\\(randoop.test.issta2006.Node\\)|empty\\(\\)|insert\\(randoop.test.issta2006.Node\\)|min\\(\\)|size\\(\\)|union"),
-        stopper,
-        excludeNames);
+            "decreaseKey|delete\\(randoop.test.issta2006.Node\\)|empty\\(\\)|insert\\(randoop.test.issta2006.Node\\)|min\\(\\)|size\\(\\)|union"));
+    runRandoop("FibHeap", classList, omitPatterns, stopper, excludeNames);
     assertEquals(96, FibHeap.tests.size());
   }
 
@@ -166,8 +164,9 @@ public class ICSE07ContainersTest {
         excludeNames.add(f.getDeclaringClass().getName() + "." + f.getName());
       }
     }
-    runRandoop(
-        "BinTree", classList, Pattern.compile("find\\(int\\)|gen_native"), stopper, excludeNames);
+    List<Pattern> omitPatterns = new ArrayList<>();
+    omitPatterns.add(Pattern.compile("find\\(int\\)|gen_native"));
+    runRandoop("BinTree", classList, omitPatterns, stopper, excludeNames);
     assertEquals(54, BinTree.tests.size());
   }
 
@@ -190,13 +189,11 @@ public class ICSE07ContainersTest {
         excludeNames.add(f.getDeclaringClass().getName() + "." + f.getName());
       }
     }
-    runRandoop(
-        "TreeMap",
-        classList,
+    List<Pattern> omitPatterns = new ArrayList<>();
+    omitPatterns.add(
         Pattern.compile(
-            "toString\\(\\)|size\\(\\)|containsKey\\(int\\)|print\\(\\)|concreteString\\(int\\)"),
-        stopper,
-        excludeNames);
+            "toString\\(\\)|size\\(\\)|containsKey\\(int\\)|print\\(\\)|concreteString\\(int\\)"));
+    runRandoop("TreeMap", classList, omitPatterns, stopper, excludeNames);
     assertEquals(106, TreeMap.tests.size());
   }
 
@@ -219,8 +216,9 @@ public class ICSE07ContainersTest {
         excludeNames.add(f.getDeclaringClass().getName() + "." + f.getName());
       }
     }
-    runRandoop(
-        "BinomialHeap", classList, Pattern.compile("findMinimum\\(\\)"), stopper, excludeNames);
+    List<Pattern> omitPatterns = new ArrayList<>();
+    omitPatterns.add(Pattern.compile("findMinimum\\(\\)"));
+    runRandoop("BinomialHeap", classList, omitPatterns, stopper, excludeNames);
     assertEquals(101, randoop.test.issta2006.BinomialHeap.tests.size());
   }
 }
