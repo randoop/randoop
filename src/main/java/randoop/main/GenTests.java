@@ -475,7 +475,7 @@ public class GenTests extends GenInputsAbstract {
         List<File> outputFiles = outputTests(GenInputsAbstract.error_test_basename, errorSequences);
 
         // Automatically minimize the error-revealing test if the flag indicates to do so.
-        if (GenInputsAbstract.minimize) {
+        if (GenInputsAbstract.minimized_error_test) {
           // Minimize each error-revealing test that has been output.
           for (File errorRevealingTestSuite : outputFiles) {
             String baseName = FilenameUtils.removeExtension(errorRevealingTestSuite.getName());

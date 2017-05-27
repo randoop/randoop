@@ -199,6 +199,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Whether to check if test sequences are compilable")
   public static boolean check_compilable = true;
 
+  /** Flag indicating whether or not to automatically minimize error-revealing tests. */
+  @Option("<boolean> to indicate automatic minimization of error-revealing tests")
+  public static boolean minimized_error_test = true;
+
   /**
    * The possible values for exception behavior types. The order INVALID, ERROR, EXPECTED should be
    * maintained.
@@ -676,9 +680,4 @@ public abstract class GenInputsAbstract extends CommandHandler {
     }
     return elementSet;
   }
-
-  @OptionGroup(value = "Automatically minimize error-revealing tests")
-  /** Flag indicating whether or not to automatically minimize error-revealing tests. */
-  @Option("<boolean> to indicate automatic minimization of error-revealing tests")
-  public static boolean minimize = true;
 }
