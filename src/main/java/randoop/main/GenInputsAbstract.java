@@ -201,7 +201,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /** Flag indicating whether or not to automatically minimize error-revealing tests. */
   @Option("<boolean> to indicate automatic minimization of error-revealing tests")
-  public static boolean minimized_error_test = true;
+  public static boolean minimized_error_test = false;
 
   /**
    * The possible values for exception behavior types. The order INVALID, ERROR, EXPECTED should be
