@@ -18,24 +18,20 @@ import plume.Options;
  * The MapCalls javaagent applies the {@link CallReplacementTransformer} to map calls in loaded
  * classes to alternate implementations.
  *
- * <p>Each replacement indicates how the method in a call is to be replaced:
+ * <p>The transformer applies method call replacements as specified in either the default or a user
+ * provided replacement file. (See {@link CallReplacementTransformer#readMapFile(Reader)} for
+ * details on the file format.) Default replacements are given in an internal resource file {@code
+ * "default-replacements.txt"}. User replacements are then loaded using the {@link #map_calls}
+ * command-line argument. A user replacement may override a default replacement.
  *
- * <ul>
- *   <li> replacing the method by a specific alternate method;
- *   <li> replacing the method by a method of the same name in a different class; or
- *   <li> replacing the method by a method of the same name, in a class of the same name, but
- *       occurring in a different package.
- * </ul>
- *
- * <p>Replacements are loaded from text files where each line is a pair of method, class, or package
- * names. Both method and class names must be fully qualified.
- *
- * <p>The agent loads default replacements from an internal resource file {@code
- * "replacements.txt"}. User replacements are then loaded using the {@link #map_calls} command-line
- * argument. Any default may be overriden by a user replacement.
+ * <p>The classes of certain packages are excluded from transformation. These exclusions include
+ * boot loaded classes (see {@link CallReplacementTransformer#isBootClass(ClassLoader, String)})
+ * that are not in AWT or Swing (see {@link CallReplacementTransformer#isAWTSwingClass(String)}),
+ * and classes in packages listed in the resource file {@code "default-load-exclusions.txt"}.
  */
 public class MapCallsAgent {
 
+  /** Run the mapcall agent in debug mode. */
   @SuppressWarnings("WeakerAccess")
   @Option("print debug information")
   public static boolean debug = false;
@@ -44,17 +40,20 @@ public class MapCallsAgent {
   @Option("print progress information")
   public static boolean verbose = false;
 
+  /** The file from which to read the user replacements for mapping calls. */
   @SuppressWarnings("WeakerAccess")
   @Option("file containing methods calls to map to substitute methods")
   public static File map_calls = null;
 
+  /** Exclude transformation of classes in the the listed packages. */
   @SuppressWarnings("WeakerAccess")
-  @Option("file containing list of packages from which classes should not be loaded")
+  @Option("file containing list of packages from which classes should not be transformed")
   public static File dont_transform = null;
 
   /**
-   * Entry point of the java agent. Sets up the transformer {@link CallReplacementTransformer} so
-   * that when classes are loaded they are first transformed.
+   * Entry point of the mapcall java agent. Initializes the {@link CallReplacementTransformer} so
+   * that when classes are loaded they are transformed to replace calls to methods as specified in
+   * the replacements file(s).
    *
    * @param agentArgs the arguments to the agent
    * @param inst the {@code Instrumentation} object
@@ -105,15 +104,15 @@ public class MapCallsAgent {
     CallReplacementTransformer transformer = new CallReplacementTransformer(excludedPackages);
 
     // Read the default replacement file
-    inputStream = transformer.getClass().getResourceAsStream("/replacements.txt");
+    inputStream = transformer.getClass().getResourceAsStream("/default-replacements.txt");
     if (inputStream == null) {
       System.err.println("Unable to open default replacements file. Please report.");
       System.exit(1);
     }
     try {
-      transformer.readMapFile(new InputStreamReader(inputStream), "default-replacements");
+      transformer.readMapFile(new InputStreamReader(inputStream));
     } catch (Throwable e) {
-      System.err.printf("Error reading default replacement file:%n  %s%n", e.getMessage());
+      System.err.printf("Error reading default replacement file:%n  %s%n", e);
       System.err.println("  Please report.");
       System.exit(1);
     }
@@ -133,6 +132,14 @@ public class MapCallsAgent {
     inst.addTransformer(transformer);
   }
 
+  /**
+   * Load package names from the given file and add them to the set of excluded package names.
+   *
+   * @param exclusionReader the reader for the text file containing the list of excluded packages,
+   *     must not be null
+   * @param excludedPackages the set of excluded package names, must not be null
+   * @throws IOException if there is an error reading the file
+   */
   private static void loadExclusions(Reader exclusionReader, Set<String> excludedPackages)
       throws IOException {
     try (BufferedReader reader = new BufferedReader(exclusionReader)) {
