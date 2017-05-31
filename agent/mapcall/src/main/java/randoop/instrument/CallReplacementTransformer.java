@@ -9,12 +9,12 @@ import java.io.Reader;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.bcel.Const;
 import org.apache.bcel.classfile.Attribute;
@@ -42,19 +42,18 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.UnknownKeyFor;
 import plume.BCELUtil;
 import plume.SimpleLog;
-import plume.StrTok;
 import plume.UtilMDE;
 
 /**
- * The CallReplacementTransformer replaces calls in loaded classes to methods with calls to other
- * methods as specified by files loaded with {@link #readMapFile(File)} or {@link
- * #readMapFile(Reader, String)}.
+ * The {@code CallReplacementTransformer} replaces calls in loaded classes to methods with calls to
+ * other methods as specified by files loaded with {@link #readMapFile(File)} or {@link
+ * #readMapFile(Reader)}.
  *
  * @see MapCallsAgent
  */
 public class CallReplacementTransformer implements ClassFileTransformer {
 
-  /** current Constant Pool */
+  /** Current Constant Pool */
   private static ConstantPoolGen pgen = null;
 
   /** Debug information about which classes are transformed and why */
@@ -65,15 +64,22 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   /** Debug information on method maping */
   private static SimpleLog debug_map = new SimpleLog("method_mapping.txt", MapCallsAgent.debug);
 
-  /** the map of method replacements */
+  /** The map of method replacements */
   private final Map<MethodDef, MethodDef> replacementMap;
 
-  /** the map of class name prefix replacements */
+  /** The map of class name prefix replacements */
   private final Map<String, String> prefixReplacementMap;
 
-  /** the list of packages to exclude from transformation */
+  /** The list of packages to exclude from transformation */
   private final Set<String> excludedPackages;
 
+  /**
+   * Create a {@link CallReplacementTransformer} that transforms method calls in classes other than
+   * those named in the given exclusion set. (Replacements are added using {@link
+   * #readMapFile(Reader)}.)
+   *
+   * @param excludedPackages the packages from which classes should not be transformed
+   */
   CallReplacementTransformer(Set<String> excludedPackages) {
     this.excludedPackages = excludedPackages;
     this.replacementMap = new HashMap<>();
@@ -83,11 +89,11 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   /**
    * {@inheritDoc}
    *
-   * <p>Transforms class by replacing calls to methods with corresponding calls defined in this
-   * class.
+   * <p>Transforms the given class class by replacing calls to methods with corresponding calls as
+   * determined by {@link #replacementMap} (and {@link #prefixReplacementMap}).
    *
    * <p>Excludes bootloaded classes that are not AWT/Swing classes. Other exclusions are determined
-   * by the default and user provided exclusion files.
+   * by the set of {@link #excludedPackages}.
    *
    * @see MapCallsAgent
    */
@@ -141,7 +147,8 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   }
 
   /**
-   * Indicates whether the named class is in either the AWT or Swing packages.
+   * Indicates whether the named class is in either the AWT ({@code java.awt}) or Swing ({@code
+   * javax.swing}) packages.
    *
    * @param classname the fully qualified class name, must be non-null
    * @return true if the method is in either the AWT or Swing package, false otherwise
@@ -178,8 +185,11 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   }
 
   /**
-   * @param fullClassName
-   * @return
+   * Indicates whether the named class occurs in a package that is excluded. Tests whether one of
+   * the excluded package names is a prefix of the fully qualified class name.
+   *
+   * @param fullClassName the fully qualified class name, must be non-null
+   * @return true if any excluded package is a prefix of the class name, false otherwise
    */
   private boolean isExcludedClass(String fullClassName) {
     for (String excludedPackage : excludedPackages) {
@@ -191,13 +201,18 @@ public class CallReplacementTransformer implements ClassFileTransformer {
     return false;
   }
 
-  /** Processes each method in cg replacing any specified calls with static user calls. */
+  /**
+   * Processes each method in the given class replacing any specified calls with static user calls.
+   *
+   * @param cg the BCEL class representation
+   * @return true if the class has been transformed, false otherwise
+   */
   private boolean mapCalls(ClassGen cg) {
     boolean transformed = false;
     pgen = cg.getConstantPool();
+
     // Loop through each method in the class
-    Method[] methods = cg.getMethods();
-    for (Method method : methods) {
+    for (Method method : cg.getMethods()) {
       MethodGen mg = new MethodGen(method, cg.getClassName(), pgen);
 
       // Get the instruction list and skip methods with no instructions
@@ -248,7 +263,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   }
 
   /**
-   * CallReplacementTransformer the specified method to replace mapped calls.
+   * Transforms the specified method to replace mapped calls.
    *
    * @param mg the method generator
    * @param ifact the instrument factory for the enclosing class of this method
@@ -284,11 +299,13 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   }
 
   /**
-   * Transforms invoke instructions that match a replacement so that it calls the specified method
-   * instead.
+   * Transforms invoke instructions that match a replacement so that it calls the replacement method
+   * instead of the original method.
    *
-   * @param mg the BCEL representation of a method
+   * @param mg the BCEL representation of the method being transformed
+   * @param inst the instruction to transform
    * @param ifact the instruction factory for the enclosing class
+   * @return the transformed instruction list, or null if the instruction is not trasformed
    */
   private InstructionList transformInstruction(
       MethodGen mg, Instruction inst, InstructionFactory ifact) {
@@ -296,6 +313,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
     if (!(inst instanceof InvokeInstruction)) {
       return null;
     }
+
     InvokeInstruction invocation = (InvokeInstruction) inst;
     MethodDef orig;
     try {
@@ -356,6 +374,11 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   /**
    * Returns the replacement method for the given method if one is determined by a method, class or
    * package replacement.
+   *
+   * <p>Class or package replacements are represented as strings in the {@link
+   * #prefixReplacementMap}. When the argument method belongs to one of these classes/packages, a
+   * new {@link MethodDef} replacement is constructed for the method and is added to the {@link
+   * #replacementMap}.
    *
    * @param orig the method to replace, must not be null
    * @return the replacement method, null if there is none
@@ -447,71 +470,16 @@ public class CallReplacementTransformer implements ClassFileTransformer {
     }
   }
 
-  private boolean isLocalVariableTypeTable(Attribute a) {
-    return (getAttributeName(a).equals("LocalVariableTypeTable"));
-  }
-
   /**
-   * Returns the attribute name for the specified attribute.
+   * Indicates whether the method attribute is the local variable type table for the method.
    *
-   * @param a the attribute
-   * @return the name for the attribute
+   * @param methodAttribute the method attribute
+   * @return true if the attribute is a local variable type table, false otherwise
    */
-  private String getAttributeName(Attribute a) {
-    int con_index = a.getNameIndex();
+  private boolean isLocalVariableTypeTable(Attribute methodAttribute) {
+    int con_index = methodAttribute.getNameIndex();
     Constant c = pgen.getConstant(con_index);
-    return ((ConstantUtf8) c).getBytes();
-  }
-
-  /**
-   * Parse a method declaration. The declaration should be in the following format:
-   *
-   * <p>fully-qualified-method-name (args)
-   *
-   * <p>where the arguments are comma separated and all arguments other than primitives should have
-   * fully-qualified names. Arrays are indicating by trailing brackets. For example:
-   *
-   * <p>int int[] int[][] java.lang.String java.util.Date[]
-   *
-   * <p>The arguments are translated into BCEL types and a MethodDef is returned.
-   *
-   * @param st the string tokenizer
-   */
-  private MethodDef parseMethod(StrTok st) {
-    // Get the method name
-    String fullMethodName = st.need_word();
-    String methodName = fullMethodName;
-    String classname = "";
-    int dotPos = fullMethodName.lastIndexOf('.');
-    if (dotPos > 0) {
-      methodName = fullMethodName.substring(dotPos + 1);
-      classname = fullMethodName.substring(0, dotPos);
-    }
-    // Get the opening paren
-    st.need("(");
-
-    // Read the arguments
-    ArrayList<String> args = new ArrayList<>();
-    String tok = st.nextToken();
-    //noinspection StringEquality
-    if (tok != ")") { // interned
-      st.pushBack();
-      //noinspection StringEquality
-      do {
-        tok = st.need_word();
-        args.add(tok);
-      } while (st.nextToken() == ","); // interned
-      st.pushBack();
-      st.need(")");
-    }
-
-    // Convert the arguments to Type
-    Type[] argTypes = new Type[args.size()];
-    for (int i = 0; i < args.size(); i++) {
-      argTypes[i] = BCELUtil.classname_to_type(args.get(i));
-    }
-
-    return new MethodDef(classname, methodName, argTypes);
+    return (((ConstantUtf8) c).getBytes().equals("LocalVariableTypeTable"));
   }
 
   /**
@@ -525,42 +493,84 @@ public class CallReplacementTransformer implements ClassFileTransformer {
    * method names and argument types should be fully-qualified.
    *
    * @param map_file the file with map of method substitutions
-   * @throws IOException if file has missing regex
+   * @throws IOException if there is an error reading the file
    */
   void readMapFile(File map_file) throws IOException {
-    readMapFile(new FileReader(map_file), map_file.toString());
+    readMapFile(new FileReader(map_file));
   }
+
+  /** Regex string for java identifiers */
+  private static final String ID_STRING =
+      "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
+
+  /** Pattern to recognize a prefix of a fully qualified method name: either package or class */
+  private static final Pattern PREFIX_PATTERN =
+      Pattern.compile(ID_STRING + "(\\." + ID_STRING + ")*");
 
   /**
    * Pattern for checking replacement file line for method. Has two groups, first matching
-   * everything up to first left parenthesis, and second matching.
+   * everything up to first left parenthesis, and second matching everything within the parentheses.
    */
   private static final Pattern SIGNATURE_PATTERN = Pattern.compile("([^(]+)\\(([^)]*)\\)");
 
-  void readMapFile(Reader in, String filename) throws IOException {
+  /**
+   * Reads the replacement file specifying method calls that should be replaced by other method
+   * calls. The file may have lines of the form:
+   *
+   * <p>[original-name] [replacement-name]
+   *
+   * <p>where both names are either method names, class names or package names.
+   *
+   * <p>Blank lines and // comments are ignored. A call to a method in a class of the
+   * orig-package-name is replaced by a call to the same method within the new-package-name. All
+   * method names and argument types should be fully-qualified.
+   *
+   * @param in the {@code Reader} for the replacement file
+   * @throws IOException if there is an error reading from the file
+   */
+  void readMapFile(Reader in) throws IOException {
     LineNumberReader lr = new LineNumberReader(in);
-    MapFileErrorHandler errorHandler = new MapFileErrorHandler(lr, filename);
     for (String line = lr.readLine(); line != null; line = lr.readLine()) {
       line = line.replaceFirst("//.*$", "").trim();
       if (line.length() == 0) {
         continue;
       }
-      if (SIGNATURE_PATTERN.matcher(line).find()) {
-        StrTok st = new StrTok(line, errorHandler);
-        st.stok.wordChars('.', '.'); // make '.' a word constituent
-        MethodDef orig = parseMethod(st);
-        MethodDef replacement = parseMethod(st);
-        replacementMap.put(orig, replacement);
+      Matcher sigMatcher = SIGNATURE_PATTERN.matcher(line);
+      if (sigMatcher.find() && sigMatcher.groupCount() == 2) {
+        String[] arguments = sigMatcher.group(2).split(",");
+        MethodDef orig = getMethod(sigMatcher.group(1).trim(), arguments);
+        if (sigMatcher.find() && sigMatcher.groupCount() == 2) {
+          arguments = sigMatcher.group(2).split(",");
+          MethodDef replacement = getMethod(sigMatcher.group(1).trim(), arguments);
+          replacementMap.put(orig, replacement);
+        }
       } else {
-        StrTok st = new StrTok(line, errorHandler);
-        st.stok.wordChars('.', '.');
-        String orig = st.need_word();
-        String replacement = st.need_word();
-        prefixReplacementMap.put(orig, replacement);
+        Matcher prefixMatcher = PREFIX_PATTERN.matcher(line);
+        if (prefixMatcher.find()) {
+          String orig = prefixMatcher.group(0).trim();
+          if (prefixMatcher.find()) {
+            prefixReplacementMap.put(orig, prefixMatcher.group(0).trim());
+          }
+        }
       }
     }
 
     dumpMapCallsFile();
+  }
+
+  private MethodDef getMethod(String fullMethodName, String[] args) {
+    String methodName = fullMethodName;
+    String classname = "";
+    int dotPos = fullMethodName.lastIndexOf('.');
+    if (dotPos > 0) {
+      methodName = fullMethodName.substring(dotPos + 1);
+      classname = fullMethodName.substring(0, dotPos);
+    }
+    Type[] argTypes = new Type[args.length];
+    for (int i = 0; i < args.length; i++) {
+      argTypes[i] = BCELUtil.classname_to_type(args[i].trim());
+    }
+    return new MethodDef(classname, methodName, argTypes);
   }
 
   /** Dumps out the map list to the debug_map logger */
@@ -668,23 +678,6 @@ public class CallReplacementTransformer implements ClassFileTransformer {
 
     Type[] getArgTypes() {
       return argTypes;
-    }
-  }
-
-  /** Class that reports tokenizing errors from the map file. */
-  static class MapFileErrorHandler extends StrTok.ErrorHandler {
-    LineNumberReader lr;
-    String filename;
-
-    MapFileErrorHandler(LineNumberReader lr, String filename) {
-      this.lr = lr;
-      this.filename = filename;
-    }
-
-    @Override
-    public void tok_error(String s) {
-      throw new RuntimeException(
-          String.format("Error on line %d of %s: %s", lr.getLineNumber(), filename, s));
     }
   }
 }
