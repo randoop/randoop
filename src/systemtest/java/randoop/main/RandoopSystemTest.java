@@ -934,6 +934,7 @@ public class RandoopSystemTest {
     options.addTestClass("components.Unit");
     options.addTestClass("components.Utils");
 
+    //XXX remove these once Randoop uses mapcall replacements file.
     options.setOption("omitmethods", "java\\.awt");
     options.setOption("omitmethods", "javax\\.swing");
     options.setOption("outputlimit", "400");
@@ -1047,6 +1048,35 @@ public class RandoopSystemTest {
     options.setOption("timelimit", "200");
     options.setFlag("ignore-flaky-tests");
     generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+  }
+
+  @Test
+  public void runSystemExitTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("system-exit-test");
+    testEnvironment.addJavaAgent(
+        systemTestEnvironment.mapcallAgentPath,
+        "--dont-transform=resources/systemTest/load-exclusions.txt");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("input.SystemExitClass");
+    options.setOption("outputlimit", "20");
+    CoverageChecker checker = new CoverageChecker(options);
+    checker.ignore("input.SystemExitClass.hashCode()");
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
+  }
+
+  @Test
+  public void runNoReplacementsTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("no-replacement-test");
+    testEnvironment.addJavaAgent(
+        systemTestEnvironment.mapcallAgentPath,
+        "--dont-transform=resources/systemTest/load-exclusions.txt");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("input.NoExitClass");
+    options.setOption("outputlimit", "20");
+    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
   /* ------------------------------ utility methods ---------------------------------- */
