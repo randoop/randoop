@@ -1453,7 +1453,7 @@ public class Minimize extends CommandHandler {
    */
   private static void printProgress(int currentTestIndex, int totalTests, String testName) {
     System.out.println(
-        currentTestIndex + "/" + totalTests + " tests minimized, Minimized: " + testName);
+        currentTestIndex + "/" + totalTests + " tests minimized, Minimized method: " + testName);
   }
 
   /**
