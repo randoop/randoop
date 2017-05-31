@@ -11,7 +11,7 @@ randoop
 // The following are library classes used by Randoop
 // Remove once the Randoop jar is built with package relocation
 plume
-org.github.javaparser
+com.github.javaparser
 org.checkerframework
 com.sun.tools.javac
 com.sun.source.util
