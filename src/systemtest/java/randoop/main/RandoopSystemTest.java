@@ -895,44 +895,49 @@ public class RandoopSystemTest {
    * This test uses classes from (or based on) the <a
    * href="http://docs.oracle.com/javase/tutorial/uiswing/examples/components/index.html">Swing
    * Tutorial Examples</a>.
+   *
+   * <p>Note: setting <code>timeout</code> for this test made the generated test flaky.
    */
   @Test
-  public void runSwingTest() {
-    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("swing-test");
+  public void runSwingDirectTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("swing-direct-test");
     testEnvironment.addJavaAgent(
         systemTestEnvironment.mapcallAgentPath,
         "--dont-transform=resources/systemTest/load-exclusions.txt");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName("components");
     options.addTestClass("components.DialogRunner");
-    //options.addTestClass("components.ArrowIcon");
-    //options.addTestClass("components.ConversionPanel");
-    //options.addTestClass("components.Converter");
-    //options.addTestClass("components.ConverterRangeModel");
-    //options.addTestClass("components.Corner");
-    //options.addTestClass("components.CrayonPanel");
+    options.addTestClass("components.ArrowIcon");
+    options.addTestClass("components.ConversionPanel");
+    options.addTestClass("components.Converter");
+    options.addTestClass("components.ConverterRangeModel");
+    options.addTestClass("components.Corner");
+    options.addTestClass("components.CrayonPanel");
     options.addTestClass("components.CustomDialog");
-    //options.addTestClass("components.DynamicTree");
-    //options.addTestClass("components.FollowerRangeModel");
-    //options.addTestClass("components.Framework");
-    //options.addTestClass("components.GenealogyModel");
-    //options.addTestClass("components.GenealogyTree");
-    //options.addTestClass("components.ImageFileView");
-    //options.addTestClass("components.ImageFilter");
-    //options.addTestClass("components.ImagePreview");
-    //options.addTestClass("components.ListDialog");
-    //options.addTestClass("components.ListDialogRunner");
-    //options.addTestClass("components.MissingIcon");
-    //options.addTestClass("components.MyInternalFrame");
-    //options.addTestClass("components.Converter");
-    //options.addTestClass("components.Person");
-    //options.addTestClass("components.Rule");
-    //options.addTestClass("components.ScrollablePicture");
-    //options.addTestClass("components.Unit");
-    //options.addTestClass("components.Utils");
+    options.addTestClass("components.DynamicTree");
+    options.addTestClass("components.FollowerRangeModel");
+    options.addTestClass("components.Framework");
+    options.addTestClass("components.GenealogyModel");
+    options.addTestClass("components.GenealogyTree");
+    options.addTestClass("components.ImageFileView");
+    options.addTestClass("components.ImageFilter");
+    options.addTestClass("components.ImagePreview");
+    options.addTestClass("components.ListDialog");
+    options.addTestClass("components.ListDialogRunner");
+    options.addTestClass("components.MissingIcon");
+    options.addTestClass("components.MyInternalFrame");
+    options.addTestClass("components.Converter");
+    options.addTestClass("components.Person");
+    options.addTestClass("components.Rule");
+    options.addTestClass("components.ScrollablePicture");
+    options.addTestClass("components.Unit");
+    options.addTestClass("components.Utils");
 
+    options.setOption("omitmethods", "java\\.awt");
+    options.setOption("omitmethods", "javax\\.swing");
     options.setOption("outputlimit", "400");
-    options.setOption("timelimit", "120");
+    options.setOption("timelimit", "200");
     options.setFlag("ignore-flaky-tests");
 
     CoverageChecker checker = new CoverageChecker(options);
@@ -941,8 +946,107 @@ public class RandoopSystemTest {
     // not sure why this is not being called
     checker.ignore("components.CustomDialog.clearAndHide()");
 
+    checker.ignore(
+        "components.ListDialog.showDialog(java.awt.Component, java.awt.Component, java.lang.String, java.lang.String, java.lang.String[], java.lang.String, java.lang.String)");
+
+    // all of these are not covered - have not determined why
+    checker.ignore("components.ArrowIcon.getIconHeight()");
+    checker.ignore(
+        "components.ArrowIcon.paintIcon(java.awt.Component, java.awt.Graphics, int, int)");
+    checker.ignore("components.ConversionPanel.actionPerformed(java.awt.event.ActionEvent)");
+    checker.ignore("components.ConversionPanel.getMaximumSize()");
+    checker.ignore("components.Converter.createAndShowGUI()");
+    checker.ignore("components.Converter.initLookAndFeel()");
+    checker.ignore("components.Converter.main(java.lang.String[])");
+    checker.ignore("components.ConverterRangeModel.getExtent()");
+    checker.ignore(
+        "components.ConverterRangeModel.removeChangeListener(javax.swing.event.ChangeListener)");
+    checker.ignore(
+        "components.ConverterRangeModel.setRangeProperties(int, int, int, int, boolean)");
+    checker.ignore("components.ConverterRangeModel.setValue(int)");
+    checker.ignore("components.Corner.paintComponent(java.awt.Graphics)");
+    checker.ignore("components.CrayonPanel.actionPerformed(java.awt.event.ActionEvent)");
+    checker.ignore("components.CrayonPanel.getLargeDisplayIcon()");
+    checker.ignore("components.CrayonPanel.getSmallDisplayIcon()");
+    checker.ignore("components.CrayonPanel.updateChooser()");
+    checker.ignore("components.CustomDialog.getValidatedText()");
+    checker.ignore("components.DynamicTree.addObject(java.lang.Object)");
+    checker.ignore(
+        "components.DynamicTree.addObject(javax.swing.tree.DefaultMutableTreeNode, java.lang.Object)");
+    checker.ignore(
+        "components.DynamicTree.addObject(javax.swing.tree.DefaultMutableTreeNode, java.lang.Object, boolean)");
+    checker.ignore("components.FollowerRangeModel.getExtent()");
+    checker.ignore("components.Framework.createAndShowGUI()");
+    checker.ignore("components.Framework.main(java.lang.String[])");
+    checker.ignore("components.Framework.quit(javax.swing.JFrame)");
+    checker.ignore("components.Framework.quitConfirmed(javax.swing.JFrame)");
+    checker.ignore("components.Framework.windowClosed(java.awt.event.WindowEvent)");
+    checker.ignore("components.GenealogyModel.getChild(java.lang.Object, int)");
+    checker.ignore("components.GenealogyModel.getChildCount(java.lang.Object)");
+    checker.ignore("components.GenealogyModel.getIndexOfChild(java.lang.Object, java.lang.Object)");
+    checker.ignore(
+        "components.GenealogyModel.removeTreeModelListener(javax.swing.event.TreeModelListener)");
+    checker.ignore(
+        "components.GenealogyModel.valueForPathChanged(javax.swing.tree.TreePath, java.lang.Object)");
+    checker.ignore("components.ImageFileView.getIcon(java.io.File)");
+    checker.ignore("components.ImageFileView.getTypeDescription(java.io.File)");
+    checker.ignore("components.ImageFileView.isTraversable(java.io.File)");
+    checker.ignore("components.ImageFilter.accept(java.io.File)");
+    checker.ignore("components.ImageFilter.getDescription()");
+    checker.ignore("components.ImagePreview.loadImage()");
+    checker.ignore("components.ImagePreview.paintComponent(java.awt.Graphics)");
+    checker.ignore("components.ImagePreview.propertyChange(java.beans.PropertyChangeEvent)");
+    checker.ignore("components.ListDialog.actionPerformed(java.awt.event.ActionEvent)");
+    checker.ignore("components.ListDialog.setValue(java.lang.String)");
+    checker.ignore("components.ListDialogRunner.createAndShowGUI()");
+    checker.ignore("components.ListDialogRunner.createUI()");
+    checker.ignore("components.ListDialogRunner.getAFont()");
+    checker.ignore("components.ListDialogRunner.main(java.lang.String[])");
+    checker.ignore(
+        "components.MissingIcon.paintIcon(java.awt.Component, java.awt.Graphics, int, int)");
+    checker.ignore("components.Person.getChildAt(int)");
+    checker.ignore("components.Person.getFather()");
+    checker.ignore("components.Person.getName()");
+    checker.ignore("components.Rule.paintComponent(java.awt.Graphics)");
+    checker.ignore("components.Rule.setPreferredHeight(int)");
+    checker.ignore("components.ScrollablePicture.getPreferredScrollableViewportSize()");
+    checker.ignore("components.ScrollablePicture.getPreferredSize()");
+    checker.ignore(
+        "components.ScrollablePicture.getScrollableBlockIncrement(java.awt.Rectangle, int, int)");
+    checker.ignore("components.ScrollablePicture.getScrollableTracksViewportHeight()");
+    checker.ignore("components.ScrollablePicture.getScrollableTracksViewportWidth()");
+    checker.ignore(
+        "components.ScrollablePicture.getScrollableUnitIncrement(java.awt.Rectangle, int, int)");
+    checker.ignore("components.ScrollablePicture.mouseDragged(java.awt.event.MouseEvent)");
+    checker.ignore("components.ScrollablePicture.mouseMoved(java.awt.event.MouseEvent)");
+    checker.ignore("components.ScrollablePicture.setMaxUnitIncrement(int)");
+
     generateAndTestWithCoverage(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
+  }
+
+  /**
+   * This test uses classes from (or based on) the <a
+   * href="http://docs.oracle.com/javase/tutorial/uiswing/examples/components/index.html">Swing
+   * Tutorial Examples</a>.
+   */
+  @Test
+  public void runIndirectSwingTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("swing-indirect-test");
+    testEnvironment.addJavaAgent(
+        systemTestEnvironment.mapcallAgentPath,
+        "--dont-transform=resources/systemTest/load-exclusions.txt");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.setPackageName("components");
+    options.addTestClass("components.DialogRunner");
+
+    //options.setOption("omitmethods", "java\\.awt");
+    //options.setOption("omitmethods", "javax\\.swing");
+    options.setOption("outputlimit", "400");
+    options.setOption("timelimit", "200");
+    options.setFlag("ignore-flaky-tests");
+    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
   /* ------------------------------ utility methods ---------------------------------- */
