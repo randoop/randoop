@@ -771,7 +771,9 @@ public class Minimize extends CommandHandler {
       Map<String, String> expectedOutput,
       int timeoutLimit,
       boolean verboseOutput) {
-    System.out.println("Adding imports and simplifying type names.");
+    if (verboseOutput) {
+      System.out.println("Adding imports and simplifying type names.");
+    }
 
     // Set of fully-qualified type names that are used in variable declarations.
     Set<ClassOrInterfaceType> fullyQualifiedNames =
