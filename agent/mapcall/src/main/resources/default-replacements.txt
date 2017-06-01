@@ -92,6 +92,10 @@ javax.swing.JWindow.requestFocus() randoop.mock.JWindow.requestFocus(javax.swing
 //sun.awt.AppContext.getAppContext() randoop.mock.AppContext.getAppContext()
 // Need to make sure that the call in java.awt.Component is not masked in CallReplacementTransformer
 
+// Finally, attempting to create certain AWT/Swing objects in headless mode
+// results in a HeadlessException being thrown. These are handled by
+// java.awt.GraphicsEnvironment
+java.awt.GraphicsEnvironment.isHeadless() randoop.mock.GraphicsEnvironment.isHeadless()
+java.awt.GraphicsEnvironment.isHeadlessInstance() randoop.mock.GraphicsEnvironment.isHeadlessInstance(java.awt.GraphicsEnvironment)
+java.awt.GraphicsEnvironment.checkHeadless() randoop.mock.GraphicsEnvironment.checkHeadless()
 
-
-// NOTE: not sure this is a complete set of replacements.
