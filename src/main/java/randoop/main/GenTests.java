@@ -5,6 +5,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -226,6 +227,23 @@ public class GenTests extends GenInputsAbstract {
       visibility = new PublicVisibilityPredicate();
     } else {
       visibility = new PackageVisibilityPredicate(GenInputsAbstract.junit_package_name);
+    }
+
+    // Read default method omissions from resource file and add to the omitmethods list from the
+    // command-line.
+    //
+    InputStream methodsStream = this.getClass().getResourceAsStream("/default-omitmethods.txt");
+    try (EntryReader er = new EntryReader(methodsStream, "default-omitmethods.txt", "^#.*", null)) {
+      for (String line : er) {
+        String trimmed = line.trim();
+        if (!trimmed.isEmpty()) {
+          Pattern pattern = Pattern.compile(trimmed);
+          omitmethods.add(pattern);
+        }
+      }
+    } catch (IOException e) {
+      System.out.println("Error reading default omitmethods file. Please report.");
+      System.exit(1);
     }
 
     ReflectionPredicate reflectionPredicate =

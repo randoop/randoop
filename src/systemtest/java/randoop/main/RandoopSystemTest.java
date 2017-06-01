@@ -1008,6 +1008,7 @@ public class RandoopSystemTest {
     checker.ignore("components.Person.getChildAt(int)");
     checker.ignore("components.Person.getFather()");
     checker.ignore("components.Person.getName()");
+    checker.ignore("components.Person.getIndexOfChild(components.Person)");
     checker.ignore("components.Rule.paintComponent(java.awt.Graphics)");
     checker.ignore("components.Rule.setPreferredHeight(int)");
     checker.ignore("components.ScrollablePicture.getPreferredScrollableViewportSize()");
