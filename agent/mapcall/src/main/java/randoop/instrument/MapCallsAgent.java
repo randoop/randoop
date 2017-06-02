@@ -35,8 +35,8 @@ public class MapCallsAgent {
   public static boolean default_bcel = true;
 
   /**
-   * Entry point of the java agent. Sets up the transformer {@link CallReplacementTransformer} so that when classes
-   * are loaded they are first transformed.
+   * Entry point of the java agent. Sets up the transformer {@link CallReplacementTransformer} so
+   * that when classes are loaded they are first transformed.
    *
    * @param agentArgs the arguments to the agent
    * @param inst the {@code Instrumentation} object
@@ -62,9 +62,11 @@ public class MapCallsAgent {
     } else { // use a special classloader to ensure our files are used
       ClassLoader loader = new BCELLoader();
       try {
-        transformer = loader.loadClass("randoop.instrument.CallReplacementTransformer").newInstance();
+        transformer =
+            loader.loadClass("randoop.instrument.CallReplacementTransformer").newInstance();
         @SuppressWarnings("unchecked")
-        Class<CallReplacementTransformer> c = (Class<CallReplacementTransformer>) transformer.getClass();
+        Class<CallReplacementTransformer> c =
+            (Class<CallReplacementTransformer>) transformer.getClass();
         // System.out.printf ("Classloader of tranformer = %s%n",
         // c.getClassLoader());
       } catch (Exception e) {
