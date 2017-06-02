@@ -12,7 +12,8 @@ java.lang.System.exit(int) randoop.mock.System.exit(int)
 // Also want to prevent issues from AWT/Swing:
 // - having dialogs (and other components/containers) display themselves,
 // - having windowing system focus taken,
-// - having windowing system threads hijack generation.
+// - having windowing system threads run a long time and cause a timeout
+//   which makes generation very slow.
 // The last of these is probably the more critical, but requires more work than has been done.
 // See the placeholder below for more detail.
 
