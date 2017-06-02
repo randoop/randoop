@@ -68,8 +68,6 @@ import plume.TimeLimitProcess;
 /**
  * This program minimizes a failing JUnit test suite. Its three command-line arguments are:
  *
- * <p>
- *
  * <ol>
  *   <li>the Java file whose failing tests will be minimized
  *   <li>an optional classpath containing dependencies needed to compile and run the Java file
@@ -77,16 +75,12 @@ import plume.TimeLimitProcess;
  *       is 30 seconds.
  * </ol>
  *
- * <p>
- *
  * <p>The minimizer will only attempt to minimize methods that are annotated with the @Test
  * annotation. In a method that contains a failing assertion, the minimizer will iterate through the
  * statements of the method, from last to first. For each statement, it tries possible replacement
  * statements, from most minimized to least minimized. Removing the statement is the most a
  * statement can be minimized. Leaving the statement unchanged is the least that the statement can
  * be minimized.
- *
- * <p>
  *
  * <p>If a replacement causes the output test suite to fail differently than the original test
  * suite, the algorithm tries a different replacement. If no replacement allows the output test
@@ -187,19 +181,13 @@ public class Minimize extends CommandHandler {
   /**
    * Minimize the input test file.
    *
-   * <p>
-   *
    * <p>Given an input Java file, minimization produces a smaller file that fails in the same way as
    * the original, having the same failing assertions with the same stack trace.
-   *
-   * <p>
    *
    * <ol>
    *   <li>Same failing assertions as in the original input test suite.
    *   <li>Same stacktrace produced by failing assertions.
    * </ol>
-   *
-   * <p>
    *
    * <p>The original input Java file will be compiled and run once. The "expected output" derived
    * from the standard output from running the input file is a map from test method name to failure
@@ -510,16 +498,12 @@ public class Minimize extends CommandHandler {
    * Return a list of statements that are a simplification of a given statement, in order from most
    * to least minimized. The possible minimizations are:
    *
-   * <p>
-   *
    * <ul>
    *   <li>Remove a statement, represented by null.
    *   <li>Replace the right hand side expression with {@code 0}, {@code false}, or {@code null}.
    *   <li>Replace right hand side by a calculated value obtained from a passing assertion.
    *   <li>Remove the left hand side of a statement, retaining only the expression on the right.
    * </ul>
-   *
-   * <p>
    *
    * <p>Assertions are never simplified, only removed completely.
    *
@@ -749,8 +733,6 @@ public class Minimize extends CommandHandler {
    * simplified to {@code String}. If two different types have the same simple type name, then the
    * lexicographically first one is simplified and the other is left unchanged.
    *
-   * <p>
-   *
    * <p>Additionally, sort the import statements of the compilation unit.
    *
    * @param compUnit compilation unit containing an AST for a Java file, the compilation unit will
@@ -917,8 +899,6 @@ public class Minimize extends CommandHandler {
   /**
    * Get directory to execute command in, given file path and package name. Returns a {@code File}
    * pointing to the directory that the Java file should be executed in.
-   *
-   * <p>
    *
    * <p>For the simplest case where the Java file is nested in a single package layer, i.e.
    * MyJavaFile.java is in the package mypackage, the folder structure would be
@@ -1405,7 +1385,7 @@ public class Minimize extends CommandHandler {
   /**
    * Deletes the .class file associated with the outputFile.
    *
-   * @param outputFile
+   * @param outputFile the source file for the class file to be removed
    * @param verboseOutput whether to print information about minimization status
    */
   private static void cleanUp(File outputFile, boolean verboseOutput) {

@@ -760,9 +760,16 @@ Randoop about your application, and that is how we recommend using Randoop.
    <li>If a method is inherited without an override, the pattern must match the superclass
        method.
  </ul>
+            <li id="option:omitmethods-list"><b>--omitmethods-list=</b><i>filename</i>.
+             A file containing a list of regular expressions that indicate methods that should not be
+ included in generated tests. These patterns are used along with those provided with <code>
+ --omitmethods</code>, and the default omissions.
+            <li id="option:omit-field"><b>--omit-field=</b><i>string</i> <code>[+]</code>.
+             A fully-qualified field name of a field to be excluded from test generation. An accessible
+ field is used unless it is omitted by this or the <code>--omit-field-list</code> option.
             <li id="option:omit-field-list"><b>--omit-field-list=</b><i>filename</i>.
-             File that contains fully-qualified field names to be excluded from test generation. Otherwise,
- Randoop includes all public fields of classes under test as observer methods.
+             File that contains fully-qualified field names to be excluded from test generation. An
+ accessible field is used unless it is omitted by this or the <code>--omit-field</code> option.
             <li id="option:only-test-public-members"><b>--only-test-public-members=</b><i>boolean</i>.
              Restrict tests to only include public members of classes. Ordinarily, the setting of <code>
  --junit-package-name</code> and package accessibility is used to determine which members will
@@ -810,6 +817,11 @@ Randoop about your application, and that is how we recommend using Randoop.
  This check is useful because the assumptions in Randoop generation heuristics are sometimes
  violated by input methods, and, as a result, a generated test may not compile. This check does
  increases the runtime by approximately 50%. [default true]
+            <li id="option:minimize-error-test"><b>--minimize-error-test=</b><i>boolean</i>.
+             Flag indicating whether or not to automatically minimize error-revealing tests. Both original
+ and minimized versions of each test class will be output. Minimization is automatically enabled
+ when <code>--stop-on-error-test</code> is set. Setting this option is not recommended when the
+ number of error-revealing tests is expected to be greater than 100. [default false]
       </ul>
   <li id="optiongroup:Test-classification">Test classification
       <ul>
@@ -879,17 +891,6 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li><b>INVALID</b> Occurrence of exception indicates an invalid test
 </ul>
 
-            <li id="option:toradocu-conditions"><b>--toradocu-conditions=</b><i>filename</i> <code>[+]</code>.
-             Read Toradocu JSON condition file to use Toradocu generated conditions to control how tests are
- classified.
-
- <p>Param-conditions are used as pre-conditions on method/constructor calls, with test sequences
- where the condition fails being classified as <code>BehaviorType.INVALID</code>.
-
- <p>Throws-conditions are used to check exceptions: if the inputs to the call satisfy the
- condition, when the exception is thrown the sequence is <code>BehaviorType.EXPECTED</code>, but, if
- it is not, the sequence is classified as <code>BehaviorType.ERROR</code>. If the throws-condition is
- not satisfied by the input, then ordinary classification is applied.
       </ul>
   <li id="optiongroup:Observer-methods">Observer methods
       <ul>
@@ -1056,15 +1057,6 @@ Randoop about your application, and that is how we recommend using Randoop.
       <ul>
             <li id="option:system-props"><b>-D</b> <b>--system-props=</b><i>string</i> <code>[+]</code>.
              Specify system properties to be set (similar to java -Dx=y)
-            <li id="option:agent"><b>--agent=</b><i>string</i>.
-             Specify an extra command for recursive JVM calls that Randoop spawns. The argument to the
- --agent option is the entire extra JVM command. A typical invocation of Randoop might be:
-
- <pre>
- java -javaagent:<em>jarpath</em>=<em>args</em> randoop.main.Main gentests --agent="-javaagent:<em>jarpath</em>=<em>args</em>"
- </pre>
-            <li id="option:mem-megabytes"><b>--mem-megabytes=</b><i>int</i>.
-             specify the memory size (in megabytes) for recursive JVM calls [default 1000]
             <li id="option:capture-output"><b>--capture-output=</b><i>boolean</i>.
              Capture all output to stdout and stderr [default false]
       </ul>
