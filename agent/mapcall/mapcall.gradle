@@ -1,20 +1,51 @@
-description = "mapcall agent"
-configurations {
-  plume
-  compile.extendsFrom plume
-}
-dependencies {
-  // use plume.jar from parent project
-  plume project(path: ':', configuration: 'plume' )
+/* build file for mapcall agent */
+
+plugins {
+  id 'com.github.johnrengelman.shadow' version '2.0.0'
+  id 'java'
 }
 
+description = "mapcall agent"
+
+dependencies {
+  // use plume.jar from parent project
+  compile project(path: ':', configuration: 'plume' )
+}
+
+/*
+ * Jar needs to be executable as a javaagent.
+ */
 jar {
-  //want the following, but resulting file is much larger
-  //from { configurations.plume.collect { it.isDirectory() ? it : zipTree(it) } }
   manifest {
     attributes(
-      "Premain-Class": "randoop.instrument.Premain",
+      "Premain-Class": "randoop.instrument.MapCallsAgent",
       "Can-Redefine-Classes": "true"
       )
   }
+}
+
+shadowJar {
+  // should be named mapcall-version.jar
+  classifier = null
+/*
+  relocate 'com.google', 'randoop.com.google'
+  relocate 'com.jcraft.jsch', 'randoop.com.jcraft.jsch'
+  relocate 'com.sun.javadoc', 'randoop.com.sun.javadoc'
+  relocate 'com.sun.jna', 'randoop.com.sun.jna'
+  relocate 'com.trilead.ssh2', 'randoop.com.trilead.ssh2'
+  relocate 'de.regnis.q.sequence', 'randoop.de.regnis.q.sequence'
+  relocate 'edu.emory.mathcs.backport.java.util', 'randoop.edu.emory.mathcs.backport.java.util'
+  relocate 'net.fortuna.ical4j', 'randoop.net.fortuna.ical4j'
+  relocate 'nu.xom', 'randoop.nu.xom'
+  relocate 'org.antlr', 'randoop.org.antlr'
+  relocate 'org.apache', 'randoop.org.apache'
+  relocate 'org.ccil.cowan.tagsoup', 'randoop.org.ccil.cowan.tagsoup'
+  relocate 'org.checkerframework', 'randoop.org.checkerframework'
+  relocate 'org.ini4j', 'randoop.org.ini4j'
+  relocate 'org.junit', 'randoop.org.junit'
+  relocate 'org.slf4j', 'randoop.org.slf4j'
+  relocate 'org.tigris.subversion', 'randoop.org.tigris.subversion'
+  relocate 'org.tmatesoft', 'randoop.org.tmatesoft'
+  relocate 'plume', 'randoop.plume'
+  */
 }
