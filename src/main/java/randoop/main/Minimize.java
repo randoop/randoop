@@ -40,6 +40,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -67,6 +68,8 @@ import plume.TimeLimitProcess;
 /**
  * This program minimizes a failing JUnit test suite. Its three command-line arguments are:
  *
+ * <p>
+ *
  * <ol>
  *   <li>the Java file whose failing tests will be minimized
  *   <li>an optional classpath containing dependencies needed to compile and run the Java file
@@ -74,12 +77,16 @@ import plume.TimeLimitProcess;
  *       is 30 seconds.
  * </ol>
  *
+ * <p>
+ *
  * <p>The minimizer will only attempt to minimize methods that are annotated with the @Test
  * annotation. In a method that contains a failing assertion, the minimizer will iterate through the
  * statements of the method, from last to first. For each statement, it tries possible replacement
  * statements, from most minimized to least minimized. Removing the statement is the most a
  * statement can be minimized. Leaving the statement unchanged is the least that the statement can
  * be minimized.
+ *
+ * <p>
  *
  * <p>If a replacement causes the output test suite to fail differently than the original test
  * suite, the algorithm tries a different replacement. If no replacement allows the output test
@@ -170,20 +177,29 @@ public class Minimize extends CommandHandler {
       System.exit(1);
     }
 
+    // File object pointing to the file to be minimized.
+    File originalFile = new File(suitepath);
+
     // Call the main minimize method.
-    return mainMinimize(suitepath, suiteclasspath, testsuitetimeout, verboseminimizer);
+    return mainMinimize(originalFile, suiteclasspath, testsuitetimeout, verboseminimizer);
   }
 
   /**
    * Minimize the input test file.
    *
+   * <p>
+   *
    * <p>Given an input Java file, minimization produces a smaller file that fails in the same way as
    * the original, having the same failing assertions with the same stack trace.
+   *
+   * <p>
    *
    * <ol>
    *   <li>Same failing assertions as in the original input test suite.
    *   <li>Same stacktrace produced by failing assertions.
    * </ol>
+   *
+   * <p>
    *
    * <p>The original input Java file will be compiled and run once. The "expected output" derived
    * from the standard output from running the input file is a map from test method name to failure
@@ -192,7 +208,7 @@ public class Minimize extends CommandHandler {
    * The "expected output" will be used during subsequent runs of the modified test suite to
    * determine whether or not the test suite still fails in the same way.
    *
-   * @param filePath the path to the Java file that is being minimized
+   * @param file the Java file that is being minimized
    * @param classPath classpath used to compile and run the Java file
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
    * @param verboseOutput whether to produce verbose output
@@ -200,24 +216,30 @@ public class Minimize extends CommandHandler {
    *     the original file
    */
   public static boolean mainMinimize(
-      String filePath, String classPath, int timeoutLimit, boolean verboseOutput) {
-    System.out.println("Reading and parsing: " + filePath);
+      File file, String classPath, int timeoutLimit, boolean verboseOutput) {
+    System.out.println("Minimizing: " + file.getName() + ".");
+
+    if (verboseOutput) {
+      System.out.println("Reading and parsing file.");
+    }
 
     // Read and parse input Java file.
     CompilationUnit compUnit;
-    try (FileInputStream inputStream = new FileInputStream(filePath)) {
+    try (FileInputStream inputStream = new FileInputStream(file)) {
       compUnit = JavaParser.parse(inputStream);
     } catch (ParseException e) {
-      System.err.println("Error parsing Java file: " + filePath);
+      System.err.println("Error parsing Java file: " + file);
       e.printStackTrace();
       return false;
     } catch (IOException e) {
-      System.err.println("Error reading Java file: " + filePath);
+      System.err.println("Error reading Java file: " + file);
       e.printStackTrace();
       return false;
     }
 
-    System.out.println("Getting expected output.");
+    if (verboseOutput) {
+      System.out.println("Getting expected output.");
+    }
 
     // Find the package name of the input file if it has one.
     String packageName = null;
@@ -230,30 +252,30 @@ public class Minimize extends CommandHandler {
       // No package declaration.
     }
 
-    File originalFile = new File(filePath);
-
-    // Create a new file; the file and the class within will have "Minimized" postpended.
+    // Create a new file; the file and the class within will have
+    // "Minimized" postpended.
+    String fileNameStr = file.getAbsolutePath();
     String minimizedFileName =
-        new StringBuilder(filePath).insert(filePath.lastIndexOf('.'), SUFFIX).toString();
+        new StringBuilder(fileNameStr).insert(fileNameStr.lastIndexOf('.'), SUFFIX).toString();
     File minimizedFile = new File(minimizedFileName);
+
     // Rename the overall class to [original class name][suffix].
-    String origClassName = FilenameUtils.removeExtension(originalFile.getName());
+    String origClassName = FilenameUtils.removeExtension(file.getName());
     new ClassRenamer().visit(compUnit, new String[] {origClassName, SUFFIX});
+
     // Write the compilation unit to the minimized file.
     writeToFile(compUnit, minimizedFile);
 
     // Compile the Java file and check that the exit value is 0.
     if (compileJavaFile(minimizedFile, classPath, packageName, timeoutLimit) != 0) {
-      System.err.println("Error when compiling file " + filePath + ". Aborting.");
+      System.err.println("Error when compiling file " + file + ". Aborting.");
       return false;
     }
 
+    // expectedOutput is a map from method name to failure stack trace with
+    // line numbers removed.
     String runResult = runJavaFile(minimizedFile, classPath, packageName, timeoutLimit);
-
-    // expectedOutput is a map from method name to failure stack trace with line numbers removed.
     Map<String, String> expectedOutput = normalizeJUnitOutput(runResult);
-
-    System.out.println("Minimizing: " + filePath);
 
     // Minimize the Java test suite.
     minimizeTestSuite(
@@ -268,12 +290,20 @@ public class Minimize extends CommandHandler {
     // Cleanup: simplify type names and sort the import statements.
     compUnit =
         simplifyTypeNames(
-            compUnit, packageName, minimizedFile, classPath, expectedOutput, timeoutLimit);
+            compUnit,
+            packageName,
+            minimizedFile,
+            classPath,
+            expectedOutput,
+            timeoutLimit,
+            verboseOutput);
 
     writeToFile(compUnit, minimizedFile);
 
-    System.out.println("Minimizing complete.\n");
-    System.out.println("Original file length: " + getFileLength(originalFile) + " lines.");
+    // Delete the .class file associated with the minimized Java file.
+    cleanUp(minimizedFile, verboseOutput);
+
+    System.out.println("Original file length: " + getFileLength(file) + " lines.");
     System.out.println("Minimized file length: " + getFileLength(minimizedFile) + " lines.");
 
     return true;
@@ -288,7 +318,7 @@ public class Minimize extends CommandHandler {
    * @param classpath classpath used to compile and run the Java file
    * @param expectedOutput expected JUnit output when the Java file is compiled and run
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
-   * @param verboseOutput whether to print information about minimization status
+   * @param verboseOutput whether or not to output information about minimization status
    */
   private static void minimizeTestSuite(
       CompilationUnit cu,
@@ -298,6 +328,11 @@ public class Minimize extends CommandHandler {
       Map<String, String> expectedOutput,
       int timeoutLimit,
       boolean verboseOutput) {
+    System.out.println("Minimizing test suite.");
+
+    int numberOfTestMethods = getNumberOfTestMethods(cu);
+    int numberOfMinimizedTests = 0;
+
     for (TypeDeclaration type : cu.getTypes()) {
       for (BodyDeclaration member : type.getMembers()) {
         if (member instanceof MethodDeclaration) {
@@ -306,10 +341,7 @@ public class Minimize extends CommandHandler {
           // Minimize the method only if it is a JUnit test method.
           if (isTestMethod(method)) {
             minimizeMethod(method, cu, packageName, file, classpath, expectedOutput, timeoutLimit);
-
-            if (verboseOutput) {
-              System.out.println("Minimized method " + method.getName() + ".");
-            }
+            printProgress(++numberOfMinimizedTests, numberOfTestMethods, method.getName());
           }
         }
       }
@@ -356,7 +388,8 @@ public class Minimize extends CommandHandler {
       int timeoutLimit) {
     List<Statement> statements = method.getBody().getStmts();
 
-    // Map from primitive variable name to the variable's value extracted from a passing assertion.
+    // Map from primitive variable name to the variable's value extracted
+    // from a passing assertion.
     Map<String, String> primitiveValues = new HashMap<String, String>();
 
     // Find all the names of the primitive and wrapped types.
@@ -367,7 +400,8 @@ public class Minimize extends CommandHandler {
     for (int i = statements.size() - 1; i >= 0; i--) {
       Statement currStmt = statements.get(i);
 
-      // Remove the current statement. We will re-insert simplifications of it.
+      // Remove the current statement. We will re-insert simplifications
+      // of it.
       statements.remove(i);
 
       // Obtain a list of possible replacements for the current statement.
@@ -444,8 +478,7 @@ public class Minimize extends CommandHandler {
             BinaryExpr binaryExp = (BinaryExpr) mExp;
             // Check that the operator is an equality operator.
             if (binaryExp.getOperator().equals(BinaryExpr.Operator.equals)) {
-              // Retrieve and store the value associated with the
-              // variable in the assertion.
+              // Retrieve and store the value associated with the variable in the assertion.
               Expression leftExpr = binaryExp.getLeft();
               Expression rightExpr = binaryExp.getRight();
 
@@ -477,12 +510,16 @@ public class Minimize extends CommandHandler {
    * Return a list of statements that are a simplification of a given statement, in order from most
    * to least minimized. The possible minimizations are:
    *
+   * <p>
+   *
    * <ul>
    *   <li>Remove a statement, represented by null.
    *   <li>Replace the right hand side expression with {@code 0}, {@code false}, or {@code null}.
    *   <li>Replace right hand side by a calculated value obtained from a passing assertion.
    *   <li>Remove the left hand side of a statement, retaining only the expression on the right.
    * </ul>
+   *
+   * <p>
    *
    * <p>Assertions are never simplified, only removed completely.
    *
@@ -502,10 +539,12 @@ public class Minimize extends CommandHandler {
       if (exp instanceof VariableDeclarationExpr) {
         VariableDeclarationExpr vdExpr = (VariableDeclarationExpr) exp;
 
-        // Simplify right hand side to zero-equivalent value: 0, false, or null.
+        // Simplify right hand side to zero-equivalent value: 0, false,
+        // or null.
         replacements.addAll(rhsAssignZeroValue(vdExpr));
 
-        // Simplify right hand side to a value that was previously found in a passing assertion.
+        // Simplify right hand side to a value that was previously found
+        // in a passing assertion.
         Statement rhsAssertValStmt = rhsAssignValueFromPassingAssertion(vdExpr, primitiveValues);
         if (rhsAssertValStmt != null) {
           replacements.add(rhsAssertValStmt);
@@ -710,6 +749,8 @@ public class Minimize extends CommandHandler {
    * simplified to {@code String}. If two different types have the same simple type name, then the
    * lexicographically first one is simplified and the other is left unchanged.
    *
+   * <p>
+   *
    * <p>Additionally, sort the import statements of the compilation unit.
    *
    * @param compUnit compilation unit containing an AST for a Java file, the compilation unit will
@@ -719,6 +760,7 @@ public class Minimize extends CommandHandler {
    * @param classpath classpath needed to compile and run the Java file
    * @param expectedOutput expected standard output from running the JUnit test suite
    * @param timeoutLimit number of seconds allowed for the whole test suite to run
+   * @param verboseOutput whether or not to output information about minimization status
    * @return {@code CompilationUnit} with fully-qualified type names simplified to simple type names
    */
   private static CompilationUnit simplifyTypeNames(
@@ -727,9 +769,13 @@ public class Minimize extends CommandHandler {
       File file,
       String classpath,
       Map<String, String> expectedOutput,
-      int timeoutLimit) {
-    // Set of fully-qualified type names that are used in variable
-    // declarations.
+      int timeoutLimit,
+      boolean verboseOutput) {
+    if (verboseOutput) {
+      System.out.println("Adding imports and simplifying type names.");
+    }
+
+    // Set of fully-qualified type names that are used in variable declarations.
     Set<ClassOrInterfaceType> fullyQualifiedNames =
         new TreeSet<ClassOrInterfaceType>(
             new Comparator<ClassOrInterfaceType>() {
@@ -871,6 +917,8 @@ public class Minimize extends CommandHandler {
   /**
    * Get directory to execute command in, given file path and package name. Returns a {@code File}
    * pointing to the directory that the Java file should be executed in.
+   *
+   * <p>
    *
    * <p>For the simplest case where the Java file is nested in a single package layer, i.e.
    * MyJavaFile.java is in the package mypackage, the folder structure would be
@@ -1259,7 +1307,8 @@ public class Minimize extends CommandHandler {
     for (ImportDeclaration im : importDeclarations) {
       String currImportStr = im.toString().trim();
 
-      // Check if the compilation unit already includes the import exactly.
+      // Check if the compilation unit already includes the import
+      // exactly.
       if (importStr.equals(currImportStr)) {
         return;
       }
@@ -1351,6 +1400,62 @@ public class Minimize extends CommandHandler {
       System.exit(1);
     }
     return lines;
+  }
+
+  /**
+   * Deletes the .class file associated with the outputFile.
+   *
+   * @param outputFile
+   * @param verboseOutput whether to print information about minimization status
+   */
+  private static void cleanUp(File outputFile, boolean verboseOutput) {
+    System.out.println("Minimizing complete.");
+
+    String outputClassFileStr =
+        FilenameUtils.removeExtension(outputFile.getAbsolutePath()).concat(".class");
+    File outputClassFile = new File(outputClassFileStr);
+    try {
+      boolean success = Files.deleteIfExists(outputClassFile.toPath());
+
+      if (verboseOutput && success) {
+        System.out.println("Minimizer cleanup: Removed .class file.");
+      }
+    } catch (IOException e) {
+      System.err.println("IOException when cleaning up .class file.");
+    }
+  }
+
+  /**
+   * Return the number of JUnit test methods in a compilation unit
+   *
+   * @param compUnit the compilation unit to count the number of unit test methods
+   * @return the number of unit test methods in compUnit
+   */
+  private static int getNumberOfTestMethods(CompilationUnit compUnit) {
+    int numberOfTestMethods = 0;
+    for (TypeDeclaration type : compUnit.getTypes()) {
+      for (BodyDeclaration member : type.getMembers()) {
+        if (member instanceof MethodDeclaration) {
+          MethodDeclaration method = (MethodDeclaration) member;
+          if (isTestMethod(method)) {
+            numberOfTestMethods += 1;
+          }
+        }
+      }
+    }
+    return numberOfTestMethods;
+  }
+
+  /**
+   * Output the minimizer's current progress
+   *
+   * @param currentTestIndex the number of tests that have been minimized so far
+   * @param totalTests the total number of tests in the input test suite
+   * @param testName the current test method being minimized
+   */
+  private static void printProgress(int currentTestIndex, int totalTests, String testName) {
+    System.out.println(
+        currentTestIndex + "/" + totalTests + " tests minimized, Minimized method: " + testName);
   }
 
   /**
