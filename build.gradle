@@ -218,30 +218,11 @@ clean.dependsOn ':exercised-class:clean'
 /*
  * Configuration for building omitmethods default file.
  */
-task buildDefaultOmitMethods {
-  def replacementFile = file("$projectDir/agent/mapcall/src/main/resources/default-replacements.txt")
-  def omitmethodsFile = file("$projectDir/src/main/resources/default-omitmethods.txt")
-  doLast {
-    def writer = omitmethodsFile.newWriter()
-    replacementFile.readLines().collect {
-      line ->
-      line.replaceFirst("//.*\$", "").trim()
-    }.collect {
-      line ->
-      def array = line.split()
-      array
-    }.findAll {
-      array -> array.length == 2
-    }.collect {
-      method ->
-      method[0].replaceAll("\\.", '\\\\.')
-               .replaceAll("\\(",'\\\\(')
-               .replaceAll("\\)", '\\\\)')
-    }.each {
-      pattern -> writer << "^" + pattern + "\$\n"
-    }
-    writer.close()
+task copyReplacementFile(type: Copy) {
+  from fileTree("$projectDir/agent/mapcall/src/main/resources/") {
+    include '**/default-replacements.txt'
   }
+  into file("$projectDir/src/main/resources/")
 }
 
 
@@ -472,7 +453,7 @@ task copyJars(type: Copy, dependsOn: [':exercised-class:jar', ':mapcall:jar']) {
 
 assemble.dependsOn copyJars
 
-task singleJar (type: Jar, dependsOn: 'buildDefaultOmitMethods') {
+task singleJar (type: Jar, dependsOn: 'copyReplacementFile') {
   group "build"
   description "Assemble a fat jar archive of Randoop and runtime dependencies"
   baseName = project.name + '-all'

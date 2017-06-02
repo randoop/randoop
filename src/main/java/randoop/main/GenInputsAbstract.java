@@ -105,6 +105,30 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static List<Pattern> omitmethods = null;
 
   /**
+   * A file containing a list of regular expressions that indicate methods that should not be
+   * included in generated tests. These patterns are used along with those provided with <code>
+   * --omitmethods</code>, and the default omissions.
+   */
+  @Option("File containing regular expressions for methods to omit")
+  public static File omitmethods_list = null;
+
+  /**
+   * A <code>mapcall</code> agent replacement file indicating replaced methods that should not be
+   * included in generated tests. These methods are omitted along with those provided with <code>
+   * --omitmethods</code>, <code>--omitmethods_list</code>, and the default omissions.
+   */
+  @Option("File containing mapcall replacements for which methods should be omitted")
+  public static File omit_replaced_methods = null;
+
+  /**
+   * Include methods that are otherwise omitted by default. These excluded methods are those
+   * replaced by the <code>mapcall</code> agent, and is only necessary if you want to include those
+   * methods in the generated tests.
+   */
+  @Option("Include methods that are omitted by default")
+  public static boolean include_default_omitmethods = false;
+
+  /**
    * File that contains fully-qualified field names to be excluded from test generation. Otherwise,
    * Randoop includes all public fields of classes under test as observer methods.
    */

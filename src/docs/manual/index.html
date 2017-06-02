@@ -748,8 +748,9 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>Note:
 
  <ul>
-   <li>The regex is unanchored, so <code>^</code> or <code>$</code> may be needed to get the
-       correct results.
+   <li>The string returned by <code>java.lang.reflect.Method.toString()</code> includes the
+       access modifiers and return type, which means that anchors (<code>^</code> and <code>$</code>)
+       may not give the desired results.
    <li>If a method is inherited without an override, the pattern must match the superclass
        method. (A fix to this is on the Randoop issue list.)
  </ul>
@@ -1133,18 +1134,23 @@ in the code under test by using the <code>--omitmethods=regexp</code>
 command-line option to indicate the methods that are not to be called.
 However, this option does not prevent Randoop from making indirect calls to
 a method, especially a method that is not a member of a class under test.
-Instead, to handle indirect calls, you can transform calls to certain methods
+If you want to avoid indirect calls, you can transform calls to certain methods
 by providing a different implementation that will be used when running Randoop.
+(You should still omit these methods if direct calls are a concern.)
 </p>
 
 <p>
 To transform calls to undesired methods so that they use an alternate
 implementation, pass the following command-line option to <code>java</code> when
-running Randoop <b>and</b> when running the generated tests:
+running Randoop:
 </p>
 <pre>
     -javaagent:$(RANDOOP_PATH)/mapcall-3.1.5.jar
 </pre>
+<p>
+You also need to include this argument when running the generated tests,
+<i>and</i> add the file <code>mapcall-3.1.5.jar</code> to the classpath.
+</p>
 
 <p>
 The Randoop <code>mapcall</code> agent transforms the code under test, replacing
@@ -1223,7 +1229,16 @@ command line when running Randoop <b>and</b> when running the generated tests:
 <pre>
     -javaagent:$(RANDOOP_PATH)/mapcall-3.1.5.jar=--map_calls=replace_calls_example.txt
 </pre>
+<p>
+Because default replacements may also be applied by the mapcall agent, you will
+also need to include the <code>mapcall-3.1.5.jar</code> in the classpath.
+</p>
 
+<p>
+The mapcall agent will not prevent direct calls to the replaced methods within Randoop.
+You can omit these by also providing the replacement file using the
+<code>--omit-replaced-methods</code> command-line argument.
+</p>
 
 
 <h3 id="creating-call-replacements">Creating replacement methods</h3>

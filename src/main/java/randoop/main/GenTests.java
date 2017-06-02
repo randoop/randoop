@@ -229,22 +229,7 @@ public class GenTests extends GenInputsAbstract {
       visibility = new PackageVisibilityPredicate(GenInputsAbstract.junit_package_name);
     }
 
-    // Read default method omissions from resource file and add to the omitmethods list from the
-    // command-line.
-    //
-    InputStream methodsStream = this.getClass().getResourceAsStream("/default-omitmethods.txt");
-    try (EntryReader er = new EntryReader(methodsStream, "default-omitmethods.txt", "^#.*", null)) {
-      for (String line : er) {
-        String trimmed = line.trim();
-        if (!trimmed.isEmpty()) {
-          Pattern pattern = Pattern.compile(trimmed);
-          omitmethods.add(pattern);
-        }
-      }
-    } catch (IOException e) {
-      System.out.println("Error reading default omitmethods file. Please report.");
-      System.exit(1);
-    }
+    extendOmitMethods(omitmethods);
 
     ReflectionPredicate reflectionPredicate =
         new DefaultReflectionPredicate(omitmethods, omitFields);
@@ -516,6 +501,85 @@ public class GenTests extends GenInputsAbstract {
       System.out.printf("%nInvalid tests generated: %d%n", explorer.invalidSequenceCount);
     }
     return true;
+  }
+
+  /**
+   * Adds patterns for methods to be omitted to the given list. Reads from the default mapcall
+   * replacement file, the user mapcall replacement file, and the {@link
+   * GenInputsAbstract#omitmethods_list} file.
+   *
+   * <p>Assumes that default replacement file is on classpath (e.g., located in jar file).
+   *
+   * @param omitmethods the list of {@code Pattern} objects to add new patterns to, must not be null
+   */
+  private void extendOmitMethods(List<Pattern> omitmethods) {
+    // read default replacement file
+    if (!include_default_omitmethods) {
+      InputStream methodsStream = this.getClass().getResourceAsStream("/default-replacements.txt");
+      try (EntryReader er =
+          new EntryReader(methodsStream, "default-replacements.txt", "//.*$", null)) {
+        readReplacementFile(omitmethods, er);
+      } catch (IOException e) {
+        System.out.println("Error reading methods from default replacements file. Please report.");
+        System.exit(1);
+      }
+    }
+
+    // read user replacement file
+    if (omit_replaced_methods != null) {
+      try (EntryReader er = new EntryReader(omitmethods_list, "//.*$", null)) {
+        readReplacementFile(omitmethods, er);
+      } catch (IOException e) {
+        System.out.println("Error reading methods from replacement file: " + e.getMessage());
+        System.exit(1);
+      }
+    }
+
+    // Read method omissions from user provided file
+    if (omitmethods_list != null) {
+      try (EntryReader er = new EntryReader(omitmethods_list, "^#.*", null)) {
+        for (String line : er) {
+          String trimmed = line.trim();
+          if (!trimmed.isEmpty()) {
+            Pattern pattern = Pattern.compile(trimmed);
+            omitmethods.add(pattern);
+          }
+        }
+      } catch (IOException e) {
+        System.out.println("Error reading omitmethods-list file: " + e.getMessage());
+        System.exit(1);
+      }
+    }
+  }
+
+  /**
+   * Reads a mapcalls replacement file and extracts the patterns for the original method, class, or
+   * package. Converts the text to a regex and adds it to the omit methods parameter.
+   *
+   * <p>Note: want the pattern to be anchored at the beginning (e.g., start with "^"), but this
+   * doesn't match the current reflection predicate that matches against the <code>toString()</code>
+   * method, which includes access modifiers and return type.
+   *
+   * @param omitmethods the list of patterns to which new patterns are added
+   * @param er the reader for the replacement file.
+   */
+  private void readReplacementFile(List<Pattern> omitmethods, EntryReader er) {
+    for (String line : er) {
+      String trimmed = line.trim();
+      if (!trimmed.isEmpty()) {
+        String[] toks = trimmed.split("\\s+");
+        if (toks.length == 2) {
+          String patternString =
+              toks[0]
+                  .replaceAll("\\.", "\\\\.")
+                  .replaceAll("\\(", "\\\\(")
+                  .replaceAll("\\)", "\\\\)")
+                  .replaceAll("\\$", "\\\\$");
+          Pattern pattern = Pattern.compile(patternString);
+          omitmethods.add(pattern);
+        }
+      }
+    }
   }
 
   /**
