@@ -1,7 +1,10 @@
 Version ?, released May ?, 2017
 
 Adds a minimize command that can be run from the command line to simplify
-failing tests to make it easier to understand the test sequence.
+failing tests to make it easier to understand the test sequence. Automatically
+minimizes the error-revealing test generated when using the --stop-on-error-test.
+Adds flag --minimize-error-tests to minimize generated error tests. (Thanks to
+Waylon Huang for implementing and integrating the minimizer!)
 
 Modifies the mapcall agent so that it applies default replacements that eliminate
 calls to System.exit() and display of AWT/Swing components that can adversely

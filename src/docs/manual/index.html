@@ -681,6 +681,15 @@ class within the Java file will be named <code>InputTestSuiteMinimized</code>.
 </p>
 
 <p>
+It is desirable for the minimizer to retain both the original error-revealing test suite and
+the minimized test suite. This is because the minimizer may simplify a test suite in such a
+way that important information is lost. For example, when a test case fails due to a
+<code>NullPointerException</code>, the minimizer can replace the right hand side of an
+expression with the value <code>null</code>. This is sometimes an oversimplification.
+
+</p>
+
+<p>
   See the documentation for the
   <a href="#optiongroup:Test-case-minimization-options">command-line options for failing test suite minimization</a>.
 </p>
