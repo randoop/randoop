@@ -234,6 +234,8 @@ public class GenTests extends GenInputsAbstract {
       visibility = new PackageVisibilityPredicate(GenInputsAbstract.junit_package_name);
     }
 
+    extendOmitMethods(omitmethods);
+
     ReflectionPredicate reflectionPredicate =
         new DefaultReflectionPredicate(omitmethods, omitFields);
 
@@ -525,6 +527,30 @@ public class GenTests extends GenInputsAbstract {
           this.sequenceCompileFailureCount);
     }
     return true;
+  }
+
+  /**
+   * Adds patterns for methods to be omitted to the given list. Reads from the {@link
+   * GenInputsAbstract#omitmethods_list} file.
+   *
+   * @param omitmethods the list of {@code Pattern} objects to add new patterns to, must not be null
+   */
+  private void extendOmitMethods(List<Pattern> omitmethods) {
+    // Read method omissions from user provided file
+    if (omitmethods_list != null) {
+      try (EntryReader er = new EntryReader(omitmethods_list, "^#.*", null)) {
+        for (String line : er) {
+          String trimmed = line.trim();
+          if (!trimmed.isEmpty()) {
+            Pattern pattern = Pattern.compile(trimmed);
+            omitmethods.add(pattern);
+          }
+        }
+      } catch (IOException e) {
+        System.out.println("Error reading omitmethods-list file: " + e.getMessage());
+        System.exit(1);
+      }
+    }
   }
 
   /**

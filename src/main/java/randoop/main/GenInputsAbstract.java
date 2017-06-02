@@ -106,6 +106,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static List<Pattern> omitmethods = null;
 
   /**
+   * A file containing a list of regular expressions that indicate methods that should not be
+   * included in generated tests. These patterns are used along with those provided with <code>
+   * --omitmethods</code>, and the default omissions.
+   */
+  @Option("File containing regular expressions for methods to omit")
+  public static File omitmethods_list = null;
+
+  /**
    * A fully-qualified field name of a field to be excluded from test generation. An accessible
    * field is used unless it is omitted by this or the <code>--omit-field-list</code> option.
    */
