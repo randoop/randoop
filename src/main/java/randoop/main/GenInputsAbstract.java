@@ -17,6 +17,7 @@ import randoop.util.Randomness;
 import randoop.util.Util;
 
 /** Container for Randoop options. */
+@SuppressWarnings("WeakerAccess")
 public abstract class GenInputsAbstract extends CommandHandler {
 
   public GenInputsAbstract(
@@ -83,16 +84,26 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static File methodlist = null;
 
   /**
-   * Randoop will not attempt to directly call methods whose {@link
-   * java.lang.reflect.Method#toString()} matches the regular expression given. This does not
-   * prevent indirect calls to such methods from other, allowed methods.
+   * A pattern that indicates methods that should not be included in generated tests. Randoop will
+   * not attempt to directly call methods whose {@link java.lang.reflect.Method#toString()} matches
+   * the regular expression given. This does not prevent indirect calls to such methods from other,
+   * allowed methods.
    *
    * <p>Randoop only calls methods that are specified by one of the <code>--testclass</code>, <code>
    * -classlist</code>, or <code>--methodlist</code> command-line options; the purpose of <code>
    * --omitmethods</code> is to override one of those other command-line options.
+   *
+   * <p>Note:
+   *
+   * <ul>
+   *   <li>The regex is unanchored, so <code>^</code> or <code>$</code> may be needed to get the
+   *       correct results.
+   *   <li>If a method is inherited without an override, the pattern must match the superclass
+   *       method.
+   * </ul>
    */
   @Option("Do not call methods that match regular expression <string>")
-  public static Pattern omitmethods = null;
+  public static List<Pattern> omitmethods = null;
 
   /**
    * File that contains fully-qualified field names to be excluded from test generation. Otherwise,
@@ -188,6 +199,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Whether to check if test sequences are compilable")
   public static boolean check_compilable = true;
+
+  /**
+   * Flag indicating whether or not to automatically minimize error-revealing tests. Both original
+   * and minimized versions of each test class will be output. Minimization is automatically enabled
+   * when <code>--stop-on-error-test</code> is set. Setting this option is not recommended when the
+   * number of error-revealing tests is expected to be large (> 100).
+   */
+  @Option("<boolean> to indicate automatic minimization of error-revealing tests")
+  public static boolean minimize_error_test = false;
 
   /**
    * The possible values for exception behavior types. The order INVALID, ERROR, EXPECTED should be
@@ -287,11 +307,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Terminate Randoop if specification condition is uncompilable")
   public static boolean fail_on_condition_error = false;
 
+  ///////////////////////////////////////////////////////////////////
   /**
    * File containing side-effect-free observer methods. Specifying observers has 2 benefits: it
    * makes regression tests stronger, and it helps Randoop create smaller tests.
    */
-  ///////////////////////////////////////////////////////////////////
   @OptionGroup("Observer methods")
   @Option("File containing observer functions")
   // This file is used to populate RegressionCaptureVisitor.observer_map
@@ -456,9 +476,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int clear = 100000000;
 
   ///////////////////////////////////////////////////////////////////
-  @OptionGroup("Outputting the JUnit tests")
-
   /** Maximum number of tests to write to each JUnit file */
+  @OptionGroup("Outputting the JUnit tests")
   @Option("Maximum number of tests to write to each JUnit file")
   public static int testsperfile = 500;
 
@@ -554,20 +573,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("-D Specify system properties to be set (similar to java -Dx=y)")
   public static List<String> system_props = new ArrayList<>();
 
-  /**
-   * Specify an extra command for recursive JVM calls that Randoop spawns. The argument to the
-   * --agent option is the entire extra JVM command. A typical invocation of Randoop might be:
-   *
-   * <pre>
-   * java -javaagent:<em>jarpath</em>=<em>args</em> randoop.main.Main gentests --agent="-javaagent:<em>jarpath</em>=<em>args</em>"
-   * </pre>
-   */
-  @Option("Specify an extra command for recursive JVM calls")
-  public static String agent = null;
-
-  @Option("specify the memory size (in megabytes) for recursive JVM calls")
-  public static int mem_megabytes = 1000;
-
   @Option("Capture all output to stdout and stderr")
   public static boolean capture_output = false;
 
@@ -605,8 +610,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Create sequences but never execute them")
   public static boolean dontexecute = false;
 
-  /** Install the given runtime visitor. See class randoop.ExecutionVisitor. */
   ///////////////////////////////////////////////////////////////////
+  /** Install the given runtime visitor. See class randoop.ExecutionVisitor. */
   @OptionGroup(value = "Advanced extension points")
   @Option("Install the given runtime visitor")
   public static List<String> visitor = new ArrayList<>();
