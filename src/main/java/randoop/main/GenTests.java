@@ -125,8 +125,12 @@ public class GenTests extends GenInputsAbstract {
           ForwardGenerator.class,
           AbstractGenerator.class);
 
+  /** The count of sequences that failed to compile */
+  private int sequenceCompileFailureCount;
+
   public GenTests() {
     super(command, pitch, commandGrammar, where, summary, notes, input, output, example, options);
+    sequenceCompileFailureCount = 0;
   }
 
   @SuppressWarnings("unchecked")
@@ -514,6 +518,12 @@ public class GenTests extends GenInputsAbstract {
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.printf("%nInvalid tests generated: %d%n", explorer.invalidSequenceCount);
     }
+
+    if (this.sequenceCompileFailureCount > 0) {
+      System.out.printf(
+          "%nUncompilable sequences generated (count: %d). Please report.%n",
+          this.sequenceCompileFailureCount);
+    }
     return true;
   }
 
@@ -630,7 +640,7 @@ public class GenTests extends GenInputsAbstract {
                 afterAllFixtureBody,
                 beforeEachFixtureBody,
                 afterEachFixtureBody);
-        isOutputTest = baseTest.and(checkTest.and(new CompilableTestPredicate(junitCreator)));
+        isOutputTest = baseTest.and(checkTest.and(new CompilableTestPredicate(junitCreator, this)));
       } else {
         isOutputTest = baseTest.and(checkTest);
       }
@@ -802,5 +812,9 @@ public class GenTests extends GenInputsAbstract {
       return textList;
     }
     return null;
+  }
+
+  public void countSequenceCompileFailure() {
+    this.sequenceCompileFailureCount++;
   }
 }
