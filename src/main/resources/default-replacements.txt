@@ -55,7 +55,7 @@ javax.swing.JDialog.pack() randoop.mock.JDialog.pack(javax.swing.JDialog)
 javax.swing.JFrame.pack() randoop.mock.JFrame.pack(javax.swing.JFrame)
 javax.swing.JWindow.pack() randoop.mock.JWindow.pack(javax.swing.JWindow)
 
-// Prevent AWT/Swing components from stealing focus.
+// Try to Prevent AWT/Swing components from stealing focus, though apparently not sufficient.
 // NOTE: these replacements require modifying bootloaded classes
 
 // On some systems, moving a window to the front will take focus
@@ -100,7 +100,8 @@ java.awt.GraphicsEnvironment.isHeadlessInstance() randoop.mock.GraphicsEnvironme
 java.awt.GraphicsEnvironment.checkHeadless() randoop.mock.GraphicsEnvironment.checkHeadless()
 
 
-// shutdown JOptionPane methods
+// Avoid calls to JOptionPane methods.
+// It is not clear why these are necessary after suppressing show() methods, but dialogs are still shown
 javax.swing.JOptionPane.showConfirmDialog(java.awt.Component,java.lang.Object) randoop.mock.showConfirmDialog(java.awt.Component,java.lang.Object)
 javax.swing.JOptionPane.showConfirmDialog(java.awt.Component,java.lang.Object,java.lang.String,int) randoop.mock.showConfirmDialog(java.awt.Component,java.lang.Object,java.lang.String,int)
 javax.swing.JOptionPane.showConfirmDialog(java.awt.Component,java.lang.Object,java.lang.String,int,int) randoop.mock.showConfirmDialog(java.awt.Component,java.lang.Object,java.lang.String,int,int)

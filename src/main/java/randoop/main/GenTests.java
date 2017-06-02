@@ -601,7 +601,9 @@ public class GenTests extends GenInputsAbstract {
                   .replaceAll("\\.", "\\\\.")
                   .replaceAll("\\(", "\\\\(")
                   .replaceAll("\\)", "\\\\)")
-                  .replaceAll("\\$", "\\\\$");
+                  .replaceAll("\\$", "\\\\$")
+                  .replaceAll("\\[", "\\\\[")
+                  .replaceAll("\\]", "\\\\]");
           Pattern pattern = Pattern.compile(patternString);
           omitmethods.add(pattern);
         }
