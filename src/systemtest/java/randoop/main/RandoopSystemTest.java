@@ -901,7 +901,7 @@ public class RandoopSystemTest {
    * <p>Note: setting <code>timeout</code> for this test made the generated test flaky.
    */
   @Test
-  public void runSwingDirectTest() {
+  public void runDirectSwingTest() {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("swing-direct-test");
     testEnvironment.addJavaAgent(
@@ -939,6 +939,7 @@ public class RandoopSystemTest {
     options.setOption("omitmethods", "javax\\.swing\\.JInternalFrame\\.getTitle\\(\\)");
     options.setOption("omitmethods", "javax\\.swing\\.JComponent\\.getX\\(\\)");
     options.setOption("omitmethods", "javax\\.swing\\.JComponent\\.getY\\(\\)");
+    options.setOption("omit-field", "components.MyInternalFrame.openFrameCount");
     options.setOption("outputlimit", "400");
     options.setOption("timelimit", "200");
     options.setFlag("ignore-flaky-tests");
@@ -1024,6 +1025,36 @@ public class RandoopSystemTest {
     checker.ignore("components.ScrollablePicture.mouseDragged(java.awt.event.MouseEvent)");
     checker.ignore("components.ScrollablePicture.mouseMoved(java.awt.event.MouseEvent)");
     checker.ignore("components.ScrollablePicture.setMaxUnitIncrement(int)");
+
+    checker.ignore("components.ArrowIcon.getIconWidth()");
+    checker.ignore("components.ConverterRangeModel.getValueIsAdjusting()");
+    checker.ignore("components.ConverterRangeModel.setExtent(int)");
+    checker.ignore("components.ConverterRangeModel.setMinimum(int)");
+    checker.ignore("components.CrayonPanel.getDisplayName()");
+    checker.ignore("components.FollowerRangeModel.setExtent(int)");
+    checker.ignore("components.FollowerRangeModel.setMaximum(int)");
+    checker.ignore("components.FollowerRangeModel.setRangeProperties(int, int, int, int, boolean)");
+    checker.ignore("components.FollowerRangeModel.setValue(int)");
+    checker.ignore(
+        "components.GenealogyModel.addTreeModelListener(javax.swing.event.TreeModelListener)");
+    checker.ignore("components.GenealogyModel.fireTreeStructureChanged(components.Person)");
+    checker.ignore("components.GenealogyModel.isLeaf(java.lang.Object)");
+    checker.ignore("components.GenealogyModel.showAncestor(boolean, java.lang.Object)");
+    checker.ignore("components.GenealogyTree.showAncestor(boolean)");
+    checker.ignore("components.ImageFileView.getDescription(java.io.File)");
+    checker.ignore("components.ImageFileView.getName(java.io.File)");
+    checker.ignore("components.MissingIcon.getIconHeight()");
+    checker.ignore("components.MissingIcon.getIconWidth()");
+    checker.ignore("components.Person.getChildCount()");
+    checker.ignore("components.Person.getMother()");
+    checker.ignore("components.Person.toString()");
+    checker.ignore("components.Rule.getIncrement()");
+    checker.ignore("components.Rule.isMetric()");
+    checker.ignore("components.Rule.setIncrementAndUnits()");
+    checker.ignore("components.Rule.setIsMetric(boolean)");
+    checker.ignore("components.Rule.setPreferredWidth(int)");
+    checker.ignore("components.Unit.toString()");
+    checker.ignore("components.DynamicTree.clear()");
 
     generateAndTestWithCoverage(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
