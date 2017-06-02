@@ -199,9 +199,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Whether to check if test sequences are compilable")
   public static boolean check_compilable = true;
 
-  /** Flag indicating whether or not to automatically minimize error-revealing tests. */
+  /**
+   * Flag indicating whether or not to automatically minimize error-revealing tests. Both original
+   * and minimized versions of each test class will be output. Minimization is automatically enabled
+   * when <code>--stop-on-error-test</code> is set. Setting this option is not recommended when the
+   * number of error-revealing tests is expected to be large (> 100).
+   */
   @Option("<boolean> to indicate automatic minimization of error-revealing tests")
-  public static boolean minimized_error_test = false;
+  public static boolean minimize_error_test = false;
 
   /**
    * The possible values for exception behavior types. The order INVALID, ERROR, EXPECTED should be
