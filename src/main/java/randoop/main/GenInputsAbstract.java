@@ -17,6 +17,7 @@ import randoop.util.Randomness;
 import randoop.util.Util;
 
 /** Container for Randoop options. */
+@SuppressWarnings("WeakerAccess")
 public abstract class GenInputsAbstract extends CommandHandler {
 
   public GenInputsAbstract(
@@ -278,29 +279,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static BehaviorType sof_exception = BehaviorType.INVALID;
 
   /**
-   * Read Toradocu JSON condition file to use Toradocu generated conditions to control how tests are
-   * classified.
-   *
-   * <p>Param-conditions are used as pre-conditions on method/constructor calls, with test sequences
-   * where the condition fails being classified as {@link BehaviorType#INVALID}.
-   *
-   * <p>Throws-conditions are used to check exceptions: if the inputs to the call satisfy the
-   * condition, when the exception is thrown the sequence is {@link BehaviorType#EXPECTED}, but, if
-   * it is not, the sequence is classified as {@link BehaviorType#ERROR}. If the throws-condition is
-   * not satisfied by the input, then ordinary classification is applied.
-   */
-  @Option("Use Toradocu condition JSON file to classify behaviors for methods/constructors")
-  public static List<File> toradocu_conditions = null;
-
-  /**
-   * Throw exception when cannot find expected condition methods in Toradocu output. Otherwise a
-   * warning message is printed and the condition is ignored.
-   */
-  @Unpublicized
-  @Option("Allow failure when cannot find Toradocu condition methods")
-  public static boolean fail_on_condition_input_error = false;
-
-  /**
    * File containing side-effect-free observer methods. Specifying observers has 2 benefits: it
    * makes regression tests stronger, and it helps Randoop create smaller tests.
    */
@@ -469,9 +447,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int clear = 100000000;
 
   ///////////////////////////////////////////////////////////////////
-  @OptionGroup("Outputting the JUnit tests")
-
   /** Maximum number of tests to write to each JUnit file */
+  @OptionGroup("Outputting the JUnit tests")
   @Option("Maximum number of tests to write to each JUnit file")
   public static int testsperfile = 500;
 
@@ -567,20 +544,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("-D Specify system properties to be set (similar to java -Dx=y)")
   public static List<String> system_props = new ArrayList<>();
 
-  /**
-   * Specify an extra command for recursive JVM calls that Randoop spawns. The argument to the
-   * --agent option is the entire extra JVM command. A typical invocation of Randoop might be:
-   *
-   * <pre>
-   * java -javaagent:<em>jarpath</em>=<em>args</em> randoop.main.Main gentests --agent="-javaagent:<em>jarpath</em>=<em>args</em>"
-   * </pre>
-   */
-  @Option("Specify an extra command for recursive JVM calls")
-  public static String agent = null;
-
-  @Option("specify the memory size (in megabytes) for recursive JVM calls")
-  public static int mem_megabytes = 1000;
-
   @Option("Capture all output to stdout and stderr")
   public static boolean capture_output = false;
 
@@ -618,8 +581,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Create sequences but never execute them")
   public static boolean dontexecute = false;
 
-  /** Install the given runtime visitor. See class randoop.ExecutionVisitor. */
   ///////////////////////////////////////////////////////////////////
+  /** Install the given runtime visitor. See class randoop.ExecutionVisitor. */
   @OptionGroup(value = "Advanced extension points")
   @Option("Install the given runtime visitor")
   public static List<String> visitor = new ArrayList<>();
