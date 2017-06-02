@@ -5,11 +5,11 @@
 sun.reflect
 com.sun.proxy.$Proxy
 
-// Don't transform Randoop files 
+// Don't transform Randoop files .
 randoop
 
-// The following are library classes used by Randoop
-// Remove once the Randoop jar is built with package relocation
+// The following are library classes used by Randoop.
+// Remove once the Randoop jar is built with package relocation.
 plume
 com.github.javaparser
 org.checkerframework
