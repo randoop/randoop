@@ -92,10 +92,37 @@ javax.swing.JWindow.requestFocus() randoop.mock.JWindow.requestFocus(javax.swing
 //sun.awt.AppContext.getAppContext() randoop.mock.AppContext.getAppContext()
 // Need to make sure that the call in java.awt.Component is not masked in CallReplacementTransformer
 
-// Finally, attempting to create certain AWT/Swing objects in headless mode
+// Want to be able to create certain AWT/Swing objects in headless mode, which ordinarily
 // results in a HeadlessException being thrown. These are handled by
 // java.awt.GraphicsEnvironment
 java.awt.GraphicsEnvironment.isHeadless() randoop.mock.GraphicsEnvironment.isHeadless()
 java.awt.GraphicsEnvironment.isHeadlessInstance() randoop.mock.GraphicsEnvironment.isHeadlessInstance(java.awt.GraphicsEnvironment)
 java.awt.GraphicsEnvironment.checkHeadless() randoop.mock.GraphicsEnvironment.checkHeadless()
 
+
+// shutdown JOptionPane methods
+javax.swing.JOptionPane.showConfirmDialog(java.awt.Component,java.lang.Object) randoop.mock.showConfirmDialog(java.awt.Component,java.lang.Object)
+javax.swing.JOptionPane.showConfirmDialog(java.awt.Component,java.lang.Object,java.lang.String,int) randoop.mock.showConfirmDialog(java.awt.Component,java.lang.Object,java.lang.String,int)
+javax.swing.JOptionPane.showConfirmDialog(java.awt.Component,java.lang.Object,java.lang.String,int,int) randoop.mock.showConfirmDialog(java.awt.Component,java.lang.Object,java.lang.String,int,int)
+javax.swing.JOptionPane.showConfirmDialog(java.awt.Component,java.lang.Object,java.lang.String,int,int,javax.swing.Icon) randoop.mock.showConfirmDialog(java.awt.Component,java.lang.Object,java.lang.String,int,int,javax.swing.Icon)
+javax.swing.JOptionPane.showInputDialog(java.lang.Object) randoop.mock.showInputDialog(java.lang.Object)
+javax.swing.JOptionPane.showInputDialog(java.lang.Object,java.lang.Object) randoop.mock.showInputDialog(java.lang.Object,java.lang.Object)
+javax.swing.JOptionPane.showInputDialog(java.awt.Component,java.lang.Object) randoop.mock.showInputDialog(java.awt.Component,java.lang.Object)
+javax.swing.JOptionPane.showInputDialog(java.awt.Component,java.lang.Object,java.lang.Object) randoop.mock.showInputDialog(java.awt.Component,java.lang.Object,java.lang.Object)
+javax.swing.JOptionPane.showInputDialog(java.awt.Component,java.lang.Object,java.lang.String,int) randoop.mock.showInputDialog(java.awt.Component,java.lang.Object,java.lang.String,int)
+javax.swing.JOptionPane.showInputDialog(java.awt.Component,java.lang.Object,java.lang.String,int,javax.swing.Icon,java.lang.Object[],java.lang.Object)
+javax.swing.JOptionPane.showMessageDialog(java.awt.Component,java.lang.Object) randoop.mock.showMessageDialog(java.awt.Component,java.lang.Object)
+javax.swing.JOptionPane.showMessageDialog(java.awt.Component,java.lang.Object,java.lang.String,int) randoop.mock.showMessageDialog(java.awt.Component,java.lang.Object,java.lang.String,int)
+javax.swing.JOptionPane.showMessageDialog(java.awt.Component,java.lang.Object,java.lang.String,int,javax.swing.Icon) randoop.mock.showMessageDialog(java.awt.Component,java.lang.Object,java.lang.String,int,javax.swing.Icon)
+javax.swing.JOptionPane.showOptionDialog(java.awt.Component,java.lang.Object,java.lang.String,int,int,javax.swing.Icon,java.lang.Object[],java.lang.Object) randoop.mock.showOptionDialog(java.awt.Component,java.lang.Object,java.lang.String,int,int,javax.swing.Icon,java.lang.Object[],java.lang.Object)
+javax.swing.JOptionPane.showInternalMessageDialog(java.awt.Component,java.lang.Object) randoop.mock.showInternalMessageDialog(java.awt.Component,java.lang.Object)
+javax.swing.JOptionPane.showInternalMessageDialog(java.awt.Component,java.lang.Object,java.lang.String,int) randoop.mock.showInternalMessageDialog(java.awt.Component,java.lang.Object,java.lang.String,int)
+javax.swing.JOptionPane.showInternalMessageDialog(java.awt.Component,java.lang.Object,java.lang.String,int,javax.swing.Icon) randoop.mock.showInternalMessageDialog(java.awt.Component,java.lang.Object,java.lang.String,int,javax.swing.Icon)
+javax.swing.JOptionPane.showInternalConfirmDialog(java.awt.Component,java.lang.Object) randoop.mock.showInternalConfirmDialog(java.awt.Component,java.lang.Object)
+javax.swing.JOptionPane.showInternalConfirmDialog(java.awt.Component,java.lang.Object,java.lang.String,int) randoop.mock.showInternalConfirmDialog(java.awt.Component,java.lang.Object,java.lang.String,int)
+javax.swing.JOptionPane.showInternalConfirmDialog(java.awt.Component,java.lang.Object,java.lang.String,int,int) randoop.mock.showInternalConfirmDialog(java.awt.Component,java.lang.Object,java.lang.String,int,int)
+javax.swing.JOptionPane.showInternalConfirmDialog(java.awt.Component,java.lang.Object,java.lang.String,int,int,javax.swing.Icon) randoop.mock.showInternalConfirmDialog(java.awt.Component,java.lang.Object,java.lang.String,int,int,javax.swing.Icon)
+javax.swing.JOptionPane.showInternalOptionDialog(java.awt.Component,java.lang.Object,java.lang.String,int,int,javax.swing.Icon,java.lang.Object[],java.lang.Object) randoop.mock.showInternalOptionDialog(java.awt.Component,java.lang.Object,java.lang.String,int,int,javax.swing.Icon,java.lang.Object[],java.lang.Object)
+javax.swing.JOptionPane.showInternalInputDialog(java.awt.Component,java.lang.Object) randoop.mock.showInternalInputDialog(java.awt.Component,java.lang.Object)
+javax.swing.JOptionPane.showInternalInputDialog(java.awt.Component,java.lang.Object,java.lang.String,int) randoop.mock.showInternalInputDialog(java.awt.Component,java.lang.Object,java.lang.String,int)
+javax.swing.JOptionPane.showInternalInputDialog(java.awt.Component,java.lang.Object,java.lang.String,int,javax.swing.Icon,java.lang.Object[],java.lang.Object) randoop.mock.showInternalInputDialog(java.awt.Component,java.lang.Object,java.lang.String,int,javax.swing.Icon,java.lang.Object[],java.lang.Object)
