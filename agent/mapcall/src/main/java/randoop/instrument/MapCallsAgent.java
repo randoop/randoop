@@ -20,7 +20,7 @@ import plume.Option;
 import plume.Options;
 import plume.SimpleLog;
 
-public class Premain {
+public class MapCallsAgent {
 
   @Option("print debug information")
   public static boolean debug = false;
@@ -35,7 +35,7 @@ public class Premain {
   public static boolean default_bcel = true;
 
   /**
-   * Entry point of the java agent. Sets up the transformer {@link Instrument} so that when classes
+   * Entry point of the java agent. Sets up the transformer {@link CallReplacementTransformer} so that when classes
    * are loaded they are first transformed.
    *
    * @param agentArgs the arguments to the agent
@@ -48,7 +48,7 @@ public class Premain {
         "In premain, agentargs ='%s', " + "Instrumentation = '%s'%n", agentArgs, inst);
 
     // Parse our arguments
-    Options options = new Options(Premain.class);
+    Options options = new Options(MapCallsAgent.class);
     String[] target_args = options.parse_or_usage(agentArgs);
     if (target_args.length > 0) {
       System.err.printf("Unexpected agent arguments %s%n", Arrays.toString(target_args));
@@ -58,13 +58,13 @@ public class Premain {
     // Setup the transformer
     Object transformer;
     if (default_bcel) {
-      transformer = new Instrument();
+      transformer = new CallReplacementTransformer();
     } else { // use a special classloader to ensure our files are used
       ClassLoader loader = new BCELLoader();
       try {
-        transformer = loader.loadClass("randoop.instrument.Instrument").newInstance();
+        transformer = loader.loadClass("randoop.instrument.CallReplacementTransformer").newInstance();
         @SuppressWarnings("unchecked")
-        Class<Instrument> c = (Class<Instrument>) transformer.getClass();
+        Class<CallReplacementTransformer> c = (Class<CallReplacementTransformer>) transformer.getClass();
         // System.out.printf ("Classloader of tranformer = %s%n",
         // c.getClassLoader());
       } catch (Exception e) {
@@ -74,7 +74,7 @@ public class Premain {
 
     // Read the map file
     if (map_calls != null) {
-      Instrument instrument = (Instrument) transformer;
+      CallReplacementTransformer instrument = (CallReplacementTransformer) transformer;
       instrument.read_map_file(map_calls);
       instrument.add_map_file_shutdown_hook();
     }
