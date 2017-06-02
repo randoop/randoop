@@ -106,8 +106,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static List<Pattern> omitmethods = null;
 
   /**
-   * File that contains fully-qualified field names to be excluded from test generation. Otherwise,
-   * Randoop includes all public fields of classes under test as observer methods.
+   * A fully-qualified field name of a field to be excluded from test generation. An accessible
+   * field is used unless it is omitted by this or the <code>--omit-field-list</code> option.
+   */
+  @Option("Omit field from generated tests")
+  public static List<String> omit_field = null;
+
+  /**
+   * File that contains fully-qualified field names to be excluded from test generation. An
+   * accessible field is used unless it is omitted by this or the <code>--omit-field</code> option.
    */
   @Option("File containing field names to omit from generated tests")
   public static File omit_field_list = null;

@@ -219,6 +219,7 @@ public class GenTests extends GenInputsAbstract {
     // get names of fields to be omitted
     Set<String> omitFields =
         GenInputsAbstract.getStringSetFromFile(omit_field_list, "Error reading field file");
+    omitFields.addAll(omit_field);
 
     VisibilityPredicate visibility;
     if (GenInputsAbstract.junit_package_name == null
@@ -263,7 +264,6 @@ public class GenTests extends GenInputsAbstract {
       System.out.printf("Error: %s%n", e.getMessage());
       if (e.getMessage().startsWith("No class with name \"")) {
         String classpath = System.getProperty("java.class.path");
-        // System.out.println("Your classpath is " + classpath);
         System.out.println("More specifically, none of the following files could be found:");
         StringTokenizer tokenizer = new StringTokenizer(classpath, File.pathSeparator);
         while (tokenizer.hasMoreTokens()) {
@@ -281,7 +281,6 @@ public class GenTests extends GenInputsAbstract {
         }
         System.out.println("Correct your classpath or the class name and re-run Randoop.");
       }
-      // System.out.println("Exiting Randoop.");
       System.exit(1);
     }
     assert operationModel != null;
