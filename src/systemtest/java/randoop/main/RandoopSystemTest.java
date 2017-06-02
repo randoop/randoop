@@ -351,6 +351,8 @@ public class RandoopSystemTest {
 
     options.setFlag("no-regression-tests");
     options.setOption("inputlimit", "1000");
+    // Don't minimize the tests because it would take too long to finish.
+    options.setOption("minimized_error_test", "false");
     options.addClassList("resources/systemTest/buggyclasses.txt");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.NONE;
