@@ -1004,31 +1004,31 @@ public class Minimize extends CommandHandler {
     Future<String> errOutput = fixedThreadPool.submit(errCallable);
     fixedThreadPool.shutdown();
 
+    String stdOutputString;
+    String errOutputString;
+    int exitValue;
+
     // Wait for the TimeLimitProcess to finish.
     try {
       timeLimitProcess.waitFor();
-    } catch (InterruptedException e) {
-      return new Outputs("", "Process was interrupted while waiting.", 1);
-    }
-    if (timeLimitProcess.timed_out()) {
-      timeLimitProcess.destroy();
-      return new Outputs("", "Process timed out after " + timeoutLimit + " seconds.", 1);
-    }
-
-    String stdOutputString;
-    String errOutputString;
-    try {
       stdOutputString = stdOutput.get();
       errOutputString = errOutput.get();
+      exitValue = timeLimitProcess.exitValue();
     } catch (InterruptedException e) {
       return new Outputs("", "Process was interrupted while waiting.", 1);
     } catch (ExecutionException e) {
       return new Outputs("", "A computation in the process threw an exception.", 1);
+    } finally {
+      timeLimitProcess.destroy();
+    }
+
+    if (timeLimitProcess.timed_out()) {
+      return new Outputs("", "Process timed out after " + timeoutLimit + " seconds.", 1);
     }
 
     // Collect and return the results from the standard output and error
     // output.
-    return new Outputs(stdOutputString, errOutputString, timeLimitProcess.exitValue());
+    return new Outputs(stdOutputString, errOutputString, exitValue);
   }
 
   /**
