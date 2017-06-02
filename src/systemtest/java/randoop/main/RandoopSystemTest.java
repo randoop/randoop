@@ -934,9 +934,9 @@ public class RandoopSystemTest {
     options.addTestClass("components.Unit");
     options.addTestClass("components.Utils");
 
-    //XXX remove these once Randoop uses mapcall replacements file.
-    options.setOption("omitmethods", "java\\.awt");
-    options.setOption("omitmethods", "javax\\.swing");
+    options.setOption("omitmethods", "javax\\.swing\\.JInternalFrame\\.getTitle\\(\\)");
+    options.setOption("omitmethods", "javax\\.swing\\.JComponent\\.getX\\(\\)");
+    options.setOption("omitmethods", "javax\\.swing\\.JComponent\\.getY\\(\\)");
     options.setOption("outputlimit", "400");
     options.setOption("timelimit", "200");
     options.setFlag("ignore-flaky-tests");
@@ -1043,8 +1043,6 @@ public class RandoopSystemTest {
     options.setPackageName("components");
     options.addTestClass("components.DialogRunner");
 
-    //options.setOption("omitmethods", "java\\.awt");
-    //options.setOption("omitmethods", "javax\\.swing");
     options.setOption("outputlimit", "400");
     options.setOption("timelimit", "200");
     options.setFlag("ignore-flaky-tests");
