@@ -222,7 +222,7 @@ task copyReplacementFile(type: Copy) {
   from fileTree("$projectDir/agent/mapcall/src/main/resources/") {
     include '**/default-replacements.txt'
   }
-  into file("$projectDir/src/main/resources/")
+  into file("$buildDir/resources/main/")
 }
 
 
