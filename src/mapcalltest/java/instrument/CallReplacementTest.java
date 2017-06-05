@@ -47,5 +47,4 @@ public class CallReplacementTest {
 
     frame.setVisible(true);
   }
-
 }
