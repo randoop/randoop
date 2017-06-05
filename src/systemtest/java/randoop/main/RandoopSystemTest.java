@@ -936,9 +936,17 @@ public class RandoopSystemTest {
     options.addTestClass("components.Unit");
     options.addTestClass("components.Utils");
 
-    options.setOption("omitmethods", "javax\\.swing\\.JInternalFrame\\.getTitle\\(\\)");
-    options.setOption("omitmethods", "javax\\.swing\\.JComponent\\.getX\\(\\)");
-    options.setOption("omitmethods", "javax\\.swing\\.JComponent\\.getY\\(\\)");
+    // Some AWT/Swing methods are state-dependant and lead to flaky tests
+    // Avoid all direct calls to these methods, since not enough information given by test failures
+    // on Travis CI to figure out what methods are causing a failure.
+    options.setOption("omitmethods", "javax\\.swing\\.");
+    options.setOption("omitmethods", "java\\.awt\\.");
+
+    // These fail running on mac, but commented out because covered by above. Keeping just in case.
+    //options.setOption("omitmethods", "javax\\.swing\\.JInternalFrame\\.getTitle\\(\\)");
+    //options.setOption("omitmethods", "javax\\.swing\\.JComponent\\.getX\\(\\)");
+    //options.setOption("omitmethods", "javax\\.swing\\.JComponent\\.getY\\(\\)");
+
     options.setOption("omit-field", "components.MyInternalFrame.openFrameCount");
     options.setOption("outputlimit", "400");
     options.setOption("timelimit", "200");
