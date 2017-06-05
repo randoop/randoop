@@ -106,11 +106,16 @@ public class CallReplacementTransformer implements ClassFileTransformer {
       byte[] classfileBuffer)
       throws IllegalClassFormatException {
 
-    debug_transform.log("In Transform: class = %s%n", className);
+    debug_transform.log("In transform: class = %s%n", className);
     String fullClassName = className.replace("/", ".");
-
-    if ((isBootClass(loader, fullClassName) && !isAWTSwingClass(fullClassName))
-        || isExcludedClass(fullClassName)) {
+    if (isBootClass(loader, fullClassName)) {
+      if (!isAWTSwingClass(fullClassName)) {
+        debug_transform.log("ignoring non-AWT/Swing class %s, null class loader", fullClassName);
+        return null;
+      }
+    }
+    if (isExcludedClass(fullClassName)) {
+      debug_transform.log("ignoring excluded class %s%n", fullClassName);
       return null;
     }
 
@@ -154,15 +159,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
    * @return true if the method is in either the AWT or Swing package, false otherwise
    */
   private boolean isAWTSwingClass(String classname) {
-    if (classname.startsWith("java.awt")) {
-      debug_transform.log("transforming AWT class %s", classname);
-      return true;
-    }
-    if (classname.startsWith("javax.swing")) {
-      debug_transform.log("transforming Swing class %s", classname);
-      return true;
-    }
-    return false;
+    return classname.startsWith("java.awt") || classname.startsWith("javax.swing");
   }
 
   /**
@@ -175,10 +172,8 @@ public class CallReplacementTransformer implements ClassFileTransformer {
    */
   private boolean isBootClass(ClassLoader loader, String fullClassName) {
     if (loader == null) {
-      debug_transform.log("ignoring system class %s, class loader == null", fullClassName);
       return true;
     } else if (loader.getParent() == null) {
-      debug_transform.log("ignoring system class %s, parent loader == null\n", fullClassName);
       return true;
     }
     return false;
@@ -194,7 +189,6 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   private boolean isExcludedClass(String fullClassName) {
     for (String excludedPackage : excludedPackages) {
       if (fullClassName.startsWith(excludedPackage)) {
-        debug_transform.log("Not considering excluded class %s%n", fullClassName);
         return true;
       }
     }
@@ -221,9 +215,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
         continue;
       }
 
-      if (MapCallsAgent.debug) {
-        System.out.format("Original code: %s%n", mg.getMethod().getCode());
-      }
+      debug_transform.log("Original code: %s%n", mg.getMethod().getCode());
 
       instrumentMethod(mg, new InstructionFactory(cg));
 
@@ -250,9 +242,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
 
       // Update the method in the class
       cg.replaceMethod(method, mg.getMethod());
-      if (MapCallsAgent.debug) {
-        System.out.format("Modified code: %s%n", mg.getMethod().getCode());
-      }
+      debug_transform.log("Modified code: %s%n", mg.getMethod().getCode());
 
       transformed = true;
     }
@@ -323,6 +313,8 @@ public class CallReplacementTransformer implements ClassFileTransformer {
     }
     MethodDef call = getReplacement(orig);
     if (call == null) {
+      debug_transform.log(
+          "%s.%s: No replacement for %s%n", mg.getClassName(), mg.getName(), orig.toString());
       return null;
     }
 
@@ -388,7 +380,6 @@ public class CallReplacementTransformer implements ClassFileTransformer {
     if (replacement != null) {
       return replacement;
     }
-
     // check for a class or package prefix.
     String prefix = orig.getClassname();
     String prefixReplacement = prefixReplacementMap.get(prefix);
@@ -537,7 +528,11 @@ public class CallReplacementTransformer implements ClassFileTransformer {
       }
       Matcher sigMatcher = SIGNATURE_PATTERN.matcher(line);
       if (sigMatcher.find() && sigMatcher.groupCount() == 2) {
-        String[] arguments = sigMatcher.group(2).split(",");
+        String[] arguments = new String[0];
+        String argString = sigMatcher.group(2);
+        if (!argString.isEmpty()) {
+          arguments = argString.split(",");
+        }
         MethodDef orig = getMethod(sigMatcher.group(1).trim(), arguments);
         if (sigMatcher.find() && sigMatcher.groupCount() == 2) {
           arguments = sigMatcher.group(2).split(",");
@@ -580,7 +575,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
         debug_map.log("no method replacements");
       } else {
         for (Map.Entry<MethodDef, MethodDef> entry : replacementMap.entrySet()) {
-          debug_map.log("Method: %s : %s", entry.getKey(), entry.getValue());
+          debug_map.log("Method: %s (%d): %s", entry.getKey(), entry.hashCode(), entry.getValue());
         }
       }
       if (prefixReplacementMap.isEmpty()) {
@@ -656,7 +651,11 @@ public class CallReplacementTransformer implements ClassFileTransformer {
 
     @Override
     public int hashCode() {
-      return Objects.hash(classname, name, Arrays.hashCode(argTypes));
+      if (argTypes.length > 0) {
+        return Objects.hash(classname, name, Arrays.hashCode(argTypes));
+      } else {
+        return Objects.hash(classname, name);
+      }
     }
 
     @Override
