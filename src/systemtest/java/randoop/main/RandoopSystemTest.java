@@ -942,7 +942,8 @@ public class RandoopSystemTest {
     options.setOption("omitmethods", "javax\\.swing\\.");
     options.setOption("omitmethods", "java\\.awt\\.");
 
-    // These fail running on mac, but commented out because covered by above. Keeping just in case.
+    // These resolve flaky tests when running on mac, but commented out because covered by above.
+    // Keeping just in case figure out how to identify failing methods on travis.
     //options.setOption("omitmethods", "javax\\.swing\\.JInternalFrame\\.getTitle\\(\\)");
     //options.setOption("omitmethods", "javax\\.swing\\.JComponent\\.getX\\(\\)");
     //options.setOption("omitmethods", "javax\\.swing\\.JComponent\\.getY\\(\\)");
