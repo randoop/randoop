@@ -89,6 +89,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       return false;
     }
 
+    //XXX should use fully qualified signature and not toString()
     if (matchesOmitMethodPattern(m.toString())) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + m.toString());
@@ -283,6 +284,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   @Override
   public boolean test(Constructor<?> c) {
 
+    //should use fully qualified signature
     if (matchesOmitMethodPattern(c.toString())) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + c.toString());
@@ -311,7 +313,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       boolean result = pattern.matcher(name).find();
       if (Log.isLoggingOn()) {
         Log.logLine(
-            String.format("Comparing '%s' against pattern '%s' = %b%n", name, omitMethods, result));
+            String.format("Comparing '%s' against pattern '%s' = %b%n", name, pattern, result));
       }
       if (result) {
         return true;
