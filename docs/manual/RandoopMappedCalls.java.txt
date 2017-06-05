@@ -24,4 +24,10 @@ public class RandoopMappedCalls {
     System.out.printf("Confirm Dialog box with message: %s%n", message);
   }
 
+  // This method replaces a call to System.exit by a printed indication
+  // that the call would have been made.
+
+  public static void exit(int status) {
+    System.out.printf("System exit with status %d ignored%n", status);
+  }
 }
