@@ -848,7 +848,7 @@ public class RandoopSystemTest {
   public void runExercisedClassFilter() {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("exercised-class");
-    testEnvironment.addJavaAgent(systemTestEnvironment.excercisedClassAgentPath);
+    testEnvironment.addJavaAgent(systemTestEnvironment.exercisedClassAgentPath);
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.addClassList("resources/systemTest/instrument/testcase/allclasses.txt");
     options.setOption(

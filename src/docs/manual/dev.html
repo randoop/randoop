@@ -19,6 +19,7 @@
     </ul></li>
   <li><a href="#compiling">Building Randoop</a>
     <ul>
+      <li><a href="#publish-only-tasks">CAUTION: Release-Only Tasks</a></li>
       <li><a href="#gradlew">The Gradle wrapper</a></li>
       <li><a href="#buildgradle">The Randoop build script</a></li>
     </ul></li>
@@ -215,6 +216,26 @@ pip install --user html5validator</code></pre>
   </ul></li>
 
 </ul>
+
+<h2 id="publish-only-tasks">CAUTION: Release-Only Tasks</h2>
+
+<p>
+The tasks <code>cleanSite</code>, <code>publishSite</code> and <code>buildRelease</code>
+should not be run except while making a release, and so should never be run
+within a branch other than master.
+These tasks will delete and/or replace the GitHub pages site located in the <code>docs</code> directory of the repository.
+If you happen to run these commands, you should use git to revert to the previous version.
+For instance, the command
+</p>
+
+<pre><code>
+  git checkout -- docs/
+</code></pre>
+
+<p>
+can be used to restore the files before they have been commited.
+</p>
+
 
 
 <h2 id="gradlew">The Gradle wrapper</h2>
