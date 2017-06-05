@@ -2,6 +2,7 @@ package instrument;
 
 import static org.junit.Assert.assertTrue;
 
+import components.DialogDemo;
 import input.SystemExitClass;
 import javax.swing.*;
 import org.junit.Rule;
@@ -28,7 +29,6 @@ public class CallReplacementTest {
   }
 
   /* code borrowed from {@code createAndShowGUI()} in Oracle example components.DialogDemo */
-  /* this test fails in Travis b/c creating a JFrame in headless environment.  Not sure why replacement not working.
   @Test
   public void swingTest() {
     thrown = ExpectedException.none();
@@ -47,5 +47,5 @@ public class CallReplacementTest {
 
     frame.setVisible(true);
   }
-  */
+
 }
