@@ -1,3 +1,6 @@
+// packages for classes that should not be loaded and transformed by the mapcall agent
+// when running the agent with Randoop system tests
+//
 junit
 org.gradle
 org.hamcrest
