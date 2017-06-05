@@ -106,8 +106,23 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static List<Pattern> omitmethods = null;
 
   /**
-   * File that contains fully-qualified field names to be excluded from test generation. Otherwise,
-   * Randoop includes all public fields of classes under test as observer methods.
+   * A file containing a list of regular expressions that indicate methods that should not be
+   * included in generated tests. These patterns are used along with those provided with <code>
+   * --omitmethods</code>, and the default omissions.
+   */
+  @Option("File containing regular expressions for methods to omit")
+  public static File omitmethods_list = null;
+
+  /**
+   * A fully-qualified field name of a field to be excluded from test generation. An accessible
+   * field is used unless it is omitted by this or the <code>--omit-field-list</code> option.
+   */
+  @Option("Omit field from generated tests")
+  public static List<String> omit_field = null;
+
+  /**
+   * File that contains fully-qualified field names to be excluded from test generation. An
+   * accessible field is used unless it is omitted by this or the <code>--omit-field</code> option.
    */
   @Option("File containing field names to omit from generated tests")
   public static File omit_field_list = null;
@@ -204,7 +219,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Flag indicating whether or not to automatically minimize error-revealing tests. Both original
    * and minimized versions of each test class will be output. Minimization is automatically enabled
    * when <code>--stop-on-error-test</code> is set. Setting this option is not recommended when the
-   * number of error-revealing tests is expected to be large (> 100).
+   * number of error-revealing tests is expected to be greater than 100.
    */
   @Option("<boolean> to indicate automatic minimization of error-revealing tests")
   public static boolean minimize_error_test = false;

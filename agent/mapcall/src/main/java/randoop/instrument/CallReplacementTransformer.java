@@ -49,7 +49,7 @@ import plume.UtilMDE;
  * JOptionPane.showConfirmDialog (which would otherwise hang a regressions test) can be changed to
  * throw an exception, or simply print a message and continue.
  */
-public class Instrument implements ClassFileTransformer {
+public class CallReplacementTransformer implements ClassFileTransformer {
 
   boolean debug = false;
   boolean log_on = false;
@@ -152,7 +152,7 @@ public class Instrument implements ClassFileTransformer {
    */
   public static List<MethodMapInfo> map_calls_file = new ArrayList<>();
 
-  public Instrument() {}
+  public CallReplacementTransformer() {}
 
   /**
    * {@inheritDoc}

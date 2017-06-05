@@ -32,7 +32,7 @@ class SystemTestEnvironment {
 
   final Path mapcallAgentPath;
 
-  final Path excercisedClassAgentPath;
+  final Path exercisedClassAgentPath;
 
   /**
    * Initializes a {@link SystemTestEnvironment} with the given classpath, working directory, input
@@ -49,13 +49,13 @@ class SystemTestEnvironment {
       Path testInputClassDir,
       Path jacocoAgentPath,
       Path mapcallAgentPath,
-      Path excercisedClassAgentPath) {
+      Path exercisedClassAgentPath) {
     this.classpath = classpath;
     this.systemTestWorkingDir = workingDir;
     this.testInputClassDir = testInputClassDir;
     this.jacocoAgentPath = jacocoAgentPath;
     this.mapcallAgentPath = mapcallAgentPath;
-    this.excercisedClassAgentPath = excercisedClassAgentPath;
+    this.exercisedClassAgentPath = exercisedClassAgentPath;
   }
 
   /**
