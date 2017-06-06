@@ -948,7 +948,13 @@ public class RandoopSystemTest {
     //options.setOption("omitmethods", "javax\\.swing\\.JComponent\\.getX\\(\\)");
     //options.setOption("omitmethods", "javax\\.swing\\.JComponent\\.getY\\(\\)");
 
+    // These methods lead to flaky tests
+    options.setOption("omitmethods", "components\\.ConverterRangeModel\\.getValue\\(\\)");
+
     options.setOption("omit-field", "components.MyInternalFrame.openFrameCount");
+    options.setOption("omit-field", "components.ConverterRangeModel.value");
+    options.setOption("omit-field", "components.ConverterRangeModel.multiplier");
+    //
     options.setOption("outputlimit", "400");
     options.setOption("timelimit", "200");
     options.setFlag("ignore-flaky-tests");
