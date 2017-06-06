@@ -909,7 +909,6 @@ public class RandoopSystemTest {
         "--dont-transform=resources/systemTest/load-exclusions.txt");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName("components");
-    options.addTestClass("components.DialogRunner");
     options.addTestClass("components.ArrowIcon");
     options.addTestClass("components.ConversionPanel");
     options.addTestClass("components.Converter");
@@ -917,6 +916,7 @@ public class RandoopSystemTest {
     options.addTestClass("components.Corner");
     options.addTestClass("components.CrayonPanel");
     options.addTestClass("components.CustomDialog");
+    options.addTestClass("components.DialogRunner");
     options.addTestClass("components.DynamicTree");
     options.addTestClass("components.FollowerRangeModel");
     options.addTestClass("components.Framework");
@@ -1070,6 +1070,11 @@ public class RandoopSystemTest {
     checker.ignore("components.Rule.setPreferredWidth(int)");
     checker.ignore("components.Unit.toString()");
     checker.ignore("components.DynamicTree.clear()");
+    checker.ignore("components.ConversionPanel.getValue()");
+    checker.ignore("components.CrayonPanel.buildChooser()");
+    checker.ignore(
+        "components.CrayonPanel.createCrayon(java.lang.String, javax.swing.border.Border)");
+    checker.ignore("components.CrayonPanel.createImageIcon(java.lang.String)");
 
     generateAndTestWithCoverage(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
