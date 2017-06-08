@@ -481,8 +481,8 @@ task distributionZip (type: Zip , dependsOn: ['singleJar', 'copyJars', 'manual']
 
 /********************* Building manual *******************/
 /*
- * Goal is to create the contents of the manual directory within buildDir to be
- * moved to project docs directory.
+ * The "manual" gradle target create the contents of the manual directory
+ * within src/, which will eventually be moved to project docs directory.
  *
  * Has structure:
  *   docs/
@@ -707,7 +707,7 @@ task tags(type: Exec, dependsOn: 'clonePlumeLib') {
   group 'Emacs'
   description "Run etags to create an Emacs TAGS table"
   environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
-  commandLine "bash", "-c", "find src/ -name *.java | sort-directory-order | xargs etags"
+  commandLine "bash", "-c", "find src/ agent/exercised-class/src/ agent/mapcall/src/ -name *.java | sort-directory-order | xargs etags"
 }
 
 /* Make Emacs TAGS table, with only Randoop code (not test code) */
