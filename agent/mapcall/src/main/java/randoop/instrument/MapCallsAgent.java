@@ -25,8 +25,8 @@ import plume.Options;
  * provided replacement file. (See the <a
  * href="https://randoop.github.io/randoop/manual/index.html#map_calls">mapcall user documentat</a>
  * for details on the file format.) Default replacements are given in an internal resource file
- * {@code "default-replacements.txt"}. User replacements are then loaded using the {@link
- * #map_calls} command-line argument. A user replacement may override a default replacement.
+ * {@code "default-replacements.txt"}. User replacements are then loaded using the {@link #map_calls
+ * --map-calls} command-line argument. A user replacement may override a default replacement.
  *
  * <p>The classes of certain packages are excluded from transformation. These exclusions include
  * boot loaded classes (see {@link CallReplacementTransformer#isBootClass(ClassLoader)}) that are
@@ -52,12 +52,12 @@ public class MapCallsAgent {
 
   /** The file from which to read the user replacements for mapping calls. */
   @SuppressWarnings("WeakerAccess")
-  @Option("file containing methods calls to map to substitute methods")
+  @Option("file containing methods whose calls to replace by substitute methods")
   public static File map_calls = null;
 
   /** Exclude transformation of classes in the the listed packages. */
   @SuppressWarnings("WeakerAccess")
-  @Option("file containing list of packages from which classes should not be transformed")
+  @Option("file containing list of packages whose classes should not be transformed")
   public static File dont_transform = null;
 
   /**
@@ -92,11 +92,10 @@ public class MapCallsAgent {
     }
 
     // Load named default package exclusions from the resource file in the jar
-    InputStream inputStream;
     Set<String> excludedPackages = new LinkedHashSet<>();
 
     String exclusionFileName = "/default-load-exclusions.txt";
-    inputStream = MapCallsAgent.class.getResourceAsStream(exclusionFileName);
+    InputStream inputStream = MapCallsAgent.class.getResourceAsStream(exclusionFileName);
     if (inputStream == null) {
       System.err.println("unable to open default package exclusion file. Please report.");
       System.exit(1);
@@ -105,7 +104,7 @@ public class MapCallsAgent {
       loadExclusions(new InputStreamReader(inputStream), exclusionFileName, excludedPackages);
     } catch (IOException e) {
       System.err.format(
-          "Unable to read default package exclusion file: %s%n Please report.", e.getMessage());
+          "Unable to read default package exclusion file: %s%nPlease report.", e.getMessage());
       System.exit(1);
     }
 
@@ -132,7 +131,7 @@ public class MapCallsAgent {
       transformer.readMapFile(new InputStreamReader(inputStream));
     } catch (Throwable e) {
       System.err.printf("Error reading default replacement file:%n  %s%n", e);
-      System.err.println("  Please report.");
+      System.err.println("Please report.");
       System.exit(1);
     }
 

@@ -125,12 +125,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static File replacement_file = null;
 
   /**
-   * Include methods that are otherwise omitted by default. These excluded methods are those
-   * replaced by the <code>mapcall</code> agent, and is only necessary if you want to include those
-   * methods in the generated tests.
-   *
-   * <p>This flag will not override any <code>--omitmethods</code> or <code>--omitmethods-list
-   * </code> arguments.
+   * Include methods that are otherwise omitted by default. Unless you set this to true, every
+   * method replaced by the <code>mapcall</code> agent is treated as if it had been supplied as an
+   * argument to <code>--omitmethods</code>.
    */
   @Option("Include methods that are omitted by default")
   public static boolean include_default_replacements = false;
