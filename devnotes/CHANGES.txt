@@ -1,13 +1,16 @@
 Version ?, released May ?, 2017
 
-Adds a minimize command that can be run from the command line to simplify
-failing tests to make it easier to understand the test sequence. Automatically
-minimizes the error-revealing test generated when using the --stop-on-error-test.
-Adds flag --minimize-error-tests to minimize generated error tests. (Thanks to
-Waylon Huang for implementing and integrating the minimizer!)
+Randoop contains a test suite minimizer.  Given a test suite containing
+failing tests, it creates a test suite with smaller tests that fail the
+same way.
+ * You can run this minimizer on any test suite, whether it was created by
+   Randoop or not.
+ * Randoop automatically runs the minimizer on fault-revealing tests before
+   it outputs them; this makes the failures easier to understand.  You can
+   disable this behavior.
 
 Fixes a problem in progress reporting where the wrong count was being used for
-error-revealing sequences
+error-revealing sequences.
 
 
 Version 3.1.5, released April 28, 2017
