@@ -1,6 +1,5 @@
 package randoop.instrument;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -8,9 +7,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.instrument.Instrumentation;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import plume.EntryReader;
 import plume.Option;
 import plume.Options;
 
@@ -19,15 +22,16 @@ import plume.Options;
  * classes to alternate implementations.
  *
  * <p>The transformer applies method call replacements as specified in either the default or a user
- * provided replacement file. (See {@link CallReplacementTransformer#readMapFile(Reader)} for
- * details on the file format.) Default replacements are given in an internal resource file {@code
- * "default-replacements.txt"}. User replacements are then loaded using the {@link #map_calls}
- * command-line argument. A user replacement may override a default replacement.
+ * provided replacement file. (See the <a
+ * href="https://randoop.github.io/randoop/manual/index.html#map_calls">mapcall user documentat</a>
+ * for details on the file format.) Default replacements are given in an internal resource file
+ * {@code "default-replacements.txt"}. User replacements are then loaded using the {@link
+ * #map_calls} command-line argument. A user replacement may override a default replacement.
  *
  * <p>The classes of certain packages are excluded from transformation. These exclusions include
- * boot loaded classes (see {@link CallReplacementTransformer#isBootClass(ClassLoader, String)})
- * that are not in AWT or Swing (see {@link CallReplacementTransformer#isAWTSwingClass(String)}),
- * and classes in packages listed in the resource file {@code "default-load-exclusions.txt"}.
+ * boot loaded classes (see {@link CallReplacementTransformer#isBootClass(ClassLoader)}) that are
+ * not in AWT or Swing (see {@link CallReplacementTransformer#isAWTSwingClass(String)}), and classes
+ * in packages listed in the resource file {@code "default-load-exclusions.txt"}.
  */
 public class MapCallsAgent {
 
@@ -35,6 +39,12 @@ public class MapCallsAgent {
   @SuppressWarnings("WeakerAccess")
   @Option("print debug information")
   public static boolean debug = false;
+
+  @SuppressWarnings("WeakerAccess")
+  @Option("directory name for debug information")
+  public static String debug_directory = "";
+
+  static Path debugPath = Paths.get("").toAbsolutePath().normalize();
 
   @SuppressWarnings("WeakerAccess")
   @Option("print progress information")
@@ -74,16 +84,25 @@ public class MapCallsAgent {
       }
     }
 
+    if (debug && !debug_directory.isEmpty()) {
+      debugPath = debugPath.resolve(debug_directory);
+      if (!Files.exists(debugPath)) {
+        Files.createDirectory(debugPath);
+      }
+    }
+
     // Load named default package exclusions from the resource file in the jar
     InputStream inputStream;
     Set<String> excludedPackages = new LinkedHashSet<>();
-    inputStream = excludedPackages.getClass().getResourceAsStream("/default-load-exclusions.txt");
+
+    String exclusionFileName = "/default-load-exclusions.txt";
+    inputStream = MapCallsAgent.class.getResourceAsStream(exclusionFileName);
     if (inputStream == null) {
       System.err.println("unable to open default package exclusion file. Please report.");
       System.exit(1);
     }
     try {
-      loadExclusions(new InputStreamReader(inputStream), excludedPackages);
+      loadExclusions(new InputStreamReader(inputStream), exclusionFileName, excludedPackages);
     } catch (IOException e) {
       System.err.format(
           "Unable to read default package exclusion file: %s%n Please report.", e.getMessage());
@@ -93,7 +112,7 @@ public class MapCallsAgent {
     // If user provided package exclusion file, load user package exclusions
     if (dont_transform != null) {
       try {
-        loadExclusions(new FileReader(dont_transform), excludedPackages);
+        loadExclusions(new FileReader(dont_transform), dont_transform.getName(), excludedPackages);
       } catch (IOException e) {
         System.err.format(
             "Error reading package exclusion file %s:%n %s%n", dont_transform, e.getMessage());
@@ -137,19 +156,18 @@ public class MapCallsAgent {
    *
    * @param exclusionReader the reader for the text file containing the list of excluded packages,
    *     must not be null
+   * @param filename the name of the file read by the reader
    * @param excludedPackages the set of excluded package names, must not be null
    * @throws IOException if there is an error reading the file
    */
-  private static void loadExclusions(Reader exclusionReader, Set<String> excludedPackages)
-      throws IOException {
-    try (BufferedReader reader = new BufferedReader(exclusionReader)) {
-      String line = reader.readLine();
-      while (line != null) {
-        line = line.replaceFirst("//.*$", "").trim();
-        if (line.length() > 0) {
-          excludedPackages.add(line);
+  private static void loadExclusions(
+      Reader exclusionReader, String filename, Set<String> excludedPackages) throws IOException {
+    try (EntryReader reader = new EntryReader(exclusionReader, filename, "//.*$", null)) {
+      for (String line : reader) {
+        String trimmed = line.trim();
+        if (!trimmed.isEmpty()) {
+          excludedPackages.add(trimmed);
         }
-        line = reader.readLine();
       }
     }
   }

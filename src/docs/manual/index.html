@@ -42,9 +42,8 @@ The Randoop homepage is
       <li><a href="#command-line-options">Command-line options</a></li>
       <li><a href="#map_calls">Avoiding calls to specific methods</a>
         <ul>
-          <li><a href="#map-calls-format">Replacement file format</a></li>
           <li><a href="#creating-call-replacements">Creating replacement methods</a></li>
-          <li><a href="#determining-calls-to-map">Determining which calls to place in the map_calls file</a></li>
+          <li><a href="#determining-calls-to-map">Determining which calls to place in the replacements file</a></li>
         </ul></li>
       <li><a href="#checkrep">Specifying representation invariant methods (such as <code>checkRep</code>)</a></li>
       <li><a href="#exercised-filter">Instrumenting classes for filtering tests on exercised-classes</a></li>
@@ -757,16 +756,28 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>Note:
 
  <ul>
-   <li>The string returned by <code>java.lang.reflect.Method.toString()</code> includes the
-       access modifiers and return type, which means that anchors (<code>^</code> and <code>$</code>)
-       may not give the desired results.
+   <li>The regex is unanchored, so <code>^</code> or <code>$</code> may be needed to get the
+       correct results.
    <li>If a method is inherited without an override, the pattern must match the superclass
-       method. (A fix to this is on the Randoop issue list.)
+       method.
  </ul>
             <li id="option:omitmethods-list"><b>--omitmethods-list=</b><i>filename</i>.
              A file containing a list of regular expressions that indicate methods that should not be
  included in generated tests. These patterns are used along with those provided with <code>
  --omitmethods</code>, and the default omissions.
+            <li id="option:replacement-file"><b>--replacement-file=</b><i>filename</i>.
+             A <code>mapcall</code> agent replacement file indicating replaced methods that should not be
+ included in generated tests. This argument will generally only be useful if the
+ <code>mapcall</code> agent is being used.
+
+ <p>These methods are omitted along with those provided with <code>
+ --omitmethods</code>, <code>--omitmethods-list</code>, and the default omissions.
+            <li id="option:include-default-replacements"><b>--include-default-replacements=</b><i>boolean</i>.
+             Include methods that are otherwise omitted by default. These excluded methods are those
+ replaced by the <code>mapcall</code> agent, and is only necessary if you want to include those
+ methods in the generated tests.
+
+ <p>This flag will not override any <code>--omitmethods</code> or <code>--omitmethods-list</code> arguments. [default false]
             <li id="option:omit-field"><b>--omit-field=</b><i>string</i> <code>[+]</code>.
              A fully-qualified field name of a field to be excluded from test generation. An accessible
  field is used unless it is omitted by this or the <code>--omit-field-list</code> option.
@@ -1137,7 +1148,6 @@ However, this option does not prevent Randoop from making indirect calls to
 a method, especially a method that is not a member of a class under test.
 If you want to avoid indirect calls, you can transform calls to certain methods
 by providing a different implementation that will be used when running Randoop.
-(You should still omit these methods if direct calls are a concern.)
 </p>
 
 <p>
@@ -1164,13 +1174,9 @@ By default, the agent makes the following replacements:
     throws a Randoop-specific exception that Randoop includes in the generated tests.
   </li>
   <li>
-    A call to a method from AWT and Swing classes is replaced by a call to an
-    implementation that does as little as possible.  Specifically, for a
-    <code>void</code>-method, the replacement does nothing;
-    for a method that returns a class type, the replacement returns
-    <code>null</code>; for a <code>boolean</code>-method, the replacement returns
-    <code>false</code>; and for a method with a numeric primitive return type,
-    the replacement returns zero.
+    A call to certain methods of AWT and Swing classes is replaced by a call to
+    an implementation that is designed to avoid hanging both during test generation
+    by Randoop and during execution of the generated tests.
   </li>
 </ul>
 <p>
@@ -1216,9 +1222,8 @@ In contrast to the package replacement above, a call to
   replacements-file.)
 </p>
 
-
 <p>
-The replacement file is used by using the <code>mapcall</code> and providing
+The replacement file is used by using the <code>mapcall</code> agent and providing
 the file as an argument.
 For example, the class <a href="RandoopMappedCalls.java.txt">RandoopMappedCalls.java</a>
 defines methods to replace three Swing methods as described by the replacement
@@ -1238,7 +1243,7 @@ also need to include the <code>mapcall-3.1.5.jar</code> in the classpath.
 <p>
 The mapcall agent will not prevent direct calls to the replaced methods within Randoop.
 You can omit these by also providing the replacement file using the
-<code>--omit-replaced-methods</code> command-line argument.
+<code>--replacements-file</code> command-line argument.
 </p>
 
 

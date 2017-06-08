@@ -541,7 +541,7 @@ public class GenTests extends GenInputsAbstract {
    */
   private void extendOmitMethods(List<Pattern> omitmethods) {
     // read default replacement file
-    if (!include_default_omitmethods) {
+    if (!include_default_replacements) {
       InputStream methodsStream = this.getClass().getResourceAsStream("/default-replacements.txt");
       try (EntryReader er =
           new EntryReader(methodsStream, "default-replacements.txt", "//.*$", null)) {
@@ -553,8 +553,8 @@ public class GenTests extends GenInputsAbstract {
     }
 
     // read user replacement file
-    if (omit_replaced_methods != null) {
-      try (EntryReader er = new EntryReader(omitmethods_list, "//.*$", null)) {
+    if (replacement_file != null) {
+      try (EntryReader er = new EntryReader(replacement_file, "//.*$", null)) {
         readReplacementFile(omitmethods, er);
       } catch (IOException e) {
         System.out.println("Error reading methods from replacement file: " + e.getMessage());

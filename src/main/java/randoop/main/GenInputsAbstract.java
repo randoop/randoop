@@ -115,19 +115,25 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * A <code>mapcall</code> agent replacement file indicating replaced methods that should not be
-   * included in generated tests. These methods are omitted along with those provided with <code>
-   * --omitmethods</code>, <code>--omitmethods_list</code>, and the default omissions.
+   * included in generated tests. This argument will generally only be useful if the <code>mapcall
+   * </code> agent is being used.
+   *
+   * <p>These methods are omitted along with those provided with <code>
+   * --omitmethods</code>, <code>--omitmethods-list</code>, and the default omissions.
    */
   @Option("File containing mapcall replacements for which methods should be omitted")
-  public static File omit_replaced_methods = null;
+  public static File replacement_file = null;
 
   /**
    * Include methods that are otherwise omitted by default. These excluded methods are those
    * replaced by the <code>mapcall</code> agent, and is only necessary if you want to include those
    * methods in the generated tests.
+   *
+   * <p>This flag will not override any <code>--omitmethods</code> or <code>--omitmethods-list
+   * </code> arguments.
    */
   @Option("Include methods that are omitted by default")
-  public static boolean include_default_omitmethods = false;
+  public static boolean include_default_replacements = false;
 
   /**
    * A fully-qualified field name of a field to be excluded from test generation. An accessible
