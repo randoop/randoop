@@ -439,8 +439,8 @@ task distributionZip (type: Zip , dependsOn: ['singleJar', 'copyJars', 'manual']
 
 /********************* Building manual *******************/
 /*
- * Goal is to create the contents of the manual directory within buildDir to be
- * moved to project docs directory.
+ * The "manual" gradle target create the contents of the manual directory
+ * within src/, which will eventually be moved to project docs directory.
  *
  * Has structure:
  *   docs/
