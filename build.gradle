@@ -160,7 +160,6 @@ dependencies {
    systemTestCompile group: 'org.jacoco', name: 'org.jacoco.core', version: '0.7.7.201606060606'
    systemTestCompile group: 'org.jacoco', name: 'org.jacoco.report', version: '0.7.7.201606060606'
    systemTestRuntime sourceSets.testInput.output
-   systemTestRuntime files(project(':mapcall').sourceSets.main.output)
 
   /*
    * sourceSet testInput depends on output of main.
