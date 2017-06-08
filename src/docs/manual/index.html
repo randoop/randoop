@@ -44,7 +44,7 @@ The Randoop homepage is
         <ul>
           <li><a href="#map-calls-format">Replacement file format</a></li>
           <li><a href="#creating-call-replacements">Creating replacement methods</a></li>
-          <li><a href="#determining-calls-to-map">Determining which calls to place in the map_calls file</a></li>
+          <li><a href="#determining-calls-to-map">Determining which calls to place in the replacements file</a></li>
         </ul></li>
       <li><a href="#checkrep">Specifying representation invariant methods (such as <code>checkRep</code>)</a></li>
       <li><a href="#exercised-filter">Instrumenting classes for filtering tests on exercised-classes</a></li>
@@ -345,6 +345,7 @@ Randoop only invokes a method or constructor <i>M</i> if <b>all</b> of the follo
   </li>
   <li> <i>M</i> does not match any of the patterns given
        via <a href="#option:omitmethods"><code>--omitmethods</code></a>.
+       or <a href="#option:omitmethods_list"><code>--omitmethods-list</code></a>.
        </li>
   <li> All of the following are accessible from the package of the tests
        (set with <a href="#option:junit-package-name"><code>--junit-package-name</code></a>):
@@ -613,7 +614,9 @@ appropriate action.
     table.<br />
     In this case, you need to re-run Randoop, informing it not to depend on
     observations that may vary from run to run.  You can use the
-    <a href="#option:omitmethods"><code>--omitmethods</code></a> command-line
+    <a href="#option:omitmethods"><code>--omitmethods</code></a> or
+    or <a href="#option:omitmethods_list"><code>--omitmethods-list</code></a>
+    command-line
     option, or you can replace its behavior with a different implementation
     (such as a deterministic one or a mock) using the <a href="#map_calls"><code>map_calls</code> feature of the Randoop agent</a>.
     You can also see the techniques suggested in the paper
@@ -757,16 +760,23 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>Note:
 
  <ul>
-   <li>The string returned by <code>java.lang.reflect.Method.toString()</code> includes the
-       access modifiers and return type, which means that anchors (<code>^</code> and <code>$</code>)
-       may not give the desired results.
+   <li>The regex is unanchored, so <code>^</code> or <code>$</code> may be needed to get the
+       correct results.
    <li>If a method is inherited without an override, the pattern must match the superclass
-       method. (A fix to this is on the Randoop issue list.)
+       method.
  </ul>
             <li id="option:omitmethods-list"><b>--omitmethods-list=</b><i>filename</i>.
              A file containing a list of regular expressions that indicate methods that should not be
  included in generated tests. These patterns are used along with those provided with <code>
  --omitmethods</code>, and the default omissions.
+            <li id="option:omit-replaced-methods"><b>--omit-replaced-methods=</b><i>filename</i>.
+             A <code>mapcall</code> agent replacement file indicating replaced methods that should not be
+ included in generated tests. These methods are omitted along with those provided with <code>
+ --omitmethods</code>, <code>--omitmethods_list</code>, and the default omissions.
+            <li id="option:include-default-omitmethods"><b>--include-default-omitmethods=</b><i>boolean</i>.
+             Include methods that are otherwise omitted by default. Unless you set this to true, every
+ method replaced by the <code>mapcall</code> agent is treated as if it had been supplied as an
+ argument to <code>--omitmethods</code>. [default false]
             <li id="option:omit-field"><b>--omit-field=</b><i>string</i> <code>[+]</code>.
              A fully-qualified field name of a field to be excluded from test generation. An accessible
  field is used unless it is omitted by this or the <code>--omit-field-list</code> option.
@@ -1121,41 +1131,30 @@ Randoop about your application, and that is how we recommend using Randoop.
 <h2 id="map_calls">Avoiding calls to specific methods</h2>
 
 <p>
-The code under test may make calls to methods that you do not want executed.
-These are methods whose behavior can be problematic during test generation or testing itself.
-One example is <code>System.exit</code> that when called during test generation by Randoop will terminate both the
-target program and Randoop.
-Other examples, include methods that require user interaction, such as those that open a modal dialog
+The code under test may make calls (directly or indirectly) to methods that you do not want executed.
+One example is <code>System.exit</code>.  If called during test generation, it will terminate Randoop itself.
+Another example is methods that require user interaction, such as those that open a modal dialog
 box.
 </p>
 
 <p>
-You can prevent Randoop from making direct calls to certain methods
-in the code under test by using the <code>--omitmethods=regexp</code>
-command-line option to indicate the methods that are not to be called.
-However, this option does not prevent Randoop from making indirect calls to
-a method, especially a method that is not a member of a class under test.
-If you want to avoid indirect calls, you can transform calls to certain methods
-by providing a different implementation that will be used when running Randoop.
-(You should still omit these methods if direct calls are a concern.)
+The Randoop <code>mapcall</code> agent transforms the code under test, replacing
+each call to an undesired method by a call to some other implementation.
+To use it:
 </p>
-
-<p>
-To transform calls to undesired methods so that they use an alternate
-implementation, pass the following command-line option to <code>java</code> when
-running Randoop:
-</p>
+<ul>
+  <li>When running Randoop, pass the following command-line option to <code>java</code>:
 <pre>
     -javaagent:$(RANDOOP_PATH)/mapcall-3.1.5.jar
 </pre>
-<p>
-You also need to include this argument when running the generated tests,
-<i>and</i> add the file <code>mapcall-3.1.5.jar</code> to the classpath.
-</p>
+  </li>
+  <li>When running the generated tests, add the file <code>mapcall-3.1.5.jar</code> to the classpath, and pass the following command-line option to <code>java</code>:
+<pre>
+    -javaagent:$(RANDOOP_PATH)/mapcall-3.1.5.jar
+</pre>
+</ul>
 
 <p>
-The Randoop <code>mapcall</code> agent transforms the code under test, replacing
-each call to a undesired method by a call to the new implementation.
 By default, the agent makes the following replacements:
 </p>
 <ul>
@@ -1178,6 +1177,19 @@ You can define your own replacements, and can even override
 these defaults, by providing your own implementations with the replacements
 specified in a text file.
 </p>
+
+<p>
+The <a href="#option:omitmethods"><code>--omitmethods</code></a> and
+<a href="#option:omitmethods_list"><code>--omitmethods-list</code></a>
+command-line options prevent Randoop from making direct calls to certain methods.
+in the code under test by using  to indicate the methods that are not to be called.
+However, this option does not prevent Randoop from making indirect calls to
+a method and has no effect on a method that is not a member of a class under test.
+(You should still omit these methods if direct calls are a concern.)
+</p>
+
+
+<h3 id="map-calls-format">Replacement file format</h3>
 
 <p>
 The replacement-file is simply a list of replacements each of which is a pair of
