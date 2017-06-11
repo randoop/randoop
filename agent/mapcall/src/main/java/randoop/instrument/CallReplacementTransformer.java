@@ -155,7 +155,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
    * Indicates whether the named class is in either the AWT ({@code java.awt}) or Swing ({@code
    * javax.swing}) packages.
    *
-   * @param classname the fully qualified class name, must be non-null
+   * @param classname the fully-qualified class name, must be non-null
    * @return true if the method is in either the AWT or Swing package, false otherwise
    */
   private boolean isAWTSwingClass(String classname) {
@@ -181,9 +181,9 @@ public class CallReplacementTransformer implements ClassFileTransformer {
 
   /**
    * Indicates whether the named class occurs in a package that is excluded. Tests whether one of
-   * the excluded package names is a prefix of the fully qualified class name.
+   * the excluded package names is a prefix of the fully-qualified class name.
    *
-   * @param fullClassName the fully qualified class name, must be non-null
+   * @param fullClassName the fully-qualified class name, must be non-null
    * @return true if any excluded package is a prefix of the class name, false otherwise
    */
   private boolean isExcludedClass(String fullClassName) {
@@ -494,7 +494,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   private static final String ID_STRING =
       "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
 
-  /** Pattern to recognize a prefix of a fully qualified method name: either package or class */
+  /** Pattern to recognize a prefix of a fully-qualified method name: either package or class */
   private static final Pattern PREFIX_PATTERN =
       Pattern.compile(ID_STRING + "(\\." + ID_STRING + ")*");
 
