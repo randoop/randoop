@@ -122,7 +122,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
     debug_transform.log(
         "transforming class %s, loader %s - %s%n", className, loader, loader.getParent());
 
-    // Parse the bytes of the classfile, die on any errors
+    // Parse the bytes of the classfile
     JavaClass c;
     try {
       ClassParser parser = new ClassParser(new ByteArrayInputStream(classfileBuffer), className);
