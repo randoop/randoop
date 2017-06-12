@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 import org.apache.bcel.Const;
 import org.apache.bcel.classfile.Attribute;
 import org.apache.bcel.classfile.ClassParser;
-import org.apache.bcel.classfile.Code;
 import org.apache.bcel.classfile.Constant;
 import org.apache.bcel.classfile.ConstantUtf8;
 import org.apache.bcel.classfile.JavaClass;
@@ -159,7 +158,8 @@ public class CallReplacementTransformer implements ClassFileTransformer {
     } catch (Throwable e) {
       debug_transform.log(
           "transform: EXIT transform of %s resulted in exception %s%n", className, e);
-      System.out.format("Unexpected exception %s (%s) in class transform%n", e, e.getCause());
+      System.out.format(
+          "Unexpected exception %s (%s) in class transform of %s%n", e, e.getCause(), className);
       e.printStackTrace();
       return null;
     }
@@ -217,7 +217,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   private boolean transformClass(ClassGen cg) {
     boolean transformed = false;
     pgen = cg.getConstantPool();
-
+    debug_transform.log("transformClass: ENTER %s", cg.getClassName());
     // Loop through each method in the class
     for (Method method : cg.getMethods()) {
       MethodGen mg = new MethodGen(method, cg.getClassName(), pgen);
@@ -228,46 +228,40 @@ public class CallReplacementTransformer implements ClassFileTransformer {
         continue;
       }
 
-      Code code = mg.getMethod().getCode();
+      debug_instrument_inst.log(
+          "%n%s.%s original code: %s%n", mg.getClassName(), mg.getName(), mg.getMethod().getCode());
 
-      if (transformMethod(mg, new InstructionFactory(cg))) {
+      transformed = transformMethod(mg, new InstructionFactory(cg));
 
-        debug_instrument_inst.log(
-            "%n%s.%s original code: %s%n", mg.getClassName(), mg.getName(), code);
-
-        // Remove the Local variable type table attribute (if any).
-        // Evidently, some changes we make require this to be updated, but
-        // without BCEL support, that would be hard to do. Just delete it
-        // for now (since it is optional, and we are unlikely to be used by
-        // a debugger)
-        for (Attribute a : mg.getCodeAttributes()) {
-          if (isLocalVariableTypeTable(a)) {
-            mg.removeCodeAttribute(a);
-          }
+      // Remove the Local variable type table attribute (if any).
+      // Evidently, some changes we make require this to be updated, but
+      // without BCEL support, that would be hard to do. Just delete it
+      // for now (since it is optional, and we are unlikely to be used by
+      // a debugger)
+      for (Attribute a : mg.getCodeAttributes()) {
+        if (isLocalVariableTypeTable(a)) {
+          mg.removeCodeAttribute(a);
         }
-        transformed = true;
-
-        // Update the instruction list
-        mg.setInstructionList(instructionList);
-        mg.update();
-
-        // Update the max stack and Max Locals
-        mg.setMaxLocals();
-        mg.setMaxStack();
-        mg.update();
-
-        // Update the method in the class
-        cg.replaceMethod(method, mg.getMethod());
-        debug_instrument_inst.log(
-            "%s.%s modified code: %s%n%n",
-            mg.getClassName(), mg.getName(), mg.getMethod().getCode());
       }
-    }
 
-    if (transformed) {
-      cg.update();
-    }
+      // Update the instruction list
+      mg.setInstructionList(instructionList);
+      mg.update();
 
+      // Update the max stack and Max Locals
+      mg.setMaxLocals();
+      mg.setMaxStack();
+      mg.update();
+
+      // Update the method in the class
+      cg.replaceMethod(method, mg.getMethod());
+
+      debug_instrument_inst.log(
+          "%s.%s modified code: %s%n%n", mg.getClassName(), mg.getName(), mg.getMethod().getCode());
+    }
+    cg.update();
+
+    debug_transform.log("transformClass: EXIT %s", cg.getClassName());
     return transformed;
   }
 
@@ -280,6 +274,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   private boolean transformMethod(MethodGen mg, InstructionFactory ifact) {
     boolean modified = false;
     // Loop through each instruction, making substitutions
+    debug_transform.log("transformMethod: ENTER %s.%s%n", mg.getClassName(), mg.getName());
     InstructionList instructionList = mg.getInstructionList();
     for (InstructionHandle instructionHandle = instructionList.getStart();
         instructionHandle != null;
@@ -289,30 +284,29 @@ public class CallReplacementTransformer implements ClassFileTransformer {
       InstructionHandle nextHandle = instructionHandle.getNext();
 
       final Instruction instruction = instructionHandle.getInstruction();
-      if (instruction instanceof InvokeInstruction) {
-        if (debug_instrument_inst.enabled()) {
-          debug_instrument_inst.log(
-              "%s.%s: instrumenting instruction %s%n",
-              mg.getClassName(), mg.getName(), instructionHandle);
-        }
+      if (debug_instrument_inst.enabled()) {
+        debug_instrument_inst.log(
+            "%s.%s: instrumenting instruction %s%n",
+            mg.getClassName(), mg.getName(), instructionHandle);
+      }
 
-        InstructionList new_il = transformInstruction(mg, instruction, ifact);
-        if (debug_instrument_inst.enabled()) {
-          debug_instrument_inst.log("  new inst: %s%n", new_il);
-        }
+      InstructionList new_il = transformInstruction(mg, instruction, ifact);
+      if (debug_instrument_inst.enabled()) {
+        debug_instrument_inst.log("  new inst: %s%n", new_il);
+      }
 
-        if (new_il != null) {
-          modified = true;
-          // If this instruction was modified, replace it with the new
-          // instruction list. If this instruction was the target of any
-          // jumps or line numbers, replace them with the first
-          // instruction in the new list.
-          replaceInstructions(instructionList, instructionHandle, new_il);
-        }
+      if (new_il != null) {
+        modified = true;
+        // If this instruction was modified, replace it with the new
+        // instruction list. If this instruction was the target of any
+        // jumps or line numbers, replace them with the first
+        // instruction in the new list.
+        replaceInstructions(instructionList, instructionHandle, new_il);
       }
 
       instructionHandle = nextHandle;
     }
+    debug_transform.log("transformMethod: EXIT %s.%s%n", mg.getClassName(), mg.getName());
     return modified;
   }
 
@@ -327,8 +321,9 @@ public class CallReplacementTransformer implements ClassFileTransformer {
    */
   private InstructionList transformInstruction(
       MethodGen mg, Instruction inst, InstructionFactory ifact) {
-
+    debug_transform.log("transformInstruction: ENTER %s.%s%n", mg.getClassName(), mg.getName());
     if (!(inst instanceof InvokeInstruction)) {
+      debug_transform.log("transformInstruction: EXIT %s.%s%n", mg.getClassName(), mg.getName());
       return null;
     }
 
@@ -337,12 +332,16 @@ public class CallReplacementTransformer implements ClassFileTransformer {
     try {
       orig = MethodDef.of(invocation);
     } catch (Throwable e) {
+      debug_transform.log(
+          "transformInstruction: EXIT exception getting orig for %s.%s: %s%n",
+          mg.getClassName(), mg.getName(), e);
       return null;
     }
     MethodDef call = getReplacement(orig);
     if (call == null) {
       debug_transform.log(
           "%s.%s: No replacement for %s%n", mg.getClassName(), mg.getName(), orig.toString());
+      debug_transform.log("transformInstruction: EXIT %s.%s%n", mg.getClassName(), mg.getName());
       return null;
     }
 
@@ -382,8 +381,12 @@ public class CallReplacementTransformer implements ClassFileTransformer {
         break;
 
       default:
+        debug_transform.log(
+            "transformInstruction: EXIT wrong instruction %s.%s%n",
+            mg.getClassName(), mg.getName());
         return null;
     }
+    debug_transform.log("transformInstruction: EXIT %s.%s%n", mg.getClassName(), mg.getName());
     return instructionList;
   }
 
@@ -494,7 +497,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   private boolean isLocalVariableTypeTable(Attribute methodAttribute) {
     int con_index = methodAttribute.getNameIndex();
     Constant c = pgen.getConstant(con_index);
-    return (((ConstantUtf8) c).getBytes().equals("LocalVariableTypeTable"));
+    return c != null && ((ConstantUtf8) c).getBytes().equals("LocalVariableTypeTable");
   }
 
   /**
@@ -691,10 +694,6 @@ public class CallReplacementTransformer implements ClassFileTransformer {
 
     String getName() {
       return name;
-    }
-
-    String getQualifiedName() {
-      return classname + "." + name;
     }
 
     Type[] getArgTypes() {
