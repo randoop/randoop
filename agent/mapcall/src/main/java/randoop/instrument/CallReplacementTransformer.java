@@ -38,9 +38,9 @@ import plume.SimpleLog;
 import plume.UtilMDE;
 
 /**
- * The {@code CallReplacementTransformer} replaces calls in loaded classes to methods with calls to
- * other methods as specified by files loaded with {@link #readMapFile(File)} or {@link
- * #readMapFile(Reader)}.
+ * The {@code CallReplacementTransformer} replaces each call to method m1 by a call to method m2, as
+ * specified by files loaded with {@link #readMapFile(File)} or {@link #readMapFile(Reader)}. It is
+ * used by the MapCallsAgent.
  *
  * <p>Replacements may be given as original-replacement pairs of methods, classes, or packages. For
  * a replacement pair consisting of methods, the original method is replaced by the replacement
@@ -64,11 +64,11 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   private static SimpleLog debug_map =
       new SimpleLog(MapCallsAgent.debugPath + "/method_mapping.txt", MapCallsAgent.debug);
 
-  /** The map of method replacements. See {@link #getReplacementMethod(MethodDef)}. */
+  /** Map from a method to its replacement. See {@link #getReplacementMethod(MethodDef)}. */
   private final Map<MethodDef, MethodDef> replacementMap;
 
   /**
-   * The map of class or package name replacements. See {@link #getReplacementMethod(MethodDef)}.
+   * Map from a class or package name to its replacement. See {@link #getReplacementMethod(MethodDef)}.
    */
   private final Map<String, String> classOrPackageReplacementsMap;
 
@@ -135,7 +135,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
       debug_transform.log("transforming class %s, null - null%n", className);
     }
 
-    // Parse the bytes of the classfile, die on any errors
+    // Parse the bytes of the classfile
     JavaClass c;
     try {
       ClassParser parser = new ClassParser(new ByteArrayInputStream(classfileBuffer), className);
@@ -184,9 +184,9 @@ public class CallReplacementTransformer implements ClassFileTransformer {
 
   /**
    * Indicates whether the named class occurs in a package that is excluded. Tests whether one of
-   * the excluded package names is a prefix of the fully qualified class name.
+   * the excluded package names is a prefix of the fully-qualified class name.
    *
-   * @param fullClassName the fully qualified class name, must be non-null
+   * @param fullClassName the fully-qualified class name, must be non-null
    * @return true if any excluded package is a prefix of the class name, false otherwise
    */
   private boolean isExcludedClass(String fullClassName) {
@@ -369,7 +369,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
 
   /**
    * Returns the replacement method for the given method if one is determined by a method, class or
-   * package replacement.
+   * package replacement, or null otherwise.
    *
    * <p>Class or package replacements are represented as strings in the {@link
    * #classOrPackageReplacementsMap}. If the argument {@link MethodDef} does not already have a
@@ -501,11 +501,14 @@ public class CallReplacementTransformer implements ClassFileTransformer {
     readMapFile(new FileReader(map_file));
   }
 
-  /** Regex string for java identifiers */
+  /** Regex string for Java identifiers */
   private static final String ID_STRING =
       "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
 
-  /** Pattern to recognize a prefix of a fully qualified method name: either package or class */
+  /**
+   * Pattern to match a prefix of a fully qualified method name: either package or class. Does not
+   * match the trailing "." that separates a package from a class.
+   */
   private static final Pattern PREFIX_PATTERN =
       Pattern.compile(ID_STRING + "(\\." + ID_STRING + ")*");
 
@@ -566,6 +569,10 @@ public class CallReplacementTransformer implements ClassFileTransformer {
     logReplacementMap();
   }
 
+  /**
+   * @param fullMethodName fully-qualified name of method
+   * @param args fully-qualified names of argument types
+   */
   private MethodDef getMethod(String fullMethodName, String[] args) {
     String methodName = fullMethodName;
     String classname = "";
@@ -646,21 +653,9 @@ public class CallReplacementTransformer implements ClassFileTransformer {
         return false;
       }
       MethodDef md = (MethodDef) obj;
-      if (!this.classname.equals(md.classname)) {
-        return false;
-      }
-      if (!this.name.equals(md.name)) {
-        return false;
-      }
-      if (this.argTypes.length != md.argTypes.length) {
-        return false;
-      }
-      for (int i = 0; i < md.argTypes.length; i++) {
-        if (!this.argTypes[i].equals(md.argTypes[i])) {
-          return false;
-        }
-      }
-      return true;
+      return this.classname.equals(md.classname)
+          && this.name.equals(md.name)
+          && Arrays.equals(this.argTypes, md.argTypes);
     }
 
     @Override
