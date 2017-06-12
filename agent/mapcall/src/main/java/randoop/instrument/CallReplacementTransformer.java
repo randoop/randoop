@@ -280,29 +280,25 @@ public class CallReplacementTransformer implements ClassFileTransformer {
         instructionHandle != null;
         ) {
 
+      debug_instrument_inst.log(
+          "%s.%s: instrumenting instruction %s%n",
+          mg.getClassName(), mg.getName(), instructionHandle);
+
       // The next instruction for next iteration
       InstructionHandle nextHandle = instructionHandle.getNext();
 
-      final Instruction instruction = instructionHandle.getInstruction();
-      if (debug_instrument_inst.enabled()) {
-        debug_instrument_inst.log(
-            "%s.%s: instrumenting instruction %s%n",
-            mg.getClassName(), mg.getName(), instructionHandle);
-      }
-
-      InstructionList new_il = transformInstruction(mg, instruction, ifact);
-      if (debug_instrument_inst.enabled()) {
-        debug_instrument_inst.log("  new inst: %s%n", new_il);
-      }
+      InstructionList new_il = transformInstruction(mg, instructionHandle.getInstruction(), ifact);
+      debug_instrument_inst.log("  new inst: %s%n", new_il);
 
       if (new_il != null) {
         modified = true;
-        // If this instruction was modified, replace it with the new
-        // instruction list. If this instruction was the target of any
-        // jumps or line numbers, replace them with the first
-        // instruction in the new list.
-        replaceInstructions(instructionList, instructionHandle, new_il);
       }
+
+      // If this instruction was modified, replace it with the new
+      // instruction list. If this instruction was the target of any
+      // jumps or line numbers, replace them with the first
+      // instruction in the new list.
+      replaceInstructions(instructionList, instructionHandle, new_il);
 
       instructionHandle = nextHandle;
     }
