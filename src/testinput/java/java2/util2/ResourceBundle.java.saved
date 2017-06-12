@@ -499,7 +499,7 @@ abstract public class ResourceBundle {
      * See {@link #getBundle(java.lang.String, java2.util2.Locale, java.lang.ClassLoader) getBundle}
      * for a complete description of the search and instantiation strategy.
      *
-     * @param baseName the base name of the resource bundle, a fully qualified class name
+     * @param baseName the base name of the resource bundle, a fully-qualified class name
      * @exception java.lang.NullPointerException
      *     if <code>baseName</code> is <code>null</code>
      * @exception MissingResourceException
@@ -524,7 +524,7 @@ abstract public class ResourceBundle {
      * See {@link #getBundle(java.lang.String, java2.util2.Locale, java.lang.ClassLoader) getBundle}
      * for a complete description of the search and instantiation strategy.
      *
-     * @param baseName the base name of the resource bundle, a fully qualified class name
+     * @param baseName the base name of the resource bundle, a fully-qualified class name
      * @param locale the locale for which a resource bundle is desired
      * @exception java.lang.NullPointerException
      *     if <code>baseName</code> or <code>locale</code> is <code>null</code>
@@ -615,10 +615,10 @@ abstract public class ResourceBundle {
      * the description above.
      *
      * <p>
-     * The <code>baseName</code> argument should be a fully qualified class name. However, for
+     * The <code>baseName</code> argument should be a fully-qualified class name. However, for
      * compatibility with earlier versions, Sun's Java 2 runtime environments do not verify this,
      * and so it is possible to access <code>PropertyResourceBundle</code>s by specifying a
-     * path name (using "/") instead of a fully qualified class name (using ".").
+     * path name (using "/") instead of a fully-qualified class name (using ".").
      *
      * <p>
      * <strong>Example:</strong> The following class and property files are provided:
@@ -642,7 +642,7 @@ abstract public class ResourceBundle {
      *
      * <p>
      *
-     * @param baseName the base name of the resource bundle, a fully qualified class name
+     * @param baseName the base name of the resource bundle, a fully-qualified class name
      * @param locale the locale for which a resource bundle is desired
      * @param loader the class loader from which to load the resource bundle
      * @exception java.lang.NullPointerException

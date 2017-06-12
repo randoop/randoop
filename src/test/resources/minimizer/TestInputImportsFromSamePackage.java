@@ -6,7 +6,7 @@ import org.junit.runners.MethodSorters;
 public class TestInputImportsFromSamePackage {
 
   /* This test input uses ClassA belonging to package dir_a and ClassB belonging
-  to package dir_a. The minimizer should simplify the fully qualified type name
+  to package dir_a. The minimizer should simplify the fully-qualified type name
   for instances of either types.
    */
 
