@@ -40,7 +40,11 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
     if (exception.getClass().isAnonymousClass()) {
       message = "Expected anonymous exception";
     } else {
-      message = "Expected exception of type " + getExceptionName();
+      message =
+          "Expected exception of type "
+              + getExceptionName()
+              + "; message: "
+              + exception.getMessage();
     }
     String assertion = "org.junit.Assert.fail(\"" + message + "\")";
     b.append("  ").append(assertion).append(";").append(Globals.lineSep);
