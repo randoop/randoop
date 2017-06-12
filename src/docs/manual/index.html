@@ -42,6 +42,7 @@ The Randoop homepage is
       <li><a href="#command-line-options">Command-line options</a></li>
       <li><a href="#map_calls">Avoiding calls to specific methods</a>
         <ul>
+          <li><a href="#map-calls-format">Replacement file format</a></li>
           <li><a href="#creating-call-replacements">Creating replacement methods</a></li>
           <li><a href="#determining-calls-to-map">Determining which calls to place in the replacements file</a></li>
         </ul></li>
@@ -770,17 +771,15 @@ Randoop about your application, and that is how we recommend using Randoop.
  --omitmethods</code>, and the default omissions.
             <li id="option:replacement-file"><b>--replacement-file=</b><i>filename</i>.
              A <code>mapcall</code> agent replacement file indicating replaced methods that should not be
- included in generated tests. This argument will generally only be useful if the
- <code>mapcall</code> agent is being used.
+ included in generated tests. This argument will generally only be useful if the <code>mapcall
+ </code> agent is being used.
 
  <p>These methods are omitted along with those provided with <code>
  --omitmethods</code>, <code>--omitmethods-list</code>, and the default omissions.
             <li id="option:include-default-replacements"><b>--include-default-replacements=</b><i>boolean</i>.
-             Include methods that are otherwise omitted by default. These excluded methods are those
- replaced by the <code>mapcall</code> agent, and is only necessary if you want to include those
- methods in the generated tests.
-
- <p>This flag will not override any <code>--omitmethods</code> or <code>--omitmethods-list</code> arguments. [default false]
+             Include methods that are otherwise omitted by default. Unless you set this to true, every
+ method replaced by the <code>mapcall</code> agent is treated as if it had been supplied as an
+ argument to <code>--omitmethods</code>. [default false]
             <li id="option:omit-field"><b>--omit-field=</b><i>string</i> <code>[+]</code>.
              A fully-qualified field name of a field to be excluded from test generation. An accessible
  field is used unless it is omitted by this or the <code>--omit-field-list</code> option.
