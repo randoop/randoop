@@ -63,6 +63,10 @@ class RandoopRunStatus {
     List<String> command = new ArrayList<>();
     command.add("java");
     command.add("-ea");
+    if (testEnvironment.getBootClassPath() != null
+        && !testEnvironment.getBootClassPath().isEmpty()) {
+      command.add("-Xbootclasspath/a:" + testEnvironment.getBootClassPath());
+    }
     command.add("-classpath");
     command.add(testEnvironment.getSystemTestClasspath());
     if (testEnvironment.getJavaAgentPath() != null) {
@@ -76,6 +80,7 @@ class RandoopRunStatus {
     command.add("randoop.main.Main");
     command.add("gentests");
     command.addAll(options.getOptions());
+    System.out.format("Randoop command:%n%s%n", command);
     ProcessStatus randoopExitStatus = ProcessStatus.runCommand(command);
 
     if (randoopExitStatus.exitStatus != 0) {

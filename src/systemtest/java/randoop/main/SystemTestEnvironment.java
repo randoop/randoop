@@ -25,10 +25,10 @@ class SystemTestEnvironment {
   private final Path systemTestWorkingDir;
 
   /** The path for the JaCoCo javaagent */
-  final Path jacocoAgentPath;
+  private final Path jacocoAgentPath;
 
   /** The path for the root directory for test input classes. */
-  final Path testInputClassDir;
+  private final Path testInputClassDir;
 
   final Path mapcallAgentPath;
 
@@ -107,6 +107,24 @@ class SystemTestEnvironment {
    * @return the {@link TestEnvironment} with the directory as the working directory
    */
   TestEnvironment createTestEnvironment(String dirname) {
+    return createTestEnvironment(dirname, this.classpath, null);
+  }
+
+  /**
+   * Creates the {@link TestEnvironment} for a test using the given directory name and classpath.
+   * Creates a subdirectory in the {@link #systemTestWorkingDir} that contains the subdirectories
+   * for source, class and JaCoCo files using the directory names {@link #SOURCE_DIR_NAME}, {@link
+   * #CLASS_DIR_NAME}, and {@link #JACOCO_DIR_NAME}.
+   *
+   * <p>Will fail calling test if an {@code IOException} is thrown
+   *
+   * @param dirname the name of the working directory to create
+   * @param classpath the classpath to use for the test
+   * @param bootclasspath the bootclasspath to use for the test, null if none
+   * @return the {@link TestEnvironment} with the directory as the working directory and using the
+   *     given classpath
+   */
+  TestEnvironment createTestEnvironment(String dirname, String classpath, String bootclasspath) {
     Path testDir = null;
     Path sourceDir = null;
     Path classDir = null;
@@ -119,7 +137,15 @@ class SystemTestEnvironment {
     } catch (IOException e) {
       fail("failed to create working directory for test: " + e);
     }
-    return new TestEnvironment(this, testDir, sourceDir, classDir, jacocoDir);
+    return new TestEnvironment(
+        bootclasspath,
+        classpath,
+        this.jacocoAgentPath,
+        this.testInputClassDir,
+        testDir,
+        sourceDir,
+        classDir,
+        jacocoDir);
   }
 
   /**
