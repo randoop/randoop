@@ -7,6 +7,7 @@ com.sun.proxy.$Proxy
 
 // Don't transform Randoop files .
 randoop
+mapcall
 
 // The following are library classes used by Randoop.
 // Remove once the Randoop jar is built with package relocation.
