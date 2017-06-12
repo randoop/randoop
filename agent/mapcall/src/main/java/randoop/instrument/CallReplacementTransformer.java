@@ -494,7 +494,10 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   private static final String ID_STRING =
       "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
 
-  /** Pattern to recognize a prefix of a fully qualified method name: either package or class */
+  /**
+   * Pattern to recognize a prefix of a fully qualified method name: either package or class. Does
+   * not match the trailing "." that separates a package from a class.
+   */
   private static final Pattern PREFIX_PATTERN =
       Pattern.compile(ID_STRING + "(\\." + ID_STRING + ")*");
 
