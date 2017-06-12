@@ -316,8 +316,9 @@ check.dependsOn exercisedTest
 task mapcallTest(type: Test, dependsOn: 'copyJars') {
   workingDir = sourceSets.mapcallTest.output.resourcesDir
   testClassesDir = sourceSets.mapcallTest.output.classesDir
-  classpath = sourceSets.mapcallTest.runtimeClasspath
-  jvmArgs "-javaagent:$buildDir/libs/mapcall-${version}.jar=--dont-transform=load-exclusions.txt"
+  classpath = sourceSets.mapcallTest.runtimeClasspath + files("$buildDir/libs/mapcall-${version}.jar")
+  jvmArgs "-javaagent:$buildDir/libs/mapcall-${version}.jar=--dont-transform=load-exclusions.txt,--debug"
+  jvmArgs "-Xbootclasspath/a:$buildDir/libs/mapcall-${version}.jar"
   testLogging {
     showStandardStreams = true
     exceptionFormat = 'full'
@@ -375,7 +376,7 @@ task extractJacocoAgent(type: Copy) {
  * Runs JUnit over all classes in systemTest sourceSet.
  * JUnit tests assume that working directories can be found in the build directory.
  */
-task systemTest(type: Test, dependsOn: [ 'extractJacocoAgent', 'generateWorkingDirs', 'copyJars' ]) {
+task systemTest(type: Test, dependsOn: [ 'extractJacocoAgent', 'generateWorkingDirs', 'copyJars', 'copyReplacementFile' ]) {
 
   workingDir = file("$buildDir")
   testClassesDir = sourceSets.systemTest.output.classesDir
