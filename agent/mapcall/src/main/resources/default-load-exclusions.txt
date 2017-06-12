@@ -2,19 +2,19 @@
 
 // Don't transform Java classes that are not loaded by the boot loader, but
 // for which the transformation leads to failures.
-sun.reflect
-com.sun.proxy.$Proxy
+sun.reflect.
+com.sun.proxy.$Proxy.
 
 // Don't transform Randoop files .
-randoop
-mapcall
+randoop.
+mapcall.
 
 // The following are library classes used by Randoop.
 // Remove once the Randoop jar is built with package relocation.
-plume
-com.github.javaparser
-org.checkerframework
-com.sun.tools.javac
-com.sun.source.util
-com.sun.source.tree
-com.sun.tools.doclint
+plume.
+com.github.javaparser.
+org.checkerframework.
+com.sun.tools.javac.
+com.sun.source.util.
+com.sun.source.tree.
+com.sun.tools.doclint.

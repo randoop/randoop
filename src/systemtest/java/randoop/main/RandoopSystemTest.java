@@ -898,15 +898,39 @@ public class RandoopSystemTest {
    * href="http://docs.oracle.com/javase/tutorial/uiswing/examples/components/index.html">Swing
    * Tutorial Examples</a>.
    *
-   * <p>Note: setting <code>timeout</code> for this test made the generated test flaky.
+   * <p>Notes:
+   *
+   * <ul>
+   *   <li>setting <code>timeout=5</code> for this test results in multiple <code>ThreadDeath</code>
+   *       exceptions during Randoop generation. The test still completes.
+   *   <li>even though the default replacements attempt to suppress calls to methods that throw
+   *       <code>HeadlessException</code>, they still happen. So, this test may fail in a headless
+   *       environment. On Travis, this is resolved by running <code>xvfb</code>.
+   * </ul>
    */
   @Test
   public void runDirectSwingTest() {
+    String classpath =
+        systemTestEnvironment.classpath + ":" + systemTestEnvironment.mapcallAgentPath;
+    String bootclasspath = "-Xbootclasspath/a:" + systemTestEnvironment.mapcallAgentPath;
     TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("swing-direct-test");
+        systemTestEnvironment.createTestEnvironment("swing-direct-test", classpath, bootclasspath);
+
+    String genDebugDir = testEnvironment.workingDir.resolve("mapcall-generation").toString();
+    String testDebugDir = testEnvironment.workingDir.resolve("mapcall-testing").toString();
     testEnvironment.addJavaAgent(
         systemTestEnvironment.mapcallAgentPath,
-        "--dont-transform=resources/systemTest/load-exclusions.txt");
+        "--dont-transform=resources/systemTest/load-exclusions.txt,--debug,--debug-directory="
+            + genDebugDir,
+        "--dont-transform=resources/systemTest/load-exclusions.txt,--debug,--debug-directory="
+            + testDebugDir);
+
+    /*
+        testEnvironment.addJavaAgent(
+            systemTestEnvironment.mapcallAgentPath,
+            "--dont-transform=resources/systemTest/load-exclusions.txt");
+
+    */
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName("components");
     options.addTestClass("components.ArrowIcon");
@@ -936,11 +960,14 @@ public class RandoopSystemTest {
     options.addTestClass("components.Unit");
     options.addTestClass("components.Utils");
 
+    //using for debugging
+    //options.setFlag("include-default-replacements");
+
     // Some AWT/Swing methods are state-dependant and lead to flaky tests
     // Avoid all direct calls to these methods, since not enough information given by test failures
     // on Travis CI to figure out what methods are causing a failure.
-    options.setOption("omitmethods", "javax\\.swing\\.");
-    options.setOption("omitmethods", "java\\.awt\\.");
+    // options.setOption("omitmethods", "javax\\.swing\\.");
+    //options.setOption("omitmethods", "java\\.awt\\.");
 
     // These resolve flaky tests when running on mac, but commented out because covered by above.
     // Keeping just in case figure out how to identify failing methods on travis.
@@ -949,14 +976,13 @@ public class RandoopSystemTest {
     //options.setOption("omitmethods", "javax\\.swing\\.JComponent\\.getY\\(\\)");
 
     // These methods lead to flaky tests
-    options.setOption("omitmethods", "components\\.ConverterRangeModel\\.getValue\\(\\)");
+    //options.setOption("omitmethods", "components\\.ConverterRangeModel\\.getValue\\(\\)");
 
-    options.setOption("omit-field", "components.MyInternalFrame.openFrameCount");
-    options.setOption("omit-field", "components.ConverterRangeModel.value");
-    options.setOption("omit-field", "components.ConverterRangeModel.multiplier");
+    options.setOption("omit-field-list", "resources/systemTest/components/omitfields.txt");
     //
     options.setOption("outputlimit", "400");
     options.setOption("timelimit", "200");
+    //options.setOption("timeout", "5");
     options.setFlag("ignore-flaky-tests");
 
     CoverageChecker checker = new CoverageChecker(options);

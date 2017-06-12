@@ -28,10 +28,8 @@ import plume.Options;
  * {@code "default-replacements.txt"}. User replacements are then loaded using the {@link #map_calls
  * --map-calls} command-line argument. A user replacement may override a default replacement.
  *
- * <p>The classes of certain packages are excluded from transformation. These exclusions include
- * boot loaded classes (see {@link CallReplacementTransformer#isBootClass(ClassLoader)}) that are
- * not in AWT or Swing (see {@link CallReplacementTransformer#isAWTSwingClass(String)}), and classes
- * in packages listed in the resource file {@code "default-load-exclusions.txt"}.
+ * <p>The classes of packages listed in the resource file {@code "default-load-exclusions.txt"} are
+ * excluded from transformation.
  */
 public class MapCallsAgent {
 
@@ -151,7 +149,8 @@ public class MapCallsAgent {
   }
 
   /**
-   * Load package names from the given file and add them to the set of excluded package names.
+   * Load package names from the given file and add them to the set of excluded package names. Adds
+   * a period to the end of any name that does not have one.
    *
    * @param exclusionReader the reader for the text file containing the list of excluded packages,
    *     must not be null
@@ -165,6 +164,9 @@ public class MapCallsAgent {
       for (String line : reader) {
         String trimmed = line.trim();
         if (!trimmed.isEmpty()) {
+          if (trimmed.charAt(trimmed.length() - 1) != '.') {
+            trimmed = trimmed + ".";
+          }
           excludedPackages.add(trimmed);
         }
       }
