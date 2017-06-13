@@ -358,7 +358,7 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     if (!sequences.success) {
-      if (Log.isLoggingOn()) Log.logLine("Failed to find inputs for statement.");
+      if (Log.isLoggingOn()) Log.logLine("Failed to find inputs for operation: " + operation);
       return null;
     }
 
@@ -425,9 +425,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     // Keep track of any input sequences that are used in this sequence.
     // Tests that contain only these sequences are probably redundant.
-    for (Sequence is : sequences.sequences) {
-      subsumed_sequences.add(is);
-    }
+    subsumed_sequences.addAll(sequences.sequences);
 
     return new ExecutableSequence(newSequence);
   }
