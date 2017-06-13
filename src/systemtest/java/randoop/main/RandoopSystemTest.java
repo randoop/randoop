@@ -925,12 +925,6 @@ public class RandoopSystemTest {
         "--dont-transform=resources/systemTest/load-exclusions.txt,--debug,--debug-directory="
             + testDebugDir);
 
-    /*
-        testEnvironment.addJavaAgent(
-            systemTestEnvironment.mapcallAgentPath,
-            "--dont-transform=resources/systemTest/load-exclusions.txt");
-
-    */
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName("components");
     options.addTestClass("components.ArrowIcon");

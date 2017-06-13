@@ -68,7 +68,8 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   private final Map<MethodDef, MethodDef> replacementMap;
 
   /**
-   * Map from a class or package name to its replacement. See {@link #getReplacementMethod(MethodDef)}.
+   * Map from a class or package name to its replacement. See {@link
+   * #getReplacementMethod(MethodDef)}.
    */
   private final Map<String, String> classOrPackageReplacementsMap;
 
