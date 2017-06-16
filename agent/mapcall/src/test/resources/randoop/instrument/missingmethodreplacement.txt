@@ -1,0 +1,2 @@
+//bad replacement file
+alpha.beta.Component.delta() randoop.mock.Component.delta()
