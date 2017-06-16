@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import plume.EntryReader;
 import plume.Option;
 import plume.Options;
@@ -117,16 +118,16 @@ public class MapCallsAgent {
       }
     }
 
-    CallReplacementTransformer transformer = new CallReplacementTransformer(excludedPackages);
+    ConcurrentHashMap<MethodDef, MethodDef> replacementMap = new ConcurrentHashMap<>();
 
     // Read the default replacement file
-    inputStream = transformer.getClass().getResourceAsStream("/default-replacements.txt");
+    inputStream = MapCallsAgent.class.getResourceAsStream("/default-replacements.txt");
     if (inputStream == null) {
       System.err.println("Unable to open default replacements file. Please report.");
       System.exit(1);
     }
     try {
-      transformer.readMapFile(new InputStreamReader(inputStream));
+      replacementMap.putAll(ReplacementFileReader.readFile(new InputStreamReader(inputStream)));
     } catch (Throwable e) {
       System.err.printf("Error reading default replacement file:%n  %s%n", e);
       System.err.println("Please report.");
@@ -136,13 +137,15 @@ public class MapCallsAgent {
     // If the user provided a replacement file, load user replacements
     if (map_calls != null) {
       try {
-        transformer.readMapFile(map_calls);
+        replacementMap.putAll(ReplacementFileReader.readFile(map_calls));
       } catch (Throwable e) {
         System.err.printf("Error reading replacement file %s:%n  %s%n", map_calls, e.getMessage());
         System.exit(1);
       }
     }
 
+    CallReplacementTransformer transformer =
+        new CallReplacementTransformer(excludedPackages, replacementMap);
     transformer.addMapFileShutdownHook();
 
     inst.addTransformer(transformer);
