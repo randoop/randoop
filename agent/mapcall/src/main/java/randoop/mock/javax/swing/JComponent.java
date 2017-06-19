@@ -1,10 +1,10 @@
-package randoop.mock;
+package randoop.mock.javax.swing;
 
 /**
  * Class of mock methods for {@code javax.swing.JComponent}.
  *
  * <p>Default replacement for {@link randoop.instrument.MapCallsAgent}. Replacement should be
- * specified in {@code "resources/replacements.txt"}
+ * specified in {@code "resources/default-replacements.txt"}
  */
 public class JComponent {
   public static void setVisible(javax.swing.JComponent component, boolean visible) {

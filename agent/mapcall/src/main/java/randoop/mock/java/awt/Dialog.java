@@ -1,10 +1,10 @@
-package randoop.mock;
+package randoop.mock.java.awt;
 
 /**
  * Class of mock methods for {@code java.awt.Dialog}.
  *
  * <p>Default replacement for {@link randoop.instrument.MapCallsAgent}. Replacement should be
- * specified in {@code "resources/replacements.txt"}
+ * specified in {@code "resources/default-replacements.txt"}
  */
 public class Dialog {
 

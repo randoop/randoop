@@ -1,6 +1,11 @@
-package randoop.mock;
+package randoop.mock.javax.swing;
 
-/** Created by bjkeller on 5/26/17. */
+/**
+ * Class of mock methods for {@code javax.swing.JOptionPane}.
+ *
+ * <p>Default replacement for {@link randoop.instrument.MapCallsAgent}. Replacement should be
+ * specified in {@code "resources/default-replacements.txt"}
+ */
 public class JOptionPane {
   public static int showConfirmDialog(java.awt.Component parent, Object message) {
     return 0;

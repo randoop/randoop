@@ -1,4 +1,4 @@
-package randoop.mock;
+package randoop.mock.java.lang;
 
 import randoop.SystemExitCalledError;
 

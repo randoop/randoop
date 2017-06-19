@@ -1,10 +1,10 @@
-package randoop.mock;
+package randoop.mock.java.awt;
 
 /**
  * Class of mock methods for {@code java.awt.Component}
  *
  * <p>Default replacement for {@link randoop.instrument.MapCallsAgent}. Replacement should be
- * specified in {@code "resources/replacements.txt"}
+ * specified in {@code "resources/default-replacements.txt"}
  */
 public class Component {
   public static void setVisible(java.awt.Component component, boolean visible) {
