@@ -5,9 +5,14 @@
 sun.reflect.
 com.sun.proxy.$Proxy.
 
-// Don't transform Randoop files .
+// Don't transform Randoop classes:
 randoop.
 mapcall.
+
+// or JUnit classes:
+junit.
+org.hamcrest.
+org.junit.
 
 // The following are library classes used by Randoop.
 // Remove once the Randoop jar is built with package relocation.
@@ -18,3 +23,5 @@ com.sun.tools.javac.
 com.sun.source.util.
 com.sun.source.tree.
 com.sun.tools.doclint.
+
+
