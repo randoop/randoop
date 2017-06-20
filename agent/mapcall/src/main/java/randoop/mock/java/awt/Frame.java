@@ -65,16 +65,6 @@ public class Frame {
   }
 
   /**
-   * Mock of method {@code java.awt.Frame.requestFocus()} to prevent component getting focus.
-   *
-   * @param frame the frame that should not receive focus
-   * @param temporary flag that indicates that focus should be temporary (ignored)
-   */
-  public static void requestFocus(java.awt.Frame frame, boolean temporary) {
-    frame.setFocusable(false);
-  }
-
-  /**
    * Helper method for mock methods to set the state of a {@code java.awt.Frame} so that it is not
    * focusable, and attempt to dispose of it.
    *

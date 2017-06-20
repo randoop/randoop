@@ -65,16 +65,6 @@ public class Window {
   }
 
   /**
-   * Mock of method {@code java.awt.Window.requestFocus()} to prevent component getting focus.
-   *
-   * @param window the window that should not receive focus
-   * @param temporary flag that indicates that focus should be temporary (ignored)
-   */
-  public static void requestFocus(java.awt.Window window, boolean temporary) {
-    window.setFocusable(false);
-  }
-
-  /**
    * Helper method for mock methods to set the state of a {@code java.awt.Window} so that it is not
    * focusable, and attempt to dispose of it.
    *

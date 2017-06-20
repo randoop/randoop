@@ -65,16 +65,6 @@ public class JWindow {
   }
 
   /**
-   * Mock of method {@code javax.swing.JWindow.requestFocus()} to prevent component getting focus.
-   *
-   * @param window the window that should not receive focus
-   * @param temporary flag that indicates that focus should be temporary (ignored)
-   */
-  public static void requestFocus(javax.swing.JWindow window, boolean temporary) {
-    window.setFocusable(false);
-  }
-
-  /**
    * Helper method for mock methods to set the state of a {@code javax.swing.JWindow} so that it is
    * not focusable, and attempt to dispose of it.
    *
