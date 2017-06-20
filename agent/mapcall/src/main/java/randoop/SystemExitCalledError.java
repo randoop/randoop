@@ -3,7 +3,7 @@ package randoop;
 /**
  * Exception to be thrown by default replacement for {@code System.exit()}.
  *
- * @see randoop.mock.System
+ * @see randoop.mock.java.lang.System
  */
 public class SystemExitCalledError extends Error {
 
