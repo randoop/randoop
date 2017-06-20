@@ -35,8 +35,8 @@ public class ReplacementFileTest {
     String msg =
         String.format(
             "Error in replacement file: %s on line %n%s%n",
-            "Replacement method not found randoop.mock.Component.delta()",
-            "alpha.beta.Component.delta() randoop.mock.Component.delta()");
+            "Replacement method not found randoop.mock.java.awt.Component.delta()",
+            "alpha.beta.Component.delta() randoop.mock.java.awt.Component.delta()");
     thrown.expectMessage(msg);
     ConcurrentHashMap<MethodDef, MethodDef> map = ReplacementFileReader.readFile(file);
   }
@@ -61,7 +61,7 @@ public class ReplacementFileTest {
         String.format(
             "Error in replacement file: %s on line %n%s%n",
             "In replacement method: can't find class for alpha.beta.Gamma",
-            "alpha.beta.Gamma.delta() randoop.mock.Component.show(alpha.beta.Gamma)");
+            "alpha.beta.Gamma.delta() randoop.mock.java.awt.Component.show(alpha.beta.Gamma)");
     thrown.expectMessage(msg);
     ConcurrentHashMap<MethodDef, MethodDef> map = ReplacementFileReader.readFile(file);
   }
@@ -85,11 +85,11 @@ public class ReplacementFileTest {
   public void packageReplacementTest() throws IOException, ReplacementFileException {
     File file = new File("build/resources/test/randoop/instrument/packagereplacement.txt");
     ConcurrentHashMap<MethodDef, MethodDef> map = ReplacementFileReader.readFile(file);
-    assertThat("mock package has more methods than I want to count", map.size(), is(equalTo(43)));
+    assertThat("mock package has more methods than I want to count", map.size(), is(equalTo(75)));
 
     File defaultFile = new File("build/resources/main/default-replacements.txt");
     ConcurrentHashMap<MethodDef, MethodDef> defaultMap =
         ReplacementFileReader.readFile(defaultFile);
-    assertThat("default file has more methods than I want to count", map.size(), is(equalTo(43)));
+    assertThat("default file has more methods than I want to count", map.size(), is(equalTo(75)));
   }
 }

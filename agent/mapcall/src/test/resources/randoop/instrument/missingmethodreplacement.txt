@@ -1,2 +1,2 @@
 //bad replacement file
-alpha.beta.Component.delta() randoop.mock.Component.delta()
+alpha.beta.Component.delta() randoop.mock.java.awt.Component.delta()

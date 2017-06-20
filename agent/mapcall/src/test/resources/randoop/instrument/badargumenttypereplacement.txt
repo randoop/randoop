@@ -1,1 +1,1 @@
-alpha.beta.Gamma.delta() randoop.mock.Component.show(alpha.beta.Gamma)
+alpha.beta.Gamma.delta() randoop.mock.java.awt.Component.show(alpha.beta.Gamma)

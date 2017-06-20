@@ -1,1 +1,1 @@
-java.awt.Component randoop.mock.Component
+java.awt.Component randoop.mock.java.awt.Component
