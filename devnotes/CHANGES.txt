@@ -11,14 +11,14 @@ same way.
 
 Randoop's mapcall agent has been improved.  The mapcall agent prevents
 Randoop, or a test suite, from calling certain methods such as System.exit();
-instead, at run time a different replacement method is called.
+instead, at runtime a replacement method is called.
  * The file format for specifying replacements has changed.
  * The mapcall agent applies default replacements for System.exit() and
    display of AWT/Swing components
  * Randoop does not make direct calls to methods whose calls are replaced.
    You can disable this with option --dont-omit-replaced-methods.
 
-Command-line argument --omitmethods can be supplied multiple times.  New
+Command-line argument --omitmethods can now be supplied multiple times.  New
 argument --omitmethods-list enables providing many patterns in a file.
 
 Fixes a problem in progress reporting where the wrong count was being used for
