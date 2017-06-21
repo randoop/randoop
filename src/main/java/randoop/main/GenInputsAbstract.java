@@ -119,7 +119,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * argument to <code>--omitmethods</code>.
    */
   @Option("Include methods that are omitted by default")
-  public static boolean include_replaced_methods = false;
+  public static boolean dont_omit_replaced_methods = false;
 
   /**
    * A fully-qualified field name of a field to be excluded from test generation. An accessible

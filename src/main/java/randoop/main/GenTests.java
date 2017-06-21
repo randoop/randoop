@@ -543,7 +543,7 @@ public class GenTests extends GenInputsAbstract {
 
     // if the mapcall agent has been run then this call will return a non-empty list consisting of
     // the signatures of the replaced methods
-    if (!GenInputsAbstract.include_replaced_methods) {
+    if (!GenInputsAbstract.dont_omit_replaced_methods) {
       List<String> replacedMethods = MethodReplacements.getSignatureList();
       if (!replacedMethods.isEmpty()) {
         for (String signatureString : replacedMethods) {
