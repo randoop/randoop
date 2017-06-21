@@ -5,7 +5,6 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -30,6 +29,7 @@ import randoop.generation.RandoopGenerationError;
 import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
 import randoop.instrument.ExercisedClassVisitor;
+import randoop.instrument.MethodReplacements;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
@@ -540,25 +540,25 @@ public class GenTests extends GenInputsAbstract {
    * @param omitmethods the list of {@code Pattern} objects to add new patterns to, must not be null
    */
   private void extendOmitMethods(List<Pattern> omitmethods) {
-    // read default replacement file
-    if (!include_default_replacements) {
-      InputStream methodsStream = this.getClass().getResourceAsStream("/default-replacements.txt");
-      try (EntryReader er =
-          new EntryReader(methodsStream, "default-replacements.txt", "//.*$", null)) {
-        readReplacementFile(omitmethods, er);
-      } catch (IOException e) {
-        System.out.println("Error reading methods from default replacements file. Please report.");
-        System.exit(1);
-      }
-    }
 
-    // read user replacement file
-    if (replacement_file != null) {
-      try (EntryReader er = new EntryReader(replacement_file, "//.*$", null)) {
-        readReplacementFile(omitmethods, er);
-      } catch (IOException e) {
-        System.out.println("Error reading methods from replacement file: " + e.getMessage());
-        System.exit(1);
+    // if the mapcall agent has been run then this call will return a non-empty list consisting of
+    // the signatures of the replaced methods
+    if (!GenInputsAbstract.include_replaced_methods) {
+      List<String> replacedMethods = MethodReplacements.getSignatureList();
+      if (!replacedMethods.isEmpty()) {
+        for (String signatureString : replacedMethods) {
+          String patternString =
+              signatureString
+                  .replaceAll(" ", "")
+                  .replaceAll("\\.", "\\\\.")
+                  .replaceAll("\\(", "\\\\(")
+                  .replaceAll("\\)", "\\\\)")
+                  .replaceAll("\\$", "\\\\$")
+                  .replaceAll("\\[", "\\\\[")
+                  .replaceAll("\\]", "\\\\]");
+          Pattern pattern = Pattern.compile(patternString);
+          omitmethods.add(pattern);
+        }
       }
     }
 

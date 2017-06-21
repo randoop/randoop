@@ -155,19 +155,27 @@ class ReplacementFileReader {
       String originalSignature,
       String replacementSignature)
       throws ReplacementFileException {
-    MethodDef orig = getMethodDef(originalSignature);
-    if (orig != null) {
-      MethodDef replacement = getMethodDef(replacementSignature);
+    MethodDef originalDef = getMethodDef(originalSignature);
+    if (originalDef != null) {
+      MethodDef replacementDef = getMethodDef(replacementSignature);
       try {
         // check that replacement exists in a way that allows reporting errors
-        if (replacement != null && replacement.toMethod() != null) {
-          replacementMap.put(orig, replacement);
+        if (replacementDef != null && replacementDef.toMethod() != null) {
+          if (replacementMap.get(originalDef) == null) {
+            replacementMap.put(originalDef, replacementDef);
+          } else {
+            String msg =
+                String.format(
+                    "Conflicting replacement found for method %s by %s",
+                    originalDef, replacementDef);
+            throw new ReplacementFileException(msg);
+          }
         }
       } catch (ClassNotFoundException e) {
-        String msg = "Class " + replacement.getClassname() + " not found for replacement method";
+        String msg = "Class " + replacementDef.getClassname() + " not found for replacement method";
         throw new ReplacementFileException(msg);
       } catch (NoSuchMethodException e) {
-        throw new ReplacementFileException("Replacement method not found " + replacement);
+        throw new ReplacementFileException("Replacement method not found " + replacementDef);
       } catch (RuntimeException e) {
         throw new ReplacementFileException("In replacement method: " + e.getMessage());
       }
@@ -282,6 +290,11 @@ class ReplacementFileReader {
         // If there is already a replacement, do not overwrite it
         if (replacementMap.get(originalDef) == null) {
           replacementMap.put(originalDef, replacementDef);
+        } else {
+          String msg =
+              String.format(
+                  "Conflicting replacement found for method %s by %s", originalDef, replacementDef);
+          throw new ReplacementFileException(msg);
         }
         continue;
       }
@@ -295,6 +308,12 @@ class ReplacementFileReader {
           // If there is already a replacement, do not overwrite it
           if (replacementMap.get(originalDef) == null) {
             replacementMap.put(originalDef, replacementDef);
+          } else {
+            String msg =
+                String.format(
+                    "Conflicting replacement found for method %s by %s",
+                    originalDef, replacementDef);
+            throw new ReplacementFileException(msg);
           }
           continue;
         }

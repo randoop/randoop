@@ -127,14 +127,14 @@ public class MapCallsAgent {
       System.exit(1);
     }
     try {
-      replacementMap.putAll(ReplacementFileReader.readFile(new InputStreamReader(inputStream)));
+      replacementMap = ReplacementFileReader.readFile(new InputStreamReader(inputStream));
     } catch (Throwable e) {
       System.err.printf("Error reading default replacement file:%n  %s%n", e);
       System.err.println("Please report.");
       System.exit(1);
     }
 
-    // If the user provided a replacement file, load user replacements
+    // If the user has provided a replacement file, load user replacements allowing overrides
     if (map_calls != null) {
       try {
         replacementMap.putAll(ReplacementFileReader.readFile(map_calls));
@@ -143,6 +143,9 @@ public class MapCallsAgent {
         System.exit(1);
       }
     }
+
+    // Communicate the list of replaced methods to Randoop
+    MethodReplacements.addReplacedMethods(replacementMap);
 
     CallReplacementTransformer transformer =
         new CallReplacementTransformer(excludedPackages, replacementMap);
