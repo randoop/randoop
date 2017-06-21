@@ -981,23 +981,21 @@ public class RandoopSystemTest {
 
     CoverageChecker checker = new CoverageChecker(options);
 
+    // these are ignored/excluded on jdk 7 and 8
     checker.ignore("components.ArrowIcon.getIconHeight()");
     checker.ignore("components.ArrowIcon.getIconWidth()");
     checker.ignore(
         "components.ArrowIcon.paintIcon(java.awt.Component, java.awt.Graphics, int, int)");
-    //
     checker.ignore("components.ConversionPanel.actionPerformed(java.awt.event.ActionEvent)");
     checker.ignore("components.ConversionPanel.getMaximumSize()");
     checker.ignore("components.ConversionPanel.getValue()");
     checker.ignore("components.ConversionPanel.getMultiplier()");
     checker.ignore("components.ConversionPanel.propertyChange(java.beans.PropertyChangeEvent)");
     checker.ignore("components.ConversionPanel.stateChanged(javax.swing.event.ChangeEvent)");
-    //
     checker.ignore("components.Converter.createAndShowGUI()");
     checker.ignore("components.Converter.initLookAndFeel()");
     checker.ignore("components.Converter.main(java.lang.String[])");
     checker.ignore("components.Converter.resetMaxValues(boolean)");
-    //
     checker.ignore("components.ConverterRangeModel.getExtent()");
     checker.ignore("components.ConverterRangeModel.getDoubleValue()");
     checker.ignore("components.ConverterRangeModel.getMaximum()");
@@ -1016,12 +1014,9 @@ public class RandoopSystemTest {
         "components.ConverterRangeModel.setRangeProperties(int, int, int, int, boolean)");
     checker.ignore("components.ConverterRangeModel.setValue(int)");
     checker.ignore("components.ConverterRangeModel.setValueIsAdjusting(boolean)");
-    //
     checker.ignore(
         "components.ConverterRangeModel.removeChangeListener(javax.swing.event.ChangeListener)");
-    //
     checker.ignore("components.Corner.paintComponent(java.awt.Graphics)");
-    //
     checker.ignore("components.CrayonPanel.actionPerformed(java.awt.event.ActionEvent)");
     checker.ignore("components.CrayonPanel.getDisplayName()");
     checker.ignore("components.CrayonPanel.getLargeDisplayIcon()");
@@ -1029,21 +1024,16 @@ public class RandoopSystemTest {
     checker.ignore("components.CrayonPanel.buildChooser()");
     checker.ignore(
         "components.CrayonPanel.createCrayon(java.lang.String, javax.swing.border.Border)");
-    //
     checker.exclude("components.CustomDialog.actionPerformed(java.awt.event.ActionEvent)");
     checker.ignore("components.CustomDialog.clearAndHide()");
     checker.ignore("components.CustomDialog.getValidatedText()");
-    //
     checker.ignore("components.DialogRunner.runDialogDemo()");
-
-    //
     checker.ignore("components.DynamicTree.addObject(java.lang.Object)");
     checker.ignore(
         "components.DynamicTree.addObject(javax.swing.tree.DefaultMutableTreeNode, java.lang.Object)");
     checker.ignore(
         "components.DynamicTree.addObject(javax.swing.tree.DefaultMutableTreeNode, java.lang.Object, boolean)");
     checker.ignore("components.DynamicTree.removeCurrentNode()");
-    //
     checker.ignore("components.FollowerRangeModel.getDoubleValue()");
     checker.ignore("components.FollowerRangeModel.getExtent()");
     checker.ignore("components.FollowerRangeModel.getMaximum()");
@@ -1053,13 +1043,11 @@ public class RandoopSystemTest {
     checker.ignore("components.FollowerRangeModel.setMaximum(int)");
     checker.ignore("components.FollowerRangeModel.setRangeProperties(int, int, int, int, boolean)");
     checker.ignore("components.FollowerRangeModel.setValue(int)");
-    //
     checker.ignore("components.Framework.createAndShowGUI()");
     checker.ignore("components.Framework.main(java.lang.String[])");
     checker.ignore("components.Framework.quit(javax.swing.JFrame)");
     checker.ignore("components.Framework.quitConfirmed(javax.swing.JFrame)");
     checker.ignore("components.Framework.windowClosed(java.awt.event.WindowEvent)");
-    //
     checker.ignore("components.GenealogyModel.getChild(java.lang.Object, int)");
     checker.ignore("components.GenealogyModel.getChildCount(java.lang.Object)");
     checker.ignore("components.GenealogyModel.getIndexOfChild(java.lang.Object, java.lang.Object)");
@@ -1073,24 +1061,18 @@ public class RandoopSystemTest {
     checker.ignore("components.GenealogyModel.fireTreeStructureChanged(components.Person)");
     checker.ignore("components.GenealogyModel.getRoot()");
     checker.ignore("components.GenealogyModel.showAncestor(boolean, java.lang.Object)");
-    //
     checker.ignore("components.GenealogyTree.showAncestor(boolean)");
-    //
     checker.ignore("components.MissingIcon.getIconHeight()");
-    //
     checker.ignore("components.ImageFileView.getDescription(java.io.File)");
     checker.ignore("components.ImageFileView.getIcon(java.io.File)");
     checker.ignore("components.ImageFileView.getName(java.io.File)");
     checker.ignore("components.ImageFileView.getTypeDescription(java.io.File)");
     checker.ignore("components.ImageFileView.isTraversable(java.io.File)");
-    //
     checker.ignore("components.ImageFilter.accept(java.io.File)");
     checker.ignore("components.ImageFilter.getDescription()");
-    //
     checker.ignore("components.ImagePreview.loadImage()");
     checker.ignore("components.ImagePreview.paintComponent(java.awt.Graphics)");
     checker.ignore("components.ImagePreview.propertyChange(java.beans.PropertyChangeEvent)");
-    //
     checker.ignore("components.ListDialog.actionPerformed(java.awt.event.ActionEvent)");
     checker.ignore("components.ListDialog.setValue(java.lang.String)");
     checker.ignore(
@@ -1099,10 +1081,8 @@ public class RandoopSystemTest {
     checker.ignore("components.ListDialogRunner.createUI()");
     checker.ignore("components.ListDialogRunner.getAFont()");
     checker.ignore("components.ListDialogRunner.main(java.lang.String[])");
-    //
     checker.ignore(
         "components.MissingIcon.paintIcon(java.awt.Component, java.awt.Graphics, int, int)");
-    //
     checker.ignore("components.Person.getChildAt(int)");
     checker.ignore("components.Person.getChildCount()");
     checker.ignore("components.Person.getFather()");
@@ -1112,7 +1092,6 @@ public class RandoopSystemTest {
     checker.ignore("components.Person.toString()");
     checker.ignore(
         "components.Person.linkFamily(components.Person, components.Person, components.Person[])");
-    //
     checker.ignore("components.Rule.paintComponent(java.awt.Graphics)");
     checker.ignore("components.Rule.getIncrement()");
     checker.ignore("components.Rule.isMetric()");
@@ -1120,7 +1099,6 @@ public class RandoopSystemTest {
     checker.ignore("components.Rule.setIsMetric(boolean)");
     checker.ignore("components.Rule.setPreferredHeight(int)");
     checker.ignore("components.Rule.setPreferredWidth(int)");
-    //
     checker.ignore("components.ScrollablePicture.getPreferredScrollableViewportSize()");
     checker.ignore("components.ScrollablePicture.getPreferredSize()");
     checker.ignore(
@@ -1132,10 +1110,19 @@ public class RandoopSystemTest {
     checker.ignore("components.ScrollablePicture.mouseDragged(java.awt.event.MouseEvent)");
     checker.ignore("components.ScrollablePicture.mouseMoved(java.awt.event.MouseEvent)");
     checker.ignore("components.ScrollablePicture.setMaxUnitIncrement(int)");
-    //
     checker.ignore("components.Unit.toString()");
-    //
     checker.ignore("components.Utils.getExtension(java.io.File)");
+
+    // These are not covered on jdk7 on travis
+    checker.ignore(
+        "components.ConverterRangeModel.addChangeListener(javax.swing.event.ChangeListener)");
+    checker.ignore("components.ConverterRangeModel.fireStateChanged()");
+    checker.ignore("components.CrayonPanel.updateChooser()");
+    checker.ignore("components.CustomDialog.propertyChange(java.beans.PropertyChangeEvent)");
+    checker.ignore("components.DynamicTree.clear()");
+    checker.ignore("components.FollowerRangeModel.stateChanged(javax.swing.event.ChangeEvent)");
+    checker.ignore("components.Framework.makeNewWindow()");
+    checker.ignore("components.MissingIcon.getIconWidth()");
 
     generateAndTestWithCoverage(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
