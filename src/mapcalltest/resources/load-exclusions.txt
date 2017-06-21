@@ -1,6 +1,3 @@
-junit.
 org.gradle.
-org.hamcrest.
 org.jacoco.
-org.junit.
 worker.org.gradle.
