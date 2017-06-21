@@ -156,6 +156,14 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   /**
    * Indicates whether the class is a non-AWT/Swing boot loaded class.
    *
+   * <p>This check is for performance, since attempting to transform all of {@code rt.jar} is
+   * unnecessary. However, we want to transform AWT/Swing classes if they are loaded.
+   *
+   * <p>Actually checks whether the class is loaded by the bootstrap loader or by the first
+   * classloader. The first classloader will either be a user provided boot loader, or the extension
+   * class loader. Since predicate is mostly for performance, we don't make the extra check to
+   * determine if the user has given a boot loader.
+   *
    * @param loader the class loader for the class
    * @param fullClassName the fully-qualified name of the class
    * @return true if the named class is boot loaded and not in {@code java.awt.} or {@code
