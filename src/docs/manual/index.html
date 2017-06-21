@@ -42,9 +42,10 @@ The Randoop homepage is
       <li><a href="#command-line-options">Command-line options</a></li>
       <li><a href="#map_calls">Avoiding calls to specific methods</a>
         <ul>
+          <li><a href="#mapcall-load-exclusions">Replacement exclusions</a></li>
           <li><a href="#map-calls-format">Replacement file format</a></li>
-          <li><a href="#creating-call-replacements">Creating replacement methods</a></li>
           <li><a href="#determining-calls-to-map">Determining which calls to place in the replacements file</a></li>
+          <li><a href="#replacements-and-classpaths">Placing replacement mocks on the classpath</a></li>
         </ul></li>
       <li><a href="#checkrep">Specifying representation invariant methods (such as <code>checkRep</code>)</a></li>
       <li><a href="#exercised-filter">Instrumenting classes for filtering tests on exercised-classes</a></li>
@@ -769,7 +770,7 @@ Randoop about your application, and that is how we recommend using Randoop.
              A file containing a list of regular expressions that indicate methods that should not be
  included in generated tests. These patterns are used along with those provided with <code>
  --omitmethods</code>, and the default omissions.
-            <li id="option:include-default-replacements"><b>--include-default-replacements=</b><i>boolean</i>.
+            <li id="option:include-replaced-methods"><b>--include-replaced-methods=</b><i>boolean</i>.
              Include methods that are otherwise omitted by default. Unless you set this to true, every
  method replaced by the <code>mapcall</code> agent is treated as if it had been supplied as an
  argument to <code>--omitmethods</code>. [default false]
@@ -1129,7 +1130,7 @@ Randoop about your application, and that is how we recommend using Randoop.
 <p>
 The code under test can make calls to methods that you do not want executed.
 One is <code>System.exit</code>, which will terminate Randoop if called during test generation.
-Others, such as the <code>JOptionPane.showConfirmDialog</code> methods, open a modal dialog box requiring user interaction.
+Others, such as the <code>JOptionPane.showConfirmDialog</code> methods, open a modal dialog box requiring user interaction, interfering with the automated testing.
 We can avoid direct calls to these methods with <code>--omitmethods</code>, but the most complete way to handle these methods is to use the <code>mapcall</code> agent.
 </p>
 
@@ -1166,8 +1167,7 @@ By default, the agent makes the following replacements:
   </li>
 </ul>
 <p>
-In addition, Randoop will not include direct calls to replaced methods as if the
-methods were given as arguments to <code>--omitmethods</code>.
+In addition, Randoop treats replaced methods as if the methods were given as arguments to <code>--omitmethods</code> and does not include direct calls to them.
 </p>
 
 
@@ -1176,19 +1176,16 @@ methods were given as arguments to <code>--omitmethods</code>.
 
 <p>
 There are some classes to which the mapcall agent should not be applied.
-For instance, we don't want the agent to modify Randoop, the agent, JUnit classes, or the build environment if there is one.
+For instance, we don't want the agent to modify Randoop, the agent, JUnit classes, or the build environment.
 So, by default, the agent will not make replacements in Randoop and Randoop Java agent classes (and, currently, classes of libraries they use), or in JUnit or Hamcrest classes.
-Also, to improve performance, the agent also does not make replacements in boot-loaded classes with the exception of packages in <code>java.awt</code> and <code>javax.swing</code>.
+Also, to improve performance, the agent does not make replacements in boot-loaded classes with the exception of packages in <code>java.awt</code> and <code>javax.swing</code>.
 </p>
 
 <p>
 If you are using the agent in a build environment, it is also necessary to exclude the build environment classes.
 For instance, when running the agent on generated tests in a Gradle project using the Java plugin, the replacement of <code>System.exit</code>
-will affect the behavior of the build, and so at a minimum we should exclude the Gradle packages.
-</p>
-
-<p>
-To exclude these packages an exclusion file <code>gradle-exclusions.txt</code> is created with the lines
+will affect the behavior of the build, and we should exclude the Gradle packages from being transformed.
+To exclude these packages, an exclusion file <code>gradle-exclusions.txt</code> is created with the lines
 </p>
 <pre>
 org.gradle.
@@ -1198,9 +1195,14 @@ worker.org.gradle.
 Then the agent is run with the <code>--load-exclusions</code> command-line option with the filename as the argument:
 </p>
 <pre>
-    -javaagent:$(RANDOOP_PATH)/mapcall-3.1.5.jar=--dont-transform=gradle-exclusions.txt
+    -javaagent:$(RANDOOP_PATH)/mapcall-3.1.5.jar=--load-exclusions=gradle-exclusions.txt
 </pre>
 
+<p>
+The exclusion file is simply a list of package names -- one package per line.
+All package names will be treated as if they end with a period, whether or not they do, and are used to match the prefix of the fully-qualified classname.
+(Blank lines and <code>//</code>-style comments are ignored.)
+</p>
 
 <p>
 For a different environment, you can determine what classes are being affected by running the agent with the
@@ -1211,12 +1213,6 @@ For a different environment, you can determine what classes are being affected b
 </pre>
 <p>
 and looking in the file <code>transform-log.txt</code> to see which methods are being transformed.
-</p>
-
-<p>
-The exclusion file is simply a list of package names -- one package per line.
-All package names will be treated as if they end with a period, whether or not they do, and are used to match the prefix of the fully-qualified classname.
-(Blank lines and <code>//</code>-style comments are ignored.)
 </p>
 
 
@@ -1239,6 +1235,7 @@ javax.swing.JOptionPane randoop.stream.javax.swing.JOptionPane
 </pre>
 <p>
 The first line is a package replacement, the second a method replacement, and the third a class replacement.
+(Blank lines and <code>//</code> comments are ignored in the replacements-file.)
 </p>
 
 <p>
@@ -1273,12 +1270,8 @@ replaces method replacements for each mock method in a class of the package <cod
 </p>
 
 <p>
-Note that explicitly given method replacements override other replacements indicated by class or package replacements.
-</p>
-
-<p>
-  (Blank lines and <code>//</code> comments are ignored in the
-  replacements-file.)
+User provided replacements can override the default replacements, but, otherwise, conflicting replacements are an error.
+The earlier example replacements are only an error if both <code>randoop.mock.java.awt</code> and <code>randoop.stream.java.awt</code> have a class <code>Component</code> with the method <code>show(java.awt.Component)</code>.
 </p>
 
 <p>
@@ -1299,11 +1292,6 @@ Because default replacements may also be applied by the mapcall agent, you will
 also need to include the <code>mapcall-3.1.5.jar</code> in the classpath.
 </p>
 
-<p>
-The mapcall agent will not prevent direct calls to the replaced methods within Randoop.
-You can omit these by also providing the replacement file using the
-<code>--replacements-file</code> command-line argument.
-</p>
 
 
 <h3 id="determining-calls-to-map">Determining which calls to place in the replacements file</h3>
