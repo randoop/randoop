@@ -961,6 +961,7 @@ public class RandoopSystemTest {
     options.setOption("outputlimit", "400");
     options.setOption("timelimit", "200");
     options.setFlag("ignore-flaky-tests");
+    options.setFlag("log-operation-history");
 
     CoverageChecker checker = new CoverageChecker(options);
 

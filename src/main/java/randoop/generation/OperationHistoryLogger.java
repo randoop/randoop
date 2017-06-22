@@ -46,6 +46,7 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
   }
 
   public void outputTable() {
+    writer.format("%nOperation History:%n");
     int maxNameLength = 0;
     for (TypedOperation operation : operationMap.keySet()) {
       int nameLength = operation.getSignatureString().length();
