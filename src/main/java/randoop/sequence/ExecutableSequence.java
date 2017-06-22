@@ -16,6 +16,7 @@ import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.TypedOperation;
 import randoop.test.Check;
 import randoop.test.TestCheckGenerator;
 import randoop.test.TestChecks;
@@ -628,5 +629,15 @@ public class ExecutableSequence {
    */
   public boolean coversClass(Class<?> c) {
     return executionResults.getCoveredClasses().contains(c);
+  }
+
+  /**
+   * Return the operation from which this sequence was generated -- the operation of the last
+   * statement of this sequence.
+   *
+   * @return the operation of the last statement of this sequence
+   */
+  public TypedOperation getOperation() {
+    return this.sequence.getOperation();
   }
 }
