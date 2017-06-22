@@ -901,11 +901,12 @@ public class RandoopSystemTest {
    * <p>Notes:
    *
    * <ul>
-   *   <li>setting <code>timeout=5</code> for this test results in multiple <code>ThreadDeath</code>
+   *   <li>Setting <code>timeout=5</code> for this test results in multiple <code>ThreadDeath</code>
    *       exceptions during Randoop generation. The test still completes.
-   *   <li>even though the default replacements attempt to suppress calls to methods that throw
+   *   <li>Even though the default replacements attempt to suppress calls to methods that throw
    *       <code>HeadlessException</code>, they still happen. So, this test may fail in a headless
-   *       environment. On Travis, this is resolved by running <code>xvfb</code>.
+   *       environment. On Travis CI, this is resolved by running <code>xvfb</code>.
+   *   <li>There are differences in coverage between JDK 7 and 8 when running on Travis.
    * </ul>
    */
   @Test
@@ -954,29 +955,10 @@ public class RandoopSystemTest {
     options.addTestClass("components.Unit");
     options.addTestClass("components.Utils");
 
-    //using for debugging
-    //options.setFlag("include-default-replacements");
-
-    // Some AWT/Swing methods are state-dependant and lead to flaky tests
-    // Avoid all direct calls to these methods, since not enough information given by test failures
-    // on Travis CI to figure out what methods are causing a failure.
-    // options.setOption("omitmethods", "javax\\.swing\\.");
-    //options.setOption("omitmethods", "java\\.awt\\.");
-
-    // These resolve flaky tests when running on mac, but commented out because covered by above.
-    // Keeping just in case figure out how to identify failing methods on travis.
-    //options.setOption("omitmethods", "javax\\.swing\\.JInternalFrame\\.getTitle\\(\\)");
-    //options.setOption("omitmethods", "javax\\.swing\\.JComponent\\.getX\\(\\)");
-    //options.setOption("omitmethods", "javax\\.swing\\.JComponent\\.getY\\(\\)");
-
-    // These methods lead to flaky tests
-    //options.setOption("omitmethods", "components\\.ConverterRangeModel\\.getValue\\(\\)");
-
     options.setOption("omit-field-list", "resources/systemTest/components/omitfields.txt");
     //
     options.setOption("outputlimit", "400");
     options.setOption("timelimit", "200");
-    //options.setOption("timeout", "5");
     options.setFlag("ignore-flaky-tests");
 
     CoverageChecker checker = new CoverageChecker(options);
