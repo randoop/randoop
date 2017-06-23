@@ -78,7 +78,7 @@ public abstract class ParameterizedType extends ClassOrInterfaceType {
   /**
    * {@inheritDoc}
    *
-   * <p>Returns the fully qualified name of this type with fully qualified type arguments. E.g.,
+   * <p>Returns the fully-qualified name of this type with fully-qualified type arguments. E.g.,
    * {@code java.lang.List<java.lang.String>}
    */
   @Override

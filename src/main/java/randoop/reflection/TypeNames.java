@@ -14,7 +14,7 @@ import randoop.types.PrimitiveTypes;
 public class TypeNames {
 
   /**
-   * Returns {@link Class} object for a fully qualified class name or primitive type name.
+   * Returns {@link Class} object for a fully-qualified class name or primitive type name.
    *
    * @param typeName a fully-qualified class name or primitive type name
    * @return {@link Class} object for type given in string
