@@ -30,8 +30,10 @@ class SystemTestEnvironment {
   /** The path for the root directory for test input classes. */
   private final Path testInputClassDir;
 
+  /** The path for the mapcall agent jar */
   final Path mapcallAgentPath;
 
+  /** The path for the exercised-class agent jar */
   final Path exercisedClassAgentPath;
 
   /**
@@ -69,7 +71,8 @@ class SystemTestEnvironment {
    */
   static SystemTestEnvironment createSystemTestEnvironment(String classpath, Path buildDir) {
     Path workingDir = buildDir.resolve("working-directories");
-    Path testInputClassDir = buildDir.resolve("classes/testInput");
+    Path testInputClassDir =
+        buildDir.resolve("classes/java/testInput"); //XXX breaks when Gradle changes
     Path jacocoAgentPath = buildDir.resolve("jacocoagent/jacocoagent.jar");
     Path libsPath = buildDir.resolve("libs");
     Path mapcallAgentPath = null;

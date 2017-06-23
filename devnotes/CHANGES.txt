@@ -21,6 +21,10 @@ instead, at runtime a replacement method is called.
 Command-line argument --omitmethods can now be supplied multiple times.  New
 argument --omitmethods-list enables providing many patterns in a file.
 
+New flag --log-operation-history will write table of operation use during
+generation to standard output. Option --operation-history-log will write to
+the file argument.
+
 Fixes a problem in progress reporting where the wrong count was being used for
 error-revealing sequences.
 

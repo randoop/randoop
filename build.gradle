@@ -281,7 +281,7 @@ task exercisedTest(type: Test, dependsOn: 'copyJars') {
    * instead of the project directory.
    */
   workingDir = sourceSets.exercisedTest.output.resourcesDir
-  testClassesDir = sourceSets.exercisedTest.output.classesDir
+  testClassesDirs = sourceSets.exercisedTest.output.classesDirs
   classpath = sourceSets.exercisedTest.runtimeClasspath
   jvmArgs "-javaagent:$buildDir/libs/exercised-class-${version}.jar"
 
@@ -369,7 +369,7 @@ task extractJacocoAgent(type: Copy) {
 task systemTest(type: Test, dependsOn: [ 'extractJacocoAgent', 'generateWorkingDirs', 'copyJars' ]) {
 
   workingDir = file("$buildDir")
-  testClassesDir = sourceSets.systemTest.output.classesDir
+  testClassesDirs = sourceSets.systemTest.output.classesDirs
   classpath = sourceSets.systemTest.runtimeClasspath
 
   /*
@@ -688,7 +688,7 @@ task buildRelease(type: DefaultTask, dependsOn: [ 'assemble', 'check', 'publishS
 /* Declares the Gradle version to be used when the wrapper is built */
 task wrapper(type: Wrapper) {
   description "Configure Gradle Wrapper for this project"
-  gradleVersion = '3.5'
+  gradleVersion = '4.0'
 }
 
 /*************** Other tool configs *************/
