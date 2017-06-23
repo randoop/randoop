@@ -260,6 +260,7 @@ public class ExecutableSequence {
    * @param gen the check generator
    * @param ignoreException the flag to indicate exceptions should be ignored
    */
+  @SuppressWarnings("SameParameterValue")
   private void execute(ExecutionVisitor visitor, TestCheckGenerator gen, boolean ignoreException) {
 
     visitor.initialize(this);
