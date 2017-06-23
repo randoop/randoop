@@ -9,6 +9,10 @@ same way.
    it outputs them; this makes the failures easier to understand.  You can
    disable this behavior.
 
+New flag --log-operation-history will write table of operation use during
+generation to standard output. Option --operation-history-log will write to
+the file argument.
+
 Fixes a problem in progress reporting where the wrong count was being used for
 error-revealing sequences.
 
