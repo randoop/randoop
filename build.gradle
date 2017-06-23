@@ -305,7 +305,7 @@ check.dependsOn exercisedTest
 
 task mapcallTest(type: Test, dependsOn: 'copyJars') {
   workingDir = sourceSets.mapcallTest.output.resourcesDir
-  testClassesDir = sourceSets.mapcallTest.output.classesDir
+  testClassesDirs = sourceSets.mapcallTest.output.classesDirs
   classpath = sourceSets.mapcallTest.runtimeClasspath + files("$buildDir/libs/mapcall-${version}.jar")
   jvmArgs "-javaagent:$buildDir/libs/mapcall-${version}.jar=--dont-transform=load-exclusions.txt,--debug"
   jvmArgs "-Xbootclasspath/a:$buildDir/libs/mapcall-${version}.jar"
