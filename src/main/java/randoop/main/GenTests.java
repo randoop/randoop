@@ -5,6 +5,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -27,6 +28,7 @@ import randoop.condition.SpecificationCollection;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
+import randoop.generation.OperationHistoryLogger;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
@@ -456,6 +458,13 @@ public class GenTests extends GenInputsAbstract {
       Log.logLine("Initial sequences (seeds):");
       componentMgr.log();
     }
+    if (GenInputsAbstract.log_operation_history) {
+      explorer.setOperationHistoryLogger(new OperationHistoryLogger(new PrintWriter(System.out)));
+    }
+    if (GenInputsAbstract.operation_history_log != null) {
+      explorer.setOperationHistoryLogger(
+          new OperationHistoryLogger(new PrintWriter(GenInputsAbstract.operation_history_log)));
+    }
 
     /* Generate tests */
     try {
@@ -547,6 +556,11 @@ public class GenTests extends GenInputsAbstract {
           "%nUncompilable sequences generated (count: %d). Please report.%n",
           this.sequenceCompileFailureCount);
     }
+
+    //operation history includes counts determined by getting regression sequences from explorer
+    //so, dump after all done.
+    explorer.getOperationHistory().outputTable();
+
     return true;
   }
 

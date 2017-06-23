@@ -1082,6 +1082,16 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
+   * Returns the operation from which this sequence was constructed. (Also known as the operation in
+   * the last statement of this sequence.
+   *
+   * @return the last operation of this sequence
+   */
+  public TypedOperation getOperation() {
+    return this.statements.get(this.statements.size() - 1).getOperation();
+  }
+
+  /**
    * Used internally (i.e. in package randoop.sequence) to represent inputs to a statement.
    *
    * <p>IMPLEMENTATION NOTE: Recall that a sequence is a sequence of statements where the inputs to

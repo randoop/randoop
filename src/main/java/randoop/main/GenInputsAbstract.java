@@ -618,6 +618,20 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static FileWriter log = null;
 
   /**
+   * Track and log the usage of operations during generation to standard out. This option is not
+   * affected by setting <code>--operation-history-log</code>.
+   */
+  @Option("Track and log operation usage counts")
+  public static boolean log_operation_history = false;
+
+  /**
+   * Name of a log to which the operation usage history is written. This operation is not affected
+   * by setting <code>--log-operation-history</code>.
+   */
+  @Option("Track and log operation usage counts to this file")
+  public static FileWriter operation_history_log = null;
+
+  /**
    * Create sequences but never execute them. Used to test performance of Randoop's sequence
    * generation code.
    */
@@ -673,6 +687,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     return getStringSetFromFile(listFile, errMessage, "^#.*", null);
   }
 
+  @SuppressWarnings("SameParameterValue")
   public static Set<String> getStringSetFromFile(
       File listFile, String errMessage, String commentRegex, String includeRegex) {
     Set<String> elementSet = new LinkedHashSet<>();

@@ -646,4 +646,14 @@ public class ExecutableSequence {
   public boolean coversClass(Class<?> c) {
     return executionResults.getCoveredClasses().contains(c);
   }
+
+  /**
+   * Return the operation from which this sequence was generated -- the operation of the last
+   * statement of this sequence.
+   *
+   * @return the operation of the last statement of this sequence
+   */
+  public TypedOperation getOperation() {
+    return this.sequence.getOperation();
+  }
 }
