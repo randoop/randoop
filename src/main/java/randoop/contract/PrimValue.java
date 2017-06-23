@@ -130,6 +130,9 @@ public final class PrimValue implements ObjectContract {
     } else {
       assert printMode.equals(PrintMode.EQUALSEQUALS);
       b.append("org.junit.Assert.assertTrue(");
+      b.append("\"'\" + " + "x0" + " + \"' != '\" + ")
+          .append(Value.toCodeString(value))
+          .append("+ \"'\", ");
       b.append("x0 == ").append(Value.toCodeString(value));
       b.append(");");
     }

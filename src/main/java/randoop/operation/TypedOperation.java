@@ -104,6 +104,15 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
+   * Returns the signature string for this operation.
+   *
+   * @return a string with the fully-qualified operation name and input type-tuple
+   */
+  public String getSignatureString() {
+    return getName() + inputTypes;
+  }
+
+  /**
    * Returns the tuple of input types for this operation.
    *
    * @return tuple of concrete input types
