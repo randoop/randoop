@@ -1130,24 +1130,27 @@ Randoop about your application, and that is how we recommend using Randoop.
 <p>
 The code under test can make calls to methods that you do not want executed.
 One is <code>System.exit</code>, which will terminate Randoop if called during test generation.
-Others, such as the <code>JOptionPane.showConfirmDialog</code> methods, open a modal dialog box requiring user interaction, interfering with the automated testing.
-We can avoid direct calls to these methods with <code>--omitmethods</code>, but the most complete way to handle these methods is to use the <code>mapcall</code> agent.
+Others, such as the <code>JOptionPane.showConfirmDialog</code> methods, open a modal dialog box requiring user interaction, which interferes with automated testing.
+It is not enough to use <a href="#option:omitmethods"><code>--omitmethods</code></a> to
+prevent direct calls to these methods, because the methods may still be called indirectly.
+To prevent all calls to these methods, use the <code>mapcall</code> agent.
 </p>
 
 <p>
 The Randoop <code>mapcall</code> agent transforms the code under test, replacing
-each call to an undesired method by a call to some other implementation.
+each call to an undesired method by a call to some other method.
 To use it:
 </p>
 <ul>
-  <li>When running Randoop, pass the following command-line option to <code>java</code>:
+  <li>When running Randoop, pass the following command-line options to <code>java</code>:
 <pre>
     -Xbootclasspath/a:$(RANDOOP_PATH)/mapcall-3.1.5.jar -javaagent:$(RANDOOP_PATH)/mapcall-3.1.5.jar
 </pre>
   </li>
-  <li>When running the generated tests, add the file <code>mapcall-3.1.5.jar</code>, and pass the following command-line option to <code>java</code>:
+  <li>When running the generated tests, add the file <code>mapcall-3.1.5.jar</code>,
+    and pass the same command-line options to <code>java</code>:
 <pre>
-    -Xbootclasspath/a:$(RANDOOP_PATH)/mapcall-3.1.5.jar  -javaagent:$(RANDOOP_PATH)/mapcall-3.1.5.jar
+    -Xbootclasspath/a:$(RANDOOP_PATH)/mapcall-3.1.5.jar -javaagent:$(RANDOOP_PATH)/mapcall-3.1.5.jar
 </pre>
 </li>
 </ul>
@@ -1167,7 +1170,9 @@ By default, the agent makes the following replacements:
   </li>
 </ul>
 <p>
-In addition, Randoop treats replaced methods as if the methods were given as arguments to <code>--omitmethods</code> and does not include direct calls to them.
+In addition, Randoop treats replaced methods as if the methods were given as arguments
+to <a href="#option:omitmethods"><code>--omitmethods</code></a> and does not create
+direct calls to them in test cases.
 </p>
 
 
@@ -1176,9 +1181,6 @@ In addition, Randoop treats replaced methods as if the methods were given as arg
 
 <p>
 There are some classes to which the mapcall agent should not be applied.
-For instance, we don't want the agent to modify Randoop, the agent, JUnit classes, or the build environment.
-So, by default, the agent will not make replacements in Randoop and Randoop Java agent classes (and, currently, classes of libraries they use), or in JUnit or Hamcrest classes.
-Also, to improve performance, the agent does not make replacements in boot-loaded classes with the exception of packages in <code>java.awt</code> and <code>javax.swing</code>.
 </p>
 
 <p>
@@ -1199,7 +1201,7 @@ Then the agent is run with the <code>--load-exclusions</code> command-line optio
 </pre>
 
 <p>
-The exclusion file is simply a list of package names -- one package per line.
+The exclusion file is simply a list of package names &mdash; one package per line.
 All package names will be treated as if they end with a period, whether or not they do, and are used to match the prefix of the fully-qualified classname.
 (Blank lines and <code>//</code>-style comments are ignored.)
 </p>
@@ -1215,17 +1217,25 @@ For a different environment, you can determine what classes are being affected b
 and looking in the file <code>transform-log.txt</code> to see which methods are being transformed.
 </p>
 
+<p>
+By default, the agent does not modify Randoop, the agent itself,
+JUnit classes, or the build environment.
+So, by default, the agent will not make replacements in Randoop and Randoop
+Java agent classes (and, currently, classes of libraries they use), or in JUnit
+or Hamcrest classes.
+Also, to improve performance, the agent does not make replacements in boot-loaded classes
+with the exception of packages in <code>java.awt</code> and <code>javax.swing</code>.
 
 
 <h3 id="map-calls-format">Replacement file format</h3>
 
 <p>
-You can also define your own replacements by providing your implementations and specifying the replacements in a text file.
+You can define your own replacements by providing your implementations and specifying the replacements in a text file.
 </p>
 
 <p>
 The replacement-file is a list of replacements, each of which is a pair of
-packages, classes or methods.
+packages, classes, or methods.
 A file including an example of each is
 </p>
 <pre>
@@ -1245,9 +1255,13 @@ The method replacement
   java.awt.Component.show() randoop.stream.java.awt.Component.show(java.awt.Component)
 </pre>
 <p>
-indicates that a call to the original method <code>java.awt.Component.show()</code> should be replaced by a call to the static method <code>randoop.stream.java.awt.Component.show(java.awt.Component)</code>.
-A replacement method must be static and non-private; and should have an identical signature to the original, unless the original method is non-static
-in which case the first parameter type should be the containing class of the original method.
+indicates that every call to the original method <code>java.awt.Component.show()</code>
+should be replaced by a call to the static method
+<code>randoop.stream.java.awt.Component.show(java.awt.Component)</code>. 
+A replacement method must be static and non-private; and should have an 
+identical signature to the original, unless the original method is non-static
+in which case the first parameter type should be the containing class of the
+original method.
 </p>
 
 <p>
@@ -1258,7 +1272,9 @@ For instance, the line
     javax.swing.JOptionPane randoop.stream.javax.swing.JOptionPane
 </pre>
 <p>
-replaces several method replacements, one for each replacement method in the class <code>randoop.stream.javax.swing.JOptionPane</code>.
+replaces several method replacements, one for each replacement method in the class
+<code>randoop.stream.javax.swing.JOptionPane</code>.
+
 Similarly, the line
 </p>
 <pre>
@@ -1871,7 +1887,7 @@ please let us know so we can correct the oversight.
 </body>
 </html>
 
-<!--  LocalWords:  Randoop's checkRep addFirst TreeSet ClassCastException util nullary CheckRep ExecutionVisitor LinkedHashMap LinkedHashSet HashMap HashSet listFiles hamcrest JUNITPATH
+<!--  LocalWords:  Randoop's checkRep addFirst TreeSet ClassCastException util nullary CheckRep ExecutionVisitor LinkedHashMap LinkedHashSet HashMap HashSet listFiles hamcrest JUNITPATH cp suitepath suiteclasspath testsuitetimeout verboseminimizer Xbootclasspath AWT mapcall org gradle awt subpackages RandoopMappedCalls
  -->
 <!--  LocalWords:  synchronizedSet ProjectIdeas randoop classpath gentests txt
  -->
