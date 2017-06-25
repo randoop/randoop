@@ -184,7 +184,7 @@ class MethodDef {
    * Returns the {@link MethodDef} formed by removing the first parameter of this {@link MethodDef}.
    *
    * @return a new {@link MethodDef} identical to this one except the signature has the first
-   *     parameter type removed
+   *     parameter removed
    */
   MethodDef removeFirstParameter() {
     Type[] types = new Type[paramTypes.length - 1];
