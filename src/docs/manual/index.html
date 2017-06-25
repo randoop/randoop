@@ -1274,6 +1274,8 @@ For instance, the line
 <p>
 replaces several method replacements, one for each replacement method in the class
 <code>randoop.stream.javax.swing.JOptionPane</code>.
+(Methods in the original class without a corresponding replacement method are
+not changed.)
 
 Similarly, the line
 </p>
@@ -1286,26 +1288,21 @@ replaces method replacements for each mock method in a class of the package <cod
 </p>
 
 <p>
-User provided replacements can override the default replacements, but, otherwise, conflicting replacements are an error.
+User-provided replacements can override the default replacements, but, otherwise, conflicting replacements are an error.
 The earlier example replacements are only an error if both <code>randoop.mock.java.awt</code> and <code>randoop.stream.java.awt</code> have a class <code>Component</code> with the method <code>show(java.awt.Component)</code>.
 </p>
 
 <p>
-The replacement file is used by using the <code>mapcall</code> agent and providing
-the file as an argument.
-For example, the class <a href="RandoopMappedCalls.java.txt">RandoopMappedCalls.java</a>
-defines methods to replace three Swing methods as described by the replacement
-file <a href="replace_calls_example.txt">replace_calls_example.txt</a>.
-To use this replacement, include the class file for <code>RandoopMappedCalls</code>
-on the classpath, and run the agent by including the following on the
-command line when running Randoop <b>and</b> when running the generated tests:
+Provide the replacement file as an argument to the <code>mapcall</code> agent,
+when running Randoop <b>and</b> when running the generated tests:
 </p>
 <pre>
     -javaagent:$(RANDOOP_PATH)/mapcall-3.1.5.jar=--map_calls=replace_calls_example.txt
 </pre>
 <p>
-Because default replacements may also be applied by the mapcall agent, you will
-also need to include the <code>mapcall-3.1.5.jar</code> in the classpath.
+Also put the class file with the replacements on the classpath.
+Because default replacements may also be applied by the mapcall agent, you must
+also include the <code>mapcall-3.1.5.jar</code> in the classpath.
 </p>
 
 
@@ -1329,8 +1326,9 @@ call.
 For a dialog box, while the dialog box is displayed, determine which
   calls are executing by examining the stack trace.  On Unix this can be done
   by typing <code>Ctrl-\</code> (hold down the Control key, then press the
-  Backslash key)
+  Backslash key).
 </p>
+
 
 <h3 id="replacements-and-classpaths">Placing replacement mocks on the classpath</h3>
 
