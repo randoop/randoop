@@ -67,6 +67,8 @@ class MethodDef {
   }
 
   /**
+   * Creates a {@link MethodDef} object from string representations of its method name and types.
+   *
    * @param fullMethodName fully-qualified name of method
    * @param args fully-qualified names of parameter types
    */
