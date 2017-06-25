@@ -51,22 +51,22 @@ public class MapCallsAgent {
 
   /** The file from which to read the user replacements for mapping calls. */
   @SuppressWarnings("WeakerAccess")
-  @Option("file containing methods whose calls to replace by substitute methods")
+  @Option("file listing methods whose calls to replace by substitute methods")
   public static File map_calls = null;
 
   /** Exclude transformation of classes in the the listed packages. */
   @SuppressWarnings("WeakerAccess")
-  @Option("file containing list of packages whose classes should not be transformed")
+  @Option("file listing packages whose classes should not be transformed")
   public static File dont_transform = null;
 
   /**
-   * Entry point of the mapcall java agent. Initializes the {@link CallReplacementTransformer} so
+   * Entry point of the mapcall Java agent. Initializes the {@link CallReplacementTransformer} so
    * that when classes are loaded they are transformed to replace calls to methods as specified in
    * the replacements file(s).
    *
    * @param agentArgs the arguments to the agent
    * @param inst the {@code Instrumentation} object
-   * @throws IOException if there is an error reading the map file
+   * @throws IOException if there is an error reading a file
    */
   public static void premain(String agentArgs, Instrumentation inst) throws IOException {
     if (verbose) {
