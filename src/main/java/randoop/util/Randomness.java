@@ -1,9 +1,11 @@
 package randoop.util;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import randoop.BugInRandoopException;
+import randoop.main.GenInputsAbstract;
 
 public final class Randomness {
 
@@ -36,21 +38,66 @@ public final class Randomness {
     if (Log.isLoggingOn()) {
       Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
     }
-    return random.nextInt(i);
+    int value = random.nextInt(i);
+    if (GenInputsAbstract.selection_log != null) {
+      try {
+        //noinspection deprecation
+        GenInputsAbstract.selection_log.write(
+            "nextRandomInt: "
+                + value
+                + " called from "
+                + sun.reflect.Reflection.getCallerClass(2).getCanonicalName()
+                + '\n');
+        GenInputsAbstract.selection_log.flush();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+    return value;
   }
 
   public static <T> T randomMember(List<T> list) {
     if (list == null || list.isEmpty()) {
       throw new IllegalArgumentException("Expected non-empty list");
     }
-    return list.get(nextRandomInt(list.size()));
+    int position = nextRandomInt(list.size());
+    if (GenInputsAbstract.selection_log != null) {
+      try {
+        //noinspection deprecation
+        GenInputsAbstract.selection_log.write(
+            "randomMember: "
+                + position
+                + " called from "
+                + sun.reflect.Reflection.getCallerClass(2).getCanonicalName()
+                + '\n');
+        GenInputsAbstract.selection_log.flush();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+    return list.get(position);
   }
 
   public static <T> T randomMember(SimpleList<T> list) {
     if (list == null || list.isEmpty()) {
       throw new IllegalArgumentException("Expected non-empty list");
     }
-    return list.get(nextRandomInt(list.size()));
+    int position = nextRandomInt(list.size());
+    if (GenInputsAbstract.selection_log != null) {
+      try {
+        //noinspection deprecation
+        GenInputsAbstract.selection_log.write(
+            "randomMember: "
+                + position
+                + " called from "
+                + sun.reflect.Reflection.getCallerClass(2).getCanonicalName()
+                + '\n');
+        GenInputsAbstract.selection_log.flush();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+    return list.get(position);
   }
 
   // Warning: iterates through the entire list twice (once to compute interval
@@ -84,6 +131,19 @@ public final class Randomness {
 
   public static <T> T randomSetMember(Collection<T> set) {
     int randIndex = Randomness.nextRandomInt(set.size());
+    if (GenInputsAbstract.selection_log != null) {
+      try {
+        GenInputsAbstract.selection_log.write(
+            "randomSetMember: "
+                + randIndex
+                + " called from "
+                + sun.reflect.Reflection.getCallerClass(2).getCanonicalName()
+                + '\n');
+        GenInputsAbstract.selection_log.flush();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
     return CollectionsExt.getNthIteratedElement(set, randIndex);
   }
 
