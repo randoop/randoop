@@ -13,7 +13,7 @@ import plume.UtilMDE;
  * Defines a method in a way that can be used to substitute method calls using BCEL. A method is
  * represented by its fully-qualified name and parameter types as BCEL {@code Type}.
  */
-class MethodDef {
+public class MethodDef {
 
   /** fully-qualified class name */
   private final String classname;
@@ -31,7 +31,7 @@ class MethodDef {
    * @param name the method name
    * @param argTypes the parameter types for the method
    */
-  MethodDef(String classname, String name, Type[] argTypes) {
+  private MethodDef(String classname, String name, Type[] argTypes) {
     this.classname = classname;
     this.name = name;
     this.paramTypes = argTypes;

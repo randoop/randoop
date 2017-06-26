@@ -10,13 +10,16 @@ import java.lang.instrument.Instrumentation;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import plume.EntryReader;
 import plume.Option;
 import plume.Options;
+import randoop.MethodReplacements;
 
 /**
  * The MapCalls javaagent applies the {@link CallReplacementTransformer} to map calls in loaded
@@ -130,7 +133,7 @@ public class MapCallsAgent {
       replacementMap = ReplacementFileReader.readFile(new InputStreamReader(inputStream));
     } catch (Throwable e) {
       System.err.printf("Error reading default replacement file:%n  %s%n", e);
-      System.err.println("Please report.");
+      System.err.println("Check that the mapcall.jar is on the classpath or bootclasspath.");
       System.exit(1);
     }
 
@@ -145,7 +148,11 @@ public class MapCallsAgent {
     }
 
     // Communicate the list of replaced methods to Randoop
-    MethodReplacements.addReplacedMethods(replacementMap);
+    List<String> signatureList = new ArrayList<>();
+    for (MethodDef def : replacementMap.keySet()) {
+      signatureList.add(def.toString());
+    }
+    MethodReplacements.addReplacedMethods(signatureList);
 
     CallReplacementTransformer transformer =
         new CallReplacementTransformer(excludedPackages, replacementMap);
