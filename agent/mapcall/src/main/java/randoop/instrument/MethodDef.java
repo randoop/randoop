@@ -67,6 +67,8 @@ public class MethodDef {
   }
 
   /**
+   * Creates a {@link MethodDef} object from string representations of its method name and types.
+   *
    * @param fullMethodName fully-qualified name of method
    * @param args fully-qualified names of parameter types
    */
@@ -182,7 +184,7 @@ public class MethodDef {
    * Returns the {@link MethodDef} formed by removing the first parameter of this {@link MethodDef}.
    *
    * @return a new {@link MethodDef} identical to this one except the signature has the first
-   *     parameter type removed
+   *     parameter removed
    */
   MethodDef removeFirstParameter() {
     Type[] types = new Type[paramTypes.length - 1];

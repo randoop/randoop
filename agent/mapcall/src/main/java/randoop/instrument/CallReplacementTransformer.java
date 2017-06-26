@@ -112,12 +112,9 @@ public class CallReplacementTransformer implements ClassFileTransformer {
       return null;
     }
 
-    if (loader != null) {
-      debug_transform.log(
-          "transforming class %s, loader %s - %s%n", className, loader, loader.getParent());
-    } else {
-      debug_transform.log("transforming class %s, null - null%n", className);
-    }
+    debug_transform.log(
+        "transforming class %s, loader %s - %s%n",
+        className, loader, (loader == null ? null : loader.getParent()));
 
     // Parse the bytes of the classfile
     JavaClass c;
