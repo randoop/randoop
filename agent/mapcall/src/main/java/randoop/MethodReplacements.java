@@ -5,13 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class used to communicate the signatures of methods replaced by the mapcalls agent to Randoop for
- * use in omitting direct calls to these methods. Uses synchronized access to a static list of the
- * signature strings. This list is set by {@link randoop.instrument.MapCallsAgent#premain(String,
- * Instrumentation)} before the {@link randoop.instrument.CallReplacementTransformer} is added to
- * the class loader, and the method {@link #addReplacedMethods(List)} should only be called at that
- * point. Randoop should use {@link #getSignatureList()} to add to the {@code --omitmethods}
- * patterns before starting generation.
+ * Class used to communicate the signatures of methods replaced by the mapcalls agent to Randoop so
+ * Randoop can omit direct calls to these methods.
+ *
+ * <p>Uses synchronized access to a static list of the signature strings. This list is set by {@link
+ * randoop.instrument.MapCallsAgent#premain(String, Instrumentation)} before the {@link
+ * randoop.instrument.CallReplacementTransformer} is added to the class loader, and the method
+ * {@link #addReplacedMethods(List)} should only be called at that point. Randoop should use {@link
+ * #getSignatureList()} to add to the {@code --omitmethods} patterns before starting generation.
  */
 public class MethodReplacements {
   /** The list of signature strings */
