@@ -137,7 +137,9 @@ public class MapCallsAgent {
       System.exit(1);
     }
 
-    // If the user has provided a replacement file, load user replacements allowing overrides
+    // If the user has provided a replacement file, load user replacements and put them into the
+    // map for the default replacements. This use of the Map.put method allows a user replacement to
+    // override a default replacement.
     if (map_calls != null) {
       try {
         replacementMap.putAll(ReplacementFileReader.readFile(map_calls));
