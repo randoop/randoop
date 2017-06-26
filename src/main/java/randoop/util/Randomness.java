@@ -40,17 +40,13 @@ public final class Randomness {
     }
     int value = random.nextInt(i);
     if (GenInputsAbstract.selection_log != null) {
+      StackTraceElement[] trace = Thread.currentThread().getStackTrace();
       try {
-        //noinspection deprecation
-        GenInputsAbstract.selection_log.write(
-            "nextRandomInt: "
-                + value
-                + " called from "
-                + sun.reflect.Reflection.getCallerClass(2).getCanonicalName()
-                + '\n');
+        String msg = String.format("nextRandomInt: %d called from %s%n", value, trace[2]);
+        GenInputsAbstract.selection_log.write(msg);
         GenInputsAbstract.selection_log.flush();
       } catch (IOException e) {
-        e.printStackTrace();
+        throw new RandoopLoggingError("Error writing to selection-log: " + e.getMessage());
       }
     }
     return value;
@@ -62,17 +58,13 @@ public final class Randomness {
     }
     int position = nextRandomInt(list.size());
     if (GenInputsAbstract.selection_log != null) {
+      StackTraceElement[] trace = Thread.currentThread().getStackTrace();
       try {
-        //noinspection deprecation
-        GenInputsAbstract.selection_log.write(
-            "randomMember: "
-                + position
-                + " called from "
-                + sun.reflect.Reflection.getCallerClass(2).getCanonicalName()
-                + '\n');
+        String msg = String.format("randomMember: %d called from %s%n", position, trace[2]);
+        GenInputsAbstract.selection_log.write(msg);
         GenInputsAbstract.selection_log.flush();
       } catch (IOException e) {
-        e.printStackTrace();
+        throw new RandoopLoggingError("Error writing to selection-log: " + e.getMessage());
       }
     }
     return list.get(position);
@@ -84,17 +76,13 @@ public final class Randomness {
     }
     int position = nextRandomInt(list.size());
     if (GenInputsAbstract.selection_log != null) {
+      StackTraceElement[] trace = Thread.currentThread().getStackTrace();
       try {
-        //noinspection deprecation
-        GenInputsAbstract.selection_log.write(
-            "randomMember: "
-                + position
-                + " called from "
-                + sun.reflect.Reflection.getCallerClass(2).getCanonicalName()
-                + '\n');
+        String msg = String.format("randomMember: %d called from %s%n", position, trace[2]);
+        GenInputsAbstract.selection_log.write(msg);
         GenInputsAbstract.selection_log.flush();
       } catch (IOException e) {
-        e.printStackTrace();
+        throw new RandoopLoggingError("Error writing to selection-log: " + e.getMessage());
       }
     }
     return list.get(position);
@@ -132,16 +120,13 @@ public final class Randomness {
   public static <T> T randomSetMember(Collection<T> set) {
     int randIndex = Randomness.nextRandomInt(set.size());
     if (GenInputsAbstract.selection_log != null) {
+      StackTraceElement[] trace = Thread.currentThread().getStackTrace();
       try {
-        GenInputsAbstract.selection_log.write(
-            "randomSetMember: "
-                + randIndex
-                + " called from "
-                + sun.reflect.Reflection.getCallerClass(2).getCanonicalName()
-                + '\n');
+        String msg = String.format("randomSetMember: %d called from %s%n", randIndex, trace[2]);
+        GenInputsAbstract.selection_log.write(msg);
         GenInputsAbstract.selection_log.flush();
       } catch (IOException e) {
-        e.printStackTrace();
+        throw new RandoopLoggingError("Error writing to selection-log: " + e.getMessage());
       }
     }
     return CollectionsExt.getNthIteratedElement(set, randIndex);
