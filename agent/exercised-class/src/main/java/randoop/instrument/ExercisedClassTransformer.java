@@ -88,9 +88,12 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
     }
 
     // randoop classes
-    if (qualifiedName.startsWith("com.github.javaparser.")
-        || qualifiedName.startsWith("randoop.")
-        || qualifiedName.startsWith("plume.")) {
+    if (qualifiedName.startsWith("randoop.")) {
+      return null;
+    }
+
+    // agent dependency classes -- see build script for package relocation details
+    if (qualifiedName.startsWith("exercisedclass.")) {
       return null;
     }
 
