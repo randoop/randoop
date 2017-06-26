@@ -1,10 +1,8 @@
-package com.mypackage;
+package mypackage.mock.javax.swing;
 
 import java.awt.Component;
-import java.io.*;
-import java.sql.*;
 
-public class RandoopMappedCalls {
+public class JOptionPane {
 
   // These methods replace a dialog box by a printed indication that the
   // dialog box would have popped up.
