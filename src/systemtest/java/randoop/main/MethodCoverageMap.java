@@ -3,7 +3,10 @@ package randoop.main;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import org.jacoco.core.analysis.Analyzer;
@@ -14,7 +17,6 @@ import org.jacoco.core.analysis.IMethodCoverage;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.tools.ExecFileLoader;
 import org.jacoco.report.JavaNames;
-import randoop.util.MultiMap;
 
 /**
  * Manages method coverage information for JaCoCo agent exec-file output from running a set of
@@ -24,14 +26,14 @@ import randoop.util.MultiMap;
 class MethodCoverageMap {
 
   /** The multi-map from classname to names of covered methods. */
-  private MultiMap<String, String> classMap;
+  private Map<String, Set<String>> classMap;
 
   /** The map from method name to coverage counter information. */
   private Map<String, ICounter> counterMap;
 
   /** Creates an empty coverage map. */
   private MethodCoverageMap() {
-    this.classMap = new MultiMap<>();
+    this.classMap = new LinkedHashMap<>();
     this.counterMap = new HashMap<>();
   }
 
@@ -80,11 +82,20 @@ class MethodCoverageMap {
    * @return the set of method names for covered methods
    */
   Set<String> getMethods(String classname) {
-    return classMap.getValues(classname);
+    Set<String> set = classMap.get(classname);
+    if (set != null) {
+      return set;
+    }
+    return Collections.emptySet();
   }
 
   private void put(String className, String methodName, ICounter methodCounter) {
-    this.classMap.add(className, methodName);
+    Set<String> set = classMap.get(className);
+    if (set == null) {
+      set = new LinkedHashSet<>();
+    }
+    set.add(methodName);
+    classMap.put(className, set);
     this.counterMap.put(methodName, methodCounter);
   }
 

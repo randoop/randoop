@@ -2,6 +2,7 @@ package randoop.main;
 
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -77,6 +78,7 @@ class SystemTestEnvironment {
     Path libsPath = buildDir.resolve("libs");
     Path mapcallAgentPath = null;
     Path exercisedClassAgentPath = null;
+    Path randoopJarPath = null;
     try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(libsPath)) {
       for (Path entry : dirStream) {
         if (entry.getFileName().toString().startsWith("exercised-class")) {
@@ -85,12 +87,16 @@ class SystemTestEnvironment {
         if (entry.getFileName().toString().startsWith("mapcall")) {
           mapcallAgentPath = entry;
         }
+        if (entry.getFileName().toString().startsWith("randoop-all")) {
+          randoopJarPath = entry;
+        }
       }
     } catch (IOException e) {
       fail("unable to get build directory contents");
     }
+    assert randoopJarPath != null;
     return new SystemTestEnvironment(
-        classpath,
+        classpath + File.pathSeparator + randoopJarPath,
         workingDir,
         testInputClassDir,
         jacocoAgentPath,

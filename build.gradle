@@ -6,6 +6,7 @@
  */
 
 plugins {
+  id 'com.github.johnrengelman.shadow' version '2.0.1'
   id 'java'
   id 'eclipse'
   id 'idea'
@@ -27,6 +28,7 @@ plugins {
 /* Common build configuration for Randoop and agents */
 allprojects {
   apply plugin: 'java'
+  apply plugin: 'com.github.johnrengelman.shadow'
 
   sourceCompatibility = 1.7
   targetCompatibility = 1.7
@@ -118,49 +120,47 @@ configurations {
    * The agent tests are JUnit tests run with the exercised-class-agent, so
    * borrow from unit test configurations.
    */
-  exercisedTestCompile.extendsFrom testCompile
+  exercisedTestImplementation.extendsFrom testImplementation
   exercisedTestRuntime.extendsFrom testRuntime
-  mapcallTestCompile.extendsFrom testCompile
+  mapcallTestImplementation.extendsFrom testImplementation
   mapcallTestRuntime.extendsFrom testRuntime
-
-  systemTestCompile.extendsFrom testCompile
-  systemTestRuntime.extendsFrom testRuntime
 }
 
 dependencies {
   /* Randoop uses local copy of Plume */
   plume files('lib/plume.jar')
-  compile group: 'com.google.code.gson', name: 'gson', version: '2.8.0'
-  compile group: 'junit', name: 'junit', version: '4.+'
-  compile files(project(':mapcall').sourceSets.main.output)
+  implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.0'
+  implementation group: 'junit', name: 'junit', version: '4.+'
+  implementation files(project(':mapcall').sourceSets.main.output)
 
   /* JavaParser 2.4.0 is the most recent version available with JDK7 jar files. */
-  compile group: 'com.github.javaparser', name: 'javaparser-core', version: '2.4.0'
+  implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '2.4.0'
 
   /* sourceSet test uses JUnit and some use testInput source set */
-  testCompile group: 'junit', name: 'junit', version: '4.+'
-  testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
-  testCompile sourceSets.testInput.output
+  testImplementation group: 'junit', name: 'junit', version: '4.+'
+  testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+  testImplementation sourceSets.testInput.output
 
   /*
    * sourceSet exercisedTest uses output from main sourceSet, and agent projects.
    * (Also, see configuration block.)
    */
-  exercisedTestCompile sourceSets.main.output
+  exercisedTestImplementation sourceSets.main.output
   exercisedTestRuntime project(':exercised-class')
 
-  mapcallTestCompile files(project(':mapcall').sourceSets.main.output)
+  mapcallTestImplementation files(project(':mapcall').sourceSets.main.output)
 
   jacocoagent group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.7.7.201606060606'
 
   /*
    * source set systemTest
    */
-   systemTestCompile sourceSets.main.output
-   systemTestCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
-   systemTestCompile group: 'org.jacoco', name: 'org.jacoco.core', version: '0.7.7.201606060606'
-   systemTestCompile group: 'org.jacoco', name: 'org.jacoco.report', version: '0.7.7.201606060606'
-   systemTestRuntime sourceSets.testInput.output
+   systemTestImplementation files('lib/plume.jar')
+   systemTestImplementation group: 'junit', name: 'junit', version: '4.+'
+   systemTestImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.7.7.201606060606'
+   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.report', version: '0.7.7.201606060606'
+   systemTestRuntimeOnly sourceSets.testInput.output
 
   /*
    * sourceSet testInput depends on output of main.
@@ -443,17 +443,43 @@ task copyJars(type: Copy, dependsOn: [':exercised-class:jar', ':mapcall:jar']) {
 
 assemble.dependsOn copyJars
 
-task singleJar (type: Jar) {
-  group "build"
-  description "Assemble a fat jar archive of Randoop and runtime dependencies"
-  baseName = project.name + '-all'
-  from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-  with jar
+
+shadowJar {
+  // name should be randoop-all-$version.jar instead of randoop-$version-all.jar
+  baseName = 'randoop-all'
+  classifier = null
+
+  exclude '**/pom.*'
+  exclude '**/default-*.txt'
+
+  // don't include either mocks or agent classes
+  // otherwise creates problems for replacement creation of mapcall agent 
+  exclude '**/randoop/mock/*'
+  exclude '**/randoop/instrument/*'
+
+  relocate 'com.github.javaparser', 'randoop.com.github.javaparser'
+  relocate 'com.google', 'randoop.com.google'
+  relocate 'com.jcraft.jsch', 'randoop.com.jcraft.jsch'
+  relocate 'com.sun.javadoc', 'randoop.com.sun.javadoc'
+  relocate 'com.sun.jna', 'randoop.com.sun.jna'
+  relocate 'com.trilead.ssh2', 'randoop.com.trilead.ssh2'
+  relocate 'de.regnis.q.sequence', 'randoop.de.regnis.q.sequence'
+  relocate 'edu.emory.mathcs.backport.java.util', 'randoop.edu.emory.mathcs.backport.java.util'
+  relocate 'net.fortuna.ical4j', 'randoop.net.fortuna.ical4j'
+  relocate 'nu.xom', 'randoop.nu.xom'
+  relocate 'org.antlr', 'randoop.org.antlr'
+  relocate 'org.apache', 'randoop.org.apache'
+  relocate 'org.ccil.cowan.tagsoup', 'randoop.org.ccil.cowan.tagsoup'
+  relocate 'org.checkerframework', 'randoop.org.checkerframework'
+  relocate 'org.ini4j', 'randoop.org.ini4j'
+  relocate 'org.slf4j', 'randoop.org.slf4j'
+  relocate 'org.tigris.subversion', 'randoop.org.tigris.subversion'
+  relocate 'org.tmatesoft', 'randoop.org.tmatesoft'
+  relocate 'plume', 'randoop.plume'
 }
+assemble.dependsOn shadowJar
 
-assemble.dependsOn singleJar
-
-task distributionZip (type: Zip , dependsOn: ['singleJar', 'copyJars', 'manual']) {
+task distributionZip (type: Zip , dependsOn: ['shadowJar', 'copyJars', 'manual']) {
   group 'Publishing'
   description "Assemble a zip file with jar files and user documentation"
   def dirName = "$baseName-$version"

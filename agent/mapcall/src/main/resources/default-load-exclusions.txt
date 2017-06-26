@@ -15,13 +15,7 @@ org.hamcrest.
 org.junit.
 
 // The following are library classes used by Randoop.
-// Remove once the Randoop jar is built with package relocation.
-plume.
-com.github.javaparser.
-org.checkerframework.
 com.sun.tools.javac.
 com.sun.source.util.
 com.sun.source.tree.
 com.sun.tools.doclint.
-
-
