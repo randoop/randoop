@@ -17,6 +17,7 @@ import randoop.util.Randomness;
 import randoop.util.Util;
 
 /** Container for Randoop options. */
+@SuppressWarnings("WeakerAccess")
 public abstract class GenInputsAbstract extends CommandHandler {
 
   public GenInputsAbstract(
@@ -83,20 +84,45 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static File methodlist = null;
 
   /**
-   * Randoop will not attempt to directly call methods whose {@link
-   * java.lang.reflect.Method#toString()} matches the regular expression given. This does not
-   * prevent indirect calls to such methods from other, allowed methods.
+   * A pattern that indicates methods that should not be included in generated tests. Randoop will
+   * not attempt to directly call methods whose {@link java.lang.reflect.Method#toString()} matches
+   * the regular expression given. This does not prevent indirect calls to such methods from other,
+   * allowed methods.
    *
    * <p>Randoop only calls methods that are specified by one of the <code>--testclass</code>, <code>
    * -classlist</code>, or <code>--methodlist</code> command-line options; the purpose of <code>
    * --omitmethods</code> is to override one of those other command-line options.
+   *
+   * <p>Note:
+   *
+   * <ul>
+   *   <li>The regex is unanchored, so <code>^</code> or <code>$</code> may be needed to get the
+   *       correct results.
+   *   <li>If a method is inherited without an override, the pattern must match the superclass
+   *       method.
+   * </ul>
    */
   @Option("Do not call methods that match regular expression <string>")
-  public static Pattern omitmethods = null;
+  public static List<Pattern> omitmethods = null;
 
   /**
-   * File that contains fully-qualified field names to be excluded from test generation. Otherwise,
-   * Randoop includes all public fields of classes under test as observer methods.
+   * A file containing a list of regular expressions that indicate methods that should not be
+   * included in generated tests. These patterns are used along with those provided with <code>
+   * --omitmethods</code>, and the default omissions.
+   */
+  @Option("File containing regular expressions for methods to omit")
+  public static File omitmethods_list = null;
+
+  /**
+   * A fully-qualified field name of a field to be excluded from test generation. An accessible
+   * field is used unless it is omitted by this or the <code>--omit-field-list</code> option.
+   */
+  @Option("Omit field from generated tests")
+  public static List<String> omit_field = null;
+
+  /**
+   * File that contains fully-qualified field names to be excluded from test generation. An
+   * accessible field is used unless it is omitted by this or the <code>--omit-field</code> option.
    */
   @Option("File containing field names to omit from generated tests")
   public static File omit_field_list = null;
@@ -130,7 +156,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static Pattern include_if_classname_appears = null;
 
   /**
-   * File containing fully qualified names of classes that the tests must exercise. This option only
+   * File containing fully-qualified names of classes that the tests must exercise. This option only
    * works if Randoop is run using the <a
    * href="https://randoop.github.io/randoop/manual/index.html#exercised-filter">exercised-class
    * javaagent</a> to instrument the classes. A test is output only if it exercises at least one of
@@ -188,6 +214,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Whether to check if test sequences are compilable")
   public static boolean check_compilable = true;
+
+  /**
+   * Flag indicating whether or not to automatically minimize error-revealing tests. Both original
+   * and minimized versions of each test class will be output. Minimization is automatically enabled
+   * when <code>--stop-on-error-test</code> is set. Setting this option is not recommended when the
+   * number of error-revealing tests is expected to be greater than 100.
+   */
+  @Option("<boolean> to indicate automatic minimization of error-revealing tests")
+  public static boolean minimize_error_test = false;
 
   /**
    * The possible values for exception behavior types. The order INVALID, ERROR, EXPECTED should be
@@ -257,29 +292,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Whether StackOverflowError is an ERROR, EXPECTED or INVALID")
   public static BehaviorType sof_exception = BehaviorType.INVALID;
-
-  /**
-   * Read Toradocu JSON condition file to use Toradocu generated conditions to control how tests are
-   * classified.
-   *
-   * <p>Param-conditions are used as pre-conditions on method/constructor calls, with test sequences
-   * where the condition fails being classified as {@link BehaviorType#INVALID}.
-   *
-   * <p>Throws-conditions are used to check exceptions: if the inputs to the call satisfy the
-   * condition, when the exception is thrown the sequence is {@link BehaviorType#EXPECTED}, but, if
-   * it is not, the sequence is classified as {@link BehaviorType#ERROR}. If the throws-condition is
-   * not satisfied by the input, then ordinary classification is applied.
-   */
-  @Option("Use Toradocu condition JSON file to classify behaviors for methods/constructors")
-  public static List<File> toradocu_conditions = null;
-
-  /**
-   * Throw exception when cannot find expected condition methods in Toradocu output. Otherwise a
-   * warning message is printed and the condition is ignored.
-   */
-  @Unpublicized
-  @Option("Allow failure when cannot find Toradocu condition methods")
-  public static boolean fail_on_condition_input_error = false;
 
   /**
    * File containing side-effect-free observer methods. Specifying observers has 2 benefits: it
@@ -462,9 +474,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int clear = 100000000;
 
   ///////////////////////////////////////////////////////////////////
-  @OptionGroup("Outputting the JUnit tests")
-
   /** Maximum number of tests to write to each JUnit file */
+  @OptionGroup("Outputting the JUnit tests")
   @Option("Maximum number of tests to write to each JUnit file")
   public static int testsperfile = 500;
 
@@ -560,20 +571,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("-D Specify system properties to be set (similar to java -Dx=y)")
   public static List<String> system_props = new ArrayList<>();
 
-  /**
-   * Specify an extra command for recursive JVM calls that Randoop spawns. The argument to the
-   * --agent option is the entire extra JVM command. A typical invocation of Randoop might be:
-   *
-   * <pre>
-   * java -javaagent:<em>jarpath</em>=<em>args</em> randoop.main.Main gentests --agent="-javaagent:<em>jarpath</em>=<em>args</em>"
-   * </pre>
-   */
-  @Option("Specify an extra command for recursive JVM calls")
-  public static String agent = null;
-
-  @Option("specify the memory size (in megabytes) for recursive JVM calls")
-  public static int mem_megabytes = 1000;
-
   @Option("Capture all output to stdout and stderr")
   public static boolean capture_output = false;
 
@@ -620,6 +617,20 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static String output_sequence_info_filename = "sequenceInfo.csv";
 
   /**
+   * Track and log the usage of operations during generation to standard out. This option is not
+   * affected by setting <code>--operation-history-log</code>.
+   */
+  @Option("Track and log operation usage counts")
+  public static boolean log_operation_history = false;
+
+  /**
+   * Name of a log to which the operation usage history is written. This operation is not affected
+   * by setting <code>--log-operation-history</code>.
+   */
+  @Option("Track and log operation usage counts to this file")
+  public static FileWriter operation_history_log = null;
+
+  /**
    * Create sequences but never execute them. Used to test performance of Randoop's sequence
    * generation code.
    */
@@ -627,8 +638,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Create sequences but never execute them")
   public static boolean dontexecute = false;
 
-  /** Install the given runtime visitor. See class randoop.ExecutionVisitor. */
   ///////////////////////////////////////////////////////////////////
+  /** Install the given runtime visitor. See class randoop.ExecutionVisitor. */
   @OptionGroup(value = "Advanced extension points")
   @Option("Install the given runtime visitor")
   public static List<String> visitor = new ArrayList<>();
@@ -675,6 +686,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     return getStringSetFromFile(listFile, errMessage, "^#.*", null);
   }
 
+  @SuppressWarnings("SameParameterValue")
   public static Set<String> getStringSetFromFile(
       File listFile, String errMessage, String commentRegex, String includeRegex) {
     Set<String> elementSet = new LinkedHashSet<>();

@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 import randoop.CheckRep;
@@ -19,7 +20,7 @@ import randoop.util.Log;
  */
 public class DefaultReflectionPredicate implements ReflectionPredicate {
 
-  private Pattern omitMethods = null;
+  private List<Pattern> omitMethods = null;
   private Set<String> omitFields;
 
   /**
@@ -27,7 +28,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    *
    * @param omitMethods the pattern for names of methods to omit
    */
-  public DefaultReflectionPredicate(Pattern omitMethods) {
+  public DefaultReflectionPredicate(List<Pattern> omitMethods) {
     this(omitMethods, new HashSet<String>());
   }
 
@@ -42,7 +43,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * @param omitMethods pattern for methods to omit, if null then no methods omitted
    * @param omitFields set of field names to omit
    */
-  public DefaultReflectionPredicate(Pattern omitMethods, Set<String> omitFields) {
+  public DefaultReflectionPredicate(List<Pattern> omitMethods, Set<String> omitFields) {
     super();
     this.omitMethods = omitMethods;
     this.omitFields = omitFields;
@@ -88,6 +89,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       return false;
     }
 
+    //XXX should use fully-qualified signature and not toString()
     if (matchesOmitMethodPattern(m.toString())) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + m.toString());
@@ -282,6 +284,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   @Override
   public boolean test(Constructor<?> c) {
 
+    //should use fully-qualified signature
     if (matchesOmitMethodPattern(c.toString())) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + c.toString());
@@ -303,15 +306,20 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   }
 
   private boolean matchesOmitMethodPattern(String name) {
-    if (omitMethods == null) {
+    if (omitMethods == null || omitMethods.isEmpty()) {
       return false;
     }
-    boolean result = omitMethods.matcher(name).find();
-    if (Log.isLoggingOn()) {
-      Log.logLine(
-          String.format("Comparing '%s' against pattern '%s' = %b%n", name, omitMethods, result));
+    for (Pattern pattern : omitMethods) {
+      boolean result = pattern.matcher(name).find();
+      if (Log.isLoggingOn()) {
+        Log.logLine(
+            String.format("Comparing '%s' against pattern '%s' = %b%n", name, pattern, result));
+      }
+      if (result) {
+        return true;
+      }
     }
-    return result;
+    return false;
   }
 
   /**

@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -17,6 +18,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import org.apache.commons.io.FilenameUtils;
 import plume.EntryReader;
 import plume.Options;
 import plume.Options.ArgException;
@@ -27,6 +29,7 @@ import randoop.MultiVisitor;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
+import randoop.generation.OperationHistoryLogger;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
@@ -46,6 +49,7 @@ import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
+import randoop.sequence.SequenceExecutionException;
 import randoop.test.CompilableTestPredicate;
 import randoop.test.ContractCheckingVisitor;
 import randoop.test.ContractSet;
@@ -126,8 +130,12 @@ public class GenTests extends GenInputsAbstract {
           ForwardGenerator.class,
           AbstractGenerator.class);
 
+  /** The count of sequences that failed to compile */
+  private int sequenceCompileFailureCount;
+
   public GenTests() {
     super(command, pitch, commandGrammar, where, summary, notes, input, output, example, options);
+    sequenceCompileFailureCount = 0;
   }
 
   @SuppressWarnings("unchecked")
@@ -224,6 +232,7 @@ public class GenTests extends GenInputsAbstract {
     // get names of fields to be omitted
     Set<String> omitFields =
         GenInputsAbstract.getStringSetFromFile(omit_field_list, "Error reading field file");
+    omitFields.addAll(omit_field);
 
     VisibilityPredicate visibility;
     if (GenInputsAbstract.junit_package_name == null
@@ -233,6 +242,8 @@ public class GenTests extends GenInputsAbstract {
     } else {
       visibility = new PackageVisibilityPredicate(GenInputsAbstract.junit_package_name);
     }
+
+    extendOmitMethods(omitmethods);
 
     ReflectionPredicate reflectionPredicate =
         new DefaultReflectionPredicate(omitmethods, omitFields);
@@ -268,7 +279,6 @@ public class GenTests extends GenInputsAbstract {
       System.out.printf("Error: %s%n", e.getMessage());
       if (e.getMessage().startsWith("No class with name \"")) {
         String classpath = System.getProperty("java.class.path");
-        // System.out.println("Your classpath is " + classpath);
         System.out.println("More specifically, none of the following files could be found:");
         StringTokenizer tokenizer = new StringTokenizer(classpath, File.pathSeparator);
         while (tokenizer.hasMoreTokens()) {
@@ -286,7 +296,6 @@ public class GenTests extends GenInputsAbstract {
         }
         System.out.println("Correct your classpath or the class name and re-run Randoop.");
       }
-      // System.out.println("Exiting Randoop.");
       System.exit(1);
     }
     assert operationModel != null;
@@ -444,6 +453,13 @@ public class GenTests extends GenInputsAbstract {
       Log.logLine("Initial sequences (seeds):");
       componentMgr.log();
     }
+    if (GenInputsAbstract.log_operation_history) {
+      explorer.setOperationHistoryLogger(new OperationHistoryLogger(new PrintWriter(System.out)));
+    }
+    if (GenInputsAbstract.operation_history_log != null) {
+      explorer.setOperationHistoryLogger(
+          new OperationHistoryLogger(new PrintWriter(GenInputsAbstract.operation_history_log)));
+    }
 
     /* Generate tests */
     try {
@@ -465,6 +481,10 @@ public class GenTests extends GenInputsAbstract {
       System.out.printf("%s%n", e.getException());
       e.printStackTrace();
       System.exit(1);
+    } catch (SequenceExecutionException e) {
+      System.out.printf("%nError executing generated sequence: %n%s%n", e.getMessage());
+      e.printStackTrace();
+      System.exit(1);
     }
 
     /* post generation */
@@ -479,7 +499,24 @@ public class GenTests extends GenInputsAbstract {
           System.out.printf("%nError-revealing test output:%n");
           System.out.printf("Error-revealing test count: %d%n", errorSequences.size());
         }
-        outputTests(GenInputsAbstract.error_test_basename, errorSequences);
+        List<File> outputFiles = outputTests(GenInputsAbstract.error_test_basename, errorSequences);
+
+        // Automatically minimize the error-revealing test if the minimized error test flag
+        // is set or if the stop on error test flag is set.
+        if (GenInputsAbstract.minimize_error_test || GenInputsAbstract.stop_on_error_test) {
+          // Minimize each error-revealing test that has been output.
+          for (File errorRevealingTestSuite : outputFiles) {
+            String baseName = FilenameUtils.removeExtension(errorRevealingTestSuite.getName());
+            // Minimize the file only if it is not the base ErrorTest file.
+            if (!baseName.equals(GenInputsAbstract.error_test_basename)) {
+              Minimize.mainMinimize(
+                  errorRevealingTestSuite,
+                  Minimize.suiteclasspath,
+                  Minimize.testsuitetimeout,
+                  Minimize.verboseminimizer);
+            }
+          }
+        }
       } else {
         if (!GenInputsAbstract.noprogressdisplay) {
           System.out.printf("%nNo error-revealing tests to output%n");
@@ -503,12 +540,22 @@ public class GenTests extends GenInputsAbstract {
     }
 
     if (!GenInputsAbstract.noprogressdisplay) {
-      System.out.printf("%nInvalid tests generated: %d", explorer.invalidSequenceCount);
+      System.out.printf("%nInvalid tests generated: %d%n", explorer.invalidSequenceCount);
     }
 
     if (GenInputsAbstract.output_sequence_info) {
       writeTestInfo(((ForwardGenerator) explorer).getExecutedSequences());
     }
+
+    if (this.sequenceCompileFailureCount > 0) {
+      System.out.printf(
+          "%nUncompilable sequences generated (count: %d). Please report.%n",
+          this.sequenceCompileFailureCount);
+    }
+
+    //operation history includes counts determined by getting regression sequences from explorer
+    //so, dump after all done.
+    explorer.getOperationHistory().outputTable();
 
     return true;
   }
@@ -547,6 +594,30 @@ public class GenTests extends GenInputsAbstract {
       System.out.println(
           "Couldn't create output file: " + GenInputsAbstract.output_sequence_info_filename);
       e.printStackTrace();
+    }
+  }
+
+  /**
+   * Adds patterns for methods to be omitted to the given list. Reads from the {@link
+   * GenInputsAbstract#omitmethods_list} file.
+   *
+   * @param omitmethods the list of {@code Pattern} objects to add new patterns to, must not be null
+   */
+  private void extendOmitMethods(List<Pattern> omitmethods) {
+    // Read method omissions from user provided file
+    if (omitmethods_list != null) {
+      try (EntryReader er = new EntryReader(omitmethods_list, "^#.*", null)) {
+        for (String line : er) {
+          String trimmed = line.trim();
+          if (!trimmed.isEmpty()) {
+            Pattern pattern = Pattern.compile(trimmed);
+            omitmethods.add(pattern);
+          }
+        }
+      } catch (IOException e) {
+        System.out.println("Error reading omitmethods-list file: " + e.getMessage());
+        System.exit(1);
+      }
     }
   }
 
@@ -663,7 +734,7 @@ public class GenTests extends GenInputsAbstract {
                 afterAllFixtureBody,
                 beforeEachFixtureBody,
                 afterEachFixtureBody);
-        isOutputTest = baseTest.and(checkTest.and(new CompilableTestPredicate(junitCreator)));
+        isOutputTest = baseTest.and(checkTest.and(new CompilableTestPredicate(junitCreator, this)));
       } else {
         isOutputTest = baseTest.and(checkTest);
       }
@@ -676,8 +747,9 @@ public class GenTests extends GenInputsAbstract {
    *
    * @param sequences the sequences to output
    * @param junitPrefix the filename prefix for test output
+   * @return list of files written
    */
-  private void outputTests(String junitPrefix, List<ExecutableSequence> sequences) {
+  private List<File> outputTests(String junitPrefix, List<ExecutableSequence> sequences) {
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.printf("Writing JUnit tests...%n");
     }
@@ -688,7 +760,7 @@ public class GenTests extends GenInputsAbstract {
             afterAllFixtureBody,
             beforeEachFixtureBody,
             afterEachFixtureBody);
-    writeJUnitTests(junitCreator, junit_output_dir, sequences, junitPrefix);
+    return writeJUnitTests(junitCreator, junit_output_dir, sequences, junitPrefix);
   }
 
   /**
@@ -835,6 +907,7 @@ public class GenTests extends GenInputsAbstract {
     }
     return null;
   }
+<<<<<<< HEAD
 
   private static PrintStream createTextOutputStream(String fileName) {
     try {
@@ -848,4 +921,11 @@ public class GenTests extends GenInputsAbstract {
       throw new Error("This can't happen");
     }
   }
+||||||| merged common ancestors
+=======
+
+  public void countSequenceCompileFailure() {
+    this.sequenceCompileFailureCount++;
+  }
+>>>>>>> e4a4545119fb8cda2e4846a97db78ca3969cfff9
 }

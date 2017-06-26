@@ -1,3 +1,31 @@
+Version ?, released May ?, 2017
+
+Randoop contains a test suite minimizer.  Given a test suite containing
+failing tests, it creates a test suite with smaller tests that fail the
+same way.
+ * You can run this minimizer on any test suite, whether it was created by
+   Randoop or not.
+ * Randoop automatically runs the minimizer on fault-revealing tests before
+   it outputs them; this makes the failures easier to understand.  You can
+   disable this behavior.
+
+New flag --log-operation-history will write table of operation use during
+generation to standard output. Option --operation-history-log will write to
+the file argument.
+
+Fixes a problem in progress reporting where the wrong count was being used for
+error-revealing sequences.
+
+
+Version 3.1.5, released April 28, 2017
+
+Fixes a bug where a call to a method with a type variable return type should
+result in a ClassCastException does not throw the exception, but instead leads
+to a later failure when invoking a class member.
+
+Fixes and improves error handling.
+
+
 Version 3.1.4, released April 11, 2017
 
 Fixes a bug uncovered in obscure cases when package visibility is used.
@@ -83,7 +111,7 @@ Randoop now
   types in previously generated test sequences. As a result, Randoop is able to
   generate more diverse instantiations of generics, as well as multidimensional
   arrays.
-- supports insertion of Java code into text fixtures when tests are written to
+- supports insertion of Java code into test fixtures when tests are written to
   disk. Given as filename to new command-line arguments: --junit-before-each,
   --junit-after-each, --junit-before-all, and --junit-after-each.
 

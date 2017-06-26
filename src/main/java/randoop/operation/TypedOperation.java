@@ -103,6 +103,15 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
   }
 
   /**
+   * Returns the signature string for this operation.
+   *
+   * @return a string with the fully-qualified operation name and input type-tuple
+   */
+  public String getSignatureString() {
+    return getName() + inputTypes;
+  }
+
+  /**
    * Returns the tuple of input types for this operation.
    *
    * @return tuple of concrete input types
@@ -288,6 +297,9 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     paramTypes.addAll(methodParamTypes);
     TypeTuple inputTypes = new TypeTuple(paramTypes);
     Type outputType = Type.forType(method.getGenericReturnType());
+    if (outputType.isVariable()) {
+      return new TypedClassOperationWithCast(op, declaringType, inputTypes, outputType);
+    }
     return new TypedClassOperation(op, declaringType, inputTypes, outputType);
   }
 

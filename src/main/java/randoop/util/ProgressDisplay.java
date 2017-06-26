@@ -40,6 +40,7 @@ public class ProgressDisplay extends Thread {
       RandoopListenerManager listenerMgr,
       Mode outputMode,
       int progressWidth) {
+    super("randoop.util.ProgressDisplay");
     if (generator == null) {
       throw new IllegalArgumentException("generator is null");
     }

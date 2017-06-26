@@ -4,6 +4,7 @@ import static randoop.output.NameGenerator.numDigits;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
+import com.github.javaparser.TokenMgrError;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.PackageDeclaration;
@@ -291,11 +292,17 @@ public class JUnitCreator {
     String sequenceBlockString = "{ " + testSequence.toCodeString() + " }";
     try {
       BlockStmt sequenceBlock = JavaParser.parseBlock(sequenceBlockString);
-      for (Statement statement : sequenceBlock.getStmts()) {
-        statements.add(statement);
-      }
+      statements.addAll(sequenceBlock.getStmts());
     } catch (ParseException e) {
-      System.out.println("Parse error while creating test method " + className + "." + methodName);
+      System.out.println(
+          "Parse error while creating test method " + className + "." + methodName + " for block ");
+      System.out.println(sequenceBlockString);
+      return null;
+    } catch (TokenMgrError e) {
+      System.out.println(
+          "Lexical error while creating test method " + className + "." + methodName);
+      System.out.println("Exception: " + e.getMessage());
+      System.out.println(sequenceBlockString);
       return null;
     }
 
@@ -344,15 +351,15 @@ public class JUnitCreator {
     List<AnnotationExpr> annotations = new ArrayList<>();
     annotations.add(
         new SingleMemberAnnotationExpr(new NameExpr("RunWith"), new NameExpr("Suite.class")));
-    String classList = "";
+    StringBuilder classList = new StringBuilder();
     Iterator<String> testIterator = testClassNames.iterator();
     if (testIterator.hasNext()) {
       String classString = testIterator.next() + ".class";
       while (testIterator.hasNext()) {
-        classList += classString + ", ";
+        classList.append(classString).append(", ");
         classString = testIterator.next() + ".class";
       }
-      classList += classString;
+      classList.append(classString);
     }
     annotations.add(
         new SingleMemberAnnotationExpr(
@@ -497,11 +504,11 @@ public class JUnitCreator {
     if (bodyText == null) {
       return null;
     }
-    String blockText = "{\n";
+    StringBuilder blockText = new StringBuilder("{\n");
     for (String line : bodyText) {
-      blockText += line + "\n";
+      blockText.append(line).append("\n");
     }
-    blockText += "\n}";
-    return JavaParser.parseBlock(blockText);
+    blockText.append("\n}");
+    return JavaParser.parseBlock(blockText.toString());
   }
 }

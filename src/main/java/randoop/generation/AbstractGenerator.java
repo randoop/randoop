@@ -109,19 +109,21 @@ public abstract class AbstractGenerator {
    * The list of error test sequences to be output as JUnit tests. May include subsequences of other
    * sequences in the list.
    */
-  public List<ExecutableSequence> outErrorSeqs = new ArrayList<>();
+  public List<ExecutableSequence> outErrorSeqs;
 
   /**
    * The list of regression sequences to be output as JUnit tests. May include subsequences of other
    * sequences in the list.
    */
-  public List<ExecutableSequence> outRegressionSeqs = new ArrayList<>();
+  public List<ExecutableSequence> outRegressionSeqs;
 
   /** A filter to determine whether a sequence should be added to the output sequence lists. */
   public Predicate<ExecutableSequence> outputTest;
 
   /** Visitor to generate checks for a sequence. */
   protected TestCheckGenerator checkGenerator;
+
+  protected OperationHistoryLogInterface operationHistory;
 
   /**
    * Constructs a generator with the given parameters.
@@ -163,6 +165,9 @@ public abstract class AbstractGenerator {
 
     this.stopper = stopper;
     this.listenerMgr = listenerManager;
+    operationHistory = new DefaultOperationHistoryLogger();
+    outRegressionSeqs = new ArrayList<>();
+    outErrorSeqs = new ArrayList<>();
   }
 
   /**
@@ -308,13 +313,12 @@ public abstract class AbstractGenerator {
 
       num_sequences_generated++;
 
-      if (eSeq.hasFailure()) {
-        num_failing_sequences++;
-      }
-
       if (outputTest.test(eSeq)) {
+        TypedOperation operation = eSeq.getOperation();
         if (!eSeq.hasInvalidBehavior()) {
           if (eSeq.hasFailure()) {
+            operationHistory.add(operation, OperationOutcome.ERROR_SEQUENCE);
+            num_failing_sequences++;
             outErrorSeqs.add(eSeq);
           } else {
             outRegressionSeqs.add(eSeq);
@@ -329,10 +333,8 @@ public abstract class AbstractGenerator {
         System.out.printf("allSequences.size() = %d%n", numGeneratedSequences());
       }
 
-      if (Log.isLoggingOn()) {
-        Log.logLine("Sequence after execution: " + Globals.lineSep + eSeq.toString());
-        Log.logLine("allSequences.size()=" + numGeneratedSequences());
-      }
+      Log.logLine("Sequence after execution: " + Globals.lineSep + eSeq.toString());
+      Log.logLine("allSequences.size()=" + numGeneratedSequences());
     }
 
     if (!GenInputsAbstract.noprogressdisplay && progressDisplay != null) {
@@ -389,7 +391,10 @@ public abstract class AbstractGenerator {
     Set<Sequence> subsumed_seqs = this.getSubsumedSequences();
     for (ExecutableSequence es : outRegressionSeqs) {
       if (!subsumed_seqs.contains(es.sequence)) {
+        operationHistory.add(es.getOperation(), OperationOutcome.REGRESSION_SEQUENCE);
         unique_seqs.add(es);
+      } else {
+        operationHistory.add(es.getOperation(), OperationOutcome.SEQUENCE_DISCARDED);
       }
     }
     return unique_seqs;
@@ -419,7 +424,15 @@ public abstract class AbstractGenerator {
    *
    * @param s the current sequence
    */
-  protected void setCurrentSequence(Sequence s) {
+  void setCurrentSequence(Sequence s) {
     currSeq = s;
+  }
+
+  public void setOperationHistoryLogger(OperationHistoryLogInterface logger) {
+    operationHistory = logger;
+  }
+
+  public OperationHistoryLogInterface getOperationHistory() {
+    return operationHistory;
   }
 }

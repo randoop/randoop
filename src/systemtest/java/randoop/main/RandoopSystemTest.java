@@ -264,6 +264,7 @@ public class RandoopSystemTest {
     options.addTestClass("java2.util2.LinkedList");
     options.addTestClass("java2.util2.Collections");
     options.setOption("omit-field-list", "resources/systemTest/naiveomitfields.txt");
+    options.setFlag("log-operation-history");
 
     CoverageChecker coverageChecker = new CoverageChecker(options);
     //    coverageChecker.exclude("java2.util2.ArrayList.add(int, java.lang.Object)");
@@ -449,6 +450,8 @@ public class RandoopSystemTest {
 
     options.setFlag("no-regression-tests");
     options.setOption("inputlimit", "1000");
+    // Don't minimize the tests because it would take too long to finish.
+    options.setOption("minimize_error_test", "false");
     options.addClassList("resources/systemTest/buggyclasses.txt");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.NONE;
@@ -972,12 +975,12 @@ public class RandoopSystemTest {
   public void runExercisedClassFilter() {
     TestEnvironment testEnvironment =
         systemTestEnvironment.createTestEnvironment("exercised-class");
-    testEnvironment.addJavaAgent(systemTestEnvironment.excercisedClassAgentPath);
+    testEnvironment.addJavaAgent(systemTestEnvironment.exercisedClassAgentPath);
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.addClassList("resources/systemTest/randoop/instrument/testcase/allclasses.txt");
+    options.addClassList("resources/systemTest/instrument/testcase/allclasses.txt");
     options.setOption(
         "include-if-class-exercised",
-        "resources/systemTest/randoop/instrument/testcase/coveredclasses.txt");
+        "resources/systemTest/instrument/testcase/coveredclasses.txt");
     options.setOption("outputlimit", "250");
     options.setOption("inputlimit", "500");
     options.setErrorBasename("ExError");
@@ -985,10 +988,10 @@ public class RandoopSystemTest {
 
     CoverageChecker coverageChecker = new CoverageChecker(options);
     //TODO figure out why this method not covered
-    coverageChecker.ignore("randoop.instrument.testcase.A.toString()");
-    coverageChecker.exclude("randoop.instrument.testcase.C.getValue()");
-    coverageChecker.exclude("randoop.instrument.testcase.C.isZero()");
-    coverageChecker.exclude("randoop.instrument.testcase.C.jumpValue()");
+    coverageChecker.ignore("instrument.testcase.A.toString()");
+    coverageChecker.exclude("instrument.testcase.C.getValue()");
+    coverageChecker.exclude("instrument.testcase.C.isZero()");
+    coverageChecker.exclude("instrument.testcase.C.jumpValue()");
     generateAndTestWithCoverage(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
@@ -1025,6 +1028,30 @@ public class RandoopSystemTest {
 
     generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
     renameOutputTo("randoop-sequenceInfo.csv");
+  }
+
+  /**
+   * Expecting something like
+   *
+   * <pre>
+   * generation.Dim6Matrix dim6Matrix = new generation.Dim6Matrix();
+   * generation.Dim5Matrix copy = dim6Matrix.copy();
+   * double d = copy.a1;
+   * </pre>
+   *
+   * which fails at the second line in the JVM because of a bad cast that is not caught using
+   * reflection.
+   */
+  @Test
+  public void runBadCopyCastTest() {
+    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("bad-copy-cast");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("generation.Dim5Matrix");
+    options.addTestClass("generation.Dim6Matrix");
+    options.setOption("outputlimit", "200");
+    options.setOption("timelimit", "20");
+
+    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
   /* ------------------------------ utility methods ---------------------------------- */
