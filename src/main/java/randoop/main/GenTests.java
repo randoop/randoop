@@ -907,7 +907,6 @@ public class GenTests extends GenInputsAbstract {
     }
     return null;
   }
-<<<<<<< HEAD
 
   private static PrintStream createTextOutputStream(String fileName) {
     try {
@@ -921,11 +920,8 @@ public class GenTests extends GenInputsAbstract {
       throw new Error("This can't happen");
     }
   }
-||||||| merged common ancestors
-=======
 
   public void countSequenceCompileFailure() {
     this.sequenceCompileFailureCount++;
   }
->>>>>>> e4a4545119fb8cda2e4846a97db78ca3969cfff9
 }
