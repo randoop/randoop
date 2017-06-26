@@ -395,6 +395,7 @@ class ReplacementFileReader {
       String replacement,
       ClassLoader loader)
       throws ReplacementFileException {
+    boolean found = false;
     Enumeration<URL> resources;
     try {
       resources = loader.getResources(replacement.replace('.', '/'));
@@ -407,14 +408,16 @@ class ReplacementFileReader {
         URLConnection connection = url.openConnection();
         if (connection instanceof JarURLConnection) {
           JarFile jarFile = ((JarURLConnection) connection).getJarFile();
-          addPackageReplacements(replacementMap, original, replacement, jarFile);
+          if (addPackageReplacements(replacementMap, original, replacement, jarFile)) {
+            found = true;
+          }
         } else {
           // The subclass for directories is is internal.  It seems to work to assume the
           // connection is a directory, and let an exception occur if it is not
           File path = new File(URLDecoder.decode(url.getPath(), "UTF-8"));
           if (path.exists() && path.isDirectory()) {
             addPackageReplacements(replacementMap, original, replacement, path);
-            return;
+            found = true;
           }
         }
       } catch (IOException e) {
@@ -424,9 +427,11 @@ class ReplacementFileReader {
         throw new ReplacementFileException(msg);
       }
     }
-    String msg =
-        String.format("No package or class for replacement %s found on classpath", replacement);
-    throw new ReplacementFileException(msg);
+    if (!found) {
+      String msg =
+          String.format("No package or class for replacement %s found on classpath", replacement);
+      throw new ReplacementFileException(msg);
+    }
   }
 
   /**
@@ -455,6 +460,7 @@ class ReplacementFileReader {
         final String classname =
             filename.substring(replacement.length() + 1, filename.lastIndexOf(".class"));
         final String originalClassname = original + "." + classname;
+
         if (classExists(originalClassname)) {
           try {
             Class<?> replacementClass = Class.forName(replacement + "." + classname);
