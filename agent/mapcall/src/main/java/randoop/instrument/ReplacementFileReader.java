@@ -29,13 +29,13 @@ import plume.BCELUtil;
  */
 class ReplacementFileReader {
 
-  /** Regex string for Java identifiers */
+  /** Regex for Java identifiers */
   private static final String ID_STRING =
       "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
 
   /**
-   * String for a regex to match fully-qualified package or class name as a sequence of identifiers
-   * separated by periods.
+   * Regex to match fully-qualified package or class name as a sequence of identifiers separated by
+   * periods.
    *
    * <p>Note: when included in more complex expressions that use groups, the parentheses in this
    * expression also form a group.
@@ -43,15 +43,15 @@ class ReplacementFileReader {
   private static final String PACKAGE_OR_CLASS_STRING = ID_STRING + "(\\." + ID_STRING + ")*";
 
   /**
-   * String for naive regex to match a method signature as a sequence of period-delimited
-   * identifiers followed by a string enclosed in parentheses. Does not actually check that the form
-   * of the arguments is correct.
+   * Naive regex to match a method signature as a sequence of period-delimited identifiers followed
+   * by a string enclosed in parentheses. Does not actually check that the form of the arguments is
+   * correct.
    */
   private static final String SIGNATURE_STRING = PACKAGE_OR_CLASS_STRING + "\\([^)]*\\)";
 
   /**
-   * String for naive regex to match a method signature with groups to extract the fully-qualified
-   * method name (group 1) and type argument list (group 3). (Group 2 is the group from {@link
+   * Naive regex to match a method signature with groups to extract the fully-qualified method name
+   * (group 1) and type argument list (group 3). (Group 2 is the group from {@link
    * #PACKAGE_OR_CLASS_STRING}.)
    */
   private static final String SIGNATURE_GROUP_STRING =
