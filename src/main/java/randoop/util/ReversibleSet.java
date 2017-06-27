@@ -46,10 +46,12 @@ public class ReversibleSet<T> implements ISimpleSet<T> {
     return map.size();
   }
 
+  /** Checkpoint the state of the data structure, for use by {@link #undoToLastMark()}. */
   public void mark() {
     map.mark();
   }
 
+  /** Undo changes since the last call to {@link #mark()}. */
   public void undoToLastMark() {
     map.undoToLastMark();
   }

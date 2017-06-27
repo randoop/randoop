@@ -49,13 +49,14 @@ public class ForwardGenerator extends AbstractGenerator {
   /** Sequences that are used in other sequences (and are thus redundant) */
   private Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
 
-  // For testing purposes only. If Globals.randooptestrun==false then the array
-  // is never populated or queried. This set contains the same set of
-  // components as the set "allsequences" above, but stores them as
-  // strings obtained via the toCodeString() method.
+  /**
+   * For testing purposes only. If {@link GenInputsAbstract#debug_checks}==false then the array is
+   * never populated or queried. This set contains the same set of components as the set
+   * "allsequences" above, but stores them as strings obtained via the toCodeString() method.
+   */
   private final List<String> allsequencesAsCode = new ArrayList<>();
 
-  // For testing purposes only.
+  /** For testing purposes only. */
   private final List<Sequence> allsequencesAsList = new ArrayList<>();
 
   private final TypeInstantiator instantiator;
@@ -296,6 +297,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // Select a StatementInfo
     TypedOperation operation = Randomness.randomMember(this.operations);
     Log.logLine("Selected operation: " + operation.toString());
+
     if (operation.isGeneric() || operation.hasWildcardTypes()) {
       try {
         operation = instantiator.instantiate((TypedClassOperation) operation);
@@ -402,7 +404,8 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     // Keep track of any input sequences that are used in this sequence.
-    // Tests that contain only these sequences are probably redundant.
+
+    // A test that consists of one of these sequences are probably redundant.
     subsumed_sequences.addAll(sequences.sequences);
 
     return new ExecutableSequence(newSequence);
