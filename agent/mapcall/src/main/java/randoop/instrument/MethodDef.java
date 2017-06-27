@@ -24,6 +24,9 @@ public class MethodDef {
   /** The parameter types */
   private final Type[] paramTypes;
 
+  /** Cached {@link java.lang.reflect.Method} object for this {@link MethodDef} */
+  private Method method;
+
   /**
    * Creates a {@code MethodDef}.
    *
@@ -35,6 +38,7 @@ public class MethodDef {
     this.classname = classname;
     this.name = name;
     this.paramTypes = argTypes;
+    this.method = null;
   }
 
   /**
@@ -79,6 +83,8 @@ public class MethodDef {
     if (dotPos > 0) {
       methodName = fullMethodName.substring(dotPos + 1);
       classname = fullMethodName.substring(0, dotPos);
+    } else {
+      throw new IllegalArgumentException("Fully-qualified method name expected");
     }
     Type[] argTypes = new Type[args.length];
     for (int i = 0; i < args.length; i++) {
@@ -86,6 +92,34 @@ public class MethodDef {
     }
 
     return new MethodDef(classname, methodName, argTypes);
+  }
+
+  /**
+   * Reads a signature string and builds the corresponding {@link MethodDef}.
+   *
+   * <p>The signature string must start with the fully-qualified classname, followed by the method
+   * name, and then the fully-qualified parameter types in parenthesis.
+   *
+   * @param signature the method signature string, all types must be fully-qualified
+   * @return the {@link MethodDef} for the method represented by the signature string
+   * @throws IllegalArgumentException if {@code signature} is not formatted correctly
+   */
+  static MethodDef of(String signature) {
+    int parenPos = signature.indexOf('(');
+    if (parenPos < 1) {
+      throw new IllegalArgumentException("Method signature expected");
+    }
+    String name = signature.substring(0, parenPos);
+    int lastParenPos = signature.lastIndexOf(')');
+    if (lastParenPos < parenPos + 1) {
+      throw new IllegalArgumentException("Method signature expected");
+    }
+    String argString = signature.substring(parenPos + 1, lastParenPos);
+    String[] arguments = new String[0];
+    if (!argString.isEmpty()) {
+      arguments = argString.split("\\s*,\\s*");
+    }
+    return MethodDef.of(name, arguments);
   }
 
   @Override
@@ -101,26 +135,42 @@ public class MethodDef {
 
   @Override
   public int hashCode() {
-    if (paramTypes.length > 0) {
-      return Objects.hash(classname, name, Arrays.hashCode(paramTypes));
-    } else {
-      return Objects.hash(classname, name);
-    }
+    return Objects.hash(classname, name, Arrays.hashCode(paramTypes));
   }
 
+  /**
+   * Returns the fully-qualified signature string for this {@link MethodDef}.
+   *
+   * @return the fully-qualified signature string for this {@link MethodDef}
+   */
   @Override
   public String toString() {
     return String.format("%s.%s(%s)", classname, name, UtilMDE.join(paramTypes, ", "));
   }
 
+  /**
+   * Returns the fully-qualified class name of this {@link MethodDef}.
+   *
+   * @return the fully-qualified class name of this {@link MethodDef}
+   */
   String getClassname() {
     return classname;
   }
 
+  /**
+   * Returns the method name for this {@link MethodDef}.
+   *
+   * @return the method name of this {@link MethodDef}
+   */
   String getName() {
     return name;
   }
 
+  /**
+   * Returns the parameter types (as BCEL {@code Type} references) for this {@link MethodDef}.
+   *
+   * @return the parameter types for this {@link MethodDef}
+   */
   Type[] getParameterTypes() {
     return paramTypes;
   }
@@ -135,12 +185,21 @@ public class MethodDef {
    *     the represented method as a member
    */
   Method toMethod() throws ClassNotFoundException, NoSuchMethodException {
+    if (method != null) {
+      return method;
+    }
+
     Class<?> methodClass = Class.forName(classname);
     Class<?> args[] = new Class[paramTypes.length];
     for (int i = 0; i < paramTypes.length; i++) {
-      args[i] = BCELUtil.type_to_class(paramTypes[i]);
+      try {
+        args[i] = typeToClass(paramTypes[i]);
+      } catch (ClassNotFoundException e) {
+        throw new ArgumentClassNotFoundException(e.getMessage());
+      }
     }
-    Method method;
+
+    // First check it the method is declared in the class
     try {
       method = methodClass.getDeclaredMethod(name, args);
       method.setAccessible(true);
@@ -148,9 +207,25 @@ public class MethodDef {
     } catch (NoSuchMethodException e) {
       // ignore -- look for inherited method
     }
+
+    // If it is not declared in class, check if it is inherited
     method = methodClass.getMethod(name, args);
-    method.setAccessible(true);
     return method;
+  }
+
+  /**
+   * Converts the BCEL type to a {@code java.lang.Class} object. (This method replicates the {@code
+   * BCELUtils.type_to_class()} method, but does not repackage the exception.)
+   *
+   * @param type the type object
+   * @return the {@code Class<?>} object for the type
+   * @throws ClassNotFoundException if no {@code Class<?>} was found for the type
+   */
+  private Class<?> typeToClass(Type type) throws ClassNotFoundException {
+    Class<?> c = null;
+    String name = UtilMDE.fieldDescriptorToClassGetName(type.getSignature());
+    c = UtilMDE.classForName(name);
+    return c;
   }
 
   /**
