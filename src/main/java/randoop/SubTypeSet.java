@@ -17,14 +17,12 @@ import randoop.util.SimpleSet;
  */
 public class SubTypeSet {
 
-  // The set of classes that have sequences. I.e. membership in this
-  // set means that the SequenceCollection has one or more sequences that
-  // create a value of the member type.
+  // The members of the set.
   public ISimpleSet<Type> typesWithsequences;
 
-  // Maps a type to the list of subtypes that have sequences.
-  // The list for a given type can be empty, which means that there
-  // are no subtypes with sequences for the given type.
+  // Maps a type to the list of subtypes in the set.
+  // The list for a given type can be empty, which means that the set contains
+  // no subtypes for the given type.
   private IMultiMap<Type, Type> subTypesWithsequences;
 
   private boolean reversible;
@@ -41,6 +39,7 @@ public class SubTypeSet {
     }
   }
 
+  /** Checkpoint the state of the data structure, for use by {@link #undoLastStep()}. */
   public void mark() {
     if (!reversible) {
       throw new RuntimeException("Operation not supported.");
@@ -49,6 +48,7 @@ public class SubTypeSet {
     ((ReversibleSet<Type>) typesWithsequences).mark();
   }
 
+  /** Undo changes since the last call to {@link #mark()}. */
   public void undoLastStep() {
     if (!reversible) {
       throw new RuntimeException("Operation not supported.");
