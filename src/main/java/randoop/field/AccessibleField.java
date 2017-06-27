@@ -48,7 +48,7 @@ public class AccessibleField {
   }
 
   /**
-   * Translates field into a string representing fully qualified name.
+   * Translates field into a string representing fully-qualified name.
    *
    * @param declaringType the declaring type for this field
    * @param inputVars list of input variables

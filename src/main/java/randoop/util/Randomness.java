@@ -3,9 +3,12 @@ package randoop.util;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
+import plume.SimpleLog;
 import randoop.BugInRandoopException;
 
 public final class Randomness {
+
+  public static SimpleLog selectionLog = new SimpleLog(false);
 
   private Randomness() {
     throw new IllegalStateException("no instances");
@@ -36,21 +39,27 @@ public final class Randomness {
     if (Log.isLoggingOn()) {
       Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
     }
-    return random.nextInt(i);
+    int value = random.nextInt(i);
+    logSelection(value, "nextRandomInt");
+    return value;
   }
 
   public static <T> T randomMember(List<T> list) {
     if (list == null || list.isEmpty()) {
       throw new IllegalArgumentException("Expected non-empty list");
     }
-    return list.get(nextRandomInt(list.size()));
+    int position = nextRandomInt(list.size());
+    logSelection(position, "randomMember");
+    return list.get(position);
   }
 
   public static <T> T randomMember(SimpleList<T> list) {
     if (list == null || list.isEmpty()) {
       throw new IllegalArgumentException("Expected non-empty list");
     }
-    return list.get(nextRandomInt(list.size()));
+    int position = nextRandomInt(list.size());
+    logSelection(position, "randomMember");
+    return list.get(position);
   }
 
   // Warning: iterates through the entire list twice (once to compute interval
@@ -84,6 +93,7 @@ public final class Randomness {
 
   public static <T> T randomSetMember(Collection<T> set) {
     int randIndex = Randomness.nextRandomInt(set.size());
+    logSelection(randIndex, "randomSetMember");
     return CollectionsExt.getNthIteratedElement(set, randIndex);
   }
 
@@ -106,5 +116,18 @@ public final class Randomness {
       Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
     }
     return (Randomness.random.nextDouble() >= falseProb);
+  }
+
+  /**
+   * Logs the call to the method named along with the value returned and the calling method.
+   *
+   * @param value the value selected
+   * @param methodName the name of the method called
+   */
+  private static void logSelection(int value, String methodName) {
+    if (selectionLog.enabled()) {
+      StackTraceElement[] trace = Thread.currentThread().getStackTrace();
+      selectionLog.log("%s: %d called from %s%n", methodName, value, trace[2]);
+    }
   }
 }

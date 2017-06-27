@@ -68,6 +68,7 @@ import randoop.util.CollectionsExt;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
+import randoop.util.RandoopLoggingError;
 import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.AlwaysFalse;
 import randoop.util.predicate.Predicate;
@@ -158,6 +159,9 @@ public class GenTests extends GenInputsAbstract {
     }
 
     Randomness.reset(randomseed);
+    if (GenInputsAbstract.selection_log != null) {
+      Randomness.selectionLog = new SimpleLog(GenInputsAbstract.selection_log, true);
+    }
 
     //java.security.Policy policy = java.security.Policy.getPolicy();
 
@@ -470,6 +474,10 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     } catch (SequenceExecutionException e) {
       System.out.printf("%nError executing generated sequence: %n%s%n", e.getMessage());
+      e.printStackTrace();
+      System.exit(1);
+    } catch (RandoopLoggingError e) {
+      System.out.printf("%nLogging error: %n%s%n", e.getMessage());
       e.printStackTrace();
       System.exit(1);
     }

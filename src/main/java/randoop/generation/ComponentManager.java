@@ -56,15 +56,19 @@ public class ComponentManager {
   /**
    * A set of additional components representing literals that should only be used as input to
    * specific classes.
+   *
+   * <p>Null if class literals are not used or none were found. At most one of classLiterals and
+   * packageliterals is non-null.
    */
-  // May be null, which represents no class literals present.
   private ClassLiterals classLiterals = null;
 
   /**
    * A set of additional components representing literals that should only be used as input to
    * specific packages.
+   *
+   * <p>Null if package literals are not used or none were found. At most one of classLiterals and
+   * packageliterals is non-null.
    */
-  // May be null, which represents no package literals present.
   private PackageLiterals packageLiterals = null;
 
   private Set<Type> sequenceTypes;
@@ -179,25 +183,27 @@ public class ComponentManager {
 
     SimpleList<Sequence> ret = gralComponents.getSequencesForType(neededType, false);
     if (operation instanceof TypedClassOperation) {
-      if (classLiterals != null || packageLiterals != null) {
+      // The operation is a method call, where the method is defined in class C.  Augment the
+      // returned list with literals that appear in class C or in its package.  At most one of
+      // classLiterals and packageLiterals is non-null.
 
+      if (classLiterals != null) {
         ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
-        if (declaringCls != null) {
-          if (classLiterals != null) {
-            SimpleList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
-            if (!sl.isEmpty()) {
-              ret = new ListOfLists<>(ret, sl);
-            }
-          }
+        assert declaringCls != null;
+        SimpleList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
+        if (!sl.isEmpty()) {
+          ret = new ListOfLists<>(ret, sl);
+        }
+      }
 
-          if (packageLiterals != null) {
-            Package pkg = declaringCls.getPackage();
-            if (pkg != null) {
-              SimpleList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
-              if (!sl.isEmpty()) {
-                ret = new ListOfLists<>(ret, sl);
-              }
-            }
+      if (packageLiterals != null) {
+        ClassOrInterfaceType declaringCls = ((TypedClassOperation) operation).getDeclaringType();
+        assert declaringCls != null;
+        Package pkg = declaringCls.getPackage();
+        if (pkg != null) {
+          SimpleList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
+          if (!sl.isEmpty()) {
+            ret = new ListOfLists<>(ret, sl);
           }
         }
       }

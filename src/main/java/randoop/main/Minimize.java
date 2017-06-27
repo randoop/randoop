@@ -773,7 +773,7 @@ public class Minimize extends CommandHandler {
       // Copy and modify the compilation unit.
       CompilationUnit compUnitWithSimpleTypeNames = (CompilationUnit) result.clone();
 
-      // String representation of the fully qualified type name.
+      // String representation of the fully-qualified type name.
       String typeName = type.getScope() + "." + type.getName();
 
       // Check that the type is not in the java.lang package.

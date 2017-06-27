@@ -35,8 +35,12 @@ script:
   - ./gradlew validateManual
   - ./gradlew verifyGoogleJavaFormat
 
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+## Disabled for now, because codecov is only aware of unit tests.
+## Once we inform it of system tests as well, it will be more useful
+## and we can turn it on without getting a lot of failures whenever we
+## introduce a feature that is best tested by system tests.
+# after_success:
+#  - bash <(curl -s https://codecov.io/bash)
 
 git:
   depth: 9
