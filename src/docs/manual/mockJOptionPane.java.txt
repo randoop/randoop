@@ -1,4 +1,4 @@
-package mypackage.mock.javax.swing;
+package projectmock.javax.swing;
 
 import java.awt.Component;
 
