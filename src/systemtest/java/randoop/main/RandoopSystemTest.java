@@ -7,7 +7,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -996,40 +995,6 @@ public class RandoopSystemTest {
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
-  // Tests the --output-sequence-info flag, which outputs information about the generated sequence pool
-  @Test
-  public void runRandoopOutputSequenceInfo() {
-    TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("randoop-sequenceInfo");
-
-    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
-    options.setPackageName("");
-    options.setRegressionBasename("RandoopSequenceInfoCompareReg");
-    options.setErrorBasename("RandoopSequenceInfoCompareErr");
-    options.setOption("literals-level", "CLASS");
-    options.setOption("literals-file", "CLASSES");
-    options.setFlag("output-sequence-info");
-
-    // stuff
-    options.setOption("inputlimit", "125"); // temp fix
-    options.setOption("timelimit", "30");
-    //options.setOption("outputlimit", "200");
-    options.setOption("null-ratio", "0.3");
-    options.setOption("alias-ratio", "0.3");
-    options.setFlag("clear=100");
-    options.addClassList("resources/systemTest/jdk_classlist.txt");
-
-    // omit methods that use Random
-    options.setOption(
-        "omitmethods", "java2\\.util2\\.Collections\\.shuffle\\(java2\\.util2\\.List\\)");
-
-    ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
-    ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
-
-    generateAndTest(testEnvironment, options, expectedRegressionTests, expectedErrorTests);
-    renameOutputTo("randoop-sequenceInfo.csv");
-  }
-
   /**
    * Expecting something like
    *
@@ -1269,26 +1234,5 @@ public class RandoopSystemTest {
    */
   private RandoopRunStatus generateAndCompile(TestEnvironment environment, RandoopOptions options) {
     return generateAndCompile(environment, options, false);
-  }
-
-  /**
-   * Outdated helper function for the weightedTests. Use this to rename the .csv file named by
-   * <code>
-   * --output-sequence-info-filename</code> since the weightedTests write to the same base directory
-   * in the build/working-directories folder. Note you can now just add the option <code>
-   * --output-sequence-info-filename</code> to not overwrite. Would not be an issue in normal
-   * conditions, as the .csv file will always be overwritten.
-   *
-   * @param newFileName the name which <code>--output-sequence-info-filename</code> will be renamed
-   *     to
-   */
-  private void renameOutputTo(String newFileName) {
-
-    File tempDir = new File(GenInputsAbstract.output_sequence_info_filename);
-    File result = new File(newFileName);
-    boolean renamed = tempDir.renameTo(result);
-    if (!renamed) {
-      fail("Couldn't rename file");
-    }
   }
 }

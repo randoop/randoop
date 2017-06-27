@@ -601,22 +601,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static FileWriter log = null;
 
   /**
-   * Whether to output the file: <code>--output-sequence-info-filename</code>, which lists the total
-   * # sequences executed and average sequence size in csv format.
-   */
-  @Option(
-      "Whether to output the file that lists the total # sequences executed and avg sequence size")
-  public static boolean output_sequence_info = false;
-
-  /**
-   * The filename to output the sequence info results to. Only valid with <code>
-   * --output-sequence-info</code>
-   */
-  @Option(
-      "The filename to output the sequence info results to.  Only valid with --output-sequence-info")
-  public static String output_sequence_info_filename = "sequenceInfo.csv";
-
-  /**
    * Track and log the usage of operations during generation to standard out. This option is not
    * affected by setting <code>--operation-history-log</code>.
    */

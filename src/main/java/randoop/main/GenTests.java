@@ -4,9 +4,7 @@ import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -169,10 +167,6 @@ public class GenTests extends GenInputsAbstract {
     // if (!GenInputsAbstract.noprogressdisplay) {
     //   System.out.printf("Using security policy %s%n", policy);
     // }
-
-    if (GenInputsAbstract.output_sequence_info) {
-      System.out.println("Sequence information output is enabled.");
-    }
 
     // If some properties were specified, set them
     for (String prop : GenInputsAbstract.system_props) {
@@ -543,10 +537,6 @@ public class GenTests extends GenInputsAbstract {
       System.out.printf("%nInvalid tests generated: %d%n", explorer.invalidSequenceCount);
     }
 
-    if (GenInputsAbstract.output_sequence_info) {
-      writeTestInfo(((ForwardGenerator) explorer).getExecutedSequences());
-    }
-
     if (this.sequenceCompileFailureCount > 0) {
       System.out.printf(
           "%nUncompilable sequences generated (count: %d). Please report.%n",
@@ -558,43 +548,6 @@ public class GenTests extends GenInputsAbstract {
     explorer.getOperationHistory().outputTable();
 
     return true;
-  }
-
-  /**
-   * Writes information of all executed sequences to the file name dictated by <code>
-   * --output-sequence-info-filename</code> in .csv format. The file is composed of three elements:
-   * (1) Total number of sequences executed, (2) the comma, (3) average sequence size.
-   *
-   * @param executedSequences the set of all executed sequences
-   */
-  private void writeTestInfo(Set<Sequence> executedSequences) {
-    File tempDir = new File(GenInputsAbstract.output_sequence_info_filename);
-    PrintStream out;
-    try {
-      if (!tempDir.exists()) {
-        tempDir.createNewFile();
-      }
-      // always overwrite, should only exist from prior runs
-      out = createTextOutputStream(GenInputsAbstract.output_sequence_info_filename);
-      StringBuilder body = new StringBuilder();
-
-      body.append(executedSequences.size()); // (1) total number of sequences executed
-      body.append(','); // (2) the comma
-
-      // get avg sequence size
-      int accumulatedSequenceSize = 0;
-      for (Sequence seq : executedSequences) {
-        accumulatedSequenceSize += seq.size();
-      }
-      double avgSeqSize = accumulatedSequenceSize * 1.0 / executedSequences.size();
-      body.append(avgSeqSize); // (3) average sequence size
-
-      out.println(body.toString());
-    } catch (IOException e) {
-      System.out.println(
-          "Couldn't create output file: " + GenInputsAbstract.output_sequence_info_filename);
-      e.printStackTrace();
-    }
   }
 
   /**
@@ -906,19 +859,6 @@ public class GenTests extends GenInputsAbstract {
       return textList;
     }
     return null;
-  }
-
-  private static PrintStream createTextOutputStream(String fileName) {
-    try {
-      return new PrintStream(new File(fileName));
-    } catch (FileNotFoundException e) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Exception thrown while creating text print stream:" + fileName);
-      }
-      e.printStackTrace();
-      System.exit(1);
-      throw new Error("This can't happen");
-    }
   }
 
   public void countSequenceCompileFailure() {

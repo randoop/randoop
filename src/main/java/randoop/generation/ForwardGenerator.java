@@ -3,7 +3,6 @@ package randoop.generation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -69,9 +68,6 @@ public class ForwardGenerator extends AbstractGenerator {
    * changed once initialized.
    */
   private final Map<Sequence, Double> literalWeights = new HashMap<>();
-
-  /** Set of all executed sequences */
-  private final Set<Sequence> executedSequences = new HashSet<>();
 
   /**
    * The set of ALL sequences ever generated, including sequences that were executed and then
@@ -206,23 +202,15 @@ public class ForwardGenerator extends AbstractGenerator {
       }
       for (Map.Entry<Sequence, Integer> m : componentManager.getLiteralFrequency().entrySet()) {
 
-        // note that this is adjusting the tf(t,d) by normalizing it across the sum of all sequences' tf(t,d)
-        // TODO: explore performance with unnormalized tf(t,d), as well as inter-weight tuning
+        // Note that this is adjusting the tf(t,d) by normalizing it across the sum of all
+        // sequences' tf(t,d).  TODO: explore performance with unnormalized tf(t,d), as well as
+        // inter-weight tuning.
         double weight =
             ((double) literalsTermFrequencies.get(m.getKey()) / totalNumLiterals)
                 * Math.log((double) (numClasses + 1) / ((numClasses + 1) - m.getValue()));
         literalWeights.put(m.getKey(), weight);
       }
     }
-  }
-
-  /**
-   * Should only be called once Randoop is done with executing tests.
-   *
-   * @return the set of all executed sequences
-   */
-  public Set<Sequence> getExecutedSequences() {
-    return executedSequences;
   }
 
   /**
@@ -300,15 +288,12 @@ public class ForwardGenerator extends AbstractGenerator {
 
     assert eSeq.sequence != null;
 
-    double weight =
-        eSeq.sequence.getWeight(); // final weight used in the actual weighted random selection
-    // use a sequence's default weight as the initial value
-    double dynamicWeight;
-    double literalWeight;
+    double defaultWeight = eSeq.sequence.getWeight();
 
-    // TODO: explore fine-tuning of weight interactions. Specifically, magnitudes between literalsWeight and
-    // dynamicWeight are drastic.  This affects the selection in the global pool, where there can be some
-    // sequences with only literalsWeight weights, which are extremely small.
+    // TODO: explore fine-tuning of weight interactions. Specifically, magnitudes between
+    // literalsWeight and dynamicWeight are drastic.  This affects the selection in the global pool,
+    // where there can be some sequences with only literalsWeight weights, which are extremely
+    // small.
 
     // update # times a sequence has been executed
     if (sequenceExecutionCount.containsKey(eSeq.sequence)) {
@@ -317,32 +302,24 @@ public class ForwardGenerator extends AbstractGenerator {
       sequenceExecutionCount.put(eSeq.sequence, 1);
     }
 
-    // the dynamic weight formula
-    dynamicWeight =
+    double dynamicWeight =
         1.0
             / (eSeq.exectime
                 * sequenceExecutionCount.get(eSeq.sequence)
                 * Math.sqrt(eSeq.sequence.size()));
-    // simply multiply it on top
-    weight *= dynamicWeight;
 
-    // applying the extracted class literals weights, only if this sequence is a class literal
+    // class literals weights, only if this sequence is a class literal
+    double literalWeight;
     if (literalWeights.containsKey(eSeq.sequence)) {
       literalWeight = literalWeights.get(eSeq.sequence);
-      // layer it on top
-      weight *= literalWeight;
+    } else {
+      literalWeight = 1.0;
     }
 
+    double weight = defaultWeight * dynamicWeight * literalWeight;
     assert weight >= 0;
 
     weightMap.put(eSeq.sequence, weight); // update the final weight for this sequence
-
-    if (GenInputsAbstract.output_sequence_info) {
-      // add it to our growing set of executed sequences if not already added
-      if (!executedSequences.contains(eSeq.sequence)) {
-        executedSequences.add(eSeq.sequence);
-      }
-    }
   }
 
   @Override
