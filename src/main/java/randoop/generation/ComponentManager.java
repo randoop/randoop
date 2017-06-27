@@ -87,9 +87,8 @@ public class ComponentManager {
   }
 
   /**
-   * Create a component manager, initially populated with the given sequences (which are considered
-   * seed sequences) and with a literalFrequency map to support sequences' static weighted-constants
-   * weighting scheme.
+   * Create a component manager, initially populated with the given sequences, which are considered
+   * seed sequences.
    *
    * @param generalSeeds seed sequences. Can be null, in which case the seed sequences set is
    *     considered empty.

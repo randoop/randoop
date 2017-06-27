@@ -40,8 +40,7 @@ import randoop.util.SimpleList;
 import randoop.util.WeightedElement;
 
 /**
- * Randoop's forward, component-based generator. Stores the information necessary for the weighted
- * random selection of input sequences.
+ * Randoop's forward, component-based generator.
  *
  * <p>For weighted random selection of an input sequence, there are three weighting schemes:
  *
@@ -54,7 +53,7 @@ import randoop.util.WeightedElement;
 public class ForwardGenerator extends AbstractGenerator {
 
   /**
-   * Map of sequences to their combined weights. Accounts for the three weighting schemes for each
+   * Map from a sequences to its combined weight. Accounts for the three weighting schemes for each
    * sequence.
    */
   private final Map<WeightedElement, Double> weightMap = new HashMap<>();
@@ -63,7 +62,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * Map of sequences to the number of times they've been executed. Used with the dynamic weighting
    * scheme.
    */
-  private final Map<WeightedElement, Integer> sequenceExecutionNumber = new HashMap<>();
+  private final Map<WeightedElement, Integer> sequenceExecutionCount = new HashMap<>();
 
   /**
    * Map of extracted literal sequences to their static weights. Note that these weights are never
@@ -312,17 +311,17 @@ public class ForwardGenerator extends AbstractGenerator {
     // sequences with only literalsWeight weights, which are extremely small.
 
     // update # times a sequence has been executed
-    if (sequenceExecutionNumber.containsKey(eSeq.sequence)) {
-      sequenceExecutionNumber.put(eSeq.sequence, sequenceExecutionNumber.get(eSeq.sequence) + 1);
+    if (sequenceExecutionCount.containsKey(eSeq.sequence)) {
+      sequenceExecutionCount.put(eSeq.sequence, sequenceExecutionCount.get(eSeq.sequence) + 1);
     } else {
-      sequenceExecutionNumber.put(eSeq.sequence, 1);
+      sequenceExecutionCount.put(eSeq.sequence, 1);
     }
 
     // the dynamic weight formula
     dynamicWeight =
         1.0
             / (eSeq.exectime
-                * sequenceExecutionNumber.get(eSeq.sequence)
+                * sequenceExecutionCount.get(eSeq.sequence)
                 * Math.sqrt(eSeq.sequence.size()));
     // simply multiply it on top
     weight *= dynamicWeight;
