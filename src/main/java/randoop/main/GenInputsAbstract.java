@@ -156,7 +156,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static Pattern include_if_classname_appears = null;
 
   /**
-   * File containing fully qualified names of classes that the tests must exercise. This option only
+   * File containing fully-qualified names of classes that the tests must exercise. This option only
    * works if Randoop is run using the <a
    * href="https://randoop.github.io/randoop/manual/index.html#exercised-filter">exercised-class
    * javaagent</a> to instrument the classes. A test is output only if it exercises at least one of
@@ -587,6 +587,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /** Name of a file to which to log lots of information. If not specified, no logging is done. */
   @Option("<filename> Name of a file to which to log lots of information")
   public static FileWriter log = null;
+
+  /** Log selections for determining sources of non-determinism. */
+  @Option("print each random selection")
+  public static String selection_log = null;
 
   /**
    * Track and log the usage of operations during generation to standard out. This option is not
