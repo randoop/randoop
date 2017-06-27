@@ -159,6 +159,9 @@ public class GenTests extends GenInputsAbstract {
     }
 
     Randomness.reset(randomseed);
+    if (GenInputsAbstract.selection_log != null) {
+      Randomness.selectionLog = new SimpleLog(GenInputsAbstract.selection_log, true);
+    }
 
     //java.security.Policy policy = java.security.Policy.getPolicy();
 

@@ -1,13 +1,14 @@
 package randoop.util;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
+import plume.SimpleLog;
 import randoop.BugInRandoopException;
-import randoop.main.GenInputsAbstract;
 
 public final class Randomness {
+
+  public static SimpleLog selectionLog = new SimpleLog(false);
 
   private Randomness() {
     throw new IllegalStateException("no instances");
@@ -39,16 +40,7 @@ public final class Randomness {
       Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
     }
     int value = random.nextInt(i);
-    if (GenInputsAbstract.selection_log != null) {
-      StackTraceElement[] trace = Thread.currentThread().getStackTrace();
-      try {
-        String msg = String.format("nextRandomInt: %d called from %s%n", value, trace[2]);
-        GenInputsAbstract.selection_log.write(msg);
-        GenInputsAbstract.selection_log.flush();
-      } catch (IOException e) {
-        throw new RandoopLoggingError("Error writing to selection-log: " + e.getMessage());
-      }
-    }
+    logSelection(value, "nextRandomInt");
     return value;
   }
 
@@ -57,16 +49,7 @@ public final class Randomness {
       throw new IllegalArgumentException("Expected non-empty list");
     }
     int position = nextRandomInt(list.size());
-    if (GenInputsAbstract.selection_log != null) {
-      StackTraceElement[] trace = Thread.currentThread().getStackTrace();
-      try {
-        String msg = String.format("randomMember: %d called from %s%n", position, trace[2]);
-        GenInputsAbstract.selection_log.write(msg);
-        GenInputsAbstract.selection_log.flush();
-      } catch (IOException e) {
-        throw new RandoopLoggingError("Error writing to selection-log: " + e.getMessage());
-      }
-    }
+    logSelection(position, "randomMember");
     return list.get(position);
   }
 
@@ -75,16 +58,7 @@ public final class Randomness {
       throw new IllegalArgumentException("Expected non-empty list");
     }
     int position = nextRandomInt(list.size());
-    if (GenInputsAbstract.selection_log != null) {
-      StackTraceElement[] trace = Thread.currentThread().getStackTrace();
-      try {
-        String msg = String.format("randomMember: %d called from %s%n", position, trace[2]);
-        GenInputsAbstract.selection_log.write(msg);
-        GenInputsAbstract.selection_log.flush();
-      } catch (IOException e) {
-        throw new RandoopLoggingError("Error writing to selection-log: " + e.getMessage());
-      }
-    }
+    logSelection(position, "randomMember");
     return list.get(position);
   }
 
@@ -119,16 +93,7 @@ public final class Randomness {
 
   public static <T> T randomSetMember(Collection<T> set) {
     int randIndex = Randomness.nextRandomInt(set.size());
-    if (GenInputsAbstract.selection_log != null) {
-      StackTraceElement[] trace = Thread.currentThread().getStackTrace();
-      try {
-        String msg = String.format("randomSetMember: %d called from %s%n", randIndex, trace[2]);
-        GenInputsAbstract.selection_log.write(msg);
-        GenInputsAbstract.selection_log.flush();
-      } catch (IOException e) {
-        throw new RandoopLoggingError("Error writing to selection-log: " + e.getMessage());
-      }
-    }
+    logSelection(randIndex, "randomSetMember");
     return CollectionsExt.getNthIteratedElement(set, randIndex);
   }
 
@@ -151,5 +116,18 @@ public final class Randomness {
       Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
     }
     return (Randomness.random.nextDouble() >= falseProb);
+  }
+
+  /**
+   * Logs the call to the method named along with the value returned and the calling method.
+   *
+   * @param value the value selected
+   * @param methodName the name of the method called
+   */
+  private static void logSelection(int value, String methodName) {
+    if (selectionLog.enabled()) {
+      StackTraceElement[] trace = Thread.currentThread().getStackTrace();
+      selectionLog.log("%s: %d called from %s%n", methodName, value, trace[2]);
+    }
   }
 }

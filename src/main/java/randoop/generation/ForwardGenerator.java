@@ -1,6 +1,5 @@
 package randoop.generation;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -298,13 +297,6 @@ public class ForwardGenerator extends AbstractGenerator {
     // Select a StatementInfo
     TypedOperation operation = Randomness.randomMember(this.operations);
     Log.logLine("Selected operation: " + operation.toString());
-    if (GenInputsAbstract.selection_log != null) {
-      try {
-        GenInputsAbstract.selection_log.write("selected: " + operation + Globals.lineSep);
-      } catch (IOException e) {
-        System.err.println("Failure writing to selection-log: " + e.getMessage());
-      }
-    }
 
     if (operation.isGeneric() || operation.hasWildcardTypes()) {
       try {

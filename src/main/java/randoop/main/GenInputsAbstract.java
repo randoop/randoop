@@ -590,7 +590,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /** Log selections for determining sources of non-determinism. */
   @Option("print each random selection")
-  public static FileWriter selection_log = null;
+  public static String selection_log = null;
 
   /**
    * Track and log the usage of operations during generation to standard out. This option is not
