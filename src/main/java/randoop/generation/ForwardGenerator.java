@@ -297,6 +297,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // Select a StatementInfo
     TypedOperation operation = Randomness.randomMember(this.operations);
     Log.logLine("Selected operation: " + operation.toString());
+
     if (operation.isGeneric() || operation.hasWildcardTypes()) {
       try {
         operation = instantiator.instantiate((TypedClassOperation) operation);
