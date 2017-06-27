@@ -600,6 +600,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("<filename> Name of a file to which to log lots of information")
   public static FileWriter log = null;
 
+  /** Log selections for determining sources of non-determinism. */
+  @Option("print each random selection")
+  public static String selection_log = null;
+
   /**
    * Track and log the usage of operations during generation to standard out. This option is not
    * affected by setting <code>--operation-history-log</code>.
