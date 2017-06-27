@@ -7,7 +7,10 @@ import randoop.types.Substitution;
 import randoop.types.Type;
 import randoop.types.TypeTuple;
 
-/** Represents operations that have no declaring class. */
+/**
+ * Represents operations that have no declaring class, such as cast or array
+ * creation/access/assignment.
+ */
 class TypedTermOperation extends TypedOperation {
 
   /**
