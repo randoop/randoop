@@ -90,7 +90,8 @@ public class ICSE07ContainersTest {
           new OperationExtractor(
               classType,
               model,
-              new DefaultReflectionPredicate(omitMethodPatterns, excludeNames),
+              new DefaultReflectionPredicate(excludeNames),
+              omitMethodPatterns,
               visibility),
           c);
     }

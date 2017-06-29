@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 import org.junit.Test;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -321,7 +322,8 @@ public class EnumReflectionTest {
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     final Set<TypedOperation> operations = new LinkedHashSet<>();
     OperationExtractor extractor =
-        new OperationExtractor(classType, operations, predicate, visibilityPredicate);
+        new OperationExtractor(
+            classType, operations, predicate, new ArrayList<Pattern>(), visibilityPredicate);
     ReflectionManager manager = new ReflectionManager(visibilityPredicate);
     manager.apply(extractor, c);
     return operations;

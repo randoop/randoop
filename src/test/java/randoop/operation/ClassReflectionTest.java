@@ -3,8 +3,10 @@ package randoop.operation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 import org.junit.Test;
 import randoop.Globals;
 import randoop.reflection.DefaultReflectionPredicate;
@@ -41,7 +43,8 @@ public class ClassReflectionTest {
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     final Set<TypedOperation> operations = new LinkedHashSet<>();
     OperationExtractor extractor =
-        new OperationExtractor(classType, operations, predicate, visibilityPredicate);
+        new OperationExtractor(
+            classType, operations, predicate, new ArrayList<Pattern>(), visibilityPredicate);
     ReflectionManager manager = new ReflectionManager(visibilityPredicate);
     manager.apply(extractor, c);
     return operations;

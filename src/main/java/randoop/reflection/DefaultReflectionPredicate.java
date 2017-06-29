@@ -6,9 +6,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.regex.Pattern;
 import randoop.CheckRep;
 import randoop.util.Log;
 
@@ -20,32 +18,21 @@ import randoop.util.Log;
  */
 public class DefaultReflectionPredicate implements ReflectionPredicate {
 
-  private List<Pattern> omitMethods = null;
   private Set<String> omitFields;
 
-  /**
-   * Create a reflection predicate. If omitMethods is null, then no methods are omitted.
-   *
-   * @param omitMethods the pattern for names of methods to omit
-   */
-  public DefaultReflectionPredicate(List<Pattern> omitMethods) {
-    this(omitMethods, new HashSet<String>());
-  }
-
+  /** Create a reflection predicate. */
   public DefaultReflectionPredicate() {
-    this(null, new HashSet<String>());
+    this(new HashSet<String>());
   }
 
   /**
    * DefaultReflectionFilter creates a filter object that uses default criteria for inclusion of
    * reflection objects.
    *
-   * @param omitMethods pattern for methods to omit, if null then no methods omitted
    * @param omitFields set of field names to omit
    */
-  public DefaultReflectionPredicate(List<Pattern> omitMethods, Set<String> omitFields) {
+  public DefaultReflectionPredicate(Set<String> omitFields) {
     super();
-    this.omitMethods = omitMethods;
     this.omitFields = omitFields;
   }
 
@@ -61,7 +48,6 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    *
    * <ul>
    *   <li>Main methods
-   *   <li>Methods matching omission pattern
    *   <li>Bridge methods related to type
    *   <li>Non-bridge, synthetic methods
    *   <li>Methods that are not visible, or do not have visible return type
@@ -85,15 +71,6 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + m.toString());
         Log.logLine("  reason: main method not applicable to unit testing.");
-      }
-      return false;
-    }
-
-    //XXX should use fully-qualified signature and not toString()
-    if (matchesOmitMethodPattern(m.toString())) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Will not use: " + m.toString());
-        Log.logLine("  reason: matches regexp specified in --omitmethods option.");
       }
       return false;
     }
@@ -284,14 +261,6 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   @Override
   public boolean test(Constructor<?> c) {
 
-    //should use fully-qualified signature
-    if (matchesOmitMethodPattern(c.toString())) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Will not use: " + c.toString());
-      }
-      return false;
-    }
-
     // synthetic constructors are OK
     // unless they have anonymous parameters
     if (c.isSynthetic()) {
@@ -303,23 +272,6 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     }
 
     return !Modifier.isAbstract(c.getDeclaringClass().getModifiers());
-  }
-
-  private boolean matchesOmitMethodPattern(String name) {
-    if (omitMethods == null || omitMethods.isEmpty()) {
-      return false;
-    }
-    for (Pattern pattern : omitMethods) {
-      boolean result = pattern.matcher(name).find();
-      if (Log.isLoggingOn()) {
-        Log.logLine(
-            String.format("Comparing '%s' against pattern '%s' = %b%n", name, pattern, result));
-      }
-      if (result) {
-        return true;
-      }
-    }
-    return false;
   }
 
   /**

@@ -13,6 +13,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 import org.junit.Test;
 import randoop.field.AccessibleField;
 import randoop.field.ClassWithFields;
@@ -92,7 +93,8 @@ public class FieldReflectionTest {
     ClassOrInterfaceType classType = ClassOrInterfaceType.forClass(c);
     final Set<TypedOperation> operations = new LinkedHashSet<>();
     OperationExtractor extractor =
-        new OperationExtractor(classType, operations, predicate, visibilityPredicate);
+        new OperationExtractor(
+            classType, operations, predicate, new ArrayList<Pattern>(), visibilityPredicate);
     ReflectionManager manager = new ReflectionManager(visibilityPredicate);
     manager.apply(extractor, c);
     return operations;
@@ -160,7 +162,7 @@ public class FieldReflectionTest {
       exclude.add(f);
     }
 
-    ReflectionPredicate filter = new DefaultReflectionPredicate(null, excludeNames);
+    ReflectionPredicate filter = new DefaultReflectionPredicate(excludeNames);
     Set<TypedOperation> actual = getConcreteOperations(c, filter, new PublicVisibilityPredicate());
 
     assertEquals("number of operations ", 2, actual.size());

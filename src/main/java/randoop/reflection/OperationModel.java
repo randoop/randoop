@@ -10,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 import randoop.Globals;
 import randoop.contract.CompareToAntiSymmetric;
 import randoop.contract.CompareToEquals;
@@ -105,22 +106,24 @@ public class OperationModel {
   /**
    * Factory method to construct an operation model for a particular set of classes
    *
-   * @param visibility the {@link randoop.reflection.VisibilityPredicate} to test accessibility of
-   *     classes and class members
+   * @param visibility the {@link VisibilityPredicate} to test accessibility of classes and class
+   *     members
    * @param reflectionPredicate the reflection predicate to determine which classes and class
    *     members are used
+   * @param omitPatterns the patterns for operations that should be omitted
    * @param classnames the names of classes under test
    * @param exercisedClassnames the names of classes to be tested by exercised heuristic
    * @param methodSignatures the signatures of methods to be added to the model
    * @param errorHandler the handler for bad file name errors
-   * @param literalsFileList the list of literals file names
-   * @return the operation model for the parameters
+   * @param literalsFileList the list of literals file names @return the operation model for the
+   *     parameters
    * @throws OperationParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
   public static OperationModel createModel(
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
+      List<Pattern> omitPatterns,
       Set<String> classnames,
       Set<String> exercisedClassnames,
       Set<String> methodSignatures,
@@ -138,7 +141,7 @@ public class OperationModel {
         errorHandler,
         literalsFileList);
 
-    model.addOperations(model.classTypes, visibility, reflectionPredicate);
+    model.addOperations(model.classTypes, visibility, reflectionPredicate, omitPatterns);
     model.addOperations(methodSignatures);
     model.addObjectConstructor();
 
@@ -388,11 +391,13 @@ public class OperationModel {
   private void addOperations(
       Set<ClassOrInterfaceType> concreteClassTypes,
       VisibilityPredicate visibility,
-      ReflectionPredicate reflectionPredicate) {
+      ReflectionPredicate reflectionPredicate,
+      List<Pattern> omitPatterns) {
     ReflectionManager mgr = new ReflectionManager(visibility);
     for (ClassOrInterfaceType classType : concreteClassTypes) {
       mgr.apply(
-          new OperationExtractor(classType, operations, reflectionPredicate, visibility),
+          new OperationExtractor(
+              classType, operations, reflectionPredicate, omitPatterns, visibility),
           classType.getRuntimeClass());
     }
   }

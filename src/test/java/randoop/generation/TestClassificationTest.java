@@ -374,14 +374,14 @@ public class TestClassificationTest {
     classnames.add(c.getName());
     Set<String> omitfields = new HashSet<>();
 
-    ReflectionPredicate predicate =
-        new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields);
+    ReflectionPredicate predicate = new DefaultReflectionPredicate(omitfields);
     OperationModel operationModel = null;
     try {
       operationModel =
           OperationModel.createModel(
               visibility,
               predicate,
+              GenInputsAbstract.omitmethods,
               classnames,
               new HashSet<String>(),
               new HashSet<String>(),

@@ -242,8 +242,7 @@ public class GenTests extends GenInputsAbstract {
 
     extendOmitMethods(omitmethods);
 
-    ReflectionPredicate reflectionPredicate =
-        new DefaultReflectionPredicate(omitmethods, omitFields);
+    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
 
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
     if (silently_ignore_bad_class_names) {
@@ -259,6 +258,7 @@ public class GenTests extends GenInputsAbstract {
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
+              omitmethods,
               classnames,
               coveredClassnames,
               methodSignatures,

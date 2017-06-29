@@ -62,8 +62,7 @@ public class SpecialCoveredClassTest {
             GenInputsAbstract.include_if_class_exercised, "Unable to read coverage class names");
     Set<String> omitFields = new HashSet<>();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    ReflectionPredicate reflectionPredicate =
-        new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitFields);
+    ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitFields);
     Set<String> methodSignatures =
         GenInputsAbstract.getStringSetFromFile(
             GenInputsAbstract.methodlist, "Error while reading method list file");
@@ -74,6 +73,7 @@ public class SpecialCoveredClassTest {
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
+              GenInputsAbstract.omitmethods,
               classnames,
               coveredClassnames,
               methodSignatures,
