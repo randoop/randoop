@@ -6,7 +6,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.Set;
 import java.util.regex.Pattern;
 import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
@@ -251,82 +255,129 @@ public class OperationExtractor extends DefaultClassVisitor {
    * Indicates whether an omit pattern matches the raw signature of the method or the same method in
    * a supertype.
    *
-   * @param classType the
+   * <p>Assumes that {@code omit(operation)} is false, meaning no pattern matches the method
+   * qualified by the declaring class of the operation.
+   *
+   * <p>Needs to search all supertypes of {@code classType} that have a member corresponding to the
+   * method. The type {@code classType} is a subtype of or equal to the declaring class of the
+   * operation. If non-equal, it is necessary to search all types in the interval between {@code
+   * classType} and {@code operation.getDeclaringType()}. Since the method may be an override in the
+   * declaring class, it is also necessary to search for superclasses of the declaring class that
+   * have the method.
+   *
+   * @param classType the class type that the method belongs to
    * @param operation the operation for the method
    * @param method the reflection object for the method
    * @return true if the signature of the method in the current class or a super class matches an
    *     omit pattern, false otherwise
    */
   private boolean omit(
-      ClassOrInterfaceType classType, TypedClassOperation operation, Method method) {
+      ClassOrInterfaceType classType, final TypedClassOperation operation, final Method method) {
     if (omitPatterns.isEmpty()) {
       return false;
     }
 
-    ClassOrInterfaceType declaringType = operation.getDeclaringType();
-    if (!classType.equals(declaringType)) {
+    final ClassOrInterfaceType declaringType = operation.getDeclaringType();
 
-      // search from classType to declaring type
-      ClassOrInterfaceType type = classType;
+    // XXX these two searches are similar, but generalization is awkward.
 
-      while (type.isSubtypeOf(declaringType)) {
-        // this conversion is safe because we known all subtypes of the declaring class of the
-        // operation have the method
-        TypedClassOperation superTypeOperation = getOperationForType(operation, type);
-        if (omit(superTypeOperation)) {
-          return true;
-        }
-        type = type.getSuperclass();
+    /*
+     * Search in the interval from classType to declaringType.  These types all have the method.
+     */
+    Set<ClassOrInterfaceType> visited = new HashSet<>();
+    Queue<ClassOrInterfaceType> typeQueue = new LinkedList<>();
+    typeQueue.add(classType);
+    while (!typeQueue.isEmpty()) {
+      ClassOrInterfaceType type = typeQueue.remove();
+      if (visited.contains(type)) {
+        continue;
       }
-    }
 
-    // otherwise, search super types of declaring type that have the method as a member
-    // for any that match pattern
-    ClassOrInterfaceType supertype = classType.getSuperclass();
-    if (supertype != null
-        && omitSupertypeMethod(method.getName(), method.getParameterTypes(), supertype)) {
-      return true;
-    }
-
-    for (ClassOrInterfaceType interfaceType : classType.getInterfaces()) {
-      if (omitSupertypeMethod(method.getName(), method.getParameterTypes(), interfaceType)) {
+      // all subtypes of declaringType have the method
+      TypedClassOperation superTypeOperation = getOperationForType(operation, type);
+      if (omit(superTypeOperation)) {
         return true;
       }
+
+      typeQueue.addAll(getBoundSupertypes(type, declaringType));
+      visited.add(type);
+    }
+
+    /*
+     * Search supertypes of declaringType that have the method.
+     */
+    visited = new HashSet<>();
+    typeQueue = new LinkedList<>();
+    typeQueue.add(declaringType);
+    while (!typeQueue.isEmpty()) {
+      ClassOrInterfaceType type = typeQueue.remove();
+      if (visited.contains(type)) {
+        continue;
+      }
+
+      Method superclassMethod =
+          getMethod(method.getName(), method.getParameterTypes(), type.getRuntimeClass());
+      if (superclassMethod != null) {
+        TypedClassOperation supertypeOperation = getOperationForType(operation, type);
+        if (omit(supertypeOperation)) {
+          return true;
+        }
+        typeQueue.addAll(getSupertypes(type));
+      }
+
+      visited.add(type);
     }
 
     return false;
   }
 
   /**
-   * Indicates whether an omit pattern matches the raw signature of the method from the supertype.
+   * Returns the set of supertypes for the given class type including the superclass and interfaces
+   * of the type restricted to those that are a subtype of the upper bound type.
    *
-   * <p>This method is necessary when searching for matches from supertypes of the declaring class
-   * of an operation.
-   *
-   * @see #omit(ClassOrInterfaceType, TypedClassOperation, Method)
-   * @param methodName the method name
-   * @param parameterTypes the {@code Class} types of the method parameters
-   * @param supertype the supertype class to search
-   * @return true if the supertype has a matching method, false otherwise
+   * @param type the type for which supertypes are collected
+   * @param upperBoundType the upper bound type
+   * @return the set of immediate supertypes that are subtypes of {@code upperBoundType}
    */
-  private boolean omitSupertypeMethod(
-      String methodName, Class<?>[] parameterTypes, ClassOrInterfaceType supertype) {
-    TypedClassOperation operation;
-    if (!supertype.equals(JavaTypes.OBJECT_TYPE)) {
-      Method superclassMethod = getMethod(methodName, parameterTypes, supertype.getRuntimeClass());
-      if (superclassMethod != null) {
-        operation = TypedOperation.forMethod(superclassMethod);
-        if (operation != null) {
-          if (omit(operation)) {
-            return true;
-          }
-          if (omit(supertype, operation, superclassMethod)) {
-            return true;
-          }
-        }
+  private static Set<ClassOrInterfaceType> getBoundSupertypes(
+      ClassOrInterfaceType type, ClassOrInterfaceType upperBoundType) {
+    Set<ClassOrInterfaceType> boundedSet = new HashSet<>();
+
+    if (type.equals(upperBoundType) || !type.isSubtypeOf(upperBoundType)) {
+      return boundedSet;
+    }
+
+    ClassOrInterfaceType supertype = type.getSuperclass();
+    if (supertype.isSubtypeOf(upperBoundType)) {
+      boundedSet.add(supertype);
+    }
+    for (ClassOrInterfaceType interfaceType : type.getInterfaces()) {
+      if (interfaceType.isSubtypeOf(upperBoundType)) {
+        boundedSet.add(interfaceType);
       }
     }
-    return false;
+    return boundedSet;
+  }
+
+  /**
+   * Returns the set of supertypes for the given class type obtained by collecting the superclass
+   * and interfaces of the type. (Rather than all supertypes returned by {@link
+   * ClassOrInterfaceType#getSuperTypes()}.
+   *
+   * @param type the type for which supertypes are collected
+   * @return the set of immediate supertypes.
+   */
+  private static Set<ClassOrInterfaceType> getSupertypes(ClassOrInterfaceType type) {
+    Set<ClassOrInterfaceType> supertypes = new HashSet<>();
+
+    if (type.equals(JavaTypes.OBJECT_TYPE)) {
+      return supertypes;
+    }
+
+    supertypes.add(type.getSuperclass());
+    supertypes.addAll(type.getInterfaces());
+
+    return supertypes;
   }
 
   /**
