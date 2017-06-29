@@ -744,22 +744,19 @@ Randoop about your application, and that is how we recommend using Randoop.
  example</a>.
             <li id="option:omitmethods"><b>--omitmethods=</b><i>regex</i> <code>[+]</code>.
              A pattern that indicates methods that should not be included in generated tests. Randoop will
- not attempt to directly call methods whose <code>java.lang.reflect.Method.toString()</code> matches
- the regular expression given. This does not prevent indirect calls to such methods from other,
- allowed methods.
+ not directly call a method whose fully-qualified signature matches the regular expression, or a
+ method inherited from a superclass or interface for which the method matches the regular
+ expression. This does not prevent indirect calls to such methods from other, allowed methods.
+
+ <p>The signature has the form <code>package-name.classname.method-name(argument-list)</code>
+ where <code>package-name</code> is a period-separated list of identifiers, and <code>
+ argument-list</code> is a comma-separated (with no spaces) of fully-qualified Java raw types.
+ If the regular expression contains anchors "<code>^</code>" and "<code>$</code>", they refer to
+ the beginning and the end (respectively) of the signature string.
 
  <p>Randoop only calls methods that are specified by one of the <code>--testclass</code>, <code>
  -classlist</code>, or <code>--methodlist</code> command-line options; the purpose of <code>
  --omitmethods</code> is to override one of those other command-line options.
-
- <p>Note:
-
- <ul>
-   <li>The regex is unanchored, so <code>^</code> or <code>$</code> may be needed to get the
-       correct results.
-   <li>If a method is inherited without an override, the pattern must match the superclass
-       method.
- </ul>
             <li id="option:omitmethods-list"><b>--omitmethods-list=</b><i>filename</i>.
              A file containing a list of regular expressions that indicate methods that should not be
  included in generated tests. These patterns are used along with those provided with <code>
@@ -1078,6 +1075,14 @@ Randoop about your application, and that is how we recommend using Randoop.
              Perform expensive internal checks (for Randoop debugging) [default false]
             <li id="option:log"><b>--log=</b><i>filename</i>.
              Name of a file to which to log lots of information. If not specified, no logging is done.
+            <li id="option:selection-log"><b>--selection-log=</b><i>string</i>.
+             Log selections for determining sources of non-determinism.
+            <li id="option:log-operation-history"><b>--log-operation-history=</b><i>boolean</i>.
+             Track and log the usage of operations during generation to standard out. This option is not
+ affected by setting <code>--operation-history-log</code>. [default false]
+            <li id="option:operation-history-log"><b>--operation-history-log=</b><i>filewriter</i>.
+             Name of a log to which the operation usage history is written. This operation is not affected
+ by setting <code>--log-operation-history</code>.
       </ul>
   <li id="optiongroup:Advanced-extension-points">Advanced extension points
       <ul>

@@ -117,6 +117,7 @@ public class OperationModel {
    * @param errorHandler the handler for bad file name errors
    * @param literalsFileList the list of literals file names @return the operation model for the
    *     parameters
+   * @return the {@link OperationModel} constructed with the given arguments
    * @throws OperationParseException if a method signature is ill-formed
    * @throws NoSuchMethodException if an attempt is made to load a non-existent method
    */
@@ -387,6 +388,7 @@ public class OperationModel {
    * @param concreteClassTypes the declaring class types for the operations
    * @param visibility the visibility predicate
    * @param reflectionPredicate the reflection predicate
+   * @param omitPatterns the patterns for omitting operations
    */
   private void addOperations(
       Set<ClassOrInterfaceType> concreteClassTypes,
