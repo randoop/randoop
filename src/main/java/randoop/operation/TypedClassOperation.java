@@ -172,4 +172,32 @@ public class TypedClassOperation extends TypedOperation {
     }
     return new ArrayList<>(paramSet);
   }
+
+  /**
+   * Returns the raw type signature for this operation. This signature consists of the
+   * fully-qualified classname as a raw type, the method name, and the argument types as raw types.
+   *
+   * <p>The raw type signature for a constructor <code>C()</code> has has this form instead of the
+   * reflection form <code>C.&lt;init&gt;</code>.
+   *
+   * @return the signature for this operation using raw types for the class and argument types
+   */
+  public String getRawSignature() {
+    List<Type> inputTypes = new ArrayList<>();
+    TypeTuple typeTuple = getInputTypes();
+    for (int i = 0; i < typeTuple.size(); i++) {
+      if (i != 0 || this.isStatic()) {
+        Type type = typeTuple.get(i);
+        if (type.isGeneric()) {
+          type = type.getRawtype();
+        }
+        inputTypes.add(type);
+      }
+    }
+    String signatureString = declaringType.getRawtype().toString();
+    if (this.isMethodCall()) {
+      signatureString += "." + super.getName();
+    }
+    return signatureString + "(" + UtilMDE.join(inputTypes, ",") + ")";
+  }
 }

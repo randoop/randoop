@@ -165,6 +165,15 @@ public abstract class Type implements Comparable<Type> {
   }
 
   /**
+   * Returns the raw type for this type, which is this type except for generic types.
+   *
+   * @return the raw type corresponding to this type
+   */
+  public Type getRawtype() {
+    return this;
+  }
+
+  /**
    * Indicates whether the given {@code Class<?>} object is the runtime class of this type.
    *
    * @param c the {@code Class<?>} to check
@@ -344,7 +353,7 @@ public abstract class Type implements Comparable<Type> {
    *
    * And, if after all those conversions, the type is a raw type, an unchecked conversion may occur.
    *
-   * @param sourceType the type to test for assignability
+   * @param sourceType the type to test for assignability, must be non-null
    * @return true if this type can be assigned from the source type, and false otherwise
    */
   public boolean isAssignableFrom(Type sourceType) {
