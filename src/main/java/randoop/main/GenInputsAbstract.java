@@ -85,22 +85,19 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * A pattern that indicates methods that should not be included in generated tests. Randoop will
-   * not attempt to directly call methods whose {@link java.lang.reflect.Method#toString()} matches
-   * the regular expression given. This does not prevent indirect calls to such methods from other,
-   * allowed methods.
+   * not directly call a method whose fully-qualified signature matches the regular expression, or a
+   * method inherited from a superclass or interface for which the method matches the regular
+   * expression. This does not prevent indirect calls to such methods from other, allowed methods.
+   *
+   * <p>The signature has the form <code>package-name.classname.method-name(argument-list)</code>
+   * where <code>package-name</code> is a period-separated list of identifiers, and <code>
+   * argument-list</code> is a comma-separated (with no spaces) of fully-qualified Java raw types.
+   * If the regular expression contains anchors "<code>^</code>" and "<code>$</code>", they refer to
+   * the beginning and the end (respectively) of the signature string.
    *
    * <p>Randoop only calls methods that are specified by one of the <code>--testclass</code>, <code>
    * -classlist</code>, or <code>--methodlist</code> command-line options; the purpose of <code>
    * --omitmethods</code> is to override one of those other command-line options.
-   *
-   * <p>Note:
-   *
-   * <ul>
-   *   <li>The regex is unanchored, so <code>^</code> or <code>$</code> may be needed to get the
-   *       correct results.
-   *   <li>If a method is inherited without an override, the pattern must match the superclass
-   *       method.
-   * </ul>
    */
   @Option("Do not call methods that match regular expression <string>")
   public static List<Pattern> omitmethods = null;
