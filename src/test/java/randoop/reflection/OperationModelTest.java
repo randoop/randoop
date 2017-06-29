@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import org.junit.Test;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
@@ -47,6 +48,7 @@ public class OperationModelTest {
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
+              new ArrayList<Pattern>(),
               classnames,
               exercisedClassnames,
               methodSignatures,
@@ -101,6 +103,7 @@ public class OperationModelTest {
           OperationModel.createModel(
               visibilityPredicate,
               reflectionPredicate,
+              new ArrayList<Pattern>(),
               classnames,
               exercisedClassname,
               methodSignatures,
@@ -174,6 +177,7 @@ public class OperationModelTest {
           OperationModel.createModel(
               visibilityPredicate,
               reflectionPredicate,
+              new ArrayList<Pattern>(),
               classnames,
               exercisedClassnames,
               methodSignatures,
@@ -356,6 +360,7 @@ public class OperationModelTest {
           OperationModel.createModel(
               visibilityPredicate,
               reflectionPredicate,
+              new ArrayList<Pattern>(),
               classnames,
               exercisedClassname,
               methodSignatures,

@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import org.junit.Test;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.ThrowClassNameError;
@@ -298,6 +299,7 @@ public class InstantiationTest {
           OperationModel.createModel(
               visibility,
               reflectionPredicate,
+              new ArrayList<Pattern>(),
               names,
               exercisedClassnames,
               methodSignatures,
