@@ -9,6 +9,10 @@ same way.
    it outputs them; this makes the failures easier to understand.  You can
    disable this behavior.
 
+Improves how --omitmethods works so that it matches against the signature of a
+method or constructor rather than java.lang.reflect.Method.toString(). Also,
+omits method throughout the inheritance hierarchy.   
+
 New flag --log-operation-history will write table of operation use during
 generation to standard output. Option --operation-history-log will write to
 the file argument.
