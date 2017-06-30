@@ -77,8 +77,8 @@ public class MethodDef {
    * @param args fully-qualified names of parameter types
    */
   static MethodDef of(String fullMethodName, String[] args) {
-    String methodName = fullMethodName;
-    String classname = "";
+    String methodName;
+    String classname;
     int dotPos = fullMethodName.lastIndexOf('.');
     if (dotPos > 0) {
       methodName = fullMethodName.substring(dotPos + 1);
@@ -222,7 +222,7 @@ public class MethodDef {
    * @throws ClassNotFoundException if no {@code Class<?>} was found for the type
    */
   private Class<?> typeToClass(Type type) throws ClassNotFoundException {
-    Class<?> c = null;
+    Class<?> c;
     String name = UtilMDE.fieldDescriptorToClassGetName(type.getSignature());
     c = UtilMDE.classForName(name);
     return c;

@@ -211,6 +211,8 @@ public class CallReplacementTransformer implements ClassFileTransformer {
         mg.update();
 
         // Update the max stack and Max Locals
+        // Since the locals and stack are not modified these three lines should not be necessary,
+        // and are here to be cautious. The performance hit is expected to be minimal.
         mg.setMaxLocals();
         mg.setMaxStack();
         mg.update();
@@ -310,7 +312,10 @@ public class CallReplacementTransformer implements ClassFileTransformer {
       case Const.INVOKESPECIAL:
       case Const.INVOKEVIRTUAL:
         /*
-         * These are invocations where an implicit argument occurs in the call.
+         * These calls have an implicit argument of the  {@code this} pointer. Since coversion is
+         * to a static call, need to insert the receiver type at the beginning of the argument type
+         * array. This argument has already been explicitly pushed onto the stack, so modifying the
+         * call signature is enough.
          */
         Type instanceType = invocation.getReferenceType(pgen);
         Type[] arguments = BCELUtil.insert_type(instanceType, invocation.getArgumentTypes(pgen));

@@ -171,7 +171,7 @@ class ReplacementFileReader {
       throw new ReplacementException(msg);
     }
 
-    Method replacementMethod = null;
+    Method replacementMethod;
     try {
       // check that replacement exists in a way that allows reporting errors
       replacementMethod = replacementDef.toMethod();
