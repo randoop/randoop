@@ -732,23 +732,24 @@ public class GenTests extends GenInputsAbstract {
       logOutputStart(regressionSequences.size(), "Regression");
     }
 
-    List<File> files = new ArrayList<>();
-
+    List<File> testFiles = new ArrayList<>();
     JavaFileWriter jfw = new JavaFileWriter(junit_output_dir);
     Map<String, CompilationUnit> testMap =
         getTestASTMap(
             GenInputsAbstract.regression_test_basename, regressionSequences, junitCreator);
     for (Map.Entry<String, CompilationUnit> entry : testMap.entrySet()) {
-      files.add(jfw.writeClass(junit_package_name, entry.getKey(), entry.getValue().toString()));
+      String classname = entry.getKey();
+      File testFile = jfw.writeClass(junit_package_name, classname, entry.getValue().toString());
+      testFiles.add(testFile);
     }
 
     Set<String> testClassNames = testMap.keySet();
-    files.add(
+    testFiles.add(
         outputTestDriver(
             GenInputsAbstract.regression_test_basename, junitCreator, testClassNames, jfw));
 
     if (!GenInputsAbstract.noprogressdisplay) {
-      logTestFiles(files);
+      logTestFiles(testFiles);
     }
   }
 
