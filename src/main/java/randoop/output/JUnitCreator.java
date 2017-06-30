@@ -120,7 +120,6 @@ public class JUnitCreator {
 
   private JUnitCreator(String packageName) {
     this.packageName = packageName;
-    //this.testClassNames = new TreeSet<>();
     this.classMethodCounts = new LinkedHashMap<>();
   }
 
