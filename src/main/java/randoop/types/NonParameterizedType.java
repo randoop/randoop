@@ -126,7 +126,7 @@ public class NonParameterizedType extends ClassOrInterfaceType {
         //return ClassOrInterfaceType.forType(supertype);
       }
     }
-    return null;
+    return JavaTypes.OBJECT_TYPE;
   }
 
   @Override
