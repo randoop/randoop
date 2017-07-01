@@ -209,7 +209,7 @@ public final class Randomness {
       if (argument != null) {
         methodWithArg += "(" + argument + ")";
       }
-      selectionLog.log("%s => %s; called from %s%n", methodName, returnValue, trace[2]);
+      selectionLog.log("%s => %s; called from %s%n", methodWithArg, returnValue, trace[3]);
     }
   }
 
