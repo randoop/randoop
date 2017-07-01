@@ -317,9 +317,9 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     ClassOrInterfaceType enumType = ClassOrInterfaceType.forClass(enumClass);
 
     /*
-     * have to determine whether parameter types match
-     * if method comes from a generic type, the parameters for method will be instantiated
-     * and it is necessary to build the instantiated parameter list
+     * Have to determine whether parameter types match.
+     * If method comes from a generic type, the parameters for method will be instantiated
+     * and it is necessary to build the instantiated parameter list.
      */
     // TODO verify that subsignature conditions on erasure met (JLS 8.4.2)
     for (Method m : enumClass.getMethods()) {

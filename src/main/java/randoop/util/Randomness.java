@@ -220,9 +220,9 @@ public final class Randomness {
    * @param methodName the name of the method called
    * @param argList the method argument, which is a list
    */
-  private static void logSelection(Object value, String methodName, List<?> argList) {
+  private static void logSelection(Object returnValue, String methodName, List<?> argList) {
     if (selectionLog.enabled()) {
-      logSelection(value, methodName, "list of length " + argList.size());
+      logSelection(returnValue, methodName, "list of length " + argList.size());
     }
   }
 }
