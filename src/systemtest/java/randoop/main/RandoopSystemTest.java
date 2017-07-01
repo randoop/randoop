@@ -194,6 +194,11 @@ public class RandoopSystemTest {
     options.setOption("observers", "resources/systemTest/randoop1_observers.txt");
     options.setOption("omit-field-list", "resources/systemTest/testclassomitfields.txt");
 
+    // Temporary, extra debugging for the runNaiveCollectionsTest
+    options.setOption("selection-log", testEnvironment.workingDir + "/selection-log.txt");
+    options.setOption(
+        "operation-history-log", testEnvironment.workingDir + "/operation-history-log.txt");
+
     CoverageChecker coverageChecker = new CoverageChecker(options);
     coverageChecker.exclude("java2.util2.Collections.get(java2.util2.ListIterator, int)");
     coverageChecker.exclude(
