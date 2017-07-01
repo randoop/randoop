@@ -7,10 +7,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static randoop.main.GenInputsAbstract.include_if_class_exercised;
-import static randoop.main.GenInputsAbstract.include_if_classname_appears;
-import static randoop.main.GenInputsAbstract.methodlist;
-import static randoop.main.GenInputsAbstract.omitmethods;
 
 import java.io.File;
 import java.util.HashSet;
@@ -54,7 +50,8 @@ public class SpecialCoveredClassTest {
   public void abstractClassTest() {
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = new File("instrument/testcase/special-allclasses.txt");
-    include_if_class_exercised = new File("instrument/testcase/special-coveredclasses.txt");
+    GenInputsAbstract.include_if_class_exercised =
+        new File("instrument/testcase/special-coveredclasses.txt");
     ReflectionExecutor.usethreads = false;
     GenInputsAbstract.outputlimit = 5000;
     GenInputsAbstract.inputlimit = 10000;
@@ -62,13 +59,14 @@ public class SpecialCoveredClassTest {
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
     Set<String> coveredClassnames =
         GenInputsAbstract.getStringSetFromFile(
-            include_if_class_exercised, "Unable to read coverage class names");
+            GenInputsAbstract.include_if_class_exercised, "Unable to read coverage class names");
     Set<String> omitFields = new HashSet<>();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ReflectionPredicate reflectionPredicate =
-        new DefaultReflectionPredicate(omitmethods, omitFields);
+        new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitFields);
     Set<String> methodSignatures =
-        GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
+        GenInputsAbstract.getStringSetFromFile(
+            GenInputsAbstract.methodlist, "Error while reading method list file");
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
     OperationModel operationModel = null;
     try {
@@ -140,7 +138,9 @@ public class SpecialCoveredClassTest {
 
     Predicate<ExecutableSequence> isOutputTest =
         genTests.createTestOutputPredicate(
-            excludeSet, operationModel.getExercisedClasses(), include_if_classname_appears);
+            excludeSet,
+            operationModel.getExercisedClasses(),
+            GenInputsAbstract.include_if_classname_appears);
     testGenerator.addTestPredicate(isOutputTest);
     ContractSet contracts = operationModel.getContracts();
     Set<TypedOperation> excludeAsObservers = new LinkedHashSet<>();
