@@ -26,6 +26,7 @@ public final class Randomness {
 
   public static void reset(long newSeed) {
     random = new Random(newSeed);
+    logSelection("[Random object]", "reset", newSeed);
   }
 
   private static int totalCallsToRandom = 0;
@@ -42,7 +43,7 @@ public final class Randomness {
       Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
     }
     int value = random.nextInt(i);
-    logSelection(value, "nextRandomInt");
+    logSelection(value, "nextRandomInt", i);
     return value;
   }
 
@@ -51,7 +52,7 @@ public final class Randomness {
       throw new IllegalArgumentException("Expected non-empty list");
     }
     int position = nextRandomInt(list.size());
-    logSelection(position, "randomMember");
+    logSelection(position, "randomMember", list);
     return list.get(position);
   }
 
@@ -60,7 +61,7 @@ public final class Randomness {
       throw new IllegalArgumentException("Expected non-empty list");
     }
     int position = nextRandomInt(list.size());
-    logSelection(position, "randomMember");
+    logSelection(position, "randomMember", list);
     return list.get(position);
   }
 
@@ -87,6 +88,7 @@ public final class Randomness {
     for (int i = 0; i < list.size(); i++) {
       currentPoint += list.get(i).getWeight();
       if (currentPoint >= randomPoint) {
+        logSelection(i, "randomMemberWeighted", list);
         return list.get(i);
       }
     }
@@ -133,7 +135,7 @@ public final class Randomness {
     assert list.size() + 1 == cumulativeWeights.size(); // because cumulative weights starts at 0
 
     int index = binarySearchForIndex(cumulativeWeights, randomPoint);
-    logSelection(index, "randomMemberWeighted(List,Map)");
+    logSelection(index, "randomMemberWeighted(List,Map)", list);
     return list.get(index);
   }
 
@@ -162,8 +164,9 @@ public final class Randomness {
   }
 
   public static <T> T randomSetMember(Collection<T> set) {
-    int randIndex = Randomness.nextRandomInt(set.size());
-    logSelection(randIndex, "randomSetMember");
+    int setSize = set.size();
+    int randIndex = Randomness.nextRandomInt(setSize);
+    logSelection(randIndex, "randomSetMember", "collection of size " + setSize);
     return CollectionsExt.getNthIteratedElement(set, randIndex);
   }
 
@@ -176,7 +179,9 @@ public final class Randomness {
     if (Log.isLoggingOn()) {
       Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
     }
-    return (Randomness.random.nextDouble() >= falseProb);
+    boolean result = Randomness.random.nextDouble() >= falseProb;
+    logSelection(result, "weightedCoinFlip", trueProb);
+    return result;
   }
 
   public static boolean randomBoolFromDistribution(double falseProb_, double trueProb_) {
@@ -185,19 +190,39 @@ public final class Randomness {
     if (Log.isLoggingOn()) {
       Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
     }
-    return (Randomness.random.nextDouble() >= falseProb);
+    boolean result = Randomness.random.nextDouble() >= falseProb;
+    logSelection(result, "randomBoolFromDistribution", falseProb_ + ", " + trueProb_);
+    return result;
   }
 
   /**
-   * Logs the call to the method named along with the value returned and the calling method.
+   * Logs the value that was randomly selected, along with the calling method and its argument.
    *
-   * @param value the value selected
+   * @param returnValue the value randomly selected
    * @param methodName the name of the method called
+   * @param argument the method argument
    */
-  private static void logSelection(int value, String methodName) {
+  private static void logSelection(Object returnValue, String methodName, Object argument) {
     if (selectionLog.enabled()) {
       StackTraceElement[] trace = Thread.currentThread().getStackTrace();
-      selectionLog.log("%s: %d called from %s%n", methodName, value, trace[2]);
+      String methodWithArg = methodName;
+      if (argument != null) {
+        methodWithArg += "(" + argument + ")";
+      }
+      selectionLog.log("%s => %d; called from %s%n", methodName, returnValue, trace[2]);
+    }
+  }
+
+  /**
+   * Logs the value that was randomly selected, along with the calling method and its lint argument.
+   *
+   * @param returnValue the value randomly selected
+   * @param methodName the name of the method called
+   * @param argList the method argument, which is a list
+   */
+  private static void logSelection(Object value, String methodName, List<?> argList) {
+    if (selectionLog.enabled()) {
+      logSelection(value, methodName, "list of length " + argList.size());
     }
   }
 }
