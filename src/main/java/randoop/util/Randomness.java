@@ -1,13 +1,20 @@
 package randoop.util;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
 import plume.SimpleLog;
 import randoop.BugInRandoopException;
 
+/**
+ * A simple-to-use wrapper around {@link java.util.Random}.
+ *
+ * <p>It also supports logging, for debugging of apparently nondeterministic behavior.
+ */
 public final class Randomness {
 
   public static SimpleLog selectionLog = new SimpleLog(false);
@@ -24,12 +31,51 @@ public final class Randomness {
    */
   static Random random = new Random(SEED);
 
-  public static void reset(long newSeed) {
-    random = new Random(newSeed);
-    logSelection("[Random object]", "reset", newSeed);
+  public static void setSeed(long newSeed) {
+    random.setSeed(newSeed);
+    totalCallsToRandom = 0;
+    logSelection("[Random object]", "setSeed", newSeed);
   }
 
+  private static Field seedField;
+
+  static {
+    try {
+      seedField = Random.class.getDeclaredField("seed");
+    } catch (NoSuchFieldException e) {
+      throw new Error(e);
+    }
+    seedField.setAccessible(true);
+  }
+
+  /**
+   * Get the seed.
+   *
+   * <p>To exactly reproduce the state, the result needs to be XOR'd with 0x5DEECE66DL if passed to
+   * setSeed, because setSeed internally XORs with that value.
+   */
+  public static long getSeed() {
+    try {
+      return ((AtomicLong) seedField.get(Randomness.random)).get();
+    } catch (IllegalAccessException e) {
+      throw new Error(e);
+    }
+  }
+
+  /** Number of calls to the underlying Random instance that this wraps. */
   private static int totalCallsToRandom = 0;
+
+  /** Call this before every use of Randomness.random. */
+  private static void incrementCallsToRandom() {
+    totalCallsToRandom++;
+    if (Log.isLoggingOn()) {
+      Log.logLine(
+          "randoop.util.Randomness: "
+              + totalCallsToRandom
+              + " calls to Random so far, seed = "
+              + getSeed());
+    }
+  }
 
   /**
    * Uniformly random int from [0, i)
@@ -38,11 +84,8 @@ public final class Randomness {
    * @return a value selected from range [0, i)
    */
   public static int nextRandomInt(int i) {
-    totalCallsToRandom++;
-    if (Log.isLoggingOn()) {
-      Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
-    }
-    int value = random.nextInt(i);
+    incrementCallsToRandom();
+    int value = Randomness.random.nextInt(i);
     logSelection(value, "nextRandomInt", i);
     return value;
   }
@@ -79,10 +122,7 @@ public final class Randomness {
     assert max > 0;
 
     // Select a random point in interval and find its corresponding element.
-    totalCallsToRandom++;
-    if (Log.isLoggingOn()) {
-      Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
-    }
+    incrementCallsToRandom();
     double randomPoint = Randomness.random.nextDouble() * max;
     double currentPoint = 0;
     for (int i = 0; i < list.size(); i++) {
@@ -97,9 +137,9 @@ public final class Randomness {
 
   /**
    * Randomly selects an element from a weighted distribution of elements. These weights are with
-   * respect to each other, and are not normalized. Used internally when the <code>
-   * --weighted-constants</code> and/or <code>--weighted-sequences</code> options are used. Iterates
-   * through the entire list once, then does a binary search to select the element.
+   * respect to each other, and are not normalized. Used internally when the {@code
+   * --weighted-constants} and/or {@code --weighted-sequences} options are used. Iterates through
+   * the entire list once, then does a binary search to select the element.
    *
    * @param list the list of elements to select from
    * @param weights the map of elements to their weights
@@ -126,10 +166,7 @@ public final class Randomness {
     assert max > 0;
 
     // Select a random point in interval and find its corresponding element.
-    totalCallsToRandom++;
-    if (Log.isLoggingOn()) {
-      Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
-    }
+    incrementCallsToRandom();
     double randomPoint = Randomness.random.nextDouble() * max;
 
     assert list.size() + 1 == cumulativeWeights.size(); // because cumulative weights starts at 0
@@ -141,8 +178,8 @@ public final class Randomness {
 
   /**
    * Performs a binary search on a cumulative weight distribution and returns the corresponding
-   * index such that {@code cumulativeWeights.get(i) < point <= cumulativeWeights.get(i + 1) for
-   * index 0 <= i <= cumulativeWeights.size()},
+   * index i such that {@code cumulativeWeights.get(i) < point <= cumulativeWeights.get(i + 1)} for
+   * {@code 0 <= i <= cumulativeWeights.size()}.
    *
    * @param cumulativeWeights the cumulative weight distribution to search through
    * @param point the value used to find the index within the cumulative weight distribution
@@ -175,10 +212,7 @@ public final class Randomness {
       throw new IllegalArgumentException("arg must be between 0 and 1.");
     }
     double falseProb = 1 - trueProb;
-    totalCallsToRandom++;
-    if (Log.isLoggingOn()) {
-      Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
-    }
+    incrementCallsToRandom();
     boolean result = Randomness.random.nextDouble() >= falseProb;
     logSelection(result, "weightedCoinFlip", trueProb);
     return result;
@@ -186,10 +220,7 @@ public final class Randomness {
 
   public static boolean randomBoolFromDistribution(double falseProb_, double trueProb_) {
     double falseProb = falseProb_ / (falseProb_ + trueProb_);
-    totalCallsToRandom++;
-    if (Log.isLoggingOn()) {
-      Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
-    }
+    incrementCallsToRandom();
     boolean result = Randomness.random.nextDouble() >= falseProb;
     logSelection(result, "randomBoolFromDistribution", falseProb_ + ", " + trueProb_);
     return result;

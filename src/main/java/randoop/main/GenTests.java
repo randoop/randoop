@@ -159,7 +159,7 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     }
 
-    Randomness.reset(randomseed);
+    Randomness.setSeed(randomseed);
     if (GenInputsAbstract.selection_log != null) {
       Randomness.selectionLog = new SimpleLog(GenInputsAbstract.selection_log, true);
     }

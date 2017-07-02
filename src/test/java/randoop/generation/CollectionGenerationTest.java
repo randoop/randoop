@@ -151,7 +151,7 @@ public class CollectionGenerationTest {
 
   @Test
   public void testParameterizedArray() {
-    Randomness.reset(999997);
+    Randomness.setSeed(999997);
     ComponentManager componentManager = setupComponentManager();
     InstantiatedType elementType = JDKTypes.LIST_TYPE.instantiate(JavaTypes.STRING_TYPE);
     componentManager.addGeneratedSequence(
@@ -188,7 +188,7 @@ public class CollectionGenerationTest {
 
   @Test
   public void testGenericArrayOfArray() {
-    Randomness.reset(104729);
+    Randomness.setSeed(104729);
     ComponentManager componentManager = setupComponentManager();
     InstantiatedType elementType = JDKTypes.LIST_TYPE.instantiate(JavaTypes.STRING_TYPE);
     componentManager.addGeneratedSequence(
