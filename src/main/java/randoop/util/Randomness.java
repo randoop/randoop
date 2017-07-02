@@ -173,7 +173,8 @@ public final class Randomness {
       if (argument != null) {
         methodWithArg += "(" + argument + ")";
       }
-      selectionLog.log("%s => %s; called from %s%n", methodWithArg, returnValue, trace[3]);
+      selectionLog.log(
+          "%s => %s; seed %s; called from %s%n", methodWithArg, returnValue, getSeed(), trace[3]);
     }
   }
 
