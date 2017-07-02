@@ -172,7 +172,8 @@ public final class Randomness {
     assert list.size() + 1 == cumulativeWeights.size(); // because cumulative weights starts at 0
 
     int index = binarySearchForIndex(cumulativeWeights, randomPoint);
-    logSelection(index, "randomMemberWeighted(List,Map)", list);
+    logSelection(
+        index, "randomMemberWeighted(List,Map)", String.format("<< %s,%n%s >>", list, weights));
     return list.get(index);
   }
 
@@ -240,7 +241,8 @@ public final class Randomness {
       if (argument != null) {
         methodWithArg += "(" + argument + ")";
       }
-      selectionLog.log("%s => %s; called from %s%n", methodWithArg, returnValue, trace[3]);
+      selectionLog.log(
+          "%s => %s; seed %s; called from %s%n", methodWithArg, returnValue, getSeed(), trace[3]);
     }
   }
 
