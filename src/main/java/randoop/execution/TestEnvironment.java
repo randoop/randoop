@@ -90,7 +90,7 @@ public class TestEnvironment {
 
     command.add("-ea");
     command.add("-classpath");
-    command.add(testClasspath.toString());
+    command.add(testClasspath + File.pathSeparator + ".");
     command.add("org.junit.runner.JUnitCore");
 
     return command;
