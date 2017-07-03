@@ -6,6 +6,8 @@ import com.github.javaparser.ast.stmt.BlockStmt;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -24,6 +26,10 @@ import plume.SimpleLog;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
 import randoop.MultiVisitor;
+import randoop.compile.FileCompiler;
+import randoop.compile.FileCompilerException;
+import randoop.execution.RunStatus;
+import randoop.execution.TestEnvironment;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
@@ -731,24 +737,55 @@ public class GenTests extends GenInputsAbstract {
     if (!GenInputsAbstract.noprogressdisplay) {
       logOutputStart(regressionSequences.size(), "Regression");
     }
+    String classpath = "TEMPORARY";
+    TestEnvironment testEnvironment = new TestEnvironment(classpath);
 
-    List<File> files = new ArrayList<>();
-
+    List<File> testFiles = new ArrayList<>();
     JavaFileWriter jfw = new JavaFileWriter(junit_output_dir);
     Map<String, CompilationUnit> testMap =
         getTestASTMap(
             GenInputsAbstract.regression_test_basename, regressionSequences, junitCreator);
     for (Map.Entry<String, CompilationUnit> entry : testMap.entrySet()) {
-      files.add(jfw.writeClass(junit_package_name, entry.getKey(), entry.getValue().toString()));
+      String classname = entry.getKey();
+      File testFile = jfw.writeClass(junit_package_name, classname, entry.getValue().toString());
+
+      List<File> sources = new ArrayList<>();
+      sources.add(testFile);
+
+      Path workingDirectory = null;
+      try {
+        workingDirectory = Files.createTempDirectory("check" + classname);
+      } catch (IOException e) {
+        //XXX handle error
+        e.printStackTrace();
+      }
+      assert workingDirectory != null;
+
+      boolean success = false;
+      FileCompiler compiler = new FileCompiler();
+      try {
+        success = compiler.compile(sources, workingDirectory);
+      } catch (FileCompilerException e) {
+        //XXX handle error
+        e.printStackTrace();
+      }
+      assert success;
+
+      RunStatus status = testEnvironment.runTest(classname, workingDirectory.toFile());
+      if (status.exitStatus != 0) {
+        // inspect error output for assertions
+      }
+
+      testFiles.add(testFile);
     }
 
     Set<String> testClassNames = testMap.keySet();
-    files.add(
+    testFiles.add(
         outputTestDriver(
             GenInputsAbstract.regression_test_basename, junitCreator, testClassNames, jfw));
 
     if (!GenInputsAbstract.noprogressdisplay) {
-      logTestFiles(files);
+      logTestFiles(testFiles);
     }
   }
 
