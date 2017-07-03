@@ -6,8 +6,6 @@ import com.github.javaparser.ast.stmt.BlockStmt;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -26,9 +24,6 @@ import plume.SimpleLog;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
 import randoop.MultiVisitor;
-import randoop.compile.FileCompiler;
-import randoop.compile.FileCompilerException;
-import randoop.execution.RunStatus;
 import randoop.execution.TestEnvironment;
 import randoop.generation.AbstractGenerator;
 import randoop.generation.ComponentManager;
@@ -41,8 +36,11 @@ import randoop.instrument.ExercisedClassVisitor;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
+import randoop.output.CodeWriter;
+import randoop.output.FailingTestFilter;
 import randoop.output.JUnitCreator;
 import randoop.output.JavaFileWriter;
+import randoop.output.MinimizerWriter;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PackageVisibilityPredicate;
@@ -109,6 +107,7 @@ public class GenTests extends GenInputsAbstract {
           + " --testclass=java.util.TreeSet";
 
   private static final List<String> notes;
+  public static final String TEST_METHOD_NAME_PREFIX = "test";
 
   private BlockStmt afterAllFixtureBody;
   private BlockStmt afterEachFixtureBody;
@@ -260,6 +259,7 @@ public class GenTests extends GenInputsAbstract {
     Set<String> methodSignatures =
         GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
 
+    String classpath = System.getProperty("java.class.path");
     OperationModel operationModel = null;
     try {
       operationModel =
@@ -282,7 +282,6 @@ public class GenTests extends GenInputsAbstract {
     } catch (RandoopClassNameError e) {
       System.out.printf("Error: %s%n", e.getMessage());
       if (e.getMessage().startsWith("No class with name \"")) {
-        String classpath = System.getProperty("java.class.path");
         System.out.println("More specifically, none of the following files could be found:");
         StringTokenizer tokenizer = new StringTokenizer(classpath, File.pathSeparator);
         while (tokenizer.hasMoreTokens()) {
@@ -502,10 +501,27 @@ public class GenTests extends GenInputsAbstract {
             beforeEachFixtureBody,
             afterEachFixtureBody);
 
+    JavaFileWriter javaFileWriter = new JavaFileWriter(junit_output_dir);
     if (!GenInputsAbstract.no_error_revealing_tests) {
       List<ExecutableSequence> errorSequences = explorer.getErrorTestSequences();
       if (!errorSequences.isEmpty()) {
-        outputErrorTests(junitCreator, errorSequences);
+        if (!GenInputsAbstract.noprogressdisplay) {
+          logOutputStart(errorSequences.size(), "Error-revealing");
+        }
+        CodeWriter codeWriter = javaFileWriter;
+        if (GenInputsAbstract.minimize_error_test || GenInputsAbstract.stop_on_error_test) {
+          codeWriter = new MinimizerWriter(javaFileWriter);
+        }
+        List<File> testFiles =
+            outputTests(
+                junitCreator,
+                GenInputsAbstract.junit_package_name,
+                GenInputsAbstract.error_test_basename,
+                errorSequences,
+                codeWriter);
+        if (!GenInputsAbstract.noprogressdisplay) {
+          logTestFiles(testFiles);
+        }
       } else {
         if (!GenInputsAbstract.noprogressdisplay) {
           System.out.printf("%nNo error-revealing tests to output%n");
@@ -516,7 +532,21 @@ public class GenTests extends GenInputsAbstract {
     if (!GenInputsAbstract.no_regression_tests) {
       List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
       if (!regressionSequences.isEmpty()) {
-        outputRegressionTests(junitCreator, regressionSequences);
+        if (!GenInputsAbstract.noprogressdisplay) {
+          logOutputStart(regressionSequences.size(), "Regression");
+        }
+        TestEnvironment testEnvironment = new TestEnvironment(classpath);
+        FailingTestFilter codeWriter = new FailingTestFilter(testEnvironment, javaFileWriter);
+        List<File> testFiles =
+            outputTests(
+                junitCreator,
+                GenInputsAbstract.junit_package_name,
+                GenInputsAbstract.regression_test_basename,
+                regressionSequences,
+                codeWriter);
+        if (!GenInputsAbstract.noprogressdisplay) {
+          logTestFiles(testFiles);
+        }
       } else {
         if (!GenInputsAbstract.noprogressdisplay) {
           System.out.printf("No regression tests to output%n");
@@ -687,106 +717,35 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Output error-revealing tests, applying the minimizer if {@link
-   * GenInputsAbstract#minimize_error_test} or {@link GenInputsAbstract#stop_on_error_test} are set.
+   * Output the test sequences as JUnit test classes in the given package using the class name
+   * prefix to form names and written using the {@link CodeWriter}.
    *
-   * @param junitCreator the JUnit class creator for this run
-   * @param errorSequences the error-revealing test sequences to output
-   */
-  private void outputErrorTests(
-      JUnitCreator junitCreator, List<ExecutableSequence> errorSequences) {
-    if (!GenInputsAbstract.noprogressdisplay) {
-      logOutputStart(errorSequences.size(), "Error-revealing");
-    }
-
-    List<File> files = new ArrayList<>();
-    JavaFileWriter jfw = new JavaFileWriter(junit_output_dir);
-
-    Map<String, CompilationUnit> testMap =
-        getTestASTMap(GenInputsAbstract.error_test_basename, errorSequences, junitCreator);
-    for (Map.Entry<String, CompilationUnit> entry : testMap.entrySet()) {
-      File testFile =
-          jfw.writeClass(junit_package_name, entry.getKey(), entry.getValue().toString());
-      if (GenInputsAbstract.minimize_error_test || GenInputsAbstract.stop_on_error_test) {
-        // Minimize the error-revealing test that has been output.
-        Minimize.mainMinimize(
-            testFile,
-            Minimize.suiteclasspath,
-            Minimize.testsuitetimeout,
-            Minimize.verboseminimizer);
-      }
-      files.add(testFile);
-    }
-    Set<String> testClassNames = testMap.keySet();
-    files.add(
-        outputTestDriver(GenInputsAbstract.error_test_basename, junitCreator, testClassNames, jfw));
-
-    if (!GenInputsAbstract.noprogressdisplay) {
-      logTestFiles(files);
-    }
-  }
-
-  /**
-   * Output regression tests.
+   * <p>Class names are formed by appending a number to the {@code namePrefix}.
    *
-   * @param junitCreator the JUnit class creator for this run
-   * @param regressionSequences the regression test sequences to output
+   * @see #getTestASTMap(String, List, JUnitCreator)
+   * @param jUnitCreator the {@link JUnitCreator} to convert sequences to JUnit tests
+   * @param packageName the package name for the test classes
+   * @param namePrefix the prefix of the class names.
+   * @param sequences the code sequences for the test methods
+   * @param codeWriter the {@link CodeWriter} to write the test classes to java files
+   * @return the list of test files written
    */
-  private void outputRegressionTests(
-      JUnitCreator junitCreator, List<ExecutableSequence> regressionSequences) {
-    if (!GenInputsAbstract.noprogressdisplay) {
-      logOutputStart(regressionSequences.size(), "Regression");
-    }
-    String classpath = "TEMPORARY";
-    TestEnvironment testEnvironment = new TestEnvironment(classpath);
-
+  private List<File> outputTests(
+      JUnitCreator jUnitCreator,
+      String packageName,
+      String namePrefix,
+      List<ExecutableSequence> sequences,
+      CodeWriter codeWriter) {
     List<File> testFiles = new ArrayList<>();
-    JavaFileWriter jfw = new JavaFileWriter(junit_output_dir);
-    Map<String, CompilationUnit> testMap =
-        getTestASTMap(
-            GenInputsAbstract.regression_test_basename, regressionSequences, junitCreator);
+    Map<String, CompilationUnit> testMap = getTestASTMap(namePrefix, sequences, jUnitCreator);
     for (Map.Entry<String, CompilationUnit> entry : testMap.entrySet()) {
       String classname = entry.getKey();
-      File testFile = jfw.writeClass(junit_package_name, classname, entry.getValue().toString());
-
-      List<File> sources = new ArrayList<>();
-      sources.add(testFile);
-
-      Path workingDirectory = null;
-      try {
-        workingDirectory = Files.createTempDirectory("check" + classname);
-      } catch (IOException e) {
-        //XXX handle error
-        e.printStackTrace();
-      }
-      assert workingDirectory != null;
-
-      boolean success = false;
-      FileCompiler compiler = new FileCompiler();
-      try {
-        success = compiler.compile(sources, workingDirectory);
-      } catch (FileCompilerException e) {
-        //XXX handle error
-        e.printStackTrace();
-      }
-      assert success;
-
-      RunStatus status = testEnvironment.runTest(classname, workingDirectory.toFile());
-      if (status.exitStatus != 0) {
-        // inspect error output for assertions
-      }
-
-      testFiles.add(testFile);
+      String classString = entry.getValue().toString();
+      testFiles.add(codeWriter.writeClass(packageName, classname, classString));
     }
-
-    Set<String> testClassNames = testMap.keySet();
-    testFiles.add(
-        outputTestDriver(
-            GenInputsAbstract.regression_test_basename, junitCreator, testClassNames, jfw));
-
-    if (!GenInputsAbstract.noprogressdisplay) {
-      logTestFiles(testFiles);
-    }
+    String classSource = outputTestDriver(namePrefix, jUnitCreator, testMap.keySet());
+    testFiles.add(codeWriter.writeUnmodifiedClass(packageName, namePrefix, classSource));
+    return testFiles;
   }
 
   /**
@@ -809,7 +768,9 @@ public class GenTests extends GenInputsAbstract {
   private void logTestFiles(List<File> files) {
     System.out.println();
     for (File f : files) {
-      System.out.println("Created file: " + f.getAbsolutePath());
+      if (f != null) {
+        System.out.println("Created file: " + f.getAbsolutePath());
+      }
     }
   }
 
@@ -819,14 +780,10 @@ public class GenTests extends GenInputsAbstract {
    * @param junitPrefix the prefix of the driver class name
    * @param junitCreator the {@link JUnitCreator} used to create test classes
    * @param testClassNames the set of names of the generated test classes
-   * @param jfw the writer to output the Java file for the test driver
    * @return the {@code File} for the test driver Java file
    */
-  private File outputTestDriver(
-      String junitPrefix,
-      JUnitCreator junitCreator,
-      Set<String> testClassNames,
-      JavaFileWriter jfw) {
+  private String outputTestDriver(
+      String junitPrefix, JUnitCreator junitCreator, Set<String> testClassNames) {
     String classSource;
     String driverName = junitPrefix;
     if (GenInputsAbstract.junit_reflection_allowed) {
@@ -835,7 +792,7 @@ public class GenTests extends GenInputsAbstract {
       driverName = junitPrefix + "Driver";
       classSource = junitCreator.createTestDriver(driverName, testClassNames);
     }
-    return jfw.writeClass(junit_package_name, driverName, classSource);
+    return classSource;
   }
 
   /**
@@ -848,21 +805,32 @@ public class GenTests extends GenInputsAbstract {
    */
   private Map<String, CompilationUnit> getTestASTMap(
       String junitPrefix, List<ExecutableSequence> sequences, JUnitCreator junitCreator) {
+
     List<List<ExecutableSequence>> sequencePartition =
         CollectionsExt.formSublists(new ArrayList<>(sequences), testsperfile);
+
     Map<String, CompilationUnit> testMap = new LinkedHashMap<>();
-    String methodNamePrefix = "test";
-    String classNameFormat = junitPrefix + "%d";
     for (int i = 0; i < sequencePartition.size(); i++) {
       List<ExecutableSequence> partition = sequencePartition.get(i);
-      String testClassName = String.format(classNameFormat, i);
+      String testClassName = createTestClassname(junitPrefix, i);
       CompilationUnit classAST =
-          junitCreator.createTestClass(testClassName, methodNamePrefix, partition);
+          junitCreator.createTestClass(testClassName, TEST_METHOD_NAME_PREFIX, partition);
       if (classAST != null) {
         testMap.put(testClassName, classAST);
       }
     }
     return testMap;
+  }
+
+  /**
+   * Creates the test class name by appending the counter value to the class name prefix.
+   *
+   * @param testClassnamePrefix the test classname prefix
+   * @param counter the counter value to append to the classname prefix
+   * @return the class name with prefix followed by the counter value
+   */
+  private String createTestClassname(String testClassnamePrefix, int counter) {
+    return String.format(testClassnamePrefix + "%d", counter);
   }
 
   /**
