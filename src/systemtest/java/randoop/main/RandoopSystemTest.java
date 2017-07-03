@@ -895,6 +895,23 @@ public class RandoopSystemTest {
     generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
+  /**
+   * This is intended to create tests that are flaky from command-line, and then filter them out.
+   *
+   * <p>The input creates a file that is deleted on exit.
+   */
+  @Test
+  public void runFlakyFilterTest() {
+    TestEnvironment testEnvironment =
+        systemTestEnvironment.createTestEnvironment("flaky-test-filter");
+    RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
+    options.addTestClass("flaky.FlakyFileDependency");
+    options.setOption("testsperfile", "1");
+    options.setOption("outputlimit", "45");
+    options.setOption("timelimit", "100");
+    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+  }
+
   /* ------------------------------ utility methods ---------------------------------- */
 
   /**
