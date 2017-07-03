@@ -2,7 +2,10 @@ package randoop.execution;
 
 import java.util.List;
 
-/** Created by bjkeller on 6/30/17. */
+/**
+ * Represents the status of a process that has been executed. Captures the command, exit status, and
+ * stream output on standared output and error.
+ */
 public class RunStatus {
 
   /** The command executed. */
@@ -23,6 +26,7 @@ public class RunStatus {
    * @param command the command
    * @param exitStatus the exit status
    * @param standardOutputLines the lines of process output
+   * @param errorOutputLines the lines of process output to standard error
    */
   public RunStatus(
       List<String> command,

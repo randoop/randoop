@@ -52,6 +52,7 @@ public class TestEnvironment {
    * Runs the named JUnit test class in this environment.
    *
    * @param testClassName the fully-qualified JUnit test class
+   * @param workingDirectory the working directory for executing the test
    */
   public RunStatus runTest(String testClassName, File workingDirectory) {
 
