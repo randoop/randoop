@@ -165,7 +165,7 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     }
 
-    Randomness.reset(randomseed);
+    Randomness.setSeed(randomseed);
     if (GenInputsAbstract.selection_log != null) {
       Randomness.selectionLog = new SimpleLog(GenInputsAbstract.selection_log, true);
     }
@@ -818,6 +818,7 @@ public class GenTests extends GenInputsAbstract {
    *
    * @param junitPrefix the prefix of the driver class name
    * @param junitCreator the {@link JUnitCreator} used to create test classes
+   * @param testClassNames the set of names of the generated test classes
    * @param jfw the writer to output the Java file for the test driver
    * @return the {@code File} for the test driver Java file
    */

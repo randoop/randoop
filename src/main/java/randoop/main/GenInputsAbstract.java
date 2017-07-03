@@ -588,8 +588,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("<filename> Name of a file to which to log lots of information")
   public static FileWriter log = null;
 
-  /** Log selections for determining sources of non-determinism. */
-  @Option("print each random selection")
+  /**
+   * Name of a file to which to log calls to methods of Randomness. Used for determining sources of
+   * non-determinism.
+   */
+  @Option("File to log each random selection")
   public static String selection_log = null;
 
   /**
@@ -600,8 +603,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean log_operation_history = false;
 
   /**
-   * Name of a log to which the operation usage history is written. This operation is not affected
-   * by setting <code>--log-operation-history</code>.
+   * Name of a file to which to log the operation usage history . This operation is not affected by
+   * setting <code>--log-operation-history</code>.
    */
   @Option("Track and log operation usage counts to this file")
   public static FileWriter operation_history_log = null;

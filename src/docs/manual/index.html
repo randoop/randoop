@@ -1078,6 +1078,15 @@ Randoop about your application, and that is how we recommend using Randoop.
              Perform expensive internal checks (for Randoop debugging) [default false]
             <li id="option:log"><b>--log=</b><i>filename</i>.
              Name of a file to which to log lots of information. If not specified, no logging is done.
+            <li id="option:selection-log"><b>--selection-log=</b><i>string</i>.
+             Name of a file to which to log calls to methods of Randomness. Used for determining sources of
+ non-determinism.
+            <li id="option:log-operation-history"><b>--log-operation-history=</b><i>boolean</i>.
+             Track and log the usage of operations during generation to standard out. This option is not
+ affected by setting <code>--operation-history-log</code>. [default false]
+            <li id="option:operation-history-log"><b>--operation-history-log=</b><i>filewriter</i>.
+             Name of a file to which to log the operation usage history . This operation is not affected by
+ setting <code>--log-operation-history</code>.
       </ul>
   <li id="optiongroup:Advanced-extension-points">Advanced extension points
       <ul>
@@ -1100,7 +1109,7 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li id="optiongroup:Test-case-minimization-options">Test case minimization options
       <ul>
             <li id="option:suitepath"><b>--suitepath=</b><i>string</i>.
-             File containing the JUnit test suite to be minimized
+             The Java file whose failing tests will be minimized.
             <li id="option:suiteclasspath"><b>--suiteclasspath=</b><i>string</i>.
              Classpath that includes dependencies needed to compile and run the JUnit test suite being
  minimized.
