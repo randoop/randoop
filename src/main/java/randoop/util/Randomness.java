@@ -176,10 +176,19 @@ public final class Randomness {
     assert list.size() + 1 == cumulativeWeights.size(); // because cumulative weights starts at 0
 
     int index = binarySearchForIndex(cumulativeWeights, randomPoint);
-    logSelection(
-        index,
-        "randomMemberWeighted(List,Map)",
-        String.format("%n << %s%n    (class %s),%n    %s >>", list, list.getClass(), weights));
+    if (selectionLog.enabled()) {
+      logSelection(
+          index,
+          "randomMemberWeighted(List,Map)",
+          String.format(
+              "%n << %s%n    (class %s),%n    %s%n    (class %s, size %s)>>",
+              list, list.getClass(), weights, weights.getClass(), weights.size()));
+      selectionLog.log("[%n");
+      for (int i = 0; i < list.size(); i++) {
+        selectionLog.log("  %s (class %s)%n", list.get(i), list.get(i).getClass());
+      }
+      selectionLog.log("]%n");
+    }
     return list.get(index);
   }
 
