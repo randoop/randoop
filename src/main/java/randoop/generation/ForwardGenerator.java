@@ -36,7 +36,6 @@ import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
 import randoop.util.SimpleList;
-import randoop.util.WeightedElement;
 
 /**
  * Randoop's forward, component-based generator.
@@ -55,13 +54,13 @@ public class ForwardGenerator extends AbstractGenerator {
    * Map from a sequences to its combined weight. Accounts for the three weighting schemes for each
    * sequence.
    */
-  private final Map<WeightedElement, Double> weightMap = new HashMap<>();
+  private final Map<Sequence, Double> weightMap = new HashMap<>();
 
   /**
    * Map of sequences to the number of times they've been executed. Used with the dynamic weighting
    * scheme.
    */
-  private final Map<WeightedElement, Integer> sequenceExecutionCount = new HashMap<>();
+  private final Map<Sequence, Integer> sequenceExecutionCount = new HashMap<>();
 
   /**
    * Map of extracted literal sequences to their static weights. Note that these weights are never
