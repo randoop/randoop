@@ -168,12 +168,18 @@ public final class Randomness {
     // Select a random point in interval and find its corresponding element.
     incrementCallsToRandom();
     double randomPoint = Randomness.random.nextDouble() * max;
+    if (selectionLog.enabled()) {
+      selectionLog.log(
+          "randomPoint = %s, cumulativeWeights = %s%n", randomPoint, cumulativeWeights);
+    }
 
     assert list.size() + 1 == cumulativeWeights.size(); // because cumulative weights starts at 0
 
     int index = binarySearchForIndex(cumulativeWeights, randomPoint);
     logSelection(
-        index, "randomMemberWeighted(List,Map)", String.format("<< %s,%n%s >>", list, weights));
+        index,
+        "randomMemberWeighted(List,Map)",
+        String.format("%n << %s%n    (class %s),%n    %s >>", list, list.getClass(), weights));
     return list.get(index);
   }
 
