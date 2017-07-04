@@ -147,7 +147,7 @@ public final class Randomness {
    * @return a randomly selected element of type T
    */
   public static <T extends WeightedElement> T randomMemberWeighted(
-      SimpleList<T> list, Map<WeightedElement, Double> weights) {
+      SimpleList<T> list, Map<T, Double> weights) {
 
     // Find interval length.
     double max = 0;
