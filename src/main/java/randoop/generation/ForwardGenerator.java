@@ -319,6 +319,10 @@ public class ForwardGenerator extends AbstractGenerator {
     double weight = defaultWeight * dynamicWeight * literalWeight;
     assert weight >= 0;
 
+    Randomness.selectionLog.log(
+        "processWeights(%s): weight %s, defaultWeight %s, dynamicWeight %s, literalWeight %s%n",
+        eSeq, weight, defaultWeight, dynamicWeight, literalWeight);
+
     weightMap.put(eSeq.sequence, weight); // update the final weight for this sequence
   }
 
