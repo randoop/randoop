@@ -62,9 +62,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * File that lists methods to test.
    *
-   * <p>In the file, each each method under test is specified on a separate line. The list of
-   * methods given by this argument augment any methods determined via the <code>--testclass</code>
-   * or <code>--classlist</code> option.
+   * <p>In the file, each method under test is specified on a separate line. The list of methods
+   * given by this argument augment any methods determined via the <code>--testclass</code> or
+   * <code>--classlist</code> option.
    *
    * <p>A constructor line begins with <code>"cons :"</code> followed by the classname, the string
    * {@code <init>}, and the constructor's parameter types enclosed in parentheses. Methods are
