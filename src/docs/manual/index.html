@@ -43,6 +43,7 @@ The Randoop homepage is
       <li><a href="#map_calls">Avoiding calls to specific methods</a>
         <ul>
           <li><a href="#mapcall-load-exclusions">Replacement exclusions</a></li>
+          <li><a href="#mapcall-replacement-definition">Defining replacements</a></li>
           <li><a href="#map-calls-format">Replacement file format</a></li>
           <li><a href="#determining-calls-to-map">Determining which calls to place in the replacements file</a></li>
           <li><a href="#replacements-and-classpaths">Placing replacement mocks on the classpath</a></li>
@@ -731,9 +732,9 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:methodlist"><b>--methodlist=</b><i>filename</i>.
              File that lists methods to test.
 
- <p>In the file, each each method under test is specified on a separate line. The list of
- methods given by this argument augment any methods determined via the <code>--testclass</code>
- or <code>--classlist</code> option.
+ <p>In the file, each method under test is specified on a separate line. The list of methods
+ given by this argument augment any methods determined via the <code>--testclass</code> or
+ <code>--classlist</code> option.
 
  <p>A constructor line begins with <code>"cons :"</code> followed by the classname, the string
  <code>&lt;init&gt;</code>, and the constructor's parameter types enclosed in parentheses. Methods are
@@ -770,7 +771,7 @@ Randoop about your application, and that is how we recommend using Randoop.
              A file containing a list of regular expressions that indicate methods that should not be
  included in generated tests. These patterns are used along with those provided with <code>
  --omitmethods</code>, and the default omissions.
-            <li id="option:include-replaced-methods"><b>--include-replaced-methods=</b><i>boolean</i>.
+            <li id="option:dont-omit-replaced-methods"><b>--dont-omit-replaced-methods=</b><i>boolean</i>.
              Include methods that are otherwise omitted by default. Unless you set this to true, every
  method replaced by the <code>mapcall</code> agent is treated as if it had been supplied as an
  argument to <code>--omitmethods</code>. [default false]
@@ -1159,7 +1160,7 @@ To use it:
     -Xbootclasspath/a:$(RANDOOP_PATH)/mapcall-3.1.5.jar -javaagent:$(RANDOOP_PATH)/mapcall-3.1.5.jar
 </pre>
   </li>
-  <li>When running the generated tests, add the file <code>mapcall-3.1.5.jar</code>,
+  <li>When running the generated tests, add the file <code>mapcall-3.1.5.jar</code> to the boot class path,
     and pass the same command-line options to <code>java</code>:
 <pre>
     -Xbootclasspath/a:$(RANDOOP_PATH)/mapcall-3.1.5.jar -javaagent:$(RANDOOP_PATH)/mapcall-3.1.5.jar
@@ -1196,20 +1197,20 @@ There are some classes to which the mapcall agent should not be applied.
 </p>
 
 <p>
-If you are using the agent in a build environment, it is also necessary to exclude the build environment classes.
+If you are using the agent in a build environment such as Ant, Maven or Gradle, it is also necessary to exclude the build environment classes.
 For instance, when running the agent on generated tests in a Gradle project using the Java plugin, the replacement of <code>System.exit</code>
 will affect the behavior of the build, and we should exclude the Gradle packages from being transformed.
-To exclude these packages, an exclusion file <code>gradle-exclusions.txt</code> is created with the lines
+To exclude these packages, place the package names in an exclusion file <code>gradle-exclusions.txt</code>
 </p>
 <pre>
 org.gradle.
 worker.org.gradle.
 </pre>
 <p>
-Then the agent is run with the <code>--load-exclusions</code> command-line option with the filename as the argument:
+and run the agent with the <code>--dont-transform</code> command-line option with the filename as the argument:
 </p>
 <pre>
-    -javaagent:$(RANDOOP_PATH)/mapcall-3.1.5.jar=--load-exclusions=gradle-exclusions.txt
+    -javaagent:$(RANDOOP_PATH)/mapcall-3.1.5.jar=--dont-transform=gradle-exclusions.txt
 </pre>
 
 <p>
@@ -1230,93 +1231,116 @@ and looking in the file <code>transform-log.txt</code> to see which methods are 
 </p>
 
 <p>
-By default, the agent does not modify Randoop, the agent itself,
-JUnit classes, or the build environment.
+By default, the agent does not modify Randoop, the agent itself, or
+JUnit classes.
 So, by default, the agent will not make replacements in Randoop and Randoop
-Java agent classes (and, currently, classes of libraries they use), or in JUnit
-or Hamcrest classes.
+Java agent classes, classes in certain subpackages of <code>com.sun.tools</code> and <code>com.sun.source</code>, or in JUnit or Hamcrest classes.
 Also, to improve performance, the agent does not make replacements in boot-loaded classes
 with the exception of packages in <code>java.awt</code> and <code>javax.swing</code>.
+</p>
+
+
+
+<h3 id="mapcall-replacement-definition">Defining replacements</h3>
+
+<p>
+You can define your own replacements by writing mock implementations and specifying the replacements in a text file.
+The mapcall agent is able to use the implementation classes to discover replacements.
+</p>
+
+<p>
+A replacement method must be static and non-private; and should have an
+identical signature to the original, unless the original method is non-static,
+in which case, the first parameter type should be the containing class of the
+original method.
+For instance, a call to <code>java.awt.Component.show()</code> would be replaced
+by a call to a method with the signature <code>show(java.awt.Component)</code>.
+See this <a href="mockJOptionPane.java.txt">JOptionPane mock class</a> for an example class.
+</p>
+
+<p>
+To organize your mock classes, it is recommended that you choose a package prefix
+and keep the package structure of the original classes.
+The example file uses <code>projectmock</code> as the prefix, so the fully-qualified
+name of the <code>JOptionPane</code> mock class is <code>projectmock.javax.swing.JOptionPane</code>.
+(You may need to <a href="mapcall-load-exclusions">exclude</a> this package if any of the replacement methods use otherwise replaced methods.)
+</p>
+
+<p>
+The more you adhere to the original class organization, the simpler your replacement file can be.
+However, the only constraint on organization is that a replacement method named in the replacement file exist in some class.
+</p>
+
+<p>
+The default replacements are all classes in the package <code>randoop.mock</code> with the same name as the declaring class of the original method.
+So, the default mock for <code>java.awt.Component.show()</code> is <code>randoop.mock.java.awt.Component.show(java.awt.Component)</code>.
+You should not use the <code>randoop.mock</code> prefix for your own mock classes.
+</p>
+
 
 
 <h3 id="map-calls-format">Replacement file format</h3>
 
 <p>
-You can define your own replacements by providing your implementations and specifying the replacements in a text file.
+The replacement-file is a list of replacements, each of which is a pair of methods, classes or packages.
 </p>
 
 <p>
-The replacement-file is a list of replacements, each of which is a pair of
-packages, classes, or methods.
-A file including an example of each is
+A method replacement is given by a pair of fully-qualified method signatures.
+For instance, the method deplacements for the three methods of the <a href="mockJOptionPane.java.txt">JOptionPane mock class</a> are
 </p>
 <pre>
-java.awt randoop.mock.java.awt
-java.awt.Component.show() randoop.stream.java.awt.Component.show(java.awt.Component)
-javax.swing.JOptionPane randoop.stream.javax.swing.JOptionPane
-</pre>
+javax.swing.JOptionPane.showMessageDialog(Component,Object,String,int) projectmock.javax.swing.JOptionPane.showMessageDialog(Component,Object,String,int)
+javax.swing.JOptionPane.showConfirmDialog(Component,Object,String,int) projectmock.javax.swing.JOptionPane.showConfirmDialog(Component,Object,String,int)
+javax.swing.JOptionPane.showConfirmDialog(Component,Object,String,int,int) projectmock.javax.swing.JOptionPane.showConfirmDialog(Component,Object,String,int,int)
+<pre>
 <p>
-The first line is a package replacement, the second a method replacement, and the third a class replacement.
-(Blank lines and <code>//</code> comments are ignored in the replacements-file.)
+(If a signature is generic, it should be written using rawtypes.)
+These methods will override the default replacements, but all other default replacements will still be used.
 </p>
 
 <p>
-The method replacement
+The class and package replacements provide a short-hand for method replacements.
+The class replacement form for the <code>JOptionPane</code> example is
 </p>
 <pre>
-  java.awt.Component.show() randoop.stream.java.awt.Component.show(java.awt.Component)
+javax.swing.JOptionPane projectmock.javax.swing.JOptionPane
 </pre>
 <p>
-indicates that every call to the original method <code>java.awt.Component.show()</code>
-should be replaced by a call to the static method
-<code>randoop.stream.java.awt.Component.show(java.awt.Component)</code>. 
-A replacement method must be static and non-private; and should have an 
-identical signature to the original, unless the original method is non-static
-in which case the first parameter type should be the containing class of the
-original method.
-</p>
-
-<p>
-Package and class replacements are a shorthand for method replacements.
-For instance, the line
+and the package replacement form is the slightly simpler
 </p>
 <pre>
-    javax.swing.JOptionPane randoop.stream.javax.swing.JOptionPane
+javax.swing projectmock.javax.swing
 </pre>
 <p>
-replaces several method replacements, one for each replacement method in the class
-<code>randoop.stream.javax.swing.JOptionPane</code>.
-(Methods in the original class without a corresponding replacement method are
-not changed.)
+In both cases, the requirements is that every (non-private) method in a
+replacement class must have a corresponding method in the original class, and no original method has more than one replacement.
+Again, if there is no user-specified replacement method for an original method, the defaults are used.
+</p>
 
-Similarly, the line
+<p>
+These types of replacements can be used together. Say, for instance, that we have project-specific replacement methods for <code>javax.swing</code>
+in <code>projectmock.javax.swing</code>, but want to use a special implementation of <code>java.awt.Component</code> methods from <code>specialmock.java.awt.Component</code>.
+To use these replacements put thee lines in a file <code>replace_calls.txt</code>
 </p>
 <pre>
-  java.awt randoop.mock.java.awt
+javax.swing projectmock.javax.swing  // project-wide package replacements
+java.awt.Component specialmock.java.awt.Component // special-case class replacement
 </pre>
 <p>
-replaces method replacements for each mock method in a class of the package <code>randoop.mock.java.awt</code>.
-(If the replacement package has subpackages, then any replacement methods in classes of the subpackages are also included.)
-</p>
-
-<p>
-User-provided replacements can override the default replacements, but, otherwise, conflicting replacements are an error.
-The earlier example replacements are only an error if both <code>randoop.mock.java.awt</code> and <code>randoop.stream.java.awt</code> have a class <code>Component</code> with the method <code>show(java.awt.Component)</code>.
-</p>
-
-<p>
-Provide the replacement file as an argument to the <code>mapcall</code> agent,
-when running Randoop <b>and</b> when running the generated tests:
+and run Randoop with the additional arguments
 </p>
 <pre>
-    -javaagent:$(RANDOOP_PATH)/mapcall-3.1.5.jar=--map_calls=replace_calls_example.txt
+    -Xbootclasspath/a:$(RANDOOP_PATH)/mapcall-3.1.5.jar -javaagent:$(RANDOOP_PATH)/mapcall-3.1.5.jar=--map_calls=replace_calls_example.txt
 </pre>
 <p>
-Also put the class file with the replacements on the classpath.
-Because default replacements may also be applied by the mapcall agent, you must
-also include the <code>mapcall-3.1.5.jar</code> in the classpath.
+The boot classpath should include the agent jar if any replacements are made of AWT or Swing calls.
+Otherwise, include <code>mapcall-3.1.5.jar</code> on the normal classpath.
 </p>
 
+<p>
+Blank lines and <code>//</code> comments are ignored in the replacements-file.)
+</p>
 
 
 <h3 id="determining-calls-to-map">Determining which calls to place in the replacements file</h3>
@@ -1329,9 +1353,7 @@ If problems continue, you need to add more calls to your replacements file.
 
 <p>
 To determine the specific method, examine the application's code where it
-calls the method that puts up the box (or other unwanted activity).  If it
-is a virtual call, the map must specify the name of the type used in the
-call.
+calls the method that puts up the box (or other unwanted activity).
 </p>
 
 <p>
@@ -1427,12 +1449,12 @@ inputs to methods:
 </p>
 
 <ul>
-  <li><code>byte</code>: <code>-1</code>, <code>0</code>, <code>1</code>,  <code>10</code>, <code>100</code></li>
-  <li><code>short</code>: <code>-1</code>, <code>0</code>, <code>1</code>,  <code>10</code>, <code>100</code></li>
-  <li><code>int</code>: <code>-1</code>, <code>0</code>, <code>1</code>,  <code>10</code>, <code>100</code></li>
-  <li><code>long</code>: <code>-1</code>, <code>0</code>, <code>1</code>,  <code>10</code>, <code>100</code></li>
-  <li><code>float</code>: <code>-1</code>, <code>0</code>, <code>1</code>,  <code>10</code>, <code>100</code></li>
-  <li><code>double</code>: <code>-1</code>, <code>0</code>, <code>1</code>,  <code>10</code>, <code>100</code></li>
+  <li><code>byte</code>: <code>-1</code>, <code>0</code> <code>1</code>,  <code>10</code>, <code>100</code></li>
+  <li><code>short</code>: <code>-1</code>, <code>0</code> <code>1</code>,  <code>10</code>, <code>100</code></li>
+  <li><code>int</code>: <code>-1</code>, <code>0</code> <code>1</code>,  <code>10</code>, <code>100</code></li>
+  <li><code>long</code>: <code>-1</code>, <code>0</code> <code>1</code>,  <code>10</code>, <code>100</code></li>
+  <li><code>float</code>: <code>-1</code>, <code>0</code> <code>1</code>,  <code>10</code>, <code>100</code></li>
+  <li><code>double</code>: <code>-1</code>, <code>0</code> <code>1</code>,  <code>10</code>, <code>100</code></li>
   <li><code>char</code>: <code>'#'</code>, <code>' '</code>, <code>'4'</code>, <code>'a'</code></li>
   <li><code>java.lang.String</code>: <code>""</code>, <code>"hi!"</code></li>
 </ul>

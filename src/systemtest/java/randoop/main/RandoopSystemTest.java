@@ -812,7 +812,7 @@ public class RandoopSystemTest {
 
   /**
    * recreate problem with tests over Google Guava where value from private enum returned by public
-   * method and value used in {@link randoop.test.ObjectCheck} surfaces in test code, creating
+   * method and value used in {@code randoop.test.ObjectCheck} surfaces in test code, creating
    * uncompilable code.
    */
   @Test
@@ -1153,8 +1153,10 @@ public class RandoopSystemTest {
 
   @Test
   public void runSystemExitTest() {
+    String classpath =
+        systemTestEnvironment.classpath + ":" + systemTestEnvironment.mapcallAgentPath;
     TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("system-exit-test");
+        systemTestEnvironment.createTestEnvironment("system-exit-test", classpath, null);
     testEnvironment.addJavaAgent(
         systemTestEnvironment.mapcallAgentPath,
         "--dont-transform=resources/systemTest/load-exclusions.txt");
@@ -1169,8 +1171,10 @@ public class RandoopSystemTest {
 
   @Test
   public void runNoReplacementsTest() {
+    String classpath =
+        systemTestEnvironment.classpath + ":" + systemTestEnvironment.mapcallAgentPath;
     TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("no-replacement-test");
+        systemTestEnvironment.createTestEnvironment("no-replacement-test", classpath, null);
     testEnvironment.addJavaAgent(
         systemTestEnvironment.mapcallAgentPath,
         "--dont-transform=resources/systemTest/load-exclusions.txt");

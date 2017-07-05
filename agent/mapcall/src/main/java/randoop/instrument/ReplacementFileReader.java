@@ -3,7 +3,6 @@ package randoop.instrument;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.LineNumberReader;
 import java.io.Reader;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -19,11 +18,14 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.bcel.generic.Type;
 import plume.BCELUtil;
+import plume.EntryReader;
 
 /**
- * Provides the methods {@link #readFile(Reader)} and {@link #readFile(File)} that read a MapCall
- * agent replacement file and populate the method replacement map used by the agent. See the <a
+ * Provides the methods {@link #readReplacements(Reader, String)} and {@link
+ * #readReplacements(File)} that read a MapCall agent replacement file and populate the method
+ * replacement map used by the agent. See the <a
  * href="https://randoop.github.io/randoop/manual/index.html#map_calls">mapcall user
  * documentation</a> for details on the file format.
  */
@@ -34,48 +36,33 @@ class ReplacementFileReader {
       "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
 
   /**
-   * Regex to match fully-qualified package or class name as a sequence of identifiers separated by
-   * periods.
-   *
-   * <p>Note: when included in more complex expressions that use groups, the parentheses in this
-   * expression also form a group.
+   * Regex to match a sequence of identifiers separated by periods. Corresponds to package names,
+   * fully-qualified classnames, or method names with fully-qualified classname.
    */
-  private static final String PACKAGE_OR_CLASS_STRING = ID_STRING + "(\\." + ID_STRING + ")*";
+  private static final String DOT_DELIMITED_IDS = ID_STRING + "(?:\\." + ID_STRING + ")*";
 
   /**
-   * Naive regex to match a method signature as a sequence of period-delimited identifiers followed
-   * by a string enclosed in parentheses. Does not actually check that the form of the arguments is
-   * correct.
+   * Naive regex to match a method signature consisting of a fully-qualified classname, a method
+   * name, and argument types in parentheses. The pattern does not include the details of the
+   * argument types.
    */
-  private static final String SIGNATURE_STRING = PACKAGE_OR_CLASS_STRING + "\\([^)]*\\)";
+  private static final String SIGNATURE_STRING = DOT_DELIMITED_IDS + "\\([^)]*\\)";
 
   /**
-   * Naive regex to match a method signature with groups to extract the fully-qualified method name
-   * (group 1) and type argument list (group 3). (Group 2 is the group from {@link
-   * #PACKAGE_OR_CLASS_STRING}.)
-   */
-  private static final String SIGNATURE_GROUP_STRING =
-      "(" + PACKAGE_OR_CLASS_STRING + ")" + "\\(([^)]*)\\)";
-
-  /** Pattern to match naive signature regex with groups. */
-  private static final Pattern SIGNATURE_PATTERN = Pattern.compile(SIGNATURE_GROUP_STRING);
-
-  /**
-   * Pattern to match of method replacements consisting of a pair of signatures. Uses the naive
-   * signature pattern separated by one or more spaces or tabs. Can be used to decide whether a
-   * replacement file line indicates a method replacement. Groups 1 and 3 correspond to each of the
-   * signature strings.
+   * Unanchored pattern to match of method replacements consisting of a pair of signatures. Uses the
+   * naive signature pattern separated by one or more spaces or tabs. Can be used to decide whether
+   * a replacement file line indicates a method replacement. Groups 1 and 2 correspond to each of
+   * the signature strings. (Use with {@code matches}.)
    */
   private static final Pattern SIGNATURE_LINE =
       Pattern.compile("(" + SIGNATURE_STRING + ")[ \\t]+(" + SIGNATURE_STRING + ")");
 
   /**
    * Pattern to match class or package replacements consisting of a pair of class or package name
-   * signatures. Groups 1 and 3 correspond to each of the package or class names.
+   * signatures. Groups 1 and 2 correspond to each of the package or class names.
    */
   private static final Pattern PACKAGE_OR_CLASS_LINE =
-      Pattern.compile(
-          "(" + PACKAGE_OR_CLASS_STRING + ")[ \\t]+" + "(" + PACKAGE_OR_CLASS_STRING + ")");
+      Pattern.compile("(" + DOT_DELIMITED_IDS + ")[ \\t]+" + "(" + DOT_DELIMITED_IDS + ")");
 
   /**
    * Reads the given replacement file specifying method calls that should be replaced by other
@@ -83,12 +70,14 @@ class ReplacementFileReader {
    * href="https://randoop.github.io/randoop/manual/index.html#map_calls">mapcall user
    * documentation</a> for details on the file format.
    *
+   * @see #readReplacements(Reader, String)
    * @param map_file the file with map of method substitutions
    * @throws IOException if there is an error reading the file
+   * @return the method replacement map constructed from the file
    */
-  static ConcurrentHashMap<MethodDef, MethodDef> readFile(File map_file)
+  static ConcurrentHashMap<MethodDef, MethodDef> readReplacements(File map_file)
       throws IOException, ReplacementFileException {
-    return readFile(new FileReader(map_file));
+    return readReplacements(new FileReader(map_file), map_file.getName());
   }
 
   /**
@@ -96,39 +85,50 @@ class ReplacementFileReader {
    * calls. See the <a href="https://randoop.github.io/randoop/manual/index.html#map_calls">mapcall
    * user documentation</a> for details on the file format.
    *
+   * <p>For each replacement line, this method determines if the replacement is a method replacement
+   * or not. If so, the method {@link #addMethodReplacement(ConcurrentHashMap, String, String)} is
+   * called. If not, the method {@link #discoverClassOrPackageReplacements(ConcurrentHashMap,
+   * String, String)} determines whether the replacement is either a class or package replacement,
+   * and, for each, searches for method replacements within the replacement class or package, adding
+   * any found to the method replacement map returned by this method.
+   *
    * @param in the {@code Reader} for the replacement file
+   * @param filename the name of the file read by {@code in}, used for error reporting
    * @throws IOException if there is an error reading from the file
+   * @return the method replacement map constructed from the file
    */
-  static ConcurrentHashMap<MethodDef, MethodDef> readFile(Reader in)
+  static ConcurrentHashMap<MethodDef, MethodDef> readReplacements(Reader in, String filename)
       throws IOException, ReplacementFileException {
     ConcurrentHashMap<MethodDef, MethodDef> replacementMap = new ConcurrentHashMap<>();
-    LineNumberReader lr = new LineNumberReader(in);
-    for (String line = lr.readLine(); line != null; line = lr.readLine()) {
-      line = line.replaceFirst("//.*$", "").trim();
-      if (line.length() == 0) {
-        continue;
-      }
-      Matcher signatureLineMatcher = SIGNATURE_LINE.matcher(line);
-      if (signatureLineMatcher.matches()) {
-        try {
-          // note that group 2 and 4 correspond to the last ".identifier" portion of method name
-          addMethodReplacement(
-              replacementMap, signatureLineMatcher.group(1), signatureLineMatcher.group(3));
-        } catch (ReplacementFileException e) {
-          String msg =
-              String.format("Error in replacement file: %s on line %n%s%n", e.getMessage(), line);
-          throw new ReplacementFileException(msg);
+    try (EntryReader reader = new EntryReader(in, filename, "//.*$", null)) {
+      for (String line : reader) {
+        String trimmed = line.trim();
+        if (trimmed.isEmpty()) {
+          continue;
         }
-      } else {
-        Matcher packageOrClassLineMatcher = PACKAGE_OR_CLASS_LINE.matcher(line);
-        if (packageOrClassLineMatcher.matches()) {
-          addPackageOrClassReplacements(
-              replacementMap,
-              packageOrClassLineMatcher.group(1),
-              packageOrClassLineMatcher.group(3));
+        Matcher signatureLineMatcher = SIGNATURE_LINE.matcher(line);
+        if (signatureLineMatcher.matches()) {
+          try {
+            addMethodReplacement(
+                replacementMap, signatureLineMatcher.group(1), signatureLineMatcher.group(2));
+          } catch (ReplacementException e) {
+            throw new ReplacementFileException(e.getMessage(), reader.getLineNumber(), line);
+          }
         } else {
-          String msg = String.format("Error in replacement file: bad format on line %n%s%n", line);
-          throw new ReplacementFileException(msg);
+          Matcher packageOrClassLineMatcher = PACKAGE_OR_CLASS_LINE.matcher(line);
+          if (packageOrClassLineMatcher.matches()) {
+            try {
+              discoverClassOrPackageReplacements(
+                  replacementMap,
+                  packageOrClassLineMatcher.group(1),
+                  packageOrClassLineMatcher.group(2));
+            } catch (ReplacementException e) {
+              throw new ReplacementFileException(e.getMessage(), reader.getLineNumber(), line);
+            }
+          } else {
+            String msg = "Error in replacement file: bad format";
+            throw new ReplacementFileException(msg, reader.getLineNumber(), line);
+          }
         }
       }
     }
@@ -138,74 +138,63 @@ class ReplacementFileReader {
   /**
    * Adds a method replacement described by a pair of method signatures to the replacement map. Uses
    * reflection to check that the replacement method signature is well-formed and corresponds to a
-   * method that exists. (Doing the same with the original signature may result in class loader
-   * issues.)
+   * method that exists.
    *
-   * <p>Note: this method will overwrite a replacement for an original method, which ensures that
-   * the most specific replacement definition is used.
+   * <p>See {@link MethodDef#of(String)} for details on expected format of a method signature.
    *
-   * @param replacementMap the map from a method to a replacement method
+   * @param replacementMap the map from a method to a replacement method to which replacement is
+   *     added
    * @param originalSignature the signature of the method to be mapped
    * @param replacementSignature the signature of the method to be mapped
-   * @throws ReplacementFileException if the replacement signature is badly-formed, or the class or
-   *     method does not exist
+   * @throws ReplacementException if the replacement signature is badly-formed, the replacement
+   *     class is not found, or the method does not exist
    */
   private static void addMethodReplacement(
       ConcurrentHashMap<MethodDef, MethodDef> replacementMap,
       String originalSignature,
       String replacementSignature)
-      throws ReplacementFileException {
-    MethodDef originalDef = getMethodDef(originalSignature);
-    if (originalDef != null) {
-      MethodDef replacementDef = getMethodDef(replacementSignature);
-      try {
-        // check that replacement exists in a way that allows reporting errors
-        if (replacementDef != null && replacementDef.toMethod() != null) {
-          if (replacementMap.get(originalDef) == null) {
-            replacementMap.put(originalDef, replacementDef);
-          } else {
-            String msg =
-                String.format(
-                    "Conflicting replacement found for method %s by %s",
-                    originalDef, replacementDef);
-            throw new ReplacementFileException(msg);
-          }
-        }
-      } catch (ClassNotFoundException e) {
-        String msg = "Class " + replacementDef.getClassname() + " not found for replacement method";
-        throw new ReplacementFileException(msg);
-      } catch (NoSuchMethodException e) {
-        throw new ReplacementFileException("Replacement method not found " + replacementDef);
-      } catch (RuntimeException e) {
-        throw new ReplacementFileException("In replacement method: " + e.getMessage());
-      }
-    }
-  }
+      throws ReplacementException {
 
-  /**
-   * Reads a signature string and builds the corresponding {@link MethodDef}.
-   *
-   * @param signature the fully-qualified method signature string
-   * @return the {@link MethodDef} for the method represented by the signature string
-   * @throws ReplacementFileException if the given string does not have the format of a signature
-   */
-  private static MethodDef getMethodDef(String signature) throws ReplacementFileException {
-    MethodDef method = null;
-    Matcher sigMatcher = SIGNATURE_PATTERN.matcher(signature);
-    if (sigMatcher.matches()) {
-      if (Pattern.matches(PACKAGE_OR_CLASS_STRING, sigMatcher.group(1).trim())) {
-        String[] arguments = new String[0];
-        String argString = sigMatcher.group(3);
-        if (!argString.isEmpty()) {
-          arguments = argString.split(",");
-        }
-        method = MethodDef.of(sigMatcher.group(1).trim(), arguments);
-      } else {
-        String msg = String.format("Signature \"%s\" has badly formed method name", signature);
-        throw new ReplacementFileException(msg);
-      }
+    MethodDef originalDef;
+    try {
+      originalDef = MethodDef.of(originalSignature);
+    } catch (IllegalArgumentException e) {
+      String msg = String.format("Bad original signature: %s", e.getMessage());
+      throw new ReplacementException(msg);
     }
-    return method;
+
+    MethodDef replacementDef;
+    try {
+      replacementDef = MethodDef.of(replacementSignature);
+    } catch (IllegalArgumentException e) {
+      String msg = String.format("Bad replacement signature: %s", e.getMessage());
+      throw new ReplacementException(msg);
+    }
+
+    Method replacementMethod;
+    try {
+      // check that replacement exists in a way that allows reporting errors
+      replacementMethod = replacementDef.toMethod();
+    } catch (ArgumentClassNotFoundException e) {
+      String msg =
+          String.format("Class not found for replacement argument type %s", e.getMessage());
+      throw new ReplacementException(msg);
+    } catch (ClassNotFoundException e) {
+      String msg = "Class " + replacementDef.getClassname() + " not found for replacement method";
+      throw new ReplacementException(msg);
+    } catch (NoSuchMethodException e) {
+      throw new ReplacementException("Replacement method not found " + replacementDef);
+    }
+
+    if (replacementMethod != null) {
+      if (replacementMap.get(originalDef) != null) {
+        String msg =
+            String.format(
+                "Conflicting replacement found for method %s by %s", originalDef, replacementDef);
+        throw new ReplacementException(msg);
+      }
+      replacementMap.put(originalDef, replacementDef);
+    }
   }
 
   /**
@@ -216,15 +205,23 @@ class ReplacementFileReader {
    * if so adds it to the {@code replacementMap}. If the replacement is a package, then each class
    * in the package is visited in the same way.
    *
+   * <p>Determines whether the replacement is a class or a package, and calls {@link
+   * #addClassReplacements(ConcurrentHashMap, String, Class)} if the replacement is a class.
+   * Otherwise determines whether the agent is operating on boot-loaded classes or not. If so, it
+   * calls {@link #discoverPackageReplacements(ConcurrentHashMap, String, String)} to find
+   * replacements on the boot classpath. Otherwise, it calls {@link
+   * #discoverPackageReplacements(ConcurrentHashMap, String, String, ClassLoader)} to find
+   * replacements using the class loader for the agent.
+   *
    * @param replacementMap the method replacement map to which new replacements are added
    * @param original the original package or class name
    * @param replacement the replacement package or class name
-   * @throws ReplacementFileException if the replacement does not correspond to a package or class
-   *     on the classpath
+   * @throws ReplacementException if the replacement does not correspond to a package or class on
+   *     the classpath
    */
-  private static void addPackageOrClassReplacements(
+  private static void discoverClassOrPackageReplacements(
       ConcurrentHashMap<MethodDef, MethodDef> replacementMap, String original, String replacement)
-      throws ReplacementFileException {
+      throws ReplacementException {
 
     // Check whether the replacement string corresponds to a class (that can be loaded)
     Class<?> replacementClass = null;
@@ -244,10 +241,10 @@ class ReplacementFileReader {
       ClassLoader loader = ReplacementFileReader.class.getClassLoader();
       if (loader == null) {
         // If the agent is run on bootloaded classes, we have to check the path directly.
-        findPackageReplacements(replacementMap, original, replacement);
+        discoverPackageReplacements(replacementMap, original, replacement);
       } else {
         // Otherwise, use the ClassLoader to avoid missing any classes on the normal classpath.
-        findPackageReplacements(replacementMap, original, replacement, loader);
+        discoverPackageReplacements(replacementMap, original, replacement, loader);
       }
     }
   }
@@ -261,7 +258,7 @@ class ReplacementFileReader {
    *
    * <p>Note: This method will not overwrite a replacement for an original method.
    *
-   * @param replacementMap the replacement map
+   * @param replacementMap the replacement map to which new replacements are added
    * @param originalClassname the name of the original class
    * @param replacementClass the {@code Class<>} for the replacement class
    */
@@ -269,7 +266,8 @@ class ReplacementFileReader {
       ConcurrentHashMap<MethodDef, MethodDef> replacementMap,
       String originalClassname,
       Class<?> replacementClass)
-      throws ReplacementFileException {
+      throws ReplacementException {
+    final Type type = BCELUtil.classname_to_type(originalClassname);
     for (Method method : replacementClass.getDeclaredMethods()) {
       int modifiers = method.getModifiers() & Modifier.methodModifiers();
       if (Modifier.isPrivate(modifiers)) {
@@ -288,33 +286,30 @@ class ReplacementFileReader {
       MethodDef originalDef = replacementDef.substituteClassname(originalClassname);
       if (originalDef.exists()) {
         // If there is already a replacement, do not overwrite it
-        if (replacementMap.get(originalDef) == null) {
-          replacementMap.put(originalDef, replacementDef);
-        } else {
+        if (replacementMap.get(originalDef) != null) {
           String msg =
               String.format(
                   "Conflicting replacement found for method %s by %s", originalDef, replacementDef);
-          throw new ReplacementFileException(msg);
+          throw new ReplacementException(msg);
         }
+        replacementMap.put(originalDef, replacementDef);
         continue;
       }
 
       // Check if the replacement might correspond to a non-static original
       if (replacementDef.getParameterTypes().length > 0
-          && replacementDef.getParameterTypes()[0]
-              .equals(BCELUtil.classname_to_type(originalClassname))) {
+          && replacementDef.getParameterTypes()[0].equals(type)) {
         originalDef = originalDef.removeFirstParameter();
         if (originalDef.exists()) {
           // If there is already a replacement, do not overwrite it
-          if (replacementMap.get(originalDef) == null) {
-            replacementMap.put(originalDef, replacementDef);
-          } else {
+          if (replacementMap.get(originalDef) != null) {
             String msg =
                 String.format(
                     "Conflicting replacement found for method %s by %s",
                     originalDef, replacementDef);
-            throw new ReplacementFileException(msg);
+            throw new ReplacementException(msg);
           }
+          replacementMap.put(originalDef, replacementDef);
           continue;
         }
       }
@@ -323,23 +318,25 @@ class ReplacementFileReader {
           String.format(
               "Replacement method %s has no matching original in %s%n",
               replacementDef, originalClassname);
-      throw new ReplacementFileException(msg);
+      throw new ReplacementException(msg);
     }
   }
 
   /**
-   * Discovers and adds method replacements for the package replacement determined by the {@code
-   * original} and {@code replacement} strings and the classes on the boot classpath.
+   * Discovers and adds method replacements on the boot classpath for the package replacement
+   * determined by the {@code original} and {@code replacement} strings and the classes. Contrasts
+   * with {@link #discoverPackageReplacements(ConcurrentHashMap, String, String, ClassLoader)} that
+   * searches for the package in using a class loader.
    *
-   * @see #addPackageOrClassReplacements(ConcurrentHashMap, String, String)
+   * @see #discoverClassOrPackageReplacements(ConcurrentHashMap, String, String)
    * @param replacementMap the method replacement map to which new replacements are added
    * @param original the original package name
    * @param replacement the replacement package name
-   * @throws ReplacementFileException if no package corresponding to the replacement is found
+   * @throws ReplacementException if no package corresponding to the replacement is found
    */
-  private static void findPackageReplacements(
+  private static void discoverPackageReplacements(
       ConcurrentHashMap<MethodDef, MethodDef> replacementMap, String original, String replacement)
-      throws ReplacementFileException {
+      throws ReplacementException {
     String bootpathString = System.getProperty("sun.boot.class.path");
     String javaHome = System.getProperty("java.home");
 
@@ -364,7 +361,8 @@ class ReplacementFileReader {
                 found = true;
               }
             } catch (IOException e) {
-              // ignore
+              throw new ReplacementException(
+                  "Error reading jar file from boot classpath: " + file.getName());
             }
           }
         }
@@ -374,32 +372,35 @@ class ReplacementFileReader {
       String msg =
           String.format(
               "No package or class for replacement %s found on the boot classpath", replacement);
-      throw new ReplacementFileException(msg);
+      throw new ReplacementException(msg);
     }
   }
 
   /**
-   * Discovers and adds method replacements for the package replacement determined by the {@code
-   * original} and {@code replacement} strings and the given {@code ClassLoader}.
+   * Discovers and adds method replacements from the given {@code ClassLoader} for the package
+   * replacement determined by the {@code original} and {@code replacement} strings. Contrasts with
+   * {@link #discoverPackageReplacements(ConcurrentHashMap, String, String)} that searches for the
+   * package on the boot classpath.
    *
-   * @see #addPackageOrClassReplacements(ConcurrentHashMap, String, String)
+   * @see #discoverClassOrPackageReplacements(ConcurrentHashMap, String, String)
    * @param replacementMap the method replacement map to which new replacements are added
    * @param original the original package name
    * @param replacement the replacement package name
    * @param loader the {@code ClassLoader}
-   * @throws ReplacementFileException if no package corresponding to replacement is found
+   * @throws ReplacementException if no package corresponding to replacement is found
    */
-  private static void findPackageReplacements(
+  private static void discoverPackageReplacements(
       ConcurrentHashMap<MethodDef, MethodDef> replacementMap,
       String original,
       String replacement,
       ClassLoader loader)
-      throws ReplacementFileException {
+      throws ReplacementException {
+    boolean found = false;
     Enumeration<URL> resources;
     try {
       resources = loader.getResources(replacement.replace('.', '/'));
     } catch (IOException e) {
-      throw new ReplacementFileException(e.getMessage());
+      throw new ReplacementException(e.getMessage());
     }
     while (resources.hasMoreElements()) {
       URL url = resources.nextElement();
@@ -407,62 +408,74 @@ class ReplacementFileReader {
         URLConnection connection = url.openConnection();
         if (connection instanceof JarURLConnection) {
           JarFile jarFile = ((JarURLConnection) connection).getJarFile();
-          addPackageReplacements(replacementMap, original, replacement, jarFile);
+          if (addPackageReplacements(replacementMap, original, replacement, jarFile)) {
+            found = true;
+          }
         } else {
           // The subclass for directories is is internal.  It seems to work to assume the
           // connection is a directory, and let an exception occur if it is not
           File path = new File(URLDecoder.decode(url.getPath(), "UTF-8"));
           if (path.exists() && path.isDirectory()) {
             addPackageReplacements(replacementMap, original, replacement, path);
-            return;
+            found = true;
           }
         }
       } catch (IOException e) {
         String msg =
             String.format(
                 "Error identifying replacement %s with a package: %s", replacement, e.getMessage());
-        throw new ReplacementFileException(msg);
+        throw new ReplacementException(msg);
       }
     }
-    String msg =
-        String.format("No package or class for replacement %s found on classpath", replacement);
-    throw new ReplacementFileException(msg);
+    if (!found) {
+      String msg =
+          String.format("No package or class for replacement %s found on classpath", replacement);
+      throw new ReplacementException(msg);
+    }
   }
 
   /**
-   * Discovers and adds method replacements for the package replacement determined by the {@code
-   * original} and {@code replacement} strings found in the given {@code ClassLoader}.
+   * Adds method replacements for the package replacement determined by the {@code original} and
+   * {@code replacement} strings found in the given jar file.
    *
+   * @see #discoverPackageReplacements(ConcurrentHashMap, String, String)
+   * @see #discoverPackageReplacements(ConcurrentHashMap, String, String, ClassLoader)
    * @param replacementMap the method replacement map to which new replacements are added
    * @param original the original package name
    * @param replacement the replacement package name
    * @param jarFile the jar file to search
-   * @return true if a class in the replacement package is found in the jar, false otherwise
+   * @return true if a class in the replacement package is found in the jar and replacements added
+   *     to {@code replacementMap}, false otherwise
    */
   private static boolean addPackageReplacements(
       ConcurrentHashMap<MethodDef, MethodDef> replacementMap,
       String original,
       String replacement,
       JarFile jarFile)
-      throws ReplacementFileException {
-
+      throws ReplacementException {
+    String replacementPath = replacement.replace('.', '/') + "/";
     boolean found = false;
     Enumeration<JarEntry> entries = jarFile.entries();
     while (entries.hasMoreElements()) {
       JarEntry entry = entries.nextElement();
       String filename = entry.getName();
-      if (filename.endsWith(".class") && filename.startsWith(replacement.replace('.', '/'))) {
+      if (filename.endsWith(".class") && filename.startsWith(replacementPath)) {
         final String classname =
             filename.substring(replacement.length() + 1, filename.lastIndexOf(".class"));
         final String originalClassname = original + "." + classname;
+
         if (classExists(originalClassname)) {
           try {
-            Class<?> replacementClass = Class.forName(replacement + "." + classname);
+            String replacementClassname = replacement + "." + classname;
+            Class<?> replacementClass = Class.forName(replacementClassname);
             addClassReplacements(replacementMap, originalClassname, replacementClass);
             found = true;
           } catch (ClassNotFoundException e) {
-            // ignore
+            throw new ReplacementException("Error loading replacement file: " + e.getMessage());
           }
+        } else {
+          String msg = String.format("Expected class %s does not exist", originalClassname);
+          throw new ReplacementException(msg);
         }
       }
     }
@@ -474,7 +487,9 @@ class ReplacementFileReader {
    *
    * <p>Assumes that subpackage structure of original and replacement packages is identical.
    *
-   * @param replacementMap the method replacement map
+   * @see #discoverPackageReplacements(ConcurrentHashMap, String, String)
+   * @see #discoverPackageReplacements(ConcurrentHashMap, String, String, ClassLoader)
+   * @param replacementMap the method replacement map to which replacements are added
    * @param original the name of the original package
    * @param replacement the name of the replacement package
    * @param replacementDirectory the directory for the replacement package, must be non-null
@@ -484,19 +499,23 @@ class ReplacementFileReader {
       String original,
       String replacement,
       File replacementDirectory)
-      throws ReplacementFileException {
+      throws ReplacementException {
 
     for (String filename : replacementDirectory.list()) {
       if (filename.endsWith(".class")) {
-        final String classname = filename.substring(0, filename.lastIndexOf(".class"));
+        final String classname = filename.substring(0, filename.length() - 6);
         final String originalClassname = original + "." + classname;
         if (classExists(originalClassname)) {
           try {
-            Class<?> replacementClass = Class.forName(replacement + "." + classname);
+            String replacementClassname = replacement + "." + classname;
+            Class<?> replacementClass = Class.forName(replacementClassname);
             addClassReplacements(replacementMap, originalClassname, replacementClass);
           } catch (ClassNotFoundException e) {
-            // ignore
+            throw new ReplacementException("Error loading replacement file: " + e.getMessage());
           }
+        } else {
+          String msg = String.format("Expected class %s does not exist", originalClassname);
+          throw new ReplacementException(msg);
         }
       } else {
         File subdirectory = new File(replacementDirectory, filename);
@@ -509,7 +528,8 @@ class ReplacementFileReader {
   }
 
   /**
-   * Indicates whether a class with the given name can be loaded in the context classpath.
+   * Indicates whether a class with the given name can be loaded by the context classloader of the
+   * agent.
    *
    * @param classname the name of the class to find
    * @return true if the class can be loaded, false otherwise
@@ -519,6 +539,13 @@ class ReplacementFileReader {
       return Class.forName(classname) != null;
     } catch (ClassNotFoundException e) {
       return false;
+    }
+  }
+
+  /** Exception to represent the occurrence of an error in the replacement file */
+  private static class ReplacementException extends Throwable {
+    ReplacementException(String message) {
+      super(message);
     }
   }
 }

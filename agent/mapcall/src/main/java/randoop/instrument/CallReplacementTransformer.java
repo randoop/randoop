@@ -1,8 +1,10 @@
 package randoop.instrument;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
+import java.nio.file.Path;
 import java.security.ProtectionDomain;
 import java.util.Map;
 import java.util.Set;
@@ -12,16 +14,12 @@ import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.ClassGen;
-import org.apache.bcel.generic.CodeExceptionGen;
 import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InstructionFactory;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.InstructionList;
-import org.apache.bcel.generic.InstructionTargeter;
 import org.apache.bcel.generic.InvokeInstruction;
-import org.apache.bcel.generic.LineNumberGen;
-import org.apache.bcel.generic.LocalVariableGen;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.generic.Type;
 import plume.BCELUtil;
@@ -31,33 +29,29 @@ import plume.SimpleLog;
  * The {@code CallReplacementTransformer} replaces each call to method m1 by a call to method m2. It
  * is used by the MapCallsAgent.
  *
- * <p>Replacements may be given as original-replacement pairs of methods, classes, or packages. For
- * a replacement pair consisting of methods, the original method is replaced by the replacement
- * method. Replacement methods must be static. If the pair consists of classes, the methods of the
- * original class will be replaced by identically named static methods of a class with the
- * replacement name. (If the original method is non-static, the class
- *
  * @see MapCallsAgent
  */
 public class CallReplacementTransformer implements ClassFileTransformer {
 
-  //XXX fix path construction for windows
   /** Debug information about which classes are transformed and why */
   private static SimpleLog debug_transform =
-      new SimpleLog(MapCallsAgent.debugPath + "/transform-log.txt", MapCallsAgent.debug);
+      new SimpleLog(
+          MapCallsAgent.debugPath + File.separator + "transform-log.txt", MapCallsAgent.debug);
 
   private static SimpleLog debug_instrument_inst =
-      new SimpleLog(MapCallsAgent.debugPath + "/instrument-log.txt", MapCallsAgent.debug);
+      new SimpleLog(
+          MapCallsAgent.debugPath + File.separator + "instrument-log.txt", MapCallsAgent.debug);
 
   /** Debug information on method maping */
   private static SimpleLog debug_map =
-      new SimpleLog(MapCallsAgent.debugPath + "/method_mapping.txt", MapCallsAgent.debug);
+      new SimpleLog(
+          MapCallsAgent.debugPath + File.separator + "method_mapping.txt", MapCallsAgent.debug);
 
   /** Map from a method to its replacement. */
   private final ConcurrentHashMap<MethodDef, MethodDef> replacementMap;
 
-  /** The list of packages to exclude from transformation */
-  private final Set<String> excludedPackages;
+  /** The list of package prefixes (package name + ".") to exclude from transformation */
+  private final Set<String> excludedPackagePrefixes;
 
   /**
    * Create a {@link CallReplacementTransformer} that transforms method calls in classes other than
@@ -66,12 +60,13 @@ public class CallReplacementTransformer implements ClassFileTransformer {
    * <p>The transformer can be run by multiple threads, so the replacement maps use concurrent
    * implementations.
    *
-   * @param excludedPackages the packages from which classes should not be transformed
+   * @param excludedPackagePrefixes the period terminated prefixes for packages from which classes
+   *     should not be transformed
    * @param replacementMap the concurrent hash map with method replacements
    */
   CallReplacementTransformer(
-      Set<String> excludedPackages, ConcurrentHashMap<MethodDef, MethodDef> replacementMap) {
-    this.excludedPackages = excludedPackages;
+      Set<String> excludedPackagePrefixes, ConcurrentHashMap<MethodDef, MethodDef> replacementMap) {
+    this.excludedPackagePrefixes = excludedPackagePrefixes;
     this.replacementMap = replacementMap;
   }
 
@@ -82,7 +77,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
    * determined by {@link #replacementMap}.
    *
    * <p>Excludes bootloaded classes that are not AWT/Swing classes. Other exclusions are determined
-   * by the set of {@link #excludedPackages}.
+   * by the set of {@link #excludedPackagePrefixes}.
    *
    * @see MapCallsAgent
    */
@@ -101,20 +96,12 @@ public class CallReplacementTransformer implements ClassFileTransformer {
 
     String fullClassName = className.replace("/", ".");
 
-    if (isNonGUIBootClass(loader, fullClassName)) {
+    if (isExcludedClass(loader, fullClassName)) {
+      debug_transform.log("transform: ignoring excluded class %s%n", className);
       return null;
     }
 
     debug_transform.log("%ntransform: ENTER %s%n", className);
-
-    if (isExcludedClass(fullClassName)) {
-      debug_transform.log("transform: EXIT ignoring excluded class %s%n", className);
-      return null;
-    }
-
-    debug_transform.log(
-        "transforming class %s, loader %s - %s%n",
-        className, loader, (loader == null ? null : loader.getParent()));
 
     // Parse the bytes of the classfile
     JavaClass c;
@@ -130,12 +117,13 @@ public class CallReplacementTransformer implements ClassFileTransformer {
       // Get the class information
       ClassGen cg = new ClassGen(c);
       if (transformClass(cg)) {
+        JavaClass javaClass = cg.getJavaClass();
         if (MapCallsAgent.debug) {
-          JavaClass njc = cg.getJavaClass();
-          njc.dump("/tmp/ret/" + njc.getClassName() + ".class");
+          Path filepath = MapCallsAgent.debugPath.resolve(javaClass.getClassName() + ".class");
+          javaClass.dump(filepath.toFile());
         }
         debug_transform.log("transform: EXIT class %s transformed", className);
-        return cg.getJavaClass().getBytes();
+        return javaClass.getBytes();
       } else {
         debug_transform.log("transform: EXIT class %s not transformed", className);
         return null;
@@ -178,9 +166,13 @@ public class CallReplacementTransformer implements ClassFileTransformer {
    * @param fullClassName the fully-qualified class name, must be non-null
    * @return true if any excluded package is a prefix of the class name, false otherwise
    */
-  private boolean isExcludedClass(String fullClassName) {
-    for (String excludedPackage : excludedPackages) {
-      if (fullClassName.startsWith(excludedPackage)) {
+  private boolean isExcludedClass(ClassLoader loader, String fullClassName) {
+    if (isNonGUIBootClass(loader, fullClassName)) {
+      return false;
+    }
+
+    for (String prefix : excludedPackagePrefixes) {
+      if (fullClassName.startsWith(prefix)) {
         return true;
       }
     }
@@ -191,9 +183,10 @@ public class CallReplacementTransformer implements ClassFileTransformer {
    * Processes each method in the given class replacing any specified calls with static user calls.
    *
    * @param cg the BCEL class representation
-   * @return true if the class has been transformed, false otherwise
+   * @return true if the class has been transformed, false if either no calls were replaced or an
+   *     error occured.
    */
-  private boolean transformClass(ClassGen cg) {
+  private boolean transformClass(ClassGen cg) throws IllegalClassFormatException {
     boolean transformed = false;
     ConstantPoolGen pgen = cg.getConstantPool();
     debug_transform.log("transformClass: ENTER %s", cg.getClassName());
@@ -212,19 +205,21 @@ public class CallReplacementTransformer implements ClassFileTransformer {
 
       if (transformMethod(mg, new InstructionFactory(cg), pgen)) {
         transformed = true;
+
+        // Update the instruction list
+        mg.setInstructionList(instructionList);
+        mg.update();
+
+        // Update the max stack and Max Locals
+        // Since the locals and stack are not modified these three lines should not be necessary,
+        // and are here to be cautious. The performance hit is expected to be minimal.
+        mg.setMaxLocals();
+        mg.setMaxStack();
+        mg.update();
+
+        // Update the method in the class
+        cg.replaceMethod(method, mg.getMethod());
       }
-
-      // Update the instruction list
-      mg.setInstructionList(instructionList);
-      mg.update();
-
-      // Update the max stack and Max Locals
-      mg.setMaxLocals();
-      mg.setMaxStack();
-      mg.update();
-
-      // Update the method in the class
-      cg.replaceMethod(method, mg.getMethod());
 
       debug_instrument_inst.log(
           "%s.%s modified code: %s%n%n", mg.getClassName(), mg.getName(), mg.getMethod().getCode());
@@ -241,15 +236,16 @@ public class CallReplacementTransformer implements ClassFileTransformer {
    * @param mg the method generator
    * @param ifact the instrument factory for the enclosing class of this method
    * @param pgen the constant pool for this class
+   * @return true if the method was modified, false otherwise
    */
-  private boolean transformMethod(MethodGen mg, InstructionFactory ifact, ConstantPoolGen pgen) {
+  private boolean transformMethod(MethodGen mg, InstructionFactory ifact, ConstantPoolGen pgen)
+      throws IllegalClassFormatException {
     boolean transformed = false;
     // Loop through each instruction, making substitutions
     debug_transform.log("transformMethod: ENTER %s.%s%n", mg.getClassName(), mg.getName());
     InstructionList instructionList = mg.getInstructionList();
-    for (InstructionHandle instructionHandle = instructionList.getStart();
-        instructionHandle != null;
-        ) {
+    InstructionHandle instructionHandle = instructionList.getStart();
+    while (instructionHandle != null) {
 
       debug_instrument_inst.log(
           "%s.%s: instrumenting instruction %s%n",
@@ -265,7 +261,7 @@ public class CallReplacementTransformer implements ClassFileTransformer {
 
       if (instruction != null) {
         transformed = true;
-        replaceInstructions(instructionList, instructionHandle, instruction);
+        instructionHandle.setInstruction(instruction);
       }
 
       instructionHandle = nextHandle;
@@ -275,16 +271,16 @@ public class CallReplacementTransformer implements ClassFileTransformer {
   }
 
   /**
-   * Transforms invoke instructions that match a replacement so that it calls the replacement method
-   * instead of the original method.
+   * Returns the instruction to call a replacement method instead of the original method.
    *
    * @param mg the BCEL representation of the method being transformed
-   * @param inst the instruction to transform
+   * @param inst the instruction to replace
    * @param ifact the instruction factory for the enclosing class
-   * @return the transformed instruction list, or null if the instruction is not transformed
+   * @return the new instruction, or null if the instruction has no replacement
    */
   private InvokeInstruction getReplacementInstruction(
-      MethodGen mg, Instruction inst, InstructionFactory ifact, ConstantPoolGen pgen) {
+      MethodGen mg, Instruction inst, InstructionFactory ifact, ConstantPoolGen pgen)
+      throws IllegalClassFormatException {
     debug_transform.log(
         "getReplacementInstruction: ENTER %s.%s%n", mg.getClassName(), mg.getName());
     if (!(inst instanceof InvokeInstruction)) {
@@ -294,17 +290,9 @@ public class CallReplacementTransformer implements ClassFileTransformer {
     }
 
     InvokeInstruction invocation = (InvokeInstruction) inst;
-    MethodDef orig;
-    try {
-      orig = MethodDef.of(invocation, pgen);
-    } catch (Throwable e) {
+    MethodDef orig = MethodDef.of(invocation, pgen);
 
-      debug_transform.log(
-          "getReplacementInstruction: EXIT exception getting method for instruction %s of %s.%s: %s%n",
-          invocation.toString(), mg.getClassName(), mg.getName(), e);
-      return null;
-    }
-    MethodDef call = getReplacementMethod(orig);
+    MethodDef call = replacementMap.get(orig);
     if (call == null) {
       debug_transform.log(
           "%s.%s: No replacement for %s%n", mg.getClassName(), mg.getName(), orig.toString());
@@ -320,12 +308,14 @@ public class CallReplacementTransformer implements ClassFileTransformer {
     InvokeInstruction instruction;
 
     switch (inst.getOpcode()) {
-      case Const.INVOKEDYNAMIC:
       case Const.INVOKEINTERFACE:
       case Const.INVOKESPECIAL:
       case Const.INVOKEVIRTUAL:
         /*
-         * These are invocations where an implicit argument occurs in the call.
+         * These calls have an implicit argument of the  {@code this} pointer. Since coversion is
+         * to a static call, need to insert the receiver type at the beginning of the argument type
+         * array. This argument has already been explicitly pushed onto the stack, so modifying the
+         * call signature is enough.
          */
         Type instanceType = invocation.getReferenceType(pgen);
         Type[] arguments = BCELUtil.insert_type(instanceType, invocation.getArgumentTypes(pgen));
@@ -347,86 +337,18 @@ public class CallReplacementTransformer implements ClassFileTransformer {
                 Const.INVOKESTATIC);
         break;
       default:
+        // This should be impossible.  The only unhandled instruction type is Const.INVOKEDYNAMIC
+        // which is a nameless method (lambda) and would not have a replacement.
         debug_transform.log(
-            "getReplacementInstruction: EXIT wrong instruction type in %s.%s%n",
+            "getReplacementInstruction: EXIT Exception thrown due to wrong instruction type in %s.%s%n",
             mg.getClassName(), mg.getName());
-        return null;
+        String msg =
+            String.format(
+                "Unexpected invoke instruction in %s.%s", mg.getClassName(), mg.getName());
+        throw new IllegalClassFormatException(msg);
     }
     debug_transform.log("getReplacementInstruction: EXIT %s.%s%n", mg.getClassName(), mg.getName());
     return instruction;
-  }
-
-  /**
-   * Returns the replacement method for the given method if one is determined by a method, class or
-   * package replacement, or null otherwise.
-   *
-   * @param methodDef the method to replace, must not be null
-   * @return the replacement method, null if there is none
-   */
-  private MethodDef getReplacementMethod(MethodDef methodDef) {
-    return replacementMap.get(methodDef);
-  }
-
-  /**
-   * Replace the instruction in the original instruction list with the instructions in the new
-   * instruction list. If this instruction was the target of any jumps or line numbers, replace them
-   * with the first instruction in the new list.
-   *
-   * @param instructionList the original instruction list, must be non-null
-   * @param instruction the instruction to replace
-   * @param invokeInstruction the new instructions to substitute for the instruction, must be
-   *     non-null and non-empty
-   */
-  private static void replaceInstructions(
-      InstructionList instructionList,
-      InstructionHandle instruction,
-      InvokeInstruction invokeInstruction) {
-
-    if ((invokeInstruction == null)) {
-      throw new IllegalArgumentException("New instruction must be non-null");
-    }
-
-    // If there is only one new instruction, just replace it in the handle
-    if (invokeInstruction.getLength() == 1) {
-      instruction.setInstruction(invokeInstruction);
-      return;
-    }
-
-    InstructionList newInstructionList = new InstructionList();
-    newInstructionList.append(invokeInstruction);
-
-    // Get the start and end instruction of the new instructions
-    InstructionHandle newEnd = newInstructionList.getEnd();
-    InstructionHandle newBegin = instructionList.insert(instruction, newInstructionList);
-
-    // Move all of the branches from the old instruction to the new start
-    instructionList.redirectBranches(instruction, newBegin);
-
-    // Move other targets to the new instuctions.
-    if (instruction.hasTargeters()) {
-      for (InstructionTargeter it : instruction.getTargeters()) {
-        if (it instanceof LineNumberGen) {
-          it.updateTarget(instruction, newBegin);
-        } else if (it instanceof LocalVariableGen) {
-          it.updateTarget(instruction, newEnd);
-        } else if (it instanceof CodeExceptionGen) {
-          CodeExceptionGen exc = (CodeExceptionGen) it;
-          if (exc.getStartPC() == instruction) exc.updateTarget(instruction, newBegin);
-          else if (exc.getEndPC() == instruction) exc.updateTarget(instruction, newEnd);
-          else if (exc.getHandlerPC() == instruction) exc.setHandlerPC(newBegin);
-          else System.out.printf("Malformed CodeException: %s%n", exc);
-        } else {
-          System.out.printf("unexpected target %s%n", it);
-        }
-      }
-    }
-
-    // Remove the old handle. There should be no targeters left to it.
-    try {
-      instructionList.delete(instruction);
-    } catch (Exception e) {
-      throw new Error("Can't delete instruction", e);
-    }
   }
 
   /** Dumps out the map list to the debug_map logger */

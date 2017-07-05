@@ -10,13 +10,16 @@ import java.lang.instrument.Instrumentation;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import plume.EntryReader;
 import plume.Option;
 import plume.Options;
+import randoop.MethodReplacements;
 
 /**
  * The MapCalls javaagent applies the {@link CallReplacementTransformer} to map calls in loaded
@@ -90,8 +93,8 @@ public class MapCallsAgent {
       }
     }
 
-    // Load named default package exclusions from the resource file in the jar
-    Set<String> excludedPackages = new LinkedHashSet<>();
+    // Load package prefixes from the resource file in the jar for default package exclusions
+    Set<String> excludedPackagePrefixes = new LinkedHashSet<>();
 
     String exclusionFileName = "/default-load-exclusions.txt";
     InputStream inputStream = MapCallsAgent.class.getResourceAsStream(exclusionFileName);
@@ -100,7 +103,8 @@ public class MapCallsAgent {
       System.exit(1);
     }
     try {
-      loadExclusions(new InputStreamReader(inputStream), exclusionFileName, excludedPackages);
+      loadExclusions(
+          new InputStreamReader(inputStream), exclusionFileName, excludedPackagePrefixes);
     } catch (IOException e) {
       System.err.format(
           "Unable to read default package exclusion file: %s%nPlease report.", e.getMessage());
@@ -110,7 +114,8 @@ public class MapCallsAgent {
     // If user provided package exclusion file, load user package exclusions
     if (dont_transform != null) {
       try {
-        loadExclusions(new FileReader(dont_transform), dont_transform.getName(), excludedPackages);
+        loadExclusions(
+            new FileReader(dont_transform), dont_transform.getName(), excludedPackagePrefixes);
       } catch (IOException e) {
         System.err.format(
             "Error reading package exclusion file %s:%n %s%n", dont_transform, e.getMessage());
@@ -127,17 +132,21 @@ public class MapCallsAgent {
       System.exit(1);
     }
     try {
-      replacementMap = ReplacementFileReader.readFile(new InputStreamReader(inputStream));
-    } catch (Throwable e) {
+      replacementMap =
+          ReplacementFileReader.readReplacements(
+              new InputStreamReader(inputStream), "default-replacements.txt");
+    } catch (ReplacementFileException e) {
       System.err.printf("Error reading default replacement file:%n  %s%n", e);
-      System.err.println("Please report.");
+      System.err.println("Check that the mapcall.jar is on the classpath or bootclasspath.");
       System.exit(1);
     }
 
-    // If the user has provided a replacement file, load user replacements allowing overrides
+    // If the user has provided a replacement file, load user replacements and put them into the
+    // map for the default replacements. This use of the Map.put method allows a user replacement to
+    // override a default replacement.
     if (map_calls != null) {
       try {
-        replacementMap.putAll(ReplacementFileReader.readFile(map_calls));
+        replacementMap.putAll(ReplacementFileReader.readReplacements(map_calls));
       } catch (Throwable e) {
         System.err.printf("Error reading replacement file %s:%n  %s%n", map_calls, e.getMessage());
         System.exit(1);
@@ -145,10 +154,14 @@ public class MapCallsAgent {
     }
 
     // Communicate the list of replaced methods to Randoop
-    MethodReplacements.addReplacedMethods(replacementMap);
+    List<String> signatureList = new ArrayList<>();
+    for (MethodDef def : replacementMap.keySet()) {
+      signatureList.add(def.toString());
+    }
+    MethodReplacements.addReplacedMethods(signatureList);
 
     CallReplacementTransformer transformer =
-        new CallReplacementTransformer(excludedPackages, replacementMap);
+        new CallReplacementTransformer(excludedPackagePrefixes, replacementMap);
     transformer.addMapFileShutdownHook();
 
     inst.addTransformer(transformer);
@@ -161,11 +174,13 @@ public class MapCallsAgent {
    * @param exclusionReader the reader for the text file containing the list of excluded packages,
    *     must not be null
    * @param filename the name of the file read by the reader
-   * @param excludedPackages the set of excluded package names, must not be null
+   * @param excludedPackagePrefixes the set of excluded package prefixes, modified by adding new
+   *     prefixes. Must not be null
    * @throws IOException if there is an error reading the file
    */
   private static void loadExclusions(
-      Reader exclusionReader, String filename, Set<String> excludedPackages) throws IOException {
+      Reader exclusionReader, String filename, Set<String> excludedPackagePrefixes)
+      throws IOException {
     try (EntryReader reader = new EntryReader(exclusionReader, filename, "//.*$", null)) {
       for (String line : reader) {
         String trimmed = line.trim();
@@ -173,7 +188,7 @@ public class MapCallsAgent {
           if (trimmed.charAt(trimmed.length() - 1) != '.') {
             trimmed = trimmed + ".";
           }
-          excludedPackages.add(trimmed);
+          excludedPackagePrefixes.add(trimmed);
         }
       }
     }
