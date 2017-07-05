@@ -117,11 +117,19 @@ public class GenTests extends GenInputsAbstract {
   static {
     notes = new ArrayList<>();
     notes.add(
-        "Randoop executes the code under test, with no mechanisms to protect your system from harm resulting from arbitrary code execution. If random execution of your code could have undesirable effects (e.g. deletion of files, opening network connections, etc.) make sure you execute Randoop in a sandbox machine.");
+        "Randoop executes the code under test, with no mechanisms to protect your system from "
+            + "harm resulting from arbitrary code execution. If random execution of your code "
+            + "could have undesirable effects (e.g., deletion of files, opening network "
+            + " connections, etc.) make sure you execute Randoop in a sandbox.");
     notes.add(
-        "Randoop will only use methods from the classes that you specify for testing. If Randoop is not generating tests for a particular method, make sure that you are including classes for the types that the method requires. Otherwise, Randoop may fail to generate tests due to missing input parameters.");
+        "Randoop will only use methods from the classes that you specify for testing. "
+            + "If Randoop is not generating tests for a particular method, make sure that you are "
+            + "including classes for the types that the method requires. "
+            + "Otherwise, Randoop may fail to generate tests due to missing input parameters.");
     notes.add(
-        "Randoop is designed to be deterministic when the code under test is itself deterministic. This means that two runs of Randoop will generate the same tests. To get variation across runs, use the --randomseed option.");
+        "Randoop may be deterministic when the code under test is itself deterministic. "
+            + "This means that two runs of Randoop may generate the same tests. "
+            + "To get variation across runs, use the --randomseed option.");
   }
 
   public static SimpleLog progress = new SimpleLog(true);
