@@ -725,9 +725,9 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:methodlist"><b>--methodlist=</b><i>filename</i>.
              File that lists methods to test.
 
- <p>In the file, each each method under test is specified on a separate line. The list of
- methods given by this argument augment any methods determined via the <code>--testclass</code>
- or <code>--classlist</code> option.
+ <p>In the file, each method under test is specified on a separate line. The list of methods
+ given by this argument augment any methods determined via the <code>--testclass</code> or
+ <code>--classlist</code> option.
 
  <p>A constructor line begins with <code>"cons :"</code> followed by the classname, the string
  <code>&lt;init&gt;</code>, and the constructor's parameter types enclosed in parentheses. Methods are
@@ -819,9 +819,8 @@ Randoop about your application, and that is how we recommend using Randoop.
  increases the runtime by approximately 50%. [default true]
             <li id="option:minimize-error-test"><b>--minimize-error-test=</b><i>boolean</i>.
              Flag indicating whether or not to automatically minimize error-revealing tests. Both original
- and minimized versions of each test class will be output. Minimization is automatically enabled
- when <code>--stop-on-error-test</code> is set. Setting this option is not recommended when the
- number of error-revealing tests is expected to be greater than 100. [default false]
+ and minimized versions of each test class will be output. Setting this option may cause long
+ Randoop run times if Randoop outputs and minimizes more than about 100 error-revealing tests. [default true]
       </ul>
   <li id="optiongroup:Test-classification">Test classification
       <ul>
