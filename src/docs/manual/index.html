@@ -1082,8 +1082,8 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:log"><b>--log=</b><i>filename</i>.
              A file to which to log lots of information. If not specified, no logging is done.
             <li id="option:selection-log"><b>--selection-log=</b><i>string</i>.
-             A file to which to log selections for determining sources of non-determinism. If not specified,
- no logging is done.
+             A file to which to log selections; helps find sources of non-determinism. If not specified, no
+ logging is done.
             <li id="option:log-operation-history"><b>--log-operation-history=</b><i>boolean</i>.
              Track and log the usage of operations during generation to standard out. This option is not
  affected by setting <code>--operation-history-log</code>. [default false]
@@ -1634,7 +1634,7 @@ sequential Java program are:
   </li>
   <li>
     Mitigate other sources of nondeterminism, such as always calling
-    </code>Arrays.sort</code> on the result of <code>File.listFiles</code>.
+    <code>Arrays.sort</code> on the result of <code>File.listFiles</code>.
   </li>
   <li>
     Don't depend on wall-clock or CPU time, either in your program or in
