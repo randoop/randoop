@@ -62,9 +62,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * File that lists methods to test.
    *
-   * <p>In the file, each each method under test is specified on a separate line. The list of
-   * methods given by this argument augment any methods determined via the <code>--testclass</code>
-   * or <code>--classlist</code> option.
+   * <p>In the file, each method under test is specified on a separate line. The list of methods
+   * given by this argument augment any methods determined via the <code>--testclass</code> or
+   * <code>--classlist</code> option.
    *
    * <p>A constructor line begins with <code>"cons :"</code> followed by the classname, the string
    * {@code <init>}, and the constructor's parameter types enclosed in parentheses. Methods are
@@ -173,7 +173,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * <p>Use of this option is a last resort. Flaky tests are usually due to calling Randoop on
    * side-effecting or nondeterministic methods, and a better solution is not to call Randoop on
-   * such methods.
+   * such methods (say, using the --omitmethods command-line option).
    */
   @Option("Whether to ignore non-determinism in test execution")
   public static boolean ignore_flaky_tests = false;
@@ -304,7 +304,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static File observers = null;
 
   /**
-   * Maximum number of seconds to spend generating tests.
+   * Maximum number of seconds to spend generating tests. Zero means no limit.
    *
    * <p>Test generation stops when either the time limit (--timelimit) is reached, OR the number of
    * generated sequences reaches the input limit (--inputlimit), OR the number of error-revealing
@@ -321,6 +321,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Maximum number of seconds to spend generating tests")
   public static int timelimit = 100;
 
+  private static int LIMIT_DEFAULT = 100000000;
+
   /**
    * The maximum number of regression and error-revealing tests to output. Test generation stops
    * when either the time limit (--timelimit) is reached, OR the number of generated sequences
@@ -335,7 +337,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * --no-regression-tests</code>.
    */
   @Option("Maximum number of tests to ouput; contrast to --inputlimit")
-  public static int outputlimit = 100000000;
+  public static int outputlimit = LIMIT_DEFAULT;
 
   /**
    * Maximum number of test method candidates generated internally. Test generation stops when
@@ -345,7 +347,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * of test candidates generated, because redundant and illegal tests will be discarded.
    */
   @Option("Maximum number of candidate tests generated")
-  public static int inputlimit = 100000000;
+  public static int inputlimit = LIMIT_DEFAULT;
 
   /** Do not generate tests with more than this many statements. */
   @Option("Do not generate tests with more than this many statements")
@@ -575,15 +577,22 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean capture_output = false;
 
   /**
-   * The random seed to use in the generation process. Note that Randoop is deterministic: running
-   * it twice will produce the same test suite, so long as the program under test is deterministic.
-   * If you want to produce multiple different test suites, run Randoop multiple times with a
-   * different random seed.
+   * The random seed to use in the generation process. If you want to produce multiple different
+   * test suites, run Randoop multiple times with a different random seed.
    */
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Controlling randomness")
   @Option("The random seed to use in the generation process")
   public static int randomseed = (int) Randomness.SEED;
+
+  /**
+   * If true, Randoop is deterministic: running Randoop twice will produce the same test suite, so
+   * long as the program under test is deterministic. If false, Randoop may or may not produce the
+   * same test suite. To produce multiple different test suites, use the --randomseed command-line
+   * option.
+   */
+  @Option("If true, Randoop is deterministic")
+  public static boolean deterministic = false;
 
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Logging, notifications, and troubleshooting Randoop")
@@ -596,12 +605,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Perform expensive internal checks (for Randoop debugging)")
   public static boolean debug_checks = false;
 
-  /** Name of a file to which to log lots of information. If not specified, no logging is done. */
+  /** A file to which to log lots of information. If not specified, no logging is done. */
   @Option("<filename> Name of a file to which to log lots of information")
   public static FileWriter log = null;
 
-  /** Log selections for determining sources of non-determinism. */
-  @Option("print each random selection")
+  /**
+   * A file to which to log selections; helps find sources of non-determinism. If not specified, no
+   * logging is done.
+   */
+  @Option("File to log each random selection")
   public static String selection_log = null;
 
   /**
@@ -612,8 +624,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean log_operation_history = false;
 
   /**
-   * Name of a log to which the operation usage history is written. This operation is not affected
-   * by setting <code>--log-operation-history</code>.
+   * Name of a file to which to log the operation usage history . This operation is not affected by
+   * setting <code>--log-operation-history</code>.
    */
   @Option("Track and log operation usage counts to this file")
   public static FileWriter operation_history_log = null;
