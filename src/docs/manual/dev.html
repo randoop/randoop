@@ -192,30 +192,10 @@ pip install --user html5validator</code></pre>
 </p>
 
 <p>
-  Here are some Gradle tricks that may be useful:
+Gradle allows you to run multiple tasks.  For instance, for a clean build,
+    type <code>./gradlew clean build</code>.
 </p>
-<ul>
-  <li>Gradle allows you to run multiple tasks.  For instance, for a clean build,
-    type <code>./gradlew clean build</code>.</li>
-  <li><p>You can run a single test or smaller group of tests by using the <code>--tests</code>
-    option on the command line.
-    For instance,
-<ul>
-  <li> use
-    <pre><code>
-      ./gradlew test --tests="*GenericTypesTest"
-    </code></pre>
-    to run only the tests in <code>randoop.types.generics.GenericTypesTest</code>, and
-  </li>
-  <li> use
-    <pre><code>
-      ./gradlew test --tests="*testVar*"
-  </code></pre>
-    to run the test method <code>randoop.types.generics.GenericTypesTest.testVariableParameters</code>.
-  </li>
-  </ul></li>
 
-</ul>
 
 <h2 id="publish-only-tasks">CAUTION: Release-Only Tasks</h2>
 
@@ -336,6 +316,43 @@ Therefore, you can create a branch and push it
 to the Randoop repository.  If it succeeds, you can merge it.  If it fails,
 you will be notified by email, and you can fix it without having
 destabilized the master branch.
+</p>
+
+<p>
+When developing a new feature for which there is a particular test or set of tests
+you can run a single test or smaller group of tests by using the <code>--tests</code>
+option on the command line.
+For instance,
+</p>
+<ul>
+<li> use
+  <pre><code>
+    ./gradlew test --tests="*GenericTypesTest"
+  </code></pre>
+  to run only the tests in <code>randoop.types.generics.GenericTypesTest</code>, and
+</li>
+<li> use
+  <pre><code>
+    ./gradlew systemtest --tests="*Collection*"
+</code></pre>
+  to run all of the system tests with "Collection" in their name.
+</li>
+</ul>
+
+<p>
+Each system test uses <code>--log</code> to the directory
+<code>build/working-directories</code> under the test method directory.
+The log files set by <code>--selection-log</code> and <code>--operation-history-log</code>
+can be set from the command-line by setting the system properties
+<code>randoop.selection.log</code> and
+<code>randoop.operation.history.log</code> on the Gradle command-line.
+For instance,
+</p>
+<pre><code>
+  ./gradlew systemtest --tests="*Collection*" -Drandoop.operation.history.log=working-directories/operation-log.txt
+</code></pre>
+<p>
+will write the operation log to the file <code>build/working-directories/operation-log.txt</code>
 </p>
 
 

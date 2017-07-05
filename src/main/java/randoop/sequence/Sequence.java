@@ -1017,8 +1017,9 @@ public final class Sequence implements WeightedElement {
       return;
     }
     try {
-      GenInputsAbstract.log.write(Globals.lineSep + Globals.lineSep);
+      GenInputsAbstract.log.write(Globals.lineSep);
       GenInputsAbstract.log.write(this.toFullCodeString());
+      GenInputsAbstract.log.write(Globals.lineSep);
       GenInputsAbstract.log.flush();
     } catch (IOException e) {
       e.printStackTrace();

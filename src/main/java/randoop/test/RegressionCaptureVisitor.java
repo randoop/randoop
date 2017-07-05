@@ -94,15 +94,13 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
             continue;
           }
 
-          // If value's type is void (i.e. its statement is a
-          // void-return method call), don't capture checks
-          // (nothing interesting).
+          // If value's type is void (i.e. its statement is a void-return method call),
+          // don't capture checks (nothing interesting).
           Type tc = st.getOutputType();
           if (tc.isVoid()) continue; // no return value.
 
-          // If value is the result of Object.toString() or
-          // Object.hashCode(), don't capture checks (value is
-          // likely to be non-deterministic across runs).
+          // If value is the result of Object.toString() or Object.hashCode(),
+          // don't capture checks (value is likely to be non-deterministic across runs).
           if (excludeSet.contains(st.getOperation())) {
             continue;
           }
