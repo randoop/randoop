@@ -56,7 +56,7 @@ public abstract class AbstractGenerator {
 
   /**
    * Time limit for generation. If generation reaches the specified time limit (in milliseconds),
-   * the generator stops generating sequences.
+   * the generator stops generating sequences. Zero means no limit.
    */
   public final long maxTimeMillis;
 
@@ -225,7 +225,7 @@ public abstract class AbstractGenerator {
    */
   protected boolean stop() {
     return (listenerMgr != null && listenerMgr.stopGeneration())
-        || (timer.getTimeElapsedMillis() >= maxTimeMillis)
+        || (maxTimeMillis != 0 && timer.getTimeElapsedMillis() >= maxTimeMillis)
         || (GenInputsAbstract.stop_on_error_test && numErrorSequences() > 0)
         || (numOutputSequences() >= maxOutputSequences)
         || (numGeneratedSequences() >= maxGeneratedSequences)

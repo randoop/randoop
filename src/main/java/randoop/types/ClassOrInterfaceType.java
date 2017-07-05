@@ -453,6 +453,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
     return new ArrayList<>();
   }
 
+  @Override
   public boolean isClassType() {
     return true;
   }

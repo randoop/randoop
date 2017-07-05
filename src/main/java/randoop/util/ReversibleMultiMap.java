@@ -92,11 +92,13 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
     }
   }
 
+  /** Checkpoint the state of the data structure, for use by {@link #undoToLastMark()}. */
   public void mark() {
     marks.add(steps);
     steps = 0;
   }
 
+  /** Undo changes since the last call to {@link #mark()}. */
   public void undoToLastMark() {
     if (marks.isEmpty()) {
       throw new IllegalArgumentException("No marks.");
