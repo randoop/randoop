@@ -21,6 +21,10 @@ set to true, Randoop is deterministic and produces the same test suite when
 run twice.  When set to false, Randoop may or may not produce the same test
 suite when run twice.  Use --randomseed to produce a different test suite.
 
+The --usethreads command-line option defaults to false.  This makes Randoop
+run faster and generate more tests, but Randoop will hang if it calls a
+method that does not terminate and return.
+
 
 Version 3.1.5, released April 28, 2017
 

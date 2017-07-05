@@ -47,7 +47,6 @@ The Randoop homepage is
       <li><a href="#checkrep">Specifying representation invariant methods (such as <code>checkRep</code>)</a></li>
       <li><a href="#exercised-filter">Instrumenting classes for filtering tests on exercised-classes</a></li>
       <li><a href="#primitives">Specifying additional primitive values</a></li>
-      <li><a href="#usethreads">Speeding up test generation</a></li>
     </ul></li>
   <li><a href="#getting_help">Getting help</a>
     <ul>
@@ -1099,11 +1098,13 @@ Randoop about your application, and that is how we recommend using Randoop.
       <ul>
             <li id="option:usethreads"><b>--usethreads=</b><i>boolean</i>.
              If true, Randoop executes each test in a separate thread and kills tests that take too long to
- finish. Tests killed in this manner are not reported to the user.
+ finish, as determined by the --timeout command-line argument. Tests killed in this manner are
+ not reported to the user.
 
- <p>Use this option if Randoop does not terminate is usually due to execution of code under test
- that results in an infinite loop. The downside of this option is a BIG (order-of-magnitude)
- decrease in generation speed. The tests are not run in parallel, merely in isolation. [default true]
+ <p>Use this option if Randoop does not terminate, which is usually due to execution of code
+ under test that results in an infinite loop or that waits for user input. The downside of this
+ option is a BIG (order-of-magnitude) decrease in generation speed. The tests are not run in
+ parallel, merely in isolation. [default false]
             <li id="option:timeout"><b>--timeout=</b><i>int</i>.
              After this many milliseconds, a non-returning method call, and its associated test, are stopped
  forcefully. Only meaningful if --usethreads is also specified. [default 5000]
@@ -1397,26 +1398,6 @@ classes under test
 </li>
 </ul>
 
-<h2 id="usethreads">Speeding up test generation</h2>
-
-<p>
-To increase the number of tests that Randoop generates in a given amount of
-time, run Randoop with <code>--usethreads=false</code>. This will cause
-Randoop to
-use a single thread to execute all tests, and can speed up the tool by
-an order of magnitude.
-</p>
-
-<p>
-When running with <code>--usethreads=false</code> (the default), Randoop
-executes each generated test in a separate thread.  This enables Randoop to
-detect and discard non-terminating tests.  If you
-set <code>--usethreads</code> to <code>false</code> and Randoop appears to
-hang, it may be due to a randomly-generated test that is taking too long to
-execute and cannot be killed by Randoop.  Also see the section
-on <a href="#nontermination">Randoop non-termination</a>.
-</p>
-
 
 <h1 id="getting_help">Getting help</h1>
 
@@ -1563,7 +1544,8 @@ information, or consult with the Randoop developers.
 </p>
 
 <p>
-Also see the section on <a href="#usethreads">speeding up test generation</a>.
+For example, <a href="#nontermination">avoid using
+<code>--usethreads</code></a>, which can make Randoop run very slowly.
 </p>
 
 
@@ -1576,11 +1558,6 @@ Here are three ways to deal with the problem.
 </p>
 <ul>
   <li>
-    Run Randoop with the command-line options <code>--usethreads=true
-    --timeout=5000</code>.  This will cause Randoop to discard tests in
-    which any directly-called method takes longer than 5 seconds to run.
-  </li>
-  <li>
     Determine which calls are executing by examining the stack trace.  On
     Unix this can be done by typing <code>Ctrl-\</code> (hold down the
     Control key, then press the Backslash key).  If the same methods appear
@@ -1588,6 +1565,13 @@ Here are three ways to deal with the problem.
     can <a href="#specifying-methods">exclude them from consideration by
     Randoop</a> or <a href="#map_calls">prevent the JVM from calling the
     method</a>.
+  </li>
+  <li>
+    Run Randoop with the command-line option
+    <a href="#option:usethreads"><code>--usethreads=true</code></a>.
+    This will cause Randoop to discard tests in
+    which any directly-called method takes
+    <a href="#option:usethreads"><code>too long</code></a> to run.
   </li>
   <li>
     If you suspect the problem may be a bug in Randoop, use the
