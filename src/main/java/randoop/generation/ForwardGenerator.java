@@ -310,7 +310,7 @@ public class ForwardGenerator extends AbstractGenerator {
         } else {
           operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
           Log.logLine("Instantiation error for operation " + operation);
-          Log.logLine("error message: " + e.getMessage());
+          Log.logStackTrace(e);
           System.out.println("Instantiation error for operation " + operation);
           operation = null;
         }
@@ -330,7 +330,7 @@ public class ForwardGenerator extends AbstractGenerator {
       } else {
         operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
         Log.logLine("Error selecting inputs for operation: " + operation);
-        Log.logLine("error message: " + e.getMessage());
+        Log.logStackTrace(e);
         System.out.println("Error selecting inputs for operation: " + operation);
         sequences = null;
       }

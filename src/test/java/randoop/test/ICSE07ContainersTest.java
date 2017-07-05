@@ -123,7 +123,7 @@ public class ICSE07ContainersTest {
     List<Class<?>> classList = new ArrayList<>();
     classList.add(FibHeap.class);
     FibHeap.rand.setSeed(0);
-    randoop.util.Randomness.reset(0);
+    randoop.util.Randomness.setSeed(0);
     IStopper stopper =
         new IStopper() {
           @Override
@@ -150,7 +150,7 @@ public class ICSE07ContainersTest {
     GenInputsAbstract.null_ratio = 0.5;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(BinTree.class);
-    randoop.util.Randomness.reset(0);
+    randoop.util.Randomness.setSeed(0);
     IStopper stopper =
         new IStopper() {
           @Override
@@ -175,7 +175,7 @@ public class ICSE07ContainersTest {
     GenInputsAbstract.null_ratio = 0.05;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(TreeMap.class);
-    randoop.util.Randomness.reset(0);
+    randoop.util.Randomness.setSeed(0);
     IStopper stopper =
         new IStopper() {
           @Override
@@ -202,7 +202,7 @@ public class ICSE07ContainersTest {
     GenInputsAbstract.null_ratio = 0.05;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(BinomialHeap.class);
-    randoop.util.Randomness.reset(0);
+    randoop.util.Randomness.setSeed(0);
     IStopper stopper =
         new IStopper() {
           @Override

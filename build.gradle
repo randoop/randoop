@@ -52,6 +52,8 @@ def workingDirectories = "$buildDir/working-directories"
 
 sourceSets {
   /* JUnit tests that must be run with -javaagent */
+  /* JUnit tests are run in nondeterministic order, but system tests are
+     run in deterministic order. */
   exercisedTest {
     java {
       srcDir 'src/exercisedtest/java'
@@ -340,6 +342,12 @@ task systemTest(type: Test, dependsOn: [ 'extractJacocoAgent', 'generateWorkingD
   testClassesDirs = sourceSets.systemTest.output.classesDirs
   classpath = sourceSets.systemTest.runtimeClasspath
 
+  System.properties.each { k,v->
+        if (k.startsWith("randoop.")) {
+            systemProperty k, v
+        }
+    }
+
   /*
    * Show as much as possible to console.
    */
@@ -525,7 +533,7 @@ task updateDevTOC( type:Exec, dependsOn: ['clonePlumeLib' ]) {
  * command-line arguments extracted from the given @Option annotated classes.
  * Applied in-place.
  */
-task updateUserOptions(dependsOn: 'assemble'){
+task updateUserOptions(dependsOn: 'assemble') {
   description "Runs plume.OptionsDoclet on src/docs/manual/index.html"
   def classpath = files(configurations.manual.files).asPath
   def docFile = file("${projectDir}/src/docs/manual/index.html")
