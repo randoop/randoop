@@ -47,6 +47,7 @@ public class CoveredClassTest {
   public static void setup() {
     optionsCache = new OptionsCache();
     optionsCache.saveState();
+    GenInputsAbstract.deterministic = true;
     GenInputsAbstract.outputlimit = 5000;
     GenInputsAbstract.inputlimit = 10000;
     GenInputsAbstract.silently_ignore_bad_class_names = false;
