@@ -348,6 +348,12 @@ task systemTest(type: Test, dependsOn: [ 'extractJacocoAgent', 'generateWorkingD
   testClassesDirs = sourceSets.systemTest.output.classesDirs
   classpath = sourceSets.systemTest.runtimeClasspath
 
+  System.properties.each { k,v->
+        if (k.startsWith("randoop.")) {
+            systemProperty k, v
+        }
+    }
+
   /*
    * Show as much as possible to console.
    */

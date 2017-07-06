@@ -63,9 +63,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * File that lists methods to test.
    *
-   * <p>In the file, each each method under test is specified on a separate line. The list of
-   * methods given by this argument augment any methods determined via the <code>--testclass</code>
-   * or <code>--classlist</code> option.
+   * <p>In the file, each method under test is specified on a separate line. The list of methods
+   * given by this argument augment any methods determined via the <code>--testclass</code> or
+   * <code>--classlist</code> option.
    *
    * <p>A constructor line begins with <code>"cons :"</code> followed by the classname, the string
    * {@code <init>}, and the constructor's parameter types enclosed in parentheses. Methods are
@@ -218,12 +218,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * Flag indicating whether or not to automatically minimize error-revealing tests. Both original
-   * and minimized versions of each test class will be output. Minimization is automatically enabled
-   * when <code>--stop-on-error-test</code> is set. Setting this option is not recommended when the
-   * number of error-revealing tests is expected to be greater than 100.
+   * and minimized versions of each test class will be output. Setting this option may cause long
+   * Randoop run times if Randoop outputs and minimizes more than about 100 error-revealing tests.
    */
+  // Omit this to keep the documentation short:
+  // Regardless of this option's setting, minimization is enabled when
+  // <code>--stop-on-error-test</code> is set.
   @Option("<boolean> to indicate automatic minimization of error-revealing tests")
-  public static boolean minimize_error_test = false;
+  public static boolean minimize_error_test = true;
 
   /**
    * The possible values for exception behavior types. The order INVALID, ERROR, EXPECTED should be
@@ -611,8 +613,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static FileWriter log = null;
 
   /**
-   * A file to which to log selections for determining sources of non-determinism. If not specified,
-   * no logging is done.
+   * A file to which to log selections; helps find sources of non-determinism. If not specified, no
+   * logging is done.
    */
   @Option("File to which to log each random selection")
   public static String selection_log = null;

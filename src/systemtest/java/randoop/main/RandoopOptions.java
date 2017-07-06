@@ -48,6 +48,18 @@ class RandoopOptions {
     RandoopOptions options = new RandoopOptions();
     options.setOption("junit-output-dir", testEnvironment.sourceDir.toString());
     options.setOption("log", testEnvironment.workingDir + "/randoop-log.txt");
+    options.setFlag("deterministic");
+
+    String selectionLog = System.getProperty("randoop.selection.log");
+    if (selectionLog != null && !selectionLog.isEmpty()) {
+      options.setOption("selection-log", selectionLog);
+    }
+
+    String operationLog = System.getProperty("randoop.operation.history.log");
+    if (operationLog != null && !operationLog.isEmpty()) {
+      options.setOption("operation-history-log", operationLog);
+    }
+
     return options;
   }
 

@@ -963,6 +963,7 @@ public class RandoopSystemTest {
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
   }
 
+  /** This test uses input classes that result in uncompilable tests. */
   @Test
   public void runInstantiationErrorTest() {
     TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("compile-error");
