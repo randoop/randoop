@@ -64,6 +64,7 @@ public class ClassUtil {
   /**
    * Like {@link Class#getEnumConstants()}, but returns the methods in deterministic order.
    *
+   * @param <T> the class's type parameter
    * @param c the Class whose enum constants to return
    * @return the class's enum constants
    */
