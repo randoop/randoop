@@ -302,14 +302,12 @@ public class ForwardGenerator extends AbstractGenerator {
       sequenceExecutionCount.put(eSeq.sequence, 1);
     }
 
-    double dynamicWeight =
-        1.0
-            / (eSeq.exectime
-                * sequenceExecutionCount.get(eSeq.sequence)
-                * Math.sqrt(eSeq.sequence.size()));
+    double execTime = (GenInputsAbstract.deterministic ? 1.0 : eSeq.exectime);
+    double execCount = sequenceExecutionCount.get(eSeq.sequence);
+    double dynamicWeight = 1.0 / (execTime * execCount * Math.sqrt(eSeq.sequence.size()));
     Randomness.selectionLog.log(
-        "processWeights(%s): eSeq.exectime %s, execution count %s, eSeq.sequence.size() %s%n",
-        eSeq, eSeq.exectime, sequenceExecutionCount.get(eSeq.sequence), eSeq.sequence.size());
+        "processWeights(%s): exectime %s, execution count %s, eSeq.sequence.size() %s%n",
+        eSeq, execTime, execCount, eSeq.sequence.size());
 
     // class literals weights, only if this sequence is a class literal
     double literalWeight;
