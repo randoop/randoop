@@ -603,7 +603,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("VisibilityTest");
     options.setErrorBasename("");
 
-    options.setOption("inputlimit", "1000");
+    options.setOption("inputlimit", "2000");
     options.addTestClass("examples.Visibility");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
@@ -1025,6 +1025,7 @@ public class RandoopSystemTest {
     options.addTestClass("generation.Dim5Matrix");
     options.addTestClass("generation.Dim6Matrix");
     options.setOption("outputlimit", "200");
+    options.setOption("inputlimit", "20000");
 
     generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
