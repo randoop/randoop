@@ -50,6 +50,7 @@ public class CoveredClassTest {
     GenInputsAbstract.deterministic = true;
     GenInputsAbstract.timelimit = 0;
     GenInputsAbstract.minimize_error_test = false;
+    GenInputsAbstract.timelimit = 0;
     GenInputsAbstract.outputlimit = 5000;
     GenInputsAbstract.inputlimit = 10000;
     GenInputsAbstract.silently_ignore_bad_class_names = false;
