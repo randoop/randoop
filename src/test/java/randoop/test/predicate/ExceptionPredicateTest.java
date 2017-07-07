@@ -47,6 +47,7 @@ public class ExceptionPredicateTest {
     optionsCache = new OptionsCache();
     optionsCache.saveState();
     GenInputsAbstract.deterministic = true;
+    GenInputsAbstract.timelimit = 0;
     GenInputsAbstract.minimize_error_test = true;
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;

@@ -14,6 +14,7 @@ import plume.OptionGroup;
 import plume.Options;
 import plume.Unpublicized;
 import randoop.util.Randomness;
+import randoop.util.ReflectionExecutor;
 import randoop.util.Util;
 
 /** Container for Randoop options. */
@@ -402,8 +403,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * @see ClassLiteralsMode
    */
-  @Option("How to use literal values specified via --literals-file: ALL, PACKAGE, CLASS, or NONE")
-  public static ClassLiteralsMode literals_level = ClassLiteralsMode.CLASS;
+  @Option(
+      "How to use literal values specified via --literals-file: ALL, CLASS_OR_ALL, PACKAGE, CLASS, or NONE")
+  public static ClassLiteralsMode literals_level = ClassLiteralsMode.CLASS_OR_ALL;
 
   /**
    * The possible values of the literals_level command-line argument.
@@ -417,9 +419,18 @@ public abstract class GenInputsAbstract extends CommandHandler {
     CLASS,
     /** a literal is used as input to methods of any classes in the same package */
     PACKAGE,
+    /**
+     * a literal for a given class is used as input only to methods of that class with probability
+     * <code>--p-const</code>, otherwise each literal is used as input to any method under test
+     */
+    CLASS_OR_ALL,
     /** each literal is used as input to any method under test */
     ALL
   }
+
+  /** What probability to select from only extracted literal sequences during sequence selection. */
+  @Option("What probability to select only extracted literals")
+  public static double p_const = .01;
 
   // Implementation note: when checking whether a String S exceeds the given
   // maxlength, we test if StringEscapeUtils.escapeJava(S), because this is
@@ -446,7 +457,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static double alias_ratio = 0;
 
   /**
-   * Favor shorter sequences when assembling new sequences out of old ones.
+   * Favor shorter sequences when assembling new sequences out of old ones. Randoop already favors
+   * shorter sequences by default while striving for higher coverage, but this option may be
+   * beneficial in some cases.
    *
    * <p>Randoop generates new tests by combining old previously-generated tests. If this option is
    * given, tests with fewer calls are given greater weight during its random selection. This has
@@ -603,7 +616,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * A file to which to log selections; helps find sources of non-determinism. If not specified, no
    * logging is done.
    */
-  @Option("File to log each random selection")
+  @Option("File to which to log each random selection")
   public static String selection_log = null;
 
   /**
@@ -662,6 +675,23 @@ public abstract class GenInputsAbstract extends CommandHandler {
     if (!literals_file.isEmpty() && literals_level == ClassLiteralsMode.NONE) {
       throw new RuntimeException(
           "Invalid parameter combination: specified a class literal file but --use-class-literals=NONE");
+    }
+
+    if (deterministic && ReflectionExecutor.usethreads) {
+      throw new RuntimeException(
+          "Invalid parameter combination: --deterministic with --usethreads");
+    }
+
+    if (deterministic && timelimit != 0) {
+      throw new RuntimeException(
+          "Invalid parameter combination: --deterministic without --timelimit=0");
+    }
+
+    if (timelimit == 0 && outputlimit == LIMIT_DEFAULT && inputlimit == LIMIT_DEFAULT) {
+      throw new RuntimeException(
+          String.format(
+              "Unlikely parameter combination: --timelimit=0 --outputlimit=%s --inputlimit=%s",
+              LIMIT_DEFAULT, LIMIT_DEFAULT));
     }
   }
 

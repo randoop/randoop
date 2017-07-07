@@ -359,9 +359,13 @@ public final class Sequence implements WeightedElement {
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
-      // don't dump primitive initializations, if using literals
-      if (canUseShortForm() && getStatement(i).getShortForm() != null) {
-        continue;
+      // Don't dump primitive initializations, if using literals.
+      // But do print them if they are the last statement;
+      // otherwise, the sequence might print as the empty string.
+      if (i != size() - 1) {
+        if (canUseShortForm() && getStatement(i).getShortForm() != null) {
+          continue;
+        }
       }
       appendCode(b, i);
       b.append(Globals.lineSep);
