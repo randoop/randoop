@@ -49,6 +49,7 @@ class RandoopOptions {
     options.setOption("junit-output-dir", testEnvironment.sourceDir.toString());
     options.setOption("log", testEnvironment.workingDir + "/randoop-log.txt");
     options.setFlag("deterministic");
+    options.unsetFlag("minimize-error-test", "false");
 
     String selectionLog = System.getProperty("randoop.selection.log");
     if (selectionLog != null && !selectionLog.isEmpty()) {
@@ -89,6 +90,19 @@ class RandoopOptions {
    */
   void unsetFlag(String option) {
     setOption(option, "false");
+  }
+
+  /**
+   * Adds an option-flag set to the given value
+   *
+   * @param option the name of the option flag to be set to false
+   */
+  void setFlag(String option, boolean value) {
+    if (value) {
+      setFlag(option);
+    } else {
+      unsetFlag(option);
+    }
   }
 
   /**
