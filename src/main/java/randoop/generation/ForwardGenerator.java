@@ -96,8 +96,8 @@ public class ForwardGenerator extends AbstractGenerator {
   // been generated, to add the value to the components.
   private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
-  // Called if you don't want to use the static weighting scheme for extracted literals. Currently used in regression tests and for
-  // backwards compatibility.
+  // Called if you don't want to use the static weighting scheme for extracted literals.
+  // Currently used in regression tests and for backwards compatibility.
   public ForwardGenerator(
       List<TypedOperation> operations,
       Set<TypedOperation> observers,
@@ -119,8 +119,8 @@ public class ForwardGenerator extends AbstractGenerator {
         null);
   }
 
-  // Called if you don't want to use the static weighting scheme for extracted literals. Currently used in regression tests and for
-  // backwards compatibility.
+  // Called if you don't want to use the static weighting scheme for extracted literals.
+  // Currently used in regression tests and for backwards compatibility.
   public ForwardGenerator(
       List<TypedOperation> operations,
       Set<TypedOperation> observers,
@@ -130,7 +130,6 @@ public class ForwardGenerator extends AbstractGenerator {
       ComponentManager componentManager,
       IStopper stopper,
       RandoopListenerManager listenerManager) {
-
     this(
         operations,
         observers,
@@ -178,7 +177,6 @@ public class ForwardGenerator extends AbstractGenerator {
       RandoopListenerManager listenerManager,
       int numClasses,
       Map<Sequence, Integer> literalsTermFrequencies) {
-
     super(
         operations,
         timeMillis,
