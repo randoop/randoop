@@ -51,7 +51,6 @@ class RandoopOptions {
     options.setFlag("deterministic");
     options.setOption("timelimit", "0");
     options.unsetFlag("minimize-error-test");
-    options.setOption("timelimit", "0");
 
     String selectionLog = System.getProperty("randoop.selection.log");
     if (selectionLog != null && !selectionLog.isEmpty()) {
