@@ -359,6 +359,10 @@ public class GenTests extends GenInputsAbstract {
      * Create the generator for this session.
      */
     AbstractGenerator explorer;
+
+    int num_classes = operationModel.getClassTypes().size();
+    Map<Sequence, Integer> literalsTermFrequency = operationModel.getLiteralsTermFrequency();
+
     explorer =
         new ForwardGenerator(
             operations,
@@ -367,7 +371,9 @@ public class GenTests extends GenInputsAbstract {
             inputlimit,
             outputlimit,
             componentMgr,
-            listenerMgr);
+            listenerMgr,
+            num_classes,
+            literalsTermFrequency);
 
     /*
      * setup for check generation

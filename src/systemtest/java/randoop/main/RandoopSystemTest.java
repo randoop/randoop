@@ -194,6 +194,11 @@ public class RandoopSystemTest {
     options.setOption("observers", "resources/systemTest/randoop1_observers.txt");
     options.setOption("omit-field-list", "resources/systemTest/testclassomitfields.txt");
 
+    // Temporary, extra debugging for the runNaiveCollectionsTest
+    options.setOption("selection-log", testEnvironment.workingDir + "/selection-log.txt");
+    options.setOption(
+        "operation-history-log", testEnvironment.workingDir + "/operation-history-log.txt");
+
     CoverageChecker coverageChecker = new CoverageChecker(options);
     coverageChecker.exclude("java2.util2.Collections.get(java2.util2.ListIterator, int)");
     coverageChecker.exclude(
@@ -214,6 +219,25 @@ public class RandoopSystemTest {
     coverageChecker.exclude("java2.util2.TreeSet.readObject(java.io.ObjectInputStream)");
     coverageChecker.exclude("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
     coverageChecker.exclude("java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream)");
+
+    // The following are known coverage inconsistencies when using --literals-level=CLASS_OR_ALL with --p.const=.01
+    // These inconsistencies depend on the value of --p_const
+    if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS_OR_ALL
+        && GenInputsAbstract.p_const == .01) {
+      /* Inconsistent locally, covered on Travis */
+      coverageChecker.ignore(
+          "java2.util2.Collections.max(java2.util2.Collection, java2.util2.Comparator)");
+      /* Inconsistent on Travis */
+      coverageChecker.ignore("java2.util2.Collections.eq(java.lang.Object, java.lang.Object)");
+    }
+
+    // Coverage inconsistencies
+    if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS) {
+      /* Inconsistent on Travis */
+      coverageChecker.ignore("java2.util2.Collections.eq(java.lang.Object, java.lang.Object)");
+      coverageChecker.ignore(
+          "java2.util2.Collections.max(java2.util2.Collection, java2.util2.Comparator)");
+    }
 
     //TODO after changed types to ordered set in OperationModel, failing on Travis, but not locally
     coverageChecker.ignore("java2.util2.Collections.synchronizedSet(java2.util2.Set)");
@@ -246,53 +270,136 @@ public class RandoopSystemTest {
     options.setOption("omit-field-list", "resources/systemTest/naiveomitfields.txt");
     options.setFlag("log-operation-history");
 
+    // Temporary, extra debugging for the runNaiveCollectionsTest
+    options.setOption("selection-log", testEnvironment.workingDir + "/selection-log.txt");
+    options.setOption(
+        "operation-history-log", testEnvironment.workingDir + "/operation-history-log.txt");
+
     CoverageChecker coverageChecker = new CoverageChecker(options);
-    coverageChecker.exclude("java2.util2.ArrayList.add(int, java.lang.Object)");
+    //    coverageChecker.exclude("java2.util2.ArrayList.add(int, java.lang.Object)");
     coverageChecker.exclude("java2.util2.ArrayList.get(int)");
-    coverageChecker.exclude("java2.util2.ArrayList.lastIndexOf(java.lang.Object)");
+    //    coverageChecker.exclude("java2.util2.ArrayList.lastIndexOf(java.lang.Object)");
     coverageChecker.exclude("java2.util2.ArrayList.readObject(java.io.ObjectInputStream)");
     coverageChecker.exclude("java2.util2.ArrayList.remove(int)");
     coverageChecker.exclude("java2.util2.ArrayList.removeRange(int, int)");
     coverageChecker.exclude("java2.util2.ArrayList.set(int, java.lang.Object)");
     coverageChecker.exclude("java2.util2.ArrayList.writeObject(java.io.ObjectOutputStream)");
+    coverageChecker.exclude("java2.util2.Collections.enumeration(java2.util2.Collection)");
     coverageChecker.exclude("java2.util2.Collections.eq(java.lang.Object, java.lang.Object)");
     coverageChecker.exclude("java2.util2.Collections.get(java2.util2.ListIterator, int)");
-    coverageChecker.exclude(
-        "java2.util2.Collections.indexOfSubList(java2.util2.List, java2.util2.List)");
+    //    coverageChecker.exclude(
+    //        "java2.util2.Collections.indexOfSubList(java2.util2.List, java2.util2.List)");
     coverageChecker.exclude(
         "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object)");
     coverageChecker.exclude(
         "java2.util2.Collections.iteratorBinarySearch(java2.util2.List, java.lang.Object, java2.util2.Comparator)");
     coverageChecker.exclude("java2.util2.Collections.rotate2(java2.util2.List, int)");
-    coverageChecker.exclude("java2.util2.Collections.shuffle(java2.util2.List)");
-    coverageChecker.exclude(
-        "java2.util2.Collections.shuffle(java2.util2.List, java2.util2.Random)");
+    //    coverageChecker.exclude("java2.util2.Collections.shuffle(java2.util2.List)");
+    //    coverageChecker.exclude(
+    //        "java2.util2.Collections.shuffle(java2.util2.List, java2.util2.Random)");
     coverageChecker.exclude("java2.util2.Collections.swap(java.lang.Object[], int, int)");
     coverageChecker.exclude("java2.util2.Collections.swap(java2.util2.List, int, int)");
     coverageChecker.exclude(
         "java2.util2.Collections.synchronizedCollection(java2.util2.Collection, java.lang.Object)");
     coverageChecker.exclude(
         "java2.util2.Collections.synchronizedList(java2.util2.List, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.Collections.synchronizedSet(java2.util2.Set)");
     coverageChecker.exclude(
         "java2.util2.Collections.synchronizedSet(java2.util2.Set, java.lang.Object)");
     coverageChecker.exclude("java2.util2.Collections.synchronizedSortedMap(java2.util2.SortedMap)");
-    coverageChecker.exclude("java2.util2.Collections.unmodifiableList(java2.util2.List)");
+    //    coverageChecker.exclude("java2.util2.Collections.unmodifiableList(java2.util2.List)");
+    coverageChecker.exclude("java2.util2.Collections.unmodifiableMap(java2.util2.Map)");
+    coverageChecker.exclude("java2.util2.Collections.unmodifiableSet(java2.util2.Set)");
     coverageChecker.exclude("java2.util2.Collections.unmodifiableSortedMap(java2.util2.SortedMap)");
-    coverageChecker.exclude("java2.util2.Collections.unmodifiableSortedSet(java2.util2.SortedSet)");
+    //    coverageChecker.exclude("java2.util2.Collections.unmodifiableSortedSet(java2.util2.SortedSet)");
     coverageChecker.exclude("java2.util2.LinkedList.add(int, java.lang.Object)");
-    coverageChecker.exclude("java2.util2.LinkedList.addFirst(java.lang.Object)");
-    coverageChecker.exclude("java2.util2.LinkedList.addLast(java.lang.Object)");
+    //    coverageChecker.exclude("java2.util2.LinkedList.addFirst(java.lang.Object)");
+    //    coverageChecker.exclude("java2.util2.LinkedList.addLast(java.lang.Object)");
+    coverageChecker.exclude("java2.util2.LinkedList.clone()");
     coverageChecker.exclude("java2.util2.LinkedList.get(int)");
     coverageChecker.exclude("java2.util2.LinkedList.readObject(java.io.ObjectInputStream)");
     coverageChecker.exclude("java2.util2.LinkedList.remove(int)");
+    coverageChecker.exclude("java2.util2.LinkedList.remove(java.lang.Object)");
+    coverageChecker.exclude("java2.util2.LinkedList.set(int, java.lang.Object)");
+    coverageChecker.exclude("java2.util2.LinkedList.toArray()");
     coverageChecker.exclude("java2.util2.LinkedList.writeObject(java.io.ObjectOutputStream)");
     coverageChecker.exclude("java2.util2.TreeSet.first()");
-    coverageChecker.exclude("java2.util2.TreeSet.headSet(java.lang.Object)");
+    //    coverageChecker.exclude("java2.util2.TreeSet.headSet(java.lang.Object)");
     coverageChecker.exclude("java2.util2.TreeSet.last()");
     coverageChecker.exclude("java2.util2.TreeSet.readObject(java.io.ObjectInputStream)");
     coverageChecker.exclude("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
     coverageChecker.exclude("java2.util2.TreeSet.tailSet(java.lang.Object)");
     coverageChecker.exclude("java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream)");
+
+    // Known coverage inconsistencies when using --literals-level=CLASS
+    if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS) {
+
+      /* inconsistent on Travis  */
+      coverageChecker.ignore("java2.util2.ArrayList.add(int, java.lang.Object)");
+      coverageChecker.ignore("java2.util2.ArrayList.add(java.lang.Object)");
+      coverageChecker.ignore("java2.util2.ArrayList.clone()");
+      coverageChecker.ignore("java2.util2.ArrayList.trimToSize()");
+      coverageChecker.ignore("java2.util2.Collections.max(java2.util2.Collection)");
+      coverageChecker.ignore("java2.util2.Collections.rotate(java2.util2.List, int)");
+      coverageChecker.ignore("java2.util2.Collections.rotate1(java2.util2.List, int)");
+      coverageChecker.ignore(
+          "java2.util2.Collections.singletonMap(java.lang.Object, java.lang.Object)");
+      coverageChecker.ignore(
+          "java2.util2.Collections.sort(java2.util2.List, java2.util2.Comparator)");
+      coverageChecker.ignore("java2.util2.Collections.synchronizedMap(java2.util2.Map)");
+      coverageChecker.ignore("java2.util2.Collections.synchronizedSet(java2.util2.Set)");
+      coverageChecker.ignore("java2.util2.LinkedList.add(java.lang.Object)");
+      coverageChecker.ignore("java2.util2.LinkedList.get(int)");
+      coverageChecker.ignore("java2.util2.LinkedList.lastIndexOf(java.lang.Object)");
+      coverageChecker.ignore("java2.util2.TreeSet.last()");
+      coverageChecker.ignore("java2.util2.TreeSet.tailSet(java.lang.Object)");
+
+      /* inconsistent on local machine */
+      coverageChecker.ignore("java2.util2.ArrayList.get(int)");
+      coverageChecker.ignore("java2.util2.LinkedList.set(int, java.lang.Object)");
+      coverageChecker.ignore("java2.util2.LinkedList.toArray()");
+    }
+
+    // The following are known coverage inconsistencies when using --literals-level=CLASS_OR_ALL with --p.const=.01
+    // These also depend on the value of --p_const
+    if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS_OR_ALL
+        && GenInputsAbstract.p_const == .01) {
+
+      /* Covered locally, inconsistently covered on Travis */
+      coverageChecker.ignore("java2.util2.ArrayList.add(int, java.lang.Object)");
+      coverageChecker.ignore("java2.util2.ArrayList.add(java.lang.Object)");
+      coverageChecker.ignore("java2.util2.ArrayList.clone()");
+      coverageChecker.ignore("java2.util2.ArrayList.trimToSize()");
+      coverageChecker.ignore("java2.util2.Collections.max(java2.util2.Collection)");
+      coverageChecker.ignore("java2.util2.Collections.rotate(java2.util2.List, int)");
+      coverageChecker.ignore("java2.util2.Collections.rotate1(java2.util2.List, int)");
+      coverageChecker.ignore(
+          "java2.util2.Collections.singletonMap(java.lang.Object, java.lang.Object)");
+      coverageChecker.ignore(
+          "java2.util2.Collections.sort(java2.util2.List, java2.util2.Comparator)");
+      coverageChecker.ignore("java2.util2.Collections.synchronizedMap(java2.util2.Map)");
+      coverageChecker.ignore("java2.util2.LinkedList.add(java.lang.Object)");
+      coverageChecker.ignore("java2.util2.LinkedList.lastIndexOf(java.lang.Object)");
+      coverageChecker.ignore("java2.util2.LinkedList.set(int, java.lang.Object)");
+      coverageChecker.ignore("java2.util2.LinkedList.toArray()");
+      coverageChecker.ignore("java2.util2.TreeSet.isEmpty()");
+
+      /* Inconsistently covered locally, not covered on Travis */
+      coverageChecker.ignore("java2.util2.ArrayList.get(int)");
+
+      /* Not covered locally, inconsistently covered on Travis */
+      coverageChecker.ignore("java2.util2.Collections.eq(java.lang.Object, java.lang.Object)");
+      coverageChecker.ignore("java2.util2.LinkedList.clone()");
+      coverageChecker.ignore("java2.util2.LinkedList.remove(java.lang.Object)");
+      coverageChecker.ignore("java2.util2.TreeSet.first()");
+      coverageChecker.ignore("java2.util2.TreeSet.headSet(java.lang.Object)");
+      coverageChecker.ignore("java2.util2.TreeSet.last()");
+
+      /* Not covered locally, covered on Travis*/
+      coverageChecker.ignore("java2.util2.Collections.synchronizedSet(java2.util2.Set)");
+      coverageChecker.ignore("java2.util2.TreeSet.tailSet(java.lang.Object)");
+      coverageChecker.ignore("java2.util2.LinkedList.get(int)");
+    }
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.DONT_CARE;
@@ -371,6 +478,34 @@ public class RandoopSystemTest {
     coverageChecker.ignore("examples.Buggy.BuggyEqualsTransitive.hashCode()");
 
     coverageChecker.ignore("examples.Buggy.StackOverflowError()");
+
+    /* Excluded locally and on Travis */
+    coverageChecker.exclude("examples.Buggy.Buggy3.equals(java.lang.Object)");
+    coverageChecker.exclude("examples.Buggy.Buggy3.hashCode()");
+    coverageChecker.exclude("examples.Buggy.Buggy5.equals(java.lang.Object)");
+    coverageChecker.exclude("examples.Buggy.Buggy5.getOne()");
+    coverageChecker.exclude("examples.Buggy.Buggy5.getTwo()");
+    coverageChecker.exclude("examples.Buggy.BuggyEqualsTransitive.equals(java.lang.Object)");
+    coverageChecker.exclude("examples.Buggy.BuggyEqualsTransitive.getOne()");
+    coverageChecker.exclude("examples.Buggy.BuggyEqualsTransitive.getThree()");
+    coverageChecker.exclude("examples.Buggy.BuggyEqualsTransitive.getTwo()");
+
+    // Coverage inconsistencies
+    if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS) {
+      /* Inconsistent locally and on Travis */
+      coverageChecker.ignore("examples.Buggy.BuggyCompareToSubs.getOne()");
+    }
+
+    // Coverage inconsistencies
+    if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS_OR_ALL) {
+      /* Covered locally, inconsistent on Travis */
+      coverageChecker.ignore("examples.Buggy.BuggyCompareToSubs.getOne()");
+      coverageChecker.ignore("examples.Buggy.BuggyCompareToSubs.getThree()");
+      /* Inconsistent locally, covered on Travis */
+      coverageChecker.ignore("examples.Buggy.BuggyCompareToTransitive.getTwo()");
+      /* high suspicion this method is inconsistent on Travis is well */
+      //    coverageChecker.ignore("examples.Buggy.BuggyCompareToTransitive.getThree()");
+    }
 
     /* these should be covered, but are in failing assertions and wont show up in JaCoCo results */
     coverageChecker.exclude(
