@@ -22,13 +22,16 @@ class RandoopOptions {
   /** The package name for Randoop generated test classes. */
   private String packageName;
 
-  /** The basename for generated regression test classes */
+  /** The basename for generated regression test classes. */
   private String regressionBasename;
 
   /** The basename for generated error test classes */
   private String errorBasename;
 
-  /** Creates an empty set of options. */
+  /**
+   * Creates an empty set of options. The regression basename is "RegressionTest" and the error
+   * basename is "ErrorTest".
+   */
   private RandoopOptions() {
     this.options = new ArrayList<>();
     this.classnames = new HashSet<>();
