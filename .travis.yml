@@ -29,7 +29,7 @@ jdk:
 script:
   - set -o errexit
   - ./gradlew assemble
-  - ./gradlew --info check
+  - travis_wait ./gradlew --info check
   - travis_wait ./gradlew javadoc
   - ./gradlew --info manual
   - ./gradlew validateManual
