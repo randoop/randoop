@@ -34,6 +34,8 @@
 
 package randoop.util;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,8 +71,8 @@ public class StreamRedirectThread extends Thread {
    */
   public StreamRedirectThread(String name, InputStream in, OutputStream out) {
     super(name);
-    this.in = new InputStreamReader(in);
-    this.out = new OutputStreamWriter(out);
+    this.in = new InputStreamReader(in, UTF_8);
+    this.out = new OutputStreamWriter(out, UTF_8);
     this.outWriter = new PrintStream(out);
 
     setPriority(Thread.MAX_PRIORITY - 1);

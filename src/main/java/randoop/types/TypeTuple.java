@@ -174,7 +174,7 @@ public class TypeTuple implements Iterable<Type>, Comparable<TypeTuple> {
     return result;
   }
 
-  private class TypeIterator implements Iterator<Type> {
+  private static class TypeIterator implements Iterator<Type> {
 
     private Iterator<Type> iterator;
 

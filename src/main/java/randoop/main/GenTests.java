@@ -1,10 +1,14 @@
 package randoop.main;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -421,7 +425,7 @@ public class GenTests extends GenInputsAbstract {
       for (String visitorClsName : GenInputsAbstract.visitor) {
         try {
           Class<ExecutionVisitor> cls = (Class<ExecutionVisitor>) Class.forName(visitorClsName);
-          ExecutionVisitor vis = cls.newInstance();
+          ExecutionVisitor vis = cls.getDeclaredConstructor().newInstance();
           visitors.add(vis);
         } catch (Exception e) {
           System.out.println("Error while loading visitor class " + visitorClsName);
@@ -454,7 +458,9 @@ public class GenTests extends GenInputsAbstract {
       componentMgr.log();
     }
     if (GenInputsAbstract.log_operation_history) {
-      explorer.setOperationHistoryLogger(new OperationHistoryLogger(new PrintWriter(System.out)));
+      explorer.setOperationHistoryLogger(
+          new OperationHistoryLogger(
+              new PrintWriter(new BufferedWriter(new OutputStreamWriter(System.out, UTF_8)))));
     }
     if (GenInputsAbstract.operation_history_log != null) {
       explorer.setOperationHistoryLogger(
