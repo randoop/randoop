@@ -591,7 +591,7 @@ task validateManual(type: Exec, dependsOn: 'manual') {
     environment PATH: "$System.env.PATH"
     commandLine "html5validator", "--root", file("${projectDir}/src/docs/manual")
   } else {
-    commandLine "echo","WARNING: HTML validation of manuals only run in Java 8+"
+    commandLine "echo","WARNING: HTML is validated only in Java 8+"
   }
 }
 
