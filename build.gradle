@@ -487,6 +487,11 @@ javadoc {
   source sourceSets.main.allJava
   options.memberLevel = JavadocMemberLevel.PRIVATE
   options.addStringOption("stylesheetfile", "${projectDir}/src/javadoc/resources/stylesheets/javadocstyle.css")
+  // Use of Javadoc's -linkoffline command-line option makes Javadoc generation
+  // much faster, especially on Travis.
+  options.with {
+    linksOffline 'https://docs.oracle.com/javase/8/docs/api/', 'https://docs.oracle.com/javase/8/docs/api/'
+  }
 }
 
 // needed for javadoc.doLast
