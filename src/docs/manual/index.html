@@ -742,20 +742,18 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>See an <a href= "https://randoop.github.io/randoop/manual/method_list_example.txt">
  example</a>.
             <li id="option:omitmethods"><b>--omitmethods=</b><i>regex</i> <code>[+]</code>.
-             A pattern that indicates methods that should not be included in generated tests. Randoop will
- not attempt to directly call methods whose <code>java.lang.reflect.Method.toString()</code> matches
- the regular expression given. This does not prevent indirect calls to such methods from other,
- allowed methods.
+             Methods whose <code>java.lang.reflect.Method.toString() toString()</code> matches this regex are not
+ directly called by test methods. This does not prevent indirect calls to such methods from
+ other, allowed methods.
 
- <p>Randoop only calls methods that are specified by one of the <code>--testclass</code>, <code>
- -classlist</code>, or <code>--methodlist</code> command-line options; the purpose of <code>
- --omitmethods</code> is to override one of those other command-line options.
+ <p>Randoop only calls methods that are specified by one of the <code>--testclass</code>, <code>--classlist</code>, or <code>--methodlist</code> command-line options; the purpose of <code>omitmethods</code>
+ --is to override one of those other command-line options.
+
+ <p>The regex may match a substring of the method name, unless the regex is anchored with <code>^</code> or <code>$</code>.
 
  <p>Note:
 
  <ul>
-   <li>The regex is unanchored, so <code>^</code> or <code>$</code> may be needed to get the
-       correct results.
    <li>If a method is inherited without an override, the pattern must match the superclass
        method.
  </ul>
@@ -1086,7 +1084,7 @@ Randoop about your application, and that is how we recommend using Randoop.
              Track and log the usage of operations during generation to standard out. This option is not
  affected by setting <code>--operation-history-log</code>. [default false]
             <li id="option:operation-history-log"><b>--operation-history-log=</b><i>filewriter</i>.
-             Name of a file to which to log the operation usage history . This operation is not affected by
+             Name of a file to which to log the operation usage history. This operation is not affected by
  setting <code>--log-operation-history</code>.
       </ul>
   <li id="optiongroup:Advanced-extension-points">Advanced extension points
@@ -1240,7 +1238,7 @@ If the rep invariant is ever violated, the program has a bug.
 <p>
 By using the
 <a href="https://randoop.github.io/randoop/api/randoop/CheckRep.html"><code>@CheckRep</code></a>
-annotation (don't forget to <code>import randoop.*</code>), you can
+annotation, you can
 tell Randoop which methods in your classes under test are rep
 invariant methods.  Randoop will call these methods; if the method
 ever fails, Randoop outputs the test as a failing test.

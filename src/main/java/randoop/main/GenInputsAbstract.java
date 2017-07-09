@@ -614,7 +614,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean log_operation_history = false;
 
   /**
-   * Name of a file to which to log the operation usage history . This operation is not affected by
+   * Name of a file to which to log the operation usage history. This operation is not affected by
    * setting <code>--log-operation-history</code>.
    */
   @Option("Track and log operation usage counts to this file")
