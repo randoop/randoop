@@ -88,6 +88,7 @@ public class InstantiatedType extends ParameterizedType {
    *
    * @return the capture conversion type for this type
    */
+  @Override
   public InstantiatedType applyCaptureConversion() {
 
     if (!this.hasWildcard()) {
@@ -213,6 +214,7 @@ public class InstantiatedType extends ParameterizedType {
    *
    * @return the list of type arguments
    */
+  @Override
   public List<TypeArgument> getTypeArguments() {
     return argumentList;
   }
@@ -440,6 +442,7 @@ public class InstantiatedType extends ParameterizedType {
     return this.getRawtype().isSubtypeOf(otherType);
   }
 
+  @Override
   public NonParameterizedType getRawtype() {
     return instantiatedType.getRawtype();
   }

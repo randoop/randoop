@@ -17,6 +17,7 @@ public final class EqualsReflexive implements ObjectContract {
     return instance;
   }
 
+  @SuppressWarnings("SelfEquals")
   @Override
   public boolean evaluate(Object... objects) {
     assert objects != null && objects.length == 1;

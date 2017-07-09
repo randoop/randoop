@@ -45,6 +45,7 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
     operationMap.put(operation, outcomeMap);
   }
 
+  @Override
   public void outputTable() {
     int maxNameLength = 0;
     for (TypedOperation operation : operationMap.keySet()) {
