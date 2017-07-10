@@ -345,8 +345,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Maximum number of test method candidates generated internally. Test generation stops when
    * either the time limit (--timelimit) is reached, OR the number of generated sequences reaches
    * the input limit (--inputlimit), OR the number of error-revealing and regression tests reaches
-   * the output limit (--outputlimit). The number of tests output will be smaller than then number
-   * of test candidates generated, because redundant and illegal tests will be discarded.
+   * the output limit (--outputlimit). The number of tests output will be smaller than the number of
+   * test candidates generated, because redundant and illegal tests will be discarded.
    */
   @Option("Maximum number of candidate tests generated")
   public static int inputlimit = LIMIT_DEFAULT;
@@ -607,10 +607,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Logging, notifications, and troubleshooting Randoop")
-  @Option("Do not display progress update message to console")
+  @Option("Run more quietly: do not display information such as progress updates.")
   public static boolean noprogressdisplay = false;
 
-  @Option("Display progress message every <int> milliseconds")
+  @Option("Display progress message every <int> milliseconds. -1 means no display.")
   public static long progressintervalmillis = 60000;
 
   @Option("Display progress message every <int> attempts to create a test; -1 means none")
@@ -638,7 +638,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean log_operation_history = false;
 
   /**
-   * Name of a file to which to log the operation usage history . This operation is not affected by
+   * Name of a file to which to log the operation usage history. This operation is not affected by
    * setting <code>--log-operation-history</code>.
    */
   @Option("Track and log operation usage counts to this file")

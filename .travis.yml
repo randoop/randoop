@@ -13,7 +13,7 @@ before_install:
   - sed -e "s/^\\(127\\.0\\.0\\.1.*\\)/\\1 $(hostname | cut -c1-63)/" /etc/hosts > /tmp/hosts
   - sudo mv /tmp/hosts /etc/hosts
   - cat /etc/hosts
-  - sudo pip install html5validator
+  - sudo -H pip install html5validator
 
 # sudo: false
 sudo: required
