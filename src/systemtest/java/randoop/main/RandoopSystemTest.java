@@ -396,7 +396,7 @@ public class RandoopSystemTest {
     options.setErrorBasename("CheckRepTest");
 
     options.setFlag("no-regression-tests");
-    options.setOption("timelimit", "2");
+    options.setOption("inputlimit", "200");
     options.addTestClass("examples.CheckRep1");
     options.addTestClass("examples.CheckRep2");
 
@@ -445,7 +445,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("LongString");
     options.setErrorBasename("");
 
-    options.setOption("timelimit", "1");
+    options.setOption("inputlimit", "100");
     options.addTestClass("randoop.test.LongString");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
@@ -468,7 +468,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("VisibilityTest");
     options.setErrorBasename("");
 
-    options.setOption("timelimit", "2");
+    options.setOption("inputlimit", "200");
     options.addTestClass("examples.Visibility");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
@@ -495,7 +495,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("NoOutputTest");
     options.setErrorBasename("");
 
-    options.setOption("timelimit", "1");
+    options.setOption("inputlimit", "100");
     options.addTestClass("java.util.LinkedList");
     options.setFlag("noprogressdisplay");
 
@@ -540,7 +540,7 @@ public class RandoopSystemTest {
     options.setErrorBasename("ParamTypeErr");
     options.addTestClass("muse.SortContainer");
     options.setOption("outputlimit", "100");
-    options.setOption("timelimit", "300");
+    options.setOption("inputlimit", "30000");
     options.setFlag("forbid-null");
     options.setOption("null-ratio", "0");
 
@@ -560,7 +560,7 @@ public class RandoopSystemTest {
     options.setErrorBasename("BoundsErr");
     options.addTestClass("muse.RecursiveBound");
     options.setOption("outputlimit", "100");
-    options.setOption("timelimit", "300");
+    options.setOption("inputlimit", "30000");
     options.setFlag("forbid-null");
     options.setOption("null-ratio", "0");
 
@@ -995,7 +995,7 @@ public class RandoopSystemTest {
     options.addTestClass("generror.Ints");
     options.setErrorBasename("LexError");
     options.setRegressionBasename("LexRegression");
-    options.setOption("timelimit", "30");
+    options.setOption("inputlimit", "3000");
 
     generateAndTestWithCoverage(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
@@ -1009,8 +1009,7 @@ public class RandoopSystemTest {
     options.addTestClass("compileerr.WildcardCollection");
     options.setErrorBasename("CompError");
     options.setRegressionBasename("CompRegression");
-    options.setOption("timelimit", "30");
-    options.setFlag("check-compilable");
+    options.setOption("inputlimit", "3000");
 
     CoverageChecker coverageChecker = new CoverageChecker(options);
     coverageChecker.ignore("compileerr.WildcardCollection.getAStringList()");
@@ -1064,7 +1063,7 @@ public class RandoopSystemTest {
     options.addTestClass("generation.Dim5Matrix");
     options.addTestClass("generation.Dim6Matrix");
     options.setOption("outputlimit", "200");
-    options.setOption("timelimit", "20");
+    options.setOption("inputlimit", "2000");
 
     generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }

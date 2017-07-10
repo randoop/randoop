@@ -1,10 +1,14 @@
 package randoop.main;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -102,7 +106,7 @@ public class GenTests extends GenInputsAbstract {
 
   private static final String example =
       "java randoop.main.Main gentests --testclass=java.util.Collections "
-          + " --testclass=java.util.TreeSet";
+          + "--testclass=java.util.TreeSet";
 
   private static final List<String> notes;
 
@@ -117,7 +121,7 @@ public class GenTests extends GenInputsAbstract {
         "Randoop executes the code under test, with no mechanisms to protect your system from "
             + "harm resulting from arbitrary code execution. If random execution of your code "
             + "could have undesirable effects (e.g., deletion of files, opening network "
-            + " connections, etc.) make sure you execute Randoop in a sandbox.");
+            + "connections, etc.) make sure you execute Randoop in a sandbox.");
     notes.add(
         "Randoop will only use methods from the classes that you specify for testing. "
             + "If Randoop is not generating tests for a particular method, make sure that you are "
@@ -439,7 +443,7 @@ public class GenTests extends GenInputsAbstract {
       for (String visitorClsName : GenInputsAbstract.visitor) {
         try {
           Class<ExecutionVisitor> cls = (Class<ExecutionVisitor>) Class.forName(visitorClsName);
-          ExecutionVisitor vis = cls.newInstance();
+          ExecutionVisitor vis = cls.getDeclaredConstructor().newInstance();
           visitors.add(vis);
         } catch (Exception e) {
           System.out.println("Error while loading visitor class " + visitorClsName);
@@ -472,7 +476,9 @@ public class GenTests extends GenInputsAbstract {
       componentMgr.log();
     }
     if (GenInputsAbstract.log_operation_history) {
-      explorer.setOperationHistoryLogger(new OperationHistoryLogger(new PrintWriter(System.out)));
+      explorer.setOperationHistoryLogger(
+          new OperationHistoryLogger(
+              new PrintWriter(new BufferedWriter(new OutputStreamWriter(System.out, UTF_8)))));
     }
     if (GenInputsAbstract.operation_history_log != null) {
       explorer.setOperationHistoryLogger(

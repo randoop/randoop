@@ -51,6 +51,8 @@ public final class Randomness {
    *
    * <p>To exactly reproduce the state, the result needs to be XOR'd with 0x5DEECE66DL if passed to
    * setSeed, because setSeed internally XORs with that value.
+   *
+   * @return the internal random seed
    */
   public static long getSeed() {
     try {

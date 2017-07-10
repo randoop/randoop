@@ -22,13 +22,16 @@ class RandoopOptions {
   /** The package name for Randoop generated test classes. */
   private String packageName;
 
-  /** The basename for generated regression test classes */
+  /** The basename for generated regression test classes. */
   private String regressionBasename;
 
   /** The basename for generated error test classes */
   private String errorBasename;
 
-  /** Creates an empty set of options. */
+  /**
+   * Creates an empty set of options. The regression basename is "RegressionTest" and the error
+   * basename is "ErrorTest".
+   */
   private RandoopOptions() {
     this.options = new ArrayList<>();
     this.classnames = new HashSet<>();
@@ -48,7 +51,8 @@ class RandoopOptions {
     RandoopOptions options = new RandoopOptions();
     options.setOption("junit-output-dir", testEnvironment.sourceDir.toString());
     options.setOption("log", testEnvironment.workingDir + "/randoop-log.txt");
-    options.unsetFlag("check-compilable");
+    options.setFlag("deterministic");
+    options.unsetFlag("minimize-error-test");
 
     // Use value from environment variable if command-line argument was not set
     String selectionLog = System.getProperty("randoop.selection.log");
@@ -91,6 +95,19 @@ class RandoopOptions {
    */
   void unsetFlag(String option) {
     setOption(option, "false");
+  }
+
+  /**
+   * Adds an option-flag set to the given value
+   *
+   * @param option the name of the option flag to be set to false
+   */
+  void setFlag(String option, boolean value) {
+    if (value) {
+      setFlag(option);
+    } else {
+      unsetFlag(option);
+    }
   }
 
   /**

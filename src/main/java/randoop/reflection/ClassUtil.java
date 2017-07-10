@@ -17,7 +17,12 @@ public class ClassUtil {
     throw new Error("do not instantiate");
   }
 
-  /** Like {@link Class#getAnnotations()}, but returns the methods in deterministic order. */
+  /**
+   * Like {@link Class#getAnnotations()}, but returns the methods in deterministic order.
+   *
+   * @param c the Class whose annotations to return
+   * @return the class's annotations
+   */
   public static Annotation[] getAnnotations(Class<?> c) {
     Annotation[] result = c.getAnnotations();
     Arrays.sort(result, annotationComparator);
@@ -25,31 +30,55 @@ public class ClassUtil {
   }
   /**
    * Like {@link Class#getDeclaredAnnotations()}, but returns the methods in deterministic order.
+   *
+   * @param c the Class whose declared annotations to return
+   * @return the class's declared annotations
    */
   public static Annotation[] getDeclaredAnnotations(Class<?> c) {
     Annotation[] result = c.getDeclaredAnnotations();
     Arrays.sort(result, annotationComparator);
     return result;
   }
-  /** Like {@link Class#getClasses()}, but returns the methods in deterministic order. */
+  /**
+   * Like {@link Class#getClasses()}, but returns the classes in deterministic order.
+   *
+   * @param c the Class whose member classes to return
+   * @return the class's member classes
+   */
   public static Class<?>[] getClasses(Class<?> c) {
     Class<?>[] result = c.getClasses();
     Arrays.sort(result, classComparator);
     return result;
   }
-  /** Like {@link Class#getDeclaredClasses()}, but returns the methods in deterministic order. */
+  /**
+   * Like {@link Class#getDeclaredClasses()}, but returns the classes in deterministic order.
+   *
+   * @param c the Class whose declared member classes to return
+   * @return the class's declared member classes
+   */
   public static Class<?>[] getDeclaredClasses(Class<?> c) {
     Class<?>[] result = c.getDeclaredClasses();
     Arrays.sort(result, classComparator);
     return result;
   }
-  /** Like {@link Class#getEnumConstants()}, but returns the methods in deterministic order. */
+  /**
+   * Like {@link Class#getEnumConstants()}, but returns the methods in deterministic order.
+   *
+   * @param <T> the class's type parameter
+   * @param c the Class whose enum constants to return
+   * @return the class's enum constants
+   */
   public static <T> T[] getEnumConstants(Class<T> c) {
     T[] result = c.getEnumConstants();
     Arrays.sort(result, toStringComparator);
     return result;
   }
-  /** Like {@link Class#getConstructors()}, but returns the methods in deterministic order. */
+  /**
+   * Like {@link Class#getConstructors()}, but returns the methods in deterministic order.
+   *
+   * @param c the Class whose constructors to return
+   * @return the class's constructors
+   */
   public static Constructor<?>[] getConstructors(Class<?> c) {
     Constructor<?>[] result = c.getConstructors();
     Arrays.sort(result, constructorComparator);
@@ -57,31 +86,54 @@ public class ClassUtil {
   }
   /**
    * Like {@link Class#getDeclaredConstructors()}, but returns the methods in deterministic order.
+   *
+   * @param c the Class whose declared constructors to return
+   * @return the class's declared constructors
    */
   public static Constructor<?>[] getDeclaredConstructors(Class<?> c) {
     Constructor<?>[] result = c.getDeclaredConstructors();
     Arrays.sort(result, constructorComparator);
     return result;
   }
-  /** Like {@link Class#getFields()}, but returns the methods in deterministic order. */
+  /**
+   * Like {@link Class#getFields()}, but returns the methods in deterministic order.
+   *
+   * @param c the Class whose fields to return
+   * @return the class's fields
+   */
   public static Field[] getFields(Class<?> c) {
     Field[] result = c.getFields();
     Arrays.sort(result, fieldComparator);
     return result;
   }
-  /** Like {@link Class#getDeclaredFields()}, but returns the methods in deterministic order. */
+  /**
+   * Like {@link Class#getDeclaredFields()}, but returns the methods in deterministic order.
+   *
+   * @param c the Class whose declared fields to return
+   * @return the class's declared fields
+   */
   public static Field[] getDeclaredFields(Class<?> c) {
     Field[] result = c.getDeclaredFields();
     Arrays.sort(result, fieldComparator);
     return result;
   }
-  /** Like {@link Class#getMethods()}, but returns the methods in deterministic order. */
+  /**
+   * Like {@link Class#getMethods()}, but returns the methods in deterministic order.
+   *
+   * @param c the Class whose methods to return
+   * @return the class's methods
+   */
   public static Method[] getMethods(Class<?> c) {
     Method[] result = c.getMethods();
     Arrays.sort(result, methodComparator);
     return result;
   }
-  /** Like {@link Class#getDeclaredMethods()}, but returns the methods in deterministic order. */
+  /**
+   * Like {@link Class#getDeclaredMethods()}, but returns the methods in deterministic order.
+   *
+   * @param c the Class whose declared methods to return
+   * @return the class's declared methods
+   */
   public static Method[] getDeclaredMethods(Class<?> c) {
     Method[] result = c.getDeclaredMethods();
     Arrays.sort(result, methodComparator);
