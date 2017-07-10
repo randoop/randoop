@@ -472,7 +472,7 @@ task clonePlumeLib {
     if ( ! plumeFolder.exists() ) {
       org.ajoberstar.grgit.Grgit.clone(dir: plumeFolder, uri: 'https://github.com/mernst/plume-lib.git')
       exec {
-        commandLine 'chmod', '+x', "$buildDir/utils/plume-lib/bin/*"
+        commandLine 'chmod', '-R', '+x', "$buildDir/utils/plume-lib/bin"
       }
     } else {
       println("WARNING: not cloning plume-lib because already exists.")
