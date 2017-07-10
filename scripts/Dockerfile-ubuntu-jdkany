@@ -15,7 +15,7 @@ RUN apt-get -qqy update \
   git \
   gradle \
   default-jdk \
-apt-get -qqy update \
+&& apt-get -qqy update \
 && apt-get -qqy install \
   python-pip \
 && apt-get clean \
