@@ -129,9 +129,7 @@ public abstract class AbstractGenerator {
    *
    * @param operations statements (e.g. methods and constructors) used to create sequences. Cannot
    *     be null.
-   * @param timeMillis maximum time to spend in generation. Must be non-negative.
-   * @param maxGeneratedSequences the maximum number of sequences to generate. Must be non-negative.
-   * @param maxOutSequences the maximum number of sequences to output. Must be non-negative.
+   * @param limits maximum time and number of sequences to generate/output
    * @param componentManager the component manager to use to store sequences during component-based
    *     generation. Can be null, in which case the generator's component manager is initialized as
    *     <code>new ComponentManager()</code>.
