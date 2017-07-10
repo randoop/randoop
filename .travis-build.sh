@@ -37,7 +37,7 @@ if [[ "${GROUP}" == "test" || "${GROUP}" == "all" ]]; then
 fi
 
 if [[ "${GROUP}" == "misc" || "${GROUP}" == "all" ]]; then
-  ./gradlew --debug javadoc
+  ./gradlew javadoc
   ./gradlew manual
   ./gradlew validateManual
   ./gradlew verifyGoogleJavaFormat
