@@ -471,6 +471,7 @@ task clonePlumeLib {
     def plumeFolder = file("$buildDir/utils/plume-lib")
     if ( ! plumeFolder.exists() ) {
       org.ajoberstar.grgit.Grgit.clone(dir: plumeFolder, uri: 'https://github.com/mernst/plume-lib.git')
+      commandLine 'chmod', '+x', "$buildDir/utils/plume-lib/bin/*"
     } else {
       println("WARNING: not cloning plume-lib because already exists.")
       println("         Force clone by running after clean")
@@ -499,9 +500,6 @@ javadoc.dependsOn clonePlumeLib
 
 javadoc.doLast {
   def preplace = file("$buildDir/utils/plume-lib/bin/preplace")
-  exec {
-    commandLine 'chmod', '+x', "$buildDir/utils/plume-lib/bin/preplace"
-  }
   println 'Does preplace exist?'
   println file("$buildDir/utils/plume-lib/bin/preplace").exists()
   exec {
