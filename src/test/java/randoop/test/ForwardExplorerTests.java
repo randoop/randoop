@@ -113,6 +113,7 @@ public class ForwardExplorerTests {
     int oldTimeout = ReflectionExecutor.timeout;
     ReflectionExecutor.timeout = 500;
     long oldProgressintervalsteps = GenInputsAbstract.progressintervalsteps;
+    GenInputsAbstract.progressintervalsteps = 10;
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     final List<TypedOperation> model = getConcreteOperations(classes);
     assertTrue("model should not be empty", model.size() != 0);
