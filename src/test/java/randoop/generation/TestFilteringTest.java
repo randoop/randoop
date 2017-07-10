@@ -245,7 +245,7 @@ public class TestFilteringTest {
         new ForwardGenerator(
             model,
             new LinkedHashSet<TypedOperation>(),
-            GenInputsAbstract.limits(),
+            new GenInputsAbstract.Limits(),
             componentMgr,
             null,
             listenerMgr);

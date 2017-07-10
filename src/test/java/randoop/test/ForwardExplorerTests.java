@@ -70,7 +70,12 @@ public class ForwardExplorerTests {
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator explorer =
         new ForwardGenerator(
-            model, new LinkedHashSet<TypedOperation>(), new Limits(0, 5000, 5000), mgr, null, null);
+            model,
+            new LinkedHashSet<TypedOperation>(),
+            new GenInputsAbstract.Limits(0, 5000, 5000),
+            mgr,
+            null,
+            null);
     explorer.addTestCheckGenerator(createChecker(new ContractSet()));
     explorer.addTestPredicate(createOutputTest());
     explorer.explore();
@@ -107,7 +112,7 @@ public class ForwardExplorerTests {
     //Log.log = new FileWriter("templog.txt");
     int oldTimeout = ReflectionExecutor.timeout;
     ReflectionExecutor.timeout = 500;
-    int oldProgressintervalsteps = GenInputsAbstract.progressintervalsteps;
+    long oldProgressintervalsteps = GenInputsAbstract.progressintervalsteps;
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     final List<TypedOperation> model = getConcreteOperations(classes);
     assertTrue("model should not be empty", model.size() != 0);

@@ -397,7 +397,7 @@ public class TestClassificationTest {
         new ForwardGenerator(
             model,
             new LinkedHashSet<TypedOperation>(),
-            GenInputsAbstract.limits(),
+            new GenInputsAbstract.Limits(),
             componentMgr,
             null,
             listenerMgr);
