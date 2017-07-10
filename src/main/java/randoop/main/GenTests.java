@@ -104,7 +104,7 @@ public class GenTests extends GenInputsAbstract {
 
   private static final String example =
       "java randoop.main.Main gentests --testclass=java.util.Collections "
-          + " --testclass=java.util.TreeSet";
+          + "--testclass=java.util.TreeSet";
 
   private static final List<String> notes;
 
@@ -119,7 +119,7 @@ public class GenTests extends GenInputsAbstract {
         "Randoop executes the code under test, with no mechanisms to protect your system from "
             + "harm resulting from arbitrary code execution. If random execution of your code "
             + "could have undesirable effects (e.g., deletion of files, opening network "
-            + " connections, etc.) make sure you execute Randoop in a sandbox.");
+            + "connections, etc.) make sure you execute Randoop in a sandbox.");
     notes.add(
         "Randoop will only use methods from the classes that you specify for testing. "
             + "If Randoop is not generating tests for a particular method, make sure that you are "

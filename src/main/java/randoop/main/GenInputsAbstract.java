@@ -345,8 +345,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Maximum number of test method candidates generated internally. Test generation stops when
    * either the time limit (--timelimit) is reached, OR the number of generated sequences reaches
    * the input limit (--inputlimit), OR the number of error-revealing and regression tests reaches
-   * the output limit (--outputlimit). The number of tests output will be smaller than then number
-   * of test candidates generated, because redundant and illegal tests will be discarded.
+   * the output limit (--outputlimit). The number of tests output will be smaller than the number of
+   * test candidates generated, because redundant and illegal tests will be discarded.
    */
   @Option("Maximum number of candidate tests generated")
   public static int inputlimit = LIMIT_DEFAULT;
