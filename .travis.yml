@@ -30,7 +30,7 @@ script:
   - set -o errexit
   - ./gradlew assemble
   - ./gradlew --info check
-  - travis_wait ./gradlew javadoc
+  - ./gradlew javadoc
   - ./gradlew --info manual
   - ./gradlew validateManual
   - ./gradlew verifyGoogleJavaFormat
