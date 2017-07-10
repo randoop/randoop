@@ -662,7 +662,7 @@ task validateSite(type: Exec) {
     environment PATH: "$System.env.PATH"
     commandLine "html5validator", "--root", "docs/", "--ignore", "docs/api"
   } else {
-    commandLine "echo","WARNING: HTML validation of manuals only run in Java 8+"
+    commandLine "echo", "WARNING: HTML validation of site is only run in Java 8+"
   }
 }
 
