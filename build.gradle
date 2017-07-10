@@ -471,6 +471,9 @@ task clonePlumeLib {
     def plumeFolder = file("$buildDir/utils/plume-lib")
     if ( ! plumeFolder.exists() ) {
       org.ajoberstar.grgit.Grgit.clone(dir: plumeFolder, uri: 'https://github.com/mernst/plume-lib.git')
+      exec {
+        commandLine 'chmod', '-R', '+x', "$buildDir/utils/plume-lib/bin"
+      }
     } else {
       println("WARNING: not cloning plume-lib because already exists.")
       println("         Force clone by running after clean")
@@ -681,7 +684,7 @@ task tags(type: Exec, dependsOn: 'clonePlumeLib') {
   group 'Emacs'
   description "Run etags to create an Emacs TAGS table"
   environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
-  commandLine "bash", "-c", "find src/ agent/exercised-class/src/ agent/mapcall/src/ -name *.java | sort-directory-order | xargs etags"
+  commandLine "bash", "-c", "find src/ agent/exercised-class/src/ agent/mapcall/src/ -name *.java | grep -v src/testinput | sort-directory-order | xargs etags"
 }
 
 /* Make Emacs TAGS table, with only Randoop code (not test code) */
