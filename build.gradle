@@ -499,7 +499,11 @@ javadoc.dependsOn clonePlumeLib
 
 javadoc.doLast {
   def preplace = file("$buildDir/utils/plume-lib/bin/preplace")
-  // Work around Javadoc bug
+  println 'Does preplace exist?'
+  println file("$buildDir/utils/plume-lib/bin/preplace").exists()
+  println file("$buildDir/utils/plume-lib/bin/preplace").text
+  // Work around Javadoc bug 
+  println 'About to call preplace'
   exec {
     commandLine preplace, "-debug", "<dt><span class=\"memberNameLink\"><a href=\".*\\(\\)</a></span> - Constructor for enum [a-zA-Z0-9_.]*<a href=\".*</a></dt>", "", "build/docs/api/index-all.html"
   }
