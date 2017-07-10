@@ -70,14 +70,7 @@ public class ForwardExplorerTests {
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator explorer =
         new ForwardGenerator(
-            model,
-            new LinkedHashSet<TypedOperation>(),
-            Long.MAX_VALUE,
-            5000,
-            5000,
-            mgr,
-            null,
-            null);
+            model, new LinkedHashSet<TypedOperation>(), new Limits(0, 5000, 5000), mgr, null, null);
     explorer.addTestCheckGenerator(createChecker(new ContractSet()));
     explorer.addTestPredicate(createOutputTest());
     explorer.explore();
@@ -120,7 +113,12 @@ public class ForwardExplorerTests {
     GenInputsAbstract.ignore_flaky_tests = true;
     ForwardGenerator exp =
         new ForwardGenerator(
-            model, new LinkedHashSet<TypedOperation>(), Long.MAX_VALUE, 200, 200, mgr, null, null);
+            model,
+            new LinkedHashSet<TypedOperation>(),
+            new GenInputsAbstract.Limits(0, 200, 200),
+            mgr,
+            null,
+            null);
     exp.addTestCheckGenerator(createChecker(new ContractSet()));
     exp.addTestPredicate(createOutputTest());
     try {
@@ -172,7 +170,12 @@ public class ForwardExplorerTests {
     assertTrue("model should not be empty", model.size() != 0);
     ForwardGenerator exp =
         new ForwardGenerator(
-            model, new LinkedHashSet<TypedOperation>(), Long.MAX_VALUE, 200, 200, mgr, null, null);
+            model,
+            new LinkedHashSet<TypedOperation>(),
+            new GenInputsAbstract.Limits(0, 200, 200),
+            mgr,
+            null,
+            null);
     GenInputsAbstract.forbid_null = false;
     exp.addTestCheckGenerator(createChecker(new ContractSet()));
     exp.addTestPredicate(createOutputTest());

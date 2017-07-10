@@ -361,13 +361,7 @@ public class GenTests extends GenInputsAbstract {
     AbstractGenerator explorer;
     explorer =
         new ForwardGenerator(
-            operations,
-            observers,
-            timelimit * 1000,
-            inputlimit,
-            outputlimit,
-            componentMgr,
-            listenerMgr);
+            operations, observers, new GenInputsAbstract.Limits(), componentMgr, listenerMgr);
 
     /*
      * setup for check generation
