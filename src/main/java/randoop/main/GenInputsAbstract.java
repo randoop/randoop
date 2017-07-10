@@ -586,7 +586,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Logging, notifications, and troubleshooting Randoop")
-  @Option("Do not display progress update message to console")
+  @Option("Run more quietly: do not display information such as progress updates.")
   public static boolean noprogressdisplay = false;
 
   @Option("Display progress message every <int> milliseconds. -1 means no display.")

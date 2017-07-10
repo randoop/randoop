@@ -16,7 +16,7 @@ import randoop.main.GenInputsAbstract;
 // Currently this class does both things.
 public class ProgressDisplay extends Thread {
 
-  /** Lock so that unfortunate interleaving of this printing can be avoided */
+  /** Global lock to prevent interleaving of progress display messages. */
   public static final Object print_synchro = new Object();
 
   private static int exit_if_no_new_sequences_after_mseconds = 10000;
