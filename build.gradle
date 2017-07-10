@@ -500,16 +500,6 @@ javadoc.dependsOn clonePlumeLib
 
 javadoc.doLast {
   def preplace = file("$buildDir/utils/plume-lib/bin/preplace")
-  println 'Does preplace exist?'
-  println file("$buildDir/utils/plume-lib/bin/preplace").exists()
-  exec {
-    commandLine "ls", "-l", "$buildDir/utils/plume-lib/bin/preplace"
-  }
-  println file("$buildDir/utils/plume-lib/bin/preplace").text
-  println "About to execute perl"
-  exec {
-    commandLine "/usr/bin/env", "perl", "-e", 'print "hello\n"'
-  }
   // Work around Javadoc bug 
   println 'About to call preplace'
   exec {
