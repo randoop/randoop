@@ -589,7 +589,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Do not display progress update message to console")
   public static boolean noprogressdisplay = false;
 
-  @Option("Display progress message every <int> milliseconds")
+  @Option("Display progress message every <int> milliseconds. -1 means no display.")
   public static long progressinterval = 5000;
 
   @Option("Perform expensive internal checks (for Randoop debugging)")
