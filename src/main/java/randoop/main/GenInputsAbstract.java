@@ -84,20 +84,20 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static File methodlist = null;
 
   /**
-   * A pattern that indicates methods that should not be included in generated tests. Randoop will
-   * not attempt to directly call methods whose {@link java.lang.reflect.Method#toString()} matches
-   * the regular expression given. This does not prevent indirect calls to such methods from other,
-   * allowed methods.
+   * Methods whose {@link java.lang.reflect.Method#toString() toString()} matches this regex are not
+   * directly called by test methods. This does not prevent indirect calls to such methods from
+   * other, allowed methods.
    *
-   * <p>Randoop only calls methods that are specified by one of the <code>--testclass</code>, <code>
-   * -classlist</code>, or <code>--methodlist</code> command-line options; the purpose of <code>
-   * --omitmethods</code> is to override one of those other command-line options.
+   * <p>Randoop only calls methods that are specified by one of the {@code --testclass}, {@code
+   * --classlist}, or {@code --methodlist} command-line options; the purpose of {@code omitmethods}
+   * --is to override one of those other command-line options.
+   *
+   * <p>The regex may match a substring of the method name, unless the regex is anchored with {@code
+   * ^} or {@code $}.
    *
    * <p>Note:
    *
    * <ul>
-   *   <li>The regex is unanchored, so <code>^</code> or <code>$</code> may be needed to get the
-   *       correct results.
    *   <li>If a method is inherited without an override, the pattern must match the superclass
    *       method.
    * </ul>
@@ -225,12 +225,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * Flag indicating whether or not to automatically minimize error-revealing tests. Both original
-   * and minimized versions of each test class will be output. Minimization is automatically enabled
-   * when <code>--stop-on-error-test</code> is set. Setting this option is not recommended when the
-   * number of error-revealing tests is expected to be greater than 100.
+   * and minimized versions of each test class will be output. Setting this option may cause long
+   * Randoop run times if Randoop outputs and minimizes more than about 100 error-revealing tests.
    */
+  // Omit this to keep the documentation short:
+  // Regardless of this option's setting, minimization is enabled when
+  // <code>--stop-on-error-test</code> is set.
   @Option("<boolean> to indicate automatic minimization of error-revealing tests")
-  public static boolean minimize_error_test = false;
+  public static boolean minimize_error_test = true;
 
   /**
    * The possible values for exception behavior types. The order INVALID, ERROR, EXPECTED should be
@@ -351,8 +353,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Maximum number of test method candidates generated internally. Test generation stops when
    * either the time limit (--timelimit) is reached, OR the number of generated sequences reaches
    * the input limit (--inputlimit), OR the number of error-revealing and regression tests reaches
-   * the output limit (--outputlimit). The number of tests output will be smaller than then number
-   * of test candidates generated, because redundant and illegal tests will be discarded.
+   * the output limit (--outputlimit). The number of tests output will be smaller than the number of
+   * test candidates generated, because redundant and illegal tests will be discarded.
    */
   @Option("Maximum number of candidate tests generated")
   public static int inputlimit = LIMIT_DEFAULT;
@@ -592,10 +594,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Logging, notifications, and troubleshooting Randoop")
-  @Option("Do not display progress update message to console")
+  @Option("Run more quietly: do not display information such as progress updates.")
   public static boolean noprogressdisplay = false;
 
-  @Option("Display progress message every <int> milliseconds")
+  @Option("Display progress message every <int> milliseconds. -1 means no display.")
   public static long progressinterval = 5000;
 
   @Option("Perform expensive internal checks (for Randoop debugging)")
@@ -620,7 +622,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean log_operation_history = false;
 
   /**
-   * Name of a file to which to log the operation usage history . This operation is not affected by
+   * Name of a file to which to log the operation usage history. This operation is not affected by
    * setting <code>--log-operation-history</code>.
    */
   @Option("Track and log operation usage counts to this file")

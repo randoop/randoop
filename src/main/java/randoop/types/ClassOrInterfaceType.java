@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a class or interface type as defined in JLS Section 4.3.
@@ -96,6 +97,11 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
         || this.enclosingType.equals(otherType.enclosingType);
   }
 
+  @Override
+  public int hashCode() {
+    return Objects.hash(isMemberClass(), enclosingType);
+  }
+
   /**
    * {@inheritDoc}
    *
@@ -144,6 +150,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return the name of this class
    */
+  @Override
   public String getSimpleName() {
     return getRuntimeClass().getSimpleName();
   }
@@ -423,6 +430,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return true if this type has a wildcard, and false otherwise
    */
+  @Override
   public boolean hasWildcard() {
     return false;
   }

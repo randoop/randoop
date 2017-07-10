@@ -12,7 +12,11 @@ public final class Log {
     throw new IllegalStateException("no instance");
   }
 
-  /** Log to GenInputsAbstract.log, if that is non-null. */
+  /**
+   * Log to GenInputsAbstract.log, if that is non-null.
+   *
+   * @param s the string to output
+   */
   public static void log(String s) {
     if (!isLoggingOn()) {
       return;
@@ -27,7 +31,11 @@ public final class Log {
     }
   }
 
-  /** Log to GenInputsAbstract.log, if that is non-null. */
+  /**
+   * Log to GenInputsAbstract.log, if that is non-null.
+   *
+   * @param s the string to output (followed by a newline)
+   */
   public static void logLine(String s) {
     if (!isLoggingOn()) {
       return;
@@ -43,7 +51,11 @@ public final class Log {
     }
   }
 
-  /** Log to GenInputsAbstract.log, if that is non-null. */
+  /**
+   * Log to GenInputsAbstract.log, if that is non-null.
+   *
+   * @param t the Throwable whose stack trace to log
+   */
   public static void logStackTrace(Throwable t) {
     if (!isLoggingOn()) {
       return;

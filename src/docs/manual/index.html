@@ -51,7 +51,6 @@ The Randoop homepage is
       <li><a href="#checkrep">Specifying representation invariant methods (such as <code>checkRep</code>)</a></li>
       <li><a href="#exercised-filter">Instrumenting classes for filtering tests on exercised-classes</a></li>
       <li><a href="#primitives">Specifying additional primitive values</a></li>
-      <li><a href="#usethreads">Speeding up test generation</a></li>
     </ul></li>
   <li><a href="#getting_help">Getting help</a>
     <ul>
@@ -750,20 +749,18 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>See an <a href= "https://randoop.github.io/randoop/manual/method_list_example.txt">
  example</a>.
             <li id="option:omitmethods"><b>--omitmethods=</b><i>regex</i> <code>[+]</code>.
-             A pattern that indicates methods that should not be included in generated tests. Randoop will
- not attempt to directly call methods whose <code>java.lang.reflect.Method.toString()</code> matches
- the regular expression given. This does not prevent indirect calls to such methods from other,
- allowed methods.
+             Methods whose <code>java.lang.reflect.Method.toString() toString()</code> matches this regex are not
+ directly called by test methods. This does not prevent indirect calls to such methods from
+ other, allowed methods.
 
- <p>Randoop only calls methods that are specified by one of the <code>--testclass</code>, <code>
- -classlist</code>, or <code>--methodlist</code> command-line options; the purpose of <code>
- --omitmethods</code> is to override one of those other command-line options.
+ <p>Randoop only calls methods that are specified by one of the <code>--testclass</code>, <code>--classlist</code>, or <code>--methodlist</code> command-line options; the purpose of <code>omitmethods</code>
+ --is to override one of those other command-line options.
+
+ <p>The regex may match a substring of the method name, unless the regex is anchored with <code>^</code> or <code>$</code>.
 
  <p>Note:
 
  <ul>
-   <li>The regex is unanchored, so <code>^</code> or <code>$</code> may be needed to get the
-       correct results.
    <li>If a method is inherited without an override, the pattern must match the superclass
        method.
  </ul>
@@ -830,9 +827,8 @@ Randoop about your application, and that is how we recommend using Randoop.
  increases the runtime by approximately 50%. [default true]
             <li id="option:minimize-error-test"><b>--minimize-error-test=</b><i>boolean</i>.
              Flag indicating whether or not to automatically minimize error-revealing tests. Both original
- and minimized versions of each test class will be output. Minimization is automatically enabled
- when <code>--stop-on-error-test</code> is set. Setting this option is not recommended when the
- number of error-revealing tests is expected to be greater than 100. [default false]
+ and minimized versions of each test class will be output. Setting this option may cause long
+ Randoop run times if Randoop outputs and minimizes more than about 100 error-revealing tests. [default true]
       </ul>
   <li id="optiongroup:Test-classification">Test classification
       <ul>
@@ -1099,7 +1095,7 @@ Randoop about your application, and that is how we recommend using Randoop.
              Track and log the usage of operations during generation to standard out. This option is not
  affected by setting <code>--operation-history-log</code>. [default false]
             <li id="option:operation-history-log"><b>--operation-history-log=</b><i>filewriter</i>.
-             Name of a file to which to log the operation usage history . This operation is not affected by
+             Name of a file to which to log the operation usage history. This operation is not affected by
  setting <code>--log-operation-history</code>.
       </ul>
   <li id="optiongroup:Advanced-extension-points">Advanced extension points
@@ -1111,11 +1107,13 @@ Randoop about your application, and that is how we recommend using Randoop.
       <ul>
             <li id="option:usethreads"><b>--usethreads=</b><i>boolean</i>.
              If true, Randoop executes each test in a separate thread and kills tests that take too long to
- finish. Tests killed in this manner are not reported to the user.
+ finish, as determined by the --timeout command-line argument. Tests killed in this manner are
+ not reported to the user.
 
- <p>Use this option if Randoop does not terminate is usually due to execution of code under test
- that results in an infinite loop. The downside of this option is a BIG (order-of-magnitude)
- decrease in generation speed. The tests are not run in parallel, merely in isolation. [default true]
+ <p>Use this option if Randoop does not terminate, which is usually due to execution of code
+ under test that results in an infinite loop or that waits for user input. The downside of this
+ option is a BIG (order-of-magnitude) decrease in generation speed. The tests are not run in
+ parallel, merely in isolation. [default false]
             <li id="option:timeout"><b>--timeout=</b><i>int</i>.
              After this many milliseconds, a non-returning method call, and its associated test, are stopped
  forcefully. Only meaningful if --usethreads is also specified. [default 5000]
@@ -1387,7 +1385,7 @@ If the rep invariant is ever violated, the program has a bug.
 <p>
 By using the
 <a href="https://randoop.github.io/randoop/api/randoop/CheckRep.html"><code>@CheckRep</code></a>
-annotation (don't forget to <code>import randoop.*</code>), you can
+annotation, you can
 tell Randoop which methods in your classes under test are rep
 invariant methods.  Randoop will call these methods; if the method
 ever fails, Randoop outputs the test as a failing test.
@@ -1545,26 +1543,6 @@ classes under test
 </li>
 </ul>
 
-<h2 id="usethreads">Speeding up test generation</h2>
-
-<p>
-To increase the number of tests that Randoop generates in a given amount of
-time, run Randoop with <code>--usethreads=false</code>. This will cause
-Randoop to
-use a single thread to execute all tests, and can speed up the tool by
-an order of magnitude.
-</p>
-
-<p>
-When running with <code>--usethreads=false</code> (the default), Randoop
-executes each generated test in a separate thread.  This enables Randoop to
-detect and discard non-terminating tests.  If you
-set <code>--usethreads</code> to <code>false</code> and Randoop appears to
-hang, it may be due to a randomly-generated test that is taking too long to
-execute and cannot be killed by Randoop.  Also see the section
-on <a href="#nontermination">Randoop non-termination</a>.
-</p>
-
 
 <h1 id="getting_help">Getting help</h1>
 
@@ -1711,7 +1689,8 @@ information, or consult with the Randoop developers.
 </p>
 
 <p>
-Also see the section on <a href="#usethreads">speeding up test generation</a>.
+For example, <a href="#nontermination">avoid using
+<code>--usethreads</code></a>, which can make Randoop run very slowly.
 </p>
 
 
@@ -1724,11 +1703,6 @@ Here are three ways to deal with the problem.
 </p>
 <ul>
   <li>
-    Run Randoop with the command-line options <code>--usethreads=true
-    --timeout=5000</code>.  This will cause Randoop to discard tests in
-    which any directly-called method takes longer than 5 seconds to run.
-  </li>
-  <li>
     Determine which calls are executing by examining the stack trace.  On
     Unix this can be done by typing <code>Ctrl-\</code> (hold down the
     Control key, then press the Backslash key).  If the same methods appear
@@ -1736,6 +1710,13 @@ Here are three ways to deal with the problem.
     can <a href="#specifying-methods">exclude them from consideration by
     Randoop</a> or <a href="#map_calls">prevent the JVM from calling the
     method</a>.
+  </li>
+  <li>
+    Run Randoop with the command-line option
+    <a href="#option:usethreads"><code>--usethreads=true</code></a>.
+    This will cause Randoop to discard tests in
+    which any directly-called method takes
+    <a href="#option:usethreads"><code>too long</code></a> to run.
   </li>
   <li>
     If you suspect the problem may be a bug in Randoop, use the

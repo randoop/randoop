@@ -20,15 +20,17 @@ public final class ReflectionExecutor {
 
   /**
    * If true, Randoop executes each test in a separate thread and kills tests that take too long to
-   * finish. Tests killed in this manner are not reported to the user.
+   * finish, as determined by the --timeout command-line argument. Tests killed in this manner are
+   * not reported to the user.
    *
-   * <p>Use this option if Randoop does not terminate is usually due to execution of code under test
-   * that results in an infinite loop. The downside of this option is a BIG (order-of-magnitude)
-   * decrease in generation speed. The tests are not run in parallel, merely in isolation.
+   * <p>Use this option if Randoop does not terminate, which is usually due to execution of code
+   * under test that results in an infinite loop or that waits for user input. The downside of this
+   * option is a BIG (order-of-magnitude) decrease in generation speed. The tests are not run in
+   * parallel, merely in isolation.
    */
   @OptionGroup("Threading and timeouts")
   @Option("Execute each test in a separate thread, with timeout")
-  public static boolean usethreads = true;
+  public static boolean usethreads = false;
 
   /**
    * After this many milliseconds, a non-returning method call, and its associated test, are stopped

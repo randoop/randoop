@@ -101,6 +101,7 @@ public class Variable implements Comparable<Variable> {
     return basename + Integer.toString(i);
   }
 
+  @SuppressWarnings("ReferenceEquality")
   @Override
   public int compareTo(Variable o) {
     if (o == null) throw new IllegalArgumentException();
