@@ -16,10 +16,8 @@ import randoop.main.GenInputsAbstract;
 // Currently this class does both things.
 public class ProgressDisplay extends Thread {
 
-  /** Lock so that unfortunate interleaving of this printing can be avoided */
+  /** Global lock to prevent interleaving of progress display messages. */
   public static final Object print_synchro = new Object();
-
-  private static int progresswidth = 170;
 
   private static int exit_if_no_new_sequences_after_mseconds = 10000;
 
@@ -36,10 +34,7 @@ public class ProgressDisplay extends Thread {
   private AbstractGenerator generator;
 
   public ProgressDisplay(
-      AbstractGenerator generator,
-      RandoopListenerManager listenerMgr,
-      Mode outputMode,
-      int progressWidth) {
+      AbstractGenerator generator, RandoopListenerManager listenerMgr, Mode outputMode) {
     super("randoop.util.ProgressDisplay");
     if (generator == null) {
       throw new IllegalArgumentException("generator is null");
@@ -47,7 +42,6 @@ public class ProgressDisplay extends Thread {
     this.generator = generator;
     this.outputMode = outputMode;
     this.listenerMgr = listenerMgr;
-    ProgressDisplay.progresswidth = progressWidth;
     setDaemon(true);
   }
 
@@ -141,8 +135,7 @@ public class ProgressDisplay extends Thread {
     if (GenInputsAbstract.progressinterval == -1) return;
     // "display("");" is wrong because it leaves the timestamp and writes
     // spaces across the screen.
-    String status = UtilMDE.rpad("", progresswidth - 1);
-    System.out.print("\r" + status);
+    System.out.print("\r" + UtilMDE.rpad("", 199)); // erase about 200 characters of text
     System.out.print("\r"); // return to beginning of line
     System.out.flush();
   }

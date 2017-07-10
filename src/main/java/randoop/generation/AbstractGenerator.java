@@ -278,7 +278,7 @@ public abstract class AbstractGenerator {
     timer.startTiming();
 
     if (!GenInputsAbstract.noprogressdisplay) {
-      progressDisplay = new ProgressDisplay(this, listenerMgr, ProgressDisplay.Mode.MULTILINE, 200);
+      progressDisplay = new ProgressDisplay(this, listenerMgr, ProgressDisplay.Mode.MULTILINE);
       progressDisplay.start();
     }
 
