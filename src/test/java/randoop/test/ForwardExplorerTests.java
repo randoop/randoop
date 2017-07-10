@@ -106,11 +106,12 @@ public class ForwardExplorerTests {
     //GenFailures.noprogressdisplay = true;
     //Log.log = new FileWriter("templog.txt");
     int oldTimeout = ReflectionExecutor.timeout;
-    ReflectionExecutor.timeout = 200;
+    ReflectionExecutor.timeout = 500;
+    int oldProgressintervalsteps = GenInputsAbstract.progressintervalsteps;
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     final List<TypedOperation> model = getConcreteOperations(classes);
     assertTrue("model should not be empty", model.size() != 0);
-    GenInputsAbstract.ignore_flaky_tests = true;
+    // GenInputsAbstract.ignore_flaky_tests = true;
     ForwardGenerator exp =
         new ForwardGenerator(
             model,
@@ -127,6 +128,7 @@ public class ForwardExplorerTests {
       fail("Exception during generation: " + t);
     }
     ReflectionExecutor.timeout = oldTimeout;
+    GenInputsAbstract.progressintervalsteps = oldProgressintervalsteps;
     for (Sequence s : exp.getAllSequences()) {
       String str = s.toCodeString();
       if (str.contains("bisort")) bisort = true;
