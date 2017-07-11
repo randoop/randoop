@@ -113,11 +113,10 @@ public class ForwardExplorerTests {
     int oldTimeout = ReflectionExecutor.timeout;
     ReflectionExecutor.timeout = 500;
     long oldProgressintervalsteps = GenInputsAbstract.progressintervalsteps;
-    GenInputsAbstract.progressintervalsteps = 10;
+    GenInputsAbstract.progressintervalsteps = 100;
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     final List<TypedOperation> model = getConcreteOperations(classes);
     assertTrue("model should not be empty", model.size() != 0);
-    // GenInputsAbstract.ignore_flaky_tests = true;
     ForwardGenerator exp =
         new ForwardGenerator(
             model,
@@ -172,7 +171,6 @@ public class ForwardExplorerTests {
     classes.add(Tree.class);
 
     System.out.println(classes);
-    GenInputsAbstract.ignore_flaky_tests = true;
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     final List<TypedOperation> model = getConcreteOperations(classes);
     assertTrue("model should not be empty", model.size() != 0);

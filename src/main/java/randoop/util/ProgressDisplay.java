@@ -101,7 +101,7 @@ public class ProgressDisplay extends Thread {
 
     System.out.println();
     System.out.print("*** Randoop has detected no input generation attempts after ");
-    System.out.println((exit_if_no_new_sequences_after_milliseconds / 10) + " seconds.");
+    System.out.println((exit_if_no_new_sequences_after_milliseconds / 1000) + " seconds.");
     System.out.println("This indicates Randoop may be executing a sequence");
     System.out.println("that leads to nonterminating behavior.");
     System.out.println("Last sequence generated:");
@@ -133,10 +133,15 @@ public class ProgressDisplay extends Thread {
     }
   }
 
+  /** Return true if no progress output should be displayed. */
+  private boolean noProgressOutput() {
+    return GenInputsAbstract.progressintervalmillis <= 0
+        && GenInputsAbstract.progressintervalsteps <= 0;
+  }
+
   /** Clear the display; good to do before printing to System.out. */
   public void clear() {
-    if (GenInputsAbstract.progressintervalmillis == -1
-        && GenInputsAbstract.progressintervalsteps == -1) return;
+    if (noProgressOutput()) return;
     // "display("");" is wrong because it leaves the timestamp and writes
     // spaces across the screen.
     System.out.print("\r" + UtilMDE.rpad("", 199)); // erase about 200 characters of text
@@ -149,8 +154,7 @@ public class ProgressDisplay extends Thread {
    * display.
    */
   public void displayWithTime() {
-    if (GenInputsAbstract.progressintervalmillis == -1
-        && GenInputsAbstract.progressintervalsteps == -1) return;
+    if (noProgressOutput()) return;
     display(messageWithTime());
   }
 
@@ -159,8 +163,7 @@ public class ProgressDisplay extends Thread {
    * display.
    */
   public void displayWithoutTime() {
-    if (GenInputsAbstract.progressintervalmillis == -1
-        && GenInputsAbstract.progressintervalsteps == -1) return;
+    if (noProgressOutput()) return;
     display(messageWithoutTime());
   }
 
@@ -170,8 +173,7 @@ public class ProgressDisplay extends Thread {
    * @param message the message to display
    */
   private void display(String message) {
-    if (GenInputsAbstract.progressintervalmillis == -1
-        && GenInputsAbstract.progressintervalsteps == -1) return;
+    if (noProgressOutput()) return;
     synchronized (print_synchro) {
       System.out.print(
           (this.outputMode == Mode.SINGLE_LINE_OVERWRITE ? "\r" : Globals.lineSep) + message);
