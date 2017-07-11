@@ -115,13 +115,7 @@ public class SpecialCoveredClassTest {
     Set<TypedOperation> observers = new LinkedHashSet<>();
     ForwardGenerator testGenerator =
         new ForwardGenerator(
-            model,
-            observers,
-            GenInputsAbstract.timelimit * 1000,
-            GenInputsAbstract.inputlimit,
-            GenInputsAbstract.outputlimit,
-            componentMgr,
-            listenerMgr);
+            model, observers, new GenInputsAbstract.Limits(), componentMgr, listenerMgr);
     GenTests genTests = new GenTests();
 
     TypedOperation objectConstructor = null;

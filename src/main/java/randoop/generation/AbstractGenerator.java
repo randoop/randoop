@@ -55,20 +55,19 @@ public abstract class AbstractGenerator {
   public final Timer timer = new Timer();
 
   /**
-   * Time limit for generation. If generation reaches the specified time limit (in milliseconds),
-   * the generator stops generating sequences. Zero means no limit.
+   * Time limit for generation, in milliseconds, after which the generator stops generating
+   * sequences. Zero means no limit.
    */
   public final long maxTimeMillis;
 
   /**
-   * Sequence limit for generation. If generation reaches the specified sequence limit, the
-   * generator stops generating sequences.
+   * Maximum number of sequences to generate, after which the generator stops generating sequences.
    */
   public final int maxGeneratedSequences;
 
   /**
-   * Limit for output. Once the specified number of sequences are in the output lists, the generator
-   * will stop.
+   * Maximum number of sequences to output. Once the specified number of sequences are in the output
+   * lists, the generator will stop.
    */
   public final int maxOutputSequences;
 
@@ -130,9 +129,7 @@ public abstract class AbstractGenerator {
    *
    * @param operations statements (e.g. methods and constructors) used to create sequences. Cannot
    *     be null.
-   * @param timeMillis maximum time to spend in generation. Must be non-negative.
-   * @param maxGeneratedSequences the maximum number of sequences to generate. Must be non-negative.
-   * @param maxOutSequences the maximum number of sequences to output. Must be non-negative.
+   * @param limits maximum time and number of sequences to generate/output
    * @param componentManager the component manager to use to store sequences during component-based
    *     generation. Can be null, in which case the generator's component manager is initialized as
    *     <code>new ComponentManager()</code>.
@@ -142,17 +139,15 @@ public abstract class AbstractGenerator {
    */
   public AbstractGenerator(
       List<TypedOperation> operations,
-      long timeMillis,
-      int maxGeneratedSequences,
-      int maxOutSequences,
+      GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
       IStopper stopper,
       RandoopListenerManager listenerManager) {
     assert operations != null;
 
-    this.maxTimeMillis = timeMillis;
-    this.maxGeneratedSequences = maxGeneratedSequences;
-    this.maxOutputSequences = maxOutSequences;
+    this.maxTimeMillis = limits.maxTimeMillis;
+    this.maxGeneratedSequences = limits.maxGeneratedSequences;
+    this.maxOutputSequences = limits.maxOutSequences;
     this.operations = operations;
     this.executionVisitor = new DummyVisitor();
     this.outputTest = new AlwaysFalse<>();
@@ -233,7 +228,7 @@ public abstract class AbstractGenerator {
   }
 
   /**
-   * Generate an individual test sequence
+   * Attempt to generate a test (a sequence).
    *
    * @return a test sequence, may be null
    */
@@ -307,6 +302,11 @@ public abstract class AbstractGenerator {
         listenerMgr.generationStepPost(eSeq);
       }
 
+      if ((GenInputsAbstract.progressintervalsteps != -1)
+          && (num_steps % GenInputsAbstract.progressintervalsteps == 0)) {
+        progressDisplay.displayWithoutTime();
+      }
+
       if (eSeq == null) {
         continue;
       }
@@ -338,7 +338,7 @@ public abstract class AbstractGenerator {
     }
 
     if (!GenInputsAbstract.noprogressdisplay && progressDisplay != null) {
-      progressDisplay.display();
+      progressDisplay.displayWithTime();
       progressDisplay.shouldStop = true;
     }
 

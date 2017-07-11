@@ -351,6 +351,36 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Maximum number of candidate tests generated")
   public static int inputlimit = LIMIT_DEFAULT;
 
+  /**
+   * Wraps the three ways of limiting Randoop test generation.
+   *
+   * <p>The purpose is to shorten parameter lists and make them easier to read.
+   */
+  public static class Limits {
+    /* Maximum time in milliseconds to spend in generation. Must be non-negative. Zero means no limit. */
+    public int maxTimeMillis;
+    /* Maximum number of sequences to output. Must be non-negative. */
+    public int maxOutSequences;
+    /* Maximum number of sequences to generate. Must be non-negative. */
+    public int maxGeneratedSequences;
+
+    public Limits() {
+      this(timelimit, outputlimit, inputlimit);
+    }
+
+    /**
+     * @param timelimit maximum time in seconds to spend in generation. Must be non-negative. Zero
+     *     means no limit.
+     * @param outputlimit the maximum number of sequences to generate. Must be non-negative.
+     * @param inputlimit the maximum number of sequences to output. Must be non-negative.
+     */
+    public Limits(int timelimit, int outputlimit, int inputlimit) {
+      this.maxTimeMillis = timelimit * 1000;
+      this.maxOutSequences = outputlimit;
+      this.maxGeneratedSequences = inputlimit;
+    }
+  }
+
   /** Do not generate tests with more than this many statements. */
   @Option("Do not generate tests with more than this many statements")
   public static int maxsize = 100;
@@ -590,7 +620,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean noprogressdisplay = false;
 
   @Option("Display progress message every <int> milliseconds. -1 means no display.")
-  public static long progressinterval = 5000;
+  public static long progressintervalmillis = 60000;
+
+  @Option("Display progress message every <int> attempts to create a test; -1 means none")
+  public static long progressintervalsteps = 1000;
 
   @Option("Perform expensive internal checks (for Randoop debugging)")
   public static boolean debug_checks = false;

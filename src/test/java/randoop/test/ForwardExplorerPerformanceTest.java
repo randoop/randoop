@@ -87,9 +87,7 @@ public class ForwardExplorerPerformanceTest {
         new ForwardGenerator(
             model,
             new LinkedHashSet<TypedOperation>(),
-            TIME_LIMIT_SECS * 1000,
-            Integer.MAX_VALUE,
-            Integer.MAX_VALUE,
+            new GenInputsAbstract.Limits(TIME_LIMIT_SECS, Integer.MAX_VALUE, Integer.MAX_VALUE),
             null,
             null,
             null);
