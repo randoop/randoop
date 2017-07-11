@@ -11,8 +11,8 @@ env:
   - OS=ubuntu JDKVER=jdk7 GROUP=test
   - OS=ubuntu JDKVER=jdk8 GROUP=test
   - OS=ubuntu JDKVER=jdkany GROUP=misc
-  - OS=fedora JDKVER=jdk8 GROUP=test
-  - OS=centos JDKVER=jdk8 GROUP=test
+#  - OS=fedora JDKVER=jdk8 GROUP=test
+#  - OS=centos JDKVER=jdk8 GROUP=test
 
 before_script:
 - docker pull mdernst/$OS-for-randoop-$JDKVER

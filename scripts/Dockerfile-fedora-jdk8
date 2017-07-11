@@ -11,6 +11,8 @@ MAINTAINER Michael Ernst <mernst@cs.washington.edu>
 RUN dnf -qy upgrade && dnf -qy install \
   git \
   gradle \
+  which \
   java-1.8.0-openjdk \
   java-1.8.0-openjdk-devel \
-&& dnf -q clean all
+&& dnf -q clean all \
+&& ln -s /etc/pki/java/cacerts /usr/lib/jvm/java-1.8.0-openjdk/jre/lib/security/cacerts
