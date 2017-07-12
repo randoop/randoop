@@ -396,6 +396,7 @@ public class RandoopSystemTest {
     options.setErrorBasename("CheckRepTest");
 
     options.setFlag("no-regression-tests");
+    options.setOption("attemptedLimit", "1000");
     options.setOption("generatedLimit", "200");
     options.addTestClass("examples.CheckRep1");
     options.addTestClass("examples.CheckRep2");
@@ -445,6 +446,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("LongString");
     options.setErrorBasename("");
 
+    options.setOption("attemptedLimit", "1000");
     options.setOption("generatedLimit", "100");
     options.addTestClass("randoop.test.LongString");
 
@@ -468,6 +470,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("VisibilityTest");
     options.setErrorBasename("");
 
+    options.setOption("attemptedLimit", "1000");
     options.setOption("generatedLimit", "200");
     options.addTestClass("examples.Visibility");
 
@@ -822,6 +825,7 @@ public class RandoopSystemTest {
     options.addTestClass("generror.Ints");
     options.setErrorBasename("LexError");
     options.setRegressionBasename("LexRegression");
+    options.setOption("attemptedLimit", "10000");
     options.setOption("generatedLimit", "3000");
 
     generateAndTestWithCoverage(
