@@ -99,14 +99,22 @@
 <h2 id="prerequisites">Prerequisites</h2>
 
 <p>
-  Install the <code>CSS::DOM</code> Perl module.
+  To install prerequisites, execute (as superuser) the RUN commands in files
+  named <code>scripts/Dockerfile-<em>OPERATINGSYSTEM</em>-jdkany</code>.
+  For example, to install prerequisites on Ubuntu, run
 </p>
+<!-- Accurate as of July 2017 -->
+  <pre>
+    sudo apt-get -qqy install git gradle default-jdk
+    sudo apt-get -qqy install perl python-pip
+    sudo pip install html5validator
+  </pre>
 
 <p>
-  Install <code>html5validator</code>, using one of the the following two command lines:
+  If you do not have superuser permissions, ask your system administrator
+  to install the software.  You can run the last command yourself, by changing it to
+  <code>pip install --user html5validator</code>.
 </p>
-<pre><code>sudo pip install html5validator
-pip install --user html5validator</code></pre>
 
 
 <h1 id="compiling">Building Randoop</h1>
