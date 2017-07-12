@@ -188,16 +188,11 @@ public class RandoopSystemTest {
     options.addTestClass("java2.util2.TreeSet");
     options.addTestClass("java2.util2.Collections");
     options.setFlag("no-error-revealing-tests");
-    options.setOption("outputlimit", "200");
+    options.setOption("outputLimit", "200");
     options.setOption("npe-on-null-input", "EXPECTED");
     options.setFlag("debug_checks");
     options.setOption("observers", "resources/systemTest/randoop1_observers.txt");
     options.setOption("omit-field-list", "resources/systemTest/testclassomitfields.txt");
-
-    // Temporary, extra debugging for the runNaiveCollectionsTest
-    options.setOption("selection-log", testEnvironment.workingDir + "/selection-log.txt");
-    options.setOption(
-        "operation-history-log", testEnvironment.workingDir + "/operation-history-log.txt");
 
     CoverageChecker coverageChecker = new CoverageChecker(options);
     coverageChecker.exclude("java2.util2.Collections.get(java2.util2.ListIterator, int)");
@@ -220,8 +215,8 @@ public class RandoopSystemTest {
     coverageChecker.exclude("java2.util2.TreeSet.subSet(java.lang.Object, java.lang.Object)");
     coverageChecker.exclude("java2.util2.TreeSet.writeObject(java.io.ObjectOutputStream)");
 
-    // The following are known coverage inconsistencies when using --literals-level=CLASS_OR_ALL with --p.const=.01
-    // These inconsistencies depend on the value of --p_const
+    // The following are known coverage inconsistencies when using --literals-level=CLASS_OR_ALL with --p.const=.01 .
+    // These inconsistencies depend on the value of --p_const .
     if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS_OR_ALL
         && GenInputsAbstract.p_const == .01) {
       /* Inconsistent locally, covered on Travis */
@@ -262,18 +257,13 @@ public class RandoopSystemTest {
     options.setPackageName("foo.bar");
     options.setRegressionBasename("NaiveRegression");
     options.setErrorBasename("NaiveError");
-    options.setOption("outputlimit", "200");
+    options.setOption("outputLimit", "200");
     options.addTestClass("java2.util2.TreeSet");
     options.addTestClass("java2.util2.ArrayList");
     options.addTestClass("java2.util2.LinkedList");
     options.addTestClass("java2.util2.Collections");
     options.setOption("omit-field-list", "resources/systemTest/naiveomitfields.txt");
     options.setFlag("log-operation-history");
-
-    // Temporary, extra debugging for the runNaiveCollectionsTest
-    options.setOption("selection-log", testEnvironment.workingDir + "/selection-log.txt");
-    options.setOption(
-        "operation-history-log", testEnvironment.workingDir + "/operation-history-log.txt");
 
     CoverageChecker coverageChecker = new CoverageChecker(options);
     //    coverageChecker.exclude("java2.util2.ArrayList.add(int, java.lang.Object)");
@@ -420,7 +410,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("JDK_Tests_regression");
     options.setErrorBasename("JDK_Tests_error");
 
-    options.setOption("inputlimit", "1000");
+    options.setOption("generatedLimit", "1000");
     options.setOption("null-ratio", "0.3");
     options.setOption("alias-ratio", "0.3");
     options.setFlag("small-tests");
@@ -458,7 +448,7 @@ public class RandoopSystemTest {
     options.setErrorBasename("BuggyTest");
 
     options.setFlag("no-regression-tests");
-    options.setOption("inputlimit", "1000");
+    options.setOption("generatedLimit", "1000");
     // Don't minimize the tests because it would take too long to finish.
     options.setOption("minimize_error_test", "false");
     options.addClassList("resources/systemTest/buggyclasses.txt");
@@ -478,17 +468,6 @@ public class RandoopSystemTest {
     coverageChecker.ignore("examples.Buggy.BuggyEqualsTransitive.hashCode()");
 
     coverageChecker.ignore("examples.Buggy.StackOverflowError()");
-
-    /* Excluded locally and on Travis */
-    coverageChecker.exclude("examples.Buggy.Buggy3.equals(java.lang.Object)");
-    coverageChecker.exclude("examples.Buggy.Buggy3.hashCode()");
-    coverageChecker.exclude("examples.Buggy.Buggy5.equals(java.lang.Object)");
-    coverageChecker.exclude("examples.Buggy.Buggy5.getOne()");
-    coverageChecker.exclude("examples.Buggy.Buggy5.getTwo()");
-    coverageChecker.exclude("examples.Buggy.BuggyEqualsTransitive.equals(java.lang.Object)");
-    coverageChecker.exclude("examples.Buggy.BuggyEqualsTransitive.getOne()");
-    coverageChecker.exclude("examples.Buggy.BuggyEqualsTransitive.getThree()");
-    coverageChecker.exclude("examples.Buggy.BuggyEqualsTransitive.getTwo()");
 
     // Coverage inconsistencies
     if (GenInputsAbstract.literals_level == GenInputsAbstract.ClassLiteralsMode.CLASS) {
@@ -531,7 +510,8 @@ public class RandoopSystemTest {
     options.setErrorBasename("CheckRepTest");
 
     options.setFlag("no-regression-tests");
-    options.setOption("inputlimit", "200");
+    options.setOption("attemptedLimit", "1000");
+    options.setOption("generatedLimit", "200");
     options.addTestClass("examples.CheckRep1");
     options.addTestClass("examples.CheckRep2");
 
@@ -554,7 +534,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("LiteralsReg");
     options.setErrorBasename("LiteralsErr");
 
-    options.setOption("inputlimit", "1000");
+    options.setOption("generatedLimit", "1000");
     options.addTestClass("randoop.literals.A");
     options.addTestClass("randoop.literals.A2");
     options.addTestClass("randoop.literals.B");
@@ -580,7 +560,8 @@ public class RandoopSystemTest {
     options.setRegressionBasename("LongString");
     options.setErrorBasename("");
 
-    options.setOption("inputlimit", "100");
+    options.setOption("attemptedLimit", "1000");
+    options.setOption("generatedLimit", "100");
     options.addTestClass("randoop.test.LongString");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
@@ -603,7 +584,8 @@ public class RandoopSystemTest {
     options.setRegressionBasename("VisibilityTest");
     options.setErrorBasename("");
 
-    options.setOption("inputlimit", "200");
+    options.setOption("attemptedLimit", "1000");
+    options.setOption("generatedLimit", "200");
     options.addTestClass("examples.Visibility");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
@@ -630,7 +612,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("NoOutputTest");
     options.setErrorBasename("");
 
-    options.setOption("inputlimit", "100");
+    options.setOption("generatedLimit", "100");
     options.addTestClass("java.util.LinkedList");
     options.setFlag("noprogressdisplay");
 
@@ -653,7 +635,7 @@ public class RandoopSystemTest {
     options.setErrorBasename("InnerClassError");
     options.addTestClass("randoop.test.ClassWithInnerClass");
     options.addTestClass("randoop.test.ClassWithInnerClass$A");
-    options.setOption("inputlimit", "20");
+    options.setOption("generatedLimit", "20");
     options.setFlag("silently-ignore-bad-class-names");
     options.setOption("unchecked-exception", "ERROR");
     options.setOption("npe-on-null-input", "ERROR");
@@ -674,8 +656,8 @@ public class RandoopSystemTest {
     options.setRegressionBasename("ParamTypeReg");
     options.setErrorBasename("ParamTypeErr");
     options.addTestClass("muse.SortContainer");
-    options.setOption("outputlimit", "100");
-    options.setOption("inputlimit", "30000");
+    options.setOption("generatedLimit", "30000");
+    options.setOption("outputLimit", "100");
     options.setFlag("forbid-null");
     options.setOption("null-ratio", "0");
 
@@ -694,8 +676,8 @@ public class RandoopSystemTest {
     options.setRegressionBasename("BoundsReg");
     options.setErrorBasename("BoundsErr");
     options.addTestClass("muse.RecursiveBound");
-    options.setOption("outputlimit", "100");
-    options.setOption("inputlimit", "30000");
+    options.setOption("generatedLimit", "30000");
+    options.setOption("outputLimit", "100");
     options.setFlag("forbid-null");
     options.setOption("null-ratio", "0");
 
@@ -715,7 +697,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("DefaultPackageReg");
     options.setErrorBasename("DefaultPackageErr");
     options.addTestClass("ClassInDefaultPackage");
-    options.setOption("inputlimit", "20");
+    options.setOption("generatedLimit", "20");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
@@ -733,7 +715,7 @@ public class RandoopSystemTest {
     options.setRegressionBasename("RegressionTest");
     options.setErrorBasename("ErrorTest");
     options.addTestClass("misc.ThrowsAnonymousException");
-    options.setOption("outputlimit", "2");
+    options.setOption("outputLimit", "2");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
@@ -765,7 +747,7 @@ public class RandoopSystemTest {
     options.addTestClass("collectiongen.Day");
     options.addTestClass("collectiongen.AnInputClass");
     options.setFlag("small-tests");
-    options.setOption("inputlimit", "500");
+    options.setOption("generatedLimit", "500");
     options.setOption("omitmethods", "hashCode\\(\\)");
 
     CoverageChecker coverageChecker = new CoverageChecker(options);
@@ -794,7 +776,7 @@ public class RandoopSystemTest {
     options.setErrorBasename("EnumCheckError");
     options.addTestClass("examples.Option");
     options.setFlag("small-tests");
-    options.setOption("inputlimit", "20");
+    options.setOption("generatedLimit", "20");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
@@ -808,6 +790,7 @@ public class RandoopSystemTest {
     TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("empty-names");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.addClassList("resources/systemTest/emptyclasslist.txt");
+    options.setOption("attemptedLimit", "20");
 
     RandoopRunStatus result = generateAndCompile(testEnvironment, options, true);
 
@@ -831,7 +814,7 @@ public class RandoopSystemTest {
     options.addTestClass("examples.NaNBadness");
     options.setRegressionBasename("NaNRegression");
     options.setErrorBasename("NaNError");
-    options.setOption("inputlimit", "200");
+    options.setOption("generatedLimit", "200");
 
     ExpectedTests expectedRegressionTests = ExpectedTests.SOME;
     ExpectedTests expectedErrorTests = ExpectedTests.NONE;
@@ -850,7 +833,7 @@ public class RandoopSystemTest {
     options.setOption("junit-after-all", "resources/systemTest/afterallcode.txt");
     options.setOption("junit-before-each", "resources/systemTest/beforeeachcode.txt");
     options.setOption("junit-after-each", "resources/systemTest/aftereachcode.txt");
-    options.setOption("inputlimit", "200");
+    options.setOption("generatedLimit", "200");
     options.setFlag("no-error-revealing-tests");
 
     RandoopRunStatus runStatus = generateAndCompile(testEnvironment, options, false);
@@ -900,7 +883,7 @@ public class RandoopSystemTest {
     options.setOption("junit-after-all", "resources/systemTest/afterallcode.txt");
     options.setOption("junit-before-each", "resources/systemTest/beforeeachcode.txt");
     options.setOption("junit-after-each", "resources/systemTest/aftereachcode.txt");
-    options.setOption("inputlimit", "200");
+    options.setOption("generatedLimit", "200");
     options.setFlag("no-error-revealing-tests");
     options.unsetFlag("junit-reflection-allowed");
 
@@ -957,7 +940,8 @@ public class RandoopSystemTest {
     options.addTestClass("generror.Ints");
     options.setErrorBasename("LexError");
     options.setRegressionBasename("LexRegression");
-    options.setOption("inputlimit", "3000");
+    options.setOption("attemptedLimit", "10000");
+    options.setOption("generatedLimit", "3000");
 
     generateAndTestWithCoverage(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
@@ -971,7 +955,7 @@ public class RandoopSystemTest {
     options.addTestClass("compileerr.WildcardCollection");
     options.setErrorBasename("CompError");
     options.setRegressionBasename("CompRegression");
-    options.setOption("inputlimit", "3000");
+    options.setOption("generatedLimit", "3000");
 
     CoverageChecker coverageChecker = new CoverageChecker(options);
     coverageChecker.ignore("compileerr.WildcardCollection.getAStringList()");
@@ -991,8 +975,8 @@ public class RandoopSystemTest {
     options.setOption(
         "include-if-class-exercised",
         "resources/systemTest/instrument/testcase/coveredclasses.txt");
-    options.setOption("outputlimit", "250");
-    options.setOption("inputlimit", "500");
+    options.setOption("generatedLimit", "500");
+    options.setOption("outputLimit", "250");
     options.setErrorBasename("ExError");
     options.setRegressionBasename("ExRegression");
 
@@ -1024,8 +1008,8 @@ public class RandoopSystemTest {
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.addTestClass("generation.Dim5Matrix");
     options.addTestClass("generation.Dim6Matrix");
-    options.setOption("outputlimit", "200");
-    options.setOption("inputlimit", "2000");
+    options.setOption("generatedLimit", "2000");
+    options.setOption("outputLimit", "200");
 
     generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }

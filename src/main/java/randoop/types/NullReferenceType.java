@@ -70,6 +70,7 @@ class NullReferenceType extends ReferenceType {
    *
    * @return true if this type has a wildcard, and false otherwise
    */
+  @Override
   public boolean hasWildcard() {
     return false;
   }

@@ -319,6 +319,7 @@ public final class Sequence implements WeightedElement {
    * @param value the variable
    * @return the statement that assigned to this variable
    */
+  @SuppressWarnings("ReferenceEquality")
   public Statement getCreatingStatement(Variable value) {
     if (value.sequence != this) throw new IllegalArgumentException("value.owner != this");
     return statements.get((value).index);
@@ -590,6 +591,7 @@ public final class Sequence implements WeightedElement {
   }
 
   /** Two sequences are equal if their statements(+inputs) are element-wise equal. */
+  @SuppressWarnings("ReferenceEquality")
   @Override
   public final boolean equals(Object o) {
     if (!(o instanceof Sequence)) return false;
@@ -684,6 +686,7 @@ public final class Sequence implements WeightedElement {
 
   // Argument checker for extend method.
   // These checks should be caught by checkRep() too.
+  @SuppressWarnings("ReferenceEquality")
   private void checkInputs(TypedOperation operation, List<Variable> inputVariables) {
     if (operation.getInputTypes().size() != inputVariables.size()) {
       String msg =
