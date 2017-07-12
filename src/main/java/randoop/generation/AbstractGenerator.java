@@ -54,22 +54,8 @@ public abstract class AbstractGenerator {
    */
   public final Timer timer = new Timer();
 
-  /**
-   * Time limit for generation, in milliseconds, after which the generator stops generating
-   * sequences. Zero means no limit.
-   */
-  public final long maxTimeMillis;
-
-  /**
-   * Maximum number of sequences to generate, after which the generator stops generating sequences.
-   */
-  public final int maxGeneratedSequences;
-
-  /**
-   * Maximum number of sequences to output. Once the specified number of sequences are in the output
-   * lists, the generator will stop.
-   */
-  public final int maxOutputSequences;
+  /** Limits for generation, after which the generator will stop. */
+  public final GenInputsAbstract.Limits limits;
 
   /**
    * The list of statement kinds (methods, constructors, primitive value declarations, etc.) used to
@@ -145,9 +131,7 @@ public abstract class AbstractGenerator {
       RandoopListenerManager listenerManager) {
     assert operations != null;
 
-    this.maxTimeMillis = limits.maxTimeMillis;
-    this.maxGeneratedSequences = limits.maxGeneratedSequences;
-    this.maxOutputSequences = limits.maxOutSequences;
+    this.limits = limits;
     this.operations = operations;
     this.executionVisitor = new DummyVisitor();
     this.outputTest = new AlwaysFalse<>();
@@ -204,27 +188,18 @@ public abstract class AbstractGenerator {
   }
 
   /**
-   * Tests stopping criteria and determines whether generation should stop. Criteria are checked in
-   * this order:
+   * Tests stopping criteria.
    *
-   * <ul>
-   *   <li>if there is a listener manager, {@link RandoopListenerManager#stopGeneration()} returns
-   *       true,
-   *   <li>the elapsed generation time is greater than or equal to the max time in milliseconds,
-   *   <li>the number of output sequences is equal to the maximum output,
-   *   <li>the number of generated sequences is equal to the maximum generated sequence count, or
-   *   <li>if there is a stopper, {@link IStopper#stop()} returns true.
-   * </ul>
-   *
-   * @return true if any of stopping criteria are met, otherwise false
+   * @return true iff any stopping criterion is met
    */
-  protected boolean stop() {
-    return (listenerMgr != null && listenerMgr.stopGeneration())
-        || (maxTimeMillis != 0 && timer.getTimeElapsedMillis() >= maxTimeMillis)
+  protected boolean shouldStop() {
+    return (limits.timeLimitMillis != 0 && timer.getTimeElapsedMillis() >= limits.timeLimitMillis)
+        || (numAttemptedSequences() >= limits.attemptedLimit)
+        || (numGeneratedSequences() >= limits.generatedLimit)
+        || (numOutputSequences() >= limits.outputLimit)
         || (GenInputsAbstract.stop_on_error_test && numErrorSequences() > 0)
-        || (numOutputSequences() >= maxOutputSequences)
-        || (numGeneratedSequences() >= maxGeneratedSequences)
-        || (stopper != null && stopper.stop());
+        || (stopper != null && stopper.shouldStop())
+        || (listenerMgr != null && listenerMgr.shouldStopGeneration());
   }
 
   /**
@@ -233,6 +208,22 @@ public abstract class AbstractGenerator {
    * @return a test sequence, may be null
    */
   public abstract ExecutableSequence step();
+
+  /**
+   * Returns the count of attempts to generate a sequence so far.
+   *
+   * @return the number of attempts to generate a sequence so far
+   */
+  public int numAttemptedSequences() {
+    return num_steps;
+  }
+
+  /**
+   * Returns the count of sequences generated so far by the generator.
+   *
+   * @return the number of sequences generated
+   */
+  public abstract int numGeneratedSequences();
 
   /**
    * Returns the count of generated sequence currently for output.
@@ -253,16 +244,9 @@ public abstract class AbstractGenerator {
   }
 
   /**
-   * Returns the count of sequences generated so far by the generator.
-   *
-   * @return the number of sequences generated
-   */
-  public abstract int numGeneratedSequences();
-
-  /**
    * Creates and executes new sequences until stopping criteria is met.
    *
-   * @see AbstractGenerator#stop()
+   * @see AbstractGenerator#shouldStop()
    * @see AbstractGenerator#step()
    */
   public void explore() {
@@ -282,7 +266,7 @@ public abstract class AbstractGenerator {
       listenerMgr.explorationStart();
     }
 
-    while (!stop()) {
+    while (!shouldStop()) {
 
       // Notify listeners we are about to perform a generation step.
       if (listenerMgr != null) {
