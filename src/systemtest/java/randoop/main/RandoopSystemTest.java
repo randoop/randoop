@@ -676,6 +676,7 @@ public class RandoopSystemTest {
     TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("empty-names");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.addClassList("resources/systemTest/emptyclasslist.txt");
+    options.setOption("attemptedLimit", "20");
 
     RandoopRunStatus result = generateAndCompile(testEnvironment, options, true);
 

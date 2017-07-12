@@ -52,6 +52,7 @@ class RandoopOptions {
     options.setOption("junit-output-dir", testEnvironment.sourceDir.toString());
     options.setOption("log", testEnvironment.workingDir + "/randoop-log.txt");
     options.setFlag("deterministic");
+    options.setOption("timeLimit", "0");
     options.unsetFlag("minimize-error-test");
 
     String selectionLog = System.getProperty("randoop.selection.log");

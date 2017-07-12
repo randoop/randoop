@@ -14,6 +14,7 @@ import plume.OptionGroup;
 import plume.Options;
 import plume.Unpublicized;
 import randoop.util.Randomness;
+import randoop.util.ReflectionExecutor;
 import randoop.util.Util;
 
 /** Container for Randoop options. */
@@ -365,6 +366,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
     /**
      * @param timeLimit maximum time in seconds to spend in generation. Must be non-negative. Zero
      *     means no limit.
+     * @param attemptedLimit the maximum number of attempts to create a sequence. Must be
+     *     non-negative.
      * @param generatedLimit the maximum number of sequences to output. Must be non-negative.
      * @param outputLimit the maximum number of sequences to generate. Must be non-negative.
      */
@@ -631,7 +634,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * A file to which to log selections; helps find sources of non-determinism. If not specified, no
    * logging is done.
    */
-  @Option("File to log each random selection")
+  @Option("File to which to log each random selection")
   public static String selection_log = null;
 
   /**
@@ -690,6 +693,26 @@ public abstract class GenInputsAbstract extends CommandHandler {
     if (!literals_file.isEmpty() && literals_level == ClassLiteralsMode.NONE) {
       throw new RuntimeException(
           "Invalid parameter combination: specified a class literal file but --use-class-literals=NONE");
+    }
+
+    if (deterministic && ReflectionExecutor.usethreads) {
+      throw new RuntimeException(
+          "Invalid parameter combination: --deterministic with --usethreads");
+    }
+
+    if (deterministic && timeLimit != 0) {
+      throw new RuntimeException(
+          "Invalid parameter combination: --deterministic without --timeLimit=0");
+    }
+
+    if (timeLimit == 0
+        && attemptedLimit >= LIMIT_DEFAULT
+        && generatedLimit >= LIMIT_DEFAULT
+        && outputLimit >= LIMIT_DEFAULT) {
+      throw new RuntimeException(
+          String.format(
+              "Unlikely parameter combination: --timeLimit=%s --attemptedLimit=%s --generatedLimit=%s --outputLimit=%s",
+              timeLimit, attemptedLimit, generatedLimit, outputLimit));
     }
   }
 
