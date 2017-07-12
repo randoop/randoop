@@ -10,4 +10,4 @@ set -e
 # ./gradlew assemble manual validate verifyGoogleJavaFormat
 
 # The manual is rarely changed, and Travis validates the manual anyway.
-./gradlew assemble verifyGoogleJavaFormat
+./gradlew assemble compileTestJava verifyGoogleJavaFormat
