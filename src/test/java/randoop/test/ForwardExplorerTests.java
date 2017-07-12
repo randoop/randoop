@@ -72,7 +72,7 @@ public class ForwardExplorerTests {
         new ForwardGenerator(
             model,
             new LinkedHashSet<TypedOperation>(),
-            new GenInputsAbstract.Limits(0, 5000, 5000),
+            new GenInputsAbstract.Limits(0, 1000, 1000, 1000),
             mgr,
             null,
             null);
@@ -121,7 +121,7 @@ public class ForwardExplorerTests {
         new ForwardGenerator(
             model,
             new LinkedHashSet<TypedOperation>(),
-            new GenInputsAbstract.Limits(0, 200, 200),
+            new GenInputsAbstract.Limits(0, 200, 200, 200),
             mgr,
             null,
             null);
@@ -178,7 +178,7 @@ public class ForwardExplorerTests {
         new ForwardGenerator(
             model,
             new LinkedHashSet<TypedOperation>(),
-            new GenInputsAbstract.Limits(0, 200, 200),
+            new GenInputsAbstract.Limits(0, 200, 200, 200),
             mgr,
             null,
             null);

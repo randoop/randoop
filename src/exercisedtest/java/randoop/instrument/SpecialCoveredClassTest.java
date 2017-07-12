@@ -53,8 +53,8 @@ public class SpecialCoveredClassTest {
     GenInputsAbstract.include_if_class_exercised =
         new File("instrument/testcase/special-coveredclasses.txt");
     ReflectionExecutor.usethreads = false;
-    GenInputsAbstract.outputlimit = 5000;
-    GenInputsAbstract.inputlimit = 10000;
+    GenInputsAbstract.generatedLimit = 10000;
+    GenInputsAbstract.outputLimit = 5000;
 
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
     Set<String> coveredClassnames =
