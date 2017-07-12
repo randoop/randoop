@@ -106,9 +106,8 @@ public class ICSE07ContainersTest {
         new ForwardGenerator(
             model,
             new LinkedHashSet<TypedOperation>(),
-            120000 /* two minutes */,
-            Integer.MAX_VALUE,
-            Integer.MAX_VALUE,
+            new GenInputsAbstract.Limits(
+                120 /* 2 minutes */, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE),
             componentMgr,
             stopper,
             null);
@@ -126,7 +125,7 @@ public class ICSE07ContainersTest {
     IStopper stopper =
         new IStopper() {
           @Override
-          public boolean stop() {
+          public boolean shouldStop() {
             return FibHeap.tests.size() >= 96;
           }
         };
@@ -153,7 +152,7 @@ public class ICSE07ContainersTest {
     IStopper stopper =
         new IStopper() {
           @Override
-          public boolean stop() {
+          public boolean shouldStop() {
             return BinTree.tests.size() >= 54;
           }
         };
@@ -178,7 +177,7 @@ public class ICSE07ContainersTest {
     IStopper stopper =
         new IStopper() {
           @Override
-          public boolean stop() {
+          public boolean shouldStop() {
             return TreeMap.tests.size() >= 106;
           }
         };
@@ -205,7 +204,7 @@ public class ICSE07ContainersTest {
     IStopper stopper =
         new IStopper() {
           @Override
-          public boolean stop() {
+          public boolean shouldStop() {
             return BinomialHeap.tests.size() >= 101;
           }
         };
