@@ -14,6 +14,7 @@ import plume.OptionGroup;
 import plume.Options;
 import plume.Unpublicized;
 import randoop.util.Randomness;
+import randoop.util.ReflectionExecutor;
 import randoop.util.Util;
 
 /** Container for Randoop options. */
@@ -84,20 +85,20 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static File methodlist = null;
 
   /**
-   * A pattern that indicates methods that should not be included in generated tests. Randoop will
-   * not attempt to directly call methods whose {@link java.lang.reflect.Method#toString()} matches
-   * the regular expression given. This does not prevent indirect calls to such methods from other,
-   * allowed methods.
+   * Methods whose {@link java.lang.reflect.Method#toString() toString()} matches this regex are not
+   * directly called by test methods. This does not prevent indirect calls to such methods from
+   * other, allowed methods.
    *
-   * <p>Randoop only calls methods that are specified by one of the <code>--testclass</code>, <code>
-   * -classlist</code>, or <code>--methodlist</code> command-line options; the purpose of <code>
-   * --omitmethods</code> is to override one of those other command-line options.
+   * <p>Randoop only calls methods that are specified by one of the {@code --testclass}, {@code
+   * --classlist}, or {@code --methodlist} command-line options; the purpose of {@code omitmethods}
+   * --is to override one of those other command-line options.
+   *
+   * <p>The regex may match a substring of the method name, unless the regex is anchored with {@code
+   * ^} or {@code $}.
    *
    * <p>Note:
    *
    * <ul>
-   *   <li>The regex is unanchored, so <code>^</code> or <code>$</code> may be needed to get the
-   *       correct results.
    *   <li>If a method is inherited without an override, the pattern must match the superclass
    *       method.
    * </ul>
@@ -181,7 +182,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * Whether to output error-revealing tests. Disables all output when used with <code>
    * --no-regression-tests</code>. Restricting output can result in long runs if the default values
-   * of <code>--inputlimit</code> and <code>--timelimit</code> are used.
+   * of <code>--generatedLimit</code> and <code>--timeLimit</code> are used.
    */
   ///////////////////////////////////////////////////////////////////////////
   @OptionGroup("Which tests to output")
@@ -191,7 +192,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * Whether to output regression tests. Disables all output when used with <code>
    * --no-error-revealing-tests</code>. Restricting output can result in long runs if the default
-   * values of <code>--inputlimit</code> and <code>--timelimit</code> are used.
+   * values of <code>--generatedLimit</code> and <code>--timeLimit</code> are used.
    */
   @Option("Whether to output regression tests")
   public static boolean no_regression_tests = false;
@@ -217,12 +218,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * Flag indicating whether or not to automatically minimize error-revealing tests. Both original
-   * and minimized versions of each test class will be output. Minimization is automatically enabled
-   * when <code>--stop-on-error-test</code> is set. Setting this option is not recommended when the
-   * number of error-revealing tests is expected to be greater than 100.
+   * and minimized versions of each test class will be output. Setting this option may cause long
+   * Randoop run times if Randoop outputs and minimizes more than about 100 error-revealing tests.
    */
+  // Omit this to keep the documentation short:
+  // Regardless of this option's setting, minimization is enabled when
+  // <code>--stop-on-error-test</code> is set.
   @Option("<boolean> to indicate automatic minimization of error-revealing tests")
-  public static boolean minimize_error_test = false;
+  public static boolean minimize_error_test = true;
 
   /**
    * The possible values for exception behavior types. The order INVALID, ERROR, EXPECTED should be
@@ -304,50 +307,77 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static File observers = null;
 
   /**
-   * Maximum number of seconds to spend generating tests. Zero means no limit.
-   *
-   * <p>Test generation stops when either the time limit (--timelimit) is reached, OR the number of
-   * generated sequences reaches the input limit (--inputlimit), OR the number of error-revealing
-   * and regression tests reaches the output limit (--outputlimit).
+   * Maximum number of seconds to spend generating tests. Zero means no limit. If nonzero, Randoop
+   * is nondeterministic: it may generate different test suites on different runs.
    *
    * <p>The default value is appropriate for generating tests for a single class in the context of a
    * larger program, but is too small to be effective for generating tests for an entire program.
-   *
-   * <p>Note that if you use this option, Randoop is nondeterministic: it may generate different
-   * test suites on different runs.
    */
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Limiting test generation")
   @Option("Maximum number of seconds to spend generating tests")
-  public static int timelimit = 100;
+  public static int timeLimit = 100;
 
   private static int LIMIT_DEFAULT = 100000000;
 
+  /** Maximum number of attempts to generate a test method candidate. */
+  @Option("Maximum number of attempts to generate a candidate test")
+  public static int attemptedLimit = LIMIT_DEFAULT;
+
+  /** Maximum number of test method candidates generated internally. */
+  @Option("Maximum number of candidate tests generated")
+  public static int generatedLimit = LIMIT_DEFAULT;
+
   /**
-   * The maximum number of regression and error-revealing tests to output. Test generation stops
-   * when either the time limit (--timelimit) is reached, OR the number of generated sequences
-   * reaches the input limit (--inputlimit), OR the number of error-revealing and regression tests
-   * reaches the output limit (--outputlimit).
+   * The maximum number of regression and error-revealing tests to output. If there is no output,
+   * this limit has no effect. There is no output when using either <code>
+   * --dont-output-tests</code> or <code>--no-error-revealing-tests</code> together with <code>
+   * --no-regression-tests</code>.
    *
    * <p>In the current implementation, the number of tests in the output can be substantially
    * smaller than this limit.
-   *
-   * <p>If there is no output, this limit has no effect. There is no output when using either <code>
-   * --dont-output-tests</code> or <code>--no-error-revealing-tests</code> together with <code>
-   * --no-regression-tests</code>.
    */
-  @Option("Maximum number of tests to ouput; contrast to --inputlimit")
-  public static int outputlimit = LIMIT_DEFAULT;
+  @Option("Maximum number of tests to ouput")
+  public static int outputLimit = LIMIT_DEFAULT;
 
   /**
-   * Maximum number of test method candidates generated internally. Test generation stops when
-   * either the time limit (--timelimit) is reached, OR the number of generated sequences reaches
-   * the input limit (--inputlimit), OR the number of error-revealing and regression tests reaches
-   * the output limit (--outputlimit). The number of tests output will be smaller than then number
-   * of test candidates generated, because redundant and illegal tests will be discarded.
+   * Wraps the three ways of limiting Randoop test generation.
+   *
+   * <p>The purpose is to shorten parameter lists and make them easier to read.
    */
-  @Option("Maximum number of candidate tests generated")
-  public static int inputlimit = LIMIT_DEFAULT;
+  public static class Limits {
+    /* Maximum time in milliseconds to spend in generation. Must be non-negative. Zero means no limit. */
+    public int timeLimitMillis;
+    /* Maximum number of attempts to generate a sequence. Must be non-negative. */
+    public int attemptedLimit;
+    /* Maximum number of sequences to generate. Must be non-negative. */
+    public int generatedLimit;
+    /* Maximum number of sequences to output. Must be non-negative. */
+    public int outputLimit;
+
+    public Limits() {
+      this(
+          GenInputsAbstract.timeLimit,
+          GenInputsAbstract.attemptedLimit,
+          GenInputsAbstract.generatedLimit,
+          GenInputsAbstract.outputLimit);
+    }
+
+    /**
+     * @param timeLimit maximum time in seconds to spend in generation. Must be non-negative. Zero
+     *     means no limit.
+     * @param attemptedLimit the maximum number of attempts to create a sequence. Must be
+     *     non-negative.
+     * @param generatedLimit the maximum number of sequences to output. Must be non-negative.
+     * @param outputLimit the maximum number of sequences to generate. Must be non-negative.
+     */
+    public Limits(int timeLimit, int attemptedLimit, int generatedLimit, int outputLimit) {
+      this.timeLimitMillis = timeLimit * 1000;
+      this.attemptedLimit = attemptedLimit;
+      this.generatedLimit = generatedLimit;
+      this.outputLimit = outputLimit;
+    }
+  }
 
   /** Do not generate tests with more than this many statements. */
   @Option("Do not generate tests with more than this many statements")
@@ -537,9 +567,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * Run test generation without output. May be desirable when running with a visitor.
    *
-   * <p>NOTE: Because there is no output, the value of <code>--outputlimit</code> will never be met,
-   * so be sure to set <code>--inputlimit</code> or <code>--timelimit</code> to a reasonable value
-   * when using this option.
+   * <p>NOTE: Because there is no output, the value of <code>--outputLimit</code> will never be met,
+   * so be sure to set <code>--generatedLimit</code> or <code>--timeLimit</code> to a reasonable
+   * value when using this option.
    */
   @Option("Run Randoop but do not output JUnit tests")
   public static boolean dont_output_tests = false;
@@ -574,21 +604,24 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int randomseed = (int) Randomness.SEED;
 
   /**
-   * If true, Randoop is deterministic: running Randoop twice will produce the same test suite, so
-   * long as the program under test is deterministic. If false, Randoop may or may not produce the
-   * same test suite. To produce multiple different test suites, use the --randomseed command-line
-   * option.
+   * If true, Randoop is deterministic: running Randoop twice with the same arguments (including
+   * {@code --randomseed}) will produce the same test suite, so long as the program under test is
+   * deterministic. If false, Randoop may or may not produce the same test suite. To produce
+   * multiple different test suites, use the {@code --randomseed} command-line option.
    */
   @Option("If true, Randoop is deterministic")
   public static boolean deterministic = false;
 
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Logging, notifications, and troubleshooting Randoop")
-  @Option("Do not display progress update message to console")
+  @Option("Run more quietly: do not display information such as progress updates.")
   public static boolean noprogressdisplay = false;
 
-  @Option("Display progress message every <int> milliseconds")
-  public static long progressinterval = 5000;
+  @Option("Display progress message every <int> milliseconds. -1 means no display.")
+  public static long progressintervalmillis = 60000;
+
+  @Option("Display progress message every <int> attempts to create a test; -1 means none")
+  public static long progressintervalsteps = 1000;
 
   @Option("Perform expensive internal checks (for Randoop debugging)")
   public static boolean debug_checks = false;
@@ -601,7 +634,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * A file to which to log selections; helps find sources of non-determinism. If not specified, no
    * logging is done.
    */
-  @Option("File to log each random selection")
+  @Option("File to which to log each random selection")
   public static String selection_log = null;
 
   /**
@@ -612,7 +645,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean log_operation_history = false;
 
   /**
-   * Name of a file to which to log the operation usage history . This operation is not affected by
+   * Name of a file to which to log the operation usage history. This operation is not affected by
    * setting <code>--log-operation-history</code>.
    */
   @Option("Track and log operation usage counts to this file")
@@ -660,6 +693,26 @@ public abstract class GenInputsAbstract extends CommandHandler {
     if (!literals_file.isEmpty() && literals_level == ClassLiteralsMode.NONE) {
       throw new RuntimeException(
           "Invalid parameter combination: specified a class literal file but --use-class-literals=NONE");
+    }
+
+    if (deterministic && ReflectionExecutor.usethreads) {
+      throw new RuntimeException(
+          "Invalid parameter combination: --deterministic with --usethreads");
+    }
+
+    if (deterministic && timeLimit != 0) {
+      throw new RuntimeException(
+          "Invalid parameter combination: --deterministic without --timeLimit=0");
+    }
+
+    if (timeLimit == 0
+        && attemptedLimit >= LIMIT_DEFAULT
+        && generatedLimit >= LIMIT_DEFAULT
+        && outputLimit >= LIMIT_DEFAULT) {
+      throw new RuntimeException(
+          String.format(
+              "Unlikely parameter combination: --timeLimit=%s --attemptedLimit=%s --generatedLimit=%s --outputLimit=%s",
+              timeLimit, attemptedLimit, generatedLimit, outputLimit));
     }
   }
 

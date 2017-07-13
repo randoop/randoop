@@ -526,6 +526,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
         || type.getRuntimeClass().equals(Class.class);
   }
 
+  @Override
   public boolean isUncheckedCast() {
     return operation.isUncheckedCast();
   }
