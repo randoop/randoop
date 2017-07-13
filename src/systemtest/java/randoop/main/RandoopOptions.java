@@ -2,7 +2,7 @@ package randoop.main;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import plume.EntryReader;
@@ -34,7 +34,7 @@ class RandoopOptions {
    */
   private RandoopOptions() {
     this.options = new ArrayList<>();
-    this.classnames = new HashSet<>();
+    this.classnames = new LinkedHashSet<>();
     this.packageName = "";
     this.regressionBasename = "RegressionTest";
     this.errorBasename = "ErrorTest";

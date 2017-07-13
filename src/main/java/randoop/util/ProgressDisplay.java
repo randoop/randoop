@@ -133,7 +133,11 @@ public class ProgressDisplay extends Thread {
     }
   }
 
-  /** Return true if no progress output should be displayed. */
+  /**
+   * Return true iff no progress output should be displayed.
+   *
+   * @return true iff no progress output should be displayed.
+   */
   private boolean noProgressOutput() {
     return GenInputsAbstract.progressintervalmillis <= 0
         && GenInputsAbstract.progressintervalsteps <= 0;

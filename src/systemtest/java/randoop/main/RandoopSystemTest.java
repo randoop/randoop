@@ -138,9 +138,9 @@ public class RandoopSystemTest {
    *     The expected-tests parameters are values of the ExpectedTests enumerated type.
    *     Use the value SOME if there must be at least one test, NONE if there should be no tests,
    *     and DONT_CARE if, well, it doesn't matter how many tests there are.
-   *     The generateAndTestWithCoverage() method handles the standard test behavior, checking the standard
-   *     assumptions about regression and error tests (given the quantifiers), and dumping output
-   *     when the results don't meet expectations.
+   *     The generateAndTestWithCoverage() method handles the standard test behavior, checking the
+   *     standard assumptions about regression and error tests (given the quantifiers), and dumping
+   *     output when the results don't meet expectations.
    *
    *     By default, coverage is checked against all methods returned by Class.getDeclaredMethods()
    *     for an input class. Some tests need to specifically exclude methods that Randoop should not
@@ -148,7 +148,7 @@ public class RandoopSystemTest {
    *     CoverageChecker object and adding these method names using either the exclude() or ignore()
    *     methods, and then giving the CoverageChecker as the last argument to the alternate version
    *     of generateAndTestWithCoverage(). When excluded methods are given, these methods may not be
-   *    covered, and, unless ignored, any method not excluded is expected to be covered.
+   *     covered, and, unless ignored, any method not excluded is expected to be covered.
    *
    *     As a stop-gap, the method
    *       generateAndTest(
@@ -955,7 +955,7 @@ public class RandoopSystemTest {
     options.addTestClass("compileerr.WildcardCollection");
     options.setErrorBasename("CompError");
     options.setRegressionBasename("CompRegression");
-    options.setOption("generatedLimit", "3000");
+    options.setOption("attemptedLimit", "3000");
 
     CoverageChecker coverageChecker = new CoverageChecker(options);
     coverageChecker.ignore("compileerr.WildcardCollection.getAStringList()");

@@ -308,59 +308,51 @@ So, for instance, the following will work to run the <code>exercised-class</code
 <h1 id="testing-randoop">Testing Randoop</h1>
 
 <p>
+  To run the Randoop unit tests and system tests, do:
+</p>
+<pre><code>./gradlew check</code></pre>
+
+<p>
+  More thorough checking can be performed via:
+</p>
+<pre><code>./gradlew clean assemble check javadoc manual validateManual verifyGoogleJavaFormat</code></pre>
+
+<p>
+Travis also runs these more thorough tests.  A standard practice is to create a
+branch and push it to the Randoop repository or to your own fork.  Travis will
+test it; if it succeeds, you can merge it.  If it fails, you will be notified by
+email, and you can fix it without having destabilized the master branch.
 The <a href="https://travis-ci.org/randoop/randoop">Travis tests</a>
-currently pass if this icon is green:
+currently pass on the master branch if this icon is green:
 <img src="https://api.travis-ci.org/randoop/randoop.svg?branch=master" alt="Randoop Travis status icon"/>
 </p>
 
 <p>
-This command will reveal most problems:
-</p>
-<pre><code>./gradlew clean assemble check manual</code></pre>
-
-<p>
-Travis also runs these tests from a fresh clone, which may reveal some problems that would not otherwise be exposed.
-Therefore, you can create a branch and push it
-to the Randoop repository.  If it succeeds, you can merge it.  If it fails,
-you will be notified by email, and you can fix it without having
-destabilized the master branch.
-</p>
-
-<p>
-When developing a new feature for which there is a particular test or set of tests
-you can run a single test or smaller group of tests by using the <code>--tests</code>
+You can run a subset of the tests by using the <code>--tests</code>
 option on the command line.
 For instance,
 </p>
-<ul>
-<li> use
   <pre><code>
     ./gradlew test --tests="*GenericTypesTest"
-  </code></pre>
-  to run only the tests in <code>randoop.types.generics.GenericTypesTest</code>, and
-</li>
-<li> use
-  <pre><code>
     ./gradlew systemtest --tests="*Collection*"
-</code></pre>
-  to run all of the system tests with "Collection" in their name.
-</li>
-</ul>
+  </code></pre>
 
 <p>
-The system tests already runs <code>--log</code> to the directory
-<code>build/working-directories</code> under the test method directory.
-The log files set by <code>--selection-log</code> and <code>--operation-history-log</code>
+The system tests write logs to the directory
+<code>build/working-directories/<em>test-name</em></code>.
+You can create additional logs (as produced by 
+<a href="dev.html#option:selection-log"><code>--selection-log</code></a> or
+<a href="dev.html#option:operation-history-log"><code>--operation-history-log</code></a>)
 can be set from the command-line by setting the system properties
-<code>randoop.selection.log</code> and
+<code>randoop.selection.log</code> or
 <code>randoop.operation.history.log</code> on the Gradle command-line.
-For instance,
+For instance:
 </p>
 <pre><code>
   ./gradlew systemtest --tests="*Collection*" -Drandoop.operation.history.log=operation-log.txt
 </code></pre>
 <p>
-will write the operation log to the file <code>build/operation-log.txt</code>
+will write the operation log to the file <code>/build/working-directories/<em>test-name</em>/operation-log.txt</code>
 </p>
 
 
