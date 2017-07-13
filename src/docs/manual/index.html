@@ -1101,10 +1101,10 @@ Randoop about your application, and that is how we recommend using Randoop.
              The random seed to use in the generation process. If you want to produce multiple different
  test suites, run Randoop multiple times with a different random seed. [default 0]
             <li id="option:deterministic"><b>--deterministic=</b><i>boolean</i>.
-             If true, Randoop is deterministic: running Randoop twice will produce the same test suite, so
- long as the program under test is deterministic. If false, Randoop may or may not produce the
- same test suite. To produce multiple different test suites, use the --randomseed command-line
- option. [default false]
+             If true, Randoop is deterministic: running Randoop twice with the same arguments (including
+ <code>--randomseed</code>) will produce the same test suite, so long as the program under test is
+ deterministic. If false, Randoop may or may not produce the same test suite. To produce
+ multiple different test suites, use the <code>--randomseed</code> command-line option. [default false]
       </ul>
   <li id="optiongroup:Logging,-notifications,-and-troubleshooting-Randoop">Logging, notifications, and troubleshooting Randoop
       <ul>
