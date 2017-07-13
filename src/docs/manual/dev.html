@@ -99,14 +99,22 @@
 <h2 id="prerequisites">Prerequisites</h2>
 
 <p>
-  Install the <code>CSS::DOM</code> Perl module.
+  To install prerequisites, execute (as superuser) the RUN commands in files
+  named <code>scripts/Dockerfile-<em>OPERATINGSYSTEM</em>-jdkany</code>.
+  For example, to install prerequisites on Ubuntu, run
 </p>
+<!-- Accurate as of July 2017 -->
+  <pre>
+    sudo apt-get -qqy install git gradle default-jdk
+    sudo apt-get -qqy install perl python-pip
+    sudo pip install html5validator
+  </pre>
 
 <p>
-  Install <code>html5validator</code>, using one of the the following two command lines:
+  If you do not have superuser permissions, ask your system administrator
+  to install the software.  You can run the last command yourself, by changing it to
+  <code>pip install --user html5validator</code>.
 </p>
-<pre><code>sudo pip install html5validator
-pip install --user html5validator</code></pre>
 
 
 <h1 id="compiling">Building Randoop</h1>
@@ -185,37 +193,17 @@ pip install --user html5validator</code></pre>
   dependencies and tasks.
   For instance, in the Randoop <code>build.gradle</code> there is the
   <code>agentTest</code> source set that is separate from the <code>test</code> source
-  set because the test classes must run using the <code>exercised-class</code> Java
+  set because the test classes must run using the <code>covered-class</code> Java
   agent.
   The Gradle Java plugin normally has two source sets named <code>main</code> and <code>test</code>,
   and the Randoop build script defines others to better structure the build process.
 </p>
 
 <p>
-  Here are some Gradle tricks that may be useful:
+Gradle allows you to run multiple tasks.  For instance, for a clean build,
+    type <code>./gradlew clean build</code>.
 </p>
-<ul>
-  <li>Gradle allows you to run multiple tasks.  For instance, for a clean build,
-    type <code>./gradlew clean build</code>.</li>
-  <li><p>You can run a single test or smaller group of tests by using the <code>--tests</code>
-    option on the command line.
-    For instance,
-<ul>
-  <li> use
-    <pre><code>
-      ./gradlew test --tests="*GenericTypesTest"
-    </code></pre>
-    to run only the tests in <code>randoop.types.generics.GenericTypesTest</code>, and
-  </li>
-  <li> use
-    <pre><code>
-      ./gradlew test --tests="*testVar*"
-  </code></pre>
-    to run the test method <code>randoop.types.generics.GenericTypesTest.testVariableParameters</code>.
-  </li>
-  </ul></li>
 
-</ul>
 
 <h2 id="publish-only-tasks">CAUTION: Release-Only Tasks</h2>
 
@@ -311,31 +299,54 @@ Plume-lib, should there be a conflict in included classes.
 The jar files for Java agents are located in
 the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.
-So, for instance, the following will work to run the <code>exercised-class</code> agent:
+So, for instance, the following will work to run the <code>covered-class</code> agent:
 </p>
-<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/exercised-class-3.1.5.jar</code></pre>
+<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-3.1.5.jar</code></pre>
 
 
 
 <h1 id="testing-randoop">Testing Randoop</h1>
 
 <p>
-The <a href="https://travis-ci.org/randoop/randoop">Travis tests</a>
-currently pass if this icon is green:
-<img src="https://api.travis-ci.org/randoop/randoop.svg?branch=master" alt="Randoop Travis status icon"/>
+To run the Randoop tests:
+</p>
+<pre><code>./gradlew check</code></pre>
+
+<p>
+A standard practice is to create a
+branch and push it to the Randoop repository or to your own fork.  Travis will
+test it; if it succeeds, you can merge it.  If it fails, you will be notified by
+email, and you can fix it without having destabilized the master branch.
+The <a href="https://travis-ci.org/randoop/randoop">Travis tests</a> are
+equivalent to <code>./gradlew clean build</code>, and they
+currently pass on the master branch if this icon is green:
+<img src="https://api.travis-ci.org/randoop/randoop.svg?branch=master" alt="Randoop Travis status icon"/>.
 </p>
 
 <p>
-This command will reveal most problems:
+You can run a subset of the tests by using the <code>--tests</code>
+option on the command line.
+For instance,
 </p>
-<pre><code>./gradlew clean assemble check manual</code></pre>
+<pre><code>    ./gradlew test --tests="*GenericTypesTest"
+    ./gradlew systemtest --tests="*Collection*"
+</code></pre>
 
 <p>
-Travis also runs these tests from a fresh clone, which may reveal some problems that would not otherwise be exposed.
-Therefore, you can create a branch and push it
-to the Randoop repository.  If it succeeds, you can merge it.  If it fails,
-you will be notified by email, and you can fix it without having
-destabilized the master branch.
+The system tests write logs to the directory
+<code>build/working-directories/<em>test-name</em></code>.
+You can create additional logs (as produced by
+<a href="dev.html#option:selection-log"><code>--selection-log</code></a> or
+<a href="dev.html#option:operation-history-log"><code>--operation-history-log</code></a>)
+can be set from the command-line by setting the system properties
+<code>randoop.selection.log</code> or
+<code>randoop.operation.history.log</code> on the Gradle command-line.
+For instance:
+</p>
+<pre><code>  ./gradlew systemtest --tests="*Collection*" -Drandoop.operation.history.log=operation-log.txt
+</code></pre>
+<p>
+will write the operation log to the file <code>build/working-directories/<em>test-name</em>/operation-log.txt</code>
 </p>
 
 
@@ -344,9 +355,12 @@ destabilized the master branch.
 <p>
   As you add new functionality to Randoop, you should also add new tests.
   Randoop has three kinds of tests:
-  unit tests of Randoop internal classes (under directory <code>src/test</code>),
-  unit tests of Randoop Java agents (under directory <code>src/agenttest</code>), and
+  tests of Randoop internal classes (under directory <code>src/test</code>),
+  tests of Randoop Java agents (under directories <code>src/coveredtest</code>
+  and <code>src/mapcalltest</code>), and
   system tests that run Randoop on input classes.
+  All of the tests are written as JUnit classes, but are separate because each
+  needs to be executed differently.
 </p>
 
 

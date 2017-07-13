@@ -54,7 +54,7 @@ public class ObjectCheck implements Check {
 
   @Override
   public int hashCode() {
-    return Objects.hash(contract, vars);
+    return Objects.hash(contract, Arrays.hashCode(vars));
   }
 
   public ObjectCheck(ObjectContract cc, Variable... vars) {

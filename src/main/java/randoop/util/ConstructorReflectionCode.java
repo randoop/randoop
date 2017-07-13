@@ -21,6 +21,7 @@ public final class ConstructorReflectionCode extends ReflectionCode {
     this.inputs = inputs;
   }
 
+  @SuppressWarnings("Finally")
   @Override
   public void runReflectionCodeRaw()
       throws InstantiationException, IllegalAccessException, InvocationTargetException {

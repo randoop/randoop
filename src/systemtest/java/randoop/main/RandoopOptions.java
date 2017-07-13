@@ -2,7 +2,7 @@ package randoop.main;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import plume.EntryReader;
@@ -22,16 +22,19 @@ class RandoopOptions {
   /** The package name for Randoop generated test classes. */
   private String packageName;
 
-  /** The basename for generated regression test classes */
+  /** The basename for generated regression test classes. */
   private String regressionBasename;
 
   /** The basename for generated error test classes */
   private String errorBasename;
 
-  /** Creates an empty set of options. */
+  /**
+   * Creates an empty set of options. The regression basename is "RegressionTest" and the error
+   * basename is "ErrorTest".
+   */
   private RandoopOptions() {
     this.options = new ArrayList<>();
-    this.classnames = new HashSet<>();
+    this.classnames = new LinkedHashSet<>();
     this.packageName = "";
     this.regressionBasename = "RegressionTest";
     this.errorBasename = "ErrorTest";
@@ -48,6 +51,20 @@ class RandoopOptions {
     RandoopOptions options = new RandoopOptions();
     options.setOption("junit-output-dir", testEnvironment.sourceDir.toString());
     options.setOption("log", testEnvironment.workingDir + "/randoop-log.txt");
+    options.setFlag("deterministic");
+    options.setOption("timeLimit", "0");
+    options.unsetFlag("minimize-error-test");
+
+    String selectionLog = System.getProperty("randoop.selection.log");
+    if (selectionLog != null && !selectionLog.isEmpty()) {
+      options.setOption("selection-log", selectionLog);
+    }
+
+    String operationLog = System.getProperty("randoop.operation.history.log");
+    if (operationLog != null && !operationLog.isEmpty()) {
+      options.setOption("operation-history-log", operationLog);
+    }
+
     return options;
   }
 
@@ -77,6 +94,19 @@ class RandoopOptions {
    */
   void unsetFlag(String option) {
     setOption(option, "false");
+  }
+
+  /**
+   * Adds an option-flag set to the given value
+   *
+   * @param option the name of the option flag to be set to false
+   */
+  void setFlag(String option, boolean value) {
+    if (value) {
+      setFlag(option);
+    } else {
+      unsetFlag(option);
+    }
   }
 
   /**

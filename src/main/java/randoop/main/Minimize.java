@@ -1,12 +1,13 @@
 package randoop.main;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
@@ -15,7 +16,6 @@ import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
 import com.github.javaparser.ast.expr.DoubleLiteralExpr;
 import com.github.javaparser.ast.expr.Expression;
-import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.IntegerLiteralExpr;
 import com.github.javaparser.ast.expr.LiteralExpr;
 import com.github.javaparser.ast.expr.LongLiteralExpr;
@@ -29,14 +29,11 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
-import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.Charset;
@@ -64,6 +61,13 @@ import plume.Option;
 import plume.OptionGroup;
 import plume.Options;
 import plume.TimeLimitProcess;
+import randoop.Globals;
+import randoop.output.ClassRenamingVisitor;
+import randoop.output.ClassTypeNameSimplifyVisitor;
+import randoop.output.ClassTypeVisitor;
+import randoop.output.FieldAccessTypeNameSimplifyVisitor;
+import randoop.output.MethodTypeNameSimplifyVisitor;
+import randoop.output.PrimitiveAndWrappedTypeVarNameCollector;
 
 /**
  * This program minimizes a failing JUnit test suite. Its three command-line arguments are:
@@ -88,8 +92,9 @@ import plume.TimeLimitProcess;
  * version of the current statement and continues.
  */
 public class Minimize extends CommandHandler {
-  @OptionGroup(value = "Test case minimization options")
   /** The Java file whose failing tests will be minimized. */
+  @SuppressWarnings("WeakerAccess")
+  @OptionGroup(value = "Test case minimization options")
   @Option("File containing the JUnit test suite to be minimized")
   public static String suitepath;
 
@@ -97,18 +102,21 @@ public class Minimize extends CommandHandler {
    * Classpath that includes dependencies needed to compile and run the JUnit test suite being
    * minimized.
    */
+  @SuppressWarnings("WeakerAccess")
   @Option("Classpath to compile and run the JUnit test suite")
   public static String suiteclasspath;
 
   /** The maximum number of seconds allowed for the entire test suite to run. */
+  @SuppressWarnings("WeakerAccess")
   @Option("Timeout, in seconds, for the whole test suite")
   public static int testsuitetimeout = 30;
 
   /** Output verbose output to standard output if true. */
+  @SuppressWarnings("WeakerAccess")
   @Option("Verbose, flag for verbose output")
   public static boolean verboseminimizer = false;
 
-  public Minimize() {
+  Minimize() {
     super(
         "minimize",
         "Minimize a failing JUnit test suite.",
@@ -249,7 +257,7 @@ public class Minimize extends CommandHandler {
 
     // Rename the overall class to [original class name][suffix].
     String origClassName = FilenameUtils.removeExtension(file.getName());
-    new ClassRenamer().visit(compUnit, new String[] {origClassName, SUFFIX});
+    new ClassRenamingVisitor().visit(compUnit, new String[] {origClassName, SUFFIX});
 
     // Write the compilation unit to the minimized file.
     writeToFile(compUnit, minimizedFile);
@@ -378,10 +386,10 @@ public class Minimize extends CommandHandler {
 
     // Map from primitive variable name to the variable's value extracted
     // from a passing assertion.
-    Map<String, String> primitiveValues = new HashMap<String, String>();
+    Map<String, String> primitiveValues = new HashMap<>();
 
     // Find all the names of the primitive and wrapped types.
-    Set<String> primitiveAndWrappedTypes = new HashSet<String>();
+    Set<String> primitiveAndWrappedTypes = new HashSet<>();
     new PrimitiveAndWrappedTypeVarNameCollector().visit(compUnit, primitiveAndWrappedTypes);
 
     // Iterate through the list of statements, from last to first.
@@ -513,7 +521,7 @@ public class Minimize extends CommandHandler {
    */
   private static List<Statement> getStatementReplacements(
       Statement currStmt, Map<String, String> primitiveValues) {
-    List<Statement> replacements = new ArrayList<Statement>();
+    List<Statement> replacements = new ArrayList<>();
 
     // Null represents removal of the statement.
     replacements.add(null);
@@ -554,7 +562,7 @@ public class Minimize extends CommandHandler {
    *     expression
    */
   private static List<Statement> rhsAssignZeroValue(VariableDeclarationExpr vdExpr) {
-    List<Statement> resultList = new ArrayList<Statement>();
+    List<Statement> resultList = new ArrayList<>();
 
     if (vdExpr.getVars().size() != 1) {
       // Number of variables declared in this expression is not 1.
@@ -759,7 +767,7 @@ public class Minimize extends CommandHandler {
 
     // Set of fully-qualified type names that are used in variable declarations.
     Set<ClassOrInterfaceType> fullyQualifiedNames =
-        new TreeSet<ClassOrInterfaceType>(
+        new TreeSet<>(
             new Comparator<ClassOrInterfaceType>() {
               @Override
               public int compare(ClassOrInterfaceType o1, ClassOrInterfaceType o2) {
@@ -783,6 +791,7 @@ public class Minimize extends CommandHandler {
       }
 
       // Simplify class type names, method call names, and field names.
+      //XXX this should be handled by a single visitor that uses the full set of types
       new ClassTypeNameSimplifyVisitor().visit(compUnitWithSimpleTypeNames, type);
       new MethodTypeNameSimplifyVisitor().visit(compUnitWithSimpleTypeNames, type);
       new FieldAccessTypeNameSimplifyVisitor().visit(compUnitWithSimpleTypeNames, type);
@@ -817,6 +826,7 @@ public class Minimize extends CommandHandler {
       String packageName,
       Map<String, String> expectedOutput,
       int timeoutLimit) {
+
     // Zero exit status means success.
     if (compileJavaFile(file, classpath, packageName, timeoutLimit) != 0) {
       return false;
@@ -1024,7 +1034,7 @@ public class Minimize extends CommandHandler {
     BufferedReader bufReader = new BufferedReader(new StringReader(input));
 
     String methodName = null;
-    Map<String, String> resultMap = new HashMap<String, String>();
+    Map<String, String> resultMap = new HashMap<>();
 
     StringBuilder result = new StringBuilder();
     try {
@@ -1060,7 +1070,7 @@ public class Minimize extends CommandHandler {
             // Remove the substring containing the line number.
             line = line.substring(0, lParenIndex);
           }
-          result.append(line + "\n");
+          result.append(line).append(Globals.lineSep);
         }
       }
       bufReader.close();
@@ -1083,183 +1093,12 @@ public class Minimize extends CommandHandler {
    */
   private static void writeToFile(CompilationUnit compUnit, File file) {
     // Write the compilation unit to the file.
-    try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+    try (BufferedWriter bw = Files.newBufferedWriter(file.toPath(), UTF_8)) {
       bw.write(compUnit.toString());
     } catch (IOException e) {
       System.err.println("Error writing to file: " + file);
       e.printStackTrace();
       System.exit(1);
-    }
-  }
-
-  /** Visit every class or interface type. */
-  private static class ClassRenamer extends VoidVisitorAdapter<Object> {
-    /**
-     * Rename the overall class to class name + suffix.
-     *
-     * @param arg a String array where the first element is the class name and the second element is
-     *     the suffix that we will append
-     */
-    @Override
-    public void visit(ClassOrInterfaceDeclaration n, Object arg) {
-      String[] params = (String[]) arg;
-      String className = params[0];
-      String suffix = params[1];
-      if (className.equals(n.getName())) {
-        n.setName(className + suffix);
-      }
-    }
-  }
-
-  /** Visit every class or interface type. */
-  private static class ClassTypeVisitor extends VoidVisitorAdapter<Object> {
-    /**
-     * If the class or interface type is in a package that's not visible by default, add the type to
-     * the set of types that is passed in as an argument. For instance, suppose that the type {@code
-     * org.apache.commons.lang3.MutablePair} appears in the program. This type will be added to the
-     * set of types. This is used for type name simplifications to simplify {@code
-     * org.apache.commons.lang3.MutablePair} into {@code MutablePair} after adding the import
-     * statement {@code import org.apache.commons.lang3.MutablePair;}.
-     *
-     * @param arg a set of {@code Type} objects; will be modified if the class or interface type is
-     *     a non-visible type by default
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public void visit(ClassOrInterfaceType n, Object arg) {
-      Set<ClassOrInterfaceType> params = (Set<ClassOrInterfaceType>) arg;
-
-      // If the class type is a generic types, visit each one of the
-      // parameter types as well.
-      for (Type argType : n.getTypeArgs()) {
-        ReferenceType rType = (ReferenceType) argType;
-        if (rType.getType() instanceof ClassOrInterfaceType) {
-          this.visit((ClassOrInterfaceType) rType.getType(), arg);
-        }
-      }
-
-      // Add the type to the set if it's not a visible type be default.
-      if (n.getScope() != null) {
-        // Add a copy, so that modifying removing the scope later won't
-        // affect this instance which is used for comparisons only.
-        params.add((ClassOrInterfaceType) n.clone());
-      }
-    }
-  }
-
-  /**
-   * Visit every variable declaration. Adds to a set of strings for all the names of variables that
-   * are either primitive or wrapped types.
-   */
-  private static class PrimitiveAndWrappedTypeVarNameCollector extends VoidVisitorAdapter<Object> {
-    /**
-     * Visit every variable declaration.
-     *
-     * @param arg a set containing the names of all the variables that are of primitive or wrapped
-     *     types.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public void visit(VariableDeclarationExpr n, Object arg) {
-      Set<String> variables = (Set<String>) arg;
-
-      ClassOrInterfaceType classType = null;
-      if (n.getType() instanceof ReferenceType) {
-        ReferenceType rType = (ReferenceType) n.getType();
-        if (rType.getType() instanceof ClassOrInterfaceType) {
-          classType = (ClassOrInterfaceType) rType.getType();
-        }
-      }
-
-      // Check if the variable's type is a primitive or a wrapped type.
-      if (n.getType() instanceof PrimitiveType || (classType != null && classType.isBoxedType())) {
-        for (VariableDeclarator vd : n.getVars()) {
-          variables.add(vd.getId().getName());
-        }
-      }
-    }
-  }
-
-  /** Visit every class or interface type. */
-  private static class ClassTypeNameSimplifyVisitor extends VoidVisitorAdapter<Object> {
-    /**
-     * Visit every class or interface type. Simplify the type name by removing the scope component
-     * if the visited object is of the same type as that contained in the argument that is passed
-     * in.
-     *
-     * @param arg a {@code ClassOrInterfaceType} object
-     */
-    @Override
-    public void visit(ClassOrInterfaceType n, Object arg) {
-      ClassOrInterfaceType typeName = (ClassOrInterfaceType) arg;
-
-      // Remove the scope component of the type.
-      if (n.getScope() != null
-          && typeName.getScope() != null
-          && typeName.getScope().equals(n.getScope())
-          && typeName.getName().equals(n.getName())) {
-        n.setScope(null);
-      }
-
-      // If the class type is a generic types, visit each one of the
-      // parameter types as well.
-      for (Type argType : n.getTypeArgs()) {
-        ReferenceType rType = (ReferenceType) argType;
-        if (rType.getType() instanceof ClassOrInterfaceType) {
-          this.visit((ClassOrInterfaceType) rType.getType(), arg);
-        }
-      }
-    }
-  }
-
-  /** Visit every method call expression. */
-  private static class MethodTypeNameSimplifyVisitor extends VoidVisitorAdapter<Object> {
-    /**
-     * Visit every method call expression. Simplify the type name by removing the scope component if
-     * the visited object is of the same type as that contained in the argument that is passed in.
-     *
-     * @param arg a {@code ClassOrInterfaceType} object
-     */
-    @Override
-    public void visit(MethodCallExpr n, Object arg) {
-      ClassOrInterfaceType typeName = (ClassOrInterfaceType) arg;
-      if (n.getScope() != null
-          && typeName.getScope() != null
-          && n.getScope().toString().equals(typeName.getScope() + "." + typeName.getName())) {
-        try {
-          // Set scope to be just the name of the type.
-          n.setScope(JavaParser.parseExpression(typeName.getName()));
-        } catch (ParseException e) {
-          // Error parsing type name.
-          e.printStackTrace();
-        }
-      }
-    }
-  }
-
-  /** Visit every field access expression. */
-  private static class FieldAccessTypeNameSimplifyVisitor extends VoidVisitorAdapter<Object> {
-    /**
-     * Visit every field access expression. Simplify the type name by removing the scope component
-     * if the visited object is of the same type as that contained in the argument that is passed
-     * in.
-     *
-     * @param arg a {@code ClassOrInterfaceType} object
-     */
-    @Override
-    public void visit(FieldAccessExpr n, Object arg) {
-      ClassOrInterfaceType typeName = (ClassOrInterfaceType) arg;
-      if (n.getScope() != null
-          && typeName.getScope() != null
-          && n.getScope().toString().equals(typeName.getScope() + "." + typeName.getName())) {
-        try {
-          // Set scope to be just the name of the type.
-          n.setScope(JavaParser.parseExpression(typeName.getName()));
-        } catch (ParseException e) {
-          // Error parsing type name.
-          e.printStackTrace();
-        }
-      }
     }
   }
 
@@ -1367,7 +1206,7 @@ public class Minimize extends CommandHandler {
     int lines = 0;
     try {
       // Read and count the number of lines in the file.
-      BufferedReader reader = new BufferedReader(new FileReader(file));
+      BufferedReader reader = Files.newBufferedReader(file.toPath(), UTF_8);
       while (reader.readLine() != null) {
         lines++;
       }
