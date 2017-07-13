@@ -151,7 +151,7 @@ dependencies {
    * (Also, see configuration block.)
    */
   coveredTestImplementation sourceSets.main.output
-  coveredTestRuntime project(':exercised-class')
+  coveredTestRuntime project(':covered-class')
 
   mapcallTestImplementation files(project(':mapcall').sourceSets.main.output)
 
