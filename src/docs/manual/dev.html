@@ -308,7 +308,7 @@ So, for instance, the following will work to run the <code>covered-class</code> 
 <h1 id="testing-randoop">Testing Randoop</h1>
 
 <p>
-  To run the Randoop unit tests and system tests, do:
+To run the Randoop tests:
 </p>
 <pre><code>./gradlew check</code></pre>
 
@@ -317,29 +317,20 @@ A standard practice is to create a
 branch and push it to the Randoop repository or to your own fork.  Travis will
 test it; if it succeeds, you can merge it.  If it fails, you will be notified by
 email, and you can fix it without having destabilized the master branch.
-The <a href="https://travis-ci.org/randoop/randoop">Travis tests</a>
+The <a href="https://travis-ci.org/randoop/randoop">Travis tests</a> are
+equivalent to <code>./gradlew clean build</code>, and they
 currently pass on the master branch if this icon is green:
-<img src="https://api.travis-ci.org/randoop/randoop.svg?branch=master" alt="Randoop Travis status icon"/>
+<img src="https://api.travis-ci.org/randoop/randoop.svg?branch=master" alt="Randoop Travis status icon"/>.
 </p>
-
-<p>
-To run Randoop similarly to how tests are run on Travis, do:
-</p>
-<pre><code>./gradlew clean build</code></pre>
-<p>
-  which is equivalent to the command
-</p>
-<pre><code>./gradlew clean assemble check javadoc manual</code></pre>
 
 <p>
 You can run a subset of the tests by using the <code>--tests</code>
 option on the command line.
 For instance,
 </p>
-  <pre><code>
-    ./gradlew test --tests="*GenericTypesTest"
+<pre><code>    ./gradlew test --tests="*GenericTypesTest"
     ./gradlew systemtest --tests="*Collection*"
-  </code></pre>
+</code></pre>
 
 <p>
 The system tests write logs to the directory
@@ -352,11 +343,10 @@ can be set from the command-line by setting the system properties
 <code>randoop.operation.history.log</code> on the Gradle command-line.
 For instance:
 </p>
-<pre><code>
-  ./gradlew systemtest --tests="*Collection*" -Drandoop.operation.history.log=operation-log.txt
+<pre><code>  ./gradlew systemtest --tests="*Collection*" -Drandoop.operation.history.log=operation-log.txt
 </code></pre>
 <p>
-will write the operation log to the file <code>/build/working-directories/<em>test-name</em>/operation-log.txt</code>
+will write the operation log to the file <code>build/working-directories/<em>test-name</em>/operation-log.txt</code>
 </p>
 
 
