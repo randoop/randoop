@@ -841,7 +841,7 @@ public class RandoopSystemTest {
     options.addTestClass("compileerr.WildcardCollection");
     options.setErrorBasename("CompError");
     options.setRegressionBasename("CompRegression");
-    options.setOption("generatedLimit", "3000");
+    options.setOption("attemptedLimit", "3000");
 
     CoverageChecker coverageChecker = new CoverageChecker(options);
     coverageChecker.ignore("compileerr.WildcardCollection.getAStringList()");
