@@ -81,6 +81,7 @@ public class OperationModel {
 
   /** Create an empty model of test context. */
   private OperationModel() {
+    // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
     classTypes = new TreeSet<>();
     inputTypes = new TreeSet<>();
     classLiteralMap = new MultiMap<>();

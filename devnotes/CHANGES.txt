@@ -25,7 +25,9 @@ The --usethreads command-line option defaults to false.  This makes Randoop
 run faster and generate more tests, but Randoop will hang if it calls a
 method that does not terminate and return.
 
+The --timelimit command-line option has been renamed to --timeLimit.
 The --inputlimit command-line option has been renamed to --generatedLimit.
+The --outputlimit command-line option has been renamed to --outputLimit.
 New --attemptedLimit command-line option is a new way to limit test generation.
 
 

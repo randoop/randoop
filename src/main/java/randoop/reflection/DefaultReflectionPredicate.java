@@ -13,7 +13,7 @@ import randoop.CheckRep;
 import randoop.util.Log;
 
 /**
- * Returns true for public members, with some exceptions (see doNotUseSpecialCase method).
+ * Returns true for public members, with some exceptions (see {@link #doNotUseSpecialCase} method).
  *
  * <p>If a method has the {@code @CheckRep} annotation, returns false (the method will be used as a
  * contract checker, not as a method under test).

@@ -249,7 +249,7 @@ java -ea -classpath $(RANDOOP_JAR) randoop.main.Main help gentests
 see <a href="#generating_tests">Generating Tests</a>. Example use:
 
 <pre class="code">
-java -ea -classpath <em>myclasspath</em>:$(RANDOOP_JAR) randoop.main.Main gentests --testclass=java.util.TreeSet --timelimit=60
+java -ea -classpath <em>myclasspath</em>:$(RANDOOP_JAR) randoop.main.Main gentests --testclass=java.util.TreeSet --timeLimit=60
 </pre>
 </li>
 
@@ -312,7 +312,7 @@ java.util.TreeSet</pre>
 <p>
 and invoke Randoop as follows: </p>
 
-<pre class="code">java -classpath $(RANDOOP_JAR) randoop.main.Main gentests --classlist=myclasses.txt --timelimit=60</pre>
+<pre class="code">java -classpath $(RANDOOP_JAR) randoop.main.Main gentests --classlist=myclasses.txt --timeLimit=60</pre>
 
 
 <p>After 60 seconds, Randoop stops generating tests. The last thing Randoop prints out is the name of the JUnit files containing the tests it generated. You should see a message similar to the following: </p>
@@ -684,20 +684,20 @@ Here is how Randoop attempts to generate a test:
 </p>
 <ul>
   <li>
-    The time limit (<a href="#option:timelimit"><code>--timelimit</code></a>)
+    The time limit (<a href="#option:timeLimit"><code>--timeLimit</code></a>)
     is reached, or
   </li>
   <li>
     the number of attempts to generate a sequence reaches the step limit
-    (<a href="#option:steplimit"><code>--attemptedLimit</code></a>), or
+    (<a href="#option:attemtedLimit"><code>--attemptedLimit</code></a>), or
   </li>
   <li>
     the number of generated sequences reaches the input limit
-    (<a href="#option:inputlimit"><code>--generatedLimit</code></a>), or
+    (<a href="#option:generatedLimit"><code>--generatedLimit</code></a>), or
   </li>
   <li>
     the number of error-revealing and regression tests reaches the output
-    limit (<a href="#option:outputlimit"><code>--outputLimit</code></a>).
+    limit (<a href="#option:outputLimit"><code>--outputLimit</code></a>).
   </li>
 </ul>
 
@@ -2022,9 +2022,9 @@ sequential Java program are:
   <li>
     Don't depend on wall-clock or CPU time, either in your program or in
     Randoop.  (Randoop forbids using the
-    <a href="#option:timelimit"><code>--timelimit</code></a> command-line
+    <a href="#option:timeLimit"><code>--timeLimit</code></a> command-line
     option at the same time as
-    <a href="#option:timelimit"><code>--deterministic</code></a>).
+    <a href="#option:deterministic"><code>--deterministic</code></a>).
   </li>
 </ul>
 
@@ -2164,7 +2164,7 @@ please let us know so we can correct the oversight.
  -->
 <!--  LocalWords:  synchronizedSet ProjectIdeas randoop classpath gentests txt
  -->
-<!--  LocalWords:  usethreads testclass timelimit classlist myclasses hashcode
+<!--  LocalWords:  usethreads testclass timeLimit classlist myclasses hashcode
  -->
 <!--  LocalWords:  RandoopTest hashCode NullPointerException Throwable boolean
  -->
