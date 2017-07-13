@@ -46,14 +46,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import randoop.sequence.ExecutableSequence;
 
 /** Creates Java source as {@code String} for a suite of JUnit4 tests. */
 public class JUnitCreator {
 
   private final String packageName;
-  private final Set<String> testClassNames;
 
   /**
    * classMethodCounts maps test class names to the number of methods in each class. This is used to
@@ -122,7 +120,6 @@ public class JUnitCreator {
 
   private JUnitCreator(String packageName) {
     this.packageName = packageName;
-    this.testClassNames = new TreeSet<>();
     this.classMethodCounts = new LinkedHashMap<>();
   }
 
@@ -164,7 +161,6 @@ public class JUnitCreator {
 
   public CompilationUnit createTestClass(
       String testClassName, String testMethodPrefix, List<ExecutableSequence> sequences) {
-    this.testClassNames.add(testClassName);
     this.classMethodCounts.put(testClassName, sequences.size());
 
     CompilationUnit compilationUnit = new CompilationUnit();
@@ -334,9 +330,10 @@ public class JUnitCreator {
    * Creates the JUnit4 suite class for the tests in this object as a {@code String}.
    *
    * @param suiteClassName the name of the suite class created
+   * @param testClassNames the set of names of the test classes in the suite
    * @return the {@code String} with the declaration for the suite class
    */
-  public String createSuiteClass(String suiteClassName) {
+  public String createSuiteClass(String suiteClassName, Set<String> testClassNames) {
     CompilationUnit cu = new CompilationUnit();
     if (packageName != null && !packageName.isEmpty()) {
       cu.setPackage(new PackageDeclaration(new NameExpr(packageName)));
@@ -375,9 +372,10 @@ public class JUnitCreator {
    * Create non-reflective test driver as a main class.
    *
    * @param driverName the name for the driver class
+   * @param testClassNames the set of names of the test classes in the suite
    * @return the test driver class as a {@code String}
    */
-  public String createTestDriver(String driverName) {
+  public String createTestDriver(String driverName, Set<String> testClassNames) {
     CompilationUnit cu = new CompilationUnit();
     if (packageName != null && !packageName.isEmpty()) {
       cu.setPackage(new PackageDeclaration(new NameExpr(packageName)));

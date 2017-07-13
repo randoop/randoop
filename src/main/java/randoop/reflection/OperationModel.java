@@ -64,8 +64,8 @@ public class OperationModel {
   /** The set of input types for this model */
   private Set<Type> inputTypes;
 
-  /** The set of class objects used in the exercised-class test filter */
-  private final LinkedHashSet<Class<?>> exercisedClasses;
+  /** The set of class objects used in the covered-class test filter */
+  private final LinkedHashSet<Class<?>> coveredClasses;
 
   /** Map for singleton sequences of literals extracted from classes. */
   private MultiMap<ClassOrInterfaceType, Sequence> classLiteralMap;
@@ -81,6 +81,7 @@ public class OperationModel {
 
   /** Create an empty model of test context. */
   private OperationModel() {
+    // TreeSet here for deterministic coverage in the systemTest runNaiveCollectionsTest()
     classTypes = new TreeSet<>();
     inputTypes = new TreeSet<>();
     classLiteralMap = new MultiMap<>();
@@ -98,7 +99,7 @@ public class OperationModel {
     contracts.add(CompareToSubs.getInstance());
     contracts.add(CompareToTransitive.getInstance());
 
-    exercisedClasses = new LinkedHashSet<>();
+    coveredClasses = new LinkedHashSet<>();
     operations = new TreeSet<>();
     classCount = 0;
   }
@@ -112,7 +113,7 @@ public class OperationModel {
    *     members are used
    * @param omitPatterns the patterns for operations that should be omitted
    * @param classnames the names of classes under test
-   * @param exercisedClassnames the names of classes to be tested by exercised heuristic
+   * @param coveredClassnames the names of classes to be tested by covered class heuristic
    * @param methodSignatures the signatures of methods to be added to the model
    * @param errorHandler the handler for bad file name errors
    * @param literalsFileList the list of literals file names @return the operation model for the
@@ -126,7 +127,7 @@ public class OperationModel {
       ReflectionPredicate reflectionPredicate,
       List<Pattern> omitPatterns,
       Set<String> classnames,
-      Set<String> exercisedClassnames,
+      Set<String> coveredClassnames,
       Set<String> methodSignatures,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList)
@@ -138,7 +139,7 @@ public class OperationModel {
         visibility,
         reflectionPredicate,
         classnames,
-        exercisedClassnames,
+        coveredClassnames,
         errorHandler,
         literalsFileList);
 
@@ -225,12 +226,12 @@ public class OperationModel {
   }
 
   /**
-   * Returns the set of identified {@code Class<?>} objects for the exercised class heuristic.
+   * Returns the set of identified {@code Class<?>} objects for the covered class heuristic.
    *
-   * @return the set of exercised classes
+   * @return the set of covered classes
    */
-  public Set<Class<?>> getExercisedClasses() {
-    return exercisedClasses;
+  public Set<Class<?>> getCoveredClasses() {
+    return coveredClasses;
   }
 
   /**
@@ -291,14 +292,14 @@ public class OperationModel {
 
   /**
    * Gathers class types to be used in a run of Randoop and adds them to this {@code
-   * OperationModel}. Specifically, collects types for classes-under-test, objects for
-   * exercised-class heuristic, concrete input types, annotated test values, and literal values.
-   * Also collects annotated test values, and class literal values used in test generation.
+   * OperationModel}. Specifically, collects types for classes-under-test, objects for covered-class
+   * heuristic, concrete input types, annotated test values, and literal values. Also collects
+   * annotated test values, and class literal values used in test generation.
    *
    * @param visibility the visibility predicate
    * @param reflectionPredicate the predicate to determine which reflection objects are used
    * @param classnames the names of classes-under-test
-   * @param exercisedClassnames the names of classes used in exercised-class heuristic
+   * @param coveredClassnames the names of classes used in covered-class heuristic
    * @param errorHandler the handler for bad class names
    * @param literalsFileList the list of literals file names
    */
@@ -306,7 +307,7 @@ public class OperationModel {
       VisibilityPredicate visibility,
       ReflectionPredicate reflectionPredicate,
       Set<String> classnames,
-      Set<String> exercisedClassnames,
+      Set<String> coveredClassnames,
       ClassNameErrorHandler errorHandler,
       List<String> literalsFileList) {
     ReflectionManager mgr = new ReflectionManager(visibility);
@@ -346,16 +347,16 @@ public class OperationModel {
           } else {
             mgr.apply(c);
           }
-          if (exercisedClassnames.contains(classname)) {
-            exercisedClasses.add(c);
+          if (coveredClassnames.contains(classname)) {
+            coveredClasses.add(c);
           }
         }
       }
     }
     classCount = this.classTypes.size();
 
-    // Collect exercised classes
-    for (String classname : exercisedClassnames) {
+    // Collect covered classes
+    for (String classname : coveredClassnames) {
       if (!classnames.contains(classname)) {
         Class<?> c = null;
         try {
@@ -368,12 +369,11 @@ public class OperationModel {
         if (c != null) {
           if (!visibility.isVisible(c)) {
             System.out.println(
-                "Ignoring non-visible " + c + " specified as include-if-class-exercised target");
+                "Ignoring non-visible " + c + " specified as --require-covered-classes target");
           } else if (c.isInterface()) {
-            System.out.println(
-                "Ignoring " + c + " specified as include-if-class-exercised target.");
+            System.out.println("Ignoring " + c + " specified as --require-covered-classes target.");
           } else {
-            exercisedClasses.add(c);
+            coveredClasses.add(c);
           }
         }
       }

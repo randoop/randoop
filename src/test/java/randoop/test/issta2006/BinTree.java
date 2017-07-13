@@ -68,7 +68,7 @@ public class BinTree {
     if (!tests.contains(res)) {
       tests.add(res);
       System.out.println("Test case number " + tests.size() + " for '" + res + "': ");
-      System.out.println("TIME=" + (System.currentTimeMillis() - startTime));
+      // System.out.println("TIME=" + (System.currentTimeMillis() - startTime));
       counter = tests.size();
       return tests.size();
     }

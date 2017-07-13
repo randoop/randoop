@@ -97,6 +97,7 @@ public class TypedClassOperation extends TypedOperation {
    * @param substitution the type substitution
    * @return the concrete operation with type variables replaced by substitution
    */
+  @Override
   public TypedClassOperation apply(Substitution<ReferenceType> substitution) {
     if (substitution.isEmpty()) {
       return this;
@@ -121,6 +122,7 @@ public class TypedClassOperation extends TypedOperation {
    * @param inputVars the list of variables that are inputs to operation
    * @param b the {@link StringBuilder} to which code is added
    */
+  @Override
   public void appendCode(List<Variable> inputVars, StringBuilder b) {
     assert inputVars.size() == this.getInputTypes().size()
         : "number of inputs doesn't match on operation appendCode";

@@ -107,9 +107,8 @@ public class ICSE07ContainersTest {
         new ForwardGenerator(
             model,
             new LinkedHashSet<TypedOperation>(),
-            120000 /* two minutes */,
-            Integer.MAX_VALUE,
-            Integer.MAX_VALUE,
+            new GenInputsAbstract.Limits(
+                120 /* 2 minutes */, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE),
             componentMgr,
             stopper,
             null);
@@ -123,11 +122,11 @@ public class ICSE07ContainersTest {
     List<Class<?>> classList = new ArrayList<>();
     classList.add(FibHeap.class);
     FibHeap.rand.setSeed(0);
-    randoop.util.Randomness.reset(0);
+    randoop.util.Randomness.setSeed(0);
     IStopper stopper =
         new IStopper() {
           @Override
-          public boolean stop() {
+          public boolean shouldStop() {
             return FibHeap.tests.size() >= 96;
           }
         };
@@ -150,11 +149,11 @@ public class ICSE07ContainersTest {
     GenInputsAbstract.null_ratio = 0.5;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(BinTree.class);
-    randoop.util.Randomness.reset(0);
+    randoop.util.Randomness.setSeed(0);
     IStopper stopper =
         new IStopper() {
           @Override
-          public boolean stop() {
+          public boolean shouldStop() {
             return BinTree.tests.size() >= 54;
           }
         };
@@ -175,11 +174,11 @@ public class ICSE07ContainersTest {
     GenInputsAbstract.null_ratio = 0.05;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(TreeMap.class);
-    randoop.util.Randomness.reset(0);
+    randoop.util.Randomness.setSeed(0);
     IStopper stopper =
         new IStopper() {
           @Override
-          public boolean stop() {
+          public boolean shouldStop() {
             return TreeMap.tests.size() >= 106;
           }
         };
@@ -202,11 +201,11 @@ public class ICSE07ContainersTest {
     GenInputsAbstract.null_ratio = 0.05;
     List<Class<?>> classList = new ArrayList<>();
     classList.add(BinomialHeap.class);
-    randoop.util.Randomness.reset(0);
+    randoop.util.Randomness.setSeed(0);
     IStopper stopper =
         new IStopper() {
           @Override
-          public boolean stop() {
+          public boolean shouldStop() {
             return BinomialHeap.tests.size() >= 101;
           }
         };

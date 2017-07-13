@@ -6,7 +6,7 @@ plugins {
   id 'jacoco'
 }
 
-description = "exercised-class instrumentation agent"
+description = "covered-class instrumentation agent"
 
 configurations {
   javassist
@@ -21,14 +21,14 @@ dependencies {
 jar {
   manifest {
     attributes(
-      "Premain-Class": "randoop.instrument.ExercisedAgent",
+      "Premain-Class": "randoop.instrument.CoveredClassAgent",
       "Can-Redefine-Classes": "true"
       )
   }
 }
 
 shadowJar {
-  // should be named exercised-class-version.jar
+  // should be named covered-class-version.jar
   classifier = null
 /*
   relocate 'com.github.javaparser', 'randoop.org.github.javaparser'

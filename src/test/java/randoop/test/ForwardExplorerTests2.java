@@ -81,7 +81,12 @@ public class ForwardExplorerTests2 {
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator exp =
         new ForwardGenerator(
-            model, new LinkedHashSet<TypedOperation>(), Long.MAX_VALUE, 100, 100, mgr, null, null);
+            model,
+            new LinkedHashSet<TypedOperation>(),
+            new GenInputsAbstract.Limits(0, 100, 100, 100),
+            mgr,
+            null,
+            null);
     exp.addTestCheckGenerator(createChecker(new ContractSet()));
 
     // get a SequenceExceptionError when repeat_heuristic=true

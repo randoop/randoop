@@ -20,7 +20,8 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
 
   public final List<SimpleList<T>> lists;
 
-  private int[] accumulatedSize;
+  /** The i-th value is the number of elements in the sublists up to the i-th one, inclusive. */
+  private int[] cumulativeSize;
 
   private int totalelements;
 
@@ -30,7 +31,7 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
     for (SimpleList<T> sl : lists) {
       this.lists.add(sl);
     }
-    this.accumulatedSize = new int[lists.length];
+    this.cumulativeSize = new int[lists.length];
     this.totalelements = 0;
     for (int i = 0; i < lists.length; i++) {
       SimpleList<T> l = lists[i];
@@ -38,14 +39,14 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
         throw new IllegalArgumentException("All lists should be non-null");
       }
       this.totalelements += l.size();
-      this.accumulatedSize[i] = this.totalelements;
+      this.cumulativeSize[i] = this.totalelements;
     }
   }
 
   public ListOfLists(List<SimpleList<T>> lists) {
     if (lists == null) throw new IllegalArgumentException("param cannot be null");
     this.lists = lists;
-    this.accumulatedSize = new int[lists.size()];
+    this.cumulativeSize = new int[lists.size()];
     this.totalelements = 0;
     for (int i = 0; i < lists.size(); i++) {
       SimpleList<T> l = lists.get(i);
@@ -53,7 +54,7 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
         throw new IllegalArgumentException("All lists should be non-null");
       }
       this.totalelements += l.size();
-      this.accumulatedSize[i] = this.totalelements;
+      this.cumulativeSize[i] = this.totalelements;
     }
   }
 
@@ -78,9 +79,9 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
       throw new IllegalArgumentException("index must be between 0 and size()-1");
     }
     int previousListSize = 0;
-    for (int i = 0; i < this.accumulatedSize.length; i++) {
-      if (index < this.accumulatedSize[i]) return this.lists.get(i).get(index - previousListSize);
-      previousListSize = this.accumulatedSize[i];
+    for (int i = 0; i < this.cumulativeSize.length; i++) {
+      if (index < this.cumulativeSize[i]) return this.lists.get(i).get(index - previousListSize);
+      previousListSize = this.cumulativeSize[i];
     }
     throw new BugInRandoopException("Indexing error in ListOfLists");
   }
@@ -91,11 +92,11 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
       throw new IllegalArgumentException("index must be between 0 and size()-1");
     }
     int previousListSize = 0;
-    for (int i = 0; i < this.accumulatedSize.length; i++) {
-      if (index < this.accumulatedSize[i]) {
+    for (int i = 0; i < this.cumulativeSize.length; i++) {
+      if (index < this.cumulativeSize[i]) {
         return lists.get(i).getSublist(index - previousListSize);
       }
-      previousListSize = accumulatedSize[i];
+      previousListSize = cumulativeSize[i];
     }
     throw new BugInRandoopException("indexing error in ListOfLists");
   }

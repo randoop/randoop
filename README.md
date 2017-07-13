@@ -3,7 +3,7 @@
 Randoop is a unit test generator for Java.
 It automatically creates unit tests for your classes, in JUnit format.
 
-## More about Randoop:
+## Learn about Randoop:
 
 * [Randoop homepage](https://randoop.github.io/randoop/)
 * [Randoop manual](https://randoop.github.io/randoop/manual/index.html)
@@ -20,11 +20,12 @@ It automatically creates unit tests for your classes, in JUnit format.
 * `lib` - jar files for local copies of libraries not available via Maven
 * `scripts` - git hook scripts
 * `src` - source directories for Randoop, including
-    * `agenttest` - source for JUnit tests of the exercised-class Java agent
+    * `coveredtest` - source for JUnit tests of the covered-class Java agent
     * `distribution` - resource files for creating the distribution zip file
     * `docs` - all editable documentation and resources
     * `javadoc` - resource files for creating [docs/api](docs/api)
     * `main` - Randoop source code
+    * `mapcalltest` - source for JUnit tests of the mapcall Java agent
     * `systemtest` - source for Randoop system tests
     * `test` - source for JUnit tests of Randoop
     * `testinput` - source for libraries used in Randoop testing

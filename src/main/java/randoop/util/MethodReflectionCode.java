@@ -28,6 +28,7 @@ public final class MethodReflectionCode extends ReflectionCode {
     this.inputs = inputs;
   }
 
+  @SuppressWarnings("Finally")
   @Override
   public void runReflectionCodeRaw() throws IllegalAccessException, InvocationTargetException {
 

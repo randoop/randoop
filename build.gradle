@@ -17,6 +17,9 @@ plugins {
    * https://github.com/sherter/google-java-format-gradle-plugin
    */
   id 'com.github.sherter.google-java-format' version '0.6'
+
+  /* Need to exclude src/testinput from directories examined by Error Prone */
+//  id "net.ltgt.errorprone-base" version "0.0.10"
 }
 
 /* Common build configuration for Randoop and agents */
@@ -52,12 +55,14 @@ def workingDirectories = "$buildDir/working-directories"
 
 sourceSets {
   /* JUnit tests that must be run with -javaagent */
-  exercisedTest {
+  /* JUnit tests are run in nondeterministic order, but system tests are
+     run in deterministic order. */
+  coveredTest {
     java {
-      srcDir 'src/exercisedtest/java'
+      srcDir 'src/coveredtest/java'
     }
     resources {
-      srcDir 'src/exercisedtest/resources'
+      srcDir 'src/coveredtest/resources'
     }
   }
 
@@ -92,7 +97,7 @@ sourceSets {
 
 configurations {
   plume
-  compile.extendsFrom plume
+  implementation.extendsFrom plume
 
   manual {
     description = "Generate user and developer documentation"
@@ -105,54 +110,54 @@ configurations {
   jacocoagent
 
   /*
-   * The agent tests are JUnit tests run with the exercised-class-agent, so
+   * The agent tests are JUnit tests run with the covered-class-agent, so
    * borrow from unit test configurations.
    */
-  exercisedTestCompile.extendsFrom testCompile
-  exercisedTestRuntime.extendsFrom testRuntime
+  coveredTestImplementation.extendsFrom testImplementation
+  coveredTestRuntimeOnly.extendsFrom testRuntimeOnly
 
-  systemTestCompile.extendsFrom testCompile
-  systemTestRuntime.extendsFrom testRuntime
+  systemTestImplementation.extendsFrom testImplementation
+  systemTestRuntimeOnly.extendsFrom testRuntimeOnly
 }
 
 dependencies {
   /* Randoop uses local copy of Plume */
   plume files('lib/plume.jar')
-  compile group: 'com.google.code.gson', name: 'gson', version: '2.8.0'
-  compile group: 'junit', name: 'junit', version: '4.+'
+  implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.0'
+  implementation group: 'junit', name: 'junit', version: '4.+'
 
   /* JavaParser 2.4.0 is the most recent version available with JDK7 jar files. */
-  compile group: 'com.github.javaparser', name: 'javaparser-core', version: '2.4.0'
+  implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '2.4.0'
 
   /* sourceSet test uses JUnit and some use testInput source set */
-  testCompile group: 'junit', name: 'junit', version: '4.+'
-  testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
-  testCompile sourceSets.testInput.output
+  testImplementation group: 'junit', name: 'junit', version: '4.+'
+  testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+  testImplementation sourceSets.testInput.output
 
   /*
-   * sourceSet exercisedTest uses output from main sourceSet, and agent projects.
+   * sourceSet coveredTest uses output from main sourceSet, and agent projects.
    * (Also, see configuration block.)
    */
-  exercisedTestCompile sourceSets.main.output
-  exercisedTestRuntime project(':exercised-class')
+  coveredTestImplementation sourceSets.main.output
+  coveredTestRuntimeOnly project(':covered-class')
 
   jacocoagent group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.7.7.201606060606'
 
   /*
    * source set systemTest
    */
-   systemTestCompile sourceSets.main.output
-   systemTestRuntime sourceSets.testInput.output
-   systemTestCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
-   systemTestCompile group: 'org.jacoco', name: 'org.jacoco.core', version: '0.7.7.201606060606'
-   systemTestCompile group: 'org.jacoco', name: 'org.jacoco.report', version: '0.7.7.201606060606'
+   systemTestImplementation sourceSets.main.output
+   systemTestRuntimeOnly sourceSets.testInput.output
+   systemTestImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.7.7.201606060606'
+   systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.report', version: '0.7.7.201606060606'
 
   /*
    * sourceSet testInput depends on output of main.
    * Also, src/testinput/java/ps1/RatPolyTest.java uses JUnit
    */
-  testInputCompile sourceSets.main.output
-  testInputCompile group: 'junit', name: 'junit', version: '4.+'
+  testInputImplementation sourceSets.main.output
+  testInputImplementation group: 'junit', name: 'junit', version: '4.+'
 
   /*
    * building documentation uses Options doclet that is part of plume, and
@@ -184,25 +189,44 @@ tasks.verifyGoogleJavaFormat {
   exclude 'src/testinput'
 }
 
+// should verifyGoogleJavaFormat before compiling
+tasks.withType(JavaCompile) {
+  dependsOn 'googleJavaFormat' // task name conflicts with plugin name
+}
+
 /*
  * Configuration for compilation.
  */
 compileJava.options.compilerArgs = ['-Xlint','-g','-Xlint:-classfile']
 compileTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
-compileExercisedTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
+compileCoveredTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileSystemTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
+
+/*
+ * Configuration for using error-prone compiler.
+ *
+ * Only setting up for main source set
+ */
+//import net.ltgt.gradle.errorprone.ErrorProneToolChain
+
+//compileJava {
+//  toolChain ErrorProneToolChain.create(project)
+//}
+
+
+
 
 /*
  * Configuration for clean
  */
 clean.dependsOn ':mapcall:clean'
-clean.dependsOn ':exercised-class:clean'
+clean.dependsOn ':covered-class:clean'
 
 /*
  * Configuration for testing.
  * In terms of build, we have two kinds of tests, both using JUnit.
- *   * Those in src/exercisedtest require the exercised-class Java agent.
+ *   * Those in src/coveredtest require the covered-class Java agent.
  *   * Those in src/test are run without the agent.
  *     This second group includes tests that run the full Randoop over
  *     classes that (mostly) are located in src/testinput.
@@ -259,15 +283,15 @@ test {
   exclude 'randoop/operation/OperationParserTests.*'
 }
 
-task exercisedTest(type: Test, dependsOn: 'copyJars') {
+task coveredTest(type: Test, dependsOn: 'copyJars') {
   /*
    * Set the working directory for JUnit tests to the resources directory
    * instead of the project directory.
    */
-  workingDir = sourceSets.exercisedTest.output.resourcesDir
-  testClassesDirs = sourceSets.exercisedTest.output.classesDirs
-  classpath = sourceSets.exercisedTest.runtimeClasspath
-  jvmArgs "-javaagent:$buildDir/libs/exercised-class-$version"+".jar"
+  workingDir = sourceSets.coveredTest.output.resourcesDir
+  testClassesDirs = sourceSets.coveredTest.output.classesDirs
+  classpath = sourceSets.coveredTest.runtimeClasspath
+  jvmArgs "-javaagent:$buildDir/libs/covered-class-$version"+".jar"
 
   /*
    * Show as much as possible to console.
@@ -282,10 +306,10 @@ task exercisedTest(type: Test, dependsOn: 'copyJars') {
 }
 
 /*
- * Link the exercisedTest task into project check task. Includes agent tests into
+ * Link the coveredTest task into project check task. Includes agent tests into
  * the project build task.
  */
-check.dependsOn exercisedTest
+check.dependsOn coveredTest
 
 jacocoTestReport {
   group 'Report'
@@ -339,6 +363,12 @@ task systemTest(type: Test, dependsOn: [ 'extractJacocoAgent', 'generateWorkingD
   workingDir = file("$buildDir")
   testClassesDirs = sourceSets.systemTest.output.classesDirs
   classpath = sourceSets.systemTest.runtimeClasspath
+
+  System.properties.each { k,v->
+        if (k.startsWith("randoop.")) {
+            systemProperty k, v
+        }
+    }
 
   /*
    * Show as much as possible to console.
@@ -404,7 +434,7 @@ uploadArchives {
   }
 }
 
-task copyJars(type: Copy, dependsOn: [':exercised-class:jar', ':mapcall:jar']) {
+task copyJars(type: Copy, dependsOn: [':covered-class:jar', ':mapcall:jar']) {
   from subprojects.collect { it.tasks.withType(Jar) }
   into "$buildDir/libs"
 }
@@ -460,6 +490,9 @@ task clonePlumeLib {
     def plumeFolder = file("$buildDir/utils/plume-lib")
     if ( ! plumeFolder.exists() ) {
       org.ajoberstar.grgit.Grgit.clone(dir: plumeFolder, uri: 'https://github.com/mernst/plume-lib.git')
+      exec {
+        commandLine 'chmod', '-R', '+x', "$buildDir/utils/plume-lib/bin"
+      }
     } else {
       println("WARNING: not cloning plume-lib because already exists.")
       println("         Force clone by running after clean")
@@ -476,6 +509,11 @@ javadoc {
   source sourceSets.main.allJava
   options.memberLevel = JavadocMemberLevel.PRIVATE
   options.addStringOption("stylesheetfile", "${projectDir}/src/javadoc/resources/stylesheets/javadocstyle.css")
+  // Use of Javadoc's -linkoffline command-line option makes Javadoc generation
+  // much faster, especially on Travis.
+  options.with {
+    linksOffline 'https://docs.oracle.com/javase/8/docs/api/', 'https://docs.oracle.com/javase/8/docs/api/'
+  }
 }
 
 // needed for javadoc.doLast
@@ -487,12 +525,13 @@ javadoc.doLast {
   exec {
     commandLine preplace, "<dt><span class=\"memberNameLink\"><a href=\".*\\(\\)</a></span> - Constructor for enum [a-zA-Z0-9_.]*<a href=\".*</a></dt>", "", "build/docs/api/index-all.html"
   }
-  // Reduce size of diffs
+  // Reduce size of diffs (when it's copied over to docs/api whech is under
+  // version control).  Note that build/docs/api/ is the same as src/docs/api/.
   exec {
-    commandLine preplace, "^<!-- Generated by javadoc \\(.* -->\$", ""
+    commandLine preplace, "^<!-- Generated by javadoc \\(.* -->\$", "", "build/docs/api/"
   }
   exec {
-    commandLine preplace, "^<meta name=\"date\" content=\"[-0-9]+\">\$", ""
+    commandLine preplace, "^<meta name=\"date\" content=\"[-0-9]+\">\$", "", "build/docs/api/"
   }
 }
 
@@ -525,7 +564,7 @@ task updateDevTOC( type:Exec, dependsOn: ['clonePlumeLib' ]) {
  * command-line arguments extracted from the given @Option annotated classes.
  * Applied in-place.
  */
-task updateUserOptions(dependsOn: 'assemble'){
+task updateUserOptions(dependsOn: 'assemble') {
   description "Runs plume.OptionsDoclet on src/docs/manual/index.html"
   def classpath = files(configurations.manual.files).asPath
   def docFile = file("${projectDir}/src/docs/manual/index.html")
@@ -556,7 +595,19 @@ task updateUserOptions(dependsOn: 'assemble'){
 task manual(type: DefaultTask, dependsOn: [ 'updateUserOptions', 'updateUserTOC', 'updateDevTOC']) {
   group 'Documentation'
   description "Adds options and TOC to documentation in src/docs"
+  doLast {
+    exec {
+      if (JavaVersion.current().isJava8Compatible()) {
+        environment PATH: "$System.env.PATH"
+        commandLine "html5validator", "--root", file("${projectDir}/src/docs/manual")
+      } else {
+        commandLine "echo","WARNING: HTML validation of manuals is only run in Java 8+"
+      }
+    }
+  }
 }
+
+build.dependsOn manual
 
 /*
  * Applies HTML5 validator to API javadoc.
@@ -569,23 +620,10 @@ task validateAPI(type: Exec, dependsOn: 'javadoc') {
     environment PATH: "$System.env.PATH"
     commandLine "html5validator", "--root", file("${buildDir}/docs/api")
   } else {
-    commandLine "echo", "WARNING: HTML validation of API only run in Java 9+"
+    commandLine "echo", "WARNING: HTML validation of API is only run in Java 9+"
   }
 }
 
-/*
- * Applies HTML5 validator to find errors in the manual post options and TOC updates.
- */
-task validateManual(type: Exec, dependsOn: 'manual') {
-  group 'Documentation'
-  description "Run html5validator to find HTML errors in manual documents"
-  if (JavaVersion.current().isJava8Compatible()) {
-    environment PATH: "$System.env.PATH"
-    commandLine "html5validator", "--root", file("${projectDir}/src/docs/manual")
-  } else {
-    commandLine "echo","WARNING: HTML validation of manuals only run in Java 8+"
-  }
-}
 
 /*
  * WARNING: do not run this task unless you mean to wipe out the project pages
@@ -615,7 +653,7 @@ task cleanSite {
  *
  * All site files will be read-only.
  */
-task publishSite (dependsOn: ['cleanSite', 'javadoc', 'validateAPI', 'manual', 'validateManual']) {
+task publishSite (dependsOn: ['cleanSite', 'javadoc', 'validateAPI', 'manual']) {
   group 'Publishing'
   description 'Publish changes to site files and javadoc to the project pages directory'
   def siteDir = file("${projectDir}/docs")
@@ -639,11 +677,12 @@ task publishSite (dependsOn: ['cleanSite', 'javadoc', 'validateAPI', 'manual', '
  */
 task validateSite(type: Exec) {
   description "Run html5validator to find HTML errors in site files (excludes manual and api)"
-  if (JavaVersion.current().isJava9Compatible()) {
+  if (JavaVersion.current().isJava8Compatible()) {
     environment PATH: "$System.env.PATH"
+    commandLine "html5validator", "--root", "src/docs/", "--ignore", "src/docs/api"
     commandLine "html5validator", "--root", "docs/", "--ignore", "docs/api"
   } else {
-    commandLine "echo", "WARNING: HTML validation of site only run in Java 8+"
+    commandLine "echo", "WARNING: HTML validation of site is only run in Java 9+"
   }
 }
 
@@ -665,7 +704,7 @@ task tags(type: Exec, dependsOn: 'clonePlumeLib') {
   group 'Emacs'
   description "Run etags to create an Emacs TAGS table"
   environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
-  commandLine "bash", "-c", "find src/ agent/exercised-class/src/ agent/mapcall/src/ -name *.java | sort-directory-order | xargs etags"
+  commandLine "bash", "-c", "find src/ agent/covered-class/src/ agent/mapcall/src/ -name *.java | grep -v src/testinput | sort-directory-order | xargs etags"
 }
 
 /* Make Emacs TAGS table, with only Randoop code (not test code) */

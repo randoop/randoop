@@ -305,21 +305,23 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
 
   /**
    * Constructs a {@link TypedOperation} for an enum from a method object that is a member of an
-   * anonymous class for an enum constant. Will return null if the method is
+   * anonymous class for an enum constant. Will return null if no matching method is found in the
+   * enum.
    *
    * @param method the method of the anonymous class
    * @param methodParamTypes the parameter types of the method
    * @param enumClass the declaring class
-   * @return the typed operation for the given method
+   * @return the typed operation for the given method, null if no matching method is found in {@code
+   *     enumClass}
    */
   private static TypedClassOperation getAnonEnumOperation(
       Method method, List<Type> methodParamTypes, Class<?> enumClass) {
     ClassOrInterfaceType enumType = ClassOrInterfaceType.forClass(enumClass);
 
     /*
-     * have to determine whether parameter types match
-     * if method comes from a generic type, the parameters for method will be instantiated
-     * and it is necessary to build the instantiated parameter list
+     * Have to determine whether parameter types match.
+     * If method comes from a generic type, the parameters for method will be instantiated
+     * and it is necessary to build the instantiated parameter list.
      */
     // TODO verify that subsignature conditions on erasure met (JLS 8.4.2)
     for (Method m : enumClass.getMethods()) {
@@ -363,7 +365,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
     /*
      * When dredging methods from anonymous classes, end up with methods that have Object instead
      * of generic type parameter. These just cause pain when generating code, and this code
-     * assumes that current method is one of these if we cannot find a match.
+     * assumes that the current method is one of these if we cannot find a match.
      */
     System.out.println(
         method.getName()
@@ -524,6 +526,7 @@ public abstract class TypedOperation implements Operation, Comparable<TypedOpera
         || type.getRuntimeClass().equals(Class.class);
   }
 
+  @Override
   public boolean isUncheckedCast() {
     return operation.isUncheckedCast();
   }

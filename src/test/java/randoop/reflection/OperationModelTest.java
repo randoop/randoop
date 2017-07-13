@@ -38,7 +38,7 @@ public class OperationModelTest {
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Set<String> classnames = new LinkedHashSet<>();
     classnames.add("java.util.LinkedList");
-    Set<String> exercisedClassnames = new LinkedHashSet<>();
+    Set<String> coveredClassnames = new LinkedHashSet<>();
     Set<String> methodSignatures = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new ThrowClassNameError();
     List<String> literalsFileList = new ArrayList<>();
@@ -50,7 +50,7 @@ public class OperationModelTest {
               reflectionPredicate,
               new ArrayList<Pattern>(),
               classnames,
-              exercisedClassnames,
+              coveredClassnames,
               methodSignatures,
               errorHandler,
               literalsFileList);
@@ -93,7 +93,7 @@ public class OperationModelTest {
     Set<String> classnames = new LinkedHashSet<>();
     classnames.add("randoop.test.ClassWithInnerClass");
     classnames.add("randoop.test.ClassWithInnerClass$A");
-    Set<String> exercisedClassname = new LinkedHashSet<>();
+    Set<String> coveredClassnames = new LinkedHashSet<>();
     Set<String> methodSignatures = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new WarnOnBadClassName();
     List<String> literalsFileList = new ArrayList<>();
@@ -105,7 +105,7 @@ public class OperationModelTest {
               reflectionPredicate,
               new ArrayList<Pattern>(),
               classnames,
-              exercisedClassname,
+              coveredClassnames,
               methodSignatures,
               errorHandler,
               literalsFileList);
@@ -167,7 +167,7 @@ public class OperationModelTest {
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
     Set<String> classnames = new LinkedHashSet<>();
     classnames.add("randoop.reflection.supertypetest.InheritedEnum");
-    Set<String> exercisedClassnames = new LinkedHashSet<>();
+    Set<String> coveredClassnames = new LinkedHashSet<>();
     Set<String> methodSignatures = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new ThrowClassNameError();
     List<String> literalsFileList = new ArrayList<>();
@@ -179,7 +179,7 @@ public class OperationModelTest {
               reflectionPredicate,
               new ArrayList<Pattern>(),
               classnames,
-              exercisedClassnames,
+              coveredClassnames,
               methodSignatures,
               errorHandler,
               literalsFileList);
@@ -350,7 +350,7 @@ public class OperationModelTest {
   private OperationModel getOperationModel(Set<String> classnames) {
     VisibilityPredicate visibilityPredicate = new PublicVisibilityPredicate();
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
-    Set<String> exercisedClassname = new LinkedHashSet<>();
+    Set<String> coveredClassnames = new LinkedHashSet<>();
     Set<String> methodSignatures = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new WarnOnBadClassName();
     List<String> literalsFileList = new ArrayList<>();
@@ -362,7 +362,7 @@ public class OperationModelTest {
               reflectionPredicate,
               new ArrayList<Pattern>(),
               classnames,
-              exercisedClassname,
+              coveredClassnames,
               methodSignatures,
               errorHandler,
               literalsFileList);

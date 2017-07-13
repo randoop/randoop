@@ -3,8 +3,8 @@ package randoop.instrument;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static randoop.main.GenInputsAbstract.include_if_classname_appears;
 import static randoop.main.GenInputsAbstract.methodlist;
+import static randoop.main.GenInputsAbstract.require_classname_in_test;
 
 import java.io.File;
 import java.util.LinkedHashSet;
@@ -47,8 +47,11 @@ public class CoveredClassTest {
   public static void setup() {
     optionsCache = new OptionsCache();
     optionsCache.saveState();
-    GenInputsAbstract.outputlimit = 5000;
-    GenInputsAbstract.inputlimit = 10000;
+    GenInputsAbstract.deterministic = true;
+    GenInputsAbstract.minimize_error_test = false;
+    GenInputsAbstract.timeLimit = 0;
+    GenInputsAbstract.generatedLimit = 10000;
+    GenInputsAbstract.outputLimit = 5000;
     GenInputsAbstract.silently_ignore_bad_class_names = false;
   }
 
@@ -62,8 +65,8 @@ public class CoveredClassTest {
     System.out.println("no filter");
 
     GenInputsAbstract.classlist = new File("instrument/testcase/allclasses.txt");
-    include_if_classname_appears = null;
-    GenInputsAbstract.include_if_class_exercised = null;
+    require_classname_in_test = null;
+    GenInputsAbstract.require_covered_classes = null;
     // setup classes
 
     ForwardGenerator testGenerator = getGenerator();
@@ -100,8 +103,8 @@ public class CoveredClassTest {
   public void testNameFilter() {
     System.out.println("name filter");
     GenInputsAbstract.classlist = new File("instrument/testcase/allclasses.txt");
-    include_if_classname_appears = Pattern.compile("instrument\\.testcase\\.A"); //null;
-    GenInputsAbstract.include_if_class_exercised =
+    require_classname_in_test = Pattern.compile("instrument\\.testcase\\.A"); //null;
+    GenInputsAbstract.require_covered_classes =
         null; //"tests/instrument/testcase/coveredclasses.txt";
     // setup classes
 
@@ -139,9 +142,8 @@ public class CoveredClassTest {
   public void testCoverageFilter() {
     System.out.println("coverage filter");
     GenInputsAbstract.classlist = new File("instrument/testcase/allclasses.txt");
-    include_if_classname_appears = null;
-    GenInputsAbstract.include_if_class_exercised =
-        new File("instrument/testcase/coveredclasses.txt");
+    require_classname_in_test = null;
+    GenInputsAbstract.require_covered_classes = new File("instrument/testcase/coveredclasses.txt");
     // setup classes
 
     ForwardGenerator testGenerator = getGenerator();
@@ -178,7 +180,7 @@ public class CoveredClassTest {
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
     Set<String> coveredClassnames =
         GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.include_if_class_exercised, "unable to read coverage class names");
+            GenInputsAbstract.require_covered_classes, "unable to read coverage class names");
     Set<String> omitFields =
         GenInputsAbstract.getStringSetFromFile(
             GenInputsAbstract.omit_field_list, "Error reading field file");
@@ -236,13 +238,7 @@ public class CoveredClassTest {
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
     ForwardGenerator testGenerator =
         new ForwardGenerator(
-            model,
-            observers,
-            GenInputsAbstract.timelimit * 1000,
-            GenInputsAbstract.inputlimit,
-            GenInputsAbstract.outputlimit,
-            componentMgr,
-            listenerMgr);
+            model, observers, new GenInputsAbstract.Limits(), componentMgr, listenerMgr);
     GenTests genTests = new GenTests();
 
     TypedOperation objectConstructor = null;
@@ -259,7 +255,7 @@ public class CoveredClassTest {
 
     Predicate<ExecutableSequence> isOutputTest =
         genTests.createTestOutputPredicate(
-            excludeSet, operationModel.getExercisedClasses(), include_if_classname_appears);
+            excludeSet, operationModel.getCoveredClasses(), require_classname_in_test);
     testGenerator.addTestPredicate(isOutputTest);
 
     ContractSet contracts = operationModel.getContracts();
@@ -267,8 +263,7 @@ public class CoveredClassTest {
     TestCheckGenerator checkGenerator =
         genTests.createTestCheckGenerator(visibility, contracts, observerMap, excludeAsObservers);
     testGenerator.addTestCheckGenerator(checkGenerator);
-    testGenerator.addExecutionVisitor(
-        new ExercisedClassVisitor(operationModel.getExercisedClasses()));
+    testGenerator.addExecutionVisitor(new CoveredClassVisitor(operationModel.getCoveredClasses()));
     return testGenerator;
   }
 }
