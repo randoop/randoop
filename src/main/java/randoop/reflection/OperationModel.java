@@ -140,11 +140,7 @@ public class OperationModel {
 
     OperationModel model = new OperationModel(visibility, reflectionPredicate);
 
-    model.addClassTypes(
-        classnames,
-        coveredClassnames,
-        errorHandler,
-        literalsFileList);
+    model.addClassTypes(classnames, coveredClassnames, errorHandler, literalsFileList);
 
     model.addOperations(visibility, reflectionPredicate);
     model.addOperations(methodSignatures);
