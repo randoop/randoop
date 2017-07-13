@@ -16,6 +16,25 @@ the file argument.
 Fixes a problem in progress reporting where the wrong count was being used for
 error-revealing sequences.
 
+Added the --deterministic command-line argument (default = false).  When
+set to true, Randoop is deterministic and produces the same test suite when
+run twice.  When set to false, Randoop may or may not produce the same test
+suite when run twice.  Use --randomseed to produce a different test suite.
+
+The --usethreads command-line option defaults to false.  This makes Randoop
+run faster and generate more tests, but Randoop will hang if it calls a
+method that does not terminate and return.
+
+The --timelimit command-line option has been renamed to --timeLimit.
+The --inputlimit command-line option has been renamed to --generatedLimit.
+The --outputlimit command-line option has been renamed to --outputLimit.
+New --attemptedLimit command-line option is a new way to limit test generation.
+
+The option --include-if-classname-appears has been renamed to
+--require-classname-in-test.
+The option --include-if-class-exercised has been renamed to
+--require-covered-classes.  The "exercised-class.jar" is now "covered-class.jar".
+
 
 Version 3.1.5, released April 28, 2017
 

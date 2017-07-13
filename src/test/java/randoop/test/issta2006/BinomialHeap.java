@@ -174,7 +174,7 @@ public class BinomialHeap /*implements java.io.Serializable*/ {
     //END comment here
     if (!tests.contains(res)) {
       tests.add(res);
-      System.out.println("TIME=" + (System.currentTimeMillis() - startTime));
+      // System.out.println("TIME=" + (System.currentTimeMillis() - startTime));
       System.out.println("Test case number " + tests.size() + " for '" + res + "': ");
       counter = tests.size();
       return tests.size();

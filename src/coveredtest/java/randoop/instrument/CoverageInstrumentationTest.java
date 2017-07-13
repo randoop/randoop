@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 import org.junit.Test;
 import randoop.reflection.TypeNames;
 
-public class ExerciseInstrumentationTest {
+public class CoverageInstrumentationTest {
 
   @Test
   public void test() {

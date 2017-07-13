@@ -13,7 +13,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.reflection.TypeNames;
 
 /**
- * This test was originally written when the exercised-class instrumentation was being handled by a
+ * This test was originally written when the covered-class instrumentation was being handled by a
  * classloader, and the CheckRep annotation was lost. This is here mainly to make sure that
  * annotations are still arriving when the transforming java agent is used.
  */
@@ -23,8 +23,8 @@ public class LoadingWithAnnotationTest {
   public void test() {
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = new File("randoop/instrument/testcase/allclasses.txt");
-    GenInputsAbstract.include_if_classname_appears = null;
-    GenInputsAbstract.include_if_class_exercised =
+    GenInputsAbstract.require_classname_in_test = null;
+    GenInputsAbstract.require_covered_classes =
         new File("randoop/instrument/testcase/annotatedclasses.txt");
 
     Class<?> cc = null;

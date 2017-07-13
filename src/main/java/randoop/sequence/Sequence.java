@@ -319,6 +319,7 @@ public final class Sequence implements WeightedElement {
    * @param value the variable
    * @return the statement that assigned to this variable
    */
+  @SuppressWarnings("ReferenceEquality")
   public Statement getCreatingStatement(Variable value) {
     if (value.sequence != this) throw new IllegalArgumentException("value.owner != this");
     return statements.get((value).index);
@@ -359,9 +360,13 @@ public final class Sequence implements WeightedElement {
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
-      // don't dump primitive initializations, if using literals
-      if (canUseShortForm() && getStatement(i).getShortForm() != null) {
-        continue;
+      // Don't dump primitive initializations, if using literals.
+      // But do print them if they are the last statement;
+      // otherwise, the sequence might print as the empty string.
+      if (i != size() - 1) {
+        if (canUseShortForm() && getStatement(i).getShortForm() != null) {
+          continue;
+        }
       }
       appendCode(b, i);
       b.append(Globals.lineSep);
@@ -552,6 +557,7 @@ public final class Sequence implements WeightedElement {
   }
 
   /** Two sequences are equal if their statements(+inputs) are element-wise equal. */
+  @SuppressWarnings("ReferenceEquality")
   @Override
   public final boolean equals(Object o) {
     if (!(o instanceof Sequence)) return false;
@@ -647,6 +653,7 @@ public final class Sequence implements WeightedElement {
 
   // Argument checker for extend method.
   // These checks should be caught by checkRep() too.
+  @SuppressWarnings("ReferenceEquality")
   private void checkInputs(TypedOperation operation, List<Variable> inputVariables) {
     if (operation.getInputTypes().size() != inputVariables.size()) {
       String msg =
@@ -1017,8 +1024,9 @@ public final class Sequence implements WeightedElement {
       return;
     }
     try {
-      GenInputsAbstract.log.write(Globals.lineSep + Globals.lineSep);
+      GenInputsAbstract.log.write(Globals.lineSep);
       GenInputsAbstract.log.write(this.toFullCodeString());
+      GenInputsAbstract.log.write(Globals.lineSep);
       GenInputsAbstract.log.flush();
     } catch (IOException e) {
       e.printStackTrace();

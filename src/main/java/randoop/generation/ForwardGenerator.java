@@ -69,40 +69,21 @@ public class ForwardGenerator extends AbstractGenerator {
   public ForwardGenerator(
       List<TypedOperation> operations,
       Set<TypedOperation> observers,
-      long timeMillis,
-      int maxGenSequences,
-      int maxOutSequences,
+      GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
       RandoopListenerManager listenerManager) {
-    this(
-        operations,
-        observers,
-        timeMillis,
-        maxGenSequences,
-        maxOutSequences,
-        componentManager,
-        null,
-        listenerManager);
+    this(operations, observers, limits, componentManager, null, listenerManager);
   }
 
   public ForwardGenerator(
       List<TypedOperation> operations,
       Set<TypedOperation> observers,
-      long timeMillis,
-      int maxGenSequences,
-      int maxOutSequences,
+      GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
       IStopper stopper,
       RandoopListenerManager listenerManager) {
 
-    super(
-        operations,
-        timeMillis,
-        maxGenSequences,
-        maxOutSequences,
-        componentManager,
-        stopper,
-        listenerManager);
+    super(operations, limits, componentManager, stopper, listenerManager);
 
     this.observers = observers;
     this.allSequences = new LinkedHashSet<>();
@@ -310,7 +291,7 @@ public class ForwardGenerator extends AbstractGenerator {
         } else {
           operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
           Log.logLine("Instantiation error for operation " + operation);
-          Log.logLine("error message: " + e.getMessage());
+          Log.logStackTrace(e);
           System.out.println("Instantiation error for operation " + operation);
           operation = null;
         }
@@ -330,7 +311,7 @@ public class ForwardGenerator extends AbstractGenerator {
       } else {
         operationHistory.add(operation, OperationOutcome.SEQUENCE_DISCARDED);
         Log.logLine("Error selecting inputs for operation: " + operation);
-        Log.logLine("error message: " + e.getMessage());
+        Log.logStackTrace(e);
         System.out.println("Error selecting inputs for operation: " + operation);
         sequences = null;
       }
@@ -706,10 +687,8 @@ public class ForwardGenerator extends AbstractGenerator {
       // Now, find values that satisfy the constraint set.
       Variable randomVariable = chosenSeq.randomVariableForTypeLastStatement(inputType);
 
-      // We are not done yet: we have chosen a sequence that yields a value of
-      // the required
-      // type inputTypes[i], but there may be more than one such value. Our last
-      // random
+      // We are not done yet: we have chosen a sequence that yields a value of the required
+      // type inputTypes[i], but there may be more than one such value. Our last random
       // selection step is to select from among all possible values.
       // if (i == 0 && statement.isInstanceMethod()) m = Match.EXACT_TYPE;
       if (randomVariable == null) {

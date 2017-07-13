@@ -38,9 +38,9 @@ public class RandoopListenerManager {
     }
   }
 
-  public boolean stopGeneration() {
+  public boolean shouldStopGeneration() {
     for (IEventListener n : listeners) {
-      if (n.stopGeneration()) {
+      if (n.shouldStopGeneration()) {
         return true;
       }
     }
