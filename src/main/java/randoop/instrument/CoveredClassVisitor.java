@@ -10,7 +10,7 @@ import randoop.sequence.ExecutableSequence;
  * A {@link ExecutionVisitor} that polls a set of coverage instrumented classes and adds each
  * covered class to an {@link ExecutableSequence} after it is executed.
  */
-public class ExercisedClassVisitor implements ExecutionVisitor {
+public class CoveredClassVisitor implements ExecutionVisitor {
 
   /** The classes to be polled. */
   private Set<Class<?>> classes;
@@ -20,7 +20,7 @@ public class ExercisedClassVisitor implements ExecutionVisitor {
    *
    * @param classes the set of classes to poll for coverage by a sequence
    */
-  public ExercisedClassVisitor(Set<Class<?>> classes) {
+  public CoveredClassVisitor(Set<Class<?>> classes) {
     this.classes = classes;
   }
 

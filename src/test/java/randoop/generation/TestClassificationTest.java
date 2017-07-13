@@ -73,7 +73,7 @@ public class TestClassificationTest {
    */
   @Test
   public void allInvalidTest() {
-    GenInputsAbstract.include_if_classname_appears = null;
+    GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_regression_assertions = false;
     GenInputsAbstract.checked_exception = BehaviorType.INVALID;
     GenInputsAbstract.unchecked_exception = BehaviorType.INVALID;
@@ -114,7 +114,7 @@ public class TestClassificationTest {
    */
   @Test
   public void allErrorTest() {
-    GenInputsAbstract.include_if_classname_appears = null;
+    GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_regression_assertions = false;
     GenInputsAbstract.checked_exception = BehaviorType.ERROR;
     GenInputsAbstract.unchecked_exception = BehaviorType.ERROR;
@@ -169,7 +169,7 @@ public class TestClassificationTest {
    */
   @Test
   public void allExpectedTest() {
-    GenInputsAbstract.include_if_classname_appears = null;
+    GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_regression_assertions = false;
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
@@ -212,7 +212,7 @@ public class TestClassificationTest {
    */
   @Test
   public void defaultsTest() {
-    GenInputsAbstract.include_if_classname_appears = null;
+    GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_regression_assertions = false;
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
@@ -270,7 +270,7 @@ public class TestClassificationTest {
    */
   @Test
   public void defaultsWithNoRegressionAssertions() {
-    GenInputsAbstract.include_if_classname_appears = null;
+    GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_regression_assertions = true;
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;

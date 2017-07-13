@@ -193,7 +193,7 @@
   dependencies and tasks.
   For instance, in the Randoop <code>build.gradle</code> there is the
   <code>agentTest</code> source set that is separate from the <code>test</code> source
-  set because the test classes must run using the <code>exercised-class</code> Java
+  set because the test classes must run using the <code>covered-class</code> Java
   agent.
   The Gradle Java plugin normally has two source sets named <code>main</code> and <code>test</code>,
   and the Randoop build script defines others to better structure the build process.
@@ -299,9 +299,9 @@ Plume-lib, should there be a conflict in included classes.
 The jar files for Java agents are located in
 the <code>build/libs</code> subdirectory of both the Randoop project and the
 agent project directories.
-So, for instance, the following will work to run the <code>exercised-class</code> agent:
+So, for instance, the following will work to run the <code>covered-class</code> agent:
 </p>
-<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/exercised-class-3.1.5.jar</code></pre>
+<pre><code>-javaagent:&lt;randoop-path&gt;/build/libs/covered-class-3.1.5.jar</code></pre>
 
 
 
@@ -365,9 +365,12 @@ will write the operation log to the file <code>/build/working-directories/<em>te
 <p>
   As you add new functionality to Randoop, you should also add new tests.
   Randoop has three kinds of tests:
-  unit tests of Randoop internal classes (under directory <code>src/test</code>),
-  unit tests of Randoop Java agents (under directory <code>src/agenttest</code>), and
+  tests of Randoop internal classes (under directory <code>src/test</code>),
+  tests of Randoop Java agents (under directories <code>src/coveredtest</code>
+  and <code>src/mapcalltest</code>), and
   system tests that run Randoop on input classes.
+  All of the tests are written as JUnit classes, but are separate because each
+  needs to be executed differently.
 </p>
 
 

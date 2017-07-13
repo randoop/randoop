@@ -852,15 +852,13 @@ public class RandoopSystemTest {
   }
 
   @Test
-  public void runExercisedClassFilter() {
-    TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("exercised-class");
-    testEnvironment.addJavaAgent(systemTestEnvironment.exercisedClassAgentPath);
+  public void runCoveredClassFilterTest() {
+    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment("covered-class");
+    testEnvironment.addJavaAgent(systemTestEnvironment.coveredClassAgentPath);
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.addClassList("resources/systemTest/instrument/testcase/allclasses.txt");
     options.setOption(
-        "include-if-class-exercised",
-        "resources/systemTest/instrument/testcase/coveredclasses.txt");
+        "require-covered-classes", "resources/systemTest/instrument/testcase/coveredclasses.txt");
     options.setOption("generatedLimit", "500");
     options.setOption("outputLimit", "250");
     options.setErrorBasename("ExError");

@@ -2,7 +2,7 @@ package randoop.test;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static randoop.main.GenInputsAbstract.include_if_classname_appears;
+import static randoop.main.GenInputsAbstract.require_classname_in_test;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -230,6 +230,6 @@ public class ForwardExplorerTests {
     sequences.add((new Sequence().extend(op, new ArrayList<Variable>())));
     return (new GenTests())
         .createTestOutputPredicate(
-            sequences, new LinkedHashSet<Class<?>>(), include_if_classname_appears);
+            sequences, new LinkedHashSet<Class<?>>(), require_classname_in_test);
   }
 }

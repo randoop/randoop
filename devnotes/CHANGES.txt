@@ -30,6 +30,11 @@ The --inputlimit command-line option has been renamed to --generatedLimit.
 The --outputlimit command-line option has been renamed to --outputLimit.
 New --attemptedLimit command-line option is a new way to limit test generation.
 
+The option --include-if-classname-appears has been renamed to
+--require-classname-in-test.
+The option --include-if-class-exercised has been renamed to
+--require-covered-classes.  The "exercised-class.jar" is now "covered-class.jar".
+
 
 Version 3.1.5, released April 28, 2017
 

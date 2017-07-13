@@ -57,12 +57,12 @@ sourceSets {
   /* JUnit tests that must be run with -javaagent */
   /* JUnit tests are run in nondeterministic order, but system tests are
      run in deterministic order. */
-  exercisedTest {
+  coveredTest {
     java {
-      srcDir 'src/exercisedtest/java'
+      srcDir 'src/coveredtest/java'
     }
     resources {
-      srcDir 'src/exercisedtest/resources'
+      srcDir 'src/coveredtest/resources'
     }
   }
 
@@ -110,11 +110,11 @@ configurations {
   jacocoagent
 
   /*
-   * The agent tests are JUnit tests run with the exercised-class-agent, so
+   * The agent tests are JUnit tests run with the covered-class-agent, so
    * borrow from unit test configurations.
    */
-  exercisedTestCompile.extendsFrom testCompile
-  exercisedTestRuntime.extendsFrom testRuntime
+  coveredTestCompile.extendsFrom testCompile
+  coveredTestRuntime.extendsFrom testRuntime
 
   systemTestCompile.extendsFrom testCompile
   systemTestRuntime.extendsFrom testRuntime
@@ -135,11 +135,11 @@ dependencies {
   testCompile sourceSets.testInput.output
 
   /*
-   * sourceSet exercisedTest uses output from main sourceSet, and agent projects.
+   * sourceSet coveredTest uses output from main sourceSet, and agent projects.
    * (Also, see configuration block.)
    */
-  exercisedTestCompile sourceSets.main.output
-  exercisedTestRuntime project(':exercised-class')
+  coveredTestCompile sourceSets.main.output
+  coveredTestRuntime project(':covered-class')
 
   jacocoagent group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.7.7.201606060606'
 
@@ -199,7 +199,7 @@ tasks.withType(JavaCompile) {
  */
 compileJava.options.compilerArgs = ['-Xlint','-g','-Xlint:-classfile']
 compileTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
-compileExercisedTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
+compileCoveredTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileSystemTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
 
@@ -221,12 +221,12 @@ compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
  * Configuration for clean
  */
 clean.dependsOn ':mapcall:clean'
-clean.dependsOn ':exercised-class:clean'
+clean.dependsOn ':covered-class:clean'
 
 /*
  * Configuration for testing.
  * In terms of build, we have two kinds of tests, both using JUnit.
- *   * Those in src/exercisedtest require the exercised-class Java agent.
+ *   * Those in src/coveredtest require the covered-class Java agent.
  *   * Those in src/test are run without the agent.
  *     This second group includes tests that run the full Randoop over
  *     classes that (mostly) are located in src/testinput.
@@ -283,15 +283,15 @@ test {
   exclude 'randoop/operation/OperationParserTests.*'
 }
 
-task exercisedTest(type: Test, dependsOn: 'copyJars') {
+task coveredTest(type: Test, dependsOn: 'copyJars') {
   /*
    * Set the working directory for JUnit tests to the resources directory
    * instead of the project directory.
    */
-  workingDir = sourceSets.exercisedTest.output.resourcesDir
-  testClassesDirs = sourceSets.exercisedTest.output.classesDirs
-  classpath = sourceSets.exercisedTest.runtimeClasspath
-  jvmArgs "-javaagent:$buildDir/libs/exercised-class-$version"+".jar"
+  workingDir = sourceSets.coveredTest.output.resourcesDir
+  testClassesDirs = sourceSets.coveredTest.output.classesDirs
+  classpath = sourceSets.coveredTest.runtimeClasspath
+  jvmArgs "-javaagent:$buildDir/libs/covered-class-$version"+".jar"
 
   /*
    * Show as much as possible to console.
@@ -306,10 +306,10 @@ task exercisedTest(type: Test, dependsOn: 'copyJars') {
 }
 
 /*
- * Link the exercisedTest task into project check task. Includes agent tests into
+ * Link the coveredTest task into project check task. Includes agent tests into
  * the project build task.
  */
-check.dependsOn exercisedTest
+check.dependsOn coveredTest
 
 jacocoTestReport {
   group 'Report'
@@ -434,7 +434,7 @@ uploadArchives {
   }
 }
 
-task copyJars(type: Copy, dependsOn: [':exercised-class:jar', ':mapcall:jar']) {
+task copyJars(type: Copy, dependsOn: [':covered-class:jar', ':mapcall:jar']) {
   from subprojects.collect { it.tasks.withType(Jar) }
   into "$buildDir/libs"
 }
@@ -702,7 +702,7 @@ task tags(type: Exec, dependsOn: 'clonePlumeLib') {
   group 'Emacs'
   description "Run etags to create an Emacs TAGS table"
   environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
-  commandLine "bash", "-c", "find src/ agent/exercised-class/src/ agent/mapcall/src/ -name *.java | grep -v src/testinput | sort-directory-order | xargs etags"
+  commandLine "bash", "-c", "find src/ agent/covered-class/src/ agent/mapcall/src/ -name *.java | grep -v src/testinput | sort-directory-order | xargs etags"
 }
 
 /* Make Emacs TAGS table, with only Randoop code (not test code) */

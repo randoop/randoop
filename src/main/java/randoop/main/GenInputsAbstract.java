@@ -150,25 +150,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean fail_on_generation_error = false;
 
   /**
-   * Classes, one of which every test must use. Randoop will only output tests whose source code has
-   * at least one use of a member of a class whose name matches the regular expression.
-   */
-  @Option("Classes, one of which every test must use")
-  public static Pattern include_if_classname_appears = null;
-
-  /**
-   * File containing fully-qualified names of classes that the tests must exercise. This option only
-   * works if Randoop is run using the <a
-   * href="https://randoop.github.io/randoop/manual/index.html#exercised-filter">exercised-class
-   * javaagent</a> to instrument the classes. A test is output only if it exercises at least one of
-   * the class names in the file. A test exercises a class if it executes any constructor or method
-   * of the class, directly or indirectly (the constructor or method might not appear in the source
-   * code of the test). Included classes may be abstract.
-   */
-  @Option("File containing class names that tests must exercise")
-  public static File include_if_class_exercised = null;
-
-  /**
    * If false, Randoop halts and gives diagnostics about flaky tests -- tests that behave
    * differently on different executions. If true, Randoop ignores them and does not output them.
    *
@@ -215,6 +196,25 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Whether to check if test sequences are compilable")
   public static boolean check_compilable = true;
+
+  /**
+   * Classes that must occur in a test. Randoop will only output tests whose source code has at
+   * least one use of a member of a class whose name matches the regular expression.
+   */
+  @Option("Classes that must occur in a test")
+  public static Pattern require_classname_in_test = null;
+
+  /**
+   * File containing fully-qualified names of classes that the tests must exercise. This option only
+   * works if Randoop is run using the <a
+   * href="https://randoop.github.io/randoop/manual/index.html#covered-filter">covered-class
+   * javaagent</a> to instrument the classes. A test is output only if it exercises at least one of
+   * the class names in the file. A test exercises a class if it executes any constructor or method
+   * of the class, directly or indirectly (the constructor or method might not appear in the source
+   * code of the test). Included classes may be abstract.
+   */
+  @Option("File containing class names that tests must cover")
+  public static File require_covered_classes = null;
 
   /**
    * Flag indicating whether or not to automatically minimize error-revealing tests. Both original
