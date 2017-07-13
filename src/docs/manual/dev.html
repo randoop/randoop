@@ -313,12 +313,7 @@ So, for instance, the following will work to run the <code>exercised-class</code
 <pre><code>./gradlew check</code></pre>
 
 <p>
-  More thorough checking can be performed via:
-</p>
-<pre><code>./gradlew clean assemble check javadoc manual validateManual verifyGoogleJavaFormat</code></pre>
-
-<p>
-Travis also runs these more thorough tests.  A standard practice is to create a
+A standard practice is to create a
 branch and push it to the Randoop repository or to your own fork.  Travis will
 test it; if it succeeds, you can merge it.  If it fails, you will be notified by
 email, and you can fix it without having destabilized the master branch.
@@ -326,6 +321,15 @@ The <a href="https://travis-ci.org/randoop/randoop">Travis tests</a>
 currently pass on the master branch if this icon is green:
 <img src="https://api.travis-ci.org/randoop/randoop.svg?branch=master" alt="Randoop Travis status icon"/>
 </p>
+
+<p>
+To run Randoop similarly to how tests are run on Travis, do:
+</p>
+<pre><code>./gradlew clean build</code></pre>
+<p>
+  which is equivalent to the command
+</p>
+<pre><code>./gradlew clean assemble check javadoc manual</code></pre>
 
 <p>
 You can run a subset of the tests by using the <code>--tests</code>
@@ -340,7 +344,7 @@ For instance,
 <p>
 The system tests write logs to the directory
 <code>build/working-directories/<em>test-name</em></code>.
-You can create additional logs (as produced by 
+You can create additional logs (as produced by
 <a href="dev.html#option:selection-log"><code>--selection-log</code></a> or
 <a href="dev.html#option:operation-history-log"><code>--operation-history-log</code></a>)
 can be set from the command-line by setting the system properties

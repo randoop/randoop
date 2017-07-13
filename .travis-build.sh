@@ -39,8 +39,6 @@ fi
 if [[ "${GROUP}" == "misc" || "${GROUP}" == "all" ]]; then
   ./gradlew javadoc
   ./gradlew manual
-  ./gradlew validateManual
-  ./gradlew verifyGoogleJavaFormat
 fi
 
 ## TODO Re-enable codecov.io code coverage tests.
@@ -50,4 +48,3 @@ fi
 ## introduce a feature that is best tested by system tests.
 # after_success:
 #  - bash <(curl -s https://codecov.io/bash)
-
