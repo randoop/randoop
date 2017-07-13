@@ -191,7 +191,7 @@ tasks.verifyGoogleJavaFormat {
 
 // should verifyGoogleJavaFormat before compiling
 tasks.withType(JavaCompile) {
-  dependsOn verifyGoogleJavaFormat
+  dependsOn 'googleJavaFormat' // task name conflicts with plugin name 
 }
 
 /*
