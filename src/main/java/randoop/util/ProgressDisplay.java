@@ -16,12 +16,10 @@ import randoop.main.GenInputsAbstract;
 // Currently this class does both things.
 public class ProgressDisplay extends Thread {
 
-  /** Lock so that unfortunate interleaving of this printing can be avoided */
+  /** Global lock to prevent interleaving of progress display messages. */
   public static final Object print_synchro = new Object();
 
-  private static int progresswidth = 170;
-
-  private static int exit_if_no_new_sequences_after_mseconds = 10000;
+  private static int exit_if_no_new_sequences_after_milliseconds = 10000;
 
   public enum Mode {
     SINGLE_LINE_OVERWRITE,
@@ -36,10 +34,7 @@ public class ProgressDisplay extends Thread {
   private AbstractGenerator generator;
 
   public ProgressDisplay(
-      AbstractGenerator generator,
-      RandoopListenerManager listenerMgr,
-      Mode outputMode,
-      int progressWidth) {
+      AbstractGenerator generator, RandoopListenerManager listenerMgr, Mode outputMode) {
     super("randoop.util.ProgressDisplay");
     if (generator == null) {
       throw new IllegalArgumentException("generator is null");
@@ -47,18 +42,20 @@ public class ProgressDisplay extends Thread {
     this.generator = generator;
     this.outputMode = outputMode;
     this.listenerMgr = listenerMgr;
-    ProgressDisplay.progresswidth = progressWidth;
     setDaemon(true);
   }
 
-  public String message() {
-    return "Progress update: test inputs generated="
+  public String messageWithoutTime() {
+    return "Progress update: steps="
+        + generator.num_steps
+        + ", test inputs generated="
         + generator.num_sequences_generated
         + ", failing inputs="
-        + generator.num_failing_sequences
-        + "      ("
-        + new Date()
-        + ")";
+        + generator.num_failing_sequences;
+  }
+
+  public String messageWithTime() {
+    return messageWithoutTime() + "      (" + new Date() + ")";
   }
 
   /**
@@ -74,7 +71,7 @@ public class ProgressDisplay extends Thread {
         clear();
         return;
       }
-      display();
+      displayWithTime();
       if (listenerMgr != null) {
         listenerMgr.progressThreadUpdateNotify();
       }
@@ -83,18 +80,17 @@ public class ProgressDisplay extends Thread {
       // if several test threads time out in a row, the global timeout
       // will be exceeded even though nothing is wrong.
       if (!ReflectionExecutor.usethreads) {
-        // Check that we're still doing progress. If no new inputs
-        // generated for several seconds, we're probably in an infinite
-        // loop, and should exit.
+        // Check that we're still making progress.  If no new inputs are generated
+        // for several seconds, we're probably in an infinite loop, and should exit.
         updateLastSeqGen();
         long now = System.currentTimeMillis();
-        if (now - lastNumSeqsIncrease > exit_if_no_new_sequences_after_mseconds) {
+        if (now - lastNumSeqsIncrease > exit_if_no_new_sequences_after_milliseconds) {
           printStackTraceAndExit();
         }
       }
 
       try {
-        sleep(GenInputsAbstract.progressinterval);
+        sleep(GenInputsAbstract.progressintervalmillis);
       } catch (InterruptedException e) {
         // hmm
       }
@@ -105,7 +101,7 @@ public class ProgressDisplay extends Thread {
 
     System.out.println();
     System.out.print("*** Randoop has detected no input generation attempts after ");
-    System.out.println(exit_if_no_new_sequences_after_mseconds + " milliseconds.");
+    System.out.println((exit_if_no_new_sequences_after_milliseconds / 1000) + " seconds.");
     System.out.println("This indicates Randoop may be executing a sequence");
     System.out.println("that leads to nonterminating behavior.");
     System.out.println("Last sequence generated:");
@@ -137,13 +133,22 @@ public class ProgressDisplay extends Thread {
     }
   }
 
+  /**
+   * Return true iff no progress output should be displayed.
+   *
+   * @return true iff no progress output should be displayed.
+   */
+  private boolean noProgressOutput() {
+    return GenInputsAbstract.progressintervalmillis <= 0
+        && GenInputsAbstract.progressintervalsteps <= 0;
+  }
+
   /** Clear the display; good to do before printing to System.out. */
   public void clear() {
-    if (GenInputsAbstract.progressinterval == -1) return;
+    if (noProgressOutput()) return;
     // "display("");" is wrong because it leaves the timestamp and writes
     // spaces across the screen.
-    String status = UtilMDE.rpad("", progresswidth - 1);
-    System.out.print("\r" + status);
+    System.out.print("\r" + UtilMDE.rpad("", 199)); // erase about 200 characters of text
     System.out.print("\r"); // return to beginning of line
     System.out.flush();
   }
@@ -152,9 +157,18 @@ public class ProgressDisplay extends Thread {
    * Displays the current status. Call this if you don't want to wait until the next automatic
    * display.
    */
-  public void display() {
-    if (GenInputsAbstract.progressinterval == -1) return;
-    display(message());
+  public void displayWithTime() {
+    if (noProgressOutput()) return;
+    display(messageWithTime());
+  }
+
+  /**
+   * Displays the current status. Call this if you don't want to wait until the next automatic
+   * display.
+   */
+  public void displayWithoutTime() {
+    if (noProgressOutput()) return;
+    display(messageWithoutTime());
   }
 
   /**
@@ -163,7 +177,7 @@ public class ProgressDisplay extends Thread {
    * @param message the message to display
    */
   private void display(String message) {
-    if (GenInputsAbstract.progressinterval == -1) return;
+    if (noProgressOutput()) return;
     synchronized (print_synchro) {
       System.out.print(
           (this.outputMode == Mode.SINGLE_LINE_OVERWRITE ? "\r" : Globals.lineSep) + message);

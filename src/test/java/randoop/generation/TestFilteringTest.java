@@ -54,7 +54,7 @@ public class TestFilteringTest {
   @Test
   public void nonemptyOutputTest() {
     GenInputsAbstract.dont_output_tests = false;
-    GenInputsAbstract.include_if_classname_appears = null;
+    GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_error_revealing_tests = false;
     GenInputsAbstract.no_regression_tests = false;
     // arguments below ensure we get both kinds of tests
@@ -65,7 +65,7 @@ public class TestFilteringTest {
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.sof_exception = BehaviorType.INVALID;
-    GenInputsAbstract.outputlimit = 1000;
+    GenInputsAbstract.outputLimit = 1000;
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
@@ -84,7 +84,7 @@ public class TestFilteringTest {
   @Test
   public void noOutputTest() {
     GenInputsAbstract.dont_output_tests = true;
-    GenInputsAbstract.include_if_classname_appears = null;
+    GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_error_revealing_tests = false;
     GenInputsAbstract.no_regression_tests = false;
     // arguments below ensure we get both kinds of tests
@@ -95,8 +95,8 @@ public class TestFilteringTest {
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.sof_exception = BehaviorType.INVALID;
-    GenInputsAbstract.outputlimit = 1000;
-    GenInputsAbstract.inputlimit = 1000;
+    GenInputsAbstract.generatedLimit = 1000;
+    GenInputsAbstract.outputLimit = 1000;
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
@@ -113,7 +113,7 @@ public class TestFilteringTest {
   @Test
   public void noErrorOutputTest() {
     GenInputsAbstract.dont_output_tests = false;
-    GenInputsAbstract.include_if_classname_appears = null;
+    GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_error_revealing_tests = true;
     GenInputsAbstract.no_regression_tests = false;
     // arguments below ensure we get both kinds of tests
@@ -124,7 +124,7 @@ public class TestFilteringTest {
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.sof_exception = BehaviorType.INVALID;
-    GenInputsAbstract.outputlimit = 1000;
+    GenInputsAbstract.outputLimit = 1000;
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
@@ -139,12 +139,12 @@ public class TestFilteringTest {
 
   /**
    * Make sure that no regression tests are output when no-regression-tests is set. Better to set
-   * inputlimit here since most tests are regression tests.
+   * generatedLimit here since most tests are regression tests.
    */
   @Test
   public void noRegressionOutputTest() {
     GenInputsAbstract.dont_output_tests = false;
-    GenInputsAbstract.include_if_classname_appears = null;
+    GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_error_revealing_tests = false;
     GenInputsAbstract.no_regression_tests = true;
     // arguments below ensure we get both kinds of tests
@@ -155,8 +155,8 @@ public class TestFilteringTest {
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.sof_exception = BehaviorType.INVALID;
-    GenInputsAbstract.outputlimit = 1000;
-    GenInputsAbstract.inputlimit = 1000;
+    GenInputsAbstract.generatedLimit = 1000;
+    GenInputsAbstract.outputLimit = 1000;
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
@@ -169,11 +169,11 @@ public class TestFilteringTest {
     assertTrue("should have some error tests", eTests.size() > 0);
   }
 
-  /** Having both Error and Regression tests turned off should give nothing. Set inputlimit */
+  /** Having both Error and Regression tests turned off should give nothing. Set generatedLimit. */
   @Test
   public void noErrorOrRegressionOutputTest() {
     GenInputsAbstract.dont_output_tests = false;
-    GenInputsAbstract.include_if_classname_appears = null;
+    GenInputsAbstract.require_classname_in_test = null;
     GenInputsAbstract.no_error_revealing_tests = true;
     GenInputsAbstract.no_regression_tests = true;
     // arguments below ensure we get both kinds of tests
@@ -184,8 +184,8 @@ public class TestFilteringTest {
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.sof_exception = BehaviorType.INVALID;
-    GenInputsAbstract.outputlimit = 1000;
-    GenInputsAbstract.inputlimit = 1000;
+    GenInputsAbstract.generatedLimit = 1000;
+    GenInputsAbstract.outputLimit = 1000;
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
@@ -202,7 +202,7 @@ public class TestFilteringTest {
   @Test
   public void matchOutputTest() {
     GenInputsAbstract.dont_output_tests = false;
-    GenInputsAbstract.include_if_classname_appears = Pattern.compile("randoop\\.sequence\\.Flaky");
+    GenInputsAbstract.require_classname_in_test = Pattern.compile("randoop\\.sequence\\.Flaky");
     GenInputsAbstract.no_error_revealing_tests = false;
     GenInputsAbstract.no_regression_tests = false;
     // arguments below ensure we get both kinds of tests
@@ -213,8 +213,8 @@ public class TestFilteringTest {
     GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.sof_exception = BehaviorType.INVALID;
-    GenInputsAbstract.outputlimit = 1000;
-    GenInputsAbstract.inputlimit = 1000;
+    GenInputsAbstract.generatedLimit = 1000;
+    GenInputsAbstract.outputLimit = 1000;
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
@@ -245,9 +245,7 @@ public class TestFilteringTest {
         new ForwardGenerator(
             model,
             new LinkedHashSet<TypedOperation>(),
-            GenInputsAbstract.timelimit * 1000,
-            GenInputsAbstract.inputlimit,
-            GenInputsAbstract.outputlimit,
+            new GenInputsAbstract.Limits(),
             componentMgr,
             null,
             listenerMgr);

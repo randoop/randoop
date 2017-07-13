@@ -9,8 +9,8 @@ import randoop.contract.ObjectContract;
 /** Manages the set of {@link ObjectContract} objects. Contracts are organized by arity. */
 public class ContractSet {
 
-  /** the collection of contracts */
-  private final Map<Integer, List<ObjectContract>> contractMap;
+  /** Maps from arity to all all contracts of that arity. */
+  private final Map<Integer, List<ObjectContract>> contractMap; // used only for containment check
 
   /** the maximum arity of a contract */
   private int maxArity;

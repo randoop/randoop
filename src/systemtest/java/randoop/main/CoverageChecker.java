@@ -14,6 +14,7 @@ import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.IMethodCoverage;
 import org.jacoco.report.JavaNames;
 import plume.UtilMDE;
+import randoop.reflection.ClassUtil;
 
 /** Checks coverage for a test, managing information needed to perform the coverage checks. */
 class CoverageChecker {
@@ -91,7 +92,7 @@ class CoverageChecker {
         c = Class.forName(classname);
 
         boolean firstLine = true;
-        for (Method m : c.getDeclaredMethods()) {
+        for (Method m : ClassUtil.getDeclaredMethods(c)) {
           String methodname = methodName(m);
           if (!isIgnoredMethod(methodname) && !dontCareMethods.contains(methodname)) {
             if (excludedMethods.contains(methodname)) {

@@ -54,23 +54,8 @@ public abstract class AbstractGenerator {
    */
   public final Timer timer = new Timer();
 
-  /**
-   * Time limit for generation. If generation reaches the specified time limit (in milliseconds),
-   * the generator stops generating sequences.
-   */
-  public final long maxTimeMillis;
-
-  /**
-   * Sequence limit for generation. If generation reaches the specified sequence limit, the
-   * generator stops generating sequences.
-   */
-  public final int maxGeneratedSequences;
-
-  /**
-   * Limit for output. Once the specified number of sequences are in the output lists, the generator
-   * will stop.
-   */
-  public final int maxOutputSequences;
+  /** Limits for generation, after which the generator will stop. */
+  public final GenInputsAbstract.Limits limits;
 
   /**
    * The list of statement kinds (methods, constructors, primitive value declarations, etc.) used to
@@ -130,9 +115,7 @@ public abstract class AbstractGenerator {
    *
    * @param operations statements (e.g. methods and constructors) used to create sequences. Cannot
    *     be null.
-   * @param timeMillis maximum time to spend in generation. Must be non-negative.
-   * @param maxGeneratedSequences the maximum number of sequences to generate. Must be non-negative.
-   * @param maxOutSequences the maximum number of sequences to output. Must be non-negative.
+   * @param limits maximum time and number of sequences to generate/output
    * @param componentManager the component manager to use to store sequences during component-based
    *     generation. Can be null, in which case the generator's component manager is initialized as
    *     <code>new ComponentManager()</code>.
@@ -142,17 +125,13 @@ public abstract class AbstractGenerator {
    */
   public AbstractGenerator(
       List<TypedOperation> operations,
-      long timeMillis,
-      int maxGeneratedSequences,
-      int maxOutSequences,
+      GenInputsAbstract.Limits limits,
       ComponentManager componentManager,
       IStopper stopper,
       RandoopListenerManager listenerManager) {
     assert operations != null;
 
-    this.maxTimeMillis = timeMillis;
-    this.maxGeneratedSequences = maxGeneratedSequences;
-    this.maxOutputSequences = maxOutSequences;
+    this.limits = limits;
     this.operations = operations;
     this.executionVisitor = new DummyVisitor();
     this.outputTest = new AlwaysFalse<>();
@@ -209,35 +188,42 @@ public abstract class AbstractGenerator {
   }
 
   /**
-   * Tests stopping criteria and determines whether generation should stop. Criteria are checked in
-   * this order:
+   * Tests stopping criteria.
    *
-   * <ul>
-   *   <li>if there is a listener manager, {@link RandoopListenerManager#stopGeneration()} returns
-   *       true,
-   *   <li>the elapsed generation time is greater than or equal to the max time in milliseconds,
-   *   <li>the number of output sequences is equal to the maximum output,
-   *   <li>the number of generated sequences is equal to the maximum generated sequence count, or
-   *   <li>if there is a stopper, {@link IStopper#stop()} returns true.
-   * </ul>
-   *
-   * @return true if any of stopping criteria are met, otherwise false
+   * @return true iff any stopping criterion is met
    */
-  protected boolean stop() {
-    return (listenerMgr != null && listenerMgr.stopGeneration())
-        || (timer.getTimeElapsedMillis() >= maxTimeMillis)
+  protected boolean shouldStop() {
+    return (limits.timeLimitMillis != 0 && timer.getTimeElapsedMillis() >= limits.timeLimitMillis)
+        || (numAttemptedSequences() >= limits.attemptedLimit)
+        || (numGeneratedSequences() >= limits.generatedLimit)
+        || (numOutputSequences() >= limits.outputLimit)
         || (GenInputsAbstract.stop_on_error_test && numErrorSequences() > 0)
-        || (numOutputSequences() >= maxOutputSequences)
-        || (numGeneratedSequences() >= maxGeneratedSequences)
-        || (stopper != null && stopper.stop());
+        || (stopper != null && stopper.shouldStop())
+        || (listenerMgr != null && listenerMgr.shouldStopGeneration());
   }
 
   /**
-   * Generate an individual test sequence
+   * Attempt to generate a test (a sequence).
    *
    * @return a test sequence, may be null
    */
   public abstract ExecutableSequence step();
+
+  /**
+   * Returns the count of attempts to generate a sequence so far.
+   *
+   * @return the number of attempts to generate a sequence so far
+   */
+  public int numAttemptedSequences() {
+    return num_steps;
+  }
+
+  /**
+   * Returns the count of sequences generated so far by the generator.
+   *
+   * @return the number of sequences generated
+   */
+  public abstract int numGeneratedSequences();
 
   /**
    * Returns the count of generated sequence currently for output.
@@ -258,16 +244,9 @@ public abstract class AbstractGenerator {
   }
 
   /**
-   * Returns the count of sequences generated so far by the generator.
-   *
-   * @return the number of sequences generated
-   */
-  public abstract int numGeneratedSequences();
-
-  /**
    * Creates and executes new sequences until stopping criteria is met.
    *
-   * @see AbstractGenerator#stop()
+   * @see AbstractGenerator#shouldStop()
    * @see AbstractGenerator#step()
    */
   public void explore() {
@@ -278,7 +257,7 @@ public abstract class AbstractGenerator {
     timer.startTiming();
 
     if (!GenInputsAbstract.noprogressdisplay) {
-      progressDisplay = new ProgressDisplay(this, listenerMgr, ProgressDisplay.Mode.MULTILINE, 200);
+      progressDisplay = new ProgressDisplay(this, listenerMgr, ProgressDisplay.Mode.MULTILINE);
       progressDisplay.start();
     }
 
@@ -287,7 +266,7 @@ public abstract class AbstractGenerator {
       listenerMgr.explorationStart();
     }
 
-    while (!stop()) {
+    while (!shouldStop()) {
 
       // Notify listeners we are about to perform a generation step.
       if (listenerMgr != null) {
@@ -305,6 +284,11 @@ public abstract class AbstractGenerator {
       // Notify listeners we just completed generation step.
       if (listenerMgr != null) {
         listenerMgr.generationStepPost(eSeq);
+      }
+
+      if ((GenInputsAbstract.progressintervalsteps != -1)
+          && (num_steps % GenInputsAbstract.progressintervalsteps == 0)) {
+        progressDisplay.displayWithoutTime();
       }
 
       if (eSeq == null) {
@@ -338,7 +322,7 @@ public abstract class AbstractGenerator {
     }
 
     if (!GenInputsAbstract.noprogressdisplay && progressDisplay != null) {
-      progressDisplay.display();
+      progressDisplay.displayWithTime();
       progressDisplay.shouldStop = true;
     }
 

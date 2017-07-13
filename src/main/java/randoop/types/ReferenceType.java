@@ -114,6 +114,7 @@ public abstract class ReferenceType extends Type {
    * href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.1.5">section JLS
    * 5.1.5</a> for details.
    */
+  @Override
   public boolean isAssignableFrom(Type sourceType) {
     return super.isAssignableFrom(sourceType)
         || (sourceType.isReferenceType() && sourceType.isSubtypeOf(this));
