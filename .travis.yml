@@ -1,46 +1,57 @@
-language: java
+sudo: false
 
-before_cache:
-  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
-cache:
-    directories:
-      - $HOME/.gradle/caches
-      - $HOME/.gradle/wrapper
+language: generic
 
-before_install:
-  - cat /etc/hosts
-  - sudo hostname "$(hostname | cut -c1-63)"
-  - sed -e "s/^\\(127\\.0\\.0\\.1.*\\)/\\1 $(hostname | cut -c1-63)/" /etc/hosts > /tmp/hosts
-  - sudo mv /tmp/hosts /etc/hosts
-  - cat /etc/hosts
-  - sudo pip install html5validator
+services:
+  - docker
 
-# sudo: false
-sudo: required
+# jdkany contains extra packages that permit it to be used to build the manual
+matrix:
+env:
+  - OS=ubuntu JDKVER=jdk7 GROUP=test
+  - OS=ubuntu JDKVER=jdk8 GROUP=test
+  - OS=ubuntu JDKVER=jdkany GROUP=misc
+#  - OS=fedora JDKVER=jdk8 GROUP=test
+#  - OS=centos JDKVER=jdk8 GROUP=test
 
-jdk:
-  - openjdk7
-  - oraclejdk7
-  - oraclejdk8
+before_script:
+- docker pull mdernst/$OS-for-randoop-$JDKVER
 
 # want more info when running tests and building manual
 # NOTE: the tasks here should at least be a subset of build task dependency in build.gradle
 #       update that task if you change this list
 script:
-  - set -o errexit
-  - ./gradlew assemble
-  - ./gradlew --info check
-  - ./gradlew javadoc
-  - ./gradlew --info manual
-  - ./gradlew validateManual
-  - ./gradlew verifyGoogleJavaFormat
-
-## Disabled for now, because codecov is only aware of unit tests.
-## Once we inform it of system tests as well, it will be more useful
-## and we can turn it on without getting a lot of failures whenever we
-## introduce a feature that is best tested by system tests.
-# after_success:
-#  - bash <(curl -s https://codecov.io/bash)
+- REMOTE_ORIGIN_URL=`git config --get remote.origin.url`
+- echo "JDKVER=${JDKVER}"
+- echo "TRAVIS_BRANCH=${TRAVIS_BRANCH}"
+- echo "REMOTE_ORIGIN_URL=${REMOTE_ORIGIN_URL}"
+- echo "TRAVIS_EVENT_TYPE=${TRAVIS_EVENT_TYPE}"
+- echo "TRAVIS_PULL_REQUEST=${TRAVIS_PULL_REQUEST}"
+- echo "TRAVIS_PULL_REQUEST_BRANCH=${TRAVIS_PULL_REQUEST_BRANCH}"
+- echo "TRAVIS_REPO_SLUG=${TRAVIS_REPO_SLUG}"
+- echo "GROUP=${GROUP}"
+- echo "BUILDJDK=${BUILDJDK}"
+- >-
+  docker run mdernst/$OS-for-randoop-$JDKVER /bin/bash -c "true &&
+     export JAVA_HOME=\`which javac|xargs readlink -f|xargs dirname|xargs dirname\` &&
+     if [ $TRAVIS_EVENT_TYPE = pull_request ] ; then
+       git clone --quiet --depth 9 $REMOTE_ORIGIN_URL randoop
+       cd randoop
+       git fetch origin +refs/pull/$TRAVIS_PULL_REQUEST/merge
+       git checkout -qf FETCH_HEAD
+       git config user.email noone@cares.com
+       git config user.name Noone Cares
+       git remote add theupstream https://github.com/$TRAVIS_REPO_SLUG.git
+       git pull --depth 9 theupstream $TRAVIS_BRANCH
+     else
+       git clone --quiet -b $TRAVIS_BRANCH --depth 9 $REMOTE_ORIGIN_URL randoop
+       cd randoop
+     fi &&
+     java -version &&
+     javac -version &&
+     export TRAVIS_REPO_SLUG=$TRAVIS_REPO_SLUG &&
+     export TRAVIS_BUILD_DIR=$TRAVIS_BUILD_DIR &&
+     ./.travis-build.sh $GROUP $BUILDJDK"
 
 git:
   depth: 9

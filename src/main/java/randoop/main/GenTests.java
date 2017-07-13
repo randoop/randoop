@@ -1,10 +1,14 @@
 package randoop.main;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +36,7 @@ import randoop.generation.OperationHistoryLogger;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
-import randoop.instrument.ExercisedClassVisitor;
+import randoop.instrument.CoveredClassVisitor;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
@@ -104,7 +108,7 @@ public class GenTests extends GenInputsAbstract {
 
   private static final String example =
       "java randoop.main.Main gentests --testclass=java.util.Collections "
-          + " --testclass=java.util.TreeSet";
+          + "--testclass=java.util.TreeSet";
 
   private static final List<String> notes;
   public static final String TEST_METHOD_NAME_PREFIX = "test";
@@ -117,11 +121,19 @@ public class GenTests extends GenInputsAbstract {
   static {
     notes = new ArrayList<>();
     notes.add(
-        "Randoop executes the code under test, with no mechanisms to protect your system from harm resulting from arbitrary code execution. If random execution of your code could have undesirable effects (e.g. deletion of files, opening network connections, etc.) make sure you execute Randoop in a sandbox machine.");
+        "Randoop executes the code under test, with no mechanisms to protect your system from "
+            + "harm resulting from arbitrary code execution. If random execution of your code "
+            + "could have undesirable effects (e.g., deletion of files, opening network "
+            + "connections, etc.) make sure you execute Randoop in a sandbox.");
     notes.add(
-        "Randoop will only use methods from the classes that you specify for testing. If Randoop is not generating tests for a particular method, make sure that you are including classes for the types that the method requires. Otherwise, Randoop may fail to generate tests due to missing input parameters.");
+        "Randoop will only use methods from the classes that you specify for testing. "
+            + "If Randoop is not generating tests for a particular method, make sure that you are "
+            + "including classes for the types that the method requires. "
+            + "Otherwise, Randoop may fail to generate tests due to missing input parameters.");
     notes.add(
-        "Randoop is designed to be deterministic when the code under test is itself deterministic. This means that two runs of Randoop will generate the same tests. To get variation across runs, use the --randomseed option.");
+        "Randoop may be deterministic when the code under test is itself deterministic. "
+            + "This means that two runs of Randoop may generate the same tests. "
+            + "To get variation across runs, use the --randomseed option.");
   }
 
   public static SimpleLog progress = new SimpleLog(true);
@@ -230,7 +242,7 @@ public class GenTests extends GenInputsAbstract {
     // get names of classes that must be covered by output tests
     Set<String> coveredClassnames =
         GenInputsAbstract.getStringSetFromFile(
-            include_if_class_exercised, "Unable to read coverage class names");
+            require_covered_classes, "Unable to read coverage class names");
 
     // get names of fields to be omitted
     Set<String> omitFields =
@@ -358,13 +370,7 @@ public class GenTests extends GenInputsAbstract {
     AbstractGenerator explorer;
     explorer =
         new ForwardGenerator(
-            operations,
-            observers,
-            timelimit * 1000,
-            inputlimit,
-            outputlimit,
-            componentMgr,
-            listenerMgr);
+            operations, observers, new GenInputsAbstract.Limits(), componentMgr, listenerMgr);
 
     /*
      * setup for check generation
@@ -397,8 +403,8 @@ public class GenTests extends GenInputsAbstract {
     Predicate<ExecutableSequence> isOutputTest =
         createTestOutputPredicate(
             excludeSet,
-            operationModel.getExercisedClasses(),
-            GenInputsAbstract.include_if_classname_appears);
+            operationModel.getCoveredClasses(),
+            GenInputsAbstract.require_classname_in_test);
 
     explorer.addTestPredicate(isOutputTest);
 
@@ -409,8 +415,8 @@ public class GenTests extends GenInputsAbstract {
     List<ExecutionVisitor> visitors = new ArrayList<>();
 
     // instrumentation visitor
-    if (GenInputsAbstract.include_if_class_exercised != null) {
-      visitors.add(new ExercisedClassVisitor(operationModel.getExercisedClasses()));
+    if (GenInputsAbstract.require_covered_classes != null) {
+      visitors.add(new CoveredClassVisitor(operationModel.getCoveredClasses()));
     }
 
     // Install any user-specified visitors.
@@ -418,7 +424,7 @@ public class GenTests extends GenInputsAbstract {
       for (String visitorClsName : GenInputsAbstract.visitor) {
         try {
           Class<ExecutionVisitor> cls = (Class<ExecutionVisitor>) Class.forName(visitorClsName);
-          ExecutionVisitor vis = cls.newInstance();
+          ExecutionVisitor vis = cls.getDeclaredConstructor().newInstance();
           visitors.add(vis);
         } catch (Exception e) {
           System.out.println("Error while loading visitor class " + visitorClsName);
@@ -451,7 +457,9 @@ public class GenTests extends GenInputsAbstract {
       componentMgr.log();
     }
     if (GenInputsAbstract.log_operation_history) {
-      explorer.setOperationHistoryLogger(new OperationHistoryLogger(new PrintWriter(System.out)));
+      explorer.setOperationHistoryLogger(
+          new OperationHistoryLogger(
+              new PrintWriter(new BufferedWriter(new OutputStreamWriter(System.out, UTF_8)))));
     }
     if (GenInputsAbstract.operation_history_log != null) {
       explorer.setOperationHistoryLogger(

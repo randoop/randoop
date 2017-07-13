@@ -2,7 +2,7 @@ package randoop.test;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static randoop.main.GenInputsAbstract.include_if_classname_appears;
+import static randoop.main.GenInputsAbstract.require_classname_in_test;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -72,9 +72,7 @@ public class ForwardExplorerTests {
         new ForwardGenerator(
             model,
             new LinkedHashSet<TypedOperation>(),
-            Long.MAX_VALUE,
-            5000,
-            5000,
+            new GenInputsAbstract.Limits(0, 1000, 1000, 1000),
             mgr,
             null,
             null);
@@ -113,14 +111,20 @@ public class ForwardExplorerTests {
     //GenFailures.noprogressdisplay = true;
     //Log.log = new FileWriter("templog.txt");
     int oldTimeout = ReflectionExecutor.timeout;
-    ReflectionExecutor.timeout = 200;
+    ReflectionExecutor.timeout = 500;
+    long oldProgressintervalsteps = GenInputsAbstract.progressintervalsteps;
+    GenInputsAbstract.progressintervalsteps = 100;
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     final List<TypedOperation> model = getConcreteOperations(classes);
     assertTrue("model should not be empty", model.size() != 0);
-    GenInputsAbstract.ignore_flaky_tests = true;
     ForwardGenerator exp =
         new ForwardGenerator(
-            model, new LinkedHashSet<TypedOperation>(), Long.MAX_VALUE, 200, 200, mgr, null, null);
+            model,
+            new LinkedHashSet<TypedOperation>(),
+            new GenInputsAbstract.Limits(0, 200, 200, 200),
+            mgr,
+            null,
+            null);
     exp.addTestCheckGenerator(createChecker(new ContractSet()));
     exp.addTestPredicate(createOutputTest());
     try {
@@ -129,6 +133,7 @@ public class ForwardExplorerTests {
       fail("Exception during generation: " + t);
     }
     ReflectionExecutor.timeout = oldTimeout;
+    GenInputsAbstract.progressintervalsteps = oldProgressintervalsteps;
     for (Sequence s : exp.getAllSequences()) {
       String str = s.toCodeString();
       if (str.contains("bisort")) bisort = true;
@@ -166,13 +171,17 @@ public class ForwardExplorerTests {
     classes.add(Tree.class);
 
     System.out.println(classes);
-    GenInputsAbstract.ignore_flaky_tests = true;
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     final List<TypedOperation> model = getConcreteOperations(classes);
     assertTrue("model should not be empty", model.size() != 0);
     ForwardGenerator exp =
         new ForwardGenerator(
-            model, new LinkedHashSet<TypedOperation>(), Long.MAX_VALUE, 200, 200, mgr, null, null);
+            model,
+            new LinkedHashSet<TypedOperation>(),
+            new GenInputsAbstract.Limits(0, 200, 200, 200),
+            mgr,
+            null,
+            null);
     GenInputsAbstract.forbid_null = false;
     exp.addTestCheckGenerator(createChecker(new ContractSet()));
     exp.addTestPredicate(createOutputTest());
@@ -221,6 +230,6 @@ public class ForwardExplorerTests {
     sequences.add((new Sequence().extend(op, new ArrayList<Variable>())));
     return (new GenTests())
         .createTestOutputPredicate(
-            sequences, new LinkedHashSet<Class<?>>(), include_if_classname_appears);
+            sequences, new LinkedHashSet<Class<?>>(), require_classname_in_test);
   }
 }

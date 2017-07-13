@@ -1,5 +1,7 @@
 package randoop.main;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
@@ -32,8 +34,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.Charset;
@@ -1093,7 +1093,7 @@ public class Minimize extends CommandHandler {
    */
   private static void writeToFile(CompilationUnit compUnit, File file) {
     // Write the compilation unit to the file.
-    try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+    try (BufferedWriter bw = Files.newBufferedWriter(file.toPath(), UTF_8)) {
       bw.write(compUnit.toString());
     } catch (IOException e) {
       System.err.println("Error writing to file: " + file);
@@ -1206,7 +1206,7 @@ public class Minimize extends CommandHandler {
     int lines = 0;
     try {
       // Read and count the number of lines in the file.
-      BufferedReader reader = new BufferedReader(new FileReader(file));
+      BufferedReader reader = Files.newBufferedReader(file.toPath(), UTF_8);
       while (reader.readLine() != null) {
         lines++;
       }

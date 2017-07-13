@@ -87,9 +87,8 @@ public class ForwardExplorerPerformanceTest {
         new ForwardGenerator(
             model,
             new LinkedHashSet<TypedOperation>(),
-            TIME_LIMIT_SECS * 1000,
-            Integer.MAX_VALUE,
-            Integer.MAX_VALUE,
+            new GenInputsAbstract.Limits(
+                TIME_LIMIT_SECS, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE),
             null,
             null,
             null);
@@ -109,21 +108,19 @@ public class ForwardExplorerPerformanceTest {
     GenInputsAbstract.debug_checks = true;
     if (explorer.numGeneratedSequences() < EXPECTED_MIN) {
       String b =
-          "Randoop's explorer created fewer than "
-              + EXPECTED_MIN
-              + " inputs (precisely, "
+          "Randoop's explorer created "
               + explorer.numGeneratedSequences()
-              + ") in "
+              + " inputs in "
               + TIME_LIMIT_SECS
-              + " seconds."
+              + " seconds, expected at least "
+              + EXPECTED_MIN
+              + "."
               + Globals.lineSep
               + "This failure could have two causes:"
               + Globals.lineSep
-              + " (1) Our guess as to how fast your machine is is wrong."
+              + " (1) The test guessed your machine's speed incorrectly."
               + Globals.lineSep
-              + " (2) You made a change to Randoop that slows down its performance."
-              + Globals.lineSep
-              + "     No tips available here.";
+              + " (2) You made a change to Randoop that slows down its performance.";
       fail(b);
     }
   }

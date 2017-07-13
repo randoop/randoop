@@ -11,6 +11,7 @@ import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -103,7 +104,7 @@ public class ReflectionManager {
       } else {
 
         // Methods
-        Set<Method> methods = new HashSet<>();
+        Set<Method> methods = new HashSet<>(); // used only for containment check
         for (Method m : ClassUtil.getMethods(c)) { // for all class methods
           methods.add(m); // remember to avoid duplicates
           if (isVisible(m)) { // if satisfies predicate then visit
@@ -173,6 +174,7 @@ public class ReflectionManager {
    * @param c the enum class object from which constants and methods are extracted
    */
   private void applyToEnum(ClassVisitor visitor, Class<?> c) {
+    // Maps from a name to a set of methods.
     Map<String, Set<Method>> overrideMethods = new HashMap<>();
     for (Object obj : c.getEnumConstants()) {
       Enum<?> e = (Enum<?>) obj;
@@ -181,7 +183,7 @@ public class ReflectionManager {
         for (Method m : e.getClass().getDeclaredMethods()) {
           Set<Method> methodSet = overrideMethods.get(m.getName());
           if (methodSet == null) {
-            methodSet = new HashSet<>();
+            methodSet = new LinkedHashSet<>();
           }
           methodSet.add(m);
           overrideMethods.put(m.getName(), methodSet); // collect any potential overrides
