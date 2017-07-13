@@ -1089,8 +1089,7 @@ public class RandoopSystemTest {
 
     options.setOption("omit-field-list", "resources/systemTest/components/omitfields.txt");
     //
-    options.setOption("outputlimit", "400");
-    options.setOption("timelimit", "200");
+    options.setOption("outputLimit", "400");
     options.setFlag("ignore-flaky-tests");
     options.setFlag("log-operation-history");
 
@@ -1269,8 +1268,7 @@ public class RandoopSystemTest {
     options.setPackageName("components");
     options.addTestClass("components.DialogRunner");
 
-    options.setOption("outputlimit", "400");
-    options.setOption("timelimit", "200");
+    options.setOption("outputLimit", "400");
     options.setFlag("ignore-flaky-tests");
 
     CoverageChecker checker = new CoverageChecker(options);
@@ -1292,7 +1290,7 @@ public class RandoopSystemTest {
         "--dont-transform=resources/systemTest/load-exclusions.txt");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.addTestClass("input.SystemExitClass");
-    options.setOption("outputlimit", "20");
+    options.setOption("outputLimit", "20");
     CoverageChecker checker = new CoverageChecker(options);
     checker.ignore("input.SystemExitClass.hashCode()");
     generateAndTestWithCoverage(
@@ -1310,7 +1308,7 @@ public class RandoopSystemTest {
         "--dont-transform=resources/systemTest/load-exclusions.txt");
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.addTestClass("input.NoExitClass");
-    options.setOption("outputlimit", "20");
+    options.setOption("outputLimit", "20");
     generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
