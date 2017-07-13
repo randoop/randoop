@@ -33,8 +33,8 @@ class SystemTestEnvironment {
   /** The path for the mapcall agent jar */
   final Path mapcallAgentPath;
 
-  /** The path for the exercised-class agent jar */
-  final Path exercisedClassAgentPath;
+  /** The path for the covered-class agent jar */
+  final Path coveredClassAgentPath;
 
   /**
    * Initializes a {@link SystemTestEnvironment} with the given classpath, working directory, input
@@ -51,13 +51,13 @@ class SystemTestEnvironment {
       Path testInputClassDir,
       Path jacocoAgentPath,
       Path mapcallAgentPath,
-      Path exercisedClassAgentPath) {
+      Path coveredClassAgentPath) {
     this.classpath = classpath;
     this.systemTestWorkingDir = workingDir;
     this.testInputClassDir = testInputClassDir;
     this.jacocoAgentPath = jacocoAgentPath;
     this.mapcallAgentPath = mapcallAgentPath;
-    this.exercisedClassAgentPath = exercisedClassAgentPath;
+    this.coveredClassAgentPath = coveredClassAgentPath;
   }
 
   /**
@@ -76,11 +76,11 @@ class SystemTestEnvironment {
     Path jacocoAgentPath = buildDir.resolve("jacocoagent/jacocoagent.jar");
     Path libsPath = buildDir.resolve("libs");
     Path mapcallAgentPath = null;
-    Path exercisedClassAgentPath = null;
+    Path coveredClassAgentPath = null;
     try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(libsPath)) {
       for (Path entry : dirStream) {
-        if (entry.getFileName().toString().startsWith("exercised-class")) {
-          exercisedClassAgentPath = entry;
+        if (entry.getFileName().toString().startsWith("covered-class")) {
+          coveredClassAgentPath = entry;
         }
         if (entry.getFileName().toString().startsWith("mapcall")) {
           mapcallAgentPath = entry;
@@ -95,7 +95,7 @@ class SystemTestEnvironment {
         testInputClassDir,
         jacocoAgentPath,
         mapcallAgentPath,
-        exercisedClassAgentPath);
+        coveredClassAgentPath);
   }
 
   /**

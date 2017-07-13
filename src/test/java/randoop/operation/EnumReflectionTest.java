@@ -48,7 +48,7 @@ public class EnumReflectionTest {
 
   /**
    * simpleEnum tests that for a simple enum (constants and no explicit methods) that we just get
-   * the constant valuse and no methods. Uses randoop.test.SimpleEnum, which is a basic enum with
+   * the constant values and no methods. Uses randoop.test.SimpleEnum, which is a basic enum with
    * four values: ONE, TWO, THREE, and FOUR.
    */
   @Test

@@ -41,8 +41,8 @@ import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.Predicate;
 
 /**
- * Test special cases of "covered" (or exercised) class filtering. Want to ensure behaves well when
- * given abstract class and interface.
+ * Test special cases of covered class filtering. Want to ensure behaves well when given abstract
+ * class and interface.
  */
 public class SpecialCoveredClassTest {
 
@@ -50,16 +50,16 @@ public class SpecialCoveredClassTest {
   public void abstractClassTest() {
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = new File("instrument/testcase/special-allclasses.txt");
-    GenInputsAbstract.include_if_class_exercised =
+    GenInputsAbstract.require_covered_classes =
         new File("instrument/testcase/special-coveredclasses.txt");
     ReflectionExecutor.usethreads = false;
-    GenInputsAbstract.outputlimit = 5000;
-    GenInputsAbstract.inputlimit = 10000;
+    GenInputsAbstract.generatedLimit = 10000;
+    GenInputsAbstract.outputLimit = 5000;
 
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
     Set<String> coveredClassnames =
         GenInputsAbstract.getStringSetFromFile(
-            GenInputsAbstract.include_if_class_exercised, "Unable to read coverage class names");
+            GenInputsAbstract.require_covered_classes, "Unable to read coverage class names");
     Set<String> omitFields = new HashSet<>();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ReflectionPredicate reflectionPredicate =
@@ -84,7 +84,7 @@ public class SpecialCoveredClassTest {
     }
     assert operationModel != null;
 
-    Set<Class<?>> coveredClasses = operationModel.getExercisedClasses();
+    Set<Class<?>> coveredClasses = operationModel.getCoveredClasses();
     Set<ClassOrInterfaceType> classes = operationModel.getClassTypes();
     //
     assertThat("should be one covered classes", coveredClasses.size(), is(equalTo(1)));
@@ -115,13 +115,7 @@ public class SpecialCoveredClassTest {
     Set<TypedOperation> observers = new LinkedHashSet<>();
     ForwardGenerator testGenerator =
         new ForwardGenerator(
-            model,
-            observers,
-            GenInputsAbstract.timelimit * 1000,
-            GenInputsAbstract.inputlimit,
-            GenInputsAbstract.outputlimit,
-            componentMgr,
-            listenerMgr);
+            model, observers, new GenInputsAbstract.Limits(), componentMgr, listenerMgr);
     GenTests genTests = new GenTests();
 
     TypedOperation objectConstructor = null;
@@ -139,8 +133,8 @@ public class SpecialCoveredClassTest {
     Predicate<ExecutableSequence> isOutputTest =
         genTests.createTestOutputPredicate(
             excludeSet,
-            operationModel.getExercisedClasses(),
-            GenInputsAbstract.include_if_classname_appears);
+            operationModel.getCoveredClasses(),
+            GenInputsAbstract.require_classname_in_test);
     testGenerator.addTestPredicate(isOutputTest);
     ContractSet contracts = operationModel.getContracts();
     Set<TypedOperation> excludeAsObservers = new LinkedHashSet<>();
@@ -148,7 +142,7 @@ public class SpecialCoveredClassTest {
     TestCheckGenerator checkGenerator =
         genTests.createTestCheckGenerator(visibility, contracts, observerMap, excludeAsObservers);
     testGenerator.addTestCheckGenerator(checkGenerator);
-    testGenerator.addExecutionVisitor(new ExercisedClassVisitor(coveredClasses));
+    testGenerator.addExecutionVisitor(new CoveredClassVisitor(coveredClasses));
     testGenerator.explore();
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();

@@ -16,7 +16,7 @@ import randoop.BugInRandoopException;
 
 /**
  * A {@code java.lang.instrument.ClassTransformer} that instruments loaded classes to determine if
- * exercised. Does the following instrumentation of each class:
+ * covered. Does the following instrumentation of each class:
  *
  * <ol>
  *   <li>Adds a static boolean flag to the class. Initially set to false.
@@ -27,16 +27,16 @@ import randoop.BugInRandoopException;
  * Avoids instrumenting JDK and JUnit classes and skips interfaces. Otherwise, all other classes are
  * instrumented.
  *
- * @see ExercisedAgent
+ * @see CoveredClassAgent
  * @see #modifyClass(CtClass)
  */
-public class ExercisedClassTransformer implements ClassFileTransformer {
+public class CoveredClassTransformer implements ClassFileTransformer {
 
   /** the class pool used to load class files */
   private ClassPool pool;
 
-  /** Create {@code ExercisedClassTransformer}. */
-  ExercisedClassTransformer() {
+  /** Create {@code CoveredClassTransformer}. */
+  CoveredClassTransformer() {
     super();
     pool = ClassPool.getDefault();
   }
@@ -44,7 +44,7 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
   /**
    * {@inheritDoc}
    *
-   * <p>Transforms bytecode for a class by adding "exercised" instrumentation. Avoids JDK and JUnit
+   * <p>Transforms bytecode for a class by adding "covered" instrumentation. Avoids JDK and JUnit
    * classes, interfaces and any "frozen" classes that have already been loaded.
    */
   @Override
@@ -163,7 +163,7 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
       throw new Error("error instrumenting constructor: " + e);
     }
 
-    // add static method that polls and resets the exercised flag
+    // add static method that polls and resets the covered flag
     try {
       String methodName = "randoop_checkAndReset";
       CtMethod pollMethod = new CtMethod(CtClass.booleanType, methodName, new CtClass[0], cc);

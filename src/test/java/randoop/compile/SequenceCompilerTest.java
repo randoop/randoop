@@ -176,6 +176,7 @@ public class SequenceCompilerTest {
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
     SequenceClassLoader classLoader = new SequenceClassLoader(getClass().getClassLoader());
     List<String> options = new ArrayList<>();
+    // These are javac options
     options.add("-Xmaxerrs");
     options.add("1000");
     return new SequenceCompiler(classLoader, options);
