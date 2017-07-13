@@ -129,6 +129,8 @@ configurations {
   coveredTestRuntime.extendsFrom testRuntime
   mapcallTestImplementation.extendsFrom testImplementation
   mapcallTestRuntime.extendsFrom testRuntime
+  systemTestImplementation.extendsFrom testImplementation
+  systemTestRuntime.extendsFrom testRuntime
 }
 
 dependencies {
