@@ -109,7 +109,7 @@ sourceSets {
 
 configurations {
   plume
-  compile.extendsFrom plume
+  implementation.extendsFrom plume
 
   manual {
     description = "Generate user and developer documentation"
@@ -126,11 +126,11 @@ configurations {
    * borrow from unit test configurations.
    */
   coveredTestImplementation.extendsFrom testImplementation
-  coveredTestRuntime.extendsFrom testRuntime
+  coveredTestRuntimeOnly.extendsFrom testRuntimeOnly
   mapcallTestImplementation.extendsFrom testImplementation
-  mapcallTestRuntime.extendsFrom testRuntime
+  mapcallTestRuntimeOnly.extendsFrom testRuntimeOnly
   systemTestImplementation.extendsFrom testImplementation
-  systemTestRuntime.extendsFrom testRuntime
+  systemTestRuntimeOnly.extendsFrom testRuntimeOnly
 }
 
 dependencies {
@@ -153,7 +153,7 @@ dependencies {
    * (Also, see configuration block.)
    */
   coveredTestImplementation sourceSets.main.output
-  coveredTestRuntime project(':covered-class')
+  coveredTestRuntimeOnly project(':covered-class')
 
   mapcallTestImplementation files(project(':mapcall').sourceSets.main.output)
 
@@ -173,8 +173,8 @@ dependencies {
    * sourceSet testInput depends on output of main.
    * Also, src/testinput/java/ps1/RatPolyTest.java uses JUnit
    */
-  testInputCompile sourceSets.main.output
-  testInputCompile group: 'junit', name: 'junit', version: '4.+'
+  testInputImplementation sourceSets.main.output
+  testInputImplementation group: 'junit', name: 'junit', version: '4.+'
 
   /*
    * building documentation uses Options doclet that is part of plume, and
