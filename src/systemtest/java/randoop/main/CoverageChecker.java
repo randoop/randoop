@@ -14,7 +14,6 @@ import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.IMethodCoverage;
 import org.jacoco.report.JavaNames;
 import plume.UtilMDE;
-import randoop.reflection.ClassUtil;
 
 /** Checks coverage for a test, managing information needed to perform the coverage checks. */
 class CoverageChecker {
@@ -92,7 +91,9 @@ class CoverageChecker {
         c = Class.forName(classname);
 
         boolean firstLine = true;
-        for (Method m : ClassUtil.getDeclaredMethods(c)) {
+        // Using Class method instead of randoop.reflection.ClassUtils.
+        // It shouldn't matter here that the Class method is nondeterministic.
+        for (Method m : c.getDeclaredMethods()) {
           String methodname = methodName(m);
           if (!isIgnoredMethod(methodname) && !dontCareMethods.contains(methodname)) {
             if (excludedMethods.contains(methodname)) {
