@@ -189,6 +189,7 @@ tasks.verifyGoogleJavaFormat {
   exclude 'src/testinput'
 }
 
+// should verifyGoogleJavaFormat before compiling
 tasks.withType(JavaCompile) {
   dependsOn verifyGoogleJavaFormat
 }
