@@ -6,6 +6,12 @@
  */
 
 plugins {
+  id 'com.github.johnrengelman.shadow' version '2.0.1'
+  id 'java'
+  id 'eclipse'
+  id 'idea'
+  id 'jacoco'
+
   /*
    * Setup gradle-git so can clone plume-lib
    * https://github.com/ajoberstar/gradle-git
@@ -25,11 +31,9 @@ plugins {
 /* Common build configuration for Randoop and agents */
 allprojects {
 
-  /* This project and agent subprojects are Java projects */
   apply plugin: 'java'
-  apply plugin: 'eclipse'
-  apply plugin: 'idea'
-  apply plugin: 'jacoco'
+  apply plugin: 'com.github.johnrengelman.shadow'
+
   sourceCompatibility = 1.7
   targetCompatibility = 1.7
 
@@ -115,9 +119,6 @@ configurations {
    */
   coveredTestImplementation.extendsFrom testImplementation
   coveredTestRuntimeOnly.extendsFrom testRuntimeOnly
-
-  systemTestImplementation.extendsFrom testImplementation
-  systemTestRuntimeOnly.extendsFrom testRuntimeOnly
 }
 
 dependencies {
@@ -146,11 +147,12 @@ dependencies {
   /*
    * source set systemTest
    */
-   systemTestImplementation sourceSets.main.output
-   systemTestRuntimeOnly sourceSets.testInput.output
+   systemTestImplementation files('lib/plume.jar')
+   systemTestImplementation group: 'junit', name: 'junit', version: '4.+'
    systemTestImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
    systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.core', version: '0.7.7.201606060606'
    systemTestImplementation group: 'org.jacoco', name: 'org.jacoco.report', version: '0.7.7.201606060606'
+   systemTestRuntimeOnly sourceSets.testInput.output
 
   /*
    * sourceSet testInput depends on output of main.
@@ -291,7 +293,7 @@ task coveredTest(type: Test, dependsOn: 'copyJars') {
   workingDir = sourceSets.coveredTest.output.resourcesDir
   testClassesDirs = sourceSets.coveredTest.output.classesDirs
   classpath = sourceSets.coveredTest.runtimeClasspath
-  jvmArgs "-javaagent:$buildDir/libs/covered-class-$version"+".jar"
+  jvmArgs "-javaagent:$buildDir/libs/covered-class-${version}.jar"
 
   /*
    * Show as much as possible to console.
@@ -444,17 +446,43 @@ task copyJars(type: Copy, dependsOn: [':covered-class:jar', ':mapcall:jar']) {
 
 assemble.dependsOn copyJars
 
-task singleJar (type: Jar) {
-  group "build"
-  description "Assemble a fat jar archive of Randoop and runtime dependencies"
-  baseName = project.name + '-all'
-  from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-  with jar
+shadowJar {
+  // name should be randoop-all-$version.jar instead of randoop-$version-all.jar
+  baseName = 'randoop-all'
+  classifier = null
+
+  exclude '**/pom.*'
+  exclude '**/default-*.txt'
+
+  // don't include either mocks or agent classes
+  // otherwise creates problems for replacement creation of mapcall agent
+  exclude '**/randoop/mock/*'
+  exclude '**/randoop/instrument/*'
+
+  relocate 'com.github.javaparser', 'randoop.com.github.javaparser'
+  relocate 'com.google', 'randoop.com.google'
+  relocate 'com.jcraft.jsch', 'randoop.com.jcraft.jsch'
+  relocate 'com.sun.javadoc', 'randoop.com.sun.javadoc'
+  relocate 'com.sun.jna', 'randoop.com.sun.jna'
+  relocate 'com.trilead.ssh2', 'randoop.com.trilead.ssh2'
+  relocate 'de.regnis.q.sequence', 'randoop.de.regnis.q.sequence'
+  relocate 'edu.emory.mathcs.backport.java.util', 'randoop.edu.emory.mathcs.backport.java.util'
+  relocate 'net.fortuna.ical4j', 'randoop.net.fortuna.ical4j'
+  relocate 'nu.xom', 'randoop.nu.xom'
+  relocate 'org.antlr', 'randoop.org.antlr'
+  relocate 'org.apache', 'randoop.org.apache'
+  relocate 'org.ccil.cowan.tagsoup', 'randoop.org.ccil.cowan.tagsoup'
+  relocate 'org.checkerframework', 'randoop.org.checkerframework'
+  relocate 'org.ini4j', 'randoop.org.ini4j'
+  relocate 'org.slf4j', 'randoop.org.slf4j'
+  relocate 'org.tigris.subversion', 'randoop.org.tigris.subversion'
+  relocate 'org.tmatesoft', 'randoop.org.tmatesoft'
+  relocate 'plume', 'randoop.plume'
 }
 
-assemble.dependsOn singleJar
+assemble.dependsOn shadowJar
 
-task distributionZip (type: Zip , dependsOn: ['singleJar', 'copyJars', 'manual']) {
+task distributionZip (type: Zip , dependsOn: ['shadowJar', 'copyJars', 'manual']) {
   group 'Publishing'
   description "Assemble a zip file with jar files and user documentation"
   def dirName = "$baseName-$version"
