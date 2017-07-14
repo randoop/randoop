@@ -17,7 +17,7 @@ import randoop.util.Randomness;
 import randoop.util.ReflectionExecutor;
 import randoop.util.Util;
 
-/** Container for Randoop options. */
+/** Container for Randoop options. They are stored as static variables, not instance variables. */
 @SuppressWarnings("WeakerAccess")
 public abstract class GenInputsAbstract extends CommandHandler {
 
