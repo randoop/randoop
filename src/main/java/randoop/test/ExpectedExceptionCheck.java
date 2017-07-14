@@ -46,8 +46,9 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
               + "; message: "
               + exception.getMessage();
     }
+    message = fixMessage(message);
     String assertion = "org.junit.Assert.fail(\"" + message + "\")";
-    b.append("  ").append(assertion).append(";").append(Globals.lineSep);
+    b.append(Globals.lineSep).append("  ").append(assertion).append(";").append(Globals.lineSep);
   }
 
   /**
@@ -89,5 +90,16 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
     ExceptionalExecution e = (ExceptionalExecution) outcomeAtIndex;
     // TODO verify that this substitution still works!!!
     return exception.getClass().isAssignableFrom(e.getException().getClass());
+  }
+
+  /**
+   * Ensures that the fail message built from an exception message is formatted propertly for use in
+   * an assertion by removing newlines.
+   *
+   * @param message the message to convert
+   * @return the message with newlines removed
+   */
+  private static String fixMessage(String message) {
+    return message.replaceAll("[\\r\\n]+", ".");
   }
 }
