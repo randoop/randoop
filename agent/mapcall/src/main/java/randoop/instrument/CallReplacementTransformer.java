@@ -200,8 +200,15 @@ public class CallReplacementTransformer implements ClassFileTransformer {
         continue;
       }
 
-      debug_instrument_inst.log(
-          "%n%s.%s original code: %s%n", mg.getClassName(), mg.getName(), mg.getMethod().getCode());
+      try { // sometimes get exceptions on mg.getMethod().getCode().toString()
+        debug_instrument_inst.log(
+            "%n%s.%s original code: %s%n",
+            mg.getClassName(), mg.getName(), mg.getMethod().getCode());
+      } catch (Throwable e) {
+        debug_instrument_inst.log(
+            "%nException %s logging original code for %s.%s%n",
+            e.getMessage(), mg.getClassName(), mg.getName());
+      }
 
       if (transformMethod(mg, new InstructionFactory(cg), pgen)) {
         transformed = true;
@@ -221,8 +228,15 @@ public class CallReplacementTransformer implements ClassFileTransformer {
         cg.replaceMethod(method, mg.getMethod());
       }
 
-      debug_instrument_inst.log(
-          "%s.%s modified code: %s%n%n", mg.getClassName(), mg.getName(), mg.getMethod().getCode());
+      try {
+        debug_instrument_inst.log(
+            "%s.%s modified code: %s%n%n",
+            mg.getClassName(), mg.getName(), mg.getMethod().getCode());
+      } catch (Throwable e) {
+        debug_instrument_inst.log(
+            "%nException %s logging modified code for %s.%s%n",
+            e.getMessage(), mg.getClassName(), mg.getName());
+      }
     }
     cg.update();
 
