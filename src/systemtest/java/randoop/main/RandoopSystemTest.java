@@ -1090,7 +1090,7 @@ public class RandoopSystemTest {
     //
     options.setOption("outputLimit", "400");
     options.setFlag("ignore-flaky-tests");
-    options.setFlag("log-operation-history");
+    options.setOption("operation-history-log", "-");
 
     CoverageChecker checker = new CoverageChecker(options);
 
@@ -1308,7 +1308,10 @@ public class RandoopSystemTest {
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.addTestClass("input.NoExitClass");
     options.setOption("outputLimit", "20");
-    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+    CoverageChecker checker = new CoverageChecker(options);
+    checker.exclude("input.NoExitClass.hashCode()");
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, checker);
   }
 
   /* ------------------------------ utility methods ---------------------------------- */
