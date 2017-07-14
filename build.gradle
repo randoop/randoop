@@ -289,7 +289,7 @@ task coveredTest(type: Test, dependsOn: 'copyJars') {
   workingDir = sourceSets.coveredTest.output.resourcesDir
   testClassesDirs = sourceSets.coveredTest.output.classesDirs
   classpath = sourceSets.coveredTest.runtimeClasspath
-  jvmArgs "-javaagent:$buildDir/libs/covered-class-$version"+".jar"
+  jvmArgs "-javaagent:$buildDir/libs/covered-class-${version}"+".jar"
 
   /*
    * Show as much as possible to console.
