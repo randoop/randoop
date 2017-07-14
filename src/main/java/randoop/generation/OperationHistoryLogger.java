@@ -1,9 +1,9 @@
 package randoop.generation;
 
-import java.io.PrintWriter;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import plume.SimpleLog;
 import randoop.operation.TypedOperation;
 
 /**
@@ -13,7 +13,7 @@ import randoop.operation.TypedOperation;
 public class OperationHistoryLogger implements OperationHistoryLogInterface {
 
   /** The {@code PrintWriter} for outputting the operation history as a table */
-  private final PrintWriter writer;
+  private final SimpleLog logger;
 
   /** A sparse representation for the operation-outcome table */
   private final Map<TypedOperation, Map<OperationOutcome, Integer>> operationMap;
@@ -21,11 +21,12 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
   /**
    * Creates an {@link OperationHistoryLogger} that will write to the given {@code PrintWriter}.
    *
-   * @param writer the {@code PrintWriter} for writing the table from the created operation history
+   * @param logger the {@code PrintWriter} for writing the table from the created operation history
    */
-  public OperationHistoryLogger(PrintWriter writer) {
-    this.writer = writer;
+  public OperationHistoryLogger(SimpleLog logger) {
+    this.logger = logger;
     this.operationMap = new LinkedHashMap<>();
+    this.logger.line_oriented = false; // don't want the logger to manage newlines
   }
 
   @Override
@@ -33,7 +34,7 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
     Map<OperationOutcome, Integer> outcomeMap = operationMap.get(operation);
     int count = 0;
     if (outcomeMap == null) {
-      outcomeMap = new EnumMap<OperationOutcome, Integer>(OperationOutcome.class);
+      outcomeMap = new EnumMap<>(OperationOutcome.class);
     } else {
       Integer countInteger = outcomeMap.get(outcome);
       if (countInteger != null) {
@@ -57,7 +58,6 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
         operationMap.entrySet()) {
       printRow(maxNameLength, formatMap, entry.getKey(), entry.getValue());
     }
-    writer.flush();
   }
 
   /**
@@ -68,14 +68,13 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
    * @return a map from {@link OperationOutcome} value to numeric column format for subsequent rows
    */
   private Map<OperationOutcome, String> printHeader(int firstColumnLength) {
-    Map<OperationOutcome, String> formatMap =
-        new EnumMap<OperationOutcome, String>(OperationOutcome.class);
-    writer.format("%-" + firstColumnLength + "s", "Operation");
+    Map<OperationOutcome, String> formatMap = new EnumMap<>(OperationOutcome.class);
+    logger.log("%-" + firstColumnLength + "s", "Operation");
     for (OperationOutcome outcome : OperationOutcome.values()) {
-      writer.format("\t%" + outcome.name().length() + "s", outcome);
+      logger.log("\t%" + outcome.name().length() + "s", outcome);
       formatMap.put(outcome, "\t%" + outcome.name().length() + "d");
     }
-    writer.format("%n");
+    logger.log("%n");
     return formatMap;
   }
 
@@ -93,14 +92,14 @@ public class OperationHistoryLogger implements OperationHistoryLogInterface {
       Map<OperationOutcome, String> formatMap,
       TypedOperation operation,
       Map<OperationOutcome, Integer> countMap) {
-    writer.format("%-" + firstColumnLength + "s", operation.getSignatureString());
+    logger.log("%-" + firstColumnLength + "s", operation.getSignatureString());
     for (OperationOutcome outcome : OperationOutcome.values()) {
       Integer count = countMap.get(outcome);
       if (count == null) {
         count = 0;
       }
-      writer.format(formatMap.get(outcome), count);
+      logger.log(formatMap.get(outcome), count);
     }
-    writer.format("%n");
+    logger.log("%n");
   }
 }
