@@ -11,11 +11,10 @@ same way.
 
 Improves how --omitmethods works so that it matches against the signature of a
 method or constructor rather than java.lang.reflect.Method.toString(). Also,
-omits method throughout the inheritance hierarchy.   
+omits method throughout the inheritance hierarchy.
 
-New flag --log-operation-history will write table of operation use during
-generation to standard output. Option --operation-history-log will write to
-the file argument.
+New option --operation-history-log will write table of operation used during
+generation to either a file or standard out as indicated by the argument.
 
 Fixes a problem in progress reporting where the wrong count was being used for
 error-revealing sequences.

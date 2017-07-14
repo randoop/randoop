@@ -210,9 +210,8 @@ public class RandoopSystemTest {
   /** Test formerly known as randoop2. Previously did a diff on generated test. */
   @Test
   public void runNaiveCollectionsTest() {
-
-    TestEnvironment testEnvironment =
-        systemTestEnvironment.createTestEnvironment("naive-collections-test");
+    String directoryName = "naive-collections-test";
+    TestEnvironment testEnvironment = systemTestEnvironment.createTestEnvironment(directoryName);
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.setPackageName("foo.bar");
     options.setRegressionBasename("NaiveRegression");
@@ -223,7 +222,7 @@ public class RandoopSystemTest {
     options.addTestClass("java2.util2.LinkedList");
     options.addTestClass("java2.util2.Collections");
     options.setOption("omit-field-list", "resources/systemTest/naiveomitfields.txt");
-    options.setFlag("log-operation-history");
+    options.setOption("operation-history-log", "-"); //log to stdout
 
     CoverageChecker coverageChecker = new CoverageChecker(options);
     coverageChecker.exclude("java2.util2.ArrayList.add(int, java.lang.Object)");
