@@ -288,7 +288,7 @@ public class InstantiationTest {
   private OperationModel createModel(Set<String> names, String packageName) {
     VisibilityPredicate visibility = new PackageVisibilityPredicate(packageName);
     ReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate();
-    Set<String> exercisedClassnames = new LinkedHashSet<>();
+    Set<String> coveredClassnames = new LinkedHashSet<>();
     Set<String> methodSignatures = new LinkedHashSet<>();
     ClassNameErrorHandler errorHandler = new ThrowClassNameError();
     List<String> literalsFileList = new ArrayList<>();
@@ -299,7 +299,7 @@ public class InstantiationTest {
               visibility,
               reflectionPredicate,
               names,
-              exercisedClassnames,
+              coveredClassnames,
               methodSignatures,
               errorHandler,
               literalsFileList);

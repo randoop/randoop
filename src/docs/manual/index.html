@@ -46,7 +46,7 @@ The Randoop homepage is
           <li><a href="#determining-calls-to-map">Determining which calls to place in the map_calls file</a></li>
         </ul></li>
       <li><a href="#checkrep">Specifying representation invariant methods (such as <code>checkRep</code>)</a></li>
-      <li><a href="#exercised-filter">Instrumenting classes for filtering tests on exercised-classes</a></li>
+      <li><a href="#covered-filter">Instrumenting classes for filtering tests on covered-classes</a></li>
       <li><a href="#primitives">Specifying additional primitive values</a></li>
     </ul></li>
   <li><a href="#getting_help">Getting help</a>
@@ -166,7 +166,7 @@ occasions when they fail and reveal a bug or a regression failure.
 <!--
   This zip archive contains the Randoop jar file
   <code>randoop-all-3.1.5.jar</code>, the Java agent jar files
-  (<code>exercised-class-3.1.5.jar</code> and
+  (<code>covered-class-3.1.5.jar</code> and
    <code>mapcall-3.1.5.jar</code>),
   and this documentation.
 -->
@@ -825,17 +825,6 @@ Randoop about your application, and that is how we recommend using Randoop.
  class is a member of the same package as the generated tests. [default false]
             <li id="option:silently-ignore-bad-class-names"><b>--silently-ignore-bad-class-names=</b><i>boolean</i>.
              Ignore class names specified by user that cannot be found [default false]
-            <li id="option:include-if-classname-appears"><b>--include-if-classname-appears=</b><i>regex</i>.
-             Classes, one of which every test must use. Randoop will only output tests whose source code has
- at least one use of a member of a class whose name matches the regular expression.
-            <li id="option:include-if-class-exercised"><b>--include-if-class-exercised=</b><i>filename</i>.
-             File containing fully-qualified names of classes that the tests must exercise. This option only
- works if Randoop is run using the <a
- href="https://randoop.github.io/randoop/manual/index.html#exercised-filter">exercised-class
- javaagent</a> to instrument the classes. A test is output only if it exercises at least one of
- the class names in the file. A test exercises a class if it executes any constructor or method
- of the class, directly or indirectly (the constructor or method might not appear in the source
- code of the test). Included classes may be abstract.
             <li id="option:ignore-flaky-tests"><b>--ignore-flaky-tests=</b><i>boolean</i>.
              If false, Randoop halts and gives diagnostics about flaky tests -- tests that behave
  differently on different executions. If true, Randoop ignores them and does not output them.
@@ -865,6 +854,17 @@ Randoop about your application, and that is how we recommend using Randoop.
  This check is useful because the assumptions in Randoop generation heuristics are sometimes
  violated by input methods, and, as a result, a generated test may not compile. This check does
  increases the runtime by approximately 50%. [default true]
+            <li id="option:require-classname-in-test"><b>--require-classname-in-test=</b><i>regex</i>.
+             Classes that must occur in a test. Randoop will only output tests whose source code has at
+ least one use of a member of a class whose name matches the regular expression.
+            <li id="option:require-covered-classes"><b>--require-covered-classes=</b><i>filename</i>.
+             File containing fully-qualified names of classes that the tests must exercise. This option only
+ works if Randoop is run using the <a
+ href="https://randoop.github.io/randoop/manual/index.html#covered-filter">covered-class
+ javaagent</a> to instrument the classes. A test is output only if it exercises at least one of
+ the class names in the file. A test exercises a class if it executes any constructor or method
+ of the class, directly or indirectly (the constructor or method might not appear in the source
+ code of the test). Included classes may be abstract.
             <li id="option:minimize-error-test"><b>--minimize-error-test=</b><i>boolean</i>.
              Flag indicating whether or not to automatically minimize error-revealing tests. Both original
  and minimized versions of each test class will be output. Setting this option may cause long
@@ -1101,10 +1101,10 @@ Randoop about your application, and that is how we recommend using Randoop.
              The random seed to use in the generation process. If you want to produce multiple different
  test suites, run Randoop multiple times with a different random seed. [default 0]
             <li id="option:deterministic"><b>--deterministic=</b><i>boolean</i>.
-             If true, Randoop is deterministic: running Randoop twice will produce the same test suite, so
- long as the program under test is deterministic. If false, Randoop may or may not produce the
- same test suite. To produce multiple different test suites, use the --randomseed command-line
- option. [default false]
+             If true, Randoop is deterministic: running Randoop twice with the same arguments (including
+ <code>--randomseed</code>) will produce the same test suite, so long as the program under test is
+ deterministic. If false, Randoop may or may not produce the same test suite. To produce
+ multiple different test suites, use the <code>--randomseed</code> command-line option. [default false]
       </ul>
   <li id="optiongroup:Logging,-notifications,-and-troubleshooting-Randoop">Logging, notifications, and troubleshooting Randoop
       <ul>
@@ -1307,7 +1307,7 @@ exception escaping the method as the rep invariant being violated.
 
 </ul>
 
-<h2 id="exercised-filter">Instrumenting classes for filtering tests on exercised-classes</h2>
+<h2 id="covered-filter">Instrumenting classes for filtering tests on covered-classes</h2>
 
 <p>
   Randoop will ordinarily generate tests involving all accessible constructors,
@@ -1315,20 +1315,20 @@ exception escaping the method as the rep invariant being violated.
   <code>--classlist</code> options.
   These can be restricted to tests that exercise the constructors and methods of
   classes from a different list given by using the
-  <code>--include-if-class-exercised</code> option.
+  <code>--require-covered-classes</code> option.
   However, for this option to work, the classes must be instrumented to indicate
-  when they are exercised.
-  To instrument classes for this filter, also use the <code>exercised-class-3.1.5.jar</code>
+  when they are covered.
+  To instrument classes for this filter, also use the <code>covered-class-3.1.5.jar</code>
   by giving the following command-line option for java
 </p>
 <pre><code>
-  -javaagent:$(RANDOOP_PATH)/exercised-class-3.1.5.jar
+  -javaagent:$(RANDOOP_PATH)/covered-class-3.1.5.jar
 </code></pre>
 <p>
   This will instrument any non-abstract constructor and method of loaded
   classes so that the use of a class can be detected.
   (The instrumentation is not done on any JDK or JUnit classes.)
-  (The <code>exercised-class-3.1.5.jar</code> file can be found in the
+  (The <code>covered-class-3.1.5.jar</code> file can be found in the
     unzipped distribution archive, or can be downloaded from the
     <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.)
 </p>

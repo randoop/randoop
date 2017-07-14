@@ -1,5 +1,5 @@
 // These subprojects are in subdirectories of the 'agent/' directory.
-include 'exercised-class'
+include 'covered-class'
 include 'mapcall'
 
 // Adds agent subprojects, omitting 'agent' directory name.

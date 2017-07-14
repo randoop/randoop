@@ -35,7 +35,7 @@ import randoop.generation.OperationHistoryLogger;
 import randoop.generation.RandoopGenerationError;
 import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
-import randoop.instrument.ExercisedClassVisitor;
+import randoop.instrument.CoveredClassVisitor;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.TypedOperation;
@@ -237,7 +237,7 @@ public class GenTests extends GenInputsAbstract {
     // get names of classes that must be covered by output tests
     Set<String> coveredClassnames =
         GenInputsAbstract.getStringSetFromFile(
-            include_if_class_exercised, "Unable to read coverage class names");
+            require_covered_classes, "Unable to read coverage class names");
 
     // get names of fields to be omitted
     Set<String> omitFields =
@@ -398,8 +398,8 @@ public class GenTests extends GenInputsAbstract {
     Predicate<ExecutableSequence> isOutputTest =
         createTestOutputPredicate(
             excludeSet,
-            operationModel.getExercisedClasses(),
-            GenInputsAbstract.include_if_classname_appears);
+            operationModel.getCoveredClasses(),
+            GenInputsAbstract.require_classname_in_test);
 
     explorer.addTestPredicate(isOutputTest);
 
@@ -410,8 +410,8 @@ public class GenTests extends GenInputsAbstract {
     List<ExecutionVisitor> visitors = new ArrayList<>();
 
     // instrumentation visitor
-    if (GenInputsAbstract.include_if_class_exercised != null) {
-      visitors.add(new ExercisedClassVisitor(operationModel.getExercisedClasses()));
+    if (GenInputsAbstract.require_covered_classes != null) {
+      visitors.add(new CoveredClassVisitor(operationModel.getCoveredClasses()));
     }
 
     // Install any user-specified visitors.
