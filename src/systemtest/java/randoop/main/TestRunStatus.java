@@ -68,6 +68,10 @@ class TestRunStatus {
 
     List<String> command = new ArrayList<>();
     command.add("java");
+    if (testEnvironment.getBootClassPath() != null
+        && !testEnvironment.getBootClassPath().isEmpty()) {
+      command.add("-Xbootclasspath/a:" + testEnvironment.getBootClassPath());
+    }
     command.add(
         "-javaagent:"
             + testEnvironment.getJacocoAgentPath().toString()
@@ -77,7 +81,7 @@ class TestRunStatus {
             + ",excludes=org.junit.*");
     if (testEnvironment.getJavaAgentPath() != null) {
       String agent = "-javaagent:" + testEnvironment.getJavaAgentPath();
-      String args = testEnvironment.getJavaAgentArgumentString();
+      String args = testEnvironment.getJavaAgentTestArgumentString();
       if (args != null) {
         agent = agent + "=" + args;
       }
@@ -88,7 +92,7 @@ class TestRunStatus {
     command.add(testClasspath);
     command.add("org.junit.runner.JUnitCore");
     command.add(jUnitTestSuiteName);
-
+    System.out.format("JUnit command:%n%s%n", command);
     ProcessStatus status = ProcessStatus.runCommand(command);
 
     File classesDirectory = testEnvironment.getTestInputClassDir().toFile();
