@@ -76,6 +76,7 @@ class RandoopRunStatus {
     command.add("randoop.main.Main");
     command.add("gentests");
     command.addAll(options.getOptions());
+    System.out.format("Randoop command:%n%s%n", command);
     ProcessStatus randoopExitStatus = ProcessStatus.runCommand(command);
 
     if (randoopExitStatus.exitStatus != 0) {
