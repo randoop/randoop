@@ -1,15 +1,10 @@
 package randoop.main;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.BlockStmt;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -173,7 +168,7 @@ public class GenTests extends GenInputsAbstract {
 
     Randomness.setSeed(randomseed);
     if (GenInputsAbstract.selection_log != null) {
-      Randomness.selectionLog = new SimpleLog(GenInputsAbstract.selection_log, true);
+      Randomness.selectionLog = getSimpleLog(GenInputsAbstract.selection_log);
     }
 
     //java.security.Policy policy = java.security.Policy.getPolicy();
@@ -451,14 +446,9 @@ public class GenTests extends GenInputsAbstract {
       Log.logLine("Initial sequences (seeds):");
       componentMgr.log();
     }
-    if (GenInputsAbstract.log_operation_history) {
-      explorer.setOperationHistoryLogger(
-          new OperationHistoryLogger(
-              new PrintWriter(new BufferedWriter(new OutputStreamWriter(System.out, UTF_8)))));
-    }
     if (GenInputsAbstract.operation_history_log != null) {
-      explorer.setOperationHistoryLogger(
-          new OperationHistoryLogger(new PrintWriter(GenInputsAbstract.operation_history_log)));
+      SimpleLog logger = getSimpleLog(GenInputsAbstract.operation_history_log);
+      explorer.setOperationHistoryLogger(new OperationHistoryLogger(logger));
     }
 
     /* Generate tests */
@@ -541,6 +531,23 @@ public class GenTests extends GenInputsAbstract {
     explorer.getOperationHistory().outputTable();
 
     return true;
+  }
+
+  /**
+   * Creates a {@code plume.SimpleLog} that writes to standard output if {@code filename} is "-" (a
+   * hyphen), or the file with name {@code filename}.
+   *
+   * @param filename the name of a file or a hyphen to indicate standard output, must not be null
+   * @return a {@code SimpleLog} object that writes to the location indicated by {@code filename}
+   */
+  private static SimpleLog getSimpleLog(String filename) {
+    SimpleLog logger = null;
+    if (filename.equals("-")) {
+      logger = new SimpleLog(true);
+    } else {
+      logger = new SimpleLog(filename, true);
+    }
+    return logger;
   }
 
   /**
