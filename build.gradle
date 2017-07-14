@@ -364,12 +364,6 @@ task systemTest(type: Test, dependsOn: [ 'extractJacocoAgent', 'generateWorkingD
   testClassesDirs = sourceSets.systemTest.output.classesDirs
   classpath = sourceSets.systemTest.runtimeClasspath
 
-  System.properties.each { k,v->
-        if (k.startsWith("randoop.")) {
-            systemProperty k, v
-        }
-    }
-
   /*
    * Show as much as possible to console.
    */
@@ -397,6 +391,15 @@ tasks.withType(Test) {
   * Set the heap size and GC for running tests.
   */
   jvmArgs '-Xmx384m', '-XX:+UseG1GC', '-XX:SoftRefLRUPolicyMSPerMB=250'
+
+  /*
+   * Pass along any system properties that begin with "randoop."
+   */
+  System.properties.each { k,v->
+        if (k.startsWith("randoop.")) {
+            systemProperty k, v
+        }
+  }
 }
 
 /*
