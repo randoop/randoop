@@ -951,8 +951,7 @@ public class RandoopSystemTest {
         "specifications", "resources/systemTest/randoop/condition/classwithconditions.json");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
-    options.setOption("timelimit", "60");
-    options.setOption("outputlimit", "200");
+    options.setOption("outputLimit", "200");
 
     //TODO should check for invalid test count
     generateAndTestWithCoverage(
@@ -969,8 +968,7 @@ public class RandoopSystemTest {
         "specifications", "resources/systemTest/net/net_connection_toradocu_spec.json");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
-    options.setOption("timelimit", "30");
-    options.setOption("outputlimit", "200");
+    options.setOption("outputLimit", "200");
 
     //TODO should check for invalid test count
     generateAndTestWithCoverage(
@@ -988,8 +986,7 @@ public class RandoopSystemTest {
         "specifications", "resources/systemTest/net/net_connection_toradocu_spec.json");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
-    options.setOption("timelimit", "30");
-    options.setOption("outputlimit", "200");
+    options.setOption("outputLimit", "200");
     options.setOption("checked-exception", "INVALID");
     options.setOption("unchecked-exception", "INVALID");
 
@@ -1007,8 +1004,7 @@ public class RandoopSystemTest {
         "specifications", "resources/systemTest/net/net_connection_toradocu_spec.json");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
-    options.setOption("timelimit", "30");
-    options.setOption("outputlimit", "200");
+    options.setOption("outputLimit", "200");
     options.setOption("checked-exception", "ERROR");
     options.setOption("unchecked-exception", "ERROR");
 
@@ -1026,8 +1022,7 @@ public class RandoopSystemTest {
     options.setOption("specifications", "resources/systemTest/pkg/pkg_subclass_toradocu_spec.json");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
-    options.setOption("timelimit", "30");
-    options.setOption("outputlimit", "200");
+    options.setOption("outputLimit", "200");
 
     generateAndTestWithCoverage(
         testEnvironment, options, ExpectedTests.SOME, ExpectedTests.DONT_CARE);
@@ -1043,10 +1038,9 @@ public class RandoopSystemTest {
         "specifications", "resources/systemTest/randoop/condition/condition_with_exception.json");
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
-    options.setOption("timelimit", "30");
-    options.setOption("outputlimit", "200");
+    options.setOption("outputLimit", "200");
 
-    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
   @Test
@@ -1059,10 +1053,9 @@ public class RandoopSystemTest {
         "specifications", "resources/systemTest/randoop/condition/overridingconditionsclass.json");
     options.setErrorBasename("ConditionsError");
     options.setRegressionBasename("ConditionsRegression");
-    options.setOption("timelimit", "30");
-    options.setOption("outputlimit", "200");
+    options.setOption("outputLimit", "200");
 
-    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
   @Test
@@ -1075,10 +1068,9 @@ public class RandoopSystemTest {
         "specifications", "resources/systemTest/randoop/condition/conditionsuperclass.json");
     options.setErrorBasename("ConditionsError");
     options.setRegressionBasename("ConditionsRegression");
-    options.setOption("timelimit", "30");
-    options.setOption("outputlimit", "200");
+    options.setOption("outputLimit", "200");
 
-    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
   @Test
@@ -1091,10 +1083,9 @@ public class RandoopSystemTest {
         "specifications", "resources/systemTest/randoop/condition/conditionsinterface.json");
     options.setErrorBasename("ConditionsError");
     options.setRegressionBasename("ConditionsRegression");
-    options.setOption("timelimit", "30");
-    options.setOption("outputlimit", "200");
+    options.setOption("outputLimit", "200");
 
-    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
   @Test
@@ -1107,10 +1098,9 @@ public class RandoopSystemTest {
         "specifications", "resources/systemTest/randoop/condition/conditionsupersuperclass.json");
     options.setErrorBasename("ConditionsError");
     options.setRegressionBasename("ConditionsRegression");
-    options.setOption("timelimit", "30");
-    options.setOption("outputlimit", "200");
+    options.setOption("outputLimit", "200");
 
-    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+    generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
 
   /**
