@@ -62,6 +62,7 @@ The Randoop homepage is
           <li><a href="#flaky-tests">Randoop stopped because of a flaky test</a></li>
           <li><a href="#dependent-tests">Tests behave differently in isolation or when reordered</a></li>
         </ul></li>
+      <li><a href="#bug-reporting">Reporting a bug to the issue tracker</a></li>
     </ul></li>
   <li><a href="#credits">Credits</a></li>
 </ul>
@@ -1119,14 +1120,11 @@ Randoop about your application, and that is how we recommend using Randoop.
             <li id="option:log"><b>--log=</b><i>filename</i>.
              A file to which to log lots of information. If not specified, no logging is done.
             <li id="option:selection-log"><b>--selection-log=</b><i>string</i>.
-             A file to which to log selections; helps find sources of non-determinism. If not specified, no
- logging is done.
-            <li id="option:log-operation-history"><b>--log-operation-history=</b><i>boolean</i>.
-             Track and log the usage of operations during generation to standard out. This option is not
- affected by setting <code>--operation-history-log</code>. [default false]
-            <li id="option:operation-history-log"><b>--operation-history-log=</b><i>filewriter</i>.
-             Name of a file to which to log the operation usage history. This operation is not affected by
- setting <code>--log-operation-history</code>.
+             A destination to which to log selections; helps find sources of non-determinism. Either the
+ name of a file or a hyphen ("-") indicating that standard output should be used. If not
+ specified, no logging is done.
+            <li id="option:operation-history-log"><b>--operation-history-log=</b><i>string</i>.
+             A file to which to log the operation usage history.
       </ul>
   <li id="optiongroup:Advanced-extension-points">Advanced extension points
       <ul>
@@ -1471,25 +1469,8 @@ java -ea -classpath $(RANDOOP_JAR) randoop.main.Main help --unpub gentests
 </li>
 <li><strong>Bug reporting</strong>: If
   you have discovered a problem with Randoop, we would like to fix it.
-  Please submit an issue to the
-  <a href="https://github.com/randoop/randoop/issues"
-  rel="nofollow">issue tracker</a>.
-<br/>
-  You should include enough information to
-  enable the Randoop developers to reproduce the problem, which will make
-  it easier for them to diagnose the problem, fix Randoop, and verify the
-  fix.  This generally includes
-  <ul>
-    <li>the version of Randoop (please use the most recent released
-  version, or the current version from the <a href="https://github.com/randoop/randoop">GitHub version control repository</a>),</li>
-    <li>the exact commands you ran (we recommend using the <code>-ea</code> option to java when running Randoop, which makes diagnosis easier),</li>
-    <li>the exact and complete output of the commands, and</li>
-    <li>all the files that are necessary to run those commands.</li>
-  </ul>
-  If you encountered the problem while using the Maven plug-in,
-  then please reproduce the problem from the command line, to help the
-  Randoop developers find the underlying bug (or to isolate the problem to the plug-in).
-
+  Please see the instructions for <a href="#bug-reporting">submitting
+  a bug report</a>.
 </li>
 </ul>
 
@@ -1763,6 +1744,37 @@ tests</a>.
 <!-- <h2 id="q2">Randoop generates many tests that look similar</h2> -->
 <!-- <h2 id="q3">Randoop does not output any tests</h2> -->
 <!-- <h2 id="q3">Randoop is hanging</h2> -->
+
+
+<h2 id="bug-reporting">Reporting a bug to the issue tracker</h2>
+
+<p>
+  If
+  you have discovered a problem with Randoop, we would like to fix it.
+  Please submit an issue to the
+  <a href="https://github.com/randoop/randoop/issues"
+  rel="nofollow">issue tracker</a>.
+</p>
+
+<p>
+  You should include enough information to
+  enable the Randoop developers to reproduce the problem, which will make
+  it easier for them to diagnose the problem, fix Randoop, and verify the
+  fix.  This generally includes
+</p>
+  <ul>
+    <li>the version of Randoop (please use the most recent released
+  version, or the current version from the <a href="https://github.com/randoop/randoop">GitHub version control repository</a>),</li>
+    <li>the exact commands you ran (we recommend using the <code>-ea</code> option to java when running Randoop, which makes diagnosis easier),</li>
+    <li>the exact and complete output of the commands, and</li>
+    <li>all the files that are necessary to run those commands.</li>
+  </ul>
+
+<p>
+  If you encountered the problem while using the Maven plug-in,
+  then please reproduce the problem from the command line, to help the
+  Randoop developers find the underlying bug (or to isolate the problem to the plug-in).
+</p>
 
 
 <h1 id="credits">Credits</h1>
