@@ -17,7 +17,7 @@ import randoop.util.Randomness;
 import randoop.util.ReflectionExecutor;
 import randoop.util.Util;
 
-/** Container for Randoop options. */
+/** Container for Randoop options. They are stored as static variables, not instance variables. */
 @SuppressWarnings("WeakerAccess")
 public abstract class GenInputsAbstract extends CommandHandler {
 
@@ -631,25 +631,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static FileWriter log = null;
 
   /**
-   * A file to which to log selections; helps find sources of non-determinism. If not specified, no
-   * logging is done.
+   * A destination to which to log selections; helps find sources of non-determinism. Either the
+   * name of a file or a hyphen ("-") indicating that standard output should be used. If not
+   * specified, no logging is done.
    */
-  @Option("File to which to log each random selection")
+  @Option("Log destination for logging each random selection. Should be a file or stdout \"-\".")
   public static String selection_log = null;
 
-  /**
-   * Track and log the usage of operations during generation to standard out. This option is not
-   * affected by setting <code>--operation-history-log</code>.
-   */
-  @Option("Track and log operation usage counts")
-  public static boolean log_operation_history = false;
-
-  /**
-   * Name of a file to which to log the operation usage history. This operation is not affected by
-   * setting <code>--log-operation-history</code>.
-   */
-  @Option("Track and log operation usage counts to this file")
-  public static FileWriter operation_history_log = null;
+  /** A file to which to log the operation usage history. */
+  @Option("Log destination for operation usage counts. Should be a file or stdout \"-\".")
+  public static String operation_history_log = null;
 
   /**
    * Create sequences but never execute them. Used to test performance of Randoop's sequence
