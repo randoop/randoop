@@ -1039,6 +1039,7 @@ public class RandoopSystemTest {
     options.setErrorBasename("ConditionError");
     options.setRegressionBasename("ConditionRegression");
     options.setOption("outputLimit", "200");
+    options.setOption("generationLimit", "500");
 
     generateAndTestWithCoverage(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
   }
