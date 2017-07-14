@@ -30,6 +30,7 @@ plugins {
 
 /* Common build configuration for Randoop and agents */
 allprojects {
+
   apply plugin: 'java'
   apply plugin: 'com.github.johnrengelman.shadow'
 
@@ -129,8 +130,6 @@ configurations {
   coveredTestRuntimeOnly.extendsFrom testRuntimeOnly
   mapcallTestImplementation.extendsFrom testImplementation
   mapcallTestRuntimeOnly.extendsFrom testRuntimeOnly
-  //systemTestImplementation.extendsFrom testImplementation
-  //systemTestRuntimeOnly.extendsFrom testRuntimeOnly
 }
 
 dependencies {
@@ -478,7 +477,6 @@ task copyJars(type: Copy, dependsOn: [':covered-class:jar', ':mapcall:jar']) {
 
 assemble.dependsOn copyJars
 
-
 shadowJar {
   // name should be randoop-all-$version.jar instead of randoop-$version-all.jar
   baseName = 'randoop-all'
@@ -512,6 +510,7 @@ shadowJar {
   relocate 'org.tmatesoft', 'randoop.org.tmatesoft'
   relocate 'plume', 'randoop.plume'
 }
+
 assemble.dependsOn shadowJar
 
 task distributionZip (type: Zip , dependsOn: ['shadowJar', 'copyJars', 'manual']) {
