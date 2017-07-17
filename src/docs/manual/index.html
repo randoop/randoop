@@ -1308,16 +1308,38 @@ exception escaping the method as the rep invariant being violated.
 <h2 id="covered-filter">Instrumenting classes for filtering tests on covered-classes</h2>
 
 <p>
-  Randoop will ordinarily generate tests involving all accessible constructors,
-  fields and methods of tests given using the <code>--testclass</code> and
-  <code>--classlist</code> options.
-  These can be restricted to tests that exercise the constructors and methods of
-  classes from a different list given by using the
-  <code>--require-covered-classes</code> option.
-  However, for this option to work, the classes must be instrumented to indicate
-  when they are covered.
-  To instrument classes for this filter, also use the <code>covered-class-3.1.5.jar</code>
-  by giving the following command-line option for java
+  Randoop generates tests that use methods, constructors, and fields of classes
+  given using the <code>--testclass</code> and <code>--classlist</code> options.
+  Any given test may involve one or more of the classes.
+</p>
+
+<p>
+  The <a href="#option:require-covered-classes"><code>--require-covered-classes</code></a>
+  option makes Randoop discard any test that doesn't use at least one of the
+  specified classes.
+</p>
+
+<p>
+  Suppose you only want to test class A, but its methods takes arguments of type
+  B and C.  If you supply only A as a test class, Randoop cannot create
+  objects of type B and C, so Randoop may be unable to call class A.  Instead,
+  you can supply A, B, and C as test classes, but instruct Randoop to only
+  output the classes that use A.
+</p>
+
+<p>
+  Use of the <code>--require-covered-classes</code> option is unusual:  you
+  probably care about testing your entire application rather than just part of
+  it.  The option makes Randoop less efficient, because Randoop creates but
+  discards tests.
+</p>
+
+<p>
+  For the <code>--require-covered-classes</code> option to work, the classes
+  must be instrumented so Randoop can determine when they are covered.  To
+  instrument classes for this filter, also use
+  the <code>covered-class-3.1.5.jar</code> by giving the following command-line
+  option for java
 </p>
 <pre><code>
   -javaagent:$(RANDOOP_PATH)/covered-class-3.1.5.jar
@@ -1330,6 +1352,7 @@ exception escaping the method as the rep invariant being violated.
     unzipped distribution archive, or can be downloaded from the
     <a href="https://github.com/randoop/randoop/releases/latest">latest release</a>.)
 </p>
+
 
 <h2 id="primitives">Specifying additional primitive values</h2>
 

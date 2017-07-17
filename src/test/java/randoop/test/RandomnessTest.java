@@ -27,6 +27,7 @@ public class RandomnessTest extends TestCase {
         this.weight = weight;
       }
 
+      @Override
       public double getWeight() {
         return this.weight;
       }

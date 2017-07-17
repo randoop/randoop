@@ -169,7 +169,7 @@ public class CoverageInstrumentationTest {
     }
 
     Object[] args = new Object[1];
-    args[0] = new Integer(1);
+    args[0] = Integer.valueOf(1);
     Object bobj = null;
     try {
       bobj = bcon.newInstance(args);

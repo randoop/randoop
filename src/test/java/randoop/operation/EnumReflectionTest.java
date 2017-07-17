@@ -160,6 +160,7 @@ public class EnumReflectionTest {
     }
   }
 
+  @SuppressWarnings("GetClassOnEnum")
   @Test
   public void enumAsPredicateTest() {
     Class<?> c = EnumAsPredicate.class;
@@ -210,8 +211,10 @@ public class EnumReflectionTest {
 
     for (TypedOperation op : actual) {
       if (op.getName().equals("test")) {
-        checkOutcome(op, new Object[] {EnumAsPredicate.ONE, new Integer(0)}, false);
-        checkOutcome(op, new Object[] {EnumAsPredicate.TWO, new Integer(0)}, true);
+        //noinspection UnnecessaryBoxing
+        checkOutcome(op, new Object[] {EnumAsPredicate.ONE, Integer.valueOf(0)}, false);
+        //noinspection UnnecessaryBoxing
+        checkOutcome(op, new Object[] {EnumAsPredicate.TWO, Integer.valueOf(0)}, true);
       }
     }
 
@@ -280,6 +283,7 @@ public class EnumReflectionTest {
    * overridden Object methods. Uses randoop.test.Operator that has four constants, one abstract
    * method eval and each constant implements eval and toString.
    */
+  @SuppressWarnings("GetClassOnEnum")
   @Test
   public void abstractMethodEnum() {
     Class<?> op = OperatorEnum.class;

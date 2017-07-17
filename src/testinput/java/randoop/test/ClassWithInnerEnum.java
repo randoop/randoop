@@ -21,11 +21,13 @@ public class ClassWithInnerEnum {
 
   public enum OtherToggle {
     OFF {
+      @Override
       public boolean isOn() {
         return false;
       }
     },
     ON {
+      @Override
       public boolean isOn() {
         return true;
       }
