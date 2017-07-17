@@ -15,6 +15,7 @@ import randoop.BugInRandoopException;
 import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.SeedSequences;
+import randoop.generation.TestUtils;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
 import randoop.main.OptionsCache;
@@ -51,6 +52,8 @@ public class ForwardExplorerTests {
   public static void setup() {
     optionsCache = new OptionsCache();
     optionsCache.saveState();
+
+    TestUtils.setSelectionLog();
   }
 
   @AfterClass
@@ -78,7 +81,9 @@ public class ForwardExplorerTests {
             null);
     explorer.addTestCheckGenerator(createChecker(new ContractSet()));
     explorer.addTestPredicate(createOutputTest());
+    TestUtils.setOperationLog(explorer);
     explorer.explore();
+    explorer.getOperationHistory().outputTable();
     GenInputsAbstract.dontexecute = false;
     assertTrue(explorer.numGeneratedSequences() != 0);
   }
@@ -117,7 +122,7 @@ public class ForwardExplorerTests {
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     final List<TypedOperation> model = getConcreteOperations(classes);
     assertTrue("model should not be empty", model.size() != 0);
-    ForwardGenerator exp =
+    ForwardGenerator explorer =
         new ForwardGenerator(
             model,
             new LinkedHashSet<TypedOperation>(),
@@ -125,16 +130,18 @@ public class ForwardExplorerTests {
             mgr,
             null,
             null);
-    exp.addTestCheckGenerator(createChecker(new ContractSet()));
-    exp.addTestPredicate(createOutputTest());
+    explorer.addTestCheckGenerator(createChecker(new ContractSet()));
+    explorer.addTestPredicate(createOutputTest());
+    TestUtils.setOperationLog(explorer);
     try {
-      exp.explore();
+      explorer.explore();
     } catch (Throwable t) {
       fail("Exception during generation: " + t);
     }
+    explorer.getOperationHistory().outputTable();
     ReflectionExecutor.timeout = oldTimeout;
     GenInputsAbstract.progressintervalsteps = oldProgressintervalsteps;
-    for (Sequence s : exp.getAllSequences()) {
+    for (Sequence s : explorer.getAllSequences()) {
       String str = s.toCodeString();
       if (str.contains("bisort")) bisort = true;
       if (str.contains("bimerge")) bimerge = true;
@@ -174,7 +181,7 @@ public class ForwardExplorerTests {
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     final List<TypedOperation> model = getConcreteOperations(classes);
     assertTrue("model should not be empty", model.size() != 0);
-    ForwardGenerator exp =
+    ForwardGenerator explorer =
         new ForwardGenerator(
             model,
             new LinkedHashSet<TypedOperation>(),
@@ -183,14 +190,16 @@ public class ForwardExplorerTests {
             null,
             null);
     GenInputsAbstract.forbid_null = false;
-    exp.addTestCheckGenerator(createChecker(new ContractSet()));
-    exp.addTestPredicate(createOutputTest());
+    explorer.addTestCheckGenerator(createChecker(new ContractSet()));
+    explorer.addTestPredicate(createOutputTest());
+    TestUtils.setOperationLog(explorer);
     try {
-      exp.explore();
+      explorer.explore();
     } catch (Throwable t) {
       fail("Exception during generation: " + t);
     }
-    for (Sequence s : exp.getAllSequences()) {
+    explorer.getOperationHistory().outputTable();
+    for (Sequence s : explorer.getAllSequences()) {
       String str = s.toCodeString();
       if (str.contains("BH")) bh = true;
       if (str.contains("Body")) body = true;

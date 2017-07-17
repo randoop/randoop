@@ -102,6 +102,7 @@ public class FieldSetterTest {
     }
   }
 
+  @SuppressWarnings("ClassNewInstance")
   @Test
   public void testInstanceField() {
     Class<?> c = ClassWithFields.class;
