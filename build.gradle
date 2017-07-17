@@ -209,16 +209,17 @@ compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
 /*
  * Configuration for using error-prone compiler.
  *
- * Only setting up for main source set
+ * Only works in Java 8+.
  */
 import net.ltgt.gradle.errorprone.ErrorProneToolChain
 
 tasks.withType(JavaCompile).each { t ->
-  if (!t.name.equals("compileTestInputJava")) {
+  if (JavaVersion.current().isJava8Compatible()) {
+    if (!t.name.equals("compileTestInputJava")) {
       t.toolChain ErrorProneToolChain.create(project)
+    }
   }
 }
-
 
 
 /*
