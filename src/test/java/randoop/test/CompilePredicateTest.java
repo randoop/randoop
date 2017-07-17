@@ -1,5 +1,6 @@
 package randoop.test;
 
+import static org.apache.commons.codec.CharEncoding.UTF_8;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -8,10 +9,11 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 import org.junit.Test;
 import randoop.output.JUnitCreator;
 
-/** Created by bjkeller on 3/10/17. */
+/** Test for compilation predicate. */
 public class CompilePredicateTest {
 
   @Test
@@ -99,9 +101,11 @@ public class CompilePredicateTest {
             + "}";
     CompilationUnit source = null;
     try {
-      source = JavaParser.parse(new ByteArrayInputStream(failedCode.getBytes()));
+      source = JavaParser.parse(new ByteArrayInputStream(failedCode.getBytes(UTF_8)));
     } catch (ParseException e) {
       fail("code did not parse");
+    } catch (UnsupportedEncodingException e) {
+      fail("unsupported encoding");
     }
     assert source != null;
     JUnitCreator jUnitCreator = JUnitCreator.getTestCreator("", null, null, null, null);
@@ -138,9 +142,11 @@ public class CompilePredicateTest {
             + "}";
     CompilationUnit source = null;
     try {
-      source = JavaParser.parse(new ByteArrayInputStream(compilableCode.getBytes()));
+      source = JavaParser.parse(new ByteArrayInputStream(compilableCode.getBytes(UTF_8)));
     } catch (ParseException e) {
       fail("code did not parse");
+    } catch (UnsupportedEncodingException e) {
+      fail("unsupported encoding");
     }
     assert source != null;
     JUnitCreator jUnitCreator = JUnitCreator.getTestCreator("foo.bar", null, null, null, null);

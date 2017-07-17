@@ -205,13 +205,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static Pattern require_classname_in_test = null;
 
   /**
-   * File containing fully-qualified names of classes that the tests must exercise. This option only
+   * File containing fully-qualified names of classes that the tests must use. This option only
    * works if Randoop is run using the <a
    * href="https://randoop.github.io/randoop/manual/index.html#covered-filter">covered-class
-   * javaagent</a> to instrument the classes. A test is output only if it exercises at least one of
-   * the class names in the file. A test exercises a class if it executes any constructor or method
-   * of the class, directly or indirectly (the constructor or method might not appear in the source
-   * code of the test). Included classes may be abstract.
+   * javaagent</a> to instrument the classes. A test is output only if it uses at least one of the
+   * class names in the file. A test uses a class if it invokes any constructor or method of the
+   * class, directly or indirectly (the constructor or method might not appear in the source code of
+   * the test). Included classes may be abstract.
    */
   @Option("File containing class names that tests must cover")
   public static File require_covered_classes = null;
