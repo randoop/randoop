@@ -14,7 +14,7 @@ public enum Coin {
   HALFDOLLAR(50),
   DOLLAR(100);
 
-  private int value;
+  private final int value;
 
   Coin(int value) {
     this.value = value;

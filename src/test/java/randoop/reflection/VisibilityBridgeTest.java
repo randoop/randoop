@@ -9,6 +9,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import org.junit.Test;
 import randoop.operation.TypedOperation;
@@ -26,7 +27,7 @@ public class VisibilityBridgeTest {
 
   //can't compare method of superclass directly to method of subclass
   //so need to convert to abstraction to allow list search
-  private class FormalMethod {
+  private static class FormalMethod {
     private Type returnType;
     private String name;
     private TypeTuple parameterTypes;
@@ -50,17 +51,18 @@ public class VisibilityBridgeTest {
       this.name = op.getOperation().getName();
     }
 
-    public boolean equals(FormalMethod m) {
+    @Override
+    public boolean equals(Object obj) {
+      if (!(obj instanceof FormalMethod)) return false;
+      FormalMethod m = (FormalMethod) obj;
       return this.returnType.equals(m.returnType)
           && this.name.equals(m.name)
           && this.parameterTypes.equals(m.parameterTypes);
     }
 
     @Override
-    public boolean equals(Object obj) {
-      if (!(obj instanceof FormalMethod)) return false;
-      FormalMethod m = (FormalMethod) obj;
-      return this.equals(m);
+    public int hashCode() {
+      return Objects.hash(returnType, name, parameterTypes);
     }
 
     @Override
