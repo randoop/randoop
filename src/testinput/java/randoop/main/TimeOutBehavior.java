@@ -29,6 +29,7 @@ public class TimeOutBehavior {
     this.sleepTime = sleepTime;
   }
 
+  @Override
   public boolean equals(Object obj) {
     if (toggle == true) {
       setDelay();
@@ -46,6 +47,7 @@ public class TimeOutBehavior {
     return this.sleepTime == t.sleepTime;
   }
 
+  @Override
   public int hashCode() {
     try {
       Thread.sleep(delayTime);

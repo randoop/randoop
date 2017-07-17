@@ -15,4 +15,5 @@ RUN yum -q -y upgrade && yum -q -y install \
   which \
   java-1.8.0-openjdk \
   java-1.8.0-openjdk-devel \
+  xorg-X11-server-Xvfb \
 && yum -q clean all

@@ -41,6 +41,8 @@ public class TestFilteringTest {
   public static void setup() {
     optionsCache = new OptionsCache();
     optionsCache.saveState();
+
+    TestUtils.setSelectionLog();
   }
 
   @AfterClass
@@ -69,8 +71,7 @@ public class TestFilteringTest {
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
-    ForwardGenerator gen = buildGenerator(c);
-    gen.explore();
+    ForwardGenerator gen = buildAndRunGenerator(c);
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
@@ -100,8 +101,7 @@ public class TestFilteringTest {
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
-    ForwardGenerator gen = buildGenerator(c);
-    gen.explore();
+    ForwardGenerator gen = buildAndRunGenerator(c);
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
@@ -128,8 +128,7 @@ public class TestFilteringTest {
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
-    ForwardGenerator gen = buildGenerator(c);
-    gen.explore();
+    ForwardGenerator gen = buildAndRunGenerator(c);
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
@@ -160,8 +159,7 @@ public class TestFilteringTest {
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
-    ForwardGenerator gen = buildGenerator(c);
-    gen.explore();
+    ForwardGenerator gen = buildAndRunGenerator(c);
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
@@ -189,8 +187,7 @@ public class TestFilteringTest {
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
-    ForwardGenerator gen = buildGenerator(c);
-    gen.explore();
+    ForwardGenerator gen = buildAndRunGenerator(c);
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
@@ -218,8 +215,7 @@ public class TestFilteringTest {
     GenInputsAbstract.forbid_null = false;
 
     Class<?> c = Flaky.class;
-    ForwardGenerator gen = buildGenerator(c);
-    gen.explore();
+    ForwardGenerator gen = buildAndRunGenerator(c);
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
@@ -227,8 +223,7 @@ public class TestFilteringTest {
     assertTrue("should have some error tests", eTests.size() > 0);
   }
 
-  private ForwardGenerator buildGenerator(Class<?> c) {
-
+  private ForwardGenerator buildAndRunGenerator(Class<?> c) {
     Set<String> omitfields = new HashSet<>();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ReflectionPredicate predicate =
@@ -262,6 +257,9 @@ public class TestFilteringTest {
                 new LinkedHashSet<TypedOperation>());
     gen.addTestCheckGenerator(checkGenerator);
     gen.addExecutionVisitor(new DummyVisitor());
+    TestUtils.setOperationLog(gen);
+    gen.explore();
+    gen.getOperationHistory().outputTable();
     return gen;
   }
 }
