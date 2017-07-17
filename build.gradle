@@ -140,6 +140,7 @@ dependencies {
    * (Also, see configuration block.)
    */
   coveredTestImplementation sourceSets.main.output
+  coveredTestImplementation sourceSets.test.output
   coveredTestRuntimeOnly project(':covered-class')
 
   jacocoagent group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.7.7.201606060606'
@@ -285,7 +286,7 @@ test {
   exclude 'randoop/operation/OperationParserTests.*'
 }
 
-task coveredTest(type: Test, dependsOn: 'copyJars') {
+task coveredTest(type: Test, dependsOn: ['copyJars', 'compileTestJava']) {
   /*
    * Set the working directory for JUnit tests to the resources directory
    * instead of the project directory.

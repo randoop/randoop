@@ -18,6 +18,7 @@ import randoop.generation.ComponentManager;
 import randoop.generation.ForwardGenerator;
 import randoop.generation.RandoopListenerManager;
 import randoop.generation.SeedSequences;
+import randoop.generation.TestUtils;
 import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
@@ -48,6 +49,7 @@ public class SpecialCoveredClassTest {
 
   @Test
   public void abstractClassTest() {
+    TestUtils.setSelectionLog();
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = new File("instrument/testcase/special-allclasses.txt");
     GenInputsAbstract.require_covered_classes =
@@ -143,7 +145,9 @@ public class SpecialCoveredClassTest {
         genTests.createTestCheckGenerator(visibility, contracts, observerMap, excludeAsObservers);
     testGenerator.addTestCheckGenerator(checkGenerator);
     testGenerator.addExecutionVisitor(new CoveredClassVisitor(coveredClasses));
+    //    TestUtils.setOperationLog(testGenerator);
     testGenerator.explore();
+    //    testGenerator.getOperationHistory().outputTable();
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
     //
