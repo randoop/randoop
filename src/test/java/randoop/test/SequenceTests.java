@@ -1,5 +1,6 @@
 package randoop.test;
 
+import static org.apache.commons.codec.CharEncoding.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -99,7 +100,7 @@ public class SequenceTests {
 
     RecordListReader reader = new RecordListReader("TEST", processor);
     InputStream stream = SequenceTests.class.getResourceAsStream("/sequence_tests_script.txt");
-    BufferedReader b = new BufferedReader(new InputStreamReader(stream));
+    BufferedReader b = new BufferedReader(new InputStreamReader(stream, UTF_8));
     reader.parse(b);
   }
 

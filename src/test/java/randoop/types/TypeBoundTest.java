@@ -206,7 +206,7 @@ public class TypeBoundTest {
     return arguments;
   }
 
-  private class ArgumentVisitor implements ClassVisitor {
+  private static class ArgumentVisitor implements ClassVisitor {
     private Map<String, TypeVariable> argTypes;
     private Set<Method> declaredMethods;
 
