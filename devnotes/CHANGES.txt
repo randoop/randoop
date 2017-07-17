@@ -1,4 +1,4 @@
-Version ?, released May ?, 2017
+Version ?, released July ?, 2017
 
 Randoop contains a test suite minimizer.  Given a test suite containing
 failing tests, it creates a test suite with smaller tests that fail the

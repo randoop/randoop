@@ -25,7 +25,7 @@ plugins {
   id 'com.github.sherter.google-java-format' version '0.6'
 
   /* Need to exclude src/testinput from directories examined by Error Prone */
-//  id "net.ltgt.errorprone-base" version "0.0.10"
+  id "net.ltgt.errorprone-base" version "0.0.11"
 }
 
 /* Common build configuration for Randoop and agents */
@@ -140,6 +140,7 @@ dependencies {
    * (Also, see configuration block.)
    */
   coveredTestImplementation sourceSets.main.output
+  coveredTestImplementation sourceSets.test.output
   coveredTestRuntimeOnly project(':covered-class')
 
   jacocoagent group: 'org.jacoco', name: 'org.jacoco.agent', version: '0.7.7.201606060606'
@@ -208,15 +209,17 @@ compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
 /*
  * Configuration for using error-prone compiler.
  *
- * Only setting up for main source set
+ * Only works in Java 8+.
  */
-//import net.ltgt.gradle.errorprone.ErrorProneToolChain
+import net.ltgt.gradle.errorprone.ErrorProneToolChain
 
-//compileJava {
-//  toolChain ErrorProneToolChain.create(project)
-//}
-
-
+tasks.withType(JavaCompile).each { t ->
+  if (JavaVersion.current().isJava8Compatible()) {
+    if (!t.name.equals("compileTestInputJava")) {
+      t.toolChain ErrorProneToolChain.create(project)
+    }
+  }
+}
 
 
 /*
@@ -285,7 +288,7 @@ test {
   exclude 'randoop/operation/OperationParserTests.*'
 }
 
-task coveredTest(type: Test, dependsOn: 'copyJars') {
+task coveredTest(type: Test, dependsOn: ['copyJars', 'compileTestJava']) {
   /*
    * Set the working directory for JUnit tests to the resources directory
    * instead of the project directory.

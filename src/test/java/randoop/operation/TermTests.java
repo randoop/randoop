@@ -5,7 +5,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import org.junit.Test;
 import randoop.types.JavaTypes;
@@ -30,11 +29,6 @@ public class TermTests {
         "getValue returns Class object", classTerm.getValue(), is((Object) Comparator.class));
     assertThat("getType returns Class type", classTerm.getType(), is((Type) JavaTypes.CLASS_TYPE));
     assertTrue("Class<T> is a nonreceiver type", NonreceiverTerm.isNonreceiverType(Class.class));
-    Class<? extends ArrayList> arrayListClass = (new ArrayList<String>()).getClass();
-    Class<? extends Class> typeClass = arrayListClass.getClass();
-    assertTrue(
-        "Class " + typeClass + " from type is nonreceiver type",
-        NonreceiverTerm.isNonreceiverType(typeClass));
 
     NonreceiverTerm term = NonreceiverTerm.createNullOrZeroTerm(JavaTypes.CLASS_TYPE);
     NonreceiverTerm nullClassTerm = new NonreceiverTerm(JavaTypes.CLASS_TYPE, null);
