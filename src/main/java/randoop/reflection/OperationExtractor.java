@@ -47,7 +47,7 @@ public class OperationExtractor extends DefaultClassVisitor {
   /** The collection of operations */
   private final Collection<TypedOperation> operations;
 
-  /** The class type of the declaring class for the collected operations */
+  /** The type of the declaring class for the collected operations */
   private ClassOrInterfaceType classType;
 
   /** The list of {@code Pattern} objects to omit matching operations */
@@ -55,9 +55,9 @@ public class OperationExtractor extends DefaultClassVisitor {
 
   /**
    * Creates a visitor object that collects the {@link TypedOperation} objects corresponding to
-   * members of the class type and satisfying the given predicates.
+   * members of the class satisfying the given predicates and that don't match the omit patterns.
    *
-   * @param classType the declaring classtype for collected operations
+   * @param classType the declaring class for collected operations
    * @param operations the collection of operations, will be side-effected
    * @param predicate the reflection predicate
    * @param omitPatterns the list of {@code Pattern} objects for omitting methods, may be null
@@ -82,9 +82,9 @@ public class OperationExtractor extends DefaultClassVisitor {
 
   /**
    * Creates a visitor object that collects the {@link TypedOperation} objects corresponding to
-   * members of the class type and satisfying the given predicates.
+   * members of the class and satisfying the given predicates.
    *
-   * @param classType the declaring classtype for collected operations
+   * @param classType the declaring class for collected operations
    * @param operations the collection of operations, will be side-effected
    * @param predicate the reflection predicate
    * @param visibilityPredicate the predicate for testing visibility
@@ -98,7 +98,7 @@ public class OperationExtractor extends DefaultClassVisitor {
   }
 
   /**
-   * Adds an operation to the collection of this extractor. If the declaring class type is an {@link
+   * Adds an operation to the collection of this extractor. If the declaring class is an {@link
    * InstantiatedType}, then the substitution for that class is applied to the types of the
    * operation, and this instantiated operation is returned.
    *
@@ -139,7 +139,7 @@ public class OperationExtractor extends DefaultClassVisitor {
       return;
     }
     TypedClassOperation operation = TypedOperation.forConstructor(constructor);
-    if (!omit(operation)) {
+    if (!shouldOmit(operation)) {
       addOperation(operation);
     }
   }
@@ -164,7 +164,7 @@ public class OperationExtractor extends DefaultClassVisitor {
         operation = getOperationForType(operation, classType);
       }
     }
-    if (!omit(operation) && !omit(classType, operation, method)) {
+    if (!shouldOmit(classType, operation, method)) {
       addOperation(operation);
     }
   }
@@ -231,10 +231,7 @@ public class OperationExtractor extends DefaultClassVisitor {
    *     extractor
    * @return true if the signature matches an omit pattern, and false otherwise.
    */
-  private boolean omit(TypedClassOperation operation) {
-    if (omitPatterns.isEmpty()) {
-      return false;
-    }
+  private boolean shouldOmit(TypedClassOperation operation) {
     String signature = operation.getRawSignature();
     for (Pattern pattern : omitPatterns) {
       boolean result = pattern.matcher(signature).find();
@@ -251,29 +248,32 @@ public class OperationExtractor extends DefaultClassVisitor {
   }
 
   /**
-   * Indicates whether an omit pattern matches the raw signature of the method or the same method in
-   * a supertype.
+   * Indicates whether an omit pattern matches the raw signature of the method in either the
+   * declaring class of the method or a supertype.
    *
-   * <p>Assumes that {@code omit(operation)} is false, meaning no pattern matches the method
-   * qualified by the declaring class of the operation.
+   * <p>Needs to search all supertypes of {@code classType} that have a declared member
+   * corresponding to the method. The type {@code classType} is a subtype of or equal to the
+   * declaring class of the operation. If non-equal, it is necessary to search all types in the
+   * interval between {@code classType} and {@code operation.getDeclaringType()}. Since the method
+   * may be an override in the declaring class, it is also necessary to search for superclasses of
+   * the declaring class that have the method.
    *
-   * <p>Needs to search all supertypes of {@code classType} that have a member corresponding to the
-   * method. The type {@code classType} is a subtype of or equal to the declaring class of the
-   * operation. If non-equal, it is necessary to search all types in the interval between {@code
-   * classType} and {@code operation.getDeclaringType()}. Since the method may be an override in the
-   * declaring class, it is also necessary to search for superclasses of the declaring class that
-   * have the method.
-   *
-   * @param classType the class type that the method belongs to
+   * @param classType the type to which the method belongs
    * @param operation the operation for the method
    * @param method the reflection object for the method
    * @return true if the signature of the method in the current class or a super class matches an
    *     omit pattern, false otherwise
    */
-  private boolean omit(
+  private boolean shouldOmit(
       ClassOrInterfaceType classType, final TypedClassOperation operation, final Method method) {
+    // done if there are no patterns
     if (omitPatterns.isEmpty()) {
       return false;
+    }
+
+    // check whether the operation matches an omit pattern directly
+    if (shouldOmit(operation)) {
+      return true;
     }
 
     final ClassOrInterfaceType declaringType = operation.getDeclaringType();
@@ -294,7 +294,7 @@ public class OperationExtractor extends DefaultClassVisitor {
 
       // all subtypes of declaringType have the method
       TypedClassOperation superTypeOperation = getOperationForType(operation, type);
-      if (omit(superTypeOperation)) {
+      if (shouldOmit(superTypeOperation)) {
         return true;
       }
 
@@ -318,7 +318,7 @@ public class OperationExtractor extends DefaultClassVisitor {
           getMethod(method.getName(), method.getParameterTypes(), type.getRuntimeClass());
       if (superclassMethod != null) {
         TypedClassOperation supertypeOperation = getOperationForType(operation, type);
-        if (omit(supertypeOperation)) {
+        if (shouldOmit(supertypeOperation)) {
           return true;
         }
         typeQueue.addAll(getSupertypes(type));
@@ -331,8 +331,8 @@ public class OperationExtractor extends DefaultClassVisitor {
   }
 
   /**
-   * Returns the set of supertypes for the given class type including the superclass and interfaces
-   * of the type restricted to those that are a subtype of the upper bound type.
+   * Returns the set of supertypes for the given class including the superclass and interfaces of
+   * the type restricted to those that are a subtype of the upper bound type.
    *
    * @param type the type for which supertypes are collected
    * @param upperBoundType the upper bound type
@@ -359,8 +359,8 @@ public class OperationExtractor extends DefaultClassVisitor {
   }
 
   /**
-   * Returns the set of supertypes for the given class type obtained by collecting the superclass
-   * and interfaces of the type. (Rather than all supertypes returned by {@link
+   * Returns the set of supertypes for the given class obtained by collecting the superclass and
+   * interfaces of the type. (Rather than all supertypes returned by {@link
    * ClassOrInterfaceType#getSuperTypes()}.
    *
    * @param type the type for which supertypes are collected
