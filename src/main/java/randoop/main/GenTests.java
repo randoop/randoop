@@ -20,6 +20,7 @@ import plume.EntryReader;
 import plume.Options;
 import plume.Options.ArgException;
 import plume.SimpleLog;
+import randoop.BugInRandoopException;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
 import randoop.MultiVisitor;
@@ -535,15 +536,20 @@ public class GenTests extends GenInputsAbstract {
         }
         TestEnvironment testEnvironment = new TestEnvironment(classpath);
         FailingTestFilter codeWriter = new FailingTestFilter(testEnvironment, javaFileWriter);
-        List<File> testFiles =
-            outputTests(
-                junitCreator,
-                GenInputsAbstract.junit_package_name,
-                GenInputsAbstract.regression_test_basename,
-                regressionSequences,
-                codeWriter);
-        if (!GenInputsAbstract.noprogressdisplay) {
-          logTestFiles(testFiles);
+        try {
+          List<File> testFiles =
+              outputTests(
+                  junitCreator,
+                  GenInputsAbstract.junit_package_name,
+                  GenInputsAbstract.regression_test_basename,
+                  regressionSequences,
+                  codeWriter);
+          if (!GenInputsAbstract.noprogressdisplay) {
+            logTestFiles(testFiles);
+          }
+        } catch (BugInRandoopException e) {
+          System.out.printf("%nError writing regression tests: " + e.getMessage());
+          System.exit(1);
         }
       } else {
         if (!GenInputsAbstract.noprogressdisplay) {
@@ -752,14 +758,25 @@ public class GenTests extends GenInputsAbstract {
       List<ExecutableSequence> sequences,
       CodeWriter codeWriter) {
     List<File> testFiles = new ArrayList<>();
+
+    // create and write test classes
     Map<String, CompilationUnit> testMap = getTestASTMap(namePrefix, sequences, jUnitCreator);
     for (Map.Entry<String, CompilationUnit> entry : testMap.entrySet()) {
       String classname = entry.getKey();
       String classString = entry.getValue().toString();
       testFiles.add(codeWriter.writeClass(packageName, classname, classString));
     }
-    String classSource = outputTestDriver(namePrefix, jUnitCreator, testMap.keySet());
-    testFiles.add(codeWriter.writeUnmodifiedClass(packageName, namePrefix, classSource));
+
+    // create and write driver
+    String driverName = namePrefix;
+    String classSource;
+    if (GenInputsAbstract.junit_reflection_allowed) {
+      classSource = jUnitCreator.createSuiteClass(driverName, testMap.keySet());
+    } else {
+      driverName += "Driver";
+      classSource = jUnitCreator.createTestDriver(driverName, testMap.keySet());
+    }
+    testFiles.add(codeWriter.writeUnmodifiedClass(packageName, driverName, classSource));
     return testFiles;
   }
 
@@ -787,27 +804,6 @@ public class GenTests extends GenInputsAbstract {
         System.out.println("Created file: " + f.getAbsolutePath());
       }
     }
-  }
-
-  /**
-   * Writes the test driver for the test classes created by the JUnit creator.
-   *
-   * @param junitPrefix the prefix of the driver class name
-   * @param junitCreator the {@link JUnitCreator} used to create test classes
-   * @param testClassNames the set of names of the generated test classes
-   * @return the {@code File} for the test driver Java file
-   */
-  private String outputTestDriver(
-      String junitPrefix, JUnitCreator junitCreator, Set<String> testClassNames) {
-    String classSource;
-    String driverName = junitPrefix;
-    if (GenInputsAbstract.junit_reflection_allowed) {
-      classSource = junitCreator.createSuiteClass(driverName, testClassNames);
-    } else {
-      driverName = junitPrefix + "Driver";
-      classSource = junitCreator.createTestDriver(driverName, testClassNames);
-    }
-    return classSource;
   }
 
   /**
