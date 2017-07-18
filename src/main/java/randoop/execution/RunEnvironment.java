@@ -1,5 +1,7 @@
 package randoop.execution;
 
+import static org.apache.commons.codec.CharEncoding.UTF_8;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +15,7 @@ import plume.TimeLimitProcess;
  * Class to hold the return status from running a command assuming that it is run in a process where
  * stderr and stdout are linked. Includes the exit status, and the list of output lines.
  */
-public class RunEnvironment {
+class RunEnvironment {
 
   /**
    * Runs the given command in a new process using the given timeout.
@@ -29,7 +31,7 @@ public class RunEnvironment {
     ProcessBuilder processBuilder = new ProcessBuilder(command);
     processBuilder.directory(workingDirectory);
 
-    TimeLimitProcess p = null;
+    TimeLimitProcess p;
 
     try {
       p = new TimeLimitProcess(processBuilder.start(), timeout, true);
@@ -37,7 +39,7 @@ public class RunEnvironment {
       throw new ProcessException("Exception starting process", e);
     }
 
-    int exitValue = -1;
+    int exitValue;
     try {
       exitValue = p.waitFor();
     } catch (InterruptedException e) {
@@ -68,9 +70,16 @@ public class RunEnvironment {
     return new RunStatus(command, exitValue, standardOutputLines, errorOutputLines);
   }
 
+  /**
+   * Captures output from the stream as a {@code List<String>}.
+   *
+   * @param stream the stream to read from
+   * @return the list of lines read from the stream
+   * @throws IOException if there is an error reading from the stream
+   */
   private static List<String> captureProcessOutput(InputStream stream) throws IOException {
     List<String> outputLines = new ArrayList<>();
-    try (BufferedReader rdr = new BufferedReader(new InputStreamReader(stream))) {
+    try (BufferedReader rdr = new BufferedReader(new InputStreamReader(stream, UTF_8))) {
       String line = rdr.readLine();
       while (line != null) {
         outputLines.add(line);
