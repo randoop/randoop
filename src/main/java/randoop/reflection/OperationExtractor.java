@@ -55,12 +55,12 @@ public class OperationExtractor extends DefaultClassVisitor {
 
   /**
    * Creates a visitor object that collects the {@link TypedOperation} objects corresponding to
-   * members of the class type and satisfying the given predicate.
+   * members of the class type and satisfying the given predicates.
    *
    * @param classType the declaring classtype for collected operations
-   * @param operations the collection of operations
+   * @param operations the collection of operations, will be side-effected
    * @param predicate the reflection predicate
-   * @param omitPatterns the list of {@code Pattern} objects for omitting methods
+   * @param omitPatterns the list of {@code Pattern} objects for omitting methods, may be null
    * @param visibilityPredicate the predicate for test visibility
    */
   public OperationExtractor(
@@ -73,19 +73,19 @@ public class OperationExtractor extends DefaultClassVisitor {
     this.operations = operations;
     this.predicate = predicate;
     this.visibilityPredicate = visibilityPredicate;
-    if (omitPatterns != null) {
-      this.omitPatterns = omitPatterns;
-    } else {
+    if (omitPatterns == null) {
       this.omitPatterns = new ArrayList<>();
+    } else {
+      this.omitPatterns = omitPatterns;
     }
   }
 
   /**
    * Creates a visitor object that collects the {@link TypedOperation} objects corresponding to
-   * members of the class type and satisfying the given predicate.
+   * members of the class type and satisfying the given predicates.
    *
-   * @param classType the declaring classtype for collected operation
-   * @param operations the collection of operations
+   * @param classType the declaring classtype for collected operations
+   * @param operations the collection of operations, will be side-effected
    * @param predicate the reflection predicate
    * @param visibilityPredicate the predicate for testing visibility
    */
@@ -156,10 +156,8 @@ public class OperationExtractor extends DefaultClassVisitor {
     }
     TypedClassOperation operation = TypedOperation.forMethod(method);
     if (classType.isSubtypeOf(operation.getDeclaringType()) && operation.isStatic()) {
-      /*
-       * if this classType inherits this static method, but declaring class is not public, then
-       * consider method to have classType as declaring class
-       */
+      // If this classType inherits this static method, but declaring class is not public, then
+      // consider method to have classType as declaring class.
       int declaringClassMods =
           method.getDeclaringClass().getModifiers() & Modifier.classModifiers();
       if (!Modifier.isPublic(declaringClassMods)) {
@@ -226,7 +224,7 @@ public class OperationExtractor extends DefaultClassVisitor {
   }
 
   /**
-   * Indicates whether an omit patterns matches the {@link TypedClassOperation#getRawSignature()}
+   * Indicates whether some omit pattern matches the {@link TypedClassOperation#getRawSignature()}
    * for the given operation.
    *
    * @param operation the constructor or method call to match against the omit patterns of this
