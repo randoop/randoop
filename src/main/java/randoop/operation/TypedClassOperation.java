@@ -189,7 +189,8 @@ public class TypedClassOperation extends TypedOperation {
     List<Type> inputTypes = new ArrayList<>();
     TypeTuple typeTuple = getInputTypes();
     for (int i = 0; i < typeTuple.size(); i++) {
-      if (i == 0 && this.isStatic()) {
+      // for non-static method, don't include the receiver in the raw signature
+      if (i == 0 && !this.isStatic()) {
         continue;
       }
       Type type = typeTuple.get(i);
