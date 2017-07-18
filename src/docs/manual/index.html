@@ -794,20 +794,18 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>See an <a href= "https://randoop.github.io/randoop/manual/method_list_example.txt">
  example</a>.
             <li id="option:omitmethods"><b>--omitmethods=</b><i>regex</i> <code>[+]</code>.
-             A pattern that indicates methods that should not be included in generated tests. Randoop will
- not directly call a method whose fully-qualified signature matches the regular expression, or a
- method inherited from a superclass or interface for which the method matches the regular
- expression. This does not prevent indirect calls to such methods from other, allowed methods.
+             A regex that indicates methods that should not be called directly in generated tests. This does
+ not prevent indirect calls to such methods from other, allowed methods.
 
- <p>The signature has the form <code>package-name.classname.method-name(argument-list)</code>
- where <code>package-name</code> is a period-separated list of identifiers, and <code>
- argument-list</code> is a comma-separated (with no spaces) of fully-qualified Java raw types.
- If the regular expression contains anchors "<code>^</code>" and "<code>$</code>", they refer to
- the beginning and the end (respectively) of the signature string.
+ <p>Randoop will not directly call a method whose fully-qualified signature matches the regular
+ expression, or a method inherited from a superclass or interface for which the method matches
+ the regular expression.
 
- <p>Randoop only calls methods that are specified by one of the <code>--testclass</code>, <code>
- -classlist</code>, or <code>--methodlist</code> command-line options; the purpose of <code>
- --omitmethods</code> is to override one of those other command-line options.
+ <p>The signature has the form <code>package-name.classname.method-name(argument-list)</code> where
+ <code>package-name</code> is a period-separated list of identifiers, and <code>argument-list</code> is a
+ comma-separated (with no spaces) list of fully-qualified Java raw types. If the regular
+ expression contains anchors "<code>^</code>" and "<code>$</code>", they refer to the beginning and the
+ end (respectively) of the signature string.
             <li id="option:omitmethods-list"><b>--omitmethods-list=</b><i>filename</i>.
              A file containing a list of regular expressions that indicate methods that should not be
  included in generated tests. These patterns are used along with those provided with <code>
@@ -858,13 +856,13 @@ Randoop about your application, and that is how we recommend using Randoop.
              Classes that must occur in a test. Randoop will only output tests whose source code has at
  least one use of a member of a class whose name matches the regular expression.
             <li id="option:require-covered-classes"><b>--require-covered-classes=</b><i>filename</i>.
-             File containing fully-qualified names of classes that the tests must exercise. This option only
+             File containing fully-qualified names of classes that the tests must use. This option only
  works if Randoop is run using the <a
  href="https://randoop.github.io/randoop/manual/index.html#covered-filter">covered-class
- javaagent</a> to instrument the classes. A test is output only if it exercises at least one of
- the class names in the file. A test exercises a class if it executes any constructor or method
- of the class, directly or indirectly (the constructor or method might not appear in the source
- code of the test). Included classes may be abstract.
+ javaagent</a> to instrument the classes. A test is output only if it uses at least one of the
+ class names in the file. A test uses a class if it invokes any constructor or method of the
+ class, directly or indirectly (the constructor or method might not appear in the source code of
+ the test). Included classes may be abstract.
             <li id="option:minimize-error-test"><b>--minimize-error-test=</b><i>boolean</i>.
              Flag indicating whether or not to automatically minimize error-revealing tests. Both original
  and minimized versions of each test class will be output. Setting this option may cause long

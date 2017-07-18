@@ -207,6 +207,7 @@ public abstract class ClassOrInterfaceType extends ReferenceType {
    *
    * @return the non-parameterized form of this class type
    */
+  @Override
   public abstract NonParameterizedType getRawtype();
 
   /**

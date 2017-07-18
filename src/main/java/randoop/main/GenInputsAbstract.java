@@ -36,10 +36,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
   /**
-   * The fully-qualified name of a class to test; for example, <code>--testclass=java.util.TreeSet
-   * </code>. All of its methods are methods under test. This class is tested in addition to any
-   * specified using <code>--classlist</code>, and must be accessible from the package of the tests
-   * (set with <code>--junit-package-name</code>).
+   * The fully-qualified raw name of a class to test; for example, {@code
+   * --testclass=java.util.TreeSet}. All of its methods are methods under test. This class is tested
+   * in addition to any specified using {@code --classlist}, and must be accessible from the package
+   * of the tests (set with {@code --junit-package-name}).
    */
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Code under test:  which methods may be called by a test")
@@ -51,9 +51,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * <p>In the file, each class under test is specified by its fully-qualified name on a separate
    * line. See an <a href= "https://randoop.github.io/randoop/manual/class_list_example.txt">
-   * example</a>. These classes are tested in addition to any specified using <code>--testclass
-   * </code>. All classes must be accessible from the package of the tests (set with <code>
-   * --junit-package-name</code>).
+   * example</a>. These classes are tested in addition to any specified using {@code --testclass}.
+   * All classes must be accessible from the package of the tests (set with {@code
+   * --junit-package-name}).
    */
   @Option("File that lists classes under test")
   public static File classlist = null;
@@ -85,20 +85,18 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static File methodlist = null;
 
   /**
-   * A pattern that indicates methods that should not be included in generated tests. Randoop will
-   * not directly call a method whose fully-qualified signature matches the regular expression, or a
-   * method inherited from a superclass or interface for which the method matches the regular
-   * expression. This does not prevent indirect calls to such methods from other, allowed methods.
+   * A regex that indicates methods that should not be called directly in generated tests. This does
+   * not prevent indirect calls to such methods from other, allowed methods.
    *
-   * <p>The signature has the form <code>package-name.classname.method-name(argument-list)</code>
-   * where <code>package-name</code> is a period-separated list of identifiers, and <code>
-   * argument-list</code> is a comma-separated (with no spaces) of fully-qualified Java raw types.
-   * If the regular expression contains anchors "<code>^</code>" and "<code>$</code>", they refer to
-   * the beginning and the end (respectively) of the signature string.
+   * <p>Randoop will not directly call a method whose fully-qualified signature matches the regular
+   * expression, or a method inherited from a superclass or interface for which the method matches
+   * the regular expression.
    *
-   * <p>Randoop only calls methods that are specified by one of the <code>--testclass</code>, <code>
-   * -classlist</code>, or <code>--methodlist</code> command-line options; the purpose of <code>
-   * --omitmethods</code> is to override one of those other command-line options.
+   * <p>The signature has the form {@code package-name.classname.method-name(argument-list)} where
+   * {@code package-name} is a period-separated list of identifiers, and {@code argument-list} is a
+   * comma-separated (with no spaces) list of fully-qualified Java raw types. If the regular
+   * expression contains anchors "{@code ^}" and "{@code $}", they refer to the beginning and the
+   * end (respectively) of the signature string.
    */
   @Option("Do not call methods that match regular expression <string>")
   public static List<Pattern> omitmethods = null;
