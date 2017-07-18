@@ -59,7 +59,9 @@ public class SubTypeSet {
 
   public void add(Type c) {
     if (c == null) throw new IllegalArgumentException("c cannot be null.");
-    if (typesWithsequences.contains(c)) return;
+    if (typesWithsequences.contains(c)) {
+      return;
+    }
     typesWithsequences.add(c);
 
     // Update existing entries.

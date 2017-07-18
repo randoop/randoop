@@ -106,8 +106,12 @@ public final class MethodReflectionCode extends ReflectionCode {
   @Override
   public String toString() {
     String ret = "Call to " + method + " receiver:" + receiver + " args:" + Arrays.toString(inputs);
-    if (!hasRunAlready()) return ret + " not run yet";
-    else if (exceptionThrown == null) return ret + " returned:" + retval;
-    else return ret + " threw:" + exceptionThrown;
+    if (!hasRunAlready()) {
+      return ret + " not run yet";
+    } else if (exceptionThrown == null) {
+      return ret + " returned:" + retval;
+    } else {
+      return ret + " threw:" + exceptionThrown;
+    }
   }
 }
