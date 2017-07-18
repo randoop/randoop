@@ -942,7 +942,7 @@ public class RandoopSystemTest {
 
   /**
    * recreate problem with tests over Google Guava where value from private enum returned by public
-   * method and value used in {@link randoop.test.ObjectCheck} surfaces in test code, creating
+   * method and value used in {@code randoop.test.ObjectCheck} surfaces in test code, creating
    * uncompilable code.
    */
   @Test
@@ -1036,9 +1036,11 @@ public class RandoopSystemTest {
     RandoopOptions options = RandoopOptions.createOptions(testEnvironment);
     options.addTestClass("flaky.FlakyFileDependency");
     options.setOption("testsperfile", "1");
-    options.setOption("outputlimit", "45");
-    options.setOption("timelimit", "100");
-    generateAndTest(testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE);
+    options.setOption("outputLimit", "45");
+    CoverageChecker coverageChecker = new CoverageChecker(options);
+    coverageChecker.exclude("flaky.FlakyFileDependency.hashCode()");
+    generateAndTestWithCoverage(
+        testEnvironment, options, ExpectedTests.SOME, ExpectedTests.NONE, coverageChecker);
   }
 
   /* ------------------------------ utility methods ---------------------------------- */
