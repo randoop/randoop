@@ -10,9 +10,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import plume.UtilMDE;
+import randoop.BugInRandoopException;
 import randoop.Globals;
 import randoop.compile.FileCompiler;
 import randoop.compile.FileCompilerException;
+import randoop.execution.ProcessException;
 import randoop.execution.RunStatus;
 import randoop.execution.TestEnvironment;
 import randoop.main.GenTests;
@@ -32,6 +34,10 @@ public class FailingTestFilter implements CodeWriter {
   /** A pattern matching the JUnit4 message indicating the total count of failures */
   private static final Pattern FAILURE_MESSAGE_PATTERN =
       Pattern.compile("There\\s+(?:was|were)\\s+(\\d+)\\s+failure(?:s|):");
+
+  /** Regex for Java identifiers */
+  private static final String ID_STRING =
+      "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
 
   /** The {@link randoop.execution.TestEnvironment} for running the test classes. */
   private final TestEnvironment testEnvironment;
@@ -63,6 +69,8 @@ public class FailingTestFilter implements CodeWriter {
     File testFile = javaFileWriter.writeClass(packageName, classname, classString);
     sourceList.add(testFile);
 
+    String qualifiedClassname = ((!packageName.isEmpty()) ? packageName + "." : "") + classname;
+
     int pass = 0;
     boolean passing = false;
 
@@ -73,7 +81,12 @@ public class FailingTestFilter implements CodeWriter {
       boolean success = compileTestClass(sourceList, workingDirectory);
       assert success;
 
-      RunStatus status = testEnvironment.runTest(classname, workingDirectory.toFile());
+      RunStatus status = null;
+      try {
+        status = testEnvironment.runTest(qualifiedClassname, workingDirectory.toFile());
+      } catch (ProcessException e) {
+        throw new BugInRandoopException("Error filtering regression tests: " + e.getMessage());
+      }
       if (status.exitStatus == 0) {
         passing = true;
         continue;
@@ -104,8 +117,8 @@ public class FailingTestFilter implements CodeWriter {
        * The standard runner gives a numbered list with each entry matching the following pattern:
        */
       Pattern failureHeaderPattern =
-          Pattern.compile(
-              "\\d+\\)\\s+(" + GenTests.TEST_METHOD_NAME_PREFIX + "\\d+)\\(" + classname + "\\)");
+          Pattern.compile("\\d+\\)\\s+(" + ID_STRING + ")\\(" + classname + "\\)");
+
       // split the class text string so that we can match the line number for the assertion with the code
       String[] classLines =
           classString.split(Globals.lineSep); //use same line break as used to write file
@@ -117,7 +130,22 @@ public class FailingTestFilter implements CodeWriter {
         String line = lineIterator.next();
         Matcher failureMatcher = failureHeaderPattern.matcher(line);
         if (failureMatcher.matches()) { // found the beginning of a failure
+          failureCount++;
           methodName = failureMatcher.group(1);
+
+          /*
+           * If the method name in the failure message is not a test method, throw an exception.
+           */
+          if (!methodName.matches(GenTests.TEST_METHOD_NAME_PREFIX + "\\d+")) {
+            if (line.contains("initializationError")) {
+              throw new BugInRandoopException(
+                  "Check configuration of test environment: "
+                      + "initialization error of test in flaky-test filter");
+            } else {
+              throw new BugInRandoopException(
+                  "Unexpected failure in flaky-test filter: " + methodName);
+            }
+          }
 
           /*
            * Search for the stacktrace entry corresponding to the test method, and capture the line
@@ -142,14 +170,14 @@ public class FailingTestFilter implements CodeWriter {
           }
           assert lineNumber - 1 < classLines.length;
           classLines[lineNumber - 1] = "// flaky: " + classLines[lineNumber - 1];
-
-          failureCount++;
         }
       }
+
       classString = UtilMDE.join(classLines, Globals.lineSep);
       testFile = javaFileWriter.writeClass(packageName, classname, classString);
       pass++;
     }
+
     return testFile;
   }
 

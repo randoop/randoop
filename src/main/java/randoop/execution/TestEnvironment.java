@@ -53,18 +53,13 @@ public class TestEnvironment {
    *
    * @param testClassName the fully-qualified JUnit test class
    * @param workingDirectory the working directory for executing the test
+   * @return the {@link RunStatus} object for the execution of the test class
+   * @throws ProcessException if there is an error running the test command
    */
-  public RunStatus runTest(String testClassName, File workingDirectory) {
-
+  public RunStatus runTest(String testClassName, File workingDirectory) throws ProcessException {
     List<String> command = buildCommandPrefix();
     command.add(testClassName);
-
-    try {
-      return RunEnvironment.run(command, workingDirectory, timeout);
-    } catch (ProcessException e) {
-      e.printStackTrace();
-    }
-    return null;
+    return RunEnvironment.run(command, workingDirectory, timeout);
   }
 
   /**
