@@ -16,4 +16,4 @@ RUN dnf -qy upgrade && dnf -qy install \
   java-1.8.0-openjdk-devel \
   xorg-x11-server-Xvfb \
 && dnf -q clean all \
-&& ln -s /etc/pki/java/cacerts /usr/lib/jvm/java-1.8.0-openjdk/jre/lib/security/cacerts
+&& ([ -e /usr/lib/jvm/java-1.8.0-openjdk/jre/lib/security/cacerts ] || ln -s /etc/pki/java/cacerts /usr/lib/jvm/java-1.8.0-openjdk/jre/lib/security/cacerts)
