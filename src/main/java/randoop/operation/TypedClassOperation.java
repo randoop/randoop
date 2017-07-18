@@ -21,8 +21,11 @@ import randoop.types.TypeVariable;
  * <p>The representation is the operation plus the declaring class.
  */
 public class TypedClassOperation extends TypedOperation {
-  /** The declaring type for this operation */
+  /** The declaring type for this operation. */
   private final ClassOrInterfaceType declaringType;
+
+  /** The cached value of {@link #getRawSignature()}. */
+  private String rawSignature = null;
 
   /**
    * Creates a {@link TypedClassOperation} for a given {@link CallableOperation} indicating the
@@ -180,27 +183,31 @@ public class TypedClassOperation extends TypedOperation {
    * a fully-qualified raw type, the method name, and the argument types as fully-qualified raw
    * types.
    *
-   * <p>The raw type signature for a constructor <code>C()</code> has has this form instead of the
+   * <p>The raw type signature for a constructor <code>C()</code> is <code>C()</code> instead of the
    * reflection form <code>C.&lt;init&gt;</code>.
    *
    * @return the signature for this operation using raw types for the class and argument types
    */
   public String getRawSignature() {
-    List<Type> inputTypes = new ArrayList<>();
-    TypeTuple typeTuple = getInputTypes();
-    for (int i = 0; i < typeTuple.size(); i++) {
-      // for non-static method, don't include the receiver in the raw signature
-      if (i == 0 && !this.isStatic()) {
-        continue;
+    if (rawSignature == null) {
+      List<Type> inputTypes = new ArrayList<>();
+      TypeTuple typeTuple = getInputTypes();
+      for (int i = 0; i < typeTuple.size(); i++) {
+        // for non-static method, don't include the receiver in the raw signature
+        if (i == 0 && !this.isStatic()) {
+          continue;
+        }
+        Type type = typeTuple.get(i);
+        if (type.isGeneric()) {
+          type = type.getRawtype();
+        }
+        inputTypes.add(type);
       }
-      Type type = typeTuple.get(i);
-      if (type.isGeneric()) {
-        type = type.getRawtype();
-      }
-      inputTypes.add(type);
+      String methodName =
+          declaringType.getRawtype().toString()
+              + (this.isMethodCall() ? "." + super.getName() : "");
+      rawSignature = methodName + "(" + UtilMDE.join(inputTypes, ",") + ")";
     }
-    String methodName =
-        declaringType.getRawtype().toString() + (this.isMethodCall() ? "." + super.getName() : "");
-    return methodName + "(" + UtilMDE.join(inputTypes, ",") + ")";
+    return rawSignature;
   }
 }

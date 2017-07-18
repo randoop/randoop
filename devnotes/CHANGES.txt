@@ -11,7 +11,8 @@ same way.
 
 Improves how --omitmethods works so that it matches against the signature of a
 method or constructor rather than java.lang.reflect.Method.toString(). Also,
-omits method throughout the inheritance hierarchy.
+omits method throughout the inheritance hierarchy. See the documentation of
+--omitmethods for details.
 
 New option --operation-history-log will write table of operation used during
 generation to either a file or standard out as indicated by the argument.
