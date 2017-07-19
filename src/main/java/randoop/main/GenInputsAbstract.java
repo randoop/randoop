@@ -42,7 +42,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * of the tests (set with {@code --junit-package-name}).
    */
   ///////////////////////////////////////////////////////////////////
-  @OptionGroup("Code under test:  which methods may be called by a test")
+  @OptionGroup("Code under test:  which members may be used by a test")
   @Option("The fully-qualified name of a class under test")
   public static List<String> testclass = new ArrayList<>();
 
@@ -74,9 +74,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
    *
    * <p>These methods augment any methods from classes given by the <code>--testclass</code> or
    * <code>--classlist</code> options.
-   *
-   * <p>This option also overrides any conflicting method omission from {@code --omitmethods} or
-   * {@code --omitmethods-list}.
    *
    * <p>See an <a href= "https://randoop.github.io/randoop/manual/method_list_example.txt">
    * example</a>.
