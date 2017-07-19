@@ -28,7 +28,7 @@ The Randoop homepage is
   <li><a href="#generating_tests">Generating tests</a>
     <ul>
       <li><a href="#example_collections">Example: Generating tests for <code>java.util.Collections</code></a></li>
-      <li><a href="#specifying-methods">Specifying methods and constructors that may appear in a test</a></li>
+      <li><a href="#specifying-methods">Specifying methods, constructors and fields that may appear in a test</a></li>
       <li><a href="#classifying_tests">Classifying tests</a></li>
       <li><a href="#error_revealing_tests">Error-revealing tests</a></li>
       <li><a href="#regression_tests">Regression tests</a>
@@ -330,7 +330,7 @@ RegressionTest will pass.
 </p>
 
 
-<h2 id="specifying-methods">Specifying methods and constructors that may appear in a test</h2>
+<h2 id="specifying-methods">Specifying methods, constructors and fields that may appear in a test</h2>
 
 <p>
 Randoop only invokes a method or constructor <i>M</i> if <b>all</b> of the following are true:
@@ -761,35 +761,32 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li id="optiongroup:Code-under-test:--which-methods-may-be-called-by-a-test">Code under test:  which methods may be called by a test
       <ul>
             <li id="option:testclass"><b>--testclass=</b><i>string</i> <code>[+]</code>.
-             The fully-qualified name of a class to test; for example, <code>--testclass=java.util.TreeSet
- </code>. All of its methods are methods under test. This class is tested in addition to any
- specified using <code>--classlist</code>, and must be accessible from the package of the tests
- (set with <code>--junit-package-name</code>).
+             The fully-qualified raw name of a class to test; for example, <code>--testclass=java.util.TreeSet</code>. All of its methods are methods under test. This class is tested
+ in addition to any specified using <code>--classlist</code>, and must be accessible from the package
+ of the tests (set with <code>--junit-package-name</code>).
             <li id="option:classlist"><b>--classlist=</b><i>filename</i>.
              File that lists classes to test. All of their methods are methods under test.
 
  <p>In the file, each class under test is specified by its fully-qualified name on a separate
  line. See an <a href= "https://randoop.github.io/randoop/manual/class_list_example.txt">
- example</a>. These classes are tested in addition to any specified using <code>--testclass
- </code>. All classes must be accessible from the package of the tests (set with <code>
- --junit-package-name</code>).
+ example</a>. These classes are tested in addition to any specified using <code>--testclass</code>.
+ All classes must be accessible from the package of the tests (set with <code>--junit-package-name</code>).
             <li id="option:methodlist"><b>--methodlist=</b><i>filename</i>.
-             File that lists methods to test.
+             A file containing a list of methods and constructors to test, each given as a fully-qualified
+ signature on a separate line:
 
- <p>In the file, each method under test is specified on a separate line. The list of methods
- given by this argument augment any methods determined via the <code>--testclass</code> or
- <code>--classlist</code> option.
+ <ul>
+   <li><code>package-name.classname.method-name(argument-list)</code> for a method, or
+   <li><code>package-name.classname(argument-list)</code> for a constructor
+ </ul>
 
- <p>A constructor line begins with <code>"cons :"</code> followed by the classname, the string
- <code>&lt;init&gt;</code>, and the constructor's parameter types enclosed in parentheses. Methods are
- specified in a similar way. For example:
+ <p>where <code>package-name</code> is a period-separated list of identifiers, and <code>argument-list</code> is a comma-separated (spaces allowed) list of fully-qualified Java raw types.
 
- <pre><code>
- cons : Type0.&lt;init&gt;(Type1, Type2, ..., TypeN)
- method : Type0.method_name(Type1, Type2, ..., TypeN)
- </code></pre>
+ <p>These methods augment any methods from classes given by the <code>--testclass</code> or
+ <code>--classlist</code> options.
 
- <p>Each <code>Type<i>i</i></code> must be fully-qualified (include package names).
+ <p>This option also overrides any conflicting method omission from <code>--omitmethods</code> or
+ <code>--omitmethods-list</code>.
 
  <p>See an <a href= "https://randoop.github.io/randoop/manual/method_list_example.txt">
  example</a>.
